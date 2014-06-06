@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Duke Nukem 3D Mod Manager", "Duke Nukem 3D Mod Manager.vcproj", "{0DACB95E-E694-4C1B-A932-415EEB805921}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0DACB95E-E694-4C1B-A932-415EEB805921}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0DACB95E-E694-4C1B-A932-415EEB805921}.Debug|Win32.Build.0 = Debug|Win32
+		{0DACB95E-E694-4C1B-A932-415EEB805921}.Release|Win32.ActiveCfg = Release|Win32
+		{0DACB95E-E694-4C1B-A932-415EEB805921}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
