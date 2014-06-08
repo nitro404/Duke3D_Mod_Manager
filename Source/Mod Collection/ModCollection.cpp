@@ -134,42 +134,14 @@ const Mod * ModCollection::getMod(const QString & name) const {
 	return NULL;
 }
 
-bool ModCollection::addMod(const QString & name, const QString & type, const QString & group, const QString & con) {
-	return addMod(name.toLocal8Bit().data(), ModTypes::parseFrom(type), group.toLocal8Bit().data(), con.toLocal8Bit().data());
-}
-
-bool ModCollection::addMod(const char * name, const char * type, const char * group, const char * con) {
-	return addMod(name, ModTypes::parseFrom(type), group, con);
-}
-
-bool ModCollection::addMod(const QString & name, int type, const QString & group, const QString & con) {
-	if(!ModTypes::isValid(type)) { return false; }
-
-	return addMod(name.toLocal8Bit().data(), static_cast<ModTypes::ModType>(type), group.toLocal8Bit().data(), con.toLocal8Bit().data());
-}
-
-bool ModCollection::addMod(const char * name, int type, const char * group, const char * con) {
-	if(!ModTypes::isValid(type)) { return false; }
-
-	return addMod(name, static_cast<ModTypes::ModType>(type), group, con);
-}
-
-bool ModCollection::addMod(const QString & name, ModTypes::ModType type, const QString & group, const QString & con) {
-	return addMod(name.toLocal8Bit().data(), type, group.toLocal8Bit().data(), con.toLocal8Bit().data());
-}
-
-bool ModCollection::addMod(const char * name, ModTypes::ModType type, const char * group, const char * con) {
-	if(name == NULL || Utilities::stringLength(name) == 0 || hasMod(name) || !isValid(type) || ((group == NULL || Utilities::stringLength(group) == 0) && (con == NULL || Utilities::stringLength(con) == 0))) {
+bool ModCollection::addMod(Mod * mod) {
+	if(mod == NULL || Utilities::stringLength(mod->getName()) == 0 || hasMod(*mod) || !isValid(mod->getType()) || (mod->getGroup() == NULL || Utilities::stringLength(mod->getGroup()) == 0)) {
 		return false;
 	}
 	
-	m_mods.push_back(new Mod(name, type, group, con));
+	m_mods.push_back(mod);
 
 	return true;
-}
-
-bool ModCollection::addMod(const Mod & mod) {
-	return addMod(mod.getName(), mod.getType(), mod.getGroup(), mod.getCon());
 }
 
 bool ModCollection::removeMod(int index) {
@@ -238,7 +210,26 @@ bool ModCollection::load() {
 }
 
 bool ModCollection::loadFrom(const char * fileName) {
-	QString modListPath(SettingsManager::getInstance()->modListFileName);
+	if(fileName == NULL) { return false; }
+	
+	char * fileExtension = Utilities::getFileExtension(fileName);
+	
+	if(fileExtension == NULL) {
+		return false;
+	}
+	else if(Utilities::compareStringsIgnoreCase(fileExtension, "ini") == 0) {
+		return loadFromINI(fileName);
+	}
+	else if(Utilities::compareStringsIgnoreCase(fileExtension, "xml") == 0) {
+		return loadFromXML(fileName);
+	}
+	return false;
+}
+
+bool ModCollection::loadFromINI(const char * fileName) {
+	if(fileName == NULL) { return false; }
+
+	QString modListPath(fileName);
 	
 	QFileInfo modListFile(modListPath);
 	if(!modListFile.exists()) { return false; }
@@ -269,7 +260,7 @@ bool ModCollection::loadFrom(const char * fileName) {
 			QByteArray conBytes = con.toLocal8Bit();
 			const char * conData = conBytes.data();
 			
-			addMod(nameData, typeData, groupData, conData);
+			addMod(new Mod(nameData, typeData, conData, groupData));
 			
 			name.clear();
 			type.clear();
@@ -355,6 +346,218 @@ bool ModCollection::loadFrom(const char * fileName) {
 	}
 
 	input.close();
+
+	return true;
+}
+
+bool ModCollection::loadFromXML(const char * fileName) {
+	if(fileName == NULL) { return false; }
+
+	QString modListPath(fileName);
+	
+	QFileInfo modListFile(modListPath);
+	if(!modListFile.exists()) { return false; }
+	
+	QFile file(modListPath);
+	if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) { return false; }
+	
+	clear();
+
+	QXmlStreamReader input(&file);
+
+	QXmlStreamAttributes attributes;
+	QString name, type, version, con, group;
+	bool skipReadLine = false;
+
+	// root level loop
+	while(true) {
+		if(input.atEnd() || input.hasError()) {
+			break;
+		}
+
+		if(!skipReadLine) {
+			if(input.readNext() == QXmlStreamReader::StartDocument) {
+				continue;
+			}
+		}
+		else {
+			skipReadLine = false;
+		}
+
+		if(input.isStartElement()) {
+			if(QString::compare(input.name().toString(), "mod", Qt::CaseInsensitive) == 0) {
+				attributes = input.attributes();
+
+				if(attributes.hasAttribute("name")) {
+					name = attributes.value("name").toString();
+				}
+				else {
+					printf("Found mod entry missing required name attribute.\n");
+					break;
+				}
+
+				// root / mod level loop
+				while(true) {
+					if(input.atEnd() || input.hasError()) {
+						break;
+					}
+
+					if(!skipReadLine) {
+						input.readNext();
+					}
+					else {
+						skipReadLine = false;
+					}
+
+					if(input.isStartElement()) {
+						if(QString::compare(input.name().toString(), "information", Qt::CaseInsensitive) == 0) {
+							attributes = input.attributes();
+
+							if(attributes.hasAttribute("type")) {
+								type = attributes.value("type").toString();
+							}
+							else {
+								printf("Mod \"%s\" missing required type attribute in information node.\n", name.toLocal8Bit().data());
+								break;
+							}
+						}
+						else if(QString::compare(input.name().toString(), "files", Qt::CaseInsensitive) == 0) {
+							// root / mod / files level loop
+							while(true) {
+								if(input.atEnd() || input.hasError()) {
+									break;
+								}
+
+								if(!skipReadLine) {
+									input.readNext();
+								}
+								else {
+									skipReadLine = false;
+								}
+
+								if(input.isStartElement()) {
+									if(QString::compare(input.name().toString(), "version", Qt::CaseInsensitive) == 0) {
+										attributes = input.attributes();
+										
+										if(attributes.hasAttribute("id")) {
+											version = attributes.value("id").toString();
+										}
+
+										// root / mod / files / version level loop
+										while(true) {
+											if(input.atEnd() || input.hasError()) {
+												break;
+											}
+
+											if(!skipReadLine) {
+												input.readNext();
+											}
+											else {
+												skipReadLine = false;
+											}
+
+											if(input.isStartElement()) {
+												if(QString::compare(input.name().toString(), "file", Qt::CaseInsensitive) == 0) {
+													attributes = input.attributes();
+													
+													QString fileName, fileType;
+
+													if(attributes.hasAttribute("name")) {
+														fileName = attributes.value("name").toString();
+													}
+													else {
+														printf("Mod \"%s\" missing required name attribute for a version / file node.\n", name.toLocal8Bit().data());
+														break;
+													}
+
+													if(attributes.hasAttribute("type")) {
+														fileType = attributes.value("type").toString();
+													}
+													else {
+														QString fileExtension = Utilities::getFileExtension(fileName);
+
+														if(QString::compare(fileExtension, "con", Qt::CaseInsensitive) == 0) {
+															fileType = "con";
+														}
+														else if(QString::compare(fileExtension, "grp", Qt::CaseInsensitive) == 0) {
+															fileType = "grp";
+														}
+														else {
+															printf("Unhandled or unknown file type for version / file node with unspecified type attribute for mod \"%s\".\n", name.toLocal8Bit().data());
+															break;
+														}
+													}
+
+													if(QString::compare(fileType, "con", Qt::CaseInsensitive) == 0) {
+														con = fileName;
+													}
+													else if(QString::compare(fileType, "grp", Qt::CaseInsensitive) == 0) {
+														group = fileName;
+													}
+												}
+											}
+											else if(input.isEndElement()) {
+												if(QString::compare(input.name().toString(), "version", Qt::CaseInsensitive) == 0) {
+													if(!group.isNull()) {
+														QString newName = QString("%1 %2").arg(name).arg(version);
+														QByteArray nameBytes = newName.toLocal8Bit();
+														const char * nameData = nameBytes.data();
+														
+														QByteArray typeBytes = type.toLocal8Bit();
+														const char * typeData = typeBytes.data();
+														
+														const char * conData = NULL;
+														QByteArray conBytes;
+														if(!con.isNull()) {
+															conBytes = con.toLocal8Bit();
+															conData = conBytes.data();
+														}
+
+														QByteArray groupBytes = group.toLocal8Bit();
+														const char * groupData = groupBytes.data();
+														
+														addMod(new Mod(nameData, typeData, conData, groupData));
+
+														version.clear();
+														con.clear();
+														group.clear();
+													}
+													else {
+														printf("Mod \"%s\" version node missing required group file.\n", name.toLocal8Bit().data());
+														break;
+													}
+
+													break;
+												}
+											}
+										}
+									}
+								}
+								else if(input.isEndElement()) {
+									if(QString::compare(input.name().toString(), "files", Qt::CaseInsensitive) == 0) {
+										break;
+									}
+								}
+							}
+						}
+					}
+					else if(input.isEndElement()) {
+						if(QString::compare(input.name().toString(), "mod", Qt::CaseInsensitive) == 0) {
+							name.clear();
+							type.clear();
+							version.clear();
+							con.clear();
+							group.clear();
+
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	file.close();
 
 	return true;
 }

@@ -4,6 +4,7 @@
 #include <QVector.h>
 #include <QString.h>
 #include <QFileInfo.h>
+#include <QXmlStreamReader>
 #include "Utilities/Utilities.h"
 #include "Settings Manager/SettingsManager.h"
 #include "Mod Collection/Mod.h"
@@ -25,13 +26,7 @@ public:
 	const Mod * getMod(int index) const;
 	const Mod * getMod(const char * name) const;
 	const Mod * getMod(const QString & name) const;
-	bool addMod(const QString & name, const QString & type, const QString & group, const QString & con);
-	bool addMod(const char * name, const char * type, const char * group, const char * con);
-	bool addMod(const QString & name, int type, const QString & group, const QString & con);
-	bool addMod(const char * name, int type, const char * group, const char * con);
-	bool addMod(const QString & name, ModTypes::ModType type, const QString & group, const QString & con);
-	bool addMod(const char * name, ModTypes::ModType type, const char * group, const char * con);
-	bool addMod(const Mod & mod);
+	bool addMod(Mod * mod);
 	bool removeMod(int index);
 	bool removeMod(const char * name);
 	bool removeMod(const QString & name);
@@ -40,7 +35,10 @@ public:
 	
 	bool load();
 	bool loadFrom(const char * fileName);
-	
+	bool loadFromINI(const char * fileName);
+	bool loadFromXML(const char * fileName);
+
+public:
 	bool operator == (const ModCollection & m) const;
 	bool operator != (const ModCollection & m) const;
 

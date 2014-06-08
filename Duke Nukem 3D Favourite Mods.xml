@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<favourites game="Duke Nukem 3D" id="duke_nukem_3d" >
+	
+	<!-- <mod name="The War Is the Life" /> -->
+	<mod name="Platoon" />
+	<mod name="Duke, It&apos;s ZeroHour" />
+	<mod name="Canadian Carnage" />
+	<mod name="Duke in Black" />
+	<mod name="Duke Meets Doom" />
+	<mod name="Starship Troopers" />
+	<mod name="Evil Incarnate" />
+	<mod name="Pray Your Prayers" />
+	<mod name="A Jedi&apos;s Quest" />
+	<mod name="Grins of Divinity Episode 1: System Sol Invaded" />
+	<mod name="The Gate" />
+	<mod name="Infinity: Secrets of the Acropolis" />
+	<mod name="Extreme Justice" />
+	<mod name="Duke Caribbean: Life&apos;s a Beach" />
+	<mod name="Vixens Resurrection" />
+	<mod name="Duke Trek 3D" />
+	<mod name="MERC: Fatal Reality" />
+	<mod name="MERC 2" />
+	<mod name="Majestic 12: Survive the Horror" />
+	<mod name="Murder: The EDF Conspiracy" />
+	<mod name="Saving Private Ryan" />
+	<mod name="Castle Dukenstein" />
+	<mod name="2000" />
+	<mod name="Total Chaos" />
+	<mod name="Project X" />
+	<mod name="Navy SEALS Weapons Patch" />
+	
+</favourites>
