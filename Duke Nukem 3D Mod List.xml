@@ -549,7 +549,7 @@
 		</files>
 		<downloads>
 			<download filename="borgnukem.zip" subfolder="original" type="Stand-Alone" />
-			<download filename="bnlowq.zip" special="Anti-Lag Patch" subfolder="original" />
+			<download filename="bnlowq.zip" special="Anti-Lag Patch" subfolder="original" type="Patch" />
 			<download filename="Borg_Nukem-ModMgr.zip" subfolder="mod_manager" type="Mod Manager Files" />
 		</downloads>
 	</mod>

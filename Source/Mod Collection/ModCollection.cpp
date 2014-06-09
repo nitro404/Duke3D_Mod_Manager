@@ -582,6 +582,73 @@ bool ModCollection::loadFromXML(const char * fileName) {
 								}
 							}
 						}
+						else if(QString::compare(input.name().toString(), "downloads", Qt::CaseInsensitive) == 0) {
+							// root / mod / downloads level loop
+							while(true) {
+								if(input.atEnd() || input.hasError()) {
+									break;
+								}
+
+								input.readNext();
+
+								if(input.isStartElement()) {
+									if(QString::compare(input.name().toString(), "download", Qt::CaseInsensitive) == 0) {
+										attributes = input.attributes();
+
+										QString downloadName, filePart, fileNumberOfParts, fileVersion, fileSubfolder, downloadType, fileDescription;
+										ModDownload * newDownload = NULL;
+
+										if(attributes.hasAttribute("filename")) {
+											downloadName = attributes.value("filename").toString();
+										}
+										else {
+											printf("Mod \"%s\" missing required filename attribute for a download node.\n", name.toLocal8Bit().data());
+											break;
+										}
+
+										if(attributes.hasAttribute("type")) {
+											downloadType = attributes.value("type").toString();
+										}
+										else {
+											printf("Mod \"%s\" missing required type attribute for a download node.\n", name.toLocal8Bit().data());
+											break;
+										}
+
+										newDownload = new ModDownload(downloadName, downloadType);
+										newMod->addDownload(newDownload);
+
+										if(attributes.hasAttribute("part")) {
+											newDownload->setPartNumber(attributes.value("part").toString());
+										}
+
+										if(attributes.hasAttribute("numparts")) {
+											newDownload->setPartCount(attributes.value("numparts").toString());
+										}
+
+										if(attributes.hasAttribute("version")) {
+											newDownload->setVersion(attributes.value("version").toString());
+										}
+
+										if(attributes.hasAttribute("special")) {
+											newDownload->setVersion(attributes.value("special").toString());
+										}
+
+										if(attributes.hasAttribute("subfolder")) {
+											newDownload->setSubfolder(attributes.value("subfolder").toString());
+										}
+
+										if(attributes.hasAttribute("description")) {
+											newDownload->setDescription(attributes.value("description").toString());
+										}
+									}
+								}
+								else if(input.isEndElement()) {
+									if(QString::compare(input.name().toString(), "downloads", Qt::CaseInsensitive) == 0) {
+										break;
+									}
+								}
+							}
+						}
 					}
 					else if(input.isEndElement()) {
 						if(QString::compare(input.name().toString(), "mod", Qt::CaseInsensitive) == 0) {
@@ -597,6 +664,11 @@ bool ModCollection::loadFromXML(const char * fileName) {
 						}
 					}
 				}
+			}
+		}
+		else if(input.isEndElement()) {
+			if(QString::compare(input.name().toString(), "mods", Qt::CaseInsensitive) == 0) {
+				break;
 			}
 		}
 	}

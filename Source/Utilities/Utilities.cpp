@@ -22,6 +22,8 @@ unsigned int Utilities::stringLength(const char * s) {
 }
 
 bool Utilities::copyString(char * destination, int size, const char * source) {
+	if(source == NULL || destination == NULL || size < 1) { return false; }
+
 #if _WIN32
 	return strcpy_s(destination, size, source) == 0;
 #else
@@ -45,7 +47,7 @@ char * Utilities::trimCopy(const char * data) {
 	// verify the string
 	if(data == NULL) { return NULL; }
 	char * newData;
-	int length = strlen(data);
+	int length = stringLength(data);
 	if(length == 0) {
 		newData = new char[1];
 		*newData = '\0';

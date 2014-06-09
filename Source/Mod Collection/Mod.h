@@ -6,6 +6,7 @@
 #include "Utilities/Utilities.h"
 #include "Mod Collection/ModVersion.h"
 #include "Mod Collection/ModTeam.h"
+#include "Mod Collection/ModDownload.h"
 
 class Mod {
 public:
@@ -60,6 +61,33 @@ public:
 	bool removeVersion(const QString & version);
 	void clearVersions();
 
+	int numberOfDownloads() const;
+	bool hasDownload(const ModDownload & download) const;
+	bool hasDownload(const char * fileName) const;
+	bool hasDownload(const QString & fileName) const;
+	bool hasDownloadOfType(const char * type) const;
+	bool hasDownloadOfType(const QString & type) const;
+	int indexOfDownload(const ModDownload & download) const;
+	int indexOfDownload(const char * fileName) const;
+	int indexOfDownload(const QString & fileName) const;
+	int indexOfDownloadByType(const char * type) const;
+	int indexOfDownloadByType(const QString & type) const;
+	const ModDownload * getDownload(int index) const;
+	const ModDownload * getDownload(const char * fileName) const;
+	const ModDownload * getDownload(const QString & fileName) const;
+	const ModDownload * getDownloadByType(const char * type) const;
+	const ModDownload * getDownloadByType(const QString & type) const;
+	const char * getFileNameByType(const char * type) const;
+	const char * getFileNameByType(const QString & type) const;
+	bool addDownload(ModDownload * download);
+	bool removeDownload(int index);
+	bool removeDownload(const ModDownload & download);
+	bool removeDownload(const char * fileName);
+	bool removeDownload(const QString & fileName);
+	bool removeDownloadByType(const char * type);
+	bool removeDownloadByType(const QString & type);
+	void clearDownloads();
+
 	bool operator == (const Mod & m) const;
 	bool operator != (const Mod & m) const;
 
@@ -74,7 +102,7 @@ private:
 	ModTeam * m_team;
 //	QVector<ModReview *> m_reviews;
 	QVector<ModVersion *> m_versions;
-//	QVector<ModDownload *> m_downloads;
+	QVector<ModDownload *> m_downloads;
 //	QVector<ModVideo *> m_videos;
 //	QVector<ModImage *> m_images;
 //	QVector<ModScreenshot *> m_screenshots;

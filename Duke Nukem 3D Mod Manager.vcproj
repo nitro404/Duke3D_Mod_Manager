@@ -191,6 +191,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Source\Mod Collection\ModDownload.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\Mod Collection\ModDownload.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Source\Mod Collection\ModTeam.cpp"
 				>
 			</File>

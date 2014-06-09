@@ -97,7 +97,9 @@ Mod::Mod(const Mod & m)
 		m_versions.push_back(new ModVersion(*m.m_versions[i]));
 	}
 
-// TODO: add new variables
+	for(int i=0;i<m.m_downloads.size();i++) {
+		m_downloads.push_back(new ModDownload(*m.m_downloads[i]));
+	}
 }
 
 Mod & Mod::operator = (const Mod & m) {
@@ -138,6 +140,11 @@ Mod & Mod::operator = (const Mod & m) {
 		delete m_versions[i];
 	}
 	m_versions.clear();
+
+	for(int i=0;i<m_downloads.size();i++) {
+		delete m_downloads[i];
+	}
+	m_downloads.clear();
 	
 	m_name = Utilities::trimCopy(m.m_name);
 
@@ -171,7 +178,9 @@ Mod & Mod::operator = (const Mod & m) {
 		m_versions.push_back(new ModVersion(*m.m_versions[i]));
 	}
 
-// TODO: add new variables
+	for(int i=0;i<m.m_downloads.size();i++) {
+		m_downloads.push_back(new ModDownload(*m.m_downloads[i]));
+	}
 
 	return *this;
 }
@@ -190,7 +199,9 @@ Mod::~Mod() {
 		delete m_versions[i];
 	}
 
-// TODO: add new variables
+	for(int i=0;i<m_downloads.size();i++) {
+		delete m_downloads[i];
+	}
 }
 
 const char * Mod::getName() const {
@@ -589,6 +600,300 @@ void Mod::clearVersions() {
 		delete m_versions[i];
 	}
 	m_versions.clear();
+}
+
+int Mod::numberOfDownloads() const {
+	return m_downloads.size();
+}
+
+bool Mod::hasDownload(const ModDownload & download) const {
+	for(int i=0;i<m_downloads.size();i++) {
+		if(*m_downloads[i] == download) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Mod::hasDownload(const char * fileName) const {
+	if(fileName == NULL || Utilities::stringLength(fileName) == 0) { return false; }
+
+	for(int i=0;i<m_downloads.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getFileName(), fileName) == 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Mod::hasDownload(const QString & fileName) const {
+	if(fileName.isEmpty()) { return false; }
+	QByteArray fileNameBytes = fileName.toLocal8Bit();
+	const char * fileNameData = fileNameBytes.data();
+
+	for(int i=0;i<m_downloads.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getFileName(), fileNameData) == 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Mod::hasDownloadOfType(const char * type) const {
+	if(type == NULL || Utilities::stringLength(type) == 0) { return false; }
+
+	for(int i=0;i<m_downloads.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getType(), type) == 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Mod::hasDownloadOfType(const QString & type) const {
+	if(type.isEmpty()) { return false; }
+	QByteArray typeBytes = type.toLocal8Bit();
+	const char * typeData = typeBytes.data();
+
+	for(int i=0;i<m_downloads.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getType(), typeData) == 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
+int Mod::indexOfDownload(const ModDownload & download) const {
+	for(int i=0;i<m_downloads.size();i++) {
+		if(*m_downloads[i] == download) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+int Mod::indexOfDownload(const char * fileName) const {
+	if(fileName == NULL || Utilities::stringLength(fileName) == 0) { return -1; }
+
+	for(int i=0;i<m_downloads.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getFileName(), fileName) == 0) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+int Mod::indexOfDownload(const QString & fileName) const {
+	if(fileName.isEmpty()) { return -1; }
+	QByteArray fileNameBytes = fileName.toLocal8Bit();
+	const char * fileNameData = fileNameBytes.data();
+
+	for(int i=0;i<m_downloads.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getFileName(), fileNameData) == 0) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+int Mod::indexOfDownloadByType(const char * type) const {
+	if(type == NULL || Utilities::stringLength(type) == 0) { return -1; }
+
+	for(int i=0;i<m_downloads.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getType(), type) == 0) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+int Mod::indexOfDownloadByType(const QString & type) const {
+	if(type.isEmpty()) { return -1; }
+	QByteArray typeBytes = type.toLocal8Bit();
+	const char * typeData = typeBytes.data();
+
+	for(int i=0;i<m_downloads.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getType(), typeData) == 0) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+const ModDownload * Mod::getDownload(int index) const {
+	if(index < 0 || index >= m_downloads.size()) { return NULL; }
+
+	return m_downloads[index];
+}
+
+const ModDownload * Mod::getDownload(const char * fileName) const {
+	if(fileName == NULL || Utilities::stringLength(fileName) == 0) { return NULL; }
+
+	for(int i=0;i<m_downloads.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getFileName(), fileName) == 0) {
+			return m_downloads[i];
+		}
+	}
+	return NULL;
+}
+
+const ModDownload * Mod::getDownload(const QString & fileName) const {
+	if(fileName.isEmpty()) { return NULL; }
+	QByteArray fileNameBytes = fileName.toLocal8Bit();
+	const char * fileNameData = fileNameBytes.data();
+
+	for(int i=0;i<m_downloads.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getFileName(), fileNameData) == 0) {
+			return m_downloads[i];
+		}
+	}
+	return NULL;
+}
+
+const ModDownload * Mod::getDownloadByType(const char * type) const {
+	if(type == NULL || Utilities::stringLength(type) == 0) { return NULL; }
+
+	for(int i=0;i<m_downloads.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getType(), type) == 0) {
+			return m_downloads[i];
+		}
+	}
+	return NULL;
+}
+
+const ModDownload * Mod::getDownloadByType(const QString & type) const {
+	if(type.isEmpty()) { return NULL; }
+	QByteArray typeBytes = type.toLocal8Bit();
+	const char * typeData = typeBytes.data();
+
+	for(int i=0;i<m_downloads.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getType(), typeData) == 0) {
+			return m_downloads[i];
+		}
+	}
+	return NULL;
+}
+
+const char * Mod::getFileNameByType(const char * type) const {
+	if(type == NULL || Utilities::stringLength(type) == 0) { return NULL; }
+
+	for(int i=0;i<m_downloads.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getType(), type) == 0) {
+			return m_downloads[i]->getFileName();
+		}
+	}
+	return NULL;
+}
+
+const char * Mod::getFileNameByType(const QString & type) const {
+	if(type.isEmpty()) { return NULL; }
+	QByteArray typeBytes = type.toLocal8Bit();
+	const char * typeData = typeBytes.data();
+
+	for(int i=0;i<m_downloads.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getType(), typeData) == 0) {
+			return m_downloads[i]->getFileName();
+		}
+	}
+	return NULL;
+}
+
+bool Mod::addDownload(ModDownload * download) {
+	if(download == NULL || Utilities::stringLength(download->getFileName()) == 0 || Utilities::stringLength(download->getType()) == 0 || hasDownload(*download)) {
+		return false;
+	}
+	
+	m_downloads.push_back(download);
+
+	return true;
+}
+
+bool Mod::removeDownload(int index) {
+	if(index < 0 || index >= m_downloads.size()) { return false; }
+	
+	delete m_downloads[index];
+	m_downloads.remove(index);
+	
+	return true;
+}
+
+bool Mod::removeDownload(const ModDownload & download) {
+	for(int i=0;i<m_downloads.size();i++) {
+		if(*m_downloads[i] == download) {
+			delete m_downloads[i];
+			m_downloads.remove(i);
+			
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Mod::removeDownload(const char * fileName) {
+	if(fileName == NULL || Utilities::stringLength(fileName) == 0) { return false; }
+
+	for(int i=0;i<m_downloads.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getFileName(), fileName) == 0) {
+			delete m_downloads[i];
+			m_downloads.remove(i);
+
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Mod::removeDownload(const QString & fileName) {
+	if(fileName.isEmpty()) { return false; }
+	QByteArray fileNameBytes = fileName.toLocal8Bit();
+	const char * fileNameData = fileNameBytes.data();
+
+	for(int i=0;i<m_downloads.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getFileName(), fileNameData) == 0) {
+			delete m_downloads[i];
+			m_downloads.remove(i);
+
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Mod::removeDownloadByType(const char * type) {
+	if(type == NULL || Utilities::stringLength(type) == 0) { return false; }
+
+	for(int i=0;i<m_downloads.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getType(), type) == 0) {
+			delete m_downloads[i];
+			m_downloads.remove(i);
+
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Mod::removeDownloadByType(const QString & type) {
+	if(type.isEmpty()) { return false; }
+	QByteArray typeBytes = type.toLocal8Bit();
+	const char * typeData = typeBytes.data();
+
+	for(int i=0;i<m_downloads.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getType(), typeData) == 0) {
+			delete m_downloads[i];
+			m_downloads.remove(i);
+
+			return true;
+		}
+	}
+	return false;
+}
+
+void Mod::clearDownloads() {
+	for(int i=0;i<m_downloads.size();i++) {
+		delete m_downloads[i];
+	}
+	m_downloads.clear();
 }
 
 bool Mod::operator == (const Mod & m) const {
