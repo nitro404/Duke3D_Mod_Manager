@@ -2597,8 +2597,8 @@
 	</mod>
 	
 	<mod name="Platoon" id="platoon">
-		<information type="Total Conversion" game="All Versions" version="1.1B" release_date="September 30, 1997" website="http://www.mbnet.fi/~tnt" country="Finland">
-			<team name="TNT Team" email="tnt@mbnet.fi">
+		<information type="Total Conversion" game="All Versions" version="1.1B" release_date="September 30, 1997" website="http://www.mbnet.fi/~tnt">
+			<team name="TNT Team" email="tnt@mbnet.fi" country="Finland">
 				<member name="Bad Karma" email="hese@ksilta.edu.ouka.fi" />
 				<member name="TuC0" />
 				<member name="Lado Crnologar" alias="IceBreaker" />
@@ -3434,8 +3434,8 @@
 	</mod>
 	
 	<mod name="The Premium Edition" id="the_premium_edition">
-		<information type="Total Conversion" game="Regular Version 1.3" version="1.6" release_date="January 18, 2003" website="http://www.premiumtc.de.vu" country="Vanuatu">
-			<team>
+		<information type="Total Conversion" game="Regular Version 1.3" version="1.6" release_date="January 18, 2003" website="http://www.premiumtc.de.vu">
+			<team country="Vanuatu">
 				<member name="The Gangster" alias="King6" email="gangsta762@hotmail.com" />
 			</team>
 		</information>
@@ -3630,8 +3630,8 @@
 	</mod>
 	
 	<mod name="Total Duke" id="total_duke">
-		<information type="Total Conversion" game="Regular Version 1.3" release_date="May 28, 1999" country="Finland">
-			<team>
+		<information type="Total Conversion" game="Regular Version 1.3" release_date="May 28, 1999">
+			<team country="Finland">
 				<member name="Juha Laaksonen" />
 			</team>
 		</information>
@@ -3662,8 +3662,8 @@
 	</mod>
 	
 	<mod name="Tour of Bases" id="tour_of_bases">
-		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" release_date="May 25, 1999" city="Flanders" country="Belgium">
-			<team>
+		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" release_date="May 25, 1999">
+			<team city="Flanders" country="Belgium">
 				<member name="Patrik van Ostaeyen" email="RedX@mail.dma.be" />
 			</team>
 		</information>
@@ -3965,8 +3965,8 @@
 	</mod>
 	
 	<mod name="Wolf 2 Duke" id="wolf_2_duke">
-		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" version="4.05" release_date="June 18, 1999" website="http://wolf2duke.dukeworld.com" country="Sweden">
-			<team name="The Wolf2Duke Team" email="wolf2duke@swipnet.se">
+		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" version="4.05" release_date="June 18, 1999" website="http://wolf2duke.dukeworld.com">
+			<team name="The Wolf2Duke Team" email="wolf2duke@swipnet.se" country="Sweden">
 				<member name="Pär" email="wolf2duke@swipnet.se" />
 				<member name="Rust" />
 				<member name="Jamie" />
@@ -4188,8 +4188,8 @@
 	</mod>
 	
 	<mod name="M16A2 &amp; M249SAW" id="m16a2_m249saw">
-		<information type="Weapon Patch" game="Regular Version 1.3" release_date="February 20, 1997" country="Finland">
-			<team>
+		<information type="Weapon Patch" game="Regular Version 1.3" release_date="February 20, 1997">
+			<team country="Finland">
 				<member name="Bad Karma" email="hese@ksilta.edu.ouka.fi" />
 				<member name="Black" email="mixu@kastelli.edu.ouka.fi" />
 			</team>
@@ -4234,8 +4234,8 @@
 	</mod>
 	
 	<mod name="Double Tops" id="double_tops">
-		<information type="Weapon Patch" game="Regular Version 1.3" release_date="February 2, 1997" country="Ireland">
-			<team>
+		<information type="Weapon Patch" game="Regular Version 1.3" release_date="February 2, 1997">
+			<team country="Ireland">
 				<member name="Philip Andrews" email="anthrax@indigo.ie" />
 			</team>
 		</information>
@@ -4256,8 +4256,8 @@
 	</mod>
 	
 	<mod name="Anti-Gravity Bomb Thrower" id="anti-gravity_bomb_thrower">
-		<information type="Weapon Patch" game="Regular Version 1.3" version="1.0" release_date="March 16, 1998" city="Vicenza" country="Italy">
-			<team>
+		<information type="Weapon Patch" game="Regular Version 1.3" version="1.0" release_date="March 16, 1998">
+			<team city="Vicenza" country="Italy">
 				<member name="Nicola Giuseppe Deganello" email="ngdegan@tin.it" />
 			</team>
 		</information>
@@ -4274,8 +4274,8 @@
 	</mod>
 	
 	<mod name="Bum Blaster 2000" id="bum_blaster_2000">
-		<information type="Weapon Patch" game="Regular Version 1.3" version="1.0" release_date="October 2, 1998" website="http://members.xoom.com/Ug_Bum" country="New Zealand">
-			<team>
+		<information type="Weapon Patch" game="Regular Version 1.3" version="1.0" release_date="October 2, 1998" website="http://members.xoom.com/Ug_Bum">
+			<team country="New Zealand">
 				<member name="Sam Harris" email="samth@ihug.co.nz" />
 			</team>
 		</information>
@@ -4296,8 +4296,8 @@
 	</mod>
 	
 	<mod name="ULTRA Bum Blaster 2000" id="ultra_bum_blaster_2000">
-		<information type="Weapon Patch" game="Regular Version 1.3" version="1.0" release_date="February 7, 1999" website="http://members.xoom.com/Ug_Bum" country="New Zealand">
-			<team>
+		<information type="Weapon Patch" game="Regular Version 1.3" version="1.0" release_date="February 7, 1999" website="http://members.xoom.com/Ug_Bum">
+			<team country="New Zealand">
 				<member name="Sam Harris" email="samth@ihug.co.nz" />
 			</team>
 		</information>
@@ -4372,8 +4372,8 @@
 	</mod>
 	
 	<mod name="David Art" id="david_art">
-		<information type="Weapon Patch" game="All Versions" release_date="February 16, 1999" country="Sweden">
-			<team>
+		<information type="Weapon Patch" game="All Versions" release_date="February 16, 1999">
+			<team country="Sweden">
 				<member name="David Sandberg" email="dauid@hotmail.com" />
 			</team>
 		</information>
@@ -4411,8 +4411,8 @@
 	</mod>
 	
 	<mod name="Doom Chaingun" id="doom_chaingun">
-		<information type="Weapon Patch" game="All Versions" release_date="December 1, 1998" country="Germany">
-			<team>
+		<information type="Weapon Patch" game="All Versions" release_date="December 1, 1998">
+			<team country="Germany">
 				<member name="WolfHead" email="wolfhead@cu-muc.de" />
 			</team>
 		</information>
@@ -4447,8 +4447,8 @@
 	</mod>
 	
 	<mod name="Double Barrel Shotgun" id="double_barrel_shotgun">
-		<information type="Weapon Patch" game="Regular Version 1.3" release_date="March 5, 1997" website="http://www.geocities.com/siliconvalley/park/5436/maps.html" country="Canada">
-			<team>
+		<information type="Weapon Patch" game="Regular Version 1.3" release_date="March 5, 1997" website="http://www.geocities.com/siliconvalley/park/5436/maps.html">
+			<team country="Canada">
 				<member name="Tyler Borrowman" email="bbauto@eagle.wbm.ca" />
 			</team>
 		</information>
@@ -4469,8 +4469,8 @@
 	</mod>
 	
 	<mod name="Drone 2 Cheese" id="drone_2_cheese">
-		<information type="Enemy Replacement" game="Regular Version 1.3" version="V1" release_date="September 22, 1996" country="Sweden">
-			<team>
+		<information type="Enemy Replacement" game="Regular Version 1.3" version="V1" release_date="September 22, 1996">
+			<team country="Sweden">
 				<member name="Mats Blixt" email="mats.blixt@mailbox.swipnet.se" />
 			</team>
 		</information>
@@ -4646,8 +4646,8 @@
 	</mod>
 	
 	<mod name="Golden Gun" id="golden_gun">
-		<information type="Weapon Patch" game="Regular Version 1.3" release_date="August 9, 1999" city="Salisbury" country="England">
-			<team>
+		<information type="Weapon Patch" game="Regular Version 1.3" release_date="August 9, 1999">
+			<team city="Salisbury" country="England">
 				<member name="Richard Belk" email="rich_belk@yahoo.com" />
 			</team>
 		</information>
@@ -4709,8 +4709,8 @@
 	-->
 	
 	<mod name="HoloDuke Weapon" id="holoduke_weapon">
-		<information type="Weapon Patch" game="Atomic Edition 1.4/1.5" release_date="March 14, 1997" country="Netherlands">
-			<team>
+		<information type="Weapon Patch" game="Atomic Edition 1.4/1.5" release_date="March 14, 1997">
+			<team country="Netherlands">
 				<member name="Joris Weimar" email="antiwin@worldonline.nl" />
 			</team>
 		</information>
@@ -4732,8 +4732,8 @@
 	</mod>
 	
 	<mod name="Ion Shrinker" id="ion_shrinker">
-		<information type="Weapon Patch" game="Atomic Edition 1.4/1.5" version="1.0" release_date="April 25, 1999" website="http://home5.swipnet.se/~w-53165/TED" country="Sweden">
-			<team>
+		<information type="Weapon Patch" game="Atomic Edition 1.4/1.5" version="1.0" release_date="April 25, 1999" website="http://home5.swipnet.se/~w-53165/TED">
+			<team country="Sweden">
 				<member name="Anders Johansson" alias="AirHawke" email="ante@mbox307.swipnet.se" />
 			</team>
 		</information>
@@ -4811,8 +4811,8 @@
 	</mod>
 	
 	<mod name="M16" id="m16">
-		<information type="Weapon Patch" game="Regular Version 1.3" release_date="February 12, 1997" country="Finland">
-			<team>
+		<information type="Weapon Patch" game="Regular Version 1.3" release_date="February 12, 1997">
+			<team country="Finland">
 				<member name="Bad Karma" email="hese@ksilta.edu.ouka.fi" />
 				<member name="Black" email="mixu@kastelli.edu.ouka.fi" />
 			</team>
@@ -4834,8 +4834,8 @@
 	</mod>
 	
 	<mod name="M16 &amp; Level" id="m16_level">
-		<information type="Partial Conversion" game="Regular Version 1.3" release_date="February 12, 1997" country="Finland">
-			<team>
+		<information type="Partial Conversion" game="Regular Version 1.3" release_date="February 12, 1997">
+			<team country="Finland">
 				<member name="Bad Karma" email="hese@ksilta.edu.ouka.fi" />
 				<member name="Black" email="mixu@kastelli.edu.ouka.fi" />
 			</team>
@@ -4858,8 +4858,8 @@
 	</mod>
 	
 	<mod name="Magnum 44" id="magnum_44">
-		<information type="Weapon Patch" game="Regular Version 1.3" release_date="August 27, 1997" country="Sweden">
-			<team>
+		<information type="Weapon Patch" game="Regular Version 1.3" release_date="August 27, 1997">
+			<team country="Sweden">
 				<member name="Simon Mellergårdh" email="lemel@algonet.se" />
 			</team>
 		</information>
@@ -5171,8 +5171,8 @@
 	</mod>
 	
 	<mod name="Scorpion Tank" id="scorpion_tank">
-		<information type="Enemy Replacement" game="Atomic Edition 1.4/1.5" release_date="January 27, 1999" website="http://members.xoom.com/Ug_Bum" county="New Zealand">
-			<team>
+		<information type="Enemy Replacement" game="Atomic Edition 1.4/1.5" release_date="January 27, 1999" website="http://members.xoom.com/Ug_Bum">
+			<team county="New Zealand">
 				<member name="Sam Harris" email="samth@ihug.co.nz" />
 			</team>
 		</information>
@@ -5214,8 +5214,8 @@
 	</mod>
 	
 	<mod name="The Star Trek Weapons Patch" id="the_star_trek_weapons_patch">
-		<information type="Weapon Patch" game="Atomic Edition 1.4/1.5" version="Beta 1.5" release_date="January 29, 1999" website="http://www.dukeworld.com/stwp" country="Europe">
-			<team>
+		<information type="Weapon Patch" game="Atomic Edition 1.4/1.5" version="Beta 1.5" release_date="January 29, 1999" website="http://www.dukeworld.com/stwp">
+			<team country="Europe">
 				<member name="James Keen" email="STWP@marnhull.demon.co.uk" />
 			</team>
 		</information>
@@ -5240,8 +5240,8 @@
 	</mod>
 	
 	<mod name="Star Wars Enemies" id="star_wars_enemies">
-		<information type="Enemy Replacement" game="All Versions" release_date="November 18, 1996" country="Chile">
-			<team>
+		<information type="Enemy Replacement" game="All Versions" release_date="November 18, 1996">
+			<team country="Chile">
 				<member name="Jose Herrera" alias="The mighty little dragon" email="festigal@cmet.net" />
 			</team>
 		</information>
@@ -5308,8 +5308,8 @@
 	</mod>
 	
 	<mod name="The Taxicab Launcher" id="the_taxicab_launcher">
-		<information type="Weapon Patch" game="Regular Version 1.3" release_date="June 17, 1997" country="Australia">
-			<team>
+		<information type="Weapon Patch" game="Regular Version 1.3" release_date="June 17, 1997">
+			<team country="Australia">
 				<member name="Bill McGuire" email="mcgmed@gil.com.au" />
 			</team>
 		</information>
@@ -5505,8 +5505,8 @@
 	</mod>
 	
 	<mod name="Deathmatch - Total Conversion" id="deathmatch_total_conversion">
-		<information type="Dukematch" game="Atomic Edition 1.4/1.5" version="1.3" release_date="March 25, 2007" website="http://www.ntdm.gmxhome.de" country="Germany">
-			<team name="The Napalm Team" email="ntdm1@web.de">
+		<information type="Dukematch" game="Atomic Edition 1.4/1.5" version="1.3" release_date="March 25, 2007" website="http://www.ntdm.gmxhome.de">
+			<team name="The Napalm Team" email="ntdm1@web.de"  country="Germany">
 				<member name="DR Caos" />
 				<member name="CR0" />
 				<member name="ALPHAWOLF" />
@@ -5525,8 +5525,8 @@
 	</mod>
 	
 	<mod name="Deathmatch II - Duke It Out in Germany" id="deathmatch_ii_duke_it_out_in_germany">
-		<information type="Dukematch" game="Atomic Edition 1.4/1.5" version="1.0" release_date="March 17, 2007" website="http://www.ntdm.gmxhome.de" country="Germany">
-			<team name="The Napalm Team" email="ntdm1@web.de">
+		<information type="Dukematch" game="Atomic Edition 1.4/1.5" version="1.0" release_date="March 17, 2007" website="http://www.ntdm.gmxhome.de">
+			<team name="The Napalm Team" email="ntdm1@web.de" country="Germany">
 				<member name="DR Caos" />
 				<member name="CR0" />
 				<member name="ALPHAWOLF" />
@@ -5545,8 +5545,8 @@
 	</mod>
 	
 	<mod name="DOOM Death Match Pack" id="doom_death_match_pack">
-		<information type="Dukematch" game="Atomic Edition 1.4/1.5" version="2.3a" release_date="April 1, 1999" website="http://www.dukeworld.com/doomdmp" country="Gemany">
-			<team>
+		<information type="Dukematch" game="Atomic Edition 1.4/1.5" version="2.3a" release_date="April 1, 1999" website="http://www.dukeworld.com/doomdmp">
+			<team country="Gemany">
 				<member name="WolfHead" email="wolfhead@cu-muc.de" />
 				<member name="Mike Thomas" email="levellord@MikeRST.freeserve.co.uk" />
 			</team>
@@ -5674,8 +5674,8 @@
 	</mod>
 	
 	<mod name="Speedtrax Racing" id="speedtrax_racing">
-		<information type="Dukematch" game="Atomic Edition 1.4/1.5" version="0.6" release_date="September 12, 2000" country="Denmark">
-			<team>
+		<information type="Dukematch" game="Atomic Edition 1.4/1.5" version="0.6" release_date="September 12, 2000">
+			<team country="Denmark">
 				<member name="Samir Mughrabi" alias="Megaton" email="Megaton@get2net.dk" />
 			</team>
 		</information>

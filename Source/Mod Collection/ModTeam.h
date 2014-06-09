@@ -16,11 +16,20 @@ public:
 
 	const char * getName() const;
 	const char * getEmail() const;
+	const char * getCity() const;
+	const char * getState() const;
+	const char * getCountry() const;
 
 	void setName(const char * name);
 	void setName(const QString & name);
 	void setEmail(const char * email);
 	void setEmail(const QString & email);
+	void setCity(const char * city);
+	void setCity(const QString & city);
+	void setState(const char * state);
+	void setState(const QString & state);
+	void setCountry(const char * country);
+	void setCountry(const QString & country);
 
 	int numberOfMembers() const;
 	bool hasMember(const ModTeamMember & member) const;
@@ -45,6 +54,9 @@ public:
 private:
 	char * m_name;
 	char * m_email;
+	char * m_city;
+	char * m_state;
+	char * m_country;
 	QVector<ModTeamMember *> m_members;
 };
 

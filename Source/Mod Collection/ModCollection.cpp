@@ -456,7 +456,23 @@ bool ModCollection::loadFromXML(const char * fileName) {
 											teamEmail = attributes.value("email").toString();
 										}
 
-										newMod->setTeam(new ModTeam(teamName, teamEmail));
+										ModTeam * newTeam = new ModTeam(teamName, teamEmail);
+										newMod->setTeam(newTeam);
+
+										if(attributes.hasAttribute("city")) {
+											newTeam->setCity(attributes.value("city").toString());
+										}
+
+										if(attributes.hasAttribute("state")) {
+											newTeam->setState(attributes.value("state").toString());
+										}
+										else if(attributes.hasAttribute("province")) {
+											newTeam->setState(attributes.value("province").toString());
+										}
+
+										if(attributes.hasAttribute("country")) {
+											newTeam->setCountry(attributes.value("country").toString());
+										}
 
 										// root / mod / information / team level loop
 										while(true) {
