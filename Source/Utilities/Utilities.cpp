@@ -18,7 +18,7 @@ int Utilities::randomInteger(int min, int max, bool randomize) {
 }
 
 unsigned int Utilities::stringLength(const char * s) {
-	return strlen(s);
+	return s == NULL ? 0 : strlen(s);
 }
 
 bool Utilities::copyString(char * destination, int size, const char * source) {
@@ -120,6 +120,10 @@ QString Utilities::substring(const QString & data, int start, int end) {
 }
 
 int Utilities::compareStrings(const char * s1, const char * s2, bool caseSensitive) {
+	if(s1 == NULL && s2 == NULL) { return 0; }
+	if(s1 == NULL && s2 != NULL) { return -1; }
+	if(s1 != NULL && s2 == NULL) { return 1; }
+
 	if(caseSensitive) {
 #if _WIN32
 		return strcmp(s1, s2);

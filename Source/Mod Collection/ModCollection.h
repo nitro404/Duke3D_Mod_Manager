@@ -28,10 +28,10 @@ public:
 	const Mod * getMod(const QString & name) const;
 	bool addMod(Mod * mod);
 	bool removeMod(int index);
+	bool removeMod(const Mod & mod);
 	bool removeMod(const char * name);
 	bool removeMod(const QString & name);
-	bool removeMod(const Mod & mod);
-	void clear();
+	void clearMods();
 	
 	bool load();
 	bool loadFrom(const char * fileName);

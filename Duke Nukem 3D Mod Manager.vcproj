@@ -191,11 +191,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Mod Collection\ModType.cpp"
+				RelativePath=".\Source\Mod Collection\ModVersion.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Mod Collection\ModType.h"
+				RelativePath=".\Source\Mod Collection\ModVersion.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\Mod Collection\ModVersionFile.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\Mod Collection\ModVersionFile.h"
 				>
 			</File>
 		</Filter>

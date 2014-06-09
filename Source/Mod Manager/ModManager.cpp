@@ -4,7 +4,8 @@ ModManager::ModManager()
 	: m_initialized(false)
 	, m_mode(ModManagerModes::defaultMode)
 	, m_gameType(GameTypes::defaultGameType)
-	, m_selectedMod(NULL) {
+	, m_selectedMod(NULL)
+	, m_selectedModVersionIndex(0) {
 	
 }
 
@@ -58,7 +59,7 @@ bool ModManager::uninit() {
 
 	m_selectedMod = NULL;
 	m_favourites.clear();
-	m_mods.clear();
+	m_mods.clearMods();
 	m_scriptArgs.clear();
 
 	m_initialized = false;
@@ -367,7 +368,8 @@ void ModManager::runMenu() {
 	bool valid = false;
 	QTextStream in(stdin);
 	QString input, data;
-	do {
+
+	while(true) {
 		for(int i=0;i<m_mods.numberOfMods();i++) {
 			printf("%d: %s\n", (i + 1), m_mods.getMod(i)->getName());
 		}
@@ -427,7 +429,7 @@ void ModManager::runMenu() {
 			printf("Invalid selection!\n\n");
 			Utilities::pause();
 		}
-	} while(true);
+	}
 
 	printf("\n");
 
@@ -438,14 +440,16 @@ void ModManager::runSearchPrompt() {
 	if(!m_initialized) { return; }
 
 	QTextStream in(stdin);
-	QString input;
-	do {
+	QString input, data;
+
+	while(true) {
 		printf("Enter search query:\n");
 		printf("> ");
 
 		input = in.readLine();
+		data = input.trimmed();
 
-		int numberOfMatches = searchForAndSelectMod(input);
+		int numberOfMatches = searchForAndSelectMod(data);
 
 		if(numberOfMatches == -1) {
 			printf("\nInvalid or empty search query.\n\n");
@@ -460,7 +464,54 @@ void ModManager::runSearchPrompt() {
 		else {
 			printf("\n%d matches found, please refine your search query.\n\n", numberOfMatches);
 		}
-	} while(true);
+	}
+}
+
+bool ModManager::runModVersionSelectionPrompt() {
+	if(!m_initialized || m_selectedMod == NULL || m_selectedMod->numberOfVersions() == 0) {
+		return false;
+	}
+	
+	m_selectedModVersionIndex = 0;
+
+	if(m_selectedMod->numberOfVersions() == 1) {
+		return true;
+	}
+
+	int selectedModVersion = -1;
+	bool valid = false;
+	QTextStream in(stdin);
+	QString input, data;
+
+	while(true) {
+		printf("Please select a version of the mod to run:\n");
+		for(int i=0;i<m_selectedMod->numberOfVersions();i++) {
+			printf("%d: %s\n", (i + 1), m_selectedMod->getFullName(i).toLocal8Bit().data());
+		}
+		printf("> ");
+
+		input = in.readLine();
+		data = input.trimmed().toLower();
+
+		if(QRegExp("^(a(bort)?|c(ancel)?)$").exactMatch(data)) {
+			return false;
+		}
+
+		selectedModVersion = input.toInt(&valid, 10);
+
+		valid = valid && selectedModVersion >= 1 && selectedModVersion <= m_selectedMod->numberOfVersions();
+
+		if(valid) {
+			m_selectedModVersionIndex = selectedModVersion - 1;
+			return true;
+		}
+		else {
+			printf("Invalid selection! To cancel, type cancel or abort.\n\n");
+			Utilities::pause();
+		}
+	}
+
+	return false;
 }
 
 void ModManager::runSelectedMod(const ArgumentParser * args) {
@@ -471,9 +522,25 @@ void ModManager::runSelectedMod(const ArgumentParser * args) {
 		return;
 	}
 
+	if(m_selectedMod->numberOfVersions() == 0) {
+		printf("Mod has no versions specified, aborting execution.\n");
+		return;
+	}
+
+	m_selectedModVersionIndex = 0;
+	if(m_selectedMod->numberOfVersions() > 1) {
+		if(!runModVersionSelectionPrompt()) {
+			return;
+		}
+
+		printf("\n");
+	}
+
 	Script script;
 
-	updateScriptArgs();
+	if(!updateScriptArgs()) {
+		return;
+	}
 
 	bool customMod = false;
 	if(args != NULL) {
@@ -486,7 +553,7 @@ void ModManager::runSelectedMod(const ArgumentParser * args) {
 	}
 
 	if(!customMod) {
-		printf("Running mod \"%s\" in %s mode.\n\n", m_selectedMod->getName(), GameTypes::toString(m_gameType));
+		printf("Running mod \"%s\" in %s mode.\n\n", m_selectedMod->getFullName(m_selectedModVersionIndex).toLocal8Bit().data(), GameTypes::toString(m_gameType));
 	}
 
 	Utilities::renameFiles("DMO", "TMPDMO");
@@ -575,18 +642,20 @@ void ModManager::runSelectedMod(const ArgumentParser * args) {
 	Utilities::renameFiles("TMPDMO", "DMO");
 }
 
-void ModManager::updateScriptArgs() {
-	if(!m_initialized) { return; }
+bool ModManager::updateScriptArgs() {
+	if(!m_initialized || m_selectedMod == NULL || m_selectedMod->numberOfVersions() == 0 || m_selectedModVersionIndex < 0 || m_selectedModVersionIndex >= m_selectedMod->numberOfVersions()) { return false; }
 
 	m_scriptArgs.setArgument("KEXTRACT", SettingsManager::getInstance()->kextractFileName);
 	m_scriptArgs.setArgument("DUKE3D", SettingsManager::getInstance()->gameFileName);
 	m_scriptArgs.setArgument("SETUP", SettingsManager::getInstance()->setupFileName);
 	m_scriptArgs.setArgument("MODDIR", SettingsManager::getInstance()->modsDirectoryName);
 	if(m_selectedMod != NULL) {
-		m_scriptArgs.setArgument("GROUP", m_selectedMod->getGroup());
-		m_scriptArgs.setArgument("CON", m_selectedMod->getCon());
+		m_scriptArgs.setArgument("CON", m_selectedMod->getVersion(m_selectedModVersionIndex)->getFileNameByType("con"));
+		m_scriptArgs.setArgument("GROUP", m_selectedMod->getVersion(m_selectedModVersionIndex)->getFileNameByType("grp"));
 	}
 	m_scriptArgs.setArgument("IP", SettingsManager::getInstance()->serverIPAddress);
+
+	return true;
 }
 
 bool ModManager::handleArguments(const ArgumentParser * args) {
@@ -711,32 +780,39 @@ int ModManager::checkForUnlinkedModFiles() const {
 	}
 
 	int numberOfMultipleLinkedModFiles = 0;
+	const ModVersion * modVersion = NULL;
+	const char * fileName = NULL;
 	QString key;
 	for(int i=0;i<m_mods.numberOfMods();i++) {
-		if(Utilities::stringLength(m_mods.getMod(i)->getGroup()) > 0) {
-			key = QString(m_mods.getMod(i)->getGroup()).toUpper();
-			if(linkedModFiles[key] == 1) {
-				numberOfMultipleLinkedModFiles++;
+		for(int j=0;j<m_mods.getMod(i)->numberOfVersions();j++) {
 
-				QByteArray keyBytes = key.toLocal8Bit();
-				const char * keyData = keyBytes.data();
+			fileName = m_mods.getMod(i)->getVersion(j)->getFileNameByType("grp");
+			if(fileName != NULL) {
+				key = QString(fileName).toUpper();
+				if(linkedModFiles[key] == 1) {
+					numberOfMultipleLinkedModFiles++;
 
-				printf("Mod file linked multiple times: \"%s\"\n", keyData);
+					QByteArray keyBytes = key.toLocal8Bit();
+					const char * keyData = keyBytes.data();
+
+					printf("Mod file linked multiple times: \"%s\"\n", keyData);
+				}
+				linkedModFiles[key] = 1;
 			}
-			linkedModFiles[key] = 1;
-		}
 
-		if(Utilities::stringLength(m_mods.getMod(i)->getCon()) > 0) {
-			key = QString(m_mods.getMod(i)->getCon()).toUpper();
-			if(linkedModFiles[key] == 1) {
-				numberOfMultipleLinkedModFiles++;
+			fileName = m_mods.getMod(i)->getVersion(j)->getFileNameByType("con");
+			if(fileName != NULL) {
+				key = QString(fileName).toUpper();
+				if(linkedModFiles[key] == 1) {
+					numberOfMultipleLinkedModFiles++;
 
-				QByteArray keyBytes = key.toLocal8Bit();
-				const char * keyData = keyBytes.data();
+					QByteArray keyBytes = key.toLocal8Bit();
+					const char * keyData = keyBytes.data();
 
-				printf("Mod file linked multiple times: \"%s\"\n", keyData);
+					printf("Mod file linked multiple times: \"%s\"\n", keyData);
+				}
+				linkedModFiles[key] = 1;
 			}
-			linkedModFiles[key] = 1;
 		}
 	}
 
@@ -762,7 +838,7 @@ int ModManager::checkForUnlinkedModFiles() const {
 	return numberOfUnlinkedModFiles;
 }
 
-int ModManager::checkModForMissingFiles(const char * modName) const {
+int ModManager::checkModForMissingFiles(const char * modName, int versionIndex) const {
 	if(!m_initialized) { return 0; }
 
 	if(modName == NULL || Utilities::stringLength(modName) == 0) { return 0; }
@@ -770,40 +846,48 @@ int ModManager::checkModForMissingFiles(const char * modName) const {
 	const Mod * mod = m_mods.getMod(modName);
 	if(mod == NULL) { return 0; }
 
-	return checkModForMissingFiles(*mod);
+	return checkModForMissingFiles(*mod, versionIndex);
 }
 
-int ModManager::checkModForMissingFiles(const QString & modName) const {
+int ModManager::checkModForMissingFiles(const QString & modName, int versionIndex) const {
 	if(!m_initialized) { return 0; }
 
 	const Mod * mod = m_mods.getMod(modName);
 	if(mod == NULL) { return 0; }
 
-	return checkModForMissingFiles(*mod);
+	return checkModForMissingFiles(*mod, versionIndex);
 }
 
-int ModManager::checkModForMissingFiles(const Mod & mod) const {
-	if(!m_initialized) { return 0; }
+int ModManager::checkModForMissingFiles(const Mod & mod, int versionIndex) const {
+	if(!m_initialized || mod.numberOfVersions() == 0 || versionIndex >= mod.numberOfVersions()) { return 0; }
 
 	int numberOfMissingFiles = 0;
+	const char * fileName = NULL;
 
-	if(Utilities::stringLength(mod.getGroup()) > 0) {
-		QFileInfo group(QString("%1/%2").arg(SettingsManager::getInstance()->modsDirectoryName).arg(mod.getGroup()));
+	for(int i=(versionIndex < 0 ? 0 : versionIndex);i<(versionIndex < 0 ? mod.numberOfVersions() : versionIndex + 1);i++) {
 
-		if(!group.isFile() || !group.exists()) {
-			printf("Missing mod group file: %s\n", mod.getGroup());
-			
-			numberOfMissingFiles++;
+		fileName = mod.getVersion(i)->getFileNameByType("con");
+
+		if(fileName != NULL) {
+			QFileInfo con(QString("%1/%2").arg(SettingsManager::getInstance()->modsDirectoryName).arg(fileName));
+
+			if(!con.isFile() || !con.exists()) {
+				printf("Missing mod con file: %s\n", fileName);
+				
+				numberOfMissingFiles++;
+			}
 		}
-	}
 
-	if(Utilities::stringLength(mod.getCon()) > 0) {
-		QFileInfo con(QString("%1/%2").arg(SettingsManager::getInstance()->modsDirectoryName).arg(mod.getCon()));
+		fileName = mod.getVersion(i)->getFileNameByType("grp");
 
-		if(!con.isFile() || !con.exists()) {
-			printf("Missing mod con file: %s\n", mod.getCon());
-			
-			numberOfMissingFiles++;
+		if(fileName != NULL) {
+			QFileInfo group(QString("%1/%2").arg(SettingsManager::getInstance()->modsDirectoryName).arg(fileName));
+
+			if(!group.isFile() || !group.exists()) {
+				printf("Missing mod group file: %s\n", fileName);
+				
+				numberOfMissingFiles++;
+			}
 		}
 	}
 

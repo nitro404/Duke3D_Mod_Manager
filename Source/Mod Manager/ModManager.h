@@ -58,15 +58,16 @@ public:
 	void runModePrompt();
 	void runIPAddressPrompt();
 	void runSearchPrompt();
+	bool runModVersionSelectionPrompt();
 	void runSelectedMod(const ArgumentParser * args = NULL);
-	void updateScriptArgs();
+	bool updateScriptArgs();
 
 	bool handleArguments(const ArgumentParser * args);
 
 	int checkForUnlinkedModFiles() const;
-	int checkModForMissingFiles(const char * modName) const;
-	int checkModForMissingFiles(const QString & modName) const;
-	int checkModForMissingFiles(const Mod & mod) const;
+	int checkModForMissingFiles(const char * modName, int versionIndex = -1) const;
+	int checkModForMissingFiles(const QString & modName, int versionIndex = -1) const;
+	int checkModForMissingFiles(const Mod & mod, int versionIndex = -1) const;
 	int checkAllModsForMissingFiles() const;
 	static int checkForMissingExecutables();
 	
@@ -75,6 +76,7 @@ private:
 	ModManagerModes::ModManagerMode m_mode;
 	GameTypes::GameType m_gameType;
 	const Mod * m_selectedMod;
+	int m_selectedModVersionIndex;
 	ModCollection m_mods;
 	QVector<const Mod *> m_favourites;
 	ScriptArguments m_scriptArgs;

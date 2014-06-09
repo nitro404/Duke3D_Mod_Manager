@@ -39,23 +39,22 @@ bool ModCollection::hasMod(const Mod & mod) const {
 			return true;
 		}
 	}
-
 	return false;
 }
 
 bool ModCollection::hasMod(const char * name) const {
-	if(name == NULL) { return false; }
+	if(name == NULL || Utilities::stringLength(name) == 0) { return false; }
 
 	for(int i=0;i<m_mods.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(m_mods[i]->getName(), name) == 0) {
 			return true;
 		}
 	}
-
 	return false;
 }
 
 bool ModCollection::hasMod(const QString & name) const {
+	if(name.isEmpty()) { return false; }
 	QByteArray nameBytes = name.toLocal8Bit();
 	const char * nameData = nameBytes.data();
 
@@ -64,7 +63,6 @@ bool ModCollection::hasMod(const QString & name) const {
 			return true;
 		}
 	}
-
 	return false;
 }
 
@@ -74,23 +72,22 @@ int ModCollection::indexOfMod(const Mod & mod) const {
 			return i;
 		}
 	}
-
 	return -1;
 }
 
 int ModCollection::indexOfMod(const char * name) const {
-	if(name == NULL) { return -1; }
+	if(name == NULL || Utilities::stringLength(name) == 0) { return -1; }
 
 	for(int i=0;i<m_mods.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(m_mods[i]->getName(), name) == 0) {
 			return i;
 		}
 	}
-
 	return -1;
 }
 
 int ModCollection::indexOfMod(const QString & name) const {
+	if(name.isEmpty()) { return -1; }
 	QByteArray nameBytes = name.toLocal8Bit();
 	const char * nameData = nameBytes.data();
 
@@ -99,7 +96,6 @@ int ModCollection::indexOfMod(const QString & name) const {
 			return i;
 		}
 	}
-
 	return -1;
 }
 
@@ -110,18 +106,18 @@ const Mod * ModCollection::getMod(int index) const {
 }
 
 const Mod * ModCollection::getMod(const char * name) const {
-	if(name == NULL) { return NULL; }
+	if(name == NULL || Utilities::stringLength(name) == 0) { return NULL; }
 
 	for(int i=0;i<m_mods.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(m_mods[i]->getName(), name) == 0) {
 			return m_mods[i];
 		}
 	}
-
 	return NULL;
 }
 
 const Mod * ModCollection::getMod(const QString & name) const {
+	if(name.isEmpty()) { return NULL; }
 	QByteArray nameBytes = name.toLocal8Bit();
 	const char * nameData = nameBytes.data();
 
@@ -130,12 +126,11 @@ const Mod * ModCollection::getMod(const QString & name) const {
 			return m_mods[i];
 		}
 	}
-
 	return NULL;
 }
 
 bool ModCollection::addMod(Mod * mod) {
-	if(mod == NULL || Utilities::stringLength(mod->getName()) == 0 || hasMod(*mod) || !isValid(mod->getType()) || (mod->getGroup() == NULL || Utilities::stringLength(mod->getGroup()) == 0)) {
+	if(mod == NULL || Utilities::stringLength(mod->getName()) == 0 || hasMod(*mod)) {
 		return false;
 	}
 	
@@ -153,8 +148,20 @@ bool ModCollection::removeMod(int index) {
 	return true;
 }
 
+bool ModCollection::removeMod(const Mod & mod) {
+	for(int i=0;i<m_mods.size();i++) {
+		if(*m_mods[i] == mod) {
+			delete m_mods[i];
+			m_mods.remove(i);
+			
+			return true;
+		}
+	}
+	return false;
+}
+
 bool ModCollection::removeMod(const char * name) {
-	if(name == NULL) { return false; }
+	if(name == NULL || Utilities::stringLength(name) == 0) { return false; }
 
 	for(int i=0;i<m_mods.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(m_mods[i]->getName(), name) == 0) {
@@ -164,11 +171,11 @@ bool ModCollection::removeMod(const char * name) {
 			return true;
 		}
 	}
-
 	return false;
 }
 
 bool ModCollection::removeMod(const QString & name) {
+	if(name.isEmpty()) { return false; }
 	QByteArray nameBytes = name.toLocal8Bit();
 	const char * nameData = nameBytes.data();
 
@@ -180,28 +187,13 @@ bool ModCollection::removeMod(const QString & name) {
 			return true;
 		}
 	}
-
 	return false;
 }
 
-bool ModCollection::removeMod(const Mod & mod) {
-	for(int i=0;i<m_mods.size();i++) {
-		if(*m_mods[i] == mod) {
-			delete m_mods[i];
-			m_mods.remove(i);
-			
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void ModCollection::clear() {
+void ModCollection::clearMods() {
 	for(int i=0;i<m_mods.size();i++) {
 		delete m_mods[i];
 	}
-
 	m_mods.clear();
 }
 
@@ -210,7 +202,7 @@ bool ModCollection::load() {
 }
 
 bool ModCollection::loadFrom(const char * fileName) {
-	if(fileName == NULL) { return false; }
+	if(fileName == NULL || Utilities::stringLength(fileName) == 0) { return false; }
 	
 	char * fileExtension = Utilities::getFileExtension(fileName);
 	
@@ -227,7 +219,7 @@ bool ModCollection::loadFrom(const char * fileName) {
 }
 
 bool ModCollection::loadFromINI(const char * fileName) {
-	if(fileName == NULL) { return false; }
+	if(fileName == NULL || Utilities::stringLength(fileName) == 0) { return false; }
 
 	QString modListPath(fileName);
 	
@@ -237,30 +229,26 @@ bool ModCollection::loadFromINI(const char * fileName) {
 	QFile input(modListPath);
 	if(!input.open(QIODevice::ReadOnly | QIODevice::Text)) { return false; }
 	
-	clear();
+	clearMods();
 	
 	QString line;
 	QByteArray bytes;
 	QString temp;
-	QString name, type, group, con;
+	QString name, id, type, group, con;
 	bool addModToCollection = false;
 	bool skipReadLine = false;
 	
 	while(true) {
 		if(addModToCollection) {
-			QByteArray nameBytes = name.toLocal8Bit();
-			const char * nameData = nameBytes.data();
+			Mod * newMod = new Mod(name, QString());
+			newMod->setType(type);
 			
-			QByteArray typeBytes = type.toLocal8Bit();
-			const char * typeData = typeBytes.data();
-			
-			QByteArray groupBytes = group.toLocal8Bit();
-			const char * groupData = groupBytes.data();
-			
-			QByteArray conBytes = con.toLocal8Bit();
-			const char * conData = conBytes.data();
-			
-			addMod(new Mod(nameData, typeData, conData, groupData));
+			ModVersion * newVersion = new ModVersion();
+			newVersion->addFile(new ModVersionFile(con, QString("con")));
+			newVersion->addFile(new ModVersionFile(group, QString("grp")));
+			newMod->addVersion(newVersion);
+
+			addMod(newMod);
 			
 			name.clear();
 			type.clear();
@@ -351,7 +339,7 @@ bool ModCollection::loadFromINI(const char * fileName) {
 }
 
 bool ModCollection::loadFromXML(const char * fileName) {
-	if(fileName == NULL) { return false; }
+	if(fileName == NULL || Utilities::stringLength(fileName) == 0) { return false; }
 
 	QString modListPath(fileName);
 	
@@ -361,12 +349,14 @@ bool ModCollection::loadFromXML(const char * fileName) {
 	QFile file(modListPath);
 	if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) { return false; }
 	
-	clear();
+	clearMods();
 
 	QXmlStreamReader input(&file);
 
 	QXmlStreamAttributes attributes;
-	QString name, type, version, con, group;
+	Mod * newMod = NULL;
+	ModVersion * newModVersion = NULL;
+	QString name, id;
 	bool skipReadLine = false;
 
 	// root level loop
@@ -396,6 +386,16 @@ bool ModCollection::loadFromXML(const char * fileName) {
 					break;
 				}
 
+				if(attributes.hasAttribute("id")) {
+					id = attributes.value("id").toString();
+				}
+				else {
+					printf("Mod \"%s\" missing required id attribute.\n", name.toLocal8Bit().data());
+					break;
+				}
+
+				newMod = new Mod(name, id);
+
 				// root / mod level loop
 				while(true) {
 					if(input.atEnd() || input.hasError()) {
@@ -414,7 +414,7 @@ bool ModCollection::loadFromXML(const char * fileName) {
 							attributes = input.attributes();
 
 							if(attributes.hasAttribute("type")) {
-								type = attributes.value("type").toString();
+								newMod->setType(attributes.value("type").toString());
 							}
 							else {
 								printf("Mod \"%s\" missing required type attribute in information node.\n", name.toLocal8Bit().data());
@@ -439,9 +439,7 @@ bool ModCollection::loadFromXML(const char * fileName) {
 									if(QString::compare(input.name().toString(), "version", Qt::CaseInsensitive) == 0) {
 										attributes = input.attributes();
 										
-										if(attributes.hasAttribute("id")) {
-											version = attributes.value("id").toString();
-										}
+										newModVersion = new ModVersion(attributes.hasAttribute("id") ? attributes.value("id").toString() : NULL);
 
 										// root / mod / files / version level loop
 										while(true) {
@@ -488,44 +486,14 @@ bool ModCollection::loadFromXML(const char * fileName) {
 														}
 													}
 
-													if(QString::compare(fileType, "con", Qt::CaseInsensitive) == 0) {
-														con = fileName;
-													}
-													else if(QString::compare(fileType, "grp", Qt::CaseInsensitive) == 0) {
-														group = fileName;
-													}
+													newModVersion->addFile(new ModVersionFile(fileName, fileType));
 												}
 											}
 											else if(input.isEndElement()) {
 												if(QString::compare(input.name().toString(), "version", Qt::CaseInsensitive) == 0) {
-													if(!group.isNull()) {
-														QString newName = QString("%1 %2").arg(name).arg(version);
-														QByteArray nameBytes = newName.toLocal8Bit();
-														const char * nameData = nameBytes.data();
-														
-														QByteArray typeBytes = type.toLocal8Bit();
-														const char * typeData = typeBytes.data();
-														
-														const char * conData = NULL;
-														QByteArray conBytes;
-														if(!con.isNull()) {
-															conBytes = con.toLocal8Bit();
-															conData = conBytes.data();
-														}
+													newMod->addVersion(newModVersion);
 
-														QByteArray groupBytes = group.toLocal8Bit();
-														const char * groupData = groupBytes.data();
-														
-														addMod(new Mod(nameData, typeData, conData, groupData));
-
-														version.clear();
-														con.clear();
-														group.clear();
-													}
-													else {
-														printf("Mod \"%s\" version node missing required group file.\n", name.toLocal8Bit().data());
-														break;
-													}
+													newModVersion = NULL;
 
 													break;
 												}
@@ -543,11 +511,13 @@ bool ModCollection::loadFromXML(const char * fileName) {
 					}
 					else if(input.isEndElement()) {
 						if(QString::compare(input.name().toString(), "mod", Qt::CaseInsensitive) == 0) {
+							addMod(newMod);
+
+							newModVersion = NULL;
+							newMod = NULL;
+
 							name.clear();
-							type.clear();
-							version.clear();
-							con.clear();
-							group.clear();
+							id.clear();
 
 							break;
 						}
