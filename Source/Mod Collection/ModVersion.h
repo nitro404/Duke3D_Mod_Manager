@@ -12,7 +12,7 @@ public:
 	ModVersion(const QString & version);
 	ModVersion(const ModVersion & m);
 	ModVersion & operator = (const ModVersion & m);
-	~ModVersion(void);
+	~ModVersion();
 
 	const char * getVersion() const;
 

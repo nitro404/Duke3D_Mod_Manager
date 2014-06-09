@@ -10,7 +10,7 @@ public:
 	ModVersionFile(const QString & name, const QString & type = QString());
 	ModVersionFile(const ModVersionFile & f);
 	ModVersionFile & operator = (const ModVersionFile & f);
-	~ModVersionFile(void);
+	~ModVersionFile();
 
 	const char * getName() const;
 	const char * getType() const;

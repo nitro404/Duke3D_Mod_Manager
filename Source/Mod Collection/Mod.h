@@ -5,6 +5,7 @@
 #include <QVector.h>
 #include "Utilities/Utilities.h"
 #include "Mod Collection/ModVersion.h"
+#include "Mod Collection/ModTeam.h"
 
 class Mod {
 public:
@@ -12,7 +13,7 @@ public:
 	Mod(const QString & name, const QString & id);
 	Mod(const Mod & m);
 	Mod & operator = (const Mod & m);
-	~Mod(void);
+	~Mod();
 
 public:
 	const char * getName() const;
@@ -23,6 +24,7 @@ public:
 	const char * getLatestVersion() const;
 	const char * getReleaseDate() const;
 	const char * getWebsite() const;
+	const ModTeam * getTeam() const;
 
 	void setName(const char * name);
 	void setName(const QString & name);
@@ -38,6 +40,8 @@ public:
 	void setReleaseDate(const QString & releaseDate);
 	void setWebsite(const char * website);
 	void setWebsite(const QString & website);
+	void setTeam(ModTeam * team);
+	bool addTeamMember(ModTeamMember * teamMember);
 
 	int numberOfVersions() const;
 	bool hasVersion(const ModVersion & version) const;
@@ -67,7 +71,7 @@ private:
 	char * m_latestVersion;
 	char * m_releaseDate;
 	char * m_website;
-//	ModTeam * m_team;
+	ModTeam * m_team;
 //	QVector<ModReview *> m_reviews;
 	QVector<ModVersion *> m_versions;
 //	QVector<ModDownload *> m_downloads;

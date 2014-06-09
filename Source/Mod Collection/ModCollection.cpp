@@ -357,7 +357,6 @@ bool ModCollection::loadFromXML(const char * fileName) {
 	Mod * newMod = NULL;
 	ModVersion * newModVersion = NULL;
 	QString name, id;
-	bool skipReadLine = false;
 
 	// root level loop
 	while(true) {
@@ -365,13 +364,8 @@ bool ModCollection::loadFromXML(const char * fileName) {
 			break;
 		}
 
-		if(!skipReadLine) {
-			if(input.readNext() == QXmlStreamReader::StartDocument) {
-				continue;
-			}
-		}
-		else {
-			skipReadLine = false;
+		if(input.readNext() == QXmlStreamReader::StartDocument) {
+			continue;
 		}
 
 		if(input.isStartElement()) {
@@ -402,12 +396,7 @@ bool ModCollection::loadFromXML(const char * fileName) {
 						break;
 					}
 
-					if(!skipReadLine) {
-						input.readNext();
-					}
-					else {
-						skipReadLine = false;
-					}
+					input.readNext();
 
 					if(input.isStartElement()) {
 						if(QString::compare(input.name().toString(), "information", Qt::CaseInsensitive) == 0) {
@@ -420,6 +409,101 @@ bool ModCollection::loadFromXML(const char * fileName) {
 								printf("Mod \"%s\" missing required type attribute in information node.\n", name.toLocal8Bit().data());
 								break;
 							}
+
+							if(attributes.hasAttribute("game")) {
+								newMod->setGameVersion(attributes.value("game").toString());
+							}
+							else {
+								printf("Mod \"%s\" missing required game version attribute in information node.\n", name.toLocal8Bit().data());
+								break;
+							}
+
+							if(attributes.hasAttribute("version")) {
+								newMod->setLatestVersion(attributes.value("version").toString());
+							}
+
+							if(attributes.hasAttribute("release_date")) {
+								newMod->setReleaseDate(attributes.value("release_date").toString());
+							}
+							else {
+								printf("Mod \"%s\" missing required release_date attribute in information node.\n", name.toLocal8Bit().data());
+								break;
+							}
+
+							if(attributes.hasAttribute("website")) {
+								newMod->setWebsite(attributes.value("website").toString());
+							}
+
+							// root / mod / information level loop
+							while(true) {
+								if(input.atEnd() || input.hasError()) {
+									break;
+								}
+
+								input.readNext();
+
+								if(input.isStartElement()) {
+									if(QString::compare(input.name().toString(), "team", Qt::CaseInsensitive) == 0) {
+										attributes = input.attributes();
+
+										QString teamName, teamEmail;
+
+										if(attributes.hasAttribute("name")) {
+											teamName = attributes.value("name").toString();
+										}
+
+										if(attributes.hasAttribute("email")) {
+											teamEmail = attributes.value("email").toString();
+										}
+
+										newMod->setTeam(new ModTeam(teamName, teamEmail));
+
+										// root / mod / information / team level loop
+										while(true) {
+											if(input.atEnd() || input.hasError()) {
+												break;
+											}
+
+											input.readNext();
+
+											if(input.isStartElement()) {
+												if(QString::compare(input.name().toString(), "member", Qt::CaseInsensitive) == 0) {
+													attributes = input.attributes();
+
+													QString memberName, memberAlias, memberEmail;
+
+													if(attributes.hasAttribute("name")) {
+														memberName = attributes.value("name").toString();
+													}
+													else {
+														memberName = QString("Unknown");
+													}
+
+													if(attributes.hasAttribute("alias")) {
+														memberAlias = attributes.value("alias").toString();
+													}
+
+													if(attributes.hasAttribute("email")) {
+														memberEmail = attributes.value("email").toString();
+													}
+
+													newMod->addTeamMember(new ModTeamMember(memberName, memberAlias, memberEmail));
+												}
+											}
+											else if(input.isEndElement()) {
+												if(QString::compare(input.name().toString(), "team", Qt::CaseInsensitive) == 0) {
+													break;
+												}
+											}
+										}
+									}
+								}
+								else if(input.isEndElement()) {
+									if(QString::compare(input.name().toString(), "information", Qt::CaseInsensitive) == 0) {
+										break;
+									}
+								}
+							}
 						}
 						else if(QString::compare(input.name().toString(), "files", Qt::CaseInsensitive) == 0) {
 							// root / mod / files level loop
@@ -428,12 +512,7 @@ bool ModCollection::loadFromXML(const char * fileName) {
 									break;
 								}
 
-								if(!skipReadLine) {
-									input.readNext();
-								}
-								else {
-									skipReadLine = false;
-								}
+								input.readNext();
 
 								if(input.isStartElement()) {
 									if(QString::compare(input.name().toString(), "version", Qt::CaseInsensitive) == 0) {
@@ -447,12 +526,7 @@ bool ModCollection::loadFromXML(const char * fileName) {
 												break;
 											}
 
-											if(!skipReadLine) {
-												input.readNext();
-											}
-											else {
-												skipReadLine = false;
-											}
+											input.readNext();
 
 											if(input.isStartElement()) {
 												if(QString::compare(input.name().toString(), "file", Qt::CaseInsensitive) == 0) {

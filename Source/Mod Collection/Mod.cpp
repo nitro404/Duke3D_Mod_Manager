@@ -7,8 +7,8 @@ Mod::Mod(const char * name, const char * id)
 	, m_gameVersion(NULL)
 	, m_latestVersion(NULL)
 	, m_releaseDate(NULL)
-	, m_website(NULL) {
-//	, m_team(NULL) { // TODO: uncomment when implemented
+	, m_website(NULL)
+	, m_team(NULL) {
 	if(name == NULL) {
 		m_name = new char[1];
 		m_name[0] = '\0';
@@ -33,8 +33,8 @@ Mod::Mod(const QString & name, const QString & id)
 	, m_gameVersion(NULL)
 	, m_latestVersion(NULL)
 	, m_releaseDate(NULL)
-	, m_website(NULL) {
-//	, m_team(NULL) { // TODO: uncomment when implemented
+	, m_website(NULL)
+	, m_team(NULL) {
 	if(name.isEmpty()) {
 		m_name = new char[1];
 		m_name[0] = '\0';
@@ -63,8 +63,8 @@ Mod::Mod(const Mod & m)
 	, m_gameVersion(NULL)
 	, m_latestVersion(NULL)
 	, m_releaseDate(NULL)
-	, m_website(NULL) {
-//	, m_team(NULL) { // TODO: uncomment when implemented
+	, m_website(NULL)
+	, m_team(NULL) {
 	m_name = Utilities::trimCopy(m.m_name);
 	
 	m_id = Utilities::trimCopy(m.m_id);
@@ -87,6 +87,10 @@ Mod::Mod(const Mod & m)
 
 	if(m.m_website != NULL) {
 		m_website = Utilities::trimCopy(m.m_website);
+	}
+
+	if(m.m_team != NULL) {
+		m_team = new ModTeam(*m.m_team);
 	}
 
 	for(int i=0;i<m.m_versions.size();i++) {
@@ -125,6 +129,11 @@ Mod & Mod::operator = (const Mod & m) {
 		m_website = NULL;
 	}
 
+	if(m_team != NULL) {
+		delete m_team;
+		m_team = NULL;
+	}
+
 	for(int i=0;i<m_versions.size();i++) {
 		delete m_versions[i];
 	}
@@ -154,6 +163,10 @@ Mod & Mod::operator = (const Mod & m) {
 		m_website = Utilities::trimCopy(m.m_website);
 	}
 
+	if(m.m_team != NULL) {
+		m_team = new ModTeam(*m.m_team);
+	}
+
 	for(int i=0;i<m.m_versions.size();i++) {
 		m_versions.push_back(new ModVersion(*m.m_versions[i]));
 	}
@@ -171,6 +184,7 @@ Mod::~Mod() {
 	if(m_latestVersion != NULL) { delete [] m_latestVersion; }
 	if(m_releaseDate != NULL)   { delete [] m_releaseDate; }
 	if(m_website != NULL)       { delete [] m_website; }
+	if(m_team != NULL)          { delete m_team; }
 
 	for(int i=0;i<m_versions.size();i++) {
 		delete m_versions[i];
@@ -211,6 +225,10 @@ const char * Mod::getReleaseDate() const {
 
 const char * Mod::getWebsite() const {
 	return const_cast<const char *>(m_website);
+}
+
+const ModTeam * Mod::getTeam() const {
+	return const_cast<const ModTeam *>(m_team);
 }
 
 void Mod::setName(const char * name) {
@@ -387,6 +405,18 @@ void Mod::setWebsite(const QString & website) {
 		const char * websiteData = websiteBytes.data();
 		m_website = Utilities::trimCopy(websiteData);
 	}
+}
+
+void Mod::setTeam(ModTeam * team) {
+	if(m_team != NULL) { delete m_team; }
+
+	m_team = team;
+}
+
+bool Mod::addTeamMember(ModTeamMember * teamMember) {
+	if(m_team == NULL) { return false; }
+
+	return m_team->addMember(teamMember);
 }
 
 int Mod::numberOfVersions() const {
