@@ -199,6 +199,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Source\Mod Collection\ModScreenshot.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\Mod Collection\ModScreenshot.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Source\Mod Collection\ModTeam.cpp"
 				>
 			</File>
@@ -238,10 +246,6 @@
 				RelativePath=".\Source\Settings Manager\SettingsManager.cpp"
 				>
 			</File>
-			<File
-				RelativePath=".\Source\Settings Manager\SettingsManager.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Variable System"
@@ -278,6 +282,10 @@
 		<Filter
 			Name="Singleton"
 			>
+			<File
+				RelativePath=".\Source\Settings Manager\SettingsManager.h"
+				>
+			</File>
 			<File
 				RelativePath=".\Source\Singleton\Singleton.h"
 				>

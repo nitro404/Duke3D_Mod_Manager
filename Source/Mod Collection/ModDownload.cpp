@@ -166,18 +166,20 @@ void ModDownload::setPartNumber(int partNumber) {
 }
 
 void ModDownload::setPartNumber(const char * partNumber) {
+	if(partNumber == NULL || Utilities::stringLength(partNumber) == 0) { return; }
 	bool valid = false;
 	int value = QString(partNumber).toInt(&valid, 10);
-	if(valid && value >= 1) {
-		m_partNumber = value;
+	if(valid) {
+		setPartNumber(value);
 	}
 }
 
 void ModDownload::setPartNumber(const QString & partNumber) {
+	if(partNumber.isEmpty()) { return; }
 	bool valid = false;
 	int value = partNumber.toInt(&valid, 10);
-	if(valid && value >= 1) {
-		m_partNumber = value;
+	if(valid) {
+		setPartNumber(value);
 	}
 }
 
@@ -187,18 +189,20 @@ void ModDownload::setPartCount(int partCount) {
 }
 
 void ModDownload::setPartCount(const char * partCount) {
+	if(partCount == NULL || Utilities::stringLength(partCount) == 0) { return; }
 	bool valid = false;
 	int value = QString(partCount).toInt(&valid, 10);
-	if(valid && value >= 1) {
-		m_partCount = value;
+	if(valid) {
+		setPartCount(value);
 	}
 }
 
 void ModDownload::setPartCount(const QString & partCount) {
+	if(partCount.isEmpty()) { return; }
 	bool valid = false;
 	int value = partCount.toInt(&valid, 10);
-	if(valid && value >= 1) {
-		m_partCount = value;
+	if(valid) {
+		setPartCount(value);
 	}
 }
 

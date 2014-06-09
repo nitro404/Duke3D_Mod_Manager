@@ -7,6 +7,7 @@
 #include "Mod Collection/ModVersion.h"
 #include "Mod Collection/ModTeam.h"
 #include "Mod Collection/ModDownload.h"
+#include "Mod Collection/ModScreenshot.h"
 
 class Mod {
 public:
@@ -88,6 +89,23 @@ public:
 	bool removeDownloadByType(const QString & type);
 	void clearDownloads();
 
+	int numberOfScreenshots() const;
+	bool hasScreenshot(const ModScreenshot & screenshot) const;
+	bool hasScreenshot(const char * fileName) const;
+	bool hasScreenshot(const QString & fileName) const;
+	int indexOfScreenshot(const ModScreenshot & screenshot) const;
+	int indexOfScreenshot(const char * fileName) const;
+	int indexOfScreenshot(const QString & fileName) const;
+	const ModScreenshot * getScreenshot(int index) const;
+	const ModScreenshot * getScreenshot(const char * fileName) const;
+	const ModScreenshot * getScreenshot(const QString & fileName) const;
+	bool addScreenshot(ModScreenshot * screenshot);
+	bool removeScreenshot(int index);
+	bool removeScreenshot(const ModScreenshot & screenshot);
+	bool removeScreenshot(const char * fileName);
+	bool removeScreenshot(const QString & fileName);
+	void clearScreenshots();
+
 	bool operator == (const Mod & m) const;
 	bool operator != (const Mod & m) const;
 
@@ -100,12 +118,9 @@ private:
 	char * m_releaseDate;
 	char * m_website;
 	ModTeam * m_team;
-//	QVector<ModReview *> m_reviews;
 	QVector<ModVersion *> m_versions;
 	QVector<ModDownload *> m_downloads;
-//	QVector<ModVideo *> m_videos;
-//	QVector<ModImage *> m_images;
-//	QVector<ModScreenshot *> m_screenshots;
+	QVector<ModScreenshot *> m_screenshots;
 };
 
 #endif // MOD_H

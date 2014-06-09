@@ -100,6 +100,10 @@ Mod::Mod(const Mod & m)
 	for(int i=0;i<m.m_downloads.size();i++) {
 		m_downloads.push_back(new ModDownload(*m.m_downloads[i]));
 	}
+
+	for(int i=0;i<m.m_screenshots.size();i++) {
+		m_screenshots.push_back(new ModScreenshot(*m.m_screenshots[i]));
+	}
 }
 
 Mod & Mod::operator = (const Mod & m) {
@@ -145,6 +149,11 @@ Mod & Mod::operator = (const Mod & m) {
 		delete m_downloads[i];
 	}
 	m_downloads.clear();
+
+	for(int i=0;i<m_screenshots.size();i++) {
+		delete m_screenshots[i];
+	}
+	m_screenshots.clear();
 	
 	m_name = Utilities::trimCopy(m.m_name);
 
@@ -182,6 +191,10 @@ Mod & Mod::operator = (const Mod & m) {
 		m_downloads.push_back(new ModDownload(*m.m_downloads[i]));
 	}
 
+	for(int i=0;i<m.m_screenshots.size();i++) {
+		m_screenshots.push_back(new ModScreenshot(*m.m_screenshots[i]));
+	}
+
 	return *this;
 }
 
@@ -201,6 +214,10 @@ Mod::~Mod() {
 
 	for(int i=0;i<m_downloads.size();i++) {
 		delete m_downloads[i];
+	}
+
+	for(int i=0;i<m_screenshots.size();i++) {
+		delete m_screenshots[i];
 	}
 }
 
@@ -894,6 +911,174 @@ void Mod::clearDownloads() {
 		delete m_downloads[i];
 	}
 	m_downloads.clear();
+}
+
+int Mod::numberOfScreenshots() const {
+	return m_screenshots.size();
+}
+
+bool Mod::hasScreenshot(const ModScreenshot & screenshot) const {
+	for(int i=0;i<m_screenshots.size();i++) {
+		if(*m_screenshots[i] == screenshot) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Mod::hasScreenshot(const char * fileName) const {
+	if(fileName == NULL || Utilities::stringLength(fileName) == 0) { return false; }
+
+	for(int i=0;i<m_screenshots.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_screenshots[i]->getFileName(), fileName) == 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Mod::hasScreenshot(const QString & fileName) const {
+	if(fileName.isEmpty()) { return false; }
+	QByteArray fileNameBytes = fileName.toLocal8Bit();
+	const char * fileNameData = fileNameBytes.data();
+
+	for(int i=0;i<m_screenshots.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_screenshots[i]->getFileName(), fileNameData) == 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
+int Mod::indexOfScreenshot(const ModScreenshot & screenshot) const {
+	for(int i=0;i<m_screenshots.size();i++) {
+		if(*m_screenshots[i] == screenshot) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+int Mod::indexOfScreenshot(const char * fileName) const {
+	if(fileName == NULL || Utilities::stringLength(fileName) == 0) { return -1; }
+
+	for(int i=0;i<m_screenshots.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_screenshots[i]->getFileName(), fileName) == 0) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+int Mod::indexOfScreenshot(const QString & fileName) const {
+	if(fileName.isEmpty()) { return -1; }
+	QByteArray fileNameBytes = fileName.toLocal8Bit();
+	const char * fileNameData = fileNameBytes.data();
+
+	for(int i=0;i<m_screenshots.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_screenshots[i]->getFileName(), fileNameData) == 0) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+const ModScreenshot * Mod::getScreenshot(int index) const {
+	if(index < 0 || index >= m_screenshots.size()) { return NULL; }
+
+	return m_screenshots[index];
+}
+
+const ModScreenshot * Mod::getScreenshot(const char * fileName) const {
+	if(fileName == NULL || Utilities::stringLength(fileName) == 0) { return NULL; }
+
+	for(int i=0;i<m_screenshots.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_screenshots[i]->getFileName(), fileName) == 0) {
+			return m_screenshots[i];
+		}
+	}
+	return NULL;
+}
+
+const ModScreenshot * Mod::getScreenshot(const QString & fileName) const {
+	if(fileName.isEmpty()) { return NULL; }
+	QByteArray fileNameBytes = fileName.toLocal8Bit();
+	const char * fileNameData = fileNameBytes.data();
+
+	for(int i=0;i<m_screenshots.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_screenshots[i]->getFileName(), fileNameData) == 0) {
+			return m_screenshots[i];
+		}
+	}
+	return NULL;
+}
+
+bool Mod::addScreenshot(ModScreenshot * screenshot) {
+	if(screenshot == NULL || Utilities::stringLength(screenshot->getFileName()) == 0 || hasScreenshot(*screenshot)) {
+		return false;
+	}
+	
+	m_screenshots.push_back(screenshot);
+
+	return true;
+}
+
+bool Mod::removeScreenshot(int index) {
+	if(index < 0 || index >= m_screenshots.size()) { return false; }
+	
+	delete m_screenshots[index];
+	m_screenshots.remove(index);
+	
+	return true;
+}
+
+bool Mod::removeScreenshot(const ModScreenshot & screenshot) {
+	for(int i=0;i<m_screenshots.size();i++) {
+		if(*m_screenshots[i] == screenshot) {
+			delete m_screenshots[i];
+			m_screenshots.remove(i);
+			
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Mod::removeScreenshot(const char * fileName) {
+	if(fileName == NULL || Utilities::stringLength(fileName) == 0) { return false; }
+
+	for(int i=0;i<m_screenshots.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_screenshots[i]->getFileName(), fileName) == 0) {
+			delete m_screenshots[i];
+			m_screenshots.remove(i);
+
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Mod::removeScreenshot(const QString & fileName) {
+	if(fileName.isEmpty()) { return false; }
+	QByteArray fileNameBytes = fileName.toLocal8Bit();
+	const char * fileNameData = fileNameBytes.data();
+
+	for(int i=0;i<m_screenshots.size();i++) {
+		if(Utilities::compareStringsIgnoreCase(m_screenshots[i]->getFileName(), fileNameData) == 0) {
+			delete m_screenshots[i];
+			m_screenshots.remove(i);
+
+			return true;
+		}
+	}
+	return false;
+}
+
+void Mod::clearScreenshots() {
+	for(int i=0;i<m_screenshots.size();i++) {
+		delete m_screenshots[i];
+	}
+	m_screenshots.clear();
 }
 
 bool Mod::operator == (const Mod & m) const {

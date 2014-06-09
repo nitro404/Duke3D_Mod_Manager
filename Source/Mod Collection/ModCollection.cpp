@@ -753,6 +753,53 @@ bool ModCollection::loadFromXML(const char * fileName) {
 								}
 							}
 						}
+						else if(QString::compare(input.name().toString(), "screenshots", Qt::CaseInsensitive) == 0) {
+							// root / mod / screenshots level loop
+							while(true) {
+								if(input.atEnd() || input.hasError()) {
+									break;
+								}
+
+								input.readNext();
+
+								if(input.isStartElement()) {
+									if(QString::compare(input.name().toString(), "screenshot", Qt::CaseInsensitive) == 0) {
+										attributes = input.attributes();
+
+										QString fileName;
+										ModScreenshot * newScreenshot = NULL;
+
+										if(attributes.hasAttribute("filename")) {
+											fileName = attributes.value("filename").toString();
+										}
+										else {
+											printf("Mod \"%s\" missing required filename attribute for a download node.\n", name.toLocal8Bit().data());
+											break;
+										}
+
+										newScreenshot = new ModScreenshot(fileName);
+										newMod->addScreenshot(newScreenshot);
+
+										if(attributes.hasAttribute("thumbnail")) {
+											newScreenshot->setThumbnail(attributes.value("thumbnail").toString());
+										}
+
+										if(attributes.hasAttribute("width")) {
+											newScreenshot->setWidth(attributes.value("width").toString());
+										}
+
+										if(attributes.hasAttribute("height")) {
+											newScreenshot->setHeight(attributes.value("height").toString());
+										}
+									}
+								}
+								else if(input.isEndElement()) {
+									if(QString::compare(input.name().toString(), "screenshots", Qt::CaseInsensitive) == 0) {
+										break;
+									}
+								}
+							}
+						}
 					}
 					else if(input.isEndElement()) {
 						if(QString::compare(input.name().toString(), "mod", Qt::CaseInsensitive) == 0) {
