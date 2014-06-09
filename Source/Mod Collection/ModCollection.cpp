@@ -1,20 +1,29 @@
 #include "Mod Collection/ModCollection.h"
 
-ModCollection::ModCollection() {
-	
+ModCollection::ModCollection()
+	: m_id(NULL) {
+	m_id = new char[1];
+	m_id[0] = '\0';
 }
 
-ModCollection::ModCollection(const ModCollection & m) {
+ModCollection::ModCollection(const ModCollection & m)
+	: m_id(NULL) {
+	m_id = Utilities::trimCopy(m.m_id);
+
 	for(int i=0;i<m.m_mods.size();i++) {
 		m_mods.push_back(new Mod(*m.m_mods[i]));
 	}
 }
 
 ModCollection & ModCollection::operator = (const ModCollection & m) {
+	delete [] m_id;
+
 	for(int i=0;i<m.m_mods.size();i++) {
 		delete m_mods[i];
 	}
 	m_mods.clear();
+
+	m_id = Utilities::trimCopy(m.m_id);
 
 	for(int i=0;i<m.m_mods.size();i++) {
 		m_mods.push_back(new Mod(*m.m_mods[i]));
@@ -26,6 +35,38 @@ ModCollection & ModCollection::operator = (const ModCollection & m) {
 ModCollection::~ModCollection() {
 	for(int i=0;i<m_mods.size();i++) {
 		delete m_mods[i];
+	}
+}
+
+const char * ModCollection::getID() const {
+	return const_cast<const char *>(m_id);
+}
+
+void ModCollection::setID(const char * id) {
+	if(m_id != NULL) {
+		delete [] m_id;
+	}
+	
+	if(id == NULL) {
+		m_id = new char[1];
+		m_id[0] = '\0';
+	}
+	else {
+		m_id = Utilities::trimCopy(id);
+	}
+}
+
+void ModCollection::setID(const QString & id) {
+	delete [] m_id;
+
+	if(id.isEmpty()) {
+		m_id = new char[1];
+		m_id[0] = '\0';
+	}
+	else {
+		QByteArray idBytes = id.toLocal8Bit();
+		const char * idData = idBytes.data();
+		m_id = Utilities::trimCopy(idData);
 	}
 }
 
@@ -229,6 +270,7 @@ bool ModCollection::loadFromINI(const char * fileName) {
 	QFile input(modListPath);
 	if(!input.open(QIODevice::ReadOnly | QIODevice::Text)) { return false; }
 	
+	setID(NULL);
 	clearMods();
 	
 	QString line;
@@ -349,6 +391,7 @@ bool ModCollection::loadFromXML(const char * fileName) {
 	QFile file(modListPath);
 	if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) { return false; }
 	
+	setID(NULL);
 	clearMods();
 
 	QXmlStreamReader input(&file);
@@ -357,6 +400,7 @@ bool ModCollection::loadFromXML(const char * fileName) {
 	Mod * newMod = NULL;
 	ModVersion * newModVersion = NULL;
 	QString name, id;
+	bool foundRootNode = false;
 
 	// root level loop
 	while(true) {
@@ -369,6 +413,50 @@ bool ModCollection::loadFromXML(const char * fileName) {
 		}
 
 		if(input.isStartElement()) {
+			if(!foundRootNode) {
+				if(QString::compare(input.name().toString(), "mods", Qt::CaseInsensitive) == 0) {
+					foundRootNode = true;
+
+					attributes = input.attributes();
+
+					QString game, id, fileVersion;
+
+					if(attributes.hasAttribute("game")) {
+						game = attributes.value("game").toString();
+						if(QString::compare(game, "Duke Nukem 3D", Qt::CaseInsensitive) != 0) {
+							printf("Specified mod list is for an unsupported game: \"%s\".\n", game.toLocal8Bit().data());
+							break;
+						}
+					}
+					else {
+						printf("Root mods node missing required game attribute.\n");
+						break;
+					}
+
+					if(attributes.hasAttribute("id")) {
+						setID(attributes.value("id").toString());
+					}
+					else {
+						printf("Root mods node missing required id attribute.\n");
+						break;
+					}
+
+					if(attributes.hasAttribute("mods_version")) {
+						fileVersion = attributes.value("mods_version").toString();
+						if(QString::compare(fileVersion, "1.0", Qt::CaseInsensitive) != 0) {
+							printf("Mod list version %s is unsupported.\n", fileVersion.toLocal8Bit().data());
+							break;
+						}
+					}
+					else {
+						printf("Root mods node missing required mods_version attribute.\n");
+						break;
+					}
+				}
+				
+				continue;
+			}
+
 			if(QString::compare(input.name().toString(), "mod", Qt::CaseInsensitive) == 0) {
 				attributes = input.attributes();
 

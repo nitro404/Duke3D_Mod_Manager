@@ -15,6 +15,11 @@ public:
 	ModCollection(const ModCollection & m);
 	ModCollection & operator = (const ModCollection & m);
 	~ModCollection();
+
+	const char * getID() const;
+
+	void setID(const char * id);
+	void setID(const QString & id);
 	
 	int numberOfMods() const;
 	bool hasMod(const Mod & mod) const;
@@ -43,6 +48,7 @@ public:
 	bool operator != (const ModCollection & m) const;
 
 private:
+	char * m_id;
 	QVector<Mod *> m_mods;
 };
 
