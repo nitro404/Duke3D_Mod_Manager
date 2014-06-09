@@ -1,0 +1,21 @@
+DOSBox/*
+Debug/*
+Release/*
+Mods/*
+CDROM.INI
+DUKE3D.CFG
+stderr.txt
+stdout.txt
+Duke 3D Mod Manager.txt
+Favourites *.txt
+*.ncb
+*.suo
+*.vcproj.*
+*.EXE
+*.GRP
+*.CON
+*.DMO
+*.DAT
+*.SAV
+*.PCX
+*.BAT
