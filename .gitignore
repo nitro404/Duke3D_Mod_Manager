@@ -1,7 +1,9 @@
 DOSBox/*
 Debug/*
 Release/*
+Misc/*
 Mods/*
+Old/*
 CDROM.INI
 DUKE3D.CFG
 stderr.txt
@@ -10,6 +12,7 @@ Duke 3D Mod Manager.txt
 Duke Nukem 3D Mod Manager.ini
 Favourites *.txt
 *.ncb
+*.sdf
 *.suo
 *.vcproj.*
 *.EXE

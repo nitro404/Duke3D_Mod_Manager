@@ -4,10 +4,6 @@
 #include "Mod Manager/ModManager.h"
 #include "Mod Collection/ModCollection.h"
 
-#if _DEBUG
-#include <vld.h>
-#endif // _DEBUG
-
 int main(int argc, char * argv[]) {
 	// -s "settings.ini"
 	// -m [dosbox]/megaton/windows (mode)
@@ -28,7 +24,9 @@ int main(int argc, char * argv[]) {
 	ModManager::createInstance();
 
 	SettingsManager::getInstance()->load(&args);
-	if(!ModManager::getInstance()->init(true, &args)) { return 0; }
+	ModManager::getInstance()->init(&args);
+
+	ModManager::getInstance()->run();
 
 	ModManager::getInstance()->uninit();
 	SettingsManager::getInstance()->save(&args);

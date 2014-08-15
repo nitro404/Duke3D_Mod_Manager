@@ -18,8 +18,10 @@ protected:
 	~ModManager();
 
 public:
-	bool init(bool openMenu = true, const ArgumentParser * args = NULL);
+	bool init(const ArgumentParser * args = NULL);
 	bool uninit();
+
+	void run();
 
 	ModManagerModes::ModManagerMode getMode() const;
 	const char * getModeName() const;

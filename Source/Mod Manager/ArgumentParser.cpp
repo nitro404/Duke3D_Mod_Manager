@@ -9,10 +9,22 @@ ArgumentParser::ArgumentParser(int argc, char * argv[]) {
 }
 
 ArgumentParser::ArgumentParser(const ArgumentParser & a) {
-	
+	QList<QString> keys = a.m_arguments.keys();
+
+	for(int i=0;i<keys.size();i++) {
+		m_arguments[keys[i]] = a.m_arguments.value(keys[i]);
+	}
 }
 
 ArgumentParser & ArgumentParser::operator = (const ArgumentParser & a) {
+	m_arguments.clear();
+
+	QList<QString> keys = a.m_arguments.keys();
+
+	for(int i=0;i<keys.size();i++) {
+		m_arguments[keys[i]] = a.m_arguments.value(keys[i]);
+	}
+
 	return *this;
 }
 
@@ -155,5 +167,5 @@ bool ArgumentParser::parseArguments(int argc, char * argv[]) {
 }
 
 void ArgumentParser::displayHelp() const {
-	
+	// TODO: add help display
 }

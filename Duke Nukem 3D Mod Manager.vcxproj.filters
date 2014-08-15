@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="Source\Icon.h" />
+    <ClInclude Include="Source\Mod Collection\Mod.h">
+      <Filter>Mod Collection</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mod Collection\ModCollection.h">
+      <Filter>Mod Collection</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mod Collection\ModDownload.h">
+      <Filter>Mod Collection</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mod Collection\ModScreenshot.h">
+      <Filter>Mod Collection</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mod Collection\ModTeam.h">
+      <Filter>Mod Collection</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mod Collection\ModTeamMember.h">
+      <Filter>Mod Collection</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mod Collection\ModVersion.h">
+      <Filter>Mod Collection</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mod Collection\ModVersionFile.h">
+      <Filter>Mod Collection</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mod Manager\ArgumentParser.h">
+      <Filter>Mod Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mod Manager\GameType.h">
+      <Filter>Mod Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mod Manager\ModManager.h">
+      <Filter>Mod Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mod Manager\ModManagerMode.h">
+      <Filter>Mod Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Script\Script.h">
+      <Filter>Script</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Script\ScriptArguments.h">
+      <Filter>Script</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Settings Manager\SettingsManager.h">
+      <Filter>Settings Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Singleton\Singleton.h">
+      <Filter>Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Singleton\SingletonManager.h">
+      <Filter>Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Utilities\Utilities.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Variable System\Variable.h">
+      <Filter>Variable System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Variable System\VariableSystem.h">
+      <Filter>Variable System</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\Mod Collection\Mod.cpp">
+      <Filter>Mod Collection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mod Collection\ModCollection.cpp">
+      <Filter>Mod Collection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mod Collection\ModDownload.cpp">
+      <Filter>Mod Collection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mod Collection\ModScreenshot.cpp">
+      <Filter>Mod Collection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mod Collection\ModTeam.cpp">
+      <Filter>Mod Collection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mod Collection\ModTeamMember.cpp">
+      <Filter>Mod Collection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mod Collection\ModVersion.cpp">
+      <Filter>Mod Collection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mod Collection\ModVersionFile.cpp">
+      <Filter>Mod Collection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mod Manager\ArgumentParser.cpp">
+      <Filter>Mod Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mod Manager\GameType.cpp">
+      <Filter>Mod Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mod Manager\ModManager.cpp">
+      <Filter>Mod Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mod Manager\ModManagerMode.cpp">
+      <Filter>Mod Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Script\Script.cpp">
+      <Filter>Script</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Script\ScriptArguments.cpp">
+      <Filter>Script</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Settings Manager\SettingsManager.cpp">
+      <Filter>Settings Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Singleton\SingletonManager.cpp">
+      <Filter>Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Utilities\Utilities.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Variable System\Variable.cpp">
+      <Filter>Variable System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Variable System\VariableSystem.cpp">
+      <Filter>Variable System</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Duke Nukem 3D Mod Manager.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Duke3D_ModMgr.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Mod Collection">
+      <UniqueIdentifier>{ea578d67-1cc4-48a1-88ca-81252dbd308f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mod Manager">
+      <UniqueIdentifier>{a0db8b75-f16a-4566-ba04-4843c099f416}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Script">
+      <UniqueIdentifier>{ecbc3b54-5d32-4856-9be0-1f0a260874f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Settings Manager">
+      <UniqueIdentifier>{225ee70c-6ffb-4d7d-bbd9-3639d16dbea7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singleton">
+      <UniqueIdentifier>{c1cbc0ad-8dfd-4d35-9020-ef882585106f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{7846c2d7-c8a6-493b-aa7a-22a791809dd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Variable System">
+      <UniqueIdentifier>{52fd0e12-99ab-4562-aa21-d79a5a02f2de}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

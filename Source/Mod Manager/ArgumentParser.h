@@ -2,7 +2,9 @@
 #define ARGUMENT_PARSER_H
 
 #include <QMap.h>
+#include <QList.h>
 #include <QString.h>
+#include "Utilities/Utilities.h"
 
 class ArgumentParser {
 public:

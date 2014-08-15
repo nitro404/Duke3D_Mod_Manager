@@ -16,7 +16,7 @@ ModManager::~ModManager() {
 	}
 }
 
-bool ModManager::init(bool openMenu, const ArgumentParser * args) {
+bool ModManager::init(const ArgumentParser * args) {
 	if(m_initialized) { return true; }
 
 	m_mode = SettingsManager::getInstance()->modManagerMode;
@@ -45,9 +45,7 @@ bool ModManager::init(bool openMenu, const ArgumentParser * args) {
 
 	printf("\n");
 
-	if(!handleArguments(args) && openMenu) {
-		runMenu();
-	}
+	handleArguments(args);
 
 	return true;
 }
@@ -65,6 +63,12 @@ bool ModManager::uninit() {
 	m_initialized = false;
 
 	return true;
+}
+
+void ModManager::run() {
+	if(!m_initialized) { return; }
+
+	runMenu();
 }
 
 ModManagerModes::ModManagerMode ModManager::getMode() const {
@@ -329,26 +333,28 @@ void ModManager::runIPAddressPrompt() {
 		printf("Enter host IP Address:\n");
 		printf("> ");
 
-		input = in.readLine().trimmed();
+		input = in.readLine();
+		data = input.trimmed();
 
 		valid = true;
-		for(int i=0;i<input.length();i++) {
-			if(input[i] == ' ' || input[i] == '\t') {
+
+		if(data.length() == 0) { valid = false; }
+
+		for(int i=0;i<data.length();i++) {
+			if(data[i] == ' ' || data[i] == '\t') {
 				valid = false;
 			}
 		}
 
-		if(input.length() == 0) { valid = false; }
-
 		if(valid) {
-			QByteArray inputBytes = input.toLocal8Bit();
-			const char * inputData = inputBytes.data();
+			QByteArray dataBytes = data.toLocal8Bit();
+			const char * rawData = dataBytes.data();
 
 			if(SettingsManager::getInstance()->serverIPAddress != NULL) { delete [] SettingsManager::getInstance()->serverIPAddress; }
-			SettingsManager::getInstance()->serverIPAddress = new char[Utilities::stringLength(inputData) + 1];
-			Utilities::copyString(SettingsManager::getInstance()->serverIPAddress, Utilities::stringLength(inputData) + 1, inputData);
+			SettingsManager::getInstance()->serverIPAddress = new char[Utilities::stringLength(rawData) + 1];
+			Utilities::copyString(SettingsManager::getInstance()->serverIPAddress, Utilities::stringLength(rawData) + 1, rawData);
 
-			printf("\nHost IP Address changed to: %s\n\n", inputData);
+			printf("\nHost IP Address changed to: %s\n\n", rawData);
 
 			Utilities::pause();
 
@@ -556,7 +562,7 @@ void ModManager::runSelectedMod(const ArgumentParser * args) {
 		printf("Running mod \"%s\" in %s mode.\n\n", m_selectedMod->getFullName(m_selectedModVersionIndex).toLocal8Bit().data(), GameTypes::toString(m_gameType));
 	}
 
-	Utilities::renameFiles("DMO", "TMPDMO");
+	Utilities::renameFiles("DMO", "DMO_");
 
 	if(m_mode == ModManagerModes::DOSBox) {
 		bool scriptLoaded = false;
@@ -639,7 +645,7 @@ void ModManager::runSelectedMod(const ArgumentParser * args) {
 
 	Utilities::deleteFiles("DMO");
 	
-	Utilities::renameFiles("TMPDMO", "DMO");
+	Utilities::renameFiles("DMO_", "DMO");
 }
 
 bool ModManager::updateScriptArgs() {
