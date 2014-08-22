@@ -242,6 +242,14 @@ bool ModCollection::load() {
 	return loadFrom(SettingsManager::getInstance()->modListFileName);
 }
 
+bool ModCollection::loadFrom(const QString & fileName) {
+	if(fileName.isEmpty()) { return false; }
+	QByteArray fileNameBytes = fileName.toLocal8Bit();
+	const char * fileNameData = fileNameBytes.data();
+
+	return loadFrom(fileNameData);
+}
+
 bool ModCollection::loadFrom(const char * fileName) {
 	if(fileName == NULL || Utilities::stringLength(fileName) == 0) { return false; }
 	
@@ -257,6 +265,14 @@ bool ModCollection::loadFrom(const char * fileName) {
 		return loadFromXML(fileName);
 	}
 	return false;
+}
+
+bool ModCollection::loadFromINI(const QString & fileName) {
+	if(fileName.isEmpty()) { return false; }
+	QByteArray fileNameBytes = fileName.toLocal8Bit();
+	const char * fileNameData = fileNameBytes.data();
+
+	return loadFromINI(fileNameData);
 }
 
 bool ModCollection::loadFromINI(const char * fileName) {
@@ -378,6 +394,14 @@ bool ModCollection::loadFromINI(const char * fileName) {
 	input.close();
 
 	return true;
+}
+
+bool ModCollection::loadFromXML(const QString & fileName) {
+	if(fileName.isEmpty()) { return false; }
+	QByteArray fileNameBytes = fileName.toLocal8Bit();
+	const char * fileNameData = fileNameBytes.data();
+
+	return loadFromXML(fileNameData);
 }
 
 bool ModCollection::loadFromXML(const char * fileName) {

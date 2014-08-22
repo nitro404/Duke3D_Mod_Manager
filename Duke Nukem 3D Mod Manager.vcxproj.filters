@@ -62,6 +62,9 @@
     <ClInclude Include="Source\Variable System\VariableSystem.h">
       <Filter>Variable System</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Mod Manager\ModInformation.h">
+      <Filter>Mod Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Main.cpp" />
@@ -121,6 +124,9 @@
     </ClCompile>
     <ClCompile Include="Source\Variable System\VariableSystem.cpp">
       <Filter>Variable System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mod Manager\ModInformation.cpp">
+      <Filter>Mod Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

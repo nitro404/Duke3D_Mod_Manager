@@ -39,8 +39,11 @@ public:
 	void clearMods();
 	
 	bool load();
+	bool loadFrom(const QString & fileName);
 	bool loadFrom(const char * fileName);
+	bool loadFromINI(const QString & fileName);
 	bool loadFromINI(const char * fileName);
+	bool loadFromXML(const QString & fileName);
 	bool loadFromXML(const char * fileName);
 
 public:

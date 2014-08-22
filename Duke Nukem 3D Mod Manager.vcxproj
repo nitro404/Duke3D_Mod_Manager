@@ -95,6 +95,7 @@
     <ClInclude Include="Source\Mod Collection\ModVersionFile.h" />
     <ClInclude Include="Source\Mod Manager\ArgumentParser.h" />
     <ClInclude Include="Source\Mod Manager\GameType.h" />
+    <ClInclude Include="Source\Mod Manager\ModInformation.h" />
     <ClInclude Include="Source\Mod Manager\ModManager.h" />
     <ClInclude Include="Source\Mod Manager\ModManagerMode.h" />
     <ClInclude Include="Source\Script\Script.h" />
@@ -118,6 +119,7 @@
     <ClCompile Include="Source\Mod Collection\ModVersionFile.cpp" />
     <ClCompile Include="Source\Mod Manager\ArgumentParser.cpp" />
     <ClCompile Include="Source\Mod Manager\GameType.cpp" />
+    <ClCompile Include="Source\Mod Manager\ModInformation.cpp" />
     <ClCompile Include="Source\Mod Manager\ModManager.cpp" />
     <ClCompile Include="Source\Mod Manager\ModManagerMode.cpp" />
     <ClCompile Include="Source\Script\Script.cpp" />

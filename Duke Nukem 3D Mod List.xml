@@ -3227,7 +3227,7 @@
 	</mod>
 	
 	<mod name="Starship Troopers" id="starship_troopers">
-		<information type="Total Conversion" game="All Versions" release_date="June 10, 2000" website="http://www.dukeworld.com/starshiptroopers">
+		<information type="Total Conversion" game="All Versions" version="1.0" release_date="June 10, 2000" website="http://www.dukeworld.com/starshiptroopers">
 			<team name="Bgame Productions" email="bgame@madmzone.com">
 				<member name="Moloch" email="moloch@3dportal.com" />
 				<member name="C3PO" />

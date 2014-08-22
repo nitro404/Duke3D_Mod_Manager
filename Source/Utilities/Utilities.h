@@ -19,7 +19,11 @@ namespace Utilities {
 	char * substring(const char * data, int start, int end);
 	QString substring(const QString & data, int start, int end);
 	int compareStrings(const char * s1, const char * s2, bool caseSensitive = true);
+	int compareStrings(const char * s1, const QString & s2, bool caseSensitive = true);
+	int compareStrings(const QString & s1, const char * s2, bool caseSensitive = true);
 	int compareStringsIgnoreCase(const char * s1, const char * s2);
+	int compareStringsIgnoreCase(const char * s1, const QString & s2);
+	int compareStringsIgnoreCase(const QString & s1, const char * s2);
 	int firstIndexOf(const char * data, char c);
 	int lastIndexOf(const char * data, char c);
 	char * getFileNameNoExtension(const char * fileName);

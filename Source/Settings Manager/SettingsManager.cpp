@@ -2,7 +2,7 @@
 
 const char * SettingsManager::defaultSettingsFileName = "Duke Nukem 3D Mod Manager.ini";
 const char * SettingsManager::defaultModListFileName = "Duke Nukem 3D Mod List.ini";
-const char * SettingsManager::defaultFavouritesListFileName = "Favourites.txt";
+const char * SettingsManager::defaultFavouritesListFileName = "Duke Nukem 3D Favourite Mods.xml";
 const char * SettingsManager::defaultModsDirectoryName = "Mods";
 const char * SettingsManager::defaultDataDirectoryName = "Data";
 const char * SettingsManager::defaultGameFileName = "DUKE3D.EXE";

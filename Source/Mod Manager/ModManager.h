@@ -3,7 +3,9 @@
 
 #include <QString.h>
 #include <QTextStream.h>
+#include <QXmlStream.h>
 #include "Singleton/Singleton.h"
+#include "Mod Manager/ModInformation.h"
 #include "Mod Manager/ModManagerMode.h"
 #include "Mod Manager/GameType.h"
 #include "Mod Collection/Mod.h"
@@ -51,9 +53,46 @@ public:
 	void clearSelectedMod();
 
 // TODO: add category filter enum & functions
-// TODO: favourites container functions
-	bool readFavourites();
-	bool writeFavourites();
+
+	int numberOfFavourites();
+	bool hasFavourite(const ModInformation & favourite) const;
+	bool hasFavourite(const char * name) const;
+	bool hasFavourite(const QString & name) const;
+	bool hasFavourite(const char * name, const char * version) const;
+	bool hasFavourite(const QString & name, const QString & version) const;
+	int indexOfFavourite(const ModInformation & favourite) const;
+	int indexOfFavourite(const char * name) const;
+	int indexOfFavourite(const QString & name) const;
+	int indexOfFavourite(const char * name, const char * version) const;
+	int indexOfFavourite(const QString & name, const QString & version) const;
+	const ModInformation * getFavourite(int index) const;
+	const ModInformation * getFavourite(const char * name) const;
+	const ModInformation * getFavourite(const QString & name) const;
+	const ModInformation * getFavourite(const char * name, const char * version) const;
+	const ModInformation * getFavourite(const QString & name, const QString & version) const;
+	bool addFavourite(ModInformation * favourite);
+	bool removeFavourite(int index);
+	bool removeFavourite(const ModInformation & favourite);
+	bool removeFavourite(const char * name);
+	bool removeFavourite(const QString & name);
+	bool removeFavourite(const char * name, const char * version);
+	bool removeFavourite(const QString & name, const QString & version);
+	void clearFavourites();
+
+	bool loadFavourites();
+	bool loadFavourites(const QString & fileName);
+	bool loadFavourites(const char * fileName);
+	bool loadFavouritesList(const QString & fileName);
+	bool loadFavouritesList(const char * fileName);
+	bool loadFavouritesXML(const QString & fileName);
+	bool loadFavouritesXML(const char * fileName);
+	bool saveFavourites();
+	bool saveFavourites(const QString & fileName);
+	bool saveFavourites(const char * fileName);
+	bool saveFavouritesList(const QString & fileName);
+	bool saveFavouritesList(const char * fileName);
+	bool saveFavouritesXML(const QString & fileName);
+	bool saveFavouritesXML(const char * fileName);
 
 	void runMenu();
 	void runGameTypePrompt();
@@ -80,7 +119,7 @@ private:
 	const Mod * m_selectedMod;
 	int m_selectedModVersionIndex;
 	ModCollection m_mods;
-	QVector<const Mod *> m_favourites;
+	QVector<ModInformation *> m_favourites;
 	ScriptArguments m_scriptArgs;
 };
 
