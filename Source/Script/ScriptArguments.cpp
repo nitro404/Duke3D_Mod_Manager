@@ -6,128 +6,23 @@ const char ScriptArguments::condCloseChar = '>';
 const char ScriptArguments::argChar = ':';
 
 ScriptArguments::ScriptArguments() {
-	
+	m_case = ArgumentCases::UpperCase;
 }
 
 ScriptArguments::ScriptArguments(const ScriptArguments & s) {
-	QMapIterator<QString, QString> i(s.m_arguments);
-	while(i.hasNext()) {
-		i.next();
-		m_arguments[i.key()] = i.value();
-	}
+	m_case = s.m_case;
+	m_arguments = s.m_arguments;
 }
 
 ScriptArguments & ScriptArguments::operator = (const ScriptArguments & s) {
-	m_arguments.clear();
-
-	QMapIterator<QString, QString> i(s.m_arguments);
-	while(i.hasNext()) {
-		i.next();
-		m_arguments[i.key()] = i.value();
-	}
+	m_case = s.m_case;
+	m_arguments = s.m_arguments;
 
 	return *this;
 }
 
 ScriptArguments::~ScriptArguments() {
 	
-}
-
-int ScriptArguments::numberOfArguments() const {
-	return m_arguments.keys().size();
-}
-
-bool ScriptArguments::hasArgument(const char * name) const {
-	if(name == NULL) { return false; }
-
-	QString tempName(QString(name).trimmed().toUpper());
-	if(tempName.length() == 0) { return false; }
-
-	return m_arguments.contains(tempName);
-}
-
-bool ScriptArguments::hasArgument(const QString & name) const {
-	QString tempName(name.trimmed().toUpper());
-	if(tempName.length() == 0) { return false; }
-
-	return m_arguments.contains(tempName);
-}
-
-QString ScriptArguments::getValue(const char * name) const {
-	if(name == NULL) { return QString(); }
-
-	QString tempName(QString(name).trimmed().toUpper());
-	if(tempName.length() == 0) { return QString(); }
-
-	if(!m_arguments.contains(tempName)) { return QString(); }
-
-	return m_arguments.value(tempName);
-}
-
-QString ScriptArguments::getValue(const QString & name) const {
-	QString tempName(name.trimmed().toUpper());
-	if(tempName.length() == 0) { return QString(); }
-
-	if(!m_arguments.contains(tempName)) { return QString(); }
-
-	return m_arguments.value(tempName);
-}
-
-bool ScriptArguments::setArgument(const char * name, const char * value) {
-	if(name == NULL || value == NULL) { return false; }
-
-	QString tempName(QString(name).trimmed().toUpper());
-	if(tempName.length() == 0) { return false; }
-
-	m_arguments[tempName] = QString(value);
-
-	return true;
-}
-
-bool ScriptArguments::setArgument(const char * name, const QString & value) {
-	QString tempName(QString(name).trimmed().toUpper());
-	if(tempName.length() == 0) { return false; }
-
-	m_arguments[tempName] = value;
-
-	return true;
-}
-
-bool ScriptArguments::setArgument(const QString & name, const char * value) {
-	if(name.length() == 0 || value == NULL) { return false; }
-
-	m_arguments[name.toUpper()] = QString(value);
-
-	return true;
-}
-
-bool ScriptArguments::setArgument(const QString & name, const QString & value) {
-	QString tempName(name.trimmed().toUpper());
-	if(tempName.length() == 0) { return false; }
-
-	m_arguments[tempName] = value;
-
-	return true;
-}
-
-void ScriptArguments::removeArgument(const char * name) {
-	if(name == NULL) { return; }
-
-	QString tempName(QString(name).trimmed().toUpper());
-	if(tempName.length() == 0) { return; }
-
-	m_arguments.remove(tempName);
-}
-
-void ScriptArguments::removeArgument(const QString & name) {
-	QString tempName(name.trimmed().toUpper());
-	if(tempName.length() == 0) { return; }
-
-	m_arguments.remove(tempName);
-}
-
-void ScriptArguments::clear() {
-	m_arguments.clear();
 }
 
 QString ScriptArguments::applyConditionals(const QString & command) const {

@@ -658,7 +658,6 @@ bool ModManager::loadFavouritesXML(const char * fileName) {
 	QString name, version;
 	bool foundRootNode = false;
 
-	// root level loop
 	while(true) {
 		if(input.atEnd() || input.hasError()) {
 			break;

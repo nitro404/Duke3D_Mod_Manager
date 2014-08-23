@@ -84,6 +84,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Argument Collection\ArgumentCase.h" />
+    <ClInclude Include="Source\Argument Collection\ArgumentCollection.h" />
     <ClInclude Include="Source\Icon.h" />
     <ClInclude Include="Source\Mod Collection\Mod.h" />
     <ClInclude Include="Source\Mod Collection\ModCollection.h" />
@@ -108,6 +110,8 @@
     <ClInclude Include="Source\Variable System\VariableSystem.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Argument Collection\ArgumentCase.cpp" />
+    <ClCompile Include="Source\Argument Collection\ArgumentCollection.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Mod Collection\Mod.cpp" />
     <ClCompile Include="Source\Mod Collection\ModCollection.cpp" />

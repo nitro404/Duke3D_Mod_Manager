@@ -65,6 +65,12 @@
     <ClInclude Include="Source\Mod Manager\ModInformation.h">
       <Filter>Mod Manager</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Argument Collection\ArgumentCollection.h">
+      <Filter>Argument Collection</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Argument Collection\ArgumentCase.h">
+      <Filter>Argument Collection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Main.cpp" />
@@ -128,6 +134,12 @@
     <ClCompile Include="Source\Mod Manager\ModInformation.cpp">
       <Filter>Mod Manager</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Argument Collection\ArgumentCollection.cpp">
+      <Filter>Argument Collection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Argument Collection\ArgumentCase.cpp">
+      <Filter>Argument Collection</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Duke Nukem 3D Mod Manager.rc" />
@@ -156,6 +168,9 @@
     </Filter>
     <Filter Include="Variable System">
       <UniqueIdentifier>{52fd0e12-99ab-4562-aa21-d79a5a02f2de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Argument Collection">
+      <UniqueIdentifier>{cc0dff7e-da5a-41d4-868a-fc96b3c6fdf4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
