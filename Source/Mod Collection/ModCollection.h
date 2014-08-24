@@ -8,13 +8,14 @@
 #include "Utilities/Utilities.h"
 #include "Settings Manager/SettingsManager.h"
 #include "Mod Collection/Mod.h"
+#include "Mod Collection/ModCollectionListener.h"
 
 class ModCollection {
 public:
 	ModCollection();
 	ModCollection(const ModCollection & m);
 	ModCollection & operator = (const ModCollection & m);
-	~ModCollection();
+	virtual ~ModCollection();
 
 	const char * getID() const;
 
@@ -45,14 +46,26 @@ public:
 	bool loadFromINI(const char * fileName);
 	bool loadFromXML(const QString & fileName);
 	bool loadFromXML(const char * fileName);
-
-public:
+	
 	bool operator == (const ModCollection & m) const;
 	bool operator != (const ModCollection & m) const;
+
+	int numberOfListeners() const;
+	bool hasListener(const ModCollectionListener * listener) const;
+	int indexOfListener(const ModCollectionListener * listener) const;
+	ModCollectionListener * getListener(int index) const;
+	bool addListener(ModCollectionListener * listener);
+	bool removeListener(int index);
+	bool removeListener(const ModCollectionListener * listener);
+	void clearListeners();
+
+private:
+	void notifyCollectionChanged() const;
 
 private:
 	char * m_id;
 	QVector<Mod *> m_mods;
+	QVector<ModCollectionListener *> m_listeners;
 };
 
 #endif // MOD_COLLECTION_H

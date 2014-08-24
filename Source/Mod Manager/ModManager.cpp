@@ -37,6 +37,8 @@ bool ModManager::init(const ArgumentParser * args) {
 	}
 	printf("%d mods loaded.\n", m_mods.numberOfMods());
 
+	m_organizedMods.setModCollection(&m_mods);
+
 	m_initialized = true;
 
 	loadFavourites();
@@ -59,6 +61,7 @@ bool ModManager::uninit() {
 
 	saveFavourites();
 
+	m_organizedMods.setModCollection(NULL);
 	m_selectedMod = NULL;
 	m_favourites.clear();
 	m_mods.clearMods();

@@ -177,6 +177,8 @@ bool ModCollection::addMod(Mod * mod) {
 	
 	m_mods.push_back(mod);
 
+	notifyCollectionChanged();
+
 	return true;
 }
 
@@ -185,6 +187,8 @@ bool ModCollection::removeMod(int index) {
 	
 	delete m_mods[index];
 	m_mods.remove(index);
+
+	notifyCollectionChanged();
 	
 	return true;
 }
@@ -194,6 +198,8 @@ bool ModCollection::removeMod(const Mod & mod) {
 		if(*m_mods[i] == mod) {
 			delete m_mods[i];
 			m_mods.remove(i);
+
+			notifyCollectionChanged();
 			
 			return true;
 		}
@@ -208,6 +214,8 @@ bool ModCollection::removeMod(const char * name) {
 		if(Utilities::compareStringsIgnoreCase(m_mods[i]->getName(), name) == 0) {
 			delete m_mods[i];
 			m_mods.remove(i);
+
+			notifyCollectionChanged();
 
 			return true;
 		}
@@ -225,6 +233,8 @@ bool ModCollection::removeMod(const QString & name) {
 			delete m_mods[i];
 			m_mods.remove(i);
 
+			notifyCollectionChanged();
+
 			return true;
 		}
 	}
@@ -236,6 +246,8 @@ void ModCollection::clearMods() {
 		delete m_mods[i];
 	}
 	m_mods.clear();
+
+	notifyCollectionChanged();
 }
 
 bool ModCollection::load() {
@@ -866,4 +878,87 @@ bool ModCollection::operator == (const ModCollection & m) const {
 
 bool ModCollection::operator != (const ModCollection & m) const {
 	return !operator == (m);
+}
+
+int ModCollection::numberOfListeners() const {
+	return m_listeners.size();
+}
+
+bool ModCollection::hasListener(const ModCollectionListener * listener) const {
+	if(listener == NULL) {
+		return false;
+	}
+
+	for(int i=0;i<m_listeners.size();i++) {
+		if(m_listeners[i] == listener) {
+			return true;
+		}
+	}
+	return false;
+}
+
+int ModCollection::indexOfListener(const ModCollectionListener * listener) const {
+	if(listener == NULL) {
+		return -1;
+	}
+
+	for(int i=0;i<m_listeners.size();i++) {
+		if(m_listeners[i] == listener) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+ModCollectionListener * ModCollection::getListener(int index) const {
+	if(index < 0 || index >= m_listeners.size()) {
+		return NULL;
+	}
+
+	return m_listeners[index];
+}
+
+bool ModCollection::addListener(ModCollectionListener * listener) {
+	if(listener == NULL) {
+		return false;
+	}
+
+	if(!hasListener(listener)) {
+		m_listeners.push_back(listener);
+		return true;
+	}
+	return false;
+}
+
+bool ModCollection::removeListener(int index) {
+	if(index < 0 || index >= m_listeners.size()) {
+		return false;
+	}
+
+	m_listeners.remove(index);
+}
+
+bool ModCollection::removeListener(const ModCollectionListener * listener) {
+	if(listener == NULL) {
+		return false;
+	}
+
+	for(int i=0;i<m_listeners.size();i++) {
+		if(m_listeners[i] == listener) {
+			m_listeners.remove(i);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void ModCollection::clearListeners() {
+	m_listeners.clear();
+}
+
+void ModCollection::notifyCollectionChanged() const {
+	for(int i=0;i<m_listeners.size();i++) {
+		m_listeners[i]->modCollectionUpdated();
+	}
 }

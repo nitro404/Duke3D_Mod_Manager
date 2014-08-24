@@ -10,6 +10,7 @@
 #include "Mod Manager/GameType.h"
 #include "Mod Collection/Mod.h"
 #include "Mod Collection/ModCollection.h"
+#include "Mod Collection/OrganizedModCollection.h"
 #include "Script/Script.h"
 
 class ModManager : public Singleton<ModManager> {
@@ -51,8 +52,6 @@ public:
 	int searchForAndSelectMod(const char * query);
 	int searchForAndSelectMod(const QString & query);
 	void clearSelectedMod();
-
-// TODO: add category filter enum & functions
 
 	int numberOfFavourites();
 	bool hasFavourite(const ModInformation & favourite) const;
@@ -119,6 +118,7 @@ private:
 	const Mod * m_selectedMod;
 	int m_selectedModVersionIndex;
 	ModCollection m_mods;
+	OrganizedModCollection m_organizedMods;
 	QVector<ModInformation *> m_favourites;
 	ScriptArguments m_scriptArgs;
 };
