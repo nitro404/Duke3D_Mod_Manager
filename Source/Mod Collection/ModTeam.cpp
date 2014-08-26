@@ -125,23 +125,23 @@ ModTeam::~ModTeam() {
 }
 
 const char * ModTeam::getName() const {
-	return const_cast<const char *>(m_name);
+	return m_name;
 }
 
 const char * ModTeam::getEmail() const {
-	return const_cast<const char *>(m_email);
+	return m_email;
 }
 
 const char * ModTeam::getCity() const {
-	return const_cast<const char *>(m_city);
+	return m_city;
 }
 
 const char * ModTeam::getState() const {
-	return const_cast<const char *>(m_state);
+	return m_state;
 }
 
 const char * ModTeam::getCountry() const {
-	return const_cast<const char *>(m_country);
+	return m_country;
 }
 
 void ModTeam::setName(const char * name) {

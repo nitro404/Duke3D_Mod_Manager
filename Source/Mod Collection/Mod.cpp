@@ -6,7 +6,6 @@ Mod::Mod(const char * name, const char * id)
 	, m_type(NULL)
 	, m_gameVersion(NULL)
 	, m_latestVersion(NULL)
-	, m_releaseDate(NULL)
 	, m_website(NULL)
 	, m_team(NULL) {
 	if(name == NULL) {
@@ -32,7 +31,6 @@ Mod::Mod(const QString & name, const QString & id)
 	, m_type(NULL)
 	, m_gameVersion(NULL)
 	, m_latestVersion(NULL)
-	, m_releaseDate(NULL)
 	, m_website(NULL)
 	, m_team(NULL) {
 	if(name.isEmpty()) {
@@ -62,7 +60,6 @@ Mod::Mod(const Mod & m)
 	, m_type(NULL)
 	, m_gameVersion(NULL)
 	, m_latestVersion(NULL)
-	, m_releaseDate(NULL)
 	, m_website(NULL)
 	, m_team(NULL) {
 	m_name = Utilities::trimCopy(m.m_name);
@@ -81,9 +78,7 @@ Mod::Mod(const Mod & m)
 		m_latestVersion = Utilities::trimCopy(m.m_latestVersion);
 	}
 
-	if(m.m_releaseDate != NULL) {
-		m_releaseDate = Utilities::trimCopy(m.m_releaseDate);
-	}
+	m_releaseDate = m.m_releaseDate;
 
 	if(m.m_website != NULL) {
 		m_website = Utilities::trimCopy(m.m_website);
@@ -123,11 +118,6 @@ Mod & Mod::operator = (const Mod & m) {
 	if(m_latestVersion != NULL) {
 		delete [] m_latestVersion;
 		m_latestVersion = NULL;
-	}
-
-	if(m_releaseDate != NULL) {
-		delete [] m_releaseDate;
-		m_releaseDate = NULL;
 	}
 
 	if(m_website != NULL) {
@@ -171,9 +161,7 @@ Mod & Mod::operator = (const Mod & m) {
 		m_latestVersion = Utilities::trimCopy(m.m_latestVersion);
 	}
 
-	if(m.m_releaseDate != NULL) {
-		m_releaseDate = Utilities::trimCopy(m.m_releaseDate);
-	}
+	m_releaseDate = m.m_releaseDate;
 
 	if(m.m_website != NULL) {
 		m_website = Utilities::trimCopy(m.m_website);
@@ -204,7 +192,6 @@ Mod::~Mod() {
 	if(m_type != NULL)          { delete [] m_type; }
 	if(m_gameVersion != NULL)   { delete [] m_gameVersion; }
 	if(m_latestVersion != NULL) { delete [] m_latestVersion; }
-	if(m_releaseDate != NULL)   { delete [] m_releaseDate; }
 	if(m_website != NULL)       { delete [] m_website; }
 	if(m_team != NULL)          { delete m_team; }
 
@@ -222,7 +209,7 @@ Mod::~Mod() {
 }
 
 const char * Mod::getName() const {
-	return const_cast<const char *>(m_name);
+	return m_name;
 }
 
 const QString Mod::getFullName(int versionIndex) const {
@@ -232,31 +219,35 @@ const QString Mod::getFullName(int versionIndex) const {
 }
 
 const char * Mod::getID() const {
-	return const_cast<const char *>(m_id);
+	return m_id;
 }
 
 const char * Mod::getType() const {
-	return const_cast<const char *>(m_type);
+	return m_type;
 }
 
 const char * Mod::getGameVersion() const {
-	return const_cast<const char *>(m_gameVersion);
+	return m_gameVersion;
 }
 
 const char * Mod::getLatestVersion() const {
-	return const_cast<const char *>(m_latestVersion);
+	return m_latestVersion;
 }
 
-const char * Mod::getReleaseDate() const {
-	return const_cast<const char *>(m_releaseDate);
+const QDate & Mod::getReleaseDate() const {
+	return m_releaseDate;
+}
+
+const QString Mod::getReleaseDateAsString() const {
+	return m_releaseDate.isNull() ? QString() : Utilities::dateToString(m_releaseDate);
 }
 
 const char * Mod::getWebsite() const {
-	return const_cast<const char *>(m_website);
+	return m_website;
 }
 
 const ModTeam * Mod::getTeam() const {
-	return const_cast<const ModTeam *>(m_team);
+	return m_team;
 }
 
 void Mod::setName(const char * name) {
@@ -387,28 +378,47 @@ void Mod::setLatestVersion(const QString & latestVersion) {
 	}
 }
 
-void Mod::setReleaseDate(const char * releaseDate) {
-	if(m_releaseDate != NULL) {
-		delete [] m_releaseDate;
-		m_releaseDate = NULL;
+bool Mod::setReleaseDate(const char * releaseDate) {
+	if(releaseDate == NULL) {
+		m_releaseDate = QDate();
+		return true;
 	}
 	
-	if(releaseDate != NULL) {
-		m_releaseDate = Utilities::trimCopy(releaseDate);
+	QDate newReleaseDate = Utilities::parseDate(releaseDate);
+	if(newReleaseDate.isValid()) {
+		m_releaseDate = newReleaseDate;
+		return true;
 	}
+	return false;
 }
 
-void Mod::setReleaseDate(const QString & releaseDate) {
-	if(m_releaseDate != NULL) {
-		delete [] m_releaseDate;
-		m_releaseDate = NULL;
+bool Mod::setReleaseDate(const QString & releaseDate) {
+	if(releaseDate.isNull()) {
+		m_releaseDate = QDate();
+		return true;
 	}
 
-	if(!releaseDate.isNull()) {
-		QByteArray releaseDateBytes = releaseDate.toLocal8Bit();
-		const char * releaseDateData = releaseDateBytes.data();
-		m_releaseDate = Utilities::trimCopy(releaseDateData);
+	QDate newReleaseDate = Utilities::parseDate(releaseDate);
+	if(newReleaseDate.isValid()) {
+		m_releaseDate = newReleaseDate;
+		return true;
 	}
+	return false;
+}
+
+bool Mod::setReleaseDate(const QDate & releaseDate) {
+	if(releaseDate.isNull()) {
+		m_releaseDate = QDate();
+		return true;
+	}
+
+	if(!releaseDate.isValid()) {
+		return false;
+	}
+
+	m_releaseDate = releaseDate;
+
+	return true;
 }
 
 void Mod::setWebsite(const char * website) {

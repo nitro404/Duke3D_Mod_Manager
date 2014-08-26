@@ -78,11 +78,11 @@ ModVersionFile::~ModVersionFile(void) {
 }
 
 const char * ModVersionFile::getName() const {
-	return const_cast<const char *>(m_name);
+	return m_name;
 }
 
 const char * ModVersionFile::getType() const {
-	return const_cast<const char *>(m_type);
+	return m_type;
 }
 
 void ModVersionFile::setName(const char * name) {

@@ -1,7 +1,7 @@
 #include "Mod Collection/ModSortType.h"
 
-const char * ModSortTypes::sortTypeStrings[] = { "Invalid", "Default", "Name", "Release Date", "Rating" };
-const ModSortTypes::ModSortType ModSortTypes::defaultSortType = ModSortTypes::Default;
+const char * ModSortTypes::sortTypeStrings[] = { "Invalid", "Unsorted", "Name", "Release Date", "Rating", "Number of Mods" };
+const ModSortTypes::ModSortType ModSortTypes::defaultSortType = ModSortTypes::Unsorted;
 
 bool ModSortTypes::isValid(int sortType) {
 	return isValid(static_cast<ModSortTypes::ModSortType>(sortType));

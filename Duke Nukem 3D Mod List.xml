@@ -1097,7 +1097,6 @@
 			</version>
 		</files>
 		<downloads>
-			<download filename="dncctest.zip" version="Test" subfolder="original" type="Regular Version 1.3" />
 			<download filename="dncctest.zip" version="Test" subfolder="original" type="Atomic Edition 1.4/1.5" />
 			<download filename="dncc-640.zip" special="640x480" subfolder="original" type="Wallpaper 1" />
 			<download filename="dncc-800.zip" special="800x600" subfolder="original" type="Wallpaper 1" />
@@ -2331,7 +2330,6 @@
 			</version>
 		</files>
 		<downloads>
-			<download filename="nyr.zip" subfolder="original" type="Regular Version 1.3" />
 			<download filename="nyr.zip" subfolder="original" type="Atomic Edition 1.4/1.5" />
 			<download filename="New_York_Rebellion-ModMgr.zip" subfolder="mod_manager" type="Mod Manager Files" />
 		</downloads>
@@ -3389,7 +3387,6 @@
 			</version>
 		</files>
 		<downloads>
-			<download filename="gate.zip" version="1.0" subfolder="original" type="Regular Version 1.3" />
 			<download filename="gate.zip" version="1.0" subfolder="original" type="Atomic Edition 1.4/1.5" />
 			<download filename="gate.txt" version="1.0" special="Readme" subfolder="original" type="Documentation" />
 			<download filename="the-gate" version="1.0" special="Unofficial Mac Version" subfolder="original" type="Mac Version" />
@@ -3623,7 +3620,6 @@
 			</version>
 		</files>
 		<downloads>
-			<download filename="tchaos.zip" version="Demo" subfolder="original" type="Regular Version 1.3" />
 			<download filename="tchaos.zip" version="Demo" subfolder="original" type="Atomic Edition 1.4/1.5" />
 			<download filename="Total_Chaos_Demo-ModMgr.zip" version="Demo" subfolder="mod_manager" type="Mod Manager Files" />
 		</downloads>
@@ -4086,7 +4082,7 @@
 		</files>
 		<downloads>
 			<download filename="y2kdemo.zip" version="Demo 1.2" subfolder="original" type="Atomic Edition 1.4/1.5" />
-			<download filename="y2kdemo.zip" version="Demo 1.2" special="Replacement Game Demo" subfolder="original" type="Game Demo" />
+			<download filename="demo1.zip" version="Demo 1.2" special="Replacement Game Demo" subfolder="original" type="Game Demo" />
 			<download filename="Y2K_Nuklear_Meltdown_Demo_1.2-ModMgr.zip" version="Demo 1.2" subfolder="mod_manager" type="Mod Manager Files" />
 		</downloads>
 	</mod>
@@ -4584,9 +4580,9 @@
 	<mod name="Flamethrower (2)" id="flamethrower_2">
 		<information type="Weapon Patch" game="Regular Version 1.3" release_date="April 5, 1997" website="http://ivyweb.com/lindsay">
 			<team name="Lindsay Enterprises">
-				<member name="Unknown" email="lehq@ivyweb.com" />
-				<member name="Unknown" email="lepres@ix.netcom.com" />
-				<member name="Unknown" email="jlindsay@galaxy-net.com" />
+				<member name="lehq" email="lehq@ivyweb.com" />
+				<member name="lepres" email="lepres@ix.netcom.com" />
+				<member name="jlindsay" email="jlindsay@galaxy-net.com" />
 			</team>
 		</information>
 		<review overall="5" level="n/a" art="4" sound="5" code="5" />
@@ -5226,7 +5222,6 @@
 			</version>
 		</files>
 		<downloads>
-			<download filename="STweapons.zip" version="Beta 1.5" subfolder="original" type="Regular Version 1.3" />
 			<download filename="STweapons.zip" version="Beta 1.5" subfolder="original" type="Atomic Edition 1.4/1.5" />
 			<download filename="The_Star_Trek_Weapons_Patch_Beta_1.5-ModMgr.zip" version="Beta 1.5" subfolder="mod_manager" type="Mod Manager Files" />
 		</downloads>

@@ -14,14 +14,15 @@ ModManager::~ModManager() {
 		SettingsManager::getInstance()->modManagerMode = m_mode;
 		SettingsManager::getInstance()->gameType = m_gameType;
 	}
-
-	for(int i=0;i<m_favourites.size();i++) {
-		delete m_favourites[i];
-	}
 }
 
-bool ModManager::init(const ArgumentParser * args) {
+bool ModManager::init(const ArgumentParser * args, bool start) {
 	if(m_initialized) { return true; }
+
+	if(args->hasArgument("?")) {
+		displayHelp();
+		return false;
+	}
 
 	m_mode = SettingsManager::getInstance()->modManagerMode;
 	m_gameType = SettingsManager::getInstance()->gameType;
@@ -35,13 +36,16 @@ bool ModManager::init(const ArgumentParser * args) {
 		printf("No mods loaded!\n");
 		return false;
 	}
-	printf("%d mods loaded.\n", m_mods.numberOfMods());
+	printf("%d mod%s loaded.\n", m_mods.numberOfMods(), m_mods.numberOfMods() == 1 ? "" : "s");
 
-	m_organizedMods.setModCollection(&m_mods);
+	m_favouriteMods.init(&m_mods);
+	if(m_favouriteMods.numberOfFavourites() > 0) {
+		printf("%d favourite mod%s loaded.\n", m_favouriteMods.numberOfFavourites(), m_favouriteMods.numberOfFavourites() == 1 ? "" : "s");
+	}
+
+	m_organizedMods.init(&m_mods, &m_favouriteMods);
 
 	m_initialized = true;
-
-	loadFavourites();
 
 	checkForMissingExecutables();
 
@@ -51,7 +55,9 @@ bool ModManager::init(const ArgumentParser * args) {
 
 	printf("\n");
 
-	handleArguments(args);
+	if(!handleArguments(args, start)) {
+		return false;
+	}
 
 	return true;
 }
@@ -59,11 +65,9 @@ bool ModManager::init(const ArgumentParser * args) {
 bool ModManager::uninit() {
 	if(!m_initialized) { return false; }
 
-	saveFavourites();
-
-	m_organizedMods.setModCollection(NULL);
 	m_selectedMod = NULL;
-	m_favourites.clear();
+	m_organizedMods.uninit();
+	m_favouriteMods.uninit();
 	m_mods.clearMods();
 	m_scriptArgs.clear();
 
@@ -210,21 +214,18 @@ bool ModManager::setSelectedMod(const QString & name) {
 }
 
 void ModManager::selectRandomMod() {
-// TODO: account for category filter
 	if(!m_initialized) { return; }
 
-	m_selectedMod = m_mods.getMod(Utilities::randomInteger(0, m_mods.numberOfMods() - 1));
+	m_selectedMod = m_organizedMods.getMod(Utilities::randomInteger(0, m_organizedMods.numberOfMods() - 1));
 }
 
 int ModManager::searchForAndSelectMod(const char * query) {
-// TODO: account for category filter
 	if(!m_initialized || query == NULL || Utilities::stringLength(query) == 0) { return -1; }
 
 	return searchForAndSelectMod(QString(query));
 }
 
 int ModManager::searchForAndSelectMod(const QString & query) {
-// TODO: account for category filter
 	if(!m_initialized) { return -1; }
 
 	QString data = query.trimmed().toLower();
@@ -260,658 +261,45 @@ void ModManager::clearSelectedMod() {
 	m_selectedMod = NULL;
 }
 
-int ModManager::numberOfFavourites() {
-	return m_favourites.size();
-}
-
-bool ModManager::hasFavourite(const ModInformation & favourite) const {
-	for(int i=0;i<m_favourites.size();i++) {
-		if(*m_favourites[i] == favourite) {
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ModManager::hasFavourite(const char * name) const {
-	if(name == NULL || Utilities::stringLength(name) == 0) { return false; }
-
-	for(int i=0;i<m_favourites.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), name) == 0) {
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ModManager::hasFavourite(const QString & name) const {
-	if(name.isEmpty()) { return false; }
-	QByteArray nameBytes = name.toLocal8Bit();
-	const char * nameData = nameBytes.data();
-
-	for(int i=0;i<m_favourites.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), nameData) == 0) {
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ModManager::hasFavourite(const char * name, const char * version) const {
-	if(name == NULL || Utilities::stringLength(name) == 0) { return false; }
-
-	for(int i=0;i<m_favourites.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), name) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_favourites[i]->getVersion(), version) == 0) {
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ModManager::hasFavourite(const QString & name, const QString & version) const {
-	if(name.isEmpty()) { return false; }
-	QByteArray nameBytes = name.toLocal8Bit();
-	const char * nameData = nameBytes.data();
-
-	QByteArray versionBytes = version.toLocal8Bit();
-	const char * versionData = version.isNull() ? NULL : versionBytes.data();
-
-	for(int i=0;i<m_favourites.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), nameData) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_favourites[i]->getVersion(), versionData) == 0) {
-			return true;
-		}
-	}
-	return false;
-}
-
-int ModManager::indexOfFavourite(const ModInformation & favourite) const {
-	for(int i=0;i<m_favourites.size();i++) {
-		if(*m_favourites[i] == favourite) {
-			return i;
-		}
-	}
-	return -1;
-}
-
-int ModManager::indexOfFavourite(const char * name) const {
-	if(name == NULL || Utilities::stringLength(name) == 0) { return -1; }
-
-	for(int i=0;i<m_favourites.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), name) == 0) {
-			return i;
-		}
-	}
-	return -1;
-}
-
-int ModManager::indexOfFavourite(const QString & name) const {
-	if(name.isEmpty()) { return -1; }
-	QByteArray nameBytes = name.toLocal8Bit();
-	const char * nameData = nameBytes.data();
-
-	for(int i=0;i<m_favourites.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), nameData) == 0) {
-			return i;
-		}
-	}
-	return -1;
-}
-
-int ModManager::indexOfFavourite(const char * name, const char * version) const {
-	if(name == NULL || Utilities::stringLength(name) == 0) { return -1; }
-
-	for(int i=0;i<m_favourites.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), name) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_favourites[i]->getVersion(), version) == 0) {
-			return i;
-		}
-	}
-	return -1;
-}
-
-int ModManager::indexOfFavourite(const QString & name, const QString & version) const {
-	if(name.isEmpty()) { return -1; }
-	QByteArray nameBytes = name.toLocal8Bit();
-	const char * nameData = nameBytes.data();
-
-	QByteArray versionBytes = version.toLocal8Bit();
-	const char * versionData = version.isNull() ? NULL : versionBytes.data();
-
-	for(int i=0;i<m_favourites.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), nameData) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_favourites[i]->getVersion(), versionData) == 0) {
-			return i;
-		}
-	}
-	return -1;
-}
-
-const ModInformation * ModManager::getFavourite(int index) const {
-	if(index < 0 || index >= m_favourites.size()) { return NULL; }
-
-	return m_favourites[index];
-}
-
-const ModInformation * ModManager::getFavourite(const char * name) const {
-	if(name == NULL || Utilities::stringLength(name) == 0) { return NULL; }
-
-	for(int i=0;i<m_favourites.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), name) == 0) {
-			return m_favourites[i];
-		}
-	}
-	return NULL;
-}
-
-const ModInformation * ModManager::getFavourite(const QString & name) const {
-	if(name.isEmpty()) { return NULL; }
-	QByteArray nameBytes = name.toLocal8Bit();
-	const char * nameData = nameBytes.data();
-
-	for(int i=0;i<m_favourites.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), nameData) == 0) {
-			return m_favourites[i];
-		}
-	}
-	return NULL;
-}
-
-const ModInformation * ModManager::getFavourite(const char * name, const char * version) const {
-	if(name == NULL || Utilities::stringLength(name) == 0) { return NULL; }
-
-	for(int i=0;i<m_favourites.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), name) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_favourites[i]->getVersion(), version) == 0) {
-			return m_favourites[i];
-		}
-	}
-	return NULL;
-}
-
-const ModInformation * ModManager::getFavourite(const QString & name, const QString & version) const {
-	if(name.isEmpty()) { return NULL; }
-	QByteArray nameBytes = name.toLocal8Bit();
-	const char * nameData = nameBytes.data();
-
-	QByteArray versionBytes = version.toLocal8Bit();
-	const char * versionData = version.isNull() ? NULL : versionBytes.data();
-
-	for(int i=0;i<m_favourites.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), nameData) == 0,
-		   Utilities::compareStringsIgnoreCase(m_favourites[i]->getVersion(), versionData) == 0) {
-			return m_favourites[i];
-		}
-	}
-	return NULL;
-}
-
-bool ModManager::addFavourite(ModInformation * favourite) {
-	if(favourite == NULL || Utilities::stringLength(favourite->getName()) == 0 || hasFavourite(*favourite)) {
-		return false;
-	}
-	
-	m_favourites.push_back(favourite);
-
-	return true;
-}
-
-bool ModManager::removeFavourite(int index) {
-	if(index < 0 || index >= m_favourites.size()) { return false; }
-	
-	delete m_favourites[index];
-	m_favourites.remove(index);
-	
-	return true;
-}
-
-bool ModManager::removeFavourite(const ModInformation & favourite) {
-	for(int i=0;i<m_favourites.size();i++) {
-		if(*m_favourites[i] == favourite) {
-			delete m_favourites[i];
-			m_favourites.remove(i);
-			
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ModManager::removeFavourite(const char * name) {
-	if(name == NULL || Utilities::stringLength(name) == 0) { return false; }
-
-	for(int i=0;i<m_favourites.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), name) == 0) {
-			delete m_favourites[i];
-			m_favourites.remove(i);
-
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ModManager::removeFavourite(const QString & name) {
-	if(name.isEmpty()) { return false; }
-	QByteArray nameBytes = name.toLocal8Bit();
-	const char * nameData = nameBytes.data();
-
-	for(int i=0;i<m_favourites.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), nameData) == 0) {
-			delete m_favourites[i];
-			m_favourites.remove(i);
-
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ModManager::removeFavourite(const char * name, const char * version) {
-	if(name == NULL || Utilities::stringLength(name) == 0) { return false; }
-
-	for(int i=0;i<m_favourites.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), name) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_favourites[i]->getVersion(), version) == 0) {
-			delete m_favourites[i];
-			m_favourites.remove(i);
-
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ModManager::removeFavourite(const QString & name, const QString & version) {
-	if(name.isEmpty()) { return false; }
-	QByteArray nameBytes = name.toLocal8Bit();
-	const char * nameData = nameBytes.data();
-
-	QByteArray versionBytes = version.toLocal8Bit();
-	const char * versionData = version.isNull() ? NULL : versionBytes.data();
-
-	for(int i=0;i<m_favourites.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), nameData) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_favourites[i]->getVersion(), versionData) == 0) {
-			delete m_favourites[i];
-			m_favourites.remove(i);
-
-			return true;
-		}
-	}
-	return false;
-}
-
-void ModManager::clearFavourites() {
-	for(int i=0;i<m_favourites.size();i++) {
-		delete m_favourites[i];
-	}
-	m_favourites.clear();
-}
-
-bool ModManager::loadFavourites() {
-	return loadFavourites(SettingsManager::getInstance()->favouritesListFileName);
-}
-
-bool ModManager::loadFavourites(const QString & fileName) {
-	if(fileName.isEmpty()) { return false; }
-	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
-
-	return loadFavourites(fileNameData);
-}
-
-bool ModManager::loadFavourites(const char * fileName) {
-	if(fileName == NULL || Utilities::stringLength(fileName) == 0) { return false; }
-	
-	char * fileExtension = Utilities::getFileExtension(fileName);
-	
-	if(fileExtension == NULL) {
-		return false;
-	}
-	else if(Utilities::compareStringsIgnoreCase(fileExtension, "txt") == 0 || Utilities::compareStringsIgnoreCase(fileExtension, "ini") == 0) {
-		return loadFavouritesList(fileName);
-	}
-	else if(Utilities::compareStringsIgnoreCase(fileExtension, "xml") == 0) {
-		return loadFavouritesXML(fileName);
-	}
-	return false;
-}
-
-bool ModManager::loadFavouritesList(const QString & fileName) {
-	if(fileName.isEmpty()) { return false; }
-	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
-
-	return loadFavouritesList(fileNameData);
-}
-
-bool ModManager::loadFavouritesList(const char * fileName) {
-	if(!m_initialized) { return false; }
-
-	QString favouritesListPath(fileName);
-	
-	QFileInfo favouritesListFileInfo(favouritesListPath);
-	if(!favouritesListFileInfo.exists()) { return false; }
-	
-	QFile input(favouritesListPath);
-	if(!input.open(QIODevice::ReadOnly | QIODevice::Text)) { return false; }
-
-	clearFavourites();
-
-	QString line;
-
-	while(true) {
-		if(input.atEnd()) { break; }
-		
-		line = input.readLine().trimmed();
-
-		if(line.length() == 0) { continue; }
-
-		const Mod * mod = m_mods.getMod(line);
-
-		if(mod != NULL) {
-			addFavourite(new ModInformation(mod->getName(), mod->getLatestVersion()));
-		}
-		else {
-			QByteArray lineBytes = line.toLocal8Bit();
-			const char * lineData = lineBytes.data();
-
-			printf("Unknown or missing mod in favourites list: %s\n", lineData);
-		}
-	}
-
-	if(m_favourites.size() > 0) {
-		printf("%d favourite mod%s loaded.\n", m_favourites.size(), m_favourites.size() == 1 ? "" : "s");
-	}
-
-	input.close();
-
-	return true;
-}
-
-bool ModManager::loadFavouritesXML(const QString & fileName) {
-	if(fileName.isEmpty()) { return false; }
-	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
-
-	return loadFavouritesXML(fileNameData);
-}
-
-bool ModManager::loadFavouritesXML(const char * fileName) {
-	if(!m_initialized) { return false; }
-
-	if(fileName == NULL || Utilities::stringLength(fileName) == 0) { return false; }
-
-	QString favouritesListPath(fileName);
-	
-	QFileInfo favouritesListFileInfo(favouritesListPath);
-	if(!favouritesListFileInfo.exists()) { return false; }
-	
-	QFile favouritesListFile(favouritesListPath);
-	if(!favouritesListFile.open(QIODevice::ReadOnly | QIODevice::Text)) { return false; }
-	
-	clearFavourites();
-
-	QXmlStreamReader input(&favouritesListFile);
-
-	QXmlStreamAttributes attributes;
-	ModInformation * newModInfo = NULL;
-	QString name, version;
-	bool foundRootNode = false;
-
-	while(true) {
-		if(input.atEnd() || input.hasError()) {
-			break;
-		}
-
-		if(input.readNext() == QXmlStreamReader::StartDocument) {
-			continue;
-		}
-
-		if(input.isStartElement()) {
-			if(!foundRootNode) {
-				if(QString::compare(input.name().toString(), "favourites", Qt::CaseInsensitive) == 0) {
-					foundRootNode = true;
-
-					attributes = input.attributes();
-
-					QString game, fileVersion;
-
-					if(attributes.hasAttribute("game")) {
-						game = attributes.value("game").toString();
-						if(QString::compare(game, "Duke Nukem 3D", Qt::CaseInsensitive) != 0) {
-							printf("Specified mod list is for an unsupported game: \"%s\".\n", game.toLocal8Bit().data());
-							break;
-						}
-					}
-					else {
-						printf("Root mods node missing required game attribute.\n");
-						break;
-					}
-
-					if(attributes.hasAttribute("favourites_version")) {
-						fileVersion = attributes.value("favourites_version").toString();
-						if(QString::compare(fileVersion, "1.0", Qt::CaseInsensitive) != 0) {
-							printf("Mod list version %s is unsupported.\n", fileVersion.toLocal8Bit().data());
-							break;
-						}
-					}
-					else {
-						printf("Root mods node missing required mods_version attribute.\n");
-						break;
-					}
-				}
-				
-				continue;
-			}
-
-			if(QString::compare(input.name().toString(), "mod", Qt::CaseInsensitive) == 0) {
-				attributes = input.attributes();
-
-				if(attributes.hasAttribute("name")) {
-					name = attributes.value("name").toString();
-				}
-				else {
-					printf("Found favourite mod entry missing required name attribute.\n");
-					break;
-				}
-
-				if(attributes.hasAttribute("version")) {
-					version = attributes.value("version").toString();
-				}
-			}
-
-			if(!name.isEmpty()) {
-				addFavourite(new ModInformation(name, version));
-			}
-
-			name.clear();
-			version.clear();
-		}
-		else if(input.isEndElement()) {
-			if(QString::compare(input.name().toString(), "favourites", Qt::CaseInsensitive) == 0) {
-				break;
-			}
-		}
-	}
-
-	favouritesListFile.close();
-
-	return true;
-}
-
-bool ModManager::saveFavourites() {
-	return saveFavourites(SettingsManager::getInstance()->favouritesListFileName);
-}
-
-bool ModManager::saveFavourites(const QString & fileName) {
-	if(fileName.isEmpty()) { return false; }
-	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
-
-	return saveFavourites(fileNameData);
-}
-
-bool ModManager::saveFavourites(const char * fileName) {
-	if(fileName == NULL || Utilities::stringLength(fileName) == 0) { return false; }
-	
-	char * fileExtension = Utilities::getFileExtension(fileName);
-	
-	if(fileExtension == NULL) {
-		return false;
-	}
-	else if(Utilities::compareStringsIgnoreCase(fileExtension, "txt") == 0 || Utilities::compareStringsIgnoreCase(fileExtension, "ini") == 0) {
-		return saveFavouritesList(fileName);
-	}
-	else if(Utilities::compareStringsIgnoreCase(fileExtension, "xml") == 0) {
-		return saveFavouritesXML(fileName);
-	}
-	return false;
-}
-
-bool ModManager::saveFavouritesList(const QString & fileName) {
-	if(fileName.isEmpty()) { return false; }
-	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
-
-	return saveFavouritesList(fileNameData);
-}
-
-bool ModManager::saveFavouritesList(const char * fileName) {
-	if(!m_initialized) { return false; }
-
-	if(m_favourites.size() == 0) { return true; }
-
-	QString favouritesListPath(fileName);
-	
-	QFile output(favouritesListPath);
-	if(!output.open(QIODevice::WriteOnly)) { return false; }
-	
-	for(int i=0;i<m_favourites.size();i++) {
-		output.write(m_favourites[i]->getName(), Utilities::stringLength(m_favourites[i]->getName()));
-		output.write(Utilities::newLine, Utilities::stringLength(Utilities::newLine));
-	}
-	
-	output.close();
-	
-	return true;
-}
-
-bool ModManager::saveFavouritesXML(const QString & fileName) {
-	if(fileName.isEmpty()) { return false; }
-	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
-
-	return saveFavouritesList(fileNameData);
-}
-
-bool ModManager::saveFavouritesXML(const char * fileName) {
-	if(!m_initialized) { return false; }
-
-	if(m_favourites.size() == 0) { return true; }
-
-	QString favouritesListPath(fileName);
-	
-	QFile favouritesListFile(favouritesListPath);
-	if(!favouritesListFile.open(QIODevice::WriteOnly)) { return false; }
-
-	QXmlStreamWriter output(&favouritesListFile);
-
-	output.setAutoFormatting(true);
-
-	output.writeStartDocument();
-
-	output.writeStartElement("favourites");
-
-	output.writeAttribute("game", "Duke Nukem 3D");
-	output.writeAttribute("id", "duke_nukem_3d");
-	output.writeAttribute("favourites_version", "1.0");
-
-	for(int i=0;i<m_favourites.size();i++) {
-		output.writeStartElement("mod");
-
-		output.writeAttribute("name", m_favourites[i]->getName());
-		if(m_favourites[i]->getVersion() != NULL) {
-			output.writeAttribute("version", m_favourites[i]->getVersion());
-		}
-
-		output.writeEndElement();
-	}
-
-	output.writeEndElement();
-
-	output.writeEndDocument();
-
-	favouritesListFile.close();
-
-	return true;
-}
-
-void ModManager::runGameTypePrompt() {
-	// TODO: finish runGameTypePrompt
-}
-
-void ModManager::runModePrompt() {
-	// TODO: finish runModePrompt
-}
-
-void ModManager::runIPAddressPrompt() {
-	bool valid = false;
-	QTextStream in(stdin);
-	QString input, data;
-	do {
-		printf("Enter host IP Address:\n");
-		printf("> ");
-
-		input = in.readLine();
-		data = input.trimmed();
-
-		valid = true;
-
-		if(data.length() == 0) { valid = false; }
-
-		for(int i=0;i<data.length();i++) {
-			if(data[i] == ' ' || data[i] == '\t') {
-				valid = false;
-			}
-		}
-
-		if(valid) {
-			QByteArray dataBytes = data.toLocal8Bit();
-			const char * rawData = dataBytes.data();
-
-			if(SettingsManager::getInstance()->serverIPAddress != NULL) { delete [] SettingsManager::getInstance()->serverIPAddress; }
-			SettingsManager::getInstance()->serverIPAddress = new char[Utilities::stringLength(rawData) + 1];
-			Utilities::copyString(SettingsManager::getInstance()->serverIPAddress, Utilities::stringLength(rawData) + 1, rawData);
-
-			printf("\nHost IP Address changed to: %s\n\n", rawData);
-
-			Utilities::pause();
-
-			break;
-		}
-		else {
-			printf("Invalid IP Address!\n\n");
-			Utilities::pause();
-		}
-	} while(true);
-}
-
 void ModManager::runMenu() {
 	if(!m_initialized) { return; }
 
 	int selectedIndex = -1;
 	bool valid = false;
 	QTextStream in(stdin);
-	QString input, data;
+	QString input, data, date;
+	QByteArray dateBytes;
 
 	while(true) {
-		for(int i=0;i<m_mods.numberOfMods();i++) {
-			printf("%d: %s\n", (i + 1), m_mods.getMod(i)->getName());
+		if(m_organizedMods.getFilterType() == ModFilterTypes::None || m_organizedMods.getFilterType() == ModFilterTypes::Favourites) {
+			for(int i=0;i<m_organizedMods.numberOfMods();i++) {
+				printf("%d: %s", (i + 1), m_organizedMods.getMod(i)->getName());
+				if(m_organizedMods.getSortType() == ModSortTypes::ReleaseDate) {
+					if(!m_organizedMods.getMod(i)->getReleaseDate().isNull()) {
+						date = Utilities::dateToString(m_organizedMods.getMod(i)->getReleaseDate());
+						dateBytes = date.toLocal8Bit();
+
+						printf(" (%s)", dateBytes.data());
+					}
+				}
+				if(m_organizedMods.getSortType() == ModSortTypes::Rating) {
+// TODO: rating
+				}
+				printf("\n");
+			}
+		}
+		else if(m_organizedMods.getFilterType() == ModFilterTypes::Teams) {
+			for(int i=0;i<m_organizedMods.numberOfTeams();i++) {
+				printf("%d: %s (%d)\n", (i + 1), m_organizedMods.getTeamInfo(i)->getName(), m_organizedMods.getTeamInfo(i)->getModCount());
+			}
+		}
+		else if(m_organizedMods.getFilterType() == ModFilterTypes::Authors) {
+			for(int i=0;i<m_organizedMods.numberOfAuthors();i++) {
+				printf("%d: %s (%d)\n", (i + 1), m_organizedMods.getAuthorInfo(i)->getName(), m_organizedMods.getAuthorInfo(i)->getModCount());
+			}
 		}
 		printf("> ");
+// TODO: handle author / mod stuff, and add menu options to switch / clear / go back / etc.
 
 		input = in.readLine();
 		data = input.trimmed().toLower();
@@ -957,10 +345,26 @@ void ModManager::runMenu() {
 
 		selectedIndex = input.toInt(&valid, 10);
 
-		valid = valid && selectedIndex >= 1 && selectedIndex <= m_mods.numberOfMods();
+		if(m_organizedMods.getFilterType() == ModFilterTypes::None || m_organizedMods.getFilterType() == ModFilterTypes::Favourites) {
+			valid = valid && selectedIndex >= 1 && selectedIndex <= m_organizedMods.numberOfMods();
+		}
+		else if(m_organizedMods.getFilterType() == ModFilterTypes::Teams) {
+			valid = valid && selectedIndex >= 1 && selectedIndex <= m_organizedMods.numberOfTeams();
+		}
+		else if(m_organizedMods.getFilterType() == ModFilterTypes::Authors) {
+			valid = valid && selectedIndex >= 1 && selectedIndex <= m_organizedMods.numberOfAuthors();
+		}
 
 		if(valid) {
-			m_selectedMod = m_mods.getMod(selectedIndex - 1);
+			if(m_organizedMods.getFilterType() == ModFilterTypes::None || m_organizedMods.getFilterType() == ModFilterTypes::Favourites) {
+				m_selectedMod = m_organizedMods.getMod(selectedIndex - 1);
+			}
+			else if(m_organizedMods.getFilterType() == ModFilterTypes::Teams) {
+				m_organizedMods.setSelectedTeam(selectedIndex - 1);
+			}
+			else if(m_organizedMods.getFilterType() == ModFilterTypes::Authors) {
+				m_organizedMods.setSelectedAuthor(selectedIndex - 1);
+			}
 			break;
 		}
 		else {
@@ -972,6 +376,64 @@ void ModManager::runMenu() {
 	printf("\n");
 
 	runSelectedMod();
+}
+
+void runFilterPrompt() {
+// TODO: finish filter prompt
+}
+
+void runSortPompt() {
+// TODO: finish sort prompt
+}
+
+void ModManager::runGameTypePrompt() {
+// TODO: finish game type prompt
+}
+
+void ModManager::runModePrompt() {
+// TODO: finish mod manager mode prompt
+}
+
+void ModManager::runIPAddressPrompt() {
+	bool valid = false;
+	QTextStream in(stdin);
+	QString input, data;
+	do {
+		printf("Enter host IP Address:\n");
+		printf("> ");
+
+		input = in.readLine();
+		data = input.trimmed();
+
+		valid = true;
+
+		if(data.length() == 0) { valid = false; }
+
+		for(int i=0;i<data.length();i++) {
+			if(data[i] == ' ' || data[i] == '\t') {
+				valid = false;
+			}
+		}
+
+		if(valid) {
+			QByteArray dataBytes = data.toLocal8Bit();
+			const char * rawData = dataBytes.data();
+
+			if(SettingsManager::getInstance()->serverIPAddress != NULL) { delete [] SettingsManager::getInstance()->serverIPAddress; }
+			SettingsManager::getInstance()->serverIPAddress = new char[Utilities::stringLength(rawData) + 1];
+			Utilities::copyString(SettingsManager::getInstance()->serverIPAddress, Utilities::stringLength(rawData) + 1, rawData);
+
+			printf("\nHost IP Address changed to: %s\n\n", rawData);
+
+			Utilities::pause();
+
+			break;
+		}
+		else {
+			printf("Invalid IP Address!\n\n");
+			Utilities::pause();
+		}
+	} while(true);
 }
 
 void ModManager::runSearchPrompt() {
@@ -1196,7 +658,7 @@ bool ModManager::updateScriptArgs() {
 	return true;
 }
 
-bool ModManager::handleArguments(const ArgumentParser * args) {
+bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
 	if(args == NULL) { return false; }
 
 	if(args->hasArgument("m")) {
@@ -1251,7 +713,7 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 			}
 		}
 		else {
-			printf("Invalid game type argument, please specify one of the following: %s / %s / %s / %s\n", GameTypes::toString(GameTypes::Game), GameTypes::toString(GameTypes::Setup), GameTypes::toString(GameTypes::Client), GameTypes::toString(GameTypes::Server));
+			printf("Invalid game type, please specify one of the following: %s / %s / %s / %s\n", GameTypes::toString(GameTypes::Game), GameTypes::toString(GameTypes::Setup), GameTypes::toString(GameTypes::Client), GameTypes::toString(GameTypes::Server));
 			return false;
 		}
 	}
@@ -1259,29 +721,29 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 // TODO: add better output
 	if(args->hasArgument("q")) {
 		if(args->hasArgument("r") || args->hasArgument("g") || args->hasArgument("x")) {
-			printf("Redundant arguments specified, please specify either q OR r OR (x AND/OR g).\n");
+			printf("Redundant arguments specified, please specify either q OR r OR (g AND/OR x).\n");
 			return false;
 		}
 
 		int numberOfMatches = searchForAndSelectMod(args->getValue("q"));
 
 		if(numberOfMatches == -1) {
-			printf("Invalid or empty search query argument.\n");
+			printf("Invalid or empty search query.\n");
 			return false;
 		}
 		else if(numberOfMatches == 0) {
-			printf("No matches found for specified argument.\n\n");
+			printf("No matches found for specified search query.\n\n");
 			return false;
 		}
 		else if(numberOfMatches == 1) {
-			printf("Selected mod from argument: %s\n", m_selectedMod->getName());
+			printf("Selected mod from search query: %s\n", m_selectedMod->getName());
 
 			runSelectedMod();
 
 			return true;
 		}
 		else {
-			printf("%d matches found, please refine your argument search query.\n", numberOfMatches);
+			printf("%d matches found, please refine your search query.\n", numberOfMatches);
 			return false;
 		}
 	}
@@ -1300,8 +762,12 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 		runSelectedMod(args);
 		return true;
 	}
+	
+	if(start) {
+		run();
+	}
 
-	return false;
+	return true;
 }
 
 int ModManager::checkForUnlinkedModFiles() const {
@@ -1477,4 +943,17 @@ int ModManager::checkForMissingExecutables() {
 	}
 
 	return numberOfMissingExecutables++;
+}
+
+void ModManager::displayHelp() {
+	printf("Duke Nukem 3D Mod Manager arguments:\n");
+	printf(" -s \"Settings.ini\" - specifies an alternate settings file to use.\n");
+	printf(" -m DOSBox/Windows - specifies mod manager mode, default: DOSBox.\n");
+	printf(" -t Game/Setup/Client/Server - specifies game type, default: Game.\n");
+	printf(" -ip 127.0.0.1 - specifies host ip address if running in client mode.\n");
+	printf(" -g Mod.grp - manually specifies a group file to use.\n");
+	printf(" -x Mod.con - manually specifies a game con file to use.\n");
+	printf(" -q \"Mod Name\" - searches for and selects the matching mod, if there is one.\n");
+	printf(" -r - randomly selects a mod to run.\n");
+	printf(" -? - displays this help message.\n");
 }

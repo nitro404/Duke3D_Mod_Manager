@@ -8,6 +8,8 @@ const char Utilities::newLine[] = "\r";
 const char Utilities::newLine[] = "\n";
 #endif
 
+const char * Utilities::monthStrings[] = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+
 int Utilities::randomInteger(int min, int max, bool randomize) {
 	if(randomize) {
 		QTime time = QTime::currentTime();
@@ -245,6 +247,54 @@ QString Utilities::getFileExtension(const QString & fileName) {
 bool Utilities::fileHasExtension(const QString & fileName, const QString & fileExtension) {
 	QString actualFileExtension = getFileExtension(fileName);
 	return !actualFileExtension.isNull() && QString::compare(actualFileExtension, fileExtension, Qt::CaseInsensitive) == 0;
+}
+
+QDate Utilities::parseDate(const char * date) {
+	if(date == NULL) { return QDate(); }
+
+	return parseDate(QString(date));
+}
+
+QDate Utilities::parseDate(const QString & date) {
+	if(date.trimmed().isEmpty()) { return QDate(); }
+
+	QRegExp dateRegExp(QString("[ ,]+"));
+	QRegExp integerRegExp(QString("^[0-9]+$"));
+
+	QStringList dateParts = date.trimmed().split(dateRegExp, QString::SkipEmptyParts);
+
+	if(dateParts.size() != 3) {
+		return QDate();
+	}
+
+	int year = -1;
+	int month = -1;
+	int day = -1;
+	for(int i=0;i<12;i++) {
+		if(Utilities::compareStringsIgnoreCase(dateParts[0], monthStrings[i]) == 0) {
+			month = i + 1;
+			break;
+		}
+	}
+	if(month < 1) { return QDate(); }
+
+	if(!integerRegExp.exactMatch(dateParts[1]) || !integerRegExp.exactMatch(dateParts[2])) { return QDate(); }
+
+	bool success = false;
+
+	day = dateParts[1].toInt(&success, 10);
+	if(!success || day < 1 || day > 31) { return QDate(); }
+
+	year = dateParts[2].toInt(&success, 10);
+	if(!success || year < 1) { return QDate(); }
+
+	return QDate(year, month, day);
+}
+
+QString Utilities::dateToString(const QDate & date) {
+	if(date.isNull()) { return QString(); }
+
+	return QString("%1 %2, %3").arg(monthStrings[date.month() - 1]).arg(date.day()).arg(date.year());
 }
 
 void Utilities::deleteFiles(const char * suffix) {

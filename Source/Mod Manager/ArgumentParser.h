@@ -16,7 +16,6 @@ public:
 	~ArgumentParser();
 
 	bool parseArguments(int argc, char * argv[]);
-	void displayHelp() const;
 };
 
 #endif // ARGUMENT_PARSER_H

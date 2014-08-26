@@ -3,6 +3,7 @@
 
 #include <QString.h>
 #include <QVector.h>
+#include <QDate>
 #include "Utilities/Utilities.h"
 #include "Mod Collection/ModVersion.h"
 #include "Mod Collection/ModTeam.h"
@@ -23,7 +24,8 @@ public:
 	const char * getType() const;
 	const char * getGameVersion() const;
 	const char * getLatestVersion() const;
-	const char * getReleaseDate() const;
+	const QDate & getReleaseDate() const;
+	const QString getReleaseDateAsString() const;
 	const char * getWebsite() const;
 	const ModTeam * getTeam() const;
 
@@ -37,8 +39,9 @@ public:
 	void setGameVersion(const QString & gameVersion);
 	void setLatestVersion(const char * latestVersion);
 	void setLatestVersion(const QString & latestVersion);
-	void setReleaseDate(const char * releaseDate);
-	void setReleaseDate(const QString & releaseDate);
+	bool setReleaseDate(const char * releaseDate);
+	bool setReleaseDate(const QString & releaseDate);
+	bool setReleaseDate(const QDate & releaseDate);
 	void setWebsite(const char * website);
 	void setWebsite(const QString & website);
 	void setTeam(ModTeam * team);
@@ -114,7 +117,7 @@ private:
 	char * m_type;
 	char * m_gameVersion;
 	char * m_latestVersion;
-	char * m_releaseDate;
+	QDate m_releaseDate;
 	char * m_website;
 	ModTeam * m_team;
 	QVector<ModVersion *> m_versions;

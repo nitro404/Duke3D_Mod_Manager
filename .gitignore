@@ -15,6 +15,8 @@ Duke Nukem 3D Favourite Mods *.*
 *.sdf
 *.suo
 *.vcproj.*
+*.vcxproj.*
+*.opensdf
 *.EXE
 *.GRP
 *.CON

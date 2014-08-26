@@ -4,6 +4,7 @@
 #include <QMap.h>
 #include <QString.h>
 #include <QStringList.h>
+#include "Utilities/Utilities.h"
 #include "Argument Collection/ArgumentCase.h"
 
 class ArgumentCollection {
@@ -19,6 +20,7 @@ public:
 	int numberOfArguments() const;
 	bool hasArgument(const char * name) const;
 	bool hasArgument(const QString & name) const;
+	QString getValue(int index) const;
 	QString getValue(const char * name) const;
 	QString getValue(const QString & name) const;
 	bool setArgument(const char * name, const char * value);

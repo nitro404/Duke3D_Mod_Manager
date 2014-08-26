@@ -1,4 +1,4 @@
-#include "Mod Manager/ModInformation.h"
+#include "Mod Collection/ModInformation.h"
 
 ModInformation::ModInformation(const char * name, const char * version)
 	: m_name(NULL)
@@ -65,7 +65,7 @@ ModInformation::~ModInformation() {
 }
 
 const char * ModInformation::getName() const {
-	return const_cast<const char *>(m_name);
+	return m_name;
 }
 
 const QString ModInformation::getFullName() const {
@@ -73,7 +73,7 @@ const QString ModInformation::getFullName() const {
 }
 
 const char * ModInformation::getVersion() const {
-	return const_cast<const char *>(m_version);
+	return m_version;
 }
 
 void ModInformation::setName(const char * name) {

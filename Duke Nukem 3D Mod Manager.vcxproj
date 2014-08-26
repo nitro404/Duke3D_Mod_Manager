@@ -41,13 +41,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Qt\Qt5.3.1\5.3\msvc2013_opengl\include;C:\Qt\Qt5.3.1\5.3\msvc2013_opengl\include\QtCore;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Qt\Qt5.3.1\5.3\msvc2013_opengl\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files (x86)\Visual Leak Detector\include;C:\Qt\Qt5.3.1\5.3\msvc2013_opengl\include;C:\Qt\Qt5.3.1\5.3\msvc2013_opengl\include\QtCore;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files (x86)\Visual Leak Detector\lib\Win32;C:\Qt\Qt5.3.1\5.3\msvc2013_opengl\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Qt\Qt5.3.1\5.3\msvc2013_opengl\include;C:\Qt\Qt5.3.1\5.3\msvc2013_opengl\include\QtCore;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Qt\Qt5.3.1\5.3\msvc2013_opengl\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files (x86)\Visual Leak Detector\include;C:\Qt\Qt5.3.1\5.3\msvc2013_opengl\include;C:\Qt\Qt5.3.1\5.3\msvc2013_opengl\include\QtCore;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files (x86)\Visual Leak Detector\lib\Win32;C:\Qt\Qt5.3.1\5.3\msvc2013_opengl\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -87,11 +87,15 @@
     <ClInclude Include="Source\Argument Collection\ArgumentCase.h" />
     <ClInclude Include="Source\Argument Collection\ArgumentCollection.h" />
     <ClInclude Include="Source\Icon.h" />
+    <ClInclude Include="Source\Mod Collection\FavouriteModCollection.h" />
     <ClInclude Include="Source\Mod Collection\Mod.h" />
+    <ClInclude Include="Source\Mod Collection\ModAuthorInformation.h" />
     <ClInclude Include="Source\Mod Collection\ModCollection.h" />
+    <ClInclude Include="Source\Mod Collection\ModCollectionBroadcaster.h" />
     <ClInclude Include="Source\Mod Collection\ModCollectionListener.h" />
     <ClInclude Include="Source\Mod Collection\ModDownload.h" />
     <ClInclude Include="Source\Mod Collection\ModFilterType.h" />
+    <ClInclude Include="Source\Mod Collection\ModInformation.h" />
     <ClInclude Include="Source\Mod Collection\ModScreenshot.h" />
     <ClInclude Include="Source\Mod Collection\ModSortDirection.h" />
     <ClInclude Include="Source\Mod Collection\ModSortType.h" />
@@ -102,7 +106,6 @@
     <ClInclude Include="Source\Mod Collection\OrganizedModCollection.h" />
     <ClInclude Include="Source\Mod Manager\ArgumentParser.h" />
     <ClInclude Include="Source\Mod Manager\GameType.h" />
-    <ClInclude Include="Source\Mod Manager\ModInformation.h" />
     <ClInclude Include="Source\Mod Manager\ModManager.h" />
     <ClInclude Include="Source\Mod Manager\ModManagerMode.h" />
     <ClInclude Include="Source\Script\Script.h" />
@@ -118,10 +121,14 @@
     <ClCompile Include="Source\Argument Collection\ArgumentCase.cpp" />
     <ClCompile Include="Source\Argument Collection\ArgumentCollection.cpp" />
     <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\Mod Collection\FavouriteModCollection.cpp" />
     <ClCompile Include="Source\Mod Collection\Mod.cpp" />
+    <ClCompile Include="Source\Mod Collection\ModAuthorInformation.cpp" />
     <ClCompile Include="Source\Mod Collection\ModCollection.cpp" />
+    <ClCompile Include="Source\Mod Collection\ModCollectionBroadcaster.cpp" />
     <ClCompile Include="Source\Mod Collection\ModDownload.cpp" />
     <ClCompile Include="Source\Mod Collection\ModFilterType.cpp" />
+    <ClCompile Include="Source\Mod Collection\ModInformation.cpp" />
     <ClCompile Include="Source\Mod Collection\ModScreenshot.cpp" />
     <ClCompile Include="Source\Mod Collection\ModSortDirection.cpp" />
     <ClCompile Include="Source\Mod Collection\ModSortType.cpp" />
@@ -132,7 +139,6 @@
     <ClCompile Include="Source\Mod Collection\OrganizedModCollection.cpp" />
     <ClCompile Include="Source\Mod Manager\ArgumentParser.cpp" />
     <ClCompile Include="Source\Mod Manager\GameType.cpp" />
-    <ClCompile Include="Source\Mod Manager\ModInformation.cpp" />
     <ClCompile Include="Source\Mod Manager\ModManager.cpp" />
     <ClCompile Include="Source\Mod Manager\ModManagerMode.cpp" />
     <ClCompile Include="Source\Script\Script.cpp" />

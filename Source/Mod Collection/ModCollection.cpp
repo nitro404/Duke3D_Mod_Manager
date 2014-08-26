@@ -1,13 +1,11 @@
 #include "Mod Collection/ModCollection.h"
 
-ModCollection::ModCollection()
-	: m_id(NULL) {
+ModCollection::ModCollection() : m_id(NULL) {
 	m_id = new char[1];
 	m_id[0] = '\0';
 }
 
-ModCollection::ModCollection(const ModCollection & m)
-	: m_id(NULL) {
+ModCollection::ModCollection(const ModCollection & m) : m_id(NULL) {
 	m_id = Utilities::trimCopy(m.m_id);
 
 	for(int i=0;i<m.m_mods.size();i++) {
@@ -16,7 +14,9 @@ ModCollection::ModCollection(const ModCollection & m)
 }
 
 ModCollection & ModCollection::operator = (const ModCollection & m) {
-	delete [] m_id;
+	if(m_id != NULL) {
+		delete [] m_id;
+	}
 
 	for(int i=0;i<m.m_mods.size();i++) {
 		delete m_mods[i];
@@ -33,13 +33,17 @@ ModCollection & ModCollection::operator = (const ModCollection & m) {
 }
 
 ModCollection::~ModCollection() {
+	if(m_id != NULL) {
+		delete [] m_id;
+	}
+
 	for(int i=0;i<m_mods.size();i++) {
 		delete m_mods[i];
 	}
 }
 
 const char * ModCollection::getID() const {
-	return const_cast<const char *>(m_id);
+	return m_id;
 }
 
 void ModCollection::setID(const char * id) {
@@ -57,7 +61,9 @@ void ModCollection::setID(const char * id) {
 }
 
 void ModCollection::setID(const QString & id) {
-	delete [] m_id;
+	if(m_id != NULL) {
+		delete [] m_id;
+	}
 
 	if(id.isEmpty()) {
 		m_id = new char[1];
@@ -266,17 +272,22 @@ bool ModCollection::loadFrom(const char * fileName) {
 	if(fileName == NULL || Utilities::stringLength(fileName) == 0) { return false; }
 	
 	char * fileExtension = Utilities::getFileExtension(fileName);
+
+	bool loaded = false;
 	
 	if(fileExtension == NULL) {
 		return false;
 	}
 	else if(Utilities::compareStringsIgnoreCase(fileExtension, "ini") == 0) {
-		return loadFromINI(fileName);
+		loaded = loadFromINI(fileName);
 	}
 	else if(Utilities::compareStringsIgnoreCase(fileExtension, "xml") == 0) {
-		return loadFromXML(fileName);
+		loaded = loadFromXML(fileName);
 	}
-	return false;
+
+	delete [] fileExtension;
+
+	return loaded;
 }
 
 bool ModCollection::loadFromINI(const QString & fileName) {
@@ -435,6 +446,8 @@ bool ModCollection::loadFromXML(const char * fileName) {
 	QXmlStreamAttributes attributes;
 	Mod * newMod = NULL;
 	ModVersion * newModVersion = NULL;
+	ModTeamMember * newTeamMember = NULL;
+	ModVersionFile * newVersionFile = NULL;
 	QString name, id;
 	bool foundRootNode = false;
 
@@ -627,7 +640,24 @@ bool ModCollection::loadFromXML(const char * fileName) {
 														memberEmail = attributes.value("email").toString();
 													}
 
-													newMod->addTeamMember(new ModTeamMember(memberName, memberAlias, memberEmail));
+													newTeamMember = new ModTeamMember(memberName, memberAlias, memberEmail);
+													if(!newMod->addTeamMember(newTeamMember)) {
+														if(newMod->getTeam() == NULL) {
+															printf("Attempted to add team member to mod with no team: \"%s\".\n", newMod->getName());
+														}
+														else {
+															if(Utilities::stringLength(newTeamMember->getName()) == 0) {
+																printf("Attempted to add team member with empty name to mod: \"%s\".\n", newMod->getName());
+															}
+															else {
+																printf("Attempted to add duplicate team member \"%s\" to mod: \"%s\"\n", newTeamMember->getName(), newMod->getName());
+															}
+														}
+
+														delete newTeamMember;
+
+														break;
+													}
 												}
 											}
 											else if(input.isEndElement()) {
@@ -700,12 +730,33 @@ bool ModCollection::loadFromXML(const char * fileName) {
 														}
 													}
 
-													newModVersion->addFile(new ModVersionFile(fileName, fileType));
+													newVersionFile = new ModVersionFile(fileName, fileType);
+													if(!newModVersion->addFile(newVersionFile)) {
+														if(Utilities::stringLength(newVersionFile->getName()) == 0) {
+															printf("Attempted to add version file with empty file name to mod: \"%s\".\n", newMod->getName());
+														}
+														else {
+															printf("Attempted to add duplicate version file \"%s\" to mod: \"%s%s%s\"\n", newVersionFile->getName(), newMod->getName(), newModVersion->getVersion() == NULL ? "" : " ", newModVersion->getVersion() == NULL ? "" : newModVersion->getVersion());
+														}
+
+														delete newVersionFile;
+
+														break;
+													}
 												}
 											}
 											else if(input.isEndElement()) {
 												if(QString::compare(input.name().toString(), "version", Qt::CaseInsensitive) == 0) {
-													newMod->addVersion(newModVersion);
+													if(!newMod->addVersion(newModVersion)) {
+														if(!newModVersion->hasFileOfType("grp")) {
+															printf("Attempted to add mod version %s%s%s without required group file to mod: \"%s\"\n", newModVersion->getVersion() == NULL ? "" : "\"", newModVersion->getVersion() == NULL ? "" : newModVersion->getVersion(), newModVersion->getVersion() == NULL ? "" : "\"", newMod->getName());
+														}
+														else {
+															printf("Attempted to add duplicate mod version %s%s%s to mod: \"%s\"\n", newModVersion->getVersion() == NULL ? "" : "\"", newModVersion->getVersion() == NULL ? "" : newModVersion->getVersion(), newModVersion->getVersion() == NULL ? "" : "\"", newMod->getName());
+														}
+
+														delete newModVersion;
+													}
 
 													newModVersion = NULL;
 
@@ -755,7 +806,21 @@ bool ModCollection::loadFromXML(const char * fileName) {
 										}
 
 										newDownload = new ModDownload(downloadName, downloadType);
-										newMod->addDownload(newDownload);
+										if(!newMod->addDownload(newDownload)) {
+											if(Utilities::stringLength(newDownload->getFileName()) == 0) {
+												printf("Attempted to add download with empty file name to mod: \"%s\"\n", newMod->getName());
+											}
+											else if(Utilities::stringLength(newDownload->getType()) == 0) {
+												printf("Attempted to add download with empty type to mod: \"%s\"\n", newMod->getName());
+											}
+											else {
+												printf("Attempted to add duplicate download \"%s\" to mod: \"%s\"\n", newDownload->getFileName(), newMod->getName());
+											}
+
+											delete newDownload;
+
+											break;
+										}
 
 										if(attributes.hasAttribute("part")) {
 											newDownload->setPartNumber(attributes.value("part").toString());
@@ -814,7 +879,18 @@ bool ModCollection::loadFromXML(const char * fileName) {
 										}
 
 										newScreenshot = new ModScreenshot(fileName);
-										newMod->addScreenshot(newScreenshot);
+										if(!newMod->addScreenshot(newScreenshot)) {
+											if(Utilities::stringLength(newScreenshot->getFileName()) == 0) {
+												printf("Attempted to add screenshot with empty file name to mod: \"%s\"\n", newMod->getName());
+											}
+											else {
+												printf("Attempted to add duplicate screenshot \"%s\" to mod: \"%s\"\n", newScreenshot->getFileName(), newMod->getName());
+											}
+
+											delete newScreenshot;
+
+											break;
+										}
 
 										if(attributes.hasAttribute("thumbnail")) {
 											newScreenshot->setThumbnail(attributes.value("thumbnail").toString());
@@ -839,7 +915,11 @@ bool ModCollection::loadFromXML(const char * fileName) {
 					}
 					else if(input.isEndElement()) {
 						if(QString::compare(input.name().toString(), "mod", Qt::CaseInsensitive) == 0) {
-							addMod(newMod);
+							if(!addMod(newMod)) {
+								printf("Failed to add mod to collection: \"%s\"\n", newMod->getName());
+
+								delete newMod;
+							}
 
 							newModVersion = NULL;
 							newMod = NULL;
@@ -865,6 +945,12 @@ bool ModCollection::loadFromXML(const char * fileName) {
 	return true;
 }
 
+void ModCollection::notifyCollectionChanged() const {
+	for(int i=0;i<numberOfListeners();i++) {
+		getListener(i)->modCollectionUpdated();
+	}
+}
+
 bool ModCollection::operator == (const ModCollection & m) const {
 	if(m_mods.size() != m.m_mods.size()) { return false; }
 	
@@ -878,87 +964,4 @@ bool ModCollection::operator == (const ModCollection & m) const {
 
 bool ModCollection::operator != (const ModCollection & m) const {
 	return !operator == (m);
-}
-
-int ModCollection::numberOfListeners() const {
-	return m_listeners.size();
-}
-
-bool ModCollection::hasListener(const ModCollectionListener * listener) const {
-	if(listener == NULL) {
-		return false;
-	}
-
-	for(int i=0;i<m_listeners.size();i++) {
-		if(m_listeners[i] == listener) {
-			return true;
-		}
-	}
-	return false;
-}
-
-int ModCollection::indexOfListener(const ModCollectionListener * listener) const {
-	if(listener == NULL) {
-		return -1;
-	}
-
-	for(int i=0;i<m_listeners.size();i++) {
-		if(m_listeners[i] == listener) {
-			return i;
-		}
-	}
-	return -1;
-}
-
-ModCollectionListener * ModCollection::getListener(int index) const {
-	if(index < 0 || index >= m_listeners.size()) {
-		return NULL;
-	}
-
-	return m_listeners[index];
-}
-
-bool ModCollection::addListener(ModCollectionListener * listener) {
-	if(listener == NULL) {
-		return false;
-	}
-
-	if(!hasListener(listener)) {
-		m_listeners.push_back(listener);
-		return true;
-	}
-	return false;
-}
-
-bool ModCollection::removeListener(int index) {
-	if(index < 0 || index >= m_listeners.size()) {
-		return false;
-	}
-
-	m_listeners.remove(index);
-}
-
-bool ModCollection::removeListener(const ModCollectionListener * listener) {
-	if(listener == NULL) {
-		return false;
-	}
-
-	for(int i=0;i<m_listeners.size();i++) {
-		if(m_listeners[i] == listener) {
-			m_listeners.remove(i);
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void ModCollection::clearListeners() {
-	m_listeners.clear();
-}
-
-void ModCollection::notifyCollectionChanged() const {
-	for(int i=0;i<m_listeners.size();i++) {
-		m_listeners[i]->modCollectionUpdated();
-	}
 }

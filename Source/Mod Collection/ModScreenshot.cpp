@@ -114,11 +114,11 @@ ModScreenshot::~ModScreenshot() {
 }
 
 const char * ModScreenshot::getFileName() const {
-	return const_cast<const char *>(m_fileName);
+	return m_fileName;
 }
 
 const char * ModScreenshot::getThumbnail() const {
-	return const_cast<const char *>(m_thumbnail);
+	return m_thumbnail;
 }
 
 int ModScreenshot::getWidth() const {

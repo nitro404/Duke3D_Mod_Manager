@@ -4,18 +4,11 @@
 #include "Mod Manager/ModManager.h"
 #include "Mod Collection/ModCollection.h"
 
-int main(int argc, char * argv[]) {
-	// -s "settings.ini"
-	// -m [dosbox]/megaton/windows (mode)
-	// -t [game]/setup/client/server (type)
-	// -ip ip.address
-	// -g "duke3d.grp"
-	// -x "game.con"
-	// -q "Evil" (query)
-	// -r (random)
-	//
-	// NOTE: (r OR m OR x+g)
+#if _DEBUG
+#include <vld.h>
+#endif // _DEBUG
 
+int main(int argc, char * argv[]) {
 	ArgumentParser args(argc, argv);
 
 	SingletonManager::create();
@@ -25,8 +18,6 @@ int main(int argc, char * argv[]) {
 
 	SettingsManager::getInstance()->load(&args);
 	ModManager::getInstance()->init(&args);
-
-	ModManager::getInstance()->run();
 
 	ModManager::getInstance()->uninit();
 	SettingsManager::getInstance()->save(&args);

@@ -60,7 +60,7 @@ ModVersion::~ModVersion(void) {
 }
 
 const char * ModVersion::getVersion() const {
-	return const_cast<const char *>(m_version);
+	return m_version;
 }
 
 void ModVersion::setVersion(const char * version) {

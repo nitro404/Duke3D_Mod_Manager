@@ -96,15 +96,15 @@ ModTeamMember::~ModTeamMember() {
 }
 
 const char * ModTeamMember::getName() const {
-	return const_cast<const char *>(m_name);
+	return m_name;
 }
 
 const char * ModTeamMember::getAlias() const {
-	return const_cast<const char *>(m_alias);
+	return m_alias;
 }
 
 const char * ModTeamMember::getEmail() const {
-	return const_cast<const char *>(m_email);
+	return m_email;
 }
 
 void ModTeamMember::setName(const char * name) {

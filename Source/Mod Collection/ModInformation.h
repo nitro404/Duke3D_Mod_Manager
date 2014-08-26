@@ -10,7 +10,7 @@ public:
 	ModInformation(const QString & name, const QString & version);
 	ModInformation(const ModInformation & m);
 	ModInformation & operator = (const ModInformation & m);
-	~ModInformation();
+	virtual ~ModInformation();
 
 	const char * getName() const;
 	const QString getFullName() const;

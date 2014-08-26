@@ -6,10 +6,12 @@
 #include <QFile.h>
 #include <QFileInfo.h>
 #include <QGlobal.h>
+#include <QDate>
 #include <QTime>
 
 namespace Utilities {
 	extern const char newLine[];
+	extern const char * monthStrings[];
 
 	int randomInteger(int min, int max, bool randomize = true);
 	unsigned int stringLength(const char * s);
@@ -32,6 +34,9 @@ namespace Utilities {
 	QString getFileNameNoExtension(const QString & fileName);
 	QString getFileExtension(const QString & fileName);
 	bool fileHasExtension(const QString & fileName, const QString & fileExtension);
+	QDate parseDate(const char * date);
+	QDate parseDate(const QString & date);
+	QString dateToString(const QDate & date);
 	void deleteFiles(const char * suffix);
 	void renameFiles(const char * fromSuffix, const char * toSuffix);
 	void pause();

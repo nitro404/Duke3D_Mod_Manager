@@ -103,7 +103,7 @@ ModDownload::~ModDownload(void) {
 }
 
 const char * ModDownload::getFileName() const {
-	return const_cast<const char *>(m_fileName);
+	return m_fileName;
 }
 
 int ModDownload::getPartNumber() const {
@@ -115,23 +115,23 @@ int ModDownload::getPartCount() const {
 }
 
 const char * ModDownload::getVersion() const {
-	return const_cast<const char *>(m_version);
+	return m_version;
 }
 
 const char * ModDownload::getSpecial() const {
-	return const_cast<const char *>(m_special);
+	return m_special;
 }
 
 const char * ModDownload::getSubfolder() const {
-	return const_cast<const char *>(m_subfolder);
+	return m_subfolder;
 }
 
 const char * ModDownload::getType() const {
-	return const_cast<const char *>(m_type);
+	return m_type;
 }
 
 const char * ModDownload::getDescription() const {
-	return const_cast<const char *>(m_description);
+	return m_description;
 }
 
 void ModDownload::setFileName(const char * fileName) {

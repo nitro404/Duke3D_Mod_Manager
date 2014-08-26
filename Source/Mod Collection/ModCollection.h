@@ -8,9 +8,9 @@
 #include "Utilities/Utilities.h"
 #include "Settings Manager/SettingsManager.h"
 #include "Mod Collection/Mod.h"
-#include "Mod Collection/ModCollectionListener.h"
+#include "Mod Collection/ModCollectionBroadcaster.h"
 
-class ModCollection {
+class ModCollection : public ModCollectionBroadcaster {
 public:
 	ModCollection();
 	ModCollection(const ModCollection & m);
@@ -50,22 +50,12 @@ public:
 	bool operator == (const ModCollection & m) const;
 	bool operator != (const ModCollection & m) const;
 
-	int numberOfListeners() const;
-	bool hasListener(const ModCollectionListener * listener) const;
-	int indexOfListener(const ModCollectionListener * listener) const;
-	ModCollectionListener * getListener(int index) const;
-	bool addListener(ModCollectionListener * listener);
-	bool removeListener(int index);
-	bool removeListener(const ModCollectionListener * listener);
-	void clearListeners();
-
 private:
 	void notifyCollectionChanged() const;
 
 private:
 	char * m_id;
 	QVector<Mod *> m_mods;
-	QVector<ModCollectionListener *> m_listeners;
 };
 
 #endif // MOD_COLLECTION_H

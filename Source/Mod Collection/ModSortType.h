@@ -6,10 +6,11 @@
 namespace ModSortTypes {
 	enum ModSortType {
 		Invalid,
-		Default,
+		Unsorted,
 		Name,
 		ReleaseDate,
 		Rating,
+		NumberOfMods,
 		NumberOfSortTypes
 	};
 	

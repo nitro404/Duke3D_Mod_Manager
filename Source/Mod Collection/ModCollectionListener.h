@@ -5,6 +5,7 @@ class ModCollectionListener {
 public:
 	virtual ~ModCollectionListener() { }
 	virtual void modCollectionUpdated() = 0;
+	virtual void favouriteModCollectionUpdated() = 0;
 };
 
 #endif // MOD_COLLECTION_LISTENER

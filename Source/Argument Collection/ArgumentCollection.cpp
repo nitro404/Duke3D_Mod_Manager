@@ -68,6 +68,16 @@ bool ArgumentCollection::hasArgument(const QString & name) const {
 	return m_arguments.contains(formattedName);
 }
 
+QString ArgumentCollection::getValue(int index) const {
+	if(index < 0) { return QString(); }
+
+	QList<QString> keys = m_arguments.keys();
+
+	if(index >= keys.size()) { return QString(); }
+
+	return m_arguments.value(keys[index]);
+}
+
 QString ArgumentCollection::getValue(const char * name) const {
 	if(name == NULL) { return QString(); }
 

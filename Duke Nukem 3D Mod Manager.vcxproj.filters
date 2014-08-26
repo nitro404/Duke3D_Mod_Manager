@@ -62,9 +62,6 @@
     <ClInclude Include="Source\Variable System\VariableSystem.h">
       <Filter>Variable System</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Mod Manager\ModInformation.h">
-      <Filter>Mod Manager</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Argument Collection\ArgumentCollection.h">
       <Filter>Argument Collection</Filter>
     </ClInclude>
@@ -84,6 +81,18 @@
       <Filter>Mod Collection</Filter>
     </ClInclude>
     <ClInclude Include="Source\Mod Collection\ModSortType.h">
+      <Filter>Mod Collection</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mod Collection\ModInformation.h">
+      <Filter>Mod Collection</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mod Collection\FavouriteModCollection.h">
+      <Filter>Mod Collection</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mod Collection\ModCollectionBroadcaster.h">
+      <Filter>Mod Collection</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mod Collection\ModAuthorInformation.h">
       <Filter>Mod Collection</Filter>
     </ClInclude>
   </ItemGroup>
@@ -146,9 +155,6 @@
     <ClCompile Include="Source\Variable System\VariableSystem.cpp">
       <Filter>Variable System</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Mod Manager\ModInformation.cpp">
-      <Filter>Mod Manager</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Argument Collection\ArgumentCollection.cpp">
       <Filter>Argument Collection</Filter>
     </ClCompile>
@@ -165,6 +171,18 @@
       <Filter>Mod Collection</Filter>
     </ClCompile>
     <ClCompile Include="Source\Mod Collection\ModSortType.cpp">
+      <Filter>Mod Collection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mod Collection\ModInformation.cpp">
+      <Filter>Mod Collection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mod Collection\FavouriteModCollection.cpp">
+      <Filter>Mod Collection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mod Collection\ModCollectionBroadcaster.cpp">
+      <Filter>Mod Collection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mod Collection\ModAuthorInformation.cpp">
       <Filter>Mod Collection</Filter>
     </ClCompile>
   </ItemGroup>

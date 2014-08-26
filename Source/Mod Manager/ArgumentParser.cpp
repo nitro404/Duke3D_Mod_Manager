@@ -37,6 +37,10 @@ bool ArgumentParser::parseArguments(int argc, char * argv[]) {
 		if(arg.length() == 0) {
 			if(data.startsWith("-")) {
 				arg = data.mid(1, data.length() - 1);
+
+				if(i == argc - 1) {
+					m_arguments[arg] = QString();
+				}
 			}
 			else {
 				printf("Malformed argument list.\n");
@@ -59,8 +63,4 @@ bool ArgumentParser::parseArguments(int argc, char * argv[]) {
 	}
 
 	return true;
-}
-
-void ArgumentParser::displayHelp() const {
-	// TODO: add help display
 }
