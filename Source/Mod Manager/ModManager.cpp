@@ -254,8 +254,9 @@ int ModManager::searchForAndSelectMod(const char * query) {
 int ModManager::searchForAndSelectMod(const QString & query) {
 	if(!m_initialized) { return -1; }
 
-	QString data = query.trimmed().toLower();
-	if(data.length() == 0) { return -1; }
+	QString data = query.trimmed();
+	if(data.isEmpty()) { return -1; }
+	QString formattedData = data.toLower();
 
 	QString modName;
 	const Mod * matchingMod = NULL;
@@ -264,13 +265,13 @@ int ModManager::searchForAndSelectMod(const QString & query) {
 	for(int i=0;i<m_mods.numberOfMods();i++) {
 		modName = QString(m_mods.getMod(i)->getName()).toLower();
 
-		if(QString::compare(modName, data, Qt::CaseSensitive) == 0) {
+		if(QString::compare(modName, formattedData, Qt::CaseSensitive) == 0) {
 			matchingMod = m_mods.getMod(i);
 			numberOfMatches = 1;
 			break;
 		}
 
-		if(modName.contains(data)) {
+		if(modName.contains(formattedData)) {
 			matchingMod = m_mods.getMod(i);
 			numberOfMatches++;
 		}
@@ -293,19 +294,20 @@ void ModManager::runMenu() {
 	int selectedIndex = -1;
 	bool valid = false;
 	QTextStream in(stdin);
-	QString input, data, date;
+	QString input, data, formattedData, date;
 	QByteArray dateBytes;
 
-	QRegExp searchRegExp =   QRegExp("^(s(earch)?)([ ]+.*)?");
-	QRegExp randomRegExp =   QRegExp("^(r(andom)?)$");
-	QRegExp vanillaRegExp =  QRegExp("^(v(anilla)?)$");
-	QRegExp filterRegExp =   QRegExp("^(f(ilter)?)([ ]+.*)?");
-	QRegExp sortRegExp =     QRegExp("^(o|sort)([ ]+.*)?");
-	QRegExp ipRegExp =       QRegExp("^(ip|c(onnect)?)([ ]+.*)?");
-	QRegExp gameTypeRegExp = QRegExp("^(t(ype)?)([ ]+.*)?");
-	QRegExp modeRegExp =     QRegExp("^(m(ode)?)([ ]+.*)?");
-	QRegExp helpRegExp =     QRegExp("^(\\?|h(elp)?)$");
-	QRegExp exitRegExp =     QRegExp("^(x|exit|q(uit)?)$");
+	QRegExp   searchRegExp("^(s(earch)?)([ ]+.*)?");
+	QRegExp   randomRegExp("^(r(andom)?)$");
+	QRegExp  vanillaRegExp("^(v(anilla)?)$");
+	QRegExp   filterRegExp("^(f(ilter)?)([ ]+.*)?");
+	QRegExp     sortRegExp("^(o|sort)([ ]+.*)?");
+	QRegExp       ipRegExp("^(ip|c(onnect)?)([ ]+.*)?");
+	QRegExp gameTypeRegExp("^(t(ype)?)([ ]+.*)?");
+	QRegExp     modeRegExp("^(m(ode)?)([ ]+.*)?");
+	QRegExp     helpRegExp("^(\\?|h(elp)?)$");
+	QRegExp     backRegExp("^(b(ack)?)$");
+	QRegExp     exitRegExp("^(x|exit|q(uit)?)$");
 
 	while(true) {
 		Utilities::clear();
@@ -343,52 +345,95 @@ void ModManager::runMenu() {
 		printf("> ");
 
 		input = in.readLine();
-		data = input.trimmed().toLower();
+		data = input.trimmed();
+		formattedData = data.toLower();
 
-		if(sortRegExp.exactMatch(data)) {
+		if(sortRegExp.exactMatch(formattedData)) {
 			runSortPrompt(Utilities::getArguments(data));
 			continue;
 		}
-		else if(searchRegExp.exactMatch(data)) {
+		else if(searchRegExp.exactMatch(formattedData)) {
 			runSearchPrompt(Utilities::getArguments(data));
 			if(m_selectedMod != NULL) {
 				printf("\n");
-				runSelectedMod();
-				break;
+				if(runSelectedMod()) {
+					break;
+				}
 			}
 			continue;
 		}
-		else if(randomRegExp.exactMatch(data)) {
+		else if(randomRegExp.exactMatch(formattedData)) {
 			runSelectRandomModPrompt();
 			if(m_selectedMod != NULL) {
 				printf("\n");
-				runSelectedMod();
-				break;
+				if(runSelectedMod()) {
+					break;
+				}
 			}
 			continue;
 		}
-		else if(vanillaRegExp.exactMatch(data)) {
+		else if(vanillaRegExp.exactMatch(formattedData)) {
 			m_selectedMod = NULL;
 			runSelectedMod();
 			break;
 		}
-		else if(filterRegExp.exactMatch(data)) {
+		else if(filterRegExp.exactMatch(formattedData)) {
 			runFilterPrompt(Utilities::getArguments(data));
 			continue;
 		}
-		else if(ipRegExp.exactMatch(data)) {
+		else if(ipRegExp.exactMatch(formattedData)) {
 			runIPAddressPrompt(Utilities::getArguments(data));
 			continue;
 		}
-		else if(gameTypeRegExp.exactMatch(data)) {
+		else if(gameTypeRegExp.exactMatch(formattedData)) {
 			runGameTypePrompt(Utilities::getArguments(data));
 			continue;
 		}
-		else if(modeRegExp.exactMatch(data)) {
+		else if(modeRegExp.exactMatch(formattedData)) {
 			runModePrompt(Utilities::getArguments(data));
 			continue;
 		}
-		else if(helpRegExp.exactMatch(data)) {
+		else if(backRegExp.exactMatch(formattedData)) {
+			Utilities::clear();
+
+			if(m_organizedMods.getFilterType() == ModFilterTypes::Teams) {
+				if(m_organizedMods.hasSelectedTeam()) {
+					m_organizedMods.clearSelectedTeam();
+
+					printf("Returning to team list.\n\n");
+				}
+				else {
+					m_organizedMods.setFilterType(ModFilterTypes::None);
+
+					printf("Returning to main mod list.\n\n");
+				}
+			}
+			else if(m_organizedMods.getFilterType() == ModFilterTypes::Authors) {
+				if(m_organizedMods.hasSelectedAuthor()) {
+					m_organizedMods.clearSelectedAuthor();
+
+					printf("Returning to author list.\n\n");
+				}
+				else {
+					m_organizedMods.setFilterType(ModFilterTypes::None);
+
+					printf("Returning to main mod list.\n\n");
+				}
+			}
+			else if(m_organizedMods.getFilterType() == ModFilterTypes::Favourites) {
+				m_organizedMods.setFilterType(ModFilterTypes::None);
+
+				printf("Returning to main mod list.\n\n");
+			}
+			else {
+				printf("Cannot go back from main mod list.\n\n");
+			}
+
+			Utilities::pause();
+
+			continue;
+		}
+		else if(helpRegExp.exactMatch(formattedData)) {
 			Utilities::clear();
 
 			printf("Command information:\n");
@@ -401,6 +446,7 @@ void ModManager::runMenu() {
 			printf("       ip <args> - obtains the ip address of the host server.\n");
 			printf("   [t]ype <args> - change game type (single / multi player).\n");
 			printf("   [m]ode <args> - change mod manager launch mode (regular / dosbox).\n");
+			printf("   [b]ack -------- returns to the previous menu (if applicable).\n");
 			printf("   [h]elp -------- displays this help message.\n");
 			printf("        ? -------- displays this help message.\n");
 			printf("   [q]uit -------- closes the program.\n");
@@ -411,7 +457,7 @@ void ModManager::runMenu() {
 
 			continue;
 		}
-		else if(exitRegExp.exactMatch(data)) {
+		else if(exitRegExp.exactMatch(formattedData)) {
 			Utilities::clear();
 
 			printf("Goodbye!\n");
@@ -420,7 +466,7 @@ void ModManager::runMenu() {
 			return;
 		}
 
-		selectedIndex = input.toInt(&valid, 10);
+		selectedIndex = data.toInt(&valid, 10);
 
 		if(valid) {
 			if( m_organizedMods.getFilterType() == ModFilterTypes::None ||
@@ -431,9 +477,9 @@ void ModManager::runMenu() {
 					valid = true;
 
 					m_selectedMod = m_organizedMods.getMod(selectedIndex - 1);
-					runSelectedMod();
-
-					break;
+					if(runSelectedMod()) {
+						break;
+					}
 				}
 			}
 			else if(m_organizedMods.getFilterType() == ModFilterTypes::Teams && !m_organizedMods.hasSelectedTeam()) {
@@ -465,13 +511,16 @@ void ModManager::runFilterPrompt(const QString & args) {
 
 	bool valid = false;
 	QTextStream in(stdin);
-	QString input, data;
+	QString input, data, formattedData;
 	int value = -1;
 	int cancel = -1;
 	QString trimmedArgs = args.trimmed();
 	bool skipInput = !trimmedArgs.isEmpty();
 	ModFilterTypes::ModFilterType filterType = ModFilterTypes::Invalid;
-	QRegExp integerRegExp(QString("^[0-9]+$"));
+
+	QRegExp integerRegExp("^[0-9]+$");
+	QRegExp  cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
+	QRegExp    helpRegExp("^(\\?|h(elp)?)$");
 
 	while(true) {
 		Utilities::clear();
@@ -496,8 +545,27 @@ void ModManager::runFilterPrompt(const QString & args) {
 
 			input = in.readLine();
 			data = input.trimmed();
+			formattedData = data.toLower();
 
 			printf("\n");
+
+			if(cancelRegExp.exactMatch(formattedData)) {
+				break;
+			}
+			else if(helpRegExp.exactMatch(formattedData)) {
+				Utilities::clear();
+
+				printf(" [a]bort - returns to previous menu.\n");
+				printf("  [b]ack - returns to previous menu.\n");
+				printf("[c]ancel - returns to previous menu.\n");
+				printf("  [h]elp - displays this help message.\n");
+				printf("       ? - displays this help message.\n");
+				printf("\n");
+
+				Utilities::pause();
+
+				continue;
+			}
 		}
 
 		valid = false;
@@ -548,15 +616,18 @@ void ModManager::runSortPrompt(const QString & args) {
 	bool valid = false;
 	bool inputSortDirection = false;
 	QTextStream in(stdin);
-	QString input, data;
+	QString input, data, formattedData;
 	int value = -1;
 	int cancel = -1;
 	QString trimmedArgs = args.trimmed();
 	bool skipInput = !trimmedArgs.isEmpty();
 	ModSortTypes::ModSortType sortType = ModSortTypes::Invalid;
 	ModSortDirections::ModSortDirection sortDirection = ModSortDirections::Invalid;
-	QRegExp integerRegExp(QString("^[0-9]+$"));
-	QRegExp whitespaceRegExp = QRegExp("[ \t]+");
+
+	QRegExp    integerRegExp("^[0-9]+$");
+	QRegExp whitespaceRegExp("[ \t]+");
+	QRegExp     cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
+	QRegExp       helpRegExp("^(\\?|h(elp)?)$");
 
 	QVector<ModSortTypes::ModSortType> validSortTypes;
 	for(int i=ModSortTypes::Invalid+1;i<ModSortTypes::NumberOfSortTypes;i++) {
@@ -585,13 +656,6 @@ void ModManager::runSortPrompt(const QString & args) {
 
 					cancel = i + 2;
 				}
-				printf("%d: Cancel\n", cancel);
-				printf("> ");
-
-				input = in.readLine();
-				data = input.trimmed();
-
-				printf("\n");
 			}
 			else {
 				printf("Current sort type will be changed from \"%s\" to \"%s\".\n\n", ModSortTypes::toString(m_organizedMods.getSortType()), ModSortTypes::toString(sortType));
@@ -602,15 +666,35 @@ void ModManager::runSortPrompt(const QString & args) {
 
 					cancel = i + 1;
 				}
-				printf("%d: Cancel\n", cancel);
-				printf("> ");
-
-				input = in.readLine();
-				data = input.trimmed();
-
-				printf("\n");
 
 				inputSortDirection = true;
+			}
+
+			printf("%d: Cancel\n", cancel);
+			printf("> ");
+
+			input = in.readLine();
+			data = input.trimmed();
+			formattedData = data.toLower();
+
+			printf("\n");
+
+			if(cancelRegExp.exactMatch(formattedData)) {
+				break;
+			}
+			else if(helpRegExp.exactMatch(formattedData)) {
+				Utilities::clear();
+
+				printf(" [a]bort - returns to previous menu.\n");
+				printf("  [b]ack - returns to previous menu.\n");
+				printf("[c]ancel - returns to previous menu.\n");
+				printf("  [h]elp - displays this help message.\n");
+				printf("       ? - displays this help message.\n");
+				printf("\n");
+
+				Utilities::pause();
+
+				continue;
 			}
 		}
 
@@ -780,13 +864,16 @@ void ModManager::runGameTypePrompt(const QString & args) {
 
 	bool valid = false;
 	QTextStream in(stdin);
-	QString input, data;
+	QString input, data, formattedData;
 	int value = -1;
 	int cancel = -1;
 	QString trimmedArgs = args.trimmed();
 	bool skipInput = !trimmedArgs.isEmpty();
 	GameTypes::GameType gameType = GameTypes::Invalid;
-	QRegExp integerRegExp(QString("^[0-9]+$"));
+
+	QRegExp integerRegExp("^[0-9]+$");
+	QRegExp  cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
+	QRegExp    helpRegExp("^(\\?|h(elp)?)$");
 
 	while(true) {
 		Utilities::clear();
@@ -811,8 +898,27 @@ void ModManager::runGameTypePrompt(const QString & args) {
 
 			input = in.readLine();
 			data = input.trimmed();
+			formattedData = data.toLower();
 
 			printf("\n");
+
+			if(cancelRegExp.exactMatch(formattedData)) {
+				break;
+			}
+			else if(helpRegExp.exactMatch(formattedData)) {
+				Utilities::clear();
+
+				printf(" [a]bort - returns to previous menu.\n");
+				printf("  [b]ack - returns to previous menu.\n");
+				printf("[c]ancel - returns to previous menu.\n");
+				printf("  [h]elp - displays this help message.\n");
+				printf("       ? - displays this help message.\n");
+				printf("\n");
+
+				Utilities::pause();
+
+				continue;
+			}
 		}
 
 		gameType = GameTypes::Invalid;
@@ -861,13 +967,16 @@ void ModManager::runModePrompt(const QString & args) {
 
 	bool valid = false;
 	QTextStream in(stdin);
-	QString input, data;
+	QString input, data, formattedData;
 	int value = -1;
 	int cancel = -1;
 	QString trimmedArgs = args.trimmed();
 	bool skipInput = !trimmedArgs.isEmpty();
 	ModManagerModes::ModManagerMode mode = ModManagerModes::Invalid;
-	QRegExp integerRegExp(QString("^[0-9]+$"));
+
+	QRegExp integerRegExp("^[0-9]+$");
+	QRegExp  cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
+	QRegExp    helpRegExp("^(\\?|h(elp)?)$");
 
 	while(true) {
 		Utilities::clear();
@@ -892,8 +1001,27 @@ void ModManager::runModePrompt(const QString & args) {
 
 			input = in.readLine();
 			data = input.trimmed();
+			formattedData = data.toLower();
 
 			printf("\n");
+
+			if(cancelRegExp.exactMatch(formattedData)) {
+				break;
+			}
+			else if(helpRegExp.exactMatch(formattedData)) {
+				Utilities::clear();
+
+				printf(" [a]bort - returns to previous menu.\n");
+				printf("  [b]ack - returns to previous menu.\n");
+				printf("[c]ancel - returns to previous menu.\n");
+				printf("  [h]elp - displays this help message.\n");
+				printf("       ? - displays this help message.\n");
+				printf("\n");
+
+				Utilities::pause();
+
+				continue;
+			}
 		}
 
 		mode = ModManagerModes::Invalid;
@@ -942,9 +1070,12 @@ void ModManager::runIPAddressPrompt(const QString & args) {
 
 	bool valid = false;
 	QTextStream in(stdin);
-	QString input, data;
+	QString input, data, formattedData;
 	QString trimmedArgs = args.trimmed();
 	bool skipInput = !trimmedArgs.isEmpty();
+
+	QRegExp cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
+	QRegExp   helpRegExp("^(\\?|h(elp)?)$");
 
 	while(true) {
 		Utilities::clear();
@@ -959,8 +1090,27 @@ void ModManager::runIPAddressPrompt(const QString & args) {
 
 			input = in.readLine();
 			data = input.trimmed();
+			formattedData = data.toLower();
 
 			printf("\n");
+		}
+
+		if(cancelRegExp.exactMatch(data)) {
+			return;
+		}
+		else if(helpRegExp.exactMatch(data)) {
+			Utilities::clear();
+
+			printf(" [a]bort - returns to previous menu.\n");
+			printf("  [b]ack - returns to previous menu.\n");
+			printf("[c]ancel - returns to previous menu.\n");
+			printf("  [h]elp - displays this help message.\n");
+			printf("       ? - displays this help message.\n");
+			printf("\n");
+
+			Utilities::pause();
+
+			continue;
 		}
 
 		valid = true;
@@ -976,8 +1126,7 @@ void ModManager::runIPAddressPrompt(const QString & args) {
 		QByteArray dataBytes = data.toLocal8Bit();
 		if(valid) {
 			if(SettingsManager::getInstance()->serverIPAddress != NULL) { delete [] SettingsManager::getInstance()->serverIPAddress; }
-			SettingsManager::getInstance()->serverIPAddress = new char[Utilities::stringLength(dataBytes.data()) + 1];
-			Utilities::copyString(SettingsManager::getInstance()->serverIPAddress, Utilities::stringLength(dataBytes.data()) + 1, dataBytes.data());
+			SettingsManager::getInstance()->serverIPAddress = Utilities::copyString(dataBytes.data());
 
 			printf("Host IP Address changed to: %s\n\n", dataBytes.data());
 
@@ -997,11 +1146,11 @@ void ModManager::runSelectRandomModPrompt() {
 	if(!m_initialized) { return; }
 
 	QTextStream in(stdin);
-	QString input, data;
+	QString input, data, formattedData;
 	bool skipRandomSelection = false;
 
-	QRegExp randomRegExp = QRegExp("^(r(andom)?)$");
-	QRegExp cancelRegExp = QRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
+	QRegExp randomRegExp("^(r(andom)?)$");
+	QRegExp cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
 
 	while(true) {
 		Utilities::clear();
@@ -1018,14 +1167,14 @@ void ModManager::runSelectRandomModPrompt() {
 		printf("> ");
 
 		input = in.readLine();
-		data = input.trimmed().toLower();
-
+		data = input.trimmed();
 		if(data.isEmpty()) { break; }
+		formattedData = data.toLower();
 
-		if(randomRegExp.exactMatch(data)) {
+		if(randomRegExp.exactMatch(formattedData)) {
 			continue;
 		}
-		else if(cancelRegExp.exactMatch(data)) {
+		else if(cancelRegExp.exactMatch(formattedData)) {
 			m_selectedMod = NULL;
 			return;
 		}
@@ -1039,6 +1188,8 @@ void ModManager::runSelectRandomModPrompt() {
 			printf("  [a]bort - returns to previous menu.\n");
 			printf("   [b]ack - returns to previous menu.\n");
 			printf(" [c]ancel - returns to previous menu.\n");
+			printf("  [h]elp - displays this help message.\n");
+			printf("       ? - displays this help message.\n");
 			printf("\n");
 
 			Utilities::pause();
@@ -1054,8 +1205,8 @@ void ModManager::runSearchPrompt(const QString & args) {
 	QString trimmedArgs = args.trimmed();
 	bool skipInput = !trimmedArgs.isEmpty();
 
-	QRegExp cancelRegExp = QRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
-	QRegExp helpRegExp =   QRegExp("^(\\?|h(elp)?)$");
+	QRegExp cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
+	QRegExp   helpRegExp("^(\\?|h(elp)?)$");
 
 	while(true) {
 		Utilities::clear();
@@ -1137,6 +1288,9 @@ bool ModManager::runModVersionSelectionPrompt() {
 	if(!m_initialized || m_selectedMod == NULL || m_selectedMod->numberOfVersions() == 0) {
 		return false;
 	}
+
+	QRegExp cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
+	QRegExp   helpRegExp("^(\\?|h(elp)?)$");
 	
 	m_selectedModVersionIndex = 0;
 
@@ -1144,26 +1298,51 @@ bool ModManager::runModVersionSelectionPrompt() {
 		return true;
 	}
 
-	int selectedModVersion = -1;
 	bool valid = false;
+	int selectedModVersion = -1;
+	int cancel = -1;
 	QTextStream in(stdin);
-	QString input, data;
+	QString input, data, formattedData;
 
 	while(true) {
 		printf("Please select a version of the mod to run:\n");
 		for(int i=0;i<m_selectedMod->numberOfVersions();i++) {
 			printf("%d: %s\n", (i + 1), m_selectedMod->getFullName(i).toLocal8Bit().data());
+
+			cancel = i + 2;
 		}
+		printf("%d: Cancel\n", cancel);
 		printf("> ");
 
 		input = in.readLine();
-		data = input.trimmed().toLower();
+		data = input.trimmed();
+		formattedData = data.toLower();
 
-		if(QRegExp("^(a(bort)?|c(ancel)?)$").exactMatch(data)) {
+		printf("\n");
+
+		if(cancelRegExp.exactMatch(formattedData)) {
 			return false;
 		}
+		else if(helpRegExp.exactMatch(formattedData)) {
+			Utilities::clear();
 
-		selectedModVersion = input.toInt(&valid, 10);
+			printf(" [a]bort - returns to previous menu.\n");
+			printf("  [b]ack - returns to previous menu.\n");
+			printf("[c]ancel - returns to previous menu.\n");
+			printf("  [h]elp - displays this help message.\n");
+			printf("       ? - displays this help message.\n");
+			printf("\n");
+
+			Utilities::pause();
+
+			Utilities::clear();
+
+			continue;
+		}
+
+		selectedModVersion = data.toInt(&valid, 10);
+
+		if(selectedModVersion == cancel) { return false; }
 
 		valid = valid && selectedModVersion >= 1 && selectedModVersion <= m_selectedMod->numberOfVersions();
 
@@ -1172,27 +1351,30 @@ bool ModManager::runModVersionSelectionPrompt() {
 			return true;
 		}
 		else {
-			printf("Invalid selection! To cancel, type cancel or abort.\n\n");
+			printf("Invalid selection, type c to cancel version selection.\n\n");
+
 			Utilities::pause();
+
+			Utilities::clear();
 		}
 	}
 
 	return false;
 }
 
-void ModManager::runSelectedMod(const ArgumentParser * args) {
-	if(!m_initialized) { return; }
+bool ModManager::runSelectedMod(const ArgumentParser * args) {
+	if(!m_initialized) { return false; }
 
 	if(m_selectedMod != NULL) {
 		if(checkModForMissingFiles(*m_selectedMod) > 0) {
 			printf("Mod is missing files, aborting execution.\n");
-			return;
+			return false;
 		}
 		
 		m_selectedModVersionIndex = 0;
 		if(m_selectedMod->numberOfVersions() > 1) {
 			if(!runModVersionSelectionPrompt()) {
-				return;
+				return false;
 			}
 
 			printf("\n");
@@ -1202,7 +1384,7 @@ void ModManager::runSelectedMod(const ArgumentParser * args) {
 	Script script;
 
 	if(!updateScriptArgs()) {
-		return;
+		return false;
 	}
 
 	bool customMod = false;
@@ -1248,12 +1430,12 @@ void ModManager::runSelectedMod(const ArgumentParser * args) {
 			scriptFileName = SettingsManager::getInstance()->DOSBoxServerScriptFileName;
 		}
 		else {	
-			return;
+			return false;
 		}
 
 		if(!scriptLoaded) {
 			printf("Failed to load DOSBox script file: %s\n", scriptFileName);
-			return;
+			return false;
 		}
 
 		QString DOSBoxCommand = script.generateDOSBoxCommand(m_scriptArgs);
@@ -1280,12 +1462,12 @@ void ModManager::runSelectedMod(const ArgumentParser * args) {
 			scriptFileName = SettingsManager::getInstance()->windowsSetupScriptFileName;
 		}
 		else {
-			return;
+			return false;
 		}
 
 		if(!scriptLoaded) {
 			printf("Failed to load Windows script file: %s\n", scriptFileName);
-			return;
+			return false;
 		}
 
 		for(int i=0;i<script.numberOfCommands();i++) {
@@ -1305,6 +1487,8 @@ void ModManager::runSelectedMod(const ArgumentParser * args) {
 	
 		Utilities::renameFiles("DMO_", "DMO");
 	}
+
+	return true;
 }
 
 bool ModManager::updateScriptArgs() {
@@ -1436,6 +1620,7 @@ bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
 		}
 		else if(args->hasArgument("g") || args->hasArgument("x")) {
 			runSelectedMod(args);
+
 			return true;
 		}
 	}

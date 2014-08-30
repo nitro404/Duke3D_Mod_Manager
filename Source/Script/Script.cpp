@@ -116,7 +116,7 @@ bool Script::readFrom(const QString & fileName) {
 QString Script::generateWindowsCommand(const ScriptArguments & arguments, int lineNumber) const {
 	if(lineNumber < 0 || lineNumber >= m_commands.size()) { return QString(); }
 
-	return arguments.applyArguments(m_commands[lineNumber]);
+	return arguments.applyArguments(m_commands[lineNumber]).trimmed();
 }
 
 QString Script::generateDOSBoxCommand(const ScriptArguments & arguments) const {
@@ -138,7 +138,7 @@ QString Script::generateDOSBoxCommand(const ScriptArguments & arguments) const {
 		}
 	}
 
-	return command;
+	return command.trimmed();
 }
 
 bool Script::operator == (const Script & s) const {

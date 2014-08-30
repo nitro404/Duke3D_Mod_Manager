@@ -284,8 +284,8 @@ QDate Utilities::parseDate(const char * date) {
 QDate Utilities::parseDate(const QString & date) {
 	if(date.trimmed().isEmpty()) { return QDate(); }
 
-	QRegExp dateRegExp(QString("[ ,]+"));
-	QRegExp integerRegExp(QString("^[0-9]+$"));
+	QRegExp    dateRegExp("[ ,]+");
+	QRegExp integerRegExp("^[0-9]+$");
 
 	QStringList dateParts = date.trimmed().split(dateRegExp, QString::SkipEmptyParts);
 

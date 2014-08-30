@@ -3,6 +3,7 @@
 
 #include <QString.h>
 #include <QTextStream.h>
+#include <QRegExp.h>
 #include <QXmlStream.h>
 #include "Mod Manager/ModManagerMode.h"
 #include "Mod Manager/GameType.h"
@@ -59,7 +60,7 @@ public:
 	void runSelectRandomModPrompt();
 	void runSearchPrompt(const QString & args = QString());
 	bool runModVersionSelectionPrompt();
-	void runSelectedMod(const ArgumentParser * args = NULL);
+	bool runSelectedMod(const ArgumentParser * args = NULL);
 	bool updateScriptArgs();
 
 	bool handleArguments(const ArgumentParser * args, bool start);
