@@ -4,11 +4,11 @@ const char * ArgumentCases::caseStrings[] = { "Invalid", "Original", "UpperCase"
 const ArgumentCases::ArgumentCase ArgumentCases::defaultCase = ArgumentCases::OriginalCase;
 
 bool ArgumentCases::isValid(int caseType) {
-	return isValid(static_cast<ArgumentCases::ArgumentCase>(caseType));
+	return caseType > static_cast<int>(Invalid) && caseType < static_cast<int>(NumberOfCases);
 }
 
 bool ArgumentCases::isValid(ArgumentCase caseType) {
-	return caseType > ArgumentCases::Invalid && caseType < ArgumentCases::NumberOfCases;
+	return caseType > Invalid && caseType < NumberOfCases;
 }
 
 const char * ArgumentCases::toString(ArgumentCase caseType) {
@@ -24,15 +24,15 @@ const char * ArgumentCases::toString(int caseType) {
 }
 
 ArgumentCases::ArgumentCase ArgumentCases::parseFrom(const char * data) {
-	if(data == NULL) { return ArgumentCases::Invalid; }
+	if(data == NULL) { return Invalid; }
 
-	ArgumentCases::ArgumentCase caseType = Invalid;
+	ArgumentCase caseType = Invalid;
 
 	char * caseString = Utilities::trimCopyString(data);
 
-	for(int i=0;i<ArgumentCases::NumberOfCases;i++) {
+	for(int i=static_cast<int>(Invalid)+1;i<static_cast<int>(NumberOfCases);i++) {
 		if(Utilities::compareStringsIgnoreCase(caseString, caseStrings[i]) == 0) {
-			caseType = static_cast<ArgumentCases::ArgumentCase>(i);
+			caseType = static_cast<ArgumentCase>(i);
 			break;
 		}
 	}

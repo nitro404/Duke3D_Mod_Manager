@@ -4,11 +4,11 @@ const char * ModManagerModes::modeStrings[] = { "Invalid", "DOSBox", "Windows" }
 const ModManagerModes::ModManagerMode ModManagerModes::defaultMode = ModManagerModes::DOSBox;
 
 bool ModManagerModes::isValid(int mode) {
-	return isValid(static_cast<ModManagerModes::ModManagerMode>(mode));
+	return mode > static_cast<int>(Invalid) && mode < static_cast<int>(NumberOfModes);
 }
 
 bool ModManagerModes::isValid(ModManagerMode mode) {
-	return mode > ModManagerModes::Invalid && mode < ModManagerModes::NumberOfModes;
+	return mode > Invalid && mode < NumberOfModes;
 }
 
 const char * ModManagerModes::toString(ModManagerMode mode) {
@@ -24,15 +24,15 @@ const char * ModManagerModes::toString(int mode) {
 }
 
 ModManagerModes::ModManagerMode ModManagerModes::parseFrom(const char * data) {
-	if(data == NULL) { return ModManagerModes::Invalid; }
+	if(data == NULL) { return Invalid; }
 
-	ModManagerModes::ModManagerMode mode = Invalid;
+	ModManagerMode mode = Invalid;
 
 	char * modeString = Utilities::trimCopyString(data);
 
-	for(int i=0;i<ModManagerModes::NumberOfModes;i++) {
+	for(int i=static_cast<int>(Invalid)+1;i<static_cast<int>(NumberOfModes);i++) {
 		if(Utilities::compareStringsIgnoreCase(modeString, modeStrings[i]) == 0) {
-			mode = static_cast<ModManagerModes::ModManagerMode>(i);
+			mode = static_cast<ModManagerMode>(i);
 			break;
 		}
 	}

@@ -4,11 +4,11 @@ const char * ModFilterTypes::filterTypeStrings[] = { "Invalid", "None", "Favouri
 const ModFilterTypes::ModFilterType ModFilterTypes::defaultFilterType = ModFilterTypes::None;
 
 bool ModFilterTypes::isValid(int filterType) {
-	return isValid(static_cast<ModFilterTypes::ModFilterType>(filterType));
+	return filterType > static_cast<int>(Invalid) && filterType < static_cast<int>(NumberOfFilterTypes);
 }
 
 bool ModFilterTypes::isValid(ModFilterType filterType) {
-	return filterType > ModFilterTypes::Invalid && filterType < ModFilterTypes::NumberOfFilterTypes;
+	return filterType > Invalid && filterType < NumberOfFilterTypes;
 }
 
 const char * ModFilterTypes::toString(ModFilterType filterType) {
@@ -24,15 +24,15 @@ const char * ModFilterTypes::toString(int filterType) {
 }
 
 ModFilterTypes::ModFilterType ModFilterTypes::parseFrom(const char * data) {
-	if(data == NULL) { return ModFilterTypes::Invalid; }
+	if(data == NULL) { return Invalid; }
 
-	ModFilterTypes::ModFilterType filterType = Invalid;
+	ModFilterType filterType = Invalid;
 
 	char * filterTypeString = Utilities::trimCopyString(data);
 
-	for(int i=0;i<ModFilterTypes::NumberOfFilterTypes;i++) {
+	for(int i=static_cast<int>(Invalid)+1;i<static_cast<int>(NumberOfFilterTypes);i++) {
 		if(Utilities::compareStringsIgnoreCase(filterTypeString, filterTypeStrings[i]) == 0) {
-			filterType = static_cast<ModFilterTypes::ModFilterType>(i);
+			filterType = static_cast<ModFilterType>(i);
 			break;
 		}
 	}

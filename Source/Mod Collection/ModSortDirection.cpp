@@ -4,11 +4,11 @@ const char * ModSortDirections::sortDirectionStrings[] = { "Invalid", "Ascending
 const ModSortDirections::ModSortDirection ModSortDirections::defaultSortDirection = ModSortDirections::Ascending;
 
 bool ModSortDirections::isValid(int sortDirection) {
-	return isValid(static_cast<ModSortDirections::ModSortDirection>(sortDirection));
+	return sortDirection > static_cast<int>(Invalid) && sortDirection < static_cast<int>(NumberOfSortDirections);
 }
 
 bool ModSortDirections::isValid(ModSortDirection sortDirection) {
-	return sortDirection > ModSortDirections::Invalid && sortDirection < ModSortDirections::NumberOfSortDirections;
+	return sortDirection > Invalid && sortDirection < NumberOfSortDirections;
 }
 
 const char * ModSortDirections::toString(ModSortDirection sortDirection) {
@@ -24,15 +24,15 @@ const char * ModSortDirections::toString(int sortDirection) {
 }
 
 ModSortDirections::ModSortDirection ModSortDirections::parseFrom(const char * data) {
-	if(data == NULL) { return ModSortDirections::Invalid; }
+	if(data == NULL) { return Invalid; }
 
-	ModSortDirections::ModSortDirection sortDirection = Invalid;
+	ModSortDirection sortDirection = Invalid;
 
 	char * sortDirectionString = Utilities::trimCopyString(data);
 
-	for(int i=0;i<ModSortDirections::NumberOfSortDirections;i++) {
+	for(int i=static_cast<int>(Invalid)+1;i<static_cast<int>(NumberOfSortDirections);i++) {
 		if(Utilities::compareStringsIgnoreCase(sortDirectionString, sortDirectionStrings[i]) == 0) {
-			sortDirection = static_cast<ModSortDirections::ModSortDirection>(i);
+			sortDirection = static_cast<ModSortDirection>(i);
 			break;
 		}
 	}

@@ -4,11 +4,11 @@ const char * GameTypes::gameTypeStrings[] = { "Invalid", "Game", "Setup", "Clien
 const GameTypes::GameType GameTypes::defaultGameType = GameTypes::Game;
 
 bool GameTypes::isValid(int type) {
-	return isValid(static_cast<GameType>(type));
+	return type > static_cast<int>(Invalid) && type < static_cast<int>(NumberOfGameTypes);
 }
 
 bool GameTypes::isValid(GameType type) {
-	return type > GameTypes::Invalid && type < GameTypes::NumberOfGameTypes;
+	return type > Invalid && type < NumberOfGameTypes;
 }
 
 const char * GameTypes::toString(GameType type) {
@@ -30,7 +30,7 @@ GameTypes::GameType GameTypes::parseFrom(const char * data) {
 
 	char * typeString = Utilities::trimCopyString(data);
 
-	for(int i=0;i<NumberOfGameTypes;i++) {
+	for(int i=static_cast<int>(Invalid)+1;i<static_cast<int>(NumberOfGameTypes);i++) {
 		if(Utilities::compareStringsIgnoreCase(typeString, gameTypeStrings[i]) == 0) {
 			type = static_cast<GameType>(i);
 			break;

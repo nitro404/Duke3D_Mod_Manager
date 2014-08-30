@@ -4,11 +4,11 @@ const char * ModSortTypes::sortTypeStrings[] = { "Invalid", "Unsorted", "Name", 
 const ModSortTypes::ModSortType ModSortTypes::defaultSortType = ModSortTypes::Unsorted;
 
 bool ModSortTypes::isValid(int sortType) {
-	return isValid(static_cast<ModSortType>(sortType));
+	return sortType > static_cast<int>(Invalid) && sortType < static_cast<int>(NumberOfSortTypes);
 }
 
 bool ModSortTypes::isValid(ModSortType sortType) {
-	return sortType > ModSortTypes::Invalid && sortType < ModSortTypes::NumberOfSortTypes;
+	return sortType > Invalid && sortType < NumberOfSortTypes;
 }
 
 bool ModSortTypes::isValidInContext(int sortType, int filterType, bool hasSelectedTeam, bool hasSelectedAuthor) {
@@ -30,16 +30,16 @@ bool ModSortTypes::isValidInContext(ModSortType sortType, ModFilterTypes::ModFil
 	    filterType == ModFilterTypes::Favourites ||
 	   (filterType == ModFilterTypes::Teams && hasSelectedTeam) ||
 	   (filterType == ModFilterTypes::Authors && hasSelectedAuthor)) {
-		return sortType == ModSortTypes::Unsorted ||
-			   sortType == ModSortTypes::Name ||
-			   sortType == ModSortTypes::ReleaseDate ||
-			   sortType == ModSortTypes::Rating;
+		return sortType == Unsorted ||
+			   sortType == Name ||
+			   sortType == ReleaseDate ||
+			   sortType == Rating;
 	}
 	else if((filterType == ModFilterTypes::Teams && !hasSelectedTeam) ||
 			(filterType == ModFilterTypes::Authors && !hasSelectedAuthor)) {
-		return sortType == ModSortTypes::Unsorted ||
-			   sortType == ModSortTypes::Name ||
-			   sortType == ModSortTypes::NumberOfMods;
+		return sortType == Unsorted ||
+			   sortType == Name ||
+			   sortType == NumberOfMods;
 	}
 	return false;
 }
@@ -57,15 +57,15 @@ const char * ModSortTypes::toString(int sortType) {
 }
 
 ModSortTypes::ModSortType ModSortTypes::parseFrom(const char * data) {
-	if(data == NULL) { return ModSortTypes::Invalid; }
+	if(data == NULL) { return Invalid; }
 
-	ModSortTypes::ModSortType sortType = Invalid;
+	ModSortType sortType = Invalid;
 
 	char * sortTypeString = Utilities::trimCopyString(data);
 
-	for(int i=0;i<ModSortTypes::NumberOfSortTypes;i++) {
+	for(int i=static_cast<int>(Invalid)+1;i<static_cast<int>(NumberOfSortTypes);i++) {
 		if(Utilities::compareStringsIgnoreCase(sortTypeString, sortTypeStrings[i]) == 0) {
-			sortType = static_cast<ModSortTypes::ModSortType>(i);
+			sortType = static_cast<ModSortType>(i);
 			break;
 		}
 	}
