@@ -199,6 +199,40 @@ int Utilities::lastIndexOf(const char * data, char c) {
 	return -1;
 }
 
+QString Utilities::getArguments(const char * data) {
+	if(data == NULL) { return QString(); }
+
+	char * newData = trimCopy(data);
+	if(stringLength(newData) == 0) {
+		delete [] newData;
+		return QString();
+	}
+
+	int split = firstIndexOf(newData, ' ');
+	if(split < 1 || split == stringLength(newData) - 1) {
+		delete [] newData;
+		return QString();
+	}
+
+	char * arguments = substring(newData, split + 1, stringLength(newData));
+
+	delete [] newData;
+
+	return arguments;
+}
+
+QString Utilities::getArguments(const QString & data) {
+	if(data.isNull()) { return QString(); }
+
+	QString newData = data.trimmed();
+	if(newData.isEmpty()) { return QString(); }
+
+	int split = newData.indexOf(" ");
+	if(split < 1 || split == newData.length() - 1) { return QString(); }
+
+	return substring(newData, split + 1, newData.length());
+}
+
 char * Utilities::getFileNameNoExtension(const char * fileName) {
 	if(fileName == NULL) { return NULL; }
 	
@@ -325,6 +359,10 @@ void Utilities::renameFiles(const char * fromSuffix, const char * toSuffix) {
 	}
 }
 
+void Utilities::clear() {
+	system("CLS");
+}
+
 void Utilities::pause() {
-	system("pause");
+	system("PAUSE");
 }

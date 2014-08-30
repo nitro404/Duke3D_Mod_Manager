@@ -1,12 +1,20 @@
 #include "Mod Collection/ModCollection.h"
 
-ModCollection::ModCollection() : m_id(NULL) {
+ModCollection::ModCollection()
+	: m_id(NULL)
+	, m_name(NULL) {
 	m_id = new char[1];
 	m_id[0] = '\0';
+
+	m_name = new char[1];
+	m_name[0] = '\0';
 }
 
-ModCollection::ModCollection(const ModCollection & m) : m_id(NULL) {
+ModCollection::ModCollection(const ModCollection & m)
+	: m_id(NULL)
+	, m_name(NULL) {
 	m_id = Utilities::trimCopy(m.m_id);
+	m_name = Utilities::trimCopy(m.m_name);
 
 	for(int i=0;i<m.m_mods.size();i++) {
 		m_mods.push_back(new Mod(*m.m_mods[i]));
@@ -14,9 +22,8 @@ ModCollection::ModCollection(const ModCollection & m) : m_id(NULL) {
 }
 
 ModCollection & ModCollection::operator = (const ModCollection & m) {
-	if(m_id != NULL) {
-		delete [] m_id;
-	}
+	if(m_id != NULL) { delete [] m_id; }
+	if(m_name != NULL) { delete [] m_name; }
 
 	for(int i=0;i<m.m_mods.size();i++) {
 		delete m_mods[i];
@@ -24,6 +31,7 @@ ModCollection & ModCollection::operator = (const ModCollection & m) {
 	m_mods.clear();
 
 	m_id = Utilities::trimCopy(m.m_id);
+	m_name = Utilities::trimCopy(m.m_name);
 
 	for(int i=0;i<m.m_mods.size();i++) {
 		m_mods.push_back(new Mod(*m.m_mods[i]));
@@ -33,9 +41,8 @@ ModCollection & ModCollection::operator = (const ModCollection & m) {
 }
 
 ModCollection::~ModCollection() {
-	if(m_id != NULL) {
-		delete [] m_id;
-	}
+	if(m_id != NULL) { delete [] m_id; }
+	if(m_name != NULL) { delete [] m_name; }
 
 	for(int i=0;i<m_mods.size();i++) {
 		delete m_mods[i];
@@ -44,6 +51,10 @@ ModCollection::~ModCollection() {
 
 const char * ModCollection::getID() const {
 	return m_id;
+}
+
+const char * ModCollection::getGameName() const {
+	return m_name;
 }
 
 void ModCollection::setID(const char * id) {
@@ -73,6 +84,36 @@ void ModCollection::setID(const QString & id) {
 		QByteArray idBytes = id.toLocal8Bit();
 		const char * idData = idBytes.data();
 		m_id = Utilities::trimCopy(idData);
+	}
+}
+
+void ModCollection::setGameName(const char * name) {
+	if(m_name != NULL) {
+		delete [] m_name;
+	}
+	
+	if(name == NULL) {
+		m_name = new char[1];
+		m_name[0] = '\0';
+	}
+	else {
+		m_name = Utilities::trimCopy(name);
+	}
+}
+
+void ModCollection::setGameName(const QString & name) {
+	if(m_name != NULL) {
+		delete [] m_name;
+	}
+
+	if(name.isEmpty()) {
+		m_name = new char[1];
+		m_name[0] = '\0';
+	}
+	else {
+		QByteArray nameBytes = name.toLocal8Bit();
+		const char * nameData = nameBytes.data();
+		m_name = Utilities::trimCopy(nameData);
 	}
 }
 
@@ -471,11 +512,7 @@ bool ModCollection::loadFromXML(const char * fileName) {
 					QString game, id, fileVersion;
 
 					if(attributes.hasAttribute("game")) {
-						game = attributes.value("game").toString();
-						if(QString::compare(game, "Duke Nukem 3D", Qt::CaseInsensitive) != 0) {
-							printf("Specified mod list is for an unsupported game: \"%s\".\n", game.toLocal8Bit().data());
-							break;
-						}
+						setGameName(attributes.value("game").toString());
 					}
 					else {
 						printf("Root mods node missing required game attribute.\n");

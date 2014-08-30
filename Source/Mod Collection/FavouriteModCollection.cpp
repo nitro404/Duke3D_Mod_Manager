@@ -404,7 +404,6 @@ bool FavouriteModCollection::loadFavouritesList(const char * fileName) {
 	
 	QFile input(favouritesListPath);
 	if(!input.open(QIODevice::ReadOnly | QIODevice::Text)) { return false; }
-
 	
 	clearFavourites();
 
@@ -495,8 +494,8 @@ bool FavouriteModCollection::loadFavouritesXML(const char * fileName) {
 
 					if(attributes.hasAttribute("game")) {
 						game = attributes.value("game").toString();
-						if(QString::compare(game, "Duke Nukem 3D", Qt::CaseInsensitive) != 0) {
-							printf("Specified mod list is for an unsupported game: \"%s\".\n", game.toLocal8Bit().data());
+						if(m_mods != NULL && !game.isEmpty() && QString::compare(game, m_mods->getGameName(), Qt::CaseInsensitive) != 0) {
+							printf("Attempted to load a favourite mod list for game \"%s\", while mod list is for game \"%s\".\n", game.toLocal8Bit().data(), m_mods->getGameName());
 							break;
 						}
 					}
@@ -712,7 +711,6 @@ int FavouriteModCollection::checkForMissingFavouriteMods() const {
 
 	int numberOfMissingFavouriteMods = 0;
 
-// TODO: check version too? (will need to add functions for this)
 	for(int i=0;i<m_favourites.size();i++) {
 		if(!m_mods->hasMod(m_favourites[i]->getName())) {
 			numberOfMissingFavouriteMods++;

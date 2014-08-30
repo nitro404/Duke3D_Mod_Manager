@@ -28,6 +28,8 @@ namespace Utilities {
 	int compareStringsIgnoreCase(const QString & s1, const char * s2);
 	int firstIndexOf(const char * data, char c);
 	int lastIndexOf(const char * data, char c);
+	QString getArguments(const char * data);
+	QString getArguments(const QString & data);
 	char * getFileNameNoExtension(const char * fileName);
 	char * getFileExtension(const char * fileName);
 	bool fileHasExtension(const char * fileName, const char * fileExtension);
@@ -39,6 +41,7 @@ namespace Utilities {
 	QString dateToString(const QDate & date);
 	void deleteFiles(const char * suffix);
 	void renameFiles(const char * fromSuffix, const char * toSuffix);
+	void clear();
 	void pause();
 }
 

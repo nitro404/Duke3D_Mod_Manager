@@ -18,9 +18,12 @@ public:
 	virtual ~ModCollection();
 
 	const char * getID() const;
+	const char * getGameName() const;
 
 	void setID(const char * id);
 	void setID(const QString & id);
+	void setGameName(const char * id);
+	void setGameName(const QString & id);
 	
 	int numberOfMods() const;
 	bool hasMod(const Mod & mod) const;
@@ -55,6 +58,7 @@ private:
 
 private:
 	char * m_id;
+	char * m_name;
 	QVector<Mod *> m_mods;
 };
 

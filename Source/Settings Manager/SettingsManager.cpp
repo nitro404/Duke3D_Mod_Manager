@@ -136,7 +136,7 @@ void SettingsManager::reset() {
 
 bool SettingsManager::load(const ArgumentParser * args) {
 	if(args != NULL) {
-		QString altSettingsFileName = args->getValue("s");
+		QString altSettingsFileName = args->getValue("f");
 		if(altSettingsFileName.length() > 0) {
 			QByteArray fileNameBytes = altSettingsFileName.toLocal8Bit();
 			const char * fileNameData = fileNameBytes.data();
@@ -156,7 +156,7 @@ bool SettingsManager::load(const ArgumentParser * args) {
 
 bool SettingsManager::save(const ArgumentParser * args) const {
 	if(args != NULL) {
-		QString altSettingsFileName = args->getValue("s");
+		QString altSettingsFileName = args->getValue("f");
 		if(altSettingsFileName.length() > 0) {
 			QByteArray fileNameBytes = altSettingsFileName.toLocal8Bit();
 			const char * fileNameData = fileNameBytes.data();

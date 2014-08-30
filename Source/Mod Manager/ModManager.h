@@ -54,12 +54,13 @@ public:
 	void clearSelectedMod();
 
 	void runMenu();
-	void runFilterPrompt();
-	void runSortPompt();
-	void runGameTypePrompt();
-	void runModePrompt();
-	void runIPAddressPrompt();
-	void runSearchPrompt();
+	void runFilterPrompt(const QString & args = QString());
+	void runSortPrompt(const QString & args = QString());
+	void runGameTypePrompt(const QString & args = QString());
+	void runModePrompt(const QString & args = QString());
+	void runIPAddressPrompt(const QString & args = QString());
+	void runSelectRandomModPrompt();
+	void runSearchPrompt(const QString & args = QString());
 	bool runModVersionSelectionPrompt();
 	void runSelectedMod(const ArgumentParser * args = NULL);
 	bool updateScriptArgs();
@@ -73,7 +74,7 @@ public:
 	int checkAllModsForMissingFiles() const;
 	static int checkForMissingExecutables();
 
-	static void displayHelp();
+	static void displayArgumentHelp();
 	
 private:
 	bool m_initialized;

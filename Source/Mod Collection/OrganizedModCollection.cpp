@@ -201,12 +201,26 @@ ModSortDirections::ModSortDirection OrganizedModCollection::getSortDirection() c
 }
 	
 bool OrganizedModCollection::setFilterType(ModFilterTypes::ModFilterType filterType) {
-	if(!ModFilterTypes::isValid(filterType)) {
-		return false;
-	}
+	if(!ModFilterTypes::isValid(filterType)) { return false; }
 
 	bool organize = m_filterType != filterType;
+
 	m_filterType = filterType;
+
+	if(filterType != ModFilterTypes::Teams) {
+		m_selectedTeam = NULL;
+	}
+
+	if(filterType != ModFilterTypes::Authors) {
+		m_selectedAuthor = NULL;
+	}
+
+	if(!ModSortTypes::isValidInContext(m_sortType, m_filterType, m_selectedTeam != NULL, m_selectedAuthor != NULL)) {
+		m_sortType = ModSortTypes::defaultSortType;
+		m_sortDirection = ModSortDirections::defaultSortDirection;
+
+		organize = true;
+	}
 
 	if(organize) {
 		organizeModCollection();
@@ -216,11 +230,10 @@ bool OrganizedModCollection::setFilterType(ModFilterTypes::ModFilterType filterT
 }
 
 bool OrganizedModCollection::setSortType(ModSortTypes::ModSortType sortType) {
-	if(!ModSortTypes::isValid(sortType)) {
-		return false;
-	}
+	if(!ModSortTypes::isValidInContext(sortType, m_filterType, m_selectedTeam != NULL, m_selectedAuthor != NULL)) { return false; }
 
 	bool organize = m_sortType != sortType;
+
 	m_sortType = sortType;
 
 	if(organize) {
@@ -231,11 +244,26 @@ bool OrganizedModCollection::setSortType(ModSortTypes::ModSortType sortType) {
 }
 
 bool OrganizedModCollection::setSortDirection(ModSortDirections::ModSortDirection sortDirection) {
-	if(!ModSortDirections::isValid(sortDirection)) {
-		return false;
-	}
+	if(!ModSortDirections::isValid(sortDirection)) { return false; }
 
 	bool organize = m_sortDirection != sortDirection;
+
+	m_sortDirection = sortDirection;
+
+	if(organize) {
+		sortModCollection();
+	}
+
+	return true;
+}
+
+bool OrganizedModCollection::setSortOptions(ModSortTypes::ModSortType sortType, ModSortDirections::ModSortDirection sortDirection) {
+	if(!ModSortTypes::isValidInContext(sortType, m_filterType, m_selectedTeam != NULL, m_selectedAuthor != NULL) || !ModSortDirections::isValid(sortDirection)) { return false; }
+
+	bool organize = m_sortType != sortType ||
+					m_sortDirection != sortDirection;
+
+	m_sortType = sortType;
 	m_sortDirection = sortDirection;
 
 	if(organize) {
@@ -459,10 +487,24 @@ void OrganizedModCollection::incrementTeamModCount(const QString & name) {
 	m_teams.push_back(new ModAuthorInformation(formattedName));
 }
 
+bool OrganizedModCollection::hasSelectedTeam() const {
+	return m_selectedTeam != NULL;
+}
+
+const ModAuthorInformation * OrganizedModCollection::getSelectedTeam() const {
+	return m_selectedTeam;
+}
+
 bool OrganizedModCollection::setSelectedTeam(int index) {
 	if(index < 0 || index >= m_teams.size()) { return false; }
 
+	bool organize = m_selectedTeam != m_teams[index];
+
 	m_selectedTeam = m_teams[index];
+
+	if(organize) {
+		organizeModCollection();
+	}
 
 	return true;
 }
@@ -475,10 +517,20 @@ bool OrganizedModCollection::setSelectedTeam(const char * name) {
 		return false;
 	}
 
+	bool organize = false;
+
 	for(int i=0;i<m_teams.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(m_teams[i]->getName(), formattedName) == 0) {
 			delete [] formattedName;
+
+			organize = m_selectedTeam != m_teams[i];
+
 			m_selectedTeam = m_teams[i];
+
+			if(organize) {
+				organizeModCollection();
+			}
+
 			return true;
 		}
 	}
@@ -491,9 +543,18 @@ bool OrganizedModCollection::setSelectedTeam(const QString & name) {
 	QString formattedName = name.trimmed();
 	if(formattedName.isEmpty()) { return false; }
 
+	bool organize = false;
+
 	for(int i=0;i<m_teams.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(m_teams[i]->getName(), formattedName) == 0) {
+			organize = m_selectedTeam != m_teams[i];
+
 			m_selectedTeam = m_teams[i];
+
+			if(organize) {
+				organizeModCollection();
+			}
+
 			return true;
 		}
 	}
@@ -503,9 +564,18 @@ bool OrganizedModCollection::setSelectedTeam(const QString & name) {
 bool OrganizedModCollection::setSelectedTeam(const ModAuthorInformation * teamInfo) {
 	if(teamInfo == NULL) { return false; }
 
+	bool organize = false;
+
 	for(int i=0;i<m_teams.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(m_teams[i]->getName(), teamInfo->getName()) == 0) {
+			organize = m_selectedTeam != m_teams[i];
+
 			m_selectedTeam = m_teams[i];
+
+			if(organize) {
+				organizeModCollection();
+			}
+
 			return true;
 		}
 	}
@@ -513,7 +583,13 @@ bool OrganizedModCollection::setSelectedTeam(const ModAuthorInformation * teamIn
 }
 
 void OrganizedModCollection::clearSelectedTeam() {
+	bool organize = m_selectedTeam != NULL;
+
 	m_selectedTeam = NULL;
+
+	if(organize) {
+		organizeModCollection();
+	}
 }
 
 int OrganizedModCollection::numberOfAuthors() const {
@@ -630,10 +706,24 @@ void OrganizedModCollection::incrementAuthorModCount(const QString & name) {
 	m_authors.push_back(new ModAuthorInformation(formattedName));
 }
 
+bool OrganizedModCollection::hasSelectedAuthor() const {
+	return m_selectedAuthor != NULL;
+}
+
+const ModAuthorInformation * OrganizedModCollection::getSelectedAuthor() const {
+	return m_selectedAuthor;
+}
+
 bool OrganizedModCollection::setSelectedAuthor(int index) {
 	if(index < 0 || index >= m_authors.size()) { return false; }
 
+	bool organize = m_selectedAuthor != m_authors[index];
+
 	m_selectedAuthor = m_authors[index];
+
+	if(organize) {
+		organizeModCollection();
+	}
 
 	return true;
 }
@@ -646,10 +736,20 @@ bool OrganizedModCollection::setSelectedAuthor(const char * name) {
 		return false;
 	}
 
+	bool organize = false;
+
 	for(int i=0;i<m_authors.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(m_authors[i]->getName(), formattedName) == 0) {
 			delete [] formattedName;
+
+			organize = m_selectedAuthor != m_authors[i];
+
 			m_selectedAuthor = m_authors[i];
+
+			if(organize) {
+				organizeModCollection();
+			}
+
 			return true;
 		}
 	}
@@ -662,9 +762,18 @@ bool OrganizedModCollection::setSelectedAuthor(const QString & name) {
 	QString formattedName = name.trimmed();
 	if(formattedName.isEmpty()) { return false; }
 
+	bool organize = false;
+
 	for(int i=0;i<m_authors.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(m_authors[i]->getName(), formattedName) == 0) {
+			organize = m_selectedAuthor != m_authors[i];
+
 			m_selectedAuthor = m_authors[i];
+
+			if(organize) {
+				organizeModCollection();
+			}
+
 			return true;
 		}
 	}
@@ -674,9 +783,18 @@ bool OrganizedModCollection::setSelectedAuthor(const QString & name) {
 bool OrganizedModCollection::setSelectedAuthor(const ModAuthorInformation * authorInfo) {
 	if(authorInfo == NULL) { return false; }
 
+	bool organize = false;
+
 	for(int i=0;i<m_authors.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(m_authors[i]->getName(), authorInfo->getName()) == 0) {
+			organize = m_selectedAuthor != m_authors[i];
+
 			m_selectedAuthor = m_authors[i];
+
+			if(organize) {
+				organizeModCollection();
+			}
+
 			return true;
 		}
 	}
@@ -732,16 +850,18 @@ void OrganizedModCollection::filterModCollection() {
 	}
 	else if(m_filterType == ModFilterTypes::Teams) {
 		if(m_selectedTeam != NULL) {
+			const ModTeam * team = NULL;
 			for(int i=0;i<m_mods->numberOfMods();i++) {
-				if(Utilities::compareStrings(m_mods->getMod(i)->getTeam()->getName(), m_selectedTeam->getName()) == 0) {
+				team = m_mods->getMod(i)->getTeam();
+				if(team != NULL && Utilities::compareStrings(team->getName(), m_selectedTeam->getName()) == 0) {
 					m_organizedMods.push_back(m_mods->getMod(i));
 				}
 			}
 		}
 	}
 	else if(m_filterType == ModFilterTypes::Authors) {
-		const ModTeam * team = NULL;
 		if(m_selectedAuthor != NULL) {
+			const ModTeam * team = NULL;
 			for(int i=0;i<m_mods->numberOfMods();i++) {
 				team = m_mods->getMod(i)->getTeam();
 				if(team != NULL && team->numberOfMembers() > 0) {
@@ -820,8 +940,8 @@ QVector<const Mod *> OrganizedModCollection::mergeMods(QVector<const Mod *> left
 				else { pushLeft = left[0]->getReleaseDate() > right[0]->getReleaseDate(); }
 			}
 		}
-// TODO: sort by rating
 		if(m_sortType == ModSortTypes::Rating) {
+// TODO: sort by rating
 			if(m_sortDirection == ModSortDirections::Ascending) {
 
 			}

@@ -4,11 +4,44 @@ const char * ModSortTypes::sortTypeStrings[] = { "Invalid", "Unsorted", "Name", 
 const ModSortTypes::ModSortType ModSortTypes::defaultSortType = ModSortTypes::Unsorted;
 
 bool ModSortTypes::isValid(int sortType) {
-	return isValid(static_cast<ModSortTypes::ModSortType>(sortType));
+	return isValid(static_cast<ModSortType>(sortType));
 }
 
 bool ModSortTypes::isValid(ModSortType sortType) {
 	return sortType > ModSortTypes::Invalid && sortType < ModSortTypes::NumberOfSortTypes;
+}
+
+bool ModSortTypes::isValidInContext(int sortType, int filterType, bool hasSelectedTeam, bool hasSelectedAuthor) {
+	return isValidInContext(static_cast<ModSortType>(sortType), static_cast<ModFilterTypes::ModFilterType>(filterType), hasSelectedTeam, hasSelectedAuthor);
+}
+
+bool ModSortTypes::isValidInContext(ModSortType sortType, int filterType, bool hasSelectedTeam, bool hasSelectedAuthor) {
+	return isValidInContext(sortType, static_cast<ModFilterTypes::ModFilterType>(filterType), hasSelectedTeam, hasSelectedAuthor);
+}
+
+bool ModSortTypes::isValidInContext(int sortType, ModFilterTypes::ModFilterType filterType, bool hasSelectedTeam, bool hasSelectedAuthor) {
+	return isValidInContext(static_cast<ModSortType>(sortType), filterType, hasSelectedTeam, hasSelectedAuthor);
+}
+
+bool ModSortTypes::isValidInContext(ModSortType sortType, ModFilterTypes::ModFilterType filterType, bool hasSelectedTeam, bool hasSelectedAuthor) {
+	if(!isValid(sortType) || !ModFilterTypes::isValid(filterType)) { return false; }
+
+	if( filterType == ModFilterTypes::None ||
+	    filterType == ModFilterTypes::Favourites ||
+	   (filterType == ModFilterTypes::Teams && hasSelectedTeam) ||
+	   (filterType == ModFilterTypes::Authors && hasSelectedAuthor)) {
+		return sortType == ModSortTypes::Unsorted ||
+			   sortType == ModSortTypes::Name ||
+			   sortType == ModSortTypes::ReleaseDate ||
+			   sortType == ModSortTypes::Rating;
+	}
+	else if((filterType == ModFilterTypes::Teams && !hasSelectedTeam) ||
+			(filterType == ModFilterTypes::Authors && !hasSelectedAuthor)) {
+		return sortType == ModSortTypes::Unsorted ||
+			   sortType == ModSortTypes::Name ||
+			   sortType == ModSortTypes::NumberOfMods;
+	}
+	return false;
 }
 
 const char * ModSortTypes::toString(ModSortType sortType) {

@@ -36,6 +36,7 @@ public:
 	bool setFilterType(ModFilterTypes::ModFilterType filterType);
 	bool setSortType(ModSortTypes::ModSortType sortType);
 	bool setSortDirection(ModSortDirections::ModSortDirection sortDirection);
+	bool setSortOptions(ModSortTypes::ModSortType sortType, ModSortDirections::ModSortDirection sortDirection);
 
 	int numberOfMods() const;
 	bool hasMod(const Mod & mod) const;
@@ -57,6 +58,8 @@ public:
 	void incrementTeamModCount(int index);
 	void incrementTeamModCount(const char * name);
 	void incrementTeamModCount(const QString & name);
+	bool hasSelectedTeam() const;
+	const ModAuthorInformation * getSelectedTeam() const;
 	bool setSelectedTeam(int index);
 	bool setSelectedTeam(const char * name);
 	bool setSelectedTeam(const QString & name);
@@ -72,6 +75,8 @@ public:
 	void incrementAuthorModCount(int index);
 	void incrementAuthorModCount(const char * name);
 	void incrementAuthorModCount(const QString & name);
+	bool hasSelectedAuthor() const;
+	const ModAuthorInformation * getSelectedAuthor() const;
 	bool setSelectedAuthor(int index);
 	bool setSelectedAuthor(const char * name);
 	bool setSelectedAuthor(const QString & name);
