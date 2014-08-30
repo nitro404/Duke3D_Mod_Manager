@@ -45,7 +45,7 @@ char * Utilities::copyString(const char * data) {
 }
 
 // trims whitespace off of the front and end of string passed into it, and returns a copy of the trimmed string
-char * Utilities::trimCopy(const char * data) {
+char * Utilities::trimCopyString(const char * data) {
 	// verify the string
 	if(data == NULL) { return NULL; }
 	char * newData;
@@ -202,7 +202,7 @@ int Utilities::lastIndexOf(const char * data, char c) {
 QString Utilities::getArguments(const char * data) {
 	if(data == NULL) { return QString(); }
 
-	char * newData = trimCopy(data);
+	char * newData = trimCopyString(data);
 	if(stringLength(newData) == 0) {
 		delete [] newData;
 		return QString();

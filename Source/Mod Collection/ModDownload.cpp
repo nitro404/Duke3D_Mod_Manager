@@ -14,7 +14,7 @@ ModDownload::ModDownload(const char * fileName, const char * type)
 		m_fileName[0] = '\0';
 	}
 	else {
-		m_fileName = Utilities::trimCopy(fileName);
+		m_fileName = Utilities::trimCopyString(fileName);
 	}
 
 	if(type == NULL) {
@@ -22,7 +22,7 @@ ModDownload::ModDownload(const char * fileName, const char * type)
 		m_type[0] = '\0';
 	}
 	else {
-		m_type = Utilities::trimCopy(type);
+		m_type = Utilities::trimCopyString(type);
 	}
 }
 
@@ -42,7 +42,7 @@ ModDownload::ModDownload(const QString & fileName, const QString & type)
 	else {
 		QByteArray fileNameBytes = fileName.toLocal8Bit();
 		const char * fileNameData = fileNameBytes.data();
-		m_fileName = Utilities::trimCopy(fileNameData);
+		m_fileName = Utilities::trimCopyString(fileNameData);
 	}
 
 	if(type.isEmpty()) {
@@ -52,7 +52,7 @@ ModDownload::ModDownload(const QString & fileName, const QString & type)
 	else {
 		QByteArray typeBytes = type.toLocal8Bit();
 		const char * typeData = typeBytes.data();
-		m_type = Utilities::trimCopy(typeData);
+		m_type = Utilities::trimCopyString(typeData);
 	}
 }
 
@@ -65,12 +65,12 @@ ModDownload::ModDownload(const ModDownload & d)
 	, m_subfolder(NULL)
 	, m_type(NULL)
 	, m_description(NULL) {
-	m_fileName = Utilities::trimCopy(d.m_fileName);
-	m_version = Utilities::trimCopy(d.m_version);
-	m_special = Utilities::trimCopy(d.m_special);
-	m_subfolder = Utilities::trimCopy(d.m_subfolder);
-	m_type = Utilities::trimCopy(d.m_type);
-	m_description = Utilities::trimCopy(d.m_description);
+	m_fileName = Utilities::trimCopyString(d.m_fileName);
+	m_version = Utilities::trimCopyString(d.m_version);
+	m_special = Utilities::trimCopyString(d.m_special);
+	m_subfolder = Utilities::trimCopyString(d.m_subfolder);
+	m_type = Utilities::trimCopyString(d.m_type);
+	m_description = Utilities::trimCopyString(d.m_description);
 }
 
 ModDownload & ModDownload::operator = (const ModDownload & d) {
@@ -81,14 +81,14 @@ ModDownload & ModDownload::operator = (const ModDownload & d) {
 	delete [] m_type;
 	if(m_description != NULL) { delete [] m_description; }
 
-	m_fileName = Utilities::trimCopy(d.m_fileName);
+	m_fileName = Utilities::trimCopyString(d.m_fileName);
 	m_partNumber = d.m_partNumber;
 	m_partCount = d.m_partCount;
-	m_version = Utilities::trimCopy(d.m_version);
-	m_special = Utilities::trimCopy(d.m_special);
-	m_subfolder = Utilities::trimCopy(d.m_subfolder);
-	m_type = Utilities::trimCopy(d.m_type);
-	m_description = Utilities::trimCopy(d.m_description);
+	m_version = Utilities::trimCopyString(d.m_version);
+	m_special = Utilities::trimCopyString(d.m_special);
+	m_subfolder = Utilities::trimCopyString(d.m_subfolder);
+	m_type = Utilities::trimCopyString(d.m_type);
+	m_description = Utilities::trimCopyString(d.m_description);
 
 	return *this;
 }
@@ -142,7 +142,7 @@ void ModDownload::setFileName(const char * fileName) {
 		m_fileName[0] = '\0';
 	}
 	else {
-		m_fileName = Utilities::trimCopy(fileName);
+		m_fileName = Utilities::trimCopyString(fileName);
 	}
 }
 
@@ -156,7 +156,7 @@ void ModDownload::setFileName(const QString & fileName) {
 	else {
 		QByteArray fileNameBytes = fileName.toLocal8Bit();
 		const char * fileNameData = fileNameBytes.data();
-		m_fileName = Utilities::trimCopy(fileNameData);
+		m_fileName = Utilities::trimCopyString(fileNameData);
 	}
 }
 
@@ -213,7 +213,7 @@ void ModDownload::setVersion(const char * version) {
 	}
 	
 	if(version != NULL) {
-		m_version = Utilities::trimCopy(version);
+		m_version = Utilities::trimCopyString(version);
 	}
 }
 
@@ -226,7 +226,7 @@ void ModDownload::setVersion(const QString & version) {
 	if(!version.isNull()) {
 		QByteArray versionBytes = version.toLocal8Bit();
 		const char * versionData = versionBytes.data();
-		m_version = Utilities::trimCopy(versionData);
+		m_version = Utilities::trimCopyString(versionData);
 	}
 }
 
@@ -237,7 +237,7 @@ void ModDownload::setSpecial(const char * special) {
 	}
 	
 	if(special != NULL) {
-		m_special = Utilities::trimCopy(special);
+		m_special = Utilities::trimCopyString(special);
 	}
 }
 
@@ -250,7 +250,7 @@ void ModDownload::setSpecial(const QString & special) {
 	if(!special.isNull()) {
 		QByteArray specialBytes = special.toLocal8Bit();
 		const char * specialData = specialBytes.data();
-		m_special = Utilities::trimCopy(specialData);
+		m_special = Utilities::trimCopyString(specialData);
 	}
 }
 
@@ -261,7 +261,7 @@ void ModDownload::setSubfolder(const char * subfolder) {
 	}
 	
 	if(subfolder != NULL) {
-		m_subfolder = Utilities::trimCopy(subfolder);
+		m_subfolder = Utilities::trimCopyString(subfolder);
 	}
 }
 
@@ -274,7 +274,7 @@ void ModDownload::setSubfolder(const QString & subfolder) {
 	if(!subfolder.isNull()) {
 		QByteArray subfolderBytes = subfolder.toLocal8Bit();
 		const char * subfolderData = subfolderBytes.data();
-		m_subfolder = Utilities::trimCopy(subfolderData);
+		m_subfolder = Utilities::trimCopyString(subfolderData);
 	}
 }
 
@@ -286,7 +286,7 @@ void ModDownload::setType(const char * type) {
 		m_type[0] = '\0';
 	}
 	else {
-		m_type = Utilities::trimCopy(type);
+		m_type = Utilities::trimCopyString(type);
 	}
 }
 
@@ -300,7 +300,7 @@ void ModDownload::setType(const QString & type) {
 	else {
 		QByteArray typeBytes = type.toLocal8Bit();
 		const char * typeData = typeBytes.data();
-		m_type = Utilities::trimCopy(typeData);
+		m_type = Utilities::trimCopyString(typeData);
 	}
 }
 
@@ -311,7 +311,7 @@ void ModDownload::setDescription(const char * description) {
 	}
 	
 	if(description != NULL) {
-		m_description = Utilities::trimCopy(description);
+		m_description = Utilities::trimCopyString(description);
 	}
 }
 
@@ -324,7 +324,7 @@ void ModDownload::setDescription(const QString & description) {
 	if(!description.isNull()) {
 		QByteArray descriptionBytes = description.toLocal8Bit();
 		const char * descriptionData = descriptionBytes.data();
-		m_description = Utilities::trimCopy(descriptionData);
+		m_description = Utilities::trimCopyString(descriptionData);
 	}
 }
 

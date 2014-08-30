@@ -3,7 +3,7 @@
 ModVersion::ModVersion(const char * version)
 	: m_version(NULL) {
 	if(version != NULL) {
-		m_version = Utilities::trimCopy(version);
+		m_version = Utilities::trimCopyString(version);
 	}
 }
 
@@ -12,14 +12,14 @@ ModVersion::ModVersion(const QString & version)
 	if(!version.isNull()) {
 		QByteArray versionBytes = version.toLocal8Bit();
 		const char * versionData = versionBytes.data();
-		m_version = Utilities::trimCopy(versionData);
+		m_version = Utilities::trimCopyString(versionData);
 	}
 }
 
 ModVersion::ModVersion(const ModVersion & m)
 	: m_version(NULL) {
 	if(m.m_version != NULL) {
-		m_version = Utilities::trimCopy(m.m_version);
+		m_version = Utilities::trimCopyString(m.m_version);
 	}
 
 	for(int i=0;i<m.m_files.size();i++) {
@@ -39,7 +39,7 @@ ModVersion & ModVersion::operator = (const ModVersion & m) {
 	m_files.clear();
 
 	if(m.m_version != NULL) {
-		m_version = Utilities::trimCopy(m.m_version);
+		m_version = Utilities::trimCopyString(m.m_version);
 	}
 
 	for(int i=0;i<m.m_files.size();i++) {
@@ -70,7 +70,7 @@ void ModVersion::setVersion(const char * version) {
 	}
 	
 	if(version != NULL) {
-		m_version = Utilities::trimCopy(version);
+		m_version = Utilities::trimCopyString(version);
 	}
 }
 
@@ -83,7 +83,7 @@ void ModVersion::setVersion(const QString & version) {
 	if(!version.isNull()) {
 		QByteArray versionBytes = version.toLocal8Bit();
 		const char * versionData = versionBytes.data();
-		m_version = Utilities::trimCopy(versionData);
+		m_version = Utilities::trimCopyString(versionData);
 	}
 }
 

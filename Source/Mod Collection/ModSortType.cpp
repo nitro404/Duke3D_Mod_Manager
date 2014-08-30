@@ -61,7 +61,7 @@ ModSortTypes::ModSortType ModSortTypes::parseFrom(const char * data) {
 
 	ModSortTypes::ModSortType sortType = Invalid;
 
-	char * sortTypeString = Utilities::trimCopy(data);
+	char * sortTypeString = Utilities::trimCopyString(data);
 
 	for(int i=0;i<ModSortTypes::NumberOfSortTypes;i++) {
 		if(Utilities::compareStringsIgnoreCase(sortTypeString, sortTypeStrings[i]) == 0) {

@@ -28,7 +28,7 @@ ModFilterTypes::ModFilterType ModFilterTypes::parseFrom(const char * data) {
 
 	ModFilterTypes::ModFilterType filterType = Invalid;
 
-	char * filterTypeString = Utilities::trimCopy(data);
+	char * filterTypeString = Utilities::trimCopyString(data);
 
 	for(int i=0;i<ModFilterTypes::NumberOfFilterTypes;i++) {
 		if(Utilities::compareStringsIgnoreCase(filterTypeString, filterTypeStrings[i]) == 0) {

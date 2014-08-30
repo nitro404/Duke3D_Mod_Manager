@@ -13,7 +13,7 @@ Mod::Mod(const char * name, const char * id)
 		m_name[0] = '\0';
 	}
 	else {
-		m_name = Utilities::trimCopy(name);
+		m_name = Utilities::trimCopyString(name);
 	}
 
 	if(id == NULL) {
@@ -21,7 +21,7 @@ Mod::Mod(const char * name, const char * id)
 		m_id[0] = '\0';
 	}
 	else {
-		m_id = Utilities::trimCopy(id);
+		m_id = Utilities::trimCopyString(id);
 	}
 }
 
@@ -40,7 +40,7 @@ Mod::Mod(const QString & name, const QString & id)
 	else {
 		QByteArray nameBytes = name.toLocal8Bit();
 		const char * nameData = nameBytes.data();
-		m_name = Utilities::trimCopy(nameData);
+		m_name = Utilities::trimCopyString(nameData);
 	}
 
 	if(id.isEmpty()) {
@@ -50,7 +50,7 @@ Mod::Mod(const QString & name, const QString & id)
 	else {
 		QByteArray idBytes = id.toLocal8Bit();
 		const char * idData = idBytes.data();
-		m_id = Utilities::trimCopy(idData);
+		m_id = Utilities::trimCopyString(idData);
 	}
 }
 
@@ -62,26 +62,26 @@ Mod::Mod(const Mod & m)
 	, m_latestVersion(NULL)
 	, m_website(NULL)
 	, m_team(NULL) {
-	m_name = Utilities::trimCopy(m.m_name);
+	m_name = Utilities::trimCopyString(m.m_name);
 	
-	m_id = Utilities::trimCopy(m.m_id);
+	m_id = Utilities::trimCopyString(m.m_id);
 
 	if(m.m_type != NULL) {
-		m_type = Utilities::trimCopy(m.m_type);
+		m_type = Utilities::trimCopyString(m.m_type);
 	}
 
 	if(m.m_gameVersion != NULL) {
-		m_gameVersion = Utilities::trimCopy(m.m_gameVersion);
+		m_gameVersion = Utilities::trimCopyString(m.m_gameVersion);
 	}
 
 	if(m.m_latestVersion != NULL) {
-		m_latestVersion = Utilities::trimCopy(m.m_latestVersion);
+		m_latestVersion = Utilities::trimCopyString(m.m_latestVersion);
 	}
 
 	m_releaseDate = m.m_releaseDate;
 
 	if(m.m_website != NULL) {
-		m_website = Utilities::trimCopy(m.m_website);
+		m_website = Utilities::trimCopyString(m.m_website);
 	}
 
 	if(m.m_team != NULL) {
@@ -145,26 +145,26 @@ Mod & Mod::operator = (const Mod & m) {
 	}
 	m_screenshots.clear();
 	
-	m_name = Utilities::trimCopy(m.m_name);
+	m_name = Utilities::trimCopyString(m.m_name);
 
-	m_id = Utilities::trimCopy(m.m_id);
+	m_id = Utilities::trimCopyString(m.m_id);
 
 	if(m.m_type != NULL) {
-		m_type = Utilities::trimCopy(m.m_type);
+		m_type = Utilities::trimCopyString(m.m_type);
 	}
 
 	if(m.m_gameVersion != NULL) {
-		m_gameVersion = Utilities::trimCopy(m.m_gameVersion);
+		m_gameVersion = Utilities::trimCopyString(m.m_gameVersion);
 	}
 
 	if(m.m_latestVersion != NULL) {
-		m_latestVersion = Utilities::trimCopy(m.m_latestVersion);
+		m_latestVersion = Utilities::trimCopyString(m.m_latestVersion);
 	}
 
 	m_releaseDate = m.m_releaseDate;
 
 	if(m.m_website != NULL) {
-		m_website = Utilities::trimCopy(m.m_website);
+		m_website = Utilities::trimCopyString(m.m_website);
 	}
 
 	if(m.m_team != NULL) {
@@ -260,7 +260,7 @@ void Mod::setName(const char * name) {
 		m_name[0] = '\0';
 	}
 	else {
-		m_name = Utilities::trimCopy(name);
+		m_name = Utilities::trimCopyString(name);
 	}
 }
 
@@ -274,7 +274,7 @@ void Mod::setName(const QString & name) {
 	else {
 		QByteArray nameBytes = name.toLocal8Bit();
 		const char * nameData = nameBytes.data();
-		m_name = Utilities::trimCopy(nameData);
+		m_name = Utilities::trimCopyString(nameData);
 	}
 }
 
@@ -288,7 +288,7 @@ void Mod::setID(const char * id) {
 		m_id[0] = '\0';
 	}
 	else {
-		m_id = Utilities::trimCopy(id);
+		m_id = Utilities::trimCopyString(id);
 	}
 }
 
@@ -302,7 +302,7 @@ void Mod::setID(const QString & id) {
 	else {
 		QByteArray idBytes = id.toLocal8Bit();
 		const char * idData = idBytes.data();
-		m_id = Utilities::trimCopy(idData);
+		m_id = Utilities::trimCopyString(idData);
 	}
 }
 
@@ -313,7 +313,7 @@ void Mod::setType(const char * type) {
 	}
 	
 	if(type != NULL) {
-		m_type = Utilities::trimCopy(type);
+		m_type = Utilities::trimCopyString(type);
 	}
 }
 
@@ -326,7 +326,7 @@ void Mod::setType(const QString & type) {
 	if(!type.isNull()) {
 		QByteArray typeBytes = type.toLocal8Bit();
 		const char * typeData = typeBytes.data();
-		m_type = Utilities::trimCopy(typeData);
+		m_type = Utilities::trimCopyString(typeData);
 	}
 }
 
@@ -337,7 +337,7 @@ void Mod::setGameVersion(const char * gameVersion) {
 	}
 	
 	if(gameVersion != NULL) {
-		m_gameVersion = Utilities::trimCopy(gameVersion);
+		m_gameVersion = Utilities::trimCopyString(gameVersion);
 	}
 }
 
@@ -350,7 +350,7 @@ void Mod::setGameVersion(const QString & gameVersion) {
 	if(!gameVersion.isNull()) {
 		QByteArray gameVersionBytes = gameVersion.toLocal8Bit();
 		const char * gameVersionData = gameVersionBytes.data();
-		m_gameVersion = Utilities::trimCopy(gameVersionData);
+		m_gameVersion = Utilities::trimCopyString(gameVersionData);
 	}
 }
 
@@ -361,7 +361,7 @@ void Mod::setLatestVersion(const char * latestVersion) {
 	}
 	
 	if(latestVersion != NULL) {
-		m_latestVersion = Utilities::trimCopy(latestVersion);
+		m_latestVersion = Utilities::trimCopyString(latestVersion);
 	}
 }
 
@@ -374,7 +374,7 @@ void Mod::setLatestVersion(const QString & latestVersion) {
 	if(!latestVersion.isNull()) {
 		QByteArray latestVersionBytes = latestVersion.toLocal8Bit();
 		const char * latestVersionData = latestVersionBytes.data();
-		m_latestVersion = Utilities::trimCopy(latestVersionData);
+		m_latestVersion = Utilities::trimCopyString(latestVersionData);
 	}
 }
 
@@ -428,7 +428,7 @@ void Mod::setWebsite(const char * website) {
 	}
 	
 	if(website != NULL) {
-		m_website = Utilities::trimCopy(website);
+		m_website = Utilities::trimCopyString(website);
 	}
 }
 
@@ -441,7 +441,7 @@ void Mod::setWebsite(const QString & website) {
 	if(!website.isNull()) {
 		QByteArray websiteBytes = website.toLocal8Bit();
 		const char * websiteData = websiteBytes.data();
-		m_website = Utilities::trimCopy(websiteData);
+		m_website = Utilities::trimCopyString(websiteData);
 	}
 }
 

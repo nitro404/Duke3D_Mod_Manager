@@ -8,11 +8,11 @@ ModInformation::ModInformation(const char * name, const char * version)
 		m_name[0] = '\0';
 	}
 	else {
-		m_name = Utilities::trimCopy(name);
+		m_name = Utilities::trimCopyString(name);
 	}
 
 	if(version != NULL && Utilities::stringLength(version) > 0) {
-		m_version = Utilities::trimCopy(version);
+		m_version = Utilities::trimCopyString(version);
 	}
 }
 
@@ -26,23 +26,23 @@ ModInformation::ModInformation(const QString & name, const QString & version)
 	else {
 		QByteArray nameBytes = name.toLocal8Bit();
 		const char * nameData = nameBytes.data();
-		m_name = Utilities::trimCopy(nameData);
+		m_name = Utilities::trimCopyString(nameData);
 	}
 
 	if(!version.isEmpty()) {
 		QByteArray versionBytes = version.toLocal8Bit();
 		const char * versionData = versionBytes.data();
-		m_version = Utilities::trimCopy(versionData);
+		m_version = Utilities::trimCopyString(versionData);
 	}
 }
 
 ModInformation::ModInformation(const ModInformation & m)
 	: m_name(NULL)
 	, m_version(NULL) {
-	m_name = Utilities::trimCopy(m.m_name);
+	m_name = Utilities::trimCopyString(m.m_name);
 
 	if(m.m_version != NULL) {
-		m_version = Utilities::trimCopy(m.m_version);
+		m_version = Utilities::trimCopyString(m.m_version);
 	}
 }
 
@@ -50,10 +50,10 @@ ModInformation & ModInformation::operator = (const ModInformation & m) {
 	delete [] m_name;
 	if(m_version != NULL) { delete [] m_version; }
 
-	m_name = Utilities::trimCopy(m.m_name);
+	m_name = Utilities::trimCopyString(m.m_name);
 	
 	if(m.m_version != NULL) {
-		m_version = Utilities::trimCopy(m.m_version);
+		m_version = Utilities::trimCopyString(m.m_version);
 	}
 	
 	return *this;
@@ -86,7 +86,7 @@ void ModInformation::setName(const char * name) {
 		m_name[0] = '\0';
 	}
 	else {
-		m_name = Utilities::trimCopy(name);
+		m_name = Utilities::trimCopyString(name);
 	}
 }
 
@@ -100,7 +100,7 @@ void ModInformation::setName(const QString & name) {
 	else {
 		QByteArray nameBytes = name.toLocal8Bit();
 		const char * nameData = nameBytes.data();
-		m_name = Utilities::trimCopy(nameData);
+		m_name = Utilities::trimCopyString(nameData);
 	}
 }
 
@@ -111,7 +111,7 @@ void ModInformation::setVersion(const char * version) {
 	}
 	
 	if(version != NULL && Utilities::stringLength(version) > 0) {
-		m_version = Utilities::trimCopy(version);
+		m_version = Utilities::trimCopyString(version);
 	}
 }
 
@@ -124,7 +124,7 @@ void ModInformation::setVersion(const QString & version) {
 	if(!version.isEmpty()) {
 		QByteArray versionBytes = version.toLocal8Bit();
 		const char * versionData = versionBytes.data();
-		m_version = Utilities::trimCopy(versionData);
+		m_version = Utilities::trimCopyString(versionData);
 	}
 }
 

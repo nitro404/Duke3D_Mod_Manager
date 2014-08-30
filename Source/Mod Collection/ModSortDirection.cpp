@@ -28,7 +28,7 @@ ModSortDirections::ModSortDirection ModSortDirections::parseFrom(const char * da
 
 	ModSortDirections::ModSortDirection sortDirection = Invalid;
 
-	char * sortDirectionString = Utilities::trimCopy(data);
+	char * sortDirectionString = Utilities::trimCopyString(data);
 
 	for(int i=0;i<ModSortDirections::NumberOfSortDirections;i++) {
 		if(Utilities::compareStringsIgnoreCase(sortDirectionString, sortDirectionStrings[i]) == 0) {

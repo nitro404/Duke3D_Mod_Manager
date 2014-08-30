@@ -10,7 +10,7 @@ Variable::Variable(const char * id, const char * value, int category) {
 		m_id[0] = '\0';
 	}
 	else {
-		m_id = Utilities::trimCopy(id);
+		m_id = Utilities::trimCopyString(id);
 	}
 
 	if(value == NULL) {
@@ -18,7 +18,7 @@ Variable::Variable(const char * id, const char * value, int category) {
 		m_value[0] = '\0';
 	}
 	else {
-		m_value = Utilities::trimCopy(value);
+		m_value = Utilities::trimCopyString(value);
 	}
 
 	m_category = (category < -1) ? NO_CATEGORY : category;
@@ -68,7 +68,7 @@ void Variable::setID(const char * id) {
 		m_id[0] = '\0';
 	}
 	else {
-		m_id = Utilities::trimCopy(id);
+		m_id = Utilities::trimCopyString(id);
 	}
 }
 
@@ -80,7 +80,7 @@ void Variable::setValue(const char * value) {
 		m_value[0] = '\0';
 	}
 	else {
-		m_value = Utilities::trimCopy(value);
+		m_value = Utilities::trimCopyString(value);
 	}
 }
 
@@ -111,7 +111,7 @@ void Variable::removeCategory() {
 Variable * Variable::parseFrom(const char * data) {
 	if(data == NULL) { return NULL; }
 
-	char * temp = Utilities::trimCopy(data);
+	char * temp = Utilities::trimCopyString(data);
 	
 	if(Utilities::stringLength(temp) == 0) {
 		delete [] temp;

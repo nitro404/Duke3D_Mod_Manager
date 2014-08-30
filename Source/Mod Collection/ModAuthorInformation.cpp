@@ -8,7 +8,7 @@ ModAuthorInformation::ModAuthorInformation(const char * name)
 		m_name[0] = '\0';
 	}
 	else {
-		m_name = Utilities::trimCopy(name);
+		m_name = Utilities::trimCopyString(name);
 	}
 }
 
@@ -22,20 +22,20 @@ ModAuthorInformation::ModAuthorInformation(const QString & name)
 	else {
 		QByteArray nameBytes = name.toLocal8Bit();
 		const char * nameData = nameBytes.data();
-		m_name = Utilities::trimCopy(nameData);
+		m_name = Utilities::trimCopyString(nameData);
 	}
 }
 
 ModAuthorInformation::ModAuthorInformation(const ModAuthorInformation & m)
 	: m_name(NULL)
 	, m_numberOfMods(m.m_numberOfMods) {
-	m_name = Utilities::trimCopy(m.m_name);
+	m_name = Utilities::trimCopyString(m.m_name);
 }
 
 ModAuthorInformation & ModAuthorInformation::operator = (const ModAuthorInformation & m) {
 	delete [] m_name;
 
-	m_name = Utilities::trimCopy(m.m_name);
+	m_name = Utilities::trimCopyString(m.m_name);
 
 	m_numberOfMods = m.m_numberOfMods;
 
@@ -58,7 +58,7 @@ void ModAuthorInformation::setName(const char * name) {
 		m_name[0] = '\0';
 	}
 	else {
-		m_name = Utilities::trimCopy(name);
+		m_name = Utilities::trimCopyString(name);
 	}
 }
 
@@ -72,7 +72,7 @@ void ModAuthorInformation::setName(const QString & name) {
 	else {
 		QByteArray nameBytes = name.toLocal8Bit();
 		const char * nameData = nameBytes.data();
-		m_name = Utilities::trimCopy(nameData);
+		m_name = Utilities::trimCopyString(nameData);
 	}
 }
 

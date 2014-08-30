@@ -11,11 +11,11 @@ ModTeam::ModTeam(const char * name, const char * email)
 		m_name[0] = '\0';
 	}
 	else {
-		m_name = Utilities::trimCopy(name);
+		m_name = Utilities::trimCopyString(name);
 	}
 
 	if(email != NULL) {
-		m_email = Utilities::trimCopy(email);
+		m_email = Utilities::trimCopyString(email);
 	}
 }
 
@@ -32,13 +32,13 @@ ModTeam::ModTeam(const QString & name, const QString & email)
 	else {
 		QByteArray nameBytes = name.toLocal8Bit();
 		const char * nameData = nameBytes.data();
-		m_name = Utilities::trimCopy(nameData);
+		m_name = Utilities::trimCopyString(nameData);
 	}
 
 	if(!email.isNull()) {
 		QByteArray emailBytes = email.toLocal8Bit();
 		const char * emailData = emailBytes.data();
-		m_email = Utilities::trimCopy(emailData);
+		m_email = Utilities::trimCopyString(emailData);
 	}
 }
 
@@ -48,10 +48,10 @@ ModTeam::ModTeam(const ModTeam & m)
 	, m_city(NULL)
 	, m_state(NULL)
 	, m_country(NULL) {
-	m_name = Utilities::trimCopy(m.m_name);
+	m_name = Utilities::trimCopyString(m.m_name);
 
 	if(m.m_email != NULL) {
-		m_email = Utilities::trimCopy(m.m_email);
+		m_email = Utilities::trimCopyString(m.m_email);
 	}
 
 	for(int i=0;i<m.m_members.size();i++) {
@@ -87,22 +87,22 @@ ModTeam & ModTeam::operator = (const ModTeam & m) {
 	}
 	m_members.clear();
 
-	m_name = Utilities::trimCopy(m.m_name);
+	m_name = Utilities::trimCopyString(m.m_name);
 
 	if(m.m_email != NULL) {
-		m_email = Utilities::trimCopy(m.m_email);
+		m_email = Utilities::trimCopyString(m.m_email);
 	}
 
 	if(m.m_city != NULL) {
-		m_city = Utilities::trimCopy(m.m_city);
+		m_city = Utilities::trimCopyString(m.m_city);
 	}
 
 	if(m.m_state != NULL) {
-		m_state = Utilities::trimCopy(m.m_state);
+		m_state = Utilities::trimCopyString(m.m_state);
 	}
 
 	if(m.m_country != NULL) {
-		m_country = Utilities::trimCopy(m.m_country);
+		m_country = Utilities::trimCopyString(m.m_country);
 	}
 
 	for(int i=0;i<m.m_members.size();i++) {
@@ -152,7 +152,7 @@ void ModTeam::setName(const char * name) {
 		m_name[0] = '\0';
 	}
 	else {
-		m_name = Utilities::trimCopy(name);
+		m_name = Utilities::trimCopyString(name);
 	}
 }
 
@@ -166,7 +166,7 @@ void ModTeam::setName(const QString & name) {
 	else {
 		QByteArray nameBytes = name.toLocal8Bit();
 		const char * nameData = nameBytes.data();
-		m_name = Utilities::trimCopy(nameData);
+		m_name = Utilities::trimCopyString(nameData);
 	}
 }
 
@@ -177,7 +177,7 @@ void ModTeam::setEmail(const char * email) {
 	}
 	
 	if(email != NULL) {
-		m_email = Utilities::trimCopy(email);
+		m_email = Utilities::trimCopyString(email);
 	}
 }
 
@@ -190,7 +190,7 @@ void ModTeam::setEmail(const QString & email) {
 	if(!email.isNull()) {
 		QByteArray emailBytes = email.toLocal8Bit();
 		const char * emailData = emailBytes.data();
-		m_email = Utilities::trimCopy(emailData);
+		m_email = Utilities::trimCopyString(emailData);
 	}
 }
 
@@ -201,7 +201,7 @@ void ModTeam::setCity(const char * city) {
 	}
 	
 	if(city != NULL) {
-		m_city = Utilities::trimCopy(city);
+		m_city = Utilities::trimCopyString(city);
 	}
 }
 
@@ -214,7 +214,7 @@ void ModTeam::setCity(const QString & city) {
 	if(!city.isNull()) {
 		QByteArray cityBytes = city.toLocal8Bit();
 		const char * cityData = cityBytes.data();
-		m_city = Utilities::trimCopy(cityData);
+		m_city = Utilities::trimCopyString(cityData);
 	}
 }
 
@@ -225,7 +225,7 @@ void ModTeam::setState(const char * state) {
 	}
 	
 	if(state != NULL) {
-		m_state = Utilities::trimCopy(state);
+		m_state = Utilities::trimCopyString(state);
 	}
 }
 
@@ -238,7 +238,7 @@ void ModTeam::setState(const QString & state) {
 	if(!state.isNull()) {
 		QByteArray stateBytes = state.toLocal8Bit();
 		const char * stateData = stateBytes.data();
-		m_state = Utilities::trimCopy(stateData);
+		m_state = Utilities::trimCopyString(stateData);
 	}
 }
 
@@ -249,7 +249,7 @@ void ModTeam::setCountry(const char * country) {
 	}
 	
 	if(country != NULL) {
-		m_country = Utilities::trimCopy(country);
+		m_country = Utilities::trimCopyString(country);
 	}
 }
 
@@ -262,7 +262,7 @@ void ModTeam::setCountry(const QString & country) {
 	if(!country.isNull()) {
 		QByteArray countryBytes = country.toLocal8Bit();
 		const char * countryData = countryBytes.data();
-		m_country = Utilities::trimCopy(countryData);
+		m_country = Utilities::trimCopyString(countryData);
 	}
 }
 

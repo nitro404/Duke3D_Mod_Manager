@@ -379,7 +379,7 @@ int OrganizedModCollection::numberOfTeams() const {
 
 bool OrganizedModCollection::hasTeamInfo(const char * name) const {
 	if(name == NULL) { return false; }
-	char * formattedName = Utilities::trimCopy(name);
+	char * formattedName = Utilities::trimCopyString(name);
 	if(Utilities::stringLength(formattedName) == 0) {
 		delete [] formattedName;
 		return false;
@@ -416,7 +416,7 @@ const ModAuthorInformation * OrganizedModCollection::getTeamInfo(int index) cons
 
 const ModAuthorInformation * OrganizedModCollection::getTeamInfo(const char * name) const {
 	if(name == NULL) { return NULL; }
-	char * formattedName = Utilities::trimCopy(name);
+	char * formattedName = Utilities::trimCopyString(name);
 	if(Utilities::stringLength(formattedName) == 0) {
 		delete [] formattedName;
 		return NULL;
@@ -453,7 +453,7 @@ void OrganizedModCollection::incrementTeamModCount(int index) {
 
 void OrganizedModCollection::incrementTeamModCount(const char * name) {
 	if(name == NULL) { return; }
-	char * formattedName = Utilities::trimCopy(name);
+	char * formattedName = Utilities::trimCopyString(name);
 	if(Utilities::stringLength(formattedName) == 0) {
 		delete [] formattedName;
 		return;
@@ -511,7 +511,7 @@ bool OrganizedModCollection::setSelectedTeam(int index) {
 
 bool OrganizedModCollection::setSelectedTeam(const char * name) {
 	if(name == NULL) { return false; }
-	char * formattedName = Utilities::trimCopy(name);
+	char * formattedName = Utilities::trimCopyString(name);
 	if(Utilities::stringLength(formattedName) == 0) {
 		delete [] formattedName;
 		return false;
@@ -598,7 +598,7 @@ int OrganizedModCollection::numberOfAuthors() const {
 
 bool OrganizedModCollection::hasAuthorInfo(const char * name) const {
 	if(name == NULL) { return false; }
-	char * formattedName = Utilities::trimCopy(name);
+	char * formattedName = Utilities::trimCopyString(name);
 	if(Utilities::stringLength(formattedName) == 0) {
 		delete [] formattedName;
 		return false;
@@ -635,7 +635,7 @@ const ModAuthorInformation * OrganizedModCollection::getAuthorInfo(int index) co
 
 const ModAuthorInformation * OrganizedModCollection::getAuthorInfo(const char * name) const {
 	if(name == NULL) { return NULL; }
-	char * formattedName = Utilities::trimCopy(name);
+	char * formattedName = Utilities::trimCopyString(name);
 	if(Utilities::stringLength(formattedName) == 0) {
 		delete [] formattedName;
 		return NULL;
@@ -672,7 +672,7 @@ void OrganizedModCollection::incrementAuthorModCount(int index) {
 
 void OrganizedModCollection::incrementAuthorModCount(const char * name) {
 	if(name == NULL) { return; }
-	char * formattedName = Utilities::trimCopy(name);
+	char * formattedName = Utilities::trimCopyString(name);
 	if(Utilities::stringLength(formattedName) == 0) {
 		delete [] formattedName;
 		return;
@@ -730,7 +730,7 @@ bool OrganizedModCollection::setSelectedAuthor(int index) {
 
 bool OrganizedModCollection::setSelectedAuthor(const char * name) {
 	if(name == NULL) { return false; }
-	char * formattedName = Utilities::trimCopy(name);
+	char * formattedName = Utilities::trimCopyString(name);
 	if(Utilities::stringLength(formattedName) == 0) {
 		delete [] formattedName;
 		return false;

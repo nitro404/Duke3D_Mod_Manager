@@ -13,8 +13,8 @@ ModCollection::ModCollection()
 ModCollection::ModCollection(const ModCollection & m)
 	: m_id(NULL)
 	, m_name(NULL) {
-	m_id = Utilities::trimCopy(m.m_id);
-	m_name = Utilities::trimCopy(m.m_name);
+	m_id = Utilities::trimCopyString(m.m_id);
+	m_name = Utilities::trimCopyString(m.m_name);
 
 	for(int i=0;i<m.m_mods.size();i++) {
 		m_mods.push_back(new Mod(*m.m_mods[i]));
@@ -30,8 +30,8 @@ ModCollection & ModCollection::operator = (const ModCollection & m) {
 	}
 	m_mods.clear();
 
-	m_id = Utilities::trimCopy(m.m_id);
-	m_name = Utilities::trimCopy(m.m_name);
+	m_id = Utilities::trimCopyString(m.m_id);
+	m_name = Utilities::trimCopyString(m.m_name);
 
 	for(int i=0;i<m.m_mods.size();i++) {
 		m_mods.push_back(new Mod(*m.m_mods[i]));
@@ -67,7 +67,7 @@ void ModCollection::setID(const char * id) {
 		m_id[0] = '\0';
 	}
 	else {
-		m_id = Utilities::trimCopy(id);
+		m_id = Utilities::trimCopyString(id);
 	}
 }
 
@@ -83,7 +83,7 @@ void ModCollection::setID(const QString & id) {
 	else {
 		QByteArray idBytes = id.toLocal8Bit();
 		const char * idData = idBytes.data();
-		m_id = Utilities::trimCopy(idData);
+		m_id = Utilities::trimCopyString(idData);
 	}
 }
 
@@ -97,7 +97,7 @@ void ModCollection::setGameName(const char * name) {
 		m_name[0] = '\0';
 	}
 	else {
-		m_name = Utilities::trimCopy(name);
+		m_name = Utilities::trimCopyString(name);
 	}
 }
 
@@ -113,7 +113,7 @@ void ModCollection::setGameName(const QString & name) {
 	else {
 		QByteArray nameBytes = name.toLocal8Bit();
 		const char * nameData = nameBytes.data();
-		m_name = Utilities::trimCopy(nameData);
+		m_name = Utilities::trimCopyString(nameData);
 	}
 }
 

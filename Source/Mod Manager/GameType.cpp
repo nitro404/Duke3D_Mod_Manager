@@ -28,7 +28,7 @@ GameTypes::GameType GameTypes::parseFrom(const char * data) {
 
 	GameType type = Invalid;
 
-	char * typeString = Utilities::trimCopy(data);
+	char * typeString = Utilities::trimCopyString(data);
 
 	for(int i=0;i<NumberOfGameTypes;i++) {
 		if(Utilities::compareStringsIgnoreCase(typeString, gameTypeStrings[i]) == 0) {

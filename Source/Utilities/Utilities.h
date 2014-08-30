@@ -17,7 +17,7 @@ namespace Utilities {
 	unsigned int stringLength(const char * s);
 	bool copyString(char * destination, int size, const char * source);
 	char * copyString(const char * data);
-	char * trimCopy(const char * data);
+	char * trimCopyString(const char * data);
 	char * substring(const char * data, int start, int end);
 	QString substring(const QString & data, int start, int end);
 	int compareStrings(const char * s1, const char * s2, bool caseSensitive = true);

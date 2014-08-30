@@ -175,7 +175,7 @@ void ModManager::setServerIPAddress(const char * ipAddress) {
 		SettingsManager::getInstance()->serverIPAddress[0] = '\0';
 	}
 	else {
-		SettingsManager::getInstance()->serverIPAddress = Utilities::trimCopy(ipAddress);
+		SettingsManager::getInstance()->serverIPAddress = Utilities::trimCopyString(ipAddress);
 	}
 }
 
@@ -192,7 +192,7 @@ void ModManager::setServerIPAddress(const QString & ipAddress) {
 		QByteArray ipAddressBytes = ipAddress.toLocal8Bit();
 		const char * ipAddressData = ipAddressBytes.data();
 
-		SettingsManager::getInstance()->serverIPAddress = Utilities::trimCopy(ipAddressData);
+		SettingsManager::getInstance()->serverIPAddress = Utilities::trimCopyString(ipAddressData);
 	}
 }
 

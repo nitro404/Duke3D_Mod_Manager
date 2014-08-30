@@ -28,7 +28,7 @@ ModManagerModes::ModManagerMode ModManagerModes::parseFrom(const char * data) {
 
 	ModManagerModes::ModManagerMode mode = Invalid;
 
-	char * modeString = Utilities::trimCopy(data);
+	char * modeString = Utilities::trimCopyString(data);
 
 	for(int i=0;i<ModManagerModes::NumberOfModes;i++) {
 		if(Utilities::compareStringsIgnoreCase(modeString, modeStrings[i]) == 0) {

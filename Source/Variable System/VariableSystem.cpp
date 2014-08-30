@@ -4,7 +4,7 @@ VariableSystem::VariableSystem() { }
 
 VariableSystem::VariableSystem(const VariableSystem & v) {
 	for(int i=0;i<v.m_categories.size();i++) {
-		m_categories.push_back(Utilities::trimCopy(v.m_categories[i]));
+		m_categories.push_back(Utilities::trimCopyString(v.m_categories[i]));
 	}
 
 	for(int i=0;i<v.m_variables.size();i++) {
@@ -24,7 +24,7 @@ VariableSystem & VariableSystem::operator = (const VariableSystem & v) {
 	m_variables.clear();
 
 	for(int i=0;i<v.m_categories.size();i++) {
-		m_categories.push_back(Utilities::trimCopy(v.m_categories[i]));
+		m_categories.push_back(Utilities::trimCopyString(v.m_categories[i]));
 	}
 
 	for(int i=0;i<v.m_variables.size();i++) {
@@ -47,7 +47,7 @@ VariableSystem::~VariableSystem() {
 int VariableSystem::addCategory(const char * category) {
 	if(category == NULL || Utilities::stringLength(category) == 0) { return Variable::NO_CATEGORY; }
 	
-	char * temp = Utilities::trimCopy(category);
+	char * temp = Utilities::trimCopyString(category);
 
 	if(Utilities::stringLength(temp) == 0) {
 		delete [] temp;
@@ -75,7 +75,7 @@ int VariableSystem::addCategory(const char * category) {
 int VariableSystem::indexOfCategory(const char * category) const {
 	if(category == NULL || m_categories.size() == 0) { return -1; }
 	
-	char * temp = Utilities::trimCopy(category);
+	char * temp = Utilities::trimCopyString(category);
 
 	if(Utilities::stringLength(temp) == 0) {
 		delete [] temp;
@@ -105,7 +105,7 @@ int VariableSystem::size() const {
 bool VariableSystem::contains(const char * id) const {
 	if(id == NULL) { return false; }
 
-	char * tempID = Utilities::trimCopy(id);
+	char * tempID = Utilities::trimCopyString(id);
 
 	for(int i=0;i<m_variables.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(tempID, m_variables[i]->getID()) == 0) {
@@ -121,7 +121,7 @@ bool VariableSystem::contains(const char * id) const {
 bool VariableSystem::contains(const char * id, const char * category) const {
 	if(id == NULL || category == NULL) { return false; }
 
-	char * tempID = Utilities::trimCopy(id);
+	char * tempID = Utilities::trimCopyString(id);
 	int categoryIndex = indexOfCategory(category);
 
 	for(int i=0;i<m_variables.size();i++) {
@@ -152,7 +152,7 @@ bool VariableSystem::contains(const Variable * v) const {
 int VariableSystem::indexOf(const char * id) const {
 	if(id == NULL) { return -1; }
 
-	char * tempID = Utilities::trimCopy(id);
+	char * tempID = Utilities::trimCopyString(id);
 
 	for(int i=0;i<m_variables.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(tempID, m_variables[i]->getID()) == 0) {
@@ -168,7 +168,7 @@ int VariableSystem::indexOf(const char * id) const {
 int VariableSystem::indexOf(const char * id, const char * category) const {
 	if(id == NULL || category == NULL) { return -1; }
 
-	char * tempID = Utilities::trimCopy(id);
+	char * tempID = Utilities::trimCopyString(id);
 	int categoryIndex = indexOfCategory(category);
 
 	for(int i=0;i<m_variables.size();i++) {
@@ -204,7 +204,7 @@ const Variable * VariableSystem::variableAt(int index) const {
 const Variable * VariableSystem::getVariable(const char * id) const {
 	if(id == NULL) { return NULL; }
 
-	char * tempID = Utilities::trimCopy(id);
+	char * tempID = Utilities::trimCopyString(id);
 
 	for(int i=0;i<m_variables.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(tempID, m_variables[i]->getID()) == 0) {
@@ -220,7 +220,7 @@ const Variable * VariableSystem::getVariable(const char * id) const {
 const Variable * VariableSystem::getVariable(const char * id, const char * category) const {
 	if(id == NULL || category == NULL) { return NULL; }
 
-	char * tempID = Utilities::trimCopy(id);
+	char * tempID = Utilities::trimCopyString(id);
 	int categoryIndex = indexOfCategory(category);
 
 	for(int i=0;i<m_variables.size();i++) {
@@ -238,7 +238,7 @@ const Variable * VariableSystem::getVariable(const char * id, const char * categ
 const char * VariableSystem::getValue(const char * id) const {
 	if(id == NULL) { return NULL; }
 
-	char * tempID = Utilities::trimCopy(id);
+	char * tempID = Utilities::trimCopyString(id);
 
 	for(int i=0;i<m_variables.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(tempID, m_variables[i]->getID()) == 0) {
@@ -254,7 +254,7 @@ const char * VariableSystem::getValue(const char * id) const {
 const char * VariableSystem::getValue(const char * id, const char * category) const {
 	if(id == NULL || category == NULL) { return NULL; }
 
-	char * tempID = Utilities::trimCopy(id);
+	char * tempID = Utilities::trimCopyString(id);
 	int categoryIndex = indexOfCategory(category);
 
 	for(int i=0;i<m_variables.size();i++) {
@@ -392,7 +392,7 @@ bool VariableSystem::remove(int index) {
 bool VariableSystem::remove(const char * id) {
 	if(id == NULL) { return false; }
 
-	char * tempID = Utilities::trimCopy(id);
+	char * tempID = Utilities::trimCopyString(id);
 
 	for(int i=0;i<m_variables.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(tempID, m_variables[i]->getID()) == 0) {
@@ -410,7 +410,7 @@ bool VariableSystem::remove(const char * id) {
 bool VariableSystem::remove(const char * id, const char * category) {
 	if(id == NULL || category == NULL) { return false; }
 
-	char * tempID = Utilities::trimCopy(id);
+	char * tempID = Utilities::trimCopyString(id);
 	int categoryIndex = indexOfCategory(category);
 
 	for(int i=0;i<m_variables.size();i++) {
@@ -445,7 +445,7 @@ bool VariableSystem::remove(const Variable * v) {
 void VariableSystem::removeCategory(const char * data) {
 	if(data == NULL) { return; }
 
-	char * category = Utilities::trimCopy(data);
+	char * category = Utilities::trimCopyString(data);
 
 	int categoryIndex = indexOfCategory(category);
 
@@ -502,7 +502,7 @@ VariableSystem * VariableSystem::readFrom(const char * fileName) {
 		line = input.readLine().trimmed();
 		bytes = line.toLocal8Bit();
 		data = bytes.data();
-		temp = Utilities::trimCopy(data);
+		temp = Utilities::trimCopyString(data);
 		
 		if(Utilities::stringLength(temp) == 0) {
 			if(category != NULL) { delete [] category; }

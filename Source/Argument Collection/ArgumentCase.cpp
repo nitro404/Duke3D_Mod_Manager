@@ -28,7 +28,7 @@ ArgumentCases::ArgumentCase ArgumentCases::parseFrom(const char * data) {
 
 	ArgumentCases::ArgumentCase caseType = Invalid;
 
-	char * caseString = Utilities::trimCopy(data);
+	char * caseString = Utilities::trimCopyString(data);
 
 	for(int i=0;i<ArgumentCases::NumberOfCases;i++) {
 		if(Utilities::compareStringsIgnoreCase(caseString, caseStrings[i]) == 0) {
