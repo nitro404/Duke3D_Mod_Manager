@@ -41,8 +41,7 @@ ModDownload::ModDownload(const QString & fileName, const QString & type)
 	}
 	else {
 		QByteArray fileNameBytes = fileName.toLocal8Bit();
-		const char * fileNameData = fileNameBytes.data();
-		m_fileName = Utilities::trimCopyString(fileNameData);
+		m_fileName = Utilities::trimCopyString(fileNameBytes.data());
 	}
 
 	if(type.isEmpty()) {
@@ -51,8 +50,7 @@ ModDownload::ModDownload(const QString & fileName, const QString & type)
 	}
 	else {
 		QByteArray typeBytes = type.toLocal8Bit();
-		const char * typeData = typeBytes.data();
-		m_type = Utilities::trimCopyString(typeData);
+		m_type = Utilities::trimCopyString(typeBytes.data());
 	}
 }
 
@@ -155,8 +153,7 @@ void ModDownload::setFileName(const QString & fileName) {
 	}
 	else {
 		QByteArray fileNameBytes = fileName.toLocal8Bit();
-		const char * fileNameData = fileNameBytes.data();
-		m_fileName = Utilities::trimCopyString(fileNameData);
+		m_fileName = Utilities::trimCopyString(fileNameBytes.data());
 	}
 }
 
@@ -225,8 +222,7 @@ void ModDownload::setVersion(const QString & version) {
 
 	if(!version.isNull()) {
 		QByteArray versionBytes = version.toLocal8Bit();
-		const char * versionData = versionBytes.data();
-		m_version = Utilities::trimCopyString(versionData);
+		m_version = Utilities::trimCopyString(versionBytes.data());
 	}
 }
 
@@ -249,8 +245,7 @@ void ModDownload::setSpecial(const QString & special) {
 
 	if(!special.isNull()) {
 		QByteArray specialBytes = special.toLocal8Bit();
-		const char * specialData = specialBytes.data();
-		m_special = Utilities::trimCopyString(specialData);
+		m_special = Utilities::trimCopyString(specialBytes.data());
 	}
 }
 
@@ -273,8 +268,7 @@ void ModDownload::setSubfolder(const QString & subfolder) {
 
 	if(!subfolder.isNull()) {
 		QByteArray subfolderBytes = subfolder.toLocal8Bit();
-		const char * subfolderData = subfolderBytes.data();
-		m_subfolder = Utilities::trimCopyString(subfolderData);
+		m_subfolder = Utilities::trimCopyString(subfolderBytes.data());
 	}
 }
 
@@ -299,8 +293,7 @@ void ModDownload::setType(const QString & type) {
 	}
 	else {
 		QByteArray typeBytes = type.toLocal8Bit();
-		const char * typeData = typeBytes.data();
-		m_type = Utilities::trimCopyString(typeData);
+		m_type = Utilities::trimCopyString(typeBytes.data());
 	}
 }
 
@@ -323,8 +316,7 @@ void ModDownload::setDescription(const QString & description) {
 
 	if(!description.isNull()) {
 		QByteArray descriptionBytes = description.toLocal8Bit();
-		const char * descriptionData = descriptionBytes.data();
-		m_description = Utilities::trimCopyString(descriptionData);
+		m_description = Utilities::trimCopyString(descriptionBytes.data());
 	}
 }
 

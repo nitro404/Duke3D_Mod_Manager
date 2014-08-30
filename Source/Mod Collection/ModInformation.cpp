@@ -25,14 +25,12 @@ ModInformation::ModInformation(const QString & name, const QString & version)
 	}
 	else {
 		QByteArray nameBytes = name.toLocal8Bit();
-		const char * nameData = nameBytes.data();
-		m_name = Utilities::trimCopyString(nameData);
+		m_name = Utilities::trimCopyString(nameBytes.data());
 	}
 
 	if(!version.isEmpty()) {
 		QByteArray versionBytes = version.toLocal8Bit();
-		const char * versionData = versionBytes.data();
-		m_version = Utilities::trimCopyString(versionData);
+		m_version = Utilities::trimCopyString(versionBytes.data());
 	}
 }
 
@@ -99,8 +97,7 @@ void ModInformation::setName(const QString & name) {
 	}
 	else {
 		QByteArray nameBytes = name.toLocal8Bit();
-		const char * nameData = nameBytes.data();
-		m_name = Utilities::trimCopyString(nameData);
+		m_name = Utilities::trimCopyString(nameBytes.data());
 	}
 }
 
@@ -123,8 +120,7 @@ void ModInformation::setVersion(const QString & version) {
 
 	if(!version.isEmpty()) {
 		QByteArray versionBytes = version.toLocal8Bit();
-		const char * versionData = versionBytes.data();
-		m_version = Utilities::trimCopyString(versionData);
+		m_version = Utilities::trimCopyString(versionBytes.data());
 	}
 }
 

@@ -31,20 +31,17 @@ ModTeamMember::ModTeamMember(const QString & name, const QString & alias, const 
 	}
 	else {
 		QByteArray nameBytes = name.toLocal8Bit();
-		const char * nameData = nameBytes.data();
-		m_name = Utilities::trimCopyString(nameData);
+		m_name = Utilities::trimCopyString(nameBytes.data());
 	}
 
 	if(!alias.isNull()) {
 		QByteArray aliasBytes = alias.toLocal8Bit();
-		const char * aliasData = aliasBytes.data();
-		m_alias = Utilities::trimCopyString(aliasData);
+		m_alias = Utilities::trimCopyString(aliasBytes.data());
 	}
 
 	if(!email.isNull()) {
 		QByteArray emailBytes = email.toLocal8Bit();
-		const char * emailData = emailBytes.data();
-		m_email = Utilities::trimCopyString(emailData);
+		m_email = Utilities::trimCopyString(emailBytes.data());
 	}
 }
 
@@ -128,8 +125,7 @@ void ModTeamMember::setName(const QString & name) {
 	}
 	else {
 		QByteArray nameBytes = name.toLocal8Bit();
-		const char * nameData = nameBytes.data();
-		m_name = Utilities::trimCopyString(nameData);
+		m_name = Utilities::trimCopyString(nameBytes.data());
 	}
 }
 
@@ -152,8 +148,7 @@ void ModTeamMember::setAlias(const QString & alias) {
 
 	if(!alias.isNull()) {
 		QByteArray aliasBytes = alias.toLocal8Bit();
-		const char * aliasData = aliasBytes.data();
-		m_alias = Utilities::trimCopyString(aliasData);
+		m_alias = Utilities::trimCopyString(aliasBytes.data());
 	}
 }
 
@@ -176,8 +171,7 @@ void ModTeamMember::setEmail(const QString & email) {
 
 	if(!email.isNull()) {
 		QByteArray emailBytes = email.toLocal8Bit();
-		const char * emailData = emailBytes.data();
-		m_email = Utilities::trimCopyString(emailData);
+		m_email = Utilities::trimCopyString(emailBytes.data());
 	}
 }
 

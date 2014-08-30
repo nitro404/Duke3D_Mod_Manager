@@ -82,8 +82,7 @@ void ModCollection::setID(const QString & id) {
 	}
 	else {
 		QByteArray idBytes = id.toLocal8Bit();
-		const char * idData = idBytes.data();
-		m_id = Utilities::trimCopyString(idData);
+		m_id = Utilities::trimCopyString(idBytes.data());
 	}
 }
 
@@ -112,8 +111,7 @@ void ModCollection::setGameName(const QString & name) {
 	}
 	else {
 		QByteArray nameBytes = name.toLocal8Bit();
-		const char * nameData = nameBytes.data();
-		m_name = Utilities::trimCopyString(nameData);
+		m_name = Utilities::trimCopyString(nameBytes.data());
 	}
 }
 
@@ -143,11 +141,11 @@ bool ModCollection::hasMod(const char * name) const {
 
 bool ModCollection::hasMod(const QString & name) const {
 	if(name.isEmpty()) { return false; }
+
 	QByteArray nameBytes = name.toLocal8Bit();
-	const char * nameData = nameBytes.data();
 
 	for(int i=0;i<m_mods.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_mods[i]->getName(), nameData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_mods[i]->getName(), nameBytes.data()) == 0) {
 			return true;
 		}
 	}
@@ -176,11 +174,11 @@ int ModCollection::indexOfMod(const char * name) const {
 
 int ModCollection::indexOfMod(const QString & name) const {
 	if(name.isEmpty()) { return -1; }
+
 	QByteArray nameBytes = name.toLocal8Bit();
-	const char * nameData = nameBytes.data();
 
 	for(int i=0;i<m_mods.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_mods[i]->getName(), nameData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_mods[i]->getName(), nameBytes.data()) == 0) {
 			return i;
 		}
 	}
@@ -206,11 +204,11 @@ const Mod * ModCollection::getMod(const char * name) const {
 
 const Mod * ModCollection::getMod(const QString & name) const {
 	if(name.isEmpty()) { return NULL; }
+
 	QByteArray nameBytes = name.toLocal8Bit();
-	const char * nameData = nameBytes.data();
 
 	for(int i=0;i<m_mods.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_mods[i]->getName(), nameData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_mods[i]->getName(), nameBytes.data()) == 0) {
 			return m_mods[i];
 		}
 	}
@@ -272,11 +270,11 @@ bool ModCollection::removeMod(const char * name) {
 
 bool ModCollection::removeMod(const QString & name) {
 	if(name.isEmpty()) { return false; }
+
 	QByteArray nameBytes = name.toLocal8Bit();
-	const char * nameData = nameBytes.data();
 
 	for(int i=0;i<m_mods.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_mods[i]->getName(), nameData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_mods[i]->getName(), nameBytes.data()) == 0) {
 			delete m_mods[i];
 			m_mods.remove(i);
 
@@ -303,10 +301,10 @@ bool ModCollection::load() {
 
 bool ModCollection::loadFrom(const QString & fileName) {
 	if(fileName.isEmpty()) { return false; }
-	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
 
-	return loadFrom(fileNameData);
+	QByteArray fileNameBytes = fileName.toLocal8Bit();
+
+	return loadFrom(fileNameBytes.data());
 }
 
 bool ModCollection::loadFrom(const char * fileName) {
@@ -333,10 +331,10 @@ bool ModCollection::loadFrom(const char * fileName) {
 
 bool ModCollection::loadFromINI(const QString & fileName) {
 	if(fileName.isEmpty()) { return false; }
-	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
 
-	return loadFromINI(fileNameData);
+	QByteArray fileNameBytes = fileName.toLocal8Bit();
+
+	return loadFromINI(fileNameBytes.data());
 }
 
 bool ModCollection::loadFromINI(const char * fileName) {
@@ -354,7 +352,6 @@ bool ModCollection::loadFromINI(const char * fileName) {
 	clearMods();
 	
 	QString line;
-	QByteArray bytes;
 	QString temp;
 	QString name, id, type, group, con;
 	bool addModToCollection = false;
@@ -462,10 +459,10 @@ bool ModCollection::loadFromINI(const char * fileName) {
 
 bool ModCollection::loadFromXML(const QString & fileName) {
 	if(fileName.isEmpty()) { return false; }
-	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
 
-	return loadFromXML(fileNameData);
+	QByteArray fileNameBytes = fileName.toLocal8Bit();
+
+	return loadFromXML(fileNameBytes.data());
 }
 
 bool ModCollection::loadFromXML(const char * fileName) {

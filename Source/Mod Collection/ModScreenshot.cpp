@@ -50,14 +50,12 @@ ModScreenshot::ModScreenshot(const QString & fileName, const QString & thumbnail
 	}
 	else {
 		QByteArray fileNameBytes = fileName.toLocal8Bit();
-		const char * fileNameData = fileNameBytes.data();
-		m_fileName = Utilities::trimCopyString(fileNameData);
+		m_fileName = Utilities::trimCopyString(fileNameBytes.data());
 	}
 
 	if(!thumbnail.isEmpty()) {
 		QByteArray thumbnailBytes = thumbnail.toLocal8Bit();
-		const char * thumbnailData = thumbnailBytes.data();
-		m_thumbnail = Utilities::trimCopyString(thumbnailData);
+		m_thumbnail = Utilities::trimCopyString(thumbnailBytes.data());
 	}
 
 	setWidth(width);
@@ -75,14 +73,12 @@ ModScreenshot::ModScreenshot(const QString & fileName, const QString & thumbnail
 	}
 	else {
 		QByteArray fileNameBytes = fileName.toLocal8Bit();
-		const char * fileNameData = fileNameBytes.data();
-		m_fileName = Utilities::trimCopyString(fileNameData);
+		m_fileName = Utilities::trimCopyString(fileNameBytes.data());
 	}
 
 	if(!thumbnail.isEmpty()) {
 		QByteArray thumbnailBytes = thumbnail.toLocal8Bit();
-		const char * thumbnailData = thumbnailBytes.data();
-		m_thumbnail = Utilities::trimCopyString(thumbnailData);
+		m_thumbnail = Utilities::trimCopyString(thumbnailBytes.data());
 	}
 }
 
@@ -150,8 +146,7 @@ void ModScreenshot::setFileName(const QString & fileName) {
 	}
 	else {
 		QByteArray fileNameBytes = fileName.toLocal8Bit();
-		const char * fileNameData = fileNameBytes.data();
-		m_fileName = Utilities::trimCopyString(fileNameData);
+		m_fileName = Utilities::trimCopyString(fileNameBytes.data());
 	}
 }
 
@@ -174,8 +169,7 @@ void ModScreenshot::setThumbnail(const QString & thumbnail) {
 
 	if(!thumbnail.isNull()) {
 		QByteArray thumbnailBytes = thumbnail.toLocal8Bit();
-		const char * thumbnailData = thumbnailBytes.data();
-		m_thumbnail = Utilities::trimCopyString(thumbnailData);
+		m_thumbnail = Utilities::trimCopyString(thumbnailBytes.data());
 	}
 }
 

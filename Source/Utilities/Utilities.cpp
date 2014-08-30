@@ -146,16 +146,12 @@ int Utilities::compareStrings(const char * s1, const char * s2, bool caseSensiti
 
 int Utilities::compareStrings(const char * s1, const QString & s2, bool caseSensitive) {
 	QByteArray bytes = s2.toLocal8Bit();
-	const char * data = s2.isNull() ? NULL : bytes.data();
-
-	return compareStrings(s1, data, caseSensitive);
+	return compareStrings(s1, s2.isNull() ? NULL : bytes.data(), caseSensitive);
 }
 
 int Utilities::compareStrings(const QString & s1, const char * s2, bool caseSensitive) {
 	QByteArray bytes = s1.toLocal8Bit();
-	const char * data = s1.isNull() ? NULL : bytes.data();
-
-	return compareStrings(data, s2, caseSensitive);
+	return compareStrings(s1.isNull() ? NULL : bytes.data(), s2, caseSensitive);
 }
 
 int Utilities::compareStringsIgnoreCase(const char * s1, const char * s2) {
@@ -164,16 +160,12 @@ int Utilities::compareStringsIgnoreCase(const char * s1, const char * s2) {
 
 int Utilities::compareStringsIgnoreCase(const char * s1, const QString & s2) {
 	QByteArray bytes = s2.toLocal8Bit();
-	const char * data = s2.isNull() ? NULL : bytes.data();
-
-	return compareStrings(s1, data, false);
+	return compareStrings(s1, s2.isNull() ? NULL : bytes.data(), false);
 }
 
 int Utilities::compareStringsIgnoreCase(const QString & s1, const char * s2) {
 	QByteArray bytes = s1.toLocal8Bit();
-	const char * data = s1.isNull() ? NULL : bytes.data();
-
-	return compareStrings(data, s2, false);
+	return compareStrings(s1.isNull() ? NULL : bytes.data(), s2, false);
 }
 
 int Utilities::firstIndexOf(const char * data, char c) {

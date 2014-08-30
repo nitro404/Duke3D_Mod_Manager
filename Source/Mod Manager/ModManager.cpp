@@ -207,9 +207,7 @@ void ModManager::setServerIPAddress(const QString & ipAddress) {
 	}
 	else {
 		QByteArray ipAddressBytes = ipAddress.toLocal8Bit();
-		const char * ipAddressData = ipAddressBytes.data();
-
-		SettingsManager::getInstance()->serverIPAddress = Utilities::trimCopyString(ipAddressData);
+		SettingsManager::getInstance()->serverIPAddress = Utilities::trimCopyString(ipAddressBytes.data());
 	}
 }
 
@@ -989,6 +987,7 @@ void ModManager::runIPAddressPrompt(const QString & args) {
 		}
 		else {
 			printf("Invalid IP Address: %s\n\n", dataBytes.data());
+
 			Utilities::pause();
 		}
 	}
@@ -1259,13 +1258,12 @@ void ModManager::runSelectedMod(const ArgumentParser * args) {
 
 		QString DOSBoxCommand = script.generateDOSBoxCommand(m_scriptArgs);
 		QByteArray DOSBoxCommandBytes = DOSBoxCommand.toLocal8Bit();
-		const char * DOSBoxCommandData = DOSBoxCommandBytes.data();
 
 #if _DEBUG
-		printf("%s\n", DOSBoxCommandData);
+		printf("%s\n", DOSBoxCommandBytes.data());
 #endif // _DEBUG
 
-		system(DOSBoxCommandData);
+		system(DOSBoxCommandBytes.data());
 	}
 	else if(m_mode == ModManagerModes::Windows) {
 		bool scriptLoaded = false;
@@ -1293,13 +1291,12 @@ void ModManager::runSelectedMod(const ArgumentParser * args) {
 		for(int i=0;i<script.numberOfCommands();i++) {
 			QString windowsCommand = script.generateWindowsCommand(m_scriptArgs, i);
 			QByteArray windowsCommandBytes = windowsCommand.toLocal8Bit();
-			const char * windowsCommandData = windowsCommandBytes.data();
 
 #if _DEBUG
-			printf("%s\n", windowsCommandData);
+			printf("%s\n", windowsCommandBytes.data());
 #endif // _DEBUG
 
-			system(windowsCommandData);
+			system(windowsCommandBytes.data());
 		}
 	}
 
@@ -1364,15 +1361,13 @@ bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
 						if(ipAddress.length() == 0) { valid = false; }
 
 						QByteArray ipAddressBytes = ipAddress.toLocal8Bit();
-						const char * ipAddressData = ipAddressBytes.data();
 
 						if(valid) {
 							if(SettingsManager::getInstance()->serverIPAddress != NULL) { delete [] SettingsManager::getInstance()->serverIPAddress; }
-							SettingsManager::getInstance()->serverIPAddress = new char[Utilities::stringLength(ipAddressData) + 1];
-							Utilities::copyString(SettingsManager::getInstance()->serverIPAddress, Utilities::stringLength(ipAddressData) + 1, ipAddressData);
+							SettingsManager::getInstance()->serverIPAddress = Utilities::copyString(ipAddressBytes.data());
 						}
 						else {
-							printf("\nInvalid IP Address entered in arguments: %s\n\n", ipAddressData);
+							printf("\nInvalid IP Address entered in arguments: %s\n\n", ipAddressBytes.data());
 
 							runIPAddressPrompt();
 						}
@@ -1479,9 +1474,8 @@ int ModManager::checkForUnlinkedModFiles() const {
 					numberOfMultipleLinkedModFiles++;
 
 					QByteArray keyBytes = key.toLocal8Bit();
-					const char * keyData = keyBytes.data();
 
-					printf("Mod file linked multiple times: \"%s\"\n", keyData);
+					printf("Mod file linked multiple times: \"%s\"\n", keyBytes.data());
 				}
 				linkedModFiles[key] = 1;
 			}
@@ -1493,9 +1487,8 @@ int ModManager::checkForUnlinkedModFiles() const {
 					numberOfMultipleLinkedModFiles++;
 
 					QByteArray keyBytes = key.toLocal8Bit();
-					const char * keyData = keyBytes.data();
 
-					printf("Mod file linked multiple times: \"%s\"\n", keyData);
+					printf("Mod file linked multiple times: \"%s\"\n", keyBytes.data());
 				}
 				linkedModFiles[key] = 1;
 			}
@@ -1509,9 +1502,8 @@ int ModManager::checkForUnlinkedModFiles() const {
 			numberOfUnlinkedModFiles++;
 			
 			QByteArray fileNameBytes = keys[i].toLocal8Bit();
-			const char * fileNameData = fileNameBytes.data();
 			
-			printf("Unlinked file %d: \"%s\"\n", numberOfUnlinkedModFiles, fileNameData);
+			printf("Unlinked file %d: \"%s\"\n", numberOfUnlinkedModFiles, fileNameBytes.data());
 		}
 	}
 	if(numberOfUnlinkedModFiles > 0) {

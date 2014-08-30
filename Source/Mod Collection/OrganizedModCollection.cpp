@@ -299,11 +299,11 @@ bool OrganizedModCollection::hasMod(const char * name) const {
 
 bool OrganizedModCollection::hasMod(const QString & name) const {
 	if(name.isEmpty()) { return false; }
+
 	QByteArray nameBytes = name.toLocal8Bit();
-	const char * nameData = nameBytes.data();
 
 	for(int i=0;i<m_organizedMods.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_organizedMods[i]->getName(), nameData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_organizedMods[i]->getName(), nameBytes.data()) == 0) {
 			return true;
 		}
 	}
@@ -332,11 +332,11 @@ int OrganizedModCollection::indexOfMod(const char * name) const {
 
 int OrganizedModCollection::indexOfMod(const QString & name) const {
 	if(name.isEmpty()) { return -1; }
+
 	QByteArray nameBytes = name.toLocal8Bit();
-	const char * nameData = nameBytes.data();
 
 	for(int i=0;i<m_organizedMods.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_organizedMods[i]->getName(), nameData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_organizedMods[i]->getName(), nameBytes.data()) == 0) {
 			return i;
 		}
 	}
@@ -362,11 +362,11 @@ const Mod * OrganizedModCollection::getMod(const char * name) const {
 
 const Mod * OrganizedModCollection::getMod(const QString & name) const {
 	if(name.isEmpty()) { return NULL; }
+
 	QByteArray nameBytes = name.toLocal8Bit();
-	const char * nameData = nameBytes.data();
 
 	for(int i=0;i<m_organizedMods.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_organizedMods[i]->getName(), nameData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_organizedMods[i]->getName(), nameBytes.data()) == 0) {
 			return m_organizedMods[i];
 		}
 	}

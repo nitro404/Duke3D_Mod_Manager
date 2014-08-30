@@ -213,13 +213,12 @@ bool SettingsManager::load(const ArgumentParser * args) {
 		QString altSettingsFileName = args->getValue("f");
 		if(altSettingsFileName.length() > 0) {
 			QByteArray fileNameBytes = altSettingsFileName.toLocal8Bit();
-			const char * fileNameData = fileNameBytes.data();
 
-			printf("Loading settings from alternate file: %s\n", fileNameData);
+			printf("Loading settings from alternate file: %s\n", fileNameBytes.data());
 
 			bool loadedSettings = loadFrom(altSettingsFileName);
 			if(!loadedSettings) {
-				printf("Failed to load settings from alt settings file: %s\n", fileNameData);
+				printf("Failed to load settings from alt settings file: %s\n", fileNameBytes.data());
 			}
 			return loadedSettings;
 		}
@@ -233,13 +232,12 @@ bool SettingsManager::save(const ArgumentParser * args) const {
 		QString altSettingsFileName = args->getValue("f");
 		if(altSettingsFileName.length() > 0) {
 			QByteArray fileNameBytes = altSettingsFileName.toLocal8Bit();
-			const char * fileNameData = fileNameBytes.data();
 
-			printf("Saving settings to alternate file: %s\n", fileNameData);
+			printf("Saving settings to alternate file: %s\n", fileNameBytes.data());
 
 			bool savedSettings = saveTo(altSettingsFileName);
 			if(!savedSettings) {
-				printf("Failed to save settings to alternate file: %s\n", fileNameData);
+				printf("Failed to save settings to alternate file: %s\n", fileNameBytes.data());
 			}
 			return savedSettings;
 		}
@@ -250,9 +248,7 @@ bool SettingsManager::save(const ArgumentParser * args) const {
 
 bool SettingsManager::loadFrom(const QString & fileName) {
 	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
-
-	return loadFrom(fileNameData);
+	return loadFrom(fileNameBytes.data());
 }
 
 bool SettingsManager::loadFrom(const char * fileName) {
@@ -381,9 +377,7 @@ bool SettingsManager::loadFrom(const char * fileName) {
 
 bool SettingsManager::saveTo(const QString & fileName) const {
 	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
-	
-	return saveTo(fileNameData);
+	return saveTo(fileNameBytes.data());
 }
 
 bool SettingsManager::saveTo(const char * fileName) const {

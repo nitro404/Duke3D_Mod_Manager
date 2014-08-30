@@ -44,7 +44,5 @@ ModSortDirections::ModSortDirection ModSortDirections::parseFrom(const char * da
 
 ModSortDirections::ModSortDirection ModSortDirections::parseFrom(const QString & data) {
 	QByteArray dataBytes = data.toLocal8Bit();
-	const char * rawData = dataBytes.data();
-
-	return parseFrom(rawData);
+	return parseFrom(dataBytes.data());
 }

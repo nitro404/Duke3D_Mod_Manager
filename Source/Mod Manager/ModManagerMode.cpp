@@ -44,7 +44,5 @@ ModManagerModes::ModManagerMode ModManagerModes::parseFrom(const char * data) {
 
 ModManagerModes::ModManagerMode ModManagerModes::parseFrom(const QString & data) {
 	QByteArray dataBytes = data.toLocal8Bit();
-	const char * rawData = dataBytes.data();
-
-	return parseFrom(rawData);
+	return parseFrom(dataBytes.data());
 }

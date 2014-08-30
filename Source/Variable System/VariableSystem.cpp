@@ -483,7 +483,6 @@ VariableSystem * VariableSystem::readFrom(const char * fileName) {
 	if(fileName == NULL || Utilities::stringLength(fileName) == 0) { return NULL; }
 
 	QString line;
-	const char * data;
 	char * temp;
 	QByteArray bytes;
 
@@ -501,8 +500,7 @@ VariableSystem * VariableSystem::readFrom(const char * fileName) {
 		
 		line = input.readLine().trimmed();
 		bytes = line.toLocal8Bit();
-		data = bytes.data();
-		temp = Utilities::trimCopyString(data);
+		temp = Utilities::trimCopyString(bytes.data());
 		
 		if(Utilities::stringLength(temp) == 0) {
 			if(category != NULL) { delete [] category; }

@@ -28,8 +28,7 @@ ModVersionFile::ModVersionFile(const QString & name, const QString & type)
 	}
 	else {
 		QByteArray nameBytes = name.toLocal8Bit();
-		const char * nameData = nameBytes.data();
-		m_name = Utilities::trimCopyString(nameData);
+		m_name = Utilities::trimCopyString(nameBytes.data());
 	}
 
 	if(type.isNull()) {
@@ -37,8 +36,7 @@ ModVersionFile::ModVersionFile(const QString & name, const QString & type)
 	}
 	else {
 		QByteArray typeBytes = type.toLocal8Bit();
-		const char * typeData = typeBytes.data();
-		m_type = Utilities::trimCopyString(typeData);
+		m_type = Utilities::trimCopyString(typeBytes.data());
 	}
 }
 
@@ -110,8 +108,7 @@ void ModVersionFile::setName(const QString & name) {
 	}
 	else {
 		QByteArray nameBytes = name.toLocal8Bit();
-		const char * nameData = nameBytes.data();
-		m_name = Utilities::trimCopyString(nameData);
+		m_name = Utilities::trimCopyString(nameBytes.data());
 	}
 
 	if(m_type == NULL) {
@@ -138,8 +135,7 @@ void ModVersionFile::setType(const QString & type) {
 
 	if(!type.isNull()) {
 		QByteArray typeBytes = type.toLocal8Bit();
-		const char * typeData = typeBytes.data();
-		m_type = Utilities::trimCopyString(typeData);
+		m_type = Utilities::trimCopyString(typeBytes.data());
 	}
 }
 

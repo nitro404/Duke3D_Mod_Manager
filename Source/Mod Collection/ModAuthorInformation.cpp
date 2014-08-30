@@ -21,8 +21,7 @@ ModAuthorInformation::ModAuthorInformation(const QString & name)
 	}
 	else {
 		QByteArray nameBytes = name.toLocal8Bit();
-		const char * nameData = nameBytes.data();
-		m_name = Utilities::trimCopyString(nameData);
+		m_name = Utilities::trimCopyString(nameBytes.data());
 	}
 }
 
@@ -71,8 +70,7 @@ void ModAuthorInformation::setName(const QString & name) {
 	}
 	else {
 		QByteArray nameBytes = name.toLocal8Bit();
-		const char * nameData = nameBytes.data();
-		m_name = Utilities::trimCopyString(nameData);
+		m_name = Utilities::trimCopyString(nameBytes.data());
 	}
 }
 

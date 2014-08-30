@@ -31,14 +31,12 @@ ModTeam::ModTeam(const QString & name, const QString & email)
 	}
 	else {
 		QByteArray nameBytes = name.toLocal8Bit();
-		const char * nameData = nameBytes.data();
-		m_name = Utilities::trimCopyString(nameData);
+		m_name = Utilities::trimCopyString(nameBytes.data());
 	}
 
 	if(!email.isNull()) {
 		QByteArray emailBytes = email.toLocal8Bit();
-		const char * emailData = emailBytes.data();
-		m_email = Utilities::trimCopyString(emailData);
+		m_email = Utilities::trimCopyString(emailBytes.data());
 	}
 }
 
@@ -165,8 +163,7 @@ void ModTeam::setName(const QString & name) {
 	}
 	else {
 		QByteArray nameBytes = name.toLocal8Bit();
-		const char * nameData = nameBytes.data();
-		m_name = Utilities::trimCopyString(nameData);
+		m_name = Utilities::trimCopyString(nameBytes.data());
 	}
 }
 
@@ -189,8 +186,7 @@ void ModTeam::setEmail(const QString & email) {
 
 	if(!email.isNull()) {
 		QByteArray emailBytes = email.toLocal8Bit();
-		const char * emailData = emailBytes.data();
-		m_email = Utilities::trimCopyString(emailData);
+		m_email = Utilities::trimCopyString(emailBytes.data());
 	}
 }
 
@@ -213,8 +209,7 @@ void ModTeam::setCity(const QString & city) {
 
 	if(!city.isNull()) {
 		QByteArray cityBytes = city.toLocal8Bit();
-		const char * cityData = cityBytes.data();
-		m_city = Utilities::trimCopyString(cityData);
+		m_city = Utilities::trimCopyString(cityBytes.data());
 	}
 }
 
@@ -237,8 +232,7 @@ void ModTeam::setState(const QString & state) {
 
 	if(!state.isNull()) {
 		QByteArray stateBytes = state.toLocal8Bit();
-		const char * stateData = stateBytes.data();
-		m_state = Utilities::trimCopyString(stateData);
+		m_state = Utilities::trimCopyString(stateBytes.data());
 	}
 }
 
@@ -261,8 +255,7 @@ void ModTeam::setCountry(const QString & country) {
 
 	if(!country.isNull()) {
 		QByteArray countryBytes = country.toLocal8Bit();
-		const char * countryData = countryBytes.data();
-		m_country = Utilities::trimCopyString(countryData);
+		m_country = Utilities::trimCopyString(countryBytes.data());
 	}
 }
 
@@ -292,11 +285,11 @@ bool ModTeam::hasMember(const char * memberName) const {
 
 bool ModTeam::hasMember(const QString & memberName) const {
 	if(memberName.isEmpty()) { return false; }
+
 	QByteArray memberNameBytes = memberName.toLocal8Bit();
-	const char * memberNameData = memberNameBytes.data();
 
 	for(int i=0;i<m_members.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_members[i]->getName(), memberNameData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_members[i]->getName(), memberNameBytes.data()) == 0) {
 			return true;
 		}
 	}
@@ -325,11 +318,11 @@ int ModTeam::indexOfMember(const char * memberName) const {
 
 int ModTeam::indexOfMember(const QString & memberName) const {
 	if(memberName.isEmpty()) { return -1; }
+
 	QByteArray memberNameBytes = memberName.toLocal8Bit();
-	const char * memberNameData = memberNameBytes.data();
 
 	for(int i=0;i<m_members.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_members[i]->getName(), memberNameData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_members[i]->getName(), memberNameBytes.data()) == 0) {
 			return i;
 		}
 	}
@@ -355,11 +348,11 @@ const ModTeamMember * ModTeam::getMember(const char * memberName) const {
 
 const ModTeamMember * ModTeam::getMember(const QString & memberName) const {
 	if(memberName.isEmpty()) { return NULL; }
+
 	QByteArray memberNameBytes = memberName.toLocal8Bit();
-	const char * memberNameData = memberNameBytes.data();
 
 	for(int i=0;i<m_members.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_members[i]->getName(), memberNameData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_members[i]->getName(), memberNameBytes.data()) == 0) {
 			return m_members[i];
 		}
 	}
@@ -413,11 +406,11 @@ bool ModTeam::removeMember(const char * memberName) {
 
 bool ModTeam::removeMember(const QString & memberName) {
 	if(memberName.isEmpty()) { return false; }
+
 	QByteArray memberNameBytes = memberName.toLocal8Bit();
-	const char * memberNameData = memberNameBytes.data();
 
 	for(int i=0;i<m_members.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_members[i]->getName(), memberNameData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_members[i]->getName(), memberNameBytes.data()) == 0) {
 			delete m_members[i];
 			m_members.remove(i);
 

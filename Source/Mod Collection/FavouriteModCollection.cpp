@@ -89,10 +89,9 @@ bool FavouriteModCollection::hasFavourite(const char * name) const {
 bool FavouriteModCollection::hasFavourite(const QString & name) const {
 	if(name.isEmpty()) { return false; }
 	QByteArray nameBytes = name.toLocal8Bit();
-	const char * nameData = nameBytes.data();
 
 	for(int i=0;i<m_favourites.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), nameData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), nameBytes.data()) == 0) {
 			return true;
 		}
 	}
@@ -113,15 +112,13 @@ bool FavouriteModCollection::hasFavourite(const char * name, const char * versio
 
 bool FavouriteModCollection::hasFavourite(const QString & name, const QString & version) const {
 	if(name.isEmpty()) { return false; }
-	QByteArray nameBytes = name.toLocal8Bit();
-	const char * nameData = nameBytes.data();
 
+	QByteArray nameBytes = name.toLocal8Bit();
 	QByteArray versionBytes = version.toLocal8Bit();
-	const char * versionData = version.isNull() ? NULL : versionBytes.data();
 
 	for(int i=0;i<m_favourites.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), nameData) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_favourites[i]->getVersion(), versionData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), nameBytes.data()) == 0 &&
+		   Utilities::compareStringsIgnoreCase(m_favourites[i]->getVersion(), version.isNull() ? NULL : versionBytes.data()) == 0) {
 			return true;
 		}
 	}
@@ -151,10 +148,9 @@ int FavouriteModCollection::indexOfFavourite(const char * name) const {
 int FavouriteModCollection::indexOfFavourite(const QString & name) const {
 	if(name.isEmpty()) { return -1; }
 	QByteArray nameBytes = name.toLocal8Bit();
-	const char * nameData = nameBytes.data();
 
 	for(int i=0;i<m_favourites.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), nameData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), nameBytes.data()) == 0) {
 			return i;
 		}
 	}
@@ -175,15 +171,13 @@ int FavouriteModCollection::indexOfFavourite(const char * name, const char * ver
 
 int FavouriteModCollection::indexOfFavourite(const QString & name, const QString & version) const {
 	if(name.isEmpty()) { return -1; }
-	QByteArray nameBytes = name.toLocal8Bit();
-	const char * nameData = nameBytes.data();
 
+	QByteArray nameBytes = name.toLocal8Bit();
 	QByteArray versionBytes = version.toLocal8Bit();
-	const char * versionData = version.isNull() ? NULL : versionBytes.data();
 
 	for(int i=0;i<m_favourites.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), nameData) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_favourites[i]->getVersion(), versionData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), nameBytes.data()) == 0 &&
+		   Utilities::compareStringsIgnoreCase(m_favourites[i]->getVersion(), version.isNull() ? NULL : versionBytes.data()) == 0) {
 			return i;
 		}
 	}
@@ -209,11 +203,11 @@ const ModInformation * FavouriteModCollection::getFavourite(const char * name) c
 
 const ModInformation * FavouriteModCollection::getFavourite(const QString & name) const {
 	if(name.isEmpty()) { return NULL; }
+
 	QByteArray nameBytes = name.toLocal8Bit();
-	const char * nameData = nameBytes.data();
 
 	for(int i=0;i<m_favourites.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), nameData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), nameBytes.data()) == 0) {
 			return m_favourites[i];
 		}
 	}
@@ -234,15 +228,13 @@ const ModInformation * FavouriteModCollection::getFavourite(const char * name, c
 
 const ModInformation * FavouriteModCollection::getFavourite(const QString & name, const QString & version) const {
 	if(name.isEmpty()) { return NULL; }
-	QByteArray nameBytes = name.toLocal8Bit();
-	const char * nameData = nameBytes.data();
 
+	QByteArray nameBytes = name.toLocal8Bit();
 	QByteArray versionBytes = version.toLocal8Bit();
-	const char * versionData = version.isNull() ? NULL : versionBytes.data();
 
 	for(int i=0;i<m_favourites.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), nameData) == 0,
-		   Utilities::compareStringsIgnoreCase(m_favourites[i]->getVersion(), versionData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), nameBytes.data()) == 0,
+		   Utilities::compareStringsIgnoreCase(m_favourites[i]->getVersion(), version.isNull() ? NULL : versionBytes.data()) == 0) {
 			return m_favourites[i];
 		}
 	}
@@ -296,11 +288,11 @@ bool FavouriteModCollection::removeFavourite(const char * name) {
 
 bool FavouriteModCollection::removeFavourite(const QString & name) {
 	if(name.isEmpty()) { return false; }
+
 	QByteArray nameBytes = name.toLocal8Bit();
-	const char * nameData = nameBytes.data();
 
 	for(int i=0;i<m_favourites.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), nameData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), nameBytes.data()) == 0) {
 			delete m_favourites[i];
 			m_favourites.remove(i);
 
@@ -327,15 +319,13 @@ bool FavouriteModCollection::removeFavourite(const char * name, const char * ver
 
 bool FavouriteModCollection::removeFavourite(const QString & name, const QString & version) {
 	if(name.isEmpty()) { return false; }
-	QByteArray nameBytes = name.toLocal8Bit();
-	const char * nameData = nameBytes.data();
 
+	QByteArray nameBytes = name.toLocal8Bit();
 	QByteArray versionBytes = version.toLocal8Bit();
-	const char * versionData = version.isNull() ? NULL : versionBytes.data();
 
 	for(int i=0;i<m_favourites.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), nameData) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_favourites[i]->getVersion(), versionData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), nameBytes.data()) == 0 &&
+		   Utilities::compareStringsIgnoreCase(m_favourites[i]->getVersion(), version.isNull() ? NULL : versionBytes.data()) == 0) {
 			delete m_favourites[i];
 			m_favourites.remove(i);
 
@@ -358,10 +348,10 @@ bool FavouriteModCollection::loadFavourites() {
 
 bool FavouriteModCollection::loadFavourites(const QString & fileName) {
 	if(fileName.isEmpty()) { return false; }
-	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
 
-	return loadFavourites(fileNameData);
+	QByteArray fileNameBytes = fileName.toLocal8Bit();
+
+	return loadFavourites(fileNameBytes.data());
 }
 
 bool FavouriteModCollection::loadFavourites(const char * fileName) {
@@ -388,10 +378,10 @@ bool FavouriteModCollection::loadFavourites(const char * fileName) {
 
 bool FavouriteModCollection::loadFavouritesList(const QString & fileName) {
 	if(fileName.isEmpty()) { return false; }
-	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
 
-	return loadFavouritesList(fileNameData);
+	QByteArray fileNameBytes = fileName.toLocal8Bit();;
+
+	return loadFavouritesList(fileNameBytes.data());
 }
 
 bool FavouriteModCollection::loadFavouritesList(const char * fileName) {
@@ -429,9 +419,8 @@ bool FavouriteModCollection::loadFavouritesList(const char * fileName) {
 		}
 		else {
 			QByteArray lineBytes = line.toLocal8Bit();
-			const char * lineData = lineBytes.data();
 
-			printf("Unknown or missing mod in favourites list: %s\n", lineData);
+			printf("Unknown or missing mod in favourites list: %s\n", lineBytes.data());
 		}
 	}
 
@@ -446,10 +435,10 @@ bool FavouriteModCollection::loadFavouritesList(const char * fileName) {
 
 bool FavouriteModCollection::loadFavouritesXML(const QString & fileName) {
 	if(fileName.isEmpty()) { return false; }
-	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
 
-	return loadFavouritesXML(fileNameData);
+	QByteArray fileNameBytes = fileName.toLocal8Bit();
+
+	return loadFavouritesXML(fileNameBytes.data());
 }
 
 bool FavouriteModCollection::loadFavouritesXML(const char * fileName) {
@@ -566,10 +555,10 @@ bool FavouriteModCollection::saveFavourites() {
 
 bool FavouriteModCollection::saveFavourites(const QString & fileName) {
 	if(fileName.isEmpty()) { return false; }
-	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
 
-	return saveFavourites(fileNameData);
+	QByteArray fileNameBytes = fileName.toLocal8Bit();
+
+	return saveFavourites(fileNameBytes.data());
 }
 
 bool FavouriteModCollection::saveFavourites(const char * fileName) {
@@ -596,10 +585,10 @@ bool FavouriteModCollection::saveFavourites(const char * fileName) {
 
 bool FavouriteModCollection::saveFavouritesList(const QString & fileName) {
 	if(fileName.isEmpty()) { return false; }
-	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
 
-	return saveFavouritesList(fileNameData);
+	QByteArray fileNameBytes = fileName.toLocal8Bit();
+
+	return saveFavouritesList(fileNameBytes.data());
 }
 
 bool FavouriteModCollection::saveFavouritesList(const char * fileName) {
@@ -624,10 +613,10 @@ bool FavouriteModCollection::saveFavouritesList(const char * fileName) {
 
 bool FavouriteModCollection::saveFavouritesXML(const QString & fileName) {
 	if(fileName.isEmpty()) { return false; }
-	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
 
-	return saveFavouritesList(fileNameData);
+	QByteArray fileNameBytes = fileName.toLocal8Bit();
+
+	return saveFavouritesList(fileNameBytes.data());
 }
 
 bool FavouriteModCollection::saveFavouritesXML(const char * fileName) {

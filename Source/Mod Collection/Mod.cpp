@@ -39,8 +39,7 @@ Mod::Mod(const QString & name, const QString & id)
 	}
 	else {
 		QByteArray nameBytes = name.toLocal8Bit();
-		const char * nameData = nameBytes.data();
-		m_name = Utilities::trimCopyString(nameData);
+		m_name = Utilities::trimCopyString(nameBytes.data());
 	}
 
 	if(id.isEmpty()) {
@@ -49,8 +48,7 @@ Mod::Mod(const QString & name, const QString & id)
 	}
 	else {
 		QByteArray idBytes = id.toLocal8Bit();
-		const char * idData = idBytes.data();
-		m_id = Utilities::trimCopyString(idData);
+		m_id = Utilities::trimCopyString(idBytes.data());
 	}
 }
 
@@ -273,8 +271,7 @@ void Mod::setName(const QString & name) {
 	}
 	else {
 		QByteArray nameBytes = name.toLocal8Bit();
-		const char * nameData = nameBytes.data();
-		m_name = Utilities::trimCopyString(nameData);
+		m_name = Utilities::trimCopyString(nameBytes.data());
 	}
 }
 
@@ -301,8 +298,7 @@ void Mod::setID(const QString & id) {
 	}
 	else {
 		QByteArray idBytes = id.toLocal8Bit();
-		const char * idData = idBytes.data();
-		m_id = Utilities::trimCopyString(idData);
+		m_id = Utilities::trimCopyString(idBytes.data());
 	}
 }
 
@@ -325,8 +321,7 @@ void Mod::setType(const QString & type) {
 
 	if(!type.isNull()) {
 		QByteArray typeBytes = type.toLocal8Bit();
-		const char * typeData = typeBytes.data();
-		m_type = Utilities::trimCopyString(typeData);
+		m_type = Utilities::trimCopyString(typeBytes.data());
 	}
 }
 
@@ -349,8 +344,7 @@ void Mod::setGameVersion(const QString & gameVersion) {
 
 	if(!gameVersion.isNull()) {
 		QByteArray gameVersionBytes = gameVersion.toLocal8Bit();
-		const char * gameVersionData = gameVersionBytes.data();
-		m_gameVersion = Utilities::trimCopyString(gameVersionData);
+		m_gameVersion = Utilities::trimCopyString(gameVersionBytes.data());
 	}
 }
 
@@ -373,8 +367,7 @@ void Mod::setLatestVersion(const QString & latestVersion) {
 
 	if(!latestVersion.isNull()) {
 		QByteArray latestVersionBytes = latestVersion.toLocal8Bit();
-		const char * latestVersionData = latestVersionBytes.data();
-		m_latestVersion = Utilities::trimCopyString(latestVersionData);
+		m_latestVersion = Utilities::trimCopyString(latestVersionBytes.data());
 	}
 }
 
@@ -440,8 +433,7 @@ void Mod::setWebsite(const QString & website) {
 
 	if(!website.isNull()) {
 		QByteArray websiteBytes = website.toLocal8Bit();
-		const char * websiteData = websiteBytes.data();
-		m_website = Utilities::trimCopyString(websiteData);
+		m_website = Utilities::trimCopyString(websiteBytes.data());
 	}
 }
 
@@ -480,15 +472,10 @@ bool Mod::hasVersion(const char * version) const {
 }
 
 bool Mod::hasVersion(const QString & version) const {
-	const char * versionData = NULL;
-	QByteArray versionBytes;
-	if(!version.isNull()) {
-		versionBytes = version.toLocal8Bit();
-		versionData = versionBytes.data();
-	}
+	QByteArray versionBytes = version.toLocal8Bit();
 
 	for(int i=0;i<m_versions.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_versions[i]->getVersion(), versionData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_versions[i]->getVersion(), version.isNull() ? NULL : versionBytes.data()) == 0) {
 			return true;
 		}
 	}
@@ -514,15 +501,10 @@ int Mod::indexOfVersion(const char * version) const {
 }
 
 int Mod::indexOfVersion(const QString & version) const {
-	const char * versionData = NULL;
-	QByteArray versionBytes;
-	if(!version.isNull()) {
-		versionBytes = version.toLocal8Bit();
-		versionData = versionBytes.data();
-	}
+	QByteArray versionBytes = version.toLocal8Bit();
 
 	for(int i=0;i<m_versions.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_versions[i]->getVersion(), versionData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_versions[i]->getVersion(), version.isNull() ? NULL : versionBytes.data()) == 0) {
 			return i;
 		}
 	}
@@ -545,15 +527,10 @@ const ModVersion * Mod::getVersion(const char * version) const {
 }
 
 const ModVersion * Mod::getVersion(const QString & version) const {
-	const char * versionData = NULL;
-	QByteArray versionBytes;
-	if(!version.isNull()) {
-		versionBytes = version.toLocal8Bit();
-		versionData = versionBytes.data();
-	}
+	QByteArray versionBytes = version.toLocal8Bit();
 
 	for(int i=0;i<m_versions.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_versions[i]->getVersion(), versionData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_versions[i]->getVersion(), version.isNull() ? NULL : versionBytes.data()) == 0) {
 			return m_versions[i];
 		}
 	}
@@ -604,15 +581,10 @@ bool Mod::removeVersion(const char * version) {
 }
 
 bool Mod::removeVersion(const QString & version) {
-	const char * versionData = NULL;
-	QByteArray versionBytes;
-	if(!version.isNull()) {
-		versionBytes = version.toLocal8Bit();
-		versionData = versionBytes.data();
-	}
+	QByteArray versionBytes = version.toLocal8Bit();
 
 	for(int i=0;i<m_versions.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_versions[i]->getVersion(), versionData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_versions[i]->getVersion(), version.isNull() ? NULL : versionBytes.data()) == 0) {
 			delete m_versions[i];
 			m_versions.remove(i);
 
@@ -655,11 +627,11 @@ bool Mod::hasDownload(const char * fileName) const {
 
 bool Mod::hasDownload(const QString & fileName) const {
 	if(fileName.isEmpty()) { return false; }
+	
 	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
 
 	for(int i=0;i<m_downloads.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getFileName(), fileNameData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getFileName(), fileNameBytes.data()) == 0) {
 			return true;
 		}
 	}
@@ -679,11 +651,11 @@ bool Mod::hasDownloadOfType(const char * type) const {
 
 bool Mod::hasDownloadOfType(const QString & type) const {
 	if(type.isEmpty()) { return false; }
+
 	QByteArray typeBytes = type.toLocal8Bit();
-	const char * typeData = typeBytes.data();
 
 	for(int i=0;i<m_downloads.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getType(), typeData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getType(), typeBytes.data()) == 0) {
 			return true;
 		}
 	}
@@ -712,11 +684,11 @@ int Mod::indexOfDownload(const char * fileName) const {
 
 int Mod::indexOfDownload(const QString & fileName) const {
 	if(fileName.isEmpty()) { return -1; }
+
 	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
 
 	for(int i=0;i<m_downloads.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getFileName(), fileNameData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getFileName(), fileNameBytes.data()) == 0) {
 			return i;
 		}
 	}
@@ -736,11 +708,11 @@ int Mod::indexOfDownloadByType(const char * type) const {
 
 int Mod::indexOfDownloadByType(const QString & type) const {
 	if(type.isEmpty()) { return -1; }
+
 	QByteArray typeBytes = type.toLocal8Bit();
-	const char * typeData = typeBytes.data();
 
 	for(int i=0;i<m_downloads.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getType(), typeData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getType(), typeBytes.data()) == 0) {
 			return i;
 		}
 	}
@@ -766,11 +738,11 @@ const ModDownload * Mod::getDownload(const char * fileName) const {
 
 const ModDownload * Mod::getDownload(const QString & fileName) const {
 	if(fileName.isEmpty()) { return NULL; }
+
 	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
 
 	for(int i=0;i<m_downloads.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getFileName(), fileNameData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getFileName(), fileNameBytes.data()) == 0) {
 			return m_downloads[i];
 		}
 	}
@@ -790,11 +762,11 @@ const ModDownload * Mod::getDownloadByType(const char * type) const {
 
 const ModDownload * Mod::getDownloadByType(const QString & type) const {
 	if(type.isEmpty()) { return NULL; }
+
 	QByteArray typeBytes = type.toLocal8Bit();
-	const char * typeData = typeBytes.data();
 
 	for(int i=0;i<m_downloads.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getType(), typeData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getType(), typeBytes.data()) == 0) {
 			return m_downloads[i];
 		}
 	}
@@ -814,11 +786,11 @@ const char * Mod::getFileNameByType(const char * type) const {
 
 const char * Mod::getFileNameByType(const QString & type) const {
 	if(type.isEmpty()) { return NULL; }
+
 	QByteArray typeBytes = type.toLocal8Bit();
-	const char * typeData = typeBytes.data();
 
 	for(int i=0;i<m_downloads.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getType(), typeData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getType(), typeBytes.data()) == 0) {
 			return m_downloads[i]->getFileName();
 		}
 	}
@@ -872,11 +844,11 @@ bool Mod::removeDownload(const char * fileName) {
 
 bool Mod::removeDownload(const QString & fileName) {
 	if(fileName.isEmpty()) { return false; }
+
 	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
 
 	for(int i=0;i<m_downloads.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getFileName(), fileNameData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getFileName(), fileNameBytes.data()) == 0) {
 			delete m_downloads[i];
 			m_downloads.remove(i);
 
@@ -902,11 +874,11 @@ bool Mod::removeDownloadByType(const char * type) {
 
 bool Mod::removeDownloadByType(const QString & type) {
 	if(type.isEmpty()) { return false; }
+
 	QByteArray typeBytes = type.toLocal8Bit();
-	const char * typeData = typeBytes.data();
 
 	for(int i=0;i<m_downloads.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getType(), typeData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getType(), typeBytes.data()) == 0) {
 			delete m_downloads[i];
 			m_downloads.remove(i);
 
@@ -949,11 +921,11 @@ bool Mod::hasScreenshot(const char * fileName) const {
 
 bool Mod::hasScreenshot(const QString & fileName) const {
 	if(fileName.isEmpty()) { return false; }
+
 	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
 
 	for(int i=0;i<m_screenshots.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_screenshots[i]->getFileName(), fileNameData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_screenshots[i]->getFileName(), fileNameBytes.data()) == 0) {
 			return true;
 		}
 	}
@@ -982,11 +954,11 @@ int Mod::indexOfScreenshot(const char * fileName) const {
 
 int Mod::indexOfScreenshot(const QString & fileName) const {
 	if(fileName.isEmpty()) { return -1; }
+
 	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
 
 	for(int i=0;i<m_screenshots.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_screenshots[i]->getFileName(), fileNameData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_screenshots[i]->getFileName(), fileNameBytes.data()) == 0) {
 			return i;
 		}
 	}
@@ -1012,11 +984,11 @@ const ModScreenshot * Mod::getScreenshot(const char * fileName) const {
 
 const ModScreenshot * Mod::getScreenshot(const QString & fileName) const {
 	if(fileName.isEmpty()) { return NULL; }
+
 	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
 
 	for(int i=0;i<m_screenshots.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_screenshots[i]->getFileName(), fileNameData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_screenshots[i]->getFileName(), fileNameBytes.data()) == 0) {
 			return m_screenshots[i];
 		}
 	}
@@ -1070,11 +1042,11 @@ bool Mod::removeScreenshot(const char * fileName) {
 
 bool Mod::removeScreenshot(const QString & fileName) {
 	if(fileName.isEmpty()) { return false; }
+
 	QByteArray fileNameBytes = fileName.toLocal8Bit();
-	const char * fileNameData = fileNameBytes.data();
 
 	for(int i=0;i<m_screenshots.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_screenshots[i]->getFileName(), fileNameData) == 0) {
+		if(Utilities::compareStringsIgnoreCase(m_screenshots[i]->getFileName(), fileNameBytes.data()) == 0) {
 			delete m_screenshots[i];
 			m_screenshots.remove(i);
 
