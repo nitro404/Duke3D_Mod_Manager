@@ -4,7 +4,6 @@
 #include <QString.h>
 #include <QTextStream.h>
 #include <QXmlStream.h>
-#include "Singleton/Singleton.h"
 #include "Mod Manager/ModManagerMode.h"
 #include "Mod Manager/GameType.h"
 #include "Mod Collection/Mod.h"
@@ -13,14 +12,12 @@
 #include "Mod Collection/OrganizedModCollection.h"
 #include "Script/Script.h"
 
-class ModManager : public Singleton<ModManager> {
-	friend class Singleton<ModManager>;
-	
-protected:
+class ModManager {
+public:
 	ModManager();
 	~ModManager();
 
-public:
+	bool init(int argc, char * argv[], bool start = true);
 	bool init(const ArgumentParser * args = NULL, bool start = true);
 	bool uninit();
 
@@ -78,6 +75,8 @@ public:
 	
 private:
 	bool m_initialized;
+	ArgumentParser * m_arguments;
+	SettingsManager m_settings;
 	ModManagerModes::ModManagerMode m_mode;
 	GameTypes::GameType m_gameType;
 	const Mod * m_selectedMod;

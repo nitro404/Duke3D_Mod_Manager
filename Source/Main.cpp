@@ -9,25 +9,11 @@
 #endif // _DEBUG
 
 int main(int argc, char * argv[]) {
-	ArgumentParser args(argc, argv);
+	ModManager modManager;
 
-	SingletonManager::create();
+	modManager.init(argc, argv);
 
-	SettingsManager::createInstance();
-	ModManager::createInstance();
-
-	SettingsManager::getInstance()->load(&args);
-	ModManager::getInstance()->init(&args);
-
-	ModManager::getInstance()->uninit();
-	SettingsManager::getInstance()->save(&args);
-
-	ModManager::destroyInstance();
-	SettingsManager::destroyInstance();
-
-	SingletonManager::destroy();
-
-	Utilities::pause(); // for dramatic effect
+	modManager.uninit();
 	
 	return 0;
 }

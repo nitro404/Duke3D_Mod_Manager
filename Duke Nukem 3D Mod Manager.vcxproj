@@ -111,8 +111,6 @@
     <ClInclude Include="Source\Script\Script.h" />
     <ClInclude Include="Source\Script\ScriptArguments.h" />
     <ClInclude Include="Source\Settings Manager\SettingsManager.h" />
-    <ClInclude Include="Source\Singleton\Singleton.h" />
-    <ClInclude Include="Source\Singleton\SingletonManager.h" />
     <ClInclude Include="Source\Utilities\Utilities.h" />
     <ClInclude Include="Source\Variable System\Variable.h" />
     <ClInclude Include="Source\Variable System\VariableSystem.h" />
@@ -144,7 +142,6 @@
     <ClCompile Include="Source\Script\Script.cpp" />
     <ClCompile Include="Source\Script\ScriptArguments.cpp" />
     <ClCompile Include="Source\Settings Manager\SettingsManager.cpp" />
-    <ClCompile Include="Source\Singleton\SingletonManager.cpp" />
     <ClCompile Include="Source\Utilities\Utilities.cpp" />
     <ClCompile Include="Source\Variable System\Variable.cpp" />
     <ClCompile Include="Source\Variable System\VariableSystem.cpp" />

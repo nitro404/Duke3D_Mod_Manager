@@ -47,12 +47,6 @@
     <ClInclude Include="Source\Settings Manager\SettingsManager.h">
       <Filter>Settings Manager</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Singleton\Singleton.h">
-      <Filter>Singleton</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Singleton\SingletonManager.h">
-      <Filter>Singleton</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Utilities\Utilities.h">
       <Filter>Utilities</Filter>
     </ClInclude>
@@ -143,9 +137,6 @@
     <ClCompile Include="Source\Settings Manager\SettingsManager.cpp">
       <Filter>Settings Manager</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Singleton\SingletonManager.cpp">
-      <Filter>Singleton</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Utilities\Utilities.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
@@ -204,9 +195,6 @@
     </Filter>
     <Filter Include="Settings Manager">
       <UniqueIdentifier>{225ee70c-6ffb-4d7d-bbd9-3639d16dbea7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Singleton">
-      <UniqueIdentifier>{c1cbc0ad-8dfd-4d35-9020-ef882585106f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Utilities">
       <UniqueIdentifier>{7846c2d7-c8a6-493b-aa7a-22a791809dd4}</UniqueIdentifier>

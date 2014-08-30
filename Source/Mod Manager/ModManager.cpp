@@ -2,6 +2,7 @@
 
 ModManager::ModManager()
 	: m_initialized(false)
+	, m_arguments(NULL)
 	, m_mode(ModManagerModes::defaultMode)
 	, m_gameType(GameTypes::defaultGameType)
 	, m_selectedMod(NULL)
@@ -10,19 +11,28 @@ ModManager::ModManager()
 }
 
 ModManager::~ModManager() {
-	if(m_initialized) {
-		SettingsManager::getInstance()->modManagerMode = m_mode;
-		SettingsManager::getInstance()->gameType = m_gameType;
+	if(m_arguments != NULL) {
+		delete m_arguments;
 	}
+}
+
+bool ModManager::init(int argc, char * argv[], bool start) {
+	return init(&ArgumentParser(argc, argv), start);
 }
 
 bool ModManager::init(const ArgumentParser * args, bool start) {
 	if(m_initialized) { return true; }
 
-	if(args->hasArgument("?")) {
+	if(args != NULL) {
+		m_arguments = new ArgumentParser(*args);
+	}
+
+	if(m_arguments != NULL && m_arguments->hasArgument("?")) {
 		displayArgumentHelp();
 		return false;
 	}
+
+	m_settings.load(m_arguments);
 
 	m_mode = SettingsManager::getInstance()->modManagerMode;
 	m_gameType = SettingsManager::getInstance()->gameType;
@@ -58,7 +68,7 @@ bool ModManager::init(const ArgumentParser * args, bool start) {
 	Utilities::pause();
 	Utilities::clear();
 
-	if(!handleArguments(args, start)) {
+	if(!handleArguments(m_arguments, start)) {
 		return false;
 	}
 
@@ -73,6 +83,13 @@ bool ModManager::uninit() {
 	m_favouriteMods.uninit();
 	m_mods.clearMods();
 	m_scriptArgs.clear();
+
+	if(m_arguments != NULL) {
+		delete m_arguments;
+		m_arguments = NULL;
+	}
+
+	m_settings.save(m_arguments);
 
 	m_initialized = false;
 
@@ -1310,122 +1327,122 @@ bool ModManager::updateScriptArgs() {
 }
 
 bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
-	if(args == NULL) { return false; }
-
-	if(args->hasArgument("m")) {
-		ModManagerModes::ModManagerMode newMode = ModManagerModes::parseFrom(args->getValue("m"));
+	if(args != NULL) {
+		if(args->hasArgument("m")) {
+			ModManagerModes::ModManagerMode newMode = ModManagerModes::parseFrom(args->getValue("m"));
 			
-		if(isValid(newMode)) {
-			m_mode = newMode;
+			if(isValid(newMode)) {
+				m_mode = newMode;
+			}
+			else {
+				printf("Invalid mode argument, please specify one of the following: %s / %s\n", ModManagerModes::toString(ModManagerModes::DOSBox), ModManagerModes::toString(ModManagerModes::Windows));
+				return false;
+			}
 		}
-		else {
-			printf("Invalid mode argument, please specify one of the following: %s / %s\n", ModManagerModes::toString(ModManagerModes::DOSBox), ModManagerModes::toString(ModManagerModes::Windows));
-			return false;
-		}
-	}
 
-	if(args->hasArgument("t")) {
-		GameTypes::GameType newGameType = GameTypes::parseFrom(args->getValue("t"));
+		if(args->hasArgument("t")) {
+			GameTypes::GameType newGameType = GameTypes::parseFrom(args->getValue("t"));
 
-		if(isValid(newGameType)) {
-			m_gameType = newGameType;
+			if(isValid(newGameType)) {
+				m_gameType = newGameType;
 
-			printf("Setting game type to: %s\n", GameTypes::toString(m_gameType));
+				printf("Setting game type to: %s\n", GameTypes::toString(m_gameType));
 
-			if(m_gameType == GameTypes::Client) {
-				QString ipAddress;
+				if(m_gameType == GameTypes::Client) {
+					QString ipAddress;
 
-				if(args->hasArgument("ip")) {
-					ipAddress = args->getValue("ip").trimmed();
+					if(args->hasArgument("ip")) {
+						ipAddress = args->getValue("ip").trimmed();
 
-					bool valid = true;
-					for(int i=0;i<ipAddress.length();i++) {
-						if(ipAddress[i] == ' ' || ipAddress[i] == '\t') {
-							valid = false;
+						bool valid = true;
+						for(int i=0;i<ipAddress.length();i++) {
+							if(ipAddress[i] == ' ' || ipAddress[i] == '\t') {
+								valid = false;
+							}
 						}
-					}
 
-					if(ipAddress.length() == 0) { valid = false; }
+						if(ipAddress.length() == 0) { valid = false; }
 
-					QByteArray ipAddressBytes = ipAddress.toLocal8Bit();
-					const char * ipAddressData = ipAddressBytes.data();
+						QByteArray ipAddressBytes = ipAddress.toLocal8Bit();
+						const char * ipAddressData = ipAddressBytes.data();
 
-					if(valid) {
-						if(SettingsManager::getInstance()->serverIPAddress != NULL) { delete [] SettingsManager::getInstance()->serverIPAddress; }
-						SettingsManager::getInstance()->serverIPAddress = new char[Utilities::stringLength(ipAddressData) + 1];
-						Utilities::copyString(SettingsManager::getInstance()->serverIPAddress, Utilities::stringLength(ipAddressData) + 1, ipAddressData);
-					}
-					else {
-						printf("\nInvalid IP Address entered in arguments: %s\n\n", ipAddressData);
+						if(valid) {
+							if(SettingsManager::getInstance()->serverIPAddress != NULL) { delete [] SettingsManager::getInstance()->serverIPAddress; }
+							SettingsManager::getInstance()->serverIPAddress = new char[Utilities::stringLength(ipAddressData) + 1];
+							Utilities::copyString(SettingsManager::getInstance()->serverIPAddress, Utilities::stringLength(ipAddressData) + 1, ipAddressData);
+						}
+						else {
+							printf("\nInvalid IP Address entered in arguments: %s\n\n", ipAddressData);
 
-						runIPAddressPrompt();
+							runIPAddressPrompt();
+						}
 					}
 				}
 			}
-		}
-		else {
-			printf("Invalid game type, please specify one of the following: %s / %s / %s / %s\n", GameTypes::toString(GameTypes::Game), GameTypes::toString(GameTypes::Setup), GameTypes::toString(GameTypes::Client), GameTypes::toString(GameTypes::Server));
-			return false;
-		}
-	}
-
-	if(args->hasArgument("s")) {
-		if(args->hasArgument("r") || args->hasArgument("g") || args->hasArgument("x") || args->hasArgument("v")) {
-			printf("Redundant arguments specified, please specify either s OR r OR v OR (x AND/OR g).\n");
-			return false;
+			else {
+				printf("Invalid game type, please specify one of the following: %s / %s / %s / %s\n", GameTypes::toString(GameTypes::Game), GameTypes::toString(GameTypes::Setup), GameTypes::toString(GameTypes::Client), GameTypes::toString(GameTypes::Server));
+				return false;
+			}
 		}
 
-		int numberOfMatches = searchForAndSelectMod(args->getValue("s"));
+		if(args->hasArgument("s")) {
+			if(args->hasArgument("r") || args->hasArgument("g") || args->hasArgument("x") || args->hasArgument("v")) {
+				printf("Redundant arguments specified, please specify either s OR r OR v OR (x AND/OR g).\n");
+				return false;
+			}
 
-		if(numberOfMatches == -1) {
-			printf("Invalid or empty search query.\n");
-			return false;
+			int numberOfMatches = searchForAndSelectMod(args->getValue("s"));
+
+			if(numberOfMatches == -1) {
+				printf("Invalid or empty search query.\n");
+				return false;
+			}
+			else if(numberOfMatches == 0) {
+				printf("No matches found for specified search query.\n\n");
+				return false;
+			}
+			else if(numberOfMatches == 1) {
+				printf("Selected mod from search query: %s\n", m_selectedMod->getName());
+
+				runSelectedMod();
+
+				return true;
+			}
+			else {
+				printf("%d matches found, please refine your search query.\n", numberOfMatches);
+				return false;
+			}
 		}
-		else if(numberOfMatches == 0) {
-			printf("No matches found for specified search query.\n\n");
-			return false;
-		}
-		else if(numberOfMatches == 1) {
-			printf("Selected mod from search query: %s\n", m_selectedMod->getName());
+		else if(args->hasArgument("r")) {
+			if(args->hasArgument("g") || args->hasArgument("x") || args->hasArgument("v")) {
+				printf("Redundant arguments specified, please specify either s OR r OR v OR (x AND/OR g).\n");
+				return false;
+			}
+
+			selectRandomMod();
+
+			printf("Selected random mod: %s\n", m_selectedMod->getName());
+			printf("\n");
 
 			runSelectedMod();
 
 			return true;
 		}
-		else {
-			printf("%d matches found, please refine your search query.\n", numberOfMatches);
-			return false;
+		else if(args->hasArgument("v")) {
+			if(args->hasArgument("g") || args->hasArgument("x")) {
+				printf("Redundant arguments specified, please specify either s OR r OR v OR (x AND/OR g).\n");
+				return false;
+			}
+
+			m_selectedMod = NULL;
+			runSelectedMod();
+
+			return true;
 		}
-	}
-	else if(args->hasArgument("r")) {
-		if(args->hasArgument("g") || args->hasArgument("x") || args->hasArgument("v")) {
-			printf("Redundant arguments specified, please specify either s OR r OR v OR (x AND/OR g).\n");
-			return false;
+		else if(args->hasArgument("g") || args->hasArgument("x")) {
+			runSelectedMod(args);
+			return true;
 		}
-
-		selectRandomMod();
-
-		printf("Selected random mod: %s\n", m_selectedMod->getName());
-		printf("\n");
-
-		runSelectedMod();
-
-		return true;
-	}
-	else if(args->hasArgument("v")) {
-		if(args->hasArgument("g") || args->hasArgument("x")) {
-			printf("Redundant arguments specified, please specify either s OR r OR v OR (x AND/OR g).\n");
-			return false;
-		}
-
-		m_selectedMod = NULL;
-		runSelectedMod();
-
-		return true;
-	}
-	else if(args->hasArgument("g") || args->hasArgument("x")) {
-		runSelectedMod(args);
-		return true;
 	}
 	
 	if(start) {

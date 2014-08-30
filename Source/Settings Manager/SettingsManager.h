@@ -1,21 +1,22 @@
 #ifndef SETTINGS_MANAGER_H
 #define SETTINGS_MANAGER_H
 
-#include "Singleton/Singleton.h"
 #include "Utilities/Utilities.h"
 #include "Variable System/VariableSystem.h"
 #include "Mod Manager/ArgumentParser.h"
 #include "Mod Manager/ModManagerMode.h"
 #include "Mod Manager/GameType.h"
 
-class SettingsManager : public Singleton<SettingsManager> {
-	friend class Singleton<SettingsManager>;
-
-protected:
-	SettingsManager();
-	~SettingsManager();
-	
+class SettingsManager {
 public:
+	SettingsManager();
+	SettingsManager(const SettingsManager & s);
+	SettingsManager & operator = (const SettingsManager & s);
+	~SettingsManager();
+
+	static SettingsManager * getInstance();
+	void updateInstance();
+	
 	void reset();
 	
 	bool load(const ArgumentParser * args = NULL);
@@ -66,6 +67,7 @@ public:
 	char * serverIPAddress;
 
 private:
+	static SettingsManager * instance;
 	VariableSystem * m_variables;
 };
 
