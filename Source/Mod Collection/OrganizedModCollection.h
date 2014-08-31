@@ -25,18 +25,20 @@ public:
 
 	ModCollection * getModCollection() const;
 	FavouriteModCollection * getFavouriteModCollection() const;
-
-	void setModCollection(ModCollection * mods);
-	void setFavouriteModCollection(FavouriteModCollection * favourites);
-
 	ModFilterTypes::ModFilterType getFilterType() const;
 	ModSortTypes::ModSortType getSortType() const;
 	ModSortDirections::ModSortDirection getSortDirection() const;
 	
+	void setModCollection(ModCollection * mods);
+	void setFavouriteModCollection(FavouriteModCollection * favourites);
 	bool setFilterType(ModFilterTypes::ModFilterType filterType);
 	bool setSortType(ModSortTypes::ModSortType sortType);
 	bool setSortDirection(ModSortDirections::ModSortDirection sortDirection);
 	bool setSortOptions(ModSortTypes::ModSortType sortType, ModSortDirections::ModSortDirection sortDirection);
+
+	bool displayMods() const;
+	bool displayTeams() const;
+	bool displayAuthors() const;
 
 	int numberOfMods() const;
 	bool hasMod(const Mod & mod) const;

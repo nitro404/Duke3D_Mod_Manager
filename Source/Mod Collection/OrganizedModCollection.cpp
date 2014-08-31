@@ -148,6 +148,18 @@ FavouriteModCollection * OrganizedModCollection::getFavouriteModCollection() con
 	return m_favourites;
 }
 
+ModFilterTypes::ModFilterType OrganizedModCollection::getFilterType() const {
+	return m_filterType;
+}
+
+ModSortTypes::ModSortType OrganizedModCollection::getSortType() const {
+	return m_sortType;
+}
+
+ModSortDirections::ModSortDirection OrganizedModCollection::getSortDirection() const {
+	return m_sortDirection;
+}
+
 void OrganizedModCollection::setModCollection(ModCollection * mods) {
 	bool organize = m_mods != mods;
 
@@ -186,18 +198,6 @@ void OrganizedModCollection::setFavouriteModCollection(FavouriteModCollection * 
 	if(organize) {
 		organizeModCollection();
 	}
-}
-
-ModFilterTypes::ModFilterType OrganizedModCollection::getFilterType() const {
-	return m_filterType;
-}
-
-ModSortTypes::ModSortType OrganizedModCollection::getSortType() const {
-	return m_sortType;
-}
-
-ModSortDirections::ModSortDirection OrganizedModCollection::getSortDirection() const {
-	return m_sortDirection;
 }
 	
 bool OrganizedModCollection::setFilterType(ModFilterTypes::ModFilterType filterType) {
@@ -271,6 +271,23 @@ bool OrganizedModCollection::setSortOptions(ModSortTypes::ModSortType sortType, 
 	}
 
 	return true;
+}
+
+bool OrganizedModCollection::displayMods() const {
+	return  m_filterType == ModFilterTypes::None ||
+			m_filterType == ModFilterTypes::Favourites ||
+		   (m_filterType == ModFilterTypes::Teams && m_selectedTeam != NULL) ||
+		   (m_filterType == ModFilterTypes::Authors && m_selectedAuthor != NULL);
+}
+
+bool OrganizedModCollection::displayTeams() const {
+	return m_filterType == ModFilterTypes::Teams &&
+		   m_selectedTeam == NULL;
+}
+
+bool OrganizedModCollection::displayAuthors() const {
+	return m_filterType == ModFilterTypes::Authors &&
+		   m_selectedAuthor == NULL;
 }
 
 int OrganizedModCollection::numberOfMods() const {
@@ -498,9 +515,18 @@ const ModAuthorInformation * OrganizedModCollection::getSelectedTeam() const {
 bool OrganizedModCollection::setSelectedTeam(int index) {
 	if(index < 0 || index >= m_teams.size()) { return false; }
 
-	bool organize = m_selectedTeam != m_teams[index];
+	bool organize = m_selectedTeam != m_teams[index] ||
+		 m_filterType != ModFilterTypes::Teams;
 
 	m_selectedTeam = m_teams[index];
+	m_filterType = ModFilterTypes::Teams;
+
+	if(!ModSortTypes::isValidInContext(m_sortType, m_filterType, m_selectedTeam != NULL, m_selectedAuthor != NULL)) {
+		m_sortType = ModSortTypes::defaultSortType;
+		m_sortDirection = ModSortDirections::defaultSortDirection;
+
+		organize = true;
+	}
 
 	if(organize) {
 		organizeModCollection();
@@ -523,9 +549,18 @@ bool OrganizedModCollection::setSelectedTeam(const char * name) {
 		if(Utilities::compareStringsIgnoreCase(m_teams[i]->getName(), formattedName) == 0) {
 			delete [] formattedName;
 
-			organize = m_selectedTeam != m_teams[i];
+			organize = m_selectedTeam != m_teams[i] ||
+					   m_filterType != ModFilterTypes::Teams;
 
 			m_selectedTeam = m_teams[i];
+			m_filterType = ModFilterTypes::Teams;
+
+			if(!ModSortTypes::isValidInContext(m_sortType, m_filterType, m_selectedTeam != NULL, m_selectedAuthor != NULL)) {
+				m_sortType = ModSortTypes::defaultSortType;
+				m_sortDirection = ModSortDirections::defaultSortDirection;
+
+				organize = true;
+			}
 
 			if(organize) {
 				organizeModCollection();
@@ -547,9 +582,18 @@ bool OrganizedModCollection::setSelectedTeam(const QString & name) {
 
 	for(int i=0;i<m_teams.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(m_teams[i]->getName(), formattedName) == 0) {
-			organize = m_selectedTeam != m_teams[i];
+			organize = m_selectedTeam != m_teams[i] ||
+					   m_filterType != ModFilterTypes::Teams;
 
 			m_selectedTeam = m_teams[i];
+			m_filterType = ModFilterTypes::Teams;
+
+			if(!ModSortTypes::isValidInContext(m_sortType, m_filterType, m_selectedTeam != NULL, m_selectedAuthor != NULL)) {
+				m_sortType = ModSortTypes::defaultSortType;
+				m_sortDirection = ModSortDirections::defaultSortDirection;
+
+				organize = true;
+			}
 
 			if(organize) {
 				organizeModCollection();
@@ -568,9 +612,18 @@ bool OrganizedModCollection::setSelectedTeam(const ModAuthorInformation * teamIn
 
 	for(int i=0;i<m_teams.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(m_teams[i]->getName(), teamInfo->getName()) == 0) {
-			organize = m_selectedTeam != m_teams[i];
+			organize = m_selectedTeam != m_teams[i] ||
+					   m_filterType != ModFilterTypes::Teams;
 
 			m_selectedTeam = m_teams[i];
+			m_filterType = ModFilterTypes::Teams;
+
+			if(!ModSortTypes::isValidInContext(m_sortType, m_filterType, m_selectedTeam != NULL, m_selectedAuthor != NULL)) {
+				m_sortType = ModSortTypes::defaultSortType;
+				m_sortDirection = ModSortDirections::defaultSortDirection;
+
+				organize = true;
+			}
 
 			if(organize) {
 				organizeModCollection();
@@ -586,6 +639,13 @@ void OrganizedModCollection::clearSelectedTeam() {
 	bool organize = m_selectedTeam != NULL;
 
 	m_selectedTeam = NULL;
+
+	if(!ModSortTypes::isValidInContext(m_sortType, m_filterType, m_selectedTeam != NULL, m_selectedAuthor != NULL)) {
+		m_sortType = ModSortTypes::defaultSortType;
+		m_sortDirection = ModSortDirections::defaultSortDirection;
+
+		organize = true;
+	}
 
 	if(organize) {
 		organizeModCollection();
@@ -717,9 +777,18 @@ const ModAuthorInformation * OrganizedModCollection::getSelectedAuthor() const {
 bool OrganizedModCollection::setSelectedAuthor(int index) {
 	if(index < 0 || index >= m_authors.size()) { return false; }
 
-	bool organize = m_selectedAuthor != m_authors[index];
+	bool organize = m_selectedAuthor != m_authors[index] ||
+		 m_filterType != ModFilterTypes::Authors;
 
 	m_selectedAuthor = m_authors[index];
+	m_filterType = ModFilterTypes::Authors;
+
+	if(!ModSortTypes::isValidInContext(m_sortType, m_filterType, m_selectedTeam != NULL, m_selectedAuthor != NULL)) {
+		m_sortType = ModSortTypes::defaultSortType;
+		m_sortDirection = ModSortDirections::defaultSortDirection;
+
+		organize = true;
+	}
 
 	if(organize) {
 		organizeModCollection();
@@ -742,9 +811,18 @@ bool OrganizedModCollection::setSelectedAuthor(const char * name) {
 		if(Utilities::compareStringsIgnoreCase(m_authors[i]->getName(), formattedName) == 0) {
 			delete [] formattedName;
 
-			organize = m_selectedAuthor != m_authors[i];
+			organize = m_selectedAuthor != m_authors[i] ||
+					   m_filterType != ModFilterTypes::Authors;
 
 			m_selectedAuthor = m_authors[i];
+			m_filterType = ModFilterTypes::Authors;
+
+			if(!ModSortTypes::isValidInContext(m_sortType, m_filterType, m_selectedTeam != NULL, m_selectedAuthor != NULL)) {
+				m_sortType = ModSortTypes::defaultSortType;
+				m_sortDirection = ModSortDirections::defaultSortDirection;
+
+				organize = true;
+			}
 
 			if(organize) {
 				organizeModCollection();
@@ -766,9 +844,18 @@ bool OrganizedModCollection::setSelectedAuthor(const QString & name) {
 
 	for(int i=0;i<m_authors.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(m_authors[i]->getName(), formattedName) == 0) {
-			organize = m_selectedAuthor != m_authors[i];
+			organize = m_selectedAuthor != m_authors[i] ||
+					   m_filterType != ModFilterTypes::Authors;
 
 			m_selectedAuthor = m_authors[i];
+			m_filterType = ModFilterTypes::Authors;
+
+			if(!ModSortTypes::isValidInContext(m_sortType, m_filterType, m_selectedTeam != NULL, m_selectedAuthor != NULL)) {
+				m_sortType = ModSortTypes::defaultSortType;
+				m_sortDirection = ModSortDirections::defaultSortDirection;
+
+				organize = true;
+			}
 
 			if(organize) {
 				organizeModCollection();
@@ -787,9 +874,18 @@ bool OrganizedModCollection::setSelectedAuthor(const ModAuthorInformation * auth
 
 	for(int i=0;i<m_authors.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(m_authors[i]->getName(), authorInfo->getName()) == 0) {
-			organize = m_selectedAuthor != m_authors[i];
+			organize = m_selectedAuthor != m_authors[i] ||
+					   m_filterType != ModFilterTypes::Authors;
 
 			m_selectedAuthor = m_authors[i];
+			m_filterType = ModFilterTypes::Authors;
+
+			if(!ModSortTypes::isValidInContext(m_sortType, m_filterType, m_selectedTeam != NULL, m_selectedAuthor != NULL)) {
+				m_sortType = ModSortTypes::defaultSortType;
+				m_sortDirection = ModSortDirections::defaultSortDirection;
+
+				organize = true;
+			}
 
 			if(organize) {
 				organizeModCollection();
@@ -802,7 +898,20 @@ bool OrganizedModCollection::setSelectedAuthor(const ModAuthorInformation * auth
 }
 
 void OrganizedModCollection::clearSelectedAuthor() {
+	bool organize = m_selectedAuthor != NULL;
+
 	m_selectedAuthor = NULL;
+
+	if(!ModSortTypes::isValidInContext(m_sortType, m_filterType, m_selectedTeam != NULL, m_selectedAuthor != NULL)) {
+		m_sortType = ModSortTypes::defaultSortType;
+		m_sortDirection = ModSortDirections::defaultSortDirection;
+
+		organize = true;
+	}
+
+	if(organize) {
+		organizeModCollection();
+	}
 }
 
 void OrganizedModCollection::modCollectionUpdated() {

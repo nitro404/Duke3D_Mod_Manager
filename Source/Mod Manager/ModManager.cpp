@@ -240,9 +240,21 @@ bool ModManager::setSelectedMod(const QString & name) {
 }
 
 void ModManager::selectRandomMod() {
-	if(!m_initialized) { return; }
+	if(!m_initialized || m_organizedMods.numberOfMods() == 0) { return; }
 
 	m_selectedMod = m_organizedMods.getMod(Utilities::randomInteger(0, m_organizedMods.numberOfMods() - 1));
+}
+
+bool ModManager::selectRandomTeam() {
+	if(!m_initialized || m_organizedMods.numberOfTeams() == 0) { return false; }
+
+	return m_organizedMods.setSelectedTeam(Utilities::randomInteger(0, m_organizedMods.numberOfTeams() - 1));
+}
+
+bool ModManager::selectRandomAuthor() {
+	if(!m_initialized || m_organizedMods.numberOfAuthors() == 0) { return false; }
+
+	return m_organizedMods.setSelectedAuthor(Utilities::randomInteger(0, m_organizedMods.numberOfAuthors() - 1));
 }
 
 int ModManager::searchForAndSelectMod(const char * query) {
@@ -272,13 +284,100 @@ int ModManager::searchForAndSelectMod(const QString & query) {
 		}
 
 		if(modName.contains(formattedData)) {
-			matchingMod = m_mods.getMod(i);
+			if(matchingMod == NULL) {
+				matchingMod = m_mods.getMod(i);
+			}
+
 			numberOfMatches++;
 		}
 	}
 
-	if(numberOfMatches) {
+	if(numberOfMatches == 1) {
 		m_selectedMod = matchingMod;
+	}
+
+	return numberOfMatches;
+}
+
+int ModManager::searchForAndSelectTeam(const char * query) {
+	if(!m_initialized || m_organizedMods.numberOfTeams() == 0 || query == NULL || Utilities::stringLength(query) == 0) { return -1; }
+
+	return searchForAndSelectTeam(QString(query));
+}
+
+int ModManager::searchForAndSelectTeam(const QString & query) {
+	if(!m_initialized) { return -1; }
+
+	QString data = query.trimmed();
+	if(data.isEmpty()) { return -1; }
+	QString formattedData = data.toLower();
+
+	QString teamName;
+	int matchingTeamIndex = -1;
+	int numberOfMatches = 0;
+
+	for(int i=0;i<m_organizedMods.numberOfTeams();i++) {
+		teamName = QString(m_organizedMods.getTeamInfo(i)->getName()).toLower();
+
+		if(QString::compare(teamName, formattedData, Qt::CaseSensitive) == 0) {
+			matchingTeamIndex = i;
+			numberOfMatches = 1;
+			break;
+		}
+
+		if(teamName.contains(formattedData)) {
+			if(matchingTeamIndex == -1) {
+				matchingTeamIndex = i;
+			}
+
+			numberOfMatches++;
+		}
+	}
+
+	if(numberOfMatches == 1) {
+		m_organizedMods.setSelectedTeam(matchingTeamIndex);
+	}
+
+	return numberOfMatches;
+}
+
+int ModManager::searchForAndSelectAuthor(const char * query) {
+	if(!m_initialized || m_organizedMods.numberOfAuthors() == 0 || query == NULL || Utilities::stringLength(query) == 0) { return -1; }
+
+	return searchForAndSelectAuthor(QString(query));
+}
+
+int ModManager::searchForAndSelectAuthor(const QString & query) {
+	if(!m_initialized) { return -1; }
+
+	QString data = query.trimmed();
+	if(data.isEmpty()) { return -1; }
+	QString formattedData = data.toLower();
+
+	QString authorName;
+	int matchingAuthorIndex = -1;
+	int numberOfMatches = 0;
+
+	for(int i=0;i<m_organizedMods.numberOfAuthors();i++) {
+		authorName = QString(m_organizedMods.getAuthorInfo(i)->getName()).toLower();
+
+		if(QString::compare(authorName, formattedData, Qt::CaseSensitive) == 0) {
+			matchingAuthorIndex = i;
+			numberOfMatches = 1;
+			break;
+		}
+
+		if(authorName.contains(formattedData)) {
+			if(matchingAuthorIndex == -1) {
+				matchingAuthorIndex = i;
+			}
+
+			numberOfMatches++;
+		}
+	}
+
+	if(numberOfMatches == 1) {
+		m_organizedMods.setSelectedAuthor(matchingAuthorIndex);
 	}
 
 	return numberOfMatches;
@@ -312,10 +411,7 @@ void ModManager::runMenu() {
 	while(true) {
 		Utilities::clear();
 
-		if( m_organizedMods.getFilterType() == ModFilterTypes::None ||
-		    m_organizedMods.getFilterType() == ModFilterTypes::Favourites ||
-		   (m_organizedMods.getFilterType() == ModFilterTypes::Teams && m_organizedMods.hasSelectedTeam()) ||
-		   (m_organizedMods.getFilterType() == ModFilterTypes::Authors && m_organizedMods.hasSelectedAuthor())) {
+		if(m_organizedMods.displayMods()) {
 			for(int i=0;i<m_organizedMods.numberOfMods();i++) {
 				printf("%d: %s", (i + 1), m_organizedMods.getMod(i)->getName());
 				if(m_organizedMods.getSortType() == ModSortTypes::ReleaseDate) {
@@ -332,12 +428,12 @@ void ModManager::runMenu() {
 				printf("\n");
 			}
 		}
-		else if(m_organizedMods.getFilterType() == ModFilterTypes::Teams && !m_organizedMods.hasSelectedTeam()) {
+		else if(m_organizedMods.displayTeams()) {
 			for(int i=0;i<m_organizedMods.numberOfTeams();i++) {
 				printf("%d: %s (%d)\n", (i + 1), m_organizedMods.getTeamInfo(i)->getName(), m_organizedMods.getTeamInfo(i)->getModCount());
 			}
 		}
-		else if(m_organizedMods.getFilterType() == ModFilterTypes::Authors && !m_organizedMods.hasSelectedAuthor()) {
+		else if(m_organizedMods.displayAuthors()) {
 			for(int i=0;i<m_organizedMods.numberOfAuthors();i++) {
 				printf("%d: %s (%d)\n", (i + 1), m_organizedMods.getAuthorInfo(i)->getName(), m_organizedMods.getAuthorInfo(i)->getModCount());
 			}
@@ -469,10 +565,7 @@ void ModManager::runMenu() {
 		selectedIndex = data.toInt(&valid, 10);
 
 		if(valid) {
-			if( m_organizedMods.getFilterType() == ModFilterTypes::None ||
-				m_organizedMods.getFilterType() == ModFilterTypes::Favourites ||
-			   (m_organizedMods.getFilterType() == ModFilterTypes::Teams && m_organizedMods.hasSelectedTeam()) ||
-			   (m_organizedMods.getFilterType() == ModFilterTypes::Authors && m_organizedMods.hasSelectedAuthor())) {
+			if(m_organizedMods.displayMods()) {
 				if(selectedIndex >= 1 && selectedIndex <= m_organizedMods.numberOfMods()) {
 					valid = true;
 
@@ -482,14 +575,14 @@ void ModManager::runMenu() {
 					}
 				}
 			}
-			else if(m_organizedMods.getFilterType() == ModFilterTypes::Teams && !m_organizedMods.hasSelectedTeam()) {
+			else if(m_organizedMods.displayTeams()) {
 				if(selectedIndex >= 1 && selectedIndex <= m_organizedMods.numberOfTeams()) {
 					valid = true;
 
 					m_organizedMods.setSelectedTeam(selectedIndex - 1);
 				}
 			}
-			else if(m_organizedMods.getFilterType() == ModFilterTypes::Authors && !m_organizedMods.hasSelectedAuthor()) {
+			else if(m_organizedMods.displayAuthors()) {
 				if(selectedIndex >= 1 && selectedIndex <= m_organizedMods.numberOfAuthors()) {
 					valid = true;
 
@@ -1148,6 +1241,11 @@ void ModManager::runSelectRandomModPrompt() {
 	QTextStream in(stdin);
 	QString input, data, formattedData;
 	bool skipRandomSelection = false;
+	bool randomMods = m_organizedMods.displayMods();
+	bool randomTeams = m_organizedMods.displayTeams();
+	bool randomAuthors = m_organizedMods.displayAuthors();
+	const char * searchType = randomMods ? "mod" : (randomTeams ? "team" : (randomAuthors ? "author" : "item"));
+	int selectedIndex = -1;
 
 	QRegExp randomRegExp("^(r(andom)?)$");
 	QRegExp cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
@@ -1156,26 +1254,52 @@ void ModManager::runSelectRandomModPrompt() {
 		Utilities::clear();
 
 		if(!skipRandomSelection) {
-			selectRandomMod();
+			if(m_organizedMods.displayMods()) {
+				selectRandomMod();
+			}
+			else if(m_organizedMods.displayTeams()) {
+				selectedIndex = m_organizedMods.numberOfTeams() == 0 ? -1 : Utilities::randomInteger(0, m_organizedMods.numberOfTeams() - 1);
+			}
+			else if(m_organizedMods.displayAuthors()) {
+				selectedIndex = m_organizedMods.numberOfAuthors() == 0 ? -1 : Utilities::randomInteger(0, m_organizedMods.numberOfAuthors() - 1);
+			}
 		}
 		else {
 			skipRandomSelection = false;
 		}
 
-		printf("Randomly selected mod: %s\n\n", m_selectedMod->getName());
-		printf("Press enter to continue, or type r to select a new mod, or b to go back.\n\n");
+		printf("Randomly selected %s: %s\n\n", searchType, m_organizedMods.displayMods() ? m_selectedMod->getName() : (m_organizedMods.displayTeams() ? m_organizedMods.getTeamInfo(selectedIndex)->getName() : (m_organizedMods.displayAuthors() ? m_organizedMods.getAuthorInfo(selectedIndex)->getName() : NULL)));
+		printf("Press enter to continue, or type r to select a new %s, or b to go back.\n\n", searchType);
 		printf("> ");
 
 		input = in.readLine();
 		data = input.trimmed();
-		if(data.isEmpty()) { break; }
+		if(data.isEmpty()) {
+			if(randomTeams) {
+				m_organizedMods.setSelectedTeam(selectedIndex);
+			}
+			else if(randomAuthors) {
+				m_organizedMods.setSelectedAuthor(selectedIndex);
+			}
+
+			break;
+		}
 		formattedData = data.toLower();
 
 		if(randomRegExp.exactMatch(formattedData)) {
 			continue;
 		}
 		else if(cancelRegExp.exactMatch(formattedData)) {
-			m_selectedMod = NULL;
+			if(randomMods) {
+				m_selectedMod = NULL;
+			}
+			else if(randomTeams) {
+				m_organizedMods.clearSelectedTeam();
+			}
+			else if(randomAuthors) {
+				m_organizedMods.clearSelectedAuthor();
+			}
+
 			return;
 		}
 		else {
@@ -1184,7 +1308,7 @@ void ModManager::runSelectRandomModPrompt() {
 			Utilities::clear();
 
 			printf("Invalid input, please either leave input empty by pressing enter to select the mod, or use one of the following commands:\n.");
-			printf(" [r]andom - randomly select a new mod.\n");
+			printf(" [r]andom - randomly select a new %s.\n", searchType);
 			printf("  [a]bort - returns to previous menu.\n");
 			printf("   [b]ack - returns to previous menu.\n");
 			printf(" [c]ancel - returns to previous menu.\n");
@@ -1204,6 +1328,10 @@ void ModManager::runSearchPrompt(const QString & args) {
 	QString input, data, formattedData;
 	QString trimmedArgs = args.trimmed();
 	bool skipInput = !trimmedArgs.isEmpty();
+	bool searchMods = m_organizedMods.displayMods();
+	bool searchTeams = m_organizedMods.displayTeams();
+	bool searchAuthors = m_organizedMods.displayAuthors();
+	const char * searchType = searchMods ? " mod" : (searchTeams ? " team" : (searchAuthors ? " author" : ""));
 
 	QRegExp cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
 	QRegExp   helpRegExp("^(\\?|h(elp)?)$");
@@ -1216,7 +1344,7 @@ void ModManager::runSearchPrompt(const QString & args) {
 
 			QByteArray dataBytes = data.toLocal8Bit();
 
-			printf("Searching for: %s\n", dataBytes.data());
+			printf("Searching for%s: %s\n", searchType, dataBytes.data());
 			printf("\n");
 		}
 		else {
@@ -1239,7 +1367,16 @@ void ModManager::runSearchPrompt(const QString & args) {
 		}
 
 		if(!skipInput && cancelRegExp.exactMatch(formattedData)) {
-			m_selectedMod = NULL;
+			if(searchMods) {
+				m_selectedMod = NULL;
+			}
+			else if(searchTeams) {
+				m_organizedMods.clearSelectedTeam();
+			}
+			else if(searchAuthors) {
+				m_organizedMods.clearSelectedAuthor();
+			}
+
 			break;
 		}
 		else if(!skipInput && helpRegExp.exactMatch(formattedData)) {
@@ -1257,7 +1394,7 @@ void ModManager::runSearchPrompt(const QString & args) {
 			continue;
 		}
 		else {
-			int numberOfMatches = searchForAndSelectMod(data);
+			int numberOfMatches = searchMods ? searchForAndSelectMod(data) : (searchTeams ? searchForAndSelectTeam(data) : (searchAuthors ? searchForAndSelectAuthor(data) : -1));
 
 			if(numberOfMatches == -1) {
 				printf("Invalid or empty search query.\n");
@@ -1266,7 +1403,7 @@ void ModManager::runSearchPrompt(const QString & args) {
 				printf("No matches found.\n");
 			}
 			else if(numberOfMatches == 1) {
-				printf("Selected mod: %s\n", m_selectedMod->getName());
+				printf("Selected%s: %s\n", searchType, searchMods ? m_selectedMod->getName() : (searchTeams ? m_organizedMods.getSelectedTeam()->getName() : (searchAuthors ? m_organizedMods.getSelectedAuthor()->getName() : "")));
 				break;
 			}
 			else {

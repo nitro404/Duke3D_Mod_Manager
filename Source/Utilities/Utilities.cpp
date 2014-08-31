@@ -11,6 +11,8 @@ const char Utilities::newLine[] = "\n";
 const char * Utilities::monthStrings[] = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
 int Utilities::randomInteger(int min, int max, bool randomize) {
+	if(max <= min) { return min; }
+	
 	if(randomize) {
 		QTime time = QTime::currentTime();
 		qsrand((uint) time.msec());

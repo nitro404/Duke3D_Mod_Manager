@@ -47,8 +47,14 @@ public:
 	bool setSelectedMod(const char * name);
 	bool setSelectedMod(const QString & name);
 	void selectRandomMod();
+	bool selectRandomTeam();
+	bool selectRandomAuthor();
 	int searchForAndSelectMod(const char * query);
 	int searchForAndSelectMod(const QString & query);
+	int searchForAndSelectTeam(const char * query);
+	int searchForAndSelectTeam(const QString & query);
+	int searchForAndSelectAuthor(const char * query);
+	int searchForAndSelectAuthor(const QString & query);
 	void clearSelectedMod();
 
 	void runMenu();
