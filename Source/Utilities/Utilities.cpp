@@ -21,6 +21,10 @@ int Utilities::randomInteger(int min, int max, bool randomize) {
 	return qrand() % ((max + 1) - min) + min;
 }
 
+int Utilities::intLength(int n) {
+	return n < 100000 ? n < 100 ? n < 10 ? 1 : 2 : n < 1000 ? 3 : n < 10000 ? 4 : 5 : n < 10000000 ? n < 1000000 ? 6 : 7 : n < 100000000 ? 8 : n < 1000000000 ? 9 : 10;
+}
+
 unsigned int Utilities::stringLength(const char * s) {
 	return s == NULL ? 0 : strlen(s);
 }
@@ -193,6 +197,41 @@ int Utilities::lastIndexOf(const char * data, char c) {
 	return -1;
 }
 
+QString Utilities::getCommand(const char * data) {
+	if(data == NULL) { return QString(); }
+
+	char * newData = trimCopyString(data);
+	if(stringLength(newData) == 0) {
+		delete [] newData;
+		return QString();
+	}
+
+	int split = firstIndexOf(newData, ' ');
+	if(split < 1) {
+		QString commandName(newData);
+		delete [] newData;
+		return commandName;
+	}
+
+	char * command = substring(newData, 0, split);
+
+	delete [] newData;
+
+	return command;
+}
+
+QString Utilities::getCommand(const QString & data) {
+	if(data.isNull()) { return QString(); }
+
+	QString newData = data.trimmed();
+	if(newData.isEmpty()) { return QString(); }
+
+	int split = newData.indexOf(" ");
+	if(split < 1) { return newData; }
+
+	return substring(newData, 0, split);
+}
+
 QString Utilities::getArguments(const char * data) {
 	if(data == NULL) { return QString(); }
 
@@ -354,9 +393,9 @@ void Utilities::renameFiles(const char * fromSuffix, const char * toSuffix) {
 }
 
 void Utilities::clear() {
-	system("CLS");
+	system("cls");
 }
 
 void Utilities::pause() {
-	system("PAUSE");
+	system("pause");
 }

@@ -41,13 +41,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Program Files (x86)\Visual Leak Detector\include;C:\Qt\Qt5.3.1\5.3\msvc2013_opengl\include;C:\Qt\Qt5.3.1\5.3\msvc2013_opengl\include\QtCore;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files (x86)\Visual Leak Detector\lib\Win32;C:\Qt\Qt5.3.1\5.3\msvc2013_opengl\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Qt\Qt5.3.1\5.3\msvc2013_opengl\include;C:\Qt\Qt5.3.1\5.3\msvc2013_opengl\include\QtCore;C:\Program Files (x86)\Visual Leak Detector\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Qt\Qt5.3.1\5.3\msvc2013_opengl\lib;C:\Program Files (x86)\Visual Leak Detector\lib\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Program Files (x86)\Visual Leak Detector\include;C:\Qt\Qt5.3.1\5.3\msvc2013_opengl\include;C:\Qt\Qt5.3.1\5.3\msvc2013_opengl\include\QtCore;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files (x86)\Visual Leak Detector\lib\Win32;C:\Qt\Qt5.3.1\5.3\msvc2013_opengl\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Qt\Qt5.3.1\5.3\msvc2013_opengl\include;C:\Qt\Qt5.3.1\5.3\msvc2013_opengl\include\QtCore;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Qt\Qt5.3.1\5.3\msvc2013_opengl\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

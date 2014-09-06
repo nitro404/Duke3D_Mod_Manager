@@ -14,6 +14,7 @@ namespace Utilities {
 	extern const char * monthStrings[];
 
 	int randomInteger(int min, int max, bool randomize = true);
+	int intLength(int n);
 	unsigned int stringLength(const char * s);
 	bool copyString(char * destination, int size, const char * source);
 	char * copyString(const char * data);
@@ -28,6 +29,8 @@ namespace Utilities {
 	int compareStringsIgnoreCase(const QString & s1, const char * s2);
 	int firstIndexOf(const char * data, char c);
 	int lastIndexOf(const char * data, char c);
+	QString getCommand(const char * data);
+	QString getCommand(const QString & data);
 	QString getArguments(const char * data);
 	QString getArguments(const QString & data);
 	char * getFileNameNoExtension(const char * fileName);
