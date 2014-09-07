@@ -123,7 +123,7 @@ QString Script::generateDOSBoxCommand(const ScriptArguments & arguments) const {
 	QString command, line;
 
 	command.append("CALL \"");
-	command.append(SettingsManager::getInstance()->DOSBoxPath);
+	command.append(Utilities::generateFullPath(SettingsManager::getInstance()->DOSBoxPath, SettingsManager::getInstance()->DOSBoxFileName));
 	command.append(QString("\" %1 ").arg(SettingsManager::getInstance()->DOSBoxArgs));
 
 	for(int i=0;i<m_commands.size();i++) {

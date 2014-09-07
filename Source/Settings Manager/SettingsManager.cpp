@@ -3,14 +3,17 @@
 SettingsManager * SettingsManager::instance = NULL;
 
 const char * SettingsManager::defaultSettingsFileName = "Duke Nukem 3D Mod Manager.ini";
-const char * SettingsManager::defaultModListFileName = "Duke Nukem 3D Mod List.ini";
+const char * SettingsManager::defaultModListFileName = "Duke Nukem 3D Mod List.xml";
 const char * SettingsManager::defaultFavouritesListFileName = "Duke Nukem 3D Favourite Mods.xml";
 const char * SettingsManager::defaultModsDirectoryName = "Mods";
+const char * SettingsManager::defaultModsDirectoryPath = "..";
 const char * SettingsManager::defaultDataDirectoryName = "Data";
 const char * SettingsManager::defaultGameFileName = "DUKE3D.EXE";
 const char * SettingsManager::defaultSetupFileName = "SETUP.EXE";
 const char * SettingsManager::defaultKextractFileName = "KEXTRACT.EXE";
-const char * SettingsManager::defaultDOSBoxPath = "./DOSBox/dosbox.exe";
+const char * SettingsManager::defaultGamePath = ".";
+const char * SettingsManager::defaultDOSBoxFileName = "dosbox.exe";
+const char * SettingsManager::defaultDOSBoxPath = "DOSBox";
 const char * SettingsManager::defaultDOSBoxArgs = "-noconsole";
 const char * SettingsManager::defaultDOSBoxGameScriptFileName = "duke3d.conf";
 const char * SettingsManager::defaultDOSBoxSetupScriptFileName = "duke3d_setup.conf";
@@ -26,10 +29,13 @@ SettingsManager::SettingsManager()
 	: modListFileName(NULL)
 	, favouritesListFileName(NULL)
 	, modsDirectoryName(NULL)
+	, modsDirectoryPath(NULL)
 	, dataDirectoryName(NULL)
 	, gameFileName(NULL)
 	, setupFileName(NULL)
 	, kextractFileName(NULL)
+	, gamePath(NULL)
+	, DOSBoxFileName(NULL)
 	, DOSBoxPath(NULL)
 	, DOSBoxArgs(NULL)
 	, DOSBoxGameScriptFileName(NULL)
@@ -52,10 +58,13 @@ SettingsManager::SettingsManager(const SettingsManager & s)
 	: modListFileName(NULL)
 	, favouritesListFileName(NULL)
 	, modsDirectoryName(NULL)
+	, modsDirectoryPath(NULL)
 	, dataDirectoryName(NULL)
 	, gameFileName(NULL)
 	, setupFileName(NULL)
 	, kextractFileName(NULL)
+	, gamePath(NULL)
+	, DOSBoxFileName(NULL)
 	, DOSBoxPath(NULL)
 	, DOSBoxArgs(NULL)
 	, DOSBoxGameScriptFileName(NULL)
@@ -76,10 +85,13 @@ SettingsManager::SettingsManager(const SettingsManager & s)
 	modListFileName = Utilities::copyString(s.modListFileName);
 	favouritesListFileName = Utilities::copyString(s.favouritesListFileName);
 	modsDirectoryName = Utilities::copyString(s.modsDirectoryName);
+	modsDirectoryPath = Utilities::copyString(s.modsDirectoryPath);
 	dataDirectoryName = Utilities::copyString(s.dataDirectoryName);
 	gameFileName = Utilities::copyString(s.gameFileName);
 	setupFileName = Utilities::copyString(s.setupFileName);
 	kextractFileName = Utilities::copyString(s.kextractFileName);
+	gamePath = Utilities::copyString(s.gamePath);
+	DOSBoxFileName = Utilities::copyString(s.DOSBoxFileName);
 	DOSBoxPath = Utilities::copyString(s.DOSBoxPath);
 	DOSBoxArgs = Utilities::copyString(s.DOSBoxArgs);
 	DOSBoxGameScriptFileName = Utilities::copyString(s.DOSBoxGameScriptFileName);
@@ -99,10 +111,13 @@ SettingsManager & SettingsManager::operator = (const SettingsManager & s) {
 	if(modListFileName != NULL)				{ delete [] modListFileName; }
 	if(favouritesListFileName != NULL)		{ delete [] favouritesListFileName; }
 	if(modsDirectoryName != NULL)			{ delete [] modsDirectoryName; }
+	if(modsDirectoryPath != NULL)			{ delete [] modsDirectoryPath; }
 	if(dataDirectoryName != NULL)			{ delete [] dataDirectoryName; }
 	if(gameFileName != NULL)				{ delete [] gameFileName; }
 	if(setupFileName != NULL)				{ delete [] setupFileName; }
 	if(kextractFileName != NULL)			{ delete [] kextractFileName; }
+	if(gamePath != NULL)					{ delete [] gamePath; }
+	if(DOSBoxFileName != NULL)				{ delete [] DOSBoxFileName; }
 	if(DOSBoxPath != NULL)					{ delete [] DOSBoxPath; }
 	if(DOSBoxArgs != NULL)					{ delete [] DOSBoxArgs; }
 	if(DOSBoxGameScriptFileName != NULL)	{ delete [] DOSBoxGameScriptFileName; }
@@ -123,10 +138,13 @@ SettingsManager & SettingsManager::operator = (const SettingsManager & s) {
 	modListFileName = Utilities::copyString(s.modListFileName);
 	favouritesListFileName = Utilities::copyString(s.favouritesListFileName);
 	modsDirectoryName = Utilities::copyString(s.modsDirectoryName);
+	modsDirectoryPath = Utilities::copyString(s.modsDirectoryPath);
 	dataDirectoryName = Utilities::copyString(s.dataDirectoryName);
 	gameFileName = Utilities::copyString(s.gameFileName);
 	setupFileName = Utilities::copyString(s.setupFileName);
 	kextractFileName = Utilities::copyString(s.kextractFileName);
+	gamePath = Utilities::copyString(s.gamePath);
+	DOSBoxFileName = Utilities::copyString(s.DOSBoxFileName);
 	DOSBoxPath = Utilities::copyString(s.DOSBoxPath);
 	DOSBoxArgs = Utilities::copyString(s.DOSBoxArgs);
 	DOSBoxGameScriptFileName = Utilities::copyString(s.DOSBoxGameScriptFileName);
@@ -144,10 +162,13 @@ SettingsManager::~SettingsManager() {
 	if(modListFileName != NULL)				{ delete [] modListFileName; }
 	if(favouritesListFileName != NULL)		{ delete [] favouritesListFileName; }
 	if(modsDirectoryName != NULL)			{ delete [] modsDirectoryName; }
+	if(modsDirectoryPath != NULL)			{ delete [] modsDirectoryPath; }
 	if(dataDirectoryName != NULL)			{ delete [] dataDirectoryName; }
 	if(gameFileName != NULL)				{ delete [] gameFileName; }
 	if(setupFileName != NULL)				{ delete [] setupFileName; }
 	if(kextractFileName != NULL)			{ delete [] kextractFileName; }
+	if(gamePath != NULL)					{ delete [] gamePath; }
+	if(DOSBoxFileName != NULL)				{ delete [] DOSBoxFileName; }
 	if(DOSBoxPath != NULL)					{ delete [] DOSBoxPath; }
 	if(DOSBoxArgs != NULL)					{ delete [] DOSBoxArgs; }
 	if(DOSBoxGameScriptFileName != NULL)	{ delete [] DOSBoxGameScriptFileName; }
@@ -170,16 +191,16 @@ void SettingsManager::updateInstance() {
 }
 
 void SettingsManager::reset() {
-	modManagerMode = defaultModManagerMode;
-	gameType = defaultGameType;
-
 	if(modListFileName != NULL)				{ delete [] modListFileName; }
 	if(favouritesListFileName != NULL)		{ delete [] favouritesListFileName; }
 	if(modsDirectoryName != NULL)			{ delete [] modsDirectoryName; }
+	if(modsDirectoryPath != NULL)			{ delete [] modsDirectoryPath; }
 	if(dataDirectoryName != NULL)			{ delete [] dataDirectoryName; }
 	if(gameFileName != NULL)				{ delete [] gameFileName; }
 	if(setupFileName != NULL)				{ delete [] setupFileName; }
 	if(kextractFileName != NULL)			{ delete [] kextractFileName; }
+	if(gamePath != NULL)					{ delete [] gamePath; }
+	if(DOSBoxFileName != NULL)				{ delete [] DOSBoxFileName; }
 	if(DOSBoxPath != NULL)					{ delete [] DOSBoxPath; }
 	if(DOSBoxArgs != NULL)					{ delete [] DOSBoxArgs; }
 	if(DOSBoxGameScriptFileName != NULL)	{ delete [] DOSBoxGameScriptFileName; }
@@ -193,10 +214,13 @@ void SettingsManager::reset() {
 	modListFileName = Utilities::copyString(defaultModListFileName);
 	favouritesListFileName = Utilities::copyString(defaultFavouritesListFileName);
 	modsDirectoryName = Utilities::copyString(defaultModsDirectoryName);
+	modsDirectoryPath = Utilities::copyString(defaultModsDirectoryPath);
 	dataDirectoryName = Utilities::copyString(defaultDataDirectoryName);
 	gameFileName = Utilities::copyString(defaultGameFileName);
 	setupFileName = Utilities::copyString(defaultSetupFileName);
 	kextractFileName = Utilities::copyString(defaultKextractFileName);
+	gamePath = Utilities::copyString(defaultGamePath);
+	DOSBoxFileName = Utilities::copyString(defaultDOSBoxFileName);
 	DOSBoxPath = Utilities::copyString(defaultDOSBoxPath);
 	DOSBoxArgs = Utilities::copyString(defaultDOSBoxArgs);
 	DOSBoxGameScriptFileName = Utilities::copyString(defaultDOSBoxGameScriptFileName);
@@ -206,6 +230,9 @@ void SettingsManager::reset() {
 	windowsGameScriptFileName = Utilities::copyString(defaultWindowsGameScriptFileName);
 	windowsSetupScriptFileName = Utilities::copyString(defaultWindowsSetupScriptFileName);
 	serverIPAddress = Utilities::copyString(defaultServerIPAddress);
+
+	modManagerMode = defaultModManagerMode;
+	gameType = defaultGameType;
 }
 
 bool SettingsManager::load(const ArgumentParser * args) {
@@ -277,6 +304,12 @@ bool SettingsManager::loadFrom(const char * fileName) {
 		if(modsDirectoryName != NULL) { delete [] modsDirectoryName; }
 		modsDirectoryName = Utilities::copyString(data);
 	}
+
+	data = m_variables->getValue("Mods Directory Path", "Paths");
+	if(data != NULL) {
+		if(modsDirectoryPath != NULL) { delete [] modsDirectoryPath; }
+		modsDirectoryPath = Utilities::copyString(data);
+	}
 	
 	data = m_variables->getValue("Data Directory Name", "Paths");
 	if(data != NULL) {
@@ -300,6 +333,18 @@ bool SettingsManager::loadFrom(const char * fileName) {
 	if(data != NULL) {
 		if(kextractFileName != NULL) { delete [] kextractFileName; }
 		kextractFileName = Utilities::copyString(data);
+	}
+	
+	data = m_variables->getValue("Game Path", "Paths");
+	if(data != NULL) {
+		if(gamePath != NULL) { delete [] gamePath; }
+		gamePath = Utilities::copyString(data);
+	}
+
+	data = m_variables->getValue("DOSBox File Name", "Paths");
+	if(data != NULL) {
+		if(DOSBoxFileName != NULL) { delete [] DOSBoxFileName; }
+		DOSBoxFileName = Utilities::copyString(data);
 	}
 	
 	data = m_variables->getValue("DOSBox Path", "Paths");
@@ -384,10 +429,13 @@ bool SettingsManager::saveTo(const char * fileName) const {
 	m_variables->setValue("Mod List File Name", modListFileName, "Paths");
 	m_variables->setValue("Favourites List File Name", favouritesListFileName, "Paths");
 	m_variables->setValue("Mods Directory Name", modsDirectoryName, "Paths");
+	m_variables->setValue("Mods Directory Path", modsDirectoryPath, "Paths");
 	m_variables->setValue("Data Directory Name", dataDirectoryName, "Paths");
 	m_variables->setValue("Game File Name", gameFileName, "Paths");
 	m_variables->setValue("Setup File Name", setupFileName, "Paths");
 	m_variables->setValue("Kextract File Name", kextractFileName, "Paths");
+	m_variables->setValue("Game Path", gamePath, "Paths");
+	m_variables->setValue("DOSBox File Name", DOSBoxFileName, "Paths");
 	m_variables->setValue("DOSBox Path", DOSBoxPath, "Paths");
 	m_variables->setValue("DOSBox Arguments", DOSBoxArgs, "Arguments");
 	m_variables->setValue("DOSBox Game Script File Name", DOSBoxGameScriptFileName, "Scripts");

@@ -8,6 +8,9 @@ const char Utilities::newLine[] = "\r";
 const char Utilities::newLine[] = "\n";
 #endif
 
+const QRegExp Utilities::trueRegExp("^(t(rue)?|1|on|y(es)?)$");
+const QRegExp Utilities::falseRegExp("^(f(alse)?|0|off|n(o)?)$");
+
 const char * Utilities::monthStrings[] = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
 int Utilities::randomInteger(int min, int max, bool randomize) {
@@ -266,54 +269,71 @@ QString Utilities::getArguments(const QString & data) {
 	return substring(newData, split + 1, newData.length());
 }
 
-char * Utilities::getFileNameNoExtension(const char * fileName) {
-	if(fileName == NULL) { return NULL; }
-	
-	int index = lastIndexOf(fileName, '.');
-	if(index > 0) {
-		return substring(fileName, 0, index);
+int Utilities::parseBoolean(const char * data) {
+	if(data == NULL) { return -1; }
+
+	return parseBoolean(QString(data));
+}
+
+int Utilities::parseBoolean(const QString & data) {
+	QString formattedData = data.trimmed().toLower();
+
+	if(formattedData.isEmpty()) { return -1; }
+
+	if(trueRegExp.exactMatch(formattedData)) {
+		return 1;
 	}
-	return copyString(fileName);
-}
-
-char * Utilities::getFileExtension(const char * fileName) {
-	if(fileName == NULL) { return NULL; }
-	
-	int index = lastIndexOf(fileName, '.');
-	if(index > 0) {
-		return substring(fileName, index + 1, stringLength(fileName));
+	else if(falseRegExp.exactMatch(formattedData)) {
+		return 0;
 	}
-	return NULL;
+	return -1;
 }
 
-bool Utilities::fileHasExtension(const char * fileName, const char * fileExtension) {
-	if(fileName == NULL || fileExtension == NULL) { return false; }
-	
-	char * actualFileExtension = getFileExtension(fileName);
-	bool fileExtensionMatches = actualFileExtension != NULL && compareStringsIgnoreCase(actualFileExtension, fileExtension) == 0;
-	delete [] actualFileExtension;
-	return fileExtensionMatches;
+bool Utilities::parseBoolean(const char * data, bool & boolean) {
+	if(data == NULL) { return false; }
+
+	return parseBoolean(QString(data), boolean);
 }
 
-QString Utilities::getFileNameNoExtension(const QString & fileName) {
-	int index = fileName.lastIndexOf('.');
-	if(index > 0) {
-		return fileName.mid(0, index);
+bool Utilities::parseBoolean(const QString & data, bool & boolean) {
+	QString formattedData = data.trimmed().toLower();
+
+	if(formattedData.isEmpty()) { return false; }
+
+	if(trueRegExp.exactMatch(formattedData)) {
+		boolean = true;
+		return true;
 	}
-	return fileName;
-}
-
-QString Utilities::getFileExtension(const QString & fileName) {
-	int index = fileName.lastIndexOf('.');
-	if(index > 0) {
-		return fileName.mid(index + 1, fileName.length() - index + 1);
+	else if(falseRegExp.exactMatch(formattedData)) {
+		boolean = false;
+		return true;
 	}
-	return QString();
+	return false;
 }
 
-bool Utilities::fileHasExtension(const QString & fileName, const QString & fileExtension) {
-	QString actualFileExtension = getFileExtension(fileName);
-	return !actualFileExtension.isNull() && QString::compare(actualFileExtension, fileExtension, Qt::CaseInsensitive) == 0;
+QString Utilities::generateFullPath(const char * path, const char * fileName) {
+	return generateFullPath(QString(path), QString(fileName));
+}
+
+QString Utilities::generateFullPath(const QString & path, const QString & fileName) {
+	QString trimmedPath = path.trimmed();
+	QString trimmedFileName = fileName.trimmed();
+	QString fullPath("");
+
+	if(trimmedPath.isEmpty())	 { return trimmedFileName; }
+	if(trimmedFileName.isEmpty()) { return trimmedPath; }
+
+	if(Utilities::compareStrings(trimmedPath, ".") != 0) {
+		fullPath.append(trimmedPath);
+
+		if(trimmedPath[trimmedPath.length() - 1] != '/' && trimmedPath[trimmedPath.length() - 1] != '\\') {
+			fullPath.append("/");
+		}
+	}
+
+	fullPath.append(trimmedFileName);
+
+	return fullPath;
 }
 
 QDate Utilities::parseDate(const char * date) {
@@ -362,6 +382,56 @@ QString Utilities::dateToString(const QDate & date) {
 	if(date.isNull()) { return QString(); }
 
 	return QString("%1 %2, %3").arg(monthStrings[date.month() - 1]).arg(date.day()).arg(date.year());
+}
+
+char * Utilities::getFileNameNoExtension(const char * fileName) {
+	if(fileName == NULL) { return NULL; }
+	
+	int index = lastIndexOf(fileName, '.');
+	if(index > 0) {
+		return substring(fileName, 0, index);
+	}
+	return copyString(fileName);
+}
+
+char * Utilities::getFileExtension(const char * fileName) {
+	if(fileName == NULL) { return NULL; }
+	
+	int index = lastIndexOf(fileName, '.');
+	if(index > 0) {
+		return substring(fileName, index + 1, stringLength(fileName));
+	}
+	return NULL;
+}
+
+bool Utilities::fileHasExtension(const char * fileName, const char * fileExtension) {
+	if(fileName == NULL || fileExtension == NULL) { return false; }
+	
+	char * actualFileExtension = getFileExtension(fileName);
+	bool fileExtensionMatches = actualFileExtension != NULL && compareStringsIgnoreCase(actualFileExtension, fileExtension) == 0;
+	delete [] actualFileExtension;
+	return fileExtensionMatches;
+}
+
+QString Utilities::getFileNameNoExtension(const QString & fileName) {
+	int index = fileName.lastIndexOf('.');
+	if(index > 0) {
+		return fileName.mid(0, index);
+	}
+	return fileName;
+}
+
+QString Utilities::getFileExtension(const QString & fileName) {
+	int index = fileName.lastIndexOf('.');
+	if(index > 0) {
+		return fileName.mid(index + 1, fileName.length() - index + 1);
+	}
+	return QString();
+}
+
+bool Utilities::fileHasExtension(const QString & fileName, const QString & fileExtension) {
+	QString actualFileExtension = getFileExtension(fileName);
+	return !actualFileExtension.isNull() && QString::compare(actualFileExtension, fileExtension, Qt::CaseInsensitive) == 0;
 }
 
 void Utilities::deleteFiles(const char * suffix) {

@@ -31,10 +31,13 @@ public:
 	const static char * defaultModListFileName;
 	const static char * defaultFavouritesListFileName;
 	const static char * defaultModsDirectoryName;
+	const static char * defaultModsDirectoryPath;
 	const static char * defaultDataDirectoryName;
 	const static char * defaultGameFileName;
 	const static char * defaultSetupFileName;
 	const static char * defaultKextractFileName;
+	const static char * defaultGamePath;
+	const static char * defaultDOSBoxFileName;
 	const static char * defaultDOSBoxPath;
 	const static char * defaultDOSBoxArgs;
 	const static char * defaultDOSBoxGameScriptFileName;
@@ -50,10 +53,13 @@ public:
 	char * modListFileName;
 	char * favouritesListFileName;
 	char * modsDirectoryName;
+	char * modsDirectoryPath;
 	char * dataDirectoryName;
 	char * gameFileName;
 	char * setupFileName;
 	char * kextractFileName;
+	char * gamePath;
+	char * DOSBoxFileName;
 	char * DOSBoxPath;
 	char * DOSBoxArgs;
 	char * DOSBoxGameScriptFileName;

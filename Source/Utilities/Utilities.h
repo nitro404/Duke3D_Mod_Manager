@@ -2,6 +2,7 @@
 #define UTILITIES_H
 
 #include <QString.h>
+#include <QRegExp.h>
 #include <QDir.h>
 #include <QFile.h>
 #include <QFileInfo.h>
@@ -11,6 +12,8 @@
 
 namespace Utilities {
 	extern const char newLine[];
+	extern const QRegExp trueRegExp;
+	extern const QRegExp falseRegExp;
 	extern const char * monthStrings[];
 
 	int randomInteger(int min, int max, bool randomize = true);
@@ -33,15 +36,21 @@ namespace Utilities {
 	QString getCommand(const QString & data);
 	QString getArguments(const char * data);
 	QString getArguments(const QString & data);
+	int parseBoolean(const char * data);
+	int parseBoolean(const QString & data);
+	bool parseBoolean(const char * data, bool & boolean);
+	bool parseBoolean(const QString & data, bool & boolean);
+	QString generateFullPath(const char * path, const char * fileName);
+	QString generateFullPath(const QString & path, const QString & fileName);
+	QDate parseDate(const char * date);
+	QDate parseDate(const QString & date);
+	QString dateToString(const QDate & date);
 	char * getFileNameNoExtension(const char * fileName);
 	char * getFileExtension(const char * fileName);
 	bool fileHasExtension(const char * fileName, const char * fileExtension);
 	QString getFileNameNoExtension(const QString & fileName);
 	QString getFileExtension(const QString & fileName);
 	bool fileHasExtension(const QString & fileName, const QString & fileExtension);
-	QDate parseDate(const char * date);
-	QDate parseDate(const QString & date);
-	QString dateToString(const QDate & date);
 	void deleteFiles(const char * suffix);
 	void renameFiles(const char * fromSuffix, const char * toSuffix);
 	void clear();

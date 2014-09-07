@@ -1579,7 +1579,7 @@ bool ModManager::runSelectedMod(const ArgumentParser * args) {
 		QByteArray DOSBoxCommandBytes = DOSBoxCommand.toLocal8Bit();
 
 #if _DEBUG
-		printf("%s\n", DOSBoxCommandBytes.data());
+		printf("%s\n\n", DOSBoxCommandBytes.data());
 #endif // _DEBUG
 
 		system(DOSBoxCommandBytes.data());
@@ -1612,7 +1612,7 @@ bool ModManager::runSelectedMod(const ArgumentParser * args) {
 			QByteArray windowsCommandBytes = windowsCommand.toLocal8Bit();
 
 #if _DEBUG
-			printf("%s\n", windowsCommandBytes.data());
+			printf("%s\n\n", windowsCommandBytes.data());
 #endif // _DEBUG
 
 			system(windowsCommandBytes.data());
@@ -1631,10 +1631,13 @@ bool ModManager::runSelectedMod(const ArgumentParser * args) {
 bool ModManager::updateScriptArgs() {
 	if(!m_initialized) { return false; }
 
-	m_scriptArgs.setArgument("KEXTRACT", SettingsManager::getInstance()->kextractFileName);
+	if(Utilities::stringLength(SettingsManager::getInstance()->gamePath) > 0 && Utilities::compareStrings(SettingsManager::getInstance()->gamePath, ".") != 0) {
+		m_scriptArgs.setArgument("GAMEPATH", SettingsManager::getInstance()->gamePath);
+	}
 	m_scriptArgs.setArgument("DUKE3D", SettingsManager::getInstance()->gameFileName);
 	m_scriptArgs.setArgument("SETUP", SettingsManager::getInstance()->setupFileName);
-	m_scriptArgs.setArgument("MODDIR", SettingsManager::getInstance()->modsDirectoryName);
+	m_scriptArgs.setArgument("KEXTRACT", SettingsManager::getInstance()->kextractFileName);
+	m_scriptArgs.setArgument("MODDIR", Utilities::generateFullPath(SettingsManager::getInstance()->modsDirectoryPath, SettingsManager::getInstance()->modsDirectoryName));
 	if(m_selectedMod != NULL && m_selectedMod->getVersion(m_selectedModVersionIndex) != NULL) {
 		m_scriptArgs.setArgument("CON", m_selectedMod->getVersion(m_selectedModVersionIndex)->getFileNameByType("con"));
 		m_scriptArgs.setArgument("GROUP", m_selectedMod->getVersion(m_selectedModVersionIndex)->getFileNameByType("grp"));
@@ -1913,29 +1916,38 @@ int ModManager::checkAllModsForMissingFiles() const {
 int ModManager::checkForMissingExecutables() {
 	int numberOfMissingExecutables = 0;
 
-	QFileInfo DOSBoxExe(QString(SettingsManager::getInstance()->DOSBoxPath));
-	QFileInfo gameExe(QString(SettingsManager::getInstance()->gameFileName));
-	QFileInfo setupExe(QString(SettingsManager::getInstance()->setupFileName));
-	QFileInfo kextractExe(QString(SettingsManager::getInstance()->kextractFileName));
+	QString fullDOSBoxExePath = Utilities::generateFullPath(SettingsManager::getInstance()->DOSBoxPath, SettingsManager::getInstance()->DOSBoxFileName);
+	QString fullGameExePath = Utilities::generateFullPath(SettingsManager::getInstance()->gamePath, SettingsManager::getInstance()->gameFileName);
+	QString fullSetupExePath = Utilities::generateFullPath(SettingsManager::getInstance()->gamePath, SettingsManager::getInstance()->setupFileName);
+	QString fullKextractExePath = Utilities::generateFullPath(SettingsManager::getInstance()->gamePath, SettingsManager::getInstance()->kextractFileName);
+
+	QFileInfo DOSBoxExe(fullDOSBoxExePath);
+	QFileInfo gameExe(fullGameExePath);
+	QFileInfo setupExe(fullSetupExePath);
+	QFileInfo kextractExe(fullKextractExePath);
 
 	if(!DOSBoxExe.isFile() || !DOSBoxExe.exists()) {
 		numberOfMissingExecutables++;
-		printf("Missing DOSBox executable: %s\n", SettingsManager::getInstance()->DOSBoxPath);
+		QByteArray fullDOSBoxExePathBytes = fullDOSBoxExePath.toLocal8Bit();
+		printf("Missing DOSBox executable: %s\n", fullDOSBoxExePathBytes.data());
 	}
 
 	if(!gameExe.isFile() || !gameExe.exists()) {
 		numberOfMissingExecutables++;
-		printf("Missing game executable: %s\n", SettingsManager::getInstance()->gameFileName);
+		QByteArray fullGameExePathBytes = fullGameExePath.toLocal8Bit();
+		printf("Missing game executable: %s\n", fullGameExePathBytes.data());
 	}
 
 	if(!setupExe.isFile() || !setupExe.exists()) {
 		numberOfMissingExecutables++;
-		printf("Missing setup executable: %s\n", SettingsManager::getInstance()->setupFileName);
+		QByteArray fullSetupExePathBytes = fullSetupExePath.toLocal8Bit();
+		printf("Missing setup executable: %s\n", fullSetupExePathBytes.data());
 	}
 
 	if(!kextractExe.isFile() || !kextractExe.exists()) {
 		numberOfMissingExecutables++;
-		printf("Missing kextract executable: %s\n", SettingsManager::getInstance()->kextractFileName);
+		QByteArray fullKextractExePathBytes = fullKextractExePath.toLocal8Bit();
+		printf("Missing kextract executable: %s\n", fullKextractExePathBytes.data());
 	}
 
 	return numberOfMissingExecutables++;
