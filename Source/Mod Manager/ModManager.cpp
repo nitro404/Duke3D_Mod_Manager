@@ -1583,6 +1583,10 @@ bool ModManager::runSelectedMod(const ArgumentParser * args) {
 #endif // _DEBUG
 
 		system(DOSBoxCommandBytes.data());
+
+#if _DEBUG
+			Utilities::pause();
+#endif // _DEBUG
 	}
 	else if(m_mode == ModManagerModes::Windows) {
 		bool scriptLoaded = false;
@@ -1616,6 +1620,10 @@ bool ModManager::runSelectedMod(const ArgumentParser * args) {
 #endif // _DEBUG
 
 			system(windowsCommandBytes.data());
+			
+#if _DEBUG
+			Utilities::pause();
+#endif // _DEBUG
 		}
 	}
 
