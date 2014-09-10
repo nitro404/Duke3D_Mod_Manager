@@ -8,9 +8,6 @@ const char Utilities::newLine[] = "\r";
 const char Utilities::newLine[] = "\n";
 #endif
 
-const QRegExp Utilities::trueRegExp("^(t(rue)?|1|on|y(es)?)$");
-const QRegExp Utilities::falseRegExp("^(f(alse)?|0|off|n(o)?)$");
-
 const char * Utilities::monthStrings[] = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
 int Utilities::randomInteger(int min, int max, bool randomize) {
@@ -276,6 +273,9 @@ int Utilities::parseBoolean(const char * data) {
 }
 
 int Utilities::parseBoolean(const QString & data) {
+	static const QRegExp  trueRegExp("^(t(rue)?|1|on|y(es)?)$");
+	static const QRegExp falseRegExp("^(f(alse)?|0|off|n(o)?)$");
+
 	QString formattedData = data.trimmed().toLower();
 
 	if(formattedData.isEmpty()) { return -1; }
@@ -296,6 +296,9 @@ bool Utilities::parseBoolean(const char * data, bool & boolean) {
 }
 
 bool Utilities::parseBoolean(const QString & data, bool & boolean) {
+	static const QRegExp  trueRegExp("^(t(rue)?|1|on|y(es)?)$");
+	static const QRegExp falseRegExp("^(f(alse)?|0|off|n(o)?)$");
+
 	QString formattedData = data.trimmed().toLower();
 
 	if(formattedData.isEmpty()) { return false; }
@@ -345,8 +348,8 @@ QDate Utilities::parseDate(const char * date) {
 QDate Utilities::parseDate(const QString & date) {
 	if(date.trimmed().isEmpty()) { return QDate(); }
 
-	QRegExp    dateRegExp("[ ,]+");
-	QRegExp integerRegExp("^[0-9]+$");
+	static const QRegExp    dateRegExp("[ ,]+");
+	static const QRegExp integerRegExp("^[0-9]+$");
 
 	QStringList dateParts = date.trimmed().split(dateRegExp, QString::SkipEmptyParts);
 

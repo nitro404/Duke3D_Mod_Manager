@@ -12,8 +12,6 @@
 
 namespace Utilities {
 	extern const char newLine[];
-	extern const QRegExp trueRegExp;
-	extern const QRegExp falseRegExp;
 	extern const char * monthStrings[];
 
 	int randomInteger(int min, int max, bool randomize = true);

@@ -130,15 +130,15 @@ QString ScriptArguments::applyConditionalsHelper(const QString & command) const 
 QString ScriptArguments::applyArguments(const QString & command) const {
 	if(command.length() == 0) { return QString(); }
 	
+	static const QRegExp     argumentRegExp(QString("%1[^%1]+%1").arg(argChar));
+	static const QRegExp argumentTrimRegExp(QString("^%1|%1$").arg(argChar));
+
 	QString newCommand, tempCommand;
 
 	tempCommand = applyConditionals(command);
 
-	QRegExp argumentRegExp(QString("%1[^%1]+%1").arg(argChar));
-
 	QStringList argumentParts = tempCommand.split(argumentRegExp, QString::KeepEmptyParts);
 	
-	QRegExp argumentTrimRegExp(QString("^%1|%1$").arg(argChar));
 	QStringList arguments;
 	int position = 0;
 	while((position = argumentRegExp.indexIn(tempCommand, position)) != -1)  {

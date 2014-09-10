@@ -396,17 +396,17 @@ void ModManager::runMenu() {
 	QString input, data, formattedData, date;
 	QByteArray dateBytes;
 
-	QRegExp   searchRegExp("^(s(earch)?)([ ]+.*)?");
-	QRegExp   randomRegExp("^(r(andom)?)$");
-	QRegExp  vanillaRegExp("^(v(anilla)?)$");
-	QRegExp   filterRegExp("^(f(ilter)?)([ ]+.*)?");
-	QRegExp     sortRegExp("^(o|sort)([ ]+.*)?");
-	QRegExp       ipRegExp("^(ip|c(onnect)?)([ ]+.*)?");
-	QRegExp gameTypeRegExp("^(t(ype)?)([ ]+.*)?");
-	QRegExp     modeRegExp("^(m(ode)?)([ ]+.*)?");
-	QRegExp     helpRegExp("^(\\?|h(elp)?)$");
-	QRegExp     backRegExp("^(b(ack)?)$");
-	QRegExp     exitRegExp("^(x|exit|q(uit)?)$");
+	static const QRegExp   searchRegExp("^(s(earch)?)([ ]+.*)?");
+	static const QRegExp   randomRegExp("^(r(andom)?)$");
+	static const QRegExp  vanillaRegExp("^(v(anilla)?)$");
+	static const QRegExp   filterRegExp("^(f(ilter)?)([ ]+.*)?");
+	static const QRegExp     sortRegExp("^(o|sort)([ ]+.*)?");
+	static const QRegExp       ipRegExp("^(ip|c(onnect)?)([ ]+.*)?");
+	static const QRegExp gameTypeRegExp("^(t(ype)?)([ ]+.*)?");
+	static const QRegExp     modeRegExp("^(m(ode)?)([ ]+.*)?");
+	static const QRegExp     helpRegExp("^(\\?|h(elp)?)$");
+	static const QRegExp     backRegExp("^(b(ack)?)$");
+	static const QRegExp     exitRegExp("^(x|exit|q(uit)?)$");
 
 	while(true) {
 		Utilities::clear();
@@ -611,9 +611,9 @@ void ModManager::runFilterPrompt(const QString & args) {
 	bool skipInput = !trimmedArgs.isEmpty();
 	ModFilterTypes::ModFilterType filterType = ModFilterTypes::Invalid;
 
-	QRegExp integerRegExp("^[0-9]+$");
-	QRegExp  cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
-	QRegExp    helpRegExp("^(\\?|h(elp)?)$");
+	static const QRegExp integerRegExp("^[0-9]+$");
+	static const QRegExp  cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
+	static const QRegExp    helpRegExp("^(\\?|h(elp)?)$");
 
 	while(true) {
 		Utilities::clear();
@@ -717,10 +717,10 @@ void ModManager::runSortPrompt(const QString & args) {
 	ModSortTypes::ModSortType sortType = ModSortTypes::Invalid;
 	ModSortDirections::ModSortDirection sortDirection = ModSortDirections::Invalid;
 
-	QRegExp    integerRegExp("^[0-9]+$");
-	QRegExp whitespaceRegExp("[ \t]+");
-	QRegExp     cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
-	QRegExp       helpRegExp("^(\\?|h(elp)?)$");
+	static const QRegExp    integerRegExp("^[0-9]+$");
+	static const QRegExp whitespaceRegExp("[ \t]+");
+	static const QRegExp     cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
+	static const QRegExp       helpRegExp("^(\\?|h(elp)?)$");
 
 	QVector<ModSortTypes::ModSortType> validSortTypes;
 	for(int i=ModSortTypes::Invalid+1;i<ModSortTypes::NumberOfSortTypes;i++) {
@@ -964,9 +964,9 @@ void ModManager::runGameTypePrompt(const QString & args) {
 	bool skipInput = !trimmedArgs.isEmpty();
 	GameTypes::GameType gameType = GameTypes::Invalid;
 
-	QRegExp integerRegExp("^[0-9]+$");
-	QRegExp  cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
-	QRegExp    helpRegExp("^(\\?|h(elp)?)$");
+	static const QRegExp integerRegExp("^[0-9]+$");
+	static const QRegExp  cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
+	static const QRegExp    helpRegExp("^(\\?|h(elp)?)$");
 
 	while(true) {
 		Utilities::clear();
@@ -1067,9 +1067,9 @@ void ModManager::runModePrompt(const QString & args) {
 	bool skipInput = !trimmedArgs.isEmpty();
 	ModManagerModes::ModManagerMode mode = ModManagerModes::Invalid;
 
-	QRegExp integerRegExp("^[0-9]+$");
-	QRegExp  cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
-	QRegExp    helpRegExp("^(\\?|h(elp)?)$");
+	static const QRegExp integerRegExp("^[0-9]+$");
+	static const QRegExp  cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
+	static const QRegExp    helpRegExp("^(\\?|h(elp)?)$");
 
 	while(true) {
 		Utilities::clear();
@@ -1167,8 +1167,8 @@ void ModManager::runIPAddressPrompt(const QString & args) {
 	QString trimmedArgs = args.trimmed();
 	bool skipInput = !trimmedArgs.isEmpty();
 
-	QRegExp cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
-	QRegExp   helpRegExp("^(\\?|h(elp)?)$");
+	static const QRegExp cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
+	static const QRegExp   helpRegExp("^(\\?|h(elp)?)$");
 
 	while(true) {
 		Utilities::clear();
@@ -1247,8 +1247,8 @@ void ModManager::runSelectRandomModPrompt() {
 	const char * searchType = randomMods ? "mod" : (randomTeams ? "team" : (randomAuthors ? "author" : "item"));
 	int selectedIndex = -1;
 
-	QRegExp randomRegExp("^(r(andom)?)$");
-	QRegExp cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
+	static const QRegExp randomRegExp("^(r(andom)?)$");
+	static const QRegExp cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
 
 	while(true) {
 		Utilities::clear();
@@ -1333,8 +1333,8 @@ void ModManager::runSearchPrompt(const QString & args) {
 	bool searchAuthors = m_organizedMods.displayAuthors();
 	const char * searchType = searchMods ? " mod" : (searchTeams ? " team" : (searchAuthors ? " author" : ""));
 
-	QRegExp cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
-	QRegExp   helpRegExp("^(\\?|h(elp)?)$");
+	static const QRegExp cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
+	static const QRegExp   helpRegExp("^(\\?|h(elp)?)$");
 
 	while(true) {
 		Utilities::clear();
@@ -1426,8 +1426,8 @@ bool ModManager::runModVersionSelectionPrompt() {
 		return false;
 	}
 
-	QRegExp cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
-	QRegExp   helpRegExp("^(\\?|h(elp)?)$");
+	static const QRegExp cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
+	static const QRegExp   helpRegExp("^(\\?|h(elp)?)$");
 	
 	m_selectedModVersionIndex = 0;
 
