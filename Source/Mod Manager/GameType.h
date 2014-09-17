@@ -5,7 +5,7 @@
 
 namespace GameTypes {
 	enum GameType {
-		Invalid,
+		Invalid = -1,
 		Game,
 		Setup,
 		Client,
@@ -16,8 +16,8 @@ namespace GameTypes {
 	extern const char * gameTypeStrings[];
 	extern const GameType defaultGameType;
 	
-	bool isValid(int type);
 	bool isValid(GameType type);
+	bool isValid(int type);
 	const char * toString(GameType type);
 	const char * toString(int type);
 	GameType parseFrom(const char * data);

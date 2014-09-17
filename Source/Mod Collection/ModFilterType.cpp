@@ -1,14 +1,14 @@
 #include "Mod Collection/ModFilterType.h"
 
-const char * ModFilterTypes::filterTypeStrings[] = { "Invalid", "None", "Favourites", "Teams", "Authors" };
+const char * ModFilterTypes::filterTypeStrings[] = { "None", "Favourites", "Teams", "Authors" };
 const ModFilterTypes::ModFilterType ModFilterTypes::defaultFilterType = ModFilterTypes::None;
-
-bool ModFilterTypes::isValid(int filterType) {
-	return filterType > static_cast<int>(Invalid) && filterType < static_cast<int>(NumberOfFilterTypes);
-}
 
 bool ModFilterTypes::isValid(ModFilterType filterType) {
 	return filterType > Invalid && filterType < NumberOfFilterTypes;
+}
+
+bool ModFilterTypes::isValid(int filterType) {
+	return filterType > static_cast<int>(Invalid) && filterType < static_cast<int>(NumberOfFilterTypes);
 }
 
 const char * ModFilterTypes::toString(ModFilterType filterType) {
@@ -16,9 +16,7 @@ const char * ModFilterTypes::toString(ModFilterType filterType) {
 }
 
 const char * ModFilterTypes::toString(int filterType) {
-	if(!isValid(filterType)) {
-		return filterTypeStrings[0];
-	}
+	if(!isValid(filterType)) { return "Invalid"; }
 
 	return filterTypeStrings[filterType];
 }
@@ -30,7 +28,7 @@ ModFilterTypes::ModFilterType ModFilterTypes::parseFrom(const char * data) {
 
 	char * filterTypeString = Utilities::trimCopyString(data);
 
-	for(int i=static_cast<int>(Invalid)+1;i<static_cast<int>(NumberOfFilterTypes);i++) {
+	for(int i=0;i<static_cast<int>(NumberOfFilterTypes);i++) {
 		if(Utilities::compareStringsIgnoreCase(filterTypeString, filterTypeStrings[i]) == 0) {
 			filterType = static_cast<ModFilterType>(i);
 			break;

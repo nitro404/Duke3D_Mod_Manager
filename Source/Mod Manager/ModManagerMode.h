@@ -5,7 +5,7 @@
 
 namespace ModManagerModes {
 	enum ModManagerMode {
-		Invalid,
+		Invalid = -1,
 		DOSBox,
 		Windows,
 		NumberOfModes
@@ -14,8 +14,8 @@ namespace ModManagerModes {
 	extern const char * modeStrings[];
 	extern const ModManagerMode defaultMode;
 	
-	bool isValid(int mode);
 	bool isValid(ModManagerMode mode);
+	bool isValid(int mode);
 	const char * toString(ModManagerMode mode);
 	const char * toString(int mode);
 	ModManagerMode parseFrom(const char * data);

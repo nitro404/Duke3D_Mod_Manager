@@ -1,14 +1,14 @@
 #include "Mod Manager/GameType.h"
 
-const char * GameTypes::gameTypeStrings[] = { "Invalid", "Game", "Setup", "Client", "Server" };
+const char * GameTypes::gameTypeStrings[] = { "Game", "Setup", "Client", "Server" };
 const GameTypes::GameType GameTypes::defaultGameType = GameTypes::Game;
-
-bool GameTypes::isValid(int type) {
-	return type > static_cast<int>(Invalid) && type < static_cast<int>(NumberOfGameTypes);
-}
 
 bool GameTypes::isValid(GameType type) {
 	return type > Invalid && type < NumberOfGameTypes;
+}
+
+bool GameTypes::isValid(int type) {
+	return type > static_cast<int>(Invalid) && type < static_cast<int>(NumberOfGameTypes);
 }
 
 const char * GameTypes::toString(GameType type) {
@@ -16,9 +16,7 @@ const char * GameTypes::toString(GameType type) {
 }
 
 const char * GameTypes::toString(int type) {
-	if(!isValid(type)) {
-		return gameTypeStrings[0];
-	}
+	if(!isValid(type)) { return "Invalid"; }
 
 	return gameTypeStrings[type];
 }
@@ -30,7 +28,7 @@ GameTypes::GameType GameTypes::parseFrom(const char * data) {
 
 	char * typeString = Utilities::trimCopyString(data);
 
-	for(int i=static_cast<int>(Invalid)+1;i<static_cast<int>(NumberOfGameTypes);i++) {
+	for(int i=0;i<static_cast<int>(NumberOfGameTypes);i++) {
 		if(Utilities::compareStringsIgnoreCase(typeString, gameTypeStrings[i]) == 0) {
 			type = static_cast<GameType>(i);
 			break;

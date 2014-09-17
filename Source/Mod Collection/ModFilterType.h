@@ -5,7 +5,7 @@
 
 namespace ModFilterTypes {
 	enum ModFilterType {
-		Invalid,
+		Invalid = -1,
 		None,
 		Favourites,
 		Teams,
@@ -16,8 +16,8 @@ namespace ModFilterTypes {
 	extern const char * filterTypeStrings[];
 	extern const ModFilterType defaultFilterType;
 	
-	bool isValid(int filterType);
 	bool isValid(ModFilterType filterType);
+	bool isValid(int filterType);
 	const char * toString(ModFilterType filterType);
 	const char * toString(int filterType);
 	ModFilterType parseFrom(const char * data);

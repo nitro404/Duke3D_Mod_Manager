@@ -6,7 +6,7 @@
 
 namespace ModSortTypes {
 	enum ModSortType {
-		Invalid,
+		Invalid = -1,
 		Unsorted,
 		Name,
 		ReleaseDate,
@@ -18,12 +18,12 @@ namespace ModSortTypes {
 	extern const char * sortTypeStrings[];
 	extern const ModSortType defaultSortType;
 	
-	bool isValid(int sortType);
 	bool isValid(ModSortType sortType);
-	bool isValidInContext(int sortType, int filterType, bool hasSelectedTeam = false, bool hasSelectedAuthor = false);
+	bool isValid(int sortType);
+	bool isValidInContext(ModSortType sortType, ModFilterTypes::ModFilterType filterType, bool hasSelectedTeam = false, bool hasSelectedAuthor = false);
 	bool isValidInContext(ModSortType sortType, int filterType, bool hasSelectedTeam = false, bool hasSelectedAuthor = false);
 	bool isValidInContext(int sortType, ModFilterTypes::ModFilterType filterType, bool hasSelectedTeam = false, bool hasSelectedAuthor = false);
-	bool isValidInContext(ModSortType sortType, ModFilterTypes::ModFilterType filterType, bool hasSelectedTeam = false, bool hasSelectedAuthor = false);
+	bool isValidInContext(int sortType, int filterType, bool hasSelectedTeam = false, bool hasSelectedAuthor = false);
 	const char * toString(ModSortType sortType);
 	const char * toString(int sortType);
 	ModSortType parseFrom(const char * data);

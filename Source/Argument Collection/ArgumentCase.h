@@ -5,7 +5,7 @@
 
 namespace ArgumentCases {
 	enum ArgumentCase {
-		Invalid,
+		Invalid = -1,
 		OriginalCase,
 		UpperCase,
 		LowerCase,
@@ -15,8 +15,8 @@ namespace ArgumentCases {
 	extern const char * caseStrings[];
 	extern const ArgumentCase defaultCase;
 	
-	bool isValid(int caseType);
 	bool isValid(ArgumentCase caseType);
+	bool isValid(int caseType);
 	const char * toString(ArgumentCase caseType);
 	const char * toString(int caseType);
 	ArgumentCase parseFrom(const char * data);

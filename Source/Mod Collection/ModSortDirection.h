@@ -5,7 +5,7 @@
 
 namespace ModSortDirections {
 	enum ModSortDirection {
-		Invalid,
+		Invalid = -1,
 		Ascending,
 		Descending,
 		NumberOfSortDirections
@@ -14,8 +14,8 @@ namespace ModSortDirections {
 	extern const char * sortDirectionStrings[];
 	extern const ModSortDirection defaultSortDirection;
 	
-	bool isValid(int sortDirection);
 	bool isValid(ModSortDirection sortDirection);
+	bool isValid(int sortDirection);
 	const char * toString(ModSortDirection sortDirection);
 	const char * toString(int sortDirection);
 	ModSortDirection parseFrom(const char * data);

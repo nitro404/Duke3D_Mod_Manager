@@ -1,13 +1,15 @@
 #include "Mod Collection/FavouriteModCollection.h"
 
 FavouriteModCollection::FavouriteModCollection(ModCollection * mods)
-	: m_mods(NULL)
+	: ModCollectionBroadcaster()
+	, m_mods(NULL)
 	, m_initialized(false) {
 	
 }
 
 FavouriteModCollection::FavouriteModCollection(const FavouriteModCollection & m)
-	: m_mods(m.m_mods)
+	: ModCollectionBroadcaster(m)
+	, m_mods(m.m_mods)
 	, m_initialized(m.m_initialized) {
 	for(int i=0;i<m.m_favourites.size();i++) {
 		m_favourites.push_back(new ModInformation(*m.m_favourites[i]));
@@ -15,6 +17,8 @@ FavouriteModCollection::FavouriteModCollection(const FavouriteModCollection & m)
 }
 
 FavouriteModCollection & FavouriteModCollection::operator = (const FavouriteModCollection & m) {
+	ModCollectionBroadcaster::operator = (m);
+
 	clearFavourites();
 
 	m_mods = m.m_mods;
