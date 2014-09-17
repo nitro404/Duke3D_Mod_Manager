@@ -408,11 +408,18 @@ void ModManager::runMenu() {
 	static const QRegExp     backRegExp("^(b(ack)?)$");
 	static const QRegExp     exitRegExp("^(x|exit|q(uit)?)$");
 
+	int maxLength = 0;
+	int spacing = 0;
 	while(true) {
 		Utilities::clear();
 
 		if(m_organizedMods.displayMods()) {
+			maxLength = Utilities::intLength(m_organizedMods.numberOfMods());
+
 			for(int i=0;i<m_organizedMods.numberOfMods();i++) {
+				spacing = maxLength - Utilities::intLength(i + 1);
+				for(int j=0;j<spacing;j++) { printf(" "); }
+
 				printf("%d: %s", (i + 1), m_organizedMods.getMod(i)->getName());
 				if(m_organizedMods.getSortType() == ModSortTypes::ReleaseDate) {
 					if(!m_organizedMods.getMod(i)->getReleaseDate().isNull()) {
@@ -429,12 +436,22 @@ void ModManager::runMenu() {
 			}
 		}
 		else if(m_organizedMods.displayTeams()) {
+			maxLength = Utilities::intLength(m_organizedMods.numberOfTeams());
+
 			for(int i=0;i<m_organizedMods.numberOfTeams();i++) {
+				spacing = maxLength - Utilities::intLength(i + 1);
+				for(int j=0;j<spacing;j++) { printf(" "); }
+
 				printf("%d: %s (%d)\n", (i + 1), m_organizedMods.getTeamInfo(i)->getName(), m_organizedMods.getTeamInfo(i)->getModCount());
 			}
 		}
 		else if(m_organizedMods.displayAuthors()) {
+			maxLength = Utilities::intLength(m_organizedMods.numberOfAuthors());
+
 			for(int i=0;i<m_organizedMods.numberOfAuthors();i++) {
+				spacing = maxLength - Utilities::intLength(i + 1);
+				for(int j=0;j<spacing;j++) { printf(" "); }
+
 				printf("%d: %s (%d)\n", (i + 1), m_organizedMods.getAuthorInfo(i)->getName(), m_organizedMods.getAuthorInfo(i)->getModCount());
 			}
 		}
@@ -626,10 +643,10 @@ void ModManager::runFilterPrompt(const QString & args) {
 			printf("Current filter type is set to: \"%s\" (default: \"%s\")\n\n", ModFilterTypes::toString(m_organizedMods.getFilterType()), ModFilterTypes::toString(ModFilterTypes::defaultFilterType));
 			printf("Choose a filter type:\n");
 
-			for(int i=static_cast<int>(ModFilterTypes::Invalid) + 1;i<static_cast<int>(ModFilterTypes::NumberOfFilterTypes);i++) {
-				printf("%d: %s\n", i, ModFilterTypes::filterTypeStrings[i]);
+			for(int i=0;i<static_cast<int>(ModFilterTypes::NumberOfFilterTypes);i++) {
+				printf("%d: %s\n", i + 1, ModFilterTypes::filterTypeStrings[i]);
 
-				cancel = i + 1;
+				cancel = i + 2;
 			}
 
 			printf("%d: Cancel\n", cancel);
@@ -676,8 +693,8 @@ void ModManager::runFilterPrompt(const QString & args) {
 						if(value == cancel) {
 							break;
 						}
-						else if(ModFilterTypes::isValid(value)) {
-							filterType = static_cast<ModFilterTypes::ModFilterType>(value);
+						else if(ModFilterTypes::isValid(value - 1)) {
+							filterType = static_cast<ModFilterTypes::ModFilterType>(value - 1);
 						}
 					}
 				}
@@ -754,10 +771,10 @@ void ModManager::runSortPrompt(const QString & args) {
 				printf("Current sort type will be changed from \"%s\" to \"%s\".\n\n", ModSortTypes::toString(m_organizedMods.getSortType()), ModSortTypes::toString(sortType));
 				printf("Current sort direction is: \"%s\" (default: \"%s\").\n\n", ModSortDirections::toString(m_organizedMods.getSortDirection()), ModSortDirections::toString(ModSortDirections::defaultSortDirection));
 				printf("Choose a sort direction:\n");
-				for(int i=static_cast<int>(ModSortDirections::Invalid) + 1;i<static_cast<int>(ModSortDirections::NumberOfSortDirections);i++) {
-					printf("%d: %s\n", i, ModSortDirections::sortDirectionStrings[i]);
+				for(int i=0;i<static_cast<int>(ModSortDirections::NumberOfSortDirections);i++) {
+					printf("%d: %s\n", i + 1, ModSortDirections::sortDirectionStrings[i]);
 
-					cancel = i + 1;
+					cancel = i + 2;
 				}
 
 				inputSortDirection = true;
@@ -866,8 +883,8 @@ void ModManager::runSortPrompt(const QString & args) {
 								if(value == cancel) {
 									break;
 								}
-								else if(ModSortDirections::isValid(value)) {
-									sortDirection = static_cast<ModSortDirections::ModSortDirection>(value);
+								else if(ModSortDirections::isValid(value - 1)) {
+									sortDirection = static_cast<ModSortDirections::ModSortDirection>(value - 1);
 								}
 							}
 						}
@@ -979,10 +996,10 @@ void ModManager::runGameTypePrompt(const QString & args) {
 			printf("Current game type is set to: \"%s\" (default: \"%s\")\n\n", GameTypes::toString(SettingsManager::getInstance()->gameType), GameTypes::toString(SettingsManager::getInstance()->defaultGameType));
 			printf("Choose a game type:\n");
 
-			for(int i=static_cast<int>(GameTypes::Invalid) + 1;i<static_cast<int>(GameTypes::NumberOfGameTypes);i++) {
-				printf("%d: %s\n", i, GameTypes::gameTypeStrings[i]);
+			for(int i=0;i<static_cast<int>(GameTypes::NumberOfGameTypes);i++) {
+				printf("%d: %s\n", i + 1, GameTypes::gameTypeStrings[i]);
 
-				cancel = i + 1;
+				cancel = i + 2;
 			}
 
 			printf("%d: Cancel\n", cancel);
@@ -1028,8 +1045,8 @@ void ModManager::runGameTypePrompt(const QString & args) {
 						if(value == cancel) {
 							break;
 						}
-						else if(GameTypes::isValid(value)) {
-							gameType = static_cast<GameTypes::GameType>(value);
+						else if(GameTypes::isValid(value - 1)) {
+							gameType = static_cast<GameTypes::GameType>(value - 1);
 						}
 					}
 				}
@@ -1082,10 +1099,10 @@ void ModManager::runModePrompt(const QString & args) {
 			printf("Current launch mode is set to: \"%s\" (default: \"%s\")\n\n", ModManagerModes::toString(SettingsManager::getInstance()->modManagerMode), ModManagerModes::toString(SettingsManager::getInstance()->defaultModManagerMode));
 			printf("Choose a game launch mode:\n");
 
-			for(int i=static_cast<int>(ModManagerModes::Invalid) + 1;i<static_cast<int>(ModManagerModes::NumberOfModes);i++) {
-				printf("%d: %s\n", i, ModManagerModes::modeStrings[i]);
+			for(int i=0;i<static_cast<int>(ModManagerModes::NumberOfModes);i++) {
+				printf("%d: %s\n", i + 1, ModManagerModes::modeStrings[i]);
 
-				cancel = i + 1;
+				cancel = i + 2;
 			}
 
 			printf("%d: Cancel\n", cancel);
@@ -1131,8 +1148,8 @@ void ModManager::runModePrompt(const QString & args) {
 						if(value == cancel) {
 							break;
 						}
-						else if(ModManagerModes::isValid(value)) {
-							mode = static_cast<ModManagerModes::ModManagerMode>(value);
+						else if(ModManagerModes::isValid(value - 1)) {
+							mode = static_cast<ModManagerModes::ModManagerMode>(value - 1);
 						}
 					}
 				}
