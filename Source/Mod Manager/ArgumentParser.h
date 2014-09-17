@@ -16,6 +16,9 @@ public:
 	~ArgumentParser();
 
 	bool parseArguments(int argc, char * argv[]);
+
+	bool operator == (const ArgumentParser & a) const;
+	bool operator != (const ArgumentParser & a) const;
 };
 
 #endif // ARGUMENT_PARSER_H

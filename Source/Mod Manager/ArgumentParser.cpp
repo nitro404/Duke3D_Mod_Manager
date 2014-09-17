@@ -1,21 +1,22 @@
-#include "Mod Manager/ArgumentParser.h"
+#include "Launcher/ArgumentParser.h"
 
-ArgumentParser::ArgumentParser() {
+ArgumentParser::ArgumentParser()
+	: ArgumentCollection() {
 	
 }
 
-ArgumentParser::ArgumentParser(int argc, char * argv[]) {
+ArgumentParser::ArgumentParser(int argc, char * argv[])
+	: ArgumentCollection() {
 	parseArguments(argc, argv);
 }
 
-ArgumentParser::ArgumentParser(const ArgumentParser & a) {
-	m_case = a.m_case;
-	m_arguments = a.m_arguments;
+ArgumentParser::ArgumentParser(const ArgumentParser & a)
+	: ArgumentCollection(a) {
+
 }
 
 ArgumentParser & ArgumentParser::operator = (const ArgumentParser & a) {
-	m_case = a.m_case;
-	m_arguments = a.m_arguments;
+	ArgumentCollection::operator = (a);
 
 	return *this;
 }
@@ -63,4 +64,12 @@ bool ArgumentParser::parseArguments(int argc, char * argv[]) {
 	}
 
 	return true;
+}
+
+bool ArgumentParser::operator == (const ArgumentParser & a) const {
+	return ArgumentCollection::operator == (dynamic_cast<const ArgumentCollection &>(a));
+}
+
+bool ArgumentParser::operator != (const ArgumentParser & a) const {
+	return !operator == (a);
 }

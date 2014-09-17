@@ -17,9 +17,9 @@ ArgumentCollection::ArgumentCollection(const ArgumentCollection & s) {
 }
 
 ArgumentCollection & ArgumentCollection::operator = (const ArgumentCollection & s) {
-	m_case = s.m_case;
-
 	m_arguments.clear();
+
+	m_case = s.m_case;
 
 	QMapIterator<QString, QString> i(s.m_arguments);
 	while(i.hasNext()) {
@@ -158,27 +158,6 @@ void ArgumentCollection::clear() {
 	m_arguments.clear();
 }
 
-bool ArgumentCollection::operator == (const ArgumentCollection & s) const {
-	if(m_arguments.size() != s.m_arguments.size()) { return false; }
-	
-	QList<QString> keys = m_arguments.keys();
-
-	for(int i=0;i<keys.size();i++) {
-		if(!s.m_arguments.contains(keys[i])) {
-			return false;
-		}
-		
-		if(QString::compare(m_arguments.value(keys[i]), s.m_arguments.value(keys[i]), Qt::CaseSensitive) != 0) {
-			return false;
-		}
-	}
-	return true;
-}
-
-bool ArgumentCollection::operator != (const ArgumentCollection & s) const {
-	return !operator == (s);
-}
-
 QString ArgumentCollection::formatArgument(const char * data) const {
 	if(data == NULL) {
 		return QString();
@@ -202,4 +181,25 @@ QString ArgumentCollection::formatArgument(const QString & data) const {
 	}
 
 	return formattedData;
+}
+
+bool ArgumentCollection::operator == (const ArgumentCollection & s) const {
+	if(m_arguments.size() != s.m_arguments.size()) { return false; }
+	
+	QList<QString> keys = m_arguments.keys();
+
+	for(int i=0;i<keys.size();i++) {
+		if(!s.m_arguments.contains(keys[i])) {
+			return false;
+		}
+		
+		if(QString::compare(m_arguments.value(keys[i]), s.m_arguments.value(keys[i]), Qt::CaseSensitive) != 0) {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool ArgumentCollection::operator != (const ArgumentCollection & s) const {
+	return !operator == (s);
 }
