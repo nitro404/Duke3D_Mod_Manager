@@ -21,47 +21,54 @@ public:
 	VariableCollection & operator = (const VariableCollection & v);
 	~VariableCollection();
 	
-	int addCategory(const char * category);
-#if USE_QT
-	int addCategory(const QString & category);
-#else
-	int addCategory(const std::string & category);
-#endif // USE_QT
+	int numberOfCategories() const;
 	int indexOfCategory(const char * category) const;
 #if USE_QT
 	int indexOfCategory(const QString & category) const;
 #else
 	int indexOfCategory(const std::string & category) const;
 #endif // USE_QT
-	char * categoryAt(int index) const;
-	int size() const;
-	bool contains(const char * id) const;
+	char * getCategory(int index) const;
+	int addCategory(const char * category);
 #if USE_QT
-	bool contains(const QString & id) const;
+	int addCategory(const QString & category);
 #else
-	bool contains(const std::string & id) const;
+	int addCategory(const std::string & category);
 #endif // USE_QT
-	bool contains(const char * id, const char * category) const;
+	bool removeCategory(const char * data);
 #if USE_QT
-	bool contains(const QString & id, const QString & category) const;
+	bool removeCategory(const QString & data);
 #else
-	bool contains(const std::string & id, const std::string & category) const;
+	bool removeCategory(const std::string & data);
 #endif // USE_QT
-	bool contains(const Variable * v) const;
-	int indexOf(const char * id) const;
+	int numberOfVariables() const;
+	bool hasVariable(const char * id) const;
 #if USE_QT
-	int indexOf(const QString & id) const;
+	bool hasVariable(const QString & id) const;
 #else
-	int indexOf(const std::string & id) const;
+	bool hasVariable(const std::string & id) const;
 #endif // USE_QT
-	int indexOf(const char * id, const char * category) const;
+	bool hasVariable(const char * id, const char * category) const;
 #if USE_QT
-	int indexOf(const QString & id, const QString & category) const;
+	bool hasVariable(const QString & id, const QString & category) const;
 #else
-	int indexOf(const std::string & id, const std::string & category) const;
+	bool hasVariable(const std::string & id, const std::string & category) const;
 #endif // USE_QT
-	int indexOf(const Variable * v) const;
-	const Variable * variableAt(int index) const;
+	bool hasVariable(const Variable * v) const;
+	int indexOfVariable(const char * id) const;
+#if USE_QT
+	int indexOfVariable(const QString & id) const;
+#else
+	int indexOfVariable(const std::string & id) const;
+#endif // USE_QT
+	int indexOfVariable(const char * id, const char * category) const;
+#if USE_QT
+	int indexOfVariable(const QString & id, const QString & category) const;
+#else
+	int indexOfVariable(const std::string & id, const std::string & category) const;
+#endif // USE_QT
+	int indexOfVariable(const Variable * v) const;
+	const Variable * getVariable(int index) const;
 	const Variable * getVariable(const char * id) const;
 #if USE_QT
 	const Variable * getVariable(const QString & id) const;
@@ -93,14 +100,6 @@ public:
 	std::vector<Variable *> * getVariablesInCategory(const char * category) const;
 	std::vector<Variable *> * getVariablesInCategory(const std::string & category) const;
 #endif // USE_QT
-	bool add(const char * id, const char * value = NULL, const char * category = NULL);
-#if USE_QT
-	bool add(const QString & id, const QString & value = QString(), const QString & category = QString());
-#else
-	bool add(const std::string & id, const std::string & value = std::string(), const std::string & category = std::string());
-#endif // USE_QT
-	bool add(Variable * v);
-	bool addCopy(const Variable * v);
 	void setValue(const char * id, const char * value);
 	void setValue(const char * id, int value);
 	void setValue(const char * id, double value);
@@ -135,28 +134,29 @@ public:
 	void setValue(const std::string & id, double value, const std::string & category);
 	void setValue(const std::string & id, bool value, const std::string & category);
 #endif // USE_QT
-	bool remove(int index);
-	bool remove(const char * id);
+	bool addVariable(const char * id, const char * value = NULL, const char * category = NULL);
 #if USE_QT
-	bool remove(const QString & id);
+	bool addVariable(const QString & id, const QString & value = QString(), const QString & category = QString());
 #else
-	bool remove(const std::string & id);
+	bool addVariable(const std::string & id, const std::string & value = std::string(), const std::string & category = std::string());
 #endif // USE_QT
-	bool remove(const char * id, const char * category);
+	bool addVariable(Variable * v);
+	bool removeVariable(int index);
+	bool removeVariable(const char * id);
 #if USE_QT
-	bool remove(const QString & id, const QString & category);
+	bool removeVariable(const QString & id);
 #else
-	bool remove(const std::string & id, const std::string & category);
+	bool removeVariable(const std::string & id);
 #endif // USE_QT
-	bool remove(const Variable * v);
-	bool removeCategory(const char * data);
+	bool removeVariable(const char * id, const char * category);
 #if USE_QT
-	bool removeCategory(const QString & data);
+	bool removeVariable(const QString & id, const QString & category);
 #else
-	bool removeCategory(const std::string & data);
+	bool removeVariable(const std::string & id, const std::string & category);
 #endif // USE_QT
-	void clear();
-	void sort();
+	bool removeVariable(const Variable * v);
+	void clearVariables();
+	void sortVariables();
 
 	static VariableCollection * readFrom(const char * fileName);
 #if USE_QT
