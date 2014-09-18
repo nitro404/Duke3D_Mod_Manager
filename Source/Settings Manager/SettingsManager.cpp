@@ -26,7 +26,8 @@ const GameTypes::GameType SettingsManager::defaultGameType = GameTypes::defaultG
 const char * SettingsManager::defaultServerIPAddress = "127.0.0.1";
 
 SettingsManager::SettingsManager()
-	: modListFileName(NULL)
+	: m_variables(new VariableSystem())
+	, modListFileName(NULL)
 	, favouritesListFileName(NULL)
 	, modsDirectoryName(NULL)
 	, modsDirectoryPath(NULL)
@@ -50,12 +51,12 @@ SettingsManager::SettingsManager()
 	if(instance == NULL) {
 		instance = this;
 	}
-	m_variables = new VariableSystem();
 	reset();
 }
 
 SettingsManager::SettingsManager(const SettingsManager & s)
-	: modListFileName(NULL)
+	: m_variables(new VariableSystem(*s.m_variables))
+	, modListFileName(NULL)
 	, favouritesListFileName(NULL)
 	, modsDirectoryName(NULL)
 	, modsDirectoryPath(NULL)
@@ -79,8 +80,6 @@ SettingsManager::SettingsManager(const SettingsManager & s)
 	if(instance == NULL) {
 		instance = this;
 	}
-
-	m_variables = new VariableSystem(*s.m_variables);
 
 	modListFileName = Utilities::copyString(s.modListFileName);
 	favouritesListFileName = Utilities::copyString(s.favouritesListFileName);
