@@ -29,6 +29,28 @@ unsigned int Utilities::stringLength(const char * s) {
 	return s == NULL ? 0 : strlen(s);
 }
 
+const char * Utilities::toString(int value) {
+	static char buffer[32];
+#if _WIN32
+	sprintf_s(buffer, 32, "%d", value);
+#else
+	sprintf(buffer, "%d", value);
+#endif // _WIN32
+
+	return buffer;
+}
+
+const char * Utilities::toString(double value) {
+	static char buffer[32];
+#if _WIN32
+	sprintf_s(buffer, 32, "%f", value);
+#else
+	sprintf(buffer, "%f", value);
+#endif // _WIN32
+
+	return buffer;
+}
+
 bool Utilities::copyString(char * destination, int size, const char * source) {
 	if(source == NULL || destination == NULL || size < 1) { return false; }
 

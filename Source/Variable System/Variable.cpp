@@ -4,45 +4,46 @@ const int Variable::NO_CATEGORY = -1;
 char Variable::SEPARATORS[] = { ':', '=' };
 const unsigned int Variable::NUMBER_OF_SEPARATORS = 2;
 
-Variable::Variable(const char * id, const char * value, int category) {
-	if(id == NULL) {
-		m_id = new char[1];
-		m_id[0] = '\0';
-	}
-	else {
-		m_id = Utilities::trimCopyString(id);
-	}
-
-	if(value == NULL) {
-		m_value = new char[1];
-		m_value[0] = '\0';
-	}
-	else {
-		m_value = Utilities::trimCopyString(value);
-	}
-
-	m_category = (category < -1) ? NO_CATEGORY : category;
+Variable::Variable(const char * id, const char * value, int category)
+	: m_id(NULL) 
+	, m_value(NULL)
+	, m_category(category < 0 ? NO_CATEGORY : category) {
+	setID(id);
+	setValue(value);
 }
 
-Variable::Variable(const Variable & v) {
-	m_id = new char[Utilities::stringLength(v.m_id) + 1];
-	Utilities::copyString(m_id, Utilities::stringLength(v.m_id) + 1, v.m_id);
+#if USE_QT
+Variable::Variable(const QString & id, const QString & value, int category)
+	: m_id(NULL) 
+	, m_value(NULL)
+	, m_category(category < 0 ? NO_CATEGORY : category) {
+	setID(id);
+	setValue(value);
+}
+#else
+Variable::Variable(const std::string & id, const std::string & value, int category)
+	: m_id(NULL) 
+	, m_value(NULL)
+	, m_category(category < 0 ? NO_CATEGORY : category) {
+	setID(id);
+	setValue(value);
+}
+#endif // USE_QT
 
-	m_value = new char[Utilities::stringLength(v.m_value) + 1];
-	Utilities::copyString(m_value, Utilities::stringLength(v.m_value) + 1, v.m_value);
-	
-	m_category = v.m_category;
+Variable::Variable(const Variable & v)
+	: m_id(NULL)
+	, m_value(NULL)
+	, m_category(v.m_category) {
+	m_id = Utilities::copyString(v.m_id);
+	m_value = Utilities::copyString(v.m_value);
 }
 
 Variable & Variable::operator = (const Variable & v) {
 	delete [] m_id;
 	delete [] m_value;
 
-	m_id = new char[Utilities::stringLength(v.m_id) + 1];
-	Utilities::copyString(m_id, Utilities::stringLength(v.m_id) + 1, v.m_id);
-
-	m_value = new char[Utilities::stringLength(v.m_value) + 1];
-	Utilities::copyString(m_value, Utilities::stringLength(v.m_value) + 1, v.m_value);
+	m_id = Utilities::copyString(v.m_id);
+	m_value = Utilities::copyString(v.m_value);
 
 	m_category = v.m_category;
 
@@ -54,14 +55,20 @@ Variable::~Variable() {
 	delete [] m_value;
 }
 
-char * Variable::getID() const { return m_id; }
+char * Variable::getID() const {
+	return m_id;
+}
 
-char * Variable::getValue() const { return m_value; }
+char * Variable::getValue() const {
+	return m_value;
+}
 
-int Variable::getCategory() const { return m_category; }
+int Variable::getCategory() const {
+	return m_category;
+}
 
 void Variable::setID(const char * id) {
-	delete [] m_id;
+	if(m_id != NULL) { delete [] m_id; }
 	
 	if(id == NULL) {
 		m_id = new char[1];
@@ -72,8 +79,35 @@ void Variable::setID(const char * id) {
 	}
 }
 
+#if USE_QT
+void Variable::setID(const QString & id) {
+	if(m_id != NULL) { delete [] m_id; }
+	
+	if(id.isNull()) {
+		m_id = new char[1];
+		m_id[0] = '\0';
+	}
+	else {
+		QByteArray idBytes = id.toLocal8Bit();
+		m_id = Utilities::trimCopyString(idBytes.data());
+	}
+}
+#else
+void Variable::setID(const std::string & id) {
+	if(m_id != NULL) { delete [] m_id; }
+	
+	if(id.empty()) {
+		m_id = new char[1];
+		m_id[0] = '\0';
+	}
+	else {
+		m_id = Utilities::trimCopyString(id.data());
+	}
+}
+#endif // USE_QT
+
 void Variable::setValue(const char * value) {
-	delete [] m_value;
+	if(m_value != NULL) { delete [] m_value; }
 	
 	if(value == NULL) {
 		m_value = new char[1];
@@ -84,16 +118,39 @@ void Variable::setValue(const char * value) {
 	}
 }
 
+#if USE_QT
+void Variable::setValue(const QString & value) {
+	if(m_value != NULL) { delete [] m_value; }
+	
+	if(value.isNull()) {
+		m_value = new char[1];
+		m_value[0] = '\0';
+	}
+	else {
+		QByteArray valueBytes = value.toLocal8Bit();
+		m_value = Utilities::trimCopyString(valueBytes.data());
+	}
+}
+#else
+void Variable::setValue(const std::string & value) {
+	if(m_value != NULL) { delete [] m_value; }
+	
+	if(value.empty()) {
+		m_value = new char[1];
+		m_value[0] = '\0';
+	}
+	else {
+		m_value = Utilities::trimCopyString(value.data());
+	}
+}
+#endif // USE_QT
+
 void Variable::setValue(int value) {
-	static char buffer[32];
-	sprintf_s(buffer, 32, "%d", value);
-	setValue(buffer);
+	setValue(Utilities::toString(value));
 }
 
 void Variable::setValue(double value) {
-	static char buffer[32];
-	sprintf_s(buffer, 32, "%f", value);
-	setValue(buffer);
+	setValue(Utilities::toString(value));
 }
 
 void Variable::setValue(bool value) {
@@ -101,7 +158,7 @@ void Variable::setValue(bool value) {
 }
 
 void Variable::setCategory(int category) {
-	m_category = (category < -1) ? NO_CATEGORY : category;
+	m_category = (category < 0) ? NO_CATEGORY : category;
 }
 
 void Variable::removeCategory() {
@@ -109,20 +166,27 @@ void Variable::removeCategory() {
 }
 
 Variable * Variable::parseFrom(const char * data) {
+#if USE_QT
+	int i, j, formattedDataLength;
+#else
+	unsigned int i, j, formattedDataLength;
+#endif // USE_QT
+
 	if(data == NULL) { return NULL; }
 
-	char * temp = Utilities::trimCopyString(data);
+	char * formattedData = Utilities::trimCopyString(data);
 	
-	if(Utilities::stringLength(temp) == 0) {
-		delete [] temp;
+	if(Utilities::stringLength(formattedData) == 0) {
+		delete [] formattedData;
 		return NULL;
 	}
 
 	char * separator = NULL;
-	for(unsigned int i=0;i<Utilities::stringLength(temp);i++) {
-		for(unsigned int j=0;j<NUMBER_OF_SEPARATORS;j++) {
-			if(temp[i] == SEPARATORS[j]) {
-				separator = temp + (i * sizeof(char));
+	formattedDataLength = Utilities::stringLength(formattedData);
+	for(i=0;i<formattedDataLength;i++) {
+		for(j=0;j<NUMBER_OF_SEPARATORS;j++) {
+			if(formattedData[i] == SEPARATORS[j]) {
+				separator = formattedData + (i * sizeof(char));
 				break;
 			}
 		}
@@ -132,18 +196,70 @@ Variable * Variable::parseFrom(const char * data) {
 	}
 
 	if(separator == NULL) {
-		delete [] temp;
+		delete [] formattedData;
 		return NULL;
 	}
 	
 	*separator = '\0';
 
-	Variable * newVariable = new Variable(temp, separator + sizeof(char));
+	Variable * newVariable = new Variable(formattedData, separator + sizeof(char));
 
-	delete [] temp;
+	delete [] formattedData;
 
 	return newVariable;
 }
+
+#if USE_QT
+Variable * Variable::parseFrom(const QString & data) {
+	if(data.isEmpty()) { return NULL; }
+
+	QString formattedData = data.trimmed();
+	
+	if(formattedData.isEmpty()) { return NULL; }
+
+	int separatorIndex = -1;
+	for(int i=0;i<formattedData.length();i++) {
+		for(int j=0;j<NUMBER_OF_SEPARATORS;j++) {
+			if(formattedData[i] == SEPARATORS[j]) {
+				separatorIndex = i;
+				break;
+			}
+		}
+		if(separatorIndex != -1) {
+			break;
+		}
+	}
+
+	if(separatorIndex == -1) { return NULL; }
+
+	return new Variable(Utilities::substring(formattedData, 0, separatorIndex), Utilities::substring(formattedData, separatorIndex + 1, formattedData.length()));
+}
+#else
+Variable * Variable::parseFrom(const std::string & data) {
+	if(data.empty()) { return NULL; }
+
+	std::string formattedData = Utilities::trimString(data);
+	
+	if(formattedData.empty()) { return NULL; }
+
+	int separatorIndex = -1;
+	for(unsigned int i=0;i<formattedData.length();i++) {
+		for(unsigned int j=0;j<NUMBER_OF_SEPARATORS;j++) {
+			if(formattedData[i] == SEPARATORS[j]) {
+				separatorIndex = i;
+				break;
+			}
+		}
+		if(separatorIndex != -1) {
+			break;
+		}
+	}
+
+	if(separatorIndex == -1) { return NULL; }
+
+	return new Variable(Utilities::substring(formattedData, 0, separatorIndex), Utilities::substring(formattedData, separatorIndex + 1, formattedData.length()));
+}
+#endif // USE_QT
 
 bool Variable::operator == (const Variable & v) const {
 	return Utilities::compareStringsIgnoreCase(m_id, v.m_id) == 0 &&
@@ -153,4 +269,3 @@ bool Variable::operator == (const Variable & v) const {
 bool Variable::operator != (const Variable & v) const {
 	return !operator == (v);
 }
-

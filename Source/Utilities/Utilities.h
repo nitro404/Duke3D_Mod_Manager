@@ -10,6 +10,8 @@
 #include <QDate>
 #include <QTime>
 
+#define USE_QT 1
+
 namespace Utilities {
 	extern const char newLine[];
 	extern const char * monthStrings[];
@@ -17,6 +19,8 @@ namespace Utilities {
 	int randomInteger(int min, int max, bool randomize = true);
 	int intLength(int n);
 	unsigned int stringLength(const char * s);
+	const char * toString(int value);
+	const char * toString(double value);
 	bool copyString(char * destination, int size, const char * source);
 	char * copyString(const char * data);
 	char * trimCopyString(const char * data);

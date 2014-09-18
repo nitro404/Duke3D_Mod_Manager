@@ -53,9 +53,6 @@
     <ClInclude Include="Source\Variable System\Variable.h">
       <Filter>Variable System</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Variable System\VariableSystem.h">
-      <Filter>Variable System</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Argument Collection\ArgumentCollection.h">
       <Filter>Argument Collection</Filter>
     </ClInclude>
@@ -88,6 +85,9 @@
     </ClInclude>
     <ClInclude Include="Source\Mod Collection\ModAuthorInformation.h">
       <Filter>Mod Collection</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Variable System\VariableCollection.h">
+      <Filter>Variable System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -143,9 +143,6 @@
     <ClCompile Include="Source\Variable System\Variable.cpp">
       <Filter>Variable System</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Variable System\VariableSystem.cpp">
-      <Filter>Variable System</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Argument Collection\ArgumentCollection.cpp">
       <Filter>Argument Collection</Filter>
     </ClCompile>
@@ -175,6 +172,9 @@
     </ClCompile>
     <ClCompile Include="Source\Mod Collection\ModAuthorInformation.cpp">
       <Filter>Mod Collection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Variable System\VariableCollection.cpp">
+      <Filter>Variable System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
