@@ -274,6 +274,7 @@ bool SettingsManager::save(const ArgumentParser * args) const {
 
 bool SettingsManager::loadFrom(const QString & fileName) {
 	QByteArray fileNameBytes = fileName.toLocal8Bit();
+
 	return loadFrom(fileNameBytes.data());
 }
 
@@ -421,6 +422,7 @@ bool SettingsManager::loadFrom(const char * fileName) {
 
 bool SettingsManager::saveTo(const QString & fileName) const {
 	QByteArray fileNameBytes = fileName.toLocal8Bit();
+
 	return saveTo(fileNameBytes.data());
 }
 
@@ -448,7 +450,7 @@ bool SettingsManager::saveTo(const char * fileName) const {
 	m_variables->setValue("Server IP Address", serverIPAddress, "Options");
 
 	// group the variables by categories
-	m_variables->sort();
+	m_variables->sortVariables();
 
 	// update the settings file with the changes
 	return m_variables->writeTo(fileName);
