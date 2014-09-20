@@ -8,17 +8,38 @@ const char Utilities::newLine[] = "\r";
 const char Utilities::newLine[] = "\n";
 #endif
 
+bool Utilities::initialRandomize = true;
+
 const char * Utilities::monthStrings[] = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+
+void Utilities::randomizeSeed() {
+	qsrand(static_cast<unsigned int>(QTime::currentTime().msec()));
+}
+
+void Utilities::randomSeed(unsigned int seed) {
+	qsrand(seed);
+}
 
 int Utilities::randomInteger(int min, int max, bool randomize) {
 	if(max <= min) { return min; }
-	
-	if(randomize) {
-		QTime time = QTime::currentTime();
-		qsrand((uint) time.msec());
+
+	if(randomize || initialRandomize) {
+		randomizeSeed();
+		initialRandomize = false;
 	}
 
-	return qrand() % ((max + 1) - min) + min;
+	return (qrand() % (max - min + 1)) + min;
+}
+
+float Utilities::randomFloat(float min, float max, bool randomize) {
+	if(max <= min) { return min; }
+
+	if(randomize || initialRandomize) {
+		randomizeSeed();
+		initialRandomize = false;
+	}
+
+	return ((static_cast<float>(qrand()) / static_cast<float>(RAND_MAX)) * max) + min;
 }
 
 int Utilities::intLength(int n) {

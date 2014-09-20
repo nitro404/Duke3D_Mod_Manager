@@ -10,13 +10,15 @@
 #include <QDate>
 #include <QTime>
 
-#define USE_QT 1
-
 namespace Utilities {
 	extern const char newLine[];
+	extern bool initialRandomize;
 	extern const char * monthStrings[];
 
-	int randomInteger(int min, int max, bool randomize = true);
+	void randomizeSeed();
+	void randomSeed(unsigned int seed);
+	int randomInteger(int min, int max, bool randomize = false);
+	float randomFloat(float min, float max, bool randomize = false);
 	int intLength(int n);
 	unsigned int stringLength(const char * s);
 	const char * toString(int value);
