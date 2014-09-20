@@ -10,6 +10,8 @@
 #include <QDate>
 #include <QTime>
 
+#define USE_QT 1
+
 namespace Utilities {
 	extern const char newLine[];
 	extern bool initialRandomize;
