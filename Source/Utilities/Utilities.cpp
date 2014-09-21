@@ -243,70 +243,35 @@ int Utilities::lastIndexOf(const char * data, char c) {
 QString Utilities::getCommand(const char * data) {
 	if(data == NULL) { return QString(); }
 
-	char * newData = trimCopyString(data);
-	if(stringLength(newData) == 0) {
-		delete [] newData;
-		return QString();
-	}
-
-	int split = firstIndexOf(newData, ' ');
-	if(split < 1) {
-		QString commandName(newData);
-		delete [] newData;
-		return commandName;
-	}
-
-	char * command = substring(newData, 0, split);
-
-	delete [] newData;
-
-	return command;
+	return getCommand(QString(data));
 }
 
 QString Utilities::getCommand(const QString & data) {
 	if(data.isNull()) { return QString(); }
 
 	QString newData = data.trimmed();
-	if(newData.isEmpty()) { return QString(); }
+	if(newData.isEmpty()) { return QString(""); }
 
 	int split = newData.indexOf(" ");
 	if(split < 1) { return newData; }
 
-	return substring(newData, 0, split);
+	return substring(newData, 0, split).trimmed();
 }
 
 QString Utilities::getArguments(const char * data) {
-	if(data == NULL) { return QString(); }
-
-	char * newData = trimCopyString(data);
-	if(stringLength(newData) == 0) {
-		delete [] newData;
-		return QString();
-	}
-
-	int split = firstIndexOf(newData, ' ');
-	if(split < 1 || split == stringLength(newData) - 1) {
-		delete [] newData;
-		return QString();
-	}
-
-	char * arguments = substring(newData, split + 1, stringLength(newData));
-
-	delete [] newData;
-
-	return arguments;
+	return getArguments(QString(data));
 }
 
 QString Utilities::getArguments(const QString & data) {
 	if(data.isNull()) { return QString(); }
 
 	QString newData = data.trimmed();
-	if(newData.isEmpty()) { return QString(); }
+	if(newData.isEmpty()) { return QString(""); }
 
 	int split = newData.indexOf(" ");
-	if(split < 1 || split == newData.length() - 1) { return QString(); }
+	if(split < 1 || split == newData.length() - 1) { return QString(""); }
 
-	return substring(newData, split + 1, newData.length());
+	return substring(newData, split + 1, newData.length()).trimmed();
 }
 
 int Utilities::parseBoolean(const char * data) {
