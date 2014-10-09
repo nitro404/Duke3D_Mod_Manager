@@ -5,11 +5,11 @@ VariableCollection::VariableCollection() {
 }
 
 VariableCollection::VariableCollection(const VariableCollection & v) {
-#if USE_QT
-	int i;
-#else
+#if USE_STL > USE_QT
 	unsigned int i;
-#endif // USE_QT
+#else
+	int i;
+#endif // USE_STL
 
 	for(i=0;i<v.m_categories.size();i++) {
 		m_categories.push_back(Utilities::trimCopyString(v.m_categories[i]));
@@ -21,11 +21,11 @@ VariableCollection::VariableCollection(const VariableCollection & v) {
 }
 
 VariableCollection & VariableCollection::operator = (const VariableCollection & v) {
-#if USE_QT
-	int i;
-#else
+#if USE_STL > USE_QT
 	unsigned int i;
-#endif // USE_QT
+#else
+	int i;
+#endif // USE_STL
 
 	for(i=0;i<m_categories.size();i++) {
 		delete [] m_categories[i];
@@ -49,11 +49,11 @@ VariableCollection & VariableCollection::operator = (const VariableCollection & 
 }
 
 VariableCollection::~VariableCollection() {
-#if USE_QT
-	int i;
-#else
+#if USE_STL > USE_QT
 	unsigned int i;
-#endif // USE_QT
+#else
+	int i;
+#endif // USE_STL
 
 	for(i=0;i<m_categories.size();i++) {
 		delete [] m_categories[i];
@@ -65,15 +65,19 @@ VariableCollection::~VariableCollection() {
 }
 
 int VariableCollection::numberOfCategories() const {
+#if USE_STL > USE_QT
+	return static_cast<int>(m_categories.size());
+#else
 	return m_categories.size();
+#endif // USE_STL
 }
 
 int VariableCollection::indexOfCategory(const char * category) const {
-#if USE_QT
-	int i;
-#else
+#if USE_STL > USE_QT
 	unsigned int i;
-#endif // USE_QT
+#else
+	int i;
+#endif // USE_STL
 
 	if(category == NULL || Utilities::stringLength(category) == 0 || m_categories.size() == 0) { return -1; }
 	
@@ -98,6 +102,12 @@ int VariableCollection::indexOfCategory(const char * category) const {
 
 #if USE_QT
 int VariableCollection::indexOfCategory(const QString & category) const {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(category.isEmpty()) { return -1; }
 
 	QString formattedCategory = category.trimmed();
@@ -106,7 +116,7 @@ int VariableCollection::indexOfCategory(const QString & category) const {
 
 	QByteArray formattedCategoryBytes = formattedCategory.toLocal8Bit();
 
-	for(int i=0;i<m_categories.size();i++) {
+	for(i=0;i<m_categories.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(formattedCategoryBytes.data(), m_categories[i]) == 0) {
 			return i;
 		}
@@ -114,15 +124,23 @@ int VariableCollection::indexOfCategory(const QString & category) const {
 	
 	return -1;
 }
-#else
+#endif // USE_QT
+
+#if USE_STL
 int VariableCollection::indexOfCategory(const std::string & category) const {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(category.empty()) { return -1; }
 
 	std::string formattedCategory = Utilities::trimString(category);
 	
 	if(formattedCategory.empty()) { return -1; }
 
-	for(unsigned int i=0;i<m_categories.size();i++) {
+	for(i=0;i<m_categories.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(formattedCategory.data(), m_categories[i]) == 0) {
 			return i;
 		}
@@ -130,24 +148,24 @@ int VariableCollection::indexOfCategory(const std::string & category) const {
 	
 	return -1;
 }
-#endif // USE_QT
+#endif // USE_STL
 
 char * VariableCollection::getCategory(int index) const {
-#if USE_QT
-	if(index < 0 || index >= m_categories.size()) { return NULL; }
-#else
+#if USE_STL > USE_QT
 	if(index < 0 || index >= static_cast<int>(m_categories.size())) { return NULL; }
-#endif // USE_QT
+#else
+	if(index < 0 || index >= m_categories.size()) { return NULL; }
+#endif // USE_STL
 
 	return m_categories[index];
 }
 
 int VariableCollection::addCategory(const char * category) {
-#if USE_QT
-	int i;
-#else
+#if USE_STL > USE_QT
 	unsigned int i;
-#endif // USE_QT
+#else
+	int i;
+#endif // USE_STL
 
 	if(category == NULL || Utilities::stringLength(category) == 0) { return Variable::NO_CATEGORY; }
 	
@@ -169,7 +187,11 @@ int VariableCollection::addCategory(const char * category) {
 	if(categoryIndex == -1) {
 		m_categories.push_back(formattedCategory);
 
+#if USE_STL > USE_QT
+		return static_cast<int>(m_categories.size()) - 1;
+#else
 		return m_categories.size() - 1;
+#endif // USE_STL
 	}
 	else {
 		delete [] formattedCategory;
@@ -180,6 +202,12 @@ int VariableCollection::addCategory(const char * category) {
 
 #if USE_QT
 int VariableCollection::addCategory(const QString & category) {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(category.isEmpty()) { return Variable::NO_CATEGORY; }
 	
 	QString formattedCategory = category.trimmed();
@@ -189,7 +217,7 @@ int VariableCollection::addCategory(const QString & category) {
 	QByteArray formattedCategoryBytes = formattedCategory.toLocal8Bit();
 
 	int categoryIndex = -1;
-	for(int i=0;i<m_categories.size();i++) {
+	for(i=0;i<m_categories.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(formattedCategoryBytes.data(), m_categories[i]) == 0) {
 			categoryIndex = i;
 			break;
@@ -199,14 +227,26 @@ int VariableCollection::addCategory(const QString & category) {
 	if(categoryIndex == -1) {
 		m_categories.push_back(Utilities::copyString(formattedCategoryBytes.data()));
 
+#if USE_STL > USE_QT
+		return static_cast<int>(m_categories.size()) - 1;
+#else
 		return m_categories.size() - 1;
+#endif // USE_STL
 	}
 	else {
 		return categoryIndex;
 	}
 }
-#else
+#endif // USE_QT
+
+#if USE_STL
 int VariableCollection::addCategory(const std::string & category) {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(category.empty()) { return Variable::NO_CATEGORY; }
 	
 	std::string formattedCategory = Utilities::trimString(category);
@@ -214,7 +254,7 @@ int VariableCollection::addCategory(const std::string & category) {
 	if(formattedCategory.empty()) { return Variable::NO_CATEGORY; }
 
 	int categoryIndex = -1;
-	for(unsigned int i=0;i<m_categories.size();i++) {
+	for(i=0;i<m_categories.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(formattedCategory.data(), m_categories[i]) == 0) {
 			categoryIndex = i;
 			break;
@@ -224,20 +264,24 @@ int VariableCollection::addCategory(const std::string & category) {
 	if(categoryIndex == -1) {
 		m_categories.push_back(Utilities::copyString(formattedCategory.data()));
 
+#if USE_STL > USE_QT
+		return static_cast<int>(m_categories.size()) - 1;
+#else
 		return m_categories.size() - 1;
+#endif // USE_STL
 	}
 	else {
 		return categoryIndex;
 	}
 }
-#endif // USE_QT
+#endif // USE_STL
 
 bool VariableCollection::removeCategory(const char * category) {
-#if USE_QT
-	int i;
-#else
+#if USE_STL > USE_QT
 	unsigned int i;
-#endif // USE_QT
+#else
+	int i;
+#endif // USE_STL
 
 	if(category == NULL || Utilities::stringLength(category) == 0) { return false; }
 
@@ -258,11 +302,11 @@ bool VariableCollection::removeCategory(const char * category) {
 	for(i=0;i<m_variables.size();i++) {
 		if(m_variables[i]->getCategory() == categoryIndex) {
 			delete m_variables[i];
-#if USE_QT
-			m_variables.remove(i);
-#else
+#if USE_STL > USE_QT
 			m_variables.erase(m_variables.begin() + i);
-#endif // USE_QT
+#else
+			m_variables.remove(i);
+#endif // USE_STL
 
 			i--;
 		}
@@ -273,17 +317,17 @@ bool VariableCollection::removeCategory(const char * category) {
 
 	delete [] formattedCategory;
 
-#if USE_QT
-	if(categoryIndex >= 0 && categoryIndex < m_categories.size()) {
-#else
+#if USE_STL > USE_QT
 	if(categoryIndex >= 0 && categoryIndex < static_cast<int>(m_categories.size())) {
-#endif // USE_QT
-		delete [] m_categories[categoryIndex];
-#if USE_QT
-		m_categories.remove(categoryIndex);
 #else
+	if(categoryIndex >= 0 && categoryIndex < m_categories.size()) {
+#endif // USE_STL
+		delete [] m_categories[categoryIndex];
+#if USE_STL > USE_QT
 		m_categories.erase(m_categories.begin() + categoryIndex);
-#endif // USE_QT
+#else
+		m_categories.remove(categoryIndex);
+#endif // USE_STL
 	}
 
 	return true;
@@ -291,6 +335,12 @@ bool VariableCollection::removeCategory(const char * category) {
 
 #if USE_QT
 bool VariableCollection::removeCategory(const QString & category) {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(category.isEmpty()) { return false; }
 
 	QString formattedCategory = category.trimmed();
@@ -301,10 +351,14 @@ bool VariableCollection::removeCategory(const QString & category) {
 
 	if(categoryIndex == -1) { return false; }
 
-	for(int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(m_variables[i]->getCategory() == categoryIndex) {
 			delete m_variables[i];
+#if USE_STL > USE_QT
+			m_variables.erase(m_variables.begin() + i);
+#else
 			m_variables.remove(i);
+#endif // USE_STL
 
 			i--;
 		}
@@ -312,16 +366,32 @@ bool VariableCollection::removeCategory(const QString & category) {
 			m_variables[i]->setCategory(m_variables[i]->getCategory() - 1);
 		}
 	}
-
+	
+#if USE_STL > USE_QT
+	if(categoryIndex >= 0 && categoryIndex < static_cast<int>(m_categories.size())) {
+#else
 	if(categoryIndex >= 0 && categoryIndex < m_categories.size()) {
+#endif // USE_STL
 		delete [] m_categories[categoryIndex];
+#if USE_STL > USE_QT
+		m_categories.erase(m_categories.begin() + categoryIndex);
+#else
 		m_categories.remove(categoryIndex);
+#endif // USE_STL
 	}
 
 	return true;
 }
-#else
+#endif // USE_QT
+
+#if USE_STL
 bool VariableCollection::removeCategory(const std::string & category) {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(category.empty()) { return false; }
 
 	std::string formattedCategory = Utilities::trimString(category);
@@ -332,10 +402,14 @@ bool VariableCollection::removeCategory(const std::string & category) {
 
 	if(categoryIndex == -1) { return false; }
 
-	for(unsigned int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(m_variables[i]->getCategory() == categoryIndex) {
 			delete m_variables[i];
+#if USE_STL > USE_QT
 			m_variables.erase(m_variables.begin() + i);
+#else
+			m_variables.remove(i);
+#endif // USE_STL
 
 			i--;
 		}
@@ -344,25 +418,37 @@ bool VariableCollection::removeCategory(const std::string & category) {
 		}
 	}
 
+#if USE_STL > USE_QT
 	if(categoryIndex >= 0 && categoryIndex < static_cast<int>(m_categories.size())) {
+#else
+	if(categoryIndex >= 0 && categoryIndex < m_categories.size()) {
+#endif // USE_STL
 		delete [] m_categories[categoryIndex];
+#if USE_STL > USE_QT
 		m_categories.erase(m_categories.begin() + categoryIndex);
+#else
+		m_categories.remove(categoryIndex);
+#endif // USE_STL
 	}
 
 	return true;
 }
-#endif // USE_QT
+#endif // USE_STL
 
 int VariableCollection::numberOfVariables() const {
+#if USE_STL > USE_QT
+	return static_cast<int>(m_variables.size());
+#else
 	return m_variables.size();
+#endif // USE_STL
 }
 
 bool VariableCollection::hasVariable(const char * id) const {
-#if USE_QT
-	int i;
-#else
+#if USE_STL > USE_QT
 	unsigned int i;
-#endif // USE_QT
+#else
+	int i;
+#endif // USE_STL
 
 	if(id == NULL || Utilities::stringLength(id) == 0) { return false; }
 
@@ -387,6 +473,12 @@ bool VariableCollection::hasVariable(const char * id) const {
 
 #if USE_QT
 bool VariableCollection::hasVariable(const QString & id) const {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.isEmpty()) { return false; }
 
 	QString formattedID = id.trimmed();
@@ -395,7 +487,7 @@ bool VariableCollection::hasVariable(const QString & id) const {
 
 	QByteArray formattedIDBytes = formattedID.toLocal8Bit();
 
-	for(int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(formattedIDBytes.data(), m_variables[i]->getID()) == 0) {
 			return true;
 		}
@@ -403,15 +495,23 @@ bool VariableCollection::hasVariable(const QString & id) const {
 
 	return false;
 }
-#else
+#endif // USE_QT
+
+#if USE_STL
 bool VariableCollection::hasVariable(const std::string & id) const {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.empty()) { return false; }
 
 	std::string formattedID = Utilities::trimString(id);
 
 	if(formattedID.empty()) { return false; }
 
-	for(unsigned int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(formattedID.data(), m_variables[i]->getID()) == 0) {
 			return true;
 		}
@@ -419,14 +519,14 @@ bool VariableCollection::hasVariable(const std::string & id) const {
 
 	return false;
 }
-#endif // USE_QT
+#endif // USE_STL
 
 bool VariableCollection::hasVariable(const char * id, const char * category) const {
-#if USE_QT
-	int i;
-#else
+#if USE_STL > USE_QT
 	unsigned int i;
-#endif // USE_QT
+#else
+	int i;
+#endif // USE_STL
 
 	if(id == NULL || Utilities::stringLength(id) == 0) { return false; }
 
@@ -454,6 +554,12 @@ bool VariableCollection::hasVariable(const char * id, const char * category) con
 
 #if USE_QT
 bool VariableCollection::hasVariable(const QString & id, const QString & category) const {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.isEmpty()) { return false; }
 
 	QString formattedID = id.trimmed();
@@ -464,7 +570,7 @@ bool VariableCollection::hasVariable(const QString & id, const QString & categor
 
 	int categoryIndex = indexOfCategory(category);
 
-	for(int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(m_variables[i]->getCategory() == categoryIndex &&
 		   Utilities::compareStringsIgnoreCase(formattedIDBytes.data(), m_variables[i]->getID()) == 0) {
 			return true;
@@ -473,8 +579,16 @@ bool VariableCollection::hasVariable(const QString & id, const QString & categor
 
 	return false;
 }
-#else
+#endif // USE_QT
+
+#if USE_STL
 bool VariableCollection::hasVariable(const std::string & id, const std::string & category) const {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.empty()) { return false; }
 
 	std::string formattedID = Utilities::trimString(id);
@@ -483,7 +597,7 @@ bool VariableCollection::hasVariable(const std::string & id, const std::string &
 
 	int categoryIndex = indexOfCategory(category);
 
-	for(unsigned int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(m_variables[i]->getCategory() == categoryIndex &&
 		   Utilities::compareStringsIgnoreCase(formattedID.data(), m_variables[i]->getID()) == 0) {
 			return true;
@@ -492,14 +606,14 @@ bool VariableCollection::hasVariable(const std::string & id, const std::string &
 
 	return false;
 }
-#endif // USE_QT
+#endif // USE_STL
 
 bool VariableCollection::hasVariable(const Variable * v) const {
-#if USE_QT
-	int i;
-#else
+#if USE_STL > USE_QT
 	unsigned int i;
-#endif // USE_QT
+#else
+	int i;
+#endif // USE_STL
 
 	if(v == NULL) { return false; }
 
@@ -514,11 +628,11 @@ bool VariableCollection::hasVariable(const Variable * v) const {
 }
 
 int VariableCollection::indexOfVariable(const char * id) const {
-#if USE_QT
-	int i;
-#else
+#if USE_STL > USE_QT
 	unsigned int i;
-#endif // USE_QT
+#else
+	int i;
+#endif // USE_STL
 
 	if(id == NULL || Utilities::stringLength(id) == 0) { return -1; }
 
@@ -543,6 +657,12 @@ int VariableCollection::indexOfVariable(const char * id) const {
 
 #if USE_QT
 int VariableCollection::indexOfVariable(const QString & id) const {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.isEmpty()) { return -1; }
 
 	QString formattedID = id.trimmed();
@@ -551,7 +671,7 @@ int VariableCollection::indexOfVariable(const QString & id) const {
 
 	QByteArray formattedIDBytes = formattedID.toLocal8Bit();
 
-	for(int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(formattedIDBytes.data(), m_variables[i]->getID()) == 0) {
 			return i;
 		}
@@ -559,15 +679,23 @@ int VariableCollection::indexOfVariable(const QString & id) const {
 
 	return -1;
 }
-#else
+#endif // USE_QT
+
+#if USE_STL
 int VariableCollection::indexOfVariable(const std::string & id) const {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.empty()) { return -1; }
 
 	std::string formattedID = Utilities::trimString(id);
 
 	if(formattedID.empty()) { return -1; }
 
-	for(unsigned int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(formattedID.data(), m_variables[i]->getID()) == 0) {
 			return i;
 		}
@@ -575,14 +703,14 @@ int VariableCollection::indexOfVariable(const std::string & id) const {
 
 	return -1;
 }
-#endif // USE_QT
+#endif // USE_STL
 
 int VariableCollection::indexOfVariable(const char * id, const char * category) const {
-#if USE_QT
-	int i;
-#else
+#if USE_STL > USE_QT
 	unsigned int i;
-#endif // USE_QT
+#else
+	int i;
+#endif // USE_STL
 
 	if(id == NULL || Utilities::stringLength(id) == 0) { return -1; }
 
@@ -610,6 +738,12 @@ int VariableCollection::indexOfVariable(const char * id, const char * category) 
 
 #if USE_QT
 int VariableCollection::indexOfVariable(const QString & id, const QString & category) const {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.isEmpty()) { return -1; }
 
 	QString formattedID = id.trimmed();
@@ -620,7 +754,7 @@ int VariableCollection::indexOfVariable(const QString & id, const QString & cate
 
 	int categoryIndex = indexOfCategory(category);
 
-	for(int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(m_variables[i]->getCategory() == categoryIndex &&
 		   Utilities::compareStringsIgnoreCase(formattedIDBytes.data(), m_variables[i]->getID()) == 0) {
 			return i;
@@ -629,8 +763,16 @@ int VariableCollection::indexOfVariable(const QString & id, const QString & cate
 
 	return -1;
 }
-#else
+#endif // USE_QT
+
+#if USE_STL
 int VariableCollection::indexOfVariable(const std::string & id, const std::string & category) const {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.empty()) { return -1; }
 
 	std::string formattedID = Utilities::trimString(id);
@@ -639,7 +781,7 @@ int VariableCollection::indexOfVariable(const std::string & id, const std::strin
 
 	int categoryIndex = indexOfCategory(category);
 
-	for(unsigned int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(m_variables[i]->getCategory() == categoryIndex &&
 		   Utilities::compareStringsIgnoreCase(formattedID.data(), m_variables[i]->getID()) == 0) {
 			return i;
@@ -648,14 +790,14 @@ int VariableCollection::indexOfVariable(const std::string & id, const std::strin
 
 	return -1;
 }
-#endif // USE_QT
+#endif // USE_STL
 
 int VariableCollection::indexOfVariable(const Variable * v) const {
-#if USE_QT
-	int i;
-#else
+#if USE_STL > USE_QT
 	unsigned int i;
-#endif // USE_QT
+#else
+	int i;
+#endif // USE_STL
 
 	if(v == NULL) { return -1; }
 
@@ -670,21 +812,21 @@ int VariableCollection::indexOfVariable(const Variable * v) const {
 }
 
 const Variable * VariableCollection::getVariable(int index) const {
-#if USE_QT
-	if(index < 0 || index >= m_variables.size()) { return NULL; }
-#else
+#if USE_STL > USE_QT
 	if(index < 0 || index >= static_cast<int>(m_variables.size())) { return NULL; }
-#endif // USE_QT
+#else
+	if(index < 0 || index >= m_variables.size()) { return NULL; }
+#endif // USE_STL
 
 	return m_variables[index];
 }
 
 const Variable * VariableCollection::getVariable(const char * id) const {
-#if USE_QT
-	int i;
-#else
+#if USE_STL > USE_QT
 	unsigned int i;
-#endif // USE_QT
+#else
+	int i;
+#endif // USE_STL
 
 	if(id == NULL || Utilities::stringLength(id) == 0) { return NULL; }
 
@@ -709,6 +851,12 @@ const Variable * VariableCollection::getVariable(const char * id) const {
 
 #if USE_QT
 const Variable * VariableCollection::getVariable(const QString & id) const {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.isEmpty()) { return NULL; }
 
 	QString formattedID = id.trimmed();
@@ -717,7 +865,7 @@ const Variable * VariableCollection::getVariable(const QString & id) const {
 
 	QByteArray formattedIDBytes = formattedID.toLocal8Bit();
 
-	for(int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(formattedIDBytes.data(), m_variables[i]->getID()) == 0) {
 			return m_variables[i];
 		}
@@ -725,15 +873,23 @@ const Variable * VariableCollection::getVariable(const QString & id) const {
 
 	return NULL;
 }
-#else
+#endif // USE_QT
+
+#if USE_STL
 const Variable * VariableCollection::getVariable(const std::string & id) const {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.empty()) { return NULL; }
 
 	std::string formattedID = Utilities::trimString(id);
 
 	if(formattedID.empty()) { return NULL; }
 
-	for(unsigned int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(formattedID.data(), m_variables[i]->getID()) == 0) {
 			return m_variables[i];
 		}
@@ -741,14 +897,14 @@ const Variable * VariableCollection::getVariable(const std::string & id) const {
 
 	return NULL;
 }
-#endif // USE_QT
+#endif // USE_STL
 
 const Variable * VariableCollection::getVariable(const char * id, const char * category) const {
-#if USE_QT
-	int i;
-#else
+#if USE_STL > USE_QT
 	unsigned int i;
-#endif // USE_QT
+#else
+	int i;
+#endif // USE_STL
 
 	if(id == NULL || Utilities::stringLength(id) == 0) { return NULL; }
 
@@ -776,6 +932,12 @@ const Variable * VariableCollection::getVariable(const char * id, const char * c
 
 #if USE_QT
 const Variable * VariableCollection::getVariable(const QString & id, const QString & category) const {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.isEmpty()) { return NULL; }
 
 	QString formattedID = id.trimmed();
@@ -786,7 +948,7 @@ const Variable * VariableCollection::getVariable(const QString & id, const QStri
 
 	int categoryIndex = indexOfCategory(category);
 
-	for(int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(m_variables[i]->getCategory() == categoryIndex &&
 		   Utilities::compareStringsIgnoreCase(formattedIDBytes.data(), m_variables[i]->getID()) == 0) {
 			return m_variables[i];
@@ -795,8 +957,16 @@ const Variable * VariableCollection::getVariable(const QString & id, const QStri
 
 	return NULL;
 }
-#else
+#endif // USE_QT
+
+#if USE_STL
 const Variable * VariableCollection::getVariable(const std::string & id, const std::string & category) const {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.empty()) { return NULL; }
 
 	std::string formattedID = Utilities::trimString(id);
@@ -805,7 +975,7 @@ const Variable * VariableCollection::getVariable(const std::string & id, const s
 
 	int categoryIndex = indexOfCategory(category);
 
-	for(unsigned int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(m_variables[i]->getCategory() == categoryIndex &&
 		   Utilities::compareStringsIgnoreCase(formattedID.data(), m_variables[i]->getID()) == 0) {
 			return m_variables[i];
@@ -814,14 +984,14 @@ const Variable * VariableCollection::getVariable(const std::string & id, const s
 
 	return NULL;
 }
-#endif // USE_QT
+#endif // USE_STL
 
 const char * VariableCollection::getValue(const char * id) const {
-#if USE_QT
-	int i;
-#else
+#if USE_STL > USE_QT
 	unsigned int i;
-#endif // USE_QT
+#else
+	int i;
+#endif // USE_STL
 
 	if(id == NULL || Utilities::stringLength(id) == 0) { return NULL; }
 
@@ -846,6 +1016,12 @@ const char * VariableCollection::getValue(const char * id) const {
 
 #if USE_QT
 const char * VariableCollection::getValue(const QString & id) const {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.isEmpty()) { return NULL; }
 
 	QString formattedID = id.trimmed();
@@ -854,7 +1030,7 @@ const char * VariableCollection::getValue(const QString & id) const {
 
 	QByteArray formattedIDBytes = formattedID.toLocal8Bit();
 
-	for(int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(formattedIDBytes.data(), m_variables[i]->getID()) == 0) {
 			return m_variables[i]->getValue();
 		}
@@ -862,15 +1038,23 @@ const char * VariableCollection::getValue(const QString & id) const {
 
 	return NULL;
 }
-#else
+#endif // USE_QT
+
+#if USE_STL
 const char * VariableCollection::getValue(const std::string & id) const {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.empty()) { return NULL; }
 
 	std::string formattedID = Utilities::trimString(id);
 
 	if(formattedID.empty()) { return NULL; }
 
-	for(unsigned int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(formattedID.data(), m_variables[i]->getID()) == 0) {
 			return m_variables[i]->getValue();
 		}
@@ -878,14 +1062,14 @@ const char * VariableCollection::getValue(const std::string & id) const {
 
 	return NULL;
 }
-#endif // USE_QT
+#endif // USE_STL
 
 const char * VariableCollection::getValue(const char * id, const char * category) const {
-#if USE_QT
-	int i;
-#else
+#if USE_STL > USE_QT
 	unsigned int i;
-#endif // USE_QT
+#else
+	int i;
+#endif // USE_STL
 
 	if(id == NULL || Utilities::stringLength(id) == 0) { return NULL; }
 
@@ -913,6 +1097,12 @@ const char * VariableCollection::getValue(const char * id, const char * category
 
 #if USE_QT
 const char * VariableCollection::getValue(const QString & id, const QString & category) const {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.isEmpty()) { return NULL; }
 
 	QString formattedID = id.trimmed();
@@ -923,7 +1113,7 @@ const char * VariableCollection::getValue(const QString & id, const QString & ca
 
 	QByteArray formattedIDBytes = formattedID.toLocal8Bit();
 
-	for(int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(m_variables[i]->getCategory() == categoryIndex &&
 		   Utilities::compareStringsIgnoreCase(formattedIDBytes.data(), m_variables[i]->getID()) == 0) {
 			return m_variables[i]->getValue();
@@ -932,8 +1122,16 @@ const char * VariableCollection::getValue(const QString & id, const QString & ca
 
 	return NULL;
 }
-#else
+#endif // USE_QT
+
+#if USE_STL
 const char * VariableCollection::getValue(const std::string & id, const std::string & category) const {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.empty()) { return NULL; }
 
 	std::string formattedID = Utilities::trimString(id);
@@ -942,7 +1140,7 @@ const char * VariableCollection::getValue(const std::string & id, const std::str
 
 	int categoryIndex = indexOfCategory(category);
 
-	for(unsigned int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(m_variables[i]->getCategory() == categoryIndex &&
 		   Utilities::compareStringsIgnoreCase(formattedID.data(), m_variables[i]->getID()) == 0) {
 			return m_variables[i]->getValue();
@@ -951,9 +1149,9 @@ const char * VariableCollection::getValue(const std::string & id, const std::str
 
 	return NULL;
 }
-#endif // USE_QT
+#endif // USE_STL
 
-#if USE_QT
+#if USE_QT >= USE_STL
 QVector<Variable *> * VariableCollection::getVariablesInCategory(const char * category) const {
 	int categoryIndex = indexOfCategory(category);
 
@@ -973,7 +1171,7 @@ QVector<Variable *> * VariableCollection::getVariablesInCategory(const QString &
 
 	return getVariablesInCategory(categoryBytes.data());
 }
-#else
+#elif USE_STL
 std::vector<Variable *> * VariableCollection::getVariablesInCategory(const char * category) const {
 	int categoryIndex = indexOfCategory(category);
 
@@ -994,11 +1192,11 @@ std::vector<Variable *> * VariableCollection::getVariablesInCategory(const std::
 #endif // USE_QT
 
 void VariableCollection::setValue(const char * id, const char * value) {
-#if USE_QT
-	int i;
-#else
+#if USE_STL > USE_QT
 	unsigned int i;
-#endif // USE_QT
+#else
+	int i;
+#endif // USE_STL
 
 	if(id == NULL || Utilities::stringLength(id) == 0) { return; }
 
@@ -1040,6 +1238,12 @@ void VariableCollection::setValue(const char * id, bool value) {
 
 #if USE_QT
 void VariableCollection::setValue(const QString & id, const char * value) {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.isEmpty()) { return; }
 
 	QString formattedID = id.trimmed();
@@ -1050,7 +1254,7 @@ void VariableCollection::setValue(const QString & id, const char * value) {
 
 	bool valueUpdated = false;
 
-	for(int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(formattedIDBytes.data(), m_variables[i]->getID()) == 0) {
 			m_variables[i]->setValue(value);
 			valueUpdated = true;
@@ -1064,6 +1268,12 @@ void VariableCollection::setValue(const QString & id, const char * value) {
 }
 
 void VariableCollection::setValue(const QString & id, const QString & value) {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.isEmpty()) { return; }
 
 	QString formattedID = id.trimmed();
@@ -1074,7 +1284,7 @@ void VariableCollection::setValue(const QString & id, const QString & value) {
 
 	bool valueUpdated = false;
 
-	for(int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(formattedIDBytes.data(), m_variables[i]->getID()) == 0) {
 			m_variables[i]->setValue(value);
 			valueUpdated = true;
@@ -1098,8 +1308,16 @@ void VariableCollection::setValue(const QString & id, double value) {
 void VariableCollection::setValue(const QString & id, bool value) {
 	setValue(id, value ? "true" : "false");
 }
-#else
+#endif // USE_QT
+
+#if USE_STL
 void VariableCollection::setValue(const std::string & id, const char * value) {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.empty()) { return; }
 
 	std::string formattedID = Utilities::trimString(id);
@@ -1108,7 +1326,7 @@ void VariableCollection::setValue(const std::string & id, const char * value) {
 
 	bool valueUpdated = false;
 
-	for(unsigned int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(formattedID.data(), m_variables[i]->getID()) == 0) {
 			m_variables[i]->setValue(value);
 			valueUpdated = true;
@@ -1122,6 +1340,12 @@ void VariableCollection::setValue(const std::string & id, const char * value) {
 }
 
 void VariableCollection::setValue(const std::string & id, const std::string & value) {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.empty()) { return; }
 
 	std::string formattedID = Utilities::trimString(id);
@@ -1130,7 +1354,7 @@ void VariableCollection::setValue(const std::string & id, const std::string & va
 
 	bool valueUpdated = false;
 
-	for(unsigned int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(formattedID.data(), m_variables[i]->getID()) == 0) {
 			m_variables[i]->setValue(value);
 			valueUpdated = true;
@@ -1154,14 +1378,14 @@ void VariableCollection::setValue(const std::string & id, double value) {
 void VariableCollection::setValue(const std::string & id, bool value) {
 	setValue(id, value ? "true" : "false");
 }
-#endif // USE_QT
+#endif // USE_STL
 
 void VariableCollection::setValue(const char * id, const char * value, const char * category) {
-#if USE_QT
-	int i;
-#else
+#if USE_STL > USE_QT
 	unsigned int i;
-#endif // USE_QT
+#else
+	int i;
+#endif // USE_STL
 
 	if(id == NULL || Utilities::stringLength(id) == 0) { return; }
 
@@ -1203,6 +1427,12 @@ void VariableCollection::setValue(const char * id, bool value, const char * cate
 
 #if USE_QT
 void VariableCollection::setValue(const QString & id, const char * value, const QString & category) {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.isEmpty()) { return; }
 
 	QString formattedID = id.trimmed();
@@ -1213,7 +1443,7 @@ void VariableCollection::setValue(const QString & id, const char * value, const 
 
 	int categoryIndex = indexOfCategory(category);
 
-	for(int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(m_variables[i]->getCategory() == categoryIndex &&
 		   Utilities::compareStringsIgnoreCase(formattedIDBytes.data(), m_variables[i]->getID()) == 0) {
 			m_variables[i]->setValue(value);
@@ -1226,6 +1456,12 @@ void VariableCollection::setValue(const QString & id, const char * value, const 
 }
 
 void VariableCollection::setValue(const QString & id, const QString & value, const QString & category) {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.isEmpty()) { return; }
 
 	QString formattedID = id.trimmed();
@@ -1236,7 +1472,7 @@ void VariableCollection::setValue(const QString & id, const QString & value, con
 
 	int categoryIndex = indexOfCategory(category);
 
-	for(int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(m_variables[i]->getCategory() == categoryIndex &&
 		   Utilities::compareStringsIgnoreCase(formattedIDBytes.data(), m_variables[i]->getID()) == 0) {
 			m_variables[i]->setValue(value);
@@ -1259,8 +1495,16 @@ void VariableCollection::setValue(const QString & id, double value, const QStrin
 void VariableCollection::setValue(const QString & id, bool value, const QString & category) {
 	setValue(id, value ? "true" : "false", category);
 }
-#else
+#endif // USE_QT
+
+#if USE_STL
 void VariableCollection::setValue(const std::string & id, const char * value, const std::string & category) {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.empty()) { return; }
 
 	std::string formattedID = Utilities::trimString(id);
@@ -1269,7 +1513,7 @@ void VariableCollection::setValue(const std::string & id, const char * value, co
 
 	int categoryIndex = indexOfCategory(category);
 
-	for(unsigned int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(m_variables[i]->getCategory() == categoryIndex &&
 		   Utilities::compareStringsIgnoreCase(formattedID.data(), m_variables[i]->getID()) == 0) {
 			m_variables[i]->setValue(value);
@@ -1282,6 +1526,12 @@ void VariableCollection::setValue(const std::string & id, const char * value, co
 }
 
 void VariableCollection::setValue(const std::string & id, const std::string & value, const std::string & category) {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.empty()) { return; }
 
 	std::string formattedID = Utilities::trimString(id);
@@ -1290,7 +1540,7 @@ void VariableCollection::setValue(const std::string & id, const std::string & va
 
 	int categoryIndex = indexOfCategory(category);
 
-	for(unsigned int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(m_variables[i]->getCategory() == categoryIndex &&
 		   Utilities::compareStringsIgnoreCase(formattedID.data(), m_variables[i]->getID()) == 0) {
 			m_variables[i]->setValue(value);
@@ -1313,7 +1563,7 @@ void VariableCollection::setValue(const std::string & id, double value, const st
 void VariableCollection::setValue(const std::string & id, bool value, const std::string & category) {
 	setValue(id, value ? "true" : "false", category);
 }
-#endif // USE_QT
+#endif // USE_STL
 
 bool VariableCollection::addVariable(const char * id, const char * value, const char * category) {
 	if(id == NULL || Utilities::stringLength(id) == 0) { return false; }
@@ -1355,7 +1605,9 @@ bool VariableCollection::addVariable(const QString & id, const QString & value, 
 	}
 	return false;
 }
-#else
+#endif // USE_QT
+
+#if USE_STL
 bool VariableCollection::addVariable(const std::string & id, const std::string & value, const std::string & category) {
 	if(id.empty()) { return false; }
 
@@ -1371,16 +1623,16 @@ bool VariableCollection::addVariable(const std::string & id, const std::string &
 	}
 	return false;
 }
-#endif // USE_QT
+#endif // USE_STL
 
 bool VariableCollection::addVariable(Variable * v) {
 	if(v == NULL || Utilities::stringLength(v->getID()) == 0) { return false; }
 
-#if USE_QT
-	if(!hasVariable(v) && v->getCategory() < m_categories.size()) {
-#else
+#if USE_STL > USE_QT
 	if(!hasVariable(v) && v->getCategory() < static_cast<int>(m_categories.size())) {
-#endif // USE_QT
+#else
+	if(!hasVariable(v) && v->getCategory() < m_categories.size()) {
+#endif // USE_STL
 		m_variables.push_back(v);
 		return true;
 	}
@@ -1388,28 +1640,28 @@ bool VariableCollection::addVariable(Variable * v) {
 }
 
 bool VariableCollection::removeVariable(int index) {
-#if USE_QT
-	if(index < 0 || index >= m_variables.size()) { return false; }
-#else
+#if USE_STL > USE_QT
 	if(index < 0 || index >= static_cast<int>(m_variables.size())) { return false; }
-#endif // USE_QT
+#else
+	if(index < 0 || index >= m_variables.size()) { return false; }
+#endif // USE_STL
 
 	delete m_variables[index];
-#if USE_QT
-	m_variables.remove(index);
-#else
+#if USE_STL > USE_QT
 	m_variables.erase(m_variables.begin() + index);
+#else
+	m_variables.remove(index);
 #endif // USE_QT
 
 	return true;
 }
 
 bool VariableCollection::removeVariable(const char * id) {
-#if USE_QT
-	int i;
-#else
+#if USE_STL > USE_QT
 	unsigned int i;
-#endif // USE_QT
+#else
+	int i;
+#endif // USE_STL
 
 	if(id == NULL || Utilities::stringLength(id) == 0) { return false; }
 
@@ -1423,11 +1675,11 @@ bool VariableCollection::removeVariable(const char * id) {
 	for(i=0;i<m_variables.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(formattedID, m_variables[i]->getID()) == 0) {
 			delete m_variables[i];
-#if USE_QT
-			m_variables.remove(i);
-#else
+#if USE_STL > USE_QT
 			m_variables.erase(m_variables.begin() + i);
-#endif // USE_QT
+#else
+			m_variables.remove(i);
+#endif // USE_STL
 
 			delete [] formattedID;
 
@@ -1442,6 +1694,12 @@ bool VariableCollection::removeVariable(const char * id) {
 
 #if USE_QT
 bool VariableCollection::removeVariable(const QString & id) {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.isEmpty()) { return false; }
 
 	QString formattedID = id.trimmed();
@@ -1450,10 +1708,14 @@ bool VariableCollection::removeVariable(const QString & id) {
 
 	QByteArray formattedIDBytes = formattedID.toLocal8Bit();
 
-	for(int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(formattedIDBytes.data(), m_variables[i]->getID()) == 0) {
 			delete m_variables[i];
+#if USE_STL > USE_QT
+			m_variables.erase(m_variables.begin() + i);
+#else
 			m_variables.remove(i);
+#endif // USE_STL
 
 			return true;
 		}
@@ -1461,18 +1723,30 @@ bool VariableCollection::removeVariable(const QString & id) {
 
 	return false;
 }
-#else
+#endif // USE_QT
+
+#if USE_STL
 bool VariableCollection::removeVariable(const std::string & id) {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.empty()) { return false; }
 
 	std::string formattedID = Utilities::trimString(id);
 
 	if(formattedID.empty()) { return false; }
 
-	for(unsigned int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(Utilities::compareStringsIgnoreCase(formattedID.data(), m_variables[i]->getID()) == 0) {
 			delete m_variables[i];
+#if USE_STL > USE_QT
 			m_variables.erase(m_variables.begin() + i);
+#else
+			m_variables.remove(i);
+#endif // USE_STL
 
 			return true;
 		}
@@ -1480,14 +1754,14 @@ bool VariableCollection::removeVariable(const std::string & id) {
 
 	return false;
 }
-#endif // USE_QT
+#endif // USE_STL
 
 bool VariableCollection::removeVariable(const char * id, const char * category) {
-#if USE_QT
-	int i;
-#else
+#if USE_STL > USE_QT
 	unsigned int i;
-#endif // USE_QT
+#else
+	int i;
+#endif // USE_STL
 
 	if(id == NULL || Utilities::stringLength(id)) { return false; }
 
@@ -1504,11 +1778,11 @@ bool VariableCollection::removeVariable(const char * id, const char * category) 
 		if(m_variables[i]->getCategory() == categoryIndex &&
 		   Utilities::compareStringsIgnoreCase(formattedID, m_variables[i]->getID()) == 0) {
 			delete m_variables[i];
-#if USE_QT
-			m_variables.remove(i);
-#else
+#if USE_STL > USE_QT
 			m_variables.erase(m_variables.begin() + i);
-#endif // USE_QT
+#else
+			m_variables.remove(i);
+#endif // USE_STL
 
 			delete [] formattedID;
 
@@ -1523,6 +1797,12 @@ bool VariableCollection::removeVariable(const char * id, const char * category) 
 
 #if USE_QT
 bool VariableCollection::removeVariable(const QString & id, const QString & category) {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.isEmpty()) { return false; }
 
 	QString formattedID = id.trimmed();
@@ -1533,11 +1813,15 @@ bool VariableCollection::removeVariable(const QString & id, const QString & cate
 
 	int categoryIndex = indexOfCategory(category);
 
-	for(int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(m_variables[i]->getCategory() == categoryIndex &&
 		   Utilities::compareStringsIgnoreCase(formattedIDBytes.data(), m_variables[i]->getID()) == 0) {
 			delete m_variables[i];
+#if USE_STL > USE_QT
+			m_variables.erase(m_variables.begin() + i);
+#else
 			m_variables.remove(i);
+#endif // USE_STL
 
 			return true;
 		}
@@ -1545,8 +1829,16 @@ bool VariableCollection::removeVariable(const QString & id, const QString & cate
 
 	return false;
 }
-#else
+#endif // USE_QT
+
+#if USE_STL
 bool VariableCollection::removeVariable(const std::string & id, const std::string & category) {
+#if USE_STL > USE_QT
+	unsigned int i;
+#else
+	int i;
+#endif // USE_STL
+
 	if(id.empty()) { return false; }
 
 	std::string formattedID = Utilities::trimString(id);
@@ -1555,11 +1847,15 @@ bool VariableCollection::removeVariable(const std::string & id, const std::strin
 
 	int categoryIndex = indexOfCategory(category);
 
-	for(unsigned int i=0;i<m_variables.size();i++) {
+	for(i=0;i<m_variables.size();i++) {
 		if(m_variables[i]->getCategory() == categoryIndex &&
 		   Utilities::compareStringsIgnoreCase(formattedID.data(), m_variables[i]->getID()) == 0) {
 			delete m_variables[i];
+#if USE_STL > USE_QT
 			m_variables.erase(m_variables.begin() + i);
+#else
+			m_variables.remove(i);
+#endif // USE_STL
 
 			return true;
 		}
@@ -1567,14 +1863,14 @@ bool VariableCollection::removeVariable(const std::string & id, const std::strin
 
 	return false;
 }
-#endif // USE_QT
+#endif // USE_STL
 
 bool VariableCollection::removeVariable(const Variable * v) {
-#if USE_QT
-	int i;
-#else
+#if USE_STL > USE_QT
 	unsigned int i;
-#endif // USE_QT
+#else
+	int i;
+#endif // USE_STL
 
 	if(v == NULL) { return false; }
 
@@ -1582,11 +1878,11 @@ bool VariableCollection::removeVariable(const Variable * v) {
 		if(v->getCategory() == m_variables[i]->getCategory() &&
 		   Utilities::compareStringsIgnoreCase(v->getID(), m_variables[i]->getID()) == 0) {
 			delete m_variables[i];
-#if USE_QT
-			m_variables.remove(i);
-#else
+#if USE_STL > USE_QT
 			m_variables.erase(m_variables.begin() + i);
-#endif // USE_QT
+#else
+			m_variables.remove(i);
+#endif // USE_STL
 
 			return true;
 		}
@@ -1596,11 +1892,11 @@ bool VariableCollection::removeVariable(const Variable * v) {
 }
 
 void VariableCollection::clearVariables() {
-#if USE_QT
-	int i;
-#else
+#if USE_STL > USE_QT
 	unsigned int i;
-#endif // USE_QT
+#else
+	int i;
+#endif // USE_STL
 
 	for(i=0;i<m_categories.size();i++) {
 		delete [] m_categories[i];
@@ -1617,7 +1913,7 @@ void VariableCollection::sortVariables() {
 	m_variables = mergeSort(m_variables);
 }
 
-#if USE_QT
+#if USE_QT >= USE_STL
 QVector<Variable *> VariableCollection::mergeSort(QVector<Variable *> variables) {
 	if(variables.size() <= 1) {
 		return variables;
@@ -1666,7 +1962,7 @@ QVector<Variable *> VariableCollection::merge(QVector<Variable *> left, QVector<
 
 	return result;
 }
-#else
+#elif USE_STL
 std::vector<Variable *> VariableCollection::mergeSort(std::vector<Variable *> variables) {
 	if(variables.size() <= 1) {
 		return variables;
@@ -1717,7 +2013,7 @@ std::vector<Variable *> VariableCollection::merge(std::vector<Variable *> left, 
 }
 #endif // USE_QT
 
-#if USE_QT
+#if USE_QT >= USE_STL
 VariableCollection * VariableCollection::readFrom(const char * fileName) {
 	if(fileName == NULL || Utilities::stringLength(fileName) == 0) { return NULL; }
 
@@ -1786,7 +2082,7 @@ VariableCollection * VariableCollection::readFrom(const QString & fileName) {
 
 	return readFrom(fileNameBytes.data());
 }
-#else
+#elif USE_STL
 VariableCollection * VariableCollection::readFrom(const char * fileName) {
 	if(fileName == NULL || Utilities::stringLength(fileName) == 0) { return NULL; }
 
@@ -1841,15 +2137,17 @@ VariableCollection * VariableCollection::readFrom(const char * fileName) {
 
 	return variables;
 }
+#endif // USE_QT
 
+#if USE_STL
 VariableCollection * VariableCollection::readFrom(const std::string & fileName) {
 	if(fileName.empty()) { return NULL; }
 
 	return readFrom(fileName.data());
 }
-#endif // USE_QT
+#endif // USE_STL
 
-#if USE_QT
+#if USE_QT >= USE_STL
 bool VariableCollection::writeTo(const char * fileName) const {
 	int lastCategory = Variable::NO_CATEGORY;
 	bool firstLine = true;
@@ -1886,15 +2184,7 @@ bool VariableCollection::writeTo(const char * fileName) const {
 	
 	return true;
 }
-
-bool VariableCollection::writeTo(const QString & fileName) const {
-	if(fileName.isEmpty()) { return NULL; }
-
-	QByteArray fileNameBytes = fileName.toLocal8Bit();
-
-	return writeTo(fileNameBytes.data());
-}
-#else
+#elif USE_STL
 bool VariableCollection::writeTo(const char * fileName) const {
 	int lastCategory = Variable::NO_CATEGORY;
 	bool firstLine = true;
@@ -1921,20 +2211,32 @@ bool VariableCollection::writeTo(const char * fileName) const {
 
 	return true;
 }
+#endif // USE_QT
 
+#if USE_QT
+bool VariableCollection::writeTo(const QString & fileName) const {
+	if(fileName.isEmpty()) { return NULL; }
+
+	QByteArray fileNameBytes = fileName.toLocal8Bit();
+
+	return writeTo(fileNameBytes.data());
+}
+#endif // USE_QT
+
+#if USE_STL
 bool VariableCollection::writeTo(const std::string & fileName) const {
 	if(fileName.empty()) { return NULL; }
 
 	return writeTo(fileName.data());
 }
-#endif // USE_QT
+#endif // USE_STL
 
 bool VariableCollection::operator == (const VariableCollection & v) const {
-#if USE_QT
-	int i;
-#else
+#if USE_STL > USE_QT
 	unsigned int i;
-#endif // USE_QT
+#else
+	int i;
+#endif // USE_STL
 
 	if(m_variables.size() != v.m_variables.size()) { return false; }
 

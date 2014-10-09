@@ -20,7 +20,9 @@ Variable::Variable(const QString & id, const QString & value, int category)
 	setID(id);
 	setValue(value);
 }
-#else
+#endif // USE_QT
+
+#if USE_STL
 Variable::Variable(const std::string & id, const std::string & value, int category)
 	: m_id(NULL) 
 	, m_value(NULL)
@@ -28,7 +30,7 @@ Variable::Variable(const std::string & id, const std::string & value, int catego
 	setID(id);
 	setValue(value);
 }
-#endif // USE_QT
+#endif // USE_STL
 
 Variable::Variable(const Variable & v)
 	: m_id(NULL)
@@ -92,7 +94,9 @@ void Variable::setID(const QString & id) {
 		m_id = Utilities::trimCopyString(idBytes.data());
 	}
 }
-#else
+#endif // USE_QT
+
+#if USE_STL
 void Variable::setID(const std::string & id) {
 	if(m_id != NULL) { delete [] m_id; }
 	
@@ -104,7 +108,7 @@ void Variable::setID(const std::string & id) {
 		m_id = Utilities::trimCopyString(id.data());
 	}
 }
-#endif // USE_QT
+#endif // USE_STL
 
 void Variable::setValue(const char * value) {
 	if(m_value != NULL) { delete [] m_value; }
@@ -131,7 +135,9 @@ void Variable::setValue(const QString & value) {
 		m_value = Utilities::trimCopyString(valueBytes.data());
 	}
 }
-#else
+#endif // USE_QT
+
+#if USE_STL
 void Variable::setValue(const std::string & value) {
 	if(m_value != NULL) { delete [] m_value; }
 	
@@ -143,7 +149,7 @@ void Variable::setValue(const std::string & value) {
 		m_value = Utilities::trimCopyString(value.data());
 	}
 }
-#endif // USE_QT
+#endif // USE_STL
 
 void Variable::setValue(int value) {
 	setValue(Utilities::toString(value));
@@ -166,11 +172,11 @@ void Variable::removeCategory() {
 }
 
 Variable * Variable::parseFrom(const char * data) {
-#if USE_QT
-	int i, j, formattedDataLength;
-#else
+#if USE_STL
 	unsigned int i, j, formattedDataLength;
-#endif // USE_QT
+#else
+	int i, j, formattedDataLength;
+#endif // USE_STL
 
 	if(data == NULL) { return NULL; }
 
@@ -234,7 +240,9 @@ Variable * Variable::parseFrom(const QString & data) {
 
 	return new Variable(Utilities::substring(formattedData, 0, separatorIndex), Utilities::substring(formattedData, separatorIndex + 1, formattedData.length()));
 }
-#else
+#endif // USE_QT
+
+#if USE_STL
 Variable * Variable::parseFrom(const std::string & data) {
 	if(data.empty()) { return NULL; }
 
@@ -259,7 +267,7 @@ Variable * Variable::parseFrom(const std::string & data) {
 
 	return new Variable(Utilities::substring(formattedData, 0, separatorIndex), Utilities::substring(formattedData, separatorIndex + 1, formattedData.length()));
 }
-#endif // USE_QT
+#endif // USE_STL
 
 bool Variable::operator == (const Variable & v) const {
 	return Utilities::compareStringsIgnoreCase(m_id, v.m_id) == 0 &&
