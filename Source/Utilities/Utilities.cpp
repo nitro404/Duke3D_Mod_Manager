@@ -6,7 +6,7 @@ const char Utilities::newLine[] = "\r\n";
 const char Utilities::newLine[] = "\r";
 #else
 const char Utilities::newLine[] = "\n";
-#endif
+#endif // _WIN32
 
 bool Utilities::initialRandomize = true;
 
@@ -79,7 +79,7 @@ bool Utilities::copyString(char * destination, int size, const char * source) {
 	return strcpy_s(destination, size, source) == 0;
 #else
 	return strcpy(destination, source) == 0;
-#endif
+#endif // _WIN32
 }
 
 char * Utilities::copyString(const char * data) {
@@ -134,6 +134,36 @@ char * Utilities::trimCopyString(const char * data) {
 	return newData;
 }
 
+#if USE_STL
+std::string Utilities::trimString(const std::string & data) {
+	if(data.empty()) { return std::string(); }
+	if(data.length() == 1 && (data[0] == ' ' || data[0] == '\t' || data[0] == '\n' || data[0] == '\r')) { return std::string(); }
+
+	int start = 0;
+	int end = data.length();
+
+	for(int i=0;i<static_cast<int>(data.length());i++) {
+		if(data[i] != ' ' && data[i] != '\t' && data[i] != '\n' && data[i] != '\r') {
+			break;
+		}
+
+		start++;
+	}
+
+	for(int i=static_cast<int>(data.length()) - 1;i>=0;i--) {
+		if(data[i] != ' ' && data[i] != '\t' && data[i] != '\n' && data[i] != '\r') {
+			break;
+		}
+
+		end--;
+	}
+
+	if(start > end) { return std::string(); }
+
+	return data.substr(start, end - start);
+}
+#endif // USE_STL
+
 char * Utilities::substring(const char * data, int start, int end) {
 	if(data == NULL || start > end) { return NULL; }
 
@@ -172,6 +202,17 @@ QString Utilities::substring(const QString & data, int start, int end) {
 	return data.mid(startPos, endPos - startPos);
 }
 
+#if USE_STL
+std::string Utilities::substring(const std::string & data, int start, int end) {
+	if(data.empty() || start > end) { return std::string(); }
+
+	int startPos = start < 0 ? 0 : start;
+	int endPos = end > static_cast<int>(data.length()) ? static_cast<int>(data.length()) : end;
+
+	return data.substr(startPos, endPos - startPos);
+}
+#endif // USE_STL
+
 int Utilities::compareStrings(const char * s1, const char * s2, bool caseSensitive) {
 	if(s1 == NULL && s2 == NULL) { return 0; }
 	if(s1 == NULL && s2 != NULL) { return -1; }
@@ -182,15 +223,19 @@ int Utilities::compareStrings(const char * s1, const char * s2, bool caseSensiti
 		return strcmp(s1, s2);
 #else
 		return strcmp(s1, s2);
-#endif
+#endif // _WIN32
 	}
 	else {
 #if _WIN32
 		return _stricmp(s1, s2);
 #else
 		return stricmp(s1, s2);
-#endif
+#endif // _WIN32
 	}
+}
+
+int Utilities::compareStrings(const QString & s1, const QString & s2, bool caseSensitive) {
+	return s1.compare(s2, caseSensitive ? Qt::CaseSensitive : Qt::CaseInsensitive);
 }
 
 int Utilities::compareStrings(const char * s1, const QString & s2, bool caseSensitive) {
@@ -203,7 +248,37 @@ int Utilities::compareStrings(const QString & s1, const char * s2, bool caseSens
 	return compareStrings(s1.isNull() ? NULL : bytes.data(), s2, caseSensitive);
 }
 
+#if USE_STL
+int Utilities::compareStrings(const std::string & s1, const std::string & s2, bool caseSensitive) {
+	return compareStrings(s1.data(), s2.data(), caseSensitive);
+}
+
+int Utilities::compareStrings(const char * s1, const std::string & s2, bool caseSensitive) {
+	return compareStrings(s1, s2.data(), caseSensitive);
+}
+
+int Utilities::compareStrings(const std::string & s1, const char * s2, bool caseSensitive) {
+	return compareStrings(s1.data(), s2, caseSensitive);
+}
+
+#if USE_QT
+int Utilities::compareStrings(const QString & s1, const std::string & s2, bool caseSensitive) {
+	QByteArray bytes = s1.toLocal8Bit();
+	return compareStrings(bytes.data(), s2.data(), caseSensitive);
+}
+
+int Utilities::compareStrings(const std::string & s1, const QString & s2, bool caseSensitive) {
+	QByteArray bytes = s2.toLocal8Bit();
+	return compareStrings(s1.data(), bytes.data(), caseSensitive);
+}
+#endif // USE_QT
+#endif // USE_STL
+
 int Utilities::compareStringsIgnoreCase(const char * s1, const char * s2) {
+	return compareStrings(s1, s2, false);
+}
+
+int Utilities::compareStringsIgnoreCase(const QString & s1, const QString & s2) {
 	return compareStrings(s1, s2, false);
 }
 
@@ -216,6 +291,32 @@ int Utilities::compareStringsIgnoreCase(const QString & s1, const char * s2) {
 	QByteArray bytes = s1.toLocal8Bit();
 	return compareStrings(s1.isNull() ? NULL : bytes.data(), s2, false);
 }
+
+#if USE_STL
+int Utilities::compareStringsIgnoreCase(const std::string & s1, const std::string & s2) {
+	return compareStrings(s1.data(), s2.data(), false);
+}
+
+int Utilities::compareStringsIgnoreCase(const char * s1, const std::string & s2) {
+	return compareStrings(s1, s2.data(), false);
+}
+
+int Utilities::compareStringsIgnoreCase(const std::string & s1, const char * s2) {
+	return compareStrings(s1.data(), s2, false);
+}
+
+#if USE_QT
+int Utilities::compareStringsIgnoreCase(const QString & s1, const std::string & s2) {
+	QByteArray bytes = s1.toLocal8Bit();
+	return compareStrings(bytes.data(), s2.data(), false);
+}
+
+int Utilities::compareStringsIgnoreCase(const std::string & s1, const QString & s2) {
+	QByteArray bytes = s2.toLocal8Bit();
+	return compareStrings(s1.data(), bytes.data(), false);
+}
+#endif // USE_QT
+#endif // USE_STL
 
 int Utilities::firstIndexOf(const char * data, char c) {
 	if(data == NULL) { return -1; }
@@ -238,6 +339,52 @@ int Utilities::lastIndexOf(const char * data, char c) {
 		}
 	}
 	return -1;
+}
+
+QString Utilities::getVariableID(const char * data) {
+	if(data == NULL) { return QString(); }
+
+	return getVariableID(QString(data));
+}
+
+QString Utilities::getVariableID(const QString & data) {
+	if(data.isNull()) { return QString(); }
+
+	QString formattedData = data.trimmed();
+	if(formattedData.isEmpty()) { return QString(""); }
+
+	int separatorIndex = -1;
+	for(int i=0;i<formattedData.length();i++) {
+		if(formattedData[i] == ':' || formattedData[i] == '=') {
+			separatorIndex = i;
+			break;
+		}
+	}
+	if(separatorIndex < 0) { return QString(); }
+
+	return substring(formattedData, 0, separatorIndex).trimmed();
+}
+
+QString Utilities::getVariableValue(const char * data) {
+	return getVariableValue(QString(data));
+}
+
+QString Utilities::getVariableValue(const QString & data) {
+	if(data.isNull()) { return QString(); }
+
+	QString formattedData = data.trimmed();
+	if(formattedData.isEmpty()) { return QString(""); }
+
+	int separatorIndex = -1;
+	for(int i=0;i<formattedData.length();i++) {
+		if(formattedData[i] == ':' || formattedData[i] == '=') {
+			separatorIndex = i;
+			break;
+		}
+	}
+	if(separatorIndex < 0) { return QString(); }
+
+	return substring(formattedData, separatorIndex + 1, formattedData.length()).trimmed();
 }
 
 QString Utilities::getCommand(const char * data) {
@@ -274,78 +421,192 @@ QString Utilities::getArguments(const QString & data) {
 	return substring(newData, split + 1, newData.length()).trimmed();
 }
 
-int Utilities::parseBoolean(const char * data) {
-	if(data == NULL) { return -1; }
-
-	return parseBoolean(QString(data));
-}
-
-int Utilities::parseBoolean(const QString & data) {
-	static const QRegExp  trueRegExp("^(t(rue)?|1|on|y(es)?)$");
-	static const QRegExp falseRegExp("^(f(alse)?|0|off|n(o)?)$");
-
-	QString formattedData = data.trimmed().toLower();
-
-	if(formattedData.isEmpty()) { return -1; }
-
-	if(trueRegExp.exactMatch(formattedData)) {
-		return 1;
+bool Utilities::parseBoolean(const char * data, bool * valid) {
+	if(data == NULL) {
+		if(valid != NULL) { *valid = false; }
+		return false;
 	}
-	else if(falseRegExp.exactMatch(formattedData)) {
-		return 0;
+
+	char * trimmedData = trimCopyString(data);
+	if(stringLength(trimmedData) == 0) {
+		if(valid != NULL) { *valid = false; }
+		delete [] trimmedData;
+		return false;
 	}
-	return -1;
-}
 
-bool Utilities::parseBoolean(const char * data, bool & boolean) {
-	if(data == NULL) { return false; }
-
-	return parseBoolean(QString(data), boolean);
-}
-
-bool Utilities::parseBoolean(const QString & data, bool & boolean) {
-	static const QRegExp  trueRegExp("^(t(rue)?|1|on|y(es)?)$");
-	static const QRegExp falseRegExp("^(f(alse)?|0|off|n(o)?)$");
-
-	QString formattedData = data.trimmed().toLower();
-
-	if(formattedData.isEmpty()) { return false; }
-
-	if(trueRegExp.exactMatch(formattedData)) {
-		boolean = true;
-		return true;
+	if(stringLength(trimmedData) == 1) {
+		if(trimmedData[0] == 't' ||
+		   trimmedData[0] == '1' ||
+		   trimmedData[0] == 'y') {
+			if(valid != NULL) { *valid = true; }
+			delete [] trimmedData;
+			return true;
+		}
+		else if(trimmedData[0] == 'f' ||
+				trimmedData[0] == '0' ||
+				trimmedData[0] == 'n') {
+			if(valid != NULL) { *valid = true; }
+			delete [] trimmedData;
+			return false;
+		}
 	}
-	else if(falseRegExp.exactMatch(formattedData)) {
-		boolean = false;
-		return true;
-	}
-	return false;
-}
-
-QString Utilities::generateFullPath(const char * path, const char * fileName) {
-	return generateFullPath(QString(path), QString(fileName));
-}
-
-QString Utilities::generateFullPath(const QString & path, const QString & fileName) {
-	QString trimmedPath = path.trimmed();
-	QString trimmedFileName = fileName.trimmed();
-	QString fullPath("");
-
-	if(trimmedPath.isEmpty())	 { return trimmedFileName; }
-	if(trimmedFileName.isEmpty()) { return trimmedPath; }
-
-	if(Utilities::compareStrings(trimmedPath, ".") != 0) {
-		fullPath.append(trimmedPath);
-
-		if(trimmedPath[trimmedPath.length() - 1] != '/' && trimmedPath[trimmedPath.length() - 1] != '\\') {
-			fullPath.append("/");
+	else {
+		if(compareStringsIgnoreCase(trimmedData, "true") == 0 ||
+		   compareStringsIgnoreCase(trimmedData, "on") == 0 ||
+		   compareStringsIgnoreCase(trimmedData, "yes") == 0) {
+			if(valid != NULL) { *valid = true; }
+			delete [] trimmedData;
+			return true;
+		}
+		else if(compareStringsIgnoreCase(trimmedData, "false") == 0 ||
+				compareStringsIgnoreCase(trimmedData, "off") == 0 ||
+				compareStringsIgnoreCase(trimmedData, "no") == 0) {
+			if(valid != NULL) { *valid = true; }
+			delete [] trimmedData;
+			return false;
 		}
 	}
 
-	fullPath.append(trimmedFileName);
-
-	return fullPath;
+	if(valid != NULL) { *valid = false; }
+	delete [] trimmedData;
+	return false;
 }
+
+bool Utilities::parseBoolean(const QString & data, bool * valid) {
+	if(data.isEmpty()) {
+		if(valid != NULL) { *valid = false; }
+		return false;
+	}
+
+	QByteArray bytes = data.toLocal8Bit();
+
+	return parseBoolean(bytes.data(), valid);
+}
+
+#if USE_STL
+bool Utilities::parseBoolean(const std::string & data, bool * valid) {
+	if(data.empty()) {
+		if(valid != NULL) { *valid = false; }
+		return false;
+	}
+
+	return parseBoolean(data.data(), valid);
+}
+#endif // USE_STL
+
+int Utilities::parseInteger(const char * data, bool * valid) {
+	if(data == NULL || stringLength(data) == 0) {
+		if(valid != NULL) { *valid = false; }
+		return 0;
+	}
+
+#if USE_QT
+	QString formattedData = QString(data).trimmed();
+	int value = formattedData.toInt(valid);
+	return value;
+#elif USE_STL
+	char * trimmedData = trimCopyString(data);
+	if(stringLength(trimmedData) == 0) {
+		if(valid != NULL) { *valid = false; }
+		delete [] trimmedData;
+		return 0;
+	}
+
+	for(int i=0;i<stringLength(trimmedData);i++) {
+		if(!(trimmedData[i] == '-' || (trimmedData[i] >= '0' && trimmedData[i] <= '9'))) {
+			if(valid != NULL) { *valid = false; }
+			delete [] trimmedData;
+			return 0;
+		}
+	}
+
+	if(valid != NULL) { *valid = true; }
+	float value = atoi(trimmedData);
+
+	delete [] trimmedData;
+
+	return value;
+#endif // USE_QT
+}
+
+int Utilities::parseInteger(const QString & data, bool * valid) {
+	if(data.isEmpty()) {
+		if(valid != NULL) { *valid = false; }
+		return 0;
+	}
+
+	QByteArray bytes = data.toLocal8Bit();
+
+	return parseInteger(bytes.data(), valid);
+}
+
+#if USE_STL
+int Utilities::parseInteger(const std::string & data, bool * valid) {
+	if(data.empty()) {
+		if(valid != NULL) { *valid = false; }
+		return 0;
+	}
+
+	return parseInteger(data.data(), valid);
+}
+#endif // USE_STL
+
+float Utilities::parseFloat(const char * data, bool * valid) {
+	if(data == NULL || stringLength(data) == 0) {
+		if(valid != NULL) { *valid = false; }
+		return 0.0f;
+	}
+
+#if USE_QT
+	QString formattedData = QString(data).trimmed();
+	float value = formattedData.toFloat(valid);
+	return value;
+#elif USE_STL
+	char * trimmedData = trimCopyString(data);
+	if(stringLength(trimmedData) == 0) {
+		if(valid != NULL) { *valid = false; }
+		delete [] trimmedData;
+		return 0.0f;
+	}
+
+	for(int i=0;i<stringLength(trimmedData);i++) {
+		if(!(trimmedData[i] == '-' || trimmedData[i] == '.' || (trimmedData[i] >= '0' && trimmedData[i] <= '9'))) {
+			if(valid != NULL) { *valid = false; }
+			delete [] trimmedData;
+			return 0.0f;
+		}
+	}
+
+	if(valid != NULL) { *valid = true; }
+	float value = atof(trimmedData);
+
+	delete [] trimmedData;
+
+	return value;
+#endif // USE_QT
+}
+
+float Utilities::parseFloat(const QString & data, bool * valid) {
+	if(data.isEmpty()) {
+		if(valid != NULL) { *valid = false; }
+		return 0.0f;
+	}
+
+	QByteArray bytes = data.toLocal8Bit();
+
+	return parseFloat(bytes.data(), valid);
+}
+
+#if USE_STL
+float Utilities::parseFloat(const std::string & data, bool * valid) {
+	if(data.empty()) {
+		if(valid != NULL) { *valid = false; }
+		return 0.0f;
+	}
+
+	return parseFloat(data.data(), valid);
+}
+#endif // USE_STL
 
 QDate Utilities::parseDate(const char * date) {
 	if(date == NULL) { return QDate(); }
@@ -357,7 +618,7 @@ QDate Utilities::parseDate(const QString & date) {
 	if(date.trimmed().isEmpty()) { return QDate(); }
 
 	static const QRegExp    dateRegExp("[ ,]+");
-	static const QRegExp integerRegExp("^[0-9]+$");
+	static const QRegExp integerRegExp("^[-0-9]+$");
 
 	QStringList dateParts = date.trimmed().split(dateRegExp, QString::SkipEmptyParts);
 
@@ -393,6 +654,31 @@ QString Utilities::dateToString(const QDate & date) {
 	if(date.isNull()) { return QString(); }
 
 	return QString("%1 %2, %3").arg(monthStrings[date.month() - 1]).arg(date.day()).arg(date.year());
+}
+
+QString Utilities::generateFullPath(const char * path, const char * fileName) {
+	return generateFullPath(QString(path), QString(fileName));
+}
+
+QString Utilities::generateFullPath(const QString & path, const QString & fileName) {
+	QString trimmedPath = path.trimmed();
+	QString trimmedFileName = fileName.trimmed();
+	QString fullPath("");
+
+	if(trimmedPath.isEmpty())	 { return trimmedFileName; }
+	if(trimmedFileName.isEmpty()) { return trimmedPath; }
+
+	if(Utilities::compareStrings(trimmedPath, ".") != 0) {
+		fullPath.append(trimmedPath);
+
+		if(trimmedPath[trimmedPath.length() - 1] != '/' && trimmedPath[trimmedPath.length() - 1] != '\\') {
+			fullPath.append("/");
+		}
+	}
+
+	fullPath.append(trimmedFileName);
+
+	return fullPath;
 }
 
 char * Utilities::getFileNameNoExtension(const char * fileName) {
