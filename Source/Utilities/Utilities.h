@@ -42,8 +42,8 @@ namespace Utilities {
 	void randomSeed(unsigned int seed);
 	int randomInteger(int min, int max, bool randomize = false);
 	float randomFloat(float min, float max, bool randomize = false);
-	int charLength(char n);
-	int unsignedCharLength(unsigned char n);
+	int byteLength(byte n);
+	int unsignedByteLength(unsigned byte n);
 	int shortLength(short n);
 	int unsignedShortLength(unsigned short n);
 	int intLength(int n);

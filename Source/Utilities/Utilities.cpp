@@ -54,9 +54,9 @@ namespace Utilities {
 		}
 
 #if USE_QT
-		return ((static_cast<float>(qrand()) / static_cast<float>(RAND_MAX)) * (max - min + 1)) + min;
+		return ((static_cast<float>(qrand()) / static_cast<float>(RAND_MAX)) * (max - min)) + min;
 #else // USE_STL
-		return ((static_cast<float>(rand()) / static_cast<float>(RAND_MAX)) * (max - min + 1)) + min;
+		return ((static_cast<float>(rand()) / static_cast<float>(RAND_MAX)) * (max - min)) + min;
 #endif // USE_QT / USE_STL
 	}
 
