@@ -2,9 +2,11 @@ DUKE3D/*
 DOSBox/*
 Debug/*
 Release/*
+Build/*
 Misc/*
 Mods/*
 Old/*
+.vs
 CDROM.INI
 DUKE3D.CFG
 stderr.txt
