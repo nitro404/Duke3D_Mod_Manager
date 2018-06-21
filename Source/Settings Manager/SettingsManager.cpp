@@ -24,6 +24,8 @@ const char * SettingsManager::defaultWindowsSetupScriptFileName = "duke3d_setup.
 const ModManagerModes::ModManagerMode SettingsManager::defaultModManagerMode = ModManagerModes::defaultMode;
 const GameTypes::GameType SettingsManager::defaultGameType = GameTypes::defaultGameType;
 const char * SettingsManager::defaultServerIPAddress = "127.0.0.1";
+const int SettingsManager::defaultLocalServerPort = 31337;
+const int SettingsManager::defaultRemoteServerPort = 31337;
 
 SettingsManager::SettingsManager()
 	: m_variables(new VariableCollection())
@@ -47,7 +49,9 @@ SettingsManager::SettingsManager()
 	, windowsSetupScriptFileName(NULL)
 	, modManagerMode(defaultModManagerMode)
 	, gameType(defaultGameType)
-	, serverIPAddress(NULL) {
+	, serverIPAddress(NULL)
+	, localServerPort(0)
+	, remoteServerPort(0) {
 	if(instance == NULL) {
 		instance = this;
 	}
@@ -76,7 +80,9 @@ SettingsManager::SettingsManager(const SettingsManager & s)
 	, windowsSetupScriptFileName(NULL)
 	, modManagerMode(s.modManagerMode)
 	, gameType(s.gameType)
-	, serverIPAddress(NULL) {
+	, serverIPAddress(NULL)
+	, localServerPort(s.localServerPort)
+	, remoteServerPort(s.remoteServerPort) {
 	if(instance == NULL) {
 		instance = this;
 	}
@@ -133,6 +139,8 @@ SettingsManager & SettingsManager::operator = (const SettingsManager & s) {
 
 	modManagerMode = s.modManagerMode;
 	gameType = s.gameType;
+	localServerPort = s.localServerPort;
+	remoteServerPort = s.remoteServerPort;
 
 	modListFileName = Utilities::copyString(s.modListFileName);
 	favouritesListFileName = Utilities::copyString(s.favouritesListFileName);
@@ -232,6 +240,8 @@ void SettingsManager::reset() {
 
 	modManagerMode = defaultModManagerMode;
 	gameType = defaultGameType;
+	localServerPort = defaultLocalServerPort;
+	remoteServerPort = defaultRemoteServerPort;
 }
 
 bool SettingsManager::load(const ArgumentParser * args) {
@@ -416,6 +426,18 @@ bool SettingsManager::loadFrom(const char * fileName) {
 		if(serverIPAddress != NULL) { delete [] serverIPAddress; }
 		serverIPAddress = Utilities::copyString(data);
 	}
+
+	data = m_variables->getValue("Local Server Port", "Options");
+	if (data != NULL) {
+		int value = atoi(data);
+		if (value > 0) { localServerPort = value; }
+	}
+
+	data = m_variables->getValue("Remote Server Port", "Options");
+		if (data != NULL) {
+		int value = atoi(data);
+		if (value > 0) { remoteServerPort = value; }
+	}
 	
 	return true;
 }
@@ -448,6 +470,8 @@ bool SettingsManager::saveTo(const char * fileName) const {
 	m_variables->setValue("Mod Manager Mode", ModManagerModes::toString(modManagerMode), "Options");
 	m_variables->setValue("Game Type", GameTypes::toString(gameType), "Options");
 	m_variables->setValue("Server IP Address", serverIPAddress, "Options");
+	m_variables->setValue("Local Server Port", localServerPort, "Options");
+	m_variables->setValue("Remote Server Port", remoteServerPort, "Options");
 
 	// group the variables by categories
 	m_variables->sortVariables();

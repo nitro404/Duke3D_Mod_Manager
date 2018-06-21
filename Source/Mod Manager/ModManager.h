@@ -63,6 +63,7 @@ public:
 	void runGameTypePrompt(const QString & args = QString());
 	void runModePrompt(const QString & args = QString());
 	void runIPAddressPrompt(const QString & args = QString());
+	void runPortPrompt(const QString & args = QString());
 	void runSelectRandomModPrompt();
 	void runSearchPrompt(const QString & args = QString());
 	bool runModVersionSelectionPrompt();

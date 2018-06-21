@@ -49,6 +49,8 @@ public:
 	const static ModManagerModes::ModManagerMode defaultModManagerMode;
 	const static GameTypes::GameType defaultGameType;
 	const static char * defaultServerIPAddress;
+	const static int defaultLocalServerPort;
+	const static int defaultRemoteServerPort;
 	
 	char * modListFileName;
 	char * favouritesListFileName;
@@ -71,6 +73,8 @@ public:
 	ModManagerModes::ModManagerMode modManagerMode;
 	GameTypes::GameType gameType;
 	char * serverIPAddress;
+	int localServerPort;
+	int remoteServerPort;
 
 private:
 	static SettingsManager * instance;

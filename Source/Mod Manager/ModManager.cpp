@@ -404,6 +404,7 @@ void ModManager::runMenu() {
 	static const QRegExp   filterRegExp("^(f(ilter)?)([ ]+.*)?");
 	static const QRegExp     sortRegExp("^(o|sort)([ ]+.*)?");
 	static const QRegExp       ipRegExp("^(ip|c(onnect)?)([ ]+.*)?");
+	static const QRegExp     portRegExp("^(p(ort)?)([ ]+.*)?");
 	static const QRegExp gameTypeRegExp("^(t(ype)?)([ ]+.*)?");
 	static const QRegExp     modeRegExp("^(m(ode)?)([ ]+.*)?");
 	static const QRegExp     helpRegExp("^(\\?|h(elp)?)$");
@@ -500,6 +501,10 @@ void ModManager::runMenu() {
 			runIPAddressPrompt(Utilities::getArguments(data));
 			continue;
 		}
+		else if(portRegExp.exactMatch(formattedData)) {
+			runPortPrompt(Utilities::getArguments(data));
+			continue;
+		}
 		else if(gameTypeRegExp.exactMatch(formattedData)) {
 			runGameTypePrompt(Utilities::getArguments(data));
 			continue;
@@ -559,6 +564,7 @@ void ModManager::runMenu() {
 			printf("   s[o]rt <args> - change mod list sorting options.\n");
 			printf("[c]onnect <args> - obtains the ip address of the host server.\n");
 			printf("       ip <args> - obtains the ip address of the host server.\n");
+			printf("   [p]ort <args> - Obtains the port of the local or remote server depending on specified launcher mode.\n");
 			printf("   [t]ype <args> - change game type (single / multi player).\n");
 			printf("   [m]ode <args> - change mod manager launch mode (regular / dosbox).\n");
 			printf("   [b]ack -------- returns to the previous menu (if applicable).\n");
@@ -1254,6 +1260,102 @@ void ModManager::runIPAddressPrompt(const QString & args) {
 	}
 }
 
+void ModManager::runPortPrompt(const QString & args) {
+	if (!m_initialized) { return; }
+
+	bool valid = false;
+	QTextStream in(stdin);
+	QString input, data, formattedData;
+	QString trimmedArgs = args.trimmed();
+	bool skipInput = !trimmedArgs.isEmpty();
+
+	static const QRegExp cancelRegExp("^(a(bort)?)|(b(ack)?)|(c(ancel)?)$");
+	static const QRegExp   helpRegExp("^(\\?|h(elp)?)$");
+
+	while (true) {
+		Utilities::clear();
+
+		if (skipInput) {
+			data = trimmedArgs;
+			skipInput = false;
+		}
+		else {
+			printf("Enter %s server port:\n", m_gameType == GameTypes::Server ? "local" : "remote");
+			printf("> ");
+
+			input = in.readLine();
+			data = input.trimmed();
+			formattedData = data.toLower();
+
+			printf("\n");
+		}
+
+		if (cancelRegExp.exactMatch(data)) {
+			return;
+		}
+		else if (helpRegExp.exactMatch(data)) {
+			Utilities::clear();
+
+			printf(" [a]bort - returns to previous menu.\n");
+			printf("  [b]ack - returns to previous menu.\n");
+			printf("[c]ancel - returns to previous menu.\n");
+			printf("  [h]elp - displays this help message.\n");
+			printf("       ? - displays this help message.\n");
+			printf("\n");
+
+			Utilities::pause();
+
+			continue;
+		}
+
+		valid = true;
+
+		if (data.length() == 0) { valid = false; }
+
+		for (int i = 0; i<data.length(); i++) {
+			if (data[i] == ' ' || data[i] == '\t') {
+				valid = false;
+			}
+		}
+
+		QByteArray dataBytes = data.toLocal8Bit();
+		if (valid) {
+			int port = Utilities::parseInteger(dataBytes.data(), &valid);
+
+			if (port <= 0) {
+				valid = false;
+			}
+
+			if(valid) {
+				if (m_gameType == GameTypes::Server) {
+					SettingsManager::getInstance()->localServerPort = port;
+				}
+				else {
+					SettingsManager::getInstance()->remoteServerPort = port;
+				}
+			}
+
+			if(valid) {
+				printf("%s Server Port changed to: %s\n\n", m_gameType == GameTypes::Server ? "Local" : "Remote", dataBytes.data());
+
+				Utilities::pause();
+
+				break;
+			}
+			else {
+				printf("Invalid %s Server Port: %s\n\n", m_gameType == GameTypes::Server ? "Local" : "Remote", dataBytes.data());
+
+				Utilities::pause();
+			}
+		}
+		else {
+			printf("Invalid %s Server Port: %s\n\n", m_gameType == GameTypes::Server ? "Local" : "Remote", dataBytes.data());
+
+			Utilities::pause();
+		}
+	}
+}
+
 void ModManager::runSelectRandomModPrompt() {
 	if(!m_initialized) { return; }
 
@@ -1661,15 +1763,24 @@ bool ModManager::updateScriptArgs() {
 	if(Utilities::stringLength(SettingsManager::getInstance()->gamePath) > 0 && Utilities::compareStrings(SettingsManager::getInstance()->gamePath, ".") != 0) {
 		m_scriptArgs.setArgument("GAMEPATH", SettingsManager::getInstance()->gamePath);
 	}
+	
 	m_scriptArgs.setArgument("DUKE3D", SettingsManager::getInstance()->gameFileName);
 	m_scriptArgs.setArgument("SETUP", SettingsManager::getInstance()->setupFileName);
 	m_scriptArgs.setArgument("KEXTRACT", SettingsManager::getInstance()->kextractFileName);
 	m_scriptArgs.setArgument("MODDIR", Utilities::generateFullPath(SettingsManager::getInstance()->modsDirectoryPath, SettingsManager::getInstance()->modsDirectoryName));
+	
 	if(m_selectedMod != NULL && m_selectedMod->getVersion(m_selectedModVersionIndex) != NULL) {
 		m_scriptArgs.setArgument("CON", m_selectedMod->getVersion(m_selectedModVersionIndex)->getFileNameByType("con"));
 		m_scriptArgs.setArgument("GROUP", m_selectedMod->getVersion(m_selectedModVersionIndex)->getFileNameByType("grp"));
 	}
-	m_scriptArgs.setArgument("IP", SettingsManager::getInstance()->serverIPAddress);
+
+	if(m_gameType == GameTypes::Client) {
+		m_scriptArgs.setArgument("IP", SettingsManager::getInstance()->serverIPAddress);
+		m_scriptArgs.setArgument("PORT", Utilities::toString(SettingsManager::getInstance()->remoteServerPort));
+	}
+	else if(m_gameType == GameTypes::Server) {
+		m_scriptArgs.setArgument("PORT", Utilities::toString(SettingsManager::getInstance()->localServerPort));
+	}
 
 	return true;
 }
@@ -1721,6 +1832,33 @@ bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
 							printf("\nInvalid IP Address entered in arguments: %s\n\n", ipAddressBytes.data());
 
 							runIPAddressPrompt();
+						}
+					}
+				}
+
+				if(m_gameType == GameTypes::Client || m_gameType == GameTypes::Server) {
+					if(args->hasArgument("port")) {
+						QString portData = args->getValue("port").trimmed();
+						QByteArray portBytes = portData.toLocal8Bit();
+						bool valid = false;
+						int port = Utilities::parseInteger(portBytes.data(), &valid);
+
+						if(port <= 0) {
+							valid = false;
+						}
+
+						if(valid) {
+							if (m_gameType == GameTypes::Server) {
+								SettingsManager::getInstance()->localServerPort = port;
+							}
+							else {
+								SettingsManager::getInstance()->remoteServerPort = port;
+							}
+						}
+						else {
+							printf("\nInvalid %s Server Port entered in arguments: %s\n\n", m_gameType == GameTypes::Server ? "Local" : "Remote", portBytes.data());
+
+							runPortPrompt();
 						}
 					}
 				}
@@ -1986,6 +2124,7 @@ void ModManager::displayArgumentHelp() {
 	printf(" -m DOSBox/Windows - specifies mod manager mode, default: DOSBox.\n");
 	printf(" -t Game/Setup/Client/Server - specifies game type, default: Game.\n");
 	printf(" -ip 127.0.0.1 - specifies host ip address if running in client mode.\n");
+	printf(" -port 1337 - Specifies server port when running in client or server mode.\n");
 	printf(" -g Mod.grp - manually specifies a group file to use.\n");
 	printf(" -x Mod.con - manually specifies a game con file to use.\n");
 	printf(" -s \"Mod Name\" - searches for and selects the matching mod, if there is one.\n");
