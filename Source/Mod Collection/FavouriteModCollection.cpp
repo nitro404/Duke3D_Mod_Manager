@@ -416,7 +416,7 @@ bool FavouriteModCollection::loadFavouritesList(const char * fileName) {
 		if(mod != NULL) {
 			newFavourite = new ModInformation(mod->getName(), mod->getLatestVersion());
 			if(!addFavourite(newFavourite)) {
-				printf("Attempted to add duplicate favourite mod: %s\n", newFavourite->getFullName());
+				printf("Attempted to add duplicate favourite mod: %s\n", newFavourite->getFullName().toLocal8Bit().data());
 
 				delete newFavourite;
 			}
@@ -532,7 +532,7 @@ bool FavouriteModCollection::loadFavouritesXML(const char * fileName) {
 			if(!name.isEmpty()) {
 				newFavourite = new ModInformation(name, version);
 				if(!addFavourite(newFavourite)) {
-					printf("Attempted to add duplicate favourite mod: %s\n", newFavourite->getFullName());
+					printf("Attempted to add duplicate favourite mod: %s\n", newFavourite->getFullName().toLocal8Bit().data());
 
 					delete newFavourite;
 				}
