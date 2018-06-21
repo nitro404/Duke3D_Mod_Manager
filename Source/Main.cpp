@@ -4,10 +4,6 @@
 #include "Mod Manager/ModManager.h"
 #include "Mod Collection/ModCollection.h"
 
-#if _DEBUG
-#include <vld.h>
-#endif // _DEBUG
-
 int main(int argc, char * argv[]) {
 	ModManager modManager;
 
