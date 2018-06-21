@@ -79,6 +79,8 @@ public:
 	static int checkForMissingExecutables();
 
 	static void displayArgumentHelp();
+
+	static const char * VERSION;
 	
 private:
 	bool m_initialized;

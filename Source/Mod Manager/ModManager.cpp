@@ -1,5 +1,7 @@
 #include "Mod Manager/ModManager.h"
 
+const char * ModManager::VERSION = "1.0.0";
+
 ModManager::ModManager()
 	: m_initialized(false)
 	, m_arguments(NULL)
