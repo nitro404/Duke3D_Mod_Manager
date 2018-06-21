@@ -30,8 +30,6 @@
 #include "TargetConditionals.h"
 #endif // __APPLE__
 
-#define byte char
-
 namespace Utilities {
 
 	extern const char newLine[];
@@ -42,8 +40,8 @@ namespace Utilities {
 	void randomSeed(unsigned int seed);
 	int randomInteger(int min, int max, bool randomize = false);
 	float randomFloat(float min, float max, bool randomize = false);
-	int byteLength(byte n);
-	int unsignedByteLength(unsigned byte n);
+	int byteLength(char n);
+	int unsignedByteLength(unsigned char n);
 	int shortLength(short n);
 	int unsignedShortLength(unsigned short n);
 	int intLength(int n);

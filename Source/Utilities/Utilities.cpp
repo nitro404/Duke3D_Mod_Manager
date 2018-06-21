@@ -101,7 +101,7 @@ namespace Utilities {
 	}
 
 	unsigned int stringLength(const char * s) {
-		return s == NULL ? 0 : strlen(s);
+		return s == NULL ? 0 : static_cast<unsigned int>(strlen(s));
 	}
 
 	const char * toString(int value) {
