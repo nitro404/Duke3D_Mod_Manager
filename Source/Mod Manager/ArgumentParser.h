@@ -13,7 +13,7 @@ public:
 	ArgumentParser(int argc, char * argv[]);
 	ArgumentParser(const ArgumentParser & a);
 	ArgumentParser & operator = (const ArgumentParser & a);
-	~ArgumentParser();
+	virtual ~ArgumentParser();
 
 	bool parseArguments(int argc, char * argv[]);
 

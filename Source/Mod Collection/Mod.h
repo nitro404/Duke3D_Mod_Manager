@@ -16,7 +16,7 @@ public:
 	Mod(const QString & name, const QString & id);
 	Mod(const Mod & m);
 	Mod & operator = (const Mod & m);
-	~Mod();
+	virtual ~Mod();
 
 	const char * getName() const;
 	const QString getFullName(int versionIndex = 0) const;

@@ -128,6 +128,30 @@ namespace Utilities {
 		return buffer;
 	}
 
+	char * byteArrayCopyOfRange(const char * data, int length, int start, int end) {
+		if(start < 0 || length < 0 || end > length || start > end) { return NULL; }
+
+		int newLength = end - start;
+
+		if(newLength < 0) { return NULL; }
+
+		char * dataCopy = new char[newLength];
+
+		if(newLength > 0) {
+			char * dataOffset = const_cast<char *>(data) + (start * sizeof(char));
+			
+			memcpy(dataCopy, dataOffset, newLength);
+		}
+
+		return dataCopy;
+	}
+
+#if USE_QT
+	char * byteArrayCopyOfRange(const QByteArray & data, int start, int end) {
+		return byteArrayCopyOfRange(data.data(), data.size(), start, end);
+	}
+#endif // USE_QT
+
 	bool copyString(char * destination, int size, const char * source) {
 		if(source == NULL || destination == NULL || size < 1) { return false; }
 
@@ -867,7 +891,7 @@ namespace Utilities {
 		QString trimmedFileName = fileName.trimmed();
 		QString fullPath("");
 
-		if(trimmedPath.isEmpty())	 { return trimmedFileName; }
+		if(trimmedPath.isEmpty()) { return trimmedFileName; }
 		if(trimmedFileName.isEmpty()) { return trimmedPath; }
 
 		if(compareStrings(trimmedPath, ".") != 0) {
@@ -909,6 +933,34 @@ namespace Utilities {
 	}
 #endif // USE_STL
 
+	char * getFileNameNoPath(const char * filePath) {
+		if(filePath == NULL) { return NULL; }
+		
+		char * formattedFilePath = Utilities::trimCopyString(filePath);
+		if(Utilities::stringLength(formattedFilePath) == 0) {
+			return formattedFilePath;
+		}
+		
+		int lastFileSeparatorIndex = -1;
+		int formattedFilePathLength = Utilities::stringLength(formattedFilePath);
+		for(int i=formattedFilePathLength-1;i>=0;i--) {
+			if(formattedFilePath[i] == '/' || formattedFilePath[i] == '\\') {
+				lastFileSeparatorIndex = i;
+				break;
+			}
+		}
+		
+		if(lastFileSeparatorIndex != -1) {
+			char * fileName = Utilities::substring(formattedFilePath, lastFileSeparatorIndex + 1, formattedFilePathLength);
+
+			delete [] formattedFilePath;
+
+			return fileName;
+		}
+		
+		return formattedFilePath;
+	}
+
 	char * getFileNameNoExtension(const char * fileName) {
 		if(fileName == NULL) { return NULL; }
 	
@@ -923,22 +975,50 @@ namespace Utilities {
 		if(fileName == NULL) { return NULL; }
 	
 		int index = lastIndexOf(fileName, '.');
-		if(index > 0) {
+		if(index >= 0) {
 			return substring(fileName, index + 1, stringLength(fileName));
+		}
+		return NULL;
+	}
+
+	char * getFileExtensionSubPointer(const char * fileName) {
+		if(fileName == NULL) { return NULL; }
+		
+		int index = lastIndexOf(fileName, '.');
+		if(index >= 0) {
+			return const_cast<char *>(fileName) + ((index + 1) * sizeof(char));
 		}
 		return NULL;
 	}
 
 	bool fileHasExtension(const char * fileName, const char * fileExtension) {
 		if(fileName == NULL || fileExtension == NULL) { return false; }
-	
-		char * actualFileExtension = getFileExtension(fileName);
-		bool fileExtensionMatches = actualFileExtension != NULL && compareStringsIgnoreCase(actualFileExtension, fileExtension) == 0;
-		delete [] actualFileExtension;
-		return fileExtensionMatches;
+		
+		return compareStringsIgnoreCase(getFileExtensionSubPointer(fileName), fileExtension) == 0;
 	}
 
 #if USE_QT
+	QString getFileNameNoPath(const QString & filePath) {
+		if(filePath.isNull()) { return QString(); }
+		
+		QString formattedFilePath = filePath.trimmed();
+		if(formattedFilePath.length() == 0) { return formattedFilePath; }
+		
+		int lastFileSeparatorIndex = -1;
+		for(int i=formattedFilePath.length()-1;i>=0;i--) {
+			if(formattedFilePath[i] == '/' || formattedFilePath[i] == '\\') {
+				lastFileSeparatorIndex = i;
+				break;
+			}
+		}
+		
+		if(lastFileSeparatorIndex != -1) {
+			return Utilities::substring(formattedFilePath, lastFileSeparatorIndex + 1, formattedFilePath.length());
+		}
+		
+		return filePath;
+	}
+
 	QString getFileNameNoExtension(const QString & fileName) {
 		int index = fileName.lastIndexOf('.');
 		if(index > 0) {
@@ -960,32 +1040,77 @@ namespace Utilities {
 		return !actualFileExtension.isNull() && QString::compare(actualFileExtension, fileExtension, Qt::CaseInsensitive) == 0;
 	}
 
-	void deleteFiles(const char * suffix) {
-		if(suffix == NULL || stringLength(suffix) == 0) { return; }
+	int deleteFiles(const char * suffix, const char * directory, bool verbose) {
+		if(suffix == NULL || stringLength(suffix) == 0) { return 0; }
 
 		QDir dir = QDir::currentPath();
+		if(stringLength(directory) > 0) {
+			dir = QDir(directory);
+			if(!dir.exists()) { return 0; }
+		}
+
+		int numberOfFilesDeleted = 0;
 		QFileInfoList files = dir.entryInfoList();
 		for(int i=0;i<files.size();i++) {
 			if(files[i].isFile() && QString::compare(files[i].completeSuffix(), suffix, Qt::CaseInsensitive) == 0) {
-				QFile file(files[i].fileName());
+				QFile file(files[i].absoluteFilePath());
 
-				file.remove();
+				if(!file.exists()) { continue; }
+
+				if(verbose) {
+					printf("Deleting file: \"%s\".\n", files[i].filePath().toLocal8Bit().data());
+				}
+
+				if(file.remove()) {
+					numberOfFilesDeleted++;
+				}
 			}
 		}
+		return numberOfFilesDeleted;
 	}
 
-	void renameFiles(const char * fromSuffix, const char * toSuffix) {
-		if(fromSuffix == NULL || stringLength(fromSuffix) == 0 || toSuffix == NULL || stringLength(toSuffix) == 0) { return; }
-	
+	int renameFiles(const char * fromSuffix, const char * toSuffix, const char * directory, bool verbose) {
+		if(fromSuffix == NULL || stringLength(fromSuffix) == 0 || toSuffix == NULL || stringLength(toSuffix) == 0) { return 0; }
+		
 		QDir dir = QDir::currentPath();
+		if(stringLength(directory) > 0) {
+			dir = QDir(directory);
+			if(!dir.exists()) { return 0; }
+		}
+
+		int numberOfFilesRenamed = 0;
 		QFileInfoList files = dir.entryInfoList();
 		for(int i=0;i<files.size();i++) {
 			if(files[i].isFile() && QString::compare(files[i].completeSuffix(), fromSuffix, Qt::CaseInsensitive) == 0) {
-				QFile file(files[i].fileName());
+				QFile file(files[i].absoluteFilePath());
 
-				file.rename(QString("%1.%2").arg(files[i].completeBaseName()).arg(toSuffix));
+				if(!file.exists()) { continue; }
+
+				if(verbose) {
+					printf("Renaming file: \"%s\" > \"%s\".\n", files[i].filePath().toLocal8Bit().data(), generateFullPath(QString(directory), QString("%2.%3").arg(files[i].completeBaseName()).arg(toSuffix)).toLocal8Bit().data());
+				}
+
+				if(file.rename(generateFullPath(QString(directory), QString("%2.%3").arg(files[i].completeBaseName()).arg(toSuffix)))) {
+					numberOfFilesRenamed++;
+				}
 			}
 		}
+		return numberOfFilesRenamed;
+	}
+	
+	int deleteFiles(const QString & suffix, const QString & directory, bool verbose) {
+		QByteArray suffixBytes = suffix.toLocal8Bit();
+		QByteArray directoryBytes = directory.toLocal8Bit();
+
+		return deleteFiles(suffixBytes.data(), directoryBytes.data(), verbose);
+	}
+
+	int renameFiles(const QString & fromSuffix, const QString & toSuffix, const QString & directory, bool verbose) {
+		QByteArray fromSuffixBytes = fromSuffix.toLocal8Bit();
+		QByteArray toSuffixBytes = toSuffix.toLocal8Bit();
+		QByteArray directoryBytes = directory.toLocal8Bit();
+
+		return renameFiles(fromSuffixBytes.data(), toSuffixBytes.data(), directoryBytes.isNull() ? NULL : directoryBytes.data(), verbose);
 	}
 #endif // USE_QT
 

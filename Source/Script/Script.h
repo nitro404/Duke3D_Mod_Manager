@@ -11,7 +11,7 @@ public:
 	Script();
 	Script(const Script & s);
 	Script & operator = (const Script & s);
-	~Script();
+	virtual ~Script();
 
 	int numberOfCommands() const;
 	const QString * getCommand(int lineNumber) const;

@@ -53,6 +53,8 @@ namespace Utilities {
 	unsigned int stringLength(const char * s);
 	const char * toString(int value);
 	const char * toString(double value);
+	char * byteArrayCopyOfRange(const char * data, int length, int start, int end);
+	char * byteArrayCopyOfRange(const QByteArray & data, int start, int end);
 	bool copyString(char * destination, int size, const char * source);
 	char * copyString(const char * data);
 	char * trimCopyString(const char * data);
@@ -167,15 +169,20 @@ namespace Utilities {
 	std::string generateFullPath(const char * path, const char * fileName);
 	std::string generateFullPath(const std::string & path, const std::string & fileName);
 #endif // USE_STL
+	char * getFileNameNoPath(const char * filePath);
 	char * getFileNameNoExtension(const char * fileName);
 	char * getFileExtension(const char * fileName);
+	char * getFileExtensionSubPointer(const char * fileName);
 	bool fileHasExtension(const char * fileName, const char * fileExtension);
 #if USE_QT
+	QString getFileNameNoPath(const QString & filePath);
 	QString getFileNameNoExtension(const QString & fileName);
 	QString getFileExtension(const QString & fileName);
 	bool fileHasExtension(const QString & fileName, const QString & fileExtension);
-	void deleteFiles(const char * suffix);
-	void renameFiles(const char * fromSuffix, const char * toSuffix);
+	int deleteFiles(const char * suffix, const char * directory = NULL, bool verbose = false);
+	int renameFiles(const char * fromSuffix, const char * toSuffix, const char * directory = NULL, bool verbose = false);
+	int deleteFiles(const QString & suffix, const QString & directory = QString(), bool verbose = false);
+	int renameFiles(const QString & fromSuffix, const QString & toSuffix, const QString & directory = QString(), bool verbose = false);
 #endif // USE_QT
 	void clear();
 	void pause();

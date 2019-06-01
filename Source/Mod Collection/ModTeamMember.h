@@ -10,7 +10,7 @@ public:
 	ModTeamMember(const QString & name, const QString & alias = QString(), const QString & email = QString());
 	ModTeamMember(const ModTeamMember & m);
 	ModTeamMember & operator = (const ModTeamMember & m);
-	~ModTeamMember();
+	virtual ~ModTeamMember();
 
 	const char * getName() const;
 	const char * getAlias() const;

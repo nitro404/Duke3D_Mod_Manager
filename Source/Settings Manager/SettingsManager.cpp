@@ -10,7 +10,6 @@ const char * SettingsManager::defaultModsDirectoryPath = "..";
 const char * SettingsManager::defaultDataDirectoryName = "Data";
 const char * SettingsManager::defaultGameFileName = "DUKE3D.EXE";
 const char * SettingsManager::defaultSetupFileName = "SETUP.EXE";
-const char * SettingsManager::defaultKextractFileName = "KEXTRACT.EXE";
 const char * SettingsManager::defaultGamePath = ".";
 const char * SettingsManager::defaultDOSBoxFileName = "dosbox.exe";
 const char * SettingsManager::defaultDOSBoxPath = "DOSBox";
@@ -23,6 +22,7 @@ const char * SettingsManager::defaultWindowsGameScriptFileName = "duke3d.bat";
 const char * SettingsManager::defaultWindowsSetupScriptFileName = "duke3d_setup.bat";
 const ModManagerModes::ModManagerMode SettingsManager::defaultModManagerMode = ModManagerModes::defaultMode;
 const GameTypes::GameType SettingsManager::defaultGameType = GameTypes::defaultGameType;
+const GameVersions::GameVersion SettingsManager::defaultGameVersion = GameVersions::defaultGameVersion;
 const char * SettingsManager::defaultServerIPAddress = "127.0.0.1";
 const int SettingsManager::defaultLocalServerPort = 31337;
 const int SettingsManager::defaultRemoteServerPort = 31337;
@@ -36,7 +36,6 @@ SettingsManager::SettingsManager()
 	, dataDirectoryName(NULL)
 	, gameFileName(NULL)
 	, setupFileName(NULL)
-	, kextractFileName(NULL)
 	, gamePath(NULL)
 	, DOSBoxFileName(NULL)
 	, DOSBoxPath(NULL)
@@ -49,6 +48,7 @@ SettingsManager::SettingsManager()
 	, windowsSetupScriptFileName(NULL)
 	, modManagerMode(defaultModManagerMode)
 	, gameType(defaultGameType)
+	, gameVersion(defaultGameVersion)
 	, serverIPAddress(NULL)
 	, localServerPort(0)
 	, remoteServerPort(0) {
@@ -67,7 +67,6 @@ SettingsManager::SettingsManager(const SettingsManager & s)
 	, dataDirectoryName(NULL)
 	, gameFileName(NULL)
 	, setupFileName(NULL)
-	, kextractFileName(NULL)
 	, gamePath(NULL)
 	, DOSBoxFileName(NULL)
 	, DOSBoxPath(NULL)
@@ -80,6 +79,7 @@ SettingsManager::SettingsManager(const SettingsManager & s)
 	, windowsSetupScriptFileName(NULL)
 	, modManagerMode(s.modManagerMode)
 	, gameType(s.gameType)
+	, gameVersion(s.gameVersion)
 	, serverIPAddress(NULL)
 	, localServerPort(s.localServerPort)
 	, remoteServerPort(s.remoteServerPort) {
@@ -94,7 +94,6 @@ SettingsManager::SettingsManager(const SettingsManager & s)
 	dataDirectoryName = Utilities::copyString(s.dataDirectoryName);
 	gameFileName = Utilities::copyString(s.gameFileName);
 	setupFileName = Utilities::copyString(s.setupFileName);
-	kextractFileName = Utilities::copyString(s.kextractFileName);
 	gamePath = Utilities::copyString(s.gamePath);
 	DOSBoxFileName = Utilities::copyString(s.DOSBoxFileName);
 	DOSBoxPath = Utilities::copyString(s.DOSBoxPath);
@@ -120,7 +119,6 @@ SettingsManager & SettingsManager::operator = (const SettingsManager & s) {
 	if(dataDirectoryName != NULL)			{ delete [] dataDirectoryName; }
 	if(gameFileName != NULL)				{ delete [] gameFileName; }
 	if(setupFileName != NULL)				{ delete [] setupFileName; }
-	if(kextractFileName != NULL)			{ delete [] kextractFileName; }
 	if(gamePath != NULL)					{ delete [] gamePath; }
 	if(DOSBoxFileName != NULL)				{ delete [] DOSBoxFileName; }
 	if(DOSBoxPath != NULL)					{ delete [] DOSBoxPath; }
@@ -139,6 +137,7 @@ SettingsManager & SettingsManager::operator = (const SettingsManager & s) {
 
 	modManagerMode = s.modManagerMode;
 	gameType = s.gameType;
+	gameVersion = s.gameVersion;
 	localServerPort = s.localServerPort;
 	remoteServerPort = s.remoteServerPort;
 
@@ -149,7 +148,6 @@ SettingsManager & SettingsManager::operator = (const SettingsManager & s) {
 	dataDirectoryName = Utilities::copyString(s.dataDirectoryName);
 	gameFileName = Utilities::copyString(s.gameFileName);
 	setupFileName = Utilities::copyString(s.setupFileName);
-	kextractFileName = Utilities::copyString(s.kextractFileName);
 	gamePath = Utilities::copyString(s.gamePath);
 	DOSBoxFileName = Utilities::copyString(s.DOSBoxFileName);
 	DOSBoxPath = Utilities::copyString(s.DOSBoxPath);
@@ -173,7 +171,6 @@ SettingsManager::~SettingsManager() {
 	if(dataDirectoryName != NULL)			{ delete [] dataDirectoryName; }
 	if(gameFileName != NULL)				{ delete [] gameFileName; }
 	if(setupFileName != NULL)				{ delete [] setupFileName; }
-	if(kextractFileName != NULL)			{ delete [] kextractFileName; }
 	if(gamePath != NULL)					{ delete [] gamePath; }
 	if(DOSBoxFileName != NULL)				{ delete [] DOSBoxFileName; }
 	if(DOSBoxPath != NULL)					{ delete [] DOSBoxPath; }
@@ -205,7 +202,6 @@ void SettingsManager::reset() {
 	if(dataDirectoryName != NULL)			{ delete [] dataDirectoryName; }
 	if(gameFileName != NULL)				{ delete [] gameFileName; }
 	if(setupFileName != NULL)				{ delete [] setupFileName; }
-	if(kextractFileName != NULL)			{ delete [] kextractFileName; }
 	if(gamePath != NULL)					{ delete [] gamePath; }
 	if(DOSBoxFileName != NULL)				{ delete [] DOSBoxFileName; }
 	if(DOSBoxPath != NULL)					{ delete [] DOSBoxPath; }
@@ -225,7 +221,6 @@ void SettingsManager::reset() {
 	dataDirectoryName = Utilities::copyString(defaultDataDirectoryName);
 	gameFileName = Utilities::copyString(defaultGameFileName);
 	setupFileName = Utilities::copyString(defaultSetupFileName);
-	kextractFileName = Utilities::copyString(defaultKextractFileName);
 	gamePath = Utilities::copyString(defaultGamePath);
 	DOSBoxFileName = Utilities::copyString(defaultDOSBoxFileName);
 	DOSBoxPath = Utilities::copyString(defaultDOSBoxPath);
@@ -240,6 +235,7 @@ void SettingsManager::reset() {
 
 	modManagerMode = defaultModManagerMode;
 	gameType = defaultGameType;
+	gameVersion = defaultGameVersion;
 	localServerPort = defaultLocalServerPort;
 	remoteServerPort = defaultRemoteServerPort;
 }
@@ -338,12 +334,6 @@ bool SettingsManager::loadFrom(const char * fileName) {
 		if(setupFileName != NULL) { delete [] setupFileName; }
 		setupFileName = Utilities::copyString(data);
 	}
-
-	data = m_variables->getValue("Kextract File Name", "Paths");
-	if(data != NULL) {
-		if(kextractFileName != NULL) { delete [] kextractFileName; }
-		kextractFileName = Utilities::copyString(data);
-	}
 	
 	data = m_variables->getValue("Game Path", "Paths");
 	if(data != NULL) {
@@ -420,6 +410,14 @@ bool SettingsManager::loadFrom(const char * fileName) {
 			gameType = newGameType;
 		}
 	}
+	
+	data = m_variables->getValue("Game Version", "Options");
+	if(data != NULL) {
+		GameVersions::GameVersion newGameVersion = GameVersions::parseFrom(data);
+		if(GameVersions::isValid(newGameVersion)) {
+			gameVersion = newGameVersion;
+		}
+	}
 
 	data = m_variables->getValue("Server IP Address", "Options");
 	if(data != NULL) {
@@ -456,7 +454,6 @@ bool SettingsManager::saveTo(const char * fileName) const {
 	m_variables->setValue("Data Directory Name", dataDirectoryName, "Paths");
 	m_variables->setValue("Game File Name", gameFileName, "Paths");
 	m_variables->setValue("Setup File Name", setupFileName, "Paths");
-	m_variables->setValue("Kextract File Name", kextractFileName, "Paths");
 	m_variables->setValue("Game Path", gamePath, "Paths");
 	m_variables->setValue("DOSBox File Name", DOSBoxFileName, "Paths");
 	m_variables->setValue("DOSBox Path", DOSBoxPath, "Paths");
@@ -469,6 +466,7 @@ bool SettingsManager::saveTo(const char * fileName) const {
 	m_variables->setValue("Windows Setup Script File Name", windowsSetupScriptFileName, "Scripts");
 	m_variables->setValue("Mod Manager Mode", ModManagerModes::toString(modManagerMode), "Options");
 	m_variables->setValue("Game Type", GameTypes::toString(gameType), "Options");
+	m_variables->setValue("Game Version", GameVersions::toString(gameVersion), "Options");
 	m_variables->setValue("Server IP Address", serverIPAddress, "Options");
 	m_variables->setValue("Local Server Port", localServerPort, "Options");
 	m_variables->setValue("Remote Server Port", remoteServerPort, "Options");

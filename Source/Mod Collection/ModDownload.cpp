@@ -7,8 +7,10 @@ ModDownload::ModDownload(const char * fileName, const char * type)
 	, m_version(NULL)
 	, m_special(NULL)
 	, m_subfolder(NULL)
+	, m_gameVersion(GameVersions::Invalid)
 	, m_type(NULL)
-	, m_description(NULL) {
+	, m_description(NULL)
+	, m_state(ModStates::Invalid) {
 	if(fileName == NULL) {
 		m_fileName = new char[1];
 		m_fileName[0] = '\0';
@@ -33,8 +35,10 @@ ModDownload::ModDownload(const QString & fileName, const QString & type)
 	, m_version(NULL)
 	, m_special(NULL)
 	, m_subfolder(NULL)
+	, m_gameVersion(GameVersions::Invalid)
 	, m_type(NULL)
-	, m_description(NULL) {
+	, m_description(NULL)
+	, m_state(ModStates::Invalid) {
 	if(fileName.isEmpty()) {
 		m_fileName = new char[1];
 		m_fileName[0] = '\0';
@@ -61,8 +65,10 @@ ModDownload::ModDownload(const ModDownload & d)
 	, m_version(NULL)
 	, m_special(NULL)
 	, m_subfolder(NULL)
+	, m_gameVersion(d.m_gameVersion)
 	, m_type(NULL)
-	, m_description(NULL) {
+	, m_description(NULL)
+	, m_state(d.m_state) {
 	m_fileName = Utilities::trimCopyString(d.m_fileName);
 	m_version = Utilities::trimCopyString(d.m_version);
 	m_special = Utilities::trimCopyString(d.m_special);
@@ -85,8 +91,10 @@ ModDownload & ModDownload::operator = (const ModDownload & d) {
 	m_version = Utilities::trimCopyString(d.m_version);
 	m_special = Utilities::trimCopyString(d.m_special);
 	m_subfolder = Utilities::trimCopyString(d.m_subfolder);
+	m_gameVersion = d.m_gameVersion;
 	m_type = Utilities::trimCopyString(d.m_type);
 	m_description = Utilities::trimCopyString(d.m_description);
+	m_state = d.m_state;
 
 	return *this;
 }
@@ -124,12 +132,20 @@ const char * ModDownload::getSubfolder() const {
 	return m_subfolder;
 }
 
+GameVersions::GameVersion ModDownload::getGameVersion() const {
+	return m_gameVersion;
+}
+
 const char * ModDownload::getType() const {
 	return m_type;
 }
 
 const char * ModDownload::getDescription() const {
 	return m_description;
+}
+
+ModStates::ModState ModDownload::getState() const {
+	return m_state;
 }
 
 void ModDownload::setFileName(const char * fileName) {
@@ -272,6 +288,46 @@ void ModDownload::setSubfolder(const QString & subfolder) {
 	}
 }
 
+bool ModDownload::setGameVersion(int gameVersion) {
+	if(!GameVersions::isValid(gameVersion)) { return false; }
+
+	m_gameVersion = static_cast<GameVersions::GameVersion>(gameVersion);
+
+	return true;
+}
+
+bool ModDownload::setGameVersion(GameVersions::GameVersion gameVersion) {
+	if(!GameVersions::isValid(gameVersion)) { return false; }
+
+	m_gameVersion = gameVersion;
+
+	return true;
+}
+
+bool ModDownload::setGameVersion(const char * data) {
+	if(data == NULL) { return false; }
+
+	GameVersions::GameVersion gameVersion = GameVersions::parseFrom(data);
+
+	if(!GameVersions::isValid(gameVersion)) { return false; }
+
+	m_gameVersion = gameVersion;
+
+	return true;
+}
+
+bool ModDownload::setGameVersion(const QString & data) {
+	if(data == NULL) { return false; }
+
+	GameVersions::GameVersion gameVersion = GameVersions::parseFrom(data);
+
+	if(!GameVersions::isValid(gameVersion)) { return false; }
+
+	m_gameVersion = gameVersion;
+
+	return true;
+}
+
 void ModDownload::setType(const char * type) {
 	delete [] m_type;
 	
@@ -318,6 +374,46 @@ void ModDownload::setDescription(const QString & description) {
 		QByteArray descriptionBytes = description.toLocal8Bit();
 		m_description = Utilities::trimCopyString(descriptionBytes.data());
 	}
+}
+
+bool ModDownload::setState(int state) {
+	if(!ModStates::isValid(state)) { return false; }
+
+	m_state = static_cast<ModStates::ModState>(state);
+
+	return true;
+}
+
+bool ModDownload::setState(ModStates::ModState state) {
+	if(!ModStates::isValid(state)) { return false; }
+
+	m_state = state;
+
+	return true;
+}
+
+bool ModDownload::setState(const char * data) {
+	if(data == NULL) { return false; }
+
+	ModStates::ModState state = ModStates::parseFrom(data);
+
+	if(!ModStates::isValid(state)) { return false; }
+
+	m_state = state;
+
+	return true;
+}
+
+bool ModDownload::setState(const QString & data) {
+	if(data == NULL) { return false; }
+
+	ModStates::ModState state = ModStates::parseFrom(data);
+
+	if(!ModStates::isValid(state)) { return false; }
+
+	m_state = state;
+
+	return true;
 }
 
 bool ModDownload::operator == (const ModDownload & d) const {

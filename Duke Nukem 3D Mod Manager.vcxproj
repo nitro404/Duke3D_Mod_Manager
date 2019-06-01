@@ -166,8 +166,11 @@
   <ItemGroup>
     <ClInclude Include="Source\Argument Collection\ArgumentCase.h" />
     <ClInclude Include="Source\Argument Collection\ArgumentCollection.h" />
+    <ClInclude Include="Source\Group\Group.h" />
+    <ClInclude Include="Source\Group\GroupFile.h" />
     <ClInclude Include="Source\Icon.h" />
     <ClInclude Include="Source\Mod Collection\FavouriteModCollection.h" />
+    <ClInclude Include="Source\Mod Collection\GameVersion.h" />
     <ClInclude Include="Source\Mod Collection\Mod.h" />
     <ClInclude Include="Source\Mod Collection\ModAuthorInformation.h" />
     <ClInclude Include="Source\Mod Collection\ModCollection.h" />
@@ -175,10 +178,12 @@
     <ClInclude Include="Source\Mod Collection\ModCollectionListener.h" />
     <ClInclude Include="Source\Mod Collection\ModDownload.h" />
     <ClInclude Include="Source\Mod Collection\ModFilterType.h" />
+    <ClInclude Include="Source\Mod Collection\ModGameVersion.h" />
     <ClInclude Include="Source\Mod Collection\ModInformation.h" />
     <ClInclude Include="Source\Mod Collection\ModScreenshot.h" />
     <ClInclude Include="Source\Mod Collection\ModSortDirection.h" />
     <ClInclude Include="Source\Mod Collection\ModSortType.h" />
+    <ClInclude Include="Source\Mod Collection\ModState.h" />
     <ClInclude Include="Source\Mod Collection\ModTeam.h" />
     <ClInclude Include="Source\Mod Collection\ModTeamMember.h" />
     <ClInclude Include="Source\Mod Collection\ModVersion.h" />
@@ -191,6 +196,8 @@
     <ClInclude Include="Source\Script\Script.h" />
     <ClInclude Include="Source\Script\ScriptArguments.h" />
     <ClInclude Include="Source\Settings Manager\SettingsManager.h" />
+    <ClInclude Include="Source\Utilities\Endian.h" />
+    <ClInclude Include="Source\Utilities\Serializer.h" />
     <ClInclude Include="Source\Utilities\Utilities.h" />
     <ClInclude Include="Source\Variable System\Variable.h" />
     <ClInclude Include="Source\Variable System\VariableCollection.h" />
@@ -198,18 +205,23 @@
   <ItemGroup>
     <ClCompile Include="Source\Argument Collection\ArgumentCase.cpp" />
     <ClCompile Include="Source\Argument Collection\ArgumentCollection.cpp" />
+    <ClCompile Include="Source\Group\Group.cpp" />
+    <ClCompile Include="Source\Group\GroupFile.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Mod Collection\FavouriteModCollection.cpp" />
+    <ClCompile Include="Source\Mod Collection\GameVersion.cpp" />
     <ClCompile Include="Source\Mod Collection\Mod.cpp" />
     <ClCompile Include="Source\Mod Collection\ModAuthorInformation.cpp" />
     <ClCompile Include="Source\Mod Collection\ModCollection.cpp" />
     <ClCompile Include="Source\Mod Collection\ModCollectionBroadcaster.cpp" />
     <ClCompile Include="Source\Mod Collection\ModDownload.cpp" />
     <ClCompile Include="Source\Mod Collection\ModFilterType.cpp" />
+    <ClCompile Include="Source\Mod Collection\ModGameVersion.cpp" />
     <ClCompile Include="Source\Mod Collection\ModInformation.cpp" />
     <ClCompile Include="Source\Mod Collection\ModScreenshot.cpp" />
     <ClCompile Include="Source\Mod Collection\ModSortDirection.cpp" />
     <ClCompile Include="Source\Mod Collection\ModSortType.cpp" />
+    <ClCompile Include="Source\Mod Collection\ModState.cpp" />
     <ClCompile Include="Source\Mod Collection\ModTeam.cpp" />
     <ClCompile Include="Source\Mod Collection\ModTeamMember.cpp" />
     <ClCompile Include="Source\Mod Collection\ModVersion.cpp" />
@@ -222,6 +234,8 @@
     <ClCompile Include="Source\Script\Script.cpp" />
     <ClCompile Include="Source\Script\ScriptArguments.cpp" />
     <ClCompile Include="Source\Settings Manager\SettingsManager.cpp" />
+    <ClCompile Include="Source\Utilities\Endian.cpp" />
+    <ClCompile Include="Source\Utilities\Serializer.cpp" />
     <ClCompile Include="Source\Utilities\Utilities.cpp" />
     <ClCompile Include="Source\Variable System\Variable.cpp" />
     <ClCompile Include="Source\Variable System\VariableCollection.cpp" />

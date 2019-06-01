@@ -6,13 +6,14 @@
 #include "Mod Manager/ArgumentParser.h"
 #include "Mod Manager/ModManagerMode.h"
 #include "Mod Manager/GameType.h"
+#include "Mod Collection/GameVersion.h"
 
 class SettingsManager {
 public:
 	SettingsManager();
 	SettingsManager(const SettingsManager & s);
 	SettingsManager & operator = (const SettingsManager & s);
-	~SettingsManager();
+	virtual ~SettingsManager();
 
 	static SettingsManager * getInstance();
 	void updateInstance();
@@ -35,7 +36,6 @@ public:
 	const static char * defaultDataDirectoryName;
 	const static char * defaultGameFileName;
 	const static char * defaultSetupFileName;
-	const static char * defaultKextractFileName;
 	const static char * defaultGamePath;
 	const static char * defaultDOSBoxFileName;
 	const static char * defaultDOSBoxPath;
@@ -48,6 +48,7 @@ public:
 	const static char * defaultWindowsSetupScriptFileName;
 	const static ModManagerModes::ModManagerMode defaultModManagerMode;
 	const static GameTypes::GameType defaultGameType;
+	const static GameVersions::GameVersion defaultGameVersion;
 	const static char * defaultServerIPAddress;
 	const static int defaultLocalServerPort;
 	const static int defaultRemoteServerPort;
@@ -59,7 +60,6 @@ public:
 	char * dataDirectoryName;
 	char * gameFileName;
 	char * setupFileName;
-	char * kextractFileName;
 	char * gamePath;
 	char * DOSBoxFileName;
 	char * DOSBoxPath;
@@ -72,6 +72,7 @@ public:
 	char * windowsSetupScriptFileName;
 	ModManagerModes::ModManagerMode modManagerMode;
 	GameTypes::GameType gameType;
+	GameVersions::GameVersion gameVersion;
 	char * serverIPAddress;
 	int localServerPort;
 	int remoteServerPort;

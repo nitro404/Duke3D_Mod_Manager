@@ -20,9 +20,9 @@ ModVersion::ModVersion(const ModVersion & m)
 	if(m.m_version != NULL) {
 		m_version = Utilities::trimCopyString(m.m_version);
 	}
-
-	for(int i=0;i<m.m_files.size();i++) {
-		m_files.push_back(new ModVersionFile(*m.m_files[i]));
+	
+	for(int i=0;i<m.m_gameVersions.size();i++) {
+		m_gameVersions.push_back(new ModGameVersion(*m.m_gameVersions[i]));
 	}
 }
 
@@ -32,17 +32,17 @@ ModVersion & ModVersion::operator = (const ModVersion & m) {
 		m_version = NULL;
 	}
 
-	for(int i=0;i<m_files.size();i++) {
-		delete m_files[i];
+	for(int i=0;i<m_gameVersions.size();i++) {
+		delete m_gameVersions[i];
 	}
-	m_files.clear();
+	m_gameVersions.clear();
 
 	if(m.m_version != NULL) {
 		m_version = Utilities::trimCopyString(m.m_version);
 	}
 
-	for(int i=0;i<m.m_files.size();i++) {
-		m_files.push_back(new ModVersionFile(*m.m_files[i]));
+	for(int i=0;i<m.m_gameVersions.size();i++) {
+		m_gameVersions.push_back(new ModGameVersion(*m.m_gameVersions[i]));
 	}
 
 	return *this;
@@ -53,8 +53,8 @@ ModVersion::~ModVersion(void) {
 		delete [] m_version;
 	}
 
-	for(int i=0;i<m_files.size();i++) {
-		delete m_files[i];
+	for(int i=0;i<m_gameVersions.size();i++) {
+		delete m_gameVersions[i];
 	}
 }
 
@@ -85,311 +85,179 @@ void ModVersion::setVersion(const QString & version) {
 	}
 }
 
-int ModVersion::numberOfFiles() const {
-	return m_files.size();
+int ModVersion::numberOfGameVersions() const {
+	return m_gameVersions.size();
 }
 
-bool ModVersion::hasFile(const ModVersionFile & file) const {
-	for(int i=0;i<m_files.size();i++) {
-		if(*m_files[i] == file) {
+bool ModVersion::hasGameVersion(GameVersions::GameVersion version) const {
+	if(!GameVersions::isValid(version)) { return false; }
+
+	for(int i=0;i<m_gameVersions.size();i++) {
+		if(version == m_gameVersions[i]->getGameVersion()) {
 			return true;
 		}
 	}
 	return false;
 }
 
-bool ModVersion::hasFile(const char * fileName) const {
-	if(fileName == NULL || Utilities::stringLength(fileName) == 0) { return false; }
+bool ModVersion::hasGameVersion(const char * data) const {
+	if(data == NULL) { return false; }
 
-	for(int i=0;i<m_files.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_files[i]->getName(), fileName) == 0) {
-			return true;
-		}
-	}
-	return false;
+	return hasGameVersion(GameVersions::parseFrom(data));
 }
 
-bool ModVersion::hasFile(const QString & fileName) const {
-	if(fileName.isEmpty()) { return false; }
-
-	QByteArray fileNameBytes = fileName.toLocal8Bit();
-
-	for(int i=0;i<m_files.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_files[i]->getName(), fileNameBytes.data()) == 0) {
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ModVersion::hasFileOfType(const char * fileType) const {
-	if(fileType == NULL || Utilities::stringLength(fileType) == 0) { return false; }
-
-	for(int i=0;i<m_files.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_files[i]->getType(), fileType) == 0) {
-			return true;
-		}
-	}
-	return false;
-}
-
-bool ModVersion::hasFileOfType(const QString & fileType) const {
-	if(fileType.isEmpty()) { return false; }
-
-	QByteArray fileTypeBytes = fileType.toLocal8Bit();
-
-	for(int i=0;i<m_files.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_files[i]->getType(), fileTypeBytes.data()) == 0) {
-			return true;
-		}
-	}
-	return false;
-}
-
-int ModVersion::indexOfFile(const ModVersionFile & file) const {
-	for(int i=0;i<m_files.size();i++) {
-		if(*m_files[i] == file) {
-			return i;
-		}
-	}
-	return -1;
-}
-
-int ModVersion::indexOfFile(const char * fileName) const {
-	if(fileName == NULL || Utilities::stringLength(fileName) == 0) { return -1; }
-
-	for(int i=0;i<m_files.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_files[i]->getName(), fileName) == 0) {
-			return i;
-		}
-	}
-	return -1;
-}
-
-int ModVersion::indexOfFile(const QString & fileName) const {
-	if(fileName.isEmpty()) { return -1; }
-
-	QByteArray fileNameBytes = fileName.toLocal8Bit();
-
-	for(int i=0;i<m_files.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_files[i]->getName(), fileNameBytes.data()) == 0) {
-			return i;
-		}
-	}
-	return -1;
-}
-
-int ModVersion::indexOfFileByType(const char * fileType) const {
-	if(fileType == NULL || Utilities::stringLength(fileType) == 0) { return -1; }
-
-	for(int i=0;i<m_files.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_files[i]->getType(), fileType) == 0) {
-			return i;
-		}
-	}
-	return -1;
-}
-
-int ModVersion::indexOfFileByType(const QString & fileType) const {
-	if(fileType.isEmpty()) { return -1; }
-
-	QByteArray fileTypeBytes = fileType.toLocal8Bit();
-
-	for(int i=0;i<m_files.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_files[i]->getType(), fileTypeBytes.data()) == 0) {
-			return i;
-		}
-	}
-	return -1;
-}
-
-const ModVersionFile * ModVersion::getFile(int index) const {
-	if(index < 0 || index >= m_files.size()) { return NULL; }
-
-	return m_files[index];
-}
-
-const ModVersionFile * ModVersion::getFile(const char * fileName) const {
-	if(fileName == NULL || Utilities::stringLength(fileName) == 0) { return NULL; }
-
-	for(int i=0;i<m_files.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_files[i]->getName(), fileName) == 0) {
-			return m_files[i];
-		}
-	}
-	return NULL;
-}
-
-const ModVersionFile * ModVersion::getFile(const QString & fileName) const {
-	if(fileName.isEmpty()) { return NULL; }
-
-	QByteArray fileNameBytes = fileName.toLocal8Bit();
-
-	for(int i=0;i<m_files.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_files[i]->getName(), fileNameBytes.data()) == 0) {
-			return m_files[i];
-		}
-	}
-	return NULL;
-}
-
-const ModVersionFile * ModVersion::getFileByType(const char * fileType) const {
-	if(fileType == NULL || Utilities::stringLength(fileType) == 0) { return NULL; }
-
-	for(int i=0;i<m_files.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_files[i]->getType(), fileType) == 0) {
-			return m_files[i];
-		}
-	}
-	return NULL;
-}
-
-const ModVersionFile * ModVersion::getFileByType(const QString & fileType) const {
-	if(fileType.isEmpty()) { return NULL; }
-
-	QByteArray fileTypeBytes = fileType.toLocal8Bit();
-
-	for(int i=0;i<m_files.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_files[i]->getType(), fileTypeBytes.data()) == 0) {
-			return m_files[i];
-		}
-	}
-	return NULL;
-}
-
-const char * ModVersion::getFileNameByType(const char * fileType) const {
-	if(fileType == NULL || Utilities::stringLength(fileType) == 0) { return NULL; }
-
-	for(int i=0;i<m_files.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_files[i]->getType(), fileType) == 0) {
-			return m_files[i]->getName();
-		}
-	}
-	return NULL;
-}
-
-const char * ModVersion::getFileNameByType(const QString & fileType) const {
-	if(fileType.isEmpty()) { return NULL; }
-
-	QByteArray fileTypeBytes = fileType.toLocal8Bit();
-
-	for(int i=0;i<m_files.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_files[i]->getType(), fileTypeBytes.data()) == 0) {
-			return m_files[i]->getName();
-		}
-	}
-	return NULL;
-}
-
-bool ModVersion::addFile(ModVersionFile * file) {
-	if(file == NULL || Utilities::stringLength(file->getName()) == 0 || hasFile(*file)) {
-		return false;
-	}
+bool ModVersion::hasGameVersion(const QString & data) const {
+	if(data.isEmpty()) { return false; }
 	
-	m_files.push_back(file);
-
-	return true;
+	return hasGameVersion(GameVersions::parseFrom(data));
 }
 
-bool ModVersion::removeFile(int index) {
-	if(index < 0 || index >= m_files.size()) { return false; }
+bool ModVersion::hasGameVersion(const ModGameVersion * version) const {
+	if(version == NULL) { return false; }
+
+	for(int i=0;i<m_gameVersions.size();i++) {
+		if(*m_gameVersions[i] == *version) {
+			return true;
+		}
+	}
+	return false;
+}
+
+int ModVersion::indexOfGameVersion(GameVersions::GameVersion version) const {
+	if(!GameVersions::isValid(version)) { return -1; }
+
+	for(int i=0;i<m_gameVersions.size();i++) {
+		if(version == m_gameVersions[i]->getGameVersion()) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+int ModVersion::indexOfGameVersion(const char * data) const {
+	if(data == NULL) { return -1; }
 	
-	delete m_files[index];
-	m_files.remove(index);
+	return indexOfGameVersion(GameVersions::parseFrom(data));
+}
+
+int ModVersion::indexOfGameVersion(const QString & data) const {
+	if(data.isEmpty()) { return -1; }
+	
+	return indexOfGameVersion(GameVersions::parseFrom(data));
+}
+
+int ModVersion::indexOfGameVersion(const ModGameVersion * version) const {
+	if(version == NULL) { return -1; }
+
+	for(int i=0;i<m_gameVersions.size();i++) {
+		if(*m_gameVersions[i] == *version) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+const ModGameVersion * ModVersion::getGameVersion(int index) const {
+	if(index < 0 || index >= m_gameVersions.size()) { return false; }
+
+	return m_gameVersions[index];
+}
+
+const ModGameVersion * ModVersion::getGameVersion(GameVersions::GameVersion version) const {
+	if(!GameVersions::isValid(version)) { return NULL; }
+	
+	for(int i=0;i<m_gameVersions.size();i++) {
+		if(version == m_gameVersions[i]->getGameVersion()) {
+			return m_gameVersions[i];
+		}
+	}
+	return NULL;
+}
+
+const ModGameVersion * ModVersion::getGameVersion(const char * data) const {
+	if(data == NULL) { return NULL; }
+
+	return getGameVersion(GameVersions::parseFrom(data));
+}
+
+const ModGameVersion * ModVersion::getGameVersion(const QString & data) const {
+	if(data.isEmpty()) { return NULL; }
+	
+	return getGameVersion(GameVersions::parseFrom(data));
+}
+
+bool ModVersion::addGameVersion(ModGameVersion * version) {
+	if(!ModGameVersion::isValid(version) || !version->hasFileOfType("grp") || hasGameVersion(version)) { return false; }
+
+	m_gameVersions.push_back(version);
 	
 	return true;
 }
 
-bool ModVersion::removeFile(const ModVersionFile & file) {
-	for(int i=0;i<m_files.size();i++) {
-		if(*m_files[i] == file) {
-			delete m_files[i];
-			m_files.remove(i);
-			
+bool ModVersion::removeGameVersion(int index) {
+	if(index < 0 || index >= m_gameVersions.size()) { return false; }
+
+	delete m_gameVersions[index];
+	m_gameVersions.remove(index);
+
+	return true;
+}
+
+bool ModVersion::removeGameVersion(GameVersions::GameVersion version) {
+	if(!GameVersions::isValid(version)) { return false; }
+	
+	for(int i=0;i<m_gameVersions.size();i++) {
+		if(version == m_gameVersions[i]->getGameVersion()) {
+			delete m_gameVersions[i];
+			m_gameVersions.remove(i);
 			return true;
 		}
 	}
 	return false;
 }
 
-bool ModVersion::removeFile(const char * fileName) {
-	if(fileName == NULL || Utilities::stringLength(fileName) == 0) { return false; }
+bool ModVersion::removeGameVersion(const char * data) {
+	if(data == NULL) { return false; }
+	
+	return removeGameVersion(GameVersions::parseFrom(data));
+}
 
-	for(int i=0;i<m_files.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_files[i]->getName(), fileName) == 0) {
-			delete m_files[i];
-			m_files.remove(i);
+bool ModVersion::removeGameVersion(const QString & data) {
+	if(data.isEmpty()) { return false; }
+	
+	return removeGameVersion(GameVersions::parseFrom(data));
+}
 
+bool ModVersion::removeGameVersion(const ModGameVersion * version) {
+	if(version == NULL) { return false; }
+
+	for(int i=0;i<m_gameVersions.size();i++) {
+		if(*m_gameVersions[i] == *version) {
+			delete m_gameVersions[i];
+			m_gameVersions.remove(i);
 			return true;
 		}
 	}
 	return false;
 }
 
-bool ModVersion::removeFile(const QString & fileName) {
-	if(fileName.isEmpty()) { return false; }
-
-	QByteArray fileNameBytes = fileName.toLocal8Bit();
-
-	for(int i=0;i<m_files.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_files[i]->getName(), fileNameBytes.data()) == 0) {
-			delete m_files[i];
-			m_files.remove(i);
-
-			return true;
-		}
+void ModVersion::clearGameVersions() {
+	for(int i=0;i<m_gameVersions.size();i++) {
+		delete m_gameVersions[i];
 	}
-	return false;
+	m_gameVersions.clear();
 }
 
-bool ModVersion::removeFileByType(const char * fileType) {
-	if(fileType == NULL || Utilities::stringLength(fileType) == 0) { return false; }
-
-	for(int i=0;i<m_files.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_files[i]->getType(), fileType) == 0) {
-			delete m_files[i];
-			m_files.remove(i);
-
-			return true;
-		}
-	}
-	return false;
+bool ModVersion::isValid() const {
+	return m_gameVersions.size() > 0;
 }
 
-bool ModVersion::removeFileByType(const QString & fileType) {
-	if(fileType.isEmpty()) { return false; }
-
-	QByteArray fileTypeBytes = fileType.toLocal8Bit();
-
-	for(int i=0;i<m_files.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_files[i]->getType(), fileTypeBytes.data()) == 0) {
-			delete m_files[i];
-			m_files.remove(i);
-
-			return true;
-		}
-	}
-	return false;
-}
-
-void ModVersion::clearFiles() {
-	for(int i=0;i<m_files.size();i++) {
-		delete m_files[i];
-	}
-	m_files.clear();
+bool ModVersion::isValid(const ModVersion * m) {
+	return m != NULL && m->isValid();
 }
 
 bool ModVersion::operator == (const ModVersion & m) const {
-	if(m_files.size() != m.m_files.size() || Utilities::compareStringsIgnoreCase(m_version, m.m_version) != 0) {
-		return false;
-	}
-
-	for(int i=0;i<m_files.size();i++) {
-		if(!m.hasFile(*m_files[i])) {
-			return false;
-		}
-	}
-	return true;
+	return Utilities::compareStringsIgnoreCase(m_version, m.m_version) == 0;
 }
 
 bool ModVersion::operator != (const ModVersion & m) const {

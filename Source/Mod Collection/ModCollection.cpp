@@ -363,8 +363,14 @@ bool ModCollection::loadFromINI(const char * fileName) {
 			newMod->setType(type);
 			
 			ModVersion * newVersion = new ModVersion();
-			newVersion->addFile(new ModVersionFile(con, QString("con")));
-			newVersion->addFile(new ModVersionFile(group, QString("grp")));
+
+			ModGameVersion * newModGameVersion = new ModGameVersion(GameVersions::defaultGameVersion, ModStates::Native);
+
+			newModGameVersion->addFile(new ModVersionFile(con, QString("con")));
+			newModGameVersion->addFile(new ModVersionFile(group, QString("grp")));
+
+			newVersion->addGameVersion(newModGameVersion);
+
 			newMod->addVersion(newVersion);
 
 			addMod(newMod);
@@ -484,9 +490,15 @@ bool ModCollection::loadFromXML(const char * fileName) {
 	QXmlStreamAttributes attributes;
 	Mod * newMod = NULL;
 	ModVersion * newModVersion = NULL;
+	ModGameVersion * newModGameVersion = NULL;
 	ModTeamMember * newTeamMember = NULL;
 	ModVersionFile * newVersionFile = NULL;
-	QString name, id;
+	QString name;
+	QString id;
+	bool hasGameVersion = false;
+	bool hasState = false;
+	GameVersions::GameVersion gameVersion = GameVersions::Invalid;
+	ModStates::ModState modState = ModStates::Invalid;
 	bool foundRootNode = false;
 
 	// root level loop
@@ -535,6 +547,9 @@ bool ModCollection::loadFromXML(const char * fileName) {
 						printf("Root mods node missing required mods_version attribute.\n");
 						break;
 					}
+				}
+				else {
+					printf("Encountered unexpected start tag \"%s\" at root level.\n", input.name().toString().toLocal8Bit().data());
 				}
 				
 				continue;
@@ -693,18 +708,30 @@ bool ModCollection::loadFromXML(const char * fileName) {
 														break;
 													}
 												}
+												else {
+													printf("Encountered unexpected start tag \"%s\" inside of team tag.\n", input.name().toString().toLocal8Bit().data());
+												}
 											}
 											else if(input.isEndElement()) {
 												if(QString::compare(input.name().toString(), "team", Qt::CaseInsensitive) == 0) {
 													break;
 												}
+												else {
+													printf("Encountered unexpected end tag \"%s\" inside of team tag.\n", input.name().toString().toLocal8Bit().data());
+												}
 											}
 										}
+									}
+									else {
+										printf("Encountered unexpected start tag \"%s\" inside of information tag.\n", input.name().toString().toLocal8Bit().data());
 									}
 								}
 								else if(input.isEndElement()) {
 									if(QString::compare(input.name().toString(), "information", Qt::CaseInsensitive) == 0) {
 										break;
+									}
+									else {
+										printf("Encountered unexpected end tag \"%s\" inside of information tag.\n", input.name().toString().toLocal8Bit().data());
 									}
 								}
 							}
@@ -733,60 +760,128 @@ bool ModCollection::loadFromXML(const char * fileName) {
 											input.readNext();
 
 											if(input.isStartElement()) {
-												if(QString::compare(input.name().toString(), "file", Qt::CaseInsensitive) == 0) {
+												if(QString::compare(input.name().toString(), "game", Qt::CaseInsensitive) == 0) {
 													attributes = input.attributes();
+
+													hasGameVersion = attributes.hasAttribute("type");
+													gameVersion = hasGameVersion ? GameVersions::parseFrom(attributes.value("type").toString()) : GameVersions::Invalid;
+
+													hasState = attributes.hasAttribute("state");
+													modState = hasState ? ModStates::parseFrom(attributes.value("state").toString()) : ModStates::Invalid;
+
+													if(!hasGameVersion) {
+														printf("Mod \"%s\" is missing required type attribute for a version / game node.\n", name.toLocal8Bit().data());
+													}
+													else if(!GameVersions::isValid(gameVersion)) {
+														printf("Mod \"%s\" has an invalid type attribute value for a version / game node.\n", name.toLocal8Bit().data());
+													}
+
+													if(!hasState) {
+														printf("Mod \"%s\" is missing required state attribute for a version / game node.\n", name.toLocal8Bit().data());
+													}
+													else if(!ModStates::isValid(modState)) {
+														printf("Mod \"%s\" has an invalid state attribute value for a version / game node.\n", name.toLocal8Bit().data());
+													}
 													
-													QString fileName, fileType;
+													newModGameVersion = new ModGameVersion(gameVersion, modState);
 
-													if(attributes.hasAttribute("name")) {
-														fileName = attributes.value("name").toString();
-													}
-													else {
-														printf("Mod \"%s\" missing required name attribute for a version / file node.\n", name.toLocal8Bit().data());
-														break;
-													}
-
-													if(attributes.hasAttribute("type")) {
-														fileType = attributes.value("type").toString();
-													}
-													else {
-														QString fileExtension = Utilities::getFileExtension(fileName);
-
-														if(QString::compare(fileExtension, "con", Qt::CaseInsensitive) == 0) {
-															fileType = "con";
-														}
-														else if(QString::compare(fileExtension, "grp", Qt::CaseInsensitive) == 0) {
-															fileType = "grp";
-														}
-														else {
-															printf("Unhandled or unknown file type for version / file node with unspecified type attribute for mod \"%s\".\n", name.toLocal8Bit().data());
+													// root / mod / files / version / game level loop
+													while(true) {
+														if(input.atEnd() || input.hasError()) {
 															break;
 														}
-													}
 
-													newVersionFile = new ModVersionFile(fileName, fileType);
-													if(!newModVersion->addFile(newVersionFile)) {
-														if(Utilities::stringLength(newVersionFile->getName()) == 0) {
-															printf("Attempted to add version file with empty file name to mod: \"%s\".\n", newMod->getName());
+														input.readNext();
+
+														if(input.isStartElement()) {
+															if(QString::compare(input.name().toString(), "file", Qt::CaseInsensitive) == 0) {
+																attributes = input.attributes();
+													
+																QString fileName, fileType;
+
+																if(attributes.hasAttribute("name")) {
+																	fileName = attributes.value("name").toString();
+																}
+																else {
+																	printf("Mod \"%s\" missing required name attribute for a version / game / file node.\n", name.toLocal8Bit().data());
+																	break;
+																}
+
+																if(attributes.hasAttribute("type")) {
+																	fileType = attributes.value("type").toString();
+																}
+																else {
+																	QString fileExtension = Utilities::getFileExtension(fileName);
+
+																	if(QString::compare(fileExtension, "con", Qt::CaseInsensitive) == 0) {
+																		fileType = "con";
+																	}
+																	else if(QString::compare(fileExtension, "grp", Qt::CaseInsensitive) == 0) {
+																		fileType = "grp";
+																	}
+																	else {
+																		printf("Unhandled or unknown file type for version / game / file node with unspecified type attribute for mod \"%s\".\n", name.toLocal8Bit().data());
+																		break;
+																	}
+																}
+
+																newVersionFile = new ModVersionFile(fileName, fileType);
+																if(!newModGameVersion->addFile(newVersionFile)) {
+																	if(Utilities::stringLength(newVersionFile->getName()) == 0) {
+																		printf("Attempted to add version file with empty file name to mod: \"%s\".\n", newMod->getName());
+																	}
+																	else {
+																		printf("Attempted to add duplicate version file \"%s\" to mod: \"%s%s%s\".\n", newVersionFile->getName(), newMod->getName(), newModVersion->getVersion() == NULL ? "" : " ", newModVersion->getVersion() == NULL ? "" : newModVersion->getVersion());
+																	}
+
+																	delete newVersionFile;
+
+																	break;
+																}
+															}
+															else {
+																printf("Encountered unexpected start tag \"%s\" inside of game tag.\n", input.name().toString().toLocal8Bit().data());
+															}
 														}
-														else {
-															printf("Attempted to add duplicate version file \"%s\" to mod: \"%s%s%s\"\n", newVersionFile->getName(), newMod->getName(), newModVersion->getVersion() == NULL ? "" : " ", newModVersion->getVersion() == NULL ? "" : newModVersion->getVersion());
+														else if(input.isEndElement()) {
+															if(QString::compare(input.name().toString(), "game", Qt::CaseInsensitive) == 0) {
+																if(!newModVersion->addGameVersion(newModGameVersion)) {
+																	if(!newModGameVersion->hasFileOfType("grp")) {
+																		printf("Attempted to add mod game version \"%s\" without required group file to mod \"%s\" with version %s%s%s.\n", GameVersions::toString(newModGameVersion->getGameVersion()), newMod->getName(), newModVersion->getVersion() == NULL ? "" : "\"", newModVersion->getVersion() == NULL ? "" : newModVersion->getVersion(), newModVersion->getVersion() == NULL ? "" : "\"");
+																	}
+																	else {
+																		printf("Attempted to add duplicate mod game version \"%s\" to mod \"%s\" with version %s%s%s.\n", GameVersions::toString(newModGameVersion->getGameVersion()), newMod->getName(), newModVersion->getVersion() == NULL ? "" : "\"", newModVersion->getVersion() == NULL ? "" : newModVersion->getVersion(), newModVersion->getVersion() == NULL ? "" : "\"");
+																	}
+
+																	delete newModGameVersion;
+																}
+
+																newModGameVersion = NULL;
+																hasGameVersion = false;
+																hasState = false;
+																gameVersion = GameVersions::Invalid;
+																modState = ModStates::Invalid;
+
+																break;
+															}
+															else {
+																printf("Encountered unexpected end tag \"%s\" inside of game tag.\n", input.name().toString().toLocal8Bit().data());
+															}
 														}
-
-														delete newVersionFile;
-
-														break;
 													}
+												}
+												else {
+													printf("Encountered unexpected start tag \"%s\" inside of version tag.\n", input.name().toString().toLocal8Bit().data());
 												}
 											}
 											else if(input.isEndElement()) {
 												if(QString::compare(input.name().toString(), "version", Qt::CaseInsensitive) == 0) {
 													if(!newMod->addVersion(newModVersion)) {
-														if(!newModVersion->hasFileOfType("grp")) {
-															printf("Attempted to add mod version %s%s%s without required group file to mod: \"%s\"\n", newModVersion->getVersion() == NULL ? "" : "\"", newModVersion->getVersion() == NULL ? "" : newModVersion->getVersion(), newModVersion->getVersion() == NULL ? "" : "\"", newMod->getName());
+														if(!newModVersion->numberOfGameVersions() == 0) {
+															printf("Attempted to add mod version %s%s%s without any game versions to mod: \"%s\".\n", newModVersion->getVersion() == NULL ? "" : "\"", newModVersion->getVersion() == NULL ? "" : newModVersion->getVersion(), newModVersion->getVersion() == NULL ? "" : "\"", newMod->getName());
 														}
 														else {
-															printf("Attempted to add duplicate mod version %s%s%s to mod: \"%s\"\n", newModVersion->getVersion() == NULL ? "" : "\"", newModVersion->getVersion() == NULL ? "" : newModVersion->getVersion(), newModVersion->getVersion() == NULL ? "" : "\"", newMod->getName());
+															printf("Attempted to add duplicate mod version %s%s%s to mod: \"%s\".\n", newModVersion->getVersion() == NULL ? "" : "\"", newModVersion->getVersion() == NULL ? "" : newModVersion->getVersion(), newModVersion->getVersion() == NULL ? "" : "\"", newMod->getName());
 														}
 
 														delete newModVersion;
@@ -796,13 +891,22 @@ bool ModCollection::loadFromXML(const char * fileName) {
 
 													break;
 												}
+												else {
+													printf("Encountered unexpected end tag \"%s\" inside of version tag.\n", input.name().toString().toLocal8Bit().data());
+												}
 											}
 										}
+									}
+									else {
+										printf("Encountered unexpected start tag \"%s\" inside of files tag.\n", input.name().toString().toLocal8Bit().data());
 									}
 								}
 								else if(input.isEndElement()) {
 									if(QString::compare(input.name().toString(), "files", Qt::CaseInsensitive) == 0) {
 										break;
+									}
+									else {
+										printf("Encountered unexpected end tag \"%s\" inside of files tag.\n", input.name().toString().toLocal8Bit().data());
 									}
 								}
 							}
@@ -876,14 +980,28 @@ bool ModCollection::loadFromXML(const char * fileName) {
 											newDownload->setSubfolder(attributes.value("subfolder").toString());
 										}
 
+										if(attributes.hasAttribute("game")) {
+											newDownload->setGameVersion(attributes.value("game").toString());
+										}
+
+										if(attributes.hasAttribute("state")) {
+											newDownload->setState(attributes.value("state").toString());
+										}
+
 										if(attributes.hasAttribute("description")) {
 											newDownload->setDescription(attributes.value("description").toString());
 										}
+									}
+									else {
+										printf("Encountered unexpected start tag \"%s\" inside of downloads tag.\n", input.name().toString().toLocal8Bit().data());
 									}
 								}
 								else if(input.isEndElement()) {
 									if(QString::compare(input.name().toString(), "downloads", Qt::CaseInsensitive) == 0) {
 										break;
+									}
+									else {
+										printf("Encountered unexpected end tag \"%s\" inside of downloads tag.\n", input.name().toString().toLocal8Bit().data());
 									}
 								}
 							}
@@ -938,10 +1056,16 @@ bool ModCollection::loadFromXML(const char * fileName) {
 											newScreenshot->setHeight(attributes.value("height").toString());
 										}
 									}
+									else {
+										printf("Encountered unexpected start tag \"%s\" inside of screenshots tag.\n", input.name().toString().toLocal8Bit().data());
+									}
 								}
 								else if(input.isEndElement()) {
 									if(QString::compare(input.name().toString(), "screenshots", Qt::CaseInsensitive) == 0) {
 										break;
+									}
+									else {
+										printf("Encountered unexpected end tag \"%s\" inside of screenshots tag.\n", input.name().toString().toLocal8Bit().data());
 									}
 								}
 							}
@@ -963,13 +1087,22 @@ bool ModCollection::loadFromXML(const char * fileName) {
 
 							break;
 						}
+						else {
+							printf("Encountered unexpected end tag \"%s\" inside of mod tag.\n", input.name().toString().toLocal8Bit().data());
+						}
 					}
 				}
+			}
+			else {
+				printf("Encountered unexpected start tag \"%s\" inside of mods tag.\n", input.name().toString().toLocal8Bit().data());
 			}
 		}
 		else if(input.isEndElement()) {
 			if(QString::compare(input.name().toString(), "mods", Qt::CaseInsensitive) == 0) {
 				break;
+			}
+			else {
+				printf("Encountered unexpected end tag \"%s\" inside of mods tag.\n", input.name().toString().toLocal8Bit().data());
 			}
 		}
 	}

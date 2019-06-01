@@ -20,7 +20,7 @@ public:
 #endif // USE_STL
 	Variable(const Variable & v);
 	Variable & operator = (const Variable & v);
-	~Variable();
+	virtual ~Variable();
 
 	char * getID() const;
 	char * getValue() const;

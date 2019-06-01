@@ -89,6 +89,27 @@
     <ClInclude Include="Source\Variable System\VariableCollection.h">
       <Filter>Variable System</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Mod Collection\ModState.h">
+      <Filter>Mod Collection</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mod Collection\ModGameVersion.h">
+      <Filter>Mod Collection</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mod Collection\GameVersion.h">
+      <Filter>Mod Collection</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Group\Group.h">
+      <Filter>Group</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Group\GroupFile.h">
+      <Filter>Group</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Utilities\Endian.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Utilities\Serializer.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Main.cpp" />
@@ -176,6 +197,27 @@
     <ClCompile Include="Source\Variable System\VariableCollection.cpp">
       <Filter>Variable System</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mod Collection\ModState.cpp">
+      <Filter>Mod Collection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mod Collection\ModGameVersion.cpp">
+      <Filter>Mod Collection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mod Collection\GameVersion.cpp">
+      <Filter>Mod Collection</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Group\Group.cpp">
+      <Filter>Group</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Group\GroupFile.cpp">
+      <Filter>Group</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Utilities\Endian.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Utilities\Serializer.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Duke Nukem 3D Mod Manager.rc" />
@@ -204,6 +246,9 @@
     </Filter>
     <Filter Include="Argument Collection">
       <UniqueIdentifier>{cc0dff7e-da5a-41d4-868a-fc96b3c6fdf4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Group">
+      <UniqueIdentifier>{87079d17-9e6c-4ea7-93c4-afe1f7532e37}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

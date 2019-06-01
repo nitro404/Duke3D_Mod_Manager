@@ -12,7 +12,7 @@ public:
 	ModTeam(const QString & name, const QString & email = QString());
 	ModTeam(const ModTeam & m);
 	ModTeam & operator = (const ModTeam & m);
-	~ModTeam();
+	virtual ~ModTeam();
 
 	const char * getName() const;
 	const char * getEmail() const;

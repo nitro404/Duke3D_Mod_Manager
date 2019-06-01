@@ -7,6 +7,7 @@
 #include <QXmlStream.h>
 #include "Mod Manager/ModManagerMode.h"
 #include "Mod Manager/GameType.h"
+#include "Mod Collection/GameVersion.h"
 #include "Mod Collection/Mod.h"
 #include "Mod Collection/ModCollection.h"
 #include "Mod Collection/FavouriteModCollection.h"
@@ -16,7 +17,7 @@
 class ModManager {
 public:
 	ModManager();
-	~ModManager();
+	virtual ~ModManager();
 
 	bool init(int argc, char * argv[], bool start = true);
 	bool init(const ArgumentParser * args = NULL, bool start = true);
@@ -37,6 +38,13 @@ public:
 	bool setGameType(const QString & gameTypeName);
 	bool setGameType(int gameType);
 	bool setGameType(GameTypes::GameType gameType);
+	
+	GameVersions::GameVersion getGameVersion() const;
+	const char * getGameVersionName() const;
+	bool setGameVersion(const char * gameVersionName);
+	bool setGameVersion(const QString & gameVersionName);
+	bool setGameVersion(int gameVersion);
+	bool setGameVersion(GameVersions::GameVersion gameVersion);
 
 	const char * getServerIPAddress() const;
 	void setServerIPAddress(const char * ipAddress);
@@ -89,6 +97,7 @@ private:
 	SettingsManager m_settings;
 	ModManagerModes::ModManagerMode m_mode;
 	GameTypes::GameType m_gameType;
+	GameVersions::GameVersion m_gameVersion;
 	const Mod * m_selectedMod;
 	int m_selectedModVersionIndex;
 	ModCollection m_mods;

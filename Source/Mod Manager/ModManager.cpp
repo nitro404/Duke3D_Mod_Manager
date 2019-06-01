@@ -1,4 +1,5 @@
 #include "Mod Manager/ModManager.h"
+#include "Group/Group.h"
 
 const char * ModManager::VERSION = "1.0.0";
 
@@ -7,6 +8,7 @@ ModManager::ModManager()
 	, m_arguments(NULL)
 	, m_mode(ModManagerModes::defaultMode)
 	, m_gameType(GameTypes::defaultGameType)
+	, m_gameVersion(GameVersions::defaultGameVersion)
 	, m_selectedMod(NULL)
 	, m_selectedModVersionIndex(0) {
 	
@@ -38,6 +40,7 @@ bool ModManager::init(const ArgumentParser * args, bool start) {
 
 	m_mode = SettingsManager::getInstance()->modManagerMode;
 	m_gameType = SettingsManager::getInstance()->gameType;
+	m_gameVersion = SettingsManager::getInstance()->gameVersion;
 
 	if(!m_mods.load()) {
 		printf("Failed to load mod list!\n");
@@ -147,7 +150,7 @@ GameTypes::GameType ModManager::getGameType() const {
 }
 
 const char * ModManager::getGameTypeName() const {
-	return GameTypes::toString(m_mode);
+	return GameTypes::toString(m_gameType);
 }
 
 bool ModManager::setGameType(const char * gameTypeName) {
@@ -176,6 +179,44 @@ bool ModManager::setGameType(GameTypes::GameType gameType) {
 	m_gameType = gameType;
 
 	SettingsManager::getInstance()->gameType = m_gameType;
+
+	return true;
+}
+
+GameVersions::GameVersion ModManager::getGameVersion() const {
+	return m_gameVersion;
+}
+
+const char * ModManager::getGameVersionName() const {
+	return GameVersions::toString(m_gameVersion);
+}
+
+bool ModManager::setGameVersion(const char * gameVersionName) {
+	if(gameVersionName == NULL) { return false; }
+
+	return setGameVersion(GameVersions::parseFrom(gameVersionName));
+}
+
+bool ModManager::setGameVersion(const QString & gameVersionName) {
+	return setGameVersion(GameVersions::parseFrom(gameVersionName));
+}
+
+bool ModManager::setGameVersion(int gameVersion) {
+	if(!GameVersions::isValid(gameVersion)) { return false; }
+
+	m_gameVersion = static_cast<GameVersions::GameVersion>(gameVersion);
+
+	SettingsManager::getInstance()->gameVersion = m_gameVersion;
+
+	return true;
+}
+
+bool ModManager::setGameVersion(GameVersions::GameVersion gameVersion) {
+	if(!GameVersions::isValid(gameVersion)) { return false; }
+
+	m_gameVersion = gameVersion;
+
+	SettingsManager::getInstance()->gameVersion = m_gameVersion;
 
 	return true;
 }
@@ -1637,6 +1678,20 @@ bool ModManager::runSelectedMod(const ArgumentParser * args) {
 
 			printf("\n");
 		}
+
+		if(!m_selectedMod->getVersion(m_selectedModVersionIndex)->hasGameVersion(m_gameVersion)) {
+			printf("%s", m_selectedMod->getName());
+
+			if(Utilities::stringLength(m_selectedMod->getVersion(m_selectedModVersionIndex)->getVersion()) > 0) {
+				printf(" %s", m_selectedMod->getVersion(m_selectedModVersionIndex)->getVersion());
+			}
+
+			printf(" is not supported on %s.\n\n", GameVersions::toString(m_gameVersion));
+
+			Utilities::pause();
+
+			return false;
+		}
 	}
 
 	Script script;
@@ -1659,8 +1714,20 @@ bool ModManager::runSelectedMod(const ArgumentParser * args) {
 		printf("Running mod \"%s\" in %s mode.\n\n", m_selectedMod->getFullName(m_selectedModVersionIndex).toLocal8Bit().data(), GameTypes::toString(m_gameType));
 	}
 
+	QString gameDirectory = m_scriptArgs.applyArguments("<GAMEPATH|:GAMEPATH:>");
+
 	if(m_selectedMod != NULL) {
-		Utilities::renameFiles("DMO", "DMO_");
+		if(Utilities::renameFiles("DMO", "DMO_", gameDirectory.toLocal8Bit().data(), true) > 0) {
+			printf("\n");
+		}
+
+		Group * group = new Group(m_scriptArgs.applyArguments("<GAMEPATH|:GAMEPATH:/><GROUP|<MODDIR|:MODDIR:/>:GROUP:>"));
+		if(group->load()) {
+			int numberOfDemosExtracted = group->extractAllFilesWithExtension("DMO", gameDirectory);
+
+			printf("Extracted %d demo%s from group file \"%s\" to game directory \"%s\".\n\n", numberOfDemosExtracted, numberOfDemosExtracted == 1 ? "" : "s", group->getFilePath(), gameDirectory.toLocal8Bit().data());
+		}
+		delete group;
 	}
 
 	if(m_mode == ModManagerModes::DOSBox) {
@@ -1704,10 +1771,6 @@ bool ModManager::runSelectedMod(const ArgumentParser * args) {
 #endif // _DEBUG
 
 		system(DOSBoxCommandBytes.data());
-
-#if _DEBUG
-			Utilities::pause();
-#endif // _DEBUG
 	}
 	else if(m_mode == ModManagerModes::Windows) {
 		bool scriptLoaded = false;
@@ -1741,18 +1804,22 @@ bool ModManager::runSelectedMod(const ArgumentParser * args) {
 #endif // _DEBUG
 
 			system(windowsCommandBytes.data());
-			
-#if _DEBUG
-			Utilities::pause();
-#endif // _DEBUG
 		}
 	}
 
 	if(m_selectedMod != NULL) {
-		Utilities::deleteFiles("DMO");
+		if(Utilities::deleteFiles("DMO", gameDirectory.toLocal8Bit().data(), true) > 0) {
+			printf("\n");
+		}
 	
-		Utilities::renameFiles("DMO_", "DMO");
+		if(Utilities::renameFiles("DMO_", "DMO", gameDirectory.toLocal8Bit().data(), true) > 0) {
+			printf("\n");
+		}
 	}
+	
+#if _DEBUG
+	Utilities::pause();
+#endif // _DEBUG
 
 	return true;
 }
@@ -1766,12 +1833,11 @@ bool ModManager::updateScriptArgs() {
 	
 	m_scriptArgs.setArgument("DUKE3D", SettingsManager::getInstance()->gameFileName);
 	m_scriptArgs.setArgument("SETUP", SettingsManager::getInstance()->setupFileName);
-	m_scriptArgs.setArgument("KEXTRACT", SettingsManager::getInstance()->kextractFileName);
 	m_scriptArgs.setArgument("MODDIR", Utilities::generateFullPath(SettingsManager::getInstance()->modsDirectoryPath, SettingsManager::getInstance()->modsDirectoryName));
 	
-	if(m_selectedMod != NULL && m_selectedMod->getVersion(m_selectedModVersionIndex) != NULL) {
-		m_scriptArgs.setArgument("CON", m_selectedMod->getVersion(m_selectedModVersionIndex)->getFileNameByType("con"));
-		m_scriptArgs.setArgument("GROUP", m_selectedMod->getVersion(m_selectedModVersionIndex)->getFileNameByType("grp"));
+	if(m_selectedMod != NULL && m_selectedMod->getVersion(m_selectedModVersionIndex) != NULL && m_selectedMod->getVersion(m_selectedModVersionIndex)!= NULL && m_selectedMod->getVersion(m_selectedModVersionIndex)->hasGameVersion(m_gameVersion)) {
+		m_scriptArgs.setArgument("CON", m_selectedMod->getVersion(m_selectedModVersionIndex)->getGameVersion(m_gameVersion)->getFileNameByType("con"));
+		m_scriptArgs.setArgument("GROUP", m_selectedMod->getVersion(m_selectedModVersionIndex)->getGameVersion(m_gameVersion)->getFileNameByType("grp"));
 	}
 
 	if(m_gameType == GameTypes::Client) {
@@ -1951,13 +2017,16 @@ int ModManager::checkForUnlinkedModFiles() const {
 	}
 
 	int numberOfMultipleLinkedModFiles = 0;
-	const ModVersion * modVersion = NULL;
+	const ModGameVersion * modGameVersion = NULL;
 	const char * fileName = NULL;
 	QString key;
 	for(int i=0;i<m_mods.numberOfMods();i++) {
 		for(int j=0;j<m_mods.getMod(i)->numberOfVersions();j++) {
+			modGameVersion = m_mods.getMod(i)->getVersion(j)->getGameVersion(m_gameVersion);
 
-			fileName = m_mods.getMod(i)->getVersion(j)->getFileNameByType("grp");
+			if(modGameVersion == NULL) { continue; }
+
+			fileName = modGameVersion->getFileNameByType("grp");
 			if(fileName != NULL) {
 				key = QString(fileName).toUpper();
 				if(linkedModFiles[key] == 1) {
@@ -1970,7 +2039,7 @@ int ModManager::checkForUnlinkedModFiles() const {
 				linkedModFiles[key] = 1;
 			}
 
-			fileName = m_mods.getMod(i)->getVersion(j)->getFileNameByType("con");
+			fileName = modGameVersion->getFileNameByType("con");
 			if(fileName != NULL) {
 				key = QString(fileName).toUpper();
 				if(linkedModFiles[key] == 1) {
@@ -2030,11 +2099,14 @@ int ModManager::checkModForMissingFiles(const Mod & mod, int versionIndex) const
 	if(!m_initialized || mod.numberOfVersions() == 0 || versionIndex >= mod.numberOfVersions()) { return 0; }
 
 	int numberOfMissingFiles = 0;
+	const ModGameVersion * modGameVersion = NULL;
 	const char * fileName = NULL;
-
 	for(int i=(versionIndex < 0 ? 0 : versionIndex);i<(versionIndex < 0 ? mod.numberOfVersions() : versionIndex + 1);i++) {
+		modGameVersion = mod.getVersion(i)->getGameVersion(m_gameVersion);
 
-		fileName = mod.getVersion(i)->getFileNameByType("con");
+		if(modGameVersion == NULL) { continue; }
+
+		fileName = modGameVersion->getFileNameByType("con");
 
 		if(fileName != NULL) {
 			QFileInfo con(QString("%1/%2").arg(SettingsManager::getInstance()->modsDirectoryName).arg(fileName));
@@ -2046,7 +2118,7 @@ int ModManager::checkModForMissingFiles(const Mod & mod, int versionIndex) const
 			}
 		}
 
-		fileName = mod.getVersion(i)->getFileNameByType("grp");
+		fileName = modGameVersion->getFileNameByType("grp");
 
 		if(fileName != NULL) {
 			QFileInfo group(QString("%1/%2").arg(SettingsManager::getInstance()->modsDirectoryName).arg(fileName));
@@ -2084,12 +2156,10 @@ int ModManager::checkForMissingExecutables() {
 	QString fullDOSBoxExePath = Utilities::generateFullPath(SettingsManager::getInstance()->DOSBoxPath, SettingsManager::getInstance()->DOSBoxFileName);
 	QString fullGameExePath = Utilities::generateFullPath(SettingsManager::getInstance()->gamePath, SettingsManager::getInstance()->gameFileName);
 	QString fullSetupExePath = Utilities::generateFullPath(SettingsManager::getInstance()->gamePath, SettingsManager::getInstance()->setupFileName);
-	QString fullKextractExePath = Utilities::generateFullPath(SettingsManager::getInstance()->gamePath, SettingsManager::getInstance()->kextractFileName);
 
 	QFileInfo DOSBoxExe(fullDOSBoxExePath);
 	QFileInfo gameExe(fullGameExePath);
 	QFileInfo setupExe(fullSetupExePath);
-	QFileInfo kextractExe(fullKextractExePath);
 
 	if(!DOSBoxExe.isFile() || !DOSBoxExe.exists()) {
 		numberOfMissingExecutables++;
@@ -2107,12 +2177,6 @@ int ModManager::checkForMissingExecutables() {
 		numberOfMissingExecutables++;
 		QByteArray fullSetupExePathBytes = fullSetupExePath.toLocal8Bit();
 		printf("Missing setup executable: %s\n", fullSetupExePathBytes.data());
-	}
-
-	if(!kextractExe.isFile() || !kextractExe.exists()) {
-		numberOfMissingExecutables++;
-		QByteArray fullKextractExePathBytes = fullKextractExePath.toLocal8Bit();
-		printf("Missing kextract executable: %s\n", fullKextractExePathBytes.data());
 	}
 
 	return numberOfMissingExecutables++;

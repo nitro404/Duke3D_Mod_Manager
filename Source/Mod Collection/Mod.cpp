@@ -538,7 +538,7 @@ const ModVersion * Mod::getVersion(const QString & version) const {
 }
 
 bool Mod::addVersion(ModVersion * version) {
-	if(version == NULL || !version->hasFileOfType("grp") || hasVersion(*version)) {
+	if(!ModVersion::isValid(version) || hasVersion(*version)) {
 		return false;
 	}
 	

@@ -10,7 +10,7 @@ public:
 	ModAuthorInformation(const QString & name);
 	ModAuthorInformation(const ModAuthorInformation & m);
 	ModAuthorInformation & operator = (const ModAuthorInformation & m);
-	~ModAuthorInformation();
+	virtual ~ModAuthorInformation();
 	
 	const char * getName() const;
 	void setName(const char * name);

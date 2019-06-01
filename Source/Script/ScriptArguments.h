@@ -12,7 +12,7 @@ public:
 	ScriptArguments();
 	ScriptArguments(const ScriptArguments & s);
 	ScriptArguments & operator = (const ScriptArguments & s);
-	~ScriptArguments();
+	virtual ~ScriptArguments();
 
 	QString applyConditionals(const QString & command) const;
 	QString applyArguments(const QString & command) const;

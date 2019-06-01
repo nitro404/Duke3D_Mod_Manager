@@ -4,7 +4,8 @@
 #include <QString.h>
 #include <QVector.h>
 #include "Utilities/Utilities.h"
-#include "Mod Collection/ModVersionFile.h"
+#include "Mod Collection/GameVersion.h"
+#include "Mod Collection/ModGameVersion.h"
 
 class ModVersion {
 public:
@@ -12,46 +13,42 @@ public:
 	ModVersion(const QString & version);
 	ModVersion(const ModVersion & m);
 	ModVersion & operator = (const ModVersion & m);
-	~ModVersion();
+	virtual ~ModVersion();
 
 	const char * getVersion() const;
-
 	void setVersion(const char * version);
 	void setVersion(const QString & version);
 
-	int numberOfFiles() const;
-	bool hasFile(const ModVersionFile & file) const;
-	bool hasFile(const char * fileName) const;
-	bool hasFile(const QString & fileName) const;
-	bool hasFileOfType(const char * fileType) const;
-	bool hasFileOfType(const QString & fileType) const;
-	int indexOfFile(const ModVersionFile & file) const;
-	int indexOfFile(const char * fileName) const;
-	int indexOfFile(const QString & fileName) const;
-	int indexOfFileByType(const char * fileType) const;
-	int indexOfFileByType(const QString & fileType) const;
-	const ModVersionFile * getFile(int index) const;
-	const ModVersionFile * getFile(const char * fileName) const;
-	const ModVersionFile * getFile(const QString & fileName) const;
-	const ModVersionFile * getFileByType(const char * fileType) const;
-	const ModVersionFile * getFileByType(const QString & fileType) const;
-	const char * getFileNameByType(const char * fileType) const;
-	const char * getFileNameByType(const QString & fileType) const;
-	bool addFile(ModVersionFile * file);
-	bool removeFile(int index);
-	bool removeFile(const ModVersionFile & file);
-	bool removeFile(const char * fileName);
-	bool removeFile(const QString & fileName);
-	bool removeFileByType(const char * fileType);
-	bool removeFileByType(const QString & fileType);
-	void clearFiles();
+	int numberOfGameVersions() const;
+	bool hasGameVersion(GameVersions::GameVersion version) const;
+	bool hasGameVersion(const char * data) const;
+	bool hasGameVersion(const QString & data) const;
+	bool hasGameVersion(const ModGameVersion * version) const;
+	int indexOfGameVersion(GameVersions::GameVersion version) const;
+	int indexOfGameVersion(const char * data) const;
+	int indexOfGameVersion(const QString & data) const;
+	int indexOfGameVersion(const ModGameVersion * version) const;
+	const ModGameVersion * getGameVersion(int index) const;
+	const ModGameVersion * getGameVersion(GameVersions::GameVersion version) const;
+	const ModGameVersion * getGameVersion(const char * data) const;
+	const ModGameVersion * getGameVersion(const QString & data) const;
+	bool addGameVersion(ModGameVersion * version);
+	bool removeGameVersion(int index);
+	bool removeGameVersion(GameVersions::GameVersion version);
+	bool removeGameVersion(const char * data);
+	bool removeGameVersion(const QString & data);
+	bool removeGameVersion(const ModGameVersion * version);
+	void clearGameVersions();
 
+	bool isValid() const;
+	static bool isValid(const ModVersion * m);
+	
 	bool operator == (const ModVersion & m) const;
 	bool operator != (const ModVersion & m) const;
 
 private:
 	char * m_version;
-	QVector<ModVersionFile *> m_files;
+	QVector<ModGameVersion *> m_gameVersions;
 };
 
 #endif // MOD_VERSION_H

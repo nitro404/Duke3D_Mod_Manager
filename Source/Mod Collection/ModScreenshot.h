@@ -12,7 +12,7 @@ public:
 	ModScreenshot(const QString & fileName, const QString & thumbnail, int width, int height);
 	ModScreenshot(const ModScreenshot & s);
 	ModScreenshot & operator = (const ModScreenshot & s);
-	~ModScreenshot();
+	virtual ~ModScreenshot();
 
 	const char * getFileName() const;
 	const char * getThumbnail() const;

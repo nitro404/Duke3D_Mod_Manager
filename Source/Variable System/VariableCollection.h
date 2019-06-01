@@ -20,7 +20,7 @@ public:
 	VariableCollection();
 	VariableCollection(const VariableCollection & v);
 	VariableCollection & operator = (const VariableCollection & v);
-	~VariableCollection();
+	virtual ~VariableCollection();
 	
 	int numberOfCategories() const;
 	int indexOfCategory(const char * category) const;
