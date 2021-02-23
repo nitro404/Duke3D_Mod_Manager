@@ -68,6 +68,9 @@
 			<download filename="1999_Demo-ModMgrA.zip" version="Demo" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 			<download filename="1999-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
+		<related>
+			<mod id="2000" />
+		</related>
 	</mod>
 	
 	<mod name="2000" id="2000">
@@ -88,6 +91,9 @@
 			<download filename="2000demo.zip" version="Demo" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
 			<download filename="2000_Demo-ModMgrA.zip" version="Demo" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
+		<related>
+			<mod id="1999" />
+		</related>
 	</mod>
 	
 	<mod name="25th Century Duke" id="25th_century_duke">
@@ -299,13 +305,19 @@
 	</mod>
 	
 	<mod name="Alien Versus Predator" id="alien_versus_predator">
-		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" release_date="July 20, 2004" website="http://www.geocities.com/avplaw">
-			<team>
-				<member name="Slawomir LAW Lawrynowicz" email="law2@wp.pl" />
+		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" version="Full" release_date="July 20, 2004" website="http://www.geocities.com/avplaw">
+			<team country="Poland">
+				<member name="Slawomir Lawrynowicz" alias="LAW" email="law2@wp.pl" />
 			</team>
 		</information>
 		<files>
-			<version>
+			<version id="Preview">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="AVP.CON" type="con" />
+					<file name="AVP.GRP" type="grp" />
+				</game>
+			</version>
+			<version id="Full">
 				<game type="Atomic Edition 1.4/1.5" state="Native">
 					<file name="AVP.CON" type="con" />
 					<file name="AVP.GRP" type="grp" />
@@ -313,9 +325,15 @@
 			</version>
 		</files>
 		<downloads>
-			<download filename="avp.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
-			<download filename="Alien_Versus_Predator-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+			<download filename="Alien_vs_Predator.zip" version="Preview" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="avp.zip" version="Full" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Alien_Versus_Predator_Preview-ModMgrA.zip" version="preview" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+			<download filename="Alien_Versus_Predator-ModMgrA.zip" version="Full" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
+		<related>
+			<mod id="alien_versus_predator_2" />
+			<mod id="predator_ii" />
+		</related>
 	</mod>
 	
 	<mod name="Aliens" id="aliens">
@@ -435,8 +453,8 @@
 	
 	<mod name="Arctic Wolf" id="arctic_wolf">
 		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" release_date="January 11, 2006">
-			<team>
-				<member name="Slawomir LAW Lawrynowicz" email="law2@wp.pl" />
+			<team country="Poland">
+				<member name="Slawomir Lawrynowicz" alias="LAW" email="law2@wp.pl" />
 			</team>
 		</information>
 		<files>
@@ -454,7 +472,7 @@
 	</mod>
 	
 	<mod name="Arrival" id="arrival">
-		<information type="Partial Conversion" game="Atomic Edition 1.4/1.5" release_date="Unknown" />
+		<information type="Partial Conversion" game="Atomic Edition 1.4/1.5" />
 		<files>
 			<version>
 				<game type="Atomic Edition 1.4/1.5" state="Native">
@@ -566,7 +584,7 @@
 	</mod>
 	
 	<mod name="Black Plaque Foods" id="black_plaque_foods">
-		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" release_date="Unknown" website="http://members.aol.com/alfive">
+		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" website="http://members.aol.com/alfive">
 			<team>
 				<member name="Allen Fivehouse" email="Alfive@aol.com" />
 				<member name="Felix Negron" />
@@ -592,10 +610,10 @@
 			<team name="Cool Software" email="kevincools@hotmail.com">
 				<member name="Kevin Cools" alias="Kef_Nukem" email="kevincools@hotmail.com" />
 				<member name="Geoffrey van Dijk" alias="Fakir Baba" email="fakirnogwat@hotmail.com" />
-				<member name="James Stanfield" email="Jstanf35@hotmail.com" />
+				<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" />
 				<member name="Alejandro" email="Aglavic@uol.com.ar" />
 				<member name="Rob Bomber" email="VvBoMBeRvV@aol.com" />
-				<member name="Slawomir LAW Lawrynowicz" email="Law2@wp.pl" />
+				<member name="Slawomir Lawrynowicz" alias="LAW" email="Law2@wp.pl" />
 				<member name="J.H" email="Johnhenderson16@lineone.net" />
 				<member name="The Map Master" email="I.mecking@gelrevision.nl" />
 				<member name="Mer &amp; Jer" email="G.vanoostrum@worldonline.nl" />
@@ -686,7 +704,7 @@
 	
 	<mod name="Burnt" id="burnt">
 		<information type="Total Conversion" game="All Versions" release_date="April 7, 1999">
-			<team country="Finland">
+			<team country="New Zealand">
 				<member name="Steven Petrovics Griffiths" email="MUZZAG@xtra.co.nz" />
 			</team>
 		</information>
@@ -805,7 +823,13 @@
 	</mod>
 	
 	<mod name="Command &amp; Conquer" id="command_and_conquer">
-		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" version="Demo" release_date="Unknown" />
+		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" version="Beta" release_date="March 23, 2008">
+			<team>
+				<member name="Geoffrey van Dijk" alias="Fakir Baba" email="fakirnogwat@hotmail.com" />
+				<member name="The Commander" />
+				<member name="Hudson" />
+			</team>
+		</information>
 		<files>
 			<version id="Demo">
 				<game type="Atomic Edition 1.4/1.5" state="Native">
@@ -813,13 +837,21 @@
 					<file name="CANDC.GRP" type="grp" />
 				</game>
 			</version>
+			<version id="Beta">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="C_CTC.CON" type="con" />
+					<file name="C_CTC.GRP" type="grp" />
+				</game>
+			</version>
 		</files>
 		<downloads>
 			<download filename="Candc.zip" version="Demo" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
-			<download filename="Command_and_Conquer_Demo-ModMgrA.zip" version="Demo" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+			<download filename="C_CTC_Source_Files_Beta.rar" version="Beta" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Command_&amp;_Conquer_Demo-ModMgrA.zip" version="Demo" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+			<download filename="Command_&amp;_Conquer_Beta-ModMgrA.zip" version="Beta" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
 	</mod>
-	
+
 	<mod name="Complex" id="complex">
 		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" release_date="June 29, 1997">
 			<team>
@@ -900,6 +932,9 @@
 			<screenshot filename="shot25.gif" width="320" height="200" />
 			<screenshot filename="shot26.gif" width="320" height="200" />
 		</screenshots>
+		<related>
+			<mod id="ultima_tc" />
+		</related>
 	</mod>
 	
 	<!--
@@ -949,7 +984,7 @@
 	
 	<!--
 	<mod name="Dawn of Thrawn" id="dawn_of_thrawn">
-		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" release_date="Unknown" website="http://www.dbn.lia.net/users/util">
+		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" website="http://www.dbn.lia.net/users/util">
 			<team>
 				<member name="Ben Smit" email="bens@dbn.lia.net" />
 			</team>
@@ -1030,13 +1065,33 @@
 	</mod>
 	
 	<mod name="Duke City" id="duke_city">
-		<information type="Total Conversion" game="All Versions" version="5.4" release_date="February 23, 1997" website="http://geocities.com/Area51/9835">
-			<team>
+		<information type="Total Conversion" game="All Versions" version="5.4b" release_date="January 14, 1997" website="http://geocities.com/Area51/9835">
+			<team email="duke@xblast-center.com" >
 				<member name="Yves Bresson" email="yves.bresson@span.ch" />
 			</team>
 		</information>
 		<files>
-			<version id="5.4">
+			<version id="5.3" release_date="January 14, 1997">
+				<game type="Regular Version 1.3" state="Native">
+					<file name="DCITY_53.CON" type="con" />
+					<file name="DCITY_53.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="DCITY_53.CON" type="con" />
+					<file name="DCITY_53.GRP" type="grp" />
+				</game>
+			</version>
+			<version id="5.4" release_date="February 23, 1997">
+				<game type="Regular Version 1.3" state="Native">
+					<file name="DCITY_54.CON" type="con" />
+					<file name="DCITY_54.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="DCITY_54.CON" type="con" />
+					<file name="DCITY_54.GRP" type="grp" />
+				</game>
+			</version>
+			<version id="5.4b" release_date="May 8, 1997">
 				<game type="Regular Version 1.3" state="Native">
 					<file name="DUKECITY.CON" type="con" />
 					<file name="DUKECITY.GRP" type="grp" />
@@ -1048,9 +1103,15 @@
 			</version>
 		</files>
 		<downloads>
+			<download filename="dukecityv5.3.zip" version="5.4" subfolder="original" game="All Versions" type="Original Files" />
 			<download filename="dukecity.zip" version="5.4" subfolder="original" game="All Versions" type="Original Files" />
+			<download filename="dukecityv5.4b.zip" version="5.4b" subfolder="original" game="All Versions" type="Original Files" />
+			<download filename="Duke_City_5.3-ModMgrR.zip" version="5.3" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="Duke_City_5.3-ModMgrA.zip" version="5.3" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
 			<download filename="Duke_City_5.4-ModMgrR.zip" version="5.4" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
 			<download filename="Duke_City_5.4-ModMgrA.zip" version="5.4" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+			<download filename="Duke_City_5.4b-ModMgrR.zip" version="5.4b" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="Duke_City_5.4b-ModMgrA.zip" version="5.4b" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
 	</mod>
 	
@@ -1093,7 +1154,7 @@
 				<member name="Geoffrey van Dijk" alias="Fakir Baba" email="fakirnogwat@hotmail.com" />
 				<member name="Maarten van Oostrum" />
 				<member name="Iggy" />
-				<member name="James Stanfield" />
+				<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" />
 				<member name="William Gee" />
 			</team>
 		</information>
@@ -1132,9 +1193,12 @@
 			<download filename="Duke_It_Out_in_D.C.-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
 			<download filename="Duke_It_Out_in_D.C.-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
+		<related>
+			<mod id="duke_it_out_in_dc_waffle_edition" />
+		</related>
 	</mod>
 	
-	<mod name="Duke It Out in D.C. - Waffle Edition" id="duke_it_out_in_dc">
+	<mod name="Duke It Out in D.C. - Waffle Edition" id="duke_it_out_in_dc_waffle_edition">
 		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" version="1.20" release_date="October 27, 1998" website="http://www.geocities.com/TimesSquare/Fortress/1896">
 			<team>
 				<member name="Paul J. Smith" alias="Wally Waffles" email="wallywaffles@geocities.com" />
@@ -1152,6 +1216,9 @@
 			<download filename="DUKEDCWW.zip" version="1.20" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
 			<download filename="Duke_It_Out_in_D.C._Waffle_Edition_1.20-ModMgrA.zip" version="1.20" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
+		<related>
+			<mod id="duke_it_out_in_dc" />
+		</related>
 	</mod>
 	
 	<mod name="Duke It Out in NY" id="duke_it_out_in_ny">
@@ -1465,6 +1532,9 @@
 			<download filename="Duke_Xtreme-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
 			<download filename="Duke_Xtreme-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
+		<related>
+			<mod id="dukezone_ii" />
+		</related>
 	</mod>
 	
 	<mod name="Duke!ZONE II" id="dukezone_ii">
@@ -1501,6 +1571,9 @@
 			<download filename="Duke!ZONE_II-ModMgrR.zip" version="Full" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
 			<download filename="Duke!ZONE_II-ModMgrA.zip" version="Full" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
+		<related>
+			<mod id="duke_xtreme" />
+		</related>
 	</mod>
 	
 	<mod name="Duke, It's ZeroHour" id="zero_hour">
@@ -1756,7 +1829,7 @@
 			</version>
 		</files>
 		<downloads>
-			<download filename="DukyNuke.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="dukeynuker.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
 			<download filename="Dukey_Nukem_3D-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
 	</mod>
@@ -2063,7 +2136,7 @@
 	</mod>
 	
 	<mod name="Homeward" id="homeward">
-		<information type="Map" game="Atomic Edition 1.4/1.5" release_date="Unknown" website="http://www.dbn.lia.net/users/util">
+		<information type="Map" game="Atomic Edition 1.4/1.5" website="http://www.dbn.lia.net/users/util">
 			<team>
 				<member name="Ben Smit" email="bens@dbn.lia.net" />
 			</team>
@@ -2123,7 +2196,7 @@
 	<mod name="Imagination World" id="imagination_world">
 		<information type="Total Conversion" game="Regular Version 1.3" version="1.1" version_type="Single Player" release_date="March 8, 2003" website="http://www.geocities.com/jstanf35">
 			<team name="JS Games">
-				<member name="James Stanfield" email="jstanf35@hotmail.com" />
+				<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" />
 			</team>
 		</information>
 		<files>
@@ -2152,6 +2225,8 @@
 		</files>
 		<downloads>
 			<download filename="iwfull.zip" version="1.1" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="Iwgame.zip" version="1.1" subfolder="original" game="Regular Version 1.3" type="Patch" />
+			<download filename="Nshow.zip" subfolder="original" type="User Map" />
 			<download filename="Imagination_World_1.1-ModMgrR.zip" version="1.1" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
 			<download filename="Imagination_World_1.1-ModMgrA.zip" version="1.1" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
 		</downloads>
@@ -2160,7 +2235,7 @@
 	<mod name="Incubation - Alien Apocalypse" id="incubation_alien_apocalypse">
 		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" version="2.0" release_date="July 17, 1999" website="http://www.dukeworld.com/alien">
 			<team>
-				<member name="James Hollidge" email="cyborg_jim@yahoo.com" />
+				<member name="James Hollidge" alias="Cyborg" email="cyborg_jim@yahoo.com" />
 				<member name="Edward Clarke" email="ears@poboxes.com" />
 			</team>
 		</information>
@@ -2360,7 +2435,7 @@
 	</mod>
 	
 	<mod name="Leo Hotel" id="leo_hotel">
-		<information type="Map" game="Atomic Edition 1.4/1.5" release_date="Unknown" />
+		<information type="Map" game="Atomic Edition 1.4/1.5" />
 		<files>
 			<version>
 				<game type="Atomic Edition 1.4/1.5" state="Native">
@@ -2591,6 +2666,12 @@
 			</team>
 		</information>
 		<files>
+			<version id="1.2">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="MERC12.CON" type="con" />
+					<file name="MERC12.grp" type="grp" />
+				</game>
+			</version>
 			<version id="1.4">
 				<game type="Atomic Edition 1.4/1.5" state="Native">
 					<file name="MERC14.CON" type="con" />
@@ -2599,9 +2680,14 @@
 			</version>
 		</files>
 		<downloads>
+			<download filename="Merc12.zip" version="1.2" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
 			<download filename="Merc.zip" version="1.4" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="MERC_Fatal_Reality_1.2-ModMgrA.zip" version="1.2" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 			<download filename="MERC_Fatal_Reality_1.4-ModMgrA.zip" version="1.4" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
+		<related>
+			<mod id="merc_2" />
+		</related>
 	</mod>
 	
 	<mod name="MERC 2" id="merc_2">
@@ -2660,6 +2746,9 @@
 			<download filename="MERC_2_1.0-ModMgrA.zip" version="1.0" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 			<download filename="MERC_2_1.1-ModMgrA.zip" version="1.1" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
+		<related>
+			<mod id="merc_fatal_reality" />
+		</related>
 	</mod>
 	
 	<mod name="Mic Episode" id="mic_episode">
@@ -2710,7 +2799,7 @@
 	</mod>
 	
 	<mod name="Monkey Shines" id="monkey_shines">
-		<information type="MAP" game="All Versions" release_date="Unknown" />
+		<information type="MAP" game="All Versions" />
 		<files>
 			<version>
 				<game type="Regular Version 1.3" state="Converted">
@@ -2848,6 +2937,9 @@
 			<download filename="Nene_Nukem_3D-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
 			<download filename="Nene_Nukem_3D-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
 		</downloads>
+		<related>
+			<mod id="priss_nukem_3d" />
+		</related>
 	</mod>
 	
 <!-- TODO: stand-alone -->
@@ -2971,6 +3063,9 @@
 			<download filename="vigil2.zip" part="5" numparts="5" special="Map 2" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
 			<download filename="NIB_Nuclear_Indestructible_Biology-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
+		<related>
+			<mod id="nib_the_nightmare_edition" />
+		</related>
 	</mod>
 	
 	<mod name="N.I.B.: The Nightmare Edition" id="nib_the_nightmare_edition">
@@ -3018,6 +3113,9 @@
 			<download filename="NIB_Nightmare_Edition.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
 			<download filename="NIB_The_Nightmare_Edition-ModMgr.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
+		<related>
+			<mod id="nib_nuclear_indestructible_biology" />
+		</related>
 	</mod>
 	
 	<mod name="The Nuclear Pack" id="the_nuclear_pack">
@@ -3072,13 +3170,17 @@
 	</mod>
 	
 	<mod name="Nuke the Bastards" id="nuke_the_bastards">
-		<information type="Episode" game="Atomic Edition 1.4/1.5" release_date="February 6, 1999">
+		<information type="Episode" game="Atomic Edition 1.4/1.5" release_date="April 28, 1999">
 			<team>
 				<member name="Gavin Harris" />
 			</team>
 		</information>
 		<files>
 			<version>
+				<game type="Regular Version 1.3" state="Native">
+					<file name="NUKETB.CON" type="con" />
+					<file name="NUKETB.GRP" type="grp" />
+				</game>
 				<game type="Atomic Edition 1.4/1.5" state="Converted">
 					<file name="NUKETB.CON" type="con" />
 					<file name="NUKETB.GRP" type="grp" />
@@ -3086,7 +3188,8 @@
 			</version>
 		</files>
 		<downloads>
-			<download filename="NukeTB.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="nub.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Nuke_the_Bastards-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
 			<download filename="Nuke_the_Bastards-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
 		</downloads>
 	</mod>
@@ -3294,6 +3397,9 @@
 			<download filename="Platoon_1.1B-ModMgrR.zip" version="1.1B" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
 			<download filename="Platoon_1.1B-ModMgrA.zip" version="1.1B" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
 		</downloads>
+		<related>
+			<mod id="tour_of_duty_iii" />
+		</related>
 	</mod>
 	
 	<mod name="PLE (Pacifist&apos;s Lost Episode)" id="ple_pacifists_lost_episode">
@@ -3380,6 +3486,9 @@
 			<download filename="Pray_Your_Prayers-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
 			<download filename="Pray_Your_Prayers-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
 		</downloads>
+		<related>
+			<mod id="pray_your_prayers_2000" />
+		</related>
 	</mod>
 	
 	<mod name="Pray Your Prayers 2000" id="pray_your_prayers_2000">
@@ -3410,6 +3519,9 @@
 			<download filename="Pray_Your_Prayers_2000-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
 			<download filename="Pray_Your_Prayers_2000-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
 		</downloads>
+		<related>
+			<mod id="pray_your_prayers" />
+		</related>
 	</mod>
 	
 	<mod name="Predator: Future War" id="predator_future_war">
@@ -3438,11 +3550,15 @@
 			<download filename="Predator_Future_War-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
 			<download filename="Predator_Future_War-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
 		</downloads>
+		<related>
+			<mod id="predator_lurking_darkness" />
+			<mod id="predator_dark_hunt" />
+		</related>
 	</mod>
 	
 	<mod name="Predator: Lurking Darkness" id="predator_lurking_darkness">
 		<information type="Total Conversion" game="All Versions" version="Demo" release_date="July 18, 1999" website="http://www.dukeworld.com/predtc">
-			<team name="Skynet" email="skynet2010@hotmail.com" website="http://www3.sympatico.ca/kurstak/skinet.htm">
+			<team name="Skynet" email="skynet2010@hotmail.com" country="Canada" website="http://www3.sympatico.ca/kurstak/skinet.htm">
 				<member name="Daniel Kurstak" alias="Skynet" email="kurstak@sympatico.ca" />
 			</team>
 		</information>
@@ -3461,9 +3577,14 @@
 		<downloads>
 			<download filename="lddemo.zip" version="Demo" subfolder="original" game="All Versions" type="Original Files" />
 			<download filename="predpack.zip" special="Predator Duke Art Replacement" subfolder="original" type="Patch" />
+			<download filename="predmanual.zip" special="Manual" subfolder="original" type="Documentation" />
 			<download filename="Predator_Lurking_Darkness_Demo-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
 			<download filename="Predator_Lurking_Darkness_Demo-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
+		<related>
+			<mod id="predator_future_war" />
+			<mod id="predator_dark_hunt" />
+		</related>
 	</mod>
 	
 	<mod name="Priss Nukem 3D" id="priss_nukem_3d">
@@ -3512,6 +3633,9 @@
 			<download filename="Priss_Nukem_3D_Special Edition-ModMgrR.zip" version="Special Edition" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
 			<download filename="Priss_Nukem_3D_Special Edition-ModMgrA.zip" version="Special Edition" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
+		<related>
+			<mod id="nene_nukem_3d" />
+		</related>
 	</mod>
 	
 	<mod name="Project X" id="project_x">
@@ -3559,6 +3683,9 @@
 			<download filename="Quest_for_Al-Qaeda-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
 			<download filename="Quest_for_Al-Qaeda-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
 		</downloads>
+		<related>
+			<mod id="quest_for_hussein" />
+		</related>
 	</mod>
 	
 	<mod name="Quest for Hussein" id="quest_for_hussein">
@@ -3586,6 +3713,9 @@
 			<download filename="Quest_for_Hussein-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
 			<download filename="Quest_for_Hussein-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
 		</downloads>
+		<related>
+			<mod id="quest_for_alqaeda" />
+		</related>
 	</mod>
 	
 	<mod name="Radio Free Earth" id="radio_free_earth">
@@ -3881,7 +4011,7 @@
 	
 	<mod name="Softfucker 3D" id="softfucker_3d">
 		<information type="Total Conversion" game="All Versions" release_date="December 24, 1999" website="http://www.angelfire.com/ne/jcl">
-			<team email="sf3d@hotmail.com">
+			<team email="sf3d@hotmail.com" country="Slovakia">
 				<member name="NEJC" email="nejcl@hotmail.com" />
 			</team>
 		</information>
@@ -4121,21 +4251,33 @@
 			</version>
 			<version id="1.0">
 				<game type="Atomic Edition 1.4/1.5" state="Native">
-					<file name="SST.CON" type="con" />
-					<file name="SST.GRP" type="grp" />
+					<file name="SST_10.CON" type="con" />
+					<file name="SST_10.GRP" type="grp" />
+				</game>
+			</version>
+			<version id="1.0">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="SST_11B.CON" type="con" />
+					<file name="SST_11B.GRP" type="grp" />
 				</game>
 			</version>
 		</files>
 		<downloads>
 			<download filename="sstdemo2.zip" version="Demo 2.0" subfolder="original" game="Regular Version 1.3" type="Original Files" />
 			<download filename="ssttc.zip" version="1.0" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
-			<download filename="ssttcump.zip" special="User Map Pack" subfolder="original" type="Maps" />
+			<download filename="ssttc_installer_patch.zip" version="1.0" subfolder="original" game="Atomic Edition 1.4/1.5" type="Installer Patch" />
+			<download filename="sst_tc_multiplayer_patch_atomic.zip" version="1.1b" subfolder="original" game="Atomic Edition 1.4/1.5" type="Multiplayer Patch" />
+			<download filename="ssttcump.zip" subfolder="original" type="User Map Pack" />
+			<download filename="ssttc-usermaps.zip" special="User Maps" subfolder="original" type="Maps" />
 			<download filename="Starship_Troopers_Demo_2.0-ModMgrR.zip" version="Demo 2.0" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
 			<download filename="Starship_Troopers_Demo_2.0-ModMgrA.zip" version="Demo 2.0" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
 			<download filename="Starship_Troopers_1.0-ModMgrA.zip" version="1.0" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+			<download filename="Starship_Troopers_1.1B-ModMgrA.zip" version="1.1B" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
 	</mod>
-	
+
+<!--
+TODO: figure out how to merge this with the missing files found in StevePAK:
 	<mod name="Steve Long&apos;s Episode" id="steve_longs_episode">
 		<information type="Total Conversion" game="All Versions" release_date="January 22, 1998">
 			<team>
@@ -4160,7 +4302,28 @@
 			<download filename="Steve_Long&apos;s_Episode-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
 		</downloads>
 	</mod>
-	
+
+	<mod name="StevePAK" id="stevepak">
+		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" release_date="Unknown">
+			<team>
+				<member name="Steve W. Long" email="steve@shorenet.net" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="STEVEPAK.CON" type="con" />
+					<file name="STEVEPAK.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Stevepak.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="StevePAK-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+-->
+
 	<mod name="Terrorist Terror: Follow Your Instincts" id="terrorist_terror_follow_your_instincts">
 		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" version="1.1" release_date="May 16, 1998" website="http://www.cadvision.com/przepios/tt">
 			<team name="CMV &amp; Acidic Productions">
@@ -4312,6 +4475,12 @@
 			</team>
 		</information>
 		<files>
+			<version id="Beta">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="LEGACYB.CON" type="con" />
+					<file name="LEGACYB.GRP" type="grp" />
+				</game>
+			</version>
 			<version id="1.0">
 				<game type="Atomic Edition 1.4/1.5" state="Native">
 					<file name="LEGACY.CON" type="con" />
@@ -4321,26 +4490,40 @@
 		</files>
 		<downloads>
 			<download filename="legacy.zip" version="1.0" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="The_Legacy_Beta-ModMgrA.zip" version="Beta" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 			<download filename="The_Legacy_1.0-ModMgrA.zip" version="1.0" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
 	</mod>
 	
 	<mod name="The Lost Duke Episodes" id="the_lost_duke_episodes">
-		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" version="2.0" release_date="August 27, 1997">
-			<team>
+		<information type="Total Conversion" game="All Versions" version="2.0" release_date="January 24, 1997">
+			<team state="Ohio" country="United States">
 				<member name="Mark Hadley" email="hadleyrf@tir.com" />
 			</team>
 		</information>
 		<files>
-			<version id="2.0">
-				<game type="Atomic Edition 1.4/1.5" state="Native">
+			<version id="1.0" release_date="January 24, 1997">
+				<game type="Regular Version 1.3" state="Native">
+					<file name="LOSTDUKE.CON" type="con" />
+					<file name="LOSTDUKE.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
 					<file name="LOSTDUKE.CON" type="con" />
 					<file name="LOSTDUKE.GRP" type="grp" />
 				</game>
 			</version>
+			<version id="2.0" release_date="August 27, 1997">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="LSTDKE20.CON" type="con" />
+					<file name="LSTDKE20.GRP" type="grp" />
+				</game>
+			</version>
 		</files>
 		<downloads>
+			<download filename="lstduke.zip" version="1.0" subfolder="original" game="Regular Version 1.3" type="Original Files" />
 			<download filename="lstdke20.zip" version="2.0" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="The_Lost_Duke_Episodes_1.0-ModMgrR.zip" version="1.0" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="The_Lost_Duke_Episodes_1.0-ModMgrA.zip" version="1.0" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
 			<download filename="The_Lost_Duke_Episodes_2.0-ModMgrA.zip" version="2.0" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
 	</mod>
@@ -4348,7 +4531,8 @@
 	<mod name="The Premium Edition" id="the_premium_edition">
 		<information type="Dukematch" game="All Versions" version="1.6" release_date="January 18, 2003" website="http://www.premiumtc.de.vu">
 			<team country="Vanuatu">
-				<member name="The Gangster" alias="King6" email="gangsta762@hotmail.com" />
+				<member name="The Gangster" alias="King 6" email="gangsta762@hotmail.com" />
+				<member name="Joe Joeson" alias="The_Viper" email="joe_joeson@web.de" />
 			</team>
 		</information>
 		<files>
@@ -4389,6 +4573,9 @@
 			<download filename="pretime.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
 			<download filename="The_Prequel_to_Time-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
+		<related>
+			<mod id="time" />
+		</related>
 	</mod>
 	
 	<mod name="The Realm of Grune" id="the_realm_of_grune">
@@ -4489,6 +4676,9 @@
 			<download filename="time.zip" version="1.1" subfolder="original" type="Atomic Edition 1.4/1.5" />
 			<download filename="Time_1.1-ModMgrA.zip" version="1.1" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
+		<related>
+			<mod id="the_prequel_to_time" />
+		</related>
 	</mod>
 	
 	<mod name="Toon Nukem" id="toon_nukem">
@@ -4592,7 +4782,7 @@
 	</mod>
 	
 	<mod name="Total Infiltration" id="total_infiltration">
-		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" release_date="Unknown" />
+		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" />
 		<team>
 			<member name="Devastator" email="zheka_XX@TUT.by" />
 		</team>
@@ -4658,6 +4848,9 @@
 			<download filename="Tour_of_Duty_III-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
 			<download filename="Tour_of_Duty_III-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
 		</downloads>
+		<related>
+			<mod id="platoon" />
+		</related>
 	</mod>
 	
 	<mod name="Ultima TC" id="ultima_tc">
@@ -4678,6 +4871,9 @@
 			<download filename="ultimademo.zip" version="Demo" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
 			<download filename="Ultima_TC_Demo-ModMgrA.zip" version="Demo" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
+		<related>
+			<mod id="coolio_tc" />
+		</related>
 	</mod>
 	
 	<mod name="Undead 3D" id="undead_3d">
@@ -4777,7 +4973,7 @@
 	</mod>
 	
 	<mod name="Urban Chaos" id="urban_chaos">
-		<information type="Partial Conversion" game="Atomic Edition 1.4/1.5" release_date="Unknown" />
+		<information type="Partial Conversion" game="Atomic Edition 1.4/1.5" />
 		<files>
 			<version>
 				<game type="Atomic Edition 1.4/1.5" state="Native">
@@ -4812,7 +5008,7 @@
 	</mod>
 	
 	<mod name="Victimized" id="victimized">
-		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" version="1.0" release_date="Unknown" website="http://www.execpc.com/~victim" />
+		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" version="1.0" website="http://www.execpc.com/~victim" />
 		<team name="Know 1 Interactive" />
 		<files>
 			<version id="1.0">
@@ -4853,6 +5049,9 @@
 			<download filename="Vixens_1.09-ModMgrR.zip" version="1.09" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
 			<download filename="Vixens_1.09-ModMgrA.zip" version="1.09" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
+		<related>
+			<mod id="vixens_resurrection" />
+		</related>
 	</mod>
 	
 	<mod name="Vixens Resurrection" id="vixens_resurrection">
@@ -4895,6 +5094,9 @@
 			<download filename="Vixens_Resurrection_2.04-ModMgrR.zip" version="2.04" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
 			<download filename="Vixens_Resurrection_2.04-ModMgrA.zip" version="2.04" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
 		</downloads>
+		<related>
+			<mod id="vixens" />
+		</related>
 	</mod>
 	
 	<mod name="Weaponry TC" id="weaponry_tc">
@@ -5016,7 +5218,7 @@
 	</mod>
 	
 	<mod name="Wolf 2 Duke" id="wolf_2_duke">
-		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" version="4.05" release_date="June 18, 1999" website="http://wolf2duke.dukeworld.com">
+		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" version="4.05" release_date="February 15, 1998" website="http://wolf2duke.dukeworld.com">
 			<team name="The Wolf2Duke Team" email="wolf2duke@swipnet.se" country="Sweden">
 				<member name="Pär" email="wolf2duke@swipnet.se" />
 				<member name="Rust" />
@@ -5028,7 +5230,25 @@
 			</team>
 		</information>
 		<files>
-			<version id="4.05">
+			<version id="1.03A" release_date="February 15, 1998">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="W2D_103A.CON" type="con" />
+					<file name="W2D_103A.GRP" type="grp" />
+				</game>
+			</version>
+			<version id="2.01" release_date="June 6, 1998">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="W2D_201.CON" type="con" />
+					<file name="W2D_201.GRP" type="grp" />
+				</game>
+			</version>
+			<version id="3.02" release_date="November 29, 1998">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="W2D_302.CON" type="con" />
+					<file name="W2D_302.GRP" type="grp" />
+				</game>
+			</version>
+			<version id="4.05" release_date="June 18, 1999">
 				<game type="Atomic Edition 1.4/1.5" state="Native">
 					<file name="W2D_405.CON" type="con" />
 					<file name="W2D_405.GRP" type="grp" />
@@ -5036,7 +5256,14 @@
 			</version>
 		</files>
 		<downloads>
+			<download filename="w2d_103.zip" version="1.03A" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="w2d_201.zip" version="2.01" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="w2d_302.zip" version="3.02" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
 			<download filename="w2d_405.zip" version="4.05" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="macwolf2duke.sit.bin" subfolder="original" game="Atomic Edition 1.4/1.5" type="Mac Version" />
+			<download filename="Wolf_2_Duke_1.03A-ModMgrA.zip" version="1.03A" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+			<download filename="Wolf_2_Duke_2.01-ModMgrA.zip" version="2.01" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+			<download filename="Wolf_2_Duke_3.02-ModMgrA.zip" version="3.02" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 			<download filename="Wolf_2_Duke_4.05-ModMgrA.zip" version="4.05" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
 	</mod>
@@ -5407,6 +5634,9 @@
 			<screenshot filename="DUKE0000.png" thumbnail="DUKE0000.png" width="480" height="360" />
 			<screenshot filename="DUKE0002.png" thumbnail="DUKE0002.png" width="480" height="360" />
 		</screenshots>
+		<related>
+			<mod id="ultra_bum_blaster_2000" />
+		</related>
 	</mod>
 	
 	<mod name="ULTRA Bum Blaster 2000" id="ultra_bum_blaster_2000">
@@ -5436,6 +5666,9 @@
 			<screenshot filename="DUKE0002.png" thumbnail="DUKE0002.png" width="480" height="360" />
 			<screenshot filename="DUKE0003.png" thumbnail="DUKE0003.png" width="480" height="360" />
 		</screenshots>
+		<related>
+			<mod id="bum_blaster_2000" />
+		</related>
 	</mod>
 	
 	<mod name="COOLGUNS" id="coolguns">
@@ -5661,6 +5894,9 @@
 		<screenshots>
 			<screenshot filename="DUKE0003.png" thumbnail="DUKE0003.png" width="480" height="360" />
 		</screenshots>
+		<related>
+			<mod id="drone_2_dope_fish" />
+		</related>
 	</mod>
 	
 	<mod name="Drone 2 Dope Fish" id="drone_2_dope_fish">
@@ -5687,6 +5923,9 @@
 		<screenshots>
 			<screenshot filename="DUKE0001.png" thumbnail="DUKE0001.png" width="480" height="360" />
 		</screenshots>
+		<related>
+			<mod id="drone_2_cheese" />
+		</related>
 	</mod>
 	
 	<mod name="Flamethrower &amp; Dual Pistols" id="flamethrower_dual_pistols">
@@ -5908,7 +6147,7 @@
 	
 	<!--
 	<mod name="GunGame" id="gungame">
-		<information type="Weapon Patch" game="Atomic Edition 1.4/1.5" release_date="Unknown" website="MOD_WEBSITE">
+		<information type="Weapon Patch" game="Atomic Edition 1.4/1.5" website="MOD_WEBSITE">
 			<team name="TEAM_NAME" email="TEAM_EMAIL">
 				<member name="MEMBER_NAME" email="MEMBER_EMAIL" />
 			</team>
@@ -6325,8 +6564,8 @@
 			</version>
 		</files>
 		<downloads>
-			<download filename="PaintBall.zip" version="1.0" subfolder="original" game="Regular Version 1.3" type="Original Files" />
-			<download filename="PaintBall2.zip" version="2.0" corrupted="true" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="dukepbll.zip" version="1.0" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="pbduke2.zip" version="2.0" corrupted="true" subfolder="original" game="Regular Version 1.3" type="Original Files" />
 			<download filename="Paint_Ball_Duke_1.0-ModMgrR.zip" version="1.0" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
 			<download filename="Paint_Ball_Duke_1.0-ModMgrA.zip" version="1.0" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
 			<download filename="Paint_Ball_Duke_2.0-ModMgrR.zip" version="2.0" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
@@ -6884,6 +7123,9 @@
 			<download filename="ntdm1.zip" version="1.3" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
 			<download filename="Deathmatch_Total_Conversion_1.3-ModMgrA.zip" version="1.3" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
+		<related>
+			<mod id="deathmatch_ii_duke_it_out_in_germany" />
+		</related>
 	</mod>
 	
 	<mod name="Deathmatch II - Duke It Out in Germany" id="deathmatch_ii_duke_it_out_in_germany">
@@ -6906,6 +7148,9 @@
 			<download filename="DMII.zip" version="1.0" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
 			<download filename="Deathmatch_II_Duke_It_Out_in_Germany_1.0-ModMgrA.zip" version="1.0" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
+		<related>
+			<mod id="deathmatch_total_conversion" />
+		</related>
 	</mod>
 	
 	<mod name="DOOM Death Match Pack" id="doom_death_match_pack">
@@ -7024,6 +7269,10 @@
 			<download filename="Predator_Dark_Hunt_Demo-ModMgrA.zip" version="Demo" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
 			<download filename="Predator_Dark_Hunt-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
 		</downloads>
+		<related>
+			<mod id="predator_lurking_darkness" />
+			<mod id="predator_future_war" />
+		</related>
 	</mod>
 	
 	<mod name="Quake Death Match Pack" id="quake_death_match_pack">
@@ -7121,6 +7370,9 @@
 			<download filename="new weapons for duke nukem 3D atomic.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
 			<download filename="Redcrow_Weapons-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
+		<related>
+			<mod id="evil_people" />
+		</related>
 	</mod>
 	
 	<mod name="Evil People" id="evil_people">
@@ -7142,6 +7394,9 @@
 			<download filename="new weapons for duke nukem 3D atomic.zip" special="Recovered Weapon Files" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
 			<download filename="Evil_People_Repaired-ModMgrA.zip" repaired="true" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
 		</downloads>
+		<related>
+			<mod id="redcrow_weapons" />
+		</related>
 	</mod>
 
 	<mod name="XMAS 1997" id="xmas_1997">
@@ -7178,4 +7433,1834 @@
 		</downloads>
 	</mod>
 	
+	<mod name="South Park TC" id="south_park_tc">
+		<information type="Partial Conversion" game="All Versions" release_date="December 6, 1999" website="https://www.oocities.org/southparkduke/sptc.htm">
+			<team>
+				<member name="Funduke" email="funduke@hotmail.com" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Regular Version 1.3" state="Native">
+					<file name="SPTC.CON" type="con" />
+					<file name="SPTC.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="SPTC.CON" type="con" />
+					<file name="SPTC.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="sptc.zip" subfolder="original" game="All Versions" type="Original Files" />
+			<download filename="South_Park_TC-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="South_Park_TC-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="ALLIANCE Death Match Addon" id="alliance_death_match_addon">
+		<information type="Weapon Patch" game="All Versions" version="1.0" release_date="April 26, 1997" website="http://www.elitegames.com/duke3d/alliance">
+			<team>
+				<member name="Garrp" email="garyp@erinet.com" />
+				<member name="Wumpus" email="emd@donet.com" />
+			</team>
+		</information>
+		<files>
+			<version id="1.0">
+				<game type="Regular Version 1.3" state="Native">
+					<file name="DEATH13.CON" type="con" />
+					<file name="DEATH13.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="DEATH15.CON" type="con" />
+					<file name="DEATH15.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="death13.zip" version="1.0" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="death15.zip" version="1.0" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="ALLIANCE_Death_Match_Addon-ModMgrR.zip" version="1.0" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="ALLIANCE_Death_Match_Addon-ModMgrA.zip" version="1.0" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Alien Trilogy" id="alien_trilogy">
+		<information type="Episode" game="Atomic Edition 1.4/1.5" version="Shareware 0.90" release_date="July 26, 1997">
+			<team>
+				<member name="Carl Ray" alias="MOONIE-GL" email="carl.mooney@cableinet.co.uk" />
+				<member name="Dave Lowton" />
+			</team>
+		</information>
+		<files>
+			<version id="Shareware 0.90">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="ALIEN.CON" type="con" />
+					<file name="ALIEN.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="alientc.zip" version="Shareware 0.90" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Alien_Trilogy_Shareware_0.90-ModMgrA.zip" version="Shareware 0.90" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Alien Trilogy (2)" id="alien_trilogy_2">
+		<information type="Total Conversion" game="Atomic Edition" release_date="November 29, 2000" />
+		<files>
+			<version>
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="ATRILOGY.CON" type="con" />
+					<file name="ATRILOGY.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="alientrilogy.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="alientrilogy.txt" special="Readme" subfolder="original" type="Documentation" />
+			<download filename="Alien_Trilogy-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Alien Versus Predator 2" id="alien_versus_predator_2">
+		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" release_date="May 23, 2010">
+			<team>
+				<member name="Slawomir Lawrynowicz" alias="LAW" email="law2@wp.pl" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="AVP2.CON" type="con" />
+					<file name="AVP2.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="avp2bp.exe" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Alien_Versus_Predator_2-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+		<related>
+			<mod id="alien_versus_predator" />
+			<mod id="predator_ii" />
+		</related>
+	</mod>
+
+	<mod name="Armageddon - Gang Wars" id="armageddon_gang_wars">
+		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" version="Demo" release_date="March 28, 2003" website="http://www.bullgames.totalconversions.com/arm1">
+			<team name="BullGames" email="bullgames@portugalmail.pt" website="http://www.bullgames.totalconversions.com" country="Portugal">
+				<member name="Bruno Silva" />
+			</team>
+		</information>
+		<files>
+			<version id="Demo">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="AGW_DEMO.CON" type="con" />
+					<file name="AGW_DEMO.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Agw_Demo.zip" version="Demo" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Armageddon_-_Gang_Wars_Demo-ModMgrA.zip" version="Demo" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+		<related>
+			<mod id="armageddon_2_strength_beyond_strength" />
+		</related>
+	</mod>
+
+	<mod name="Armageddon 2: Strength Beyond Strength" id="armageddon_2_strength_beyond_strength">
+		<information type="Dukematch" game="Atomic Edition 1.4/1.5" version="Beta 0.02" release_date="December 27, 2002" website="http://www.bullgames.no.sapo.pt">
+			<team name="BullGames" email="bullgames@portugalmail.pt" country="Portugal">
+				<member name="Bruno Silva" />
+			</team>
+		</information>
+		<files>
+			<version id="Beta 0.02">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="ARMAGD.CON" type="con" />
+					<file name="ARMAGD.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Armageddon2" version="Beta 0.02" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Armageddon_2_-_Strength_Beyond_Strength_Beta_0.02-ModMgrA.zip" version="Beta 0.02" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+		<related>
+			<mod id="armageddon_gang_wars" />
+		</related>
+	</mod>
+
+	<mod name="Clay Birdie" id="clay_birdie">
+		<information type="Partial Conversion" game="Atomic Edition 1.4/1.5" version_type="Hard" release_date="August 20, 2001" website="http://www.planetduke.com/concode">
+			<team website="http://rtrp.totalconversions.com">
+				<member name="Reaper_Man" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<type id="Easy">
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="BIRD1.CON" type="con" />
+						<file name="BIRDIE.GRP" type="grp" shared="true" />
+					</game>
+				</type>
+				<type id="Hard">
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="BIRD2.CON" type="con" />
+						<file name="BIRDIE.GRP" type="grp" shared="true" />
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="birdie.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Clay_Birdie-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Crazy Dookie Fun" id="crazy_dookie_fun">
+		<information type="Partial Conversion" game="Atomic Edition 1.4/1.5" version="1.0" release_date="November 18, 2014" website="http://eddyprojects.blogspot.ru">
+			<team>
+				<member name="Zykov Eddy" />
+			</team>
+		</information>
+		<files>
+			<version id="1.0">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="1EZCON.CON" type="con" />
+					<file name="1EZCON.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="1ezcon.zip" version="1.0" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Crazy_Dookie_Fun_1.0-ModMgrA.zip" version="1.0" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Critical Mass" id="critical_mass">
+		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" release_date="January 10, 2003">
+			<team>
+				<member name="Vitor de Paulo" alias="Bocao" email="bocao_the_original@yahoo.com" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="DNCM.CON" type="con" />
+					<file name="DNCM.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="dncm.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Critical_Mass-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+<!--
+TODO: Unsure of how to get mod fully working:
+	<mod name="Crossroads" id="crossroads">
+		<information type="TODO_MOD_TYPE" game="Atomic Edition 1.4/1.5" version="1.0.1" release_date="TODO_RELEASE_DATE" website="http://www.lezsite.narod.ru">
+			<team name="Lezing Entertainment" country="Russia">
+				<member name="Maxim Chinyakin" alias="Lezing" email="slike1990@mail.ru" />
+			</team>
+		</information>
+		<files>
+			<version id="1.0.1">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="CROSSRDS.CON" type="con" />
+					<file name="CROSSRDS.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Crossroads.7z" version="1.0.1" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Crossroads-ModMgrA.zip" version="1.0.1" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+-->
+
+	<mod name="Cursed Lands" id="cursed_lands">
+		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" version="1.1" release_date="December 8, 2005">
+			<team name="N.G.S. Productions" />
+		</information>
+		<files>
+			<version id="1.1">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="CURSED.CON" type="con" />
+					<file name="CURSED.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Cursed_Lands.7z" version="1.1" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Cursed_Lands_1.1-ModMgrA.zip" version="1.1" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Capture the Flag !EXTREME!" id="capture_the_flag_extreme">
+		<information type="Dukematch" game="Atomic Edition 1.4/1.5" version="0.9" release_date="February 20, 2000" website="http://www.dukeworld.com/ctfextreme">
+			<team country="Finland">
+				<member name="Teemu Polvi" email="ctf.extreme@jippii.fi" />
+			</team>
+		</information>
+		<files>
+			<version id="0.9">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="CTFEXT09.CON" type="con" />
+					<file name="CTFEXT09.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="ctfext09.zip" version="0.9" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Capture_the_Flag_!EXTREME!_0.9-ModMgrA.zip" version="0.9" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="DaikariN" id="daikarin">
+		<information type="Episode" game="Atomic Edition 1.4/1.5" release_date="September 29, 2002">
+			<team>
+				<member name="Gabriele R. Giaminardi" alias="Saarek" email="saarek@enderk.com" />
+				<member name="Fabio Simonetti " alias="FBS" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="DAIKARIN.CON" type="con" />
+					<file name="DAIKARIN.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="DaikariN.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="DaikariN-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="DOOM 2" id="doom_2">
+		<information type="Episode" game="Atomic Edition 1.4/1.5" version="Atomic Edition 1.4/1.5" release_date="June 28, 1998" website="http://www.jsp.umontreal.ca/~leonard">
+			<team country="Canada">
+				<member name="Daniel Léonard" email="leonard@jsp.umontreal.ca" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="DOOM2.CON" type="con" />
+					<file name="DOOM2.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="doom2tc.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="DOOM_2-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Duke in Denmark" id="duke_in_denmark">
+		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" version_type="Danish" release_date="August 16, 2000">
+			<team country="Denmark">
+				<member name="Dennis Mikkelsen" email="dogr@email.dk" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<type id="English">
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="DUKEDK.CON" type="con" />
+						<file name="DUKEDK.GRP" type="grp" />
+					</game>
+				</type>
+				<type id="Danish">
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="DUKEDK.CON" type="con" />
+						<file name="DUKEDK.GRP" type="grp" />
+						<file name="DUKEDK2.GRP" type="grp" shared="true" />
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="dukedk.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Duke_in_Denmark-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Duke Is 007" id="duke_is_007">
+		<information type="Episode" game="Atomic Edition 1.4/1.5" release_date="April 20, 2001">
+			<team>
+				<member name="Kevin Cools" alias="Kef_Nukem" email="kevincools@hotmail.com" />
+				<member name="Jason Bredhauer" email="jason_bredhauer@usa.net" icq="18076934" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="DUKE007.CON" type="con" />
+					<file name="DUKE007.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="duke007.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Duke_Is_007-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Duke It Out in Canada" id="duke_it_out_in_canada">
+		<information type="Map" game="Atomic Edition 1.4/1.5" version="Demo" release_date="June 14, 1997" website="http://www.trailerpark.com/moonwalk/dukeweb">
+			<team>
+				<member name="Terry Billinger" alias="LiNK" email="laserrun@hotmail.com" />
+			</team>
+		</information>
+		<files>
+			<version id="Demo">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="CANADA.CON" type="con" />
+					<file name="CANADA.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="TC_Canada.zip" version="Demo" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Duke_It_Out_in_Canada_Demo-ModMgrA.zip" version="Demo" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="New Encounter" id="new_encounter">
+		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" version="2.1" release_date="July 9, 2018">
+			<team>
+				<member name="Juan Daniel Alcobre" alias="Papamonos" email="jdgonzalezalcobre@gmail.com" />
+			</team>
+		</information>
+		<files>
+			<version id="2.1">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="NEWENCTR.CON" type="con" />
+					<file name="NEWENCTR.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="new_encounter.2.1.rar" version="2.1" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="New_Encounter_2.1-ModMgrA.zip" version="2.1" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Duke Tournament" id="duke_tournament">
+		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" version="Full" version_type="Dukematch 2000 Mission Pack" release_date="May 6, 2000" website="http://www.dukeworld.com/duketournament">
+			<team>
+				<member name="Mikko Sandt" email="sirpa.sandt@pp.inet.fi" icq="71211982" />
+				<member name="Dean Lillie" alias="Swiss Cheeseman" />
+				<member name="Dj-Mougias" />
+				<member name="Chris Pufahl" />
+				<member name="Alexander B" />
+			</team>
+		</information>
+		<files>
+			<version id="Test Demo">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="DT-TEST.CON" type="con" />
+					<file name="DT-TEST.GRP" type="grp" />
+				</game>
+			</version>
+			<version id="Full">
+				<type>
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="DT.CON" type="con" />
+						<file name="DT.GRP" type="grp" />
+					</game>
+				</type>
+				<type id="Dukematch 2000 Mission Pack">
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="DTDM2KMP.CON" type="con" />
+						<file name="DTDM2KMP.GRP" type="grp" />
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="dt-test.zip" version="Test Demo" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="dtfull.zip" version="Full" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="dtadd-on.zip" special="Dukematch 2000 Mission Pack" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Duke_Tournament_Test_Demo-ModMgrA.zip" version="Test Demo" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+			<download filename="Duke_Tournament-ModMgrA.zip" version="Full" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+			<download filename="Duke_Tournament_Dukematch_2000_Mission_Pack-ModMgrA.zip" version="Full" type="Dukematch 2000 Mission Pack" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Eye of Cul" id="eye_of_cul">
+		<information type="Episode" game="Atomic Edition 1.4/1.5" release_date="August 25, 2003" website="http://www.geocities.com/eyedecul/duke3d/duke3d.html">
+			<team>
+				<member name="Eye del Cul" email="eyedecul@ono.com" website="http://www.geocities.com/eyedecul" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="EYEOFCUL.CON" type="con" />
+					<file name="EYEOFCUL.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="eyeofcul.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Eye_of_Cul-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Fallout" id="fallout">
+		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" version="Beta 2" release_date="November 14, 1998" website="http://www.fallout.gamestats.com">
+			<team>
+				<member name="Arthur Nugmanov" email="azat_nugm@hotmail.com" />
+			</team>
+		</information>
+		<files>
+			<version id="Beta 2">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="FALLOUT.CON" type="con" />
+					<file name="FALLOUT.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="FTCBeta2.zip" version="Beta 2" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Fallout_Beta_2-ModMgrA.zip" version="Beta 2" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Funky Stuff" id="funky_stuff">
+		<information type="Partial Conversion" game="Atomic Edition 1.4/1.5" version="Beta 0.31" release_date="November 12, 1999" website="http://half.freeservers.com">
+			<team>
+				<member name="Solid" email="geyerd@coastalnet.com" />
+			</team>
+		</information>
+		<files>
+			<version id="Beta 0.31">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="FUNKY.CON" type="con" />
+					<file name="FUNKY.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="funky100.zip" version="Beta 0.31" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Funky_Stuff_Beta_0.31-ModMgrA.zip" version="Beta 0.31" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Global Meltdown" id="global_meltdown">
+		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" release_date="July 21, 1997">
+			<team>
+				<member name="J.R.R." />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="GLOBMELT.CON" type="con" />
+					<file name="GLOBMELT.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="globemelt.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Global_Meltdown-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Industrial Complex Episode" id="industrial_complex">
+		<information type="Episode" game="Atomic Edition 1.4/1.5" release_date="January 28, 2004">
+			<team country="Brazil">
+				<member name="Stephano Lessa" email="kingnukem@zipmail.com.br" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="ICE.CON" type="con" />
+					<file name="ICE.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="i.c.e.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Industrial_Complex_Episode-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Lo Wang 3D" id="lo_wang_3d">
+		<information type="Partial Conversion" game="Atomic Edition 1.4/1.5" version="1.64" release_date="July 20, 1999" website="http://www.geocities.com/TimesSquare/Fortress/1896">
+			<team>
+				<member name="Paul J. Smith" alias="Wally Waffles" email="WallyWaffles@yahoo.com" />
+			</team>
+		</information>
+		<files>
+			<version id="1.64">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="WANG3D.CON" type="con" />
+					<file name="WANG3D.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="WANG3D.zip" version="1.64" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Lo_Wang_3D-ModMgrA.zip" version="1.64" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="MAffU'S Multiplayer Mayhem" id="maffus_multiplayer_mayhem">
+		<information type="Dukematch" game="Atomic Edition 1.4/1.5" version="1.1" release_date="February 27, 1999">
+			<team>
+				<member name="Matthew Hill" email="hillmat@dns.au.com" />
+			</team>
+		</information>
+		<files>
+			<version id="1.1">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="MAFFUDM.CON" type="con" />
+					<file name="MAFFUDM.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="maffudm.zip" version="1.1" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="MAffU'S_Multiplayer_Mayhem-ModMgrA.zip" version="1.1" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Operation Blitzkrieg" id="operation_blitzkrieg">
+		<information type="Episode" game="Atomic Edition 1.4/1.5" version="0.9 Beta" release_date="March 19, 2011">
+			<team>
+				<member name="David Billing" email="davebilling26@gmail.com" />
+			</team>
+		</information>
+		<files>
+			<version id="0.9 Beta">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="OPBZBETA.CON" type="con" />
+					<file name="OPBZBETA.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="OPBLITZBETA.zip" version="0.9 Beta" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Operation_Blitzkrieg_0.9_Beta-ModMgrA.zip" version="0.9 Beta" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Operation Warehouse" id="operation_warehouse">
+		<information type="Partial Conversion" game="All Versions" version="2.5" release_date="September 25, 1996">
+			<team>
+				<member name="Michael A. Palmer" email="steamchip@aol.com" />
+			</team>
+		</information>
+		<files>
+			<version id="2.1">
+				<game type="Regular Version 1.3" state="Native">
+					<file name="FEMCON21.CON" type="con" />
+					<file name="FEMCON21.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="FEMCON21.CON" type="con" />
+					<file name="FEMCON21.GRP" type="grp" />
+				</game>
+			</version>
+			<version id="2.5">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="FEMCON25.CON" type="con" />
+					<file name="FEMCON25.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="femcon21.zip" version="2.1" subfolder="original" game="All Versions" type="Original Files" />
+			<download filename="femcon25.zip" version="2.5" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Operation_Warehouse_2.1-ModMgrR.zip" version="2.1" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="Operation_Warehouse_2.1-ModMgrA.zip" version="2.1" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+			<download filename="Operation_Warehouse_2.5-ModMgrA.zip" version="2.5" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Pigs and Brains" id="pigs_and_brains">
+		<information type="Episode" game="Atomic Edition 1.4/1.5" release_date="April 18, 2008" />
+		<files>
+			<version>
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="PIGBRAIN.CON" type="con" />
+					<file name="PIGBRAIN.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Pigsandbrains.rar" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Pigs_and_Brains-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Predator II" id="predator_ii">
+		<information type="Map" game="Atomic Edition 1.4/1.5" release_date="September 18, 2006">
+			<team country="Poland">
+				<member name="Slawomir Lawrynowicz" alias="LAW" email="law2@wp.pl" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="PREDATOR.CON" type="con" />
+					<file name="PREDATOR.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Pred2avp.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Predator_II-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Sun Burn Episode" id="sun_burn_episode">
+		<information type="Map Pack" game="Atomic Edition 1.4/1.5" release_date="July 23, 2006">
+			<team>
+				<member name="Rob Wijkstra" alias="HighWire" email="Rob_Wijkstra@hotmail.com" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="SUNBURN.CON" type="con" />
+					<file name="SUNBURN.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Sunburn.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Sun_Burn_Episode-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Driving Home for Christmas" id="driving_home_for_christmas">
+		<information type="Map" game="Atomic Edition 1.4/1.5" release_date="December 23, 2003">
+			<team>
+				<member name="Rob Wijkstra" alias="HighWire" email="kickassy35@hotmail.com" />
+				<member name="Tom Veenstra" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="DHFC.CON" type="con" />
+					<file name="DHFC.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="DHFC.rar" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Driving_Home_for_Christmas-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="The End of the World" id="the_end_of_the_world">
+		<information type="Partial Conversion" game="Atomic Edition 1.4/1.5" release_date="September 13, 1997">
+			<team>
+				<member name="James Thies" alias="The Hermit" email="jimt@emapnet.com" />
+				<member name="Al Mott77" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="ENDWORLD.CON" type="con" />
+					<file name="ENDWORLD.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="endworld.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="The_End_of_the_World-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Mystique: Ages in Time" id="Mystique_-_Ages_in_Time">
+		<information type="Total Conversion" game="Atomic Edition 1.4/1.5" version="1.1" release_date="December 11, 1997" website="http://www.mystique.org">
+			<team>
+				<member name="Chris Day" />
+				<member name="Jason O'Connell" alias="LevelMaster" />
+				<member name="Doug Murphy" alias="NukeDukem" />
+				<member name="Colin McKinney" alias="Cerebris" />
+				<member name="Brad Wernicke" alias="bwernAWAY" />
+				<member name="Scott McCabe" alias="Layre" />
+				<member name="Chris Huffman" alias="ChrisH" />
+				<member name="Nick Parde" alias="Zarzoo" />
+				<member name="Scott Haslam" alias="Dagger" />
+				<member name="Krys Palys" alias="-+-Blade--" />
+				<member name="Dave Drake" />
+				<member name="Roger Tweedie" alias="Pistonhead" />
+				<member name="Michael Clark" alias="CombatAnt" />
+				<member name="Vedran Jelenic" alias="Zagor" />
+				<member name="Andrew Huppatz" alias="SnakeEyes" />
+				<member name="Jim Semkiw" alias="Ironman" />
+				<member name="Aaron Barber" />
+				<member name="Josh Ray" alias="XDaemon" />
+				<member name="Jenna Ramsey" />
+				<member name="Matthew Anderson" />
+				<member name="Tim Aste" />
+				<member name="Csaba Kazari" alias="Henryke" />
+				<member name="Alex Kelly" />
+				<member name="Darren Mackelprang" />
+				<member name="Enric Alvarez" />
+				<member name="Gary Trilops" alias="Charvel" />
+				<member name="LedBetter" />
+				<member name="Aaron Corcoran" alias="Lithium" />
+				<member name="Jesse Garrett" alias="Storm" />
+				<member name="Robert Leeper" alias="Hacksaw" />
+				<member name="Kyle Davis" alias="Telamon" />
+				<member name="Matt Wood" />
+				<member name="Charlie Wiederhold" />
+				<member name="Joris Weimar" />
+				<member name="Joe McCabe" />
+				<member name="Steve Carson" />
+				<member name="Dick Svendsen" />
+				<member name="Bill Lovan" />
+				<member name="BeeMan" />
+				<member name="Steve Dudek" />
+				<member name="Bobby Bryant" />
+				<member name="Vedram Jelemic" />
+			</team>
+		</information>
+		<files>
+			<version id="Demo 1" release_date="March 14, 1997">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="MYSTDEMO.CON" type="con" />
+					<file name="MYSTDEMO.GRP" type="grp" />
+				</game>
+			</version>
+			<version id="Demo 2" release_date="April 2, 1997">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="MYSTDEM2.CON" type="con" />
+					<file name="MYSTDEM2.GRP" type="grp" />
+				</game>
+			</version>
+			<version id="Demo 3" release_date="May 6, 1997">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="MYSTDEM3.CON" type="con" />
+					<file name="MYSTDEM3.GRP" type="grp" />
+				</game>
+			</version>
+			<version id="1.0" release_date="December 11, 1997">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="AGES_10.CON" type="con" />
+					<file name="AGES_10.GRP" type="grp" />
+				</game>
+			</version>
+			<version id="1.1" release_date="January 18, 1998">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="AGES_11.CON" type="con" />
+					<file name="AGES_11.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="mystdemo.zip" version="Demo 1" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="mystdem2.zip" version="Demo 2" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="mystdem3.zip" version="Demo 3" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+<!--
+			<download filename="agestime.exe" version="TODO_VERSION" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+-->
+			<download filename="agestime.txt" version="1.0" subfolder="original" game="Atomic Edition 1.4/1.5" type="Documentation" />
+			<download filename="aitfull.zip" version="1.0" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="ait10-11.zip" version="1.1" special="Patch" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="ait10-11.txt" version="1.1" special="Patch" subfolder="original" game="Atomic Edition 1.4/1.5" type="Documentation" />
+<!--
+			<download filename="ages01.zip" version="TODO_VERSION" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="ages02.zip" version="TODO_VERSION" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="ages03.zip" version="TODO_VERSION" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="ages04.zip" version="TODO_VERSION" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="ages05.zip" version="TODO_VERSION" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="ages06.zip" version="TODO_VERSION" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="ages07.zip" version="TODO_VERSION" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="ages08.zip" version="TODO_VERSION" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="macait.sea" version="TODO_VERSION" subfolder="original" game="Atomic Edition 1.4/1.5" type="Mac Version" />
+			<download filename="macaitreadme.sea" version="TODO_VERSION" subfolder="original" game="Atomic Edition 1.4/1.5" type="Documentation" />
+			<download filename="macaitreadme.txt" version="TODO_VERSION" subfolder="original" game="Atomic Edition 1.4/1.5" type="Documentation" />
+-->
+			<download filename="Mystique_-_Ages_in_Time_Demo_1-ModMgrA.zip" version="Demo 1" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+			<download filename="Mystique_-_Ages_in_Time_Demo_2-ModMgrA.zip" version="Demo 2" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+			<download filename="Mystique_-_Ages_in_Time_Demo_3-ModMgrA.zip" version="Demo 3" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+			<download filename="Mystique_-_Ages_in_Time_1.0-ModMgrA.zip" version="1.0" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+			<download filename="Mystique_-_Ages_in_Time_1.1-ModMgrA.zip" version="1.1" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="The Final Fight" id="the_final_fight">
+		<information type="Episode" game="Atomic Edition 1.4/1.5" version="1.0" release_date="February 17, 2001" website="http://www.quake3stuff.com/freebrief">
+			<team name="The Freebrief Team" />
+		</information>
+		<files>
+			<version id="1.0">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="DN3DTFF.CON" type="con" />
+					<file name="DN3DTFF.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="dn3dtff.zip" version="1.0" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="The_Final_Fight_1.0-ModMgrA.zip" version="1.0" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="The Fury's City" id="the_furys_city">
+		<information type="Episode" game="Atomic Edition 1.4/1.5" version="V1" release_date="Janaury 3, 2008">
+			<team>
+				<member name="Juan M. Griglio" alias="JuaNChOX" email="juanchox_criminal@hotmail.com" />
+			</team>
+		</information>
+		<files>
+			<version id="V1">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="FCITYV1.CON" type="con" />
+					<file name="FCITYV1.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="fcityv1.rar" version="V1" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="The_Fury's_City_V1-ModMgrA.zip" version="V1" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="The Mission" id="the_mission">
+		<information type="Map Pack" game="Atomic Edition 1.4/1.5" version="Demo" release_date="October 14, 1999" website="http://www.dukesivut.cjb.net">
+			<team country="Finland">
+				<member name="Juha Laaksonen" email="jss.laaksonen@pp.inet.fi" />
+			</team>
+		</information>
+		<files>
+			<version id="Demo">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="M1DEMO.CON" type="con" />
+					<file name="M1DEMO.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="m1demo.zip" version="Demo" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="The_Mission_Demo-ModMgrA.zip" version="Demo" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="The Purify TC" id="the_purify_tc">
+		<information type="Dukematch" game="Atomic Edition 1.4/1.5" version="1.0B" release_date="January 31, 2002" website="http://personal.inet.fi/cool/thepurify">
+			<team name="Demolition Software">
+				<member name="Juho Vainio" />
+				<member name="Jani Pihlajaniemi" />
+				<member name="Jaakko Torvinen" />
+			</team>
+		</information>
+		<files>
+			<version id="1.0B">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="PURIFYTC.CON" type="con" />
+					<file name="PURIFYTC.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="purifytc.zip" version="1.0B" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="The_Purify_TC_1.0B-ModMgrA.zip" version="1.0B" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Zbychu Jowisz 3D" id="zbychu_jowisz_3d">
+		<information type="Partial Conversion" game="Atomic Edition 1.4/1.5" release_date="June 24, 2015" website="https://www.moddb.com/mods/zbychu-jowisz">
+			<team>
+				<member name="Zbychu Jowisz" alias="Brick Jove" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="ZBYCHU.CON" type="con" />
+					<file name="ZBYCHU.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="BrickJove.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Zbychu_Jowisz_3D-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="WredHeat" id="wredheat">
+		<information type="Map" game="Atomic Edition 1.4/1.5" version="1.1" release_date="January 13, 1999">
+			<team>
+				<member name="Adrian Gilbert" email="dukemaps@hotmail.com" />
+			</team>
+		</information>
+		<files>
+			<version id="1.1">
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="WREDHEAT.CON" type="con" />
+					<file name="WREDHEAT.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="wredheat11.zip" version="1.1" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="WredHeat_1.1-ModMgrA.zip" version="1.1" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="WGSpace Episode" id="wgspace_episode">
+		<information type="Episode" game="Atomic Edition 1.4/1.5" release_date="August 6, 2008" website="http://wgrealms.williamgeegallery.com">
+			<team country="New Zealand">
+				<member name="William Gee" email="geewillywizz@live.com" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="WGSPACE.CON" type="con" />
+					<file name="WGSPACE.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="wgspaceepisode.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="WGSpace_Episode-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="L.A. Rumble" id="la_rumble">
+		<information type="Episode" game="Atomic Edition 1.4/1.5" release_date="January 10, 2009" website="https://www.moddb.com/mods/dukenukem-la-rumble" />
+		<files>
+			<version>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="LARUBMLE.CON" type="con" />
+					<file name="LARUBMLE.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="LA_RUMBLE.rar" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="dn-maps.rar" special="Bonus Maps" subfolder="original" game="Atomic Edition 1.4/1.5" type="Maps" />
+			<download filename="LA_RUMBLE_WIP_maps.rar" special="Work in Progress Maps" subfolder="original" game="Atomic Edition 1.4/1.5" type="Maps" />
+			<download filename="L.A._Rumble-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="Shark's Cove" id="sharks_cove">
+		<information type="Episode" game="Atomic Edition 1.4/1.5" version="V2" release_date="May 22, 2007">
+			<team>
+				<member name="N.E. Voigt" alias="HangNail" email="nevoigt@icqmail.com" />
+			</team>
+		</information>
+		<files>
+			<version id="V1" release_date="May 22, 2007">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="SHARK_V1.CON" type="con" />
+					<file name="SHARK_V1.GRP" type="grp" />
+				</game>
+			</version>
+			<version id="V1" release_date="June 14, 2007">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="SHARK_V2.CON" type="con" />
+					<file name="SHARK_V2.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="sharkscove.zip" version="V1" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="sharkcove2.zip" version="V2" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="sharkcove_hrp.zip" special="High Resolution Pack" subfolder="original" game="Atomic Edition 1.4/1.5" type="Patch" />
+			<download filename="Shark's_Cove_V1-ModMgrA.zip" version="V1" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+			<download filename="Shark's_Cove_V2-ModMgrA.zip" version="V2" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="Blastoff" id="blastoff">
+		<information type="Episode" game="All Versions" release_date="January 19, 1997" website="http://www.xs4all.nl/~jaapm">
+			<team country="Netherlands">
+				<member name="Jaap Menist" email="jaapm@xs4all.nl" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Regular Version 1.3" state="Native">
+					<file name="BLASTOFF.CON" type="con" />
+					<file name="BLASTOFF.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="BLASTOFF.CON" type="con" />
+					<file name="BLASTOFF.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="blastoff.zip" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="BORNWILD.zip" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="Blastoff-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="Blastoff-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="Cinema Walker" id="cinema_walker">
+		<information type="Total Conversion" game="All Versions" release_date="June 27, 2004" website="http://www.dukenukemrus.narod.ru/Cinema.htm">
+			<team country="Russia">
+				<member name="Nikita Shuvanov" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Regular Version 1.3" state="Native">
+					<file name="CW.CON" type="con" />
+					<file name="CW.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="CW.CON" type="con" />
+					<file name="CW.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="CWpart1.rar" part="1" numparts="2" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="CWpart2.rar" part="1" numparts="2" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="Cinema_Walker-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="Cinema_Walker-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="Save EBN" id="save_ebn">
+		<information type="Total Conversion" game="All Versions" version_type="Russian" release_date="November 20, 2000" website="http://duke3d.nm.ru">
+			<team name="GML Software" country="Russia">
+				<member name="Goryn" email="goryn@newmail.ru" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<type id="English">
+					<game type="Regular Version 1.3" state="Native">
+						<file name="SAVE_EBN.CON" type="con" />
+						<file name="SAVE_EBN.GRP" type="grp" />
+					</game>
+					<game type="Atomic Edition 1.4/1.5" state="Converted">
+						<file name="SAVE_EBN.CON" type="con" />
+						<file name="SAVE_EBN.GRP" type="grp" />
+					</game>
+				</type>
+				<type id="Russian">
+					<game type="Regular Version 1.3" state="Native">
+						<file name="SAVE_EBN.CON" type="con" />
+						<file name="SAVE_EBN.GRP" type="grp" />
+						<file name="EBN_RUS.GRP" type="grp" shared="true" />
+					</game>
+					<game type="Atomic Edition 1.4/1.5" state="Converted">
+						<file name="SAVE_EBN.CON" type="con" />
+						<file name="SAVE_EBN.GRP" type="grp" />
+						<file name="EBN_RUS.GRP" type="grp" shared="true" />
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="save_ebn.zip" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="serusvoc.zip" special="Russian Voice Patch" subfolder="original" game="Regular Version 1.3" type="Patch" />
+			<download filename="Save_EBN-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="Save_EBN-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="Duke 2000: The Space Invasion" id="duke_2000_the_space_invasion">
+		<information type="Episode" game="All Versions" version="Final" release_date="January 1, 2000" website="http://www.d3dmm.webprovider.com">
+			<team>
+				<member name="Marcus Carlin" email="carcus@d3dmm.8m.com" />
+				<member name="Alex" />
+				<member name="Nick" />
+			</team>
+		</information>
+		<files>
+			<version id="2.1" release_date="December 14, 1999">
+				<game type="Regular Version 1.3" state="Native">
+					<file name="D2000_21.CON" type="con" />
+					<file name="D2000_21.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="D2000_21.CON" type="con" />
+					<file name="D2000_21.GRP" type="grp" />
+				</game>
+			</version>
+			<version id="Final" release_date="January 1, 2000">
+				<game type="Regular Version 1.3" state="Converted">
+					<file name="DUKE2000.CON" type="con" />
+					<file name="DUKE2000.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="DUKE2000.CON" type="con" />
+					<file name="DUKE2000.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="duke2000v2.zip" version="2.1" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="Duke2000.zip" version="Final" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="Duke_2000_-_The_Space_Invasion_2.1-ModMgrR.zip" version="2.1" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="Duke_2000_-_The_Space_Invasion_2.1-ModMgrA.zip" version="2.1" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+			<download filename="Duke_2000_-_The_Space_Invasion_Final-ModMgrR.zip" version="Final" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="Duke_2000_-_The_Space_Invasion_Final-ModMgrA.zip" version="Final" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="Duke Nukem 3D Aliens" id="duke_nukem_3d_aliens">
+		<information type="Partial Conversion" game="All Versions" release_date="August 8, 1997">
+			<team>
+				<member name="Brian Gates" email="Bpg3D@aol.com" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Regular Version 1.3" state="Native">
+					<file name="DNALIENS.CON" type="con" />
+					<file name="DNALIENS.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="DNALIENS.CON" type="con" />
+					<file name="DNALIENS.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="aliens.zip" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="Duke_Nukem_3D_Aliens-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="Duke_Nukem_3D_Aliens-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="Duke Nukem Goes to School" id="duke_nukem_goes_to_school">
+		<information type="Partial Conversion" game="All Versions" release_date="July 23, 1996" website="http://norssi.joensuu.fi/pocd/index.htm">
+			<team name="Pupils of the Cyberdemon" country="Finland">
+				<member name="Faidros" email="jrautio@cc.hut.fi" />
+				<member name="Gotara" />
+				<member name="Gigademon" />
+				<member name="Ostrowsky" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Regular Version 1.3" state="Native">
+					<file name="SCHOOLDN.CON" type="con" />
+					<file name="SCHOOLDN.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="SCHOOLDN.CON" type="con" />
+					<file name="SCHOOLDN.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="SCHOOLDN.zip" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="Duke_Nukem_Goes_to_School-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="Duke_Nukem_Goes_to_School-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="Capture the Flag" id="capture_the_flag">
+		<information type="Dukematch" game="All Versions" version="2.3" release_date="February 5, 1999">
+			<team>
+				<member name="VPR" email="eb56@hotmail.com" />
+			</team>
+		</information>
+		<files>
+			<version id="2.3">
+				<game type="Regular Version 1.3" state="Native">
+					<file name="CTF23.CON" type="con" />
+					<file name="CTF23.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="CTF23.CON" type="con" />
+					<file name="CTF23.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="dctf23.zip" version="2.3" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="Capture_the_Flag_2.3-ModMgrR.zip" version="2.3" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="Capture_the_Flag_2.3-ModMgrA.zip" version="2.3" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="The Ultimatum" id="the_ultimatum">
+		<information type="Episode" game="All Versions" release_date="July 25, 1998">
+			<team>
+				<member name="Mike Channell" email="mighty7@hotmail.com" />
+				<member name="Mike Shaw" email="bshaw78900@aol.com" />
+				<member name="Jason F. Mclauchlin" email="jfmcl@grove.net" />
+				<member name="Andy Wainwright" />
+				<member name="John Mooney" email="jmooney@prolog.net" />
+				<member name="Bruce Sparhawk" email="jsparhawk@worldnet.att.net" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Regular Version 1.3" state="Native">
+					<file name="ULTIMATU.CON" type="con" />
+					<file name="ULTIMATU.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="ULTIMATU.CON" type="con" />
+					<file name="ULTIMATU.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="ultimatu.zip" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="ultimatum-patch.zip" subfolder="original" game="Regular Version 1.3" type="Patch" />
+			<download filename="The_Ultimatum-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="The_Ultimatum-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="Duke Nukem Team Fortress" id="duke_nukem_team_fortress">
+		<information type="Dukematch" game="All Versions" release_date="June 24, 1999" website="http://come.to/mort.duke3d">
+			<team name="Blazing Torch Designs" country="Great Britain">
+				<member name="Mort" email="mort@eidosnet.co.uk" website="http://members.xoom.com/mortuus99/Duke3d" />
+				<member name="The Master of Stealth" website="http://www.geocities.com/TimesSquare/Arcade/8963" />
+				<member name="Yorick" website="http://come.to/thewarp" />
+				<member name="Chris Allcock" email="steve.allcock4@virgin.net" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Regular Version 1.3" state="Native">
+					<file name="DUKETF.CON" type="con" />
+					<file name="DUKETF.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="DUKETF.CON" type="con" />
+					<file name="DUKETF.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="duketf.zip" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="Duke_Nukem_Team_Fortress-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="Duke_Nukem_Team_Fortress-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="Duke's Vacation" id="dukes_vacation">
+		<information type="Partial Conversion" game="All Versions" release_date="July 7, 1999" />
+		<files>
+			<version>
+				<game type="Regular Version 1.3" state="Native">
+					<file name="DUKEVACA.CON" type="con" />
+					<file name="DUKEVACA.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="DUKEVACA.CON" type="con" />
+					<file name="DUKEVACA.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="dukesvacation.zip" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="Duke's_Vacation-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="Duke's_Vacation-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="Fire TC" id="fire_tc">
+		<information type="Total Conversion" game="All Versions" release_date="May 23, 2012">
+			<team name="Extreme Software" country="Poland">
+				<member name="cAGE" email="aleks997@friko7.onet.pl" />
+				<member name="Xkill" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Regular Version 1.3" state="Native">
+					<file name="FIRE_TC.CON" type="con" />
+					<file name="FIRE_TC.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="FIRE_TC.CON" type="con" />
+					<file name="FIRE_TC.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="fire_tc_release.zip" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="Fire_TC-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="Fire_TC-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="From the Wing of a Plane" id="from_the_wing_of_a_plane">
+		<information type="Episode" game="All Versions" release_date="August 8, 1996">
+			<team city="Worcester" country="England">
+				<member name="Matt Harris" alias="MattCake" email="101502.1440@compuserve.com" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Regular Version 1.3" state="Native">
+					<file name="FTWOAP.CON" type="con" />
+					<file name="FTWOAP.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="FTWOAP.CON" type="con" />
+					<file name="FTWOAP.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="ftwoap.zip" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="From_the_Wing_of_a_Plane-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="From_the_Wing_of_a_Plane-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="Grunge" id="grunge">
+		<information type="Episode" game="All Versions" version="1.2" release_date="August 23 1996" website="http://www.angelfire.com/pages0/STELTH/duke3d.html">
+			<team city="Bowmanville" province="Ontario" country="Canada">
+				<member name="Cam Guest" alias="STELTH" email="xoc785@durhamnews.net" phone_number="(905) 623-3516" />
+			</team>
+		</information>
+		<files>
+			<version id="1.2">
+				<game type="Regular Version 1.3" state="Native">
+					<file name="GRUNGE.CON" type="con" />
+					<file name="GRUNGE.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="GRUNGE.CON" type="con" />
+					<file name="GRUNGE.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="grunge.zip" version="1.2" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="Grunge_1.2-ModMgrR.zip" version="1.2" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="Grunge_1.2-ModMgrA.zip" version="1.2" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="HollyWood CTF" id="hollywood_ctf">
+		<information type="Dukematch" game="All Versions" release_date="January 15, 1997">
+			<team>
+				<member name="Glorious" email="glorious@accessone.com" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Regular Version 1.3" state="Native">
+					<file name="HOLLYCTF.CON" type="con" />
+					<file name="HOLLYCTF.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="HOLLYCTF.CON" type="con" />
+					<file name="HOLLYCTF.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="HllyWood-CTF.zip" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="HollyWood_CTF-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="HollyWood_CTF-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="Indy Tour" id="indy_tour">
+		<information type="Episode" game="All Versions" version="V1" release_date="June 24, 1996">
+			<team city="Thesee" country="France">
+				<member name="Laurent Juillard" />
+			</team>
+		</information>
+		<files>
+			<version id="V1">
+				<game type="Regular Version 1.3" state="Native">
+					<file name="INDYTOUR.CON" type="con" />
+					<file name="INDYTOUR.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="INDYTOUR.CON" type="con" />
+					<file name="INDYTOUR.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="indytour_v1.zip" version="V1" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="Indy_Tour_V1-ModMgrR.zip" version="V1" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="Indy_Tour_V1-ModMgrA.zip" version="V1" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="Last Man Standing" id="last_man_standing">
+		<information type="Dukematch" game="All Versions" release_date="August 13, 2003" website="http://www.premiumtc.de.vu">
+			<team country="Germany" email="Madmax.II@t-online.de">
+				<member name="The Gangster" alias="King 6" email="gangsta762@hotmail.com" />
+				<member name="Joe Joeson" alias="The_Viper" email="joe_joeson@web.de" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Regular Version 1.3" state="Native">
+					<file name="LASTMAN.CON" type="con" />
+					<file name="LASTMAN.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="LASTMAN.CON" type="con" />
+					<file name="LASTMAN.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="lastman.zip" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="Last_Man_Standing-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="Last_Man_Standing-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="Light Holocaust" id="light_holocaust">
+		<information type="Partial Conversion" game="All Versions" version="Demo 1.1" release_date="1998">
+			<team name="Creative Duke TCS" email="tcs@boston.crosswinds.net" />
+		</information>
+		<files>
+			<version id="Demo 1.1">
+				<game type="Regular Version 1.3" state="Native">
+					<file name="HOLOCST.CON" type="con" />
+					<file name="HOLOCST.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="HOLOCST.CON" type="con" />
+					<file name="HOLOCST.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="holocaust.zip" version="Demo 1.1" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="Light_Holocaust-ModMgrR.zip" version="Demo 1.1" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="Light_Holocaust-ModMgrA.zip" version="Demo 1.1" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="Operation Xenocide" id="operation_xenocide">
+		<information type="Map Pack" game="All Versions" release_date="May 12, 1997">
+			<team>
+				<member name="Brian Marchman" email="bookman@flosc.net" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Regular Version 1.3" state="Native">
+					<file name="XENOCIDE.CON" type="con" />
+					<file name="XENOCIDE.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="XENOCIDE.CON" type="con" />
+					<file name="XENOCIDE.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="xenocide.zip" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="Operation_Xenocide-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="Operation_Xenocide-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="Phoon Pack" id="phoon_pack">
+		<information type="Dukematch" game="All Versions" release_date="May 4, 1997" website="http://www2.fwi.com/~rentman/main.html">
+			<team>
+				<member name="Duane Miller" alias="Phoonzang" email="duanem@centralnet.net" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Regular Version 1.3" state="Native">
+					<file name="PHOON.CON" type="con" />
+					<file name="PHOON.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="PHOON.CON" type="con" />
+					<file name="PHOON.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="phoonpk.zip" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="Phoon_Pack-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="Phoon_Pack-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="Pussycat" id="pussycat">
+		<information type="Map" game="All Versions" release_date="November 30, 1996" website="http://www.elitegames.com/duke3d">
+			<team name="Elite Games" />
+		</information>
+		<files>
+			<version>
+				<game type="Regular Version 1.3" state="Native">
+					<file name="PUSSYCAT.CON" type="con" />
+					<file name="PUSSYCAT.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="PUSSYCAT.CON" type="con" />
+					<file name="PUSSYCAT.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="pussycat.zip" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="pussycat_sit.bin" subfolder="original" game="Regular Version 1.3" type="Mac Version" />
+			<download filename="Pussycat-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="Pussycat-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="Red Series" id="red_series">
+		<information type="Episode" game="Atomic Edition 1.4/1.5" release_date="January 1, 2009">
+			<team email="jersomer@popmail.com">
+				<member name="Merlijn v. Oostrum" email="merlijn_redhot@hotmail.com" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="RED.CON" type="con" />
+					<file name="RED.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="redseries.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="Red_Series-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="SlayDuke" id="slayduke">
+		<information type="Total Conversion" game="All Versions" release_date="August 17, 2006" website="http://www.slayweb.com">
+			<team name="Slayer Software" email="slayersoft@aol.com" county="Cheshire" country="United Kingdom" >
+				<member name="Brendan Ellis" email="brendan@slayweb.com" website="http://members.aol.com/slayersoft" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Regular Version 1.3" state="Native">
+					<file name="SLAY.CON" type="con" />
+					<file name="SLAY.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="SLAY.CON" type="con" />
+					<file name="SLAY.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="slayduke-original.zip" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="slayduke-atomic.zip" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files" />
+			<download filename="SlayDuke-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="SlayDuke-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" />
+		</downloads>
+	</mod>
+
+	<mod name="SWAT" id="swat">
+		<information type="Total Conversion" game="All Versions" release_date="March 31, 2001" website="http://nippersite.50megs.com/contact.html">
+			<team>
+				<member name="Nathaniel Miller" alias="NIPPER" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Regular Version 1.3" state="Native">
+					<file name="SWAT.CON" type="con" />
+					<file name="SWAT.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="SWAT.CON" type="con" />
+					<file name="SWAT.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="SwatTC.zip" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="SWAT-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="SWAT-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="SWAT vs. TECH" id="swat_vs_tech">
+		<information type="Total Conversion" game="All Versions" version_type="Heavy Weapons" release_date="December 24, 1999">
+			<team>
+				<member name="OCETB" email="ocetb@aol.com" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<type id="Original Weapons">
+					<game type="Regular Version 1.3" state="Native">
+						<file name="SWATTECH.CON" type="con" />
+						<file name="SWATTECH.GRP" type="grp" />
+					</game>
+					<game type="Atomic Edition 1.4/1.5" state="Converted">
+						<file name="SWATTECH.CON" type="con" />
+						<file name="SWATTECH.GRP" type="grp" />
+					</game>
+				</type>
+				<type id="Heavy Weapons">
+					<game type="Regular Version 1.3" state="Native">
+						<file name="SWATTECH.CON" type="con" />
+						<file name="SWATTECH.GRP" type="grp" />
+						<file name="SVTHEAVY.GRP" type="grp" shared="true" />
+					</game>
+					<game type="Atomic Edition 1.4/1.5" state="Converted">
+						<file name="SWATTECH.CON" type="con" />
+						<file name="SWATTECH.GRP" type="grp" />
+						<file name="SVTHEAVY.GRP" type="grp" shared="true" />
+					</game>
+				</type>
+				<type id="Sniper Weapons">
+					<game type="Regular Version 1.3" state="Native">
+						<file name="SWATTECH.CON" type="con" />
+						<file name="SWATTECH.GRP" type="grp" />
+						<file name="SVTSNIPE.GRP" type="grp" shared="true" />
+					</game>
+					<game type="Atomic Edition 1.4/1.5" state="Converted">
+						<file name="SWATTECH.CON" type="con" />
+						<file name="SWATTECH.GRP" type="grp" />
+						<file name="SVTSNIPE.GRP" type="grp" shared="true" />
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="swatdemo2.zip" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="SWAT_vs._TECH_Demo_2-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="SWAT_vs._TECH_Demo_2-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="The Asteroid" id="the_asteroid">
+		<information type="Episode" game="All Versions" release_date="August 7, 1999" website="http://www.multimania.com/duke3d">
+			<team country="France">
+				<member name="Olivier Delatour" alias="Ray Tracer" email="ray.tracer@wanadoo.fr" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Regular Version 1.3" state="Native">
+					<file name="ASTEROID.CON" type="con" />
+					<file name="ASTEROID.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="ASTEROID.CON" type="con" />
+					<file name="ASTEROID.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="asteroid.zip" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="The_Asteroid-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="The_Asteroid-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="The Final Missions" id="the_final_missions">
+		<information type="Episode" game="All Versions" release_date="February 28, 2001" website="http://www.geocities.com/duhast222">
+			<team>
+				<member name="Alan Nick" email="duhast222@yahoo.com" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Regular Version 1.3" state="Native">
+					<file name="EPISODE1.CON" type="con" />
+					<file name="EPISODE1.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="EPISODE1.CON" type="con" />
+					<file name="EPISODE1.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Episode1.zip" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="The_Final_Missions-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="The_Final_Missions-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="The Real Bad Ass" id="the_real_bad_ass">
+		<information type="Episode" game="All Versions" release_date="December 27, 1998">
+			<team country="France">
+				<member name="Olivier Delatour" alias="Ray Tracer" email="ray.tracer@wanadoo.fr" />
+				<member name="Yann Costes" />
+				<member name="Fabrice Cormorant" />
+			</team>
+		</information>
+		<files>
+			<version id="V1" release_date="December 27, 1998">
+				<game type="Regular Version 1.3" state="Native">
+					<file name="BADASSV1.CON" type="con" />
+					<file name="BADASSV1.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="BADASSV1.CON" type="con" />
+					<file name="BADASSV1.GRP" type="grp" />
+				</game>
+			</version>
+			<version id="V2" release_date="July 26, 1999">
+				<game type="Regular Version 1.3" state="Native">
+					<file name="BADASSV2.CON" type="con" />
+					<file name="BADASSV2.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="BADASSV2.CON" type="con" />
+					<file name="BADASSV2.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="trba.zip" version="V1" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="trba_v2.zip" version="V2" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="The_Real_Bad_Ass_V1-ModMgrR.zip" version="V1" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="The_Real_Bad_Ass_V1-ModMgrA.zip" version="V1" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+			<download filename="The_Real_Bad_Ass_V2-ModMgrR.zip" version="V2" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="The_Real_Bad_Ass_V2-ModMgrA.zip" version="V2" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
+	<mod name="Tunnel Episode" id="tunnel_episode">
+		<information type="Episode" game="All Versions" release_date="Feburary 1, 1998" website="http://www.iug.org/~ax/ohjelmat/tunnelep.zip">
+			<team>
+				<member name="Jussi Kivilinna" alias="Hullu" email="ax@iug.org" />
+				<member name="Pekka Kivilinna" alias="Donari" email="donari@iug.org" />
+				<member name="Santeri Vuopohja" email="mixuli@ircnet" />
+				<member name="Janne Saarela" email="teppich@ircnet" />
+			</team>
+		</information>
+		<files>
+			<version>
+				<game type="Regular Version 1.3" state="Native">
+					<file name="TUNNELEP.CON" type="con" />
+					<file name="TUNNELEP.GRP" type="grp" />
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Converted">
+					<file name="TUNNELEP.CON" type="con" />
+					<file name="TUNNELEP.GRP" type="grp" />
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="tunnelep.zip" subfolder="original" game="Regular Version 1.3" type="Original Files" />
+			<download filename="Tunnel_Episode-ModMgrR.zip" subfolder="mod_manager/regular" game="Regular Version 1.3" type="Mod Manager Files" state="Native" />
+			<download filename="Tunnel_Episode-ModMgrA.zip" subfolder="mod_manager/atomic" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" />
+		</downloads>
+	</mod>
+
 </mods>
