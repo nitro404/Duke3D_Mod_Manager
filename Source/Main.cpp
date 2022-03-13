@@ -1,15 +1,11 @@
-#include "Utilities/Utilities.h"
-#include "Mod Manager/ArgumentParser.h"
-#include "Settings Manager/SettingsManager.h"
-#include "Mod Manager/ModManager.h"
-#include "Mod Collection/ModCollection.h"
+#include "Manager/ModManager.h"
 
 int main(int argc, char * argv[]) {
 	ModManager modManager;
 
-	modManager.init(argc, argv);
+	modManager.initialize(argc, argv);
 
-	modManager.uninit();
-	
+	modManager.uninitialize();
+
 	return 0;
 }

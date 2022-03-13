@@ -1,0 +1,3 @@
+[submodule "Libraries/Core"]
+	path = Libraries/Core
+	url = git@github.com:nitro404/Core.git

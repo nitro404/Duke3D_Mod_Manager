@@ -1,27 +1,29 @@
-#ifndef SCRIPT_ARGUMENTS_H
-#define SCRIPT_ARGUMENTS_H
+#ifndef _SCRIPT_ARGUMENTS_H_
+#define _SCRIPT_ARGUMENTS_H_
 
-#include <QMap.h>
-#include <QString.h>
-#include <QStringList.h>
-#include <QRegExp.h>
-#include "Argument Collection/ArgumentCollection.h"
+#include "Arguments/ArgumentCollection.h"
 
-class ScriptArguments : public ArgumentCollection {
+#include <map>
+#include <regex>
+#include <string>
+
+class ScriptArguments final : public ArgumentCollection {
 public:
 	ScriptArguments();
-	ScriptArguments(const ScriptArguments & s);
-	ScriptArguments & operator = (const ScriptArguments & s);
-	~ScriptArguments();
+	ScriptArguments(ScriptArguments && arguments) noexcept;
+	ScriptArguments(const ScriptArguments & arguments);
+	ScriptArguments & operator = (ScriptArguments && arguments) noexcept;
+	ScriptArguments & operator = (const ScriptArguments & arguments);
+	virtual ~ScriptArguments();
 
-	QString applyConditionals(const QString & command) const;
-	QString applyArguments(const QString & command) const;
-	
-	bool operator == (const ScriptArguments & s) const;
-	bool operator != (const ScriptArguments & s) const;
+	std::string applyConditionals(const std::string & command) const;
+	std::string applyArguments(const std::string & command) const;
+
+	bool operator == (const ScriptArguments & arguments) const;
+	bool operator != (const ScriptArguments & arguments) const;
 
 private:
-	QString applyConditionalsHelper(const QString & command) const;
+	std::string applyConditionalsHelper(const std::string & command) const;
 
 public:
 	const static char condOpenChar;
@@ -30,4 +32,4 @@ public:
 	const static char argChar;
 };
 
-#endif // SCRIPT_ARGUMENTS_H
+#endif // _SCRIPT_ARGUMENTS_H_

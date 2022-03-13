@@ -1,19 +1,15 @@
-DUKE3D/*
-DOSBox/*
-Debug/*
-Release/*
 Build/*
 Misc/*
 Mods/*
-Old/*
 .vs
+Version.h
 CDROM.INI
 DUKE3D.CFG
 stderr.txt
 stdout.txt
-Duke 3D Mod Manager.txt
-Duke Nukem 3D Mod Manager.ini
-Duke Nukem 3D Favourite Mods *.*
+Duke Nukem 3D Mod Manager.json
+Duke Nukem 3D Game Versions.json
+Duke Nukem 3D Favourite Mods.json
 *.ncb
 *.sdf
 *.suo
@@ -28,3 +24,4 @@ Duke Nukem 3D Favourite Mods *.*
 *.SAV
 *.PCX
 *.BAT
+*.orig

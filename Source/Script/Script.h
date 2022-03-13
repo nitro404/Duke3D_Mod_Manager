@@ -1,38 +1,36 @@
-#ifndef SCRIPT_H
-#define SCRIPT_H
+#ifndef _SCRIPT_H_
+#define _SCRIPT_H_
 
-#include <QString.h>
-#include <QVector.h>
-#include "Script/ScriptArguments.h"
-#include "Settings Manager/SettingsManager.h"
+#include "ScriptArguments.h"
 
-class Script {
+#include <string>
+#include <vector>
+
+class Script final {
 public:
 	Script();
+	Script(Script && s) noexcept;
 	Script(const Script & s);
+	Script & operator = (Script && s) noexcept;
 	Script & operator = (const Script & s);
 	~Script();
 
-	int numberOfCommands() const;
-	const QString * getCommand(int lineNumber) const;
-	bool addCommand(const char * command);
-	bool addCommand(const QString & command);
-	bool setCommand(int lineNumber, const char * command);
-	bool setCommand(int lineNumber, const QString & command);
-	bool removeCommand(int lineNumber);
+	size_t numberOfCommands() const;
+	const std::string * getCommand(size_t lineNumber) const;
+	bool addCommand(const std::string & command);
+	bool setCommand(size_t lineNumber, const std::string & command);
+	bool removeCommand(size_t lineNumber);
 	void clear();
 
-	bool readFrom(const char * fileName);
-	bool readFrom(const QString & fileName);
+	bool readFrom(const std::string & scriptPath);
 
-	QString generateWindowsCommand(const ScriptArguments & arguments, int lineNumber) const;
-	QString generateDOSBoxCommand(const ScriptArguments & arguments) const;
+	std::string generateDOSBoxCommand(const ScriptArguments & arguments, const std::string & dosboxPath, const std::string & dosboxArguments) const;
 
 	bool operator == (const Script & s) const;
 	bool operator != (const Script & s) const;
 
 private:
-	QVector<QString> m_commands;
+	std::vector<std::string> m_commands;
 };
 
-#endif // SCRIPT_H
+#endif // _SCRIPT_H_

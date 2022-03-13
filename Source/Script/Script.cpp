@@ -1,75 +1,86 @@
-#include "Script/Script.h"
+#include "Script.h"
 
-Script::Script() {
-	
-}
+#include <Utilities/FileUtilities.h>
+#include <Utilities/StringUtilities.h>
+#include <Utilities/Utilities.h>
+
+#include <fmt/core.h>
+
+#include <filesystem>
+#include <fstream>
+#include <iterator>
+#include <regex>
+#include <sstream>
+
+Script::Script() = default;
+
+Script::Script(Script && s) noexcept
+	: m_commands(std::move(s.m_commands)) { }
 
 Script::Script(const Script & s) {
-	for(int i=0;i<s.m_commands.size();i++) {
-		m_commands.push_back(s.m_commands[i]);
+	for(std::vector<std::string>::const_iterator i = s.m_commands.begin(); i != s.m_commands.end(); ++i) {
+		m_commands.push_back(*i);
 	}
 }
 
-Script & Script::operator = (const Script & s) {
-	m_commands.clear();
-
-	for(int i=0;i<s.m_commands.size();i++) {
-		m_commands.push_back(s.m_commands[i]);
+Script & Script::operator = (Script && s) noexcept {
+	if(this != &s) {
+		m_commands = std::move(s.m_commands);
 	}
 
 	return *this;
 }
 
-Script::~Script() {
-	
+Script & Script::operator = (const Script & s) {
+	m_commands.clear();
+
+	for(std::vector<std::string>::const_iterator i = s.m_commands.begin(); i != s.m_commands.end(); ++i) {
+		m_commands.push_back(*i);
+	}
+
+	return *this;
 }
 
-int Script::numberOfCommands() const {
+Script::~Script() = default;
+
+size_t Script::numberOfCommands() const {
 	return m_commands.size();
 }
 
-const QString * Script::getCommand(int lineNumber) const {
-	if(lineNumber < 0 || lineNumber >= m_commands.size()) { return NULL; }
+const std::string * Script::getCommand(size_t lineNumber) const {
+	if(lineNumber >= m_commands.size()) {
+		return nullptr;
+	}
 
 	return &m_commands[lineNumber];
 }
 
-bool Script::addCommand(const char * command) {
-	if(command == NULL || Utilities::stringLength(command) == 0) { return false; }
-
-	m_commands.push_back(QString(command));
-
-	return true;
-}
-
-bool Script::addCommand(const QString & command) {
-	if(command.length() == 0) { return false; }
+bool Script::addCommand(const std::string & command) {
+	if(command.empty()) {
+		return false;
+	}
 
 	m_commands.push_back(command);
 
 	return true;
 }
 
-bool Script::setCommand(int lineNumber, const char * command) {
-	if(lineNumber < 0 || lineNumber >= m_commands.size() || command == NULL || Utilities::stringLength(command) == 0) { return false; }
+bool Script::setCommand(size_t lineNumber, const std::string & command) {
+	if(lineNumber >= m_commands.size() || command.empty() == 0) {
+		return false;
+	}
 
-	m_commands.replace(lineNumber, QString(command));
-
-	return true;
-}
-
-bool Script::setCommand(int lineNumber, const QString & command) {
-	if(lineNumber < 0 || lineNumber >= m_commands.size() || command.length() == 0) { return false; }
-
-	m_commands.replace(lineNumber, command);
+	m_commands[lineNumber] = command;
 
 	return true;
 }
 
-bool Script::removeCommand(int lineNumber) {
-	if(lineNumber < 0 || lineNumber >= m_commands.size()) { return false; }
+bool Script::removeCommand(size_t lineNumber) {
+	if(lineNumber >= m_commands.size()) {
+		return false;
+	}
 
-	m_commands.remove(lineNumber);
+	m_commands.erase(m_commands.begin() + lineNumber);
 
 	return true;
 }
@@ -78,77 +89,83 @@ void Script::clear() {
 	m_commands.clear();
 }
 
-bool Script::readFrom(const char * fileName) {
-	if(fileName == NULL) { return false; }
+bool Script::readFrom(const std::string & scriptPath) {
+	if(scriptPath.empty()) {
+		return false;
+	}
 
-	return readFrom(QString(fileName));
-}
+	if(!std::filesystem::is_regular_file(std::filesystem::path(scriptPath))) {
+		return false;
+	}
 
-bool Script::readFrom(const QString & fileName) {
-	if(fileName.length() == 0) { return false; }
+	std::ifstream fileStream(scriptPath);
 
-	QString scriptPath = QString("%1/%2").arg(SettingsManager::getInstance()->dataDirectoryName).arg(fileName);
-	
-	QFileInfo scriptFile(scriptPath);
-	if(!scriptFile.exists()) { return false; }
-	
-	QFile input(scriptPath);
-	if(!input.open(QIODevice::ReadOnly | QIODevice::Text)) { return false; }
+	if(!fileStream.is_open()) {
+		return false;
+	}
 
 	m_commands.clear();
 
-	QString line;
-	while(true) {
-		if(input.atEnd()) { break; }
-		
-		line = input.readLine().trimmed();
+	std::string line;
 
-		if(line.length() == 0) { continue; }
+	while(std::getline(fileStream, line)) {
+		line = Utilities::trimString(line);
+
+		if(line.empty()) {
+			continue;
+		}
 
 		m_commands.push_back(line);
 	}
 
-	input.close();
+	fileStream.close();
 
 	return true;
 }
 
-QString Script::generateWindowsCommand(const ScriptArguments & arguments, int lineNumber) const {
-	if(lineNumber < 0 || lineNumber >= m_commands.size()) { return QString(); }
+std::string Script::generateDOSBoxCommand(const ScriptArguments & arguments, const std::string & dosboxPath, const  std::string & dosboxArguments) const {
+	static const std::regex unescapedQuotesRegExp("(?:^\"|([^\\\\])\")");
 
-	return arguments.applyArguments(m_commands[lineNumber]).trimmed();
-}
+	if(dosboxPath.empty()) {
+		return std::string();
+	}
 
-QString Script::generateDOSBoxCommand(const ScriptArguments & arguments) const {
-	QString command, line;
+	std::stringstream command;
 
-	command.append("CALL \"");
-	command.append(Utilities::generateFullPath(SettingsManager::getInstance()->DOSBoxPath, SettingsManager::getInstance()->DOSBoxFileName));
-	command.append(QString("\" %1 ").arg(SettingsManager::getInstance()->DOSBoxArgs));
+	command << fmt::format("CALL \"{}\" {} ", dosboxPath, dosboxArguments);
 
-	for(int i=0;i<m_commands.size();i++) {
+	std::string line;
+	std::string formattedLine;
+
+	for(size_t i = 0; i < m_commands.size(); i++) {
 		line = arguments.applyArguments(m_commands[i]);
 
-		if(line.length() > 0) {
-			command.append(QString("-c \"%1\"").arg(line));
+		formattedLine.clear();
+		std::regex_replace(std::back_inserter(formattedLine), line.begin(), line.end(), unescapedQuotesRegExp, "$1\\\"");
 
-			if(i < m_commands.size() - 1) {
-				command.append(" ");
+		if(!formattedLine.empty()) {
+			if(command.tellp() != 0) {
+				command << " ";
 			}
+
+			command << fmt::format("-c \"{}\"", formattedLine);
 		}
 	}
 
-	return command.trimmed();
+	return Utilities::trimString(command.str());
 }
 
 bool Script::operator == (const Script & s) const {
-	if(m_commands.size() != s.m_commands.size()) { return false; }
+	if(m_commands.size() != s.m_commands.size()) {
+		return false;
+	}
 
-	for(int i=0;i<m_commands.size();i++) {
-		if(QString::compare(m_commands[i], s.m_commands[i], Qt::CaseSensitive) != 0) {
+	for(size_t i = 0; i < m_commands.size(); i++) {
+		if(m_commands[i] != s.m_commands[i]) {
 			return false;
 		}
 	}
+
 	return true;
 }
 
