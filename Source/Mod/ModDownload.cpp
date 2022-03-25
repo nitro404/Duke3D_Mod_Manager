@@ -17,20 +17,18 @@ static const std::string XML_MOD_DOWNLOAD_PART_NUMBER_ATTRIBUTE_NAME("part");
 static const std::string XML_MOD_DOWNLOAD_PART_COUNT_ATTRIBUTE_NAME("numparts");
 static const std::string XML_MOD_DOWNLOAD_VERSION_ATTRIBUTE_NAME("version");
 static const std::string XML_MOD_DOWNLOAD_SPECIAL_ATTRIBUTE_NAME("special");
-static const std::string XML_MOD_DOWNLOAD_SUBFOLDER_ATTRIBUTE_NAME("subfolder");
 static const std::string XML_MOD_DOWNLOAD_GAME_VERSION_ATTRIBUTE_NAME("game");
 static const std::string XML_MOD_DOWNLOAD_TYPE_ATTRIBUTE_NAME("type");
 static const std::string XML_MOD_DOWNLOAD_SHA1_ATTRIBUTE_NAME("sha1");
 static const std::string XML_MOD_DOWNLOAD_CONVERTED_ATTRIBUTE_NAME("state");
 static const std::string XML_MOD_DOWNLOAD_CORRUPTED_ATTRIBUTE_NAME("corrupted");
 static const std::string XML_MOD_DOWNLOAD_REPAIRED_ATTRIBUTE_NAME("repaired");
-static const std::array<std::string_view, 12> XML_MOD_DOWNLOAD_ATTRIBUTE_NAMES = {
+static const std::array<std::string_view, 11> XML_MOD_DOWNLOAD_ATTRIBUTE_NAMES = {
 	XML_MOD_DOWNLOAD_FILE_NAME_ATTRIBUTE_NAME,
 	XML_MOD_DOWNLOAD_PART_NUMBER_ATTRIBUTE_NAME,
 	XML_MOD_DOWNLOAD_PART_COUNT_ATTRIBUTE_NAME,
 	XML_MOD_DOWNLOAD_VERSION_ATTRIBUTE_NAME,
 	XML_MOD_DOWNLOAD_SPECIAL_ATTRIBUTE_NAME,
-	XML_MOD_DOWNLOAD_SUBFOLDER_ATTRIBUTE_NAME,
 	XML_MOD_DOWNLOAD_GAME_VERSION_ATTRIBUTE_NAME,
 	XML_MOD_DOWNLOAD_TYPE_ATTRIBUTE_NAME,
 	XML_MOD_DOWNLOAD_SHA1_ATTRIBUTE_NAME,
@@ -46,12 +44,11 @@ static constexpr const char * JSON_MOD_DOWNLOAD_PART_NUMBER_PROPERTY_NAME = "par
 static constexpr const char * JSON_MOD_DOWNLOAD_PART_COUNT_PROPERTY_NAME = "partCount";
 static constexpr const char * JSON_MOD_DOWNLOAD_VERSION_PROPERTY_NAME = "version";
 static constexpr const char * JSON_MOD_DOWNLOAD_SPECIAL_PROPERTY_NAME = "special";
-static constexpr const char * JSON_MOD_DOWNLOAD_SUBFOLDER_PROPERTY_NAME = "subfolder";
 static constexpr const char * JSON_MOD_DOWNLOAD_GAME_VERSION_PROPERTY_NAME = "gameVersion";
 static constexpr const char * JSON_MOD_DOWNLOAD_CONVERTED_PROPERTY_NAME = "converted";
 static constexpr const char * JSON_MOD_DOWNLOAD_CORRUPTED_PROPERTY_NAME = "corrupted";
 static constexpr const char * JSON_MOD_DOWNLOAD_REPAIRED_PROPERTY_NAME = "repaired";
-static const std::array<std::string_view, 12> JSON_MOD_DOWNLOAD_PROPERTY_NAMES = {
+static const std::array<std::string_view, 11> JSON_MOD_DOWNLOAD_PROPERTY_NAMES = {
 	JSON_MOD_DOWNLOAD_FILE_NAME_PROPERTY_NAME,
 	JSON_MOD_DOWNLOAD_TYPE_PROPERTY_NAME,
 	JSON_MOD_DOWNLOAD_SHA1_PROPERTY_NAME,
@@ -59,7 +56,6 @@ static const std::array<std::string_view, 12> JSON_MOD_DOWNLOAD_PROPERTY_NAMES =
 	JSON_MOD_DOWNLOAD_PART_COUNT_PROPERTY_NAME,
 	JSON_MOD_DOWNLOAD_VERSION_PROPERTY_NAME,
 	JSON_MOD_DOWNLOAD_SPECIAL_PROPERTY_NAME,
-	JSON_MOD_DOWNLOAD_SUBFOLDER_PROPERTY_NAME,
 	JSON_MOD_DOWNLOAD_GAME_VERSION_PROPERTY_NAME,
 	JSON_MOD_DOWNLOAD_CONVERTED_PROPERTY_NAME,
 	JSON_MOD_DOWNLOAD_CORRUPTED_PROPERTY_NAME,
@@ -83,7 +79,6 @@ ModDownload::ModDownload(ModDownload && d) noexcept
 	, m_partCount(d.m_partCount)
 	, m_version(std::move(d.m_version))
 	, m_special(std::move(d.m_special))
-	, m_subfolder(std::move(d.m_subfolder))
 	, m_gameVersion(std::move(d.m_gameVersion))
 	, m_type(std::move(d.m_type))
 	, m_sha1(std::move(d.m_sha1))
@@ -98,7 +93,6 @@ ModDownload::ModDownload(const ModDownload & d)
 	, m_partCount(d.m_partCount)
 	, m_version(d.m_version)
 	, m_special(d.m_special)
-	, m_subfolder(d.m_subfolder)
 	, m_gameVersion(d.m_gameVersion)
 	, m_type(d.m_type)
 	, m_sha1(d.m_sha1)
@@ -114,7 +108,6 @@ ModDownload & ModDownload::operator = (ModDownload && d) noexcept {
 		m_partCount = d.m_partCount;
 		m_version = std::move(d.m_version);
 		m_special = std::move(d.m_special);
-		m_subfolder = std::move(d.m_subfolder);
 		m_gameVersion = std::move(d.m_gameVersion);
 		m_type = std::move(d.m_type);
 		m_sha1 = std::move(d.m_sha1);
@@ -132,7 +125,6 @@ ModDownload & ModDownload::operator = (const ModDownload & d) {
 	m_partCount = d.m_partCount;
 	m_version = d.m_version;
 	m_special = d.m_special;
-	m_subfolder = d.m_subfolder;
 	m_gameVersion = d.m_gameVersion;
 	m_type = d.m_type;
 	m_sha1 = d.m_sha1;
@@ -167,10 +159,6 @@ const std::string & ModDownload::getSpecial() const {
 	return m_special;
 }
 
-const std::string & ModDownload::getSubfolder() const {
-	return m_subfolder;
-}
-
 const std::string & ModDownload::getGameVersion() const {
 	return m_gameVersion;
 }
@@ -185,6 +173,20 @@ bool ModDownload::isOriginalFiles() const {
 
 bool ModDownload::isModManagerFiles() const {
 	return Utilities::compareStringsIgnoreCase(m_type, MOD_MANAGER_FILES_TYPE) == 0;
+}
+
+const std::string & ModDownload::getSubfolder() const {
+	static const std::string ORIGINAL_FILES_SUBDIRECTORY("original");
+	static const std::string MOD_MANAGER_FILES_SUBDIRECTORY("mod_manager");
+
+	if(isOriginalFiles()) {
+		return ORIGINAL_FILES_SUBDIRECTORY;
+	}
+	else if(isModManagerFiles()) {
+		return MOD_MANAGER_FILES_SUBDIRECTORY;
+	}
+
+	return Utilities::emptyString;
 }
 
 const std::string & ModDownload::getSHA1() const {
@@ -237,10 +239,6 @@ void ModDownload::setVersion(const std::string & version) {
 
 void ModDownload::setSpecial(const std::string & special) {
 	m_special = Utilities::trimString(special);
-}
-
-void ModDownload::setSubfolder(const std::string & subfolder) {
-	m_subfolder = Utilities::trimString(subfolder);
 }
 
 void ModDownload::setGameVersion(const std::string & gameVersion) {
@@ -308,11 +306,6 @@ rapidjson::Value ModDownload::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::C
 		modDownloadValue.AddMember(rapidjson::StringRef(JSON_MOD_DOWNLOAD_SPECIAL_PROPERTY_NAME), specialValue, allocator);
 	}
 
-	if(!m_subfolder.empty()) {
-		rapidjson::Value subfolderValue(m_subfolder.c_str(), allocator);
-		modDownloadValue.AddMember(rapidjson::StringRef(JSON_MOD_DOWNLOAD_SUBFOLDER_PROPERTY_NAME), subfolderValue, allocator);
-	}
-
 	if(!m_gameVersion.empty()) {
 		rapidjson::Value gameVersionValue(m_gameVersion.c_str(), allocator);
 		modDownloadValue.AddMember(rapidjson::StringRef(JSON_MOD_DOWNLOAD_GAME_VERSION_PROPERTY_NAME), gameVersionValue, allocator);
@@ -366,10 +359,6 @@ tinyxml2::XMLElement * ModDownload::toXML(tinyxml2::XMLDocument * document) cons
 
 	if(m_repaired.has_value()) {
 		modDownloadElement->SetAttribute(XML_MOD_DOWNLOAD_REPAIRED_ATTRIBUTE_NAME.c_str(), m_repaired.value());
-	}
-
-	if(!m_subfolder.empty()) {
-		modDownloadElement->SetAttribute(XML_MOD_DOWNLOAD_SUBFOLDER_ATTRIBUTE_NAME.c_str(), m_subfolder.c_str());
 	}
 
 	if(!m_gameVersion.empty()) {
@@ -546,18 +535,6 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const rapidjson::Value & mod
 		newModDownload->setSpecial(modDownloadSpecialValue.GetString());
 	}
 
-	// parse the mod download subfolder property
-	if(modDownloadValue.HasMember(JSON_MOD_DOWNLOAD_SUBFOLDER_PROPERTY_NAME)) {
-		const rapidjson::Value & modDownloadSubfolderValue = modDownloadValue[JSON_MOD_DOWNLOAD_SUBFOLDER_PROPERTY_NAME];
-
-		if(!modDownloadSubfolderValue.IsString()) {
-			fmt::print("Mod download '{}' property has invalid type: '{}', expected 'string'.\n", JSON_MOD_DOWNLOAD_SUBFOLDER_PROPERTY_NAME, Utilities::typeToString(modDownloadSubfolderValue.GetType()));
-			return nullptr;
-		}
-
-		newModDownload->setSubfolder(modDownloadSubfolderValue.GetString());
-	}
-
 	// parse the mod download game version property
 	if(modDownloadValue.HasMember(JSON_MOD_DOWNLOAD_GAME_VERSION_PROPERTY_NAME)) {
 		const rapidjson::Value & modDownloadGameVersionValue = modDownloadValue[JSON_MOD_DOWNLOAD_GAME_VERSION_PROPERTY_NAME];
@@ -676,7 +653,6 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const tinyxml2::XMLElement *
 
 	const char * modDownloadVersion = modDownloadElement->Attribute(XML_MOD_DOWNLOAD_VERSION_ATTRIBUTE_NAME.c_str());
 	const char * modDownloadSpecial = modDownloadElement->Attribute(XML_MOD_DOWNLOAD_SPECIAL_ATTRIBUTE_NAME.c_str());
-	const char * modDownloadSubfolder = modDownloadElement->Attribute(XML_MOD_DOWNLOAD_SUBFOLDER_ATTRIBUTE_NAME.c_str());
 	const char * modDownloadGameVersion = modDownloadElement->Attribute(XML_MOD_DOWNLOAD_GAME_VERSION_ATTRIBUTE_NAME.c_str());
 	const char * modDownloadConvertedData = modDownloadElement->Attribute(XML_MOD_DOWNLOAD_CONVERTED_ATTRIBUTE_NAME.c_str());
 	const char * modDownloadPartNumberData = modDownloadElement->Attribute(XML_MOD_DOWNLOAD_PART_NUMBER_ATTRIBUTE_NAME.c_str());
@@ -693,10 +669,6 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const tinyxml2::XMLElement *
 
 	if(modDownloadSpecial != nullptr) {
 		newModDownload->setSpecial(modDownloadSpecial);
-	}
-
-	if(modDownloadSubfolder != nullptr) {
-		newModDownload->setSubfolder(modDownloadSubfolder);
 	}
 
 	if(modDownloadGameVersion != nullptr) {
@@ -790,7 +762,6 @@ bool ModDownload::operator == (const ModDownload & d) const {
 		   m_repaired == d.m_repaired &&
 		   Utilities::compareStringsIgnoreCase(m_version, d.m_version) == 0 &&
 		   Utilities::compareStringsIgnoreCase(m_special, d.m_special) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_subfolder, d.m_subfolder) == 0 &&
 		   Utilities::compareStringsIgnoreCase(m_gameVersion, d.m_gameVersion) == 0 &&
 		   Utilities::compareStringsIgnoreCase(m_type, d.m_type) == 0 &&
 		   m_sha1 == d.m_sha1;

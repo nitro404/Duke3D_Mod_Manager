@@ -31,11 +31,11 @@ public:
 	uint8_t getPartCount() const;
 	const std::string & getVersion() const;
 	const std::string & getSpecial() const;
-	const std::string & getSubfolder() const;
 	const std::string & getGameVersion() const;
 	const std::string & getType() const;
 	bool isOriginalFiles() const;
 	bool isModManagerFiles() const;
+	const std::string & getSubfolder() const;
 	const std::string & getSHA1() const;
 	bool isConverted() const;
 	std::optional<bool> getConverted() const;
@@ -50,7 +50,6 @@ public:
 	void setPartCount(uint8_t partCount);
 	void setVersion(const std::string & version);
 	void setSpecial(const std::string & special);
-	void setSubfolder(const std::string & subfolder);
 	void setGameVersion(const std::string & data);
 	void setType(const std::string & type);
 	void setSHA1(const std::string & sha1);
@@ -84,7 +83,6 @@ private:
 	uint8_t m_partCount;
 	std::string m_version;
 	std::string m_special;
-	std::string m_subfolder;
 	std::string m_gameVersion;
 	std::string m_type;
 	std::string m_sha1;
