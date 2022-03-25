@@ -21,7 +21,7 @@ public:
 	~GroupFile();
 
 	const std::string & getFileName() const;
-	std::string getFileExtension() const;
+	std::string_view getFileExtension() const;
 	size_t getSize() const;
 	const ByteBuffer & getData() const;
 

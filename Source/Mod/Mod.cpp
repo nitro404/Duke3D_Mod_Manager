@@ -18,6 +18,7 @@
 #include <tinyxml2.h>
 
 #include <algorithm>
+#include <array>
 #include <sstream>
 #include <string_view>
 
@@ -35,7 +36,7 @@ static constexpr const char * JSON_MOD_IMAGES_PROPERTY_NAME = "images";
 static constexpr const char * JSON_MOD_VIDEOS_PROPERTY_NAME = "videos";
 static constexpr const char * JSON_MOD_NOTES_PROPERTY_NAME = "notes";
 static constexpr const char * JSON_MOD_RELATED_MODS_PROPERTY_NAME = "relatedMods";
-static const std::vector<std::string_view> JSON_MOD_PROPERTY_NAMES = {
+static const std::array<std::string_view, 14> JSON_MOD_PROPERTY_NAMES = {
 	JSON_MOD_ID_PROPERTY_NAME,
 	JSON_MOD_NAME_PROPERTY_NAME,
 	JSON_MOD_TYPE_PROPERTY_NAME,
@@ -63,7 +64,7 @@ static const std::string XML_RELATED_ELEMENT_NAME("related");
 static const std::string XML_RELATED_MOD_ELEMENT_NAME("mod");
 static const std::string XML_NOTES_ELEMENT_NAME("notes");
 static const std::string XML_NOTE_ELEMENT_NAME("note");
-static const std::vector<std::string> XML_MOD_CHILD_ELEMENT_NAMES = {
+static const std::array<std::string_view, 8> XML_MOD_CHILD_ELEMENT_NAMES = {
 	XML_MOD_TEAM_ELEMENT_NAME,
 	XML_FILES_ELEMENT_NAME,
 	XML_DOWNLOADS_ELEMENT_NAME,
@@ -80,7 +81,7 @@ static const std::string XML_MOD_TYPE_ATTRIBUTE_NAME("type");
 static const std::string XML_MOD_VERSION_ATTRIBUTE_NAME("version");
 static const std::string XML_MOD_VERSION_TYPE_ATTRIBUTE_NAME("version_type");
 static const std::string XML_MOD_WEBSITE_ATTRIBUTE_NAME("website");
-static const std::vector<std::string> XML_MOD_ATTRIBUTE_NAMES = {
+static const std::array<std::string_view, 6> XML_MOD_ATTRIBUTE_NAMES = {
 	XML_MOD_ID_ATTRIBUTE_NAME,
 	XML_MOD_NAME_ATTRIBUTE_NAME,
 	XML_MOD_TYPE_ATTRIBUTE_NAME,
@@ -1890,7 +1891,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 
 		attributeHandled = false;
 
-		for(const std::string & attributeName : XML_MOD_ATTRIBUTE_NAMES) {
+		for(const std::string_view & attributeName : XML_MOD_ATTRIBUTE_NAMES) {
 			if(modAttribute->Name() == attributeName) {
 				attributeHandled = true;
 				break;
@@ -1916,7 +1917,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 
 		elementHandled = false;
 
-		for(const std::string & elementName : XML_MOD_CHILD_ELEMENT_NAMES) {
+		for(const std::string_view & elementName : XML_MOD_CHILD_ELEMENT_NAMES) {
 			if(modChildElement->Name() == elementName) {
 				elementHandled = true;
 				break;

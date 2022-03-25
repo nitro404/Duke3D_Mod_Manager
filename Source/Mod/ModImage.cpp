@@ -8,8 +8,8 @@
 #include <fmt/core.h>
 #include <tinyxml2.h>
 
+#include <array>
 #include <string_view>
-#include <vector>
 
 static const std::string XML_MOD_IMAGE_ELEMENT_NAME("image");
 static const std::string XML_MOD_IMAGE_FILE_NAME_ATTRIBUTE_NAME("filename");
@@ -19,13 +19,12 @@ static const std::string XML_MOD_IMAGE_CAPTION_ATTRIBUTE_NAME("caption");
 static const std::string XML_MOD_IMAGE_WIDTH_ATTRIBUTE_NAME("width");
 static const std::string XML_MOD_IMAGE_HEIGHT_ATTRIBUTE_NAME("height");
 static const std::string XML_MOD_IMAGE_SHA1_ATTRIBUTE_NAME("sha1");
-static const std::vector<std::string> XML_MOD_IMAGE_ATTRIBUTE_NAMES = {
+static const std::array<std::string_view, 7> XML_MOD_IMAGE_ATTRIBUTE_NAMES = {
 	XML_MOD_IMAGE_FILE_NAME_ATTRIBUTE_NAME,
 	XML_MOD_IMAGE_TYPE_ATTRIBUTE_NAME,
 	XML_MOD_IMAGE_SUBFOLDER_ATTRIBUTE_NAME,
 	XML_MOD_IMAGE_CAPTION_ATTRIBUTE_NAME,
 	XML_MOD_IMAGE_WIDTH_ATTRIBUTE_NAME,
-	XML_MOD_IMAGE_HEIGHT_ATTRIBUTE_NAME,
 	XML_MOD_IMAGE_HEIGHT_ATTRIBUTE_NAME,
 	XML_MOD_IMAGE_SHA1_ATTRIBUTE_NAME
 };
@@ -36,8 +35,8 @@ static constexpr const char * JSON_MOD_IMAGE_SUBFOLDER_PROPERTY_NAME = "subfolde
 static constexpr const char * JSON_MOD_IMAGE_CAPTION_PROPERTY_NAME = "caption";
 static constexpr const char * JSON_MOD_IMAGE_WIDTH_PROPERTY_NAME = "width";
 static constexpr const char * JSON_MOD_IMAGE_HEIGHT_PROPERTY_NAME = "height";
-static constexpr const char * JSON_MOD_IMAGE_SHA1_PROPERTY_NAME = "height";
-static const std::vector<std::string_view> JSON_MOD_IMAGE_PROPERTY_NAMES = {
+static constexpr const char * JSON_MOD_IMAGE_SHA1_PROPERTY_NAME = "sha1";
+static const std::array<std::string_view, 7> JSON_MOD_IMAGE_PROPERTY_NAMES = {
 	JSON_MOD_IMAGE_FILE_NAME_PROPERTY_NAME,
 	JSON_MOD_IMAGE_TYPE_PROPERTY_NAME,
 	JSON_MOD_IMAGE_SUBFOLDER_PROPERTY_NAME,
@@ -409,7 +408,7 @@ std::unique_ptr<ModImage> ModImage::parseFrom(const tinyxml2::XMLElement * modIm
 
 		attributeHandled = false;
 
-		for(const std::string & attributeName : XML_MOD_IMAGE_ATTRIBUTE_NAMES) {
+		for(const std::string_view & attributeName : XML_MOD_IMAGE_ATTRIBUTE_NAMES) {
 			if(modImageAttribute->Name() == attributeName) {
 				attributeHandled = true;
 				break;

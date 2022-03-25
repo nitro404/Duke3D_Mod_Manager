@@ -8,14 +8,14 @@
 #include <fmt/core.h>
 #include <tinyxml2.h>
 
+#include <array>
 #include <string_view>
-#include <vector>
 
 static const std::string XML_MOD_VIDEO_ELEMENT_NAME("video");
 static const std::string XML_MOD_VIDEO_URL_ATTRIBUTE_NAME("url");
 static const std::string XML_MOD_VIDEO_WIDTH_ATTRIBUTE_NAME("width");
 static const std::string XML_MOD_VIDEO_HEIGHT_ATTRIBUTE_NAME("height");
-static const std::vector<std::string> XML_MOD_VIDEO_ATTRIBUTE_NAMES = {
+static const std::array<std::string_view, 3> XML_MOD_VIDEO_ATTRIBUTE_NAMES = {
 	XML_MOD_VIDEO_URL_ATTRIBUTE_NAME,
 	XML_MOD_VIDEO_WIDTH_ATTRIBUTE_NAME,
 	XML_MOD_VIDEO_HEIGHT_ATTRIBUTE_NAME
@@ -24,7 +24,7 @@ static const std::vector<std::string> XML_MOD_VIDEO_ATTRIBUTE_NAMES = {
 static constexpr const char * JSON_MOD_VIDEO_URL_PROPERTY_NAME = "url";
 static constexpr const char * JSON_MOD_VIDEO_WIDTH_PROPERTY_NAME = "width";
 static constexpr const char * JSON_MOD_VIDEO_HEIGHT_PROPERTY_NAME = "height";
-static const std::vector<std::string_view> JSON_MOD_VIDEO_PROPERTY_NAMES = {
+static const std::array<std::string_view, 3> JSON_MOD_VIDEO_PROPERTY_NAMES = {
 	JSON_MOD_VIDEO_URL_PROPERTY_NAME,
 	JSON_MOD_VIDEO_WIDTH_PROPERTY_NAME,
 	JSON_MOD_VIDEO_HEIGHT_PROPERTY_NAME
@@ -240,7 +240,7 @@ std::unique_ptr<ModVideo> ModVideo::parseFrom(const tinyxml2::XMLElement * modVi
 
 		attributeHandled = false;
 
-		for(const std::string & attributeName : XML_MOD_VIDEO_ATTRIBUTE_NAMES) {
+		for(const std::string_view & attributeName : XML_MOD_VIDEO_ATTRIBUTE_NAMES) {
 			if(modVideoAttribute->Name() == attributeName) {
 				attributeHandled = true;
 				break;

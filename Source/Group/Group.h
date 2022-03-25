@@ -20,8 +20,8 @@ public:
 	~Group();
 
 	const std::string & getFilePath() const;
-	std::string getFileName() const;
-	std::string getFileExtension() const;
+	std::string_view getFileName() const;
+	std::string_view getFileExtension() const;
 	void setFilePath(const std::string & filePath);
 
 	size_t numberOfFiles() const;

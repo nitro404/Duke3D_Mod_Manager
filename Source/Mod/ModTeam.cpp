@@ -9,6 +9,7 @@
 #include <fmt/core.h>
 #include <tinyxml2.h>
 
+#include <array>
 #include <string_view>
 
 static const std::string XML_MOD_TEAM_ELEMENT_NAME("team");
@@ -20,7 +21,7 @@ static const std::string XML_MOD_TEAM_STATE_ATTRIBUTE_NAME("state");
 static const std::string XML_MOD_TEAM_COUNTRY_ATTRIBUTE_NAME("country");
 static const std::string XML_MOD_TEAM_EMAIL_ATTRIBUTE_NAME("email");
 static const std::string XML_MOD_TEAM_WEBSITE_ATTRIBUTE_NAME("website");
-static const std::vector<std::string> XML_MOD_TEAM_ATTRIBUTE_NAMES = {
+static const std::array<std::string_view, 8> XML_MOD_TEAM_ATTRIBUTE_NAMES = {
 	XML_MOD_TEAM_NAME_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_COUNTY_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_CITY_ATTRIBUTE_NAME,
@@ -40,7 +41,7 @@ static constexpr const char * JSON_MOD_TEAM_PROVINCE_PROPERTY_NAME = "province";
 static constexpr const char * JSON_MOD_TEAM_STATE_PROPERTY_NAME = "state";
 static constexpr const char * JSON_MOD_TEAM_COUNTRY_PROPERTY_NAME = "country";
 static constexpr const char * JSON_MOD_TEAM_MEMBERS_PROPERTY_NAME = "members";
-static const std::vector<std::string_view> JSON_MOD_TEAM_PROPERTY_NAMES = {
+static const std::array<std::string_view, 9> JSON_MOD_TEAM_PROPERTY_NAMES = {
 	JSON_MOD_TEAM_NAME_PROPERTY_NAME,
 	JSON_MOD_TEAM_WEBSITE_PROPERTY_NAME,
 	JSON_MOD_TEAM_EMAIL_PROPERTY_NAME,
@@ -650,7 +651,7 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const tinyxml2::XMLElement * modTeam
 
 		attributeHandled = false;
 
-		for(const std::string & attributeName : XML_MOD_TEAM_ATTRIBUTE_NAMES) {
+		for(const std::string_view & attributeName : XML_MOD_TEAM_ATTRIBUTE_NAMES) {
 			if(modTeamAttribute->Name() == attributeName) {
 				attributeHandled = true;
 				break;

@@ -8,6 +8,7 @@
 
 #include <fmt/core.h>
 
+#include <array>
 #include <filesystem>
 #include <fstream>
 #include <string_view>
@@ -27,7 +28,7 @@ static constexpr const char * JSON_MOD_DIRECTORY_NAME_PROPERTY_NAME = "modDirect
 static constexpr const char * JSON_WEBSITE_PROPERTY_NAME = "website";
 static constexpr const char * JSON_SOURCE_CODE_URL_PROPERTY_NAME = "sourceCodeURL";
 static constexpr const char * JSON_COMPATIBLE_GAME_VERSIONS_PROPERTY_NAME = "compatibleGameVersions";
-static const std::vector<std::string_view> JSON_PROPERTY_NAMES = {
+static const std::array<std::string_view, 14> JSON_PROPERTY_NAMES = {
 	JSON_NAME_PROPERTY_NAME,
 	JSON_GAME_PATH_PROPERTY_NAME,
 	JSON_GAME_EXECUTABLE_NAME_PROPERTY_NAME,

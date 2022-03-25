@@ -11,6 +11,7 @@
 #include <fmt/core.h>
 #include <tinyxml2.h>
 
+#include <array>
 #include <sstream>
 #include <string_view>
 #include <vector>
@@ -18,13 +19,13 @@
 static const std::string XML_MOD_VERSION_TYPE_ELEMENT_NAME("type");
 static const std::string XML_MOD_GAME_VERSION_ELEMENT_NAME("game");
 static const std::string XML_MOD_VERSION_TYPE_TYPE_ATTRIBUTE_NAME("id");
-static const std::vector<std::string> XML_MOD_VERSION_TYPE_ATTRIBUTE_NAMES = {
+static const std::array<std::string_view, 1> XML_MOD_VERSION_TYPE_ATTRIBUTE_NAMES = {
 	XML_MOD_VERSION_TYPE_TYPE_ATTRIBUTE_NAME,
 };
 
 static constexpr const char * JSON_MOD_VERSION_TYPE_TYPE_PROPERTY_NAME = "type";
 static constexpr const char * JSON_MOD_VERSION_TYPE_GAME_VERSIONS_PROPERTY_NAME = "gameVersions";
-static const std::vector<std::string_view> JSON_MOD_VERSION_TYPE_PROPERTY_NAMES = {
+static const std::array<std::string_view, 2> JSON_MOD_VERSION_TYPE_PROPERTY_NAMES = {
 	JSON_MOD_VERSION_TYPE_TYPE_PROPERTY_NAME,
 	JSON_MOD_VERSION_TYPE_GAME_VERSIONS_PROPERTY_NAME
 };
@@ -405,7 +406,7 @@ std::unique_ptr<ModVersionType> ModVersionType::parseFrom(const tinyxml2::XMLEle
 
 			attributeHandled = false;
 
-			for(const std::string & attributeName : XML_MOD_VERSION_TYPE_ATTRIBUTE_NAMES) {
+			for(const std::string_view & attributeName : XML_MOD_VERSION_TYPE_ATTRIBUTE_NAMES) {
 				if(modVersionTypeAttribute->Name() == attributeName) {
 					attributeHandled = true;
 					break;

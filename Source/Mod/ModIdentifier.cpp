@@ -5,13 +5,14 @@
 
 #include <fmt/core.h>
 
+#include <array>
 #include <string_view>
 #include <vector>
 
 static constexpr const char * JSON_NAME_PROPERTY_NAME = "name";
 static constexpr const char * JSON_VERSION_PROPERTY_NAME = "version";
 static constexpr const char * JSON_VERSION_TYPE_PROPERTY_NAME = "versionType";
-static const std::vector<std::string_view> JSON_PROPERTY_NAMES = {
+static const std::array<std::string_view, 3> JSON_PROPERTY_NAMES = {
 	JSON_NAME_PROPERTY_NAME,
 	JSON_VERSION_PROPERTY_NAME,
 	JSON_VERSION_TYPE_PROPERTY_NAME

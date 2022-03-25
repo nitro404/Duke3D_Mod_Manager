@@ -12,6 +12,7 @@
 #include <fmt/core.h>
 #include <tinyxml2.h>
 
+#include <array>
 #include <sstream>
 #include <string_view>
 #include <vector>
@@ -19,7 +20,7 @@
 static const std::string XML_MOD_GAME_VERSION_ELEMENT_NAME("game");
 static const std::string XML_MOD_GAME_VERSION_GAME_VERSION_ATTRIBUTE_NAME("type");
 static const std::string XML_MOD_GAME_VERSION_CONVERTED_ATTRIBUTE_NAME("state");
-static const std::vector<std::string> XML_MOD_GAME_VERSION_ATTRIBUTE_NAMES = {
+static const std::array<std::string_view, 2> XML_MOD_GAME_VERSION_ATTRIBUTE_NAMES = {
 	XML_MOD_GAME_VERSION_GAME_VERSION_ATTRIBUTE_NAME,
 	XML_MOD_GAME_VERSION_CONVERTED_ATTRIBUTE_NAME
 };
@@ -27,7 +28,7 @@ static const std::vector<std::string> XML_MOD_GAME_VERSION_ATTRIBUTE_NAMES = {
 static constexpr const char * JSON_MOD_GAME_VERSION_GAME_VERSION_PROPERTY_NAME = "gameVersion";
 static constexpr const char * JSON_MOD_GAME_VERSION_CONVERTED_PROPERTY_NAME = "converted";
 static constexpr const char * JSON_MOD_GAME_VERSION_FILES_PROPERTY_NAME = "files";
-static const std::vector<std::string_view> JSON_MOD_GAME_VERSION_PROPERTY_NAMES = {
+static const std::array<std::string_view, 3> JSON_MOD_GAME_VERSION_PROPERTY_NAMES = {
 	JSON_MOD_GAME_VERSION_GAME_VERSION_PROPERTY_NAME,
 	JSON_MOD_GAME_VERSION_CONVERTED_PROPERTY_NAME,
 	JSON_MOD_GAME_VERSION_FILES_PROPERTY_NAME
@@ -499,7 +500,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value
 
 	std::string modGameVersionGameVersion(modGameVersionGameVersionValue.GetString());
 
-	// parse the mod version converted property
+	// parse the mod game version converted property
 	if(!modGameVersionValue.HasMember(JSON_MOD_GAME_VERSION_CONVERTED_PROPERTY_NAME)) {
 		fmt::print("Mod game version is missing '{}' property'.\n", JSON_MOD_GAME_VERSION_CONVERTED_PROPERTY_NAME);
 		return nullptr;
@@ -508,7 +509,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value
 	const rapidjson::Value & modVersionConvertedValue = modGameVersionValue[JSON_MOD_GAME_VERSION_CONVERTED_PROPERTY_NAME];
 
 	if(!modVersionConvertedValue.IsBool()) {
-		fmt::print("Mod version '{}' property has invalid type: '{}', expected 'boolean'.\n", JSON_MOD_GAME_VERSION_CONVERTED_PROPERTY_NAME, Utilities::typeToString(modVersionConvertedValue.GetType()));
+		fmt::print("Mod game version '{}' property has invalid type: '{}', expected 'boolean'.\n", JSON_MOD_GAME_VERSION_CONVERTED_PROPERTY_NAME, Utilities::typeToString(modVersionConvertedValue.GetType()));
 		return nullptr;
 	}
 
@@ -526,7 +527,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value
 	const rapidjson::Value & modFilesValue = modGameVersionValue[JSON_MOD_GAME_VERSION_FILES_PROPERTY_NAME];
 
 	if(!modFilesValue.IsArray()) {
-		fmt::print("Mod version '{}' property has invalid type: '{}', expected 'array'.\n", JSON_MOD_GAME_VERSION_FILES_PROPERTY_NAME, Utilities::typeToString(modFilesValue.GetType()));
+		fmt::print("Mod game version '{}' property has invalid type: '{}', expected 'array'.\n", JSON_MOD_GAME_VERSION_FILES_PROPERTY_NAME, Utilities::typeToString(modFilesValue.GetType()));
 		return nullptr;
 	}
 
@@ -575,7 +576,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const tinyxml2::XMLEle
 
 		attributeHandled = false;
 
-		for(const std::string & attributeName : XML_MOD_GAME_VERSION_ATTRIBUTE_NAMES) {
+		for(const std::string_view & attributeName : XML_MOD_GAME_VERSION_ATTRIBUTE_NAMES) {
 			if(modGameVersionAttribute->Name() == attributeName) {
 				attributeHandled = true;
 				break;

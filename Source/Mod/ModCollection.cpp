@@ -297,7 +297,7 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const rapidjson::Value &
 		return nullptr;
 	}
 
-	std::unique_ptr<ModCollection> newModCollection = std::make_unique<ModCollection>();
+	std::unique_ptr<ModCollection> newModCollection(std::make_unique<ModCollection>());
 
 	if(modCollectionValue.Empty()) {
 		return newModCollection;
@@ -306,7 +306,7 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const rapidjson::Value &
 	std::unique_ptr<Mod> newMod;
 
 	for(rapidjson::Value::ConstValueIterator i = modCollectionValue.Begin(); i != modCollectionValue.End(); ++i) {
-		newMod = std::move(Mod::parseFrom(*i));
+		newMod = Mod::parseFrom(*i);
 
 		if(!Mod::isValid(newMod.get())) {
 			fmt::print("Failed to parse mod #{}{}!\n", newModCollection->m_mods.size() + 1, newModCollection->numberOfMods() == 0 ? "" : fmt::format(" (after mod with ID '{}')", newModCollection->getMod(newModCollection->numberOfMods() - 1)->getID()));
@@ -341,7 +341,7 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const tinyxml2::XMLEleme
 	// find the first mod element within the mods element
 	const tinyxml2::XMLElement * modElement = modsElement->FirstChildElement();
 
-	std::unique_ptr<ModCollection> modCollection = std::make_unique<ModCollection>();
+	std::unique_ptr<ModCollection> modCollection(std::make_unique<ModCollection>());
 	std::unique_ptr<Mod> newMod;
 
 	// iterate over all of the mod elements
@@ -350,7 +350,7 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const tinyxml2::XMLEleme
 			break;
 		}
 
-		newMod = std::move(Mod::parseFrom(modElement));
+		newMod = Mod::parseFrom(modElement);
 
 		if(!Mod::isValid(newMod.get())) {
 			fmt::print("Failed to parse mod #{}{}!\n", modCollection->m_mods.size() + 1, modCollection->numberOfMods() == 0 ? "" : fmt::format(" (after mod with ID '{}')", modCollection->getMod(modCollection->numberOfMods() - 1)->getID()));
@@ -407,14 +407,14 @@ bool ModCollection::loadFromXML(const std::string & filePath) {
 
 	m_mods.clear();
 
-	std::unique_ptr<ModCollection> modCollection(std::move(parseFrom(modCollectionDocument.RootElement())));
+	std::unique_ptr<ModCollection> modCollection(parseFrom(modCollectionDocument.RootElement()));
 
 	if(!ModCollection::isValid(modCollection.get())) {
 		fmt::print("Failed to parse mod collection from XML file '{}'.\n", filePath);
 		return false;
 	}
 
-	m_mods = modCollection->m_mods;
+	m_mods = std::move(modCollection->m_mods);
 
 	notifyCollectionChanged();
 
@@ -440,14 +440,14 @@ bool ModCollection::loadFromJSON(const std::string & filePath) {
 
 	fileStream.close();
 
-	std::unique_ptr<ModCollection> modCollection = std::move(parseFrom(modsValue));
+	std::unique_ptr<ModCollection> modCollection(parseFrom(modsValue));
 
 	if(!ModCollection::isValid(modCollection.get())) {
 		fmt::print("Failed to parse mod collection from JSON file '{}'.\n", filePath);
 		return false;
 	}
 
-	m_mods = modCollection->m_mods;
+	m_mods = std::move(modCollection->m_mods);
 
 	notifyCollectionChanged();
 

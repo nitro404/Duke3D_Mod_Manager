@@ -9,8 +9,8 @@
 #include <fmt/core.h>
 #include <tinyxml2.h>
 
+#include <array>
 #include <string_view>
-#include <vector>
 
 static const std::string XML_MOD_TEAM_MEMBER_ELEMENT_NAME("member");
 static const std::string XML_MOD_TEAM_MEMBER_NAME_ATTRIBUTE_NAME("name");
@@ -20,7 +20,7 @@ static const std::string XML_MOD_TEAM_MEMBER_WEBSITE_ATTRIBUTE_NAME("website");
 static const std::string XML_MOD_TEAM_MEMBER_AIM_ATTRIBUTE_NAME("aim");
 static const std::string XML_MOD_TEAM_MEMBER_ICQ_ATTRIBUTE_NAME("icq");
 static const std::string XML_MOD_TEAM_MEMBER_PHONE_NUMBER_ATTRIBUTE_NAME("phone_number");
-static const std::vector<std::string> XML_MOD_TEAM_MEMBER_ATTRIBUTE_NAMES = {
+static const std::array<std::string_view, 7> XML_MOD_TEAM_MEMBER_ATTRIBUTE_NAMES = {
 	XML_MOD_TEAM_MEMBER_NAME_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_MEMBER_ALIAS_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_MEMBER_EMAIL_ATTRIBUTE_NAME,
@@ -37,7 +37,7 @@ static constexpr const char * JSON_MOD_TEAM_MEMBER_WEBSITE_PROPERTY_NAME = "webs
 static constexpr const char * JSON_MOD_TEAM_MEMBER_AIM_PROPERTY_NAME = "aim";
 static constexpr const char * JSON_MOD_TEAM_MEMBER_ICQ_PROPERTY_NAME = "icq";
 static constexpr const char * JSON_MOD_TEAM_MEMBER_PHONE_NUMBER_PROPERTY_NAME = "phoneNumber";
-static const std::vector<std::string> JSON_MOD_TEAM_MEMBER_PROPERTY_NAMES = {
+static const std::array<std::string_view, 7> JSON_MOD_TEAM_MEMBER_PROPERTY_NAMES = {
 	JSON_MOD_TEAM_MEMBER_NAME_PROPERTY_NAME,
 	JSON_MOD_TEAM_MEMBER_ALIAS_PROPERTY_NAME,
 	JSON_MOD_TEAM_MEMBER_EMAIL_PROPERTY_NAME,
@@ -396,7 +396,7 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const tinyxml2::XMLEleme
 
 		attributeHandled = false;
 
-		for(const std::string & attributeName : XML_MOD_TEAM_MEMBER_ATTRIBUTE_NAMES) {
+		for(const std::string_view & attributeName : XML_MOD_TEAM_MEMBER_ATTRIBUTE_NAMES) {
 			if(modTeamMemberAttribute->Name() == attributeName) {
 				attributeHandled = true;
 				break;

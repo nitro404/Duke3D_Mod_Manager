@@ -58,11 +58,11 @@ const std::string & Group::getFilePath() const {
 	return m_filePath;
 }
 
-std::string Group::getFileName() const {
+std::string_view Group::getFileName() const {
 	return Utilities::getFileName(m_filePath);
 }
 
-std::string Group::getFileExtension() const {
+std::string_view Group::getFileExtension() const {
 	return Utilities::getFileExtension(m_filePath);
 }
 

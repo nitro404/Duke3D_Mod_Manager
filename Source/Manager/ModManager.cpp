@@ -858,7 +858,7 @@ bool ModManager::runSelectedMod() {
 		std::vector<std::shared_ptr<ModFile>> modFiles(selectedModGameVersion->getFilesOfType("grp"));
 
 		for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = modFiles.begin(); i != modFiles.end(); ++i) {
-			std::unique_ptr<Group> group(std::make_unique<Group>(Utilities::joinPaths(Utilities::joinPaths(m_settings->modsDirectoryPath, m_gameVersions->getGameVersion(selectedModGameVersion->getGameVersion())->getModDirectoryName()), (*i)->getFileName())));
+			std::unique_ptr<Group> group(std::make_unique<Group>(Utilities::joinPaths(m_settings->modsDirectoryPath, m_gameVersions->getGameVersion(selectedModGameVersion->getGameVersion())->getModDirectoryName(), (*i)->getFileName())));
 
 			if(group->load()) {
 				size_t numberOfDemosExtracted = group->extractAllFilesWithExtension("DMO", selectedGameVersion->getGamePath());
@@ -1353,7 +1353,7 @@ size_t ModManager::checkForUnlinkedModFilesForGameVersion(const GameVersion & ga
 
 	for(const std::filesystem::directory_entry& e : std::filesystem::directory_iterator(gameModsPath)) {
 		if(e.is_regular_file()) {
-			linkedModFiles[Utilities::getFileName(e.path().string())] = std::vector<std::shared_ptr<ModFile>>();
+			linkedModFiles[std::string(Utilities::getFileName(e.path().string()))] = std::vector<std::shared_ptr<ModFile>>();
 		}
 	}
 
@@ -1668,7 +1668,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 				continue;
 			}
 
-			downloadFilePath = Utilities::joinPaths(Utilities::joinPaths(m_settings->modDownloadsDirectoryPath, Utilities::toLowerCase(gameVersion->getModDirectoryName())), modDownload->getFileName());
+			downloadFilePath = Utilities::joinPaths(m_settings->modDownloadsDirectoryPath, Utilities::toLowerCase(gameVersion->getModDirectoryName()), modDownload->getFileName());
 		}
 		else {
 			if(m_settings->modSourceFilesDirectoryPath.empty()) {
@@ -1719,7 +1719,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 				continue;
 			}
 
-			screenshotFilePath = Utilities::joinPaths(Utilities::joinPaths(Utilities::joinPaths(m_settings->modImagesDirectoryPath, mod.getID()), Utilities::joinPaths("screenshots", "lg")), modScreenshot->getFileName());
+			screenshotFilePath = Utilities::joinPaths(m_settings->modImagesDirectoryPath, mod.getID(), "screenshots", "lg", modScreenshot->getFileName());
 
 			if(!std::filesystem::is_regular_file(std::filesystem::path(screenshotFilePath))) {
 				fmt::print("Skipping hash of missing '{}' mod screenshot file: '{}'.\n", mod.getName(), screenshotFilePath);
@@ -2009,11 +2009,11 @@ bool ModManager::createSymlink(const std::string & symlinkTarget, const std::str
 			fmt::print("Removing existing symlink: '{}'.\n", symlinkDestinationPath.string());
 		}
 
-		std::error_code error;
-		std::filesystem::remove(symlinkDestinationPath, error);
+		std::error_code errorCode;
+		std::filesystem::remove(symlinkDestinationPath, errorCode);
 
-		if(error) {
-			fmt::print("Failed to remove existing symlink '{}': {}\n", symlinkDestinationPath.string(), error.message());
+		if(errorCode) {
+			fmt::print("Failed to remove existing symlink '{}': {}\n", symlinkDestinationPath.string(), errorCode.message());
 			return false;
 		}
 	}
@@ -2022,11 +2022,11 @@ bool ModManager::createSymlink(const std::string & symlinkTarget, const std::str
 		fmt::print("Creating symlink '{}' to target '{}'.\n", symlinkDestination, symlinkTarget);
 	}
 
-	std::error_code error;
-	std::filesystem::create_directory_symlink(symlinkTarget, symlinkDestinationPath, error);
+	std::error_code errorCode;
+	std::filesystem::create_directory_symlink(symlinkTarget, symlinkDestinationPath, errorCode);
 
-	if(error) {
-		fmt::print("Failed to create symlink '{}' to target '{}': {}\n", symlinkDestination, symlinkTarget, error.message());
+	if(errorCode) {
+		fmt::print("Failed to create symlink '{}' to target '{}': {}\n", symlinkDestination, symlinkTarget, errorCode.message());
 		return false;
 	}
 
@@ -2052,11 +2052,11 @@ bool ModManager::removeSymlink(const std::string & symlinkName, const std::strin
 			fmt::print("Removing symlink: '{}'.\n", symlinkDestination);
 		}
 
-		std::error_code error;
-		std::filesystem::remove(symlinkDestinationPath, error);
+		std::error_code errorCode;
+		std::filesystem::remove(symlinkDestinationPath, errorCode);
 
-		if(error) {
-			fmt::print("Failed to remove symlink '{}': {}\n", symlinkDestination, error.message());
+		if(errorCode) {
+			fmt::print("Failed to remove symlink '{}': {}\n", symlinkDestination, errorCode.message());
 			return false;
 		}
 	}
@@ -2111,11 +2111,11 @@ size_t ModManager::deleteFilesWithSuffix(const std::string & suffix, const std::
 				fmt::print("Deleting file: '{}'.\n", e.path().string());
 			}
 
-			std::error_code error;
-			std::filesystem::remove(e.path(), error);
+			std::error_code errorCode;
+			std::filesystem::remove(e.path(), errorCode);
 
-			if(error) {
-				fmt::print("Failed to delete file '{}': {}\n", e.path().string(), error.message());
+			if(errorCode) {
+				fmt::print("Failed to delete file '{}': {}\n", e.path().string(), errorCode.message());
 				continue;
 			}
 

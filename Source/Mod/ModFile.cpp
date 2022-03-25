@@ -11,15 +11,15 @@
 #include <fmt/core.h>
 #include <tinyxml2.h>
 
+#include <array>
 #include <string_view>
-#include <vector>
 
 static const std::string XML_MOD_FILE_ELEMENT_NAME("file");
 static const std::string XML_MOD_FILE_FILE_NAME_ATTRIBUTE_NAME("name");
 static const std::string XML_MOD_FILE_TYPE_ATTRIBUTE_NAME("type");
 static const std::string XML_MOD_FILE_SHA1_ATTRIBUTE_NAME("sha1");
 static const std::string XML_MOD_FILE_SHARED_ATTRIBUTE_NAME("shared");
-static const std::vector<std::string> XML_MOD_FILE_ATTRIBUTE_NAMES = {
+static const std::array<std::string, 4> XML_MOD_FILE_ATTRIBUTE_NAMES = {
 	XML_MOD_FILE_FILE_NAME_ATTRIBUTE_NAME,
 	XML_MOD_FILE_TYPE_ATTRIBUTE_NAME,
 	XML_MOD_FILE_SHA1_ATTRIBUTE_NAME,
@@ -30,7 +30,7 @@ static constexpr const char * JSON_MOD_FILE_FILE_NAME_PROPERTY_NAME = "fileName"
 static constexpr const char * JSON_MOD_FILE_TYPE_PROPERTY_NAME = "type";
 static constexpr const char * JSON_MOD_FILE_SHA1_PROPERTY_NAME = "sha1";
 static constexpr const char * JSON_MOD_FILE_SHARED_PROPERTY_NAME = "shared";
-static const std::vector<std::string_view> JSON_MOD_FILE_PROPERTY_NAMES = {
+static const std::array<std::string_view, 4> JSON_MOD_FILE_PROPERTY_NAMES = {
 	JSON_MOD_FILE_FILE_NAME_PROPERTY_NAME,
 	JSON_MOD_FILE_TYPE_PROPERTY_NAME,
 	JSON_MOD_FILE_SHA1_PROPERTY_NAME,

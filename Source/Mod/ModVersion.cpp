@@ -11,6 +11,7 @@
 #include <fmt/core.h>
 #include <tinyxml2.h>
 
+#include <array>
 #include <sstream>
 #include <string_view>
 #include <vector>
@@ -19,7 +20,7 @@ static const std::string XML_MOD_VERSION_ELEMENT_NAME("version");
 static const std::string XML_MOD_VERSION_VERSION_ATTRIBUTE_NAME("id");
 static const std::string XML_MOD_VERSION_RELEASE_DATE_ATTRIBUTE_NAME("release_date");
 static const std::string XML_MOD_VERSION_REPAIRED_ATTRIBUTE_NAME("repaired");
-static const std::vector<std::string> XML_MOD_VERSION_ATTRIBUTE_NAMES = {
+static const std::array<std::string_view, 3> XML_MOD_VERSION_ATTRIBUTE_NAMES = {
 	XML_MOD_VERSION_VERSION_ATTRIBUTE_NAME,
 	XML_MOD_VERSION_RELEASE_DATE_ATTRIBUTE_NAME,
 	XML_MOD_VERSION_REPAIRED_ATTRIBUTE_NAME
@@ -30,7 +31,7 @@ static constexpr const char * JSON_MOD_VERSION_VERSION_PROPERTY_NAME = "version"
 static constexpr const char * JSON_MOD_VERSION_RELEASE_DATE_PROPERTY_NAME = "releaseDate";
 static constexpr const char * JSON_MOD_VERSION_REPAIRED_PROPERTY_NAME = "repaired";
 static constexpr const char * JSON_MOD_VERSIONS_VERSION_TYPES_PROPERTY_NAME = "types";
-static const std::vector<std::string_view> JSON_MOD_VERSION_PROPERTY_NAMES = {
+static const std::array<std::string_view, 4> JSON_MOD_VERSION_PROPERTY_NAMES = {
 	JSON_MOD_VERSION_VERSION_PROPERTY_NAME,
 	JSON_MOD_VERSION_RELEASE_DATE_PROPERTY_NAME,
 	JSON_MOD_VERSION_REPAIRED_PROPERTY_NAME,
@@ -502,7 +503,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const tinyxml2::XMLElement * m
 
 		attributeHandled = false;
 
-		for(const std::string & attributeName : XML_MOD_VERSION_ATTRIBUTE_NAMES) {
+		for(const std::string_view & attributeName : XML_MOD_VERSION_ATTRIBUTE_NAMES) {
 			if(modVersionAttribute->Name() == attributeName) {
 				attributeHandled = true;
 				break;

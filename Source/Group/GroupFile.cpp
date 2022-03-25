@@ -61,7 +61,7 @@ const std::string & GroupFile::getFileName() const {
 	return m_fileName;
 }
 
-std::string GroupFile::getFileExtension() const {
+std::string_view GroupFile::getFileExtension() const {
 	return Utilities::getFileExtension(m_fileName);
 }
 
@@ -131,8 +131,11 @@ bool GroupFile::writeTo(const std::string & basePath, bool overwrite, const std:
 
 	if(!basePath.empty()) {
 		if(!std::filesystem::exists(std::filesystem::path(basePath))) {
-			if(!std::filesystem::create_directories(basePath)) {
-				fmt::print("Failed to create directory structure for base path '{}'.\n", basePath);
+			std::error_code errorCode;
+			std::filesystem::create_directories(basePath, errorCode);
+
+			if(errorCode) {
+				fmt::print("Failed to create directory structure for base path '{}': {}\n", basePath, errorCode.message());
 				return false;
 			}
 		}

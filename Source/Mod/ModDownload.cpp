@@ -8,6 +8,7 @@
 #include <fmt/core.h>
 #include <tinyxml2.h>
 
+#include <array>
 #include <string_view>
 
 static const std::string XML_MOD_DOWNLOAD_ELEMENT_NAME("download");
@@ -23,7 +24,7 @@ static const std::string XML_MOD_DOWNLOAD_SHA1_ATTRIBUTE_NAME("sha1");
 static const std::string XML_MOD_DOWNLOAD_CONVERTED_ATTRIBUTE_NAME("state");
 static const std::string XML_MOD_DOWNLOAD_CORRUPTED_ATTRIBUTE_NAME("corrupted");
 static const std::string XML_MOD_DOWNLOAD_REPAIRED_ATTRIBUTE_NAME("repaired");
-static const std::vector<std::string> XML_MOD_DOWNLOAD_ATTRIBUTE_NAMES = {
+static const std::array<std::string_view, 12> XML_MOD_DOWNLOAD_ATTRIBUTE_NAMES = {
 	XML_MOD_DOWNLOAD_FILE_NAME_ATTRIBUTE_NAME,
 	XML_MOD_DOWNLOAD_PART_NUMBER_ATTRIBUTE_NAME,
 	XML_MOD_DOWNLOAD_PART_COUNT_ATTRIBUTE_NAME,
@@ -50,7 +51,7 @@ static constexpr const char * JSON_MOD_DOWNLOAD_GAME_VERSION_PROPERTY_NAME = "ga
 static constexpr const char * JSON_MOD_DOWNLOAD_CONVERTED_PROPERTY_NAME = "converted";
 static constexpr const char * JSON_MOD_DOWNLOAD_CORRUPTED_PROPERTY_NAME = "corrupted";
 static constexpr const char * JSON_MOD_DOWNLOAD_REPAIRED_PROPERTY_NAME = "repaired";
-static const std::vector<std::string_view> JSON_MOD_DOWNLOAD_PROPERTY_NAMES = {
+static const std::array<std::string_view, 12> JSON_MOD_DOWNLOAD_PROPERTY_NAMES = {
 	JSON_MOD_DOWNLOAD_FILE_NAME_PROPERTY_NAME,
 	JSON_MOD_DOWNLOAD_TYPE_PROPERTY_NAME,
 	JSON_MOD_DOWNLOAD_SHA1_PROPERTY_NAME,
@@ -62,7 +63,7 @@ static const std::vector<std::string_view> JSON_MOD_DOWNLOAD_PROPERTY_NAMES = {
 	JSON_MOD_DOWNLOAD_GAME_VERSION_PROPERTY_NAME,
 	JSON_MOD_DOWNLOAD_CONVERTED_PROPERTY_NAME,
 	JSON_MOD_DOWNLOAD_CORRUPTED_PROPERTY_NAME,
-	JSON_MOD_DOWNLOAD_REPAIRED_PROPERTY_NAME,
+	JSON_MOD_DOWNLOAD_REPAIRED_PROPERTY_NAME
 };
 
 const std::string ModDownload::ORIGINAL_FILES_TYPE("Original Files");
@@ -630,7 +631,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const tinyxml2::XMLElement *
 
 		attributeHandled = false;
 
-		for(const std::string & attributeName : XML_MOD_DOWNLOAD_ATTRIBUTE_NAMES) {
+		for(const std::string_view & attributeName : XML_MOD_DOWNLOAD_ATTRIBUTE_NAMES) {
 			if(modDownloadAttribute->Name() == attributeName) {
 				attributeHandled = true;
 				break;
