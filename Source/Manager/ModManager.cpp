@@ -26,10 +26,10 @@
 #include <Utilities/NumberUtilities.h>
 #include <Utilities/StringUtilities.h>
 #include <Utilities/Utilities.h>
+#include <Zip/ZipArchive.h>
 
 #include <fmt/core.h>
 #include <magic_enum.hpp>
-#include <zip.h>
 
 #include <array>
 #include <conio.h>
@@ -1632,13 +1632,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 	std::unique_ptr<Group> group;
 	std::shared_ptr<GroupFile> groupFile;
 	std::string zipArchiveFilePath;
-	zip_t * zipArchive = nullptr;
-	size_t numberOfZipEntries = 0;
-	struct zip_stat zipEntryInfo;
-	struct zip_file * zipEntry = nullptr;
-	int zipError = 0;
-	static constexpr size_t ZIP_ERROR_MESSAGE_MAX_LENGTH = 100;
-	char zipErrorMessage[ZIP_ERROR_MESSAGE_MAX_LENGTH];
+	std::unique_ptr<ZipArchive> zipArchive;
 	std::optional<std::string> optionalSHA1;
 
 	fmt::print("Updating '{}' mod hashes...\n", mod.getName());
@@ -1823,14 +1817,11 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 
 					if(modZipFile != nullptr) {
 						zipArchiveFilePath = Utilities::joinPaths(gameModsPath, modZipFile->getFileName());
+						zipArchive = ZipArchive::readFrom(zipArchiveFilePath, Utilities::emptyString, true);
 
-						if((zipArchive = zip_open(zipArchiveFilePath.c_str(), ZIP_RDONLY | ZIP_CHECKCONS, &zipError)) == nullptr) {
-							zip_error_to_str(zipErrorMessage, sizeof(zipErrorMessage), zipError, errno);
-
-							fmt::print("Failed to open archive '{}' with error: '{}'.\n", zipArchiveFilePath, zipErrorMessage);
+						if(zipArchive != nullptr) {
+							fmt::print("Opened '{}' zip file '{}'.\n", modVersionType->getFullName(), zipArchiveFilePath);
 						}
-
-						fmt::print("Opened '{}' zip file '{}'.\n", modVersionType->getFullName(), zipArchiveFilePath);
 					}
 					else {
 						std::shared_ptr<ModFile> modGroupFile(modGameVersion->getFirstFileOfType("grp"));
@@ -1865,42 +1856,21 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 								continue;
 							}
 
-							zip_uint64_t matchingZipEntryIndex = std::numeric_limits<zip_uint64_t>::max();
-							numberOfZipEntries = zip_get_num_entries(zipArchive, 0);
+							std::weak_ptr<ZipArchive::Entry> zipArchiveEntry(zipArchive->getEntry(modFile->getFileName(), false));
 
-							for(size_t i = 0; i < numberOfZipEntries; i++) {
-								if(zip_stat_index(zipArchive, i, 0, &zipEntryInfo) != 0) {
-									fmt::print("Failed to get zip entry info for file #{}.\n", i + 1);
-									continue;
-								}
-
-								if(Utilities::compareStringsIgnoreCase(modFile->getFileName(), zipEntryInfo.name) == 0) {
-									matchingZipEntryIndex = i;
-									break;
-								}
-							}
-
-							if(matchingZipEntryIndex == std::numeric_limits<zip_uint64_t>::max()) {
+							if(zipArchiveEntry.expired()) {
 								fmt::print("Mod file '{}' not found in zip file '{}'.\n", modFile->getFileName(), zipArchiveFilePath);
 								continue;
 							}
 
-							if((zipEntry = zip_fopen_index(zipArchive, matchingZipEntryIndex, 0)) == nullptr) {
-								fmt::print("Failed to open entry '{}' in zip file '{}'.\n", zipEntryInfo.name, zipArchiveFilePath);
+							std::unique_ptr<ByteBuffer> zipArchiveEntryData(zipArchiveEntry.lock()->getData());
+
+							if(zipArchiveEntryData == nullptr) {
+								fmt::print("Failed to read zip entry '{}' from zip file '{}' into memory.\n", zipArchiveEntry.lock()->getName(), zipArchiveFilePath);
 								continue;
 							}
 
-							ByteBuffer zipEntryData(zipEntryInfo.size);
-
-							if(zip_fread(zipEntry, zipEntryData.getRawData(), zipEntryInfo.size) < 0) {
-								zip_fclose(zipEntry);
-								fmt::print("Failed to read zip entry '{}' from zip file '{}' into memory.\n", zipEntryInfo.name, zipArchiveFilePath);
-								continue;
-							}
-
-							optionalSHA1 = zipEntryData.getSHA1();
-
-							zip_fclose(zipEntry);
+							optionalSHA1 = zipArchiveEntryData->getSHA1();
 						}
 						else if(!groupFilePath.empty()) {
 							if(group == nullptr) {
@@ -1944,12 +1914,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 				}
 
 				if(zipArchive != nullptr) {
-					zipError = zip_close(zipArchive);
-					zipArchive = nullptr;
-
-					if(zipError) {
-						fmt::print("Failed to close zip file '{}'.\n", zipArchiveFilePath);
-					}
+					zipArchive.reset();
 				}
 				else if(group != nullptr) {
 					group.reset();
