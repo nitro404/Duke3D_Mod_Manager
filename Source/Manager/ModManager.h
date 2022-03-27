@@ -24,6 +24,7 @@ class ModGameVersion;
 class ModMatch;
 class ModVersion;
 class ModVersionType;
+class Script;
 class ScriptArguments;
 class SettingsManager;
 
@@ -122,6 +123,7 @@ private:
 
 	bool handleArguments(const ArgumentParser * args, bool start);
 	std::string generateCommand(std::shared_ptr<ModGameVersion> modGameVersion, std::shared_ptr<GameVersion> gameVersion, ScriptArguments & scriptArgs, bool * customMod = nullptr, std::string * customMap = nullptr) const;
+	std::string generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const std::string & dosboxPath, const  std::string & dosboxArguments) const;
 	size_t checkForUnlinkedModFiles() const;
 	size_t checkForUnlinkedModFilesForGameVersion(const GameVersion & gameVersion) const;
 	size_t checkModForMissingFiles(const std::string & modName, std::optional<size_t> versionIndex = {}, std::optional<size_t> versionTypeIndex = {}) const;

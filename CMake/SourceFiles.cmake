@@ -32,8 +32,6 @@ set(SOURCE_FILES
 	Mod/ModVersionType.cpp
 	Mod/ModVideo.cpp
 	Mod/OrganizedModCollection.cpp
-	Script/Script.cpp
-	Script/ScriptArguments.cpp
 )
 
 source_group(Resources                  REGULAR_EXPRESSION ".*\\.(rc)")
@@ -44,5 +42,4 @@ source_group(Source\\Download           REGULAR_EXPRESSION "Download/.*\\.(h|cpp
 source_group(Source\\Game               REGULAR_EXPRESSION "Game/.*\\.(h|cpp)")
 source_group(Source\\Group              REGULAR_EXPRESSION "Group/.*\\.(h|cpp)")
 source_group(Source\\Mod                REGULAR_EXPRESSION "Mod/.*\\.(h|cpp)")
-source_group(Source\\Script             REGULAR_EXPRESSION "Script/.*\\.(h|cpp)")
 source_group(Source\\Manager            REGULAR_EXPRESSION "Manager/.*\\.(h|cpp)")

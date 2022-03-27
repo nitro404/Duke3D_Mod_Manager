@@ -17,8 +17,6 @@
 #include "Mod/ModVersionType.h"
 #include "Mod/FavouriteModCollection.h"
 #include "Mod/OrganizedModCollection.h"
-#include "Script/Script.h"
-#include "Script/ScriptArguments.h"
 #include "SettingsManager.h"
 #include "Version.h"
 
@@ -26,6 +24,8 @@
 #include <Network/HTTPRequest.h>
 #include <Network/HTTPResponse.h>
 #include <Network/HTTPService.h>
+#include <Script/Script.h>
+#include <Script/ScriptArguments.h>
 #include <Utilities/FileUtilities.h>
 #include <Utilities/NumberUtilities.h>
 #include <Utilities/StringUtilities.h>
@@ -1247,10 +1247,42 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			return {};
 		}
 
-		return dosboxScript.generateDOSBoxCommand(scriptArgs, Utilities::joinPaths(m_settings->dosboxDirectoryPath, m_settings->dosboxExecutableFileName), m_settings->dosboxArguments);
+		return generateDOSBoxCommand(dosboxScript, scriptArgs, Utilities::joinPaths(m_settings->dosboxDirectoryPath, m_settings->dosboxExecutableFileName), m_settings->dosboxArguments);
 	}
 
 	return Utilities::joinPaths("\"" + gameVersion->getGamePath(), executableName) + "\"" + command.str();
+}
+
+std::string ModManager::generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const std::string & dosboxPath, const std::string & dosboxArguments) const {
+	static const std::regex unescapedQuotesRegExp("(?:^\"|([^\\\\])\")");
+
+	if(dosboxPath.empty()) {
+		return std::string();
+	}
+
+	std::stringstream command;
+
+	command << fmt::format("CALL \"{}\" {} ", dosboxPath, dosboxArguments);
+
+	std::string line;
+	std::string formattedLine;
+
+	for(size_t i = 0; i < script.numberOfCommands(); i++) {
+		line = arguments.applyArguments(*script.getCommand(i));
+
+		formattedLine.clear();
+		std::regex_replace(std::back_inserter(formattedLine), line.begin(), line.end(), unescapedQuotesRegExp, "$1\\\"");
+
+		if(!formattedLine.empty()) {
+			if(command.tellp() != 0) {
+				command << " ";
+			}
+
+			command << fmt::format("-c \"{}\"", formattedLine);
+		}
+	}
+
+	return Utilities::trimString(command.str());
 }
 
 bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
