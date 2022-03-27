@@ -156,7 +156,7 @@ bool GroupFile::writeTo(const std::string & basePath, bool overwrite, const std:
 }
 
 bool GroupFile::operator == (const GroupFile & g) const {
-	return Utilities::compareStringsIgnoreCase(m_fileName, g.m_fileName) == 0 && m_data == g.m_data;
+	return Utilities::areStringsEqualIgnoreCase(m_fileName, g.m_fileName) && m_data == g.m_data;
 }
 
 bool GroupFile::operator != (const GroupFile & g) const {

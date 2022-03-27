@@ -458,11 +458,11 @@ bool ModTeamMember::isValid(const ModTeamMember * m) {
 }
 
 bool ModTeamMember::operator == (const ModTeamMember & m) const {
-	return Utilities::compareStringsIgnoreCase(m_name, m.m_name) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_alias, m.m_alias) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_email, m.m_email) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_website, m.m_website) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_aim, m.m_aim) == 0 &&
+	return Utilities::areStringsEqualIgnoreCase(m_name, m.m_name) &&
+		   Utilities::areStringsEqualIgnoreCase(m_alias, m.m_alias) &&
+		   Utilities::areStringsEqualIgnoreCase(m_email, m.m_email) &&
+		   Utilities::areStringsEqualIgnoreCase(m_website, m.m_website) &&
+		   Utilities::areStringsEqualIgnoreCase(m_aim, m.m_aim) &&
 		   m_icq == m.m_icq &&
 		   m_phoneNumber == m.m_phoneNumber;
 }

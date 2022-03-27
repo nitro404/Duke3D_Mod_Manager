@@ -1043,7 +1043,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			return {};
 		}
 
-		if(Utilities::compareStringsIgnoreCase(modGameVersion->getGameVersion(), gameVersion->getName()) != 0 && !gameVersion->hasCompatibleGameVersion(modGameVersion->getGameVersion())) {
+		if(!Utilities::areStringsEqualIgnoreCase(modGameVersion->getGameVersion(), gameVersion->getName()) && !gameVersion->hasCompatibleGameVersion(modGameVersion->getGameVersion())) {
 			fmt::print("Game version '{}' is not compatible with '{}'.\n", gameVersion->getName(), modGameVersion->getGameVersion());
 			return {};
 		}
@@ -2209,7 +2209,7 @@ size_t ModManager::deleteFilesWithSuffix(const std::string & suffix, const std::
 	size_t numberOfFilesDeleted = 0;
 
 	for(const std::filesystem::directory_entry & e : std::filesystem::directory_iterator(directoryPath)) {
-		if(e.is_regular_file() && Utilities::compareStringsIgnoreCase(Utilities::getFileExtension(e.path().string()), suffix) == 0) {
+		if(e.is_regular_file() && Utilities::areStringsEqualIgnoreCase(Utilities::getFileExtension(e.path().string()), suffix)) {
 
 			if(verbose) {
 				fmt::print("Deleting file: '{}'.\n", e.path().string());
@@ -2240,7 +2240,7 @@ size_t ModManager::renameFilesWithSuffixTo(const std::string & fromSuffix, const
 	size_t numberOfFilesRenamed = 0;
 
 	for(const std::filesystem::directory_entry & e : std::filesystem::directory_iterator(directoryPath)) {
-		if(e.is_regular_file() && Utilities::compareStringsIgnoreCase(Utilities::getFileExtension(e.path().string()), fromSuffix) == 0) {
+		if(e.is_regular_file() && Utilities::areStringsEqualIgnoreCase(Utilities::getFileExtension(e.path().string()), fromSuffix)) {
 			newFilePath = Utilities::replaceFileExtension(e.path().string(), toSuffix);
 
 			if(verbose) {

@@ -186,7 +186,7 @@ size_t ModVersion::numberOfTypes() const {
 
 bool ModVersion::hasType(const std::string & type) const {
 	for(std::vector<std::shared_ptr<ModVersionType>>::const_iterator i = m_types.begin(); i != m_types.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getType(), type) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getType(), type)) {
 			return true;
 		}
 	}
@@ -196,7 +196,7 @@ bool ModVersion::hasType(const std::string & type) const {
 
 bool ModVersion::hasType(const ModVersionType & type) const {
 	for(std::vector<std::shared_ptr<ModVersionType>>::const_iterator i = m_types.begin(); i != m_types.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getType(), type.getType()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getType(), type.getType())) {
 			return true;
 		}
 	}
@@ -206,7 +206,7 @@ bool ModVersion::hasType(const ModVersionType & type) const {
 
 size_t ModVersion::indexOfType(const std::string & type) const {
 	for(size_t i = 0; i < m_types.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_types[i]->getType(), type) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_types[i]->getType(), type)) {
 			return i;
 		}
 	}
@@ -216,7 +216,7 @@ size_t ModVersion::indexOfType(const std::string & type) const {
 
 size_t ModVersion::indexOfType(const ModVersionType & type) const {
 	for(size_t i = 0; i < m_types.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_types[i]->getType(), type.getType()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_types[i]->getType(), type.getType())) {
 			return i;
 		}
 	}
@@ -234,7 +234,7 @@ std::shared_ptr<ModVersionType> ModVersion::getType(size_t index) const {
 
 std::shared_ptr<ModVersionType> ModVersion::getType(const std::string & type) const {
 	for(std::vector<std::shared_ptr<ModVersionType>>::const_iterator i = m_types.begin(); i != m_types.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getType(), type) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getType(), type)) {
 			return *i;
 		}
 	}
@@ -272,7 +272,7 @@ bool ModVersion::removeType(size_t index) {
 
 bool ModVersion::removeType(const std::string & type) {
 	for(std::vector<std::shared_ptr<ModVersionType>>::const_iterator i = m_types.begin(); i != m_types.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getType(), type) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getType(), type)) {
 			(*i)->setParentModVersion(nullptr);
 			m_types.erase(i);
 
@@ -285,7 +285,7 @@ bool ModVersion::removeType(const std::string & type) {
 
 bool ModVersion::removeType(const ModVersionType & type) {
 	for(std::vector<std::shared_ptr<ModVersionType>>::const_iterator i = m_types.begin(); i != m_types.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getType(), type.getType()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getType(), type.getType())) {
 			(*i)->setParentModVersion(nullptr);
 			m_types.erase(i);
 
@@ -630,7 +630,7 @@ bool ModVersion::isValid() const {
 		}
 
 		for(std::vector<std::shared_ptr<ModVersionType>>::const_iterator j = i + 1; j != m_types.end(); ++j) {
-			if(Utilities::compareStringsIgnoreCase((*i)->getType(), (*j)->getType()) == 0) {
+			if(Utilities::areStringsEqualIgnoreCase((*i)->getType(), (*j)->getType())) {
 				return false;
 			}
 		}
@@ -645,7 +645,7 @@ bool ModVersion::isValid(const ModVersion * m) {
 
 bool ModVersion::operator == (const ModVersion & m) const {
 	return m_repaired == m.m_repaired;
-		   Utilities::compareStringsIgnoreCase(m_version, m.m_version) == 0 &&
+		   Utilities::areStringsEqualIgnoreCase(m_version, m.m_version) &&
 		   m_releaseDate != m.m_releaseDate;
 }
 

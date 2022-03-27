@@ -318,7 +318,7 @@ bool ModVideo::isValid(const ModVideo * v) {
 bool ModVideo::operator == (const ModVideo & v) const {
 	return m_width == v.m_width &&
 		   m_height == v.m_height &&
-		   Utilities::compareStringsIgnoreCase(m_url, v.m_url);
+		   Utilities::areStringsEqualIgnoreCase(m_url, v.m_url);
 }
 
 bool ModVideo::operator != (const ModVideo & v) const {

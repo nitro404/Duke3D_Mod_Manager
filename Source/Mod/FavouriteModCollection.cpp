@@ -64,9 +64,9 @@ size_t FavouriteModCollection::numberOfFavourites() {
 
 bool FavouriteModCollection::hasFavourite(const ModIdentifier & favourite) const {
 	for(std::vector<std::shared_ptr<ModIdentifier>>::const_iterator i = m_favourites.begin(); i != m_favourites.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), favourite.getName()) == 0 &&
-		   Utilities::compareStringsIgnoreCase((*i)->getVersion(), favourite.getVersion()) == 0 &&
-		   Utilities::compareStringsIgnoreCase((*i)->getVersionType(), favourite.getVersionType()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), favourite.getName()) &&
+		   Utilities::areStringsEqualIgnoreCase((*i)->getVersion(), favourite.getVersion()) &&
+		   Utilities::areStringsEqualIgnoreCase((*i)->getVersionType(), favourite.getVersionType())) {
 			return true;
 		}
 	}
@@ -80,9 +80,9 @@ bool FavouriteModCollection::hasFavourite(const std::string & name, const std::s
 	}
 
 	for(std::vector<std::shared_ptr<ModIdentifier>>::const_iterator i = m_favourites.begin(); i != m_favourites.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), name) == 0 &&
-		   Utilities::compareStringsIgnoreCase((*i)->getVersion(), version) == 0 &&
-		   Utilities::compareStringsIgnoreCase((*i)->getVersionType(), versionType) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name) &&
+		   Utilities::areStringsEqualIgnoreCase((*i)->getVersion(), version) &&
+		   Utilities::areStringsEqualIgnoreCase((*i)->getVersionType(), versionType)) {
 			return true;
 		}
 	}
@@ -91,9 +91,9 @@ bool FavouriteModCollection::hasFavourite(const std::string & name, const std::s
 
 size_t FavouriteModCollection::indexOfFavourite(const ModIdentifier & favourite) const {
 	for(size_t i = 0; i < m_favourites.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), favourite.getName()) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_favourites[i]->getVersion(), favourite.getVersion()) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_favourites[i]->getVersionType(), favourite.getVersionType()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_favourites[i]->getName(), favourite.getName()) &&
+		   Utilities::areStringsEqualIgnoreCase(m_favourites[i]->getVersion(), favourite.getVersion()) &&
+		   Utilities::areStringsEqualIgnoreCase(m_favourites[i]->getVersionType(), favourite.getVersionType())) {
 			return i;
 		}
 	}
@@ -107,9 +107,9 @@ size_t FavouriteModCollection::indexOfFavourite(const std::string & name, const 
 	}
 
 	for(size_t i = 0; i < m_favourites.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_favourites[i]->getName(), name) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_favourites[i]->getVersion(), version) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_favourites[i]->getVersionType(), versionType) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_favourites[i]->getName(), name) &&
+		   Utilities::areStringsEqualIgnoreCase(m_favourites[i]->getVersion(), version) &&
+		   Utilities::areStringsEqualIgnoreCase(m_favourites[i]->getVersionType(), versionType)) {
 			return i;
 		}
 	}
@@ -131,9 +131,9 @@ std::shared_ptr<ModIdentifier> FavouriteModCollection::getFavourite(const std::s
 	}
 
 	for(std::vector<std::shared_ptr<ModIdentifier>>::const_iterator i = m_favourites.begin(); i != m_favourites.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), name) == 0 &&
-		   Utilities::compareStringsIgnoreCase((*i)->getVersion(), version) == 0 &&
-		   Utilities::compareStringsIgnoreCase((*i)->getVersionType(), versionType) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name) &&
+		   Utilities::areStringsEqualIgnoreCase((*i)->getVersion(), version) &&
+		   Utilities::areStringsEqualIgnoreCase((*i)->getVersionType(), versionType)) {
 			return *i;
 		}
 	}
@@ -163,9 +163,9 @@ bool FavouriteModCollection::removeFavourite(size_t index) {
 
 bool FavouriteModCollection::removeFavourite(const ModIdentifier & favourite) {
 	for(std::vector<std::shared_ptr<ModIdentifier>>::const_iterator i = m_favourites.begin(); i != m_favourites.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), favourite.getName()) == 0 &&
-		   Utilities::compareStringsIgnoreCase((*i)->getVersion(), favourite.getVersion()) == 0 &&
-		   Utilities::compareStringsIgnoreCase((*i)->getVersionType(), favourite.getVersionType()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), favourite.getName()) &&
+		   Utilities::areStringsEqualIgnoreCase((*i)->getVersion(), favourite.getVersion()) &&
+		   Utilities::areStringsEqualIgnoreCase((*i)->getVersionType(), favourite.getVersionType())) {
 			m_favourites.erase(i);
 
 			return true;
@@ -181,9 +181,9 @@ bool FavouriteModCollection::removeFavourite(const std::string & name, const std
 	}
 
 	for(std::vector<std::shared_ptr<ModIdentifier>>::const_iterator i = m_favourites.begin(); i != m_favourites.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), name) == 0 &&
-		   Utilities::compareStringsIgnoreCase((*i)->getVersion(), version) == 0 &&
-		   Utilities::compareStringsIgnoreCase((*i)->getVersionType(), versionType) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name) &&
+		   Utilities::areStringsEqualIgnoreCase((*i)->getVersion(), version) &&
+		   Utilities::areStringsEqualIgnoreCase((*i)->getVersionType(), versionType)) {
 			m_favourites.erase(i);
 
 			return true;
@@ -246,7 +246,7 @@ bool FavouriteModCollection::loadFrom(const std::string & filePath) {
 	if(fileExtension.empty()) {
 		return false;
 	}
-	else if(Utilities::compareStringsIgnoreCase(fileExtension, "json") == 0) {
+	else if(Utilities::areStringsEqualIgnoreCase(fileExtension, "json")) {
 		return loadFromJSON(filePath);
 	}
 
@@ -285,7 +285,7 @@ bool FavouriteModCollection::saveTo(const std::string & filePath, bool overwrite
 	if(fileExtension.empty()) {
 		return false;
 	}
-	else if(Utilities::compareStringsIgnoreCase(fileExtension, "json") == 0) {
+	else if(Utilities::areStringsEqualIgnoreCase(fileExtension, "json")) {
 		return saveToJSON(filePath, overwrite);
 	}
 

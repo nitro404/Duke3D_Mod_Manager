@@ -372,7 +372,7 @@ size_t Mod::numberOfVersions() const {
 
 bool Mod::hasVersion(const ModVersion & version) const {
 	for(std::vector<std::shared_ptr<ModVersion>>::const_iterator i = m_versions.begin(); i != m_versions.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getVersion(), version.getVersion()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getVersion(), version.getVersion())) {
 			return true;
 		}
 	}
@@ -382,7 +382,7 @@ bool Mod::hasVersion(const ModVersion & version) const {
 
 bool Mod::hasVersion(const std::string & version) const {
 	for(std::vector<std::shared_ptr<ModVersion>>::const_iterator i = m_versions.begin(); i != m_versions.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getVersion(), version) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getVersion(), version)) {
 			return true;
 		}
 	}
@@ -392,7 +392,7 @@ bool Mod::hasVersion(const std::string & version) const {
 
 size_t Mod::indexOfVersion(const ModVersion & version) const {
 	for(size_t i = 0; i < m_versions.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_versions[i]->getVersion(), version.getVersion()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_versions[i]->getVersion(), version.getVersion())) {
 			return i;
 		}
 	}
@@ -402,7 +402,7 @@ size_t Mod::indexOfVersion(const ModVersion & version) const {
 
 size_t Mod::indexOfVersion(const std::string & version) const {
 	for(size_t i = 0; i < m_versions.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_versions[i]->getVersion(), version) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_versions[i]->getVersion(), version)) {
 			return i;
 		}
 	}
@@ -420,7 +420,7 @@ std::shared_ptr<ModVersion> Mod::getVersion(size_t index) const {
 
 std::shared_ptr<ModVersion> Mod::getVersion(const std::string & version) const {
 	for(std::vector<std::shared_ptr<ModVersion>>::const_iterator i = m_versions.begin(); i != m_versions.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getVersion(), version) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getVersion(), version)) {
 			return *i;
 		}
 	}
@@ -514,7 +514,7 @@ bool Mod::removeVersion(size_t index) {
 
 bool Mod::removeVersion(const ModVersion & version) {
 	for(std::vector<std::shared_ptr<ModVersion>>::const_iterator i = m_versions.begin(); i != m_versions.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getVersion(), version.getVersion()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getVersion(), version.getVersion())) {
 			(*i)->setParentMod(nullptr);
 			m_versions.erase(i);
 
@@ -527,7 +527,7 @@ bool Mod::removeVersion(const ModVersion & version) {
 
 bool Mod::removeVersion(const std::string & version) {
 	for(std::vector<std::shared_ptr<ModVersion>>::const_iterator i = m_versions.begin(); i != m_versions.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getVersion(), version) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getVersion(), version)) {
 			(*i)->setParentMod(nullptr);
 			m_versions.erase(i);
 
@@ -548,7 +548,7 @@ size_t Mod::numberOfDownloads() const {
 
 bool Mod::hasDownload(const ModDownload & download) const {
 	for(std::vector<std::shared_ptr<ModDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), download.getFileName()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), download.getFileName())) {
 			return true;
 		}
 	}
@@ -562,7 +562,7 @@ bool Mod::hasDownload(const std::string & fileName) const {
 	}
 
 	for(std::vector<std::shared_ptr<ModDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), fileName) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), fileName)) {
 			return true;
 		}
 	}
@@ -576,7 +576,7 @@ bool Mod::hasDownloadOfType(const std::string & type) const {
 	}
 
 	for(std::vector<std::shared_ptr<ModDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getType(), type) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getType(), type)) {
 			return true;
 		}
 	}
@@ -586,7 +586,7 @@ bool Mod::hasDownloadOfType(const std::string & type) const {
 
 size_t Mod::indexOfDownload(const ModDownload & download) const {
 	for(size_t i = 0; i < m_downloads.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getFileName(), download.getFileName()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_downloads[i]->getFileName(), download.getFileName())) {
 			return i;
 		}
 	}
@@ -600,7 +600,7 @@ size_t Mod::indexOfDownload(const std::string & fileName) const {
 	}
 
 	for(size_t i = 0; i < m_downloads.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getFileName(), fileName) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_downloads[i]->getFileName(), fileName)) {
 			return i;
 		}
 	}
@@ -614,7 +614,7 @@ size_t Mod::indexOfDownloadByType(const std::string & type) const {
 	}
 
 	for(size_t i = 0; i < m_downloads.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_downloads[i]->getType(), type) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_downloads[i]->getType(), type)) {
 			return i;
 		}
 	}
@@ -636,7 +636,7 @@ std::shared_ptr<ModDownload> Mod::getDownload(const std::string & fileName) cons
 	}
 
 	for(std::vector<std::shared_ptr<ModDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), fileName) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), fileName)) {
 			return *i;
 		}
 	}
@@ -650,7 +650,7 @@ std::shared_ptr<ModDownload> Mod::getDownloadByType(const std::string & type) co
 	}
 
 	for(std::vector<std::shared_ptr<ModDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getType(), type) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getType(), type)) {
 			return *i;
 		}
 	}
@@ -664,7 +664,7 @@ std::optional<std::string> Mod::getDownloadFileNameByType(const std::string & ty
 	}
 
 	for(std::vector<std::shared_ptr<ModDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getType(), type) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getType(), type)) {
 			return (*i)->getFileName();
 		}
 	}
@@ -689,8 +689,8 @@ std::shared_ptr<ModDownload> Mod::getDownloadForGameVersion(const ModGameVersion
 		modDownload = *i;
 
 		if(modDownload->isModManagerFiles() &&
-		   Utilities::compareStringsIgnoreCase(modDownload->getVersion(), modVersion->getVersion()) == 0 &&
-		   Utilities::compareStringsIgnoreCase(modDownload->getGameVersion(), modGameVersion->getGameVersion()) == 0) {
+		   Utilities::areStringsEqualIgnoreCase(modDownload->getVersion(), modVersion->getVersion()) &&
+		   Utilities::areStringsEqualIgnoreCase(modDownload->getGameVersion(), modGameVersion->getGameVersion())) {
 			return modDownload;
 		}
 	}
@@ -742,7 +742,7 @@ bool Mod::removeDownload(size_t index) {
 
 bool Mod::removeDownload(const ModDownload & download) {
 	for(std::vector<std::shared_ptr<ModDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), download.getFileName()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), download.getFileName())) {
 			(*i)->setParentMod(nullptr);
 			m_downloads.erase(i);
 
@@ -759,7 +759,7 @@ bool Mod::removeDownload(const std::string & fileName) {
 	}
 
 	for(std::vector<std::shared_ptr<ModDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), fileName) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), fileName)) {
 			(*i)->setParentMod(nullptr);
 			m_downloads.erase(i);
 
@@ -776,7 +776,7 @@ bool Mod::removeDownloadByType(const std::string & type) {
 	}
 
 	for(std::vector<std::shared_ptr<ModDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getType(), type) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getType(), type)) {
 			(*i)->setParentMod(nullptr);
 			m_downloads.erase(i);
 
@@ -797,7 +797,7 @@ size_t Mod::numberOfScreenshots() const {
 
 bool Mod::hasScreenshot(const ModScreenshot & screenshot) const {
 	for(std::vector<std::shared_ptr<ModScreenshot>>::const_iterator i = m_screenshots.begin(); i != m_screenshots.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), screenshot.getFileName()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), screenshot.getFileName())) {
 			return true;
 		}
 	}
@@ -811,7 +811,7 @@ bool Mod::hasScreenshot(const std::string & fileName) const {
 	}
 
 	for(std::vector<std::shared_ptr<ModScreenshot>>::const_iterator i = m_screenshots.begin(); i != m_screenshots.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), fileName) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), fileName)) {
 			return true;
 		}
 	}
@@ -821,7 +821,7 @@ bool Mod::hasScreenshot(const std::string & fileName) const {
 
 size_t Mod::indexOfScreenshot(const ModScreenshot & screenshot) const {
 	for(size_t i = 0; i < m_screenshots.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_screenshots[i]->getFileName(), screenshot.getFileName()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_screenshots[i]->getFileName(), screenshot.getFileName())) {
 			return i;
 		}
 	}
@@ -835,7 +835,7 @@ size_t Mod::indexOfScreenshot(const std::string & fileName) const {
 	}
 
 	for(size_t i = 0; i < m_screenshots.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_screenshots[i]->getFileName(), fileName) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_screenshots[i]->getFileName(), fileName)) {
 			return i;
 		}
 	}
@@ -857,7 +857,7 @@ std::shared_ptr<ModScreenshot> Mod::getScreenshot(const std::string & fileName) 
 	}
 
 	for(std::vector<std::shared_ptr<ModScreenshot>>::const_iterator i = m_screenshots.begin(); i != m_screenshots.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), fileName) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), fileName)) {
 			return *i;
 		}
 	}
@@ -895,7 +895,7 @@ bool Mod::removeScreenshot(size_t index) {
 
 bool Mod::removeScreenshot(const ModScreenshot & screenshot) {
 	for(std::vector<std::shared_ptr<ModScreenshot>>::const_iterator i = m_screenshots.begin(); i != m_screenshots.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), screenshot.getFileName()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), screenshot.getFileName())) {
 			(*i)->setParentMod(nullptr);
 			m_screenshots.erase(i);
 
@@ -912,7 +912,7 @@ bool Mod::removeScreenshot(const std::string & fileName) {
 	}
 
 	for(std::vector<std::shared_ptr<ModScreenshot>>::const_iterator i = m_screenshots.begin(); i != m_screenshots.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), fileName) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), fileName)) {
 			(*i)->setParentMod(nullptr);
 			m_screenshots.erase(i);
 
@@ -933,7 +933,7 @@ size_t Mod::numberOfImages() const {
 
 bool Mod::hasImage(const ModImage & image) const {
 	for(std::vector<std::shared_ptr<ModImage>>::const_iterator i = m_images.begin(); i != m_images.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), image.getFileName()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), image.getFileName())) {
 			return true;
 		}
 	}
@@ -947,7 +947,7 @@ bool Mod::hasImage(const std::string & fileName) const {
 	}
 
 	for(std::vector<std::shared_ptr<ModImage>>::const_iterator i = m_images.begin(); i != m_images.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), fileName) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), fileName)) {
 			return true;
 		}
 	}
@@ -957,7 +957,7 @@ bool Mod::hasImage(const std::string & fileName) const {
 
 size_t Mod::indexOfImage(const ModImage & image) const {
 	for(size_t i = 0; i < m_images.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_images[i]->getFileName(), image.getFileName()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_images[i]->getFileName(), image.getFileName())) {
 			return i;
 		}
 	}
@@ -971,7 +971,7 @@ size_t Mod::indexOfImage(const std::string & fileName) const {
 	}
 
 	for(size_t i = 0; i < m_images.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_images[i]->getFileName(), fileName) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_images[i]->getFileName(), fileName)) {
 			return i;
 		}
 	}
@@ -993,7 +993,7 @@ std::shared_ptr<ModImage> Mod::getImage(const std::string & fileName) const {
 	}
 
 	for(std::vector<std::shared_ptr<ModImage>>::const_iterator i = m_images.begin(); i != m_images.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), fileName) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), fileName)) {
 			return *i;
 		}
 	}
@@ -1031,7 +1031,7 @@ bool Mod::removeImage(size_t index) {
 
 bool Mod::removeImage(const ModImage & image) {
 	for(std::vector<std::shared_ptr<ModImage>>::const_iterator i = m_images.begin(); i != m_images.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), image.getFileName()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), image.getFileName())) {
 			(*i)->setParentMod(nullptr);
 			m_images.erase(i);
 
@@ -1048,7 +1048,7 @@ bool Mod::removeImage(const std::string & fileName) {
 	}
 
 	for(std::vector<std::shared_ptr<ModImage>>::const_iterator i = m_images.begin(); i != m_images.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), fileName) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), fileName)) {
 			(*i)->setParentMod(nullptr);
 			m_images.erase(i);
 
@@ -1069,7 +1069,7 @@ size_t Mod::numberOfVideos() const {
 
 bool Mod::hasVideo(const ModVideo & video) const {
 	for(std::vector<std::shared_ptr<ModVideo>>::const_iterator i = m_videos.begin(); i != m_videos.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getURL(), video.getURL()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getURL(), video.getURL())) {
 			return true;
 		}
 	}
@@ -1083,7 +1083,7 @@ bool Mod::hasVideo(const std::string & url) const {
 	}
 
 	for(std::vector<std::shared_ptr<ModVideo>>::const_iterator i = m_videos.begin(); i != m_videos.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getURL(), url) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getURL(), url)) {
 			return true;
 		}
 	}
@@ -1093,7 +1093,7 @@ bool Mod::hasVideo(const std::string & url) const {
 
 size_t Mod::indexOfVideo(const ModVideo & video) const {
 	for(size_t i = 0; i < m_videos.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_videos[i]->getURL(), video.getURL()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_videos[i]->getURL(), video.getURL())) {
 			return i;
 		}
 	}
@@ -1107,7 +1107,7 @@ size_t Mod::indexOfVideo(const std::string & url) const {
 	}
 
 	for(size_t i = 0; i < m_videos.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_videos[i]->getURL(), url) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_videos[i]->getURL(), url)) {
 			return i;
 		}
 	}
@@ -1129,7 +1129,7 @@ std::shared_ptr<ModVideo> Mod::getVideo(const std::string & url) const {
 	}
 
 	for(std::vector<std::shared_ptr<ModVideo>>::const_iterator i = m_videos.begin(); i != m_videos.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getURL(), url) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getURL(), url)) {
 			return *i;
 		}
 	}
@@ -1167,7 +1167,7 @@ bool Mod::removeVideo(size_t index) {
 
 bool Mod::removeVideo(const ModVideo & video) {
 	for(std::vector<std::shared_ptr<ModVideo>>::const_iterator i = m_videos.begin(); i != m_videos.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getURL(), video.getURL()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getURL(), video.getURL())) {
 			(*i)->setParentMod(nullptr);
 			m_videos.erase(i);
 
@@ -1184,7 +1184,7 @@ bool Mod::removeVideo(const std::string & url) {
 	}
 
 	for(std::vector<std::shared_ptr<ModVideo>>::const_iterator i = m_videos.begin(); i != m_videos.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getURL(), url) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getURL(), url)) {
 			(*i)->setParentMod(nullptr);
 			m_videos.erase(i);
 
@@ -2346,7 +2346,7 @@ bool Mod::checkVersions(bool verbose) const {
 		bool hasVersion = false;
 
 		for(std::vector<std::shared_ptr<ModVersion>>::const_iterator i = m_versions.begin(); i != m_versions.end(); ++i) {
-			if(Utilities::compareStringsIgnoreCase((*i)->getVersion(), m_preferredVersion) == 0) {
+			if(Utilities::areStringsEqualIgnoreCase((*i)->getVersion(), m_preferredVersion)) {
 				hasVersion = true;
 			}
 		}
@@ -2370,11 +2370,11 @@ bool Mod::checkVersions(bool verbose) const {
 		hasRepairedDownload = false;
 
 		for(std::vector<std::shared_ptr<ModDownload>>::const_iterator j = m_downloads.begin(); j != m_downloads.end(); ++j) {
-			if(Utilities::compareStringsIgnoreCase((*i)->getVersion(), (*j)->getVersion()) == 0) {
-				if(Utilities::compareStringsIgnoreCase((*j)->getType(), ModDownload::ORIGINAL_FILES_TYPE) == 0) {
+			if(Utilities::areStringsEqualIgnoreCase((*i)->getVersion(), (*j)->getVersion())) {
+				if(Utilities::areStringsEqualIgnoreCase((*j)->getType(), ModDownload::ORIGINAL_FILES_TYPE)) {
 					hasOriginalDownload = true;
 				}
-				else if(Utilities::compareStringsIgnoreCase((*j)->getType(), ModDownload::MOD_MANAGER_FILES_TYPE) == 0) {
+				else if(Utilities::areStringsEqualIgnoreCase((*j)->getType(), ModDownload::MOD_MANAGER_FILES_TYPE)) {
 					hasModManagerDownload = true;
 
 					if((*i)->getRepaired().has_value() && (*j)->getRepaired().has_value() && (*i)->isRepaired() == (*j)->isRepaired()) {
@@ -2415,7 +2415,7 @@ bool Mod::checkVersionTypes(bool verbose) const {
 		modVersion = m_versions[i];
 
 		for(size_t j = 0; j < modVersion->numberOfTypes(); j++) {
-			if(Utilities::compareStringsIgnoreCase(modVersion->getType(j)->getType(), m_defaultVersionType) == 0) {
+			if(Utilities::areStringsEqualIgnoreCase(modVersion->getType(j)->getType(), m_defaultVersionType)) {
 				return true;
 			}
 		}
@@ -2448,9 +2448,9 @@ bool Mod::checkGameVersionsHaveCorrespondingDownloads(bool verbose) const {
 				for(size_t l = 0; l < m_downloads.size(); l++) {
 					modDownload = m_downloads[l];
 
-					if(Utilities::compareStringsIgnoreCase(modDownload->getType(), ModDownload::MOD_MANAGER_FILES_TYPE) == 0 &&
-					   Utilities::compareStringsIgnoreCase(modDownload->getGameVersion(), modGameVersion->getGameVersion()) == 0 &&
-					   Utilities::compareStringsIgnoreCase(modDownload->getVersion(), modVersion->getVersion()) == 0) {
+					if(Utilities::areStringsEqualIgnoreCase(modDownload->getType(), ModDownload::MOD_MANAGER_FILES_TYPE) &&
+					   Utilities::areStringsEqualIgnoreCase(modDownload->getGameVersion(), modGameVersion->getGameVersion()) &&
+					   Utilities::areStringsEqualIgnoreCase(modDownload->getVersion(), modVersion->getVersion())) {
 						hasDownload = true;
 						break;
 					}
@@ -2494,7 +2494,7 @@ bool Mod::checkSplitDownloadsNotMissingParts(bool verbose) const {
 				b = m_downloads[j];
 
 				if(a->getPartCount() == b->getPartCount() &&
-				   Utilities::compareStringsIgnoreCase(a->getVersion(), b->getVersion()) == 0) {
+				   Utilities::areStringsEqualIgnoreCase(a->getVersion(), b->getVersion())) {
 					if(parts[b->getPartNumber() - 1]) {
 						if(verbose) {
 							fmt::print("Mod '{}' is has duplicate download {}part #{} of {}.\n", m_id, a->getVersion().empty() ? "" : fmt::format("version {} ", a->getVersion()), b->getPartNumber(), a->getPartCount());
@@ -2550,7 +2550,7 @@ bool Mod::isValid() const {
 		}
 
 		for(std::vector<std::shared_ptr<ModVersion>>::const_iterator j = i + 1; j != m_versions.end(); ++j) {
-			if(Utilities::compareStringsIgnoreCase((*i)->getVersion(), (*j)->getVersion()) == 0) {
+			if(Utilities::areStringsEqualIgnoreCase((*i)->getVersion(), (*j)->getVersion())) {
 				return false;
 			}
 		}
@@ -2566,7 +2566,7 @@ bool Mod::isValid() const {
 		}
 
 		for(std::vector<std::shared_ptr<ModDownload>>::const_iterator j = i + 1; j != m_downloads.end(); ++j) {
-			if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), (*j)->getFileName()) == 0) {
+			if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), (*j)->getFileName())) {
 				return false;
 			}
 		}
@@ -2582,7 +2582,7 @@ bool Mod::isValid() const {
 		}
 
 		for(std::vector<std::shared_ptr<ModScreenshot>>::const_iterator j = i + 1; j != m_screenshots.end(); j++) {
-			if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), (*j)->getFileName()) == 0) {
+			if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), (*j)->getFileName())) {
 				return false;
 			}
 		}
@@ -2598,7 +2598,7 @@ bool Mod::isValid() const {
 		}
 
 		for(std::vector<std::shared_ptr<ModImage>>::const_iterator j = i + 1; j != m_images.end(); ++j) {
-			if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), (*j)->getFileName()) == 0) {
+			if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), (*j)->getFileName())) {
 				return false;
 			}
 		}
@@ -2614,7 +2614,7 @@ bool Mod::isValid() const {
 		}
 
 		for(std::vector<std::shared_ptr<ModVideo>>::const_iterator j = i + 1; j != m_videos.end(); ++j) {
-			if(Utilities::compareStringsIgnoreCase((*i)->getURL(), (*j)->getURL()) == 0) {
+			if(Utilities::areStringsEqualIgnoreCase((*i)->getURL(), (*j)->getURL())) {
 				return false;
 			}
 		}
@@ -2655,12 +2655,12 @@ void Mod::updateParent() {
 }
 
 bool Mod::operator == (const Mod & m) const {
-	if(Utilities::compareStringsIgnoreCase(m_id, m.m_id) != 0 ||
-	   Utilities::compareStringsIgnoreCase(m_name, m.m_name) != 0 ||
-	   Utilities::compareStringsIgnoreCase(m_type, m.m_type) != 0 ||
-	   Utilities::compareStringsIgnoreCase(m_preferredVersion, m.m_preferredVersion) != 0 ||
-	   Utilities::compareStringsIgnoreCase(m_defaultVersionType, m.m_defaultVersionType) != 0 ||
-	   Utilities::compareStringsIgnoreCase(m_website, m.m_website) != 0 ||
+	if(!Utilities::areStringsEqualIgnoreCase(m_id, m.m_id) ||
+	   !Utilities::areStringsEqualIgnoreCase(m_name, m.m_name) ||
+	   !Utilities::areStringsEqualIgnoreCase(m_type, m.m_type) ||
+	   !Utilities::areStringsEqualIgnoreCase(m_preferredVersion, m.m_preferredVersion) ||
+	   !Utilities::areStringsEqualIgnoreCase(m_defaultVersionType, m.m_defaultVersionType) ||
+	   !Utilities::areStringsEqualIgnoreCase(m_website, m.m_website) ||
 	   (m_team == nullptr && m.m_team != nullptr) ||
 	   (m_team != nullptr && m.m_team == nullptr) ||
 	   m_versions.size() == m.m_versions.size() ||

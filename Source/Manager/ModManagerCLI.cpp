@@ -1448,7 +1448,7 @@ size_t ModManager::CLI::getValuePrompt(const std::vector<std::string> & values, 
 
 		if(!data.empty()) {
 			for(size_t i = 0; i < values.size(); i++) {
-				if(Utilities::compareStringsIgnoreCase(values[i], data) == 0) {
+				if(Utilities::areStringsEqualIgnoreCase(values[i], data)) {
 					return i;
 				}
 			}

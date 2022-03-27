@@ -404,8 +404,8 @@ bool ModFile::isValid(const ModFile * f) {
 }
 
 bool ModFile::operator == (const ModFile & f) const {
-	return Utilities::compareStringsIgnoreCase(m_fileName, f.m_fileName) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_type, f.m_type) == 0 &&
+	return Utilities::areStringsEqualIgnoreCase(m_fileName, f.m_fileName) &&
+		   Utilities::areStringsEqualIgnoreCase(m_type, f.m_type) &&
 		   m_sha1 == f.m_sha1 &&
 		   m_shared == f.m_shared;
 }

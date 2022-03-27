@@ -215,7 +215,7 @@ size_t ModTeam::numberOfMembers() const {
 
 bool ModTeam::hasMember(const ModTeamMember & member) const {
 	for(std::vector<std::shared_ptr<ModTeamMember>>::const_iterator i = m_members.begin(); i != m_members.end(); i++) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), member.getName()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), member.getName())) {
 			return true;
 		}
 	}
@@ -229,7 +229,7 @@ bool ModTeam::hasMember(const std::string & memberName) const {
 	}
 
 	for(std::vector<std::shared_ptr<ModTeamMember>>::const_iterator i = m_members.begin(); i != m_members.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), memberName) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), memberName)) {
 			return true;
 		}
 	}
@@ -239,7 +239,7 @@ bool ModTeam::hasMember(const std::string & memberName) const {
 
 size_t ModTeam::indexOfMember(const ModTeamMember & member) const {
 	for(size_t i = 0; i < m_members.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_members[i]->getName(), member.getName()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_members[i]->getName(), member.getName())) {
 			return i;
 		}
 	}
@@ -253,7 +253,7 @@ size_t ModTeam::indexOfMember(const std::string & memberName) const {
 	}
 
 	for(size_t i = 0; i < m_members.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_members[i]->getName(), memberName) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_members[i]->getName(), memberName)) {
 			return i;
 		}
 	}
@@ -275,7 +275,7 @@ std::shared_ptr<ModTeamMember> ModTeam::getMember(const std::string & memberName
 	}
 
 	for(std::vector<std::shared_ptr<ModTeamMember>>::const_iterator i = m_members.begin(); i != m_members.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), memberName) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), memberName)) {
 			return *i;
 		}
 	}
@@ -313,7 +313,7 @@ bool ModTeam::removeMember(size_t index) {
 
 bool ModTeam::removeMember(const ModTeamMember & member) {
 	for(std::vector<std::shared_ptr<ModTeamMember>>::const_iterator i = m_members.begin(); i != m_members.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), member.getName()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), member.getName())) {
 			(*i)->setParentModTeam(nullptr);
 			m_members.erase(i);
 
@@ -330,7 +330,7 @@ bool ModTeam::removeMember(const std::string & memberName) {
 	}
 
 	for(std::vector<std::shared_ptr<ModTeamMember>>::const_iterator i = m_members.begin(); i != m_members.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), memberName) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), memberName)) {
 			(*i)->setParentModTeam(nullptr);
 			m_members.erase(i);
 
@@ -749,7 +749,7 @@ bool ModTeam::isValid() const {
 		}
 
 		for(std::vector<std::shared_ptr<ModTeamMember>>::const_iterator j = i + 1; j != m_members.end(); j++) {
-			if(Utilities::compareStringsIgnoreCase((*i)->getName(), (*j)->getName()) == 0) {
+			if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), (*j)->getName())) {
 				return false;
 			}
 		}
@@ -763,14 +763,14 @@ bool ModTeam::isValid(const ModTeam * modTeam) {
 }
 
 bool ModTeam::operator == (const ModTeam & m) const {
-	if(Utilities::compareStringsIgnoreCase(m_name, m.m_name) != 0 ||
-	   Utilities::compareStringsIgnoreCase(m_website, m.m_website) != 0 ||
-	   Utilities::compareStringsIgnoreCase(m_email, m.m_email) != 0 ||
-	   Utilities::compareStringsIgnoreCase(m_county, m.m_county) != 0 ||
-	   Utilities::compareStringsIgnoreCase(m_city, m.m_city) != 0 ||
-	   Utilities::compareStringsIgnoreCase(m_province, m.m_province) != 0 ||
-	   Utilities::compareStringsIgnoreCase(m_state, m.m_state) != 0 ||
-	   Utilities::compareStringsIgnoreCase(m_country, m.m_country) != 0 ||
+	if(!Utilities::areStringsEqualIgnoreCase(m_name, m.m_name) ||
+	   !Utilities::areStringsEqualIgnoreCase(m_website, m.m_website) ||
+	   !Utilities::areStringsEqualIgnoreCase(m_email, m.m_email) ||
+	   !Utilities::areStringsEqualIgnoreCase(m_county, m.m_county) ||
+	   !Utilities::areStringsEqualIgnoreCase(m_city, m.m_city) ||
+	   !Utilities::areStringsEqualIgnoreCase(m_province, m.m_province) ||
+	   !Utilities::areStringsEqualIgnoreCase(m_state, m.m_state) ||
+	   !Utilities::areStringsEqualIgnoreCase(m_country, m.m_country) ||
 	   (!m_province.empty() && !m_state.empty()) ||
 	   m_members.size() != m.m_members.size()) {
 		return false;

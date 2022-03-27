@@ -74,7 +74,7 @@ size_t ModCollection::numberOfMods() const {
 
 bool ModCollection::hasMod(const Mod & mod) const {
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_mods.begin(); i != m_mods.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getID(), mod.getID()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getID(), mod.getID())) {
 			return true;
 		}
 	}
@@ -88,7 +88,7 @@ bool ModCollection::hasMod(const std::string & id) const {
 	}
 
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_mods.begin(); i != m_mods.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getID(), id) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getID(), id)) {
 			return true;
 		}
 	}
@@ -102,7 +102,7 @@ bool ModCollection::hasModWithName(const std::string & name) const {
 	}
 
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_mods.begin(); i != m_mods.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), name) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
 			return true;
 		}
 	}
@@ -112,7 +112,7 @@ bool ModCollection::hasModWithName(const std::string & name) const {
 
 size_t ModCollection::indexOfMod(const Mod & mod) const {
 	for(size_t i = 0; i < m_mods.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_mods[i]->getID(), mod.getID()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_mods[i]->getID(), mod.getID())) {
 			return i;
 		}
 	}
@@ -126,7 +126,7 @@ size_t ModCollection::indexOfMod(const std::string & id) const {
 	}
 
 	for(size_t i = 0; i < m_mods.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_mods[i]->getID(), id) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_mods[i]->getID(), id)) {
 			return i;
 		}
 	}
@@ -140,7 +140,7 @@ size_t ModCollection::indexOfModWithName(const std::string & name) const {
 	}
 
 	for(size_t i = 0; i < m_mods.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_mods[i]->getName(), name) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_mods[i]->getName(), name)) {
 			return i;
 		}
 	}
@@ -160,7 +160,7 @@ std::shared_ptr<Mod> ModCollection::getMod(const std::string & id) const {
 	}
 
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_mods.begin(); i != m_mods.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getID(), id) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getID(), id)) {
 			return *i;
 		}
 	}
@@ -174,7 +174,7 @@ std::shared_ptr<Mod> ModCollection::getModWithName(const std::string & name) con
 	}
 
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_mods.begin(); i != m_mods.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), name) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
 			return *i;
 		}
 	}
@@ -212,7 +212,7 @@ bool ModCollection::removeMod(size_t index) {
 
 bool ModCollection::removeMod(const Mod & mod) {
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_mods.begin(); i != m_mods.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getID(), mod.getID()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getID(), mod.getID())) {
 			m_mods.erase(i);
 
 			notifyCollectionChanged();
@@ -230,7 +230,7 @@ bool ModCollection::removeMod(const std::string & id) {
 	}
 
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_mods.begin(); i != m_mods.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getID(), id) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getID(), id)) {
 			m_mods.erase(i);
 
 			notifyCollectionChanged();
@@ -248,7 +248,7 @@ bool ModCollection::removeModWithName(const std::string & name) {
 	}
 
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_mods.begin(); i != m_mods.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), name) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
 			m_mods.erase(i);
 
 			notifyCollectionChanged();
@@ -382,10 +382,10 @@ bool ModCollection::loadFrom(const std::string & filePath) {
 	if(fileExtension.empty()) {
 		return false;
 	}
-	else if(Utilities::compareStringsIgnoreCase(fileExtension, "xml") == 0) {
+	else if(Utilities::areStringsEqualIgnoreCase(fileExtension, "xml")) {
 		return loadFromXML(filePath);
 	}
-	else if(Utilities::compareStringsIgnoreCase(fileExtension, "json") == 0) {
+	else if(Utilities::areStringsEqualIgnoreCase(fileExtension, "json")) {
 		return loadFromJSON(filePath);
 	}
 
@@ -464,10 +464,10 @@ bool ModCollection::saveTo(const std::string & filePath, bool overwrite) const {
 	if(fileExtension.empty()) {
 		return false;
 	}
-	else if(Utilities::compareStringsIgnoreCase(fileExtension, "json") == 0) {
+	else if(Utilities::areStringsEqualIgnoreCase(fileExtension, "json")) {
 		return saveToJSON(filePath, overwrite);
 	}
-	else if(Utilities::compareStringsIgnoreCase(fileExtension, "xml") == 0) {
+	else if(Utilities::areStringsEqualIgnoreCase(fileExtension, "xml")) {
 		return saveToXML(filePath, overwrite);
 	}
 

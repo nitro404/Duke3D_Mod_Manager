@@ -119,7 +119,7 @@ std::string ModGameVersion::getFullName() const {
 }
 
 bool ModGameVersion::isEDuke32() const {
-	return Utilities::compareStringsIgnoreCase(m_gameVersion, GameVersion::EDUKE32.getName()) == 0;
+	return Utilities::areStringsEqualIgnoreCase(m_gameVersion, GameVersion::EDUKE32.getName());
 }
 
 bool ModGameVersion::isConverted() const {
@@ -172,7 +172,7 @@ size_t ModGameVersion::numberOfFilesOfType(const std::string & fileType) {
 	size_t fileCount = 0;
 
 	for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getType(), fileType) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getType(), fileType)) {
 			fileCount++;
 		}
 	}
@@ -182,7 +182,7 @@ size_t ModGameVersion::numberOfFilesOfType(const std::string & fileType) {
 
 bool ModGameVersion::hasFile(const ModFile & file) const {
 	for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), file.getFileName()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), file.getFileName())) {
 			return true;
 		}
 	}
@@ -196,7 +196,7 @@ bool ModGameVersion::hasFile(const std::string & fileName) const {
 	}
 
 	for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), fileName) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), fileName)) {
 			return true;
 		}
 	}
@@ -210,7 +210,7 @@ bool ModGameVersion::hasFileOfType(const std::string & fileType) const {
 	}
 
 	for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getType(), fileType) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getType(), fileType)) {
 			return true;
 		}
 	}
@@ -220,7 +220,7 @@ bool ModGameVersion::hasFileOfType(const std::string & fileType) const {
 
 size_t ModGameVersion::indexOfFile(const ModFile & file) const {
 	for(size_t i = 0; i < m_files.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_files[i]->getFileName(), file.getFileName()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_files[i]->getFileName(), file.getFileName())) {
 			return i;
 		}
 	}
@@ -234,7 +234,7 @@ size_t ModGameVersion::indexOfFile(const std::string & fileName) const {
 	}
 
 	for(size_t i = 0; i < m_files.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_files[i]->getFileName(), fileName) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_files[i]->getFileName(), fileName)) {
 			return i;
 		}
 	}
@@ -248,7 +248,7 @@ size_t ModGameVersion::indexOfFirstFileOfType(const std::string & fileType) cons
 	}
 
 	for(size_t i = 0; i < m_files.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_files[i]->getType(), fileType) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_files[i]->getType(), fileType)) {
 			return i;
 		}
 	}
@@ -270,7 +270,7 @@ std::shared_ptr<ModFile> ModGameVersion::getFile(const std::string & fileName) c
 	}
 
 	for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), fileName) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), fileName)) {
 			return *i;
 		}
 	}
@@ -284,7 +284,7 @@ std::shared_ptr<ModFile> ModGameVersion::getFirstFileOfType(const std::string & 
 	}
 
 	for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getType(), fileType) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getType(), fileType)) {
 			return *i;
 		}
 	}
@@ -300,7 +300,7 @@ std::vector<std::shared_ptr<ModFile>> ModGameVersion::getFilesOfType(const std::
 	}
 
 	for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getType(), fileType) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getType(), fileType)) {
 			files.push_back(*i);
 		}
 	}
@@ -314,7 +314,7 @@ std::optional<std::string> ModGameVersion::getFirstFileNameOfType(const std::str
 	}
 
 	for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getType(), fileType) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getType(), fileType)) {
 			return (*i)->getFileName();
 		}
 	}
@@ -330,7 +330,7 @@ std::vector<std::string> ModGameVersion::getFileNamesOfType(const std::string & 
 	}
 
 	for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getType(), fileType) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getType(), fileType)) {
 			fileNames.emplace_back((*i)->getFileName());
 		}
 	}
@@ -378,7 +378,7 @@ bool ModGameVersion::removeFile(size_t index) {
 
 bool ModGameVersion::removeFile(const ModFile & file) {
 	for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), file.getFileName()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), file.getFileName())) {
 			(*i)->setParentModGameVersion(nullptr);
 			m_files.erase(i);
 
@@ -395,7 +395,7 @@ bool ModGameVersion::removeFile(const std::string & fileName) {
 	}
 
 	for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), fileName) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), fileName)) {
 			(*i)->setParentModGameVersion(nullptr);
 			m_files.erase(i);
 
@@ -414,7 +414,7 @@ size_t ModGameVersion::removeFilesOfType(const std::string & fileType) {
 	size_t numberOfFilesRemoved = 0;
 
 	for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getType(), fileType) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getType(), fileType)) {
 			(*i)->setParentModGameVersion(nullptr);
 			m_files.erase(i);
 
@@ -619,10 +619,10 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const tinyxml2::XMLEle
 
 	bool modGameVersionConverted = false;
 
-	if(Utilities::compareStringsIgnoreCase(modGameVersionConvertedData, "Converted") == 0) {
+	if(Utilities::areStringsEqualIgnoreCase(modGameVersionConvertedData, "Converted")) {
 		modGameVersionConverted = true;
 	}
-	else if(Utilities::compareStringsIgnoreCase(modGameVersionConvertedData, "Native") == 0) {
+	else if(Utilities::areStringsEqualIgnoreCase(modGameVersionConvertedData, "Native")) {
 		modGameVersionConverted = false;
 	}
 	else {
@@ -672,7 +672,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const tinyxml2::XMLEle
 
 bool ModGameVersion::isGameVersionSupported(const GameVersion & gameVersion) const {
 	return gameVersion.isValid() &&
-		   Utilities::compareStringsIgnoreCase(m_gameVersion, gameVersion.getName()) == 0;
+		   Utilities::areStringsEqualIgnoreCase(m_gameVersion, gameVersion.getName());
 }
 
 bool ModGameVersion::isGameVersionCompatible(const GameVersion & gameVersion) const {
@@ -708,7 +708,7 @@ bool ModGameVersion::isValid() const {
 		}
 
 		for(std::vector<std::shared_ptr<ModFile>>::const_iterator j = i + 1; j != m_files.end(); ++j) {
-			if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), (*j)->getFileName()) == 0) {
+			if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), (*j)->getFileName())) {
 				return false;
 			}
 		}
@@ -723,7 +723,7 @@ bool ModGameVersion::isValid(const ModGameVersion * m) {
 
 bool ModGameVersion::operator == (const ModGameVersion & m) const {
 	if(m_files.size() != m.m_files.size() ||
-	   Utilities::compareStringsIgnoreCase(m_gameVersion, m.m_gameVersion) != 0 ||
+	   !Utilities::areStringsEqualIgnoreCase(m_gameVersion, m.m_gameVersion) ||
 	   m_converted != m.m_converted) {
 		return false;
 	}

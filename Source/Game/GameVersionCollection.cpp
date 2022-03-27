@@ -64,7 +64,7 @@ size_t GameVersionCollection::numberOfGameVersions() const {
 
 bool GameVersionCollection::hasGameVersion(const GameVersion & gameVersion) const {
 	for(std::vector<std::shared_ptr<GameVersion>>::const_iterator i = m_gameVersions.begin(); i != m_gameVersions.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), gameVersion.getName()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), gameVersion.getName())) {
 			return true;
 		}
 	}
@@ -78,7 +78,7 @@ bool GameVersionCollection::hasGameVersion(const std::string & name) const {
 	}
 
 	for(std::vector<std::shared_ptr<GameVersion>>::const_iterator i = m_gameVersions.begin(); i != m_gameVersions.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), name) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
 			return true;
 		}
 	}
@@ -88,7 +88,7 @@ bool GameVersionCollection::hasGameVersion(const std::string & name) const {
 
 size_t GameVersionCollection::indexOfGameVersion(const GameVersion & gameVersion) const {
 	for(size_t i = 0; i < m_gameVersions.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_gameVersions[i]->getName(), gameVersion.getName()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_gameVersions[i]->getName(), gameVersion.getName())) {
 			return i;
 		}
 	}
@@ -102,7 +102,7 @@ size_t GameVersionCollection::indexOfGameVersion(const std::string & name) const
 	}
 
 	for(size_t i = 0; i < m_gameVersions.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_gameVersions[i]->getName(), name) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_gameVersions[i]->getName(), name)) {
 			return i;
 		}
 	}
@@ -124,7 +124,7 @@ std::shared_ptr<GameVersion> GameVersionCollection::getGameVersion(const std::st
 	}
 
 	for(std::vector<std::shared_ptr<GameVersion>>::const_iterator i = m_gameVersions.begin(); i != m_gameVersions.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), name) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
 			return *i;
 		}
 	}
@@ -280,7 +280,7 @@ bool GameVersionCollection::removeGameVersion(size_t index) {
 
 bool GameVersionCollection::removeGameVersion(const GameVersion & gameVersion) {
 	for(std::vector<std::shared_ptr<GameVersion>>::const_iterator i = m_gameVersions.begin(); i != m_gameVersions.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), gameVersion.getName()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), gameVersion.getName())) {
 			m_gameVersions.erase(i);
 
 			notifyCollectionChanged();
@@ -298,7 +298,7 @@ bool GameVersionCollection::removeGameVersion(const std::string & name) {
 	}
 
 	for(std::vector<std::shared_ptr<GameVersion>>::const_iterator i = m_gameVersions.begin(); i != m_gameVersions.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), name) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
 			m_gameVersions.erase(i);
 
 			notifyCollectionChanged();
@@ -416,7 +416,7 @@ bool GameVersionCollection::loadFrom(const std::string & filePath) {
 	if(fileExtension.empty()) {
 		return false;
 	}
-	else if(Utilities::compareStringsIgnoreCase(fileExtension, "json") == 0) {
+	else if(Utilities::areStringsEqualIgnoreCase(fileExtension, "json")) {
 		return loadFromJSON(filePath);
 	}
 
@@ -464,7 +464,7 @@ bool GameVersionCollection::saveTo(const std::string & filePath, bool overwrite)
 	if(fileExtension.empty()) {
 		return false;
 	}
-	else if(Utilities::compareStringsIgnoreCase(fileExtension, "json") == 0) {
+	else if(Utilities::areStringsEqualIgnoreCase(fileExtension, "json")) {
 		return saveToJSON(filePath, overwrite);
 	}
 
@@ -507,7 +507,7 @@ bool GameVersionCollection::isValid() const {
 		}
 
 		for(std::vector<std::shared_ptr<GameVersion>>::const_iterator j = i + 1; j != m_gameVersions.end(); ++j) {
-			if(Utilities::compareStringsIgnoreCase((*i)->getName(), (*j)->getName()) == 0 ||
+			if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), (*j)->getName()) ||
 			   (*i)->getModDirectoryName() == (*j)->getModDirectoryName()) {
 				return false;
 			}

@@ -86,7 +86,7 @@ bool Group::hasFile(const std::string & fileName) const {
 	}
 
 	for(std::vector<std::shared_ptr<GroupFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), formattedFileName) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), formattedFileName)) {
 			return true;
 		}
 	}
@@ -100,7 +100,7 @@ bool Group::hasFile(const GroupFile & groupFile) const {
 	}
 
 	for(std::vector<std::shared_ptr<GroupFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), groupFile.getFileName()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), groupFile.getFileName())) {
 			return true;
 		}
 	}
@@ -120,7 +120,7 @@ size_t Group::indexOfFile(const std::string & fileName) const {
 	}
 
 	for(size_t i=0;i<m_files.size();i++) {
-		if(Utilities::compareStringsIgnoreCase(m_files[i]->getFileName(), formattedFileName.data()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_files[i]->getFileName(), formattedFileName.data())) {
 			return i;
 		}
 	}
@@ -134,7 +134,7 @@ size_t Group::indexOfFile(const GroupFile & groupFile) const {
 	}
 
 	for(size_t i = 0; i < m_files.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_files[i]->getFileName(), groupFile.getFileName()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_files[i]->getFileName(), groupFile.getFileName())) {
 			return i;
 		}
 	}
@@ -162,7 +162,7 @@ std::shared_ptr<GroupFile> Group::getFile(const std::string & fileName) const {
 	}
 
 	for(std::vector<std::shared_ptr<GroupFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), formattedFileName.data()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), formattedFileName.data())) {
 			return *i;
 		}
 	}
@@ -178,7 +178,7 @@ std::vector<std::shared_ptr<GroupFile>> Group::getFilesWithExtension(const std::
 	}
 
 	for(std::vector<std::shared_ptr<GroupFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileExtension(), extension) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileExtension(), extension)) {
 			files.push_back(*i);
 		}
 	}
@@ -202,7 +202,7 @@ std::vector<std::string> Group::getFileExtensions() const {
 		duplicateExtension = false;
 
 		for(std::vector<std::string>::const_iterator j = fileExtensions.begin(); j != fileExtensions.end(); ++j) {
-			if(Utilities::compareStringsIgnoreCase(*j, extension) == 0) {
+			if(Utilities::areStringsEqualIgnoreCase(*j, extension)) {
 				duplicateExtension = true;
 				break;
 			}
@@ -238,7 +238,7 @@ size_t Group::extractAllFilesWithExtension(const std::string & extension, const 
 	size_t numberOfExtractedFiles = 0;
 
 	for(size_t i = 0; i < m_files.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_files[i]->getFileExtension(), extension) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_files[i]->getFileExtension(), extension)) {
 			if(extractFile(i, directory, overwrite)) {
 				numberOfExtractedFiles++;
 			}
@@ -339,7 +339,7 @@ bool Group::removeFile(const std::string & fileName) {
 	}
 
 	for(std::vector<std::shared_ptr<GroupFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), formattedFileName) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), formattedFileName)) {
 			m_files.erase(i);
 
 			return true;
@@ -355,7 +355,7 @@ bool Group::removeFile(const GroupFile & groupFile) {
 	}
 
 	for(std::vector<std::shared_ptr<GroupFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getFileName(), groupFile.getFileName()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getFileName(), groupFile.getFileName())) {
 			m_files.erase(i);
 
 			return true;

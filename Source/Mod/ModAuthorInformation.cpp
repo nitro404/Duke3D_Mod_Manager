@@ -68,7 +68,7 @@ bool ModAuthorInformation::isValid(const ModAuthorInformation * m) {
 }
 
 bool ModAuthorInformation::operator == (const ModAuthorInformation & m) const {
-	return Utilities::compareStringsIgnoreCase(m_name, m.m_name) == 0 &&
+	return Utilities::areStringsEqualIgnoreCase(m_name, m.m_name) &&
 		   m_numberOfMods == m.m_numberOfMods;
 }
 

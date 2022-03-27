@@ -140,7 +140,7 @@ bool ModVersionType::hasGameVersion(const std::string & gameVersion) const {
 	}
 
 	for(std::vector<std::shared_ptr<ModGameVersion>>::const_iterator i = m_gameVersions.begin(); i != m_gameVersions.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getGameVersion(), gameVersion) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getGameVersion(), gameVersion)) {
 			return true;
 		}
 	}
@@ -150,7 +150,7 @@ bool ModVersionType::hasGameVersion(const std::string & gameVersion) const {
 
 bool ModVersionType::hasGameVersion(const ModGameVersion & gameVersion) const {
 	for(std::vector<std::shared_ptr<ModGameVersion>>::const_iterator i = m_gameVersions.begin(); i != m_gameVersions.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getGameVersion(), gameVersion.getGameVersion()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getGameVersion(), gameVersion.getGameVersion())) {
 			return true;
 		}
 	}
@@ -164,7 +164,7 @@ size_t ModVersionType::indexOfGameVersion(const std::string & gameVersion) const
 	}
 
 	for(size_t i = 0; i < m_gameVersions.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_gameVersions[i]->getGameVersion(), gameVersion) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_gameVersions[i]->getGameVersion(), gameVersion)) {
 			return i;
 		}
 	}
@@ -174,7 +174,7 @@ size_t ModVersionType::indexOfGameVersion(const std::string & gameVersion) const
 
 size_t ModVersionType::indexOfGameVersion(const ModGameVersion & gameVersion) const {
 	for(size_t i = 0; i < m_gameVersions.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_gameVersions[i]->getGameVersion(), gameVersion.getGameVersion()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_gameVersions[i]->getGameVersion(), gameVersion.getGameVersion())) {
 			return i;
 		}
 	}
@@ -196,7 +196,7 @@ std::shared_ptr<ModGameVersion> ModVersionType::getGameVersion(const std::string
 	}
 
 	for(std::vector<std::shared_ptr<ModGameVersion>>::const_iterator i = m_gameVersions.begin(); i != m_gameVersions.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getGameVersion(), gameVersion) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getGameVersion(), gameVersion)) {
 			return *i;
 		}
 	}
@@ -238,7 +238,7 @@ bool ModVersionType::removeGameVersion(const std::string & gameVersion) {
 	}
 
 	for(std::vector<std::shared_ptr<ModGameVersion>>::const_iterator i = m_gameVersions.begin(); i != m_gameVersions.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getGameVersion(), gameVersion) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getGameVersion(), gameVersion)) {
 			(*i)->setParentModVersionType(nullptr);
 			m_gameVersions.erase(i);
 
@@ -251,7 +251,7 @@ bool ModVersionType::removeGameVersion(const std::string & gameVersion) {
 
 bool ModVersionType::removeGameVersion(const ModGameVersion & gameVersion) {
 	for(std::vector<std::shared_ptr<ModGameVersion>>::const_iterator i = m_gameVersions.begin(); i != m_gameVersions.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getGameVersion(), gameVersion.getGameVersion()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getGameVersion(), gameVersion.getGameVersion())) {
 			(*i)->setParentModVersionType(nullptr);
 			m_gameVersions.erase(i);
 
@@ -492,7 +492,7 @@ bool ModVersionType::isValid() const {
 		}
 
 		for(std::vector<std::shared_ptr<ModGameVersion>>::const_iterator j = i + 1; j != m_gameVersions.end(); ++j) {
-			if(Utilities::compareStringsIgnoreCase((*i)->getGameVersion(), (*j)->getGameVersion()) == 0) {
+			if(Utilities::areStringsEqualIgnoreCase((*i)->getGameVersion(), (*j)->getGameVersion())) {
 				return false;
 			}
 		}
@@ -534,7 +534,7 @@ bool ModVersionType::isValid(const ModVersionType * t) {
 }
 
 bool ModVersionType::operator == (const ModVersionType & t) const {
-	if(Utilities::compareStringsIgnoreCase(m_type, t.m_type) != 0) {
+	if(!Utilities::areStringsEqualIgnoreCase(m_type, t.m_type)) {
 		return false;
 	}
 
@@ -543,7 +543,7 @@ bool ModVersionType::operator == (const ModVersionType & t) const {
 	}
 
 	for(size_t i = 0; i < m_gameVersions.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_gameVersions[i]->getGameVersion(), t.m_gameVersions[i]->getGameVersion()) != 0) {
+		if(!Utilities::areStringsEqualIgnoreCase(m_gameVersions[i]->getGameVersion(), t.m_gameVersions[i]->getGameVersion())) {
 			return false;
 		}
 	}

@@ -510,10 +510,10 @@ bool ModImage::isValid(const ModImage * i) {
 bool ModImage::operator == (const ModImage & i) const {
 	return m_width == i.m_width &&
 		   m_height == i.m_height &&
-		   Utilities::compareStringsIgnoreCase(m_fileName, i.m_fileName) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_type, i.m_type) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_subfolder, i.m_subfolder) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_caption, i.m_caption) == 0 &&
+		   Utilities::areStringsEqualIgnoreCase(m_fileName, i.m_fileName) &&
+		   Utilities::areStringsEqualIgnoreCase(m_type, i.m_type) &&
+		   Utilities::areStringsEqualIgnoreCase(m_subfolder, i.m_subfolder) &&
+		   Utilities::areStringsEqualIgnoreCase(m_caption, i.m_caption) &&
 		   m_sha1 == i.m_sha1;
 }
 

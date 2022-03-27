@@ -179,9 +179,9 @@ bool ModIdentifier::isValid(const ModIdentifier * m) {
 }
 
 bool ModIdentifier::operator == (const ModIdentifier & m) const {
-	return Utilities::compareStringsIgnoreCase(m_name, m.m_name) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_version, m.m_version) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_versionType, m.m_versionType) == 0;
+	return Utilities::areStringsEqualIgnoreCase(m_name, m.m_name) &&
+		   Utilities::areStringsEqualIgnoreCase(m_version, m.m_version) &&
+		   Utilities::areStringsEqualIgnoreCase(m_versionType, m.m_versionType);
 }
 
 bool ModIdentifier::operator != (const ModIdentifier & m) const {

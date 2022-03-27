@@ -170,11 +170,11 @@ const std::string & ModDownload::getType() const {
 }
 
 bool ModDownload::isOriginalFiles() const {
-	return Utilities::compareStringsIgnoreCase(m_type, ORIGINAL_FILES_TYPE) == 0;
+	return Utilities::areStringsEqualIgnoreCase(m_type, ORIGINAL_FILES_TYPE);
 }
 
 bool ModDownload::isModManagerFiles() const {
-	return Utilities::compareStringsIgnoreCase(m_type, MOD_MANAGER_FILES_TYPE) == 0;
+	return Utilities::areStringsEqualIgnoreCase(m_type, MOD_MANAGER_FILES_TYPE);
 }
 
 const std::string & ModDownload::getSubfolder() const {
@@ -196,7 +196,7 @@ const std::string & ModDownload::getSHA1() const {
 }
 
 bool ModDownload::isEDuke32() const {
-	return Utilities::compareStringsIgnoreCase(m_gameVersion, GameVersion::EDUKE32.getName()) == 0;
+	return Utilities::areStringsEqualIgnoreCase(m_gameVersion, GameVersion::EDUKE32.getName());
 }
 
 bool ModDownload::isConverted() const {
@@ -719,10 +719,10 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const tinyxml2::XMLElement *
 	}
 
 	if(modDownloadConvertedData != nullptr) {
-		if(Utilities::compareStringsIgnoreCase(modDownloadConvertedData, "Converted") == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(modDownloadConvertedData, "Converted")) {
 			newModDownload->setConverted(true);
 		}
-		else if(Utilities::compareStringsIgnoreCase(modDownloadConvertedData, "Native") == 0) {
+		else if(Utilities::areStringsEqualIgnoreCase(modDownloadConvertedData, "Native")) {
 			newModDownload->setConverted(false);
 		}
 		else {
@@ -768,16 +768,16 @@ bool ModDownload::isValid(const ModDownload * d) {
 }
 
 bool ModDownload::operator == (const ModDownload & d) const {
-	return Utilities::compareStringsIgnoreCase(m_fileName, d.m_fileName) == 0 &&
+	return Utilities::areStringsEqualIgnoreCase(m_fileName, d.m_fileName) &&
 		   m_partNumber == d.m_partNumber &&
 		   m_partCount == d.m_partCount &&
 		   m_converted == d.m_converted &&
 		   m_corrupted == d.m_corrupted &&
 		   m_repaired == d.m_repaired &&
-		   Utilities::compareStringsIgnoreCase(m_version, d.m_version) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_special, d.m_special) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_gameVersion, d.m_gameVersion) == 0 &&
-		   Utilities::compareStringsIgnoreCase(m_type, d.m_type) == 0 &&
+		   Utilities::areStringsEqualIgnoreCase(m_version, d.m_version) &&
+		   Utilities::areStringsEqualIgnoreCase(m_special, d.m_special) &&
+		   Utilities::areStringsEqualIgnoreCase(m_gameVersion, d.m_gameVersion) &&
+		   Utilities::areStringsEqualIgnoreCase(m_type, d.m_type) &&
 		   m_sha1 == d.m_sha1;
 }
 

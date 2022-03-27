@@ -423,7 +423,7 @@ size_t OrganizedModCollection::numberOfMods() const {
 
 bool OrganizedModCollection::hasMod(const Mod & mod) const {
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_organizedMods.begin(); i != m_organizedMods.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getID(), mod.getID()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getID(), mod.getID())) {
 			return true;
 		}
 	}
@@ -437,7 +437,7 @@ bool OrganizedModCollection::hasMod(const std::string & id) const {
 	}
 
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_organizedMods.begin(); i != m_organizedMods.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getID(), id) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getID(), id)) {
 			return true;
 		}
 	}
@@ -451,7 +451,7 @@ bool OrganizedModCollection::hasModWithName(const std::string & name) const {
 	}
 
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_organizedMods.begin(); i != m_organizedMods.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), name) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
 			return true;
 		}
 	}
@@ -461,7 +461,7 @@ bool OrganizedModCollection::hasModWithName(const std::string & name) const {
 
 size_t OrganizedModCollection::indexOfMod(const Mod & mod) const {
 	for(size_t i = 0; i < m_organizedMods.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_organizedMods[i]->getID(), mod.getID()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_organizedMods[i]->getID(), mod.getID())) {
 			return i;
 		}
 	}
@@ -475,7 +475,7 @@ size_t OrganizedModCollection::indexOfMod(const std::string & id) const {
 	}
 
 	for(size_t i = 0; i < m_organizedMods.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_organizedMods[i]->getID(), id) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_organizedMods[i]->getID(), id)) {
 			return i;
 		}
 	}
@@ -489,7 +489,7 @@ size_t OrganizedModCollection::indexOfModWithName(const std::string & name) cons
 	}
 
 	for(size_t i = 0; i < m_organizedMods.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_organizedMods[i]->getName(), name) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_organizedMods[i]->getName(), name)) {
 			return i;
 		}
 	}
@@ -507,7 +507,7 @@ std::shared_ptr<Mod> OrganizedModCollection::getMod(size_t index) const {
 
 std::shared_ptr<Mod> OrganizedModCollection::getMod(const std::string & id) const {
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_organizedMods.begin(); i != m_organizedMods.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getID(), id) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getID(), id)) {
 			return *i;
 		}
 	}
@@ -517,7 +517,7 @@ std::shared_ptr<Mod> OrganizedModCollection::getMod(const std::string & id) cons
 
 std::shared_ptr<Mod> OrganizedModCollection::getModWithName(const std::string & name) const {
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_organizedMods.begin(); i != m_organizedMods.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), name) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
 			return *i;
 		}
 	}
@@ -547,7 +547,7 @@ size_t OrganizedModCollection::indexOfGameVersion(const std::string & gameVersio
 	}
 
 	for(size_t i = 0; i < m_organizedGameVersions.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_organizedGameVersions[i]->getName(), gameVersion) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_organizedGameVersions[i]->getName(), gameVersion)) {
 			return i;
 		}
 	}
@@ -667,7 +667,7 @@ bool OrganizedModCollection::hasTeamInfo(const std::string & name) const {
 	}
 
 	for(std::vector<std::shared_ptr<ModAuthorInformation>>::const_iterator i = m_teams.begin(); i != m_teams.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), name) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
 			return true;
 		}
 	}
@@ -689,7 +689,7 @@ std::shared_ptr<ModAuthorInformation> OrganizedModCollection::getTeamInfo(const 
 	}
 
 	for(std::vector<std::shared_ptr<ModAuthorInformation>>::const_iterator i = m_teams.begin(); i != m_teams.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), name) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
 			return *i;
 		}
 	}
@@ -711,7 +711,7 @@ void OrganizedModCollection::incrementTeamModCount(const std::string & name) {
 	}
 
 	for(std::vector<std::shared_ptr<ModAuthorInformation>>::const_iterator i = m_teams.begin(); i != m_teams.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), name) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
 			(*i)->incrementModCount();
 			return;
 		}
@@ -763,7 +763,7 @@ bool OrganizedModCollection::setSelectedTeam(const std::string & name) {
 	bool shouldOrganize = false;
 
 	for(std::vector<std::shared_ptr<ModAuthorInformation>>::const_iterator i = m_teams.begin(); i != m_teams.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), name) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
 			shouldOrganize = m_selectedTeam != *i ||
 							 m_filterType != FilterType::Teams;
 
@@ -798,7 +798,7 @@ bool OrganizedModCollection::setSelectedTeam(const ModAuthorInformation * teamIn
 	bool shouldOrganize = false;
 
 	for(std::vector<std::shared_ptr<ModAuthorInformation>>::const_iterator i = m_teams.begin(); i != m_teams.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), teamInfo->getName()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), teamInfo->getName())) {
 			shouldOrganize = m_selectedTeam != *i ||
 							 m_filterType != FilterType::Teams;
 
@@ -850,7 +850,7 @@ bool OrganizedModCollection::hasAuthorInfo(const std::string & name) const {
 	}
 
 	for(std::vector<std::shared_ptr<ModAuthorInformation>>::const_iterator i = m_authors.begin(); i != m_authors.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), name) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
 			return true;
 		}
 	}
@@ -872,7 +872,7 @@ std::shared_ptr<ModAuthorInformation> OrganizedModCollection::getAuthorInfo(cons
 	}
 
 	for(std::vector<std::shared_ptr<ModAuthorInformation>>::const_iterator i = m_authors.begin(); i != m_authors.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), name) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
 			return *i;
 		}
 	}
@@ -894,7 +894,7 @@ void OrganizedModCollection::incrementAuthorModCount(const std::string & name) {
 	}
 
 	for(std::vector<std::shared_ptr<ModAuthorInformation>>::const_iterator i = m_authors.begin(); i != m_authors.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), name) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
 			(*i)->incrementModCount();
 
 			return;
@@ -947,7 +947,7 @@ bool OrganizedModCollection::setSelectedAuthor(const std::string & name) {
 	bool shouldOrganize = false;
 
 	for(std::vector<std::shared_ptr<ModAuthorInformation>>::const_iterator i = m_authors.begin(); i != m_authors.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), name) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
 			shouldOrganize = m_selectedAuthor != *i ||
 							 m_filterType != FilterType::Authors;
 
@@ -982,7 +982,7 @@ bool OrganizedModCollection::setSelectedAuthor(const ModAuthorInformation * auth
 	bool shouldOrganize = false;
 
 	for(std::vector<std::shared_ptr<ModAuthorInformation>>::const_iterator i = m_authors.begin(); i != m_authors.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase((*i)->getName(), authorInfo->getName()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), authorInfo->getName())) {
 			shouldOrganize = m_selectedAuthor != *i ||
 							 m_filterType != FilterType::Authors;
 
@@ -1118,7 +1118,7 @@ void OrganizedModCollection::applyFilter() {
 			for(size_t i = 0; i < m_mods->numberOfMods(); i++) {
 				team = m_mods->getMod(i)->getTeam();
 
-				if(team != nullptr && Utilities::compareStrings(team->getName(), m_selectedTeam->getName()) == 0) {
+				if(team != nullptr && Utilities::areStringsEqual(team->getName(), m_selectedTeam->getName())) {
 					m_organizedMods.push_back(m_mods->getMod(i));
 				}
 			}
@@ -1133,7 +1133,7 @@ void OrganizedModCollection::applyFilter() {
 
 				if(team != nullptr && team->numberOfMembers() != 0) {
 					for(size_t j=0;j<team->numberOfMembers();j++) {
-						if(Utilities::compareStrings(team->getMember(j)->getName(), m_selectedAuthor->getName()) == 0) {
+						if(Utilities::areStringsEqual(team->getMember(j)->getName(), m_selectedAuthor->getName())) {
 							m_organizedMods.push_back(m_mods->getMod(i));
 						}
 					}

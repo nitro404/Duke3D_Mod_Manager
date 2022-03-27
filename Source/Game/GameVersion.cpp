@@ -361,7 +361,7 @@ std::optional<std::string> GameVersion::getCompatibleGameVersion(size_t index) c
 
 std::shared_ptr<ModGameVersion> GameVersion::getMostCompatibleModGameVersion(const std::vector<std::shared_ptr<ModGameVersion>> & modGameVersions) const {
 	for(std::vector<std::shared_ptr<ModGameVersion>>::const_iterator i = modGameVersions.begin(); i != modGameVersions.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase(m_name, (*i)->getGameVersion()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_name, (*i)->getGameVersion())) {
 			return *i;
 		}
 	}
@@ -379,7 +379,7 @@ std::vector<std::shared_ptr<ModGameVersion>> GameVersion::getCompatibleModGameVe
 	std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions;
 
 	for(std::vector<std::shared_ptr<ModGameVersion>>::const_iterator i = modGameVersions.begin(); i != modGameVersions.end(); ++i) {
-		if(Utilities::compareStringsIgnoreCase(m_name, (*i)->getGameVersion()) == 0) {
+		if(Utilities::areStringsEqualIgnoreCase(m_name, (*i)->getGameVersion())) {
 			compatibleModGameVersions.insert(compatibleModGameVersions.begin(), *i);
 			continue;
 		}
@@ -840,7 +840,7 @@ bool GameVersion::isValid(const GameVersion * gameVersion) {
 
 bool GameVersion::operator == (const GameVersion & gameVersion) const {
 	if(m_requiresDOSBox != gameVersion.m_requiresDOSBox ||
-	   Utilities::compareStringsIgnoreCase(m_name, gameVersion.m_name) != 0 ||
+	   !Utilities::areStringsEqualIgnoreCase(m_name, gameVersion.m_name) ||
 	   m_gamePath != gameVersion.m_gamePath ||
 	   m_gameExecutableName != gameVersion.m_gameExecutableName ||
 	   m_setupExecutableName != gameVersion.m_setupExecutableName ||
@@ -857,7 +857,7 @@ bool GameVersion::operator == (const GameVersion & gameVersion) const {
 	}
 
 	for(size_t i = 0; i < m_compatibleGameVersions.size(); i++) {
-		if(Utilities::compareStringsIgnoreCase(m_compatibleGameVersions[i], gameVersion.m_compatibleGameVersions[i]) != 0) {
+		if(!Utilities::areStringsEqualIgnoreCase(m_compatibleGameVersions[i], gameVersion.m_compatibleGameVersions[i])) {
 			return false;
 		}
 	}
