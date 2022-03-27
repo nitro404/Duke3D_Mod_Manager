@@ -51,6 +51,11 @@ private:
 	uint64_t m_cachedFileIDCounter;
 	std::shared_ptr<CachedFile> m_cachedModListFile;
 	std::map<std::string, std::shared_ptr<CachedPackageFile>> m_cachedPackageFiles;
+
+	DownloadCache(const DownloadCache &) = delete;
+	DownloadCache(DownloadCache &&) noexcept = delete;
+	const DownloadCache & operator = (const DownloadCache &) = delete;
+	const DownloadCache & operator = (DownloadCache &&) noexcept = delete;
 };
 
 #endif // _DOWNLOAD_CACHE_H_

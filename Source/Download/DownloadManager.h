@@ -35,6 +35,11 @@ private:
 	std::shared_ptr<HTTPService> m_httpService;
 	std::shared_ptr<SettingsManager> m_settings;
 	std::unique_ptr<DownloadCache> m_downloadCache;
+
+	DownloadManager(const DownloadManager &) = delete;
+	DownloadManager(DownloadManager &&) noexcept = delete;
+	const DownloadManager & operator = (const DownloadManager &) = delete;
+	const DownloadManager & operator = (DownloadManager &&) noexcept = delete;
 };
 
 #endif // _DOWNLOAD_MANAGER_H_

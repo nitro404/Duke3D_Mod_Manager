@@ -89,7 +89,7 @@ public:
 	static const std::string HTTP_USER_AGENT;
 
 private:
-	class CLI {
+	class CLI final {
 	public:
 		CLI(ModManager * modManager);
 		~CLI();
@@ -119,6 +119,11 @@ private:
 		static void clearOutput();
 
 		ModManager * m_modManager;
+
+		CLI(const CLI &) = delete;
+		CLI(CLI &&) noexcept = delete;
+		const CLI & operator = (const CLI &) = delete;
+		const CLI & operator = (CLI &&) noexcept = delete;
 	};
 
 	bool handleArguments(const ArgumentParser * args, bool start);
