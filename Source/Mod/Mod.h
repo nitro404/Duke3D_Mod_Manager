@@ -13,6 +13,7 @@
 
 class GameVersion;
 class ModDownload;
+class ModGameVersion;
 class ModImage;
 class ModScreenshot;
 class ModTeam;
@@ -87,7 +88,9 @@ public:
 	std::shared_ptr<ModDownload> getDownload(size_t index) const;
 	std::shared_ptr<ModDownload> getDownload(const std::string & fileName) const;
 	std::shared_ptr<ModDownload> getDownloadByType(const std::string & type) const;
-	std::optional<std::string> getFileNameByType(const std::string & type) const;
+	std::optional<std::string> getDownloadFileNameByType(const std::string & type) const;
+	std::shared_ptr<ModDownload> getDownloadForGameVersion(const ModGameVersion * modGameVersion) const;
+	std::shared_ptr<ModVersion> getModVersionForDownload(const ModDownload * modDownload) const;
 	const std::vector<std::shared_ptr<ModDownload>> & getDownloads() const;
 	bool addDownload(const ModDownload & download);
 	bool removeDownload(size_t index);

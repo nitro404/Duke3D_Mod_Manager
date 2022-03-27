@@ -2,6 +2,10 @@ set(SOURCE_FILES
 	Main.cpp
 	Arguments/ArgumentCollection.cpp
 	Arguments/ArgumentParser.cpp
+	Download/CachedFile.cpp
+	Download/CachedPackageFile.cpp
+	Download/DownloadCache.cpp
+	Download/DownloadManager.cpp
 	Game/GameVersion.cpp
 	Game/GameVersionCollection.cpp
 	Game/GameVersionCollectionBroadcaster.cpp
@@ -39,6 +43,7 @@ source_group(Resources\\Icon            REGULAR_EXPRESSION "Icon/.*\\.(rc)")
 source_group(Resources\\Icon\\Windows   REGULAR_EXPRESSION "Icon/Windows.*\\.(rc)")
 source_group(Source                     REGULAR_EXPRESSION ".*\\.(h|cpp)")
 source_group(Source\\Arguments          REGULAR_EXPRESSION "Arguments/.*\\.(h|cpp)")
+source_group(Source\\Download           REGULAR_EXPRESSION "Download/.*\\.(h|cpp)")
 source_group(Source\\Game               REGULAR_EXPRESSION "Game/.*\\.(h|cpp)")
 source_group(Source\\Group              REGULAR_EXPRESSION "Group/.*\\.(h|cpp)")
 source_group(Source\\Mod                REGULAR_EXPRESSION "Mod/.*\\.(h|cpp)")

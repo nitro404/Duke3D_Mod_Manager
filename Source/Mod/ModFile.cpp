@@ -5,6 +5,7 @@
 #include "ModVersion.h"
 #include "ModVersionType.h"
 
+#include <Utilities/FileUtilities.h>
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
 
@@ -83,6 +84,10 @@ ModFile::~ModFile() {
 
 const std::string & ModFile::getFileName() const {
 	return m_fileName;
+}
+
+std::string_view ModFile::getFileExtension() const {
+	return Utilities::getFileExtension(m_fileName);
 }
 
 const std::string & ModFile::getType() const {

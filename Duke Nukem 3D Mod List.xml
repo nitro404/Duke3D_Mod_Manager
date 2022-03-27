@@ -4258,7 +4258,7 @@
 				<game type="Atomic Edition 1.4/1.5" state="Native">
 					<file name="VIXENS2.CON" type="con" shared="true" sha1="4890fa2fbeafbe23ecbb265b583dcc43d35fb588"/>
 					<file name="VIXENS23.GRP" type="grp" shared="true" sha1="fe9f6ebc97a8c43c2534971d863441a1f29593e5"/>
-					<file name="VIXENS24.GRP" type="grp" sha1="1c7f43702b1d853d3f9a59989d374aa05520d2e8"/>
+					<file name="VIXENS24.GRP" type="grp" sha1="e66c10cfc9cddef2fbb7a48254abb49322b6d24e"/>
 				</game>
 			</version>
 		</files>

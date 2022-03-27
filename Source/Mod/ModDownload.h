@@ -9,6 +9,7 @@
 #include <string>
 
 class Mod;
+class ModVersion;
 
 namespace tinyxml2 {
 	class XMLDocument;
@@ -37,6 +38,7 @@ public:
 	bool isModManagerFiles() const;
 	const std::string & getSubfolder() const;
 	const std::string & getSHA1() const;
+	bool isEDuke32() const;
 	bool isConverted() const;
 	std::optional<bool> getConverted() const;
 	bool isCorrupted() const;
@@ -44,6 +46,7 @@ public:
 	bool isRepaired() const;
 	std::optional<bool> getRepaired() const;
 	const Mod * getParentMod() const;
+	std::shared_ptr<ModVersion> getModVersion() const;
 
 	void setFileName(const std::string & fileName);
 	void setPartNumber(uint8_t partNumber);

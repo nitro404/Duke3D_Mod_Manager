@@ -29,6 +29,7 @@ public:
 	~ModFile();
 
 	const std::string & getFileName() const;
+	std::string_view getFileExtension() const;
 	const std::string & getType() const;
 	const std::string & getSHA1() const;
 	bool isShared() const;

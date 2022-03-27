@@ -1,6 +1,8 @@
 Build/*
 Misc/*
 Mods/*
+Downloads/*
+Test/*
 .vs
 Version.h
 CDROM.INI

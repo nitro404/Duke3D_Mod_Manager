@@ -658,7 +658,7 @@ std::shared_ptr<ModDownload> Mod::getDownloadByType(const std::string & type) co
 	return nullptr;
 }
 
-std::optional<std::string> Mod::getFileNameByType(const std::string & type) const {
+std::optional<std::string> Mod::getDownloadFileNameByType(const std::string & type) const {
 	if(type.empty()) {
 		return {};
 	}
@@ -670,6 +670,46 @@ std::optional<std::string> Mod::getFileNameByType(const std::string & type) cons
 	}
 
 	return {};
+}
+
+std::shared_ptr<ModDownload> Mod::getDownloadForGameVersion(const ModGameVersion * modGameVersion) const {
+	if(!ModGameVersion::isValid(modGameVersion) || modGameVersion->getParentMod() != this) {
+		return nullptr;
+	}
+
+	const ModVersion * modVersion = modGameVersion->getParentModVersion();
+
+	if(modVersion == nullptr) {
+		return nullptr;
+	}
+
+	std::shared_ptr<ModDownload> modDownload;
+
+	for(std::vector<std::shared_ptr<ModDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
+		modDownload = *i;
+
+		if(modDownload->isModManagerFiles() &&
+		   Utilities::compareStringsIgnoreCase(modDownload->getVersion(), modVersion->getVersion()) == 0 &&
+		   Utilities::compareStringsIgnoreCase(modDownload->getGameVersion(), modGameVersion->getGameVersion()) == 0) {
+			return modDownload;
+		}
+	}
+
+	return nullptr;
+}
+
+std::shared_ptr<ModVersion> Mod::getModVersionForDownload(const ModDownload * modDownload) const {
+	if(!ModDownload::isValid(modDownload) || modDownload->getParentMod() != this) {
+		return nullptr;
+	}
+
+	std::shared_ptr<ModVersion> modVersion(getVersion(modDownload->getVersion()));
+
+	if(modVersion == nullptr) {
+		return nullptr;
+	}
+
+	return modVersion;
 }
 
 const std::vector<std::shared_ptr<ModDownload>> & Mod::getDownloads() const {

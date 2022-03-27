@@ -2,6 +2,7 @@
 
 #include "Game/GameVersion.h"
 #include "Mod.h"
+#include "ModDownload.h"
 #include "ModFile.h"
 #include "ModVersion.h"
 #include "ModVersionType.h"
@@ -339,6 +340,16 @@ std::vector<std::string> ModGameVersion::getFileNamesOfType(const std::string & 
 
 const std::vector<std::shared_ptr<ModFile>> & ModGameVersion::getFiles() const {
 	return m_files;
+}
+
+std::shared_ptr<ModDownload> ModGameVersion::getDownload() const {
+	const Mod * mod = getParentMod();
+
+	if(mod == nullptr) {
+		return nullptr;
+	}
+
+	return mod->getDownloadForGameVersion(this);
 }
 
 bool ModGameVersion::addFile(const ModFile & file) {

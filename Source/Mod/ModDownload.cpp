@@ -1,6 +1,8 @@
 #include "ModDownload.h"
 
+#include "Game/GameVersion.h"
 #include "Mod.h"
+#include "ModVersion.h"
 
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
@@ -193,6 +195,10 @@ const std::string & ModDownload::getSHA1() const {
 	return m_sha1;
 }
 
+bool ModDownload::isEDuke32() const {
+	return Utilities::compareStringsIgnoreCase(m_gameVersion, GameVersion::EDUKE32.getName()) == 0;
+}
+
 bool ModDownload::isConverted() const {
 	return m_converted.has_value() ? m_converted.value() : false;
 }
@@ -219,6 +225,14 @@ std::optional<bool> ModDownload::getRepaired() const {
 
 const Mod * ModDownload::getParentMod() const {
 	return m_parentMod;
+}
+
+std::shared_ptr<ModVersion> ModDownload::getModVersion() const {
+	if(m_parentMod == nullptr) {
+		return nullptr;
+	}
+
+	return m_parentMod->getModVersionForDownload(this);
 }
 
 void ModDownload::setFileName(const std::string & fileName) {

@@ -11,6 +11,7 @@
 
 class GameVersion;
 class Mod;
+class ModDownload;
 class ModFile;
 class ModVersion;
 class ModVersionType;
@@ -56,6 +57,7 @@ public:
 	std::optional<std::string> getFirstFileNameOfType(const std::string & fileType) const;
 	std::vector<std::string> getFileNamesOfType(const std::string & fileType) const;
 	const std::vector<std::shared_ptr<ModFile>> & getFiles() const;
+	std::shared_ptr<ModDownload> getDownload() const;
 	bool addFile(const ModFile & file);
 	bool removeFile(size_t index);
 	bool removeFile(const ModFile & file);

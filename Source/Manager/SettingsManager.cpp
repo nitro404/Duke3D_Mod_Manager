@@ -16,9 +16,12 @@
 #include <optional>
 #include <string_view>
 
+using namespace std::chrono_literals;
+
 static constexpr const char * SYMLINK_NAME = "symlinkName";
 static constexpr const char * LIST_FILE_PATH = "listFilePath";
 static constexpr const char * DIRECTORY_PATH = "directoryPath";
+static constexpr const char * DATA_DIRECTORY_NAME = "dataDirectoryName";
 static constexpr const char * EXECUTABLE_FILE_NAME = "executableFileName";
 
 static constexpr const char * FILE_FORMAT_VERSION_PROPERTY_NAME = "version";
@@ -35,7 +38,7 @@ static constexpr const char * MODS_LIST_FILE_PATH_PROPERTY_NAME = LIST_FILE_PATH
 static constexpr const char * FAVOURITE_MODS_LIST_FILE_PATH_PROPERTY_NAME = "favouritesListFilePath";
 static constexpr const char * MODS_DIRECTORY_PATH_PROPERTY_NAME = DIRECTORY_PATH;
 static constexpr const char * MODS_SYMLINK_NAME_PROPERTY_NAME = SYMLINK_NAME;
-static constexpr const char * MOD_DOWNLOADS_DIRECTORY_PATH_PROPERTY_NAME = "downloadsDirectoryPath";
+static constexpr const char * MOD_PACKAGE_DOWNLOADS_DIRECTORY_PATH_PROPERTY_NAME = "packageDownloadsDirectoryPath";
 static constexpr const char * MOD_IMAGES_DIRECTORY_PATH_PROPERTY_NAME = "imagesDirectoryPath";
 static constexpr const char * MOD_SOURCE_FILES_DIRECTORY_PATH_PROPERTY_NAME = "sourceFilesDirectoryPath";
 
@@ -43,11 +46,18 @@ static constexpr const char * MAPS_CATEGORY_NAME = "maps";
 static constexpr const char * MAPS_DIRECTORY_PATH_PROPERTY_NAME = DIRECTORY_PATH;
 static constexpr const char * MAPS_SYMLINK_NAME_PROPERTY_NAME = SYMLINK_NAME;
 
+static constexpr const char * DOWNLOADS_CATEGORY_NAME = "downloads";
+static constexpr const char * DOWNLOADS_DIRECTORY_PATH_PROPERTY_NAME = DIRECTORY_PATH;
+static constexpr const char * DOWNLOAD_CACHE_FILE_NAME_PROPERTY_NAME = "cacheFileName";
+static constexpr const char * MOD_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "mods";
+static constexpr const char * MAP_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "maps";
+static constexpr const char * GAME_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "games";
+
 static constexpr const char * DOSBOX_CATEGORY_NAME = "dosbox";
 static constexpr const char * DOSBOX_DIRECTORY_PATH_PROPERTY_NAME = DIRECTORY_PATH;
 static constexpr const char * DOSBOX_EXECUTABLE_FILE_NAME_PROPERTY_NAME = EXECUTABLE_FILE_NAME;
 static constexpr const char * DOSBOX_ARGUMENTS_PROPERTY_NAME = "arguments";
-static constexpr const char * DOSBOX_DATA_DIRECTORY_NAME_PROPERTY_NAME = "dataDirectoryName";
+static constexpr const char * DOSBOX_DATA_DIRECTORY_NAME_PROPERTY_NAME = DATA_DIRECTORY_NAME;
 
 static constexpr const char * DOSBOX_SCRIPTS_CATEGORY_NAME = "scriptFileNames";
 static constexpr const char * DOSBOX_GAME_SCRIPT_FILE_NAME_PROPERTY_NAME = "game";
@@ -62,6 +72,20 @@ static constexpr const char * DOSBOX_NETWORKING_PORTS_CATEGORY_NAME = "ports";
 static constexpr const char * DOSBOX_LOCAL_SERVER_PORT_PROPERTY_NAME = "local";
 static constexpr const char * DOSBOX_REMOTE_SERVER_PORT_PROPERTY_NAME = "remote";
 
+static constexpr const char * CURL_CATEGORY_NAME = "curl";
+static constexpr const char * CURL_DATA_DIRECTORY_NAME_PROPERTY_NAME = DATA_DIRECTORY_NAME;
+static constexpr const char * CURL_CERTIFICATE_AUTHORITY_STORE_FILE_NAME_PROPERTY_NAME = "certificateAuthorityStoreFileName";
+static constexpr const char * CURL_CONNECTION_TIMEOUT_PROPERTY_NAME = "connectionTimeout";
+static constexpr const char * CURL_NETWORK_TIMEOUT_PROPERTY_NAME = "networkTimeout";
+
+static constexpr const char * API_CATEGORY_NAME = "api";
+static constexpr const char * API_BASE_URL_PROPERTY_NAME = "baseURL";
+static constexpr const char * REMOTE_MOD_LIST_FILE_NAME_PROPERTY_NAME = "remoteModListFileName";
+static constexpr const char * REMOTE_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "remoteDownloadsDirectoryName";
+static constexpr const char * REMOTE_MOD_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "remoteModDownloadsDirectoryName";
+static constexpr const char * REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "remoteMapDownloadsDirectoryName";
+static constexpr const char * REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "remoteGameDownloadsDirectoryName";
+
 const char * SettingsManager::FILE_FORMAT_VERSION = "1.0.0";
 const char * SettingsManager::DEFAULT_SETTINGS_FILE_PATH = "Duke Nukem 3D Mod Manager.json";
 const char * SettingsManager::DEFAULT_MODS_LIST_FILE_PATH = "Duke Nukem 3D Mod List.xml";
@@ -69,11 +93,16 @@ const char * SettingsManager::DEFAULT_FAVOURITE_MODS_LIST_FILE_PATH = "Duke Nuke
 const char * SettingsManager::DEFAULT_GAME_VERSIONS_LIST_FILE_PATH = "Duke Nukem 3D Game Versions.json";
 const char * SettingsManager::DEFAULT_MODS_DIRECTORY_PATH = "Mods";
 const char * SettingsManager::DEFAULT_MODS_SYMLINK_NAME = "Mods";
-const char * SettingsManager::DEFAULT_MOD_DOWNLOADS_DIRECTORY_PATH = "";
+const char * SettingsManager::DEFAULT_MOD_PACKAGE_DOWNLOADS_DIRECTORY_PATH = "";
 const char * SettingsManager::DEFAULT_MOD_IMAGES_DIRECTORY_PATH = "";
 const char * SettingsManager::DEFAULT_MOD_SOURCE_FILES_DIRECTORY_PATH = "";
 const char * SettingsManager::DEFAULT_MAPS_DIRECTORY_PATH = "";
 const char * SettingsManager::DEFAULT_MAPS_SYMLINK_NAME = "Maps";
+const char * SettingsManager::DEFAULT_DOWNLOADS_DIRECTORY_PATH = "Downloads";
+const char * SettingsManager::DEFAULT_DOWNLOAD_CACHE_FILE_NAME = "Cache.json";
+const char * SettingsManager::DEFAULT_MOD_DOWNLOADS_DIRECTORY_NAME = "Mods";
+const char * SettingsManager::DEFAULT_MAP_DOWNLOADS_DIRECTORY_NAME = "Maps";
+const char * SettingsManager::DEFAULT_GAME_DOWNLOADS_DIRECTORY_NAME = "Games";
 const char * SettingsManager::DEFAULT_DATA_DIRECTORY_PATH = "Data";
 const char * SettingsManager::DEFAULT_DOSBOX_EXECUTABLE_FILE_NAME = "dosbox.exe";
 const char * SettingsManager::DEFAULT_DOSBOX_DIRECTORY_PATH = "DOSBox";
@@ -88,7 +117,33 @@ const std::string SettingsManager::DEFAULT_PREFERRED_GAME_VERSION(ModManager::DE
 const char * SettingsManager::DEFAULT_DOSBOX_SERVER_IP_ADDRESS = "127.0.0.1";
 const uint16_t SettingsManager::DEFAULT_DOSBOX_LOCAL_SERVER_PORT = 31337;
 const uint16_t SettingsManager::DEFAULT_DOSBOX_REMOTE_SERVER_PORT = 31337;
+const std::string SettingsManager::DEFAULT_CURL_DATA_DIRECTORY_NAME = "cURL";
+const std::string SettingsManager::DEFAULT_CERTIFICATE_AUTHORITY_STORE_FILE_NAME = "cacert.pem";
+const std::chrono::seconds SettingsManager::DEFAULT_CONNECTION_TIMEOUT = 30s;
+const std::chrono::seconds SettingsManager::DEFAULT_NETWORK_TIMEOUT = 1min;
+const char * SettingsManager::DEFAULT_API_BASE_URL = "http://duke3dmods.com";
+const char * SettingsManager::DEFAULT_REMOTE_MODS_LIST_FILE_NAME = "duke3d_mods.xml";
+const char * SettingsManager::DEFAULT_REMOTE_DOWNLOADS_DIRECTORY_NAME = "downloads";
+const char * SettingsManager::DEFAULT_REMOTE_MOD_DOWNLOADS_DIRECTORY_NAME = "mods";
+const char * SettingsManager::DEFAULT_REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME = "maps";
+const char * SettingsManager::DEFAULT_REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME = "games";
 const bool SettingsManager::DEFAULT_VERBOSE = false;
+
+static bool assignStringSetting(std::string & setting, const rapidjson::Value & categoryValue, const std::string & propertyName) {
+	if(propertyName.empty() || !categoryValue.IsObject() || !categoryValue.HasMember(propertyName.c_str())) {
+		return false;
+	}
+
+	const rapidjson::Value & settingValue = categoryValue[propertyName.c_str()];
+
+	if(!settingValue.IsString()) {
+		return false;
+	}
+
+	setting = settingValue.GetString();
+
+	return true;
+}
 
 SettingsManager::SettingsManager()
 	: modsListFilePath(DEFAULT_MODS_LIST_FILE_PATH)
@@ -96,11 +151,16 @@ SettingsManager::SettingsManager()
 	, gameVersionsListFilePath(DEFAULT_GAME_VERSIONS_LIST_FILE_PATH)
 	, modsDirectoryPath(DEFAULT_MODS_DIRECTORY_PATH)
 	, modsSymlinkName(DEFAULT_MODS_SYMLINK_NAME)
-	, modDownloadsDirectoryPath(DEFAULT_MOD_DOWNLOADS_DIRECTORY_PATH)
+	, modPackageDownloadsDirectoryPath(DEFAULT_MOD_PACKAGE_DOWNLOADS_DIRECTORY_PATH)
 	, modImagesDirectoryPath(DEFAULT_MOD_IMAGES_DIRECTORY_PATH)
 	, modSourceFilesDirectoryPath(DEFAULT_MOD_SOURCE_FILES_DIRECTORY_PATH)
 	, mapsDirectoryPath(DEFAULT_MAPS_DIRECTORY_PATH)
 	, mapsSymlinkName(DEFAULT_MAPS_SYMLINK_NAME)
+	, downloadsDirectoryPath(DEFAULT_DOWNLOADS_DIRECTORY_PATH)
+	, downloadCacheFileName(DEFAULT_DOWNLOAD_CACHE_FILE_NAME)
+	, modDownloadsDirectoryName(DEFAULT_MOD_DOWNLOADS_DIRECTORY_NAME)
+	, mapDownloadsDirectoryName(DEFAULT_MAP_DOWNLOADS_DIRECTORY_NAME)
+	, gameDownloadsDirectoryName(DEFAULT_GAME_DOWNLOADS_DIRECTORY_NAME)
 	, dataDirectoryPath(DEFAULT_DATA_DIRECTORY_PATH)
 	, dosboxExecutableFileName(DEFAULT_DOSBOX_EXECUTABLE_FILE_NAME)
 	, dosboxDirectoryPath(DEFAULT_DOSBOX_DIRECTORY_PATH)
@@ -115,6 +175,16 @@ SettingsManager::SettingsManager()
 	, preferredGameVersion(DEFAULT_PREFERRED_GAME_VERSION)
 	, dosboxLocalServerPort(DEFAULT_DOSBOX_LOCAL_SERVER_PORT)
 	, dosboxRemoteServerPort(DEFAULT_DOSBOX_REMOTE_SERVER_PORT)
+	, curlDataDirectoryName(DEFAULT_CURL_DATA_DIRECTORY_NAME)
+	, certificateAuthorityStoreFileName(DEFAULT_CERTIFICATE_AUTHORITY_STORE_FILE_NAME)
+	, connectionTimeout(DEFAULT_CONNECTION_TIMEOUT)
+	, networkTimeout(DEFAULT_NETWORK_TIMEOUT)
+	, apiBaseURL(DEFAULT_API_BASE_URL)
+	, remoteModsListFileName(DEFAULT_REMOTE_MODS_LIST_FILE_NAME)
+	, remoteDownloadsDirectoryName(DEFAULT_REMOTE_DOWNLOADS_DIRECTORY_NAME)
+	, remoteModDownloadsDirectoryName(DEFAULT_REMOTE_MOD_DOWNLOADS_DIRECTORY_NAME)
+	, remoteMapDownloadsDirectoryName(DEFAULT_REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME)
+	, remoteGameDownloadsDirectoryName(DEFAULT_REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME)
 	, verbose(DEFAULT_VERBOSE) { }
 
 SettingsManager::SettingsManager(SettingsManager && s) noexcept
@@ -123,10 +193,15 @@ SettingsManager::SettingsManager(SettingsManager && s) noexcept
 	, gameVersionsListFilePath(std::move(s.gameVersionsListFilePath))
 	, modsDirectoryPath(std::move(s.modsDirectoryPath))
 	, modsSymlinkName(std::move(s.modsSymlinkName))
-	, modDownloadsDirectoryPath(std::move(s.modDownloadsDirectoryPath))
+	, modPackageDownloadsDirectoryPath(std::move(s.modPackageDownloadsDirectoryPath))
 	, modSourceFilesDirectoryPath(std::move(s.modSourceFilesDirectoryPath))
 	, mapsDirectoryPath(std::move(s.mapsDirectoryPath))
 	, mapsSymlinkName(std::move(s.mapsSymlinkName))
+	, downloadsDirectoryPath(std::move(s.downloadsDirectoryPath))
+	, downloadCacheFileName(std::move(s.downloadCacheFileName))
+	, modDownloadsDirectoryName(std::move(s.modDownloadsDirectoryName))
+	, mapDownloadsDirectoryName(std::move(s.mapDownloadsDirectoryName))
+	, gameDownloadsDirectoryName(std::move(s.gameDownloadsDirectoryName))
 	, dataDirectoryPath(std::move(s.dataDirectoryPath))
 	, dosboxExecutableFileName(std::move(s.dosboxExecutableFileName))
 	, dosboxDirectoryPath(std::move(s.dosboxDirectoryPath))
@@ -141,6 +216,16 @@ SettingsManager::SettingsManager(SettingsManager && s) noexcept
 	, preferredGameVersion(std::move(s.preferredGameVersion))
 	, dosboxLocalServerPort(s.dosboxLocalServerPort)
 	, dosboxRemoteServerPort(s.dosboxRemoteServerPort)
+	, curlDataDirectoryName(std::move(s.curlDataDirectoryName))
+	, certificateAuthorityStoreFileName(std::move(s.certificateAuthorityStoreFileName))
+	, connectionTimeout(s.connectionTimeout)
+	, networkTimeout(s.networkTimeout)
+	, apiBaseURL(std::move(s.apiBaseURL))
+	, remoteModsListFileName(std::move(s.remoteModsListFileName))
+	, remoteDownloadsDirectoryName(std::move(s.remoteDownloadsDirectoryName))
+	, remoteModDownloadsDirectoryName(std::move(s.remoteModDownloadsDirectoryName))
+	, remoteMapDownloadsDirectoryName(std::move(s.remoteMapDownloadsDirectoryName))
+	, remoteGameDownloadsDirectoryName(std::move(s.remoteGameDownloadsDirectoryName))
 	, verbose(s.verbose) { }
 
 SettingsManager::SettingsManager(const SettingsManager & s)
@@ -149,10 +234,15 @@ SettingsManager::SettingsManager(const SettingsManager & s)
 	, gameVersionsListFilePath(s.gameVersionsListFilePath)
 	, modsDirectoryPath(s.modsDirectoryPath)
 	, modsSymlinkName(s.modsSymlinkName)
-	, modDownloadsDirectoryPath(s.modDownloadsDirectoryPath)
+	, modPackageDownloadsDirectoryPath(s.modPackageDownloadsDirectoryPath)
 	, modSourceFilesDirectoryPath(s.modSourceFilesDirectoryPath)
 	, mapsDirectoryPath(s.mapsDirectoryPath)
 	, mapsSymlinkName(s.mapsSymlinkName)
+	, downloadsDirectoryPath(s.downloadsDirectoryPath)
+	, downloadCacheFileName(s.downloadCacheFileName)
+	, modDownloadsDirectoryName(s.modDownloadsDirectoryName)
+	, mapDownloadsDirectoryName(s.mapDownloadsDirectoryName)
+	, gameDownloadsDirectoryName(s.gameDownloadsDirectoryName)
 	, dataDirectoryPath(s.dataDirectoryPath)
 	, dosboxExecutableFileName(s.dosboxExecutableFileName)
 	, dosboxDirectoryPath(s.dosboxDirectoryPath)
@@ -167,6 +257,16 @@ SettingsManager::SettingsManager(const SettingsManager & s)
 	, preferredGameVersion(s.preferredGameVersion)
 	, dosboxLocalServerPort(s.dosboxLocalServerPort)
 	, dosboxRemoteServerPort(s.dosboxRemoteServerPort)
+	, curlDataDirectoryName(s.curlDataDirectoryName)
+	, certificateAuthorityStoreFileName(s.certificateAuthorityStoreFileName)
+	, connectionTimeout(s.connectionTimeout)
+	, networkTimeout(s.networkTimeout)
+	, apiBaseURL(s.apiBaseURL)
+	, remoteModsListFileName(s.remoteModsListFileName)
+	, remoteDownloadsDirectoryName(s.remoteDownloadsDirectoryName)
+	, remoteModDownloadsDirectoryName(s.remoteModDownloadsDirectoryName)
+	, remoteMapDownloadsDirectoryName(s.remoteMapDownloadsDirectoryName)
+	, remoteGameDownloadsDirectoryName(s.remoteGameDownloadsDirectoryName)
 	, verbose(s.verbose) { }
 
 SettingsManager & SettingsManager::operator = (SettingsManager && s) noexcept {
@@ -176,11 +276,16 @@ SettingsManager & SettingsManager::operator = (SettingsManager && s) noexcept {
 		gameVersionsListFilePath = std::move(s.gameVersionsListFilePath);
 		modsDirectoryPath = std::move(s.modsDirectoryPath);
 		modsSymlinkName = std::move(s.modsSymlinkName);
-		modDownloadsDirectoryPath = std::move(s.modDownloadsDirectoryPath);
+		modPackageDownloadsDirectoryPath = std::move(s.modPackageDownloadsDirectoryPath);
 		modImagesDirectoryPath = std::move(s.modImagesDirectoryPath);
 		modSourceFilesDirectoryPath = std::move(s.modSourceFilesDirectoryPath);
 		mapsDirectoryPath = std::move(s.mapsDirectoryPath);
 		mapsSymlinkName = std::move(s.mapsSymlinkName);
+		downloadsDirectoryPath = std::move(s.downloadsDirectoryPath);
+		downloadCacheFileName = std::move(s.downloadCacheFileName);
+		modDownloadsDirectoryName = std::move(s.modDownloadsDirectoryName);
+		mapDownloadsDirectoryName = std::move(s.mapDownloadsDirectoryName);
+		gameDownloadsDirectoryName = std::move(s.gameDownloadsDirectoryName);
 		dataDirectoryPath = std::move(s.dataDirectoryPath);
 		dosboxExecutableFileName = std::move(s.dosboxExecutableFileName);
 		dosboxDirectoryPath = std::move(s.dosboxDirectoryPath);
@@ -195,6 +300,16 @@ SettingsManager & SettingsManager::operator = (SettingsManager && s) noexcept {
 		preferredGameVersion = std::move(s.preferredGameVersion);
 		dosboxLocalServerPort = s.dosboxLocalServerPort;
 		dosboxRemoteServerPort = s.dosboxRemoteServerPort;
+		curlDataDirectoryName = std::move(s.curlDataDirectoryName);
+		certificateAuthorityStoreFileName = std::move(s.certificateAuthorityStoreFileName);
+		connectionTimeout = s.connectionTimeout;
+		networkTimeout = s.networkTimeout;
+		apiBaseURL = std::move(s.apiBaseURL);
+		remoteModsListFileName = std::move(s.remoteModsListFileName);
+		remoteDownloadsDirectoryName = std::move(s.remoteDownloadsDirectoryName);
+		remoteModDownloadsDirectoryName = std::move(s.remoteModDownloadsDirectoryName);
+		remoteMapDownloadsDirectoryName = std::move(s.remoteMapDownloadsDirectoryName);
+		remoteGameDownloadsDirectoryName = std::move(s.remoteGameDownloadsDirectoryName);
 		verbose = s.verbose;
 	}
 
@@ -207,11 +322,16 @@ SettingsManager & SettingsManager::operator = (const SettingsManager & s) {
 	gameVersionsListFilePath = s.gameVersionsListFilePath;
 	modsDirectoryPath = s.modsDirectoryPath;
 	modsSymlinkName = s.modsSymlinkName;
-	modDownloadsDirectoryPath = s.modDownloadsDirectoryPath;
+	modPackageDownloadsDirectoryPath = s.modPackageDownloadsDirectoryPath;
 	modImagesDirectoryPath = s.modImagesDirectoryPath;
 	modSourceFilesDirectoryPath = s.modSourceFilesDirectoryPath;
 	mapsDirectoryPath = s.mapsDirectoryPath;
 	mapsSymlinkName = s.mapsSymlinkName;
+	downloadsDirectoryPath = s.downloadsDirectoryPath;
+	downloadCacheFileName = s.downloadCacheFileName;
+	modDownloadsDirectoryName = s.modDownloadsDirectoryName;
+	mapDownloadsDirectoryName = s.mapDownloadsDirectoryName;
+	gameDownloadsDirectoryName = s.gameDownloadsDirectoryName;
 	dataDirectoryPath = s.dataDirectoryPath;
 	dosboxExecutableFileName = s.dosboxExecutableFileName;
 	dosboxDirectoryPath = s.dosboxDirectoryPath;
@@ -226,6 +346,16 @@ SettingsManager & SettingsManager::operator = (const SettingsManager & s) {
 	preferredGameVersion = s.preferredGameVersion;
 	dosboxLocalServerPort = s.dosboxLocalServerPort;
 	dosboxRemoteServerPort = s.dosboxRemoteServerPort;
+	curlDataDirectoryName = s.curlDataDirectoryName;
+	certificateAuthorityStoreFileName = s.certificateAuthorityStoreFileName;
+	connectionTimeout = s.connectionTimeout;
+	networkTimeout = s.networkTimeout;
+	apiBaseURL = s.apiBaseURL;
+	remoteModsListFileName = s.remoteModsListFileName;
+	remoteDownloadsDirectoryName = s.remoteDownloadsDirectoryName;
+	remoteModDownloadsDirectoryName =s.remoteModDownloadsDirectoryName;
+	remoteMapDownloadsDirectoryName = s.remoteMapDownloadsDirectoryName;
+	remoteGameDownloadsDirectoryName = s.remoteGameDownloadsDirectoryName;
 	verbose = s.verbose;
 
 	return *this;
@@ -239,11 +369,16 @@ void SettingsManager::reset() {
 	gameVersionsListFilePath = DEFAULT_GAME_VERSIONS_LIST_FILE_PATH;
 	modsDirectoryPath = DEFAULT_MODS_DIRECTORY_PATH;
 	modsSymlinkName = DEFAULT_MODS_SYMLINK_NAME;
-	modDownloadsDirectoryPath = DEFAULT_MOD_DOWNLOADS_DIRECTORY_PATH;
+	modPackageDownloadsDirectoryPath = DEFAULT_MOD_PACKAGE_DOWNLOADS_DIRECTORY_PATH;
 	modImagesDirectoryPath = DEFAULT_MOD_IMAGES_DIRECTORY_PATH;
 	modSourceFilesDirectoryPath = DEFAULT_MOD_SOURCE_FILES_DIRECTORY_PATH;
 	mapsDirectoryPath = DEFAULT_MAPS_DIRECTORY_PATH;
 	mapsSymlinkName = DEFAULT_MAPS_SYMLINK_NAME;
+	downloadsDirectoryPath = DEFAULT_DOWNLOADS_DIRECTORY_PATH;
+	downloadCacheFileName = DEFAULT_DOWNLOAD_CACHE_FILE_NAME;
+	modDownloadsDirectoryName = DEFAULT_MOD_DOWNLOADS_DIRECTORY_NAME;
+	mapDownloadsDirectoryName = DEFAULT_MAP_DOWNLOADS_DIRECTORY_NAME;
+	gameDownloadsDirectoryName = DEFAULT_GAME_DOWNLOADS_DIRECTORY_NAME;
 	dataDirectoryPath = DEFAULT_DATA_DIRECTORY_PATH;
 	dosboxExecutableFileName = DEFAULT_DOSBOX_EXECUTABLE_FILE_NAME;
 	dosboxDirectoryPath = DEFAULT_DOSBOX_DIRECTORY_PATH;
@@ -258,6 +393,16 @@ void SettingsManager::reset() {
 	preferredGameVersion = DEFAULT_PREFERRED_GAME_VERSION;
 	dosboxLocalServerPort = DEFAULT_DOSBOX_LOCAL_SERVER_PORT;
 	dosboxRemoteServerPort = DEFAULT_DOSBOX_REMOTE_SERVER_PORT;
+	curlDataDirectoryName = DEFAULT_CURL_DATA_DIRECTORY_NAME;
+	certificateAuthorityStoreFileName = DEFAULT_CERTIFICATE_AUTHORITY_STORE_FILE_NAME;
+	connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
+	networkTimeout = DEFAULT_NETWORK_TIMEOUT;
+	apiBaseURL = DEFAULT_API_BASE_URL;
+	remoteModsListFileName = DEFAULT_REMOTE_MODS_LIST_FILE_NAME;
+	remoteDownloadsDirectoryName = DEFAULT_REMOTE_DOWNLOADS_DIRECTORY_NAME;
+	remoteModDownloadsDirectoryName = DEFAULT_REMOTE_MOD_DOWNLOADS_DIRECTORY_NAME;
+	remoteMapDownloadsDirectoryName = DEFAULT_REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME;
+	remoteGameDownloadsDirectoryName = DEFAULT_REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME;
 	verbose = DEFAULT_VERBOSE;
 }
 
@@ -293,9 +438,9 @@ rapidjson::Document SettingsManager::toJSON() const {
 	rapidjson::Value modsSymlinkNameValue(modsSymlinkName.c_str(), allocator);
 	modsCategoryValue.AddMember(rapidjson::StringRef(MODS_SYMLINK_NAME_PROPERTY_NAME), modsSymlinkNameValue, allocator);
 
-	if(!modDownloadsDirectoryPath.empty()) {
-		rapidjson::Value modDownloadsDirectoryPathValue(modDownloadsDirectoryPath.c_str(), allocator);
-		modsCategoryValue.AddMember(rapidjson::StringRef(MOD_DOWNLOADS_DIRECTORY_PATH_PROPERTY_NAME), modDownloadsDirectoryPathValue, allocator);
+	if(!modPackageDownloadsDirectoryPath.empty()) {
+		rapidjson::Value modPackageDownloadsDirectoryPathValue(modPackageDownloadsDirectoryPath.c_str(), allocator);
+		modsCategoryValue.AddMember(rapidjson::StringRef(MOD_PACKAGE_DOWNLOADS_DIRECTORY_PATH_PROPERTY_NAME), modPackageDownloadsDirectoryPathValue, allocator);
 	}
 
 	if(!modImagesDirectoryPath.empty()) {
@@ -318,6 +463,21 @@ rapidjson::Document SettingsManager::toJSON() const {
 	mapsCategoryValue.AddMember(rapidjson::StringRef(MAPS_SYMLINK_NAME_PROPERTY_NAME), mapsSymlinkNameValue, allocator);
 
 	settingsDocument.AddMember(rapidjson::StringRef(MAPS_CATEGORY_NAME), mapsCategoryValue, allocator);
+
+	rapidjson::Value downloadsCategoryValue(rapidjson::kObjectType);
+
+	rapidjson::Value downloadsDirectoryPathValue(downloadsDirectoryPath.c_str(), allocator);
+	downloadsCategoryValue.AddMember(rapidjson::StringRef(DOWNLOADS_DIRECTORY_PATH_PROPERTY_NAME), downloadsDirectoryPathValue, allocator);
+	rapidjson::Value downloadCacheFileNameValue(downloadCacheFileName.c_str(), allocator);
+	downloadsCategoryValue.AddMember(rapidjson::StringRef(DOWNLOAD_CACHE_FILE_NAME_PROPERTY_NAME), downloadCacheFileNameValue, allocator);
+	rapidjson::Value modDownloadsDirectoryNameValue(modDownloadsDirectoryName.c_str(), allocator);
+	downloadsCategoryValue.AddMember(rapidjson::StringRef(MOD_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME), modDownloadsDirectoryNameValue, allocator);
+	rapidjson::Value mapDownloadsDirectoryNameValue(mapDownloadsDirectoryName.c_str(), allocator);
+	downloadsCategoryValue.AddMember(rapidjson::StringRef(MAP_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME), mapDownloadsDirectoryNameValue, allocator);
+	rapidjson::Value gameDownloadsDirectoryNameValue(gameDownloadsDirectoryName.c_str(), allocator);
+	downloadsCategoryValue.AddMember(rapidjson::StringRef(GAME_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME), gameDownloadsDirectoryNameValue, allocator);
+
+	settingsDocument.AddMember(rapidjson::StringRef(DOWNLOADS_CATEGORY_NAME), downloadsCategoryValue, allocator);
 
 	rapidjson::Value dosboxCategoryValue(rapidjson::kObjectType);
 
@@ -359,6 +519,34 @@ rapidjson::Document SettingsManager::toJSON() const {
 
 	settingsDocument.AddMember(rapidjson::StringRef(DOSBOX_CATEGORY_NAME), dosboxCategoryValue, allocator);
 
+	rapidjson::Value curlCategoryValue(rapidjson::kObjectType);
+
+	rapidjson::Value curlDataDirectoryNameValue(curlDataDirectoryName.c_str(), allocator);
+	curlCategoryValue.AddMember(rapidjson::StringRef(CURL_DATA_DIRECTORY_NAME_PROPERTY_NAME), curlDataDirectoryNameValue, allocator);
+	rapidjson::Value curlCertificateAuthorityStoreFilePathValue(certificateAuthorityStoreFileName.c_str(), allocator);
+	curlCategoryValue.AddMember(rapidjson::StringRef(CURL_CERTIFICATE_AUTHORITY_STORE_FILE_NAME_PROPERTY_NAME), curlCertificateAuthorityStoreFilePathValue, allocator);
+	curlCategoryValue.AddMember(rapidjson::StringRef(CURL_CONNECTION_TIMEOUT_PROPERTY_NAME), rapidjson::Value(connectionTimeout.count()), allocator);
+	curlCategoryValue.AddMember(rapidjson::StringRef(CURL_NETWORK_TIMEOUT_PROPERTY_NAME), rapidjson::Value(networkTimeout.count()), allocator);
+
+	settingsDocument.AddMember(rapidjson::StringRef(CURL_CATEGORY_NAME), curlCategoryValue, allocator);
+
+	rapidjson::Value apiCategoryValue(rapidjson::kObjectType);
+
+	rapidjson::Value apiBaseURLValue(apiBaseURL.c_str(), allocator);
+	apiCategoryValue.AddMember(rapidjson::StringRef(API_BASE_URL_PROPERTY_NAME), apiBaseURLValue, allocator);
+	rapidjson::Value remoteModsListFileNameValue(remoteModsListFileName.c_str(), allocator);
+	apiCategoryValue.AddMember(rapidjson::StringRef(REMOTE_MOD_LIST_FILE_NAME_PROPERTY_NAME), remoteModsListFileNameValue, allocator);
+	rapidjson::Value remoteDownloadsDirectoryNameValue(remoteDownloadsDirectoryName.c_str(), allocator);
+	apiCategoryValue.AddMember(rapidjson::StringRef(REMOTE_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME), remoteDownloadsDirectoryNameValue, allocator);
+	rapidjson::Value remoteModDownloadsDirectoryNameValue(remoteModDownloadsDirectoryName.c_str(), allocator);
+	apiCategoryValue.AddMember(rapidjson::StringRef(REMOTE_MOD_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME), remoteModDownloadsDirectoryNameValue, allocator);
+	rapidjson::Value remoteMapDownloadsDirectoryNameValue(remoteMapDownloadsDirectoryName.c_str(), allocator);
+	apiCategoryValue.AddMember(rapidjson::StringRef(REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME), remoteMapDownloadsDirectoryNameValue, allocator);
+	rapidjson::Value remoteGameDownloadsDirectoryNameValue(remoteGameDownloadsDirectoryName.c_str(), allocator);
+	apiCategoryValue.AddMember(rapidjson::StringRef(REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME), remoteGameDownloadsDirectoryNameValue, allocator);
+
+	settingsDocument.AddMember(rapidjson::StringRef(API_CATEGORY_NAME), apiCategoryValue, allocator);
+
 	return settingsDocument;
 }
 
@@ -398,9 +586,7 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 		}
 	}
 
-	if(settingsDocument.HasMember(DATA_DIRECTORY_PATH_PROPERTY_NAME) && settingsDocument[DATA_DIRECTORY_PATH_PROPERTY_NAME].IsString()) {
-		dataDirectoryPath = settingsDocument[DATA_DIRECTORY_PATH_PROPERTY_NAME].GetString();
-	}
+	assignStringSetting(dataDirectoryPath, settingsDocument, DATA_DIRECTORY_PATH_PROPERTY_NAME);
 
 	if(settingsDocument.HasMember(VERBOSE_PROPERTY_NAME) && settingsDocument[VERBOSE_PROPERTY_NAME].IsBool()) {
 		verbose = settingsDocument[VERBOSE_PROPERTY_NAME].GetBool();
@@ -409,96 +595,54 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 	if(settingsDocument.HasMember(GAME_VERSIONS_CATEGORY_NAME) && settingsDocument[GAME_VERSIONS_CATEGORY_NAME].IsObject()) {
 		const rapidjson::Value & gameVersionsCategoryValue = settingsDocument[GAME_VERSIONS_CATEGORY_NAME];
 
-		if(gameVersionsCategoryValue.HasMember(GAME_VERSIONS_LIST_FILE_PATH_PROPERTY_NAME) && gameVersionsCategoryValue[GAME_VERSIONS_LIST_FILE_PATH_PROPERTY_NAME].IsString()) {
-			gameVersionsListFilePath = gameVersionsCategoryValue[GAME_VERSIONS_LIST_FILE_PATH_PROPERTY_NAME].GetString();
-		}
-
-		if(gameVersionsCategoryValue.HasMember(PREFERRED_GAME_VERSION_PROPERTY_NAME) && gameVersionsCategoryValue[PREFERRED_GAME_VERSION_PROPERTY_NAME].IsString()) {
-			preferredGameVersion = gameVersionsCategoryValue[PREFERRED_GAME_VERSION_PROPERTY_NAME].GetString();
-		}
+		assignStringSetting(gameVersionsListFilePath, gameVersionsCategoryValue, GAME_VERSIONS_LIST_FILE_PATH_PROPERTY_NAME);
+		assignStringSetting(preferredGameVersion, gameVersionsCategoryValue, PREFERRED_GAME_VERSION_PROPERTY_NAME);
 	}
 
 	if(settingsDocument.HasMember(MODS_CATEGORY_NAME) && settingsDocument[MODS_CATEGORY_NAME].IsObject()) {
 		const rapidjson::Value & modsCategoryValue = settingsDocument[MODS_CATEGORY_NAME];
 
-		if(modsCategoryValue.HasMember(MODS_LIST_FILE_PATH_PROPERTY_NAME) && modsCategoryValue[MODS_LIST_FILE_PATH_PROPERTY_NAME].IsString()) {
-			modsListFilePath = modsCategoryValue[MODS_LIST_FILE_PATH_PROPERTY_NAME].GetString();
-		}
-
-		if(modsCategoryValue.HasMember(FAVOURITE_MODS_LIST_FILE_PATH_PROPERTY_NAME) && modsCategoryValue[FAVOURITE_MODS_LIST_FILE_PATH_PROPERTY_NAME].IsString()) {
-			favouriteModsListFilePath = modsCategoryValue[FAVOURITE_MODS_LIST_FILE_PATH_PROPERTY_NAME].GetString();
-		}
-
-		if(modsCategoryValue.HasMember(MODS_DIRECTORY_PATH_PROPERTY_NAME) && modsCategoryValue[MODS_DIRECTORY_PATH_PROPERTY_NAME].IsString()) {
-			modsDirectoryPath = modsCategoryValue[MODS_DIRECTORY_PATH_PROPERTY_NAME].GetString();
-		}
-
-		if(modsCategoryValue.HasMember(MODS_SYMLINK_NAME_PROPERTY_NAME) && modsCategoryValue[MODS_SYMLINK_NAME_PROPERTY_NAME].IsString()) {
-			modsSymlinkName = modsCategoryValue[MODS_SYMLINK_NAME_PROPERTY_NAME].GetString();
-		}
-
-		if(modsCategoryValue.HasMember(MOD_DOWNLOADS_DIRECTORY_PATH_PROPERTY_NAME) && modsCategoryValue[MOD_DOWNLOADS_DIRECTORY_PATH_PROPERTY_NAME].IsString()) {
-			modDownloadsDirectoryPath = modsCategoryValue[MOD_DOWNLOADS_DIRECTORY_PATH_PROPERTY_NAME].GetString();
-		}
-
-		if(modsCategoryValue.HasMember(MOD_IMAGES_DIRECTORY_PATH_PROPERTY_NAME) && modsCategoryValue[MOD_IMAGES_DIRECTORY_PATH_PROPERTY_NAME].IsString()) {
-			modImagesDirectoryPath = modsCategoryValue[MOD_IMAGES_DIRECTORY_PATH_PROPERTY_NAME].GetString();
-		}
-
-		if(modsCategoryValue.HasMember(MOD_SOURCE_FILES_DIRECTORY_PATH_PROPERTY_NAME) && modsCategoryValue[MOD_SOURCE_FILES_DIRECTORY_PATH_PROPERTY_NAME].IsString()) {
-			modSourceFilesDirectoryPath = modsCategoryValue[MOD_SOURCE_FILES_DIRECTORY_PATH_PROPERTY_NAME].GetString();
-		}
+		assignStringSetting(modsListFilePath, modsCategoryValue, MODS_LIST_FILE_PATH_PROPERTY_NAME);
+		assignStringSetting(favouriteModsListFilePath, modsCategoryValue, FAVOURITE_MODS_LIST_FILE_PATH_PROPERTY_NAME);
+		assignStringSetting(modsDirectoryPath, modsCategoryValue, MODS_DIRECTORY_PATH_PROPERTY_NAME);
+		assignStringSetting(modsSymlinkName, modsCategoryValue, MODS_SYMLINK_NAME_PROPERTY_NAME);
+		assignStringSetting(modPackageDownloadsDirectoryPath, modsCategoryValue, MOD_PACKAGE_DOWNLOADS_DIRECTORY_PATH_PROPERTY_NAME);
+		assignStringSetting(modImagesDirectoryPath, modsCategoryValue, MOD_IMAGES_DIRECTORY_PATH_PROPERTY_NAME);
+		assignStringSetting(modSourceFilesDirectoryPath, modsCategoryValue, MOD_SOURCE_FILES_DIRECTORY_PATH_PROPERTY_NAME);
 	}
 
 	if(settingsDocument.HasMember(MAPS_CATEGORY_NAME) && settingsDocument[MAPS_CATEGORY_NAME].IsObject()) {
 		const rapidjson::Value & mapsCategoryValue = settingsDocument[MAPS_CATEGORY_NAME];
 
-		if(mapsCategoryValue.HasMember(MAPS_DIRECTORY_PATH_PROPERTY_NAME) && mapsCategoryValue[MAPS_DIRECTORY_PATH_PROPERTY_NAME].IsString()) {
-			mapsDirectoryPath = mapsCategoryValue[MAPS_DIRECTORY_PATH_PROPERTY_NAME].GetString();
-		}
+		assignStringSetting(mapsDirectoryPath, mapsCategoryValue, MAPS_DIRECTORY_PATH_PROPERTY_NAME);
+		assignStringSetting(mapsSymlinkName, mapsCategoryValue, MAPS_SYMLINK_NAME_PROPERTY_NAME);
+	}
 
-		if(mapsCategoryValue.HasMember(MAPS_SYMLINK_NAME_PROPERTY_NAME) && mapsCategoryValue[MAPS_SYMLINK_NAME_PROPERTY_NAME].IsString()) {
-			mapsSymlinkName = mapsCategoryValue[MAPS_SYMLINK_NAME_PROPERTY_NAME].GetString();
-		}
+	if(settingsDocument.HasMember(DOWNLOADS_CATEGORY_NAME) && settingsDocument[DOWNLOADS_CATEGORY_NAME].IsObject()) {
+		const rapidjson::Value & downloadsCategoryValue = settingsDocument[DOWNLOADS_CATEGORY_NAME];
+
+		assignStringSetting(downloadsDirectoryPath, downloadsCategoryValue, DOWNLOADS_DIRECTORY_PATH_PROPERTY_NAME);
+		assignStringSetting(downloadCacheFileName, downloadsCategoryValue, DOWNLOAD_CACHE_FILE_NAME_PROPERTY_NAME);
+		assignStringSetting(modDownloadsDirectoryName, downloadsCategoryValue, MOD_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
+		assignStringSetting(mapDownloadsDirectoryName, downloadsCategoryValue, MAP_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
+		assignStringSetting(gameDownloadsDirectoryName, downloadsCategoryValue, GAME_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
 	}
 
 	if(settingsDocument.HasMember(DOSBOX_CATEGORY_NAME) && settingsDocument[DOSBOX_CATEGORY_NAME].IsObject()) {
 		const rapidjson::Value & dosboxCategoryValue = settingsDocument[DOSBOX_CATEGORY_NAME];
 
-		if(dosboxCategoryValue.HasMember(DOSBOX_DIRECTORY_PATH_PROPERTY_NAME) && dosboxCategoryValue[DOSBOX_DIRECTORY_PATH_PROPERTY_NAME].IsString()) {
-			dosboxDirectoryPath = dosboxCategoryValue[DOSBOX_DIRECTORY_PATH_PROPERTY_NAME].GetString();
-		}
-
-		if(dosboxCategoryValue.HasMember(DOSBOX_EXECUTABLE_FILE_NAME_PROPERTY_NAME) && dosboxCategoryValue[DOSBOX_EXECUTABLE_FILE_NAME_PROPERTY_NAME].IsString()) {
-			dosboxExecutableFileName = dosboxCategoryValue[DOSBOX_EXECUTABLE_FILE_NAME_PROPERTY_NAME].GetString();
-		}
-
-		if(dosboxCategoryValue.HasMember(DOSBOX_ARGUMENTS_PROPERTY_NAME) && dosboxCategoryValue[DOSBOX_ARGUMENTS_PROPERTY_NAME].IsString()) {
-			dosboxArguments = dosboxCategoryValue[DOSBOX_ARGUMENTS_PROPERTY_NAME].GetString();
-		}
-
-		if(dosboxCategoryValue.HasMember(DOSBOX_DATA_DIRECTORY_NAME_PROPERTY_NAME) && dosboxCategoryValue[DOSBOX_DATA_DIRECTORY_NAME_PROPERTY_NAME].IsString()) {
-			dosboxDataDirectoryName = dosboxCategoryValue[DOSBOX_DATA_DIRECTORY_NAME_PROPERTY_NAME].GetString();
-		}
+		assignStringSetting(dosboxDirectoryPath, dosboxCategoryValue, DOSBOX_DIRECTORY_PATH_PROPERTY_NAME);
+		assignStringSetting(dosboxExecutableFileName, dosboxCategoryValue, DOSBOX_EXECUTABLE_FILE_NAME_PROPERTY_NAME);
+		assignStringSetting(dosboxArguments, dosboxCategoryValue, DOSBOX_ARGUMENTS_PROPERTY_NAME);
+		assignStringSetting(dosboxDataDirectoryName, dosboxCategoryValue, DOSBOX_DATA_DIRECTORY_NAME_PROPERTY_NAME);
 
 		if(dosboxCategoryValue.HasMember(DOSBOX_SCRIPTS_CATEGORY_NAME) && dosboxCategoryValue[DOSBOX_SCRIPTS_CATEGORY_NAME].IsObject()) {
 			const rapidjson::Value & dosboxScriptsCategoryValue = dosboxCategoryValue[DOSBOX_SCRIPTS_CATEGORY_NAME];
 
-			if(dosboxScriptsCategoryValue.HasMember(DOSBOX_GAME_SCRIPT_FILE_NAME_PROPERTY_NAME) && dosboxScriptsCategoryValue[DOSBOX_GAME_SCRIPT_FILE_NAME_PROPERTY_NAME].IsString()) {
-				dosboxGameScriptFileName = dosboxScriptsCategoryValue[DOSBOX_GAME_SCRIPT_FILE_NAME_PROPERTY_NAME].GetString();
-			}
-
-			if(dosboxScriptsCategoryValue.HasMember(DOSBOX_SETUP_SCRIPT_FILE_NAME_PROPERTY_NAME) && dosboxScriptsCategoryValue[DOSBOX_SETUP_SCRIPT_FILE_NAME_PROPERTY_NAME].IsString()) {
-				dosboxSetupScriptFileName = dosboxScriptsCategoryValue[DOSBOX_SETUP_SCRIPT_FILE_NAME_PROPERTY_NAME].GetString();
-			}
-
-			if(dosboxScriptsCategoryValue.HasMember(DOSBOX_CLIENT_SCRIPT_FILE_NAME_PROPERTY_NAME) && dosboxScriptsCategoryValue[DOSBOX_CLIENT_SCRIPT_FILE_NAME_PROPERTY_NAME].IsString()) {
-				dosboxClientScriptFileName = dosboxScriptsCategoryValue[DOSBOX_CLIENT_SCRIPT_FILE_NAME_PROPERTY_NAME].GetString();
-			}
-
-			if(dosboxScriptsCategoryValue.HasMember(DOSBOX_SERVER_SCRIPT_FILE_NAME_PROPERTY_NAME) && dosboxScriptsCategoryValue[DOSBOX_SERVER_SCRIPT_FILE_NAME_PROPERTY_NAME].IsString()) {
-				dosboxServerScriptFileName = dosboxScriptsCategoryValue[DOSBOX_SERVER_SCRIPT_FILE_NAME_PROPERTY_NAME].GetString();
-			}
+			assignStringSetting(dosboxGameScriptFileName, dosboxScriptsCategoryValue, DOSBOX_GAME_SCRIPT_FILE_NAME_PROPERTY_NAME);
+			assignStringSetting(dosboxSetupScriptFileName, dosboxScriptsCategoryValue, DOSBOX_SETUP_SCRIPT_FILE_NAME_PROPERTY_NAME);
+			assignStringSetting(dosboxClientScriptFileName, dosboxScriptsCategoryValue, DOSBOX_CLIENT_SCRIPT_FILE_NAME_PROPERTY_NAME);
+			assignStringSetting(dosboxServerScriptFileName, dosboxScriptsCategoryValue, DOSBOX_SERVER_SCRIPT_FILE_NAME_PROPERTY_NAME);
 		}
 
 		if(dosboxCategoryValue.HasMember(DOSBOX_NETWORKING_CATEGORY_NAME) && dosboxCategoryValue[DOSBOX_NETWORKING_CATEGORY_NAME].IsObject()) {
@@ -532,6 +676,32 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 				}
 			}
 		}
+	}
+
+	if(settingsDocument.HasMember(CURL_CATEGORY_NAME) && settingsDocument[CURL_CATEGORY_NAME].IsObject()) {
+		const rapidjson::Value & curlCategoryValue = settingsDocument[CURL_CATEGORY_NAME];
+
+		assignStringSetting(curlDataDirectoryName, curlCategoryValue, CURL_DATA_DIRECTORY_NAME_PROPERTY_NAME);
+		assignStringSetting(certificateAuthorityStoreFileName, curlCategoryValue, CURL_CERTIFICATE_AUTHORITY_STORE_FILE_NAME_PROPERTY_NAME);
+
+		if(curlCategoryValue.HasMember(CURL_CONNECTION_TIMEOUT_PROPERTY_NAME) && curlCategoryValue[CURL_CONNECTION_TIMEOUT_PROPERTY_NAME].IsUint64()) {
+			connectionTimeout = std::chrono::seconds(curlCategoryValue[CURL_CONNECTION_TIMEOUT_PROPERTY_NAME].GetUint64());
+		}
+
+		if(curlCategoryValue.HasMember(CURL_NETWORK_TIMEOUT_PROPERTY_NAME) && curlCategoryValue[CURL_NETWORK_TIMEOUT_PROPERTY_NAME].IsUint64()) {
+			networkTimeout = std::chrono::seconds(curlCategoryValue[CURL_NETWORK_TIMEOUT_PROPERTY_NAME].GetUint64());
+		}
+	}
+
+	if(settingsDocument.HasMember(API_CATEGORY_NAME) && settingsDocument[API_CATEGORY_NAME].IsObject()) {
+		const rapidjson::Value & apiCategoryValue = settingsDocument[API_CATEGORY_NAME];
+
+		assignStringSetting(apiBaseURL, apiCategoryValue, API_BASE_URL_PROPERTY_NAME);
+		assignStringSetting(remoteModsListFileName, apiCategoryValue, REMOTE_MOD_LIST_FILE_NAME_PROPERTY_NAME);
+		assignStringSetting(remoteDownloadsDirectoryName, apiCategoryValue, REMOTE_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
+		assignStringSetting(remoteModDownloadsDirectoryName, apiCategoryValue, REMOTE_MOD_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
+		assignStringSetting(remoteMapDownloadsDirectoryName, apiCategoryValue, REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
+		assignStringSetting(remoteGameDownloadsDirectoryName, apiCategoryValue, REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
 	}
 
 	return true;
@@ -579,27 +749,25 @@ bool SettingsManager::save(const ArgumentParser * arguments, bool overwrite) con
 
 bool SettingsManager::loadFrom(const std::string & filePath) {
 	if(filePath.empty() || !std::filesystem::is_regular_file(std::filesystem::path(filePath))) {
+		fmt::print("Failed to open missing or invalid settings file: '{}'!\n", filePath);
 		return false;
 	}
 
 	std::ifstream fileStream(filePath);
 
 	if(!fileStream.is_open()) {
+		fmt::print("Failed to open settings file '{}' for parsing!\n", filePath);
 		return false;
 	}
 
 	rapidjson::Document settings;
 	rapidjson::IStreamWrapper fileStreamWrapper(fileStream);
 	if(settings.ParseStream(fileStreamWrapper).HasParseError()) {
+		fmt::print("Failed to parse settings file JSON data!\n");
 		return false;
 	}
 
 	fileStream.close();
-
-	if(settings.IsNull()) {
-		fmt::print("Failed to parse settings file JSON data!\n");
-		return false;
-	}
 
 	if(!parseFrom(settings)) {
 		fmt::print("Failed to parse settings from file '{}!\n", filePath);

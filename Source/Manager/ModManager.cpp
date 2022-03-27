@@ -1,6 +1,7 @@
 #include "ModManager.h"
 
 #include "Arguments/ArgumentParser.h"
+#include "Download/DownloadManager.h"
 #include "Game/GameVersion.h"
 #include "Game/GameVersionCollection.h"
 #include "Group/Group.h"
@@ -22,6 +23,9 @@
 #include "SettingsManager.h"
 #include "Version.h"
 
+#include <Network/HTTPRequest.h>
+#include <Network/HTTPResponse.h>
+#include <Network/HTTPService.h>
 #include <Utilities/FileUtilities.h>
 #include <Utilities/NumberUtilities.h>
 #include <Utilities/StringUtilities.h>
@@ -42,11 +46,14 @@
 
 const GameType ModManager::DEFAULT_GAME_TYPE = GameType::Game;
 const std::string ModManager::DEFAULT_PREFERRED_GAME_VERSION(GameVersion::ATOMIC_EDITION.getName());
+const std::string ModManager::HTTP_USER_AGENT("DukeNukem3DModManager/" + VERSION);
 
 ModManager::ModManager()
 	: m_initialized(false)
 	, m_verbose(false)
+	, m_localMode(false)
 	, m_settings(std::make_unique<SettingsManager>())
+	, m_httpService(std::make_unique<HTTPService>())
 	, m_gameType(ModManager::DEFAULT_GAME_TYPE)
 	, m_selectedModVersionIndex(0)
 	, m_selectedModVersionTypeIndex(0)
@@ -86,12 +93,37 @@ bool ModManager::initialize(const ArgumentParser * args, bool start) {
 		if(m_arguments->hasArgument("verbose")) {
 			m_verbose = true;
 		}
+
+		if(m_arguments->hasArgument("local")) {
+			m_localMode = true;
+		}
 	}
 
 	m_settings->load(m_arguments.get());
 
 	if(m_settings->verbose) {
 		m_verbose = true;
+	}
+
+	HTTPConfiguration configuration = {
+		Utilities::joinPaths(m_settings->dataDirectoryPath, m_settings->curlDataDirectoryName, m_settings->certificateAuthorityStoreFileName),
+		m_settings->apiBaseURL,
+		m_settings->connectionTimeout,
+		m_settings->networkTimeout
+	};
+
+	if(!m_httpService->initialize(configuration)) {
+		fmt::print("Failed to initialize HTTP service!\n");
+		return false;
+	}
+
+	if(!m_localMode) {
+		m_downloadManager = std::make_unique<DownloadManager>(m_httpService, m_settings);
+
+		if(!m_downloadManager->initialize()) {
+			fmt::print("Failed to initialize download manager!\n");
+			return false;
+		}
 	}
 
 	m_gameType = m_settings->gameType;
@@ -122,8 +154,8 @@ bool ModManager::initialize(const ArgumentParser * args, bool start) {
 		fmt::print("Game configuration for game version '{}' is missing, changing preferred game version to '{}.\n", m_settings->preferredGameVersion, m_preferredGameVersion->getName());
 	}
 
-	if(!m_mods->loadFrom(m_settings->modsListFilePath)) {
-		fmt::print("Failed to load mod list '{}'!\n", m_settings->modsListFilePath);
+	if(!m_mods->loadFrom(getModsListFilePath())) {
+		fmt::print("Failed to load mod list '{}'!\n", getModsListFilePath());
 		return false;
 	}
 
@@ -137,7 +169,7 @@ bool ModManager::initialize(const ArgumentParser * args, bool start) {
 		return false;
 	}
 
-	fmt::print("Loaded {} mod{} from '{}'.\n", m_mods->numberOfMods(), m_mods->numberOfMods() == 1 ? "" : "s", m_settings->modsListFilePath);
+	fmt::print("Loaded {} mod{} from '{}'.\n", m_mods->numberOfMods(), m_mods->numberOfMods() == 1 ? "" : "s", getModsListFilePath());
 
 	m_favouriteMods->loadFrom(m_settings->favouriteModsListFilePath);
 	m_favouriteMods->checkForMissingFavouriteMods(*m_mods.get());
@@ -152,9 +184,11 @@ bool ModManager::initialize(const ArgumentParser * args, bool start) {
 
 	checkForMissingExecutables();
 
-	checkAllModsForMissingFiles();
+	if(m_localMode) {
+		checkAllModsForMissingFiles();
 
-	checkForUnlinkedModFiles();
+		checkForUnlinkedModFiles();
+	}
 
 	if(!handleArguments(m_arguments.get(), start)) {
 		return false;
@@ -195,12 +229,68 @@ void ModManager::run() {
 	m_cli->runMenu();
 }
 
+bool ModManager::isUsingLocalMode() const {
+	return m_localMode;
+}
+
 std::shared_ptr<SettingsManager> ModManager::getSettings() const {
 	return m_settings;
 }
 
+std::shared_ptr<HTTPService> ModManager::getHTTPService() const {
+	return m_httpService;
+}
+
 std::shared_ptr<OrganizedModCollection> ModManager::getOrganizedMods() const {
 	return m_organizedMods;
+}
+
+std::string ModManager::getModsListFilePath() const {
+	if(m_localMode) {
+		if(m_settings == nullptr) {
+			return Utilities::emptyString;
+		}
+
+		return m_settings->modsListFilePath;
+	}
+
+	if(m_downloadManager == nullptr) {
+		return Utilities::emptyString;
+	}
+
+	return m_downloadManager->getCachedModListFilePath();
+}
+
+std::string ModManager::getModsDirectoryPath() const {
+	if(m_settings == nullptr) {
+		return Utilities::emptyString;
+	}
+
+	if(m_localMode) {
+		return m_settings->modsDirectoryPath;
+	}
+
+	if(m_downloadManager == nullptr) {
+		return Utilities::emptyString;
+	}
+
+	return m_downloadManager->getDownloadedModsDirectoryPath();
+}
+
+std::string ModManager::getMapsDirectoryPath() const {
+	if(m_settings == nullptr) {
+		return Utilities::emptyString;
+	}
+
+	if(m_localMode) {
+		return m_settings->mapsDirectoryPath;
+	}
+
+	if(m_downloadManager == nullptr) {
+		return Utilities::emptyString;
+	}
+
+	return m_downloadManager->getDownloadedMapsDirectoryPath();
 }
 
 GameType ModManager::getGameType() const {
@@ -770,6 +860,15 @@ bool ModManager::runSelectedMod() {
 		}
 	}
 
+	if(!m_localMode && selectedModGameVersion != nullptr) {
+		if(!m_downloadManager->downloadModGameVersion(selectedModGameVersion.get(), m_gameVersions.get())) {
+			fmt::print("Aborting launch of '{}' mod!\n", selectedModGameVersion->getFullName());
+			return false;
+		}
+
+		fmt::print("\n");
+	}
+
 	ScriptArguments scriptArgs;
 
 	if(m_arguments != nullptr && m_arguments->hasPassthroughArguments()) {
@@ -830,6 +929,7 @@ bool ModManager::runSelectedMod() {
 
 	if(!selectedGameVersion->doesRequiresDOSBox() && (m_gameType == GameType::Client || m_gameType == GameType::Server)) {
 		fmt::print("Network settings are only supported when running in DOSBox, ignoring {} game type setting.\n\n", Utilities::toCapitalCase(std::string(magic_enum::enum_name(m_gameType))));
+		fmt::print("\n");
 	}
 
 	bool customMod = false;
@@ -858,7 +958,7 @@ bool ModManager::runSelectedMod() {
 		std::vector<std::shared_ptr<ModFile>> modFiles(selectedModGameVersion->getFilesOfType("grp"));
 
 		for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = modFiles.begin(); i != modFiles.end(); ++i) {
-			std::unique_ptr<Group> group(std::make_unique<Group>(Utilities::joinPaths(m_settings->modsDirectoryPath, m_gameVersions->getGameVersion(selectedModGameVersion->getGameVersion())->getModDirectoryName(), (*i)->getFileName())));
+			std::unique_ptr<Group> group(std::make_unique<Group>(Utilities::joinPaths(getModsDirectoryPath(), m_gameVersions->getGameVersion(selectedModGameVersion->getGameVersion())->getModDirectoryName(), (*i)->getFileName())));
 
 			if(group->load()) {
 				size_t numberOfDemosExtracted = group->extractAllFilesWithExtension("DMO", selectedGameVersion->getGamePath());
@@ -1091,12 +1191,14 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 					command << userMap;
 				}
 				else {
-					if(m_settings->mapsDirectoryPath.empty()) {
+					std::string mapsDirectoryPath(getMapsDirectoryPath());
+
+					if(mapsDirectoryPath.empty()) {
 						fmt::print("Maps directory path is empty.\n");
 						return {};
 					}
 
-					if(std::filesystem::is_regular_file(std::filesystem::path(Utilities::joinPaths(m_settings->mapsDirectoryPath, userMap)))) {
+					if(std::filesystem::is_regular_file(std::filesystem::path(Utilities::joinPaths(mapsDirectoryPath, userMap)))) {
 						command << Utilities::joinPaths(m_settings->mapsSymlinkName, userMap);
 					}
 					else {
@@ -1383,7 +1485,7 @@ size_t ModManager::checkForUnlinkedModFilesForGameVersion(const GameVersion & ga
 					fileName = modFile->getFileName();
 
 					if(linkedModFiles.find(fileName) != linkedModFiles.end() && linkedModFiles[fileName].size() != 0) {
-						if(modGameVersion->isEDuke32() && modFile->getType() != "zip") {
+						if(modGameVersion->isEDuke32() && modFile->getType() != "zip" && modFile->getType() != "grp") {
 							continue;
 						}
 					}
@@ -1513,7 +1615,7 @@ size_t ModManager::checkModForMissingFiles(const Mod & mod, std::optional<size_t
 
 					if(!std::filesystem::is_regular_file(std::filesystem::path(modFilePath))) {
 						// skip eDuke 32 mod files which are contained within the main zip file
-						if(modGameVersion->isEDuke32() && modFile->getType() != "zip") {
+						if(modGameVersion->isEDuke32() && modFile->getType() != "zip" && modFile->getType() != "grp") {
 							continue;
 						}
 
@@ -1568,8 +1670,8 @@ size_t ModManager::updateAllFileHashes(bool save, bool skipHashedFiles) {
 		return 0;
 	}
 
-	if(m_settings->modDownloadsDirectoryPath.empty()) {
-		fmt::print("Mod downloads directory path not set, cannot hash some download files!\n");
+	if(m_settings->modPackageDownloadsDirectoryPath.empty()) {
+		fmt::print("Mod package downloads directory path not set, cannot hash some download files!\n");
 	}
 
 	if(m_settings->modSourceFilesDirectoryPath.empty()) {
@@ -1651,7 +1753,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 		}
 
 		if(modDownload->isModManagerFiles()) {
-			if(m_settings->modDownloadsDirectoryPath.empty()) {
+			if(m_settings->modPackageDownloadsDirectoryPath.empty()) {
 				continue;
 			}
 
@@ -1662,7 +1764,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 				continue;
 			}
 
-			downloadFilePath = Utilities::joinPaths(m_settings->modDownloadsDirectoryPath, Utilities::toLowerCase(gameVersion->getModDirectoryName()), modDownload->getFileName());
+			downloadFilePath = Utilities::joinPaths(m_settings->modPackageDownloadsDirectoryPath, Utilities::toLowerCase(gameVersion->getModDirectoryName()), modDownload->getFileName());
 		}
 		else {
 			if(m_settings->modSourceFilesDirectoryPath.empty()) {
@@ -1940,6 +2042,7 @@ void ModManager::displayArgumentHelp() {
 	fmt::print(" -s \"Full Mod Name\" - searches for and selects the mod with a full or partially matching name, and optional version / type.\n");
 	fmt::print(" -r - randomly selects a mod to run.\n");
 	fmt::print(" -n - runs normal Duke Nukem 3D without any mods.\n");
+	fmt::print(" --local - runs the mod manager in local mode.\n");
 	fmt::print(" -- <args> - specify arguments to pass through to the target game executable when executing.\n");
 	fmt::print(" --hash-new - updates unhashed SHA1 file hashes (developer use only!).\n");
 	fmt::print(" --hash-all - updates all SHA1 file hashes (developer use only!).\n");
@@ -2036,10 +2139,12 @@ bool ModManager::createSymlinks(const GameVersion & gameVersion, bool verbose) {
 
 	bool result = true;
 
-	result &= createSymlink(m_settings->modsDirectoryPath, m_settings->modsSymlinkName, gameVersion.getGamePath(), verbose);
+	result &= createSymlink(getModsDirectoryPath(), m_settings->modsSymlinkName, gameVersion.getGamePath(), verbose);
 
-	if(!m_settings->mapsDirectoryPath.empty()) {
-		result &= createSymlink(m_settings->mapsDirectoryPath, m_settings->mapsSymlinkName, gameVersion.getGamePath(), verbose);
+	std::string mapsDirectoryPath(getMapsDirectoryPath());
+
+	if(!mapsDirectoryPath.empty()) {
+		result &= createSymlink(mapsDirectoryPath, m_settings->mapsSymlinkName, gameVersion.getGamePath(), verbose);
 	}
 
 	return result;
@@ -2054,7 +2159,9 @@ bool ModManager::removeSymlinks(const GameVersion & gameVersion, bool verbose) {
 
 	result &= removeSymlink(m_settings->modsSymlinkName, gameVersion.getGamePath(), verbose);
 
-	if(!m_settings->mapsDirectoryPath.empty()) {
+	std::string mapsDirectoryPath(getMapsDirectoryPath());
+
+	if(!mapsDirectoryPath.empty()) {
 		result &= removeSymlink(m_settings->mapsSymlinkName, gameVersion.getGamePath(), verbose);
 	}
 

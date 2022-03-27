@@ -12,9 +12,11 @@
 #include <vector>
 
 class ArgumentParser;
+class DownloadManager;
 class FavouriteModCollection;
 class GameVersion;
 class GameVersionCollection;
+class HTTPService;
 class Mod;
 class ModAuthorInformation;
 class ModCollection;
@@ -37,8 +39,13 @@ public:
 
 	void run();
 
+	bool isUsingLocalMode() const;
 	std::shared_ptr<SettingsManager> getSettings() const;
+	std::shared_ptr<HTTPService> getHTTPService() const;
 	std::shared_ptr<OrganizedModCollection> getOrganizedMods() const;
+	std::string getModsListFilePath() const;
+	std::string getModsDirectoryPath() const;
+	std::string getMapsDirectoryPath() const;
 
 	GameType getGameType() const;
 	bool setGameType(const std::string & gameType);
@@ -78,6 +85,7 @@ public:
 
 	static const GameType DEFAULT_GAME_TYPE;
 	static const std::string DEFAULT_PREFERRED_GAME_VERSION;
+	static const std::string HTTP_USER_AGENT;
 
 private:
 	class CLI {
@@ -133,8 +141,11 @@ private:
 
 	bool m_initialized;
 	bool m_verbose;
+	bool m_localMode;
 	std::shared_ptr<ArgumentParser> m_arguments;
 	std::shared_ptr<SettingsManager> m_settings;
+	std::shared_ptr<HTTPService> m_httpService;
+	std::unique_ptr<DownloadManager> m_downloadManager;
 	GameType m_gameType;
 	std::shared_ptr<GameVersion> m_preferredGameVersion;
 	std::shared_ptr<Mod> m_selectedMod;
@@ -145,6 +156,11 @@ private:
 	std::shared_ptr<FavouriteModCollection> m_favouriteMods;
 	std::shared_ptr<OrganizedModCollection> m_organizedMods;
 	std::unique_ptr<CLI> m_cli;
+
+	ModManager(const ModManager &) = delete;
+	ModManager(ModManager &&) noexcept = delete;
+	const ModManager & operator = (const ModManager &) = delete;
+	const ModManager & operator = (ModManager &&) noexcept = delete;
 };
 
 #endif // _MOD_MANAGER_H_
