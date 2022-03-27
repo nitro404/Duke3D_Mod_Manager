@@ -1,9 +1,10 @@
 #include "SettingsManager.h"
 
-#include "Arguments/ArgumentParser.h"
 #include "Game/GameVersion.h"
 #include "ModManager.h"
-#include "Utilities/StringUtilities.h"
+
+#include <Arguments/ArgumentParser.h>
+#include <Utilities/StringUtilities.h>
 
 #include <fmt/core.h>
 #include <magic_enum.hpp>

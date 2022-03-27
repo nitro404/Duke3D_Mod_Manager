@@ -1,7 +1,7 @@
 #ifndef _SCRIPT_ARGUMENTS_H_
 #define _SCRIPT_ARGUMENTS_H_
 
-#include "Arguments/ArgumentCollection.h"
+#include <Arguments/ArgumentCollection.h>
 
 #include <map>
 #include <regex>

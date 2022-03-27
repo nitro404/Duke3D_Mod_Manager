@@ -1,6 +1,5 @@
 #include "ModManager.h"
 
-#include "Arguments/ArgumentParser.h"
 #include "Download/DownloadManager.h"
 #include "Game/GameVersion.h"
 #include "Game/GameVersionCollection.h"
@@ -23,6 +22,7 @@
 #include "SettingsManager.h"
 #include "Version.h"
 
+#include <Arguments/ArgumentParser.h>
 #include <Network/HTTPRequest.h>
 #include <Network/HTTPResponse.h>
 #include <Network/HTTPService.h>
