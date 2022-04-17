@@ -73,6 +73,9 @@ static constexpr const char * DOSBOX_NETWORKING_PORTS_CATEGORY_NAME = "ports";
 static constexpr const char * DOSBOX_LOCAL_SERVER_PORT_PROPERTY_NAME = "local";
 static constexpr const char * DOSBOX_REMOTE_SERVER_PORT_PROPERTY_NAME = "remote";
 
+static constexpr const char * TIME_ZONE_CATEGORY_NAME = "timeZone";
+static constexpr const char * TIME_ZONE_DATA_DIRECTORY_NAME_PROPERTY_NAME = DATA_DIRECTORY_NAME;
+
 static constexpr const char * CURL_CATEGORY_NAME = "curl";
 static constexpr const char * CURL_DATA_DIRECTORY_NAME_PROPERTY_NAME = DATA_DIRECTORY_NAME;
 static constexpr const char * CURL_CERTIFICATE_AUTHORITY_STORE_FILE_NAME_PROPERTY_NAME = "certificateAuthorityStoreFileName";
@@ -118,6 +121,7 @@ const std::string SettingsManager::DEFAULT_PREFERRED_GAME_VERSION(ModManager::DE
 const char * SettingsManager::DEFAULT_DOSBOX_SERVER_IP_ADDRESS = "127.0.0.1";
 const uint16_t SettingsManager::DEFAULT_DOSBOX_LOCAL_SERVER_PORT = 31337;
 const uint16_t SettingsManager::DEFAULT_DOSBOX_REMOTE_SERVER_PORT = 31337;
+const char * SettingsManager::DEFAULT_TIME_ZONE_DATA_DIRECTORY_NAME = "Time Zone";
 const char * SettingsManager::DEFAULT_CURL_DATA_DIRECTORY_NAME = "cURL";
 const char * SettingsManager::DEFAULT_CERTIFICATE_AUTHORITY_STORE_FILE_NAME = "cacert.pem";
 const std::chrono::seconds SettingsManager::DEFAULT_CONNECTION_TIMEOUT = 30s;
@@ -176,6 +180,7 @@ SettingsManager::SettingsManager()
 	, preferredGameVersion(DEFAULT_PREFERRED_GAME_VERSION)
 	, dosboxLocalServerPort(DEFAULT_DOSBOX_LOCAL_SERVER_PORT)
 	, dosboxRemoteServerPort(DEFAULT_DOSBOX_REMOTE_SERVER_PORT)
+	, timeZoneDataDirectoryName(DEFAULT_TIME_ZONE_DATA_DIRECTORY_NAME)
 	, curlDataDirectoryName(DEFAULT_CURL_DATA_DIRECTORY_NAME)
 	, certificateAuthorityStoreFileName(DEFAULT_CERTIFICATE_AUTHORITY_STORE_FILE_NAME)
 	, connectionTimeout(DEFAULT_CONNECTION_TIMEOUT)
@@ -217,6 +222,7 @@ SettingsManager::SettingsManager(SettingsManager && s) noexcept
 	, preferredGameVersion(std::move(s.preferredGameVersion))
 	, dosboxLocalServerPort(s.dosboxLocalServerPort)
 	, dosboxRemoteServerPort(s.dosboxRemoteServerPort)
+	, timeZoneDataDirectoryName(std::move(s.timeZoneDataDirectoryName))
 	, curlDataDirectoryName(std::move(s.curlDataDirectoryName))
 	, certificateAuthorityStoreFileName(std::move(s.certificateAuthorityStoreFileName))
 	, connectionTimeout(s.connectionTimeout)
@@ -258,6 +264,7 @@ SettingsManager::SettingsManager(const SettingsManager & s)
 	, preferredGameVersion(s.preferredGameVersion)
 	, dosboxLocalServerPort(s.dosboxLocalServerPort)
 	, dosboxRemoteServerPort(s.dosboxRemoteServerPort)
+	, timeZoneDataDirectoryName(s.timeZoneDataDirectoryName)
 	, curlDataDirectoryName(s.curlDataDirectoryName)
 	, certificateAuthorityStoreFileName(s.certificateAuthorityStoreFileName)
 	, connectionTimeout(s.connectionTimeout)
@@ -301,6 +308,7 @@ SettingsManager & SettingsManager::operator = (SettingsManager && s) noexcept {
 		preferredGameVersion = std::move(s.preferredGameVersion);
 		dosboxLocalServerPort = s.dosboxLocalServerPort;
 		dosboxRemoteServerPort = s.dosboxRemoteServerPort;
+		timeZoneDataDirectoryName = std::move(s.timeZoneDataDirectoryName);
 		curlDataDirectoryName = std::move(s.curlDataDirectoryName);
 		certificateAuthorityStoreFileName = std::move(s.certificateAuthorityStoreFileName);
 		connectionTimeout = s.connectionTimeout;
@@ -347,6 +355,7 @@ SettingsManager & SettingsManager::operator = (const SettingsManager & s) {
 	preferredGameVersion = s.preferredGameVersion;
 	dosboxLocalServerPort = s.dosboxLocalServerPort;
 	dosboxRemoteServerPort = s.dosboxRemoteServerPort;
+	timeZoneDataDirectoryName = s.timeZoneDataDirectoryName;
 	curlDataDirectoryName = s.curlDataDirectoryName;
 	certificateAuthorityStoreFileName = s.certificateAuthorityStoreFileName;
 	connectionTimeout = s.connectionTimeout;
@@ -394,6 +403,7 @@ void SettingsManager::reset() {
 	preferredGameVersion = DEFAULT_PREFERRED_GAME_VERSION;
 	dosboxLocalServerPort = DEFAULT_DOSBOX_LOCAL_SERVER_PORT;
 	dosboxRemoteServerPort = DEFAULT_DOSBOX_REMOTE_SERVER_PORT;
+	timeZoneDataDirectoryName = DEFAULT_TIME_ZONE_DATA_DIRECTORY_NAME;
 	curlDataDirectoryName = DEFAULT_CURL_DATA_DIRECTORY_NAME;
 	certificateAuthorityStoreFileName = DEFAULT_CERTIFICATE_AUTHORITY_STORE_FILE_NAME;
 	connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
@@ -519,6 +529,13 @@ rapidjson::Document SettingsManager::toJSON() const {
 	dosboxCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_NETWORKING_CATEGORY_NAME), dosboxNetworkingCategoryValue, allocator);
 
 	settingsDocument.AddMember(rapidjson::StringRef(DOSBOX_CATEGORY_NAME), dosboxCategoryValue, allocator);
+
+	rapidjson::Value timeZoneCategoryValue(rapidjson::kObjectType);
+
+	rapidjson::Value timeZoneDataDirectoryNameValue(timeZoneDataDirectoryName.c_str(), allocator);
+	timeZoneCategoryValue.AddMember(rapidjson::StringRef(TIME_ZONE_DATA_DIRECTORY_NAME_PROPERTY_NAME), timeZoneDataDirectoryNameValue, allocator);
+
+	settingsDocument.AddMember(rapidjson::StringRef(TIME_ZONE_CATEGORY_NAME), timeZoneCategoryValue, allocator);
 
 	rapidjson::Value curlCategoryValue(rapidjson::kObjectType);
 
@@ -677,6 +694,12 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 				}
 			}
 		}
+	}
+
+	if(settingsDocument.HasMember(TIME_ZONE_CATEGORY_NAME) && settingsDocument[TIME_ZONE_CATEGORY_NAME].IsObject()) {
+		const rapidjson::Value & timeZoneCategoryValue = settingsDocument[TIME_ZONE_CATEGORY_NAME];
+
+		assignStringSetting(timeZoneDataDirectoryName, timeZoneCategoryValue, TIME_ZONE_DATA_DIRECTORY_NAME_PROPERTY_NAME);
 	}
 
 	if(settingsDocument.HasMember(CURL_CATEGORY_NAME) && settingsDocument[CURL_CATEGORY_NAME].IsObject()) {

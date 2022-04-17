@@ -33,6 +33,7 @@
 #include <Utilities/Utilities.h>
 #include <Zip/ZipArchive.h>
 
+#include <date/tz.h>
 #include <fmt/core.h>
 #include <magic_enum.hpp>
 
@@ -106,6 +107,8 @@ bool ModManager::initialize(const ArgumentParser * args, bool start) {
 	if(m_settings->verbose) {
 		m_verbose = true;
 	}
+
+	date::set_install(Utilities::joinPaths(m_settings->dataDirectoryPath, m_settings->timeZoneDataDirectoryName));
 
 	HTTPConfiguration configuration = {
 		Utilities::joinPaths(m_settings->dataDirectoryPath, m_settings->curlDataDirectoryName, m_settings->certificateAuthorityStoreFileName),
