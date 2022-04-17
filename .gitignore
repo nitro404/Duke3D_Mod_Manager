@@ -4,7 +4,7 @@ Mods/*
 Downloads/*
 Test/*
 .vs
-Version.h
+Project.h
 CDROM.INI
 DUKE3D.CFG
 stderr.txt

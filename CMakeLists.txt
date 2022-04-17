@@ -5,19 +5,24 @@ list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 set(_SOURCE_DIRECTORY "Source")
 set(_RESOURCES_DIRECTORY "Resources")
 set(_LIBRARY_DIRECTORY "Libraries")
-set(_VERSION_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${_SOURCE_DIRECTORY}/Version.h")
+set(_PROJECT_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${_SOURCE_DIRECTORY}/Project.h")
 
 add_subdirectory(${_LIBRARY_DIRECTORY}/Core)
 
 list(APPEND CMAKE_MODULE_PATH "${CORE_DIRECTORY}/CMake")
 
+include(Modules/GetGitCommitHash)
 include(Hunter/HunterInit)
 
 project(DukeNukem3DModManager VERSION 0.0.1 LANGUAGES C CXX)
 
 include(ThirdPartyLibraries)
 
-configure_file("${_VERSION_FILE_PATH}.in" "${_VERSION_FILE_PATH}" @ONLY)
+get_git_commit_hash()
+
+set(APPLICATION_GIT_COMMIT_HASH ${GIT_COMMIT_HASH})
+
+configure_file("${_PROJECT_FILE_PATH}.in" "${_PROJECT_FILE_PATH}" @ONLY)
 
 include(SourceFiles)
 

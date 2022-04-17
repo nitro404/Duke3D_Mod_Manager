@@ -18,7 +18,7 @@
 #include "Mod/FavouriteModCollection.h"
 #include "Mod/OrganizedModCollection.h"
 #include "SettingsManager.h"
-#include "Version.h"
+#include "Project.h"
 
 #include <Arguments/ArgumentParser.h>
 #include <Network/HTTPRequest.h>
@@ -46,7 +46,7 @@
 
 const GameType ModManager::DEFAULT_GAME_TYPE = GameType::Game;
 const std::string ModManager::DEFAULT_PREFERRED_GAME_VERSION(GameVersion::ATOMIC_EDITION.getName());
-const std::string ModManager::HTTP_USER_AGENT("DukeNukem3DModManager/" + VERSION);
+const std::string ModManager::HTTP_USER_AGENT("DukeNukem3DModManager/" + APPLICATION_VERSION);
 
 ModManager::ModManager()
 	: m_initialized(false)
@@ -2061,7 +2061,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 }
 
 void ModManager::displayArgumentHelp() {
-	fmt::print("Duke Nukem 3D Mod Manager version {} arguments:\n", VERSION);
+	fmt::print("Duke Nukem 3D Mod Manager version {} arguments:\n", APPLICATION_VERSION);
 	fmt::print(" -f \"Custom Settings.json\" - specifies an alternate settings file to use.\n");
 	fmt::print(" -t Game/Setup/Client/Server - specifies game type, default: Game.\n");
 	fmt::print(" -v \"Game Version\" - specifies the game version to run.\n");
