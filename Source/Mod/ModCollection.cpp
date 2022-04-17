@@ -475,7 +475,7 @@ bool ModCollection::saveTo(const std::string & filePath, bool overwrite) const {
 }
 
 bool ModCollection::saveToXML(const std::string & filePath, bool overwrite) const {
-	if (!overwrite && std::filesystem::exists(std::filesystem::path(filePath))) {
+	if(!overwrite && std::filesystem::exists(std::filesystem::path(filePath))) {
 		fmt::print("File '{}' already exists, use overwrite to force write.\n", filePath);
 		return false;
 	}
@@ -497,7 +497,7 @@ bool ModCollection::saveToXML(const std::string & filePath, bool overwrite) cons
 }
 
 bool ModCollection::saveToJSON(const std::string & filePath, bool overwrite) const {
-	if (!overwrite && std::filesystem::exists(std::filesystem::path(filePath))) {
+	if(!overwrite && std::filesystem::exists(std::filesystem::path(filePath))) {
 		fmt::print("File '{}' already exists, use overwrite to force write.\n", filePath);
 		return false;
 	}

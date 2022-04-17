@@ -60,8 +60,8 @@ public:
 	static const char * DEFAULT_DOSBOX_SERVER_IP_ADDRESS;
 	static const uint16_t DEFAULT_DOSBOX_LOCAL_SERVER_PORT;
 	static const uint16_t DEFAULT_DOSBOX_REMOTE_SERVER_PORT;
-	static const std::string DEFAULT_CURL_DATA_DIRECTORY_NAME;
-	static const std::string DEFAULT_CERTIFICATE_AUTHORITY_STORE_FILE_NAME;
+	static const char * DEFAULT_CURL_DATA_DIRECTORY_NAME;
+	static const char * DEFAULT_CERTIFICATE_AUTHORITY_STORE_FILE_NAME;
 	static const std::chrono::seconds DEFAULT_CONNECTION_TIMEOUT;
 	static const std::chrono::seconds DEFAULT_NETWORK_TIMEOUT;
 	static const char * DEFAULT_API_BASE_URL;

@@ -44,7 +44,7 @@ bool DownloadManager::initialize() {
 		return true;
 	}
 
-	if(m_httpService == nullptr) {
+	if(m_httpService == nullptr || !m_httpService->isInitialized()) {
 		fmt::print("Failed to initialize download manager, invalid HTTP service provided.\n");
 		return false;
 	}
@@ -260,7 +260,7 @@ bool DownloadManager::downloadModList(bool force) {
 	else if(response->isFailureStatusCode()) {
 		std::string statusCodeName(HTTPUtilities::getStatusCodeName(response->getStatusCode()));
 		fmt::print("Failed to download Duke Nukem 3D mod list ({}{})!\n", response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
-		return true;
+		return false;
 	}
 
 	fmt::print("Duke Nukem 3D mod list downloaded successfully after {} ms to file: '{}'.\n", response->getRequestDuration().value().count(), modListLocalFilePath);
@@ -343,7 +343,7 @@ bool DownloadManager::downloadModGameVersion(ModGameVersion * modGameVersion, Ga
 	else if(response->isFailureStatusCode()) {
 		std::string statusCodeName(HTTPUtilities::getStatusCodeName(response->getStatusCode()));
 		fmt::print("Failed to download '{}' mod package file ({}{})!\n", modGameVersion->getFullName(), response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
-		return true;
+		return false;
 	}
 
 	fmt::print("Successfully downloaded '{}' mod package file '{}' after {} ms, verifying file integrity using SHA1 hash...\n", modGameVersion->getFullName(), modDownload->getFileName(), response->getRequestDuration().value().count());

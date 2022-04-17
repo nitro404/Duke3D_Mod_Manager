@@ -118,8 +118,8 @@ const std::string SettingsManager::DEFAULT_PREFERRED_GAME_VERSION(ModManager::DE
 const char * SettingsManager::DEFAULT_DOSBOX_SERVER_IP_ADDRESS = "127.0.0.1";
 const uint16_t SettingsManager::DEFAULT_DOSBOX_LOCAL_SERVER_PORT = 31337;
 const uint16_t SettingsManager::DEFAULT_DOSBOX_REMOTE_SERVER_PORT = 31337;
-const std::string SettingsManager::DEFAULT_CURL_DATA_DIRECTORY_NAME = "cURL";
-const std::string SettingsManager::DEFAULT_CERTIFICATE_AUTHORITY_STORE_FILE_NAME = "cacert.pem";
+const char * SettingsManager::DEFAULT_CURL_DATA_DIRECTORY_NAME = "cURL";
+const char * SettingsManager::DEFAULT_CERTIFICATE_AUTHORITY_STORE_FILE_NAME = "cacert.pem";
 const std::chrono::seconds SettingsManager::DEFAULT_CONNECTION_TIMEOUT = 30s;
 const std::chrono::seconds SettingsManager::DEFAULT_NETWORK_TIMEOUT = 1min;
 const char * SettingsManager::DEFAULT_API_BASE_URL = "http://duke3dmods.com";
