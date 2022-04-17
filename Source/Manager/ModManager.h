@@ -4,6 +4,8 @@
 #include "Game/GameType.h"
 #include "Mod/OrganizedModCollection.h"
 
+#include <Application/Application.h>
+
 #include <cstdint>
 #include <memory>
 #include <optional>
@@ -28,10 +30,10 @@ class Script;
 class ScriptArguments;
 class SettingsManager;
 
-class ModManager final {
+class ModManager final : public Application {
 public:
 	ModManager();
-	~ModManager();
+	virtual ~ModManager();
 
 	bool isInitialized() const;
 	bool initialize(int argc, char * argv[], bool start = true);

@@ -49,7 +49,8 @@ const std::string ModManager::DEFAULT_PREFERRED_GAME_VERSION(GameVersion::ATOMIC
 const std::string ModManager::HTTP_USER_AGENT("DukeNukem3DModManager/" + APPLICATION_VERSION);
 
 ModManager::ModManager()
-	: m_initialized(false)
+	: Application()
+	, m_initialized(false)
 	, m_verbose(false)
 	, m_localMode(false)
 	, m_settings(std::make_unique<SettingsManager>())
@@ -67,7 +68,7 @@ ModManager::ModManager()
 #endif // _DEBUG
 }
 
-ModManager::~ModManager() = default;
+ModManager::~ModManager() { }
 
 bool ModManager::isInitialized() const {
 	return m_initialized;
