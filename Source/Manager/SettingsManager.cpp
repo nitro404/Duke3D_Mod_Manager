@@ -708,14 +708,14 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 	return true;
 }
 
-bool SettingsManager::load(const ArgumentParser * arguments) {
+bool SettingsManager::load(const ArgumentParser * arguments, bool autoCreate) {
 	if(arguments != nullptr) {
 		std::string alternateSettingsFileName(arguments->getFirstValue("f"));
 
 		if(!alternateSettingsFileName.empty()) {
 			fmt::print("Loading settings from alternate file: '{}'...\n", alternateSettingsFileName);
 
-			bool loadedSettings = loadFrom(alternateSettingsFileName);
+			bool loadedSettings = loadFrom(alternateSettingsFileName, autoCreate);
 
 			if(!loadedSettings) {
 				fmt::print("Failed to load settings from alt settings file: '{}'.\n", alternateSettingsFileName);
@@ -725,7 +725,7 @@ bool SettingsManager::load(const ArgumentParser * arguments) {
 		}
 	}
 
-	return loadFrom(DEFAULT_SETTINGS_FILE_PATH);
+	return loadFrom(DEFAULT_SETTINGS_FILE_PATH, autoCreate);
 }
 
 bool SettingsManager::save(const ArgumentParser * arguments, bool overwrite) const {
@@ -748,9 +748,19 @@ bool SettingsManager::save(const ArgumentParser * arguments, bool overwrite) con
 	return saveTo(DEFAULT_SETTINGS_FILE_PATH, overwrite);
 }
 
-bool SettingsManager::loadFrom(const std::string & filePath) {
-	if(filePath.empty() || !std::filesystem::is_regular_file(std::filesystem::path(filePath))) {
+bool SettingsManager::loadFrom(const std::string & filePath, bool autoCreate) {
+	if(filePath.empty()) {
+		fmt::print("Settings file path cannot be empty!\n");
+		return false;
+	}
+
+	if(!std::filesystem::is_regular_file(std::filesystem::path(filePath))) {
 		fmt::print("Failed to open missing or invalid settings file: '{}'!\n", filePath);
+
+		if(autoCreate) {
+			saveTo(filePath);
+		}
+
 		return false;
 	}
 

@@ -55,8 +55,8 @@ public:
 	rapidjson::Document toJSON() const;
 	static std::unique_ptr<GameVersionCollection> parseFrom(const rapidjson::Value & gameVersionCollectionValue);
 
-	bool loadFrom(const std::string & filePath);
-	bool loadFromJSON(const std::string & filePath);
+	bool loadFrom(const std::string & filePath, bool autoCreate = true);
+	bool loadFromJSON(const std::string & filePath, bool autoCreate = true);
 	bool saveTo(const std::string & filePath, bool overwrite = true) const;
 	bool saveToJSON(const std::string & filePath, bool overwrite = true) const;
 

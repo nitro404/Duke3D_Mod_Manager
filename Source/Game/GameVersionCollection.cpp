@@ -406,7 +406,7 @@ std::unique_ptr<GameVersionCollection> GameVersionCollection::parseFrom(const ra
 	return newGameVersionCollection;
 }
 
-bool GameVersionCollection::loadFrom(const std::string & filePath) {
+bool GameVersionCollection::loadFrom(const std::string & filePath, bool autoCreate) {
 	if(filePath.empty()) {
 		return false;
 	}
@@ -417,14 +417,22 @@ bool GameVersionCollection::loadFrom(const std::string & filePath) {
 		return false;
 	}
 	else if(Utilities::areStringsEqualIgnoreCase(fileExtension, "json")) {
-		return loadFromJSON(filePath);
+		return loadFromJSON(filePath, autoCreate);
 	}
 
 	return false;
 }
 
-bool GameVersionCollection::loadFromJSON(const std::string & filePath) {
-	if(filePath.empty() || !std::filesystem::is_regular_file(std::filesystem::path(filePath))) {
+bool GameVersionCollection::loadFromJSON(const std::string & filePath, bool autoCreate) {
+	if(filePath.empty()) {
+		return false;
+	}
+
+	if(!std::filesystem::is_regular_file(std::filesystem::path(filePath))) {
+		if(autoCreate) {
+			saveToJSON(filePath);
+		}
+
 		return false;
 	}
 

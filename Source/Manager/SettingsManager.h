@@ -24,9 +24,9 @@ public:
 	rapidjson::Document toJSON() const;
 	bool parseFrom(const rapidjson::Value & settingsDocument);
 
-	bool load(const ArgumentParser * arguments = nullptr);
+	bool load(const ArgumentParser * arguments = nullptr, bool autoCreate = true);
 	bool save(const ArgumentParser * arguments = nullptr, bool overwrite = true) const;
-	bool loadFrom(const std::string & filePath);
+	bool loadFrom(const std::string & filePath, bool autoCreate = true);
 	bool saveTo(const std::string & filePath, bool overwrite = true) const;
 
 	static const char * FILE_FORMAT_VERSION;
