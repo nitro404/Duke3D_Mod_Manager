@@ -118,6 +118,8 @@ bool ModManager::initialize(const ArgumentParser * args, bool start) {
 		return false;
 	}
 
+	m_httpService->setUserAgent(HTTP_USER_AGENT);
+
 	if(!m_localMode) {
 		m_downloadManager = std::make_unique<DownloadManager>(m_httpService, m_settings);
 
