@@ -54,6 +54,9 @@ static constexpr const char * MOD_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "mods
 static constexpr const char * MAP_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "maps";
 static constexpr const char * GAME_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "games";
 
+static constexpr const char * CACHE_CATEGORY_NAME = "cache";
+static constexpr const char * CACHE_DIRECTORY_PATH_PROPERTY_NAME = DIRECTORY_PATH;
+
 static constexpr const char * DOSBOX_CATEGORY_NAME = "dosbox";
 static constexpr const char * DOSBOX_DIRECTORY_PATH_PROPERTY_NAME = DIRECTORY_PATH;
 static constexpr const char * DOSBOX_EXECUTABLE_FILE_NAME_PROPERTY_NAME = EXECUTABLE_FILE_NAME;
@@ -90,6 +93,11 @@ static constexpr const char * REMOTE_MOD_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME 
 static constexpr const char * REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "remoteMapDownloadsDirectoryName";
 static constexpr const char * REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "remoteGameDownloadsDirectoryName";
 
+static constexpr const char * ANALYTICS_CATEGORY_NAME = "analytics";
+static constexpr const char * SEGMENT_ANALYTICS_CATEGORY_NAME = "segment";
+static constexpr const char * SEGMENT_ANALYTICS_ENABLED_PROPERTY_NAME = "enabled";
+static constexpr const char * SEGMENT_ANALYTICS_DATA_FILE_NAME_PROPERTY_NAME = "dataFileName";
+
 const char * SettingsManager::FILE_FORMAT_VERSION = "1.0.0";
 const char * SettingsManager::DEFAULT_SETTINGS_FILE_PATH = "Duke Nukem 3D Mod Manager.json";
 const char * SettingsManager::DEFAULT_MODS_LIST_FILE_PATH = "Duke Nukem 3D Mod List.xml";
@@ -108,6 +116,7 @@ const char * SettingsManager::DEFAULT_MOD_DOWNLOADS_DIRECTORY_NAME = "Mods";
 const char * SettingsManager::DEFAULT_MAP_DOWNLOADS_DIRECTORY_NAME = "Maps";
 const char * SettingsManager::DEFAULT_GAME_DOWNLOADS_DIRECTORY_NAME = "Games";
 const char * SettingsManager::DEFAULT_DATA_DIRECTORY_PATH = "Data";
+const char * SettingsManager::DEFAULT_CACHE_DIRECTORY_PATH = "Cache";
 const char * SettingsManager::DEFAULT_DOSBOX_EXECUTABLE_FILE_NAME = "dosbox.exe";
 const char * SettingsManager::DEFAULT_DOSBOX_DIRECTORY_PATH = "DOSBox";
 const char * SettingsManager::DEFAULT_DOSBOX_ARGUMENTS = "-noconsole";
@@ -132,6 +141,8 @@ const char * SettingsManager::DEFAULT_REMOTE_DOWNLOADS_DIRECTORY_NAME = "downloa
 const char * SettingsManager::DEFAULT_REMOTE_MOD_DOWNLOADS_DIRECTORY_NAME = "mods";
 const char * SettingsManager::DEFAULT_REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME = "maps";
 const char * SettingsManager::DEFAULT_REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME = "games";
+const bool SettingsManager::DEFAULT_SEGMENT_ANALYTICS_ENABLED = true;
+const char * SettingsManager::DEFAULT_SEGMENT_ANALYTICS_DATA_FILE_NAME = "Segment Analytics.json";
 const bool SettingsManager::DEFAULT_VERBOSE = false;
 
 static bool assignStringSetting(std::string & setting, const rapidjson::Value & categoryValue, const std::string & propertyName) {
@@ -167,6 +178,7 @@ SettingsManager::SettingsManager()
 	, mapDownloadsDirectoryName(DEFAULT_MAP_DOWNLOADS_DIRECTORY_NAME)
 	, gameDownloadsDirectoryName(DEFAULT_GAME_DOWNLOADS_DIRECTORY_NAME)
 	, dataDirectoryPath(DEFAULT_DATA_DIRECTORY_PATH)
+	, cacheDirectoryPath(DEFAULT_CACHE_DIRECTORY_PATH)
 	, dosboxExecutableFileName(DEFAULT_DOSBOX_EXECUTABLE_FILE_NAME)
 	, dosboxDirectoryPath(DEFAULT_DOSBOX_DIRECTORY_PATH)
 	, dosboxArguments(DEFAULT_DOSBOX_ARGUMENTS)
@@ -191,6 +203,8 @@ SettingsManager::SettingsManager()
 	, remoteModDownloadsDirectoryName(DEFAULT_REMOTE_MOD_DOWNLOADS_DIRECTORY_NAME)
 	, remoteMapDownloadsDirectoryName(DEFAULT_REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME)
 	, remoteGameDownloadsDirectoryName(DEFAULT_REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME)
+	, segmentAnalyticsEnabled(DEFAULT_SEGMENT_ANALYTICS_ENABLED)
+	, segmentAnalyticsDataFileName(DEFAULT_SEGMENT_ANALYTICS_DATA_FILE_NAME)
 	, verbose(DEFAULT_VERBOSE) { }
 
 SettingsManager::SettingsManager(SettingsManager && s) noexcept
@@ -209,6 +223,7 @@ SettingsManager::SettingsManager(SettingsManager && s) noexcept
 	, mapDownloadsDirectoryName(std::move(s.mapDownloadsDirectoryName))
 	, gameDownloadsDirectoryName(std::move(s.gameDownloadsDirectoryName))
 	, dataDirectoryPath(std::move(s.dataDirectoryPath))
+	, cacheDirectoryPath(std::move(s.cacheDirectoryPath))
 	, dosboxExecutableFileName(std::move(s.dosboxExecutableFileName))
 	, dosboxDirectoryPath(std::move(s.dosboxDirectoryPath))
 	, dosboxArguments(std::move(s.dosboxArguments))
@@ -233,6 +248,8 @@ SettingsManager::SettingsManager(SettingsManager && s) noexcept
 	, remoteModDownloadsDirectoryName(std::move(s.remoteModDownloadsDirectoryName))
 	, remoteMapDownloadsDirectoryName(std::move(s.remoteMapDownloadsDirectoryName))
 	, remoteGameDownloadsDirectoryName(std::move(s.remoteGameDownloadsDirectoryName))
+	, segmentAnalyticsEnabled(s.segmentAnalyticsEnabled)
+	, segmentAnalyticsDataFileName(std::move(s.segmentAnalyticsDataFileName))
 	, verbose(s.verbose) { }
 
 SettingsManager::SettingsManager(const SettingsManager & s)
@@ -251,6 +268,7 @@ SettingsManager::SettingsManager(const SettingsManager & s)
 	, mapDownloadsDirectoryName(s.mapDownloadsDirectoryName)
 	, gameDownloadsDirectoryName(s.gameDownloadsDirectoryName)
 	, dataDirectoryPath(s.dataDirectoryPath)
+	, cacheDirectoryPath(s.cacheDirectoryPath)
 	, dosboxExecutableFileName(s.dosboxExecutableFileName)
 	, dosboxDirectoryPath(s.dosboxDirectoryPath)
 	, dosboxArguments(s.dosboxArguments)
@@ -275,6 +293,8 @@ SettingsManager::SettingsManager(const SettingsManager & s)
 	, remoteModDownloadsDirectoryName(s.remoteModDownloadsDirectoryName)
 	, remoteMapDownloadsDirectoryName(s.remoteMapDownloadsDirectoryName)
 	, remoteGameDownloadsDirectoryName(s.remoteGameDownloadsDirectoryName)
+	, segmentAnalyticsEnabled(s.segmentAnalyticsEnabled)
+	, segmentAnalyticsDataFileName(s.segmentAnalyticsDataFileName)
 	, verbose(s.verbose) { }
 
 SettingsManager & SettingsManager::operator = (SettingsManager && s) noexcept {
@@ -295,6 +315,7 @@ SettingsManager & SettingsManager::operator = (SettingsManager && s) noexcept {
 		mapDownloadsDirectoryName = std::move(s.mapDownloadsDirectoryName);
 		gameDownloadsDirectoryName = std::move(s.gameDownloadsDirectoryName);
 		dataDirectoryPath = std::move(s.dataDirectoryPath);
+		cacheDirectoryPath = std::move(s.cacheDirectoryPath);
 		dosboxExecutableFileName = std::move(s.dosboxExecutableFileName);
 		dosboxDirectoryPath = std::move(s.dosboxDirectoryPath);
 		dosboxArguments = std::move(s.dosboxArguments);
@@ -319,6 +340,8 @@ SettingsManager & SettingsManager::operator = (SettingsManager && s) noexcept {
 		remoteModDownloadsDirectoryName = std::move(s.remoteModDownloadsDirectoryName);
 		remoteMapDownloadsDirectoryName = std::move(s.remoteMapDownloadsDirectoryName);
 		remoteGameDownloadsDirectoryName = std::move(s.remoteGameDownloadsDirectoryName);
+		segmentAnalyticsEnabled = s.segmentAnalyticsEnabled;
+		segmentAnalyticsDataFileName = std::move(s.segmentAnalyticsDataFileName);
 		verbose = s.verbose;
 	}
 
@@ -342,6 +365,7 @@ SettingsManager & SettingsManager::operator = (const SettingsManager & s) {
 	mapDownloadsDirectoryName = s.mapDownloadsDirectoryName;
 	gameDownloadsDirectoryName = s.gameDownloadsDirectoryName;
 	dataDirectoryPath = s.dataDirectoryPath;
+	cacheDirectoryPath = s.cacheDirectoryPath;
 	dosboxExecutableFileName = s.dosboxExecutableFileName;
 	dosboxDirectoryPath = s.dosboxDirectoryPath;
 	dosboxArguments = s.dosboxArguments;
@@ -366,6 +390,8 @@ SettingsManager & SettingsManager::operator = (const SettingsManager & s) {
 	remoteModDownloadsDirectoryName =s.remoteModDownloadsDirectoryName;
 	remoteMapDownloadsDirectoryName = s.remoteMapDownloadsDirectoryName;
 	remoteGameDownloadsDirectoryName = s.remoteGameDownloadsDirectoryName;
+	segmentAnalyticsEnabled = s.segmentAnalyticsEnabled;
+	segmentAnalyticsDataFileName = s.segmentAnalyticsDataFileName;
 	verbose = s.verbose;
 
 	return *this;
@@ -390,6 +416,7 @@ void SettingsManager::reset() {
 	mapDownloadsDirectoryName = DEFAULT_MAP_DOWNLOADS_DIRECTORY_NAME;
 	gameDownloadsDirectoryName = DEFAULT_GAME_DOWNLOADS_DIRECTORY_NAME;
 	dataDirectoryPath = DEFAULT_DATA_DIRECTORY_PATH;
+	cacheDirectoryPath = DEFAULT_CACHE_DIRECTORY_PATH;
 	dosboxExecutableFileName = DEFAULT_DOSBOX_EXECUTABLE_FILE_NAME;
 	dosboxDirectoryPath = DEFAULT_DOSBOX_DIRECTORY_PATH;
 	dosboxArguments = DEFAULT_DOSBOX_ARGUMENTS;
@@ -414,6 +441,8 @@ void SettingsManager::reset() {
 	remoteModDownloadsDirectoryName = DEFAULT_REMOTE_MOD_DOWNLOADS_DIRECTORY_NAME;
 	remoteMapDownloadsDirectoryName = DEFAULT_REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME;
 	remoteGameDownloadsDirectoryName = DEFAULT_REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME;
+	segmentAnalyticsEnabled = DEFAULT_SEGMENT_ANALYTICS_ENABLED;
+	segmentAnalyticsDataFileName = DEFAULT_SEGMENT_ANALYTICS_DATA_FILE_NAME;
 	verbose = DEFAULT_VERBOSE;
 }
 
@@ -490,6 +519,13 @@ rapidjson::Document SettingsManager::toJSON() const {
 
 	settingsDocument.AddMember(rapidjson::StringRef(DOWNLOADS_CATEGORY_NAME), downloadsCategoryValue, allocator);
 
+	rapidjson::Value cacheCategoryValue(rapidjson::kObjectType);
+
+	rapidjson::Value cacheDirectoryPathValue(cacheDirectoryPath.c_str(), allocator);
+	cacheCategoryValue.AddMember(rapidjson::StringRef(CACHE_DIRECTORY_PATH_PROPERTY_NAME), cacheDirectoryPathValue, allocator);
+
+	settingsDocument.AddMember(rapidjson::StringRef(CACHE_CATEGORY_NAME), cacheCategoryValue, allocator);
+
 	rapidjson::Value dosboxCategoryValue(rapidjson::kObjectType);
 
 	rapidjson::Value dosboxDirectoryPathValue(dosboxDirectoryPath.c_str(), allocator);
@@ -564,6 +600,18 @@ rapidjson::Document SettingsManager::toJSON() const {
 	apiCategoryValue.AddMember(rapidjson::StringRef(REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME), remoteGameDownloadsDirectoryNameValue, allocator);
 
 	settingsDocument.AddMember(rapidjson::StringRef(API_CATEGORY_NAME), apiCategoryValue, allocator);
+
+	rapidjson::Value analyticsCategoryValue(rapidjson::kObjectType);
+
+	rapidjson::Value segmentAnalyticsCategoryValue(rapidjson::kObjectType);
+
+	segmentAnalyticsCategoryValue.AddMember(rapidjson::StringRef(SEGMENT_ANALYTICS_ENABLED_PROPERTY_NAME), rapidjson::Value(segmentAnalyticsEnabled), allocator);
+	rapidjson::Value segmentAnalyticsDataFileNameValue(segmentAnalyticsDataFileName.c_str(), allocator);
+	segmentAnalyticsCategoryValue.AddMember(rapidjson::StringRef(SEGMENT_ANALYTICS_DATA_FILE_NAME_PROPERTY_NAME), segmentAnalyticsDataFileNameValue, allocator);
+
+	analyticsCategoryValue.AddMember(rapidjson::StringRef(SEGMENT_ANALYTICS_CATEGORY_NAME), segmentAnalyticsCategoryValue, allocator);
+
+	settingsDocument.AddMember(rapidjson::StringRef(ANALYTICS_CATEGORY_NAME), analyticsCategoryValue, allocator);
 
 	return settingsDocument;
 }
@@ -646,6 +694,12 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 		assignStringSetting(gameDownloadsDirectoryName, downloadsCategoryValue, GAME_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
 	}
 
+	if(settingsDocument.HasMember(CACHE_CATEGORY_NAME) && settingsDocument[CACHE_CATEGORY_NAME].IsObject()) {
+		const rapidjson::Value & cacheCategoryValue = settingsDocument[CACHE_CATEGORY_NAME];
+
+		assignStringSetting(cacheDirectoryPath, cacheCategoryValue, CACHE_DIRECTORY_PATH_PROPERTY_NAME);
+	}
+
 	if(settingsDocument.HasMember(DOSBOX_CATEGORY_NAME) && settingsDocument[DOSBOX_CATEGORY_NAME].IsObject()) {
 		const rapidjson::Value & dosboxCategoryValue = settingsDocument[DOSBOX_CATEGORY_NAME];
 
@@ -726,6 +780,20 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 		assignStringSetting(remoteModDownloadsDirectoryName, apiCategoryValue, REMOTE_MOD_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
 		assignStringSetting(remoteMapDownloadsDirectoryName, apiCategoryValue, REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
 		assignStringSetting(remoteGameDownloadsDirectoryName, apiCategoryValue, REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
+	}
+
+	if(settingsDocument.HasMember(ANALYTICS_CATEGORY_NAME) && settingsDocument[ANALYTICS_CATEGORY_NAME].IsObject()) {
+		const rapidjson::Value & analyticsCategoryValue = settingsDocument[ANALYTICS_CATEGORY_NAME];
+
+		if(analyticsCategoryValue.HasMember(SEGMENT_ANALYTICS_CATEGORY_NAME) && analyticsCategoryValue[SEGMENT_ANALYTICS_CATEGORY_NAME].IsObject()) {
+			const rapidjson::Value & segmentAnalyticsCategoryValue = analyticsCategoryValue[SEGMENT_ANALYTICS_CATEGORY_NAME];
+
+			if(segmentAnalyticsCategoryValue.HasMember(SEGMENT_ANALYTICS_ENABLED_PROPERTY_NAME) && segmentAnalyticsCategoryValue[SEGMENT_ANALYTICS_ENABLED_PROPERTY_NAME].IsBool()) {
+				segmentAnalyticsEnabled = segmentAnalyticsCategoryValue[SEGMENT_ANALYTICS_ENABLED_PROPERTY_NAME].GetBool();
+			}
+
+			assignStringSetting(segmentAnalyticsDataFileName, segmentAnalyticsCategoryValue, DEFAULT_SEGMENT_ANALYTICS_DATA_FILE_NAME);
+		}
 	}
 
 	return true;

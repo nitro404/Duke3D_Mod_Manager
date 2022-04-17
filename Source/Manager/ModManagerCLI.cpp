@@ -10,6 +10,7 @@
 #include "ModMatch.h"
 #include "SettingsManager.h"
 
+#include <Analytics/Segment/SegmentAnalytics.h>
 #include <Utilities/NumberUtilities.h>
 #include <Utilities/StringUtilities.h>
 #include <Utilities/Utilities.h>
@@ -380,9 +381,20 @@ bool ModManager::CLI::updateFilterTypePrompt(const std::string & args) {
 		return false;
 	}
 
-	fmt::print("Changing filter type from '{}' to '{}'.\n\n", Utilities::toCapitalCase(magic_enum::enum_name(organizedMods->getFilterType())), Utilities::toCapitalCase(magic_enum::enum_name(optionalFilterType.value())));
+	std::string previousFilterTypeName(Utilities::toCapitalCase(magic_enum::enum_name(organizedMods->getFilterType())));
+	std::string newFilterTypeName(Utilities::toCapitalCase(magic_enum::enum_name(optionalFilterType.value())));
+
+	fmt::print("Changing filter type from '{}' to '{}'.\n\n", previousFilterTypeName, newFilterTypeName);
 
 	organizedMods->setFilterType(optionalFilterType.value());
+
+	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
+
+	std::map<std::string, std::any> properties;
+	properties["previousFilterType"] = previousFilterTypeName;
+	properties["newFilterType"] = newFilterTypeName;
+
+	segmentAnalytics->track("Change Filter Type", properties);
 
 	pause();
 
@@ -636,21 +648,46 @@ bool ModManager::CLI::runSortPrompt(const std::string & args) {
 			if(organizedMods->areSortOptionsValidInCurrentContext(sortTypeOptional.value(), organizedMods->getFilterType())) {
 				if(organizedMods->getSortType() != sortTypeOptional.value() || organizedMods->getSortDirection() != sortDirectionOptional.value()) {
 					std::stringstream sortTypeChangedText;
-					sortTypeChangedText << fmt::format("Changing sort type from {}", Utilities::toCapitalCase(magic_enum::enum_name(organizedMods->getSortType())));
+
+					std::string previousSortTypeName(Utilities::toCapitalCase(magic_enum::enum_name(organizedMods->getSortType())));
+					sortTypeChangedText << fmt::format("Changing sort type from {}", previousSortTypeName);
+
+					std::string previousSortDirectionName;
 
 					if(organizedMods->getSortType() != OrganizedModCollection::SortType::Unsorted && organizedMods->getSortType() != OrganizedModCollection::SortType::Random) {
-						sortTypeChangedText << fmt::format(" ({})", Utilities::toCapitalCase(magic_enum::enum_name(organizedMods->getSortDirection())));
+						previousSortDirectionName = Utilities::toCapitalCase(magic_enum::enum_name(organizedMods->getSortDirection()));
+						sortTypeChangedText << fmt::format(" ({})", previousSortDirectionName);
 					}
 
-					sortTypeChangedText << fmt::format(" to {}", Utilities::toCapitalCase(magic_enum::enum_name(sortTypeOptional.value())));
+					std::string newSortTypeName(Utilities::toCapitalCase(magic_enum::enum_name(sortTypeOptional.value())));
+					sortTypeChangedText << fmt::format(" to {}", newSortTypeName);
+
+					std::string newSortDirectionName;
 
 					if(sortTypeOptional.value() != OrganizedModCollection::SortType::Unsorted && sortTypeOptional.value() != OrganizedModCollection::SortType::Random) {
-						sortTypeChangedText << fmt::format(" ({})", Utilities::toCapitalCase(magic_enum::enum_name(sortDirectionOptional.value())));
+						newSortDirectionName = Utilities::toCapitalCase(magic_enum::enum_name(sortDirectionOptional.value()));
+						sortTypeChangedText << fmt::format(" ({})", newSortDirectionName);
 					}
 
 					sortTypeChangedText << fmt::format(".");
 
 					fmt::print("{}\n\n", sortTypeChangedText.str());
+
+					SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
+
+					std::map<std::string, std::any> properties;
+					properties["previousSortType"] = previousSortTypeName;
+					properties["newSortType"] = newSortTypeName;
+
+					if(!previousSortDirectionName.empty()) {
+						properties["previousSortDirection"] = previousSortDirectionName;
+					}
+
+					if(!newSortDirectionName.empty()) {
+						properties["newSortDirection"] = newSortDirectionName;
+					}
+
+					segmentAnalytics->track("Change Sort Options", properties);
 
 					organizedMods->setSortOptions(sortTypeOptional.value(), sortDirectionOptional.value());
 
@@ -707,9 +744,20 @@ bool ModManager::CLI::updateGameTypePrompt(const std::string & args) {
 		return false;
 	}
 
-	fmt::print("Changing game type from '{}' to '{}'.\n\n", Utilities::toCapitalCase(magic_enum::enum_name(m_modManager->getSettings()->gameType)), Utilities::toCapitalCase(magic_enum::enum_name(optionalGameType.value())));
+	std::string previousGameTypeName(Utilities::toCapitalCase(magic_enum::enum_name(m_modManager->getSettings()->gameType)));
+	std::string newGameTypeName(Utilities::toCapitalCase(magic_enum::enum_name(optionalGameType.value())));
+
+	fmt::print("Changing game type from '{}' to '{}'.\n\n", previousGameTypeName, newGameTypeName);
 
 	m_modManager->setGameType(optionalGameType.value());
+
+	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
+
+	std::map<std::string, std::any> properties;
+	properties["previousGameType"] = previousGameTypeName;
+	properties["newGameType"] = newGameTypeName;
+
+	segmentAnalytics->track("Change Game Type", properties);
 
 	pause();
 
@@ -750,9 +798,20 @@ bool ModManager::CLI::updatePreferredGameVersionPrompt(const std::string & args)
 		return false;
 	}
 
-	fmt::print("Changing preferred game version from '{}' to '{}'.\n\n", m_modManager->hasPreferredGameVersion() ? m_modManager->getPreferredGameVersion()->getName() : "None", gameVersion->getName());
+	std::string previousPreferredGameVersionName(m_modManager->hasPreferredGameVersion() ? m_modManager->getPreferredGameVersion()->getName() : "None");
+	std::string newPreferredGameVersionName(gameVersion->getName());
+
+	fmt::print("Changing preferred game version from '{}' to '{}'.\n\n", previousPreferredGameVersionName, newPreferredGameVersionName);
 
 	m_modManager->setPreferredGameVersion(gameVersion);
+
+	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
+
+	std::map<std::string, std::any> properties;
+	properties["previousPreferredGameVersion"] = previousPreferredGameVersionName;
+	properties["newPreferredGameVersion"] = newPreferredGameVersionName;
+
+	segmentAnalytics->track("Change Preferred Game Version", properties);
 
 	pause();
 
@@ -863,9 +922,18 @@ bool ModManager::CLI::updateIPAddressPrompt(const std::string & args) {
 		return false;
 	}
 
+	std::string previousIPAddress(m_modManager->getSettings()->dosboxServerIPAddress);
 	m_modManager->getSettings()->dosboxServerIPAddress = ipAddress;
 
 	fmt::print("Server IP address changed to: '{}'.\n\n", ipAddress);
+
+	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
+
+	std::map<std::string, std::any> properties;
+	properties["previousIPAddress"] = previousIPAddress;
+	properties["newIPAddress"] = ipAddress;
+
+	segmentAnalytics->track("Change DOSBox Server IP Address", properties);
 
 	pause();
 
@@ -940,14 +1008,29 @@ bool ModManager::CLI::updatePortPrompt(const std::string & args) {
 		return false;
 	}
 
+	uint16_t previousServerPort = 0;
+
 	if(m_modManager->getGameType() == GameType::Server) {
+		previousServerPort = m_modManager->getSettings()->dosboxLocalServerPort;
 		m_modManager->getSettings()->dosboxLocalServerPort = optionalServerPort.value();
 	}
 	else {
+		previousServerPort = m_modManager->getSettings()->dosboxRemoteServerPort;
 		m_modManager->getSettings()->dosboxRemoteServerPort = optionalServerPort.value();
 	}
 
-	fmt::print("{} server port changed to: {}\n\n", m_modManager->getGameType() == GameType::Server ? "local" : "remote", optionalServerPort.value());
+	std::string portTypeName(m_modManager->getGameType() == GameType::Server ? "Local" : "Remote");
+
+	fmt::print("{} server port changed from {} to {}\n\n", portTypeName, previousServerPort, optionalServerPort.value());
+
+	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
+
+	std::map<std::string, std::any> properties;
+	properties["previousServerPort"] = previousServerPort;
+	properties["newServerPort"] = optionalServerPort.value();
+	properties["portType"] = portTypeName;
+
+	segmentAnalytics->track("Change DOSBox Server Port", properties);
 
 	pause();
 

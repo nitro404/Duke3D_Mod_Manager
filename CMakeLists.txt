@@ -16,6 +16,7 @@ include(Hunter/HunterInit)
 
 project(DukeNukem3DModManager VERSION 0.0.1 LANGUAGES C CXX)
 
+include(Environment)
 include(ThirdPartyLibraries)
 
 get_git_commit_hash()

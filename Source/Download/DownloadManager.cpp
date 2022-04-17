@@ -7,10 +7,13 @@
 #include "Game/GameVersionCollection.h"
 #include "Manager/SettingsManager.h"
 #include "Mod/ModDownload.h"
+#include "Mod/Mod.h"
 #include "Mod/ModFile.h"
 #include "Mod/ModGameVersion.h"
+#include "Mod/ModVersion.h"
 #include "Mod/ModVersionType.h"
 
+#include <Analytics/Segment/SegmentAnalytics.h>
 #include <Network/HTTPService.h>
 #include <Utilities/FileUtilities.h>
 #include <Utilities/StringUtilities.h>
@@ -163,7 +166,7 @@ std::string DownloadManager::getDownloadedMapsDirectoryPath() const {
 	return Utilities::joinPaths(m_settings->downloadsDirectoryPath, m_settings->mapDownloadsDirectoryName);
 }
 
-bool DownloadManager::ensureRequiredDirectories() {
+bool DownloadManager::createRequiredDirectories() {
 	if(m_settings == nullptr) {
 		return false;
 	}
@@ -271,9 +274,21 @@ bool DownloadManager::downloadModList(bool force) {
 
 	response->getBody()->writeTo(modListLocalFilePath, true);
 
-	m_downloadCache->updateCachedModListFile(modListFileName, response->getBody()->getSize(), response->getBody()->getSHA1(), response->getETag());
+	std::string modListSHA1(response->getBody()->getSHA1());
+	m_downloadCache->updateCachedModListFile(modListFileName, response->getBody()->getSize(), modListSHA1, response->getETag());
 
 	saveDownloadCache();
+
+	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
+
+	std::map<std::string, std::any> properties;
+	properties["fileName"] = modListFileName;
+	properties["fileSize"] = response->getBody()->getSize();
+	properties["sha1"] = modListSHA1;
+	properties["eTag"] = response->getETag();
+	properties["transferDuration"] = response->getRequestDuration().value().count();
+
+	segmentAnalytics->track("Mod List Downloaded", properties);
 
 	return true;
 }
@@ -352,7 +367,8 @@ bool DownloadManager::downloadModGameVersion(ModGameVersion * modGameVersion, Ga
 
 	fmt::print("Successfully downloaded '{}' mod package file '{}' after {} ms, verifying file integrity using SHA1 hash...\n", modGameVersion->getFullName(), modDownload->getFileName(), response->getRequestDuration().value().count());
 
-	if(response->getBody()->getSHA1() != modDownload->getSHA1()) {
+	std::string modPackageFileSHA1(response->getBody()->getSHA1());
+	if(modPackageFileSHA1 != modDownload->getSHA1()) {
 		fmt::print("Failed to download '{}' mod package file '{}' due to data corruption, SHA1 hash check failed!\n", modGameVersion->getFullName(), modDownload->getFileName());
 		return false;
 	}
@@ -424,6 +440,24 @@ bool DownloadManager::downloadModGameVersion(ModGameVersion * modGameVersion, Ga
 	m_downloadCache->updateCachedPackageFile(modDownload.get(), modGameVersion, modDownloadZipArchive->getCompressedSize(), response->getETag());
 
 	saveDownloadCache();
+
+	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
+
+	std::map<std::string, std::any> properties;
+	properties["modID"] = modGameVersion->getParentMod()->getID();
+	properties["modName"] = modGameVersion->getParentMod()->getName();
+	properties["modVersion"] = modGameVersion->getParentModVersion()->getVersion();
+	properties["modVersionType"] = modGameVersion->getParentModVersionType()->getType();
+	properties["fullModName"] = modGameVersion->getFullName();
+	properties["gameVersion"] = modGameVersion->getGameVersion();
+	properties["fileName"] = modDownload->getFileName();
+	properties["fileSize"] = response->getBody()->getSize();
+	properties["numberOfFiles"] = modDownloadZipArchive->numberOfFiles();
+	properties["sha1"] = modPackageFileSHA1;
+	properties["eTag"] = response->getETag();
+	properties["transferDuration"] = response->getRequestDuration().value().count();
+
+	segmentAnalytics->track("Mod Downloaded", properties);
 
 	return true;
 }

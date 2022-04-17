@@ -47,6 +47,7 @@ public:
 	static const char * DEFAULT_MAP_DOWNLOADS_DIRECTORY_NAME;
 	static const char * DEFAULT_GAME_DOWNLOADS_DIRECTORY_NAME;
 	static const char * DEFAULT_DATA_DIRECTORY_PATH;
+	static const char * DEFAULT_CACHE_DIRECTORY_PATH;
 	static const char * DEFAULT_DOSBOX_EXECUTABLE_FILE_NAME;
 	static const char * DEFAULT_DOSBOX_DIRECTORY_PATH;
 	static const char * DEFAULT_DOSBOX_ARGUMENTS;
@@ -71,6 +72,8 @@ public:
 	static const char * DEFAULT_REMOTE_MOD_DOWNLOADS_DIRECTORY_NAME;
 	static const char * DEFAULT_REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME;
 	static const char * DEFAULT_REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME;
+	static const bool DEFAULT_SEGMENT_ANALYTICS_ENABLED;
+	static const char * DEFAULT_SEGMENT_ANALYTICS_DATA_FILE_NAME;
 	static const bool DEFAULT_VERBOSE;
 
 	std::string modsListFilePath;
@@ -89,6 +92,7 @@ public:
 	std::string mapDownloadsDirectoryName;
 	std::string gameDownloadsDirectoryName;
 	std::string dataDirectoryPath;
+	std::string cacheDirectoryPath;
 	std::string dosboxExecutableFileName;
 	std::string dosboxDirectoryPath;
 	std::string dosboxArguments;
@@ -113,6 +117,8 @@ public:
 	std::string remoteModDownloadsDirectoryName;
 	std::string remoteMapDownloadsDirectoryName;
 	std::string remoteGameDownloadsDirectoryName;
+	bool segmentAnalyticsEnabled;
+	std::string segmentAnalyticsDataFileName;
 	bool verbose;
 };
 

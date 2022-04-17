@@ -1,3 +1,5 @@
+include_guard()
+
 set(SOURCE_FILES
 	Main.cpp
 	Download/CachedFile.cpp

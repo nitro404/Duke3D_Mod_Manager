@@ -1,6 +1,7 @@
 #include "ModManager.h"
 
 #include "Download/DownloadManager.h"
+#include "Environment.h"
 #include "Game/GameVersion.h"
 #include "Game/GameVersionCollection.h"
 #include "Group/Group.h"
@@ -20,6 +21,7 @@
 #include "SettingsManager.h"
 #include "Project.h"
 
+#include <Analytics/Segment/SegmentAnalytics.h>
 #include <Arguments/ArgumentParser.h>
 #include <Location/GeoLocationService.h>
 #include <Network/HTTPRequest.h>
@@ -46,6 +48,8 @@
 #include <regex>
 #include <sstream>
 
+using namespace std::chrono_literals;
+
 const GameType ModManager::DEFAULT_GAME_TYPE = GameType::Game;
 const std::string ModManager::DEFAULT_PREFERRED_GAME_VERSION(GameVersion::ATOMIC_EDITION.getName());
 const std::string ModManager::HTTP_USER_AGENT("DukeNukem3DModManager/" + APPLICATION_VERSION);
@@ -70,7 +74,9 @@ ModManager::ModManager()
 #endif // _DEBUG
 }
 
-ModManager::~ModManager() { }
+ModManager::~ModManager() {
+	SegmentAnalytics::destroyInstance();
+}
 
 bool ModManager::isInitialized() const {
 	return m_initialized;
@@ -126,9 +132,39 @@ bool ModManager::initialize(const ArgumentParser * args, bool start) {
 
 	GeoLocationService * geoLocationService = GeoLocationService::getInstance();
 
-	if(!geoLocationService->initialize(m_httpService, "a96b0340-b491-11ec-a512-43b18b43a434")) {
+	if(!geoLocationService->initialize(m_httpService, FREE_GEO_IP_API_KEY)) {
 		fmt::print("Failed to initialize geo location service!\n");
 		return false;
+	}
+
+	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
+
+	if(m_settings->segmentAnalyticsEnabled) {
+		SegmentAnalytics::Configuration configuration;
+		configuration.writeKey = SEGMENT_ANALYTICS_WRITE_KEY;
+		configuration.includeIPAddress = false;
+		configuration.includeGeoLocation = true;
+		configuration.dataStorageFilePath = Utilities::joinPaths(m_settings->cacheDirectoryPath, m_settings->segmentAnalyticsDataFileName);
+		configuration.httpService = m_httpService;
+		configuration.applicationName = "Duke Nukem 3D Mod Manager";
+		configuration.applicationVersion = APPLICATION_VERSION;
+		configuration.applicationBuild = APPLICATION_COMMIT_HASH;
+		configuration.applicationPackageName = Utilities::emptyString;
+		configuration.userAgent = HTTP_USER_AGENT;
+
+		if(segmentAnalytics->initialize(configuration)) {
+			if(segmentAnalytics->start()) {
+#if _DEBUG
+				fmt::print("Segment analytics initialized and started successfully!\n");
+#endif
+			}
+			else {
+				fmt::print("Failed to start Segment analytics!\n");
+			}
+		}
+		else {
+			fmt::print("Failed to initialize Segment analytics!\n");
+		}
 	}
 
 	if(!m_localMode) {
@@ -204,6 +240,22 @@ bool ModManager::initialize(const ArgumentParser * args, bool start) {
 		checkForUnlinkedModFiles();
 	}
 
+	std::map<std::string, std::any> properties;
+	properties["sessionNumber"] = segmentAnalytics->getSessionNumber();
+	properties["environment"] = Utilities::toCapitalCase(APPLICATION_ENVIRONMENT);
+	properties["gameType"] = Utilities::toCapitalCase(magic_enum::enum_name(m_settings->gameType));
+	properties["preferredGameVersion"] = m_settings->preferredGameVersion;
+	properties["numberOfDownloadedMods"] = m_downloadManager != nullptr ? m_downloadManager->numberOfDownloadedMods() : 0;
+	properties["dosBoxArguments"] = m_settings->dosboxArguments;
+	properties["dosBoxServerIPAddress"] = m_settings->dosboxServerIPAddress;
+	properties["dosBoxServerLocalPort"] = m_settings->dosboxLocalServerPort;
+	properties["dosBoxServerRemotePort"] = m_settings->dosboxRemoteServerPort;
+	properties["apiBaseURL"] = m_settings->apiBaseURL;
+	properties["connectionTimeout"] = m_settings->connectionTimeout.count();
+	properties["networkTimeout"] = m_settings->networkTimeout.count();
+
+	segmentAnalytics->track("Application Initialized", properties);
+
 	if(!handleArguments(m_arguments.get(), start)) {
 		return false;
 	}
@@ -215,6 +267,10 @@ bool ModManager::uninitialize() {
 	if(!m_initialized) {
 		return false;
 	}
+
+	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
+	segmentAnalytics->onApplicationClosed();
+	segmentAnalytics->flush(3s);
 
 	m_selectedMod.reset();
 	m_organizedMods->setModCollection(nullptr);
@@ -526,6 +582,13 @@ std::vector<ModMatch> ModManager::searchForMod(const std::vector<std::shared_ptr
 		return {};
 	}
 
+	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
+
+	std::map<std::string, std::any> properties;
+	properties["query"] = formattedQuery;
+
+	segmentAnalytics->track("Mod Search", properties);
+
 	std::vector<ModMatch> matches;
 	std::shared_ptr<Mod> mod;
 	std::shared_ptr<ModVersion> modVersion;
@@ -632,6 +695,13 @@ size_t ModManager::searchForAndSelectGameVersion(const std::string & query, std:
 		return std::numeric_limits<size_t>::max();
 	}
 
+	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
+
+	std::map<std::string, std::any> properties;
+	properties["query"] = formattedQuery;
+
+	segmentAnalytics->track("Game Version Search", properties);
+
 	std::string gameVersionName;
 	size_t matchingGameVersionIndex = std::numeric_limits<size_t>::max();
 	size_t numberOfMatches = 0;
@@ -681,6 +751,13 @@ size_t ModManager::searchForAndSelectTeam(const std::string & query, std::vector
 	if(formattedQuery.empty()) {
 		return std::numeric_limits<size_t>::max();
 	}
+
+	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
+
+	std::map<std::string, std::any> properties;
+	properties["query"] = formattedQuery;
+
+	segmentAnalytics->track("Team Search", properties);
 
 	std::string teamName;
 	size_t matchingTeamIndex = std::numeric_limits<size_t>::max();
@@ -732,6 +809,13 @@ size_t ModManager::searchForAndSelectAuthor(const std::string & query, std::vect
 		return std::numeric_limits<size_t>::max();
 	}
 
+	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
+
+	std::map<std::string, std::any> properties;
+	properties["query"] = formattedQuery;
+
+	segmentAnalytics->track("Author Search", properties);
+
 	std::string authorName;
 	size_t matchingAuthorIndex = std::numeric_limits<size_t>::max();
 	size_t numberOfMatches = 0;
@@ -781,6 +865,8 @@ bool ModManager::runSelectedMod() {
 	if(!m_initialized) {
 		return false;
 	}
+
+	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
 
 	std::shared_ptr<GameVersion> selectedGameVersion;
 
@@ -988,12 +1074,40 @@ bool ModManager::runSelectedMod() {
 		customMapMessage = fmt::format(" with custom map '{}'", customMap);
 	}
 
+	std::map<std::string, std::any> properties;
+	properties["gameVersion"] = selectedGameVersion->getName();
+	properties["command"] = command;
+
+	if(!customMap.empty()) {
+		properties["customMap"] = customMap;
+	}
+
+	if(m_arguments != nullptr && m_arguments->hasPassthroughArguments()) {
+		properties["arguments"] = m_arguments->getPassthroughArguments().value();
+	}
+
 	if(customMod) {
 		fmt::print("Running custom mod in {} mode{}.\n", Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)), customMapMessage);
+
+		segmentAnalytics->track("Running Custom Mod", properties);
 	}
 	else if(m_selectedMod != nullptr) {
-		fmt::print("Running '{}' version of mod '{}' in {} mode{}.\n", selectedModGameVersion->getGameVersion(), m_selectedMod->getFullName(m_selectedModVersionIndex, m_selectedModVersionTypeIndex), Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)), customMapMessage);
+		std::string fullModName(m_selectedMod->getFullName(m_selectedModVersionIndex, m_selectedModVersionTypeIndex));
+		std::string gameTypeName(Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)));
+		fmt::print("Running '{}' version of mod '{}' in {} mode{}.\n", selectedModGameVersion->getGameVersion(), fullModName, gameTypeName, customMapMessage);
+
+		std::map<std::string, std::any> properties;
+		properties["modName"] = fullModName;
+		properties["modGameVersion"] = selectedModGameVersion->getGameVersion();
+		properties["gameType"] = gameTypeName;
+
+		segmentAnalytics->track("Running Mod", properties);
 	}
+	else {
+		segmentAnalytics->track("Running Game", properties);
+	}
+
+	segmentAnalytics->flush();
 
 	fmt::print("\n");
 

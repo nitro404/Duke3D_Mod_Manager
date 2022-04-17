@@ -4,6 +4,7 @@
 #include "Game/GameType.h"
 #include "Mod/OrganizedModCollection.h"
 
+#include <Analytics/Segment/SegmentAnalytics.h>
 #include <Application/Application.h>
 
 #include <cstdint>

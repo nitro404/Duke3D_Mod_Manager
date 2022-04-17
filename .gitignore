@@ -5,6 +5,7 @@ Downloads/*
 Test/*
 .vs
 Project.h
+Environment.h
 CDROM.INI
 DUKE3D.CFG
 stderr.txt
@@ -12,6 +13,7 @@ stdout.txt
 Duke Nukem 3D Mod Manager.json
 Duke Nukem 3D Game Versions.json
 Duke Nukem 3D Favourite Mods.json
+Segment Analytics.json
 *.ncb
 *.sdf
 *.suo
