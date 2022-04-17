@@ -21,6 +21,7 @@
 #include "Project.h"
 
 #include <Arguments/ArgumentParser.h>
+#include <Location/GeoLocationService.h>
 #include <Network/HTTPRequest.h>
 #include <Network/HTTPResponse.h>
 #include <Network/HTTPService.h>
@@ -119,6 +120,13 @@ bool ModManager::initialize(const ArgumentParser * args, bool start) {
 	}
 
 	m_httpService->setUserAgent(HTTP_USER_AGENT);
+
+	GeoLocationService * geoLocationService = GeoLocationService::getInstance();
+
+	if(!geoLocationService->initialize(m_httpService, "a96b0340-b491-11ec-a512-43b18b43a434")) {
+		fmt::print("Failed to initialize geo location service!\n");
+		return false;
+	}
 
 	if(!m_localMode) {
 		m_downloadManager = std::make_unique<DownloadManager>(m_httpService, m_settings);
