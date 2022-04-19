@@ -380,7 +380,7 @@ bool ModManager::CLI::updateFilterTypePrompt(const std::string & args) {
 		return false;
 	}
 
-	fmt::print("Changing filter type from '{}' to '{}'.\n\n", Utilities::toCapitalCase(std::string(magic_enum::enum_name(organizedMods->getFilterType()))), Utilities::toCapitalCase(std::string(magic_enum::enum_name(optionalFilterType.value()))));
+	fmt::print("Changing filter type from '{}' to '{}'.\n\n", Utilities::toCapitalCase(magic_enum::enum_name(organizedMods->getFilterType())), Utilities::toCapitalCase(magic_enum::enum_name(optionalFilterType.value())));
 
 	organizedMods->setFilterType(optionalFilterType.value());
 
@@ -399,11 +399,11 @@ std::optional<OrganizedModCollection::FilterType> ModManager::CLI::promptForFilt
 	const auto & filterTypes = magic_enum::enum_values<OrganizedModCollection::FilterType>();
 
 	for(size_t i = 0; i < filterTypes.size(); i++) {
-		filterTypeNames.push_back(Utilities::toCapitalCase(std::string(magic_enum::enum_name(filterTypes[i]))));
+		filterTypeNames.push_back(Utilities::toCapitalCase(magic_enum::enum_name(filterTypes[i])));
 	}
 
 	std::stringstream filterTypePromptMessage;
-	filterTypePromptMessage << fmt::format("Current filter type is set to: '{}' (default: '{}')\n\n", Utilities::toCapitalCase(std::string(magic_enum::enum_name(organizedMods->getFilterType()))), Utilities::toCapitalCase(std::string(magic_enum::enum_name(OrganizedModCollection::DEFAULT_FILTER_TYPE))));
+	filterTypePromptMessage << fmt::format("Current filter type is set to: '{}' (default: '{}')\n\n", Utilities::toCapitalCase(magic_enum::enum_name(organizedMods->getFilterType())), Utilities::toCapitalCase(magic_enum::enum_name(OrganizedModCollection::DEFAULT_FILTER_TYPE)));
 	filterTypePromptMessage << "Choose a filter type:";
 
 	size_t filterTypeIndex = getValuePrompt(filterTypeNames, filterTypePromptMessage.str(), args);
@@ -449,16 +449,16 @@ bool ModManager::CLI::runSortPrompt(const std::string & args) {
 		if(!skipInput) {
 			if(!sortTypeOptional.has_value()) {
 				std::stringstream sortTypePromptText;
-				sortTypePromptText << fmt::format("Current sort type is: {}", Utilities::toCapitalCase(std::string(magic_enum::enum_name(organizedMods->getSortType()))));
+				sortTypePromptText << fmt::format("Current sort type is: {}", Utilities::toCapitalCase(magic_enum::enum_name(organizedMods->getSortType())));
 
 				if(organizedMods->getSortType() != OrganizedModCollection::SortType::Unsorted && organizedMods->getSortType() != OrganizedModCollection::SortType::Random) {
-					sortTypePromptText << fmt::format(" ({})", Utilities::toCapitalCase(std::string(magic_enum::enum_name(organizedMods->getSortDirection()))));
+					sortTypePromptText << fmt::format(" ({})", Utilities::toCapitalCase(magic_enum::enum_name(organizedMods->getSortDirection())));
 				}
 
-				sortTypePromptText << fmt::format(" (default: {}", Utilities::toCapitalCase(std::string(magic_enum::enum_name(OrganizedModCollection::DEFAULT_SORT_TYPE))));
+				sortTypePromptText << fmt::format(" (default: {}", Utilities::toCapitalCase(magic_enum::enum_name(OrganizedModCollection::DEFAULT_SORT_TYPE)));
 
 				if(OrganizedModCollection::DEFAULT_SORT_TYPE != OrganizedModCollection::SortType::Unsorted) {
-					sortTypePromptText << fmt::format(" ({})", Utilities::toCapitalCase(std::string(magic_enum::enum_name(OrganizedModCollection::DEFAULT_SORT_DIRECTION))));
+					sortTypePromptText << fmt::format(" ({})", Utilities::toCapitalCase(magic_enum::enum_name(OrganizedModCollection::DEFAULT_SORT_DIRECTION)));
 				}
 
 				sortTypePromptText << fmt::format(")");
@@ -467,22 +467,22 @@ bool ModManager::CLI::runSortPrompt(const std::string & args) {
 				fmt::print("Choose a sort type:\n");
 
 				for(size_t i = 0; i < validSortTypes.size(); i++) {
-					fmt::print("{}: {}\n", i + 1, Utilities::toCapitalCase(std::string(magic_enum::enum_name(validSortTypes[i]))));
+					fmt::print("{}: {}\n", i + 1, Utilities::toCapitalCase(magic_enum::enum_name(validSortTypes[i])));
 				}
 
 				cancel = validSortTypes.size() + 1;
 			}
 			else {
-				fmt::print("Current sort type will be changed from '{}' to '{}'.\n\n", Utilities::toCapitalCase(std::string(magic_enum::enum_name(organizedMods->getSortType()))), Utilities::toCapitalCase(std::string(magic_enum::enum_name(sortTypeOptional.value()))));
+				fmt::print("Current sort type will be changed from '{}' to '{}'.\n\n", Utilities::toCapitalCase(magic_enum::enum_name(organizedMods->getSortType())), Utilities::toCapitalCase(magic_enum::enum_name(sortTypeOptional.value())));
 
 				if(sortTypeOptional.value() != OrganizedModCollection::SortType::Random) {
-					fmt::print("Current sort direction is: '{}' (default: '{}').\n\n", Utilities::toCapitalCase(std::string(magic_enum::enum_name(organizedMods->getSortDirection()))), Utilities::toCapitalCase(std::string(magic_enum::enum_name(OrganizedModCollection::DEFAULT_SORT_DIRECTION))));
+					fmt::print("Current sort direction is: '{}' (default: '{}').\n\n", Utilities::toCapitalCase(magic_enum::enum_name(organizedMods->getSortDirection())), Utilities::toCapitalCase(magic_enum::enum_name(OrganizedModCollection::DEFAULT_SORT_DIRECTION)));
 					fmt::print("Choose a sort direction:\n");
 
 					const auto& sortDirections = magic_enum::enum_values<OrganizedModCollection::SortDirection>();
 
 					for(size_t i = 0; i < sortDirections.size(); i++) {
-						fmt::print("{}: {}\n", i + 1, Utilities::toCapitalCase(std::string(magic_enum::enum_name(sortDirections[i]))));
+						fmt::print("{}: {}\n", i + 1, Utilities::toCapitalCase(magic_enum::enum_name(sortDirections[i])));
 					}
 
 					cancel = sortDirections.size() + 1;
@@ -636,16 +636,16 @@ bool ModManager::CLI::runSortPrompt(const std::string & args) {
 			if(organizedMods->areSortOptionsValidInCurrentContext(sortTypeOptional.value(), organizedMods->getFilterType())) {
 				if(organizedMods->getSortType() != sortTypeOptional.value() || organizedMods->getSortDirection() != sortDirectionOptional.value()) {
 					std::stringstream sortTypeChangedText;
-					sortTypeChangedText << fmt::format("Changing sort type from {}", Utilities::toCapitalCase(std::string(magic_enum::enum_name(organizedMods->getSortType()))));
+					sortTypeChangedText << fmt::format("Changing sort type from {}", Utilities::toCapitalCase(magic_enum::enum_name(organizedMods->getSortType())));
 
 					if(organizedMods->getSortType() != OrganizedModCollection::SortType::Unsorted && organizedMods->getSortType() != OrganizedModCollection::SortType::Random) {
-						sortTypeChangedText << fmt::format(" ({})", Utilities::toCapitalCase(std::string(magic_enum::enum_name(organizedMods->getSortDirection()))));
+						sortTypeChangedText << fmt::format(" ({})", Utilities::toCapitalCase(magic_enum::enum_name(organizedMods->getSortDirection())));
 					}
 
-					sortTypeChangedText << fmt::format(" to {}", Utilities::toCapitalCase(std::string(magic_enum::enum_name(sortTypeOptional.value()))));
+					sortTypeChangedText << fmt::format(" to {}", Utilities::toCapitalCase(magic_enum::enum_name(sortTypeOptional.value())));
 
 					if(sortTypeOptional.value() != OrganizedModCollection::SortType::Unsorted && sortTypeOptional.value() != OrganizedModCollection::SortType::Random) {
-						sortTypeChangedText << fmt::format(" ({})", Utilities::toCapitalCase(std::string(magic_enum::enum_name(sortDirectionOptional.value()))));
+						sortTypeChangedText << fmt::format(" ({})", Utilities::toCapitalCase(magic_enum::enum_name(sortDirectionOptional.value())));
 					}
 
 					sortTypeChangedText << fmt::format(".");
@@ -661,13 +661,13 @@ bool ModManager::CLI::runSortPrompt(const std::string & args) {
 			}
 			else {
 				std::stringstream invalidSortTypeText;
-				invalidSortTypeText << fmt::format("Sort type {}", Utilities::toCapitalCase(std::string(magic_enum::enum_name(sortTypeOptional.value()))));
+				invalidSortTypeText << fmt::format("Sort type {}", Utilities::toCapitalCase(magic_enum::enum_name(sortTypeOptional.value())));
 
 				if(sortTypeOptional.value() != OrganizedModCollection::SortType::Unsorted && sortTypeOptional.value() != OrganizedModCollection::SortType::Random) {
-					invalidSortTypeText << fmt::format(" ({})", Utilities::toCapitalCase(std::string(magic_enum::enum_name(sortDirectionOptional.value()))));
+					invalidSortTypeText << fmt::format(" ({})", Utilities::toCapitalCase(magic_enum::enum_name(sortDirectionOptional.value())));
 				}
 
-				invalidSortTypeText << fmt::format(" is not valid with filter type: '{}'.", Utilities::toCapitalCase(std::string(magic_enum::enum_name(organizedMods->getFilterType()))));
+				invalidSortTypeText << fmt::format(" is not valid with filter type: '{}'.", Utilities::toCapitalCase(magic_enum::enum_name(organizedMods->getFilterType())));
 
 				fmt::print("{}\n\n", invalidSortTypeText.str());
 
@@ -707,7 +707,7 @@ bool ModManager::CLI::updateGameTypePrompt(const std::string & args) {
 		return false;
 	}
 
-	fmt::print("Changing game type from '{}' to '{}'.\n\n", Utilities::toCapitalCase(std::string(magic_enum::enum_name(m_modManager->getSettings()->gameType))), Utilities::toCapitalCase(std::string(magic_enum::enum_name(optionalGameType.value()))));
+	fmt::print("Changing game type from '{}' to '{}'.\n\n", Utilities::toCapitalCase(magic_enum::enum_name(m_modManager->getSettings()->gameType)), Utilities::toCapitalCase(magic_enum::enum_name(optionalGameType.value())));
 
 	m_modManager->setGameType(optionalGameType.value());
 
@@ -725,10 +725,10 @@ std::optional<GameType> ModManager::CLI::promptForGameType(const std::string & a
 	const auto & gameTypes = magic_enum::enum_values<GameType>();
 
 	for(size_t i = 0; i < gameTypes.size(); i++) {
-		gameTypeNames.push_back(Utilities::toCapitalCase(std::string(magic_enum::enum_name(gameTypes[i]))));
+		gameTypeNames.push_back(Utilities::toCapitalCase(magic_enum::enum_name(gameTypes[i])));
 	}
 
-	std::string promptMessage(fmt::format("Current game type is set to: '{}' (default: '{}')\n\nChoose a game type:", Utilities::toCapitalCase(std::string(magic_enum::enum_name(m_modManager->getSettings()->gameType))), Utilities::toCapitalCase(std::string(magic_enum::enum_name(ModManager::DEFAULT_GAME_TYPE)))));
+	std::string promptMessage(fmt::format("Current game type is set to: '{}' (default: '{}')\n\nChoose a game type:", Utilities::toCapitalCase(magic_enum::enum_name(m_modManager->getSettings()->gameType)), Utilities::toCapitalCase(magic_enum::enum_name(ModManager::DEFAULT_GAME_TYPE))));
 
 	size_t gameTypeIndex = getValuePrompt(gameTypeNames, promptMessage, args);
 
@@ -1277,7 +1277,7 @@ bool ModManager::CLI::runSearchPrompt(const std::string & args) {
 					selectedItemName = organizedMods->getSelectedAuthor()->getName();
 				}
 
-				fmt::print("Selected {}: {}\n", searchMods ? Utilities::toCapitalCase(std::string(magic_enum::enum_name(modMatch->getMatchType()))) : searchType, selectedItemName);
+				fmt::print("Selected {}: {}\n", searchMods ? Utilities::toCapitalCase(magic_enum::enum_name(modMatch->getMatchType())) : searchType, selectedItemName);
 
 				return true;
 			}

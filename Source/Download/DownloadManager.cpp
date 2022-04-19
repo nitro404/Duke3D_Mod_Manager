@@ -54,8 +54,8 @@ bool DownloadManager::initialize() {
 		return false;
 	}
 
-	if(!ensureRequiredDirectories()) {
-		fmt::print("Failed to create required directories!\n");
+	if(!createRequiredDirectories()) {
+		fmt::print("Failed to create required download manager directories!\n");
 		return false;
 	}
 
@@ -80,6 +80,10 @@ bool DownloadManager::uninitialize() {
 	m_initialized = false;
 
 	return true;
+}
+
+size_t DownloadManager::numberOfDownloadedMods() const {
+	return m_downloadCache->numberOfCachedPackageFiles();
 }
 
 std::string DownloadManager::getDownloadCacheFilePath() const {

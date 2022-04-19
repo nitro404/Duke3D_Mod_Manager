@@ -423,7 +423,7 @@ rapidjson::Document SettingsManager::toJSON() const {
 
 	rapidjson::Value fileFormatVersionValue(FILE_FORMAT_VERSION, allocator);
 	settingsDocument.AddMember(rapidjson::StringRef(FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
-	rapidjson::Value gameTypeValue(Utilities::toCapitalCase(std::string(magic_enum::enum_name(gameType))).c_str(), allocator);
+	rapidjson::Value gameTypeValue(Utilities::toCapitalCase(magic_enum::enum_name(gameType)).c_str(), allocator);
 	settingsDocument.AddMember(rapidjson::StringRef(GAME_TYPE_PROPERTY_NAME), gameTypeValue, allocator);
 	rapidjson::Value dataDirectoryPathValue(dataDirectoryPath.c_str(), allocator);
 	settingsDocument.AddMember(rapidjson::StringRef(DATA_DIRECTORY_PATH_PROPERTY_NAME), dataDirectoryPathValue, allocator);

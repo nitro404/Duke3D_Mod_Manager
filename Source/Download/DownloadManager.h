@@ -19,6 +19,7 @@ public:
 	bool initialize();
 	bool uninitialize();
 
+	size_t numberOfDownloadedMods() const;
 	std::string getDownloadCacheFilePath() const;
 	std::string getCachedModListFilePath() const;
 	std::string getDownloadedModsDirectoryPath() const;
@@ -27,7 +28,7 @@ public:
 	bool downloadModGameVersion(ModGameVersion * modGameVersion, GameVersionCollection * gameVersions, bool force = false);
 
 private:
-	bool ensureRequiredDirectories();
+	bool createRequiredDirectories();
 	bool loadDownloadCache();
 	bool saveDownloadCache() const;
 

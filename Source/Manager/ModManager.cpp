@@ -942,7 +942,7 @@ bool ModManager::runSelectedMod() {
 	}
 
 	if(!selectedGameVersion->doesRequiresDOSBox() && (m_gameType == GameType::Client || m_gameType == GameType::Server)) {
-		fmt::print("Network settings are only supported when running in DOSBox, ignoring {} game type setting.\n\n", Utilities::toCapitalCase(std::string(magic_enum::enum_name(m_gameType))));
+		fmt::print("Network settings are only supported when running in DOSBox, ignoring {} game type setting.\n\n", Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)));
 		fmt::print("\n");
 	}
 
@@ -989,10 +989,10 @@ bool ModManager::runSelectedMod() {
 	}
 
 	if(customMod) {
-		fmt::print("Running custom mod in {} mode{}.\n", Utilities::toCapitalCase(std::string(magic_enum::enum_name(m_gameType))), customMapMessage);
+		fmt::print("Running custom mod in {} mode{}.\n", Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)), customMapMessage);
 	}
 	else if(m_selectedMod != nullptr) {
-		fmt::print("Running '{}' version of mod '{}' in {} mode{}.\n", selectedModGameVersion->getGameVersion(), m_selectedMod->getFullName(m_selectedModVersionIndex, m_selectedModVersionTypeIndex), Utilities::toCapitalCase(std::string(magic_enum::enum_name(m_gameType))), customMapMessage);
+		fmt::print("Running '{}' version of mod '{}' in {} mode{}.\n", selectedModGameVersion->getGameVersion(), m_selectedMod->getFullName(m_selectedModVersionIndex, m_selectedModVersionTypeIndex), Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)), customMapMessage);
 	}
 
 	fmt::print("\n");
@@ -1317,7 +1317,7 @@ bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
 			if(newGameTypeOptional.has_value()) {
 				m_gameType = newGameTypeOptional.value();
 
-				fmt::print("Setting game type to: '{}'.\n", Utilities::toCapitalCase(std::string(magic_enum::enum_name(m_gameType))));
+				fmt::print("Setting game type to: '{}'.\n", Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)));
 
 				if(m_gameType == GameType::Client) {
 					std::string ipAddress;
@@ -1376,7 +1376,7 @@ bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
 							gameTypesStream << ", ";
 						}
 
-						gameTypesStream << Utilities::toCapitalCase(std::string(gameTypeNames[i]));
+						gameTypesStream << Utilities::toCapitalCase(gameTypeNames[i]);
 					}
 
 					gameTypes = gameTypesStream.str();
@@ -1402,7 +1402,7 @@ bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
 			else if(modMatches.size() == 1) {
 				const ModMatch & modMatch = modMatches[0];
 
-				fmt::print("Selected {} from search query: '{}'.\n", Utilities::toCapitalCase(std::string(magic_enum::enum_name(modMatch.getMatchType()))), modMatch.toString());
+				fmt::print("Selected {} from search query: '{}'.\n", Utilities::toCapitalCase(magic_enum::enum_name(modMatch.getMatchType())), modMatch.toString());
 
 				setSelectedMod(modMatch.getMod());
 				setSelectedModVersionIndex(modMatch.getModVersionIndex());
