@@ -12,7 +12,7 @@ class ModGameVersion;
 
 class GameVersion final {
 public:
-	GameVersion(const std::string & name, const std::string & gamePath, const std::string & gameExecutableName, bool relativeConFilePath, const std::string & conFileArgumentFlag, const std::string & groupFileArgumentFlag, const std::string & mapFileArgumentFlag, const std::string & modDirectoryName, std::optional<std::string> setupExecutableName = {}, std::optional<std::string> defFileArgumentFlag = {}, std::optional<bool> requiresDOSBox = {}, const std::string & website = std::string(), const std::string & sourceCodeURL = std::string(), const std::vector<std::string> & compatibleGameVersions = std::vector<std::string>());
+	GameVersion(const std::string & name, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, const std::string & conFileArgumentFlag, const std::string & groupFileArgumentFlag, const std::string & mapFileArgumentFlag, const std::string & modDirectoryName, std::optional<std::string> setupExecutableName = {}, std::optional<std::string> defFileArgumentFlag = {}, std::optional<bool> requiresDOSBox = {}, const std::string & website = std::string(), const std::string & sourceCodeURL = std::string(), const std::vector<std::string> & compatibleGameVersions = std::vector<std::string>());
 	GameVersion(GameVersion && gameVersion) noexcept;
 	GameVersion(const GameVersion & gameVersion);
 	GameVersion & operator = (GameVersion && gameVersion) noexcept;
@@ -33,6 +33,8 @@ public:
 	std::optional<bool> getRequiresDOSBox() const;
 	void setRequiresDOSBox(bool requiresDOSBox);
 	void clearRequiresDOSBox();
+	bool hasLocalWorkingDirectory() const;
+	void setLocalWorkingDirectory(bool localWorkingDirectory);
 	const std::string & getModDirectoryName() const;
 	void setModDirectoryName(const std::string & modDirectoryName);
 	bool hasRelativeConFilePath() const;
@@ -81,15 +83,15 @@ public:
 	bool operator != (const GameVersion & gameVersion) const;
 
 	static const std::string ALL_VERSIONS;
-	static const GameVersion REGULAR_VERSION;
-	static const GameVersion ATOMIC_EDITION;
+	static const GameVersion ORIGINAL_REGULAR_VERSION;
+	static const GameVersion ORIGINAL_ATOMIC_EDITION;
 	static const GameVersion JFDUKE3D;
 	static const GameVersion EDUKE32;
 	//static const GameVersion MEGATON_EDITION;
 	static const GameVersion WORLD_TOUR;
 	//static const GameVersion BUILDGDX;
 	static const GameVersion RAZE;
-	static const GameVersion REDNUKEM;
+	static const GameVersion RED_NUKEM;
 	static const GameVersion CHOCOLATE_DUKE3D;
 	static const GameVersion BELGIAN_CHOCOLATE_DUKE3D;
 	static const std::vector<GameVersion> DEFAULT_GAME_VERSIONS;
@@ -103,6 +105,7 @@ private:
 	std::string m_modDirectoryName;
 	std::string m_website;
 	std::string m_sourceCodeURL;
+	bool m_localWorkingDirectory;
 	bool m_relativeConFilePath;
 	std::string m_conFileArgumentFlag;
 	std::string m_groupFileArgumentFlag;

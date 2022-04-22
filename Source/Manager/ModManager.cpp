@@ -51,7 +51,7 @@
 using namespace std::chrono_literals;
 
 const GameType ModManager::DEFAULT_GAME_TYPE = GameType::Game;
-const std::string ModManager::DEFAULT_PREFERRED_GAME_VERSION(GameVersion::ATOMIC_EDITION.getName());
+const std::string ModManager::DEFAULT_PREFERRED_GAME_VERSION(GameVersion::ORIGINAL_ATOMIC_EDITION.getName());
 const std::string ModManager::HTTP_USER_AGENT("DukeNukem3DModManager/" + APPLICATION_VERSION);
 
 ModManager::ModManager()
@@ -990,6 +990,7 @@ bool ModManager::runSelectedMod() {
 		scriptArgs.addArgument("DEFFLAG", selectedGameVersion->getDefFileArgumentFlag().value());
 	}
 
+	scriptArgs.addArgument("GAMEDIR", m_settings->gameSymlinkName);
 	scriptArgs.addArgument("MODSDIR", m_settings->modsSymlinkName);
 	scriptArgs.addArgument("MAPSDIR", m_settings->mapsSymlinkName);
 
@@ -1109,11 +1110,7 @@ bool ModManager::runSelectedMod() {
 
 	segmentAnalytics->flush();
 
-	fmt::print("\n");
-
-	if(m_verbose) {
-		fmt::print("Executing Command: {}\n\n", command);
-	}
+	fmt::print("\nExecuting Command: {}\n\n", command);
 
 	system(command.c_str());
 
@@ -1132,13 +1129,13 @@ bool ModManager::runSelectedMod() {
 	return true;
 }
 
-std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameVersion, std::shared_ptr<GameVersion> gameVersion, ScriptArguments & scriptArgs, bool * customMod, std::string * customMap) const {
+std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameVersion, std::shared_ptr<GameVersion> selectedGameVersion, ScriptArguments & scriptArgs, bool * customMod, std::string * customMap) const {
 	if(!m_initialized) {
 		fmt::print("Mod manager not initialized.\n");
 		return {};
 	}
 
-	if(!gameVersion->isConfigured()) {
+	if(!selectedGameVersion->isConfigured()) {
 		fmt::print("Invalid or unconfigured game version.\n");
 		return {};
 	}
@@ -1148,8 +1145,13 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 		return {};
 	}
 
-	if(gameVersion->doesRequiresDOSBox() && m_settings->dosboxDirectoryPath.empty()) {
+	if(selectedGameVersion->doesRequiresDOSBox() && m_settings->dosboxDirectoryPath.empty()) {
 		fmt::print("Empty DOSBox path.\n");
+		return {};
+	}
+
+	if(m_settings->gameSymlinkName.empty()) {
+		fmt::print("Empty game directory symbolic link name.\n");
 		return {};
 	}
 
@@ -1171,8 +1173,8 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			return {};
 		}
 
-		if(!Utilities::areStringsEqualIgnoreCase(modGameVersion->getGameVersion(), gameVersion->getName()) && !gameVersion->hasCompatibleGameVersion(modGameVersion->getGameVersion())) {
-			fmt::print("Game version '{}' is not compatible with '{}'.\n", gameVersion->getName(), modGameVersion->getGameVersion());
+		if(!Utilities::areStringsEqualIgnoreCase(modGameVersion->getGameVersion(), selectedGameVersion->getName()) && !selectedGameVersion->hasCompatibleGameVersion(modGameVersion->getGameVersion())) {
+			fmt::print("Game version '{}' is not compatible with '{}'.\n", selectedGameVersion->getName(), modGameVersion->getGameVersion());
 			return {};
 		}
 
@@ -1184,21 +1186,21 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 		}
 	}
 	else {
-		targetGameVersion = gameVersion;
+		targetGameVersion = selectedGameVersion;
 	}
 
 	std::string executableName;
 
 	if(m_gameType == GameType::Setup) {
-		if(!gameVersion->hasSetupExecutableName()) {
-			fmt::print("Game version '{}' does not have a setup executable.\n", gameVersion->getName());
+		if(!selectedGameVersion->hasSetupExecutableName()) {
+			fmt::print("Game version '{}' does not have a setup executable.\n", selectedGameVersion->getName());
 			return {};
 		}
 
-		executableName = gameVersion->getSetupExecutableName().value();
+		executableName = selectedGameVersion->getSetupExecutableName().value();
 	}
 	else {
-		executableName = gameVersion->getGameExecutableName();
+		executableName = selectedGameVersion->getGameExecutableName();
 	}
 
 	std::stringstream command;
@@ -1234,6 +1236,10 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 	if(modGameVersion != nullptr || !customGroupFiles.empty()) {
 		std::string modPath(Utilities::joinPaths(m_settings->modsSymlinkName, targetGameVersion->getModDirectoryName()));
 
+		if(!selectedGameVersion->hasLocalWorkingDirectory()) {
+			modPath = Utilities::joinPaths(m_settings->gameSymlinkName, modPath);
+		}
+
 		std::string conFileName;
 
 		if(!customGroupFiles.empty()) {
@@ -1249,14 +1255,14 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 
 		if(!customGroupFiles.empty()) {
 			for(std::vector<std::string>::const_iterator i = customGroupFiles.begin(); i != customGroupFiles.end(); ++i) {
-				command << " " << gameVersion->getGroupFileArgumentFlag() << Utilities::joinPaths(modPath, *i);
+				command << " " << selectedGameVersion->getGroupFileArgumentFlag() << Utilities::joinPaths(modPath, *i);
 			}
 		}
 		else {
 			std::vector<std::shared_ptr<ModFile>> groupFiles(modGameVersion->getFilesOfType("grp"));
 
 			for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = groupFiles.begin(); i != groupFiles.end(); ++i) {
-				command << " " << gameVersion->getGroupFileArgumentFlag() << Utilities::joinPaths(modPath, (*i)->getFileName());
+				command << " " << selectedGameVersion->getGroupFileArgumentFlag() << Utilities::joinPaths(modPath, (*i)->getFileName());
 			}
 		}
 
@@ -1265,7 +1271,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 				std::vector<std::shared_ptr<ModFile>> zipFiles(modGameVersion->getFilesOfType("zip"));
 
 				for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = zipFiles.begin(); i != zipFiles.end(); ++i) {
-					command << " " << gameVersion->getGroupFileArgumentFlag() << Utilities::joinPaths(modPath, (*i)->getFileName());
+					command << " " << selectedGameVersion->getGroupFileArgumentFlag() << Utilities::joinPaths(modPath, (*i)->getFileName());
 				}
 			}
 
@@ -1283,17 +1289,17 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			}
 
 			if(!defFileName.empty()) {
-				if(!gameVersion->hasDefFileArgumentFlag()) {
-					fmt::print("Game version '{}' does not have a def file argument flag specified in its configuration.\n", gameVersion->getName());
+				if(!selectedGameVersion->hasDefFileArgumentFlag()) {
+					fmt::print("Game version '{}' does not have a def file argument flag specified in its configuration.\n", selectedGameVersion->getName());
 					return {};
 				}
 
-				command << " " << gameVersion->getDefFileArgumentFlag().value() << defFileName;
+				command << " " << selectedGameVersion->getDefFileArgumentFlag().value() << defFileName;
 			}
 		}
 
 		if(!conFileName.empty()) {
-			command << " " << gameVersion->getConFileArgumentFlag() << (gameVersion->hasRelativeConFilePath() ? conFileName : Utilities::joinPaths(modPath, conFileName));
+			command << " " << selectedGameVersion->getConFileArgumentFlag() << (selectedGameVersion->hasRelativeConFilePath() ? conFileName : Utilities::joinPaths(modPath, conFileName));
 		}
 	}
 
@@ -1313,9 +1319,9 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 					*customMap = userMap;
 				}
 
-				command << " " << gameVersion->getMapFileArgumentFlag();
+				command << " " << selectedGameVersion->getMapFileArgumentFlag();
 
-				if(std::filesystem::is_regular_file(std::filesystem::path(Utilities::joinPaths(gameVersion->getGamePath(), userMap)))) {
+				if(std::filesystem::is_regular_file(std::filesystem::path(Utilities::joinPaths(selectedGameVersion->getGamePath(), userMap)))) {
 					command << userMap;
 				}
 				else {
@@ -1343,7 +1349,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 		}
 	}
 
-	if(gameVersion->doesRequiresDOSBox()) {
+	if(selectedGameVersion->doesRequiresDOSBox()) {
 		Script dosboxScript;
 		std::string dosboxScriptFilePath;
 
@@ -1378,7 +1384,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 		return generateDOSBoxCommand(dosboxScript, scriptArgs, Utilities::joinPaths(m_settings->dosboxDirectoryPath, m_settings->dosboxExecutableFileName), m_settings->dosboxArguments);
 	}
 
-	return Utilities::joinPaths("\"" + gameVersion->getGamePath(), executableName) + "\"" + command.str();
+	return Utilities::joinPaths("\"" + selectedGameVersion->getGamePath(), executableName) + "\"" + command.str();
 }
 
 std::string ModManager::generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const std::string & dosboxPath, const std::string & dosboxArguments) const {
@@ -1645,6 +1651,7 @@ size_t ModManager::checkForUnlinkedModFilesForGameVersion(const GameVersion & ga
 					fileName = modFile->getFileName();
 
 					if(linkedModFiles.find(fileName) != linkedModFiles.end() && linkedModFiles[fileName].size() != 0) {
+						// eDuke32 mod files can be read straight out of the group or zip file, and are not stored separately
 						if(modGameVersion->isEDuke32() && modFile->getType() != "zip" && modFile->getType() != "grp") {
 							continue;
 						}
@@ -2111,6 +2118,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 
 					optionalSHA1.reset();
 
+					// eDuke32 mod files can be read straight out of the group or zip file, and are not stored separately
 					if(modGameVersion->isEDuke32() && modFile->getType() != "zip" && modFile->getType() != "grp") {
 						if(!zipArchiveFilePath.empty()) {
 							if(zipArchive == nullptr) {
@@ -2210,6 +2218,12 @@ void ModManager::displayArgumentHelp() {
 	fmt::print(" -? - displays this help message.\n");
 }
 
+bool ModManager::areSymlinkSettingsValid() const {
+	return !m_settings->gameSymlinkName.empty() &&
+		   !m_settings->modsSymlinkName.empty() &&
+		   !m_settings->mapsSymlinkName.empty();
+}
+
 bool ModManager::createSymlink(const std::string & symlinkTarget, const std::string & symlinkName, const std::string & symlinkDestinationDirectory, bool verbose) const {
 	if(symlinkName.empty() ||
 	   symlinkTarget.empty()) {
@@ -2293,11 +2307,13 @@ bool ModManager::removeSymlink(const std::string & symlinkName, const std::strin
 }
 
 bool ModManager::createSymlinks(const GameVersion & gameVersion, bool verbose) {
-	if(!gameVersion.isConfigured()) {
+	if(!gameVersion.isConfigured() || !areSymlinkSettingsValid()) {
 		return false;
 	}
 
 	bool result = true;
+
+	result &= createSymlink(gameVersion.getGamePath(), m_settings->gameSymlinkName, std::filesystem::current_path().string(), verbose);
 
 	result &= createSymlink(getModsDirectoryPath(), m_settings->modsSymlinkName, gameVersion.getGamePath(), verbose);
 
@@ -2311,11 +2327,13 @@ bool ModManager::createSymlinks(const GameVersion & gameVersion, bool verbose) {
 }
 
 bool ModManager::removeSymlinks(const GameVersion & gameVersion, bool verbose) {
-	if(!gameVersion.isConfigured()) {
+	if(!gameVersion.isConfigured() || !areSymlinkSettingsValid()) {
 		return false;
 	}
 
 	bool result = true;
+
+	result &= removeSymlink(m_settings->gameSymlinkName, std::filesystem::current_path().string(), verbose);
 
 	result &= removeSymlink(m_settings->modsSymlinkName, gameVersion.getGamePath(), verbose);
 

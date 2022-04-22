@@ -28,6 +28,7 @@ static constexpr const char * EXECUTABLE_FILE_NAME = "executableFileName";
 static constexpr const char * FILE_FORMAT_VERSION_PROPERTY_NAME = "version";
 static constexpr const char * GAME_TYPE_PROPERTY_NAME = "gameType";
 static constexpr const char * DATA_DIRECTORY_PATH_PROPERTY_NAME = "dataDirectoryPath";
+static constexpr const char * GAME_SYMLINK_NAME_PROPERTY_NAME = "gameSymlinkName";
 static constexpr const char * VERBOSE_PROPERTY_NAME = "verbose";
 
 static constexpr const char * GAME_VERSIONS_CATEGORY_NAME = "gameVersions";
@@ -103,6 +104,7 @@ const char * SettingsManager::DEFAULT_SETTINGS_FILE_PATH = "Duke Nukem 3D Mod Ma
 const char * SettingsManager::DEFAULT_MODS_LIST_FILE_PATH = "Duke Nukem 3D Mod List.xml";
 const char * SettingsManager::DEFAULT_FAVOURITE_MODS_LIST_FILE_PATH = "Duke Nukem 3D Favourite Mods.json";
 const char * SettingsManager::DEFAULT_GAME_VERSIONS_LIST_FILE_PATH = "Duke Nukem 3D Game Versions.json";
+const char * SettingsManager::DEFAULT_GAME_SYMLINK_NAME = "Game";
 const char * SettingsManager::DEFAULT_MODS_DIRECTORY_PATH = "Mods";
 const char * SettingsManager::DEFAULT_MODS_SYMLINK_NAME = "Mods";
 const char * SettingsManager::DEFAULT_MOD_PACKAGE_DOWNLOADS_DIRECTORY_PATH = "";
@@ -165,6 +167,7 @@ SettingsManager::SettingsManager()
 	: modsListFilePath(DEFAULT_MODS_LIST_FILE_PATH)
 	, favouriteModsListFilePath(DEFAULT_FAVOURITE_MODS_LIST_FILE_PATH)
 	, gameVersionsListFilePath(DEFAULT_GAME_VERSIONS_LIST_FILE_PATH)
+	, gameSymlinkName(DEFAULT_GAME_SYMLINK_NAME)
 	, modsDirectoryPath(DEFAULT_MODS_DIRECTORY_PATH)
 	, modsSymlinkName(DEFAULT_MODS_SYMLINK_NAME)
 	, modPackageDownloadsDirectoryPath(DEFAULT_MOD_PACKAGE_DOWNLOADS_DIRECTORY_PATH)
@@ -211,6 +214,7 @@ SettingsManager::SettingsManager(SettingsManager && s) noexcept
 	: modsListFilePath(std::move(s.modsListFilePath))
 	, favouriteModsListFilePath(std::move(s.favouriteModsListFilePath))
 	, gameVersionsListFilePath(std::move(s.gameVersionsListFilePath))
+	, gameSymlinkName(std::move(s.gameSymlinkName))
 	, modsDirectoryPath(std::move(s.modsDirectoryPath))
 	, modsSymlinkName(std::move(s.modsSymlinkName))
 	, modPackageDownloadsDirectoryPath(std::move(s.modPackageDownloadsDirectoryPath))
@@ -256,6 +260,7 @@ SettingsManager::SettingsManager(const SettingsManager & s)
 	: modsListFilePath(s.modsListFilePath)
 	, favouriteModsListFilePath(s.favouriteModsListFilePath)
 	, gameVersionsListFilePath(s.gameVersionsListFilePath)
+	, gameSymlinkName(s.gameSymlinkName)
 	, modsDirectoryPath(s.modsDirectoryPath)
 	, modsSymlinkName(s.modsSymlinkName)
 	, modPackageDownloadsDirectoryPath(s.modPackageDownloadsDirectoryPath)
@@ -302,6 +307,7 @@ SettingsManager & SettingsManager::operator = (SettingsManager && s) noexcept {
 		modsListFilePath = std::move(s.modsListFilePath);
 		favouriteModsListFilePath = std::move(s.favouriteModsListFilePath);
 		gameVersionsListFilePath = std::move(s.gameVersionsListFilePath);
+		gameSymlinkName = std::move(s.gameSymlinkName);
 		modsDirectoryPath = std::move(s.modsDirectoryPath);
 		modsSymlinkName = std::move(s.modsSymlinkName);
 		modPackageDownloadsDirectoryPath = std::move(s.modPackageDownloadsDirectoryPath);
@@ -352,6 +358,7 @@ SettingsManager & SettingsManager::operator = (const SettingsManager & s) {
 	modsListFilePath = s.modsListFilePath;
 	favouriteModsListFilePath = s.favouriteModsListFilePath;
 	gameVersionsListFilePath = s.gameVersionsListFilePath;
+	gameSymlinkName = s.gameSymlinkName;
 	modsDirectoryPath = s.modsDirectoryPath;
 	modsSymlinkName = s.modsSymlinkName;
 	modPackageDownloadsDirectoryPath = s.modPackageDownloadsDirectoryPath;
@@ -403,6 +410,7 @@ void SettingsManager::reset() {
 	modsListFilePath = DEFAULT_MODS_LIST_FILE_PATH;
 	favouriteModsListFilePath = DEFAULT_FAVOURITE_MODS_LIST_FILE_PATH;
 	gameVersionsListFilePath = DEFAULT_GAME_VERSIONS_LIST_FILE_PATH;
+	gameSymlinkName = DEFAULT_GAME_SYMLINK_NAME;
 	modsDirectoryPath = DEFAULT_MODS_DIRECTORY_PATH;
 	modsSymlinkName = DEFAULT_MODS_SYMLINK_NAME;
 	modPackageDownloadsDirectoryPath = DEFAULT_MOD_PACKAGE_DOWNLOADS_DIRECTORY_PATH;
@@ -456,6 +464,8 @@ rapidjson::Document SettingsManager::toJSON() const {
 	settingsDocument.AddMember(rapidjson::StringRef(GAME_TYPE_PROPERTY_NAME), gameTypeValue, allocator);
 	rapidjson::Value dataDirectoryPathValue(dataDirectoryPath.c_str(), allocator);
 	settingsDocument.AddMember(rapidjson::StringRef(DATA_DIRECTORY_PATH_PROPERTY_NAME), dataDirectoryPathValue, allocator);
+	rapidjson::Value gameSymlinkNameValue(gameSymlinkName.c_str(), allocator);
+	settingsDocument.AddMember(rapidjson::StringRef(GAME_SYMLINK_NAME_PROPERTY_NAME), gameSymlinkNameValue, allocator);
 	settingsDocument.AddMember(rapidjson::StringRef(VERBOSE_PROPERTY_NAME), rapidjson::Value(verbose), allocator);
 
 	rapidjson::Value gameVersionsCategoryValue(rapidjson::kObjectType);
@@ -653,6 +663,7 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 	}
 
 	assignStringSetting(dataDirectoryPath, settingsDocument, DATA_DIRECTORY_PATH_PROPERTY_NAME);
+	assignStringSetting(gameSymlinkName, settingsDocument, GAME_SYMLINK_NAME_PROPERTY_NAME);
 
 	if(settingsDocument.HasMember(VERBOSE_PROPERTY_NAME) && settingsDocument[VERBOSE_PROPERTY_NAME].IsBool()) {
 		verbose = settingsDocument[VERBOSE_PROPERTY_NAME].GetBool();

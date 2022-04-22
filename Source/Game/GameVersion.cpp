@@ -24,11 +24,12 @@ static constexpr const char * JSON_GROUP_FILE_ARGUMENT_FLAG_PROPERTY_NAME = "gro
 static constexpr const char * JSON_DEF_FILE_ARGUMENT_FLAG_PROPERTY_NAME = "defFileArgumentFlag";
 static constexpr const char * JSON_MAP_FILE_ARGUMENT_FLAG_PROPERTY_NAME = "mapFileArgumentFlag";
 static constexpr const char * JSON_REQUIRES_DOSBOX_PROPERTY_NAME = "requiresDOSBox";
+static constexpr const char * JSON_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME = "localWorkingDirectory";
 static constexpr const char * JSON_MOD_DIRECTORY_NAME_PROPERTY_NAME = "modDirectoryName";
 static constexpr const char * JSON_WEBSITE_PROPERTY_NAME = "website";
 static constexpr const char * JSON_SOURCE_CODE_URL_PROPERTY_NAME = "sourceCodeURL";
 static constexpr const char * JSON_COMPATIBLE_GAME_VERSIONS_PROPERTY_NAME = "compatibleGameVersions";
-static const std::array<std::string_view, 14> JSON_PROPERTY_NAMES = {
+static const std::array<std::string_view, 15> JSON_PROPERTY_NAMES = {
 	JSON_NAME_PROPERTY_NAME,
 	JSON_GAME_PATH_PROPERTY_NAME,
 	JSON_GAME_EXECUTABLE_NAME_PROPERTY_NAME,
@@ -39,6 +40,7 @@ static const std::array<std::string_view, 14> JSON_PROPERTY_NAMES = {
 	JSON_DEF_FILE_ARGUMENT_FLAG_PROPERTY_NAME,
 	JSON_MAP_FILE_ARGUMENT_FLAG_PROPERTY_NAME,
 	JSON_REQUIRES_DOSBOX_PROPERTY_NAME,
+	JSON_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME,
 	JSON_MOD_DIRECTORY_NAME_PROPERTY_NAME,
 	JSON_WEBSITE_PROPERTY_NAME,
 	JSON_SOURCE_CODE_URL_PROPERTY_NAME,
@@ -47,33 +49,33 @@ static const std::array<std::string_view, 14> JSON_PROPERTY_NAMES = {
 
 const std::string GameVersion::ALL_VERSIONS = "All Versions";
 
-const GameVersion GameVersion::REGULAR_VERSION         ("Regular Version 1.3",         "", "DUKE3D.EXE",                 false, "/x",  "/g",  "-map ", "Regular",          "SETUP.EXE", {},    true, "https://www.dukenukem.com");
-const GameVersion GameVersion::ATOMIC_EDITION          ("Atomic Edition 1.4/1.5",      "", "DUKE3D.EXE",                 false, "/x",  "/g",  "-map ", "Atomic",           "SETUP.EXE", {},    true, "https://www.dukenukem.com");
-const GameVersion GameVersion::JFDUKE3D                ("JFDuke3D",                    "", "duke3d.exe",                 false, "/x",  "/g",  "-map ", "JFDuke3D",         {},          {},    {},   "http://www.jonof.id.au/jfduke3d",                               "https://github.com/jonof/jfduke3d",                  { GameVersion::REGULAR_VERSION.getName(), GameVersion::ATOMIC_EDITION.getName() });
-const GameVersion GameVersion::EDUKE32                 ("eDuke32",                     "", "eduke32.exe",                true,  "-x ", "-g ", "-map ", "eDuke32",          {},          "-h ", {},   "https://www.eduke32.com",                                       "https://voidpoint.io/terminx/eduke32",               { GameVersion::REGULAR_VERSION.getName(), GameVersion::ATOMIC_EDITION.getName(), GameVersion::JFDUKE3D.getName() });
-//const GameVersion GameVersion::MEGATON_EDITION         ("Megaton Edition",             "", "duke3d.exe",                 false, "/x",  "/g",  "-map ", "Megaton",          {},          {},    {},   "https://store.steampowered.com/app/225140",                     "https://github.com/TermiT/duke3d-megaton",           { GameVersion::REGULAR_VERSION.getName(), GameVersion::ATOMIC_EDITION.getName(), GameVersion::JFDUKE3D.getName() });
-const GameVersion GameVersion::WORLD_TOUR              ("20th Anniversary World Tour", "", "duke3d.exe",                 false, "/x",  "/g",  "-map ", "WorldTour",        {},          {},    {},   "https://www.gearboxsoftware.com/game/duke-3d-20th",             "",                                                   { GameVersion::REGULAR_VERSION.getName(), GameVersion::ATOMIC_EDITION.getName() });
-//const GameVersion BUILDGDX                             ("BuildGDX",                    "", "BuildGDX.jar",               true,  "",    "",    "-map ", "BuildGDX",         {},          {},    {},   "https://m210.duke4.net/index.php/downloads/category/8-java",    "https://gitlab.com/m210/BuildGDX",                   { GameVersion::REGULAR_VERSION.getName(), GameVersion::ATOMIC_EDITION.getName() });
-const GameVersion GameVersion::RAZE                    ("Raze",                        "", "raze.exe",                   true,  "-x ", "-g ", "-map ", "Raze",             {},          "-h ", {},   "https://raze.zdoom.org/about",                                  "https://github.com/coelckers/Raze",                  { GameVersion::ATOMIC_EDITION.getName(),  GameVersion::JFDUKE3D.getName(), GameVersion::EDUKE32.getName() });
-const GameVersion GameVersion::REDNUKEM                ("RedNukem",                    "", "rednukem.exe",               true,  "-x ", "-g ", "-map ", "RedNukem",         {},          "-h ", {},   "https://lerppu.net/wannabethesis",                              "https://github.com/nukeykt/NRedneck",                { GameVersion::REGULAR_VERSION.getName(), GameVersion::ATOMIC_EDITION.getName(), GameVersion::JFDUKE3D.getName(), GameVersion::EDUKE32.getName() });
-const GameVersion GameVersion::CHOCOLATE_DUKE3D        ("Chocolate Duke3D",            "", "Game.exe",                   false, "/x",  "/g",  "-map ", "Chocolate",        {},          {},    {},   "https://fabiensanglard.net/duke3d/chocolate_duke_nukem_3D.php", "https://github.com/fabiensanglard/chocolate_duke3D", { GameVersion::REGULAR_VERSION.getName(), GameVersion::ATOMIC_EDITION.getName() });
-const GameVersion GameVersion::BELGIAN_CHOCOLATE_DUKE3D("Belgian Chocolate Duke3D",    "", "BelgianChocolateDuke3D.exe", false, "/x",  "/g",  "-map ", "BelgianChocolate", {},          {},    {},   "",                                                              "https://github.com/GPSnoopy/BelgianChocolateDuke3D", { GameVersion::REGULAR_VERSION.getName(), GameVersion::ATOMIC_EDITION.getName() });
+const GameVersion GameVersion::ORIGINAL_REGULAR_VERSION("Regular Version 1.3",         "", "DUKE3D.EXE",                 true,  false, "/x",  "/g",  "-map ", "Regular",          "SETUP.EXE", {},    true,  "https://www.dukenukem.com");
+const GameVersion GameVersion::ORIGINAL_ATOMIC_EDITION ("Atomic Edition 1.4/1.5",      "", "DUKE3D.EXE",                 true,  false, "/x",  "/g",  "-map ", "Atomic",           "SETUP.EXE", {},    true,  "https://www.dukenukem.com");
+const GameVersion GameVersion::JFDUKE3D                ("JFDuke3D",                    "", "duke3d.exe",                 true,  false, "/x",  "/g",  "-map ", "JFDuke3D",         {},          {},    {},    "http://www.jonof.id.au/jfduke3d",                               "https://github.com/jonof/jfduke3d",                  { GameVersion::ORIGINAL_REGULAR_VERSION.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName() });
+const GameVersion GameVersion::EDUKE32                 ("eDuke32",                     "", "eduke32.exe",                false, true,  "-x ", "-g ", "-map ", "eDuke32",          {},          "-h ", {},    "https://www.eduke32.com",                                       "https://voidpoint.io/terminx/eduke32",               { GameVersion::ORIGINAL_REGULAR_VERSION.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName(), GameVersion::JFDUKE3D.getName() });
+//const GameVersion GameVersion::MEGATON_EDITION         ("Megaton Edition",             "", "duke3d.exe",                 true,  false, "/x",  "/g",  "-map ", "Megaton",          {},          {},    {},    "https://store.steampowered.com/app/225140",                     "https://github.com/TermiT/duke3d-megaton",           { GameVersion::ORIGINAL_REGULAR_VERSION.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName(), GameVersion::JFDUKE3D.getName() });
+const GameVersion GameVersion::WORLD_TOUR              ("20th Anniversary World Tour", "", "duke3d.exe",                 true,  false, "/x",  "/g",  "-map ", "WorldTour",        {},          {},    {},    "https://www.gearboxsoftware.com/game/duke-3d-20th",             "",                                                   { GameVersion::ORIGINAL_REGULAR_VERSION.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName() });
+//const GameVersion BUILDGDX                             ("BuildGDX",                    "", "BuildGDX.jar",               true,  true,  "",    "",    "-map ", "BuildGDX",         {},          {},    {},    "https://m210.duke4.net/index.php/downloads/category/8-java",    "https://gitlab.com/m210/BuildGDX",                   { GameVersion::ORIGINAL_REGULAR_VERSION.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName() });
+const GameVersion GameVersion::RAZE                    ("Raze",                        "", "raze.exe",                   true,  true,  "-x ", "-g ", "-map ", "Raze",             {},          "-h ", {},    "https://raze.zdoom.org/about",                                  "https://github.com/coelckers/Raze",                  { GameVersion::ORIGINAL_ATOMIC_EDITION.getName(),  GameVersion::JFDUKE3D.getName(), GameVersion::EDUKE32.getName() });
+const GameVersion GameVersion::RED_NUKEM               ("RedNukem",                    "", "rednukem.exe",               false, true,  "-x ", "-g ", "-map ", "RedNukem",         {},          "-h ", {},    "https://lerppu.net/wannabethesis",                              "https://github.com/nukeykt/NRedneck",                { GameVersion::ORIGINAL_REGULAR_VERSION.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName(), GameVersion::JFDUKE3D.getName(), GameVersion::EDUKE32.getName() });
+const GameVersion GameVersion::CHOCOLATE_DUKE3D        ("Chocolate Duke3D",            "", "Game.exe",                   true,  false, "/x",  "/g",  "-map ", "Chocolate",        {},          {},    {},    "https://fabiensanglard.net/duke3d/chocolate_duke_nukem_3D.php", "https://github.com/fabiensanglard/chocolate_duke3D", { GameVersion::ORIGINAL_REGULAR_VERSION.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName() });
+const GameVersion GameVersion::BELGIAN_CHOCOLATE_DUKE3D("Belgian Chocolate Duke3D",    "", "BelgianChocolateDuke3D.exe", true,  false, "/x",  "/g",  "-map ", "BelgianChocolate", {},          {},    {},    "",                                                              "https://github.com/GPSnoopy/BelgianChocolateDuke3D", { GameVersion::ORIGINAL_REGULAR_VERSION.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName() });
 
 const std::vector<GameVersion> GameVersion::DEFAULT_GAME_VERSIONS = {
-	GameVersion::REGULAR_VERSION,
-	GameVersion::ATOMIC_EDITION,
+	GameVersion::ORIGINAL_REGULAR_VERSION,
+	GameVersion::ORIGINAL_ATOMIC_EDITION,
 	GameVersion::JFDUKE3D,
 	GameVersion::EDUKE32,
 //	GameVersion::MEGATON_EDITION,
 	GameVersion::WORLD_TOUR,
 //	GameVersion::BUILDGDX,
 	GameVersion::RAZE,
-	GameVersion::REDNUKEM,
+	GameVersion::RED_NUKEM,
 	GameVersion::CHOCOLATE_DUKE3D,
 	GameVersion::BELGIAN_CHOCOLATE_DUKE3D
 };
 
-GameVersion::GameVersion(const std::string & name, const std::string & gamePath, const std::string & gameExecutableName, bool relativeConFilePath, const std::string & conFileArgumentFlag, const std::string & groupFileArgumentFlag, const std::string & mapFileArgumentFlag, const std::string & modDirectoryName, std::optional<std::string> setupExecutableName, std::optional<std::string> defFileArgumentFlag, std::optional<bool> requiresDOSBox, const std::string & website, const std::string & sourceCodeURL, const std::vector<std::string> & compatibleGameVersions)
+GameVersion::GameVersion(const std::string & name, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, const std::string & conFileArgumentFlag, const std::string & groupFileArgumentFlag, const std::string & mapFileArgumentFlag, const std::string & modDirectoryName, std::optional<std::string> setupExecutableName, std::optional<std::string> defFileArgumentFlag, std::optional<bool> requiresDOSBox, const std::string & website, const std::string & sourceCodeURL, const std::vector<std::string> & compatibleGameVersions)
 	: m_name(Utilities::trimString(name))
 	, m_gamePath(Utilities::trimString(gamePath))
 	, m_gameExecutableName(Utilities::trimString(gameExecutableName))
@@ -81,6 +83,7 @@ GameVersion::GameVersion(const std::string & name, const std::string & gamePath,
 	, m_modDirectoryName(Utilities::trimString(modDirectoryName))
 	, m_website(Utilities::trimString(website))
 	, m_sourceCodeURL(Utilities::trimString(sourceCodeURL))
+	, m_localWorkingDirectory(localWorkingDirectory)
 	, m_relativeConFilePath(relativeConFilePath)
 	, m_conFileArgumentFlag(conFileArgumentFlag)
 	, m_groupFileArgumentFlag(groupFileArgumentFlag)
@@ -99,6 +102,7 @@ GameVersion::GameVersion(GameVersion && gameVersion) noexcept
 	, m_gameExecutableName(std::move(gameVersion.m_gameExecutableName))
 	, m_setupExecutableName(std::move(gameVersion.m_setupExecutableName))
 	, m_requiresDOSBox(gameVersion.m_requiresDOSBox)
+	, m_localWorkingDirectory(gameVersion.m_localWorkingDirectory)
 	, m_modDirectoryName(std::move(gameVersion.m_modDirectoryName))
 	, m_website(std::move(gameVersion.m_website))
 	, m_sourceCodeURL(std::move(gameVersion.m_sourceCodeURL))
@@ -115,6 +119,7 @@ GameVersion::GameVersion(const GameVersion & gameVersion)
 	, m_gameExecutableName(gameVersion.m_gameExecutableName)
 	, m_setupExecutableName(gameVersion.m_setupExecutableName)
 	, m_requiresDOSBox(gameVersion.m_requiresDOSBox)
+	, m_localWorkingDirectory(gameVersion.m_localWorkingDirectory)
 	, m_modDirectoryName(gameVersion.m_modDirectoryName)
 	, m_website(gameVersion.m_website)
 	, m_sourceCodeURL(gameVersion.m_sourceCodeURL)
@@ -132,6 +137,7 @@ GameVersion & GameVersion::operator = (GameVersion && gameVersion) noexcept {
 		m_gameExecutableName = std::move(gameVersion.m_gameExecutableName);
 		m_setupExecutableName = std::move(gameVersion.m_setupExecutableName);
 		m_requiresDOSBox = std::move(gameVersion.m_requiresDOSBox);
+		m_localWorkingDirectory = gameVersion.m_localWorkingDirectory;
 		m_modDirectoryName = std::move(gameVersion.m_modDirectoryName);
 		m_website = std::move(gameVersion.m_website);
 		m_sourceCodeURL = std::move(gameVersion.m_sourceCodeURL);
@@ -152,6 +158,7 @@ GameVersion & GameVersion::operator = (const GameVersion & gameVersion) {
 	m_gameExecutableName = gameVersion.m_gameExecutableName;
 	m_setupExecutableName = gameVersion.m_setupExecutableName;
 	m_requiresDOSBox = gameVersion.m_requiresDOSBox;
+	m_localWorkingDirectory = gameVersion.m_localWorkingDirectory;
 	m_modDirectoryName = gameVersion.m_modDirectoryName;
 	m_website = gameVersion.m_website;
 	m_sourceCodeURL = gameVersion.m_sourceCodeURL;
@@ -221,6 +228,14 @@ void GameVersion::setRequiresDOSBox(bool requiresDOSBox) {
 
 void GameVersion::clearRequiresDOSBox() {
 	m_requiresDOSBox.reset();
+}
+
+bool GameVersion::hasLocalWorkingDirectory() const {
+	return m_localWorkingDirectory;
+}
+
+void GameVersion::setLocalWorkingDirectory(bool localWorkingDirectory) {
+	m_localWorkingDirectory = localWorkingDirectory;
 }
 
 const std::string & GameVersion::getModDirectoryName() const {
@@ -486,6 +501,8 @@ rapidjson::Value GameVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::C
 	rapidjson::Value gameExecutableNameValue(m_gameExecutableName.c_str(), allocator);
 	gameVersionValue.AddMember(rapidjson::StringRef(JSON_GAME_EXECUTABLE_NAME_PROPERTY_NAME), gameExecutableNameValue, allocator);
 
+	gameVersionValue.AddMember(rapidjson::StringRef(JSON_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME), rapidjson::Value(m_localWorkingDirectory), allocator);
+
 	gameVersionValue.AddMember(rapidjson::StringRef(JSON_RELATIVE_CON_FILE_PATH_PROPERTY_NAME), rapidjson::Value(m_relativeConFilePath), allocator);
 
 	rapidjson::Value conFileArgumentFlagValue(m_conFileArgumentFlag.c_str(), allocator);
@@ -637,7 +654,22 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		}
 	}
 
-	// parse relative con file path
+	// parse local working directory option
+	if(!gameVersionValue.HasMember(JSON_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME)) {
+		fmt::print("Game version is missing '{}' property.\n", JSON_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME);
+		return nullptr;
+	}
+
+	const rapidjson::Value & localWorkingDirectoryValue = gameVersionValue[JSON_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME];
+
+	if(!localWorkingDirectoryValue.IsBool()) {
+		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'boolean'.\n", JSON_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME, Utilities::typeToString(localWorkingDirectoryValue.GetType()));
+		return nullptr;
+	}
+
+	bool localWorkingDirectory = localWorkingDirectoryValue.GetBool();
+
+	// parse relative con file path option
 	if(!gameVersionValue.HasMember(JSON_RELATIVE_CON_FILE_PATH_PROPERTY_NAME)) {
 		fmt::print("Game version is missing '{}' property.\n", JSON_RELATIVE_CON_FILE_PATH_PROPERTY_NAME);
 		return nullptr;
@@ -646,7 +678,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 	const rapidjson::Value & relativeConFilePathValue = gameVersionValue[JSON_RELATIVE_CON_FILE_PATH_PROPERTY_NAME];
 
 	if(!relativeConFilePathValue.IsBool()) {
-		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_RELATIVE_CON_FILE_PATH_PROPERTY_NAME, Utilities::typeToString(relativeConFilePathValue.GetType()));
+		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'boolean'.\n", JSON_RELATIVE_CON_FILE_PATH_PROPERTY_NAME, Utilities::typeToString(relativeConFilePathValue.GetType()));
 		return nullptr;
 	}
 
@@ -733,7 +765,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 	}
 
 	// initialize the game version
-	std::unique_ptr<GameVersion> newGameVersion = std::make_unique<GameVersion>(name, gamePath, gameExecutableName, relativeConFilePath, conFileArgumentFlag, groupFileArgumentFlag, mapFileArgumentFlag, modDirectoryName, setupExecutableNameOptional);
+	std::unique_ptr<GameVersion> newGameVersion = std::make_unique<GameVersion>(name, gamePath, gameExecutableName, localWorkingDirectory, relativeConFilePath, conFileArgumentFlag, groupFileArgumentFlag, mapFileArgumentFlag, modDirectoryName, setupExecutableNameOptional);
 
 	// parse game version def file argument flag
 	if(gameVersionValue.HasMember(JSON_DEF_FILE_ARGUMENT_FLAG_PROPERTY_NAME)) {

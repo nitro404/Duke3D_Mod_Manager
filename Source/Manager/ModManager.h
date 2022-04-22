@@ -130,7 +130,7 @@ private:
 	};
 
 	bool handleArguments(const ArgumentParser * args, bool start);
-	std::string generateCommand(std::shared_ptr<ModGameVersion> modGameVersion, std::shared_ptr<GameVersion> gameVersion, ScriptArguments & scriptArgs, bool * customMod = nullptr, std::string * customMap = nullptr) const;
+	std::string generateCommand(std::shared_ptr<ModGameVersion> modGameVersion, std::shared_ptr<GameVersion> selectedGameVersion, ScriptArguments & scriptArgs, bool * customMod = nullptr, std::string * customMap = nullptr) const;
 	std::string generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const std::string & dosboxPath, const  std::string & dosboxArguments) const;
 	size_t checkForUnlinkedModFiles() const;
 	size_t checkForUnlinkedModFilesForGameVersion(const GameVersion & gameVersion) const;
@@ -140,6 +140,7 @@ private:
 	size_t checkForMissingExecutables() const;
 	size_t updateAllFileHashes(bool save = true, bool skipHashedFiles = true);
 	size_t updateModHashes(Mod & mod, bool skipHashedFiles = true, std::optional<size_t> versionIndex = {}, std::optional<size_t> versionTypeIndex = {});
+	bool areSymlinkSettingsValid() const;
 	bool createSymlink(const std::string & symlinkName, const std::string & symlinkTarget, const std::string & symlinkDestinationDirectory, bool verbose = true) const;
 	bool removeSymlink(const std::string & symlinkName, const std::string & symlinkDestinationDirectory, bool verbose = true) const;
 	bool createSymlinks(const GameVersion & gameVersion, bool verbose = true);
