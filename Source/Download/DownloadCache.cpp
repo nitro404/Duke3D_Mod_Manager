@@ -150,7 +150,7 @@ bool DownloadCache::updateCachedPackageFile(const ModDownload * modDownload, con
 	for(size_t i = 0; i < modGameVersion->numberOfFiles(); i++) {
 		modFile = modGameVersion->getFile(i);
 
-		if(modGameVersion->isEDuke32() && modFile->getFileExtension() != "zip" && modFile->getFileExtension() != "grp") {
+		if(modGameVersion->isEDuke32() && modFile->getType() != "zip" && modFile->getType() != "grp") {
 			continue;
 		}
 
