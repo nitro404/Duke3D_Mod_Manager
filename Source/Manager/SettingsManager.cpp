@@ -28,6 +28,8 @@ static constexpr const char * EXECUTABLE_FILE_NAME = "executableFileName";
 static constexpr const char * FILE_FORMAT_VERSION_PROPERTY_NAME = "version";
 static constexpr const char * GAME_TYPE_PROPERTY_NAME = "gameType";
 static constexpr const char * DATA_DIRECTORY_PATH_PROPERTY_NAME = "dataDirectoryPath";
+static constexpr const char * TEMP_DIRECTORY_PATH_PROPERTY_NAME = "tempDirectoryPath";
+static constexpr const char * TEMP_SYMLINK_NAME_PROPERTY_NAME = "tempSymlinkName";
 static constexpr const char * GAME_SYMLINK_NAME_PROPERTY_NAME = "gameSymlinkName";
 static constexpr const char * VERBOSE_PROPERTY_NAME = "verbose";
 
@@ -118,6 +120,8 @@ const char * SettingsManager::DEFAULT_MOD_DOWNLOADS_DIRECTORY_NAME = "Mods";
 const char * SettingsManager::DEFAULT_MAP_DOWNLOADS_DIRECTORY_NAME = "Maps";
 const char * SettingsManager::DEFAULT_GAME_DOWNLOADS_DIRECTORY_NAME = "Games";
 const char * SettingsManager::DEFAULT_DATA_DIRECTORY_PATH = "Data";
+const char * SettingsManager::DEFAULT_TEMP_DIRECTORY_PATH = "Temp";
+const char * SettingsManager::DEFAULT_TEMP_SYMLINK_NAME = "Temp";
 const char * SettingsManager::DEFAULT_CACHE_DIRECTORY_PATH = "Cache";
 const char * SettingsManager::DEFAULT_DOSBOX_EXECUTABLE_FILE_NAME = "dosbox.exe";
 const char * SettingsManager::DEFAULT_DOSBOX_DIRECTORY_PATH = "DOSBox";
@@ -181,6 +185,8 @@ SettingsManager::SettingsManager()
 	, mapDownloadsDirectoryName(DEFAULT_MAP_DOWNLOADS_DIRECTORY_NAME)
 	, gameDownloadsDirectoryName(DEFAULT_GAME_DOWNLOADS_DIRECTORY_NAME)
 	, dataDirectoryPath(DEFAULT_DATA_DIRECTORY_PATH)
+	, tempDirectoryPath(DEFAULT_TEMP_DIRECTORY_PATH)
+	, tempSymlinkName(DEFAULT_TEMP_SYMLINK_NAME)
 	, cacheDirectoryPath(DEFAULT_CACHE_DIRECTORY_PATH)
 	, dosboxExecutableFileName(DEFAULT_DOSBOX_EXECUTABLE_FILE_NAME)
 	, dosboxDirectoryPath(DEFAULT_DOSBOX_DIRECTORY_PATH)
@@ -227,6 +233,8 @@ SettingsManager::SettingsManager(SettingsManager && s) noexcept
 	, mapDownloadsDirectoryName(std::move(s.mapDownloadsDirectoryName))
 	, gameDownloadsDirectoryName(std::move(s.gameDownloadsDirectoryName))
 	, dataDirectoryPath(std::move(s.dataDirectoryPath))
+	, tempDirectoryPath(std::move(s.tempDirectoryPath))
+	, tempSymlinkName(std::move(s.tempSymlinkName))
 	, cacheDirectoryPath(std::move(s.cacheDirectoryPath))
 	, dosboxExecutableFileName(std::move(s.dosboxExecutableFileName))
 	, dosboxDirectoryPath(std::move(s.dosboxDirectoryPath))
@@ -273,6 +281,8 @@ SettingsManager::SettingsManager(const SettingsManager & s)
 	, mapDownloadsDirectoryName(s.mapDownloadsDirectoryName)
 	, gameDownloadsDirectoryName(s.gameDownloadsDirectoryName)
 	, dataDirectoryPath(s.dataDirectoryPath)
+	, tempDirectoryPath(s.tempDirectoryPath)
+	, tempSymlinkName(s.tempSymlinkName)
 	, cacheDirectoryPath(s.cacheDirectoryPath)
 	, dosboxExecutableFileName(s.dosboxExecutableFileName)
 	, dosboxDirectoryPath(s.dosboxDirectoryPath)
@@ -321,6 +331,8 @@ SettingsManager & SettingsManager::operator = (SettingsManager && s) noexcept {
 		mapDownloadsDirectoryName = std::move(s.mapDownloadsDirectoryName);
 		gameDownloadsDirectoryName = std::move(s.gameDownloadsDirectoryName);
 		dataDirectoryPath = std::move(s.dataDirectoryPath);
+		tempDirectoryPath = std::move(s.tempDirectoryPath);
+		tempSymlinkName = std::move(s.tempSymlinkName);
 		cacheDirectoryPath = std::move(s.cacheDirectoryPath);
 		dosboxExecutableFileName = std::move(s.dosboxExecutableFileName);
 		dosboxDirectoryPath = std::move(s.dosboxDirectoryPath);
@@ -372,6 +384,8 @@ SettingsManager & SettingsManager::operator = (const SettingsManager & s) {
 	mapDownloadsDirectoryName = s.mapDownloadsDirectoryName;
 	gameDownloadsDirectoryName = s.gameDownloadsDirectoryName;
 	dataDirectoryPath = s.dataDirectoryPath;
+	tempDirectoryPath = s.tempDirectoryPath;
+	tempSymlinkName = s.tempSymlinkName;
 	cacheDirectoryPath = s.cacheDirectoryPath;
 	dosboxExecutableFileName = s.dosboxExecutableFileName;
 	dosboxDirectoryPath = s.dosboxDirectoryPath;
@@ -424,6 +438,8 @@ void SettingsManager::reset() {
 	mapDownloadsDirectoryName = DEFAULT_MAP_DOWNLOADS_DIRECTORY_NAME;
 	gameDownloadsDirectoryName = DEFAULT_GAME_DOWNLOADS_DIRECTORY_NAME;
 	dataDirectoryPath = DEFAULT_DATA_DIRECTORY_PATH;
+	tempDirectoryPath = DEFAULT_TEMP_DIRECTORY_PATH;
+	tempSymlinkName = DEFAULT_TEMP_SYMLINK_NAME;
 	cacheDirectoryPath = DEFAULT_CACHE_DIRECTORY_PATH;
 	dosboxExecutableFileName = DEFAULT_DOSBOX_EXECUTABLE_FILE_NAME;
 	dosboxDirectoryPath = DEFAULT_DOSBOX_DIRECTORY_PATH;
@@ -464,6 +480,10 @@ rapidjson::Document SettingsManager::toJSON() const {
 	settingsDocument.AddMember(rapidjson::StringRef(GAME_TYPE_PROPERTY_NAME), gameTypeValue, allocator);
 	rapidjson::Value dataDirectoryPathValue(dataDirectoryPath.c_str(), allocator);
 	settingsDocument.AddMember(rapidjson::StringRef(DATA_DIRECTORY_PATH_PROPERTY_NAME), dataDirectoryPathValue, allocator);
+	rapidjson::Value tempDirectoryPathValue(tempDirectoryPath.c_str(), allocator);
+	settingsDocument.AddMember(rapidjson::StringRef(TEMP_DIRECTORY_PATH_PROPERTY_NAME), tempDirectoryPathValue, allocator);
+	rapidjson::Value tempSymlinkNameValue(tempSymlinkName.c_str(), allocator);
+	settingsDocument.AddMember(rapidjson::StringRef(TEMP_SYMLINK_NAME_PROPERTY_NAME), tempSymlinkNameValue, allocator);
 	rapidjson::Value gameSymlinkNameValue(gameSymlinkName.c_str(), allocator);
 	settingsDocument.AddMember(rapidjson::StringRef(GAME_SYMLINK_NAME_PROPERTY_NAME), gameSymlinkNameValue, allocator);
 	settingsDocument.AddMember(rapidjson::StringRef(VERBOSE_PROPERTY_NAME), rapidjson::Value(verbose), allocator);
@@ -663,6 +683,8 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 	}
 
 	assignStringSetting(dataDirectoryPath, settingsDocument, DATA_DIRECTORY_PATH_PROPERTY_NAME);
+	assignStringSetting(tempDirectoryPath, settingsDocument, TEMP_DIRECTORY_PATH_PROPERTY_NAME);
+	assignStringSetting(tempSymlinkName, settingsDocument, TEMP_SYMLINK_NAME_PROPERTY_NAME);
 	assignStringSetting(gameSymlinkName, settingsDocument, GAME_SYMLINK_NAME_PROPERTY_NAME);
 
 	if(settingsDocument.HasMember(VERBOSE_PROPERTY_NAME) && settingsDocument[VERBOSE_PROPERTY_NAME].IsBool()) {

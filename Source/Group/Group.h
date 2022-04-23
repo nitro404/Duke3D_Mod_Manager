@@ -12,7 +12,7 @@
 
 class Group final {
 public:
-	Group(const std::string & filePath);
+	Group(std::string_view filePath);
 	Group(Group && g) noexcept;
 	Group(const Group & g);
 	Group & operator = (Group && g) noexcept;
@@ -50,6 +50,7 @@ public:
 	std::string toString() const;
 
 	bool load();
+	bool save(bool overwrite = true) const;
 
 	size_t getGroupSize() const;
 	bool verifyAllFiles() const;

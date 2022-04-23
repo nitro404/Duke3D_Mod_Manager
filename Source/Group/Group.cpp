@@ -17,7 +17,7 @@ const Endianness Group::FILE_ENDIANNESS = Endianness::LittleEndian;
 
 const std::string Group::HEADER_TEXT("KenSilverman");
 
-Group::Group(const std::string & filePath)
+Group::Group(std::string_view filePath)
 	: m_filePath(Utilities::trimString(filePath)) { }
 
 Group::Group(Group && g) noexcept
@@ -510,7 +510,7 @@ bool Group::load() {
 			return false;
 		}
 
-		std::shared_ptr<GroupFile> groupFile = std::make_shared<GroupFile>(fileNames[i], buffer->readBytes(fileSizes[i], &error));
+		std::shared_ptr<GroupFile> groupFile(std::make_shared<GroupFile>(fileNames[i], buffer->readBytes(fileSizes[i], &error)));
 
 		if(error) {
 			fmt::print("Group file '{}' failed to read data bytes for file #{} ('{}').\n", m_filePath, i + 1, fileNames[i]);
@@ -530,11 +530,76 @@ bool Group::load() {
 	return true;
 }
 
+bool Group::save(bool overwrite) const {
+	// verify that the file has a path
+	if(m_filePath.empty()) {
+		fmt::print("Group has no file name.\n");
+		return false;
+	}
+
+	// check if the file already exists and verify that overwrite is specified to continue
+	if(!overwrite && std::filesystem::is_regular_file(std::filesystem::path(m_filePath))) {
+		fmt::print("Group file already exists, must specify overwrite flag to save.\n", m_filePath);
+		return false;
+	}
+
+	ByteBuffer buffer(getGroupSize(), Group::FILE_ENDIANNESS);
+
+	if(!buffer.writeString(HEADER_TEXT)) {
+		return false;
+	}
+
+	if(!buffer.writeUnsignedInteger(m_files.size())) {
+		return false;
+	}
+
+	size_t currentFileNameLength = 0;
+
+	for(size_t i = 0; i < m_files.size(); i++) {
+		const std::shared_ptr<GroupFile> groupFile(m_files.at(i));
+
+		if(!buffer.writeString(groupFile->getFileName())) {
+			return false;
+		}
+
+		currentFileNameLength = groupFile->getFileName().length();
+
+		if(currentFileNameLength < GroupFile::MAX_FILE_NAME_LENGTH) {
+			if(!buffer.skipWriteBytes(GroupFile::MAX_FILE_NAME_LENGTH - currentFileNameLength)) {
+				return false;
+			}
+		}
+
+		if(!buffer.writeUnsignedInteger(groupFile->getSize())) {
+			return false;
+		}
+	}
+
+	for(size_t i = 0; i < m_files.size(); i++) {
+		const std::shared_ptr<GroupFile> groupFile(m_files.at(i));
+
+		if(!buffer.writeBytes(groupFile->getData())) {
+			return false;
+		}
+	}
+
+	if(!buffer.writeTo(m_filePath, overwrite)) {
+		return false;
+	}
+
+	return true;
+}
+
 size_t Group::getGroupSize() const {
-	size_t size = 0;
+	static constexpr size_t NUMBER_OF_FILES_LENGTH = sizeof(uint32_t);
+	static constexpr size_t GROUP_FILE_SIZE_LENGTH = sizeof(uint32_t);
+	static const size_t HEADER_LENGTH = HEADER_TEXT.length() + NUMBER_OF_FILES_LENGTH;
+	static const size_t GROUP_FILE_HEADER_LENGTH = GroupFile::MAX_FILE_NAME_LENGTH + GROUP_FILE_SIZE_LENGTH;
+
+	size_t size = HEADER_LENGTH;
 
 	for(std::vector<std::shared_ptr<GroupFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
-		size += (*i)->getSize();
+		size += GROUP_FILE_HEADER_LENGTH + (*i)->getSize();
 	}
 
 	return size;

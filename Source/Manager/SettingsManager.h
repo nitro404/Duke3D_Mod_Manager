@@ -48,6 +48,8 @@ public:
 	static const char * DEFAULT_MAP_DOWNLOADS_DIRECTORY_NAME;
 	static const char * DEFAULT_GAME_DOWNLOADS_DIRECTORY_NAME;
 	static const char * DEFAULT_DATA_DIRECTORY_PATH;
+	static const char * DEFAULT_TEMP_DIRECTORY_PATH;
+	static const char * DEFAULT_TEMP_SYMLINK_NAME;
 	static const char * DEFAULT_CACHE_DIRECTORY_PATH;
 	static const char * DEFAULT_DOSBOX_EXECUTABLE_FILE_NAME;
 	static const char * DEFAULT_DOSBOX_DIRECTORY_PATH;
@@ -94,6 +96,8 @@ public:
 	std::string mapDownloadsDirectoryName;
 	std::string gameDownloadsDirectoryName;
 	std::string dataDirectoryPath;
+	std::string tempDirectoryPath;
+	std::string tempSymlinkName;
 	std::string cacheDirectoryPath;
 	std::string dosboxExecutableFileName;
 	std::string dosboxDirectoryPath;

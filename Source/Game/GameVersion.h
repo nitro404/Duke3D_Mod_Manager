@@ -12,7 +12,7 @@ class ModGameVersion;
 
 class GameVersion final {
 public:
-	GameVersion(const std::string & name, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, const std::string & conFileArgumentFlag, const std::string & groupFileArgumentFlag, const std::string & mapFileArgumentFlag, const std::string & modDirectoryName, std::optional<std::string> setupExecutableName = {}, std::optional<std::string> defFileArgumentFlag = {}, std::optional<bool> requiresDOSBox = {}, const std::string & website = std::string(), const std::string & sourceCodeURL = std::string(), const std::vector<std::string> & compatibleGameVersions = std::vector<std::string>());
+	GameVersion(const std::string & name, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, const std::string & conFileArgumentFlag, const std::string & groupFileArgumentFlag, const std::string & mapFileArgumentFlag, const std::string & modDirectoryName, std::optional<std::string> setupExecutableName = {}, std::optional<std::string> defFileArgumentFlag = {}, std::optional<bool> requiresCombinedGroup = {}, std::optional<bool> requiresDOSBox = {}, const std::string & website = std::string(), const std::string & sourceCodeURL = std::string(), const std::vector<std::string> & compatibleGameVersions = std::vector<std::string>());
 	GameVersion(GameVersion && gameVersion) noexcept;
 	GameVersion(const GameVersion & gameVersion);
 	GameVersion & operator = (GameVersion && gameVersion) noexcept;
@@ -29,7 +29,11 @@ public:
 	void setGameExecutableName(const std::string & gameExecutableName);
 	void setSetupExecutableName(const std::string & setupExecutableName);
 	void clearSetupExecutableName();
-	bool doesRequiresDOSBox() const;
+	bool doesRequireCombinedGroup() const;
+	std::optional<bool> getRequiresCombinedGroup() const;
+	void setRequiresCombinedGroup(bool requiresCombinedGroup);
+	void clearRequiresCombinedGroup();
+	bool doesRequireDOSBox() const;
 	std::optional<bool> getRequiresDOSBox() const;
 	void setRequiresDOSBox(bool requiresDOSBox);
 	void clearRequiresDOSBox();
@@ -101,6 +105,7 @@ private:
 	std::string m_gamePath;
 	std::string m_gameExecutableName;
 	std::optional<std::string> m_setupExecutableName;
+	std::optional<bool> m_requiresCombinedGroup;
 	std::optional<bool> m_requiresDOSBox;
 	std::string m_modDirectoryName;
 	std::string m_website;
