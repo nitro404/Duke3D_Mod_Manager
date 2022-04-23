@@ -19,17 +19,14 @@
 #include <filesystem>
 #include <fstream>
 
-static constexpr const char * JSON_DOWNLOAD_CACHE_ID_COUNTER_PROPERTY_NAME = "idCounter";
 static constexpr const char * JSON_DOWNLOAD_CACHE_MOD_LIST_PROPERTY_NAME = "modList";
 static constexpr const char * JSON_DOWNLOAD_CACHE_PACKAGES_PROPERTY_NAME = "packages";
-static const std::array<std::string_view, 3> JSON_CACHED_PACKAGE_FILE_PROPERTY_NAMES = {
-	JSON_DOWNLOAD_CACHE_ID_COUNTER_PROPERTY_NAME,
+static const std::array<std::string_view, 2> JSON_CACHED_PACKAGE_FILE_PROPERTY_NAMES = {
 	JSON_DOWNLOAD_CACHE_MOD_LIST_PROPERTY_NAME,
 	JSON_DOWNLOAD_CACHE_PACKAGES_PROPERTY_NAME
 };
 
-DownloadCache::DownloadCache()
-	: m_cachedFileIDCounter(1) { }
+DownloadCache::DownloadCache() = default;
 
 DownloadCache::~DownloadCache() = default;
 
@@ -203,18 +200,16 @@ void DownloadCache::clearCachedPackageFiles() {
 }
 
 std::unique_ptr<CachedFile> DownloadCache::createCachedFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag) {
-	return std::make_unique<CachedFile>(m_cachedFileIDCounter++, fileName, fileSize, sha1, eTag);
+	return std::make_unique<CachedFile>(fileName, fileSize, sha1, eTag);
 }
 
 std::unique_ptr<CachedPackageFile> DownloadCache::createCachedPackageFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag) {
-	return std::make_unique<CachedPackageFile>(m_cachedFileIDCounter++, fileName, fileSize, sha1, eTag);
+	return std::make_unique<CachedPackageFile>(fileName, fileSize, sha1, eTag);
 }
 
 rapidjson::Document DownloadCache::toJSON() const {
 	rapidjson::Document downloadCacheDocument(rapidjson::kObjectType);
 	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator = downloadCacheDocument.GetAllocator();
-
-	downloadCacheDocument.AddMember(rapidjson::StringRef(JSON_DOWNLOAD_CACHE_ID_COUNTER_PROPERTY_NAME), rapidjson::Value(m_cachedFileIDCounter), allocator);
 
 	if(m_cachedModListFile != nullptr) {
 		rapidjson::Value modListValue(m_cachedModListFile->toJSON(allocator));
@@ -239,26 +234,6 @@ std::unique_ptr<DownloadCache> DownloadCache::parseFrom(const rapidjson::Value &
 	}
 
 	std::unique_ptr<DownloadCache> newDownloadCache(std::make_unique<DownloadCache>());
-
-	// parse download cache ID counter
-	if(!downloadCacheValue.HasMember(JSON_DOWNLOAD_CACHE_ID_COUNTER_PROPERTY_NAME)) {
-		fmt::print("Download cache is missing '{}' property'.\n", JSON_DOWNLOAD_CACHE_ID_COUNTER_PROPERTY_NAME);
-		return nullptr;
-	}
-
-	const rapidjson::Value & idCounterValue = downloadCacheValue[JSON_DOWNLOAD_CACHE_ID_COUNTER_PROPERTY_NAME];
-
-	if(!idCounterValue.IsUint64()) {
-		fmt::print("Download cache has an invalid '{}' property type: '{}', expected unsigned integer 'number'.\n", JSON_DOWNLOAD_CACHE_ID_COUNTER_PROPERTY_NAME, Utilities::typeToString(idCounterValue.GetType()));
-		return nullptr;
-	}
-
-	newDownloadCache->m_cachedFileIDCounter = idCounterValue.GetUint64();
-
-	if(newDownloadCache->m_cachedFileIDCounter == 0) {
-		fmt::print("Download cache has an invalid '{}' property value: '{}', expected positive integer greater than 0.\n", JSON_DOWNLOAD_CACHE_ID_COUNTER_PROPERTY_NAME, Utilities::typeToString(idCounterValue.GetType()));
-		return nullptr;
-	}
 
 	// parse download cache mod list file cache information
 	if(downloadCacheValue.HasMember(JSON_DOWNLOAD_CACHE_MOD_LIST_PROPERTY_NAME)) {
@@ -348,7 +323,6 @@ bool DownloadCache::loadFrom(const std::string & filePath) {
 		return false;
 	}
 
-	m_cachedFileIDCounter = newDownloadCache->m_cachedFileIDCounter;
 	m_cachedModListFile = std::move(newDownloadCache->m_cachedModListFile);
 	m_cachedPackageFiles = std::move(newDownloadCache->m_cachedPackageFiles);
 
@@ -394,7 +368,7 @@ bool DownloadCache::isValid() const {
 		}
 	}
 
-	return m_cachedFileIDCounter > 0;
+	return true;
 }
 
 bool DownloadCache::isValid(const DownloadCache * d) {

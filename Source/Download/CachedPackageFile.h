@@ -11,7 +11,7 @@
 
 class CachedPackageFile final : public CachedFile {
 public:
-	CachedPackageFile(uint64_t id, const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag);
+	CachedPackageFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag);
 	CachedPackageFile(CachedPackageFile && f) noexcept;
 	CachedPackageFile(CachedFile && f) noexcept;
 	CachedPackageFile(const CachedPackageFile & f);
@@ -22,9 +22,7 @@ public:
 
 	size_t numberOfCachedFiles() const;
 	bool hasCachedFile(const CachedFile * cachedFile) const;
-	bool hasCachedFileWithID(uint64_t id) const;
 	bool hasCachedFileWithName(const std::string & fileName) const;
-	std::shared_ptr<CachedFile> getCachedFileWithID(uint64_t id) const;
 	std::shared_ptr<CachedFile> getCachedFileWithName(const std::string & fileName) const;
 	bool addCachedFile(std::unique_ptr<CachedFile> cachedFile);
 

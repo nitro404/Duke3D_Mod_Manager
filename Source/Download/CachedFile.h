@@ -8,14 +8,13 @@
 
 class CachedFile {
 public:
-	CachedFile(uint64_t id, const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag);
+	CachedFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag);
 	CachedFile(CachedFile && f) noexcept;
 	CachedFile(const CachedFile & f);
 	CachedFile & operator = (CachedFile && f) noexcept;
 	CachedFile & operator = (const CachedFile & f);
 	virtual ~CachedFile();
 
-	uint64_t getID() const;
 	const std::string & getFileName() const;
 	bool setFileName(const std::string & fileName);
 	uint64_t getFileSize() const;
@@ -35,8 +34,7 @@ public:
 	bool operator == (const CachedFile & f) const;
 	bool operator != (const CachedFile & f) const;
 
-protected:
-	uint64_t m_id;
+private:
 	std::string m_fileName;
 	uint64_t m_fileSize;
 	std::string m_sha1;

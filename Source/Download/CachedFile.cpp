@@ -10,36 +10,31 @@
 #include <filesystem>
 #include <optional>
 
-static constexpr const char * JSON_CACHED_FILE_ID_PROPERTY_NAME = "id";
 static constexpr const char * JSON_CACHED_FILE_FILE_NAME_PROPERTY_NAME = "fileName";
 static constexpr const char * JSON_CACHED_FILE_FILE_SIZE_PROPERTY_NAME = "fileSize";
 static constexpr const char * JSON_CACHED_FILE_SHA1_PROPERTY_NAME = "sha1";
 static constexpr const char * JSON_CACHED_FILE_ETAG_PROPERTY_NAME = "eTag";
 
-CachedFile::CachedFile(uint64_t id, const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag)
-	: m_id(id)
-	, m_fileName(fileName)
+CachedFile::CachedFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag)
+	: m_fileName(fileName)
 	, m_fileSize(fileSize)
 	, m_sha1(sha1)
 	, m_eTag(eTag) { }
 
 CachedFile::CachedFile(CachedFile && f) noexcept
-	: m_id(f.m_id)
-	, m_fileName(std::move(f.m_fileName))
+	: m_fileName(std::move(f.m_fileName))
 	, m_fileSize(f.m_fileSize)
 	, m_sha1(std::move(f.m_sha1))
 	, m_eTag(std::move(f.m_eTag)) { }
 
 CachedFile::CachedFile(const CachedFile & f)
-	: m_id(f.m_id)
-	, m_fileName(f.m_fileName)
+	: m_fileName(f.m_fileName)
 	, m_fileSize(f.m_fileSize)
 	, m_sha1(f.m_sha1)
 	, m_eTag(f.m_eTag) { }
 
 CachedFile & CachedFile::operator = (CachedFile && f) noexcept {
 	if(this != &f) {
-		m_id = f.m_id;
 		m_fileName = std::move(f.m_fileName);
 		m_fileSize = f.m_fileSize;
 		m_sha1 = std::move(f.m_sha1);
@@ -50,7 +45,6 @@ CachedFile & CachedFile::operator = (CachedFile && f) noexcept {
 }
 
 CachedFile & CachedFile::operator = (const CachedFile & f) {
-	m_id = f.m_id;
 	m_fileName = f.m_fileName;
 	m_fileSize = f.m_fileSize;
 	m_sha1 = f.m_sha1;
@@ -60,10 +54,6 @@ CachedFile & CachedFile::operator = (const CachedFile & f) {
 }
 
 CachedFile::~CachedFile() { }
-
-uint64_t CachedFile::getID() const {
-	return m_id;
-}
 
 const std::string & CachedFile::getFileName() const {
 	return m_fileName;
@@ -122,8 +112,6 @@ bool CachedFile::setETag(const std::string & eTag) {
 rapidjson::Value CachedFile::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const {
 	rapidjson::Value cachedFileValue(rapidjson::kObjectType);
 
-	cachedFileValue.AddMember(rapidjson::StringRef(JSON_CACHED_FILE_ID_PROPERTY_NAME), rapidjson::Value(m_id), allocator);
-
 	rapidjson::Value fileNameValue(m_fileName.c_str(), allocator);
 	cachedFileValue.AddMember(rapidjson::StringRef(JSON_CACHED_FILE_FILE_NAME_PROPERTY_NAME), fileNameValue, allocator);
 
@@ -143,26 +131,6 @@ rapidjson::Value CachedFile::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::Cr
 std::unique_ptr<CachedFile> CachedFile::parseFrom(const rapidjson::Value & cachedFileValue) {
 	if(!cachedFileValue.IsObject()) {
 		fmt::print("Invalid cached file type: '{}', expected 'object'.\n", Utilities::typeToString(cachedFileValue.GetType()));
-		return nullptr;
-	}
-
-	// parse cached file ID
-	if(!cachedFileValue.HasMember(JSON_CACHED_FILE_ID_PROPERTY_NAME)) {
-		fmt::print("Cached file is missing '{}' property'.\n", JSON_CACHED_FILE_ID_PROPERTY_NAME);
-		return nullptr;
-	}
-
-	const rapidjson::Value & cachedFileIDValue = cachedFileValue[JSON_CACHED_FILE_ID_PROPERTY_NAME];
-
-	if(!cachedFileIDValue.IsUint64()) {
-		fmt::print("Cached file has an invalid '{}' property type: '{}', expected unsigned integer 'number'.\n", JSON_CACHED_FILE_ID_PROPERTY_NAME, Utilities::typeToString(cachedFileIDValue.GetType()));
-		return nullptr;
-	}
-
-	uint64_t id = cachedFileIDValue.GetUint64();
-
-	if(id == 0) {
-		fmt::print("Cached file has an invalid '{}' property value: '{}', expected positive integer greater than 0.\n", JSON_CACHED_FILE_ID_PROPERTY_NAME, Utilities::typeToString(cachedFileIDValue.GetType()));
 		return nullptr;
 	}
 
@@ -236,12 +204,11 @@ std::unique_ptr<CachedFile> CachedFile::parseFrom(const rapidjson::Value & cache
 		eTag = Utilities::trimString(cachedFileETagValue.GetString());
 	}
 
-	return std::make_unique<CachedFile>(id, fileName, fileSize, sha1, eTag);
+	return std::make_unique<CachedFile>(fileName, fileSize, sha1, eTag);
 }
 
 bool CachedFile::isValid() const {
-	return m_id > 0 &&
-		   !m_fileName.empty() &&
+	return !m_fileName.empty() &&
 		   !m_sha1.empty();
 }
 
@@ -251,7 +218,7 @@ bool CachedFile::isValid(const CachedFile * f) {
 }
 
 bool CachedFile::operator == (const CachedFile & f) const {
-	return m_id == f.m_id;
+	return Utilities::areStringsEqual(m_fileName, f.m_fileName);
 }
 
 bool CachedFile::operator != (const CachedFile & f) const {

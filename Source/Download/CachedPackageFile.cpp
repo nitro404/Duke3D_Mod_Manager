@@ -1,19 +1,18 @@
 #include "CachedPackageFile.h"
 
 #include <Utilities/RapidJSONUtilities.h>
+#include <Utilities/StringUtilities.h>
 
 #include <fmt/core.h>
 
 #include <array>
 
-static constexpr const char * JSON_CACHED_FILE_ID_PROPERTY_NAME = "id";
 static constexpr const char * JSON_CACHED_FILE_FILE_NAME_PROPERTY_NAME = "fileName";
 static constexpr const char * JSON_CACHED_FILE_FILE_SIZE_PROPERTY_NAME = "fileSize";
 static constexpr const char * JSON_CACHED_FILE_SHA1_PROPERTY_NAME = "sha1";
 static constexpr const char * JSON_CACHED_FILE_ETAG_PROPERTY_NAME = "eTag";
 static constexpr const char * JSON_CACHED_PACKAGE_FILE_CONTENTS_PROPERTY_NAME = "contents";
-static const std::array<std::string_view, 6> JSON_CACHED_PACKAGE_FILE_PROPERTY_NAMES = {
-	JSON_CACHED_FILE_ID_PROPERTY_NAME,
+static const std::array<std::string_view, 5> JSON_CACHED_PACKAGE_FILE_PROPERTY_NAMES = {
 	JSON_CACHED_FILE_FILE_NAME_PROPERTY_NAME,
 	JSON_CACHED_FILE_FILE_SIZE_PROPERTY_NAME,
 	JSON_CACHED_FILE_SHA1_PROPERTY_NAME,
@@ -21,8 +20,8 @@ static const std::array<std::string_view, 6> JSON_CACHED_PACKAGE_FILE_PROPERTY_N
 	JSON_CACHED_PACKAGE_FILE_CONTENTS_PROPERTY_NAME
 };
 
-CachedPackageFile::CachedPackageFile(uint64_t id, const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag)
-	: CachedFile(id, fileName, fileSize, sha1, eTag) { }
+CachedPackageFile::CachedPackageFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag)
+	: CachedFile(fileName, fileSize, sha1, eTag) { }
 
 CachedPackageFile::CachedPackageFile(CachedPackageFile && f) noexcept
 	: CachedFile(f)
@@ -77,39 +76,11 @@ bool CachedPackageFile::hasCachedFile(const CachedFile * cachedFile) const {
 		return nullptr;
 	}
 
-	return hasCachedFileWithID(cachedFile->getID());
-}
-
-bool CachedPackageFile::hasCachedFileWithID(uint64_t id) const {
-	if(id == 0) {
-		return false;
-	}
-
-	for(std::map<std::string, std::shared_ptr<CachedFile>>::const_iterator i = m_cachedFiles.begin(); i != m_cachedFiles.end(); ++i) {
-		if(i->second->getID() == id) {
-			return true;
-		}
-	}
-
-	return false;
+	return hasCachedFileWithName(cachedFile->getFileName());
 }
 
 bool CachedPackageFile::hasCachedFileWithName(const std::string & fileName) const {
 	return m_cachedFiles.find(fileName) != m_cachedFiles.end();
-}
-
-std::shared_ptr<CachedFile> CachedPackageFile::getCachedFileWithID(uint64_t id) const {
-	if(id == 0) {
-		return nullptr;
-	}
-
-	for(std::map<std::string, std::shared_ptr<CachedFile>>::const_iterator i = m_cachedFiles.begin(); i != m_cachedFiles.end(); ++i) {
-		if(i->second->getID() == id) {
-			return i->second;
-		}
-	}
-
-	return nullptr;
 }
 
 std::shared_ptr<CachedFile> CachedPackageFile::getCachedFileWithName(const std::string & fileName) const {
@@ -161,7 +132,7 @@ std::unique_ptr<CachedPackageFile> CachedPackageFile::parseFrom(const rapidjson:
 	std::unique_ptr<CachedPackageFile> newCachedPackageFile(std::make_unique<CachedPackageFile>(std::move(*std::move(CachedFile::parseFrom(cachedPackageFileValue)))));
 
 	// verify that the cached package file has an ETag
-	if(newCachedPackageFile->m_eTag.empty()) {
+	if(newCachedPackageFile->getETag().empty()) {
 		fmt::print("Cached package file '{}' property cannot be empty.\n", JSON_CACHED_FILE_ETAG_PROPERTY_NAME);
 		return nullptr;
 	}
@@ -226,7 +197,7 @@ std::unique_ptr<CachedPackageFile> CachedPackageFile::parseFrom(const rapidjson:
 
 bool CachedPackageFile::isValid() const {
 	return CachedFile::isValid() &&
-		   !m_eTag.empty();
+		   !getETag().empty();
 }
 
 bool CachedPackageFile::isValid(const CachedPackageFile * f) {
@@ -235,7 +206,7 @@ bool CachedPackageFile::isValid(const CachedPackageFile * f) {
 }
 
 bool CachedPackageFile::operator == (const CachedPackageFile & f) const {
-	return m_id == f.m_id;
+	return Utilities::areStringsEqual(getFileName(), f.getFileName());
 }
 
 bool CachedPackageFile::operator != (const CachedPackageFile & f) const {

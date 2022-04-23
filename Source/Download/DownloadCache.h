@@ -48,7 +48,6 @@ private:
 	rapidjson::Document toJSON() const;
 	static std::unique_ptr<DownloadCache> parseFrom(const rapidjson::Value & downloadCacheValue);
 
-	uint64_t m_cachedFileIDCounter;
 	std::shared_ptr<CachedFile> m_cachedModListFile;
 	std::map<std::string, std::shared_ptr<CachedPackageFile>> m_cachedPackageFiles;
 
