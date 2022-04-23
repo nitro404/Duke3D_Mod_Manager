@@ -999,8 +999,8 @@ bool ModManager::runSelectedMod() {
 
 	scriptArgs.addArgument("GAMEDIR", m_settings->gameSymlinkName);
 	scriptArgs.addArgument("MAPSDIR", m_settings->mapsSymlinkName);
-	scriptArgs.addArgument("MODSDIR", m_settings->tempSymlinkName);
-	scriptArgs.addArgument("TEMPDIR", m_settings->modsSymlinkName);
+	scriptArgs.addArgument("MODSDIR", m_settings->modsSymlinkName);
+	scriptArgs.addArgument("TEMPDIR", m_settings->tempSymlinkName);
 
 	if(selectedModGameVersion != nullptr) {
 		std::optional<std::string> conFileName(selectedModGameVersion->getFirstFileNameOfType("con"));
