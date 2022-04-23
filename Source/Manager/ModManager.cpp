@@ -1150,7 +1150,6 @@ bool ModManager::runSelectedMod() {
 		std::string gameTypeName(Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)));
 		fmt::print("Running '{}' version of mod '{}' in {} mode{}.\n", selectedModGameVersion->getGameVersion(), fullModName, gameTypeName, customMapMessage);
 
-		std::map<std::string, std::any> properties;
 		properties["modName"] = fullModName;
 		properties["modGameVersion"] = selectedModGameVersion->getGameVersion();
 		properties["gameType"] = gameTypeName;
