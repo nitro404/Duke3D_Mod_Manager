@@ -115,11 +115,6 @@ bool ModManager::initialize(const ArgumentParser * args, bool start) {
 		m_verbose = true;
 	}
 
-	if(!createRequiredDirectories()) {
-		fmt::print("Failed to create required mod manager directories!\n");
-		return false;
-	}
-
 	date::set_install(Utilities::joinPaths(m_settings->dataDirectoryPath, m_settings->timeZoneDataDirectoryName));
 
 	HTTPConfiguration configuration = {
@@ -966,6 +961,12 @@ bool ModManager::runSelectedMod() {
 		}
 	}
 
+	bool shouldConfigureTemporaryDirectory = false;
+
+	if(selectedGameVersion->doesRequireCombinedGroup()) {
+		shouldConfigureTemporaryDirectory = true;
+	}
+
 	if(!m_localMode && selectedModGameVersion != nullptr) {
 		if(!m_downloadManager->downloadModGameVersion(selectedModGameVersion.get(), m_gameVersions.get())) {
 			fmt::print("Aborting launch of '{}' mod!\n", selectedModGameVersion->getFullName());
@@ -1000,7 +1001,10 @@ bool ModManager::runSelectedMod() {
 	scriptArgs.addArgument("GAMEDIR", m_settings->gameSymlinkName);
 	scriptArgs.addArgument("MAPSDIR", m_settings->mapsSymlinkName);
 	scriptArgs.addArgument("MODSDIR", m_settings->modsSymlinkName);
-	scriptArgs.addArgument("TEMPDIR", m_settings->tempSymlinkName);
+
+	if(shouldConfigureTemporaryDirectory) {
+		scriptArgs.addArgument("TEMPDIR", m_settings->tempSymlinkName);
+	}
 
 	if(selectedModGameVersion != nullptr) {
 		std::optional<std::string> conFileName(selectedModGameVersion->getFirstFileNameOfType("con"));
@@ -1057,12 +1061,16 @@ bool ModManager::runSelectedMod() {
 		return false;
 	}
 
-	if(!createSymlinks(*selectedGameVersion, m_verbose)) {
+	if(!createSymlinks(*selectedGameVersion, shouldConfigureTemporaryDirectory, m_verbose)) {
 		return false;
 	}
 
 	if(m_verbose) {
 		fmt::print("\n");
+	}
+
+	if(shouldConfigureTemporaryDirectory && !createTemporaryDirectory()) {
+		return false;
 	}
 
 	std::string combinedGroupFilePath;
@@ -2290,7 +2298,7 @@ void ModManager::displayArgumentHelp() {
 	fmt::print(" -? - displays this help message.\n");
 }
 
-bool ModManager::createRequiredDirectories() {
+bool ModManager::createTemporaryDirectory() {
 	if(m_settings->tempDirectoryPath.empty()) {
 		fmt::print("Missing temp directory path setting.\n");
 		return false;
@@ -2404,8 +2412,8 @@ bool ModManager::removeSymlink(const std::string & symlinkName, const std::strin
 	return true;
 }
 
-bool ModManager::createSymlinks(const GameVersion & gameVersion, bool verbose) {
-	if(!gameVersion.isConfigured() || !areSymlinkSettingsValid() || m_settings->tempDirectoryPath.empty()) {
+bool ModManager::createSymlinks(const GameVersion & gameVersion, bool createTempSymlink, bool verbose) {
+	if(!gameVersion.isConfigured() || !areSymlinkSettingsValid() || (createTempSymlink && m_settings->tempDirectoryPath.empty())) {
 		return false;
 	}
 
@@ -2413,7 +2421,9 @@ bool ModManager::createSymlinks(const GameVersion & gameVersion, bool verbose) {
 
 	result &= createSymlink(gameVersion.getGamePath(), m_settings->gameSymlinkName, std::filesystem::current_path().string(), verbose);
 
-	result &= createSymlink(m_settings->tempDirectoryPath, m_settings->tempSymlinkName, gameVersion.getGamePath(), verbose);
+	if(createTempSymlink) {
+		result &= createSymlink(m_settings->tempDirectoryPath, m_settings->tempSymlinkName, gameVersion.getGamePath(), verbose);
+	}
 
 	result &= createSymlink(getModsDirectoryPath(), m_settings->modsSymlinkName, gameVersion.getGamePath(), verbose);
 

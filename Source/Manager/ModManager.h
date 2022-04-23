@@ -140,11 +140,11 @@ private:
 	size_t checkForMissingExecutables() const;
 	size_t updateAllFileHashes(bool save = true, bool skipHashedFiles = true);
 	size_t updateModHashes(Mod & mod, bool skipHashedFiles = true, std::optional<size_t> versionIndex = {}, std::optional<size_t> versionTypeIndex = {});
-	bool createRequiredDirectories();
+	bool createTemporaryDirectory();
 	bool areSymlinkSettingsValid() const;
 	bool createSymlink(const std::string & symlinkName, const std::string & symlinkTarget, const std::string & symlinkDestinationDirectory, bool verbose = true) const;
 	bool removeSymlink(const std::string & symlinkName, const std::string & symlinkDestinationDirectory, bool verbose = true) const;
-	bool createSymlinks(const GameVersion & gameVersion, bool verbose = true);
+	bool createSymlinks(const GameVersion & gameVersion, bool createTempSymlink = true, bool verbose = true);
 	bool removeSymlinks(const GameVersion & gameVersion, bool verbose = true);
 	size_t deleteFilesWithSuffix(const std::string & suffix, const std::string & path = "", bool verbose = false);
 	size_t renameFilesWithSuffixTo(const std::string & fromSuffix, const std::string & toSuffix, const std::string & path = "", bool verbose = false);
