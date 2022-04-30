@@ -35,6 +35,7 @@ public:
 	static const char * DEFAULT_FAVOURITE_MODS_LIST_FILE_PATH;
 	static const char * DEFAULT_GAME_VERSIONS_LIST_FILE_PATH;
 	static const char * DEFAULT_GAME_SYMLINK_NAME;
+	static const bool DEFAULT_LOCAL_MODE;
 	static const char * DEFAULT_MODS_DIRECTORY_PATH;
 	static const char * DEFAULT_MODS_SYMLINK_NAME;
 	static const char * DEFAULT_MOD_PACKAGE_DOWNLOADS_DIRECTORY_PATH;
@@ -83,6 +84,7 @@ public:
 	std::string favouriteModsListFilePath;
 	std::string gameVersionsListFilePath;
 	std::string gameSymlinkName;
+	bool localMode;
 	std::string modsDirectoryPath;
 	std::string modsSymlinkName;
 	std::string modPackageDownloadsDirectoryPath;

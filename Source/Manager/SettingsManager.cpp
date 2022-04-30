@@ -31,6 +31,7 @@ static constexpr const char * DATA_DIRECTORY_PATH_PROPERTY_NAME = "dataDirectory
 static constexpr const char * TEMP_DIRECTORY_PATH_PROPERTY_NAME = "tempDirectoryPath";
 static constexpr const char * TEMP_SYMLINK_NAME_PROPERTY_NAME = "tempSymlinkName";
 static constexpr const char * GAME_SYMLINK_NAME_PROPERTY_NAME = "gameSymlinkName";
+static constexpr const char * LOCAL_MODE_PROPERTY_NAME = "localMode";
 static constexpr const char * VERBOSE_PROPERTY_NAME = "verbose";
 
 static constexpr const char * GAME_VERSIONS_CATEGORY_NAME = "gameVersions";
@@ -107,6 +108,7 @@ const char * SettingsManager::DEFAULT_MODS_LIST_FILE_PATH = "Duke Nukem 3D Mod L
 const char * SettingsManager::DEFAULT_FAVOURITE_MODS_LIST_FILE_PATH = "Duke Nukem 3D Favourite Mods.json";
 const char * SettingsManager::DEFAULT_GAME_VERSIONS_LIST_FILE_PATH = "Duke Nukem 3D Game Versions.json";
 const char * SettingsManager::DEFAULT_GAME_SYMLINK_NAME = "Game";
+const bool SettingsManager::DEFAULT_LOCAL_MODE = false;
 const char * SettingsManager::DEFAULT_MODS_DIRECTORY_PATH = "Mods";
 const char * SettingsManager::DEFAULT_MODS_SYMLINK_NAME = "Mods";
 const char * SettingsManager::DEFAULT_MOD_PACKAGE_DOWNLOADS_DIRECTORY_PATH = "";
@@ -167,11 +169,28 @@ static bool assignStringSetting(std::string & setting, const rapidjson::Value & 
 	return true;
 }
 
+static bool assignBooleanSetting(bool & setting, const rapidjson::Value & categoryValue, const std::string & propertyName) {
+	if(propertyName.empty() || !categoryValue.IsObject() || !categoryValue.HasMember(propertyName.c_str())) {
+		return false;
+	}
+
+	const rapidjson::Value & settingValue = categoryValue[propertyName.c_str()];
+
+	if(!settingValue.IsBool()) {
+		return false;
+	}
+
+	setting = settingValue.GetBool();
+
+	return true;
+}
+
 SettingsManager::SettingsManager()
 	: modsListFilePath(DEFAULT_MODS_LIST_FILE_PATH)
 	, favouriteModsListFilePath(DEFAULT_FAVOURITE_MODS_LIST_FILE_PATH)
 	, gameVersionsListFilePath(DEFAULT_GAME_VERSIONS_LIST_FILE_PATH)
 	, gameSymlinkName(DEFAULT_GAME_SYMLINK_NAME)
+	, localMode(DEFAULT_LOCAL_MODE)
 	, modsDirectoryPath(DEFAULT_MODS_DIRECTORY_PATH)
 	, modsSymlinkName(DEFAULT_MODS_SYMLINK_NAME)
 	, modPackageDownloadsDirectoryPath(DEFAULT_MOD_PACKAGE_DOWNLOADS_DIRECTORY_PATH)
@@ -221,6 +240,7 @@ SettingsManager::SettingsManager(SettingsManager && s) noexcept
 	, favouriteModsListFilePath(std::move(s.favouriteModsListFilePath))
 	, gameVersionsListFilePath(std::move(s.gameVersionsListFilePath))
 	, gameSymlinkName(std::move(s.gameSymlinkName))
+	, localMode(s.localMode)
 	, modsDirectoryPath(std::move(s.modsDirectoryPath))
 	, modsSymlinkName(std::move(s.modsSymlinkName))
 	, modPackageDownloadsDirectoryPath(std::move(s.modPackageDownloadsDirectoryPath))
@@ -269,6 +289,7 @@ SettingsManager::SettingsManager(const SettingsManager & s)
 	, favouriteModsListFilePath(s.favouriteModsListFilePath)
 	, gameVersionsListFilePath(s.gameVersionsListFilePath)
 	, gameSymlinkName(s.gameSymlinkName)
+	, localMode(s.localMode)
 	, modsDirectoryPath(s.modsDirectoryPath)
 	, modsSymlinkName(s.modsSymlinkName)
 	, modPackageDownloadsDirectoryPath(s.modPackageDownloadsDirectoryPath)
@@ -318,6 +339,7 @@ SettingsManager & SettingsManager::operator = (SettingsManager && s) noexcept {
 		favouriteModsListFilePath = std::move(s.favouriteModsListFilePath);
 		gameVersionsListFilePath = std::move(s.gameVersionsListFilePath);
 		gameSymlinkName = std::move(s.gameSymlinkName);
+		localMode = s.localMode;
 		modsDirectoryPath = std::move(s.modsDirectoryPath);
 		modsSymlinkName = std::move(s.modsSymlinkName);
 		modPackageDownloadsDirectoryPath = std::move(s.modPackageDownloadsDirectoryPath);
@@ -371,6 +393,7 @@ SettingsManager & SettingsManager::operator = (const SettingsManager & s) {
 	favouriteModsListFilePath = s.favouriteModsListFilePath;
 	gameVersionsListFilePath = s.gameVersionsListFilePath;
 	gameSymlinkName = s.gameSymlinkName;
+	localMode = s.localMode;
 	modsDirectoryPath = s.modsDirectoryPath;
 	modsSymlinkName = s.modsSymlinkName;
 	modPackageDownloadsDirectoryPath = s.modPackageDownloadsDirectoryPath;
@@ -425,6 +448,7 @@ void SettingsManager::reset() {
 	favouriteModsListFilePath = DEFAULT_FAVOURITE_MODS_LIST_FILE_PATH;
 	gameVersionsListFilePath = DEFAULT_GAME_VERSIONS_LIST_FILE_PATH;
 	gameSymlinkName = DEFAULT_GAME_SYMLINK_NAME;
+	localMode = DEFAULT_LOCAL_MODE;
 	modsDirectoryPath = DEFAULT_MODS_DIRECTORY_PATH;
 	modsSymlinkName = DEFAULT_MODS_SYMLINK_NAME;
 	modPackageDownloadsDirectoryPath = DEFAULT_MOD_PACKAGE_DOWNLOADS_DIRECTORY_PATH;
@@ -486,6 +510,7 @@ rapidjson::Document SettingsManager::toJSON() const {
 	settingsDocument.AddMember(rapidjson::StringRef(TEMP_SYMLINK_NAME_PROPERTY_NAME), tempSymlinkNameValue, allocator);
 	rapidjson::Value gameSymlinkNameValue(gameSymlinkName.c_str(), allocator);
 	settingsDocument.AddMember(rapidjson::StringRef(GAME_SYMLINK_NAME_PROPERTY_NAME), gameSymlinkNameValue, allocator);
+	settingsDocument.AddMember(rapidjson::StringRef(LOCAL_MODE_PROPERTY_NAME), rapidjson::Value(localMode), allocator);
 	settingsDocument.AddMember(rapidjson::StringRef(VERBOSE_PROPERTY_NAME), rapidjson::Value(verbose), allocator);
 
 	rapidjson::Value gameVersionsCategoryValue(rapidjson::kObjectType);
@@ -686,10 +711,8 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 	assignStringSetting(tempDirectoryPath, settingsDocument, TEMP_DIRECTORY_PATH_PROPERTY_NAME);
 	assignStringSetting(tempSymlinkName, settingsDocument, TEMP_SYMLINK_NAME_PROPERTY_NAME);
 	assignStringSetting(gameSymlinkName, settingsDocument, GAME_SYMLINK_NAME_PROPERTY_NAME);
-
-	if(settingsDocument.HasMember(VERBOSE_PROPERTY_NAME) && settingsDocument[VERBOSE_PROPERTY_NAME].IsBool()) {
-		verbose = settingsDocument[VERBOSE_PROPERTY_NAME].GetBool();
-	}
+	assignBooleanSetting(localMode, settingsDocument, LOCAL_MODE_PROPERTY_NAME);
+	assignBooleanSetting(verbose, settingsDocument, VERBOSE_PROPERTY_NAME);
 
 	if(settingsDocument.HasMember(GAME_VERSIONS_CATEGORY_NAME) && settingsDocument[GAME_VERSIONS_CATEGORY_NAME].IsObject()) {
 		const rapidjson::Value & gameVersionsCategoryValue = settingsDocument[GAME_VERSIONS_CATEGORY_NAME];
@@ -821,10 +844,7 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 		if(analyticsCategoryValue.HasMember(SEGMENT_ANALYTICS_CATEGORY_NAME) && analyticsCategoryValue[SEGMENT_ANALYTICS_CATEGORY_NAME].IsObject()) {
 			const rapidjson::Value & segmentAnalyticsCategoryValue = analyticsCategoryValue[SEGMENT_ANALYTICS_CATEGORY_NAME];
 
-			if(segmentAnalyticsCategoryValue.HasMember(SEGMENT_ANALYTICS_ENABLED_PROPERTY_NAME) && segmentAnalyticsCategoryValue[SEGMENT_ANALYTICS_ENABLED_PROPERTY_NAME].IsBool()) {
-				segmentAnalyticsEnabled = segmentAnalyticsCategoryValue[SEGMENT_ANALYTICS_ENABLED_PROPERTY_NAME].GetBool();
-			}
-
+			assignBooleanSetting(segmentAnalyticsEnabled, segmentAnalyticsCategoryValue, SEGMENT_ANALYTICS_ENABLED_PROPERTY_NAME);
 			assignStringSetting(segmentAnalyticsDataFileName, segmentAnalyticsCategoryValue, DEFAULT_SEGMENT_ANALYTICS_DATA_FILE_NAME);
 		}
 	}

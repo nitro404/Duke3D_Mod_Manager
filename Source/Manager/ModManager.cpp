@@ -92,6 +92,9 @@ bool ModManager::initialize(const ArgumentParser * args, bool start) {
 		return true;
 	}
 
+	bool verboseSet = false;
+	bool localModeSet = false;
+
 	if(args != nullptr) {
 		m_arguments = std::make_shared<ArgumentParser>(*args);
 
@@ -102,17 +105,23 @@ bool ModManager::initialize(const ArgumentParser * args, bool start) {
 
 		if(m_arguments->hasArgument("verbose")) {
 			m_verbose = true;
+			verboseSet = true;
 		}
 
 		if(m_arguments->hasArgument("local")) {
 			m_localMode = true;
+			localModeSet = true;
 		}
 	}
 
 	m_settings->load(m_arguments.get());
 
-	if(m_settings->verbose) {
+	if(m_settings->verbose && !verboseSet) {
 		m_verbose = true;
+	}
+
+	if(m_settings->localMode && !localModeSet) {
+		m_localMode = true;
 	}
 
 	date::set_install(Utilities::joinPaths(m_settings->dataDirectoryPath, m_settings->timeZoneDataDirectoryName));
