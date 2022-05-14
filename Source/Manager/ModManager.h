@@ -38,7 +38,6 @@ public:
 
 	bool isInitialized() const;
 	bool initialize(int argc, char * argv[], bool start = true);
-	bool initialize(const ArgumentParser * args = nullptr, bool start = true);
 	bool uninitialize();
 
 	void run();

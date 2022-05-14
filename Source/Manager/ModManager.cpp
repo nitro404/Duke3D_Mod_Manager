@@ -84,10 +84,6 @@ bool ModManager::isInitialized() const {
 }
 
 bool ModManager::initialize(int argc, char * argv[], bool start) {
-	return initialize(&ArgumentParser(argc, argv), start);
-}
-
-bool ModManager::initialize(const ArgumentParser * args, bool start) {
 	if(m_initialized) {
 		return true;
 	}
@@ -95,8 +91,8 @@ bool ModManager::initialize(const ArgumentParser * args, bool start) {
 	bool verboseSet = false;
 	bool localModeSet = false;
 
-	if(args != nullptr) {
-		m_arguments = std::make_shared<ArgumentParser>(*args);
+	if(argc != 0) {
+		m_arguments = std::make_shared<ArgumentParser>(argc, argv);
 
 		if(m_arguments->hasArgument("?")) {
 			displayArgumentHelp();
