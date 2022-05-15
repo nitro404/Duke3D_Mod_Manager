@@ -32,11 +32,11 @@ public:
 	size_t indexOfGameVersion(const std::string & name) const;
 	std::shared_ptr<GameVersion> getGameVersion(size_t index) const;
 	std::shared_ptr<GameVersion> getGameVersion(const std::string & name) const;
-	std::vector<std::shared_ptr<GameVersion>> getGameVersionsCompatibleWith(size_t index, std::optional<bool> configured = {}) const;
-	std::vector<std::shared_ptr<GameVersion>> getGameVersionsCompatibleWith(const std::string & name, std::optional<bool> configured = {}) const;
-	std::vector<std::shared_ptr<GameVersion>> getGameVersionsCompatibleWith(const GameVersion & gameVersion, std::optional<bool> configured = {}) const;
-	std::vector<std::shared_ptr<GameVersion>> getGameVersionsCompatibleWith(const ModGameVersion & modGameVersion, std::optional<bool> configured = {}) const;
-	std::vector<std::pair<std::shared_ptr<GameVersion>, std::vector<std::shared_ptr<ModGameVersion>>>> getGameVersionsCompatibleWith(const std::vector<std::shared_ptr<ModGameVersion>> & modGameVersions, std::optional<bool> configured = {}) const;
+	std::vector<std::shared_ptr<GameVersion>> getGameVersionsCompatibleWith(size_t index, bool includeSupported = false, std::optional<bool> configured = {}) const;
+	std::vector<std::shared_ptr<GameVersion>> getGameVersionsCompatibleWith(const std::string & name, bool includeSupported = false, std::optional<bool> configured = {}) const;
+	std::vector<std::shared_ptr<GameVersion>> getGameVersionsCompatibleWith(const GameVersion & gameVersion, bool includeSupported = false, std::optional<bool> configured = {}) const;
+	std::vector<std::shared_ptr<GameVersion>> getGameVersionsCompatibleWith(const ModGameVersion & modGameVersion, bool includeSupported = false, std::optional<bool> configured = {}) const;
+	std::vector<std::pair<std::shared_ptr<GameVersion>, std::vector<std::shared_ptr<ModGameVersion>>>> getGameVersionsCompatibleWith(const std::vector<std::shared_ptr<ModGameVersion>> & modGameVersions, bool includeSupported = false, std::optional<bool> configured = {}) const;
 	std::vector<std::shared_ptr<GameVersion>> getConfiguredGameVersions() const;
 	std::vector<std::shared_ptr<GameVersion>> getUnconfiguredGameVersions() const;
 	bool addGameVersion(const GameVersion & gameVersion);

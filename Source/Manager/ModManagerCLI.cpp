@@ -852,7 +852,7 @@ std::optional<std::pair<std::shared_ptr<GameVersion>, std::shared_ptr<ModGameVer
 	std::shared_ptr<GameVersion> selectedGameVersion;
 	std::shared_ptr<ModGameVersion> selectedModGameVersion;
 	std::vector<std::shared_ptr<ModGameVersion>> * modGameVersions = nullptr;
-	std::vector<std::pair<std::shared_ptr<GameVersion>, std::vector<std::shared_ptr<ModGameVersion>>>> compatibleGameVersions(m_modManager->getGameVersions()->getGameVersionsCompatibleWith(modVersionType->getGameVersions(), true));
+	std::vector<std::pair<std::shared_ptr<GameVersion>, std::vector<std::shared_ptr<ModGameVersion>>>> compatibleGameVersions(m_modManager->getGameVersions()->getGameVersionsCompatibleWith(modVersionType->getGameVersions(), true, true));
 
 	if(compatibleGameVersions.empty()) {
 		return {};

@@ -132,7 +132,7 @@ std::shared_ptr<GameVersion> GameVersionCollection::getGameVersion(const std::st
 	return nullptr;
 }
 
-std::vector<std::shared_ptr<GameVersion>> GameVersionCollection::getGameVersionsCompatibleWith(size_t index, std::optional<bool> configured) const {
+std::vector<std::shared_ptr<GameVersion>> GameVersionCollection::getGameVersionsCompatibleWith(size_t index, bool includeSupported, std::optional<bool> configured) const {
 	std::vector<std::shared_ptr<GameVersion>> compatibleGameVersions;
 
 	if(index >= m_gameVersions.size()) {
@@ -140,6 +140,10 @@ std::vector<std::shared_ptr<GameVersion>> GameVersionCollection::getGameVersions
 	}
 
 	const std::shared_ptr<GameVersion> gameVersion = m_gameVersions[index];
+
+	if(includeSupported) {
+		compatibleGameVersions.push_back(gameVersion);
+	}
 
 	for(std::vector<std::shared_ptr<GameVersion>>::const_iterator i = m_gameVersions.begin(); i != m_gameVersions.end(); ++i) {
 		if(configured.has_value()) {
@@ -159,24 +163,24 @@ std::vector<std::shared_ptr<GameVersion>> GameVersionCollection::getGameVersions
 	return compatibleGameVersions;
 }
 
-std::vector<std::shared_ptr<GameVersion>> GameVersionCollection::getGameVersionsCompatibleWith(const std::string & name, std::optional<bool> configured) const {
-	return getGameVersionsCompatibleWith(indexOfGameVersion(name), configured);
+std::vector<std::shared_ptr<GameVersion>> GameVersionCollection::getGameVersionsCompatibleWith(const std::string & name, bool includeSupported, std::optional<bool> configured) const {
+	return getGameVersionsCompatibleWith(indexOfGameVersion(name), includeSupported, configured);
 }
 
-std::vector<std::shared_ptr<GameVersion>> GameVersionCollection::getGameVersionsCompatibleWith(const GameVersion & gameVersion, std::optional<bool> configured) const {
-	return getGameVersionsCompatibleWith(indexOfGameVersion(gameVersion), configured);
+std::vector<std::shared_ptr<GameVersion>> GameVersionCollection::getGameVersionsCompatibleWith(const GameVersion & gameVersion, bool includeSupported, std::optional<bool> configured) const {
+	return getGameVersionsCompatibleWith(indexOfGameVersion(gameVersion), includeSupported, configured);
 }
 
-std::vector<std::shared_ptr<GameVersion>> GameVersionCollection::getGameVersionsCompatibleWith(const ModGameVersion & modGameVersion, std::optional<bool> configured) const {
-	return getGameVersionsCompatibleWith(indexOfGameVersion(modGameVersion.getGameVersion()), configured);
+std::vector<std::shared_ptr<GameVersion>> GameVersionCollection::getGameVersionsCompatibleWith(const ModGameVersion & modGameVersion, bool includeSupported, std::optional<bool> configured) const {
+	return getGameVersionsCompatibleWith(indexOfGameVersion(modGameVersion.getGameVersion()), includeSupported, configured);
 }
 
-std::vector<std::pair<std::shared_ptr<GameVersion>, std::vector<std::shared_ptr<ModGameVersion>>>> GameVersionCollection::getGameVersionsCompatibleWith(const std::vector<std::shared_ptr<ModGameVersion>> & modGameVersions, std::optional<bool> configured) const {
+std::vector<std::pair<std::shared_ptr<GameVersion>, std::vector<std::shared_ptr<ModGameVersion>>>> GameVersionCollection::getGameVersionsCompatibleWith(const std::vector<std::shared_ptr<ModGameVersion>> & modGameVersions, bool includeSupported, std::optional<bool> configured) const {
 	std::vector<std::pair<std::shared_ptr<GameVersion>, std::vector<std::shared_ptr<ModGameVersion>>>> allCompatibleGameVersions;
 
 	for(std::vector<std::shared_ptr<ModGameVersion>>::const_iterator i = modGameVersions.begin(); i != modGameVersions.end(); ++i) {
 		bool shouldAddGameVersion = true;
-		std::vector<std::shared_ptr<GameVersion>> compatibleGameVersions(getGameVersionsCompatibleWith(**i, configured));
+		std::vector<std::shared_ptr<GameVersion>> compatibleGameVersions(getGameVersionsCompatibleWith(**i, includeSupported, configured));
 
 		for(std::vector<std::shared_ptr<GameVersion>>::const_iterator j = compatibleGameVersions.begin(); j != compatibleGameVersions.end(); ++j) {
 			for(std::vector<std::pair<std::shared_ptr<GameVersion>, std::vector<std::shared_ptr<ModGameVersion>>>>::iterator k = allCompatibleGameVersions.begin(); k != allCompatibleGameVersions.end(); ++k) {
