@@ -60,6 +60,7 @@ ModManager::ModManager()
 	, m_initialized(false)
 	, m_verbose(false)
 	, m_localMode(false)
+	, m_demoRecordingEnabled(false)
 	, m_settings(std::make_unique<SettingsManager>())
 	, m_httpService(std::make_unique<HTTPService>())
 	, m_gameType(ModManager::DEFAULT_GAME_TYPE)
@@ -107,6 +108,10 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 		if(m_arguments->hasArgument("local")) {
 			m_localMode = true;
 			localModeSet = true;
+		}
+
+		if(m_arguments->hasArgument("r")) {
+			m_demoRecordingEnabled = true;
 		}
 	}
 
@@ -876,8 +881,8 @@ bool ModManager::runSelectedMod() {
 
 	std::shared_ptr<GameVersion> selectedGameVersion;
 
-	if(m_arguments != nullptr && m_arguments->hasArgument("v") && !m_arguments->getFirstValue("v").empty()) {
-		std::string gameVersionName(m_arguments->getFirstValue("v"));
+	if(m_arguments != nullptr && m_arguments->hasArgument("game") && !m_arguments->getFirstValue("game").empty()) {
+		std::string gameVersionName(m_arguments->getFirstValue("game"));
 
 		selectedGameVersion = m_gameVersions->getGameVersion(gameVersionName);
 
@@ -1081,9 +1086,11 @@ bool ModManager::runSelectedMod() {
 	std::string combinedGroupFilePath;
 	std::unique_ptr<Group> combinedGroup;
 
-	if(m_selectedMod != nullptr) {
-		if(ModManager::renameFilesWithSuffixTo("DMO", "DMO_", selectedGameVersion->getGamePath(), m_verbose) != 0) {
-			fmt::print("\n");
+	if(m_selectedMod != nullptr && (selectedGameVersion->doesRequireCombinedGroup() || !m_demoRecordingEnabled)) {
+		if(!m_demoRecordingEnabled) {
+			if(ModManager::renameFilesWithSuffixTo("DMO", "DMO_", selectedGameVersion->getGamePath(), m_verbose) != 0) {
+				fmt::print("\n");
+			}
 		}
 
 		if(selectedGameVersion->doesRequireCombinedGroup()) {
@@ -1106,9 +1113,11 @@ bool ModManager::runSelectedMod() {
 			std::unique_ptr<Group> modGroup(std::make_unique<Group>(modGroupPath));
 
 			if(modGroup->load()) {
-				size_t numberOfDemosExtracted = modGroup->extractAllFilesWithExtension("DMO", selectedGameVersion->getGamePath());
+				if(!m_demoRecordingEnabled) {
+					size_t numberOfDemosExtracted = modGroup->extractAllFilesWithExtension("DMO", selectedGameVersion->getGamePath());
 
-				fmt::print("Extracted {} demo{} from group file '{}' to game directory '{}'.\n\n", numberOfDemosExtracted, numberOfDemosExtracted == 1 ? "" : "s", modGroup->getFilePath(), selectedGameVersion->getGamePath());
+					fmt::print("Extracted {} demo{} from group file '{}' to game directory '{}'.\n\n", numberOfDemosExtracted, numberOfDemosExtracted == 1 ? "" : "s", modGroup->getFilePath(), selectedGameVersion->getGamePath());
+				}
 
 				if(combinedGroup != nullptr) {
 					for(size_t j = 0; j < modGroup->numberOfFiles(); j++) {
@@ -1196,7 +1205,7 @@ bool ModManager::runSelectedMod() {
 		}
 	}
 
-	if(m_selectedMod != nullptr) {
+	if(m_selectedMod != nullptr && !m_demoRecordingEnabled) {
 		if(ModManager::deleteFilesWithSuffix("DMO", selectedGameVersion->getGamePath(), m_verbose) != 0) {
 			fmt::print("\n");
 		}
@@ -1429,8 +1438,44 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			}
 		}
 
-		if(m_arguments->hasPassthroughArguments()) {
-			command << " " << m_arguments->getPassthroughArguments().value();
+		if(m_arguments->hasArgument("v")) {
+			std::string episodeNumberData(m_arguments->getFirstValue("v"));
+			std::optional<uint8_t> optionalEpisodeNumber(Utilities::parseUnsignedByte(episodeNumberData));
+
+			if(optionalEpisodeNumber.has_value() && optionalEpisodeNumber.value() >= 1) {
+				command << " " << selectedGameVersion->getEpisodeArgumentFlag() << std::to_string(optionalEpisodeNumber.value());
+			}
+			else {
+				fmt::print("Invalid episode number: '{}'.\n", episodeNumberData);
+			}
+		}
+
+		if(m_arguments->hasArgument("l")) {
+			std::string levelNumberData(m_arguments->getFirstValue("l"));
+			std::optional<uint8_t> optionalLevelNumber(Utilities::parseUnsignedByte(levelNumberData));
+
+			if(optionalLevelNumber.has_value() && optionalLevelNumber.value() >= 1 && optionalLevelNumber.value() <= 11) {
+				command << " " << selectedGameVersion->getLevelArgumentFlag() << std::to_string(optionalLevelNumber.value());
+			}
+			else {
+				fmt::print("Invalid level number: '{}'.\n", levelNumberData);
+			}
+		}
+
+		if(m_arguments->hasArgument("s")) {
+			std::string skillNumberData(m_arguments->getFirstValue("s"));
+			std::optional<uint8_t> optionalSkillNumber(Utilities::parseUnsignedByte(skillNumberData));
+
+			if(optionalSkillNumber.has_value() && optionalSkillNumber.value() >= 1 && optionalSkillNumber.value() <= 4) {
+				command << " " << selectedGameVersion->getSkillArgumentFlag() << std::to_string(optionalSkillNumber.value());
+			}
+			else {
+				fmt::print("Invalid skill number: '{}'.\n", skillNumberData);
+			}
+		}
+
+		if(m_demoRecordingEnabled) {
+			command << " " << selectedGameVersion->getRecordDemoArgumentFlag();
 		}
 	}
 
@@ -1592,13 +1637,13 @@ bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
 			}
 		}
 
-		if(args->hasArgument("s")) {
-			if(args->hasArgument("r") || args->hasArgument("g") || args->hasArgument("x") || args->hasArgument("n")) {
-				fmt::print("Redundant arguments specified, please specify either s OR r OR n OR (x AND/OR g).\n");
+		if(args->hasArgument("search")) {
+			if(args->hasArgument("random") || args->hasArgument("g") || args->hasArgument("x") || args->hasArgument("n")) {
+				fmt::print("Redundant arguments specified, please specify either search OR random OR n OR (x AND/OR g).\n");
 				return false;
 			}
 
-			std::vector<ModMatch> modMatches(searchForMod(m_mods->getMods(), args->getFirstValue("s")));
+			std::vector<ModMatch> modMatches(searchForMod(m_mods->getMods(), args->getFirstValue("search")));
 
 			if(modMatches.empty()) {
 				fmt::print("No matches found for specified search query.\n\n");
@@ -1637,9 +1682,9 @@ bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
 				return false;
 			}
 		}
-		else if(args->hasArgument("r")) {
+		else if(args->hasArgument("random")) {
 			if(args->hasArgument("g") || args->hasArgument("x") || args->hasArgument("n")) {
-				fmt::print("Redundant arguments specified, please specify either s OR r OR n OR (x AND/OR g).\n");
+				fmt::print("Redundant arguments specified, please specify either search OR random OR n OR (x AND/OR g).\n");
 				return false;
 			}
 
@@ -1654,7 +1699,7 @@ bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
 		}
 		else if(args->hasArgument("n")) {
 			if(args->hasArgument("g") || args->hasArgument("x")) {
-				fmt::print("Redundant arguments specified, please specify either s OR r OR n OR (x AND/OR g).\n");
+				fmt::print("Redundant arguments specified, please specify either search OR random OR n OR (x AND/OR g).\n");
 				return false;
 			}
 
@@ -2285,16 +2330,20 @@ void ModManager::displayArgumentHelp() {
 	fmt::print("Duke Nukem 3D Mod Manager version {} arguments:\n", APPLICATION_VERSION);
 	fmt::print(" -f \"Custom Settings.json\" - specifies an alternate settings file to use.\n");
 	fmt::print(" -t Game/Setup/Client/Server - specifies game type, default: Game.\n");
-	fmt::print(" -v \"Game Version\" - specifies the game version to run.\n");
+	fmt::print(" --game \"Game Version\" - specifies the game version to run.\n");
 	fmt::print(" --ip 127.0.0.1 - specifies host ip address if running in client mode.\n");
 	fmt::print(" --port 1337 - Specifies server port when running in client or server mode.\n");
 	fmt::print(" -g MOD.GRP - manually specifies a group or zip file to use. Can be specified multiple times.\n");
 	fmt::print(" -x MOD.CON - manually specifies a game con file to use.\n");
 	fmt::print(" -h MOD.DEF - manually specifies a game def file to use.\n");
 	fmt::print(" --map ZOO.MAP - manually specifies a user map file to load.\n");
-	fmt::print(" -s \"Full Mod Name\" - searches for and selects the mod with a full or partially matching name, and optional version / type.\n");
-	fmt::print(" -r - randomly selects a mod to run.\n");
+	fmt::print(" --search \"Full Mod Name\" - searches for and selects the mod with a full or partially matching name, and optional version / type.\n");
+	fmt::print(" --random - randomly selects a mod to run.\n");
 	fmt::print(" -n - runs normal Duke Nukem 3D without any mods.\n");
+	fmt::print(" -v # - selects an episode (1-4+).\n");
+	fmt::print(" -l # - selects a level (1-11).\n");
+	fmt::print(" -s # - selects a skill level (1-4).\n");
+	fmt::print(" -r - enables demo recording.\n");
 	fmt::print(" --local - runs the mod manager in local mode.\n");
 	fmt::print(" -- <args> - specify arguments to pass through to the target game executable when executing.\n");
 	fmt::print(" --hash-new - updates unhashed SHA1 file hashes (developer use only!).\n");

@@ -153,6 +153,7 @@ private:
 	bool m_initialized;
 	bool m_verbose;
 	bool m_localMode;
+	bool m_demoRecordingEnabled;
 	std::shared_ptr<ArgumentParser> m_arguments;
 	std::shared_ptr<SettingsManager> m_settings;
 	std::shared_ptr<HTTPService> m_httpService;

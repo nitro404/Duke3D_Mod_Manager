@@ -12,7 +12,7 @@ class ModGameVersion;
 
 class GameVersion final {
 public:
-	GameVersion(const std::string & name, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, const std::string & conFileArgumentFlag, const std::string & groupFileArgumentFlag, const std::string & mapFileArgumentFlag, const std::string & modDirectoryName, std::optional<std::string> setupExecutableName = {}, std::optional<std::string> defFileArgumentFlag = {}, std::optional<bool> requiresCombinedGroup = {}, std::optional<bool> requiresDOSBox = {}, const std::string & website = std::string(), const std::string & sourceCodeURL = std::string(), const std::vector<std::string> & compatibleGameVersions = std::vector<std::string>());
+	GameVersion(const std::string & name, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, const std::string & conFileArgumentFlag, const std::string & groupFileArgumentFlag, const std::string & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, const std::string & recordDemoArgumentFlag, const std::string & modDirectoryName, std::optional<std::string> setupExecutableName = {}, std::optional<std::string> defFileArgumentFlag = {}, std::optional<bool> requiresCombinedGroup = {}, std::optional<bool> requiresDOSBox = {}, const std::string & website = std::string(), const std::string & sourceCodeURL = std::string(), const std::vector<std::string> & compatibleGameVersions = std::vector<std::string>());
 	GameVersion(GameVersion && gameVersion) noexcept;
 	GameVersion(const GameVersion & gameVersion);
 	GameVersion & operator = (GameVersion && gameVersion) noexcept;
@@ -53,6 +53,14 @@ public:
 	void clearDefFileArgumentFlag();
 	const std::string & getMapFileArgumentFlag() const;
 	bool setMapFileArgumentFlag(const std::string & flag);
+	const std::string & getEpisodeArgumentFlag() const;
+	bool setEpisodeArgumentFlag(const std::string & flag);
+	const std::string & getLevelArgumentFlag() const;
+	bool setLevelArgumentFlag(const std::string & flag);
+	const std::string & getSkillArgumentFlag() const;
+	bool setSkillArgumentFlag(const std::string & flag);
+	const std::string & getRecordDemoArgumentFlag() const;
+	bool setRecordDemoArgumentFlag(const std::string & flag);
 	const std::string & getWebsite() const;
 	void setWebsite(const std::string & website);
 	const std::string & getSourceCodeURL() const;
@@ -116,6 +124,10 @@ private:
 	std::string m_groupFileArgumentFlag;
 	std::optional<std::string> m_defFileArgumentFlag;
 	std::string m_mapFileArgumentFlag;
+	std::string m_episodeArgumentFlag;
+	std::string m_levelArgumentFlag;
+	std::string m_skillArgumentFlag;
+	std::string m_recordDemoArgumentFlag;
 	std::vector<std::string> m_compatibleGameVersions;
 };
 
