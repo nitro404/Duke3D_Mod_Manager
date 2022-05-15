@@ -12,7 +12,7 @@ class ModGameVersion;
 
 class GameVersion final {
 public:
-	GameVersion(const std::string & name, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, const std::string & conFileArgumentFlag, const std::string & groupFileArgumentFlag, const std::string & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, const std::string & recordDemoArgumentFlag, const std::string & modDirectoryName, std::optional<std::string> setupExecutableName = {}, std::optional<std::string> defFileArgumentFlag = {}, std::optional<bool> requiresCombinedGroup = {}, std::optional<bool> requiresDOSBox = {}, const std::string & website = std::string(), const std::string & sourceCodeURL = std::string(), const std::vector<std::string> & compatibleGameVersions = std::vector<std::string>());
+	GameVersion(const std::string & name, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, const std::string & conFileArgumentFlag, const std::string & groupFileArgumentFlag, const std::string & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::string & modDirectoryName, const std::optional<std::string> & setupExecutableName = {}, const std::optional<std::string> & defFileArgumentFlag = {}, const std::optional<bool> & requiresCombinedGroup = {}, const std::optional<bool> & requiresDOSBox = {}, const std::string & website = std::string(), const std::string & sourceCodeURL = std::string(), const std::vector<std::string> & compatibleGameVersions = std::vector<std::string>());
 	GameVersion(GameVersion && gameVersion) noexcept;
 	GameVersion(const GameVersion & gameVersion);
 	GameVersion & operator = (GameVersion && gameVersion) noexcept;
@@ -61,6 +61,10 @@ public:
 	bool setSkillArgumentFlag(const std::string & flag);
 	const std::string & getRecordDemoArgumentFlag() const;
 	bool setRecordDemoArgumentFlag(const std::string & flag);
+	bool hasPlayDemoArgumentFlag() const;
+	std::optional<std::string> getPlayDemoArgumentFlag() const;
+	bool setPlayDemoArgumentFlag(const std::string & flag);
+	void clearPlayDemoArgumentFlag();
 	const std::string & getWebsite() const;
 	void setWebsite(const std::string & website);
 	const std::string & getSourceCodeURL() const;
@@ -128,6 +132,7 @@ private:
 	std::string m_levelArgumentFlag;
 	std::string m_skillArgumentFlag;
 	std::string m_recordDemoArgumentFlag;
+	std::optional<std::string> m_playDemoArgumentFlag;
 	std::vector<std::string> m_compatibleGameVersions;
 };
 

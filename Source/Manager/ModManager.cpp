@@ -1477,6 +1477,14 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 		if(m_demoRecordingEnabled) {
 			command << " " << selectedGameVersion->getRecordDemoArgumentFlag();
 		}
+
+		if(m_arguments->hasArgument("d")) {
+			std::string demoFileName(m_arguments->getFirstValue("d"));
+
+			if(!demoFileName.empty() && selectedGameVersion->hasPlayDemoArgumentFlag()) {
+				command << " " << selectedGameVersion->getPlayDemoArgumentFlag().value() << demoFileName;
+			}
+		}
 	}
 
 	if(selectedGameVersion->doesRequireDOSBox()) {
@@ -2344,6 +2352,7 @@ void ModManager::displayArgumentHelp() {
 	fmt::print(" -l # - selects a level (1-11).\n");
 	fmt::print(" -s # - selects a skill level (1-4).\n");
 	fmt::print(" -r - enables demo recording.\n");
+	fmt::print(" -d DEMO3.DMO - plays back the specified demo file.\n");
 	fmt::print(" --local - runs the mod manager in local mode.\n");
 	fmt::print(" -- <args> - specify arguments to pass through to the target game executable when executing.\n");
 	fmt::print(" --hash-new - updates unhashed SHA1 file hashes (developer use only!).\n");
