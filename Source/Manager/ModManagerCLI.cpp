@@ -1245,11 +1245,13 @@ bool ModManager::CLI::runSearchPrompt(const std::string & args) {
 	std::string input, data, formattedData;
 	std::string trimmedArgs(Utilities::trimString(args));
 	bool skipInput = !trimmedArgs.empty();
+	size_t selectedMatchIndex = std::numeric_limits<size_t>::max();
 	bool searchMods = organizedMods->shouldDisplayMods();
 	bool searchGameVersions = organizedMods->shouldDisplayGameVersions();
 	bool searchTeams = organizedMods->shouldDisplayTeams();
 	bool searchAuthors = organizedMods->shouldDisplayAuthors();
 	const char * searchType = searchMods ? "mod" : (searchTeams ? "team" : (searchAuthors ? "author" : ""));
+	std::vector<ModMatch> modMatches;
 
 	while(true) {
 		clearOutput();
@@ -1312,8 +1314,6 @@ bool ModManager::CLI::runSearchPrompt(const std::string & args) {
 			continue;
 		}
 		else {
-			std::vector<ModMatch> modMatches;
-			ModMatch * modMatch;
 			std::vector<std::shared_ptr<GameVersion>> matchingGameVersions;
 			std::vector<std::shared_ptr<ModAuthorInformation>> matchingTeamsOrAuthors;
 			size_t numberOfMatches = std::numeric_limits<size_t>::max();
@@ -1339,58 +1339,33 @@ bool ModManager::CLI::runSearchPrompt(const std::string & args) {
 				fmt::print("No matches found.\n");
 			}
 			else if(numberOfMatches == 1) {
-				std::string selectedItemName;
-
-				if(searchMods) {
-					modMatch = &modMatches[0];
-
-					m_modManager->setSelectedMod(modMatch->getMod());
-					m_modManager->setSelectedModVersionIndex(modMatch->getModVersionIndex());
-					m_modManager->setSelectedModVersionTypeIndex(modMatch->getModVersionTypeIndex());
-
-					selectedItemName = modMatch->toString();
-				}
-				else if(searchGameVersions) {
-					selectedItemName = organizedMods->getSelectedGameVersion()->getName();
-				}
-				else if(searchTeams) {
-					selectedItemName = organizedMods->getSelectedTeam()->getName();
-				}
-				else if(searchAuthors) {
-					selectedItemName = organizedMods->getSelectedAuthor()->getName();
-				}
-
-				fmt::print("Selected {}: {}\n", searchMods ? Utilities::toCapitalCase(magic_enum::enum_name(modMatch->getMatchType())) : searchType, selectedItemName);
-
-				return true;
+				selectedMatchIndex = 0;
+				break;
 			}
 			else {
 				if(numberOfMatches > 20) {
 					fmt::print("Found {} matches, please refine your search query.\n", numberOfMatches);
 				}
 				else {
-					fmt::print("Found {} matches:\n", numberOfMatches);
-
-					std::string currentMatchName;
+					std::vector<std::string> matchNames;
 
 					for(size_t i = 0; i < numberOfMatches; i++) {
 						printSpacing(Utilities::unsignedLongLength(numberOfMatches) - Utilities::unsignedLongLength(i + 1));
 
 						if(searchMods) {
-							currentMatchName = modMatches[i].toString();
+							matchNames.push_back(modMatches[i].toString());
 						}
 						else if(searchGameVersions) {
-							currentMatchName = matchingGameVersions[i]->getName();
+							matchNames.push_back(matchingGameVersions[i]->getName());
 						}
 						else if(searchTeams || searchAuthors) {
-							currentMatchName = matchingTeamsOrAuthors[i]->getName();
+							matchNames.push_back(matchingTeamsOrAuthors[i]->getName());
 						}
-
-						fmt::print("{}. {}\n", i + 1, currentMatchName);
 					}
 
-					fmt::print("\n");
-					fmt::print("Please refine your search query.\n", numberOfMatches);
+					selectedMatchIndex = getValuePrompt(matchNames, fmt::format("Found {} matches, please select one:", numberOfMatches));
+
+					break;
 				}
 			}
 
@@ -1404,7 +1379,35 @@ bool ModManager::CLI::runSearchPrompt(const std::string & args) {
 		}
 	}
 
-	return false;
+	if(selectedMatchIndex == std::numeric_limits<size_t>::max()) {
+		return false;
+	}
+
+	std::string selectedItemName;
+	ModMatch * modMatch = nullptr;
+
+	if(searchMods) {
+		modMatch = &modMatches[selectedMatchIndex];
+
+		m_modManager->setSelectedMod(modMatch->getMod());
+		m_modManager->setSelectedModVersionIndex(modMatch->getModVersionIndex());
+		m_modManager->setSelectedModVersionTypeIndex(modMatch->getModVersionTypeIndex());
+
+		selectedItemName = modMatch->toString();
+	}
+	else if(searchGameVersions) {
+		selectedItemName = organizedMods->getSelectedGameVersion()->getName();
+	}
+	else if(searchTeams) {
+		selectedItemName = organizedMods->getSelectedTeam()->getName();
+	}
+	else if(searchAuthors) {
+		selectedItemName = organizedMods->getSelectedAuthor()->getName();
+	}
+
+	fmt::print("Selected {}: {}\n", searchMods ? Utilities::toCapitalCase(magic_enum::enum_name(modMatch->getMatchType())) : searchType, selectedItemName);
+
+	return true;
 }
 
 bool ModManager::CLI::updateSelectedModVersionPrompt() {
