@@ -100,6 +100,11 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 			return false;
 		}
 
+		if(m_arguments->hasArgument("version")) {
+			fmt::print("{}\n", APPLICATION_VERSION);
+			return false;
+		}
+
 		if(m_arguments->hasArgument("verbose")) {
 			m_verbose = true;
 			verboseSet = true;
@@ -2358,6 +2363,7 @@ void ModManager::displayArgumentHelp() {
 	fmt::print(" --hash-new - updates unhashed SHA1 file hashes (developer use only!).\n");
 	fmt::print(" --hash-all - updates all SHA1 file hashes (developer use only!).\n");
 	fmt::print(" --verbose - enables verbose debug output.\n");
+	fmt::print(" --version - displays the application version.\n");
 	fmt::print(" -? - displays this help message.\n");
 }
 
