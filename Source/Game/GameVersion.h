@@ -12,7 +12,7 @@ class ModGameVersion;
 
 class GameVersion final {
 public:
-	GameVersion(const std::string & name, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, const std::string & conFileArgumentFlag, const std::string & groupFileArgumentFlag, const std::string & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::string & modDirectoryName, const std::optional<std::string> & setupExecutableName = {}, const std::optional<std::string> & defFileArgumentFlag = {}, const std::optional<bool> & requiresCombinedGroup = {}, const std::optional<bool> & requiresDOSBox = {}, const std::string & website = std::string(), const std::string & sourceCodeURL = std::string(), const std::vector<std::string> & compatibleGameVersions = std::vector<std::string>());
+	GameVersion(const std::string & name, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, const std::string & conFileArgumentFlag, const std::string & groupFileArgumentFlag, const std::string & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::string & respawnModeArgumentFlag, const std::string & weaponSwitchOrderArgumentFlag, const std::string & disableMonstersArgumentFlag, const std::string & disableSoundArgumentFlag, const std::string & disableMusicArgumentFlag, const std::string & modDirectoryName, const std::optional<std::string> & setupExecutableName = {}, const std::optional<std::string> & defFileArgumentFlag = {}, const std::optional<bool> & requiresCombinedGroup = {}, const std::optional<bool> & requiresDOSBox = {}, const std::string & website = std::string(), const std::string & sourceCodeURL = std::string(), const std::vector<std::string> & compatibleGameVersions = std::vector<std::string>());
 	GameVersion(GameVersion && gameVersion) noexcept;
 	GameVersion(const GameVersion & gameVersion);
 	GameVersion & operator = (GameVersion && gameVersion) noexcept;
@@ -65,6 +65,16 @@ public:
 	std::optional<std::string> getPlayDemoArgumentFlag() const;
 	bool setPlayDemoArgumentFlag(const std::string & flag);
 	void clearPlayDemoArgumentFlag();
+	const std::string & getRespawnModeArgumentFlag() const;
+	bool setRespawnModeArgumentFlag(const std::string & flag);
+	const std::string & getWeaponSwitchOrderArgumentFlag() const;
+	bool setWeaponSwitchOrderArgumentFlag(const std::string & flag);
+	const std::string & getDisableMonstersArgumentFlag() const;
+	bool setDisableMonstersArgumentFlag(const std::string & flag);
+	const std::string & getDisableSoundArgumentFlag() const;
+	bool setDisableSoundArgumentFlag(const std::string & flag);
+	const std::string & getDisableMusicArgumentFlag() const;
+	bool setDisableMusicArgumentFlag(const std::string & flag);
 	const std::string & getWebsite() const;
 	void setWebsite(const std::string & website);
 	const std::string & getSourceCodeURL() const;
@@ -133,6 +143,11 @@ private:
 	std::string m_skillArgumentFlag;
 	std::string m_recordDemoArgumentFlag;
 	std::optional<std::string> m_playDemoArgumentFlag;
+	std::string m_respawnModeArgumentFlag;
+	std::string m_weaponSwitchOrderArgumentFlag;
+	std::string m_disableMonstersArgumentFlag;
+	std::string m_disableSoundArgumentFlag;
+	std::string m_disableMusicArgumentFlag;
 	std::vector<std::string> m_compatibleGameVersions;
 };
 

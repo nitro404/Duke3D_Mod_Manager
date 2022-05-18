@@ -28,6 +28,11 @@ static constexpr const char * JSON_LEVEL_ARGUMENT_FLAG_PROPERTY_NAME = "levelArg
 static constexpr const char * JSON_SKILL_ARGUMENT_FLAG_PROPERTY_NAME = "skillArgumentFlag";
 static constexpr const char * JSON_RECORD_DEMO_ARGUMENT_FLAG_PROPERTY_NAME = "recordDemoArgumentFlag";
 static constexpr const char * JSON_PLAY_DEMO_ARGUMENT_FLAG_PROPERTY_NAME = "playDemoArgumentFlag";
+static constexpr const char * JSON_RESPAWN_MODE_ARGUMENT_FLAG_PROPERTY_NAME = "respawnModeArgumentFlag";
+static constexpr const char * JSON_WEAPON_SWITCH_ORDER_ARGUMENT_FLAG_PROPERTY_NAME = "weaponSwitchOrderArgumentFlag";
+static constexpr const char * JSON_DISABLE_MONSTERS_ARGUMENT_FLAG_PROPERTY_NAME = "disableMonstersArgumentFlag";
+static constexpr const char * JSON_DISABLE_SOUND_ARGUMENT_FLAG_PROPERTY_NAME = "disableSoundArgumentFlag";
+static constexpr const char * JSON_DISABLE_MUSIC_ARGUMENT_FLAG_PROPERTY_NAME = "disableMusicArgumentFlag";
 static constexpr const char * JSON_REQUIRES_COMBINED_GROUP_PROPERTY_NAME = "requiresCombinedGroup";
 static constexpr const char * JSON_REQUIRES_DOSBOX_PROPERTY_NAME = "requiresDOSBox";
 static constexpr const char * JSON_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME = "localWorkingDirectory";
@@ -35,7 +40,7 @@ static constexpr const char * JSON_MOD_DIRECTORY_NAME_PROPERTY_NAME = "modDirect
 static constexpr const char * JSON_WEBSITE_PROPERTY_NAME = "website";
 static constexpr const char * JSON_SOURCE_CODE_URL_PROPERTY_NAME = "sourceCodeURL";
 static constexpr const char * JSON_COMPATIBLE_GAME_VERSIONS_PROPERTY_NAME = "compatibleGameVersions";
-static const std::array<std::string_view, 21> JSON_PROPERTY_NAMES = {
+static const std::array<std::string_view, 26> JSON_PROPERTY_NAMES = {
 	JSON_NAME_PROPERTY_NAME,
 	JSON_GAME_PATH_PROPERTY_NAME,
 	JSON_GAME_EXECUTABLE_NAME_PROPERTY_NAME,
@@ -50,6 +55,11 @@ static const std::array<std::string_view, 21> JSON_PROPERTY_NAMES = {
 	JSON_SKILL_ARGUMENT_FLAG_PROPERTY_NAME,
 	JSON_RECORD_DEMO_ARGUMENT_FLAG_PROPERTY_NAME,
 	JSON_PLAY_DEMO_ARGUMENT_FLAG_PROPERTY_NAME,
+	JSON_RESPAWN_MODE_ARGUMENT_FLAG_PROPERTY_NAME,
+	JSON_WEAPON_SWITCH_ORDER_ARGUMENT_FLAG_PROPERTY_NAME,
+	JSON_DISABLE_MONSTERS_ARGUMENT_FLAG_PROPERTY_NAME,
+	JSON_DISABLE_SOUND_ARGUMENT_FLAG_PROPERTY_NAME,
+	JSON_DISABLE_MUSIC_ARGUMENT_FLAG_PROPERTY_NAME,
 	JSON_REQUIRES_COMBINED_GROUP_PROPERTY_NAME,
 	JSON_REQUIRES_DOSBOX_PROPERTY_NAME,
 	JSON_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME,
@@ -61,17 +71,17 @@ static const std::array<std::string_view, 21> JSON_PROPERTY_NAMES = {
 
 const std::string GameVersion::ALL_VERSIONS = "All Versions";
 
-const GameVersion GameVersion::ORIGINAL_REGULAR_VERSION("Regular Version 1.3",         "", "DUKE3D.EXE",                 true,  false, "/x",  "/g",  "-map ", "/v", "/l", "/s", "/r", {},    "Regular",          "SETUP.EXE", {},    true,  true,  "https://www.dukenukem.com");
-const GameVersion GameVersion::ORIGINAL_ATOMIC_EDITION ("Atomic Edition 1.4/1.5",      "", "DUKE3D.EXE",                 true,  false, "/x",  "/g",  "-map ", "/v", "/l", "/s", "/r", "/d",  "Atomic",           "SETUP.EXE", {},    {},    true,  "https://www.dukenukem.com");
-const GameVersion GameVersion::JFDUKE3D                ("JFDuke3D",                    "", "duke3d.exe",                 true,  false, "/x",  "/g",  "-map ", "/v", "/l", "/s", "/r", "/d",  "JFDuke3D",         {},          {},    {},    {},    "http://www.jonof.id.au/jfduke3d",                               "https://github.com/jonof/jfduke3d",                  { GameVersion::ORIGINAL_REGULAR_VERSION.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName() });
-const GameVersion GameVersion::EDUKE32                 ("eDuke32",                     "", "eduke32.exe",                false, true,  "-x ", "-g ", "-map ", "-v", "-l", "-s", "-r", "-d ", "eDuke32",          {},          "-h ", {},    {},    "https://www.eduke32.com",                                       "https://voidpoint.io/terminx/eduke32",               { GameVersion::ORIGINAL_REGULAR_VERSION.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName(), GameVersion::JFDUKE3D.getName() });
-//const GameVersion GameVersion::MEGATON_EDITION         ("Megaton Edition",             "", "duke3d.exe",                 true,  false, "/x",  "/g",  "-map ", "/v", "/l", "/s", "/r", "/d",  "Megaton",          {},          {},    {},    {},    "https://store.steampowered.com/app/225140",                     "https://github.com/TermiT/duke3d-megaton",           { GameVersion::ORIGINAL_REGULAR_VERSION.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName(), GameVersion::JFDUKE3D.getName() });
-const GameVersion GameVersion::WORLD_TOUR              ("20th Anniversary World Tour", "", "duke3d.exe",                 true,  false, "/x",  "/g",  "-map ", "/v", "/l", "/s", "/r", "/d",  "WorldTour",        {},          {},    {},    {},    "https://www.gearboxsoftware.com/game/duke-3d-20th",             "",                                                   { GameVersion::ORIGINAL_REGULAR_VERSION.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName() });
-//const GameVersion GameVersion::BUILDGDX                ("BuildGDX",                    "", "BuildGDX.jar",               true,  true,  "",    "",    "-map ", "/v", "/l", "/s", "/r", "/d",  "BuildGDX",         {},          {},    {},    {},    "https://m210.duke4.net/index.php/downloads/category/8-java",    "https://gitlab.com/m210/BuildGDX",                   { GameVersion::ORIGINAL_REGULAR_VERSION.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName() });
-const GameVersion GameVersion::RAZE                    ("Raze",                        "", "raze.exe",                   true,  true,  "-x ", "-g ", "-map ", "-v", "-l", "-s", "-r", "-d ", "Raze",             {},          "-h ", {},    {},    "https://raze.zdoom.org/about",                                  "https://github.com/coelckers/Raze",                  { GameVersion::ORIGINAL_ATOMIC_EDITION.getName(),  GameVersion::JFDUKE3D.getName() });
-const GameVersion GameVersion::RED_NUKEM               ("RedNukem",                    "", "rednukem.exe",               false, true,  "-x ", "-g ", "-map ", "-v", "-l", "-s", "-r", "-d ", "RedNukem",         {},          "-h ", {},    {},    "https://lerppu.net/wannabethesis",                              "https://github.com/nukeykt/NRedneck",                { GameVersion::ORIGINAL_REGULAR_VERSION.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName(), GameVersion::JFDUKE3D.getName() });
-const GameVersion GameVersion::CHOCOLATE_DUKE3D        ("Chocolate Duke3D",            "", "Game.exe",                   true,  false, "/x",  "/g",  "-map ", "/v", "/l", "/s", "/r", "/d",  "Chocolate",        {},          {},    {},    {},    "https://fabiensanglard.net/duke3d/chocolate_duke_nukem_3D.php", "https://github.com/fabiensanglard/chocolate_duke3D", { GameVersion::ORIGINAL_REGULAR_VERSION.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName() });
-const GameVersion GameVersion::BELGIAN_CHOCOLATE_DUKE3D("Belgian Chocolate Duke3D",    "", "BelgianChocolateDuke3D.exe", true,  false, "/x",  "/g",  "-map ", "/v", "/l", "/s", "/r", "/d",  "BelgianChocolate", {},          {},    {},    {},    "",                                                              "https://github.com/GPSnoopy/BelgianChocolateDuke3D", { GameVersion::ORIGINAL_REGULAR_VERSION.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName() });
+const GameVersion GameVersion::ORIGINAL_REGULAR_VERSION("Regular Version 1.3",         "", "DUKE3D.EXE",                 true,  false, "/x",  "/g",  "-map ", "/v", "/l", "/s", "/r", {},    "/t", "/u", "/m", "/ns", "/nm", "Regular",          "SETUP.EXE", {},    true,  true,  "https://www.dukenukem.com");
+const GameVersion GameVersion::ORIGINAL_ATOMIC_EDITION ("Atomic Edition 1.4/1.5",      "", "DUKE3D.EXE",                 true,  false, "/x",  "/g",  "-map ", "/v", "/l", "/s", "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", "Atomic",           "SETUP.EXE", {},    {},    true,  "https://www.dukenukem.com");
+const GameVersion GameVersion::JFDUKE3D                ("JFDuke3D",                    "", "duke3d.exe",                 true,  false, "/x",  "/g",  "-map ", "/v", "/l", "/s", "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", "JFDuke3D",         {},          {},    {},    {},    "http://www.jonof.id.au/jfduke3d",                               "https://github.com/jonof/jfduke3d",                  { GameVersion::ORIGINAL_REGULAR_VERSION.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName() });
+const GameVersion GameVersion::EDUKE32                 ("eDuke32",                     "", "eduke32.exe",                false, true,  "-x ", "-g ", "-map ", "-v", "-l", "-s", "-r", "-d ", "-t", "-u", "-m", "-ns", "-nm", "eDuke32",          {},          "-h ", {},    {},    "https://www.eduke32.com",                                       "https://voidpoint.io/terminx/eduke32",               { GameVersion::ORIGINAL_REGULAR_VERSION.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName(), GameVersion::JFDUKE3D.getName() });
+//const GameVersion GameVersion::MEGATON_EDITION         ("Megaton Edition",             "", "duke3d.exe",                 true,  false, "/x",  "/g",  "-map ", "/v", "/l", "/s", "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", "Megaton",          {},          {},    {},    {},    "https://store.steampowered.com/app/225140",                     "https://github.com/TermiT/duke3d-megaton",           { GameVersion::ORIGINAL_REGULAR_VERSION.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName(), GameVersion::JFDUKE3D.getName() });
+const GameVersion GameVersion::WORLD_TOUR              ("20th Anniversary World Tour", "", "duke3d.exe",                 true,  false, "/x",  "/g",  "-map ", "/v", "/l", "/s", "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", "WorldTour",        {},          {},    {},    {},    "https://www.gearboxsoftware.com/game/duke-3d-20th",             "",                                                   { GameVersion::ORIGINAL_REGULAR_VERSION.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName() });
+//const GameVersion GameVersion::BUILDGDX                ("BuildGDX",                    "", "BuildGDX.jar",               true,  true,  "",    "",    "-map ", "/v", "/l", "/s", "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", "BuildGDX",         {},          {},    {},    {},    "https://m210.duke4.net/index.php/downloads/category/8-java",    "https://gitlab.com/m210/BuildGDX",                   { GameVersion::ORIGINAL_REGULAR_VERSION.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName() });
+const GameVersion GameVersion::RAZE                    ("Raze",                        "", "raze.exe",                   true,  true,  "-x ", "-g ", "-map ", "-v", "-l", "-s", "-r", "-d ", "-t", "-u", "-m", "-ns", "-nm", "Raze",             {},          "-h ", {},    {},    "https://raze.zdoom.org/about",                                  "https://github.com/coelckers/Raze",                  { GameVersion::ORIGINAL_ATOMIC_EDITION.getName(),  GameVersion::JFDUKE3D.getName() });
+const GameVersion GameVersion::RED_NUKEM               ("RedNukem",                    "", "rednukem.exe",               false, true,  "-x ", "-g ", "-map ", "-v", "-l", "-s", "-r", "-d ", "-t", "-u", "-m", "-ns", "-nm", "RedNukem",         {},          "-h ", {},    {},    "https://lerppu.net/wannabethesis",                              "https://github.com/nukeykt/NRedneck",                { GameVersion::ORIGINAL_REGULAR_VERSION.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName(), GameVersion::JFDUKE3D.getName() });
+const GameVersion GameVersion::CHOCOLATE_DUKE3D        ("Chocolate Duke3D",            "", "Game.exe",                   true,  false, "/x",  "/g",  "-map ", "/v", "/l", "/s", "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", "Chocolate",        {},          {},    {},    {},    "https://fabiensanglard.net/duke3d/chocolate_duke_nukem_3D.php", "https://github.com/fabiensanglard/chocolate_duke3D", { GameVersion::ORIGINAL_REGULAR_VERSION.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName() });
+const GameVersion GameVersion::BELGIAN_CHOCOLATE_DUKE3D("Belgian Chocolate Duke3D",    "", "BelgianChocolateDuke3D.exe", true,  false, "/x",  "/g",  "-map ", "/v", "/l", "/s", "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", "BelgianChocolate", {},          {},    {},    {},    "",                                                              "https://github.com/GPSnoopy/BelgianChocolateDuke3D", { GameVersion::ORIGINAL_REGULAR_VERSION.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName() });
 
 const std::vector<GameVersion> GameVersion::DEFAULT_GAME_VERSIONS = {
 	GameVersion::ORIGINAL_REGULAR_VERSION,
@@ -87,7 +97,7 @@ const std::vector<GameVersion> GameVersion::DEFAULT_GAME_VERSIONS = {
 	GameVersion::BELGIAN_CHOCOLATE_DUKE3D
 };
 
-GameVersion::GameVersion(const std::string & name, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, const std::string & conFileArgumentFlag, const std::string & groupFileArgumentFlag, const std::string & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::string & modDirectoryName, const std::optional<std::string> & setupExecutableName, const std::optional<std::string> & defFileArgumentFlag, const std::optional<bool> & requiresCombinedGroup, const std::optional<bool> & requiresDOSBox, const std::string & website, const std::string & sourceCodeURL, const std::vector<std::string> & compatibleGameVersions)
+GameVersion::GameVersion(const std::string & name, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, const std::string & conFileArgumentFlag, const std::string & groupFileArgumentFlag, const std::string & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::string & respawnModeArgumentFlag, const std::string & weaponSwitchOrderArgumentFlag, const std::string & disableMonstersArgumentFlag, const std::string & disableSoundArgumentFlag, const std::string & disableMusicArgumentFlag, const std::string & modDirectoryName, const std::optional<std::string> & setupExecutableName, const std::optional<std::string> & defFileArgumentFlag, const std::optional<bool> & requiresCombinedGroup, const std::optional<bool> & requiresDOSBox, const std::string & website, const std::string & sourceCodeURL, const std::vector<std::string> & compatibleGameVersions)
 	: m_name(Utilities::trimString(name))
 	, m_gamePath(Utilities::trimString(gamePath))
 	, m_gameExecutableName(Utilities::trimString(gameExecutableName))
@@ -106,7 +116,12 @@ GameVersion::GameVersion(const std::string & name, const std::string & gamePath,
 	, m_levelArgumentFlag(levelArgumentFlag)
 	, m_skillArgumentFlag(skillArgumentFlag)
 	, m_recordDemoArgumentFlag(recordDemoArgumentFlag)
-	, m_playDemoArgumentFlag(playDemoArgumentFlag) {
+	, m_playDemoArgumentFlag(playDemoArgumentFlag)
+	, m_respawnModeArgumentFlag(respawnModeArgumentFlag)
+	, m_weaponSwitchOrderArgumentFlag(weaponSwitchOrderArgumentFlag)
+	, m_disableMonstersArgumentFlag(disableMonstersArgumentFlag)
+	, m_disableSoundArgumentFlag(disableSoundArgumentFlag)
+	, m_disableMusicArgumentFlag(disableMusicArgumentFlag) {
 	if(setupExecutableName.has_value()) {
 		m_setupExecutableName = Utilities::trimString(setupExecutableName.value());
 	}
@@ -135,6 +150,11 @@ GameVersion::GameVersion(GameVersion && gameVersion) noexcept
 	, m_skillArgumentFlag(std::move(gameVersion.m_skillArgumentFlag))
 	, m_recordDemoArgumentFlag(std::move(gameVersion.m_recordDemoArgumentFlag))
 	, m_playDemoArgumentFlag(std::move(gameVersion.m_playDemoArgumentFlag))
+	, m_respawnModeArgumentFlag(std::move(gameVersion.m_respawnModeArgumentFlag))
+	, m_weaponSwitchOrderArgumentFlag(std::move(gameVersion.m_weaponSwitchOrderArgumentFlag))
+	, m_disableMonstersArgumentFlag(std::move(gameVersion.m_disableMonstersArgumentFlag))
+	, m_disableSoundArgumentFlag(std::move(gameVersion.m_disableSoundArgumentFlag))
+	, m_disableMusicArgumentFlag(std::move(gameVersion.m_disableMusicArgumentFlag))
 	, m_compatibleGameVersions(std::move(gameVersion.m_compatibleGameVersions)) { }
 
 GameVersion::GameVersion(const GameVersion & gameVersion)
@@ -158,6 +178,11 @@ GameVersion::GameVersion(const GameVersion & gameVersion)
 	, m_skillArgumentFlag(gameVersion.m_skillArgumentFlag)
 	, m_recordDemoArgumentFlag(gameVersion.m_recordDemoArgumentFlag)
 	, m_playDemoArgumentFlag(gameVersion.m_playDemoArgumentFlag)
+	, m_respawnModeArgumentFlag(gameVersion.m_respawnModeArgumentFlag)
+	, m_weaponSwitchOrderArgumentFlag(gameVersion.m_weaponSwitchOrderArgumentFlag)
+	, m_disableMonstersArgumentFlag(gameVersion.m_disableMonstersArgumentFlag)
+	, m_disableSoundArgumentFlag(gameVersion.m_disableSoundArgumentFlag)
+	, m_disableMusicArgumentFlag(gameVersion.m_disableMusicArgumentFlag)
 	, m_compatibleGameVersions(gameVersion.m_compatibleGameVersions) { }
 
 GameVersion & GameVersion::operator = (GameVersion && gameVersion) noexcept {
@@ -182,6 +207,11 @@ GameVersion & GameVersion::operator = (GameVersion && gameVersion) noexcept {
 		m_skillArgumentFlag = std::move(gameVersion.m_skillArgumentFlag);
 		m_recordDemoArgumentFlag = std::move(gameVersion.m_recordDemoArgumentFlag);
 		m_playDemoArgumentFlag = std::move(gameVersion.m_playDemoArgumentFlag);
+		m_respawnModeArgumentFlag = std::move(gameVersion.m_respawnModeArgumentFlag);
+		m_weaponSwitchOrderArgumentFlag = std::move(gameVersion.m_weaponSwitchOrderArgumentFlag);
+		m_disableMonstersArgumentFlag = std::move(gameVersion.m_disableMonstersArgumentFlag);
+		m_disableSoundArgumentFlag = std::move(gameVersion.m_disableSoundArgumentFlag);
+		m_disableMusicArgumentFlag = std::move(gameVersion.m_disableMusicArgumentFlag);
 		m_compatibleGameVersions = std::move(gameVersion.m_compatibleGameVersions);
 	}
 
@@ -209,6 +239,11 @@ GameVersion & GameVersion::operator = (const GameVersion & gameVersion) {
 	m_skillArgumentFlag = gameVersion.m_skillArgumentFlag;
 	m_recordDemoArgumentFlag = gameVersion.m_recordDemoArgumentFlag;
 	m_playDemoArgumentFlag = gameVersion.m_playDemoArgumentFlag;
+	m_respawnModeArgumentFlag = gameVersion.m_respawnModeArgumentFlag;
+	m_weaponSwitchOrderArgumentFlag = gameVersion.m_weaponSwitchOrderArgumentFlag;
+	m_disableMonstersArgumentFlag = gameVersion.m_disableMonstersArgumentFlag;
+	m_disableSoundArgumentFlag = gameVersion.m_disableSoundArgumentFlag;
+	m_disableMusicArgumentFlag = gameVersion.m_disableMusicArgumentFlag;
 	m_compatibleGameVersions = gameVersion.m_compatibleGameVersions;
 
 	return *this;
@@ -454,6 +489,76 @@ void GameVersion::clearPlayDemoArgumentFlag() {
 	m_playDemoArgumentFlag.reset();
 }
 
+const std::string & GameVersion::getRespawnModeArgumentFlag() const {
+	return m_respawnModeArgumentFlag;
+}
+
+bool GameVersion::setRespawnModeArgumentFlag(const std::string & flag) {
+	if(flag.empty()) {
+		return false;
+	}
+
+	m_respawnModeArgumentFlag = flag;
+
+	return true;
+}
+
+const std::string & GameVersion::getWeaponSwitchOrderArgumentFlag() const {
+	return m_weaponSwitchOrderArgumentFlag;
+}
+
+bool GameVersion::setWeaponSwitchOrderArgumentFlag(const std::string & flag) {
+	if(flag.empty()) {
+		return false;
+	}
+
+	m_weaponSwitchOrderArgumentFlag = flag;
+
+	return true;
+}
+
+const std::string & GameVersion::getDisableMonstersArgumentFlag() const {
+	return m_disableMonstersArgumentFlag;
+}
+
+bool GameVersion::setDisableMonstersArgumentFlag(const std::string & flag) {
+	if(flag.empty()) {
+		return false;
+	}
+
+	m_disableMonstersArgumentFlag = flag;
+
+	return true;
+}
+
+const std::string & GameVersion::getDisableSoundArgumentFlag() const {
+	return m_disableSoundArgumentFlag;
+}
+
+bool GameVersion::setDisableSoundArgumentFlag(const std::string & flag) {
+	if(flag.empty()) {
+		return false;
+	}
+
+	m_disableSoundArgumentFlag = flag;
+
+	return true;
+}
+
+const std::string & GameVersion::getDisableMusicArgumentFlag() const {
+	return m_disableMusicArgumentFlag;
+}
+
+bool GameVersion::setDisableMusicArgumentFlag(const std::string & flag) {
+	if(flag.empty()) {
+		return false;
+	}
+
+	m_disableMusicArgumentFlag = flag;
+
+	return true;
+}
+
 const std::string & GameVersion::getWebsite() const {
 	return m_website;
 }
@@ -671,6 +776,21 @@ rapidjson::Value GameVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::C
 		rapidjson::Value playDemoArgumentFlagValue(m_playDemoArgumentFlag.value().c_str(), allocator);
 		gameVersionValue.AddMember(rapidjson::StringRef(JSON_PLAY_DEMO_ARGUMENT_FLAG_PROPERTY_NAME), playDemoArgumentFlagValue, allocator);
 	}
+
+	rapidjson::Value respawnModeArgumentFlagValue(m_respawnModeArgumentFlag.c_str(), allocator);
+	gameVersionValue.AddMember(rapidjson::StringRef(JSON_RESPAWN_MODE_ARGUMENT_FLAG_PROPERTY_NAME), respawnModeArgumentFlagValue, allocator);
+
+	rapidjson::Value weaponSwitchOrderArgumentFlagValue(m_weaponSwitchOrderArgumentFlag.c_str(), allocator);
+	gameVersionValue.AddMember(rapidjson::StringRef(JSON_WEAPON_SWITCH_ORDER_ARGUMENT_FLAG_PROPERTY_NAME), weaponSwitchOrderArgumentFlagValue, allocator);
+
+	rapidjson::Value disableMonstersArgumentFlagValue(m_disableMonstersArgumentFlag.c_str(), allocator);
+	gameVersionValue.AddMember(rapidjson::StringRef(JSON_DISABLE_MONSTERS_ARGUMENT_FLAG_PROPERTY_NAME), disableMonstersArgumentFlagValue, allocator);
+
+	rapidjson::Value disableSoundArgumentFlagValue(m_disableSoundArgumentFlag.c_str(), allocator);
+	gameVersionValue.AddMember(rapidjson::StringRef(JSON_DISABLE_SOUND_ARGUMENT_FLAG_PROPERTY_NAME), disableSoundArgumentFlagValue, allocator);
+
+	rapidjson::Value disableMusicArgumentFlagValue(m_disableMusicArgumentFlag.c_str(), allocator);
+	gameVersionValue.AddMember(rapidjson::StringRef(JSON_DISABLE_MUSIC_ARGUMENT_FLAG_PROPERTY_NAME), disableMusicArgumentFlagValue, allocator);
 
 	if(m_setupExecutableName.has_value()) {
 		rapidjson::Value setupExecutableNameValue(m_setupExecutableName.value().c_str(), allocator);
@@ -995,6 +1115,106 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		optionalPlayDemoArgumentFlag = playDemoArgumentFlagValue.GetString();
 	}
 
+	// parse game version respawn mode argument flag
+	if(!gameVersionValue.HasMember(JSON_RESPAWN_MODE_ARGUMENT_FLAG_PROPERTY_NAME)) {
+		fmt::print("Game version is missing '{}' property.\n", JSON_RESPAWN_MODE_ARGUMENT_FLAG_PROPERTY_NAME);
+		return nullptr;
+	}
+
+	const rapidjson::Value & respawnModeArgumentFlagValue = gameVersionValue[JSON_RESPAWN_MODE_ARGUMENT_FLAG_PROPERTY_NAME];
+
+	if(!respawnModeArgumentFlagValue.IsString()) {
+		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_RESPAWN_MODE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(respawnModeArgumentFlagValue.GetType()));
+		return nullptr;
+	}
+
+	std::string respawnModeArgumentFlag(respawnModeArgumentFlagValue.GetString());
+
+	if(respawnModeArgumentFlag.empty()) {
+		fmt::print("Game version '{}' property cannot be empty.\n", JSON_RESPAWN_MODE_ARGUMENT_FLAG_PROPERTY_NAME);
+		return nullptr;
+	}
+
+	// parse game version weapon switch order argument flag
+	if(!gameVersionValue.HasMember(JSON_WEAPON_SWITCH_ORDER_ARGUMENT_FLAG_PROPERTY_NAME)) {
+		fmt::print("Game version is missing '{}' property.\n", JSON_WEAPON_SWITCH_ORDER_ARGUMENT_FLAG_PROPERTY_NAME);
+		return nullptr;
+	}
+
+	const rapidjson::Value & weaponSwitchOrderArgumentFlagValue = gameVersionValue[JSON_WEAPON_SWITCH_ORDER_ARGUMENT_FLAG_PROPERTY_NAME];
+
+	if(!weaponSwitchOrderArgumentFlagValue.IsString()) {
+		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_WEAPON_SWITCH_ORDER_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(weaponSwitchOrderArgumentFlagValue.GetType()));
+		return nullptr;
+	}
+
+	std::string weaponSwitchOrderArgumentFlag(weaponSwitchOrderArgumentFlagValue.GetString());
+
+	if(weaponSwitchOrderArgumentFlag.empty()) {
+		fmt::print("Game version '{}' property cannot be empty.\n", JSON_WEAPON_SWITCH_ORDER_ARGUMENT_FLAG_PROPERTY_NAME);
+		return nullptr;
+	}
+
+	// parse game version disable monsters argument flag
+	if(!gameVersionValue.HasMember(JSON_DISABLE_MONSTERS_ARGUMENT_FLAG_PROPERTY_NAME)) {
+		fmt::print("Game version is missing '{}' property.\n", JSON_DISABLE_MONSTERS_ARGUMENT_FLAG_PROPERTY_NAME);
+		return nullptr;
+	}
+
+	const rapidjson::Value & disableMonstersArgumentFlagValue = gameVersionValue[JSON_DISABLE_MONSTERS_ARGUMENT_FLAG_PROPERTY_NAME];
+
+	if(!disableMonstersArgumentFlagValue.IsString()) {
+		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_DISABLE_MONSTERS_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(disableMonstersArgumentFlagValue.GetType()));
+		return nullptr;
+	}
+
+	std::string disableMonstersArgumentFlag(disableMonstersArgumentFlagValue.GetString());
+
+	if(disableMonstersArgumentFlag.empty()) {
+		fmt::print("Game version '{}' property cannot be empty.\n", JSON_DISABLE_MONSTERS_ARGUMENT_FLAG_PROPERTY_NAME);
+		return nullptr;
+	}
+
+	// parse game version disable sound argument flag
+	if(!gameVersionValue.HasMember(JSON_DISABLE_SOUND_ARGUMENT_FLAG_PROPERTY_NAME)) {
+		fmt::print("Game version is missing '{}' property.\n", JSON_DISABLE_SOUND_ARGUMENT_FLAG_PROPERTY_NAME);
+		return nullptr;
+	}
+
+	const rapidjson::Value & disableSoundArgumentFlagValue = gameVersionValue[JSON_DISABLE_SOUND_ARGUMENT_FLAG_PROPERTY_NAME];
+
+	if(!disableSoundArgumentFlagValue.IsString()) {
+		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_DISABLE_SOUND_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(disableSoundArgumentFlagValue.GetType()));
+		return nullptr;
+	}
+
+	std::string disableSoundArgumentFlag(disableSoundArgumentFlagValue.GetString());
+
+	if(disableSoundArgumentFlag.empty()) {
+		fmt::print("Game version '{}' property cannot be empty.\n", JSON_DISABLE_SOUND_ARGUMENT_FLAG_PROPERTY_NAME);
+		return nullptr;
+	}
+
+	// parse game version disable music argument flag
+	if(!gameVersionValue.HasMember(JSON_DISABLE_MUSIC_ARGUMENT_FLAG_PROPERTY_NAME)) {
+		fmt::print("Game version is missing '{}' property.\n", JSON_DISABLE_MUSIC_ARGUMENT_FLAG_PROPERTY_NAME);
+		return nullptr;
+	}
+
+	const rapidjson::Value & disableMusicArgumentFlagValue = gameVersionValue[JSON_DISABLE_MUSIC_ARGUMENT_FLAG_PROPERTY_NAME];
+
+	if(!disableMusicArgumentFlagValue.IsString()) {
+		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_DISABLE_MUSIC_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(disableMusicArgumentFlagValue.GetType()));
+		return nullptr;
+	}
+
+	std::string disableMusicArgumentFlag(disableMusicArgumentFlagValue.GetString());
+
+	if(disableMusicArgumentFlag.empty()) {
+		fmt::print("Game version '{}' property cannot be empty.\n", JSON_DISABLE_MUSIC_ARGUMENT_FLAG_PROPERTY_NAME);
+		return nullptr;
+	}
+
 	// parse game version mod directory name
 	if(!gameVersionValue.HasMember(JSON_MOD_DIRECTORY_NAME_PROPERTY_NAME)) {
 		fmt::print("Game version is missing '{}' property.\n", JSON_MOD_DIRECTORY_NAME_PROPERTY_NAME);
@@ -1016,7 +1236,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 	}
 
 	// initialize the game version
-	std::unique_ptr<GameVersion> newGameVersion = std::make_unique<GameVersion>(name, gamePath, gameExecutableName, localWorkingDirectory, relativeConFilePath, conFileArgumentFlag, groupFileArgumentFlag, mapFileArgumentFlag, episodeArgumentFlag, levelArgumentFlag, skillArgumentFlag, recordDemoArgumentFlag, optionalPlayDemoArgumentFlag, modDirectoryName, setupExecutableNameOptional);
+	std::unique_ptr<GameVersion> newGameVersion = std::make_unique<GameVersion>(name, gamePath, gameExecutableName, localWorkingDirectory, relativeConFilePath, conFileArgumentFlag, groupFileArgumentFlag, mapFileArgumentFlag, episodeArgumentFlag, levelArgumentFlag, skillArgumentFlag, recordDemoArgumentFlag, optionalPlayDemoArgumentFlag, respawnModeArgumentFlag, weaponSwitchOrderArgumentFlag, disableMonstersArgumentFlag, disableSoundArgumentFlag, disableMusicArgumentFlag, modDirectoryName, setupExecutableNameOptional);
 
 	// parse game version def file argument flag
 	if(gameVersionValue.HasMember(JSON_DEF_FILE_ARGUMENT_FLAG_PROPERTY_NAME)) {
@@ -1122,7 +1342,12 @@ bool GameVersion::isValid() const {
 	   m_episodeArgumentFlag.empty() ||
 	   m_levelArgumentFlag.empty() ||
 	   m_skillArgumentFlag.empty() ||
-	   m_recordDemoArgumentFlag.empty()) {
+	   m_recordDemoArgumentFlag.empty() ||
+	   m_respawnModeArgumentFlag.empty() ||
+	   m_weaponSwitchOrderArgumentFlag.empty() ||
+	   m_disableMonstersArgumentFlag.empty() ||
+	   m_disableSoundArgumentFlag.empty() ||
+	   m_disableMusicArgumentFlag.empty()) {
 		return false;
 	}
 
@@ -1158,6 +1383,11 @@ bool GameVersion::operator == (const GameVersion & gameVersion) const {
 	   m_skillArgumentFlag != gameVersion.m_skillArgumentFlag ||
 	   m_recordDemoArgumentFlag != gameVersion.m_recordDemoArgumentFlag ||
 	   m_playDemoArgumentFlag != gameVersion.m_playDemoArgumentFlag ||
+	   m_respawnModeArgumentFlag != gameVersion.m_respawnModeArgumentFlag ||
+	   m_weaponSwitchOrderArgumentFlag != gameVersion.m_weaponSwitchOrderArgumentFlag ||
+	   m_disableMonstersArgumentFlag != gameVersion.m_disableMonstersArgumentFlag ||
+	   m_disableSoundArgumentFlag != gameVersion.m_disableSoundArgumentFlag ||
+	   m_disableMusicArgumentFlag != gameVersion.m_disableMusicArgumentFlag ||
 	   m_compatibleGameVersions.size() != gameVersion.m_compatibleGameVersions.size()) {
 		return false;
 	}

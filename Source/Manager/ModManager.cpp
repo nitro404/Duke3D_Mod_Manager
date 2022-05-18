@@ -1226,6 +1226,8 @@ bool ModManager::runSelectedMod() {
 }
 
 std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameVersion, std::shared_ptr<GameVersion> selectedGameVersion, ScriptArguments & scriptArgs, std::string_view combinedGroupFileName, bool * customMod, std::string * customMap) const {
+	static const std::regex respawnModeRegExp("[123x]");
+
 	if(!m_initialized) {
 		fmt::print("Mod manager not initialized.\n");
 		return {};
@@ -1490,6 +1492,34 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 				command << " " << selectedGameVersion->getPlayDemoArgumentFlag().value() << demoFileName;
 			}
 		}
+
+		if(m_arguments->hasArgument("t")) {
+			std::string respawnMode(m_arguments->getFirstValue("t"));
+
+			if(!respawnMode.empty() && std::regex_match(respawnMode, respawnModeRegExp)) {
+				command << " " << selectedGameVersion->getRespawnModeArgumentFlag() << respawnMode;
+			}
+		}
+
+		if(m_arguments->hasArgument("u")) {
+			std::string weaponSwitchOrder(m_arguments->getFirstValue("u"));
+
+			if(!weaponSwitchOrder.empty() && weaponSwitchOrder.find_first_not_of("0123456789") == std::string::npos) {
+				command << " " << selectedGameVersion->getWeaponSwitchOrderArgumentFlag() << weaponSwitchOrder;
+			}
+		}
+
+		if(m_arguments->hasArgument("m")) {
+			command << " " << selectedGameVersion->getDisableMonstersArgumentFlag();
+		}
+
+		if(m_arguments->hasArgument("ns")) {
+			command << " " << selectedGameVersion->getDisableSoundArgumentFlag();
+		}
+
+		if(m_arguments->hasArgument("nm")) {
+			command << " " << selectedGameVersion->getDisableMusicArgumentFlag();
+		}
 	}
 
 	if(selectedGameVersion->doesRequireDOSBox()) {
@@ -1574,8 +1604,8 @@ bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
 			return true;
 		}
 
-		if(args->hasArgument("t")) {
-			std::optional<GameType> newGameTypeOptional(magic_enum::enum_cast<GameType>(Utilities::toPascalCase(args->getFirstValue("t"))));
+		if(args->hasArgument("type")) {
+			std::optional<GameType> newGameTypeOptional(magic_enum::enum_cast<GameType>(Utilities::toPascalCase(args->getFirstValue("type"))));
 
 			if(newGameTypeOptional.has_value()) {
 				m_gameType = newGameTypeOptional.value();
@@ -2342,7 +2372,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 void ModManager::displayArgumentHelp() {
 	fmt::print("Duke Nukem 3D Mod Manager version {} arguments:\n", APPLICATION_VERSION);
 	fmt::print(" -f \"Custom Settings.json\" - specifies an alternate settings file to use.\n");
-	fmt::print(" -t Game/Setup/Client/Server - specifies game type, default: Game.\n");
+	fmt::print(" --type Game/Setup/Client/Server - specifies game type, default: Game.\n");
 	fmt::print(" --game \"Game Version\" - specifies the game version to run.\n");
 	fmt::print(" --ip 127.0.0.1 - specifies host ip address if running in client mode.\n");
 	fmt::print(" --port 1337 - Specifies server port when running in client or server mode.\n");
@@ -2358,6 +2388,11 @@ void ModManager::displayArgumentHelp() {
 	fmt::print(" -s # - selects a skill level (1-4).\n");
 	fmt::print(" -r - enables demo recording.\n");
 	fmt::print(" -d DEMO3.DMO - plays back the specified demo file.\n");
+	fmt::print(" -t # - respawn mode: 1 = monsters, 2 = items, 3 = inventory, x = all.\n");
+	fmt::print(" -u 8675309241 - set preferred weapon switch order, as a string of 10 digits.\n");
+	fmt::print(" -m disable monsters.\n");
+	fmt::print(" --ns disable sound.\n");
+	fmt::print(" --nm disable music.\n");
 	fmt::print(" --local - runs the mod manager in local mode.\n");
 	fmt::print(" -- <args> - specify arguments to pass through to the target game executable when executing.\n");
 	fmt::print(" --hash-new - updates unhashed SHA1 file hashes (developer use only!).\n");
