@@ -39,6 +39,7 @@
 #include <date/tz.h>
 #include <fmt/core.h>
 #include <magic_enum.hpp>
+#include <spdlog/spdlog.h>
 
 #include <array>
 #include <conio.h>
@@ -58,7 +59,6 @@ const std::string ModManager::HTTP_USER_AGENT("DukeNukem3DModManager/" + APPLICA
 ModManager::ModManager()
 	: Application()
 	, m_initialized(false)
-	, m_verbose(false)
 	, m_localMode(false)
 	, m_demoRecordingEnabled(false)
 	, m_settings(std::make_unique<SettingsManager>())
@@ -70,11 +70,7 @@ ModManager::ModManager()
 	, m_mods(std::make_shared<ModCollection>())
 	, m_favouriteMods(std::make_shared<FavouriteModCollection>())
 	, m_organizedMods(std::make_shared<OrganizedModCollection>(m_mods, m_favouriteMods, m_gameVersions))
-	, m_cli(std::make_unique<ModManager::CLI>(this)) {
-#if _DEBUG
-	m_verbose = true;
-#endif // _DEBUG
-}
+	, m_cli(std::make_unique<ModManager::CLI>(this)) { }
 
 ModManager::~ModManager() {
 	SegmentAnalytics::destroyInstance();
@@ -89,7 +85,6 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 		return true;
 	}
 
-	bool verboseSet = false;
 	bool localModeSet = false;
 
 	if(argc != 0) {
@@ -105,11 +100,6 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 			return false;
 		}
 
-		if(m_arguments->hasArgument("verbose")) {
-			m_verbose = true;
-			verboseSet = true;
-		}
-
 		if(m_arguments->hasArgument("local")) {
 			m_localMode = true;
 			localModeSet = true;
@@ -121,10 +111,6 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 	}
 
 	m_settings->load(m_arguments.get());
-
-	if(m_settings->verbose && !verboseSet) {
-		m_verbose = true;
-	}
 
 	if(m_settings->localMode && !localModeSet) {
 		m_localMode = true;
@@ -140,7 +126,7 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 	};
 
 	if(!m_httpService->initialize(configuration)) {
-		fmt::print("Failed to initialize HTTP service!\n");
+		spdlog::error("Failed to initialize HTTP service!");
 		return false;
 	}
 
@@ -149,7 +135,7 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 	GeoLocationService * geoLocationService = GeoLocationService::getInstance();
 
 	if(!geoLocationService->initialize(m_httpService, FREE_GEO_IP_API_KEY)) {
-		fmt::print("Failed to initialize geo location service!\n");
+		spdlog::error("Failed to initialize geo location service!");
 		return false;
 	}
 
@@ -170,16 +156,14 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 
 		if(segmentAnalytics->initialize(configuration)) {
 			if(segmentAnalytics->start()) {
-#if _DEBUG
-				fmt::print("Segment analytics initialized and started successfully!\n");
-#endif
+				spdlog::debug("Segment analytics initialized and started successfully!");
 			}
 			else {
-				fmt::print("Failed to start Segment analytics!\n");
+				spdlog::error("Failed to start Segment analytics!");
 			}
 		}
 		else {
-			fmt::print("Failed to initialize Segment analytics!\n");
+			spdlog::error("Failed to initialize Segment analytics!");
 		}
 	}
 
@@ -187,7 +171,7 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 		m_downloadManager = std::make_unique<DownloadManager>(m_httpService, m_settings);
 
 		if(!m_downloadManager->initialize()) {
-			fmt::print("Failed to initialize download manager!\n");
+			spdlog::error("Failed to initialize download manager!");
 			return false;
 		}
 	}
@@ -199,10 +183,10 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 
 	if(!gameVersionsLoaded || m_gameVersions->numberOfGameVersions() == 0) {
 		if(!gameVersionsLoaded) {
-			fmt::print("Missing or invalid game versions configuration file '{}', using default values.\n", m_settings->gameVersionsListFilePath);
+			spdlog::warn("Missing or invalid game versions configuration file '{}', using default values.", m_settings->gameVersionsListFilePath);
 		}
 		else if(m_gameVersions->numberOfGameVersions() == 0) {
-			fmt::print("Empty game versions configuration file '{}', using default values.\n", m_settings->gameVersionsListFilePath);
+			spdlog::warn("Empty game versions configuration file '{}', using default values.", m_settings->gameVersionsListFilePath);
 		}
 
 		// use default game version configurations
@@ -217,31 +201,31 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 		m_preferredGameVersion = m_gameVersions->getGameVersion(0);
 		m_settings->preferredGameVersion = m_preferredGameVersion->getName();
 
-		fmt::print("Game configuration for game version '{}' is missing, changing preferred game version to '{}.\n", m_settings->preferredGameVersion, m_preferredGameVersion->getName());
+		spdlog::warn("Game configuration for game version '{}' is missing, changing preferred game version to '{}.", m_settings->preferredGameVersion, m_preferredGameVersion->getName());
 	}
 
 	if(!m_mods->loadFrom(getModsListFilePath())) {
-		fmt::print("Failed to load mod list '{}'!\n", getModsListFilePath());
+		spdlog::error("Failed to load mod list '{}'!", getModsListFilePath());
 		return false;
 	}
 
 	if(m_mods->numberOfMods() == 0) {
-		fmt::print("No mods loaded!\n");
+		spdlog::error("No mods loaded!");
 		return false;
 	}
 
 	if(!m_mods->checkGameVersions(*m_gameVersions)) {
-		fmt::print("Found at least one invalid or missing game version.\n");
+		spdlog::error("Found at least one invalid or missing game version.");
 		return false;
 	}
 
-	fmt::print("Loaded {} mod{} from '{}'.\n", m_mods->numberOfMods(), m_mods->numberOfMods() == 1 ? "" : "s", getModsListFilePath());
+	spdlog::info("Loaded {} mod{} from '{}'.", m_mods->numberOfMods(), m_mods->numberOfMods() == 1 ? "" : "s", getModsListFilePath());
 
 	m_favouriteMods->loadFrom(m_settings->favouriteModsListFilePath);
 	m_favouriteMods->checkForMissingFavouriteMods(*m_mods.get());
 
 	if(m_favouriteMods->numberOfFavourites() != 0) {
-		fmt::print("Loaded {} favourite mod{} from '{}'.\n", m_favouriteMods->numberOfFavourites(), m_favouriteMods->numberOfFavourites() == 1 ? "" : "s", m_settings->favouriteModsListFilePath);
+		spdlog::info("Loaded {} favourite mod{} from '{}'.", m_favouriteMods->numberOfFavourites(), m_favouriteMods->numberOfFavourites() == 1 ? "" : "s", m_settings->favouriteModsListFilePath);
 	}
 
 	m_organizedMods->organize();
@@ -892,13 +876,13 @@ bool ModManager::runSelectedMod() {
 		selectedGameVersion = m_gameVersions->getGameVersion(gameVersionName);
 
 		if(selectedGameVersion == nullptr) {
-			fmt::print("Could not find game version override for '{}'.\n", gameVersionName);
-			return {};
+			spdlog::error("Could not find game version override for '{}'.", gameVersionName);
+			return false;
 		}
 	}
 	else {
 		if(m_preferredGameVersion == nullptr) {
-			fmt::print("No preferred game version selected.\n");
+			spdlog::error("No preferred game version selected.");
 			return false;
 		}
 
@@ -906,12 +890,12 @@ bool ModManager::runSelectedMod() {
 	}
 
 	if(!selectedGameVersion->isValid()) {
-		fmt::print("Invalid preferred game version.\n");
+		spdlog::error("Invalid preferred game version.");
 		return false;
 	}
 
 	if(!selectedGameVersion->isConfigured()) {
-		fmt::print("Preferred game version is not configured.\n");
+		spdlog::error("Preferred game version is not configured.");
 		return false;
 	}
 
@@ -921,7 +905,7 @@ bool ModManager::runSelectedMod() {
 
 	if(m_selectedMod != nullptr) {
 		if(checkModForMissingFiles(*m_selectedMod) != 0) {
-			fmt::print("Mod is missing files, aborting execution.\n");
+			spdlog::error("Mod is missing files, aborting execution.");
 			return false;
 		}
 
@@ -932,8 +916,6 @@ bool ModManager::runSelectedMod() {
 				if(!m_cli->updateSelectedModVersionPrompt()) {
 					return false;
 				}
-
-				fmt::print("\n");
 			}
 		}
 
@@ -946,8 +928,6 @@ bool ModManager::runSelectedMod() {
 				if (!m_cli->updateSelectedModVersionTypePrompt()) {
 					return false;
 				}
-
-				fmt::print("\n");
 			}
 		}
 
@@ -961,12 +941,12 @@ bool ModManager::runSelectedMod() {
 			std::optional<std::pair<std::shared_ptr<GameVersion>, std::shared_ptr<ModGameVersion>>> optionalGameAndModGameVersionSelection(m_cli->runUnsupportedModVersionTypePrompt(selectedModVersionType, additionalPromptMessage));
 
 			if(!optionalGameAndModGameVersionSelection.has_value()) {
-				fmt::print("\nAlternative game version not selected, aborting launch.\n");
+				spdlog::error("Alternative game version not selected, aborting launch.");
 
 				return false;
 			}
 
-			fmt::print("Using game version '{}' since '{}' is not supported on '{}'.\n\n", optionalGameAndModGameVersionSelection.value().first->getName(), m_selectedMod->getFullName(m_selectedModVersionIndex, m_selectedModVersionTypeIndex), selectedGameVersion->getName());
+			spdlog::info("Using game version '{}' since '{}' is not supported on '{}'.", optionalGameAndModGameVersionSelection.value().first->getName(), m_selectedMod->getFullName(m_selectedModVersionIndex, m_selectedModVersionTypeIndex), selectedGameVersion->getName());
 
 			selectedGameVersion = optionalGameAndModGameVersionSelection.value().first;
 			selectedModGameVersion = optionalGameAndModGameVersionSelection.value().second;
@@ -984,11 +964,9 @@ bool ModManager::runSelectedMod() {
 
 	if(!m_localMode && selectedModGameVersion != nullptr) {
 		if(!m_downloadManager->downloadModGameVersion(selectedModGameVersion.get(), m_gameVersions.get())) {
-			fmt::print("Aborting launch of '{}' mod!\n", selectedModGameVersion->getFullName());
+			spdlog::error("Aborting launch of '{}' mod!", selectedModGameVersion->getFullName());
 			return false;
 		}
-
-		fmt::print("\n");
 	}
 
 	std::string combinedGroupFileName;
@@ -1062,8 +1040,7 @@ bool ModManager::runSelectedMod() {
 	}
 
 	if(!selectedGameVersion->doesRequireDOSBox() && (m_gameType == GameType::Client || m_gameType == GameType::Server)) {
-		fmt::print("Network settings are only supported when running in DOSBox, ignoring {} game type setting.\n\n", Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)));
-		fmt::print("\n");
+		spdlog::info("Network settings are only supported when running in DOSBox, ignoring {} game type setting.", Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)));
 	}
 
 	bool customMod = false;
@@ -1072,16 +1049,12 @@ bool ModManager::runSelectedMod() {
 	std::string command(generateCommand(selectedModGameVersion, selectedGameVersion, scriptArgs, combinedGroupFileName, &customMod, &customMap));
 
 	if(command.empty()) {
-		fmt::print("Failed to generate command.\n");
+		spdlog::error("Failed to generate command.");
 		return false;
 	}
 
-	if(!createSymlinks(*selectedGameVersion, shouldConfigureTemporaryDirectory, m_verbose)) {
+	if(!createSymlinks(*selectedGameVersion, shouldConfigureTemporaryDirectory)) {
 		return false;
-	}
-
-	if(m_verbose) {
-		fmt::print("\n");
 	}
 
 	if(shouldConfigureTemporaryDirectory && !createTemporaryDirectory()) {
@@ -1093,9 +1066,7 @@ bool ModManager::runSelectedMod() {
 
 	if(m_selectedMod != nullptr && (selectedGameVersion->doesRequireCombinedGroup() || !m_demoRecordingEnabled)) {
 		if(!m_demoRecordingEnabled) {
-			if(ModManager::renameFilesWithSuffixTo("DMO", "DMO_", selectedGameVersion->getGamePath(), m_verbose) != 0) {
-				fmt::print("\n");
-			}
+			ModManager::renameFilesWithSuffixTo("DMO", "DMO_", selectedGameVersion->getGamePath());
 		}
 
 		if(selectedGameVersion->doesRequireCombinedGroup()) {
@@ -1103,7 +1074,7 @@ bool ModManager::runSelectedMod() {
 			combinedGroup = std::make_unique<Group>(dukeNukemGroupPath);
 
 			if(!combinedGroup->load()) {
-				fmt::print("Failed to load Duke Nukem 3D group for creation of combined group from file path: '{}'.\n", dukeNukemGroupPath);
+				spdlog::error("Failed to load Duke Nukem 3D group for creation of combined group from file path: '{}'.", dukeNukemGroupPath);
 				return false;
 			}
 
@@ -1121,7 +1092,7 @@ bool ModManager::runSelectedMod() {
 				if(!m_demoRecordingEnabled) {
 					size_t numberOfDemosExtracted = modGroup->extractAllFilesWithExtension("DMO", selectedGameVersion->getGamePath());
 
-					fmt::print("Extracted {} demo{} from group file '{}' to game directory '{}'.\n\n", numberOfDemosExtracted, numberOfDemosExtracted == 1 ? "" : "s", modGroup->getFilePath(), selectedGameVersion->getGamePath());
+					spdlog::info("Extracted {} demo{} from group file '{}' to game directory '{}'.", numberOfDemosExtracted, numberOfDemosExtracted == 1 ? "" : "s", modGroup->getFilePath(), selectedGameVersion->getGamePath());
 				}
 
 				if(combinedGroup != nullptr) {
@@ -1131,7 +1102,7 @@ bool ModManager::runSelectedMod() {
 				}
 			}
 			else if(selectedGameVersion->doesRequireCombinedGroup()) {
-				fmt::print("Failed to load mod group from file path: '{}'/\n", modGroupPath);
+				spdlog::error("Failed to load mod group from file path: '{}'.", modGroupPath);
 				return false;
 			}
 		}
@@ -1139,10 +1110,10 @@ bool ModManager::runSelectedMod() {
 
 	if(combinedGroup != nullptr) {
 		if(combinedGroup->save(true)) {
-			fmt::print("\nSaved combined group to file: '{}'\n\n", combinedGroupFilePath);
+			spdlog::info("Saved combined group to file: '{}'.", combinedGroupFilePath);
 		}
 		else {
-			fmt::print("\nFailed to write combined group to file: '{}'.\n", combinedGroupFilePath);
+			spdlog::error("Failed to write combined group to file: '{}'.", combinedGroupFilePath);
 			return false;
 		}
 
@@ -1168,14 +1139,14 @@ bool ModManager::runSelectedMod() {
 	}
 
 	if(customMod) {
-		fmt::print("Running custom mod in {} mode{}.\n", Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)), customMapMessage);
+		spdlog::info("Running custom mod in {} mode{}.", Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)), customMapMessage);
 
 		segmentAnalytics->track("Running Custom Mod", properties);
 	}
 	else if(m_selectedMod != nullptr) {
 		std::string fullModName(m_selectedMod->getFullName(m_selectedModVersionIndex, m_selectedModVersionTypeIndex));
 		std::string gameTypeName(Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)));
-		fmt::print("Running '{}' version of mod '{}' in {} mode{}.\n", selectedModGameVersion->getGameVersion(), fullModName, gameTypeName, customMapMessage);
+		spdlog::info("Running '{}' version of mod '{}' in {} mode{}.", selectedModGameVersion->getGameVersion(), fullModName, gameTypeName, customMapMessage);
 
 		properties["modName"] = fullModName;
 		properties["modGameVersion"] = selectedModGameVersion->getGameVersion();
@@ -1189,7 +1160,7 @@ bool ModManager::runSelectedMod() {
 
 	segmentAnalytics->flush();
 
-	fmt::print("\nExecuting Command: {}\n\n", command);
+	spdlog::info("Executing Command: {}", command);
 
 	system(command.c_str());
 
@@ -1197,30 +1168,23 @@ bool ModManager::runSelectedMod() {
 		std::filesystem::path filePath(combinedGroupFilePath);
 
 		if(std::filesystem::is_regular_file(filePath)) {
-			fmt::print("Deleting temporary combined group file: '{}'.\n", combinedGroupFilePath);
+			spdlog::info("Deleting temporary combined group file: '{}'.", combinedGroupFilePath);
 
 			std::error_code errorCode;
 			std::filesystem::remove(filePath, errorCode);
 
 			if(errorCode) {
-				fmt::print("Failed to delete temporary combined group file '{}': {}\n", combinedGroupFilePath, errorCode.message());
+				spdlog::error("Failed to delete temporary combined group file '{}': {}", combinedGroupFilePath, errorCode.message());
 			}
-
-			fmt::print("\n");
 		}
 	}
 
 	if(m_selectedMod != nullptr && !m_demoRecordingEnabled) {
-		if(ModManager::deleteFilesWithSuffix("DMO", selectedGameVersion->getGamePath(), m_verbose) != 0) {
-			fmt::print("\n");
-		}
-
-		if(ModManager::renameFilesWithSuffixTo("DMO_", "DMO", selectedGameVersion->getGamePath(), m_verbose) != 0) {
-			fmt::print("\n");
-		}
+		ModManager::deleteFilesWithSuffix("DMO", selectedGameVersion->getGamePath());
+		ModManager::renameFilesWithSuffixTo("DMO_", "DMO", selectedGameVersion->getGamePath());
 	}
 
-	removeSymlinks(*selectedGameVersion, m_verbose);
+	removeSymlinks(*selectedGameVersion);
 
 	return true;
 }
@@ -1229,37 +1193,37 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 	static const std::regex respawnModeRegExp("[123x]");
 
 	if(!m_initialized) {
-		fmt::print("Mod manager not initialized.\n");
+		spdlog::error("Mod manager not initialized.");
 		return {};
 	}
 
 	if(!selectedGameVersion->isConfigured()) {
-		fmt::print("Invalid or unconfigured game version.\n");
+		spdlog::error("Invalid or unconfigured game version.");
 		return {};
 	}
 
 	if(m_settings->dataDirectoryPath.empty()) {
-		fmt::print("Empty data path.\n");
+		spdlog::error("Empty data path.");
 		return {};
 	}
 
 	if(selectedGameVersion->doesRequireDOSBox() && m_settings->dosboxDirectoryPath.empty()) {
-		fmt::print("Empty DOSBox path.\n");
+		spdlog::error("Empty DOSBox path.");
 		return {};
 	}
 
 	if(m_settings->gameSymlinkName.empty()) {
-		fmt::print("Empty game directory symbolic link name.\n");
+		spdlog::error("Empty game directory symbolic link name.");
 		return {};
 	}
 
 	if(m_settings->modsSymlinkName.empty()) {
-		fmt::print("Empty mods directory symbolic link name.\n");
+		spdlog::error("Empty mods directory symbolic link name.");
 		return {};
 	}
 
 	if(!GameVersionCollection::isValid(m_gameVersions.get())) {
-		fmt::print("Invalid game version collection.\n");
+		spdlog::error("Invalid game version collection.");
 		return {};
 	}
 
@@ -1267,19 +1231,19 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 
 	if(modGameVersion != nullptr) {
 		if(!modGameVersion->isValid()) {
-			fmt::print("Invalid mod game version.\n");
+			spdlog::error("Invalid mod game version.");
 			return {};
 		}
 
 		if(!Utilities::areStringsEqualIgnoreCase(modGameVersion->getGameVersion(), selectedGameVersion->getName()) && !selectedGameVersion->hasCompatibleGameVersion(modGameVersion->getGameVersion())) {
-			fmt::print("Game version '{}' is not compatible with '{}'.\n", selectedGameVersion->getName(), modGameVersion->getGameVersion());
+			spdlog::error("Game version '{}' is not compatible with '{}'.", selectedGameVersion->getName(), modGameVersion->getGameVersion());
 			return {};
 		}
 
 		targetGameVersion = m_gameVersions->getGameVersion(modGameVersion->getGameVersion());
 
 		if(targetGameVersion == nullptr) {
-			fmt::print("Missing game configuration for '{}'.\n", modGameVersion->getGameVersion());
+			spdlog::error("Missing game configuration for '{}'.", modGameVersion->getGameVersion());
 			return {};
 		}
 	}
@@ -1291,7 +1255,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 
 	if(m_gameType == GameType::Setup) {
 		if(!selectedGameVersion->hasSetupExecutableName()) {
-			fmt::print("Game version '{}' does not have a setup executable.\n", selectedGameVersion->getName());
+			spdlog::error("Game version '{}' does not have a setup executable.", selectedGameVersion->getName());
 			return {};
 		}
 
@@ -1391,7 +1355,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 
 			if(!defFileName.empty()) {
 				if(!selectedGameVersion->hasDefFileArgumentFlag()) {
-					fmt::print("Game version '{}' does not have a def file argument flag specified in its configuration.\n", selectedGameVersion->getName());
+					spdlog::error("Game version '{}' does not have a def file argument flag specified in its configuration.", selectedGameVersion->getName());
 					return {};
 				}
 
@@ -1407,7 +1371,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 	if(m_arguments != nullptr) {
 		if(m_arguments->hasArgument("map")) {
 			if(m_settings->mapsSymlinkName.empty()) {
-				fmt::print("Maps directory symbolic link name is empty.\n");
+				spdlog::error("Maps directory symbolic link name is empty.");
 				return {};
 			}
 
@@ -1429,7 +1393,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 					std::string mapsDirectoryPath(getMapsDirectoryPath());
 
 					if(mapsDirectoryPath.empty()) {
-						fmt::print("Maps directory path is empty.\n");
+						spdlog::error("Maps directory path is empty.");
 						return {};
 					}
 
@@ -1437,7 +1401,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 						command << Utilities::joinPaths(m_settings->mapsSymlinkName, userMap);
 					}
 					else {
-						fmt::print("Map '{}' does not exist in game or maps directories.\n", userMap);
+						spdlog::error("Map '{}' does not exist in game or maps directories.", userMap);
 
 						command << userMap;
 					}
@@ -1453,7 +1417,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 				command << " " << selectedGameVersion->getEpisodeArgumentFlag() << std::to_string(optionalEpisodeNumber.value());
 			}
 			else {
-				fmt::print("Invalid episode number: '{}'.\n", episodeNumberData);
+				spdlog::warn("Invalid episode number: '{}'.", episodeNumberData);
 			}
 		}
 
@@ -1465,7 +1429,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 				command << " " << selectedGameVersion->getLevelArgumentFlag() << std::to_string(optionalLevelNumber.value());
 			}
 			else {
-				fmt::print("Invalid level number: '{}'.\n", levelNumberData);
+				spdlog::warn("Invalid level number: '{}'.", levelNumberData);
 			}
 		}
 
@@ -1477,7 +1441,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 				command << " " << selectedGameVersion->getSkillArgumentFlag() << std::to_string(optionalSkillNumber.value());
 			}
 			else {
-				fmt::print("Invalid skill number: '{}'.\n", skillNumberData);
+				spdlog::warn("Invalid skill number: '{}'.", skillNumberData);
 			}
 		}
 
@@ -1550,7 +1514,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 		}
 
 		if(!dosboxScript.readFrom(dosboxScriptFilePath)) {
-			fmt::print("Failed to load DOSBox script file: '{}'.\n", dosboxScriptFilePath);
+			spdlog::error("Failed to load DOSBox script file: '{}'.", dosboxScriptFilePath);
 			return {};
 		}
 
@@ -1610,7 +1574,7 @@ bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
 			if(newGameTypeOptional.has_value()) {
 				m_gameType = newGameTypeOptional.value();
 
-				fmt::print("Setting game type to: '{}'.\n", Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)));
+				spdlog::info("Setting game type to: '{}'.", Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)));
 
 				if(m_gameType == GameType::Client) {
 					std::string ipAddress;
@@ -1621,7 +1585,7 @@ bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
 						bool error = ipAddress.empty() || ipAddress.find_first_of(" \t") != std::string::npos;
 
 						if(error) {
-							fmt::print("\nInvalid IP Address entered in arguments: '{}'.\n\n", ipAddress);
+							spdlog::warn("Invalid IP Address entered in arguments: '{}'.", ipAddress);
 
 							m_cli->updateIPAddressPrompt();
 						}
@@ -1642,7 +1606,7 @@ bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
 						}
 
 						if(error) {
-							fmt::print("\nInvalid {} Server Port entered in arguments: '{}'.\n\n", m_gameType == GameType::Server ? "Local" : "Remote", portData);
+							spdlog::warn("Invalid {} Server Port entered in arguments: '{}'.", m_gameType == GameType::Server ? "Local" : "Remote", portData);
 
 							m_cli->updatePortPrompt();
 						}
@@ -1675,21 +1639,22 @@ bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
 					gameTypes = gameTypesStream.str();
 				}
 
-				fmt::print("Invalid game type, please specify one of the following: {}.\n", gameTypes);
+				spdlog::error("Invalid game type, please specify one of the following: {}.", gameTypes);
+
 				return false;
 			}
 		}
 
 		if(args->hasArgument("search")) {
 			if(args->hasArgument("random") || args->hasArgument("g") || args->hasArgument("x") || args->hasArgument("n")) {
-				fmt::print("Redundant arguments specified, please specify either search OR random OR n OR (x AND/OR g).\n");
+				spdlog::error("Redundant arguments specified, please specify either search OR random OR n OR (x AND/OR g).");
 				return false;
 			}
 
 			std::vector<ModMatch> modMatches(searchForMod(m_mods->getMods(), args->getFirstValue("search")));
 
 			if(modMatches.empty()) {
-				fmt::print("No matches found for specified search query.\n\n");
+				spdlog::error("No matches found for specified search query.");
 				return false;
 			}
 			else if(modMatches.size() == 1) {
@@ -1727,7 +1692,7 @@ bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
 		}
 		else if(args->hasArgument("random")) {
 			if(args->hasArgument("g") || args->hasArgument("x") || args->hasArgument("n")) {
-				fmt::print("Redundant arguments specified, please specify either search OR random OR n OR (x AND/OR g).\n");
+				spdlog::error("Redundant arguments specified, please specify either search OR random OR n OR (x AND/OR g).");
 				return false;
 			}
 
@@ -1742,7 +1707,7 @@ bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
 		}
 		else if(args->hasArgument("n")) {
 			if(args->hasArgument("g") || args->hasArgument("x")) {
-				fmt::print("Redundant arguments specified, please specify either search OR random OR n OR (x AND/OR g).\n");
+				spdlog::error("Redundant arguments specified, please specify either search OR random OR n OR (x AND/OR g).");
 				return false;
 			}
 
@@ -1842,12 +1807,12 @@ size_t ModManager::checkForUnlinkedModFilesForGameVersion(const GameVersion & ga
 		if(i->second.size() == 0) {
 			numberOfUnlinkedModFiles++;
 
-			fmt::print("Unlinked '{}' file {}: '{}' for '{}'.\n", gameVersion.getName(), numberOfUnlinkedModFiles, i->first, gameVersion.getName());
+			spdlog::warn("Unlinked '{}' file {}: '{}' for '{}'.", gameVersion.getName(), numberOfUnlinkedModFiles, i->first, gameVersion.getName());
 		}
 	}
 
 	if(numberOfUnlinkedModFiles != 0) {
-		fmt::print("Found {} unlinked '{}' mod file{} in '{}' mods directory.\n", numberOfUnlinkedModFiles, gameVersion.getName(), numberOfUnlinkedModFiles == 1 ? "" : "s", gameVersion.getName());
+		spdlog::warn("Found {} unlinked '{}' mod file{} in '{}' mods directory.", numberOfUnlinkedModFiles, gameVersion.getName(), numberOfUnlinkedModFiles == 1 ? "" : "s", gameVersion.getName());
 	}
 
 	bool multipleLinkedFile = false;
@@ -1874,7 +1839,7 @@ size_t ModManager::checkForUnlinkedModFilesForGameVersion(const GameVersion & ga
 				}
 
 				if(multipleLinkedFile) {
-					fmt::print("'{}' Mod file '{}' linked {} times.\n", gameVersion.getName(), i->first, i->second.size());
+					spdlog::warn("'{}' Mod file '{}' linked {} times.", gameVersion.getName(), i->first, i->second.size());
 
 					numberOfMultipleLinkedModFiles++;
 				}
@@ -1883,7 +1848,7 @@ size_t ModManager::checkForUnlinkedModFilesForGameVersion(const GameVersion & ga
 	}
 
 	if(numberOfMultipleLinkedModFiles != 0) {
-		fmt::print("Found {} multiple linked '{}' mod file{} in '{}' mods directory. If a mod file is linked intentionally multiple times within the same game version, it must have its shared property set to true.\n", numberOfMultipleLinkedModFiles, gameVersion.getName(), numberOfMultipleLinkedModFiles == 1 ? "" : "s", gameVersion.getName());
+		spdlog::warn("Found {} multiple linked '{}' mod file{} in '{}' mods directory. If a mod file is linked intentionally multiple times within the same game version, it must have its shared property set to true.", numberOfMultipleLinkedModFiles, gameVersion.getName(), numberOfMultipleLinkedModFiles == 1 ? "" : "s", gameVersion.getName());
 	}
 
 	return numberOfUnlinkedModFiles;
@@ -1938,14 +1903,14 @@ size_t ModManager::checkModForMissingFiles(const Mod & mod, std::optional<size_t
 				gameVersion = m_gameVersions->getGameVersion(modGameVersion->getGameVersion());
 
 				if(!GameVersion::isValid(gameVersion.get())) {
-					fmt::print("Skipping checking invalid '{}' mod game version '{}', invalid game configuration.\n", mod.getFullName(i, j), modGameVersion->getGameVersion());
+					spdlog::warn("Skipping checking invalid '{}' mod game version '{}', invalid game configuration.", mod.getFullName(i, j), modGameVersion->getGameVersion());
 					continue;
 				}
 
 				gameModsPath = Utilities::joinPaths(m_settings->modsDirectoryPath, gameVersion->getModDirectoryName());
 
 				if(!std::filesystem::is_directory(gameModsPath)) {
-					fmt::print("Skipping checking '{}' mod game version '{}', base directory is missing or not a valid directory: '{}'.\n", mod.getFullName(i, j), gameVersion->getName(), gameModsPath);
+					spdlog::warn("Skipping checking '{}' mod game version '{}', base directory is missing or not a valid directory: '{}'.", mod.getFullName(i, j), gameVersion->getName(), gameModsPath);
 					continue;
 				}
 
@@ -1959,7 +1924,7 @@ size_t ModManager::checkModForMissingFiles(const Mod & mod, std::optional<size_t
 							continue;
 						}
 
-						fmt::print("Mod '{}' is missing {} {} file: '{}'.\n", mod.getFullName(i, j), modGameVersion->getGameVersion(), modFile->getType(), modFile->getFileName());
+						spdlog::warn("Mod '{}' is missing {} {} file: '{}'.", mod.getFullName(i, j), modGameVersion->getGameVersion(), modFile->getType(), modFile->getFileName());
 
 						numberOfMissingFiles++;
 					}
@@ -1983,7 +1948,7 @@ size_t ModManager::checkAllModsForMissingFiles() const {
 	}
 
 	if(numberOfMissingModFiles != 0) {
-		fmt::print("Found {} missing mod file{} in mods directory.\n", numberOfMissingModFiles, numberOfMissingModFiles == 1 ? "" : "s");
+		spdlog::warn("Found {} missing mod file{} in mods directory.", numberOfMissingModFiles, numberOfMissingModFiles == 1 ? "" : "s");
 	}
 
 	return numberOfMissingModFiles;
@@ -1997,7 +1962,7 @@ size_t ModManager::checkForMissingExecutables() const {
 	if(!std::filesystem::is_regular_file(std::filesystem::path(fullDOSBoxExecutablePath))) {
 		numberOfMissingExecutables++;
 
-		fmt::print("Missing DOSBox executable: '{}'.\n", fullDOSBoxExecutablePath);
+		spdlog::warn("Missing DOSBox executable: '{}'.", fullDOSBoxExecutablePath);
 	}
 
 	numberOfMissingExecutables += m_gameVersions->checkForMissingExecutables();
@@ -2011,18 +1976,18 @@ size_t ModManager::updateAllFileHashes(bool save, bool skipHashedFiles) {
 	}
 
 	if(m_settings->modPackageDownloadsDirectoryPath.empty()) {
-		fmt::print("Mod package downloads directory path not set, cannot hash some download files!\n");
+		spdlog::warn("Mod package downloads directory path not set, cannot hash some download files!");
 	}
 
 	if(m_settings->modSourceFilesDirectoryPath.empty()) {
-		fmt::print("Mod source files directory path not set, cannot hash some download files!\n");
+		spdlog::warn("Mod source files directory path not set, cannot hash some download files!");
 	}
 
 	if(m_settings->modImagesDirectoryPath.empty()) {
-		fmt::print("Mod images directory path not set, cannot hash screenshots or images!\n");
+		spdlog::warn("Mod images directory path not set, cannot hash screenshots or images!");
 	}
 
-	fmt::print("Updating {} file hashes...\n", skipHashedFiles ? "unhashed" : "all");
+	spdlog::info("Updating {} file hashes...", skipHashedFiles ? "unhashed" : "all");
 
 	size_t numberOfFileHashesUpdated = 0;
 
@@ -2031,18 +1996,18 @@ size_t ModManager::updateAllFileHashes(bool save, bool skipHashedFiles) {
 	}
 
 	if(numberOfFileHashesUpdated != 0) {
-		fmt::print("Updated {} file hash{}.\n", numberOfFileHashesUpdated, numberOfFileHashesUpdated == 1 ? "" : "es");
+		spdlog::info("Updated {} file hash{}.", numberOfFileHashesUpdated, numberOfFileHashesUpdated == 1 ? "" : "es");
 	}
 	else {
-		fmt::print("No file hashes updated.\n");
+		spdlog::info("No file hashes updated.");
 	}
 
 	if(save) {
 		if(m_mods->saveTo(m_settings->modsListFilePath)) {
-			fmt::print("Saved updated mod list to file: '{}'.\n", m_settings->modsListFilePath);
+			spdlog::info("Saved updated mod list to file: '{}'.", m_settings->modsListFilePath);
 		}
 		else {
-			fmt::print("Failed to save updated mod list to file: '{}'!\n", m_settings->modsListFilePath);
+			spdlog::error("Failed to save updated mod list to file: '{}'!", m_settings->modsListFilePath);
 		}
 	}
 
@@ -2077,14 +2042,14 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 	std::unique_ptr<ZipArchive> zipArchive;
 	std::optional<std::string> optionalSHA1;
 
-	fmt::print("Updating '{}' mod hashes...\n", mod.getName());
+	spdlog::info("Updating '{}' mod hashes...", mod.getName());
 
 	// hash mod downloads
 	for(size_t i = 0; i < mod.numberOfDownloads(); i++) {
 		modDownload = mod.getDownload(i);
 
 		if(!ModDownload::isValid(modDownload.get())) {
-			fmt::print("Skipping hash of invalid download file #{} for mod '{}'.\n", i + 1, mod.getName());
+			spdlog::warn("Skipping hash of invalid download file #{} for mod '{}'.", i + 1, mod.getName());
 			continue;
 		}
 
@@ -2100,7 +2065,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 			gameVersion = m_gameVersions->getGameVersion(modDownload->getGameVersion());
 
 			if(gameVersion == nullptr) {
-				fmt::print("Could not find game configuration for game version '{}', skipping hash of download file: '{}'.\n", modDownload->getGameVersion(), modDownload->getFileName());
+				spdlog::warn("Could not find game configuration for game version '{}', skipping hash of download file: '{}'.", modDownload->getGameVersion(), modDownload->getFileName());
 				continue;
 			}
 
@@ -2121,19 +2086,19 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 		}
 
 		if(!std::filesystem::is_regular_file(std::filesystem::path(downloadFilePath))) {
-			fmt::print("Skipping hash of missing '{}' mod download file: '{}'.\n", mod.getName(), downloadFilePath);
+			spdlog::warn("Skipping hash of missing '{}' mod download file: '{}'.", mod.getName(), downloadFilePath);
 			continue;
 		}
 
 		optionalSHA1 = Utilities::getFileSHA1Hash(downloadFilePath);
 
 		if(!optionalSHA1.has_value()) {
-			fmt::print("Failed to hash mod '{}' download file '{}'.\n", mod.getName(), modFile->getFileName());
+			spdlog::error("Failed to hash mod '{}' download file '{}'.", mod.getName(), modFile->getFileName());
 			continue;
 		}
 
 		if(modDownload->getSHA1() != optionalSHA1.value()) {
-			fmt::print("Updating mod '{}' download file '{}' SHA1 hash from '{}' to '{}'.\n", mod.getName(), modDownload->getFileName(), modDownload->getSHA1(), optionalSHA1.value());
+			spdlog::info("Updating mod '{}' download file '{}' SHA1 hash from '{}' to '{}'.", mod.getName(), modDownload->getFileName(), modDownload->getSHA1(), optionalSHA1.value());
 
 			modDownload->setSHA1(optionalSHA1.value());
 
@@ -2147,7 +2112,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 			modScreenshot = mod.getScreenshot(i);
 
 			if(!ModScreenshot::isValid(modScreenshot.get())) {
-				fmt::print("Skipping hash of invalid screenshot file #{} for mod '{}'.\n", i + 1, mod.getName());
+				spdlog::warn("Skipping hash of invalid screenshot file #{} for mod '{}'.", i + 1, mod.getName());
 				continue;
 			}
 
@@ -2158,19 +2123,19 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 			screenshotFilePath = Utilities::joinPaths(m_settings->modImagesDirectoryPath, mod.getID(), "screenshots", "lg", modScreenshot->getFileName());
 
 			if(!std::filesystem::is_regular_file(std::filesystem::path(screenshotFilePath))) {
-				fmt::print("Skipping hash of missing '{}' mod screenshot file: '{}'.\n", mod.getName(), screenshotFilePath);
+				spdlog::warn("Skipping hash of missing '{}' mod screenshot file: '{}'.", mod.getName(), screenshotFilePath);
 				continue;
 			}
 
 			optionalSHA1 = Utilities::getFileSHA1Hash(screenshotFilePath);
 
 			if(!optionalSHA1.has_value()) {
-				fmt::print("Failed to hash mod '{}' screenshot file '{}'.\n", mod.getName(), modFile->getFileName());
+				spdlog::error("Failed to hash mod '{}' screenshot file '{}'.", mod.getName(), modFile->getFileName());
 				continue;
 			}
 
 			if(modScreenshot->getSHA1() != optionalSHA1.value()) {
-				fmt::print("Updating mod '{}' screenshot file '{}' SHA1 hash from '{}' to '{}'.\n", mod.getName(), modScreenshot->getFileName(), modScreenshot->getSHA1(), optionalSHA1.value());
+				spdlog::info("Updating mod '{}' screenshot file '{}' SHA1 hash from '{}' to '{}'.", mod.getName(), modScreenshot->getFileName(), modScreenshot->getSHA1(), optionalSHA1.value());
 
 				modScreenshot->setSHA1(optionalSHA1.value());
 
@@ -2185,7 +2150,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 			modImage = mod.getImage(i);
 
 			if(!ModImage::isValid(modImage.get())) {
-				fmt::print("Skipping hash of invalid image file #{} for mod '{}'.\n", i + 1, mod.getName());
+				spdlog::warn("Skipping hash of invalid image file #{} for mod '{}'.", i + 1, mod.getName());
 				continue;
 			}
 
@@ -2202,19 +2167,19 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 			imageFilePath = Utilities::joinPaths(imageFilePath, modImage->getFileName());
 
 			if(!std::filesystem::is_regular_file(std::filesystem::path(imageFilePath))) {
-				fmt::print("Skipping hash of missing '{}' mod image file: '{}'.\n", mod.getName(), imageFilePath);
+				spdlog::warn("Skipping hash of missing '{}' mod image file: '{}'.", mod.getName(), imageFilePath);
 				continue;
 			}
 
 			optionalSHA1 = Utilities::getFileSHA1Hash(imageFilePath);
 
 			if(!optionalSHA1.has_value()) {
-				fmt::print("Failed to hash mod '{}' image file '{}'.\n", mod.getName(), modFile->getFileName());
+				spdlog::error("Failed to hash mod '{}' image file '{}'.", mod.getName(), modFile->getFileName());
 				continue;
 			}
 
 			if(modImage->getSHA1() != optionalSHA1.value()) {
-				fmt::print("Updating mod '{}' image file '{}' SHA1 hash from '{}' to '{}'.\n", mod.getName(), modImage->getFileName(), modImage->getSHA1(), optionalSHA1.value());
+				spdlog::info("Updating mod '{}' image file '{}' SHA1 hash from '{}' to '{}'.", mod.getName(), modImage->getFileName(), modImage->getSHA1(), optionalSHA1.value());
 
 				modImage->setSHA1(optionalSHA1.value());
 
@@ -2243,14 +2208,14 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 				gameVersion = m_gameVersions->getGameVersion(modGameVersion->getGameVersion());
 
 				if(!GameVersion::isValid(gameVersion.get())) {
-					fmt::print("Mod '{}' game version #{} is not valid, skipping hashing of mod files.\n", mod.getFullName(i, j), k + 1);
+					spdlog::warn("Mod '{}' game version #{} is not valid, skipping hashing of mod files.", mod.getFullName(i, j), k + 1);
 					continue;
 				}
 
 				gameModsPath = Utilities::joinPaths(m_settings->modsDirectoryPath, gameVersion->getModDirectoryName());
 
 				if(!std::filesystem::is_directory(gameModsPath)) {
-					fmt::print("Mod '{}' '{}' game version directory '{}' does not exist or is not a valid directory, skipping hashing of mod files.\n", mod.getFullName(i, j), gameVersion->getName(), gameModsPath);
+					spdlog::warn("Mod '{}' '{}' game version directory '{}' does not exist or is not a valid directory, skipping hashing of mod files.", mod.getFullName(i, j), gameVersion->getName(), gameModsPath);
 					continue;
 				}
 
@@ -2262,7 +2227,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 						zipArchive = ZipArchive::readFrom(zipArchiveFilePath, Utilities::emptyString, true);
 
 						if(zipArchive != nullptr) {
-							fmt::print("Opened '{}' zip file '{}'.\n", modVersionType->getFullName(), zipArchiveFilePath);
+							spdlog::info("Opened '{}' zip file '{}'.", modVersionType->getFullName(), zipArchiveFilePath);
 						}
 					}
 					else {
@@ -2276,7 +2241,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 							if(!group->load()) {
 								group.reset();
 
-								fmt::print("Failed to open mod group file '{}'.\n", groupFilePath);
+								spdlog::error("Failed to open mod group file '{}'.", groupFilePath);
 							}
 						}
 					}
@@ -2295,21 +2260,21 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 					if(modGameVersion->isEDuke32() && modFile->getType() != "zip" && modFile->getType() != "grp") {
 						if(!zipArchiveFilePath.empty()) {
 							if(zipArchive == nullptr) {
-								fmt::print("Skipping hash of mod file '{}' since zip archive could not be opened.\n", zipArchiveFilePath);
+								spdlog::error("Skipping hash of mod file '{}' since zip archive could not be opened.", zipArchiveFilePath);
 								continue;
 							}
 
 							std::weak_ptr<ZipArchive::Entry> zipArchiveEntry(zipArchive->getEntry(modFile->getFileName(), false));
 
 							if(zipArchiveEntry.expired()) {
-								fmt::print("Mod file '{}' not found in zip file '{}'.\n", modFile->getFileName(), zipArchiveFilePath);
+								spdlog::error("Mod file '{}' not found in zip file '{}'.", modFile->getFileName(), zipArchiveFilePath);
 								continue;
 							}
 
 							std::unique_ptr<ByteBuffer> zipArchiveEntryData(zipArchiveEntry.lock()->getData());
 
 							if(zipArchiveEntryData == nullptr) {
-								fmt::print("Failed to read zip entry '{}' from zip file '{}' into memory.\n", zipArchiveEntry.lock()->getName(), zipArchiveFilePath);
+								spdlog::error("Failed to read zip entry '{}' from zip file '{}' into memory.", zipArchiveEntry.lock()->getName(), zipArchiveFilePath);
 								continue;
 							}
 
@@ -2317,14 +2282,14 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 						}
 						else if(!groupFilePath.empty()) {
 							if(group == nullptr) {
-								fmt::print("Skipping hash of mod file '{}' since group could not be opened.\n", groupFilePath);
+								spdlog::error("Skipping hash of mod file '{}' since group could not be opened.", groupFilePath);
 								continue;
 							}
 
 							groupFile = group->getFile(modFile->getFileName());
 
 							if(groupFile == nullptr) {
-								fmt::print("Mod file '{}' not found in group file '{}'.\n", modFile->getFileName(), groupFilePath);
+								spdlog::error("Mod file '{}' not found in group file '{}'.", modFile->getFileName(), groupFilePath);
 								continue;
 							}
 
@@ -2335,7 +2300,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 						modFilePath = Utilities::joinPaths(gameModsPath, modFile->getFileName());
 
 						if(!std::filesystem::is_regular_file(std::filesystem::path(modFilePath))) {
-							fmt::print("Skipping hash of missing '{}' mod file: '{}'.\n", mod.getFullName(i, j), modFilePath);
+							spdlog::warn("Skipping hash of missing '{}' mod file: '{}'.", mod.getFullName(i, j), modFilePath);
 							continue;
 						}
 
@@ -2343,12 +2308,12 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 					}
 
 					if(!optionalSHA1.has_value()) {
-						fmt::print("Failed to hash '{}' mod file '{}'.\n", mod.getFullName(i, j), modFile->getFileName());
+						spdlog::error("Failed to hash '{}' mod file '{}'.", mod.getFullName(i, j), modFile->getFileName());
 						continue;
 					}
 
 					if(modFile->getSHA1() != optionalSHA1.value()) {
-						fmt::print("Updating '{}' mod file '{}' SHA1 hash from '{}' to '{}'.\n", mod.getFullName(i, j), modFile->getFileName(), modFile->getSHA1(), optionalSHA1.value());
+						spdlog::info("Updating '{}' mod file '{}' SHA1 hash from '{}' to '{}'.", mod.getFullName(i, j), modFile->getFileName(), modFile->getSHA1(), optionalSHA1.value());
 
 						modFile->setSHA1(optionalSHA1.value());
 
@@ -2397,14 +2362,13 @@ void ModManager::displayArgumentHelp() {
 	fmt::print(" -- <args> - specify arguments to pass through to the target game executable when executing.\n");
 	fmt::print(" --hash-new - updates unhashed SHA1 file hashes (developer use only!).\n");
 	fmt::print(" --hash-all - updates all SHA1 file hashes (developer use only!).\n");
-	fmt::print(" --verbose - enables verbose debug output.\n");
 	fmt::print(" --version - displays the application version.\n");
 	fmt::print(" -? - displays this help message.\n");
 }
 
 bool ModManager::createTemporaryDirectory() {
 	if(m_settings->tempDirectoryPath.empty()) {
-		fmt::print("Missing temp directory path setting.\n");
+		spdlog::error("Missing temp directory path setting.");
 		return false;
 	}
 
@@ -2415,13 +2379,11 @@ bool ModManager::createTemporaryDirectory() {
 		std::filesystem::create_directories(tempDirectoryPath, errorCode);
 
 		if(errorCode) {
-			fmt::print("Failed to create mod manager temporary directory structure '{}': {}\n", tempDirectoryPath.string(), errorCode.message());
+			spdlog::error("Failed to create mod manager temporary directory structure '{}': {}", tempDirectoryPath.string(), errorCode.message());
 			return false;
 		}
 
-#if _DEBUG
-			fmt::print("Created mod manager temporary directory structure: '{}'.\n", tempDirectoryPath.string());
-#endif _DEBUG
+		spdlog::debug("Created mod manager temporary directory structure: '{}'.", tempDirectoryPath.string());
 	}
 
 	return true;
@@ -2434,17 +2396,17 @@ bool ModManager::areSymlinkSettingsValid() const {
 		   !m_settings->mapsSymlinkName.empty();
 }
 
-bool ModManager::createSymlink(const std::string & symlinkTarget, const std::string & symlinkName, const std::string & symlinkDestinationDirectory, bool verbose) const {
+bool ModManager::createSymlink(const std::string & symlinkTarget, const std::string & symlinkName, const std::string & symlinkDestinationDirectory) const {
 	if(symlinkName.empty() ||
 	   symlinkTarget.empty()) {
-		fmt::print("Failed to create symlink, invalid arguments provided.\n");
+		spdlog::error("Failed to create symlink, invalid arguments provided.");
 		return false;
 	}
 
 	std::filesystem::path symlinkTargetPath(symlinkTarget);
 
 	if(!std::filesystem::is_directory(symlinkTargetPath)) {
-		fmt::print("Failed to create '{}' symlink, target path '{}' does not exist or is not a valid directory.\n", symlinkName, symlinkTarget);
+		spdlog::error("Failed to create '{}' symlink, target path '{}' does not exist or is not a valid directory.", symlinkName, symlinkTarget);
 		return false;
 	}
 
@@ -2453,41 +2415,37 @@ bool ModManager::createSymlink(const std::string & symlinkTarget, const std::str
 
 	if(std::filesystem::exists(symlinkDestinationPath)) {
 		if(!std::filesystem::is_symlink(symlinkDestinationPath)) {
-			fmt::print("Failed to remove existing '{}' symlink, unexpected file system entry type.\n");
+			spdlog::error("Failed to remove existing '{}' symlink, unexpected file system entry type.");
 			return false;
 		}
 
-		if(verbose) {
-			fmt::print("Removing existing symlink: '{}'.\n", symlinkDestinationPath.string());
-		}
+		spdlog::info("Removing existing symlink: '{}'.", symlinkDestinationPath.string());
 
 		std::error_code errorCode;
 		std::filesystem::remove(symlinkDestinationPath, errorCode);
 
 		if(errorCode) {
-			fmt::print("Failed to remove existing symlink '{}': {}\n", symlinkDestinationPath.string(), errorCode.message());
+			spdlog::error("Failed to remove existing symlink '{}': {}", symlinkDestinationPath.string(), errorCode.message());
 			return false;
 		}
 	}
 
-	if(verbose) {
-		fmt::print("Creating symlink '{}' to target '{}'.\n", symlinkDestination, symlinkTarget);
-	}
+	spdlog::info("Creating symlink '{}' to target '{}'.", symlinkDestination, symlinkTarget);
 
 	std::error_code errorCode;
 	std::filesystem::create_directory_symlink(symlinkTarget, symlinkDestinationPath, errorCode);
 
 	if(errorCode) {
-		fmt::print("Failed to create symlink '{}' to target '{}': {}\n", symlinkDestination, symlinkTarget, errorCode.message());
+		spdlog::error("Failed to create symlink '{}' to target '{}': {}", symlinkDestination, symlinkTarget, errorCode.message());
 		return false;
 	}
 
 	return true;
 }
 
-bool ModManager::removeSymlink(const std::string & symlinkName, const std::string & symlinkDestinationDirectory, bool verbose) const {
+bool ModManager::removeSymlink(const std::string & symlinkName, const std::string & symlinkDestinationDirectory) const {
 	if(symlinkName.empty()) {
-		fmt::print("Failed to remove symlink, invalid arguments provided.\n");
+		spdlog::error("Failed to remove symlink, invalid arguments provided.");
 		return false;
 	}
 
@@ -2496,19 +2454,17 @@ bool ModManager::removeSymlink(const std::string & symlinkName, const std::strin
 
 	if(std::filesystem::exists(symlinkDestinationPath)) {
 		if(!std::filesystem::is_symlink(symlinkDestinationPath)) {
-			fmt::print("Failed to remove '{}' symlink, unexpected file system entry type.\n");
+			spdlog::error("Failed to remove '{}' symlink, unexpected file system entry type.");
 			return false;
 		}
 
-		if(verbose) {
-			fmt::print("Removing symlink: '{}'.\n", symlinkDestination);
-		}
+		spdlog::info("Removing symlink: '{}'.", symlinkDestination);
 
 		std::error_code errorCode;
 		std::filesystem::remove(symlinkDestinationPath, errorCode);
 
 		if(errorCode) {
-			fmt::print("Failed to remove symlink '{}': {}\n", symlinkDestination, errorCode.message());
+			spdlog::error("Failed to remove symlink '{}': {}", symlinkDestination, errorCode.message());
 			return false;
 		}
 	}
@@ -2516,53 +2472,53 @@ bool ModManager::removeSymlink(const std::string & symlinkName, const std::strin
 	return true;
 }
 
-bool ModManager::createSymlinks(const GameVersion & gameVersion, bool createTempSymlink, bool verbose) {
+bool ModManager::createSymlinks(const GameVersion & gameVersion, bool createTempSymlink) {
 	if(!gameVersion.isConfigured() || !areSymlinkSettingsValid() || (createTempSymlink && m_settings->tempDirectoryPath.empty())) {
 		return false;
 	}
 
 	bool result = true;
 
-	result &= createSymlink(gameVersion.getGamePath(), m_settings->gameSymlinkName, std::filesystem::current_path().string(), verbose);
+	result &= createSymlink(gameVersion.getGamePath(), m_settings->gameSymlinkName, std::filesystem::current_path().string());
 
 	if(createTempSymlink) {
-		result &= createSymlink(m_settings->tempDirectoryPath, m_settings->tempSymlinkName, gameVersion.getGamePath(), verbose);
+		result &= createSymlink(m_settings->tempDirectoryPath, m_settings->tempSymlinkName, gameVersion.getGamePath());
 	}
 
-	result &= createSymlink(getModsDirectoryPath(), m_settings->modsSymlinkName, gameVersion.getGamePath(), verbose);
+	result &= createSymlink(getModsDirectoryPath(), m_settings->modsSymlinkName, gameVersion.getGamePath());
 
 	std::string mapsDirectoryPath(getMapsDirectoryPath());
 
 	if(!mapsDirectoryPath.empty()) {
-		result &= createSymlink(mapsDirectoryPath, m_settings->mapsSymlinkName, gameVersion.getGamePath(), verbose);
+		result &= createSymlink(mapsDirectoryPath, m_settings->mapsSymlinkName, gameVersion.getGamePath());
 	}
 
 	return result;
 }
 
-bool ModManager::removeSymlinks(const GameVersion & gameVersion, bool verbose) {
+bool ModManager::removeSymlinks(const GameVersion & gameVersion) {
 	if(!gameVersion.isConfigured() || !areSymlinkSettingsValid()) {
 		return false;
 	}
 
 	bool result = true;
 
-	result &= removeSymlink(m_settings->gameSymlinkName, std::filesystem::current_path().string(), verbose);
+	result &= removeSymlink(m_settings->gameSymlinkName, std::filesystem::current_path().string());
 
-	result &= removeSymlink(m_settings->tempSymlinkName, gameVersion.getGamePath(), verbose);
+	result &= removeSymlink(m_settings->tempSymlinkName, gameVersion.getGamePath());
 
-	result &= removeSymlink(m_settings->modsSymlinkName, gameVersion.getGamePath(), verbose);
+	result &= removeSymlink(m_settings->modsSymlinkName, gameVersion.getGamePath());
 
 	std::string mapsDirectoryPath(getMapsDirectoryPath());
 
 	if(!mapsDirectoryPath.empty()) {
-		result &= removeSymlink(m_settings->mapsSymlinkName, gameVersion.getGamePath(), verbose);
+		result &= removeSymlink(m_settings->mapsSymlinkName, gameVersion.getGamePath());
 	}
 
 	return result;
 }
 
-size_t ModManager::deleteFilesWithSuffix(const std::string & suffix, const std::string & path, bool verbose) {
+size_t ModManager::deleteFilesWithSuffix(const std::string & suffix, const std::string & path) {
 	if(suffix.empty()) {
 		return 0;
 	}
@@ -2572,16 +2528,13 @@ size_t ModManager::deleteFilesWithSuffix(const std::string & suffix, const std::
 
 	for(const std::filesystem::directory_entry & e : std::filesystem::directory_iterator(directoryPath)) {
 		if(e.is_regular_file() && Utilities::areStringsEqualIgnoreCase(Utilities::getFileExtension(e.path().string()), suffix)) {
-
-			if(verbose) {
-				fmt::print("Deleting file: '{}'.\n", e.path().string());
-			}
+			spdlog::info("Deleting file: '{}'.", e.path().string());
 
 			std::error_code errorCode;
 			std::filesystem::remove(e.path(), errorCode);
 
 			if(errorCode) {
-				fmt::print("Failed to delete file '{}': {}\n", e.path().string(), errorCode.message());
+				spdlog::error("Failed to delete file '{}': {}", e.path().string(), errorCode.message());
 				continue;
 			}
 
@@ -2592,7 +2545,7 @@ size_t ModManager::deleteFilesWithSuffix(const std::string & suffix, const std::
 	return numberOfFilesDeleted;
 }
 
-size_t ModManager::renameFilesWithSuffixTo(const std::string & fromSuffix, const std::string & toSuffix, const std::string & path, bool verbose) {
+size_t ModManager::renameFilesWithSuffixTo(const std::string & fromSuffix, const std::string & toSuffix, const std::string & path) {
 	if(fromSuffix.empty() || toSuffix.empty()) {
 		return 0;
 	}
@@ -2605,15 +2558,13 @@ size_t ModManager::renameFilesWithSuffixTo(const std::string & fromSuffix, const
 		if(e.is_regular_file() && Utilities::areStringsEqualIgnoreCase(Utilities::getFileExtension(e.path().string()), fromSuffix)) {
 			newFilePath = Utilities::replaceFileExtension(e.path().string(), toSuffix);
 
-			if(verbose) {
-				fmt::print("Renaming file: '{}' > '{}'.\n", e.path().string(), newFilePath);
-			}
+			spdlog::info("Renaming file: '{}' > '{}'.", e.path().string(), newFilePath);
 
 			std::error_code error;
 			std::filesystem::rename(e.path(), newFilePath, error);
 
 			if(error) {
-				fmt::print("Failed to rename file '{}' to '{}': {}\n", e.path().string(), newFilePath, error.message());
+				spdlog::error("Failed to rename file '{}' to '{}': {}", e.path().string(), newFilePath, error.message());
 				continue;
 			}
 

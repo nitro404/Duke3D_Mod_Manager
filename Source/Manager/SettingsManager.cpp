@@ -6,11 +6,11 @@
 #include <Arguments/ArgumentParser.h>
 #include <Utilities/StringUtilities.h>
 
-#include <fmt/core.h>
 #include <magic_enum.hpp>
 #include <rapidjson/istreamwrapper.h>
 #include <rapidjson/ostreamwrapper.h>
 #include <rapidjson/prettywriter.h>
+#include <spdlog/spdlog.h>
 
 #include <filesystem>
 #include <fstream>
@@ -32,7 +32,6 @@ static constexpr const char * TEMP_DIRECTORY_PATH_PROPERTY_NAME = "tempDirectory
 static constexpr const char * TEMP_SYMLINK_NAME_PROPERTY_NAME = "tempSymlinkName";
 static constexpr const char * GAME_SYMLINK_NAME_PROPERTY_NAME = "gameSymlinkName";
 static constexpr const char * LOCAL_MODE_PROPERTY_NAME = "localMode";
-static constexpr const char * VERBOSE_PROPERTY_NAME = "verbose";
 
 static constexpr const char * GAME_VERSIONS_CATEGORY_NAME = "gameVersions";
 static constexpr const char * GAME_VERSIONS_LIST_FILE_PATH_PROPERTY_NAME = LIST_FILE_PATH;
@@ -151,7 +150,6 @@ const char * SettingsManager::DEFAULT_REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME = "map
 const char * SettingsManager::DEFAULT_REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME = "games";
 const bool SettingsManager::DEFAULT_SEGMENT_ANALYTICS_ENABLED = true;
 const char * SettingsManager::DEFAULT_SEGMENT_ANALYTICS_DATA_FILE_NAME = "Segment Analytics.json";
-const bool SettingsManager::DEFAULT_VERBOSE = false;
 
 static bool assignStringSetting(std::string & setting, const rapidjson::Value & categoryValue, const std::string & propertyName) {
 	if(propertyName.empty() || !categoryValue.IsObject() || !categoryValue.HasMember(propertyName.c_str())) {
@@ -232,8 +230,7 @@ SettingsManager::SettingsManager()
 	, remoteMapDownloadsDirectoryName(DEFAULT_REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME)
 	, remoteGameDownloadsDirectoryName(DEFAULT_REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME)
 	, segmentAnalyticsEnabled(DEFAULT_SEGMENT_ANALYTICS_ENABLED)
-	, segmentAnalyticsDataFileName(DEFAULT_SEGMENT_ANALYTICS_DATA_FILE_NAME)
-	, verbose(DEFAULT_VERBOSE) { }
+	, segmentAnalyticsDataFileName(DEFAULT_SEGMENT_ANALYTICS_DATA_FILE_NAME) { }
 
 SettingsManager::SettingsManager(SettingsManager && s) noexcept
 	: modsListFilePath(std::move(s.modsListFilePath))
@@ -281,8 +278,7 @@ SettingsManager::SettingsManager(SettingsManager && s) noexcept
 	, remoteMapDownloadsDirectoryName(std::move(s.remoteMapDownloadsDirectoryName))
 	, remoteGameDownloadsDirectoryName(std::move(s.remoteGameDownloadsDirectoryName))
 	, segmentAnalyticsEnabled(s.segmentAnalyticsEnabled)
-	, segmentAnalyticsDataFileName(std::move(s.segmentAnalyticsDataFileName))
-	, verbose(s.verbose) { }
+	, segmentAnalyticsDataFileName(std::move(s.segmentAnalyticsDataFileName)) { }
 
 SettingsManager::SettingsManager(const SettingsManager & s)
 	: modsListFilePath(s.modsListFilePath)
@@ -330,8 +326,7 @@ SettingsManager::SettingsManager(const SettingsManager & s)
 	, remoteMapDownloadsDirectoryName(s.remoteMapDownloadsDirectoryName)
 	, remoteGameDownloadsDirectoryName(s.remoteGameDownloadsDirectoryName)
 	, segmentAnalyticsEnabled(s.segmentAnalyticsEnabled)
-	, segmentAnalyticsDataFileName(s.segmentAnalyticsDataFileName)
-	, verbose(s.verbose) { }
+	, segmentAnalyticsDataFileName(s.segmentAnalyticsDataFileName) { }
 
 SettingsManager & SettingsManager::operator = (SettingsManager && s) noexcept {
 	if(this != &s) {
@@ -382,7 +377,6 @@ SettingsManager & SettingsManager::operator = (SettingsManager && s) noexcept {
 		remoteGameDownloadsDirectoryName = std::move(s.remoteGameDownloadsDirectoryName);
 		segmentAnalyticsEnabled = s.segmentAnalyticsEnabled;
 		segmentAnalyticsDataFileName = std::move(s.segmentAnalyticsDataFileName);
-		verbose = s.verbose;
 	}
 
 	return *this;
@@ -436,7 +430,6 @@ SettingsManager & SettingsManager::operator = (const SettingsManager & s) {
 	remoteGameDownloadsDirectoryName = s.remoteGameDownloadsDirectoryName;
 	segmentAnalyticsEnabled = s.segmentAnalyticsEnabled;
 	segmentAnalyticsDataFileName = s.segmentAnalyticsDataFileName;
-	verbose = s.verbose;
 
 	return *this;
 }
@@ -491,7 +484,6 @@ void SettingsManager::reset() {
 	remoteGameDownloadsDirectoryName = DEFAULT_REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME;
 	segmentAnalyticsEnabled = DEFAULT_SEGMENT_ANALYTICS_ENABLED;
 	segmentAnalyticsDataFileName = DEFAULT_SEGMENT_ANALYTICS_DATA_FILE_NAME;
-	verbose = DEFAULT_VERBOSE;
 }
 
 rapidjson::Document SettingsManager::toJSON() const {
@@ -511,7 +503,6 @@ rapidjson::Document SettingsManager::toJSON() const {
 	rapidjson::Value gameSymlinkNameValue(gameSymlinkName.c_str(), allocator);
 	settingsDocument.AddMember(rapidjson::StringRef(GAME_SYMLINK_NAME_PROPERTY_NAME), gameSymlinkNameValue, allocator);
 	settingsDocument.AddMember(rapidjson::StringRef(LOCAL_MODE_PROPERTY_NAME), rapidjson::Value(localMode), allocator);
-	settingsDocument.AddMember(rapidjson::StringRef(VERBOSE_PROPERTY_NAME), rapidjson::Value(verbose), allocator);
 
 	rapidjson::Value gameVersionsCategoryValue(rapidjson::kObjectType);
 
@@ -673,30 +664,30 @@ rapidjson::Document SettingsManager::toJSON() const {
 
 bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 	if(!settingsDocument.IsObject()) {
-		fmt::print("Invalid settings value, expected object.\n");
+		spdlog::error("Invalid settings value, expected object.");
 		return false;
 	}
 
 	if(settingsDocument.HasMember(FILE_FORMAT_VERSION_PROPERTY_NAME)) {
 		if(!settingsDocument[FILE_FORMAT_VERSION_PROPERTY_NAME].IsString()) {
-			fmt::print("Invalid settings file version: '{}', expected: '{}'.\n", settingsDocument[FILE_FORMAT_VERSION_PROPERTY_NAME].GetString(), FILE_FORMAT_VERSION);
+			spdlog::error("Invalid settings file version: '{}', expected: '{}'.", settingsDocument[FILE_FORMAT_VERSION_PROPERTY_NAME].GetString(), FILE_FORMAT_VERSION);
 			return false;
 		}
 
 		std::optional<std::uint8_t> optionalVersionComparison(Utilities::compareVersions(settingsDocument[FILE_FORMAT_VERSION_PROPERTY_NAME].GetString(), FILE_FORMAT_VERSION));
 
 		if(!optionalVersionComparison.has_value()) {
-			fmt::print("Invalid settings file version: '{}'.\n", settingsDocument[FILE_FORMAT_VERSION_PROPERTY_NAME].GetString());
+			spdlog::error("Invalid settings file version: '{}'.", settingsDocument[FILE_FORMAT_VERSION_PROPERTY_NAME].GetString());
 			return false;
 		}
 
 		if(*optionalVersionComparison != 0) {
-			fmt::print("Unsupported settings file version: '{}', only version '{}' is supported.\n", settingsDocument[FILE_FORMAT_VERSION_PROPERTY_NAME].GetString(), FILE_FORMAT_VERSION);
+			spdlog::error("Unsupported settings file version: '{}', only version '{}' is supported.", settingsDocument[FILE_FORMAT_VERSION_PROPERTY_NAME].GetString(), FILE_FORMAT_VERSION);
 			return false;
 		}
 	}
 	else {
-		fmt::print("Settings file is missing version, and may fail to load correctly!\n");
+		spdlog::warn("Settings file is missing version, and may fail to load correctly!");
 	}
 
 	if(settingsDocument.HasMember(GAME_TYPE_PROPERTY_NAME) && settingsDocument[GAME_TYPE_PROPERTY_NAME].IsString()) {
@@ -712,7 +703,6 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 	assignStringSetting(tempSymlinkName, settingsDocument, TEMP_SYMLINK_NAME_PROPERTY_NAME);
 	assignStringSetting(gameSymlinkName, settingsDocument, GAME_SYMLINK_NAME_PROPERTY_NAME);
 	assignBooleanSetting(localMode, settingsDocument, LOCAL_MODE_PROPERTY_NAME);
-	assignBooleanSetting(verbose, settingsDocument, VERBOSE_PROPERTY_NAME);
 
 	if(settingsDocument.HasMember(GAME_VERSIONS_CATEGORY_NAME) && settingsDocument[GAME_VERSIONS_CATEGORY_NAME].IsObject()) {
 		const rapidjson::Value & gameVersionsCategoryValue = settingsDocument[GAME_VERSIONS_CATEGORY_NAME];
@@ -857,12 +847,12 @@ bool SettingsManager::load(const ArgumentParser * arguments, bool autoCreate) {
 		std::string alternateSettingsFileName(arguments->getFirstValue("f"));
 
 		if(!alternateSettingsFileName.empty()) {
-			fmt::print("Loading settings from alternate file: '{}'...\n", alternateSettingsFileName);
+			spdlog::debug("Loading settings from alternate file: '{}'...", alternateSettingsFileName);
 
 			bool loadedSettings = loadFrom(alternateSettingsFileName, autoCreate);
 
 			if(!loadedSettings) {
-				fmt::print("Failed to load settings from alt settings file: '{}'.\n", alternateSettingsFileName);
+				spdlog::error("Failed to load settings from alt settings file: '{}'.", alternateSettingsFileName);
 			}
 
 			return loadedSettings;
@@ -877,12 +867,12 @@ bool SettingsManager::save(const ArgumentParser * arguments, bool overwrite) con
 		std::string alternateSettingsFileName(arguments->getFirstValue("f"));
 
 		if(!alternateSettingsFileName.empty()) {
-			fmt::print("Saving settings to alternate file: '{}'...\n", alternateSettingsFileName);
+			spdlog::debug("Saving settings to alternate file: '{}'...", alternateSettingsFileName);
 
 			bool savedSettings = saveTo(alternateSettingsFileName, overwrite);
 
 			if(!savedSettings) {
-				fmt::print("Failed to save settings to alternate file: '{}'.\n", alternateSettingsFileName);
+				spdlog::info("Failed to save settings to alternate file: '{}'.", alternateSettingsFileName);
 			}
 
 			return savedSettings;
@@ -894,12 +884,12 @@ bool SettingsManager::save(const ArgumentParser * arguments, bool overwrite) con
 
 bool SettingsManager::loadFrom(const std::string & filePath, bool autoCreate) {
 	if(filePath.empty()) {
-		fmt::print("Settings file path cannot be empty!\n");
+		spdlog::error("Settings file path cannot be empty!");
 		return false;
 	}
 
 	if(!std::filesystem::is_regular_file(std::filesystem::path(filePath))) {
-		fmt::print("Failed to open missing or invalid settings file: '{}'!\n", filePath);
+		spdlog::error("Failed to open missing or invalid settings file: '{}'!", filePath);
 
 		if(autoCreate) {
 			saveTo(filePath);
@@ -911,32 +901,32 @@ bool SettingsManager::loadFrom(const std::string & filePath, bool autoCreate) {
 	std::ifstream fileStream(filePath);
 
 	if(!fileStream.is_open()) {
-		fmt::print("Failed to open settings file '{}' for parsing!\n", filePath);
+		spdlog::error("Failed to open settings file '{}' for parsing!", filePath);
 		return false;
 	}
 
 	rapidjson::Document settings;
 	rapidjson::IStreamWrapper fileStreamWrapper(fileStream);
 	if(settings.ParseStream(fileStreamWrapper).HasParseError()) {
-		fmt::print("Failed to parse settings file JSON data!\n");
+		spdlog::error("Failed to parse settings file JSON data!");
 		return false;
 	}
 
 	fileStream.close();
 
 	if(!parseFrom(settings)) {
-		fmt::print("Failed to parse settings from file '{}!\n", filePath);
+		spdlog::error("Failed to parse settings from file '{}!", filePath);
 		return false;
 	}
 
-	fmt::print("Settings successfully loaded from file '{}'.\n", filePath);
+	spdlog::info("Settings successfully loaded from file '{}'.", filePath);
 
 	return true;
 }
 
 bool SettingsManager::saveTo(const std::string & filePath, bool overwrite) const {
 	if (!overwrite && std::filesystem::exists(std::filesystem::path(filePath))) {
-		fmt::print("File '{}' already exists, use overwrite to force write.\n", filePath);
+		spdlog::warn("File '{}' already exists, use overwrite to force write.", filePath);
 		return false;
 	}
 
@@ -954,7 +944,7 @@ bool SettingsManager::saveTo(const std::string & filePath, bool overwrite) const
 	settings.Accept(fileStreamWriter);
 	fileStream.close();
 
-	fmt::print("Settings successfully saved to file '{}'.\n", filePath);
+	spdlog::info("Settings successfully saved to file '{}'.", filePath);
 
 	return true;
 }

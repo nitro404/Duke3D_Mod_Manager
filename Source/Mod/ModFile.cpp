@@ -9,7 +9,7 @@
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
 
-#include <fmt/core.h>
+#include <spdlog/spdlog.h>
 #include <tinyxml2.h>
 
 #include <array>
@@ -206,7 +206,7 @@ tinyxml2::XMLElement * ModFile::toXML(tinyxml2::XMLDocument * document) const {
 
 std::unique_ptr<ModFile> ModFile::parseFrom(const rapidjson::Value & modFileValue) {
 	if(!modFileValue.IsObject()) {
-		fmt::print("Invalid mod file type: '{}', expected 'object'.\n", Utilities::typeToString(modFileValue.GetType()));
+		spdlog::error("Invalid mod file type: '{}', expected 'object'.", Utilities::typeToString(modFileValue.GetType()));
 		return nullptr;
 	}
 
@@ -224,68 +224,68 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const rapidjson::Value & modFileValu
 		}
 
 		if(!propertyHandled) {
-			fmt::print("Mod file has unexpected property '{}'.\n", i->name.GetString());
+			spdlog::error("Mod file has unexpected property '{}'.", i->name.GetString());
 			return nullptr;
 		}
 	}
 
 	// parse mod file name
 	if(!modFileValue.HasMember(JSON_MOD_FILE_FILE_NAME_PROPERTY_NAME)) {
-		fmt::print("Mod file is missing '{}' property'.\n", JSON_MOD_FILE_FILE_NAME_PROPERTY_NAME);
+		spdlog::error("Mod file is missing '{}' property'.", JSON_MOD_FILE_FILE_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & modFileNameValue = modFileValue[JSON_MOD_FILE_FILE_NAME_PROPERTY_NAME];
 
 	if(!modFileNameValue.IsString()) {
-		fmt::print("Mod file has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_MOD_FILE_FILE_NAME_PROPERTY_NAME, Utilities::typeToString(modFileNameValue.GetType()));
+		spdlog::error("Mod file has an invalid '{}' property type: '{}', expected 'string'.", JSON_MOD_FILE_FILE_NAME_PROPERTY_NAME, Utilities::typeToString(modFileNameValue.GetType()));
 		return nullptr;
 	}
 
 	std::string modFileName(Utilities::trimString(modFileNameValue.GetString()));
 
 	if(modFileName.empty()) {
-		fmt::print("Mod file '{}' property cannot be empty.\n", JSON_MOD_FILE_FILE_NAME_PROPERTY_NAME);
+		spdlog::error("Mod file '{}' property cannot be empty.", JSON_MOD_FILE_FILE_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse mod file type
 	if(!modFileValue.HasMember(JSON_MOD_FILE_TYPE_PROPERTY_NAME)) {
-		fmt::print("Mod file is missing '{}' property'.\n", JSON_MOD_FILE_TYPE_PROPERTY_NAME);
+		spdlog::error("Mod file is missing '{}' property'.", JSON_MOD_FILE_TYPE_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & modFileTypeValue = modFileValue[JSON_MOD_FILE_TYPE_PROPERTY_NAME];
 
 	if(!modFileTypeValue.IsString()) {
-		fmt::print("Mod file has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_MOD_FILE_TYPE_PROPERTY_NAME, Utilities::typeToString(modFileTypeValue.GetType()));
+		spdlog::error("Mod file has an invalid '{}' property type: '{}', expected 'string'.", JSON_MOD_FILE_TYPE_PROPERTY_NAME, Utilities::typeToString(modFileTypeValue.GetType()));
 		return nullptr;
 	}
 
 	std::string modFileType(Utilities::trimString(modFileTypeValue.GetString()));
 
 	if(modFileType.empty()) {
-		fmt::print("Mod file '{}' property cannot be empty.\n", JSON_MOD_FILE_TYPE_PROPERTY_NAME);
+		spdlog::error("Mod file '{}' property cannot be empty.", JSON_MOD_FILE_TYPE_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse the mod file sha1 property
 	if(!modFileValue.HasMember(JSON_MOD_FILE_SHA1_PROPERTY_NAME)) {
-		fmt::print("Mod file is missing '{}' property'.\n", JSON_MOD_FILE_SHA1_PROPERTY_NAME);
+		spdlog::error("Mod file is missing '{}' property'.", JSON_MOD_FILE_SHA1_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & modFileSHA1Value = modFileValue[JSON_MOD_FILE_SHA1_PROPERTY_NAME];
 
 	if(!modFileSHA1Value.IsString()) {
-		fmt::print("Mod file '{}' property has invalid type: '{}', expected 'string'.\n", JSON_MOD_FILE_SHA1_PROPERTY_NAME, Utilities::typeToString(modFileSHA1Value.GetType()));
+		spdlog::error("Mod file '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_FILE_SHA1_PROPERTY_NAME, Utilities::typeToString(modFileSHA1Value.GetType()));
 		return nullptr;
 	}
 
 	std::string modFileSHA1(Utilities::trimString(modFileSHA1Value.GetString()));
 
 	if(modFileSHA1.empty()) {
-		fmt::print("Mod file '{}' property cannot be empty.\n", JSON_MOD_FILE_SHA1_PROPERTY_NAME);
+		spdlog::error("Mod file '{}' property cannot be empty.", JSON_MOD_FILE_SHA1_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -297,7 +297,7 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const rapidjson::Value & modFileValu
 		const rapidjson::Value & modFileSharedValue = modFileValue[JSON_MOD_FILE_SHARED_PROPERTY_NAME];
 
 		if(!modFileSharedValue.IsBool()) {
-			fmt::print("Mod file '{}' property has invalid type: '{}', expected 'boolean'.\n", JSON_MOD_FILE_SHARED_PROPERTY_NAME, Utilities::typeToString(modFileSharedValue.GetType()));
+			spdlog::error("Mod file '{}' property has invalid type: '{}', expected 'boolean'.", JSON_MOD_FILE_SHARED_PROPERTY_NAME, Utilities::typeToString(modFileSharedValue.GetType()));
 			return nullptr;
 		}
 
@@ -314,7 +314,7 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const tinyxml2::XMLElement * modFile
 
 	// verify element name
 	if(modFileElement->Name() != XML_MOD_FILE_ELEMENT_NAME) {
-		fmt::print("Invalid mod file element name: '{}', expected '{}'.\n", modFileElement->Name(), XML_MOD_FILE_ELEMENT_NAME);
+		spdlog::error("Invalid mod file element name: '{}', expected '{}'.", modFileElement->Name(), XML_MOD_FILE_ELEMENT_NAME);
 		return nullptr;
 	}
 
@@ -337,7 +337,7 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const tinyxml2::XMLElement * modFile
 		}
 
 		if(!attributeHandled) {
-			fmt::print("Element '{}' has unexpected attribute '{}'.\n", XML_MOD_FILE_ELEMENT_NAME, modFileAttribute->Name());
+			spdlog::error("Element '{}' has unexpected attribute '{}'.", XML_MOD_FILE_ELEMENT_NAME, modFileAttribute->Name());
 			return nullptr;
 		}
 
@@ -346,7 +346,7 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const tinyxml2::XMLElement * modFile
 
 	// check for unexpected mod file element child elements
 	if(modFileElement->FirstChildElement() != nullptr) {
-		fmt::print("Element '{}' has an unexpected child element.\n", XML_MOD_FILE_ELEMENT_NAME);
+		spdlog::error("Element '{}' has an unexpected child element.", XML_MOD_FILE_ELEMENT_NAME);
 		return nullptr;
 	}
 
@@ -355,21 +355,21 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const tinyxml2::XMLElement * modFile
 	const char * modFileName = modFileElement->Attribute(XML_MOD_FILE_FILE_NAME_ATTRIBUTE_NAME.c_str());
 
 	if(modFileName == nullptr || Utilities::stringLength(modFileName) == 0) {
-		fmt::print("Attribute '{}' is missing from '{}' element.\n", XML_MOD_FILE_FILE_NAME_ATTRIBUTE_NAME, XML_MOD_FILE_ELEMENT_NAME);
+		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_FILE_FILE_NAME_ATTRIBUTE_NAME, XML_MOD_FILE_ELEMENT_NAME);
 		return nullptr;
 	}
 
 	const char * modFileType = modFileElement->Attribute(XML_MOD_FILE_TYPE_ATTRIBUTE_NAME.c_str());
 
 	if(modFileType == nullptr || Utilities::stringLength(modFileType) == 0) {
-		fmt::print("Attribute '{}' is missing from '{}' element.\n", XML_MOD_FILE_TYPE_ATTRIBUTE_NAME, XML_MOD_FILE_ELEMENT_NAME);
+		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_FILE_TYPE_ATTRIBUTE_NAME, XML_MOD_FILE_ELEMENT_NAME);
 		return nullptr;
 	}
 
 	const char * modFileSHA1 = modFileElement->Attribute(XML_MOD_FILE_SHA1_ATTRIBUTE_NAME.c_str());
 
 	if(modFileSHA1 == nullptr || Utilities::stringLength(modFileSHA1) == 0) {
-		fmt::print("Attribute '{}' is missing from '{}' element.\n", XML_MOD_FILE_SHA1_ATTRIBUTE_NAME, XML_MOD_FILE_ELEMENT_NAME);
+		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_FILE_SHA1_ATTRIBUTE_NAME, XML_MOD_FILE_ELEMENT_NAME);
 		return nullptr;
 	}
 
@@ -382,7 +382,7 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const tinyxml2::XMLElement * modFile
 		bool shared = Utilities::parseBoolean(modFileSharedData, &error);
 
 		if(error) {
-			fmt::print("Attribute '{}' in element '{}' has an invalid value: '{}', expected boolean.\n", XML_MOD_FILE_SHARED_ATTRIBUTE_NAME, XML_MOD_FILE_ELEMENT_NAME, modFileSharedData);
+			spdlog::error("Attribute '{}' in element '{}' has an invalid value: '{}', expected boolean.", XML_MOD_FILE_SHARED_ATTRIBUTE_NAME, XML_MOD_FILE_ELEMENT_NAME, modFileSharedData);
 			return nullptr;
 		}
 

@@ -6,7 +6,7 @@
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
 
-#include <fmt/core.h>
+#include <spdlog/spdlog.h>
 
 #include <array>
 #include <filesystem>
@@ -714,7 +714,7 @@ size_t GameVersion::checkForMissingExecutables() const {
 	if(!std::filesystem::is_regular_file(std::filesystem::path(fullGameExecutablePath))) {
 		numberOfMissingExecutables++;
 
-		fmt::print("Missing '{}' game executable: '{}'.\n", m_name, fullGameExecutablePath);
+		spdlog::error("Missing '{}' game executable: '{}'.", m_name, fullGameExecutablePath);
 	}
 
 	if(m_setupExecutableName.has_value()) {
@@ -723,7 +723,7 @@ size_t GameVersion::checkForMissingExecutables() const {
 		if(!std::filesystem::is_regular_file(std::filesystem::path(fullSetupExecutablePath))) {
 			numberOfMissingExecutables++;
 
-			fmt::print("Missing '{}' setup executable: '{}'.\n", m_name, fullSetupExecutablePath);
+			spdlog::error("Missing '{}' setup executable: '{}'.", m_name, fullSetupExecutablePath);
 		}
 	}
 
@@ -834,7 +834,7 @@ rapidjson::Value GameVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::C
 
 std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gameVersionValue) {
 	if(!gameVersionValue.IsObject()) {
-		fmt::print("Invalid game version type: '{}', expected 'object'.\n", Utilities::typeToString(gameVersionValue.GetType()));
+		spdlog::error("Invalid game version type: '{}', expected 'object'.", Utilities::typeToString(gameVersionValue.GetType()));
 		return nullptr;
 	}
 
@@ -852,41 +852,41 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		}
 
 		if(!propertyHandled) {
-			fmt::print("Game version has unexpected property '{}'.\n", i->name.GetString());
+			spdlog::error("Game version has unexpected property '{}'.", i->name.GetString());
 			return nullptr;
 		}
 	}
 
 	// parse game version name
 	if(!gameVersionValue.HasMember(JSON_NAME_PROPERTY_NAME)) {
-		fmt::print("Game version is missing '{}' property.\n", JSON_NAME_PROPERTY_NAME);
+		spdlog::error("Game version is missing '{}' property.", JSON_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & nameValue = gameVersionValue[JSON_NAME_PROPERTY_NAME];
 
 	if(!nameValue.IsString()) {
-		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_NAME_PROPERTY_NAME, Utilities::typeToString(nameValue.GetType()));
+		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_NAME_PROPERTY_NAME, Utilities::typeToString(nameValue.GetType()));
 		return nullptr;
 	}
 
 	std::string name(Utilities::trimString(nameValue.GetString()));
 
 	if(name.empty()) {
-		fmt::print("Game version '{}' property cannot be empty.\n", JSON_NAME_PROPERTY_NAME);
+		spdlog::error("Game version '{}' property cannot be empty.", JSON_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse game version game path
 	if(!gameVersionValue.HasMember(JSON_GAME_PATH_PROPERTY_NAME)) {
-		fmt::print("Game version is missing '{}' property.\n", JSON_GAME_PATH_PROPERTY_NAME);
+		spdlog::error("Game version is missing '{}' property.", JSON_GAME_PATH_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & gamePathValue = gameVersionValue[JSON_GAME_PATH_PROPERTY_NAME];
 
 	if(!gamePathValue.IsString()) {
-		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_GAME_PATH_PROPERTY_NAME, Utilities::typeToString(gamePathValue.GetType()));
+		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_GAME_PATH_PROPERTY_NAME, Utilities::typeToString(gamePathValue.GetType()));
 		return nullptr;
 	}
 
@@ -894,21 +894,21 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 
 	// parse game version game executable name
 	if(!gameVersionValue.HasMember(JSON_GAME_EXECUTABLE_NAME_PROPERTY_NAME)) {
-		fmt::print("Game version is missing '{}' property.\n", JSON_GAME_EXECUTABLE_NAME_PROPERTY_NAME);
+		spdlog::error("Game version is missing '{}' property.", JSON_GAME_EXECUTABLE_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & gameExecutableNameValue = gameVersionValue[JSON_GAME_EXECUTABLE_NAME_PROPERTY_NAME];
 
 	if(!gameExecutableNameValue.IsString()) {
-		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_GAME_EXECUTABLE_NAME_PROPERTY_NAME, Utilities::typeToString(gameExecutableNameValue.GetType()));
+		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_GAME_EXECUTABLE_NAME_PROPERTY_NAME, Utilities::typeToString(gameExecutableNameValue.GetType()));
 		return nullptr;
 	}
 
 	std::string gameExecutableName(Utilities::trimString(gameExecutableNameValue.GetString()));
 
 	if(gameExecutableName.empty()) {
-		fmt::print("Game version '{}' property cannot be empty.\n", JSON_GAME_EXECUTABLE_NAME_PROPERTY_NAME);
+		spdlog::error("Game version '{}' property cannot be empty.", JSON_GAME_EXECUTABLE_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -919,28 +919,28 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & setupExecutableNameValue = gameVersionValue[JSON_SETUP_EXECUTABLE_NAME_PROPERTY_NAME];
 
 		if(!setupExecutableNameValue.IsString()) {
-			fmt::print("Game version has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_SETUP_EXECUTABLE_NAME_PROPERTY_NAME, Utilities::typeToString(setupExecutableNameValue.GetType()));
+			spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_SETUP_EXECUTABLE_NAME_PROPERTY_NAME, Utilities::typeToString(setupExecutableNameValue.GetType()));
 			return nullptr;
 		}
 
 		setupExecutableNameOptional = Utilities::trimString(setupExecutableNameValue.GetString());
 
 		if(setupExecutableNameOptional.value().empty()) {
-			fmt::print("Game version '{}' property cannot be empty.\n", JSON_SETUP_EXECUTABLE_NAME_PROPERTY_NAME);
+			spdlog::error("Game version '{}' property cannot be empty.", JSON_SETUP_EXECUTABLE_NAME_PROPERTY_NAME);
 			return nullptr;
 		}
 	}
 
 	// parse local working directory option
 	if(!gameVersionValue.HasMember(JSON_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME)) {
-		fmt::print("Game version is missing '{}' property.\n", JSON_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME);
+		spdlog::error("Game version is missing '{}' property.", JSON_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & localWorkingDirectoryValue = gameVersionValue[JSON_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME];
 
 	if(!localWorkingDirectoryValue.IsBool()) {
-		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'boolean'.\n", JSON_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME, Utilities::typeToString(localWorkingDirectoryValue.GetType()));
+		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'boolean'.", JSON_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME, Utilities::typeToString(localWorkingDirectoryValue.GetType()));
 		return nullptr;
 	}
 
@@ -948,14 +948,14 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 
 	// parse relative con file path option
 	if(!gameVersionValue.HasMember(JSON_RELATIVE_CON_FILE_PATH_PROPERTY_NAME)) {
-		fmt::print("Game version is missing '{}' property.\n", JSON_RELATIVE_CON_FILE_PATH_PROPERTY_NAME);
+		spdlog::error("Game version is missing '{}' property.", JSON_RELATIVE_CON_FILE_PATH_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & relativeConFilePathValue = gameVersionValue[JSON_RELATIVE_CON_FILE_PATH_PROPERTY_NAME];
 
 	if(!relativeConFilePathValue.IsBool()) {
-		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'boolean'.\n", JSON_RELATIVE_CON_FILE_PATH_PROPERTY_NAME, Utilities::typeToString(relativeConFilePathValue.GetType()));
+		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'boolean'.", JSON_RELATIVE_CON_FILE_PATH_PROPERTY_NAME, Utilities::typeToString(relativeConFilePathValue.GetType()));
 		return nullptr;
 	}
 
@@ -963,141 +963,141 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 
 	// parse game version con file argument flag
 	if(!gameVersionValue.HasMember(JSON_CON_FILE_ARGUMENT_FLAG_PROPERTY_NAME)) {
-		fmt::print("Game version is missing '{}' property.\n", JSON_CON_FILE_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version is missing '{}' property.", JSON_CON_FILE_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & conFileArgumentFlagValue = gameVersionValue[JSON_CON_FILE_ARGUMENT_FLAG_PROPERTY_NAME];
 
 	if(!conFileArgumentFlagValue.IsString()) {
-		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_CON_FILE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(conFileArgumentFlagValue.GetType()));
+		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_CON_FILE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(conFileArgumentFlagValue.GetType()));
 		return nullptr;
 	}
 
 	std::string conFileArgumentFlag(conFileArgumentFlagValue.GetString());
 
 	if(conFileArgumentFlag.empty()) {
-		fmt::print("Game version '{}' property cannot be empty.\n", JSON_CON_FILE_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version '{}' property cannot be empty.", JSON_CON_FILE_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse game version group file argument flag
 	if(!gameVersionValue.HasMember(JSON_GROUP_FILE_ARGUMENT_FLAG_PROPERTY_NAME)) {
-		fmt::print("Game version is missing '{}' property.\n", JSON_GROUP_FILE_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version is missing '{}' property.", JSON_GROUP_FILE_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & groupFileArgumentFlagValue = gameVersionValue[JSON_GROUP_FILE_ARGUMENT_FLAG_PROPERTY_NAME];
 
 	if(!groupFileArgumentFlagValue.IsString()) {
-		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_GROUP_FILE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(groupFileArgumentFlagValue.GetType()));
+		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_GROUP_FILE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(groupFileArgumentFlagValue.GetType()));
 		return nullptr;
 	}
 
 	std::string groupFileArgumentFlag(groupFileArgumentFlagValue.GetString());
 
 	if(groupFileArgumentFlag.empty()) {
-		fmt::print("Game version '{}' property cannot be empty.\n", JSON_GROUP_FILE_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version '{}' property cannot be empty.", JSON_GROUP_FILE_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse game version map file argument flag
 	if(!gameVersionValue.HasMember(JSON_MAP_FILE_ARGUMENT_FLAG_PROPERTY_NAME)) {
-		fmt::print("Game version is missing '{}' property.\n", JSON_MAP_FILE_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version is missing '{}' property.", JSON_MAP_FILE_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & mapFileArgumentFlagValue = gameVersionValue[JSON_MAP_FILE_ARGUMENT_FLAG_PROPERTY_NAME];
 
 	if(!mapFileArgumentFlagValue.IsString()) {
-		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_MAP_FILE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(mapFileArgumentFlagValue.GetType()));
+		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_MAP_FILE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(mapFileArgumentFlagValue.GetType()));
 		return nullptr;
 	}
 
 	std::string mapFileArgumentFlag(mapFileArgumentFlagValue.GetString());
 
 	if(mapFileArgumentFlag.empty()) {
-		fmt::print("Game version '{}' property cannot be empty.\n", JSON_MAP_FILE_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version '{}' property cannot be empty.", JSON_MAP_FILE_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse game version episode argument flag
 	if(!gameVersionValue.HasMember(JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME)) {
-		fmt::print("Game version is missing '{}' property.\n", JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version is missing '{}' property.", JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & episodeArgumentFlagValue = gameVersionValue[JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME];
 
 	if(!episodeArgumentFlagValue.IsString()) {
-		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(episodeArgumentFlagValue.GetType()));
+		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(episodeArgumentFlagValue.GetType()));
 		return nullptr;
 	}
 
 	std::string episodeArgumentFlag(episodeArgumentFlagValue.GetString());
 
 	if(episodeArgumentFlag.empty()) {
-		fmt::print("Game version '{}' property cannot be empty.\n", JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version '{}' property cannot be empty.", JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse game version level argument flag
 	if(!gameVersionValue.HasMember(JSON_LEVEL_ARGUMENT_FLAG_PROPERTY_NAME)) {
-		fmt::print("Game version is missing '{}' property.\n", JSON_LEVEL_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version is missing '{}' property.", JSON_LEVEL_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & levelArgumentFlagValue = gameVersionValue[JSON_LEVEL_ARGUMENT_FLAG_PROPERTY_NAME];
 
 	if(!levelArgumentFlagValue.IsString()) {
-		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_LEVEL_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(levelArgumentFlagValue.GetType()));
+		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_LEVEL_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(levelArgumentFlagValue.GetType()));
 		return nullptr;
 	}
 
 	std::string levelArgumentFlag(levelArgumentFlagValue.GetString());
 
 	if(levelArgumentFlag.empty()) {
-		fmt::print("Game version '{}' property cannot be empty.\n", JSON_LEVEL_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version '{}' property cannot be empty.", JSON_LEVEL_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse game version skill argument flag
 	if(!gameVersionValue.HasMember(JSON_SKILL_ARGUMENT_FLAG_PROPERTY_NAME)) {
-		fmt::print("Game version is missing '{}' property.\n", JSON_SKILL_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version is missing '{}' property.", JSON_SKILL_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & skillArgumentFlagValue = gameVersionValue[JSON_SKILL_ARGUMENT_FLAG_PROPERTY_NAME];
 
 	if(!skillArgumentFlagValue.IsString()) {
-		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_SKILL_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(skillArgumentFlagValue.GetType()));
+		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_SKILL_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(skillArgumentFlagValue.GetType()));
 		return nullptr;
 	}
 
 	std::string skillArgumentFlag(skillArgumentFlagValue.GetString());
 
 	if(skillArgumentFlag.empty()) {
-		fmt::print("Game version '{}' property cannot be empty.\n", JSON_SKILL_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version '{}' property cannot be empty.", JSON_SKILL_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse game version record demo argument flag
 	if(!gameVersionValue.HasMember(JSON_RECORD_DEMO_ARGUMENT_FLAG_PROPERTY_NAME)) {
-		fmt::print("Game version is missing '{}' property.\n", JSON_RECORD_DEMO_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version is missing '{}' property.", JSON_RECORD_DEMO_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & recordDemoArgumentFlagValue = gameVersionValue[JSON_RECORD_DEMO_ARGUMENT_FLAG_PROPERTY_NAME];
 
 	if(!recordDemoArgumentFlagValue.IsString()) {
-		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_RECORD_DEMO_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(recordDemoArgumentFlagValue.GetType()));
+		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_RECORD_DEMO_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(recordDemoArgumentFlagValue.GetType()));
 		return nullptr;
 	}
 
 	std::string recordDemoArgumentFlag(recordDemoArgumentFlagValue.GetString());
 
 	if(recordDemoArgumentFlag.empty()) {
-		fmt::print("Game version '{}' property cannot be empty.\n", JSON_RECORD_DEMO_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version '{}' property cannot be empty.", JSON_RECORD_DEMO_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -1108,7 +1108,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & playDemoArgumentFlagValue = gameVersionValue[JSON_PLAY_DEMO_ARGUMENT_FLAG_PROPERTY_NAME];
 
 		if(!playDemoArgumentFlagValue.IsString()) {
-			fmt::print("Mod file '{}' property has invalid type: '{}', expected 'string'.\n", JSON_PLAY_DEMO_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(playDemoArgumentFlagValue.GetType()));
+			spdlog::error("Mod file '{}' property has invalid type: '{}', expected 'string'.", JSON_PLAY_DEMO_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(playDemoArgumentFlagValue.GetType()));
 			return nullptr;
 		}
 
@@ -1117,121 +1117,121 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 
 	// parse game version respawn mode argument flag
 	if(!gameVersionValue.HasMember(JSON_RESPAWN_MODE_ARGUMENT_FLAG_PROPERTY_NAME)) {
-		fmt::print("Game version is missing '{}' property.\n", JSON_RESPAWN_MODE_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version is missing '{}' property.", JSON_RESPAWN_MODE_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & respawnModeArgumentFlagValue = gameVersionValue[JSON_RESPAWN_MODE_ARGUMENT_FLAG_PROPERTY_NAME];
 
 	if(!respawnModeArgumentFlagValue.IsString()) {
-		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_RESPAWN_MODE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(respawnModeArgumentFlagValue.GetType()));
+		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_RESPAWN_MODE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(respawnModeArgumentFlagValue.GetType()));
 		return nullptr;
 	}
 
 	std::string respawnModeArgumentFlag(respawnModeArgumentFlagValue.GetString());
 
 	if(respawnModeArgumentFlag.empty()) {
-		fmt::print("Game version '{}' property cannot be empty.\n", JSON_RESPAWN_MODE_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version '{}' property cannot be empty.", JSON_RESPAWN_MODE_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse game version weapon switch order argument flag
 	if(!gameVersionValue.HasMember(JSON_WEAPON_SWITCH_ORDER_ARGUMENT_FLAG_PROPERTY_NAME)) {
-		fmt::print("Game version is missing '{}' property.\n", JSON_WEAPON_SWITCH_ORDER_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version is missing '{}' property.", JSON_WEAPON_SWITCH_ORDER_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & weaponSwitchOrderArgumentFlagValue = gameVersionValue[JSON_WEAPON_SWITCH_ORDER_ARGUMENT_FLAG_PROPERTY_NAME];
 
 	if(!weaponSwitchOrderArgumentFlagValue.IsString()) {
-		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_WEAPON_SWITCH_ORDER_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(weaponSwitchOrderArgumentFlagValue.GetType()));
+		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_WEAPON_SWITCH_ORDER_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(weaponSwitchOrderArgumentFlagValue.GetType()));
 		return nullptr;
 	}
 
 	std::string weaponSwitchOrderArgumentFlag(weaponSwitchOrderArgumentFlagValue.GetString());
 
 	if(weaponSwitchOrderArgumentFlag.empty()) {
-		fmt::print("Game version '{}' property cannot be empty.\n", JSON_WEAPON_SWITCH_ORDER_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version '{}' property cannot be empty.", JSON_WEAPON_SWITCH_ORDER_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse game version disable monsters argument flag
 	if(!gameVersionValue.HasMember(JSON_DISABLE_MONSTERS_ARGUMENT_FLAG_PROPERTY_NAME)) {
-		fmt::print("Game version is missing '{}' property.\n", JSON_DISABLE_MONSTERS_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version is missing '{}' property.", JSON_DISABLE_MONSTERS_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & disableMonstersArgumentFlagValue = gameVersionValue[JSON_DISABLE_MONSTERS_ARGUMENT_FLAG_PROPERTY_NAME];
 
 	if(!disableMonstersArgumentFlagValue.IsString()) {
-		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_DISABLE_MONSTERS_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(disableMonstersArgumentFlagValue.GetType()));
+		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_DISABLE_MONSTERS_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(disableMonstersArgumentFlagValue.GetType()));
 		return nullptr;
 	}
 
 	std::string disableMonstersArgumentFlag(disableMonstersArgumentFlagValue.GetString());
 
 	if(disableMonstersArgumentFlag.empty()) {
-		fmt::print("Game version '{}' property cannot be empty.\n", JSON_DISABLE_MONSTERS_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version '{}' property cannot be empty.", JSON_DISABLE_MONSTERS_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse game version disable sound argument flag
 	if(!gameVersionValue.HasMember(JSON_DISABLE_SOUND_ARGUMENT_FLAG_PROPERTY_NAME)) {
-		fmt::print("Game version is missing '{}' property.\n", JSON_DISABLE_SOUND_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version is missing '{}' property.", JSON_DISABLE_SOUND_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & disableSoundArgumentFlagValue = gameVersionValue[JSON_DISABLE_SOUND_ARGUMENT_FLAG_PROPERTY_NAME];
 
 	if(!disableSoundArgumentFlagValue.IsString()) {
-		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_DISABLE_SOUND_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(disableSoundArgumentFlagValue.GetType()));
+		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_DISABLE_SOUND_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(disableSoundArgumentFlagValue.GetType()));
 		return nullptr;
 	}
 
 	std::string disableSoundArgumentFlag(disableSoundArgumentFlagValue.GetString());
 
 	if(disableSoundArgumentFlag.empty()) {
-		fmt::print("Game version '{}' property cannot be empty.\n", JSON_DISABLE_SOUND_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version '{}' property cannot be empty.", JSON_DISABLE_SOUND_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse game version disable music argument flag
 	if(!gameVersionValue.HasMember(JSON_DISABLE_MUSIC_ARGUMENT_FLAG_PROPERTY_NAME)) {
-		fmt::print("Game version is missing '{}' property.\n", JSON_DISABLE_MUSIC_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version is missing '{}' property.", JSON_DISABLE_MUSIC_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & disableMusicArgumentFlagValue = gameVersionValue[JSON_DISABLE_MUSIC_ARGUMENT_FLAG_PROPERTY_NAME];
 
 	if(!disableMusicArgumentFlagValue.IsString()) {
-		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_DISABLE_MUSIC_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(disableMusicArgumentFlagValue.GetType()));
+		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_DISABLE_MUSIC_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(disableMusicArgumentFlagValue.GetType()));
 		return nullptr;
 	}
 
 	std::string disableMusicArgumentFlag(disableMusicArgumentFlagValue.GetString());
 
 	if(disableMusicArgumentFlag.empty()) {
-		fmt::print("Game version '{}' property cannot be empty.\n", JSON_DISABLE_MUSIC_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version '{}' property cannot be empty.", JSON_DISABLE_MUSIC_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse game version mod directory name
 	if(!gameVersionValue.HasMember(JSON_MOD_DIRECTORY_NAME_PROPERTY_NAME)) {
-		fmt::print("Game version is missing '{}' property.\n", JSON_MOD_DIRECTORY_NAME_PROPERTY_NAME);
+		spdlog::error("Game version is missing '{}' property.", JSON_MOD_DIRECTORY_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & modDirectoryNameValue = gameVersionValue[JSON_MOD_DIRECTORY_NAME_PROPERTY_NAME];
 
 	if(!modDirectoryNameValue.IsString()) {
-		fmt::print("Game version has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_MOD_DIRECTORY_NAME_PROPERTY_NAME, Utilities::typeToString(modDirectoryNameValue.GetType()));
+		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_MOD_DIRECTORY_NAME_PROPERTY_NAME, Utilities::typeToString(modDirectoryNameValue.GetType()));
 		return nullptr;
 	}
 
 	std::string modDirectoryName(Utilities::trimString(modDirectoryNameValue.GetString()));
 
 	if(modDirectoryName.empty()) {
-		fmt::print("Game version '{}' property cannot be empty.\n", JSON_MOD_DIRECTORY_NAME_PROPERTY_NAME);
+		spdlog::error("Game version '{}' property cannot be empty.", JSON_MOD_DIRECTORY_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -1243,7 +1243,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & defFileArgumentFlagValue = gameVersionValue[JSON_DEF_FILE_ARGUMENT_FLAG_PROPERTY_NAME];
 
 		if(!defFileArgumentFlagValue.IsString()) {
-			fmt::print("Mod file '{}' property has invalid type: '{}', expected 'string'.\n", JSON_DEF_FILE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(defFileArgumentFlagValue.GetType()));
+			spdlog::error("Mod file '{}' property has invalid type: '{}', expected 'string'.", JSON_DEF_FILE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(defFileArgumentFlagValue.GetType()));
 			return nullptr;
 		}
 
@@ -1255,7 +1255,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & requiresCombinedGroupValue = gameVersionValue[JSON_REQUIRES_COMBINED_GROUP_PROPERTY_NAME];
 
 		if(!requiresCombinedGroupValue.IsBool()) {
-			fmt::print("Game version '{}' property has invalid type: '{}', expected 'boolean'.\n", JSON_REQUIRES_COMBINED_GROUP_PROPERTY_NAME, Utilities::typeToString(requiresCombinedGroupValue.GetType()));
+			spdlog::error("Game version '{}' property has invalid type: '{}', expected 'boolean'.", JSON_REQUIRES_COMBINED_GROUP_PROPERTY_NAME, Utilities::typeToString(requiresCombinedGroupValue.GetType()));
 			return nullptr;
 		}
 
@@ -1267,7 +1267,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & requiresDOSBoxValue = gameVersionValue[JSON_REQUIRES_DOSBOX_PROPERTY_NAME];
 
 		if(!requiresDOSBoxValue.IsBool()) {
-			fmt::print("Game version '{}' property has invalid type: '{}', expected 'boolean'.\n", JSON_REQUIRES_DOSBOX_PROPERTY_NAME, Utilities::typeToString(requiresDOSBoxValue.GetType()));
+			spdlog::error("Game version '{}' property has invalid type: '{}', expected 'boolean'.", JSON_REQUIRES_DOSBOX_PROPERTY_NAME, Utilities::typeToString(requiresDOSBoxValue.GetType()));
 			return nullptr;
 		}
 
@@ -1279,7 +1279,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & websiteValue = gameVersionValue[JSON_WEBSITE_PROPERTY_NAME];
 
 		if(!websiteValue.IsString()) {
-			fmt::print("Mod file '{}' property has invalid type: '{}', expected 'string'.\n", JSON_WEBSITE_PROPERTY_NAME, Utilities::typeToString(websiteValue.GetType()));
+			spdlog::error("Mod file '{}' property has invalid type: '{}', expected 'string'.", JSON_WEBSITE_PROPERTY_NAME, Utilities::typeToString(websiteValue.GetType()));
 			return nullptr;
 		}
 
@@ -1291,7 +1291,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & sourceCodeURLValue = gameVersionValue[JSON_SOURCE_CODE_URL_PROPERTY_NAME];
 
 		if(!sourceCodeURLValue.IsString()) {
-			fmt::print("Mod file '{}' property has invalid type: '{}', expected 'string'.\n", JSON_SOURCE_CODE_URL_PROPERTY_NAME, Utilities::typeToString(sourceCodeURLValue.GetType()));
+			spdlog::error("Mod file '{}' property has invalid type: '{}', expected 'string'.", JSON_SOURCE_CODE_URL_PROPERTY_NAME, Utilities::typeToString(sourceCodeURLValue.GetType()));
 			return nullptr;
 		}
 
@@ -1303,20 +1303,20 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & compatibleGameVersionsValue = gameVersionValue[JSON_COMPATIBLE_GAME_VERSIONS_PROPERTY_NAME];
 
 		if(!compatibleGameVersionsValue.IsArray()) {
-			fmt::print("Game version '{}' property has invalid type: '{}', expected 'array'.\n", JSON_COMPATIBLE_GAME_VERSIONS_PROPERTY_NAME, Utilities::typeToString(compatibleGameVersionsValue.GetType()));
+			spdlog::error("Game version '{}' property has invalid type: '{}', expected 'array'.", JSON_COMPATIBLE_GAME_VERSIONS_PROPERTY_NAME, Utilities::typeToString(compatibleGameVersionsValue.GetType()));
 			return nullptr;
 		}
 
 		for(rapidjson::Value::ConstValueIterator i = compatibleGameVersionsValue.Begin(); i != compatibleGameVersionsValue.End(); ++i) {
 			if(!i->IsString()) {
-				fmt::print("Game version '{}' property contains invalid compatible game version type: '{}', expected 'string'.\n", JSON_COMPATIBLE_GAME_VERSIONS_PROPERTY_NAME, Utilities::typeToString(i->GetType()));
+				spdlog::error("Game version '{}' property contains invalid compatible game version type: '{}', expected 'string'.", JSON_COMPATIBLE_GAME_VERSIONS_PROPERTY_NAME, Utilities::typeToString(i->GetType()));
 				return nullptr;
 			}
 
 			std::string compatibleGameVersion(Utilities::trimString(i->GetString()));
 
 			if(newGameVersion->hasCompatibleGameVersion(compatibleGameVersion)) {
-				fmt::print("Game version '{}' property contains duplicate compatible game version: '{}'.\n", JSON_COMPATIBLE_GAME_VERSIONS_PROPERTY_NAME, compatibleGameVersion);
+				spdlog::error("Game version '{}' property contains duplicate compatible game version: '{}'.", JSON_COMPATIBLE_GAME_VERSIONS_PROPERTY_NAME, compatibleGameVersion);
 				return nullptr;
 			}
 

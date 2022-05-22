@@ -4,6 +4,7 @@
 #include <Utilities/StringUtilities.h>
 
 #include <fmt/core.h>
+#include <spdlog/spdlog.h>
 
 #include <array>
 #include <string_view>
@@ -96,7 +97,7 @@ rapidjson::Value ModIdentifier::toJSON(rapidjson::MemoryPoolAllocator<rapidjson:
 
 std::unique_ptr<ModIdentifier> ModIdentifier::parseFrom(const rapidjson::Value & modIdentifierValue) {
 	if(!modIdentifierValue.IsObject()) {
-		fmt::print("Invalid mod identifier type: '{}', expected 'object'.\n", Utilities::typeToString(modIdentifierValue.GetType()));
+		spdlog::error("Invalid mod identifier type: '{}', expected 'object'.", Utilities::typeToString(modIdentifierValue.GetType()));
 		return nullptr;
 	}
 
@@ -114,28 +115,28 @@ std::unique_ptr<ModIdentifier> ModIdentifier::parseFrom(const rapidjson::Value &
 		}
 
 		if(!propertyHandled) {
-			fmt::print("Mod identifier has unexpected property '{}'.\n", i->name.GetString());
+			spdlog::error("Mod identifier has unexpected property '{}'.", i->name.GetString());
 			return nullptr;
 		}
 	}
 
 	// parse mod identifier name
 	if(!modIdentifierValue.HasMember(JSON_NAME_PROPERTY_NAME)) {
-		fmt::print("Mod identifier is missing '{}' property.\n", JSON_NAME_PROPERTY_NAME);
+		spdlog::error("Mod identifier is missing '{}' property.", JSON_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & modIdentifierNameValue = modIdentifierValue[JSON_NAME_PROPERTY_NAME];
 
 	if(!modIdentifierNameValue.IsString()) {
-		fmt::print("Mod identifier has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_NAME_PROPERTY_NAME, Utilities::typeToString(modIdentifierNameValue.GetType()));
+		spdlog::error("Mod identifier has an invalid '{}' property type: '{}', expected 'string'.", JSON_NAME_PROPERTY_NAME, Utilities::typeToString(modIdentifierNameValue.GetType()));
 		return nullptr;
 	}
 
 	std::string name(Utilities::trimString(modIdentifierNameValue.GetString()));
 
 	if(name.empty()) {
-		fmt::print("Mod identifier '{}' property cannot be empty.\n", JSON_NAME_PROPERTY_NAME);
+		spdlog::error("Mod identifier '{}' property cannot be empty.", JSON_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -146,7 +147,7 @@ std::unique_ptr<ModIdentifier> ModIdentifier::parseFrom(const rapidjson::Value &
 		const rapidjson::Value & modIdentifierVersionValue = modIdentifierValue[JSON_VERSION_PROPERTY_NAME];
 
 		if(!modIdentifierVersionValue.IsString()) {
-			fmt::print("Mod identifier has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_VERSION_PROPERTY_NAME, Utilities::typeToString(modIdentifierVersionValue.GetType()));
+			spdlog::error("Mod identifier has an invalid '{}' property type: '{}', expected 'string'.", JSON_VERSION_PROPERTY_NAME, Utilities::typeToString(modIdentifierVersionValue.GetType()));
 			return nullptr;
 		}
 
@@ -160,7 +161,7 @@ std::unique_ptr<ModIdentifier> ModIdentifier::parseFrom(const rapidjson::Value &
 		const rapidjson::Value & modIdentifierVersionTypeValue = modIdentifierValue[JSON_VERSION_TYPE_PROPERTY_NAME];
 
 		if(!modIdentifierVersionTypeValue.IsString()) {
-			fmt::print("Mod identifier has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_VERSION_TYPE_PROPERTY_NAME, Utilities::typeToString(modIdentifierVersionTypeValue.GetType()));
+			spdlog::error("Mod identifier has an invalid '{}' property type: '{}', expected 'string'.", JSON_VERSION_TYPE_PROPERTY_NAME, Utilities::typeToString(modIdentifierVersionTypeValue.GetType()));
 			return nullptr;
 		}
 

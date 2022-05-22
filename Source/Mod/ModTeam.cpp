@@ -6,7 +6,7 @@
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
 
-#include <fmt/core.h>
+#include <spdlog/spdlog.h>
 #include <tinyxml2.h>
 
 #include <array>
@@ -457,7 +457,7 @@ tinyxml2::XMLElement * ModTeam::toXML(tinyxml2::XMLDocument * document) const {
 
 std::unique_ptr<ModTeam> ModTeam::parseFrom(const rapidjson::Value & modTeamValue) {
 	if(!modTeamValue.IsObject()) {
-		fmt::print("Invalid mod team type: '{}', expected 'object'.\n", Utilities::typeToString(modTeamValue.GetType()));
+		spdlog::error("Invalid mod team type: '{}', expected 'object'.", Utilities::typeToString(modTeamValue.GetType()));
 		return nullptr;
 	}
 
@@ -475,7 +475,7 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const rapidjson::Value & modTeamValu
 		}
 
 		if(!propertyHandled) {
-			fmt::print("Mod team has unexpected property '{}'.\n", i->name.GetString());
+			spdlog::error("Mod team has unexpected property '{}'.", i->name.GetString());
 			return nullptr;
 		}
 	}
@@ -487,7 +487,7 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const rapidjson::Value & modTeamValu
 		const rapidjson::Value & modTeamProvinceValue = modTeamValue[JSON_MOD_TEAM_PROVINCE_PROPERTY_NAME];
 
 		if(!modTeamProvinceValue.IsString()) {
-			fmt::print("Mod team '{}' property has invalid type: '{}', expected 'string'.\n", JSON_MOD_TEAM_PROVINCE_PROPERTY_NAME, Utilities::typeToString(modTeamProvinceValue.GetType()));
+			spdlog::error("Mod team '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_TEAM_PROVINCE_PROPERTY_NAME, Utilities::typeToString(modTeamProvinceValue.GetType()));
 			return nullptr;
 		}
 
@@ -501,7 +501,7 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const rapidjson::Value & modTeamValu
 		const rapidjson::Value & modTeamStateValue = modTeamValue[JSON_MOD_TEAM_STATE_PROPERTY_NAME];
 
 		if(!modTeamStateValue.IsString()) {
-			fmt::print("Mod team '{}' property has invalid type: '{}', expected 'string'.\n", JSON_MOD_TEAM_STATE_PROPERTY_NAME, Utilities::typeToString(modTeamStateValue.GetType()));
+			spdlog::error("Mod team '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_TEAM_STATE_PROPERTY_NAME, Utilities::typeToString(modTeamStateValue.GetType()));
 			return nullptr;
 		}
 
@@ -509,7 +509,7 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const rapidjson::Value & modTeamValu
 	}
 
 	if(!modTeamProvince.empty() && !modTeamState.empty()) {
-		fmt::print("Mod team has both '{}' and '{}' attributes set to '{}' and '{}'' respectively, expected one or the other.\n", JSON_MOD_TEAM_PROVINCE_PROPERTY_NAME, JSON_MOD_TEAM_STATE_PROPERTY_NAME, modTeamProvince, modTeamState);
+		spdlog::error("Mod team has both '{}' and '{}' attributes set to '{}' and '{}'' respectively, expected one or the other.", JSON_MOD_TEAM_PROVINCE_PROPERTY_NAME, JSON_MOD_TEAM_STATE_PROPERTY_NAME, modTeamProvince, modTeamState);
 		return nullptr;
 	}
 
@@ -529,7 +529,7 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const rapidjson::Value & modTeamValu
 		const rapidjson::Value & modTeamNameValue = modTeamValue[JSON_MOD_TEAM_NAME_PROPERTY_NAME];
 
 		if(!modTeamNameValue.IsString()) {
-			fmt::print("Mod team '{}' property has invalid type: '{}', expected 'string'.\n", JSON_MOD_TEAM_NAME_PROPERTY_NAME, Utilities::typeToString(modTeamNameValue.GetType()));
+			spdlog::error("Mod team '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_TEAM_NAME_PROPERTY_NAME, Utilities::typeToString(modTeamNameValue.GetType()));
 			return nullptr;
 		}
 
@@ -541,7 +541,7 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const rapidjson::Value & modTeamValu
 		const rapidjson::Value & modTeamWebsiteValue = modTeamValue[JSON_MOD_TEAM_WEBSITE_PROPERTY_NAME];
 
 		if(!modTeamWebsiteValue.IsString()) {
-			fmt::print("Mod team '{}' property has invalid type: '{}', expected 'string'.\n", JSON_MOD_TEAM_WEBSITE_PROPERTY_NAME, Utilities::typeToString(modTeamWebsiteValue.GetType()));
+			spdlog::error("Mod team '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_TEAM_WEBSITE_PROPERTY_NAME, Utilities::typeToString(modTeamWebsiteValue.GetType()));
 			return nullptr;
 		}
 
@@ -553,7 +553,7 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const rapidjson::Value & modTeamValu
 		const rapidjson::Value & modTeamEmailValue = modTeamValue[JSON_MOD_TEAM_EMAIL_PROPERTY_NAME];
 
 		if(!modTeamEmailValue.IsString()) {
-			fmt::print("Mod team '{}' property has invalid type: '{}', expected 'string'.\n", JSON_MOD_TEAM_EMAIL_PROPERTY_NAME, Utilities::typeToString(modTeamEmailValue.GetType()));
+			spdlog::error("Mod team '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_TEAM_EMAIL_PROPERTY_NAME, Utilities::typeToString(modTeamEmailValue.GetType()));
 			return nullptr;
 		}
 
@@ -565,7 +565,7 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const rapidjson::Value & modTeamValu
 		const rapidjson::Value & modTeamCountyValue = modTeamValue[JSON_MOD_TEAM_COUNTY_PROPERTY_NAME];
 
 		if(!modTeamCountyValue.IsString()) {
-			fmt::print("Mod team '{}' property has invalid type: '{}', expected 'string'.\n", JSON_MOD_TEAM_COUNTY_PROPERTY_NAME, Utilities::typeToString(modTeamCountyValue.GetType()));
+			spdlog::error("Mod team '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_TEAM_COUNTY_PROPERTY_NAME, Utilities::typeToString(modTeamCountyValue.GetType()));
 			return nullptr;
 		}
 
@@ -577,7 +577,7 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const rapidjson::Value & modTeamValu
 		const rapidjson::Value & modTeamCityValue = modTeamValue[JSON_MOD_TEAM_CITY_PROPERTY_NAME];
 
 		if(!modTeamCityValue.IsString()) {
-			fmt::print("Mod team '{}' property has invalid type: '{}', expected 'string'.\n", JSON_MOD_TEAM_CITY_PROPERTY_NAME, Utilities::typeToString(modTeamCityValue.GetType()));
+			spdlog::error("Mod team '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_TEAM_CITY_PROPERTY_NAME, Utilities::typeToString(modTeamCityValue.GetType()));
 			return nullptr;
 		}
 
@@ -589,7 +589,7 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const rapidjson::Value & modTeamValu
 		const rapidjson::Value & modTeamCountryValue = modTeamValue[JSON_MOD_TEAM_COUNTRY_PROPERTY_NAME];
 
 		if(!modTeamCountryValue.IsString()) {
-			fmt::print("Mod team '{}' property has invalid type: '{}', expected 'string'.\n", JSON_MOD_TEAM_COUNTRY_PROPERTY_NAME, Utilities::typeToString(modTeamCountryValue.GetType()));
+			spdlog::error("Mod team '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_TEAM_COUNTRY_PROPERTY_NAME, Utilities::typeToString(modTeamCountryValue.GetType()));
 			return nullptr;
 		}
 
@@ -601,7 +601,7 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const rapidjson::Value & modTeamValu
 		const rapidjson::Value & modTeamMembersValue = modTeamValue[JSON_MOD_TEAM_MEMBERS_PROPERTY_NAME];
 
 		if(!modTeamMembersValue.IsArray()) {
-			fmt::print("Mod team '{}' property has invalid type: '{}', expected 'array'.\n", JSON_MOD_TEAM_MEMBERS_PROPERTY_NAME, Utilities::typeToString(modTeamMembersValue.GetType()));
+			spdlog::error("Mod team '{}' property has invalid type: '{}', expected 'array'.", JSON_MOD_TEAM_MEMBERS_PROPERTY_NAME, Utilities::typeToString(modTeamMembersValue.GetType()));
 			return nullptr;
 		}
 
@@ -611,14 +611,14 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const rapidjson::Value & modTeamValu
 			newModTeamMember = std::shared_ptr<ModTeamMember>(std::move(ModTeamMember::parseFrom(*i)).release());
 
 			if(!ModTeamMember::isValid(newModTeamMember.get())) {
-				fmt::print("Failed to parse mod team member #{}.\n", newModTeam->m_members.size() + 1);
+				spdlog::error("Failed to parse mod team member #{}.", newModTeam->m_members.size() + 1);
 				return nullptr;
 			}
 
 			newModTeamMember->setParentModTeam(newModTeam.get());
 
 			if(newModTeam->hasMember(*newModTeamMember.get())) {
-				fmt::print("Encountered duplicate mod team member #{}.\n", newModTeam->m_members.size() + 1);
+				spdlog::error("Encountered duplicate mod team member #{}.", newModTeam->m_members.size() + 1);
 				return nullptr;
 			}
 
@@ -636,7 +636,7 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const tinyxml2::XMLElement * modTeam
 
 	// verify element name
 	if(modTeamElement->Name() != XML_MOD_TEAM_ELEMENT_NAME) {
-		fmt::print("Invalid mod team element name: '{}', expected '{}'.\n", modTeamElement->Name(), XML_MOD_TEAM_ELEMENT_NAME);
+		spdlog::error("Invalid mod team element name: '{}', expected '{}'.", modTeamElement->Name(), XML_MOD_TEAM_ELEMENT_NAME);
 		return nullptr;
 	}
 
@@ -659,7 +659,7 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const tinyxml2::XMLElement * modTeam
 		}
 
 		if(!attributeHandled) {
-			fmt::print("Element '{}' has unexpected attribute '{}'.\n", XML_MOD_TEAM_ELEMENT_NAME, modTeamAttribute->Name());
+			spdlog::error("Element '{}' has unexpected attribute '{}'.", XML_MOD_TEAM_ELEMENT_NAME, modTeamAttribute->Name());
 			return nullptr;
 		}
 
@@ -677,7 +677,7 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const tinyxml2::XMLElement * modTeam
 	const char * teamWebsite = modTeamElement->Attribute(XML_MOD_TEAM_WEBSITE_ATTRIBUTE_NAME.c_str());
 
 	if(Utilities::stringLength(teamProvince) != 0 && Utilities::stringLength(teamState) != 0) {
-		fmt::print("Element '{}' has both '{}' and '{}' attributes set to '{}' and '{}'' respectively, expected one or the other.\n", XML_MOD_TEAM_ELEMENT_NAME, XML_MOD_TEAM_PROVINCE_ATTRIBUTE_NAME, XML_MOD_TEAM_STATE_ATTRIBUTE_NAME, teamProvince, teamState);
+		spdlog::error("Element '{}' has both '{}' and '{}' attributes set to '{}' and '{}'' respectively, expected one or the other.", XML_MOD_TEAM_ELEMENT_NAME, XML_MOD_TEAM_PROVINCE_ATTRIBUTE_NAME, XML_MOD_TEAM_STATE_ATTRIBUTE_NAME, teamProvince, teamState);
 		return nullptr;
 	}
 
@@ -718,14 +718,14 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const tinyxml2::XMLElement * modTeam
 			newModTeamMember = std::shared_ptr<ModTeamMember>(std::move(ModTeamMember::parseFrom(modTeamMemberElement)).release());
 
 			if(!ModTeamMember::isValid(newModTeamMember.get())) {
-				fmt::print("Failed to parse mod team member #{}.\n", newModTeam->m_members.size() + 1);
+				spdlog::error("Failed to parse mod team member #{}.", newModTeam->m_members.size() + 1);
 				return nullptr;
 			}
 
 			newModTeamMember->setParentModTeam(newModTeam.get());
 
 			if(newModTeam->hasMember(*newModTeamMember.get())) {
-				fmt::print("Encountered duplicate mod team member #{}.\n", newModTeam->m_members.size() + 1);
+				spdlog::error("Encountered duplicate mod team member #{}.", newModTeam->m_members.size() + 1);
 				return nullptr;
 			}
 

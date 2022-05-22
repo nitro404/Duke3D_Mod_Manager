@@ -3,7 +3,7 @@
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
 
-#include <fmt/core.h>
+#include <spdlog/spdlog.h>
 
 #include <array>
 
@@ -125,7 +125,7 @@ rapidjson::Value CachedPackageFile::toJSON(rapidjson::MemoryPoolAllocator<rapidj
 
 std::unique_ptr<CachedPackageFile> CachedPackageFile::parseFrom(const rapidjson::Value & cachedPackageFileValue) {
 	if(!cachedPackageFileValue.IsObject()) {
-		fmt::print("Invalid cached package file type: '{}', expected 'object'.\n", Utilities::typeToString(cachedPackageFileValue.GetType()));
+		spdlog::error("Invalid cached package file type: '{}', expected 'object'.", Utilities::typeToString(cachedPackageFileValue.GetType()));
 		return nullptr;
 	}
 
@@ -133,7 +133,7 @@ std::unique_ptr<CachedPackageFile> CachedPackageFile::parseFrom(const rapidjson:
 
 	// verify that the cached package file has an ETag
 	if(newCachedPackageFile->getETag().empty()) {
-		fmt::print("Cached package file '{}' property cannot be empty.\n", JSON_CACHED_FILE_ETAG_PROPERTY_NAME);
+		spdlog::error("Cached package file '{}' property cannot be empty.", JSON_CACHED_FILE_ETAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -151,21 +151,21 @@ std::unique_ptr<CachedPackageFile> CachedPackageFile::parseFrom(const rapidjson:
 		}
 
 		if(!propertyHandled) {
-			fmt::print("Cached package file has unexpected property '{}'.\n", i->name.GetString());
+			spdlog::error("Cached package file has unexpected property '{}'.", i->name.GetString());
 			return nullptr;
 		}
 	}
 
 	// parse the cached package file contents property
 	if(!cachedPackageFileValue.HasMember(JSON_CACHED_PACKAGE_FILE_CONTENTS_PROPERTY_NAME)) {
-		fmt::print("Cached package file is missing '{}' property'.\n", JSON_CACHED_PACKAGE_FILE_CONTENTS_PROPERTY_NAME);
+		spdlog::error("Cached package file is missing '{}' property'.", JSON_CACHED_PACKAGE_FILE_CONTENTS_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & cachedPackageFileContentsValue = cachedPackageFileValue[JSON_CACHED_PACKAGE_FILE_CONTENTS_PROPERTY_NAME];
 
 	if(!cachedPackageFileContentsValue.IsArray()) {
-		fmt::print("Cached package file '{}' property has invalid type: '{}', expected 'array'.\n", JSON_CACHED_PACKAGE_FILE_CONTENTS_PROPERTY_NAME, Utilities::typeToString(cachedPackageFileContentsValue.GetType()));
+		spdlog::error("Cached package file '{}' property has invalid type: '{}', expected 'array'.", JSON_CACHED_PACKAGE_FILE_CONTENTS_PROPERTY_NAME, Utilities::typeToString(cachedPackageFileContentsValue.GetType()));
 		return nullptr;
 	}
 
@@ -175,12 +175,12 @@ std::unique_ptr<CachedPackageFile> CachedPackageFile::parseFrom(const rapidjson:
 		newCachedFile = std::shared_ptr<CachedFile>(std::move(CachedFile::parseFrom(*i)).release());
 
 		if(!CachedFile::isValid(newCachedFile.get())) {
-			fmt::print("Failed to parse cached package file cached file #{}.\n", newCachedPackageFile->m_cachedFiles.size() + 1);
+			spdlog::error("Failed to parse cached package file cached file #{}.", newCachedPackageFile->m_cachedFiles.size() + 1);
 			return nullptr;
 		}
 
 		if(newCachedPackageFile->hasCachedFileWithName(newCachedFile->getFileName())) {
-			fmt::print("Encountered duplicate cached package file cached file #{}.\n", newCachedPackageFile->m_cachedFiles.size() + 1);
+			spdlog::error("Encountered duplicate cached package file cached file #{}.", newCachedPackageFile->m_cachedFiles.size() + 1);
 			return nullptr;
 		}
 
@@ -188,7 +188,7 @@ std::unique_ptr<CachedPackageFile> CachedPackageFile::parseFrom(const rapidjson:
 	}
 
 	if(newCachedPackageFile->m_cachedFiles.empty()) {
-		fmt::print("Failed to parse package file, cached file list is empty.\n");
+		spdlog::error("Failed to parse package file, cached file list is empty.");
 		return nullptr;
 	}
 

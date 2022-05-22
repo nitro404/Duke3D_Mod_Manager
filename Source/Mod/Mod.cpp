@@ -15,6 +15,7 @@
 #include <Utilities/StringUtilities.h>
 
 #include <fmt/core.h>
+#include <spdlog/spdlog.h>
 #include <tinyxml2.h>
 
 #include <algorithm>
@@ -1546,7 +1547,7 @@ tinyxml2::XMLElement * Mod::toXML(tinyxml2::XMLDocument * document) const {
 
 std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 	if(!modValue.IsObject()) {
-		fmt::print("Invalid mod type: '{}', expected 'object'.\n", Utilities::typeToString(modValue.GetType()));
+		spdlog::error("Invalid mod type: '{}', expected 'object'.", Utilities::typeToString(modValue.GetType()));
 		return nullptr;
 	}
 
@@ -1564,68 +1565,68 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 		}
 
 		if(!propertyHandled) {
-			fmt::print("Mod has unexpected property '{}'.\n", i->name.GetString());
+			spdlog::error("Mod has unexpected property '{}'.", i->name.GetString());
 			return nullptr;
 		}
 	}
 
 	// parse mod id
 	if(!modValue.HasMember(JSON_MOD_ID_PROPERTY_NAME)) {
-		fmt::print("Mod is missing '{}' property'.\n", JSON_MOD_ID_PROPERTY_NAME);
+		spdlog::error("Mod is missing '{}' property'.", JSON_MOD_ID_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & modIDValue = modValue[JSON_MOD_ID_PROPERTY_NAME];
 
 	if(!modIDValue.IsString()) {
-		fmt::print("Mod has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_MOD_ID_PROPERTY_NAME, Utilities::typeToString(modIDValue.GetType()));
+		spdlog::error("Mod has an invalid '{}' property type: '{}', expected 'string'.", JSON_MOD_ID_PROPERTY_NAME, Utilities::typeToString(modIDValue.GetType()));
 		return nullptr;
 	}
 
 	std::string modID(Utilities::trimString(modIDValue.GetString()));
 
 	if(modID.empty()) {
-		fmt::print("Mod '{}' property cannot be empty.\n", JSON_MOD_ID_PROPERTY_NAME);
+		spdlog::error("Mod '{}' property cannot be empty.", JSON_MOD_ID_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse mod name
 	if(!modValue.HasMember(JSON_MOD_NAME_PROPERTY_NAME)) {
-		fmt::print("Mod '{}' is missing '{}' property'.\n", modID, JSON_MOD_NAME_PROPERTY_NAME);
+		spdlog::error("Mod '{}' is missing '{}' property'.", modID, JSON_MOD_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & modNameValue = modValue[JSON_MOD_NAME_PROPERTY_NAME];
 
 	if(!modNameValue.IsString()) {
-		fmt::print("Mod '{}' has an invalid '{}' property type: '{}', expected 'string'.\n", modID, JSON_MOD_NAME_PROPERTY_NAME, Utilities::typeToString(modNameValue.GetType()));
+		spdlog::error("Mod '{}' has an invalid '{}' property type: '{}', expected 'string'.", modID, JSON_MOD_NAME_PROPERTY_NAME, Utilities::typeToString(modNameValue.GetType()));
 		return nullptr;
 	}
 
 	std::string modName(Utilities::trimString(modNameValue.GetString()));
 
 	if(modName.empty()) {
-		fmt::print("Mod '{}' '{}' property cannot be empty.\n", modID, JSON_MOD_NAME_PROPERTY_NAME);
+		spdlog::error("Mod '{}' '{}' property cannot be empty.", modID, JSON_MOD_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse mod type
 	if(!modValue.HasMember(JSON_MOD_TYPE_PROPERTY_NAME)) {
-		fmt::print("Mod '{}' is missing '{}' property'.\n", modID, JSON_MOD_TYPE_PROPERTY_NAME);
+		spdlog::error("Mod '{}' is missing '{}' property'.", modID, JSON_MOD_TYPE_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & modTypeValue = modValue[JSON_MOD_TYPE_PROPERTY_NAME];
 
 	if(!modTypeValue.IsString()) {
-		fmt::print("Mod '{}' has an invalid '{}' property type: '{}', expected 'string'.\n", modID, JSON_MOD_TYPE_PROPERTY_NAME, Utilities::typeToString(modTypeValue.GetType()));
+		spdlog::error("Mod '{}' has an invalid '{}' property type: '{}', expected 'string'.", modID, JSON_MOD_TYPE_PROPERTY_NAME, Utilities::typeToString(modTypeValue.GetType()));
 		return nullptr;
 	}
 
 	std::string modType(Utilities::trimString(modTypeValue.GetString()));
 
 	if(modType.empty()) {
-		fmt::print("Mod '{}' '{}' property cannot be empty.\n", modID, JSON_MOD_TYPE_PROPERTY_NAME);
+		spdlog::error("Mod '{}' '{}' property cannot be empty.", modID, JSON_MOD_TYPE_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -1637,7 +1638,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 		const rapidjson::Value & modPreferredVersionNameValue = modValue[JSON_MOD_PREFERRED_VERSION_NAME_PROPERTY_NAME];
 
 		if(!modPreferredVersionNameValue.IsString()) {
-			fmt::print("Mod '{}' '{}' property has invalid type: '{}', expected 'string'.\n", modID, JSON_MOD_PREFERRED_VERSION_NAME_PROPERTY_NAME, Utilities::typeToString(modPreferredVersionNameValue.GetType()));
+			spdlog::error("Mod '{}' '{}' property has invalid type: '{}', expected 'string'.", modID, JSON_MOD_PREFERRED_VERSION_NAME_PROPERTY_NAME, Utilities::typeToString(modPreferredVersionNameValue.GetType()));
 			return nullptr;
 		}
 
@@ -1649,7 +1650,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 		const rapidjson::Value & modDefaultVersionTypeValue = modValue[JSON_MOD_DEFAULT_VERSION_TYPE_PROPERTY_NAME];
 
 		if(!modDefaultVersionTypeValue.IsString()) {
-			fmt::print("Mod '{}' '{}' property has invalid type: '{}', expected 'string'.\n", modID, JSON_MOD_DEFAULT_VERSION_TYPE_PROPERTY_NAME, Utilities::typeToString(modDefaultVersionTypeValue.GetType()));
+			spdlog::error("Mod '{}' '{}' property has invalid type: '{}', expected 'string'.", modID, JSON_MOD_DEFAULT_VERSION_TYPE_PROPERTY_NAME, Utilities::typeToString(modDefaultVersionTypeValue.GetType()));
 			return nullptr;
 		}
 
@@ -1661,7 +1662,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 		const rapidjson::Value & modWebsiteValue = modValue[JSON_MOD_WEBSITE_PROPERTY_NAME];
 
 		if(!modWebsiteValue.IsString()) {
-			fmt::print("Mod '{}' '{}' property has invalid type: '{}', expected 'string'.\n", modID, JSON_MOD_WEBSITE_PROPERTY_NAME, Utilities::typeToString(modWebsiteValue.GetType()));
+			spdlog::error("Mod '{}' '{}' property has invalid type: '{}', expected 'string'.", modID, JSON_MOD_WEBSITE_PROPERTY_NAME, Utilities::typeToString(modWebsiteValue.GetType()));
 			return nullptr;
 		}
 
@@ -1673,14 +1674,14 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 		const rapidjson::Value & modTeamValue = modValue[JSON_MOD_TEAM_PROPERTY_NAME];
 
 		if(!modTeamValue.IsObject()) {
-			fmt::print("Mod '{}' '{}' property has invalid type: '{}', expected 'object'.\n", modID, JSON_MOD_TEAM_PROPERTY_NAME, Utilities::typeToString(modTeamValue.GetType()));
+			spdlog::error("Mod '{}' '{}' property has invalid type: '{}', expected 'object'.", modID, JSON_MOD_TEAM_PROPERTY_NAME, Utilities::typeToString(modTeamValue.GetType()));
 			return nullptr;
 		}
 
 		std::unique_ptr<ModTeam> newModTeam = std::move(ModTeam::parseFrom(modTeamValue));
 
 		if(!ModTeam::isValid(newModTeam.get())) {
-			fmt::print("Failed to parse mod team for mod with ID '{}'.\n", modID);
+			spdlog::error("Failed to parse mod team for mod with ID '{}'.", modID);
 			return false;
 		}
 
@@ -1690,19 +1691,19 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 
 	// parse the mod versions property
 	if(!modValue.HasMember(JSON_MOD_VERSIONS_PROPERTY_NAME)) {
-		fmt::print("Mod '{}' is missing or has an invalid '{}' property type: '{}', expected 'string'.\n", modID, JSON_MOD_VERSIONS_PROPERTY_NAME, Utilities::typeToString(modValue[JSON_MOD_VERSIONS_PROPERTY_NAME].GetType()));
+		spdlog::error("Mod '{}' is missing or has an invalid '{}' property type: '{}', expected 'string'.", modID, JSON_MOD_VERSIONS_PROPERTY_NAME, Utilities::typeToString(modValue[JSON_MOD_VERSIONS_PROPERTY_NAME].GetType()));
 		return nullptr;
 	}
 
 	const rapidjson::Value & modVersionsValue = modValue[JSON_MOD_VERSIONS_PROPERTY_NAME];
 
 	if(!modVersionsValue.IsArray()) {
-		fmt::print("Mod '{}' '{}' property has invalid type: '{}', expected 'array'.\n", modID, JSON_MOD_VERSIONS_PROPERTY_NAME, Utilities::typeToString(modVersionsValue.GetType()));
+		spdlog::error("Mod '{}' '{}' property has invalid type: '{}', expected 'array'.", modID, JSON_MOD_VERSIONS_PROPERTY_NAME, Utilities::typeToString(modVersionsValue.GetType()));
 		return nullptr;
 	}
 
 	if(modVersionsValue.Empty()) {
-		fmt::print("Mod '{}' '{}' property cannot be empty.\n", modID, JSON_MOD_VERSIONS_PROPERTY_NAME);
+		spdlog::error("Mod '{}' '{}' property cannot be empty.", modID, JSON_MOD_VERSIONS_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -1712,14 +1713,14 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 		newModVersion = std::shared_ptr<ModVersion>(std::move(ModVersion::parseFrom(*i)).release());
 
 		if(!ModVersion::isValid(newModVersion.get())) {
-			fmt::print("Failed to parse mod version #{} for mod with ID '{}'.\n", newMod->m_versions.size() + 1, modID);
+			spdlog::error("Failed to parse mod version #{} for mod with ID '{}'.", newMod->m_versions.size() + 1, modID);
 			return nullptr;
 		}
 
 		newModVersion->setParentMod(newMod.get());
 
 		if(newMod->hasVersion(*newModVersion.get())) {
-			fmt::print("Encountered duplicate mod version #{} for mod with ID '{}'.\n", newMod->m_versions.size() + 1, modID);
+			spdlog::error("Encountered duplicate mod version #{} for mod with ID '{}'.", newMod->m_versions.size() + 1, modID);
 			return nullptr;
 		}
 
@@ -1728,19 +1729,19 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 
 	// parse the mod downloads property
 	if(!modValue.HasMember(JSON_MOD_DOWNLOADS_PROPERTY_NAME)) {
-		fmt::print("Mod '{}' is missing or has an invalid '{}' property type: '{}', expected 'string'.\n", modID, JSON_MOD_DOWNLOADS_PROPERTY_NAME, Utilities::typeToString(modValue[JSON_MOD_DOWNLOADS_PROPERTY_NAME].GetType()));
+		spdlog::error("Mod '{}' is missing or has an invalid '{}' property type: '{}', expected 'string'.", modID, JSON_MOD_DOWNLOADS_PROPERTY_NAME, Utilities::typeToString(modValue[JSON_MOD_DOWNLOADS_PROPERTY_NAME].GetType()));
 		return nullptr;
 	}
 
 	const rapidjson::Value & modDownloadsValue = modValue[JSON_MOD_DOWNLOADS_PROPERTY_NAME];
 
 	if(!modDownloadsValue.IsArray()) {
-		fmt::print("Mod '{}' '{}' property has invalid type: '{}', expected 'array'.\n", modID, JSON_MOD_DOWNLOADS_PROPERTY_NAME, Utilities::typeToString(modDownloadsValue.GetType()));
+		spdlog::error("Mod '{}' '{}' property has invalid type: '{}', expected 'array'.", modID, JSON_MOD_DOWNLOADS_PROPERTY_NAME, Utilities::typeToString(modDownloadsValue.GetType()));
 		return nullptr;
 	}
 
 	if(modDownloadsValue.Empty()) {
-		fmt::print("Mod '{}' '{}' property cannot be empty.\n", modID, JSON_MOD_DOWNLOADS_PROPERTY_NAME);
+		spdlog::error("Mod '{}' '{}' property cannot be empty.", modID, JSON_MOD_DOWNLOADS_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -1750,14 +1751,14 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 		newModDownload = std::shared_ptr<ModDownload>(std::move(ModDownload::parseFrom(*i)).release());
 
 		if(!ModDownload::isValid(newModDownload.get())) {
-			fmt::print("Failed to parse mod download #{} for mod with ID '{}'.\n", newMod->m_downloads.size() + 1, modID);
+			spdlog::error("Failed to parse mod download #{} for mod with ID '{}'.", newMod->m_downloads.size() + 1, modID);
 			return nullptr;
 		}
 
 		newModDownload->setParentMod(newMod.get());
 
 		if(newMod->hasDownload(*newModDownload.get())) {
-			fmt::print("Encountered duplicate mod download #{} for mod with ID '{}'.\n", newMod->m_downloads.size() + 1, modID);
+			spdlog::error("Encountered duplicate mod download #{} for mod with ID '{}'.", newMod->m_downloads.size() + 1, modID);
 			return nullptr;
 		}
 
@@ -1769,7 +1770,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 		const rapidjson::Value & modScreenshotsValue = modValue[JSON_MOD_SCREENSHOTS_PROPERTY_NAME];
 
 		if(!modScreenshotsValue.IsArray()) {
-			fmt::print("Mod '{}' '{}' property has invalid type: '{}', expected 'array'.\n", modID, JSON_MOD_SCREENSHOTS_PROPERTY_NAME, Utilities::typeToString(modScreenshotsValue.GetType()));
+			spdlog::error("Mod '{}' '{}' property has invalid type: '{}', expected 'array'.", modID, JSON_MOD_SCREENSHOTS_PROPERTY_NAME, Utilities::typeToString(modScreenshotsValue.GetType()));
 			return nullptr;
 		}
 
@@ -1779,14 +1780,14 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 			newModScreenshot = std::shared_ptr<ModScreenshot>(std::move(ModScreenshot::parseFrom(*i)).release());
 
 			if(!ModScreenshot::isValid(newModScreenshot.get())) {
-				fmt::print("Failed to parse mod screenshot #{} for mod with ID '{}'.\n", newMod->m_screenshots.size() + 1, modID);
+				spdlog::error("Failed to parse mod screenshot #{} for mod with ID '{}'.", newMod->m_screenshots.size() + 1, modID);
 				return nullptr;
 			}
 
 			newModScreenshot->setParentMod(newMod.get());
 
 			if(newMod->hasScreenshot(*newModScreenshot.get())) {
-				fmt::print("Encountered duplicate mod screenshot #{} for mod with ID '{}'.\n", newMod->m_screenshots.size() + 1, modID);
+				spdlog::error("Encountered duplicate mod screenshot #{} for mod with ID '{}'.", newMod->m_screenshots.size() + 1, modID);
 				return nullptr;
 			}
 
@@ -1799,7 +1800,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 		const rapidjson::Value & modImagesValue = modValue[JSON_MOD_IMAGES_PROPERTY_NAME];
 
 		if(!modImagesValue.IsArray()) {
-			fmt::print("Mod '{}' '{}' property has invalid type: '{}', expected 'array'.\n", modID, JSON_MOD_IMAGES_PROPERTY_NAME, Utilities::typeToString(modImagesValue.GetType()));
+			spdlog::error("Mod '{}' '{}' property has invalid type: '{}', expected 'array'.", modID, JSON_MOD_IMAGES_PROPERTY_NAME, Utilities::typeToString(modImagesValue.GetType()));
 			return nullptr;
 		}
 
@@ -1809,14 +1810,14 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 			newModImage = std::shared_ptr<ModImage>(std::move(ModImage::parseFrom(*i)).release());
 
 			if(!ModImage::isValid(newModImage.get())) {
-				fmt::print("Failed to parse mod image #{} for mod with ID '{}'.\n", newMod->m_images.size() + 1, modID);
+				spdlog::error("Failed to parse mod image #{} for mod with ID '{}'.", newMod->m_images.size() + 1, modID);
 				return nullptr;
 			}
 
 			newModImage->setParentMod(newMod.get());
 
 			if(newMod->hasImage(*newModImage.get())) {
-				fmt::print("Encountered duplicate mod image #{} for mod with ID '{}'.\n", newMod->m_images.size() + 1, modID);
+				spdlog::error("Encountered duplicate mod image #{} for mod with ID '{}'.", newMod->m_images.size() + 1, modID);
 				return nullptr;
 			}
 
@@ -1829,7 +1830,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 		const rapidjson::Value & modVideosValue = modValue[JSON_MOD_VIDEOS_PROPERTY_NAME];
 
 		if(!modVideosValue.IsArray()) {
-			fmt::print("Mod '{}' '{}' property has invalid type: '{}', expected 'array'.\n", modID, JSON_MOD_VIDEOS_PROPERTY_NAME, Utilities::typeToString(modVideosValue.GetType()));
+			spdlog::error("Mod '{}' '{}' property has invalid type: '{}', expected 'array'.", modID, JSON_MOD_VIDEOS_PROPERTY_NAME, Utilities::typeToString(modVideosValue.GetType()));
 			return nullptr;
 		}
 
@@ -1839,14 +1840,14 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 			newModVideo = std::shared_ptr<ModVideo>(std::move(ModVideo::parseFrom(*i)).release());
 
 			if(!ModVideo::isValid(newModVideo.get())) {
-				fmt::print("Failed to parse mod video #{} for mod with ID '{}'.\n", newMod->m_videos.size() + 1, modID);
+				spdlog::error("Failed to parse mod video #{} for mod with ID '{}'.", newMod->m_videos.size() + 1, modID);
 				return nullptr;
 			}
 
 			newModVideo->setParentMod(newMod.get());
 
 			if(newMod->hasVideo(*newModVideo.get())) {
-				fmt::print("Encountered duplicate mod video #{} for mod with ID '{}'.\n", newMod->m_videos.size() + 1, modID);
+				spdlog::error("Encountered duplicate mod video #{} for mod with ID '{}'.", newMod->m_videos.size() + 1, modID);
 				return nullptr;
 			}
 
@@ -1859,7 +1860,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 		const rapidjson::Value & modNotesValue = modValue[JSON_MOD_NOTES_PROPERTY_NAME];
 
 		if(!modNotesValue.IsArray()) {
-			fmt::print("Mod '{}' '{}' property has invalid type: '{}', expected 'array'.\n", modID, JSON_MOD_NOTES_PROPERTY_NAME, Utilities::typeToString(modNotesValue.GetType()));
+			spdlog::error("Mod '{}' '{}' property has invalid type: '{}', expected 'array'.", modID, JSON_MOD_NOTES_PROPERTY_NAME, Utilities::typeToString(modNotesValue.GetType()));
 			return nullptr;
 		}
 
@@ -1867,12 +1868,12 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 			std::string note(Utilities::trimString((*i).GetString()));
 
 			if(note.empty()) {
-				fmt::print("Encountered empty note #{} for mod with ID '{}'.\n", newMod->m_notes.size() + 1, modID);
+				spdlog::error("Encountered empty note #{} for mod with ID '{}'.", newMod->m_notes.size() + 1, modID);
 				return nullptr;
 			}
 
 			if(newMod->hasNote(note)) {
-				fmt::print("Encountered duplicate mod note #{} for mod with ID '{}'.\n", newMod->m_notes.size() + 1, modID);
+				spdlog::error("Encountered duplicate mod note #{} for mod with ID '{}'.", newMod->m_notes.size() + 1, modID);
 				return nullptr;
 			}
 
@@ -1885,7 +1886,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 		const rapidjson::Value & modRelatedModsValue = modValue[JSON_MOD_RELATED_MODS_PROPERTY_NAME];
 
 		if(!modRelatedModsValue.IsArray()) {
-			fmt::print("Mod '{}' '{}' property has invalid type: '{}', expected 'array'.\n", modID, JSON_MOD_RELATED_MODS_PROPERTY_NAME, Utilities::typeToString(modRelatedModsValue.GetType()));
+			spdlog::error("Mod '{}' '{}' property has invalid type: '{}', expected 'array'.", modID, JSON_MOD_RELATED_MODS_PROPERTY_NAME, Utilities::typeToString(modRelatedModsValue.GetType()));
 			return nullptr;
 		}
 
@@ -1893,12 +1894,12 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 			std::string relatedMod(Utilities::trimString((*i).GetString()));
 
 			if(relatedMod.empty()) {
-				fmt::print("Encountered empty related mod #{} for mod with ID '{}'.\n", newMod->m_relatedMods.size() + 1, modID);
+				spdlog::error("Encountered empty related mod #{} for mod with ID '{}'.", newMod->m_relatedMods.size() + 1, modID);
 				return nullptr;
 			}
 
 			if(newMod->hasRelatedMod(relatedMod)) {
-				fmt::print("Encountered duplicate mod related mod #{} for mod with ID '{}'.\n", newMod->m_relatedMods.size() + 1, modID);
+				spdlog::error("Encountered duplicate mod related mod #{} for mod with ID '{}'.", newMod->m_relatedMods.size() + 1, modID);
 				return nullptr;
 			}
 
@@ -1916,7 +1917,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 
 	// verify element name
 	if(modElement->Name() != XML_MOD_ELEMENT_NAME) {
-		fmt::print("Invalid mod element name: '{}', expected '{}'.\n", modElement->Name(), XML_MOD_ELEMENT_NAME);
+		spdlog::error("Invalid mod element name: '{}', expected '{}'.", modElement->Name(), XML_MOD_ELEMENT_NAME);
 		return nullptr;
 	}
 
@@ -1939,7 +1940,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 		}
 
 		if(!attributeHandled) {
-			fmt::print("Element '{}' has unexpected attribute '{}'.\n", XML_MOD_ELEMENT_NAME, modAttribute->Name());
+			spdlog::error("Element '{}' has unexpected attribute '{}'.", XML_MOD_ELEMENT_NAME, modAttribute->Name());
 			return nullptr;
 		}
 
@@ -1965,7 +1966,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 		}
 
 		if(!elementHandled) {
-			fmt::print("Element '{}' has unexpected child element '{}'.\n", XML_MOD_ELEMENT_NAME, modChildElement->Name());
+			spdlog::error("Element '{}' has unexpected child element '{}'.", XML_MOD_ELEMENT_NAME, modChildElement->Name());
 			return nullptr;
 		}
 
@@ -1976,7 +1977,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 	const char * modID = modElement->Attribute(XML_MOD_ID_ATTRIBUTE_NAME.c_str());
 
 	if(modID == nullptr || Utilities::stringLength(modID) == 0) {
-		fmt::print("Attribute '{}' is missing from '{}' element.\n", XML_MOD_ID_ATTRIBUTE_NAME, XML_MOD_ELEMENT_NAME);
+		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_ID_ATTRIBUTE_NAME, XML_MOD_ELEMENT_NAME);
 		return nullptr;
 	}
 
@@ -1984,7 +1985,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 	const char * modName = modElement->Attribute(XML_MOD_NAME_ATTRIBUTE_NAME.c_str());
 
 	if(modName == nullptr || Utilities::stringLength(modName) == 0) {
-		fmt::print("Attribute '{}' is missing from '{}' element.\n", XML_MOD_NAME_ATTRIBUTE_NAME, XML_MOD_ELEMENT_NAME);
+		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_NAME_ATTRIBUTE_NAME, XML_MOD_ELEMENT_NAME);
 		return nullptr;
 	}
 
@@ -1992,7 +1993,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 	const char * modType = modElement->Attribute(XML_MOD_TYPE_ATTRIBUTE_NAME.c_str());
 
 	if(modType == nullptr || Utilities::stringLength(modType) == 0) {
-		fmt::print("Attribute '{}' is missing from '{}' element with ID '{}'.\n", XML_MOD_TYPE_ATTRIBUTE_NAME, XML_MOD_ELEMENT_NAME, modID);
+		spdlog::error("Attribute '{}' is missing from '{}' element with ID '{}'.", XML_MOD_TYPE_ATTRIBUTE_NAME, XML_MOD_ELEMENT_NAME, modID);
 		return nullptr;
 	}
 
@@ -2025,14 +2026,14 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 
 	if(modTeamElement != nullptr) {
 		if(modTeamElement->NextSiblingElement(XML_MOD_TEAM_ELEMENT_NAME.c_str())) {
-			fmt::print("Encountered more than one '{}' child element of '{}' element with ID '{}'.\n", XML_MOD_TEAM_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
+			spdlog::error("Encountered more than one '{}' child element of '{}' element with ID '{}'.", XML_MOD_TEAM_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
 			return nullptr;
 		}
 
 		std::unique_ptr<ModTeam> newModTeam(std::move(ModTeam::parseFrom(modTeamElement)));
 
 		if(!ModTeam::isValid(newModTeam.get())) {
-			fmt::print("Failed to parse mod team for '{}' element with ID '{}'.\n", XML_MOD_ELEMENT_NAME, modID);
+			spdlog::error("Failed to parse mod team for '{}' element with ID '{}'.", XML_MOD_ELEMENT_NAME, modID);
 			return false;
 		}
 
@@ -2044,12 +2045,12 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 	const tinyxml2::XMLElement * modFilesElement = modElement->FirstChildElement(XML_FILES_ELEMENT_NAME.c_str());
 
 	if(modFilesElement == nullptr) {
-		fmt::print("Element '{}' is missing from '{}' element with ID '{}'.\n", XML_FILES_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
+		spdlog::error("Element '{}' is missing from '{}' element with ID '{}'.", XML_FILES_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
 		return nullptr;
 	}
 
 	if(modFilesElement->NextSiblingElement(XML_FILES_ELEMENT_NAME.c_str())) {
-		fmt::print("Encountered more than one '{}' child element of '{}' element with ID '{}'.\n", XML_FILES_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
+		spdlog::error("Encountered more than one '{}' child element of '{}' element with ID '{}'.", XML_FILES_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
 		return nullptr;
 	}
 
@@ -2057,7 +2058,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 	const tinyxml2::XMLElement * modVersionElement = modFilesElement->FirstChildElement();
 
 	if(modVersionElement == nullptr) {
-		fmt::print("Element '{}' has no children in element '{}' with ID '{}'.\n", XML_FILES_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
+		spdlog::error("Element '{}' has no children in element '{}' with ID '{}'.", XML_FILES_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
 		return nullptr;
 	}
 
@@ -2071,14 +2072,14 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 		newModVersion = std::shared_ptr<ModVersion>(std::move(ModVersion::parseFrom(modVersionElement)).release());
 
 		if(!ModVersion::isValid(newModVersion.get())) {
-			fmt::print("Failed to parse mod version #{} for '{}' element with ID '{}'.\n", mod->m_versions.size() + 1, XML_MOD_ELEMENT_NAME, modID);
+			spdlog::error("Failed to parse mod version #{} for '{}' element with ID '{}'.", mod->m_versions.size() + 1, XML_MOD_ELEMENT_NAME, modID);
 			return nullptr;
 		}
 
 		newModVersion->setParentMod(mod.get());
 
 		if(mod->hasVersion(*newModVersion.get())) {
-			fmt::print("Encountered duplicate mod version #{} for '{}' element with ID '{}'.\n", mod->m_versions.size() + 1, XML_MOD_ELEMENT_NAME, modID);
+			spdlog::error("Encountered duplicate mod version #{} for '{}' element with ID '{}'.", mod->m_versions.size() + 1, XML_MOD_ELEMENT_NAME, modID);
 			return nullptr;
 		}
 
@@ -2091,12 +2092,12 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 	const tinyxml2::XMLElement * modDownloadsElement = modElement->FirstChildElement(XML_DOWNLOADS_ELEMENT_NAME.c_str());
 
 	if(modDownloadsElement == nullptr) {
-		fmt::print("Element '{}' with id '{}' is missing child element '{}'.\n", XML_MOD_ELEMENT_NAME, modID, XML_DOWNLOADS_ELEMENT_NAME);
+		spdlog::error("Element '{}' with id '{}' is missing child element '{}'.", XML_MOD_ELEMENT_NAME, modID, XML_DOWNLOADS_ELEMENT_NAME);
 		return nullptr;
 	}
 
 	if(modDownloadsElement->NextSiblingElement(XML_DOWNLOADS_ELEMENT_NAME.c_str())) {
-		fmt::print("Encountered more than one '{}' child element of '{}' element with ID '{}'.\n", XML_DOWNLOADS_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
+		spdlog::error("Encountered more than one '{}' child element of '{}' element with ID '{}'.", XML_DOWNLOADS_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
 		return nullptr;
 	}
 
@@ -2112,14 +2113,14 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 		newModDownload = std::shared_ptr<ModDownload>(std::move(ModDownload::parseFrom(modDownloadElement)).release());
 
 		if(!ModDownload::isValid(newModDownload.get())) {
-			fmt::print("Failed to parse mod download #{} for '{}' element with ID '{}'.\n", mod->m_downloads.size() + 1, XML_MOD_ELEMENT_NAME, modID);
+			spdlog::error("Failed to parse mod download #{} for '{}' element with ID '{}'.", mod->m_downloads.size() + 1, XML_MOD_ELEMENT_NAME, modID);
 			return nullptr;
 		}
 
 		newModDownload->setParentMod(mod.get());
 
 		if(mod->hasDownload(*newModDownload.get())) {
-			fmt::print("Encountered duplicate mod download #{} for '{}' element with ID '{}'.\n", mod->m_downloads.size() + 1, XML_MOD_ELEMENT_NAME, modID);
+			spdlog::error("Encountered duplicate mod download #{} for '{}' element with ID '{}'.", mod->m_downloads.size() + 1, XML_MOD_ELEMENT_NAME, modID);
 			return nullptr;
 		}
 
@@ -2133,7 +2134,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 
 	if(modScreenshotsElement != nullptr) {
 		if(modScreenshotsElement->NextSiblingElement(XML_SCREENSHOTS_ELEMENT_NAME.c_str())) {
-			fmt::print("Encountered more than one '{}' child element of '{}' element with ID '{}'.\n", XML_SCREENSHOTS_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
+			spdlog::error("Encountered more than one '{}' child element of '{}' element with ID '{}'.", XML_SCREENSHOTS_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
 			return nullptr;
 		}
 
@@ -2149,14 +2150,14 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 			newModScreenshot = std::move(std::shared_ptr<ModScreenshot>(ModScreenshot::parseFrom(modScreenshotElement).release()));
 
 			if(!ModScreenshot::isValid(newModScreenshot.get())) {
-				fmt::print("Failed to parse mod screenshot #{} for '{}' element with ID '{}'.\n", mod->m_screenshots.size() + 1, XML_MOD_ELEMENT_NAME, modID);
+				spdlog::error("Failed to parse mod screenshot #{} for '{}' element with ID '{}'.", mod->m_screenshots.size() + 1, XML_MOD_ELEMENT_NAME, modID);
 				return nullptr;
 			}
 
 			newModScreenshot->setParentMod(mod.get());
 
 			if(mod->hasScreenshot(*newModScreenshot.get())) {
-				fmt::print("Encountered duplicate mod download #{} for '{}' element with ID '{}'.\n", mod->m_screenshots.size() + 1, XML_MOD_ELEMENT_NAME, modID);
+				spdlog::error("Encountered duplicate mod download #{} for '{}' element with ID '{}'.", mod->m_screenshots.size() + 1, XML_MOD_ELEMENT_NAME, modID);
 				return nullptr;
 			}
 
@@ -2171,7 +2172,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 
 	if(modImagesElement != nullptr) {
 		if(modImagesElement->NextSiblingElement(XML_IMAGES_ELEMENT_NAME.c_str())) {
-			fmt::print("Encountered more than one '{}' child element of '{}' element with ID '{}'.\n", XML_IMAGES_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
+			spdlog::error("Encountered more than one '{}' child element of '{}' element with ID '{}'.", XML_IMAGES_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
 			return nullptr;
 		}
 
@@ -2187,14 +2188,14 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 			newModImage = std::shared_ptr<ModImage>(std::move(ModImage::parseFrom(modImageElement)).release());
 
 			if(!ModImage::isValid(newModImage.get())) {
-				fmt::print("Failed to parse mod image #{} for '{}' element with ID '{}'.\n", mod->m_images.size() + 1, XML_MOD_ELEMENT_NAME, modID);
+				spdlog::error("Failed to parse mod image #{} for '{}' element with ID '{}'.", mod->m_images.size() + 1, XML_MOD_ELEMENT_NAME, modID);
 				return nullptr;
 			}
 
 			newModImage->setParentMod(mod.get());
 
 			if(mod->hasImage(*newModImage.get())) {
-				fmt::print("Encountered duplicate mod download #{} for '{}' element with ID '{}'.\n", mod->m_images.size() + 1, XML_MOD_ELEMENT_NAME, modID);
+				spdlog::error("Encountered duplicate mod download #{} for '{}' element with ID '{}'.", mod->m_images.size() + 1, XML_MOD_ELEMENT_NAME, modID);
 				return nullptr;
 			}
 
@@ -2209,7 +2210,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 
 	if(modVideosElement != nullptr) {
 		if(modVideosElement->NextSiblingElement(XML_VIDEOS_ELEMENT_NAME.c_str())) {
-			fmt::print("Encountered more than one '{}' child element of '{}' element with ID '{}'.\n", XML_VIDEOS_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
+			spdlog::error("Encountered more than one '{}' child element of '{}' element with ID '{}'.", XML_VIDEOS_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
 			return nullptr;
 		}
 
@@ -2225,14 +2226,14 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 			newModVideo = std::shared_ptr<ModVideo>(std::move(ModVideo::parseFrom(modVideoElement)).release());
 
 			if(!ModVideo::isValid(newModVideo.get())) {
-				fmt::print("Failed to parse mod video #{} for '{}' element with ID '{}'.\n", mod->m_videos.size() + 1, XML_MOD_ELEMENT_NAME, modID);
+				spdlog::error("Failed to parse mod video #{} for '{}' element with ID '{}'.", mod->m_videos.size() + 1, XML_MOD_ELEMENT_NAME, modID);
 				return nullptr;
 			}
 
 			newModVideo->setParentMod(mod.get());
 
 			if(mod->hasVideo(*newModVideo.get())) {
-				fmt::print("Encountered duplicate mod download #{} for '{}' element with ID '{}'.\n", mod->m_videos.size() + 1, XML_MOD_ELEMENT_NAME, modID);
+				spdlog::error("Encountered duplicate mod download #{} for '{}' element with ID '{}'.", mod->m_videos.size() + 1, XML_MOD_ELEMENT_NAME, modID);
 				return nullptr;
 			}
 
@@ -2247,7 +2248,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 
 	if(modNotesElement != nullptr) {
 		if(modNotesElement->NextSiblingElement(XML_NOTES_ELEMENT_NAME.c_str())) {
-			fmt::print("Encountered more than one '{}' child element of '{}' element with ID '{}'.\n", XML_NOTES_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
+			spdlog::error("Encountered more than one '{}' child element of '{}' element with ID '{}'.", XML_NOTES_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
 			return nullptr;
 		}
 
@@ -2259,14 +2260,14 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 			}
 
 			if(modNoteElement->Name() != XML_NOTE_ELEMENT_NAME) {
-				fmt::print("Encountered '{}' element child with name '{}', expected '{}' in '{}' element with ID '{}'.\n", XML_NOTES_ELEMENT_NAME, modNoteElement->Name(), XML_NOTE_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
+				spdlog::error("Encountered '{}' element child with name '{}', expected '{}' in '{}' element with ID '{}'.", XML_NOTES_ELEMENT_NAME, modNoteElement->Name(), XML_NOTE_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
 				return nullptr;
 			}
 
 			const char * note = modNoteElement->GetText();
 
 			if(note == nullptr || Utilities::stringLength(note) == 0) {
-				fmt::print("Encountered '{}' element child with no text content in '{}' element with ID '{}'.\n", XML_NOTES_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
+				spdlog::error("Encountered '{}' element child with no text content in '{}' element with ID '{}'.", XML_NOTES_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
 				return nullptr;
 			}
 
@@ -2281,7 +2282,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 
 	if(modRelatedElement != nullptr) {
 		if(modRelatedElement->NextSiblingElement(XML_RELATED_ELEMENT_NAME.c_str())) {
-			fmt::print("Encountered more than one '{}' child element of '{}' element with ID '{}'.\n", XML_RELATED_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
+			spdlog::error("Encountered more than one '{}' child element of '{}' element with ID '{}'.", XML_RELATED_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
 			return nullptr;
 		}
 
@@ -2293,14 +2294,14 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 			}
 
 			if(modRelatedModElement->Name() != XML_RELATED_MOD_ELEMENT_NAME) {
-				fmt::print("Encountered '{}' element child with name '{}', expected '{}' in '{}' element with ID '{}'.\n", XML_RELATED_ELEMENT_NAME, modRelatedModElement->Name(), XML_RELATED_MOD_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
+				spdlog::error("Encountered '{}' element child with name '{}', expected '{}' in '{}' element with ID '{}'.", XML_RELATED_ELEMENT_NAME, modRelatedModElement->Name(), XML_RELATED_MOD_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
 				return nullptr;
 			}
 
 			const char * relatedModID = modRelatedModElement->Attribute(XML_RELATED_MOD_ID_ATTRIBUTE_NAME.c_str());
 
 			if(relatedModID == nullptr || Utilities::stringLength(relatedModID) == 0) {
-				fmt::print("Encountered '{}' element child with missing '{}' attribute in '{}' element with ID '{}'.\n", XML_RELATED_ELEMENT_NAME, XML_RELATED_MOD_ID_ATTRIBUTE_NAME, XML_MOD_ELEMENT_NAME, modID);
+				spdlog::error("Encountered '{}' element child with missing '{}' attribute in '{}' element with ID '{}'.", XML_RELATED_ELEMENT_NAME, XML_RELATED_MOD_ID_ATTRIBUTE_NAME, XML_MOD_ELEMENT_NAME, modID);
 				return nullptr;
 			}
 
@@ -2353,7 +2354,7 @@ bool Mod::checkVersions(bool verbose) const {
 
 		if(!hasVersion) {
 			if(verbose) {
-				fmt::print("Mod '{}' has no version: '{}'.\n", m_id, m_preferredVersion);
+				spdlog::warn("Mod '{}' has no version: '{}'.", m_id, m_preferredVersion);
 			}
 
 			return false;
@@ -2386,7 +2387,7 @@ bool Mod::checkVersions(bool verbose) const {
 
 		if(!hasOriginalDownload || !hasModManagerDownload) {
 			if(verbose) {
-				fmt::print("Mod '{}' is missing download {}of type: '{}'.\n", m_id, (*i)->getVersion().empty() ? "" : fmt::format("for version: '{}' ", (*i)->getVersion()), !hasOriginalDownload ? ModDownload::ORIGINAL_FILES_TYPE : ModDownload::MOD_MANAGER_FILES_TYPE);
+				spdlog::warn("Mod '{}' is missing download {}of type: '{}'.", m_id, (*i)->getVersion().empty() ? "" : fmt::format("for version: '{}' ", (*i)->getVersion()), !hasOriginalDownload ? ModDownload::ORIGINAL_FILES_TYPE : ModDownload::MOD_MANAGER_FILES_TYPE);
 			}
 
 			return false;
@@ -2394,7 +2395,7 @@ bool Mod::checkVersions(bool verbose) const {
 
 		if((*i)->getRepaired().has_value() && !hasRepairedDownload) {
 			if(verbose) {
-				fmt::print("Mod '{}' is missing download {}of type: '{}', with repaired property set to: '{}' .\n", m_id, (*i)->getVersion().empty() ? "" : fmt::format("for version: '{}' ", (*i)->getVersion()), ModDownload::MOD_MANAGER_FILES_TYPE, (*i)->isRepaired());
+				spdlog::warn("Mod '{}' is missing download {}of type: '{}', with repaired property set to: '{}' .", m_id, (*i)->getVersion().empty() ? "" : fmt::format("for version: '{}' ", (*i)->getVersion()), ModDownload::MOD_MANAGER_FILES_TYPE, (*i)->isRepaired());
 			}
 
 			return false;
@@ -2422,7 +2423,7 @@ bool Mod::checkVersionTypes(bool verbose) const {
 	}
 
 	if(verbose) {
-		fmt::print("Mod '{}' has no version type: '{}'.\n", m_id, m_defaultVersionType);
+		spdlog::warn("Mod '{}' has no version type: '{}'.", m_id, m_defaultVersionType);
 	}
 
 	return false;
@@ -2458,7 +2459,7 @@ bool Mod::checkGameVersionsHaveCorrespondingDownloads(bool verbose) const {
 
 				if(!hasDownload) {
 					if(verbose) {
-						fmt::print("Mod '{}' is missing '{}' download for game version '{}'.\n", getFullName(i, j), ModDownload::MOD_MANAGER_FILES_TYPE, modGameVersion->getGameVersion());
+						spdlog::warn("Mod '{}' is missing '{}' download for game version '{}'.", getFullName(i, j), ModDownload::MOD_MANAGER_FILES_TYPE, modGameVersion->getGameVersion());
 					}
 
 					return false;
@@ -2497,7 +2498,7 @@ bool Mod::checkSplitDownloadsNotMissingParts(bool verbose) const {
 				   Utilities::areStringsEqualIgnoreCase(a->getVersion(), b->getVersion())) {
 					if(parts[b->getPartNumber() - 1]) {
 						if(verbose) {
-							fmt::print("Mod '{}' is has duplicate download {}part #{} of {}.\n", m_id, a->getVersion().empty() ? "" : fmt::format("version {} ", a->getVersion()), b->getPartNumber(), a->getPartCount());
+							spdlog::warn("Mod '{}' is has duplicate download {}part #{} of {}.", m_id, a->getVersion().empty() ? "" : fmt::format("version {} ", a->getVersion()), b->getPartNumber(), a->getPartCount());
 						}
 
 						return false;
@@ -2511,7 +2512,7 @@ bool Mod::checkSplitDownloadsNotMissingParts(bool verbose) const {
 			for(size_t j = 0; j < a->getPartCount(); j++) {
 				if(!parts[j]) {
 					if(verbose) {
-						fmt::print("Mod '{}' is missing download {}part #{} of {}.\n", m_id, a->getVersion().empty() ? "" : fmt::format("version {} ", a->getVersion()), j + 1, a->getPartCount());
+						spdlog::warn("Mod '{}' is missing download {}part #{} of {}.", m_id, a->getVersion().empty() ? "" : fmt::format("version {} ", a->getVersion()), j + 1, a->getPartCount());
 					}
 
 					return false;

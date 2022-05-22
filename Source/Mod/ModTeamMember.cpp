@@ -6,7 +6,7 @@
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
 
-#include <fmt/core.h>
+#include <spdlog/spdlog.h>
 #include <tinyxml2.h>
 
 #include <array>
@@ -253,7 +253,7 @@ tinyxml2::XMLElement * ModTeamMember::toXML(tinyxml2::XMLDocument * document) co
 
 std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const rapidjson::Value & modTeamMemberValue) {
 	if(!modTeamMemberValue.IsObject()) {
-		fmt::print("Invalid mod team member type: '{}', expected 'object'.\n", Utilities::typeToString(modTeamMemberValue.GetType()));
+		spdlog::error("Invalid mod team member type: '{}', expected 'object'.", Utilities::typeToString(modTeamMemberValue.GetType()));
 		return nullptr;
 	}
 
@@ -271,28 +271,28 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const rapidjson::Value &
 		}
 
 		if(!propertyHandled) {
-			fmt::print("Mod team member has unexpected property '{}'.\n", i->name.GetString());
+			spdlog::error("Mod team member has unexpected property '{}'.", i->name.GetString());
 			return nullptr;
 		}
 	}
 
 	// parse mod team member name
 	if(!modTeamMemberValue.HasMember(JSON_MOD_TEAM_MEMBER_NAME_PROPERTY_NAME)) {
-		fmt::print("Mod team member is missing '{}' property'.\n", JSON_MOD_TEAM_MEMBER_NAME_PROPERTY_NAME);
+		spdlog::error("Mod team member is missing '{}' property'.", JSON_MOD_TEAM_MEMBER_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & modTeamMemberNameValue = modTeamMemberValue[JSON_MOD_TEAM_MEMBER_NAME_PROPERTY_NAME];
 
 	if(!modTeamMemberNameValue.IsString()) {
-		fmt::print("Mod team member has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_MOD_TEAM_MEMBER_NAME_PROPERTY_NAME, Utilities::typeToString(modTeamMemberNameValue.GetType()));
+		spdlog::error("Mod team member has an invalid '{}' property type: '{}', expected 'string'.", JSON_MOD_TEAM_MEMBER_NAME_PROPERTY_NAME, Utilities::typeToString(modTeamMemberNameValue.GetType()));
 		return nullptr;
 	}
 
 	std::string modTeamMemberName(Utilities::trimString(modTeamMemberNameValue.GetString()));
 
 	if(modTeamMemberName.empty()) {
-		fmt::print("Mod team member '{}' property cannot be empty.\n", JSON_MOD_TEAM_MEMBER_NAME_PROPERTY_NAME);
+		spdlog::error("Mod team member '{}' property cannot be empty.", JSON_MOD_TEAM_MEMBER_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -304,7 +304,7 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const rapidjson::Value &
 		const rapidjson::Value & modTeamMemberAliasValue = modTeamMemberValue[JSON_MOD_TEAM_MEMBER_ALIAS_PROPERTY_NAME];
 
 		if(!modTeamMemberAliasValue.IsString()) {
-			fmt::print("Mod team member '{}' property has invalid type: '{}', expected 'string'.\n", JSON_MOD_TEAM_MEMBER_ALIAS_PROPERTY_NAME, Utilities::typeToString(modTeamMemberAliasValue.GetType()));
+			spdlog::error("Mod team member '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_TEAM_MEMBER_ALIAS_PROPERTY_NAME, Utilities::typeToString(modTeamMemberAliasValue.GetType()));
 			return nullptr;
 		}
 
@@ -316,7 +316,7 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const rapidjson::Value &
 		const rapidjson::Value & modTeamMemberEmailValue = modTeamMemberValue[JSON_MOD_TEAM_MEMBER_EMAIL_PROPERTY_NAME];
 
 		if(!modTeamMemberEmailValue.IsString()) {
-			fmt::print("Mod team member '{}' property has invalid type: '{}', expected 'string'.\n", JSON_MOD_TEAM_MEMBER_EMAIL_PROPERTY_NAME, Utilities::typeToString(modTeamMemberEmailValue.GetType()));
+			spdlog::error("Mod team member '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_TEAM_MEMBER_EMAIL_PROPERTY_NAME, Utilities::typeToString(modTeamMemberEmailValue.GetType()));
 			return nullptr;
 		}
 
@@ -328,7 +328,7 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const rapidjson::Value &
 		const rapidjson::Value & modTeamMemberWebsiteValue = modTeamMemberValue[JSON_MOD_TEAM_MEMBER_WEBSITE_PROPERTY_NAME];
 
 		if(!modTeamMemberWebsiteValue.IsString()) {
-			fmt::print("Mod team member '{}' property has invalid type: '{}', expected 'string'.\n", JSON_MOD_TEAM_MEMBER_WEBSITE_PROPERTY_NAME, Utilities::typeToString(modTeamMemberWebsiteValue.GetType()));
+			spdlog::error("Mod team member '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_TEAM_MEMBER_WEBSITE_PROPERTY_NAME, Utilities::typeToString(modTeamMemberWebsiteValue.GetType()));
 			return nullptr;
 		}
 
@@ -340,7 +340,7 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const rapidjson::Value &
 		const rapidjson::Value & modTeamMemberAIMValue = modTeamMemberValue[JSON_MOD_TEAM_MEMBER_AIM_PROPERTY_NAME];
 
 		if(!modTeamMemberAIMValue.IsString()) {
-			fmt::print("Mod team member '{}' property has invalid type: '{}', expected 'string'.\n", JSON_MOD_TEAM_MEMBER_AIM_PROPERTY_NAME, Utilities::typeToString(modTeamMemberAIMValue.GetType()));
+			spdlog::error("Mod team member '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_TEAM_MEMBER_AIM_PROPERTY_NAME, Utilities::typeToString(modTeamMemberAIMValue.GetType()));
 			return nullptr;
 		}
 
@@ -352,7 +352,7 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const rapidjson::Value &
 		const rapidjson::Value & modTeamMemberICQValue = modTeamMemberValue[JSON_MOD_TEAM_MEMBER_ICQ_PROPERTY_NAME];
 
 		if(!modTeamMemberICQValue.IsString()) {
-			fmt::print("Mod team member '{}' property has invalid type: '{}', expected 'string'.\n", JSON_MOD_TEAM_MEMBER_ICQ_PROPERTY_NAME, Utilities::typeToString(modTeamMemberICQValue.GetType()));
+			spdlog::error("Mod team member '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_TEAM_MEMBER_ICQ_PROPERTY_NAME, Utilities::typeToString(modTeamMemberICQValue.GetType()));
 			return nullptr;
 		}
 
@@ -364,7 +364,7 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const rapidjson::Value &
 		const rapidjson::Value & modTeamMemberPhoneNumberValue = modTeamMemberValue[JSON_MOD_TEAM_MEMBER_PHONE_NUMBER_PROPERTY_NAME];
 
 		if(!modTeamMemberPhoneNumberValue.IsString()) {
-			fmt::print("Mod team member '{}' property has invalid type: '{}', expected 'string'.\n", JSON_MOD_TEAM_MEMBER_PHONE_NUMBER_PROPERTY_NAME, Utilities::typeToString(modTeamMemberPhoneNumberValue.GetType()));
+			spdlog::error("Mod team member '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_TEAM_MEMBER_PHONE_NUMBER_PROPERTY_NAME, Utilities::typeToString(modTeamMemberPhoneNumberValue.GetType()));
 			return nullptr;
 		}
 
@@ -381,7 +381,7 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const tinyxml2::XMLEleme
 
 	// verify element name
 	if(modTeamMemberElement->Name() != XML_MOD_TEAM_MEMBER_ELEMENT_NAME) {
-		fmt::print("Invalid mod team element name: '{}', expected '{}'.\n", modTeamMemberElement->Name(), XML_MOD_TEAM_MEMBER_ELEMENT_NAME);
+		spdlog::error("Invalid mod team element name: '{}', expected '{}'.", modTeamMemberElement->Name(), XML_MOD_TEAM_MEMBER_ELEMENT_NAME);
 		return nullptr;
 	}
 
@@ -404,7 +404,7 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const tinyxml2::XMLEleme
 		}
 
 		if(!attributeHandled) {
-			fmt::print("Element '{}' has unexpected attribute '{}'.\n", XML_MOD_TEAM_MEMBER_ELEMENT_NAME, modTeamMemberAttribute->Name());
+			spdlog::error("Element '{}' has unexpected attribute '{}'.", XML_MOD_TEAM_MEMBER_ELEMENT_NAME, modTeamMemberAttribute->Name());
 			return nullptr;
 		}
 
@@ -413,7 +413,7 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const tinyxml2::XMLEleme
 
 	// check for unexpected mod team member element child elements
 	if(modTeamMemberElement->FirstChildElement() != nullptr) {
-		fmt::print("Element '{}' has an unexpected child element.\n", XML_MOD_TEAM_MEMBER_ELEMENT_NAME);
+		spdlog::error("Element '{}' has an unexpected child element.", XML_MOD_TEAM_MEMBER_ELEMENT_NAME);
 		return nullptr;
 	}
 
@@ -427,7 +427,7 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const tinyxml2::XMLEleme
 	const char * teamMemberPhoneNumber = modTeamMemberElement->Attribute(XML_MOD_TEAM_MEMBER_PHONE_NUMBER_ATTRIBUTE_NAME.c_str());
 
 	if(teamMemberName == nullptr || Utilities::stringLength(teamMemberName) == 0) {
-		fmt::print("Attribute '{}' is missing from '{}' element.\n", XML_MOD_TEAM_MEMBER_NAME_ATTRIBUTE_NAME, XML_MOD_TEAM_MEMBER_ELEMENT_NAME);
+		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_TEAM_MEMBER_NAME_ATTRIBUTE_NAME, XML_MOD_TEAM_MEMBER_ELEMENT_NAME);
 		return nullptr;
 	}
 

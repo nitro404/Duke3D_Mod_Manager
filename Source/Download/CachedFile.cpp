@@ -5,7 +5,7 @@
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
 
-#include <fmt/core.h>
+#include <spdlog/spdlog.h>
 
 #include <filesystem>
 #include <optional>
@@ -130,40 +130,40 @@ rapidjson::Value CachedFile::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::Cr
 
 std::unique_ptr<CachedFile> CachedFile::parseFrom(const rapidjson::Value & cachedFileValue) {
 	if(!cachedFileValue.IsObject()) {
-		fmt::print("Invalid cached file type: '{}', expected 'object'.\n", Utilities::typeToString(cachedFileValue.GetType()));
+		spdlog::error("Invalid cached file type: '{}', expected 'object'.", Utilities::typeToString(cachedFileValue.GetType()));
 		return nullptr;
 	}
 
 	// parse cached file name
 	if(!cachedFileValue.HasMember(JSON_CACHED_FILE_FILE_NAME_PROPERTY_NAME)) {
-		fmt::print("Cached file is missing '{}' property'.\n", JSON_CACHED_FILE_FILE_NAME_PROPERTY_NAME);
+		spdlog::error("Cached file is missing '{}' property'.", JSON_CACHED_FILE_FILE_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & cachedFileNameValue = cachedFileValue[JSON_CACHED_FILE_FILE_NAME_PROPERTY_NAME];
 
 	if(!cachedFileNameValue.IsString()) {
-		fmt::print("Cached file has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_CACHED_FILE_FILE_NAME_PROPERTY_NAME, Utilities::typeToString(cachedFileNameValue.GetType()));
+		spdlog::error("Cached file has an invalid '{}' property type: '{}', expected 'string'.", JSON_CACHED_FILE_FILE_NAME_PROPERTY_NAME, Utilities::typeToString(cachedFileNameValue.GetType()));
 		return nullptr;
 	}
 
 	std::string fileName(Utilities::trimString(cachedFileNameValue.GetString()));
 
 	if(fileName.empty()) {
-		fmt::print("Cached file '{}' property cannot be empty.\n", JSON_CACHED_FILE_FILE_NAME_PROPERTY_NAME);
+		spdlog::error("Cached file '{}' property cannot be empty.", JSON_CACHED_FILE_FILE_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse cached file size
 	if(!cachedFileValue.HasMember(JSON_CACHED_FILE_FILE_SIZE_PROPERTY_NAME)) {
-		fmt::print("Cached file is missing '{}' property'.\n", JSON_CACHED_FILE_FILE_SIZE_PROPERTY_NAME);
+		spdlog::error("Cached file is missing '{}' property'.", JSON_CACHED_FILE_FILE_SIZE_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & cachedFileSizeValue = cachedFileValue[JSON_CACHED_FILE_FILE_SIZE_PROPERTY_NAME];
 
 	if(!cachedFileSizeValue.IsUint64()) {
-		fmt::print("Cached file has an invalid '{}' property type: '{}', expected unsigned integer 'number'.\n", JSON_CACHED_FILE_FILE_SIZE_PROPERTY_NAME, Utilities::typeToString(cachedFileSizeValue.GetType()));
+		spdlog::error("Cached file has an invalid '{}' property type: '{}', expected unsigned integer 'number'.", JSON_CACHED_FILE_FILE_SIZE_PROPERTY_NAME, Utilities::typeToString(cachedFileSizeValue.GetType()));
 		return nullptr;
 	}
 
@@ -171,21 +171,21 @@ std::unique_ptr<CachedFile> CachedFile::parseFrom(const rapidjson::Value & cache
 
 	// parse cached file SHA1
 	if(!cachedFileValue.HasMember(JSON_CACHED_FILE_SHA1_PROPERTY_NAME)) {
-		fmt::print("Cached file is missing '{}' property'.\n", JSON_CACHED_FILE_SHA1_PROPERTY_NAME);
+		spdlog::error("Cached file is missing '{}' property'.", JSON_CACHED_FILE_SHA1_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & cachedFileSHA1Value = cachedFileValue[JSON_CACHED_FILE_SHA1_PROPERTY_NAME];
 
 	if(!cachedFileSHA1Value.IsString()) {
-		fmt::print("Cached file has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_CACHED_FILE_SHA1_PROPERTY_NAME, Utilities::typeToString(cachedFileSHA1Value.GetType()));
+		spdlog::error("Cached file has an invalid '{}' property type: '{}', expected 'string'.", JSON_CACHED_FILE_SHA1_PROPERTY_NAME, Utilities::typeToString(cachedFileSHA1Value.GetType()));
 		return nullptr;
 	}
 
 	std::string sha1(Utilities::trimString(cachedFileSHA1Value.GetString()));
 
 	if(sha1.empty()) {
-		fmt::print("Cached file '{}' property cannot be empty.\n", JSON_CACHED_FILE_SHA1_PROPERTY_NAME);
+		spdlog::error("Cached file '{}' property cannot be empty.", JSON_CACHED_FILE_SHA1_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -197,7 +197,7 @@ std::unique_ptr<CachedFile> CachedFile::parseFrom(const rapidjson::Value & cache
 		const rapidjson::Value & cachedFileETagValue = cachedFileValue[JSON_CACHED_FILE_ETAG_PROPERTY_NAME];
 
 		if(!cachedFileETagValue.IsString()) {
-			fmt::print("Cached file has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_CACHED_FILE_ETAG_PROPERTY_NAME, Utilities::typeToString(cachedFileETagValue.GetType()));
+			spdlog::error("Cached file has an invalid '{}' property type: '{}', expected 'string'.", JSON_CACHED_FILE_ETAG_PROPERTY_NAME, Utilities::typeToString(cachedFileETagValue.GetType()));
 			return nullptr;
 		}
 

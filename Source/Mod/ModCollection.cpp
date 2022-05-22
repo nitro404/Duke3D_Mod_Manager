@@ -23,6 +23,7 @@
 #include <rapidjson/istreamwrapper.h>
 #include <rapidjson/ostreamwrapper.h>
 #include <rapidjson/prettywriter.h>
+#include <spdlog/spdlog.h>
 #include <tinyxml2.h>
 
 #include <filesystem>
@@ -293,7 +294,7 @@ tinyxml2::XMLElement * ModCollection::toXML(tinyxml2::XMLDocument * document) co
 
 std::unique_ptr<ModCollection> ModCollection::parseFrom(const rapidjson::Value & modCollectionValue) {
 	if(!modCollectionValue.IsArray()) {
-		fmt::print("Invalid mod collection type: '{}', expected 'array'.\n", Utilities::typeToString(modCollectionValue.GetType()));
+		spdlog::error("Invalid mod collection type: '{}', expected 'array'.", Utilities::typeToString(modCollectionValue.GetType()));
 		return nullptr;
 	}
 
@@ -309,12 +310,12 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const rapidjson::Value &
 		newMod = Mod::parseFrom(*i);
 
 		if(!Mod::isValid(newMod.get())) {
-			fmt::print("Failed to parse mod #{}{}!\n", newModCollection->m_mods.size() + 1, newModCollection->numberOfMods() == 0 ? "" : fmt::format(" (after mod with ID '{}')", newModCollection->getMod(newModCollection->numberOfMods() - 1)->getID()));
+			spdlog::error("Failed to parse mod #{}{}!", newModCollection->m_mods.size() + 1, newModCollection->numberOfMods() == 0 ? "" : fmt::format(" (after mod with ID '{}')", newModCollection->getMod(newModCollection->numberOfMods() - 1)->getID()));
 			return nullptr;
 		}
 
 		if(newModCollection->hasMod(*newMod.get())) {
-			fmt::print("Encountered duplicate mod #{}{}.\n", newModCollection->m_mods.size() + 1, newModCollection->numberOfMods() == 0 ? "" : fmt::format(" (after mod with ID '{}')", newModCollection->getMod(newModCollection->numberOfMods() - 1)->getID()));
+			spdlog::error("Encountered duplicate mod #{}{}.", newModCollection->m_mods.size() + 1, newModCollection->numberOfMods() == 0 ? "" : fmt::format(" (after mod with ID '{}')", newModCollection->getMod(newModCollection->numberOfMods() - 1)->getID()));
 			return nullptr;
 		}
 
@@ -329,12 +330,12 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const rapidjson::Value &
 std::unique_ptr<ModCollection> ModCollection::parseFrom(const tinyxml2::XMLElement * modsElement) {
 	// verify the mods element
 	if(modsElement == nullptr) {
-		fmt::print("Missing '{}' element!\n", XML_MODS_ELEMENT_NAME);
+		spdlog::error("Missing '{}' element!", XML_MODS_ELEMENT_NAME);
 		return false;
 	}
 
 	if(modsElement->Name() != XML_MODS_ELEMENT_NAME) {
-		fmt::print("Invalid element name '{}', expected '{}'!\n", modsElement->Name(), XML_MODS_ELEMENT_NAME);
+		spdlog::error("Invalid element name '{}', expected '{}'!", modsElement->Name(), XML_MODS_ELEMENT_NAME);
 		return false;
 	}
 
@@ -353,12 +354,12 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const tinyxml2::XMLEleme
 		newMod = Mod::parseFrom(modElement);
 
 		if(!Mod::isValid(newMod.get())) {
-			fmt::print("Failed to parse mod #{}{}!\n", modCollection->m_mods.size() + 1, modCollection->numberOfMods() == 0 ? "" : fmt::format(" (after mod with ID '{}')", modCollection->getMod(modCollection->numberOfMods() - 1)->getID()));
+			spdlog::error("Failed to parse mod #{}{}!", modCollection->m_mods.size() + 1, modCollection->numberOfMods() == 0 ? "" : fmt::format(" (after mod with ID '{}')", modCollection->getMod(modCollection->numberOfMods() - 1)->getID()));
 			return false;
 		}
 
 		if(modCollection->hasMod(*newMod.get())) {
-			fmt::print("Encountered duplicate mod #{}{}.\n", modCollection->m_mods.size() + 1, modCollection->numberOfMods() == 0 ? "" : fmt::format(" (after mod with ID '{}')", modCollection->getMod(modCollection->numberOfMods() - 1)->getID()));
+			spdlog::error("Encountered duplicate mod #{}{}.", modCollection->m_mods.size() + 1, modCollection->numberOfMods() == 0 ? "" : fmt::format(" (after mod with ID '{}')", modCollection->getMod(modCollection->numberOfMods() - 1)->getID()));
 			return nullptr;
 		}
 
@@ -401,7 +402,7 @@ bool ModCollection::loadFromXML(const std::string & filePath) {
 	tinyxml2::XMLError result = modCollectionDocument.LoadFile(filePath.c_str());
 
 	if(result != tinyxml2::XML_SUCCESS) {
-		fmt::print("Failed to load mod collection from XML file '{}' with error code: '{}'.\n", filePath, magic_enum::enum_name(result));
+		spdlog::error("Failed to load mod collection from XML file '{}' with error code: '{}'.", filePath, magic_enum::enum_name(result));
 		return false;
 	}
 
@@ -410,7 +411,7 @@ bool ModCollection::loadFromXML(const std::string & filePath) {
 	std::unique_ptr<ModCollection> modCollection(parseFrom(modCollectionDocument.RootElement()));
 
 	if(!ModCollection::isValid(modCollection.get())) {
-		fmt::print("Failed to parse mod collection from XML file '{}'.\n", filePath);
+		spdlog::error("Failed to parse mod collection from XML file '{}'.", filePath);
 		return false;
 	}
 
@@ -443,7 +444,7 @@ bool ModCollection::loadFromJSON(const std::string & filePath) {
 	std::unique_ptr<ModCollection> modCollection(parseFrom(modsValue));
 
 	if(!ModCollection::isValid(modCollection.get())) {
-		fmt::print("Failed to parse mod collection from JSON file '{}'.\n", filePath);
+		spdlog::error("Failed to parse mod collection from JSON file '{}'.", filePath);
 		return false;
 	}
 
@@ -476,7 +477,7 @@ bool ModCollection::saveTo(const std::string & filePath, bool overwrite) const {
 
 bool ModCollection::saveToXML(const std::string & filePath, bool overwrite) const {
 	if(!overwrite && std::filesystem::exists(std::filesystem::path(filePath))) {
-		fmt::print("File '{}' already exists, use overwrite to force write.\n", filePath);
+		spdlog::warn("File '{}' already exists, use overwrite to force write.", filePath);
 		return false;
 	}
 
@@ -489,7 +490,7 @@ bool ModCollection::saveToXML(const std::string & filePath, bool overwrite) cons
 	tinyxml2::XMLError result = modCollectionDocument.SaveFile(filePath.c_str());
 
 	if(result != tinyxml2::XML_SUCCESS) {
-		fmt::print("Failed to save mod collection to XML file '{}' with error code: '{}'.\n", filePath, magic_enum::enum_name(result));
+		spdlog::error("Failed to save mod collection to XML file '{}' with error code: '{}'.", filePath, magic_enum::enum_name(result));
 		return false;
 	}
 
@@ -498,7 +499,7 @@ bool ModCollection::saveToXML(const std::string & filePath, bool overwrite) cons
 
 bool ModCollection::saveToJSON(const std::string & filePath, bool overwrite) const {
 	if(!overwrite && std::filesystem::exists(std::filesystem::path(filePath))) {
-		fmt::print("File '{}' already exists, use overwrite to force write.\n", filePath);
+		spdlog::warn("File '{}' already exists, use overwrite to force write.", filePath);
 		return false;
 	}
 
@@ -546,7 +547,7 @@ bool ModCollection::checkGameVersions(const GameVersionCollection & gameVersions
 
 					if(!gameVersions.hasGameVersion(modGameVersion->getGameVersion())) {
 						if(verbose) {
-							fmt::print("Mod '{}' contains unknown game version: '{}'.\n", mod->getFullName(j, k), modGameVersion->getGameVersion());
+							spdlog::warn("Mod '{}' contains unknown game version: '{}'.", mod->getFullName(j, k), modGameVersion->getGameVersion());
 						}
 
 						return false;
@@ -562,7 +563,7 @@ bool ModCollection::checkGameVersions(const GameVersionCollection & gameVersions
 			   modDownload->getGameVersion() != GameVersion::ALL_VERSIONS &&
 			   !gameVersions.hasGameVersion(modDownload->getGameVersion())) {
 				if(verbose) {
-					fmt::print("Mod '{}' has download '{}' with unknown game version: '{}'.\n", mod->getID(), modDownload->getFileName(), modDownload->getGameVersion());
+					spdlog::warn("Mod '{}' has download '{}' with unknown game version: '{}'.", mod->getID(), modDownload->getFileName(), modDownload->getGameVersion());
 				}
 
 				return false;

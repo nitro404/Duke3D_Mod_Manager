@@ -5,6 +5,7 @@
 #include <Utilities/Utilities.h>
 
 #include <fmt/core.h>
+#include <spdlog/spdlog.h>
 
 #include <filesystem>
 #include <fstream>
@@ -118,14 +119,14 @@ bool GroupFile::isValid(const GroupFile * g) {
 
 bool GroupFile::writeTo(const std::string & basePath, bool overwrite, const std::string & alternateFileName) const {
 	if(!isValid()) {
-		fmt::print("Failed to write '{}' file, file is not valid.\n", m_fileName);
+		spdlog::error("Failed to write '{}' file, file is not valid.", m_fileName);
 		return false;
 	}
 
 	std::string filePath(Utilities::joinPaths(basePath, alternateFileName.empty() ? m_fileName : alternateFileName));
 
 	if(!overwrite && std::filesystem::exists(std::filesystem::path(filePath))) {
-		fmt::print("File '{}' already exists, use overwrite to force write.\n", filePath);
+		spdlog::warn("File '{}' already exists, use overwrite to force write.", filePath);
 		return false;
 	}
 
@@ -135,7 +136,7 @@ bool GroupFile::writeTo(const std::string & basePath, bool overwrite, const std:
 			std::filesystem::create_directories(basePath, errorCode);
 
 			if(errorCode) {
-				fmt::print("Failed to create directory structure for base path '{}': {}\n", basePath, errorCode.message());
+				spdlog::error("Failed to create directory structure for base path '{}': {}", basePath, errorCode.message());
 				return false;
 			}
 		}
@@ -144,7 +145,7 @@ bool GroupFile::writeTo(const std::string & basePath, bool overwrite, const std:
 	std::ofstream fileStream(filePath, std::ios::binary);
 
 	if(!fileStream.is_open()) {
-		fmt::print("Failed to open write stream for file '{}'.\n", filePath);
+		spdlog::error("Failed to open write stream for file '{}'.", filePath);
 		return false;
 	}
 

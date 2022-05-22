@@ -78,7 +78,6 @@ public:
 	static const char * DEFAULT_REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME;
 	static const bool DEFAULT_SEGMENT_ANALYTICS_ENABLED;
 	static const char * DEFAULT_SEGMENT_ANALYTICS_DATA_FILE_NAME;
-	static const bool DEFAULT_VERBOSE;
 
 	std::string modsListFilePath;
 	std::string favouriteModsListFilePath;
@@ -127,7 +126,6 @@ public:
 	std::string remoteGameDownloadsDirectoryName;
 	bool segmentAnalyticsEnabled;
 	std::string segmentAnalyticsDataFileName;
-	bool verbose;
 };
 
 #endif // _SETTINGS_MANAGER_H_

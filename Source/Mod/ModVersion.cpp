@@ -8,7 +8,7 @@
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
 
-#include <fmt/core.h>
+#include <spdlog/spdlog.h>
 #include <tinyxml2.h>
 
 #include <array>
@@ -375,7 +375,7 @@ tinyxml2::XMLElement * ModVersion::toXML(tinyxml2::XMLDocument * document) const
 
 std::unique_ptr<ModVersion> ModVersion::parseFrom(const rapidjson::Value & modVersionValue) {
 	if(!modVersionValue.IsObject()) {
-		fmt::print("Invalid mod version type: '{}', expected 'object'.\n", Utilities::typeToString(modVersionValue.GetType()));
+		spdlog::error("Invalid mod version type: '{}', expected 'object'.", Utilities::typeToString(modVersionValue.GetType()));
 		return nullptr;
 	}
 
@@ -393,7 +393,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const rapidjson::Value & modVe
 		}
 
 		if(!propertyHandled) {
-			fmt::print("Mod version has unexpected property '{}'.\n", i->name.GetString());
+			spdlog::error("Mod version has unexpected property '{}'.", i->name.GetString());
 			return nullptr;
 		}
 	}
@@ -406,7 +406,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const rapidjson::Value & modVe
 		const rapidjson::Value & modVersionVersionValue = modVersionValue[JSON_MOD_VERSION_VERSION_PROPERTY_NAME];
 
 		if(!modVersionVersionValue.IsString()) {
-			fmt::print("Mod version '{}' property has invalid type: '{}', expected 'string'.\n", JSON_MOD_VERSION_VERSION_PROPERTY_NAME, Utilities::typeToString(modVersionVersionValue.GetType()));
+			spdlog::error("Mod version '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_VERSION_VERSION_PROPERTY_NAME, Utilities::typeToString(modVersionVersionValue.GetType()));
 			return nullptr;
 		}
 
@@ -418,7 +418,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const rapidjson::Value & modVe
 		const rapidjson::Value & modVersionReleaseDateValue = modVersionValue[JSON_MOD_VERSION_RELEASE_DATE_PROPERTY_NAME];
 
 		if(!modVersionReleaseDateValue.IsString()) {
-			fmt::print("Mod version '{}' property has invalid type: '{}', expected 'string'.\n", JSON_MOD_VERSION_RELEASE_DATE_PROPERTY_NAME, Utilities::typeToString(modVersionReleaseDateValue.GetType()));
+			spdlog::error("Mod version '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_VERSION_RELEASE_DATE_PROPERTY_NAME, Utilities::typeToString(modVersionReleaseDateValue.GetType()));
 			return nullptr;
 		}
 
@@ -428,7 +428,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const rapidjson::Value & modVe
 			newModVersion->setReleaseDate(releaseDate.value());
 		}
 		else {
-			fmt::print("Mod version '{}' property has invalid value: '{}'.\n", JSON_MOD_VERSION_RELEASE_DATE_PROPERTY_NAME, Utilities::valueToString(modVersionReleaseDateValue));
+			spdlog::error("Mod version '{}' property has invalid value: '{}'.", JSON_MOD_VERSION_RELEASE_DATE_PROPERTY_NAME, Utilities::valueToString(modVersionReleaseDateValue));
 			return nullptr;
 		}
 	}
@@ -438,7 +438,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const rapidjson::Value & modVe
 		const rapidjson::Value & modVersionRepairedValue = modVersionValue[JSON_MOD_VERSION_REPAIRED_PROPERTY_NAME];
 
 		if(!modVersionRepairedValue.IsBool()) {
-			fmt::print("Mod version '{}' property has invalid type: '{}', expected 'boolean'.\n", JSON_MOD_VERSION_REPAIRED_PROPERTY_NAME, Utilities::typeToString(modVersionRepairedValue.GetType()));
+			spdlog::error("Mod version '{}' property has invalid type: '{}', expected 'boolean'.", JSON_MOD_VERSION_REPAIRED_PROPERTY_NAME, Utilities::typeToString(modVersionRepairedValue.GetType()));
 			return nullptr;
 		}
 
@@ -447,14 +447,14 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const rapidjson::Value & modVe
 
 	// parse the mod version types property
 	if(!modVersionValue.HasMember(JSON_MOD_VERSIONS_VERSION_TYPES_PROPERTY_NAME)) {
-		fmt::print("Mod version is missing '{}' property'.\n", JSON_MOD_VERSIONS_VERSION_TYPES_PROPERTY_NAME);
+		spdlog::error("Mod version is missing '{}' property'.", JSON_MOD_VERSIONS_VERSION_TYPES_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & modVersionTypesValue = modVersionValue[JSON_MOD_VERSIONS_VERSION_TYPES_PROPERTY_NAME];
 
 	if(!modVersionTypesValue.IsArray()) {
-		fmt::print("Mod version '{}' property has invalid type: '{}', expected 'array'.\n", JSON_MOD_VERSIONS_VERSION_TYPES_PROPERTY_NAME, Utilities::typeToString(modVersionTypesValue.GetType()));
+		spdlog::error("Mod version '{}' property has invalid type: '{}', expected 'array'.", JSON_MOD_VERSIONS_VERSION_TYPES_PROPERTY_NAME, Utilities::typeToString(modVersionTypesValue.GetType()));
 		return nullptr;
 	}
 
@@ -464,14 +464,14 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const rapidjson::Value & modVe
 		newModVersionType = std::shared_ptr<ModVersionType>(std::move(ModVersionType::parseFrom(*i)).release());
 
 		if(!ModVersionType::isValid(newModVersionType.get())) {
-			fmt::print("Failed to parse mod version type #{}.\n", newModVersion->m_types.size() + 1);
+			spdlog::error("Failed to parse mod version type #{}.", newModVersion->m_types.size() + 1);
 			return nullptr;
 		}
 
 		newModVersionType->setParentModVersion(newModVersion.get());
 
 		if(newModVersion->hasType(*newModVersionType.get())) {
-			fmt::print("Encountered duplicate mod version type #{}.\n", newModVersion->m_types.size() + 1);
+			spdlog::error("Encountered duplicate mod version type #{}.", newModVersion->m_types.size() + 1);
 			return nullptr;
 		}
 
@@ -488,7 +488,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const tinyxml2::XMLElement * m
 
 	// verify element name
 	if(modVersionElement->Name() != XML_MOD_VERSION_ELEMENT_NAME) {
-		fmt::print("Invalid mod version element name: '{}', expected '{}'.\n", modVersionElement->Name(), XML_MOD_VERSION_ELEMENT_NAME);
+		spdlog::error("Invalid mod version element name: '{}', expected '{}'.", modVersionElement->Name(), XML_MOD_VERSION_ELEMENT_NAME);
 		return nullptr;
 	}
 
@@ -511,7 +511,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const tinyxml2::XMLElement * m
 		}
 
 		if(!attributeHandled) {
-			fmt::print("Element '{}' has unexpected attribute '{}'.\n", XML_MOD_VERSION_ELEMENT_NAME, modVersionAttribute->Name());
+			spdlog::error("Element '{}' has unexpected attribute '{}'.", XML_MOD_VERSION_ELEMENT_NAME, modVersionAttribute->Name());
 			return nullptr;
 		}
 
@@ -538,7 +538,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const tinyxml2::XMLElement * m
 		bool repaired = Utilities::parseBoolean(modVersionRepairedData, &error);
 
 		if(error) {
-			fmt::print("Attribute '{}' in element '{}' has an invalid value: '{}', expected boolean.\n", XML_MOD_VERSION_REPAIRED_ATTRIBUTE_NAME, XML_MOD_VERSION_ELEMENT_NAME, modVersionRepairedData);
+			spdlog::error("Attribute '{}' in element '{}' has an invalid value: '{}', expected boolean.", XML_MOD_VERSION_REPAIRED_ATTRIBUTE_NAME, XML_MOD_VERSION_ELEMENT_NAME, modVersionRepairedData);
 			return nullptr;
 		}
 
@@ -549,7 +549,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const tinyxml2::XMLElement * m
 	const tinyxml2::XMLElement * modVersionTypeElement = modVersionElement->FirstChildElement();
 
 	if(modVersionTypeElement == nullptr) {
-		fmt::print("Element '{}' has no children.\n", XML_MOD_VERSION_ELEMENT_NAME);
+		spdlog::error("Element '{}' has no children.", XML_MOD_VERSION_ELEMENT_NAME);
 		return nullptr;
 	}
 
@@ -563,14 +563,14 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const tinyxml2::XMLElement * m
 		newModVersionType = std::shared_ptr<ModVersionType>(std::move(ModVersionType::parseFrom(modVersionTypeElement)).release());
 
 		if(!ModVersionType::isValid(newModVersionType.get())) {
-			fmt::print("Failed to parse mod version type #{}.\n", newModVersion->m_types.size() + 1);
+			spdlog::error("Failed to parse mod version type #{}.", newModVersion->m_types.size() + 1);
 			return nullptr;
 		}
 
 		newModVersionType->setParentModVersion(newModVersion.get());
 
 		if(newModVersion->hasType(*newModVersionType.get())) {
-			fmt::print("Encountered duplicate mod version type #{}.\n", newModVersion->m_types.size() + 1);
+			spdlog::error("Encountered duplicate mod version type #{}.", newModVersion->m_types.size() + 1);
 			return nullptr;
 		}
 

@@ -9,11 +9,11 @@
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
 
-#include <fmt/core.h>
 #include <rapidjson/document.h>
 #include <rapidjson/istreamwrapper.h>
 #include <rapidjson/ostreamwrapper.h>
 #include <rapidjson/prettywriter.h>
+#include <spdlog/spdlog.h>
 
 #include <array>
 #include <filesystem>
@@ -118,7 +118,7 @@ std::shared_ptr<CachedFile> DownloadCache::getCachedFile(const ModFile * modFile
 
 bool DownloadCache::updateCachedPackageFile(const ModDownload * modDownload, const ModGameVersion * modGameVersion, uint64_t fileSize, const std::string & eTag) {
 	if(!ModDownload::isValid(modDownload) || !ModGameVersion::isValid(modGameVersion) || modDownload->getParentMod() != modGameVersion->getParentMod() || eTag.empty()) {
-		fmt::print("Failed to update cached package file, invalid arguments provided.\n");
+		spdlog::error("Failed to update cached package file, invalid arguments provided.");
 		return false;
 	}
 
@@ -137,7 +137,7 @@ bool DownloadCache::updateCachedPackageFile(const ModDownload * modDownload, con
 	}
 
 	if(modGameVersion == nullptr) {
-		fmt::print("Failed to update cached package file '{}', could not find corresponding mod game version.\n", modDownload->getFileName());
+		spdlog::error("Failed to update cached package file '{}', could not find corresponding mod game version.", modDownload->getFileName());
 		return false;
 	}
 
@@ -229,7 +229,7 @@ rapidjson::Document DownloadCache::toJSON() const {
 
 std::unique_ptr<DownloadCache> DownloadCache::parseFrom(const rapidjson::Value & downloadCacheValue) {
 	if(!downloadCacheValue.IsObject()) {
-		fmt::print("Invalid download cache type: '{}', expected 'object'.\n", Utilities::typeToString(downloadCacheValue.GetType()));
+		spdlog::error("Invalid download cache type: '{}', expected 'object'.", Utilities::typeToString(downloadCacheValue.GetType()));
 		return nullptr;
 	}
 
@@ -242,26 +242,26 @@ std::unique_ptr<DownloadCache> DownloadCache::parseFrom(const rapidjson::Value &
 		newDownloadCache->m_cachedModListFile = std::shared_ptr<CachedFile>(std::move(CachedFile::parseFrom(modListValue)).release());
 
 		if(!CachedFile::isValid(newDownloadCache->m_cachedModListFile.get())) {
-			fmt::print("Failed to parse download cache mod list cached file.\n");
+			spdlog::error("Failed to parse download cache mod list cached file.");
 			return nullptr;
 		}
 
 		if(newDownloadCache->m_cachedModListFile->getETag().empty()) {
-			fmt::print("Failed to parse download cache mod list cached file due to missing ETag value.\n");
+			spdlog::error("Failed to parse download cache mod list cached file due to missing ETag value.");
 			return nullptr;
 		}
 	}
 
 	// parse download cache packages cache information property
 	if(!downloadCacheValue.HasMember(JSON_DOWNLOAD_CACHE_PACKAGES_PROPERTY_NAME)) {
-		fmt::print("Download cache is missing '{}' property'.\n", JSON_DOWNLOAD_CACHE_PACKAGES_PROPERTY_NAME);
+		spdlog::error("Download cache is missing '{}' property'.", JSON_DOWNLOAD_CACHE_PACKAGES_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & packagesValue = downloadCacheValue[JSON_DOWNLOAD_CACHE_PACKAGES_PROPERTY_NAME];
 
 	if(!packagesValue.IsArray()) {
-		fmt::print("Invalid download cache '{}' type: '{}', expected 'array'.\n", JSON_DOWNLOAD_CACHE_PACKAGES_PROPERTY_NAME, Utilities::typeToString(packagesValue.GetType()));
+		spdlog::error("Invalid download cache '{}' type: '{}', expected 'array'.", JSON_DOWNLOAD_CACHE_PACKAGES_PROPERTY_NAME, Utilities::typeToString(packagesValue.GetType()));
 		return nullptr;
 	}
 
@@ -272,12 +272,12 @@ std::unique_ptr<DownloadCache> DownloadCache::parseFrom(const rapidjson::Value &
 			newCachedPackageFile = std::move(CachedPackageFile::parseFrom(*i));
 
 			if(!CachedPackageFile::isValid(newCachedPackageFile.get())) {
-				fmt::print("Failed to parse download cache package cached file #{}!\n", newDownloadCache->m_cachedPackageFiles.size() + 1);
+				spdlog::error("Failed to parse download cache package cached file #{}!", newDownloadCache->m_cachedPackageFiles.size() + 1);
 				return nullptr;
 			}
 
 			if(newDownloadCache->hasCachedPackageFileWithName(newCachedPackageFile->getFileName())) {
-				fmt::print("Encountered duplicate download cache package cached file #{}.\n", newDownloadCache->m_cachedPackageFiles.size() + 1);
+				spdlog::error("Encountered duplicate download cache package cached file #{}.", newDownloadCache->m_cachedPackageFiles.size() + 1);
 				return nullptr;
 			}
 
@@ -292,7 +292,7 @@ std::unique_ptr<DownloadCache> DownloadCache::parseFrom(const rapidjson::Value &
 
 bool DownloadCache::loadFrom(const std::string & filePath) {
 	if(filePath.empty()) {
-		fmt::print("Cannot load from empty download cache file path.\n");
+		spdlog::error("Cannot load from empty download cache file path.");
 		return false;
 	}
 
@@ -303,14 +303,14 @@ bool DownloadCache::loadFrom(const std::string & filePath) {
 	std::ifstream fileStream(filePath);
 
 	if(!fileStream.is_open()) {
-		fmt::print("Failed to open download cache file for reading!\n");
+		spdlog::error("Failed to open download cache file for reading!");
 		return false;
 	}
 
 	rapidjson::Document downloadCacheValue;
 	rapidjson::IStreamWrapper fileStreamWrapper(fileStream);
 	if(downloadCacheValue.ParseStream(fileStreamWrapper).HasParseError()) {
-		fmt::print("Invalid download cache JSON file data!\n");
+		spdlog::error("Invalid download cache JSON file data!");
 		return false;
 	}
 
@@ -319,7 +319,7 @@ bool DownloadCache::loadFrom(const std::string & filePath) {
 	std::unique_ptr<DownloadCache> newDownloadCache(parseFrom(downloadCacheValue));
 
 	if(!DownloadCache::isValid(newDownloadCache.get())) {
-		fmt::print("Failed to parse download cache from JSON file '{}'.\n", filePath);
+		spdlog::error("Failed to parse download cache from JSON file '{}'.", filePath);
 		return false;
 	}
 
@@ -327,7 +327,7 @@ bool DownloadCache::loadFrom(const std::string & filePath) {
 	m_cachedPackageFiles = std::move(newDownloadCache->m_cachedPackageFiles);
 
 #if _DEBUG
-	fmt::print("Successfully loaded download cache from file: '{}'.\n", filePath);
+	spdlog::debug("Successfully loaded download cache from file: '{}'.", filePath);
 #endif // _DEBUG
 
 	return true;
@@ -335,14 +335,14 @@ bool DownloadCache::loadFrom(const std::string & filePath) {
 
 bool DownloadCache::saveTo(const std::string & filePath) const {
 	if(filePath.empty()) {
-		fmt::print("Cannot save to empty download cache file path.\n");
+		spdlog::error("Cannot save to empty download cache file path.");
 		return false;
 	}
 
 	std::ofstream fileStream(filePath);
 
 	if(!fileStream.is_open()) {
-		fmt::print("Failed to open download cache file for writing.\n");
+		spdlog::error("Failed to open download cache file for writing.");
 		return false;
 	}
 

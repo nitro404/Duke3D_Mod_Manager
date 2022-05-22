@@ -11,10 +11,10 @@
 #include <Utilities/StringUtilities.h>
 #include <Utilities/Utilities.h>
 
-#include <fmt/core.h>
 #include <rapidjson/istreamwrapper.h>
 #include <rapidjson/ostreamwrapper.h>
 #include <rapidjson/prettywriter.h>
+#include <spdlog/spdlog.h>
 #include <tinyxml2.h>
 
 #include <filesystem>
@@ -211,7 +211,7 @@ rapidjson::Document FavouriteModCollection::toJSON() const {
 
 bool FavouriteModCollection::parseFrom(const rapidjson::Value & favourites) {
 	if(!favourites.IsArray()) {
-		fmt::print("Invalid favourites value, expected array.");
+		spdlog::error("Invalid favourites value, expected array.");
 		return false;
 	}
 
@@ -222,7 +222,7 @@ bool FavouriteModCollection::parseFrom(const rapidjson::Value & favourites) {
 		newModIdentifier = ModIdentifier::parseFrom(*i);
 
 		if(!ModIdentifier::isValid(newModIdentifier.get())) {
-			fmt::print("Failed to parse favourite mod #{}.\n", newFavourites.size() + 1);
+			spdlog::error("Failed to parse favourite mod #{}.", newFavourites.size() + 1);
 			return nullptr;
 		}
 
@@ -294,7 +294,7 @@ bool FavouriteModCollection::saveTo(const std::string & filePath, bool overwrite
 
 bool FavouriteModCollection::saveToJSON(const std::string & filePath, bool overwrite) {
 	if (!overwrite && std::filesystem::exists(std::filesystem::path(filePath))) {
-		fmt::print("File '{}' already exists, use overwrite to force write.\n", filePath);
+		spdlog::warn("File '{}' already exists, use overwrite to force write.", filePath);
 		return false;
 	}
 
@@ -331,7 +331,7 @@ size_t FavouriteModCollection::checkForMissingFavouriteMods(const ModCollection 
 		if(mod == nullptr) {
 			numberOfMissingFavouriteMods++;
 
-			fmt::print("Missing favourite mod #{}: '{}'.\n", numberOfMissingFavouriteMods, (*i)->getName());
+			spdlog::warn("Missing favourite mod #{}: '{}'.", numberOfMissingFavouriteMods, (*i)->getName());
 
 			continue;
 		}
@@ -341,7 +341,7 @@ size_t FavouriteModCollection::checkForMissingFavouriteMods(const ModCollection 
 		if(modVersion == nullptr) {
 			numberOfMissingFavouriteMods++;
 
-			fmt::print("Missing favourite mod #{}: '{}' with version: '{}'.\n", numberOfMissingFavouriteMods, (*i)->getName(), (*i)->getVersion());
+			spdlog::warn("Missing favourite mod #{}: '{}' with version: '{}'.", numberOfMissingFavouriteMods, (*i)->getName(), (*i)->getVersion());
 
 			continue;
 		}
@@ -351,14 +351,14 @@ size_t FavouriteModCollection::checkForMissingFavouriteMods(const ModCollection 
 		if(modVersion == nullptr) {
 			numberOfMissingFavouriteMods++;
 
-			fmt::print("Missing favourite mod #{}: '{}' with version: '{}' and type: '{}'.\n", numberOfMissingFavouriteMods, (*i)->getName(), (*i)->getVersion(), (*i)->getVersionType());
+			spdlog::warn("Missing favourite mod #{}: '{}' with version: '{}' and type: '{}'.", numberOfMissingFavouriteMods, (*i)->getName(), (*i)->getVersion(), (*i)->getVersionType());
 
 			continue;
 		}
 	}
 
 	if(numberOfMissingFavouriteMods > 0) {
-		fmt::print("Missing {} favourite mod{}.\n", numberOfMissingFavouriteMods, numberOfMissingFavouriteMods == 1 ? "" : "s");
+		spdlog::warn("Missing {} favourite mod{}.", numberOfMissingFavouriteMods, numberOfMissingFavouriteMods == 1 ? "" : "s");
 	}
 
 	return numberOfMissingFavouriteMods;

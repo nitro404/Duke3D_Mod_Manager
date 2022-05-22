@@ -1259,7 +1259,7 @@ bool ModManager::CLI::runSearchPrompt(const std::string & args) {
 		if(skipInput) {
 			data = trimmedArgs;
 
-			fmt::print("Searching for{}: {}\n", searchType, data);
+			fmt::print("Searching for {}: {}\n", searchType, data);
 			fmt::print("\n");
 		}
 		else {

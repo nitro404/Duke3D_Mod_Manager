@@ -5,7 +5,7 @@
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
 
-#include <fmt/core.h>
+#include <spdlog/spdlog.h>
 #include <tinyxml2.h>
 
 #include <array>
@@ -131,7 +131,7 @@ tinyxml2::XMLElement * ModVideo::toXML(tinyxml2::XMLDocument * document) const {
 
 std::unique_ptr<ModVideo> ModVideo::parseFrom(const rapidjson::Value & modVideoValue) {
 	if(!modVideoValue.IsObject()) {
-		fmt::print("Invalid mod video type: '{}', expected 'object'.\n", Utilities::typeToString(modVideoValue.GetType()));
+		spdlog::error("Invalid mod video type: '{}', expected 'object'.", Utilities::typeToString(modVideoValue.GetType()));
 		return nullptr;
 	}
 
@@ -149,68 +149,68 @@ std::unique_ptr<ModVideo> ModVideo::parseFrom(const rapidjson::Value & modVideoV
 		}
 
 		if(!propertyHandled) {
-			fmt::print("Mod video has unexpected property '{}'.\n", i->name.GetString());
+			spdlog::error("Mod video has unexpected property '{}'.", i->name.GetString());
 			return nullptr;
 		}
 	}
 
 	// parse mod video url
 	if(!modVideoValue.HasMember(JSON_MOD_VIDEO_URL_PROPERTY_NAME)) {
-		fmt::print("Mod video is missing '{}' property'.\n", JSON_MOD_VIDEO_URL_PROPERTY_NAME);
+		spdlog::error("Mod video is missing '{}' property'.", JSON_MOD_VIDEO_URL_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & modVideoURLValue = modVideoValue[JSON_MOD_VIDEO_URL_PROPERTY_NAME];
 
 	if(!modVideoURLValue.IsString()) {
-		fmt::print("Mod video has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_MOD_VIDEO_URL_PROPERTY_NAME, Utilities::typeToString(modVideoURLValue.GetType()));
+		spdlog::error("Mod video has an invalid '{}' property type: '{}', expected 'string'.", JSON_MOD_VIDEO_URL_PROPERTY_NAME, Utilities::typeToString(modVideoURLValue.GetType()));
 		return nullptr;
 	}
 
 	std::string modVideoURL(Utilities::trimString(modVideoURLValue.GetString()));
 
 	if(modVideoURL.empty()) {
-		fmt::print("Mod video '{}' property cannot be empty.\n", JSON_MOD_VIDEO_URL_PROPERTY_NAME);
+		spdlog::error("Mod video '{}' property cannot be empty.", JSON_MOD_VIDEO_URL_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse mod video width
 	if(!modVideoValue.HasMember(JSON_MOD_VIDEO_WIDTH_PROPERTY_NAME)) {
-		fmt::print("Mod video is missing '{}' property'.\n", JSON_MOD_VIDEO_WIDTH_PROPERTY_NAME);
+		spdlog::error("Mod video is missing '{}' property'.", JSON_MOD_VIDEO_WIDTH_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & modVideoWidthValue = modVideoValue[JSON_MOD_VIDEO_WIDTH_PROPERTY_NAME];
 
 	if(!modVideoWidthValue.IsUint()) {
-		fmt::print("Mod video has an invalid '{}' property type: '{}', expected unsigned integer 'number'.\n", JSON_MOD_VIDEO_WIDTH_PROPERTY_NAME, Utilities::typeToString(modVideoWidthValue.GetType()));
+		spdlog::error("Mod video has an invalid '{}' property type: '{}', expected unsigned integer 'number'.", JSON_MOD_VIDEO_WIDTH_PROPERTY_NAME, Utilities::typeToString(modVideoWidthValue.GetType()));
 		return nullptr;
 	}
 
 	uint32_t modVideoWidth = modVideoWidthValue.GetUint();
 
 	if(modVideoWidth > std::numeric_limits<uint16_t>::max()) {
-		fmt::print("Mod video '{}' property value has an invalid value: '{}', expected unsigned integer 'number' between 1 and {} inclusively.\n", JSON_MOD_VIDEO_WIDTH_PROPERTY_NAME, modVideoWidth, std::numeric_limits<uint8_t>::max());
+		spdlog::error("Mod video '{}' property value has an invalid value: '{}', expected unsigned integer 'number' between 1 and {} inclusively.", JSON_MOD_VIDEO_WIDTH_PROPERTY_NAME, modVideoWidth, std::numeric_limits<uint8_t>::max());
 		return nullptr;
 	}
 
 	// parse mod video height
 	if(!modVideoValue.HasMember(JSON_MOD_VIDEO_HEIGHT_PROPERTY_NAME)) {
-		fmt::print("Mod video is missing '{}' property'.\n", JSON_MOD_VIDEO_HEIGHT_PROPERTY_NAME);
+		spdlog::error("Mod video is missing '{}' property'.", JSON_MOD_VIDEO_HEIGHT_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & modVideoHeightValue = modVideoValue[JSON_MOD_VIDEO_HEIGHT_PROPERTY_NAME];
 
 	if(!modVideoHeightValue.IsUint()) {
-		fmt::print("Mod video has an invalid '{}' property type: '{}', expected unsigned integer 'number'.\n", JSON_MOD_VIDEO_HEIGHT_PROPERTY_NAME, Utilities::typeToString(modVideoHeightValue.GetType()));
+		spdlog::error("Mod video has an invalid '{}' property type: '{}', expected unsigned integer 'number'.", JSON_MOD_VIDEO_HEIGHT_PROPERTY_NAME, Utilities::typeToString(modVideoHeightValue.GetType()));
 		return nullptr;
 	}
 
 	uint32_t modVideoHeight = modVideoHeightValue.GetUint();
 
 	if(modVideoHeight > std::numeric_limits<uint16_t>::max()) {
-		fmt::print("Mod video '{}' property value has an invalid value: '{}', expected unsigned integer 'number' between 1 and {} inclusively.\n", JSON_MOD_VIDEO_HEIGHT_PROPERTY_NAME, modVideoHeight, std::numeric_limits<uint8_t>::max());
+		spdlog::error("Mod video '{}' property value has an invalid value: '{}', expected unsigned integer 'number' between 1 and {} inclusively.", JSON_MOD_VIDEO_HEIGHT_PROPERTY_NAME, modVideoHeight, std::numeric_limits<uint8_t>::max());
 		return nullptr;
 	}
 
@@ -225,7 +225,7 @@ std::unique_ptr<ModVideo> ModVideo::parseFrom(const tinyxml2::XMLElement * modVi
 
 	// verify element name
 	if(modVideoElement->Name() != XML_MOD_VIDEO_ELEMENT_NAME) {
-		fmt::print("Invalid mod video element name: '{}', expected '{}'.\n", modVideoElement->Name(), XML_MOD_VIDEO_ELEMENT_NAME);
+		spdlog::error("Invalid mod video element name: '{}', expected '{}'.", modVideoElement->Name(), XML_MOD_VIDEO_ELEMENT_NAME);
 		return nullptr;
 	}
 
@@ -248,7 +248,7 @@ std::unique_ptr<ModVideo> ModVideo::parseFrom(const tinyxml2::XMLElement * modVi
 		}
 
 		if(!attributeHandled) {
-			fmt::print("Element '{}' has unexpected attribute '{}'.\n", XML_MOD_VIDEO_ELEMENT_NAME, modVideoAttribute->Name());
+			spdlog::error("Element '{}' has unexpected attribute '{}'.", XML_MOD_VIDEO_ELEMENT_NAME, modVideoAttribute->Name());
 			return nullptr;
 		}
 
@@ -257,7 +257,7 @@ std::unique_ptr<ModVideo> ModVideo::parseFrom(const tinyxml2::XMLElement * modVi
 
 	// check for unexpected mod video element child elements
 	if(modVideoElement->FirstChildElement() != nullptr) {
-		fmt::print("Element '{}' has an unexpected child element.\n", XML_MOD_VIDEO_ELEMENT_NAME);
+		spdlog::error("Element '{}' has an unexpected child element.", XML_MOD_VIDEO_ELEMENT_NAME);
 		return nullptr;
 	}
 
@@ -265,21 +265,21 @@ std::unique_ptr<ModVideo> ModVideo::parseFrom(const tinyxml2::XMLElement * modVi
 	const char * modVideoURL = modVideoElement->Attribute(XML_MOD_VIDEO_URL_ATTRIBUTE_NAME.c_str());
 
 	if(modVideoURL == nullptr || Utilities::stringLength(modVideoURL) == 0) {
-		fmt::print("Attribute '{}' is missing from '{}' element.\n", XML_MOD_VIDEO_URL_ATTRIBUTE_NAME, XML_MOD_VIDEO_ELEMENT_NAME);
+		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_VIDEO_URL_ATTRIBUTE_NAME, XML_MOD_VIDEO_ELEMENT_NAME);
 		return nullptr;
 	}
 
 	const char * modVideoWidthData = modVideoElement->Attribute(XML_MOD_VIDEO_WIDTH_ATTRIBUTE_NAME.c_str());
 
 	if(modVideoWidthData == nullptr || Utilities::stringLength(modVideoWidthData) == 0) {
-		fmt::print("Attribute '{}' is missing from '{}' element.\n", XML_MOD_VIDEO_WIDTH_ATTRIBUTE_NAME, XML_MOD_VIDEO_ELEMENT_NAME);
+		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_VIDEO_WIDTH_ATTRIBUTE_NAME, XML_MOD_VIDEO_ELEMENT_NAME);
 		return nullptr;
 	}
 
 	const char * modVideoHeightData = modVideoElement->Attribute(XML_MOD_VIDEO_HEIGHT_ATTRIBUTE_NAME.c_str());
 
 	if(modVideoHeightData == nullptr || Utilities::stringLength(modVideoHeightData) == 0) {
-		fmt::print("Attribute '{}' is missing from '{}' element.\n", XML_MOD_VIDEO_HEIGHT_ATTRIBUTE_NAME, XML_MOD_VIDEO_ELEMENT_NAME);
+		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_VIDEO_HEIGHT_ATTRIBUTE_NAME, XML_MOD_VIDEO_ELEMENT_NAME);
 		return nullptr;
 	}
 
@@ -288,14 +288,14 @@ std::unique_ptr<ModVideo> ModVideo::parseFrom(const tinyxml2::XMLElement * modVi
 	uint32_t modVideoWidth = Utilities::parseUnsignedInteger(modVideoWidthData, &error);
 
 	if(error || modVideoWidth < 1 || modVideoWidth > std::numeric_limits<uint16_t>::max()) {
-		fmt::print("Attribute '{}' in element '{}' has an invalid value: '{}', expected integer number between 1 and {} inclusively.\n", XML_MOD_VIDEO_WIDTH_ATTRIBUTE_NAME, XML_MOD_VIDEO_ELEMENT_NAME, modVideoWidthData, std::numeric_limits<uint16_t>::max());
+		spdlog::error("Attribute '{}' in element '{}' has an invalid value: '{}', expected integer number between 1 and {} inclusively.", XML_MOD_VIDEO_WIDTH_ATTRIBUTE_NAME, XML_MOD_VIDEO_ELEMENT_NAME, modVideoWidthData, std::numeric_limits<uint16_t>::max());
 		return nullptr;
 	}
 
 	uint32_t modVideoHeight = Utilities::parseUnsignedInteger(modVideoHeightData, &error);
 
 	if(error || modVideoHeight < 1 || modVideoHeight > std::numeric_limits<uint16_t>::max()) {
-		fmt::print("Attribute '{}' in element '{}' has an invalid value: '{}', expected integer number between 1 and {} inclusively.\n", XML_MOD_VIDEO_HEIGHT_ATTRIBUTE_NAME, XML_MOD_VIDEO_ELEMENT_NAME, modVideoHeightData, std::numeric_limits<uint16_t>::max());
+		spdlog::error("Attribute '{}' in element '{}' has an invalid value: '{}', expected integer number between 1 and {} inclusively.", XML_MOD_VIDEO_HEIGHT_ATTRIBUTE_NAME, XML_MOD_VIDEO_ELEMENT_NAME, modVideoHeightData, std::numeric_limits<uint16_t>::max());
 		return nullptr;
 	}
 

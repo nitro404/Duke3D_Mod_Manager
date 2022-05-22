@@ -6,6 +6,7 @@
 #include <Utilities/Utilities.h>
 
 #include <fmt/core.h>
+#include <spdlog/spdlog.h>
 
 #include <filesystem>
 #include <memory>
@@ -428,13 +429,13 @@ std::string Group::toString() const {
 bool Group::load() {
 	// verify that the file has a path
 	if(m_filePath.empty()) {
-		fmt::print("Group has no file name.\n");
+		spdlog::error("Group has no file name.");
 		return false;
 	}
 
 	// verify that the file exists and is a file
 	if(!std::filesystem::is_regular_file(std::filesystem::path(m_filePath))) {
-		fmt::print("Group file does not exist or is not a file: '{}'.\n", m_filePath);
+		spdlog::error("Group file does not exist or is not a file: '{}'.", m_filePath);
 		return false;
 	}
 
@@ -442,11 +443,11 @@ bool Group::load() {
 	std::unique_ptr<ByteBuffer> buffer = ByteBuffer::readFrom(m_filePath, Group::FILE_ENDIANNESS);
 
 	if(buffer == nullptr) {
-		fmt::print("Failed to open group file: '{}'.\n", m_filePath);
+		spdlog::error("Failed to open group file: '{}'.", m_filePath);
 		return false;
 	}
 
-	fmt::print("Opened group file: '{}', loaded {} bytes into memory.\n", m_filePath, buffer->getSize());
+	spdlog::debug("Opened group file: '{}', loaded {} bytes into memory.", m_filePath, buffer->getSize());
 
 	bool error = false;
 
@@ -454,27 +455,27 @@ bool Group::load() {
 	std::string headerText(buffer->readString(Group::HEADER_TEXT.length(), &error));
 
 	if(error) {
-		fmt::print("Group file '{}' is incomplete or corrupted: missing header text.\n", m_filePath);
+		spdlog::error("Group file '{}' is incomplete or corrupted: missing header text.", m_filePath);
 		return false;
 	}
 
 	// verify that the header text is specified in the header
 	if(headerText != HEADER_TEXT) {
-		fmt::print("Group file '{}' is not a valid format, missing '{}' header text.\n", m_filePath, HEADER_TEXT);
+		spdlog::error("Group file '{}' is not a valid format, missing '{}' header text.", m_filePath, HEADER_TEXT);
 		return false;
 	}
 
-	fmt::print("Verified group file header text.\n");
+	spdlog::debug("Verified group file header text.");
 
 	// read and verify the number of files value
 	uint32_t numberOfFiles = buffer->readUnsignedInteger(&error);
 
 	if(error) {
-		fmt::print("Group file '{}' is incomplete or corrupted: missing number of files value.\n", m_filePath);
+		spdlog::error("Group file '{}' is incomplete or corrupted: missing number of files value.", m_filePath);
 		return false;
 	}
 
-	fmt::print("Detected {} files in group '{}'.\n", numberOfFiles, m_filePath);
+	spdlog::debug("Detected {} files in group '{}'.", numberOfFiles, m_filePath);
 
 	std::vector<std::string> fileNames;
 	std::vector<uint32_t> fileSizes;
@@ -485,7 +486,7 @@ bool Group::load() {
 		fileNames.emplace_back(buffer->readString(GroupFile::MAX_FILE_NAME_LENGTH, &error));
 
 		if(error) {
-			fmt::print("Group file '{}' is incomplete or corrupted: missing file #{} name.\n", m_filePath, i + 1);
+			spdlog::error("Group file '{}' is incomplete or corrupted: missing file #{} name.", m_filePath, i + 1);
 			return false;
 		}
 
@@ -493,19 +494,19 @@ bool Group::load() {
 		fileSizes.push_back(buffer->readUnsignedInteger(&error));
 
 		if(error) {
-			fmt::print("Group file '{}' is incomplete or corrupted: missing file #{} size value.\n", m_filePath, i + 1);
+			spdlog::error("Group file '{}' is incomplete or corrupted: missing file #{} size value.", m_filePath, i + 1);
 			return false;
 		}
 	}
 
-	fmt::print("All group file information parsed.\n");
+	spdlog::debug("All group file information parsed.");
 
 	for(uint32_t i = 0; i < numberOfFiles; i++) {
 		if(buffer->getSize() < buffer->getReadOffset() + fileSizes[i]) {
 			size_t numberOfMissingBytes = fileSizes[i] - (buffer->getSize() - buffer->getReadOffset());
 			uint32_t numberOfAdditionalFiles = groupFiles.size() - i - 1;
 
-			fmt::print("Group file '{}' is corrupted: missing {} of {} byte{} for file #{} ('{}') data.{}\n", m_filePath, numberOfMissingBytes, fileSizes[i], fileSizes[i] == 1 ? "" : "s", i + 1, fileNames[i], numberOfAdditionalFiles > 0 ? fmt::format(" There is also an additional {} files that are missing data.", numberOfAdditionalFiles) : "");
+			spdlog::error("Group file '{}' is corrupted: missing {} of {} byte{} for file #{} ('{}') data.{}", m_filePath, numberOfMissingBytes, fileSizes[i], fileSizes[i] == 1 ? "" : "s", i + 1, fileNames[i], numberOfAdditionalFiles > 0 ? fmt::format(" There is also an additional {} files that are missing data.", numberOfAdditionalFiles) : "");
 
 			return false;
 		}
@@ -513,7 +514,7 @@ bool Group::load() {
 		std::shared_ptr<GroupFile> groupFile(std::make_shared<GroupFile>(fileNames[i], buffer->readBytes(fileSizes[i], &error)));
 
 		if(error) {
-			fmt::print("Group file '{}' failed to read data bytes for file #{} ('{}').\n", m_filePath, i + 1, fileNames[i]);
+			spdlog::error("Group file '{}' failed to read data bytes for file #{} ('{}').", m_filePath, i + 1, fileNames[i]);
 		}
 
 		groupFiles.push_back(groupFile);
@@ -525,7 +526,7 @@ bool Group::load() {
 		m_files.push_back(*i);
 	}
 
-	fmt::print("Group file parsed successfully, {} files loaded into memory.\n", groupFiles.size());
+	spdlog::debug("Group file parsed successfully, {} files loaded into memory.", groupFiles.size());
 
 	return true;
 }
@@ -533,13 +534,13 @@ bool Group::load() {
 bool Group::save(bool overwrite) const {
 	// verify that the file has a path
 	if(m_filePath.empty()) {
-		fmt::print("Group has no file name.\n");
+		spdlog::error("Group has no file name.");
 		return false;
 	}
 
 	// check if the file already exists and verify that overwrite is specified to continue
 	if(!overwrite && std::filesystem::is_regular_file(std::filesystem::path(m_filePath))) {
-		fmt::print("Group file already exists, must specify overwrite flag to save.\n", m_filePath);
+		spdlog::warn("Group file already exists, must specify overwrite flag to save.", m_filePath);
 		return false;
 	}
 

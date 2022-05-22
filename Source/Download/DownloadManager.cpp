@@ -19,8 +19,8 @@
 #include <Utilities/StringUtilities.h>
 #include <Zip/ZipArchive.h>
 
-#include <fmt/core.h>
 #include <magic_enum.hpp>
+#include <spdlog/spdlog.h>
 
 #include <array>
 #include <chrono>
@@ -48,17 +48,17 @@ bool DownloadManager::initialize() {
 	}
 
 	if(m_httpService == nullptr || !m_httpService->isInitialized()) {
-		fmt::print("Failed to initialize download manager, invalid HTTP service provided.\n");
+		spdlog::error("Failed to initialize download manager, invalid HTTP service provided.");
 		return false;
 	}
 
 	if(m_settings == nullptr) {
-		fmt::print("Failed to initialize download manager, invalid settings manager provided.\n");
+		spdlog::error("Failed to initialize download manager, invalid settings manager provided.");
 		return false;
 	}
 
 	if(!createRequiredDirectories()) {
-		fmt::print("Failed to create required download manager directories!\n");
+		spdlog::error("Failed to create required download manager directories!");
 		return false;
 	}
 
@@ -95,12 +95,12 @@ std::string DownloadManager::getDownloadCacheFilePath() const {
 	}
 
 	if(m_settings->downloadsDirectoryPath.empty()) {
-		fmt::print("Missing downloads directory path setting.\n");
+		spdlog::error("Missing downloads directory path setting.");
 		return {};
 	}
 
 	if(m_settings->downloadCacheFileName.empty()) {
-		fmt::print("Missing download cache file name setting.\n");
+		spdlog::error("Missing download cache file name setting.");
 		return {};
 	}
 
@@ -113,17 +113,17 @@ std::string DownloadManager::getCachedModListFilePath() const {
 	}
 
 	if(m_settings->downloadsDirectoryPath.empty()) {
-		fmt::print("Missing downloads directory path setting.\n");
+		spdlog::error("Missing downloads directory path setting.");
 		return {};
 	}
 
 	if(m_settings->modDownloadsDirectoryName.empty()) {
-		fmt::print("Missing mod downloads directory name setting.\n");
+		spdlog::error("Missing mod downloads directory name setting.");
 		return {};
 	}
 
 	if(m_settings->remoteModsListFileName.empty()) {
-		fmt::print("Missing remote mods list file name setting.\n");
+		spdlog::error("Missing remote mods list file name setting.");
 		return {};
 	}
 
@@ -136,12 +136,12 @@ std::string DownloadManager::getDownloadedModsDirectoryPath() const {
 	}
 
 	if(m_settings->downloadsDirectoryPath.empty()) {
-		fmt::print("Missing downloads directory path setting.\n");
+		spdlog::error("Missing downloads directory path setting.");
 		return {};
 	}
 
 	if(m_settings->modDownloadsDirectoryName.empty()) {
-		fmt::print("Missing mod downloads directory name setting.\n");
+		spdlog::error("Missing mod downloads directory name setting.");
 		return {};
 	}
 
@@ -154,12 +154,12 @@ std::string DownloadManager::getDownloadedMapsDirectoryPath() const {
 	}
 
 	if(m_settings->downloadsDirectoryPath.empty()) {
-		fmt::print("Missing downloads directory path setting.\n");
+		spdlog::error("Missing downloads directory path setting.");
 		return {};
 	}
 
 	if(m_settings->mapDownloadsDirectoryName.empty()) {
-		fmt::print("Missing map downloads directory name setting.\n");
+		spdlog::error("Missing map downloads directory name setting.");
 		return {};
 	}
 
@@ -172,7 +172,7 @@ bool DownloadManager::createRequiredDirectories() {
 	}
 
 	if(m_settings->downloadsDirectoryPath.empty()) {
-		fmt::print("Missing downloads directory path setting.\n");
+		spdlog::error("Missing downloads directory path setting.");
 		return false;
 	}
 
@@ -183,13 +183,11 @@ bool DownloadManager::createRequiredDirectories() {
 		std::filesystem::create_directories(downloadsDirectoryPath, errorCode);
 
 		if(errorCode) {
-			fmt::print("Failed to create downloads directory '{}': {}\n", downloadsDirectoryPath.string(), errorCode.message());
+			spdlog::error("Failed to create downloads directory '{}': {}", downloadsDirectoryPath.string(), errorCode.message());
 			return false;
 		}
 
-#if _DEBUG
-			fmt::print("Created downloads directory: '{}'.\n", downloadsDirectoryPath.string());
-#endif _DEBUG
+		spdlog::debug("Created downloads directory: '{}'.", downloadsDirectoryPath.string());
 	}
 
 	std::array<std::filesystem::path, 3> downloadSubdirectories = {
@@ -203,13 +201,11 @@ bool DownloadManager::createRequiredDirectories() {
 			std::filesystem::create_directory(subdirectory, errorCode);
 
 			if(errorCode) {
-				fmt::print("Failed to create downloads sub-directory '{}': {}\n", subdirectory.string(), errorCode.message());
+				spdlog::error("Failed to create downloads sub-directory '{}': {}", subdirectory.string(), errorCode.message());
 				return false;
 			}
 
-#if _DEBUG
-			fmt::print("Created downloads sub-directory: '{}'.\n", subdirectory.string());
-#endif _DEBUG
+			spdlog::debug("Created downloads sub-directory: '{}'.", subdirectory.string());
 		}
 	}
 
@@ -236,7 +232,7 @@ bool DownloadManager::downloadModList(bool force) {
 	std::string modListRemoteFilePath(Utilities::joinPaths(m_settings->remoteDownloadsDirectoryName, m_settings->remoteModDownloadsDirectoryName, modListFileName));
 	std::string modListURL(Utilities::joinPaths(m_httpService->getBaseURL(), modListRemoteFilePath));
 
-	fmt::print("Downloading Duke Nukem 3D mod list from: '{}'...\n", modListURL);
+	spdlog::info("Downloading Duke Nukem 3D mod list from: '{}'...", modListURL);
 
 	std::shared_ptr<HTTPRequest> request(m_httpService->createRequest(HTTPRequest::Method::Get, modListRemoteFilePath));
 
@@ -247,7 +243,7 @@ bool DownloadManager::downloadModList(bool force) {
 	std::future<std::shared_ptr<HTTPResponse>> futureResponse(m_httpService->sendRequest(request));
 
 	if(!futureResponse.valid()) {
-		fmt::print("Failed to create Duke Nukem 3D mod list file HTTP request!\n");
+		spdlog::error("Failed to create Duke Nukem 3D mod list file HTTP request!");
 		return false;
 	}
 
@@ -256,21 +252,21 @@ bool DownloadManager::downloadModList(bool force) {
 	std::shared_ptr<HTTPResponse> response(futureResponse.get());
 
 	if(response->isFailure()) {
-		fmt::print("Failed to download Duke Nukem 3D mod list with error: {}\n", response->getErrorMessage());
+		spdlog::error("Failed to download Duke Nukem 3D mod list with error: {}", response->getErrorMessage());
 		return false;
 	}
 
 	if(response->getStatusCode() == magic_enum::enum_integer(HTTPStatusCode::NotModified)) {
-		fmt::print("Duke Nukem 3D mod list is already up to date!\n");
+		spdlog::info("Duke Nukem 3D mod list is already up to date!");
 		return true;
 	}
 	else if(response->isFailureStatusCode()) {
 		std::string statusCodeName(HTTPUtilities::getStatusCodeName(response->getStatusCode()));
-		fmt::print("Failed to download Duke Nukem 3D mod list ({}{})!\n", response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
+		spdlog::error("Failed to download Duke Nukem 3D mod list ({}{})!", response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
 		return false;
 	}
 
-	fmt::print("Duke Nukem 3D mod list downloaded successfully after {} ms to file: '{}'.\n", response->getRequestDuration().value().count(), modListLocalFilePath);
+	spdlog::info("Duke Nukem 3D mod list downloaded successfully after {} ms to file: '{}'.", response->getRequestDuration().value().count(), modListLocalFilePath);
 
 	response->getBody()->writeTo(modListLocalFilePath, true);
 
@@ -299,26 +295,26 @@ bool DownloadManager::downloadModGameVersion(ModGameVersion * modGameVersion, Ga
 	}
 
 	if(!ModGameVersion::isValid(modGameVersion)) {
-		fmt::print("Failed to download mod, invalid mod game version provided!\n");
+		spdlog::error("Failed to download mod, invalid mod game version provided!");
 		return false;
 	}
 
 	if(!GameVersionCollection::isValid(gameVersions)) {
-		fmt::print("Failed to download mod, invalid game version collection provided!\n");
+		spdlog::error("Failed to download mod, invalid game version collection provided!");
 		return false;
 	}
 
 	std::shared_ptr<GameVersion> gameVersion(gameVersions->getGameVersion(modGameVersion->getGameVersion()));
 
 	if(gameVersion == nullptr) {
-		fmt::print("Failed to download '{}' mod, could not find '{}' game version! Is your game version configuration file missing information?\n", modGameVersion->getParentModVersionType()->getFullName(), modGameVersion->getGameVersion());
+		spdlog::error("Failed to download '{}' mod, could not find '{}' game version! Is your game version configuration file missing information?", modGameVersion->getParentModVersionType()->getFullName(), modGameVersion->getGameVersion());
 		return false;
 	}
 
 	std::shared_ptr<ModDownload> modDownload(modGameVersion->getDownload());
 
 	if(modDownload == nullptr) {
-		fmt::print("Failed to obtain download for mod game version: '{}'. Is your mod collection data correct?\n", modGameVersion->getFullName());
+		spdlog::error("Failed to obtain download for mod game version: '{}'. Is your mod collection data correct?", modGameVersion->getFullName());
 		return false;
 	}
 
@@ -329,7 +325,7 @@ bool DownloadManager::downloadModGameVersion(ModGameVersion * modGameVersion, Ga
 	std::string modDownloadRemoteFilePath(Utilities::joinPaths(m_settings->remoteDownloadsDirectoryName, m_settings->remoteModDownloadsDirectoryName, modDownload->getSubfolder(), Utilities::toLowerCase(gameVersion->getModDirectoryName()), modDownload->getFileName()));
 	std::string modDownloadURL(Utilities::joinPaths(m_httpService->getBaseURL(), modDownloadRemoteFilePath));
 
-	fmt::print("Downloading '{}' mod from: '{}'...\n", modGameVersion->getFullName(), modDownloadURL);
+	spdlog::info("Downloading '{}' mod from: '{}'...", modGameVersion->getFullName(), modDownloadURL);
 
 	std::shared_ptr<HTTPRequest> request(m_httpService->createRequest(HTTPRequest::Method::Get, modDownloadRemoteFilePath));
 
@@ -342,7 +338,7 @@ bool DownloadManager::downloadModGameVersion(ModGameVersion * modGameVersion, Ga
 	std::future<std::shared_ptr<HTTPResponse>> futureResponse(m_httpService->sendRequest(request));
 
 	if(!futureResponse.valid()) {
-		fmt::print("Failed to create '{}' mod package file HTTP request!\n", modGameVersion->getFullName());
+		spdlog::error("Failed to create '{}' mod package file HTTP request!", modGameVersion->getFullName());
 		return false;
 	}
 
@@ -351,34 +347,34 @@ bool DownloadManager::downloadModGameVersion(ModGameVersion * modGameVersion, Ga
 	std::shared_ptr<HTTPResponse> response(futureResponse.get());
 
 	if(response->isFailure()) {
-		fmt::print("Failed to download '{}' mod package file with error: {}\n", modGameVersion->getFullName(), response->getErrorMessage());
+		spdlog::error("Failed to download '{}' mod package file with error: {}", modGameVersion->getFullName(), response->getErrorMessage());
 		return false;
 	}
 
 	if(response->getStatusCode() == magic_enum::enum_integer(HTTPStatusCode::NotModified)) {
-		fmt::print("Mod '{}' is already up to date!\n", modGameVersion->getFullName());
+		spdlog::info("Mod '{}' is already up to date!", modGameVersion->getFullName());
 		return true;
 	}
 	else if(response->isFailureStatusCode()) {
 		std::string statusCodeName(HTTPUtilities::getStatusCodeName(response->getStatusCode()));
-		fmt::print("Failed to download '{}' mod package file ({}{})!\n", modGameVersion->getFullName(), response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
+		spdlog::error("Failed to download '{}' mod package file ({}{})!", modGameVersion->getFullName(), response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
 		return false;
 	}
 
-	fmt::print("Successfully downloaded '{}' mod package file '{}' after {} ms, verifying file integrity using SHA1 hash...\n", modGameVersion->getFullName(), modDownload->getFileName(), response->getRequestDuration().value().count());
+	spdlog::info("Successfully downloaded '{}' mod package file '{}' after {} ms, verifying file integrity using SHA1 hash...", modGameVersion->getFullName(), modDownload->getFileName(), response->getRequestDuration().value().count());
 
 	std::string modPackageFileSHA1(response->getBody()->getSHA1());
 	if(modPackageFileSHA1 != modDownload->getSHA1()) {
-		fmt::print("Failed to download '{}' mod package file '{}' due to data corruption, SHA1 hash check failed!\n", modGameVersion->getFullName(), modDownload->getFileName());
+		spdlog::error("Failed to download '{}' mod package file '{}' due to data corruption, SHA1 hash check failed!", modGameVersion->getFullName(), modDownload->getFileName());
 		return false;
 	}
 
-	fmt::print("Mod '{}' package file '{}' file integrity verified!\n", modGameVersion->getFullName(), modDownload->getFileName());
+	spdlog::debug("Mod '{}' package file '{}' file integrity verified!", modGameVersion->getFullName(), modDownload->getFileName());
 
 	std::unique_ptr<ZipArchive> modDownloadZipArchive(ZipArchive::createFrom(response->transferBody(), Utilities::emptyString, true));
 
 	if(modDownloadZipArchive == nullptr) {
-		fmt::print("Failed to create zip archive handle from mod '{}' package file '{}'!\n", modGameVersion->getFullName(), modDownload->getFileName());
+		spdlog::error("Failed to create zip archive handle from mod '{}' package file '{}'!", modGameVersion->getFullName(), modDownload->getFileName());
 		return false;
 	}
 
@@ -389,19 +385,19 @@ bool DownloadManager::downloadModGameVersion(ModGameVersion * modGameVersion, Ga
 		std::weak_ptr<ZipArchive::Entry> modFileZipEntry(modDownloadZipArchive->getEntry(modZipFile->getFileName()));
 
 		if(modFileZipEntry.expired()) {
-			fmt::print("Failed to download '{}' mod package file '{}', mod zip file '{}' not found!\n", modGameVersion->getFullName(), modDownload->getFileName(), modZipFile->getFileName());
+			spdlog::error("Failed to download '{}' mod package file '{}', mod zip file '{}' not found!", modGameVersion->getFullName(), modDownload->getFileName(), modZipFile->getFileName());
 			return false;
 		}
 
 		std::unique_ptr<ByteBuffer> modFileZipEntryData(modFileZipEntry.lock()->getData());
 
 		if(modFileZipEntryData == nullptr) {
-			fmt::print("Failed to download '{}' mod package file '{}', could not retrieve zip entry file '{}' data!\n", modGameVersion->getFullName(), modDownload->getFileName(), modZipFile->getFileName());
+			spdlog::error("Failed to download '{}' mod package file '{}', could not retrieve zip entry file '{}' data!", modGameVersion->getFullName(), modDownload->getFileName(), modZipFile->getFileName());
 			return false;
 		}
 
 		if(!Utilities::areStringsEqualIgnoreCase(modFileZipEntryData->getSHA1(), modZipFile->getSHA1())) {
-			fmt::print("Failed to download '{}' mod package file '{}', zip entry file '{}' SHA1 hash validation failed!\n", modGameVersion->getFullName(), modDownload->getFileName(), modZipFile->getFileName());
+			spdlog::error("Failed to download '{}' mod package file '{}', zip entry file '{}' SHA1 hash validation failed!", modGameVersion->getFullName(), modDownload->getFileName(), modZipFile->getFileName());
 			return false;
 		}
 	}
@@ -420,26 +416,26 @@ bool DownloadManager::downloadModGameVersion(ModGameVersion * modGameVersion, Ga
 			modFileEntry = modDownloadZipArchive->getEntry(modFile->getFileName());
 
 			if(modFileEntry.expired()) {
-				fmt::print("Failed to download '{}' mod package file '{}', mod file '{}' not found!\n", modGameVersion->getFullName(), modDownload->getFileName(), modFile->getFileName());
+				spdlog::error("Failed to download '{}' mod package file '{}', mod file '{}' not found!", modGameVersion->getFullName(), modDownload->getFileName(), modFile->getFileName());
 				return false;
 			}
 
 			std::unique_ptr<ByteBuffer> modFileEntryData(modFileEntry.lock()->getData());
 
 			if(modFileEntryData == nullptr) {
-				fmt::print("Failed to download '{}' mod package file '{}', could not retrieve zip entry file '{}' data!\n", modGameVersion->getFullName(), modDownload->getFileName(), modFile->getFileName());
+				spdlog::error("Failed to download '{}' mod package file '{}', could not retrieve zip entry file '{}' data!", modGameVersion->getFullName(), modDownload->getFileName(), modFile->getFileName());
 				return false;
 			}
 
 			if(!Utilities::areStringsEqualIgnoreCase(modFileEntryData->getSHA1(), modFile->getSHA1())) {
-				fmt::print("Failed to download '{}' mod package file '{}', zip entry file '{}' SHA1 hash validation failed!\n", modGameVersion->getFullName(), modDownload->getFileName(), modFile->getFileName());
+				spdlog::error("Failed to download '{}' mod package file '{}', zip entry file '{}' SHA1 hash validation failed!", modGameVersion->getFullName(), modDownload->getFileName(), modFile->getFileName());
 				return false;
 			}
 		}
 	}
 
 	if(!modDownloadZipArchive->extractAllEntries(modDownloadLocalBasePath, true)) {
-		fmt::print("Failed to extract '{}' mod package file '{}' contents to directory: '{}'.\n", modGameVersion->getFullName(), modDownload->getFileName(), modDownloadLocalBasePath);
+		spdlog::error("Failed to extract '{}' mod package file '{}' contents to directory: '{}'.", modGameVersion->getFullName(), modDownload->getFileName(), modDownloadLocalBasePath);
 		return false;
 	}
 

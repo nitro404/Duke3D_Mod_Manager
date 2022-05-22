@@ -7,7 +7,7 @@
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
 
-#include <fmt/core.h>
+#include <spdlog/spdlog.h>
 #include <tinyxml2.h>
 
 #include <array>
@@ -394,7 +394,7 @@ tinyxml2::XMLElement * ModDownload::toXML(tinyxml2::XMLDocument * document) cons
 
 std::unique_ptr<ModDownload> ModDownload::parseFrom(const rapidjson::Value & modDownloadValue) {
 	if(!modDownloadValue.IsObject()) {
-		fmt::print("Invalid mod download type: '{}', expected 'object'.\n", Utilities::typeToString(modDownloadValue.GetType()));
+		spdlog::error("Invalid mod download type: '{}', expected 'object'.", Utilities::typeToString(modDownloadValue.GetType()));
 		return nullptr;
 	}
 
@@ -412,68 +412,68 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const rapidjson::Value & mod
 		}
 
 		if(!propertyHandled) {
-			fmt::print("Mod download has unexpected property '{}'.\n", i->name.GetString());
+			spdlog::error("Mod download has unexpected property '{}'.", i->name.GetString());
 			return nullptr;
 		}
 	}
 
 	// parse mod download file name
 	if(!modDownloadValue.HasMember(JSON_MOD_DOWNLOAD_FILE_NAME_PROPERTY_NAME)) {
-		fmt::print("Mod download is missing '{}' property'.\n", JSON_MOD_DOWNLOAD_FILE_NAME_PROPERTY_NAME);
+		spdlog::error("Mod download is missing '{}' property'.", JSON_MOD_DOWNLOAD_FILE_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & modDownloadFileNameValue = modDownloadValue[JSON_MOD_DOWNLOAD_FILE_NAME_PROPERTY_NAME];
 
 	if(!modDownloadFileNameValue.IsString()) {
-		fmt::print("Mod download has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_MOD_DOWNLOAD_FILE_NAME_PROPERTY_NAME, Utilities::typeToString(modDownloadFileNameValue.GetType()));
+		spdlog::error("Mod download has an invalid '{}' property type: '{}', expected 'string'.", JSON_MOD_DOWNLOAD_FILE_NAME_PROPERTY_NAME, Utilities::typeToString(modDownloadFileNameValue.GetType()));
 		return nullptr;
 	}
 
 	std::string modDownloadFileName(Utilities::trimString(modDownloadFileNameValue.GetString()));
 
 	if(modDownloadFileName.empty()) {
-		fmt::print("Mod download '{}' property cannot be empty.\n", JSON_MOD_DOWNLOAD_FILE_NAME_PROPERTY_NAME);
+		spdlog::error("Mod download '{}' property cannot be empty.", JSON_MOD_DOWNLOAD_FILE_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse mod download type
 	if(!modDownloadValue.HasMember(JSON_MOD_DOWNLOAD_TYPE_PROPERTY_NAME)) {
-		fmt::print("Mod download is missing '{}' property'.\n", JSON_MOD_DOWNLOAD_TYPE_PROPERTY_NAME);
+		spdlog::error("Mod download is missing '{}' property'.", JSON_MOD_DOWNLOAD_TYPE_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & modDownloadTypeValue = modDownloadValue[JSON_MOD_DOWNLOAD_TYPE_PROPERTY_NAME];
 
 	if(!modDownloadTypeValue.IsString()) {
-		fmt::print("Mod download has an invalid '{}' property type: '{}', expected 'string'.\n", JSON_MOD_DOWNLOAD_TYPE_PROPERTY_NAME, Utilities::typeToString(modDownloadTypeValue.GetType()));
+		spdlog::error("Mod download has an invalid '{}' property type: '{}', expected 'string'.", JSON_MOD_DOWNLOAD_TYPE_PROPERTY_NAME, Utilities::typeToString(modDownloadTypeValue.GetType()));
 		return nullptr;
 	}
 
 	std::string modDownloadType(Utilities::trimString(modDownloadTypeValue.GetString()));
 
 	if(modDownloadType.empty()) {
-		fmt::print("Mod download '{}' property cannot be empty.\n", JSON_MOD_DOWNLOAD_TYPE_PROPERTY_NAME);
+		spdlog::error("Mod download '{}' property cannot be empty.", JSON_MOD_DOWNLOAD_TYPE_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse the mod download sha1 property
 	if(!modDownloadValue.HasMember(JSON_MOD_DOWNLOAD_SHA1_PROPERTY_NAME)) {
-		fmt::print("Mod download is missing '{}' property'.\n", JSON_MOD_DOWNLOAD_SHA1_PROPERTY_NAME);
+		spdlog::error("Mod download is missing '{}' property'.", JSON_MOD_DOWNLOAD_SHA1_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & modDownloadSHA1Value = modDownloadValue[JSON_MOD_DOWNLOAD_SHA1_PROPERTY_NAME];
 
 	if(!modDownloadSHA1Value.IsString()) {
-		fmt::print("Mod download '{}' property has invalid type: '{}', expected 'string'.\n", JSON_MOD_DOWNLOAD_SHA1_PROPERTY_NAME, Utilities::typeToString(modDownloadSHA1Value.GetType()));
+		spdlog::error("Mod download '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_DOWNLOAD_SHA1_PROPERTY_NAME, Utilities::typeToString(modDownloadSHA1Value.GetType()));
 		return nullptr;
 	}
 
 	std::string modDownloadSHA1(Utilities::trimString(modDownloadSHA1Value.GetString()));
 
 	if(modDownloadSHA1.empty()) {
-		fmt::print("Mod download '{}' property cannot be empty.\n", JSON_MOD_DOWNLOAD_SHA1_PROPERTY_NAME);
+		spdlog::error("Mod download '{}' property cannot be empty.", JSON_MOD_DOWNLOAD_SHA1_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -487,14 +487,14 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const rapidjson::Value & mod
 		const rapidjson::Value & modDownloadPartCountValue = modDownloadValue[JSON_MOD_DOWNLOAD_PART_COUNT_PROPERTY_NAME];
 
 		if(!modDownloadPartCountValue.IsUint()) {
-			fmt::print("Mod download has an invalid '{}' property type: '{}', expected unsigned integer 'number'.\n", JSON_MOD_DOWNLOAD_PART_COUNT_PROPERTY_NAME, Utilities::typeToString(modDownloadPartCountValue.GetType()));
+			spdlog::error("Mod download has an invalid '{}' property type: '{}', expected unsigned integer 'number'.", JSON_MOD_DOWNLOAD_PART_COUNT_PROPERTY_NAME, Utilities::typeToString(modDownloadPartCountValue.GetType()));
 			return nullptr;
 		}
 
 		uint32_t partCount = modDownloadPartCountValue.GetUint();
 
 		if(error || partCount < 1 || partCount > std::numeric_limits<uint8_t>::max()) {
-			fmt::print("Mod download '{}' property value has an invalid value: '{}', expected unsigned integer 'number' between 1 and {} inclusively.\n", JSON_MOD_DOWNLOAD_PART_COUNT_PROPERTY_NAME, partCount, std::numeric_limits<uint8_t>::max());
+			spdlog::error("Mod download '{}' property value has an invalid value: '{}', expected unsigned integer 'number' between 1 and {} inclusively.", JSON_MOD_DOWNLOAD_PART_COUNT_PROPERTY_NAME, partCount, std::numeric_limits<uint8_t>::max());
 			return nullptr;
 		}
 
@@ -506,19 +506,19 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const rapidjson::Value & mod
 		const rapidjson::Value & modDownloadPartNumberValue = modDownloadValue[JSON_MOD_DOWNLOAD_PART_NUMBER_PROPERTY_NAME];
 
 		if(!modDownloadPartNumberValue.IsUint()) {
-			fmt::print("Mod download has an invalid '{}' property type: '{}', expected unsigned integer 'number'.\n", JSON_MOD_DOWNLOAD_PART_NUMBER_PROPERTY_NAME, Utilities::typeToString(modDownloadPartNumberValue.GetType()));
+			spdlog::error("Mod download has an invalid '{}' property type: '{}', expected unsigned integer 'number'.", JSON_MOD_DOWNLOAD_PART_NUMBER_PROPERTY_NAME, Utilities::typeToString(modDownloadPartNumberValue.GetType()));
 			return nullptr;
 		}
 
 		uint32_t partNumber = modDownloadPartNumberValue.GetUint();
 
 		if(error || partNumber < 1 || partNumber > std::numeric_limits<uint8_t>::max()) {
-			fmt::print("Mod download '{}' property value has an invalid value: '{}', expected unsigned integer 'number' between 1 and {} inclusively.\n", JSON_MOD_DOWNLOAD_PART_NUMBER_PROPERTY_NAME, partNumber, std::numeric_limits<uint8_t>::max());
+			spdlog::error("Mod download '{}' property value has an invalid value: '{}', expected unsigned integer 'number' between 1 and {} inclusively.", JSON_MOD_DOWNLOAD_PART_NUMBER_PROPERTY_NAME, partNumber, std::numeric_limits<uint8_t>::max());
 			return nullptr;
 		}
 
 		if(partNumber > newModDownload->m_partCount) {
-			fmt::print("Attribute '{}' in element '{}' has an invalid value: '{}' which exceeds the '{}' value of '{}'.\n", XML_MOD_DOWNLOAD_PART_NUMBER_ATTRIBUTE_NAME, XML_MOD_DOWNLOAD_ELEMENT_NAME, partNumber, XML_MOD_DOWNLOAD_PART_COUNT_ATTRIBUTE_NAME, newModDownload->m_partCount);
+			spdlog::error("Attribute '{}' in element '{}' has an invalid value: '{}' which exceeds the '{}' value of '{}'.", XML_MOD_DOWNLOAD_PART_NUMBER_ATTRIBUTE_NAME, XML_MOD_DOWNLOAD_ELEMENT_NAME, partNumber, XML_MOD_DOWNLOAD_PART_COUNT_ATTRIBUTE_NAME, newModDownload->m_partCount);
 			return nullptr;
 		}
 
@@ -530,7 +530,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const rapidjson::Value & mod
 		const rapidjson::Value & modDownloadVersionValue = modDownloadValue[JSON_MOD_DOWNLOAD_VERSION_PROPERTY_NAME];
 
 		if(!modDownloadVersionValue.IsString()) {
-			fmt::print("Mod download '{}' property has invalid type: '{}', expected 'string'.\n", JSON_MOD_DOWNLOAD_VERSION_PROPERTY_NAME, Utilities::typeToString(modDownloadVersionValue.GetType()));
+			spdlog::error("Mod download '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_DOWNLOAD_VERSION_PROPERTY_NAME, Utilities::typeToString(modDownloadVersionValue.GetType()));
 			return nullptr;
 		}
 
@@ -542,7 +542,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const rapidjson::Value & mod
 		const rapidjson::Value & modDownloadSpecialValue = modDownloadValue[JSON_MOD_DOWNLOAD_SPECIAL_PROPERTY_NAME];
 
 		if(!modDownloadSpecialValue.IsString()) {
-			fmt::print("Mod download '{}' property has invalid type: '{}', expected 'string'.\n", JSON_MOD_DOWNLOAD_SPECIAL_PROPERTY_NAME, Utilities::typeToString(modDownloadSpecialValue.GetType()));
+			spdlog::error("Mod download '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_DOWNLOAD_SPECIAL_PROPERTY_NAME, Utilities::typeToString(modDownloadSpecialValue.GetType()));
 			return nullptr;
 		}
 
@@ -554,7 +554,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const rapidjson::Value & mod
 		const rapidjson::Value & modDownloadGameVersionValue = modDownloadValue[JSON_MOD_DOWNLOAD_GAME_VERSION_PROPERTY_NAME];
 
 		if(!modDownloadGameVersionValue.IsString()) {
-			fmt::print("Mod download '{}' property has invalid type: '{}', expected 'string'.\n", JSON_MOD_DOWNLOAD_GAME_VERSION_PROPERTY_NAME, Utilities::typeToString(modDownloadGameVersionValue.GetType()));
+			spdlog::error("Mod download '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_DOWNLOAD_GAME_VERSION_PROPERTY_NAME, Utilities::typeToString(modDownloadGameVersionValue.GetType()));
 			return nullptr;
 		}
 
@@ -566,7 +566,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const rapidjson::Value & mod
 		const rapidjson::Value & modDownloadConvertedValue = modDownloadValue[JSON_MOD_DOWNLOAD_CONVERTED_PROPERTY_NAME];
 
 		if(!modDownloadConvertedValue.IsBool()) {
-			fmt::print("Mod download '{}' property has invalid type: '{}', expected 'boolean'.\n", JSON_MOD_DOWNLOAD_CONVERTED_PROPERTY_NAME, Utilities::typeToString(modDownloadConvertedValue.GetType()));
+			spdlog::error("Mod download '{}' property has invalid type: '{}', expected 'boolean'.", JSON_MOD_DOWNLOAD_CONVERTED_PROPERTY_NAME, Utilities::typeToString(modDownloadConvertedValue.GetType()));
 			return nullptr;
 		}
 
@@ -578,7 +578,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const rapidjson::Value & mod
 		const rapidjson::Value & modDownloadCorruptedValue = modDownloadValue[JSON_MOD_DOWNLOAD_CORRUPTED_PROPERTY_NAME];
 
 		if(!modDownloadCorruptedValue.IsBool()) {
-			fmt::print("Mod download '{}' property has invalid type: '{}', expected 'boolean'.\n", JSON_MOD_DOWNLOAD_CORRUPTED_PROPERTY_NAME, Utilities::typeToString(modDownloadCorruptedValue.GetType()));
+			spdlog::error("Mod download '{}' property has invalid type: '{}', expected 'boolean'.", JSON_MOD_DOWNLOAD_CORRUPTED_PROPERTY_NAME, Utilities::typeToString(modDownloadCorruptedValue.GetType()));
 			return nullptr;
 		}
 
@@ -590,7 +590,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const rapidjson::Value & mod
 		const rapidjson::Value & modDownloadRepairedValue = modDownloadValue[JSON_MOD_DOWNLOAD_REPAIRED_PROPERTY_NAME];
 
 		if(!modDownloadRepairedValue.IsBool()) {
-			fmt::print("Mod download '{}' property has invalid type: '{}', expected 'boolean'.\n", JSON_MOD_DOWNLOAD_REPAIRED_PROPERTY_NAME, Utilities::typeToString(modDownloadRepairedValue.GetType()));
+			spdlog::error("Mod download '{}' property has invalid type: '{}', expected 'boolean'.", JSON_MOD_DOWNLOAD_REPAIRED_PROPERTY_NAME, Utilities::typeToString(modDownloadRepairedValue.GetType()));
 			return nullptr;
 		}
 
@@ -607,7 +607,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const tinyxml2::XMLElement *
 
 	// verify element name
 	if(modDownloadElement->Name() != XML_MOD_DOWNLOAD_ELEMENT_NAME) {
-		fmt::print("Invalid mod download element name: '{}', expected '{}'.\n", modDownloadElement->Name(), XML_MOD_DOWNLOAD_ELEMENT_NAME);
+		spdlog::error("Invalid mod download element name: '{}', expected '{}'.", modDownloadElement->Name(), XML_MOD_DOWNLOAD_ELEMENT_NAME);
 		return nullptr;
 	}
 
@@ -630,7 +630,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const tinyxml2::XMLElement *
 		}
 
 		if(!attributeHandled) {
-			fmt::print("Element '{}' has unexpected attribute '{}'.\n", XML_MOD_DOWNLOAD_ELEMENT_NAME, modDownloadAttribute->Name());
+			spdlog::error("Element '{}' has unexpected attribute '{}'.", XML_MOD_DOWNLOAD_ELEMENT_NAME, modDownloadAttribute->Name());
 			return nullptr;
 		}
 
@@ -639,7 +639,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const tinyxml2::XMLElement *
 
 	// check for unexpected mod download element child elements
 	if(modDownloadElement->FirstChildElement() != nullptr) {
-		fmt::print("Element '{}' has an unexpected child element.\n", XML_MOD_DOWNLOAD_ELEMENT_NAME);
+		spdlog::error("Element '{}' has an unexpected child element.", XML_MOD_DOWNLOAD_ELEMENT_NAME);
 		return nullptr;
 	}
 
@@ -647,21 +647,21 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const tinyxml2::XMLElement *
 	const char * modDownloadFileName = modDownloadElement->Attribute(XML_MOD_DOWNLOAD_FILE_NAME_ATTRIBUTE_NAME.c_str());
 
 	if(modDownloadFileName == nullptr || Utilities::stringLength(modDownloadFileName) == 0) {
-		fmt::print("Attribute '{}' is missing from '{}' element.\n", XML_MOD_DOWNLOAD_FILE_NAME_ATTRIBUTE_NAME, XML_MOD_DOWNLOAD_ELEMENT_NAME);
+		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_DOWNLOAD_FILE_NAME_ATTRIBUTE_NAME, XML_MOD_DOWNLOAD_ELEMENT_NAME);
 		return nullptr;
 	}
 
 	const char * modDownloadType = modDownloadElement->Attribute(XML_MOD_DOWNLOAD_TYPE_ATTRIBUTE_NAME.c_str());
 
 	if(modDownloadType == nullptr || Utilities::stringLength(modDownloadType) == 0) {
-		fmt::print("Attribute '{}' is missing from '{}' element.\n", XML_MOD_DOWNLOAD_TYPE_ATTRIBUTE_NAME, XML_MOD_DOWNLOAD_ELEMENT_NAME);
+		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_DOWNLOAD_TYPE_ATTRIBUTE_NAME, XML_MOD_DOWNLOAD_ELEMENT_NAME);
 		return nullptr;
 	}
 
 	const char * modDownloadSHA1 = modDownloadElement->Attribute(XML_MOD_DOWNLOAD_SHA1_ATTRIBUTE_NAME.c_str());
 
 	if(modDownloadSHA1 == nullptr || Utilities::stringLength(modDownloadSHA1) == 0) {
-		fmt::print("Attribute '{}' is missing from '{}' element.\n", XML_MOD_DOWNLOAD_SHA1_ATTRIBUTE_NAME, XML_MOD_DOWNLOAD_ELEMENT_NAME);
+		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_DOWNLOAD_SHA1_ATTRIBUTE_NAME, XML_MOD_DOWNLOAD_ELEMENT_NAME);
 		return nullptr;
 	}
 
@@ -695,7 +695,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const tinyxml2::XMLElement *
 		uint32_t partCount = Utilities::parseUnsignedInteger(modDownloadPartCountData, &error);
 
 		if(error || partCount < 1 || partCount > std::numeric_limits<uint8_t>::max()) {
-			fmt::print("Attribute '{}' in element '{}' has an invalid value: '{}', expected integer number between 1 and {} inclusively.\n", XML_MOD_DOWNLOAD_PART_COUNT_ATTRIBUTE_NAME, XML_MOD_DOWNLOAD_ELEMENT_NAME, modDownloadPartCountData, std::numeric_limits<uint8_t>::max());
+			spdlog::error("Attribute '{}' in element '{}' has an invalid value: '{}', expected integer number between 1 and {} inclusively.", XML_MOD_DOWNLOAD_PART_COUNT_ATTRIBUTE_NAME, XML_MOD_DOWNLOAD_ELEMENT_NAME, modDownloadPartCountData, std::numeric_limits<uint8_t>::max());
 			return nullptr;
 		}
 
@@ -706,12 +706,12 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const tinyxml2::XMLElement *
 		uint32_t partNumber = Utilities::parseUnsignedInteger(modDownloadPartNumberData, &error);
 
 		if(error || partNumber < 1 || partNumber > std::numeric_limits<uint8_t>::max()) {
-			fmt::print("Attribute '{}' in element '{}' has an invalid value: '{}', expected integer number between 1 and {} inclusively.\n", XML_MOD_DOWNLOAD_PART_NUMBER_ATTRIBUTE_NAME, XML_MOD_DOWNLOAD_ELEMENT_NAME, modDownloadPartNumberData, std::numeric_limits<uint8_t>::max());
+			spdlog::error("Attribute '{}' in element '{}' has an invalid value: '{}', expected integer number between 1 and {} inclusively.", XML_MOD_DOWNLOAD_PART_NUMBER_ATTRIBUTE_NAME, XML_MOD_DOWNLOAD_ELEMENT_NAME, modDownloadPartNumberData, std::numeric_limits<uint8_t>::max());
 			return nullptr;
 		}
 
 		if(partNumber > newModDownload->m_partCount) {
-			fmt::print("Attribute '{}' in element '{}' has an invalid value: '{}' which exceeds the '{}' value of '{}'.\n", XML_MOD_DOWNLOAD_PART_NUMBER_ATTRIBUTE_NAME, XML_MOD_DOWNLOAD_ELEMENT_NAME, partNumber, XML_MOD_DOWNLOAD_PART_COUNT_ATTRIBUTE_NAME, newModDownload->m_partCount);
+			spdlog::error("Attribute '{}' in element '{}' has an invalid value: '{}' which exceeds the '{}' value of '{}'.", XML_MOD_DOWNLOAD_PART_NUMBER_ATTRIBUTE_NAME, XML_MOD_DOWNLOAD_ELEMENT_NAME, partNumber, XML_MOD_DOWNLOAD_PART_COUNT_ATTRIBUTE_NAME, newModDownload->m_partCount);
 			return nullptr;
 		}
 
@@ -726,7 +726,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const tinyxml2::XMLElement *
 			newModDownload->setConverted(false);
 		}
 		else {
-			fmt::print("Attribute '{}' in element '{}' has an invalid value: '{}', expected 'Native' or 'Converted'.\n", XML_MOD_DOWNLOAD_CONVERTED_ATTRIBUTE_NAME, XML_MOD_DOWNLOAD_ELEMENT_NAME, modDownloadConvertedData);
+			spdlog::error("Attribute '{}' in element '{}' has an invalid value: '{}', expected 'Native' or 'Converted'.", XML_MOD_DOWNLOAD_CONVERTED_ATTRIBUTE_NAME, XML_MOD_DOWNLOAD_ELEMENT_NAME, modDownloadConvertedData);
 			return nullptr;
 		}
 	}
@@ -735,7 +735,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const tinyxml2::XMLElement *
 		bool corrupted = Utilities::parseBoolean(modDownloadCorruptedData, &error);
 
 		if(error) {
-			fmt::print("Attribute '{}' in element '{}' has an invalid value: '{}', expected boolean.\n", XML_MOD_DOWNLOAD_CORRUPTED_ATTRIBUTE_NAME, XML_MOD_DOWNLOAD_ELEMENT_NAME, modDownloadCorruptedData);
+			spdlog::error("Attribute '{}' in element '{}' has an invalid value: '{}', expected boolean.", XML_MOD_DOWNLOAD_CORRUPTED_ATTRIBUTE_NAME, XML_MOD_DOWNLOAD_ELEMENT_NAME, modDownloadCorruptedData);
 			return nullptr;
 		}
 
@@ -746,7 +746,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const tinyxml2::XMLElement *
 		bool repaired = Utilities::parseBoolean(modDownloadRepairedData, &error);
 
 		if(error) {
-			fmt::print("Attribute '{}' in element '{}' has an invalid value: '{}', expected boolean.\n", XML_MOD_DOWNLOAD_REPAIRED_ATTRIBUTE_NAME, XML_MOD_DOWNLOAD_ELEMENT_NAME, modDownloadRepairedData);
+			spdlog::error("Attribute '{}' in element '{}' has an invalid value: '{}', expected boolean.", XML_MOD_DOWNLOAD_REPAIRED_ATTRIBUTE_NAME, XML_MOD_DOWNLOAD_ELEMENT_NAME, modDownloadRepairedData);
 			return nullptr;
 		}
 

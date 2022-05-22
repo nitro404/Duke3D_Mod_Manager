@@ -9,12 +9,12 @@
 #include <Utilities/StringUtilities.h>
 #include <Utilities/Utilities.h>
 
-#include <fmt/core.h>
 #include <magic_enum.hpp>
 #include <rapidjson/document.h>
 #include <rapidjson/istreamwrapper.h>
 #include <rapidjson/ostreamwrapper.h>
 #include <rapidjson/prettywriter.h>
+#include <spdlog/spdlog.h>
 
 #include <filesystem>
 #include <fstream>
@@ -322,7 +322,7 @@ size_t GameVersionCollection::addMissingDefaultGameVersions() {
 			continue;
 		}
 
-		fmt::print("Adding missing default game version '{}'.\n", i->getName());
+		spdlog::info("Adding missing default game version '{}'.", i->getName());
 
 		addGameVersion(*i);
 
@@ -377,7 +377,7 @@ rapidjson::Document GameVersionCollection::toJSON() const {
 
 std::unique_ptr<GameVersionCollection> GameVersionCollection::parseFrom(const rapidjson::Value & gameVersionCollectionValue) {
 	if(!gameVersionCollectionValue.IsArray()) {
-		fmt::print("Invalid game version collection type: '{}', expected 'array'.\n", Utilities::typeToString(gameVersionCollectionValue.GetType()));
+		spdlog::error("Invalid game version collection type: '{}', expected 'array'.", Utilities::typeToString(gameVersionCollectionValue.GetType()));
 		return nullptr;
 	}
 
@@ -393,12 +393,12 @@ std::unique_ptr<GameVersionCollection> GameVersionCollection::parseFrom(const ra
 		newGameVersion = GameVersion::parseFrom(*i);
 
 		if(!GameVersion::isValid(newGameVersion.get())) {
-			fmt::print("Failed to parse game version #{}{}!\n", newGameVersionCollection->m_gameVersions.size() + 1, newGameVersionCollection->numberOfGameVersions() == 0 ? "" : fmt::format(" (after game version '{}')", newGameVersionCollection->getGameVersion(newGameVersionCollection->numberOfGameVersions() - 1)->getName()));
+			spdlog::error("Failed to parse game version #{}{}!", newGameVersionCollection->m_gameVersions.size() + 1, newGameVersionCollection->numberOfGameVersions() == 0 ? "" : fmt::format(" (after game version '{}')", newGameVersionCollection->getGameVersion(newGameVersionCollection->numberOfGameVersions() - 1)->getName()));
 			return nullptr;
 		}
 
 		if(newGameVersionCollection->hasGameVersion(*newGameVersion.get())) {
-			fmt::print("Encountered duplicate game version #{}{}.\n", newGameVersionCollection->m_gameVersions.size() + 1, newGameVersionCollection->numberOfGameVersions() == 0 ? "" : fmt::format(" (after game version '{}')", newGameVersionCollection->getGameVersion(newGameVersionCollection->numberOfGameVersions() - 1)->getName()));
+			spdlog::error("Encountered duplicate game version #{}{}.", newGameVersionCollection->m_gameVersions.size() + 1, newGameVersionCollection->numberOfGameVersions() == 0 ? "" : fmt::format(" (after game version '{}')", newGameVersionCollection->getGameVersion(newGameVersionCollection->numberOfGameVersions() - 1)->getName()));
 			return nullptr;
 		}
 
@@ -455,7 +455,7 @@ bool GameVersionCollection::loadFromJSON(const std::string & filePath, bool auto
 	std::unique_ptr<GameVersionCollection> gameVersionCollection = parseFrom(gameVersionsValue);
 
 	if(!GameVersionCollection::isValid(gameVersionCollection.get())) {
-		fmt::print("Failed to parse gameVersion collection from JSON file '{}'.\n", filePath);
+		spdlog::error("Failed to parse gameVersion collection from JSON file '{}'.", filePath);
 		return false;
 	}
 
@@ -485,7 +485,7 @@ bool GameVersionCollection::saveTo(const std::string & filePath, bool overwrite)
 
 bool GameVersionCollection::saveToJSON(const std::string & filePath, bool overwrite) const {
 	if (!overwrite && std::filesystem::exists(std::filesystem::path(filePath))) {
-		fmt::print("File '{}' already exists, use overwrite to force write.\n", filePath);
+		spdlog::warn("File '{}' already exists, use overwrite to force write.", filePath);
 		return false;
 	}
 

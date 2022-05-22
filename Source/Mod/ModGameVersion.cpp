@@ -10,7 +10,7 @@
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
 
-#include <fmt/core.h>
+#include <spdlog/spdlog.h>
 #include <tinyxml2.h>
 
 #include <array>
@@ -473,7 +473,7 @@ tinyxml2::XMLElement * ModGameVersion::toXML(tinyxml2::XMLDocument * document) c
 
 std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value & modGameVersionValue) {
 	if(!modGameVersionValue.IsObject()) {
-		fmt::print("Invalid mod game version type: '{}', expected 'object'.\n", Utilities::typeToString(modGameVersionValue.GetType()));
+		spdlog::error("Invalid mod game version type: '{}', expected 'object'.", Utilities::typeToString(modGameVersionValue.GetType()));
 		return nullptr;
 	}
 
@@ -491,21 +491,21 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value
 		}
 
 		if(!propertyHandled) {
-			fmt::print("Mod game version has unexpected property '{}'.\n", i->name.GetString());
+			spdlog::error("Mod game version has unexpected property '{}'.", i->name.GetString());
 			return nullptr;
 		}
 	}
 
 	// parse the mod game version game version property
 	if(!modGameVersionValue.HasMember(JSON_MOD_GAME_VERSION_GAME_VERSION_PROPERTY_NAME)) {
-		fmt::print("Mod game version is missing '{}' property'.\n", JSON_MOD_GAME_VERSION_GAME_VERSION_PROPERTY_NAME);
+		spdlog::error("Mod game version is missing '{}' property'.", JSON_MOD_GAME_VERSION_GAME_VERSION_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & modGameVersionGameVersionValue = modGameVersionValue[JSON_MOD_GAME_VERSION_GAME_VERSION_PROPERTY_NAME];
 
 	if(!modGameVersionGameVersionValue.IsString()) {
-		fmt::print("Mod game version '{}' property has invalid type: '{}', expected 'string'.\n", JSON_MOD_GAME_VERSION_GAME_VERSION_PROPERTY_NAME, Utilities::typeToString(modGameVersionGameVersionValue.GetType()));
+		spdlog::error("Mod game version '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_GAME_VERSION_GAME_VERSION_PROPERTY_NAME, Utilities::typeToString(modGameVersionGameVersionValue.GetType()));
 		return nullptr;
 	}
 
@@ -513,14 +513,14 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value
 
 	// parse the mod game version converted property
 	if(!modGameVersionValue.HasMember(JSON_MOD_GAME_VERSION_CONVERTED_PROPERTY_NAME)) {
-		fmt::print("Mod game version is missing '{}' property'.\n", JSON_MOD_GAME_VERSION_CONVERTED_PROPERTY_NAME);
+		spdlog::error("Mod game version is missing '{}' property'.", JSON_MOD_GAME_VERSION_CONVERTED_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & modVersionConvertedValue = modGameVersionValue[JSON_MOD_GAME_VERSION_CONVERTED_PROPERTY_NAME];
 
 	if(!modVersionConvertedValue.IsBool()) {
-		fmt::print("Mod game version '{}' property has invalid type: '{}', expected 'boolean'.\n", JSON_MOD_GAME_VERSION_CONVERTED_PROPERTY_NAME, Utilities::typeToString(modVersionConvertedValue.GetType()));
+		spdlog::error("Mod game version '{}' property has invalid type: '{}', expected 'boolean'.", JSON_MOD_GAME_VERSION_CONVERTED_PROPERTY_NAME, Utilities::typeToString(modVersionConvertedValue.GetType()));
 		return nullptr;
 	}
 
@@ -531,14 +531,14 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value
 
 	// parse the mod game version files property
 	if(!modGameVersionValue.HasMember(JSON_MOD_GAME_VERSION_FILES_PROPERTY_NAME)) {
-		fmt::print("Mod game version is missing '{}' property'.\n", JSON_MOD_GAME_VERSION_FILES_PROPERTY_NAME);
+		spdlog::error("Mod game version is missing '{}' property'.", JSON_MOD_GAME_VERSION_FILES_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & modFilesValue = modGameVersionValue[JSON_MOD_GAME_VERSION_FILES_PROPERTY_NAME];
 
 	if(!modFilesValue.IsArray()) {
-		fmt::print("Mod game version '{}' property has invalid type: '{}', expected 'array'.\n", JSON_MOD_GAME_VERSION_FILES_PROPERTY_NAME, Utilities::typeToString(modFilesValue.GetType()));
+		spdlog::error("Mod game version '{}' property has invalid type: '{}', expected 'array'.", JSON_MOD_GAME_VERSION_FILES_PROPERTY_NAME, Utilities::typeToString(modFilesValue.GetType()));
 		return nullptr;
 	}
 
@@ -548,14 +548,14 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value
 		newModFile = std::shared_ptr<ModFile>(std::move(ModFile::parseFrom(*i)).release());
 
 		if(!ModFile::isValid(newModFile.get())) {
-			fmt::print("Failed to parse mod file #{}.\n", newModGameVersion->m_files.size() + 1);
+			spdlog::error("Failed to parse mod file #{}.", newModGameVersion->m_files.size() + 1);
 			return nullptr;
 		}
 
 		newModFile->setParentModGameVersion(newModGameVersion.get());
 
 		if(newModGameVersion->hasFile(*newModFile.get())) {
-			fmt::print("Encountered duplicate mod file #{}.\n", newModGameVersion->m_files.size() + 1);
+			spdlog::error("Encountered duplicate mod file #{}.", newModGameVersion->m_files.size() + 1);
 			return nullptr;
 		}
 
@@ -572,7 +572,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const tinyxml2::XMLEle
 
 	// verify element name
 	if(modGameVersionElement->Name() != XML_MOD_GAME_VERSION_ELEMENT_NAME) {
-		fmt::print("Invalid mod game version element name: '{}', expected '{}'.\n", modGameVersionElement->Name(), XML_MOD_GAME_VERSION_ELEMENT_NAME);
+		spdlog::error("Invalid mod game version element name: '{}', expected '{}'.", modGameVersionElement->Name(), XML_MOD_GAME_VERSION_ELEMENT_NAME);
 		return nullptr;
 	}
 
@@ -595,7 +595,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const tinyxml2::XMLEle
 		}
 
 		if(!attributeHandled) {
-			fmt::print("Element '{}' has unexpected attribute '{}'.\n", XML_MOD_GAME_VERSION_ELEMENT_NAME, modGameVersionAttribute->Name());
+			spdlog::error("Element '{}' has unexpected attribute '{}'.", XML_MOD_GAME_VERSION_ELEMENT_NAME, modGameVersionAttribute->Name());
 			return nullptr;
 		}
 
@@ -606,14 +606,14 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const tinyxml2::XMLEle
 	const char * modGameVersionGameVersion = modGameVersionElement->Attribute(XML_MOD_GAME_VERSION_GAME_VERSION_ATTRIBUTE_NAME.c_str());
 
 	if(modGameVersionGameVersion == nullptr || Utilities::stringLength(modGameVersionGameVersion) == 0) {
-		fmt::print("Attribute '{}' is missing from '{}' element.\n", XML_MOD_GAME_VERSION_GAME_VERSION_ATTRIBUTE_NAME, XML_MOD_GAME_VERSION_ELEMENT_NAME);
+		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_GAME_VERSION_GAME_VERSION_ATTRIBUTE_NAME, XML_MOD_GAME_VERSION_ELEMENT_NAME);
 		return nullptr;
 	}
 
 	const char * modGameVersionConvertedData = modGameVersionElement->Attribute(XML_MOD_GAME_VERSION_CONVERTED_ATTRIBUTE_NAME.c_str());
 
 	if(modGameVersionConvertedData == nullptr || Utilities::stringLength(modGameVersionConvertedData) == 0) {
-		fmt::print("Attribute '{}' is missing from '{}' element.\n", XML_MOD_GAME_VERSION_CONVERTED_ATTRIBUTE_NAME, XML_MOD_GAME_VERSION_ELEMENT_NAME);
+		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_GAME_VERSION_CONVERTED_ATTRIBUTE_NAME, XML_MOD_GAME_VERSION_ELEMENT_NAME);
 		return nullptr;
 	}
 
@@ -626,7 +626,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const tinyxml2::XMLEle
 		modGameVersionConverted = false;
 	}
 	else {
-		fmt::print("Attribute '{}' in element '{}' has an invalid value: '{}', expected 'Native' or 'Converted'.\n", XML_MOD_GAME_VERSION_CONVERTED_ATTRIBUTE_NAME, XML_MOD_GAME_VERSION_ELEMENT_NAME, modGameVersionConvertedData);
+		spdlog::error("Attribute '{}' in element '{}' has an invalid value: '{}', expected 'Native' or 'Converted'.", XML_MOD_GAME_VERSION_CONVERTED_ATTRIBUTE_NAME, XML_MOD_GAME_VERSION_ELEMENT_NAME, modGameVersionConvertedData);
 		return nullptr;
 	}
 
@@ -637,7 +637,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const tinyxml2::XMLEle
 	const tinyxml2::XMLElement * modFileElement = modGameVersionElement->FirstChildElement();
 
 	if(modFileElement == nullptr) {
-		fmt::print("Element '{}' has no children.\n", XML_MOD_GAME_VERSION_ELEMENT_NAME);
+		spdlog::error("Element '{}' has no children.", XML_MOD_GAME_VERSION_ELEMENT_NAME);
 		return nullptr;
 	}
 
@@ -651,14 +651,14 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const tinyxml2::XMLEle
 		newModFile = std::shared_ptr<ModFile>(std::move(ModFile::parseFrom(modFileElement)).release());
 
 		if(!ModFile::isValid(newModFile.get())) {
-			fmt::print("Failed to parse mod file #{}.\n", newModGameVersion->m_files.size() + 1);
+			spdlog::error("Failed to parse mod file #{}.", newModGameVersion->m_files.size() + 1);
 			return nullptr;
 		}
 
 		newModFile->setParentModGameVersion(newModGameVersion.get());
 
 		if(newModGameVersion->hasFile(*newModFile.get())) {
-			fmt::print("Encountered duplicate mod file #{}.\n", newModGameVersion->m_files.size() + 1);
+			spdlog::error("Encountered duplicate mod file #{}.", newModGameVersion->m_files.size() + 1);
 			return nullptr;
 		}
 
