@@ -2,6 +2,7 @@
 
 #include "Download/DownloadManager.h"
 #include "Environment.h"
+#include "Game/GameLocator.h"
 #include "Game/GameVersion.h"
 #include "Game/GameVersionCollection.h"
 #include "Group/Group.h"
@@ -70,7 +71,9 @@ ModManager::ModManager()
 	, m_mods(std::make_shared<ModCollection>())
 	, m_favouriteMods(std::make_shared<FavouriteModCollection>())
 	, m_organizedMods(std::make_shared<OrganizedModCollection>(m_mods, m_favouriteMods, m_gameVersions))
-	, m_cli(std::make_unique<ModManager::CLI>(this)) { }
+	, m_cli(std::make_unique<ModManager::CLI>(this)) {
+	assignPlatformFactories();
+}
 
 ModManager::~ModManager() {
 	SegmentAnalytics::destroyInstance();
@@ -165,6 +168,12 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 		else {
 			spdlog::error("Failed to initialize Segment analytics!");
 		}
+	}
+
+	GameLocator * gameLocator = GameLocator::getInstance();
+
+	if(gameLocator->locateGames()) {
+		spdlog::info("Located {} Duke Nukem 3D game install{}.", gameLocator->numberOfGamePaths(), gameLocator->numberOfGamePaths() == 1 ? "" : "s");
 	}
 
 	if(!m_localMode) {

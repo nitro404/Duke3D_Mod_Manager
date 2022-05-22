@@ -6,6 +6,7 @@ set(SOURCE_FILES
 	Download/CachedPackageFile.cpp
 	Download/DownloadCache.cpp
 	Download/DownloadManager.cpp
+	Game/GameLocator.cpp
 	Game/GameVersion.cpp
 	Game/GameVersionCollection.cpp
 	Game/GameVersionCollectionBroadcaster.cpp
@@ -16,6 +17,7 @@ set(SOURCE_FILES
 	Manager/ModManagerCLI.cpp
 	Manager/ModMatch.cpp
 	Manager/SettingsManager.cpp
+	Manager/Windows/ModManagerWindows.cpp
 	Mod/ModIdentifier.cpp
 	Mod/FavouriteModCollection.cpp
 	Mod/Mod.cpp
@@ -36,12 +38,18 @@ set(SOURCE_FILES
 	Mod/OrganizedModCollection.cpp
 )
 
+set(SOURCE_FILES_WINDOWS
+	Game/Windows/GameLocatorWindows.cpp
+)
+
 source_group(Resources                  REGULAR_EXPRESSION ".*\\.(rc)")
 source_group(Resources\\Icon            REGULAR_EXPRESSION "Icon/.*\\.(rc)")
 source_group(Resources\\Icon\\Windows   REGULAR_EXPRESSION "Icon/Windows.*\\.(rc)")
 source_group(Source                     REGULAR_EXPRESSION ".*\\.(h|cpp)")
 source_group(Source\\Download           REGULAR_EXPRESSION "Download/.*\\.(h|cpp)")
 source_group(Source\\Game               REGULAR_EXPRESSION "Game/.*\\.(h|cpp)")
+source_group(Source\\Game\\Windows      REGULAR_EXPRESSION "Game/Windows/.*\\.(h|cpp)")
 source_group(Source\\Group              REGULAR_EXPRESSION "Group/.*\\.(h|cpp)")
 source_group(Source\\Mod                REGULAR_EXPRESSION "Mod/.*\\.(h|cpp)")
 source_group(Source\\Manager            REGULAR_EXPRESSION "Manager/.*\\.(h|cpp)")
+source_group(Source\\Manager\\Windows   REGULAR_EXPRESSION "Manager/Windows/.*\\.(h|cpp)")
