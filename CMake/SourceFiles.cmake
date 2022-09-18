@@ -11,6 +11,7 @@ set(SOURCE_FILES
 	Game/GameVersionCollection.cpp
 	Game/GameVersionCollectionBroadcaster.cpp
 	Game/GameVersionCollectionListener.cpp
+	Game/NoCDCracker.cpp
 	Group/Group.cpp
 	Group/GroupFile.cpp
 	Manager/ModManager.cpp
