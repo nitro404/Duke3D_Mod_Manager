@@ -1262,16 +1262,16 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 
 	std::string executableName;
 
-	if(m_gameType == GameType::Setup) {
+	if(m_gameType == GameType::Game) {
+		executableName = selectedGameVersion->getGameExecutableName();
+	}
+	else {
 		if(!selectedGameVersion->hasSetupExecutableName()) {
 			spdlog::error("Game version '{}' does not have a setup executable.", selectedGameVersion->getName());
 			return {};
 		}
 
 		executableName = selectedGameVersion->getSetupExecutableName().value();
-	}
-	else {
-		executableName = selectedGameVersion->getGameExecutableName();
 	}
 
 	std::stringstream command;
