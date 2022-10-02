@@ -685,7 +685,7 @@ std::shared_ptr<ModAuthorInformation> OrganizedModCollection::getTeamInfo(size_t
 
 std::shared_ptr<ModAuthorInformation> OrganizedModCollection::getTeamInfo(const std::string & name) const {
 	if(name.empty()) {
-		return false;
+		return nullptr;
 	}
 
 	for(std::vector<std::shared_ptr<ModAuthorInformation>>::const_iterator i = m_teams.begin(); i != m_teams.end(); ++i) {
@@ -694,7 +694,7 @@ std::shared_ptr<ModAuthorInformation> OrganizedModCollection::getTeamInfo(const 
 		}
 	}
 
-	return false;
+	return nullptr;
 }
 
 void OrganizedModCollection::incrementTeamModCount(size_t index) {
@@ -868,7 +868,7 @@ std::shared_ptr<ModAuthorInformation> OrganizedModCollection::getAuthorInfo(size
 
 std::shared_ptr<ModAuthorInformation> OrganizedModCollection::getAuthorInfo(const std::string & name) const {
 	if(name.empty()) {
-		return false;
+		return nullptr;
 	}
 
 	for(std::vector<std::shared_ptr<ModAuthorInformation>>::const_iterator i = m_authors.begin(); i != m_authors.end(); ++i) {
@@ -877,7 +877,7 @@ std::shared_ptr<ModAuthorInformation> OrganizedModCollection::getAuthorInfo(cons
 		}
 	}
 
-	return false;
+	return nullptr;
 }
 
 void OrganizedModCollection::incrementAuthorModCount(size_t index) {

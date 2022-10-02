@@ -226,7 +226,7 @@ size_t ModVersion::indexOfType(const ModVersionType & type) const {
 
 std::shared_ptr<ModVersionType> ModVersion::getType(size_t index) const {
 	if(index >= m_types.size()) {
-		return false;
+		return nullptr;
 	}
 
 	return m_types[index];

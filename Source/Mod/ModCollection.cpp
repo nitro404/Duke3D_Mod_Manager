@@ -331,12 +331,12 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const tinyxml2::XMLEleme
 	// verify the mods element
 	if(modsElement == nullptr) {
 		spdlog::error("Missing '{}' element!", XML_MODS_ELEMENT_NAME);
-		return false;
+		return nullptr;
 	}
 
 	if(modsElement->Name() != XML_MODS_ELEMENT_NAME) {
 		spdlog::error("Invalid element name '{}', expected '{}'!", modsElement->Name(), XML_MODS_ELEMENT_NAME);
-		return false;
+		return nullptr;
 	}
 
 	// find the first mod element within the mods element
@@ -355,7 +355,7 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const tinyxml2::XMLEleme
 
 		if(!Mod::isValid(newMod.get())) {
 			spdlog::error("Failed to parse mod #{}{}!", modCollection->m_mods.size() + 1, modCollection->numberOfMods() == 0 ? "" : fmt::format(" (after mod with ID '{}')", modCollection->getMod(modCollection->numberOfMods() - 1)->getID()));
-			return false;
+			return nullptr;
 		}
 
 		if(modCollection->hasMod(*newMod.get())) {

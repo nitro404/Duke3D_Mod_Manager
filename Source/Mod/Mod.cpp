@@ -1682,7 +1682,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 
 		if(!ModTeam::isValid(newModTeam.get())) {
 			spdlog::error("Failed to parse mod team for mod with ID '{}'.", modID);
-			return false;
+			return nullptr;
 		}
 
 		newMod->m_team = std::shared_ptr<ModTeam>(newModTeam.release());
@@ -2034,7 +2034,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 
 		if(!ModTeam::isValid(newModTeam.get())) {
 			spdlog::error("Failed to parse mod team for '{}' element with ID '{}'.", XML_MOD_ELEMENT_NAME, modID);
-			return false;
+			return nullptr;
 		}
 
 		mod->m_team = std::shared_ptr<ModTeam>(newModTeam.release());

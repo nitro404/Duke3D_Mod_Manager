@@ -74,7 +74,7 @@ bool DownloadCache::hasCachedPackageFile(const ModDownload * modDownload) const 
 
 std::shared_ptr<CachedPackageFile> DownloadCache::getCachedPackageFile(const ModDownload * modDownload) const {
 	if(!ModDownload::isValid(modDownload)) {
-		return false;
+		return nullptr;
 	}
 
 	std::map<std::string, std::shared_ptr<CachedPackageFile>>::const_iterator cachedPackageFile(m_cachedPackageFiles.find(modDownload->getFileName()));

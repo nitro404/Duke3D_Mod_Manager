@@ -223,7 +223,7 @@ bool FavouriteModCollection::parseFrom(const rapidjson::Value & favourites) {
 
 		if(!ModIdentifier::isValid(newModIdentifier.get())) {
 			spdlog::error("Failed to parse favourite mod #{}.", newFavourites.size() + 1);
-			return nullptr;
+			return false;
 		}
 
 		newFavourites.push_back(std::shared_ptr<ModIdentifier>(newModIdentifier.release()));

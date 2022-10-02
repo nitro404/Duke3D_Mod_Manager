@@ -184,7 +184,7 @@ size_t ModVersionType::indexOfGameVersion(const ModGameVersion & gameVersion) co
 
 std::shared_ptr<ModGameVersion> ModVersionType::getGameVersion(size_t index) const {
 	if(index >= m_gameVersions.size()) {
-		return false;
+		return nullptr;
 	}
 
 	return m_gameVersions[index];
