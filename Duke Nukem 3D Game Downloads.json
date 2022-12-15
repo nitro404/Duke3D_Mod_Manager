@@ -1,0 +1,178 @@
+{
+	"games": [
+		{
+			"name": "Regular Version 1.3",
+			"versions": [
+				{
+					"version": "1.3D",
+					"releaseDate": "April 19, 1996",
+					"files": [
+						{
+							"fileName": "Duke_Nukem_3D_-_Regular_Version_Game_Files.zip",
+							"fileSize": 1230209,
+							"type": "Game",
+							"sha1": "624ae880db24da7d06ebdd9debc8ba1e33a86e8d",
+							"operatingSystem": "DOS",
+							"processorArchitecture": "x86"
+						},
+						{
+							"fileName": "Duke_Nukem_3D_-_Regular_Version_Group.zip",
+							"fileSize": 11332812,
+							"type": "Group",
+							"sha1": "dd7590a5c530cde323f1d04d303148a110c618b0",
+							"operatingSystem": "DOS",
+							"processorArchitecture": "x86"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Atomic Edition 1.4/1.5",
+			"versions": [
+				{
+					"version": "1.5",
+					"releaseDate": "December 11, 1996",
+					"files": [
+						{
+							"fileName": "Duke_Nukem_3D_-_Atomic_Edition_Game_Files.zip",
+							"fileSize": 1362258,
+							"type": "Game",
+							"sha1": "e05b9253ddd69a1fc6c24b8a968a405905c61a87",
+							"operatingSystem": "DOS",
+							"processorArchitecture": "x86"
+						},
+						{
+							"fileName": "Duke_Nukem_3D_-_Atomic_Edition_Group.zip",
+							"fileSize": 19514321,
+							"type": "Group",
+							"sha1": "b7c777cf8f90a521f03bc24bb9f23d0ee9325b85",
+							"operatingSystem": "DOS",
+							"processorArchitecture": "x86"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "JFDuke3D",
+			"versions": [
+				{
+					"version": "20211225",
+					"releaseDate": "December 25, 2021",
+					"files": [
+						{
+							"fileName": "jfduke3d-20211225-win.zip",
+							"fileSize": 1093372,
+							"type": "Game",
+							"sha1": "dc7f92fa8047bc1fcfb6211d20ad6f9664634136",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x64"
+						},
+						{
+							"fileName": "jfduke3d-20211225-win32.zip",
+							"fileSize": 958090,
+							"type": "Game",
+							"sha1": "587f1c6f8b6af992d2e1533233b0f5747cd997ac",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x86"
+						},
+						{
+							"fileName": "jfduke3d-20211225-mac.zip",
+							"fileSize": 5479314,
+							"type": "Game",
+							"sha1": "74f86d809216ebc97bb32228ca8e3015cfa1272b",
+							"operatingSystem": "MacOS"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "eDuke32",
+			"versions": [
+				{
+					"version": "20221026-10165-a9c797dcb",
+					"releaseDate": "October 26, 2022",
+					"files": [
+						{
+							"fileName": "eduke32_win64_20221026-10165-a9c797dcb.7z",
+							"fileSize": 3697283,
+							"type": "Game",
+							"sha1": "6ec53fc2c1d683f4b23a4144d6d6b181603a1cc5",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x64"
+						},
+						{
+							"fileName": "eduke32_win32_20221026-10165-a9c797dcb.7z",
+							"fileSize": 3706798,
+							"type": "Game",
+							"sha1": "6b1c1acaacd5a5d51e898e6c3da9ba4ee9c997a3",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x86"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Raze",
+			"versions": [
+				{
+					"version": "1.5.0",
+					"releaseDate": "July 22, 2022",
+					"files": [
+						{
+							"fileName": "raze_1.5.0.zip",
+							"fileSize": 13242366,
+							"type": "Game",
+							"sha1": "76427207bc500d88b06c4542024d15d046cea627",
+							"operatingSystem": "Windows"
+						},
+						{
+							"fileName": "raze-linux-1.5.0.txz",
+							"fileSize": 11963100,
+							"type": "Game",
+							"sha1": "94effe8e79ce4ba911050a9da1b902b300432de6",
+							"operatingSystem": "Linux"
+						},
+						{
+							"fileName": "raze-macos-1.5.0.zip",
+							"fileSize": 27944442,
+							"type": "Game",
+							"sha1": "8b95f9d776c1ce6ef57c433cbc1db74e1965e8a4",
+							"operatingSystem": "MacOS"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "RedNukem",
+			"versions": [
+				{
+					"version": "r13357",
+					"releaseDate": "November 29, 2022",
+					"files": [
+						{
+							"fileName": "rednukem_win64_20221129-13357.zip",
+							"fileSize": 2746709,
+							"type": "Game",
+							"sha1": "f1e12ba5ab223ecbfbcd35d5a0d6858536339198",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x64"
+						},
+						{
+							"fileName": "rednukem_win32_20221129-13357.zip",
+							"fileSize": 2784733,
+							"type": "Game",
+							"sha1": "af9417d23dfb7f3ebb782107935175f353fbc399",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x86"
+						}
+					]
+				}
+			]
+		}
+	]
+}

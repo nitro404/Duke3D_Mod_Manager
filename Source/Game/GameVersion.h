@@ -1,7 +1,7 @@
 #ifndef _GAME_VERSION_H_
 #define _GAME_VERSION_H_
 
-class ModGameVersion;
+#include <Platform/DeviceInformationBridge.h>
 
 #include <rapidjson/document.h>
 
@@ -10,9 +10,18 @@ class ModGameVersion;
 #include <string>
 #include <vector>
 
+class ModGameVersion;
+
 class GameVersion final {
 public:
-	GameVersion(const std::string & name, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, const std::string & conFileArgumentFlag, const std::string & groupFileArgumentFlag, const std::string & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::string & respawnModeArgumentFlag, const std::string & weaponSwitchOrderArgumentFlag, const std::string & disableMonstersArgumentFlag, const std::string & disableSoundArgumentFlag, const std::string & disableMusicArgumentFlag, const std::string & modDirectoryName, const std::optional<std::string> & setupExecutableName = {}, const std::optional<std::string> & defFileArgumentFlag = {}, const std::optional<bool> & requiresCombinedGroup = {}, const std::optional<bool> & requiresDOSBox = {}, const std::string & website = std::string(), const std::string & sourceCodeURL = std::string(), const std::vector<std::string> & compatibleGameVersions = std::vector<std::string>());
+	enum class OperatingSystem {
+		Windows,
+		Linux,
+		MacOS,
+		DOS
+	};
+
+	GameVersion(const std::string & name, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, const std::string & conFileArgumentFlag, const std::string & groupFileArgumentFlag, const std::string & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::string & respawnModeArgumentFlag, const std::string & weaponSwitchOrderArgumentFlag, const std::string & disableMonstersArgumentFlag, const std::string & disableSoundArgumentFlag, const std::string & disableMusicArgumentFlag, const std::string & modDirectoryName, const std::optional<std::string> & setupExecutableName = {}, const std::optional<std::string> & groupFileInstallPath = {}, const std::optional<std::string> & defFileArgumentFlag = {}, const std::optional<bool> & requiresCombinedGroup = {}, const std::optional<bool> & requiresDOSBox = {}, const std::string & website = std::string(), const std::string & sourceCodeURL = std::string(), const std::vector<OperatingSystem> & supportedOperatingSystems = std::vector<OperatingSystem>(), const std::vector<std::string> & compatibleGameVersions = std::vector<std::string>());
 	GameVersion(GameVersion && gameVersion) noexcept;
 	GameVersion(const GameVersion & gameVersion);
 	GameVersion & operator = (GameVersion && gameVersion) noexcept;
@@ -24,11 +33,15 @@ public:
 	const std::string & getGamePath() const;
 	void setGamePath(const std::string & gamePath);
 	const std::string & getGameExecutableName() const;
+	void setGameExecutableName(const std::string & gameExecutableName);
 	bool hasSetupExecutableName() const;
 	std::optional<std::string> getSetupExecutableName() const;
-	void setGameExecutableName(const std::string & gameExecutableName);
 	void setSetupExecutableName(const std::string & setupExecutableName);
 	void clearSetupExecutableName();
+	bool hasGroupFileInstallPath() const;
+	std::optional<std::string> getGroupFileInstallPath() const;
+	void setGroupFileInstallPath(const std::string & setupExecutableName);
+	void clearGroupFileInstallPath();
 	bool doesRequireCombinedGroup() const;
 	std::optional<bool> getRequiresCombinedGroup() const;
 	void setRequiresCombinedGroup(bool requiresCombinedGroup);
@@ -80,6 +93,20 @@ public:
 	const std::string & getSourceCodeURL() const;
 	void setSourceCodeURL(const std::string & sourceCodeURL);
 
+	size_t numberOfSupportedOperatingSystems() const;
+	bool hasSupportedOperatingSystem(OperatingSystem operatingSystem) const;
+	bool hasSupportedOperatingSystemWithName(const std::string & operatingSystemName) const;
+	size_t indexOfSupportedOperatingSystem(OperatingSystem operatingSystem) const;
+	size_t indexOfSupportedOperatingSystemWithName(const std::string & operatingSystemName) const;
+	std::optional<OperatingSystem> getSupportedOperatingSystem(size_t index) const;
+	bool addSupportedOperatingSystem(OperatingSystem operatingSystem);
+	bool addSupportedOperatingSystemWithName(const std::string & operatingSystemName);
+	size_t addSupportedOperatingSystems(const std::vector<OperatingSystem> & operatingSystems);
+	bool removeSupportedOperatingSystem(size_t index);
+	bool removeSupportedOperatingSystem(OperatingSystem operatingSystem);
+	bool removeSupportedOperatingSystemWithName(const std::string & operatingSystemName);
+	void clearSupportedOperatingSystems();
+
 	size_t numberOfCompatibleGameVersions() const;
 	bool hasCompatibleGameVersion(const std::string & gameVersion) const;
 	bool hasCompatibleGameVersion(const GameVersion & gameVersion) const;
@@ -100,6 +127,8 @@ public:
 
 	rapidjson::Value toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const;
 	static std::unique_ptr<GameVersion> parseFrom(const rapidjson::Value & gameVersionValue);
+
+	static std::optional<OperatingSystem> convertOperatingSystemType(DeviceInformationBridge::OperatingSystemType operatingSystemType);
 
 	bool isConfigured() const;
 	bool isValid() const;
@@ -127,6 +156,7 @@ private:
 	std::string m_gamePath;
 	std::string m_gameExecutableName;
 	std::optional<std::string> m_setupExecutableName;
+	std::optional<std::string> m_groupFileInstallPath;
 	std::optional<bool> m_requiresCombinedGroup;
 	std::optional<bool> m_requiresDOSBox;
 	std::string m_modDirectoryName;
@@ -148,6 +178,7 @@ private:
 	std::string m_disableMonstersArgumentFlag;
 	std::string m_disableSoundArgumentFlag;
 	std::string m_disableMusicArgumentFlag;
+	std::vector<OperatingSystem> m_supportedOperatingSystems;
 	std::vector<std::string> m_compatibleGameVersions;
 };
 

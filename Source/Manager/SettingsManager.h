@@ -72,6 +72,7 @@ public:
 	static const std::chrono::seconds DEFAULT_NETWORK_TIMEOUT;
 	static const char * DEFAULT_API_BASE_URL;
 	static const char * DEFAULT_REMOTE_MODS_LIST_FILE_NAME;
+	static const char * DEFAULT_REMOTE_GAMES_LIST_FILE_NAME;
 	static const char * DEFAULT_REMOTE_DOWNLOADS_DIRECTORY_NAME;
 	static const char * DEFAULT_REMOTE_MOD_DOWNLOADS_DIRECTORY_NAME;
 	static const char * DEFAULT_REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME;
@@ -120,6 +121,7 @@ public:
 	std::chrono::seconds networkTimeout;
 	std::string apiBaseURL;
 	std::string remoteModsListFileName;
+	std::string remoteGamesListFileName;
 	std::string remoteDownloadsDirectoryName;
 	std::string remoteModDownloadsDirectoryName;
 	std::string remoteMapDownloadsDirectoryName;

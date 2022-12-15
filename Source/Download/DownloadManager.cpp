@@ -14,10 +14,10 @@
 #include "Mod/ModVersionType.h"
 
 #include <Analytics/Segment/SegmentAnalytics.h>
+#include <Archive/Zip/ZipArchive.h>
 #include <Network/HTTPService.h>
 #include <Utilities/FileUtilities.h>
 #include <Utilities/StringUtilities.h>
-#include <Zip/ZipArchive.h>
 
 #include <magic_enum.hpp>
 #include <spdlog/spdlog.h>
@@ -382,7 +382,7 @@ bool DownloadManager::downloadModGameVersion(ModGameVersion * modGameVersion, Ga
 	std::shared_ptr<ModFile> modZipFile(modGameVersion->getFirstFileOfType("zip"));
 
 	if(modZipFile != nullptr) {
-		std::weak_ptr<ZipArchive::Entry> modFileZipEntry(modDownloadZipArchive->getEntry(modZipFile->getFileName()));
+		std::weak_ptr<ArchiveEntry> modFileZipEntry(modDownloadZipArchive->getEntry(modZipFile->getFileName()));
 
 		if(modFileZipEntry.expired()) {
 			spdlog::error("Failed to download '{}' mod package file '{}', mod zip file '{}' not found!", modGameVersion->getFullName(), modDownload->getFileName(), modZipFile->getFileName());
@@ -403,7 +403,7 @@ bool DownloadManager::downloadModGameVersion(ModGameVersion * modGameVersion, Ga
 	}
 	else {
 		std::shared_ptr<ModFile> modFile;
-		std::weak_ptr<ZipArchive::Entry> modFileEntry;
+		std::weak_ptr<ArchiveEntry> modFileEntry;
 
 		for(size_t i = 0; i < modGameVersion->numberOfFiles(); i++) {
 			modFile = modGameVersion->getFile(i);

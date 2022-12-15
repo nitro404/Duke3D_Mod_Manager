@@ -17,6 +17,7 @@
 class ArgumentParser;
 class DownloadManager;
 class FavouriteModCollection;
+class GameManager;
 class GameVersion;
 class GameVersionCollection;
 class HTTPService;
@@ -164,6 +165,7 @@ private:
 	size_t m_selectedModVersionIndex;
 	size_t m_selectedModVersionTypeIndex;
 	std::shared_ptr<GameVersionCollection> m_gameVersions;
+	std::unique_ptr<GameManager> m_gameManager;
 	std::shared_ptr<ModCollection> m_mods;
 	std::shared_ptr<FavouriteModCollection> m_favouriteMods;
 	std::shared_ptr<OrganizedModCollection> m_organizedMods;

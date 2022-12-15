@@ -91,6 +91,7 @@ static constexpr const char * CURL_NETWORK_TIMEOUT_PROPERTY_NAME = "networkTimeo
 static constexpr const char * API_CATEGORY_NAME = "api";
 static constexpr const char * API_BASE_URL_PROPERTY_NAME = "baseURL";
 static constexpr const char * REMOTE_MOD_LIST_FILE_NAME_PROPERTY_NAME = "remoteModListFileName";
+static constexpr const char * REMOTE_GAME_LIST_FILE_NAME_PROPERTY_NAME = "remoteGameListFileName";
 static constexpr const char * REMOTE_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "remoteDownloadsDirectoryName";
 static constexpr const char * REMOTE_MOD_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "remoteModDownloadsDirectoryName";
 static constexpr const char * REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "remoteMapDownloadsDirectoryName";
@@ -144,6 +145,7 @@ const std::chrono::seconds SettingsManager::DEFAULT_CONNECTION_TIMEOUT = 30s;
 const std::chrono::seconds SettingsManager::DEFAULT_NETWORK_TIMEOUT = 1min;
 const char * SettingsManager::DEFAULT_API_BASE_URL = "http://duke3dmods.com";
 const char * SettingsManager::DEFAULT_REMOTE_MODS_LIST_FILE_NAME = "duke3d_mods.xml";
+const char * SettingsManager::DEFAULT_REMOTE_GAMES_LIST_FILE_NAME = "duke3d_games.json";
 const char * SettingsManager::DEFAULT_REMOTE_DOWNLOADS_DIRECTORY_NAME = "downloads";
 const char * SettingsManager::DEFAULT_REMOTE_MOD_DOWNLOADS_DIRECTORY_NAME = "mods";
 const char * SettingsManager::DEFAULT_REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME = "maps";
@@ -225,6 +227,7 @@ SettingsManager::SettingsManager()
 	, networkTimeout(DEFAULT_NETWORK_TIMEOUT)
 	, apiBaseURL(DEFAULT_API_BASE_URL)
 	, remoteModsListFileName(DEFAULT_REMOTE_MODS_LIST_FILE_NAME)
+	, remoteGamesListFileName(DEFAULT_REMOTE_GAMES_LIST_FILE_NAME)
 	, remoteDownloadsDirectoryName(DEFAULT_REMOTE_DOWNLOADS_DIRECTORY_NAME)
 	, remoteModDownloadsDirectoryName(DEFAULT_REMOTE_MOD_DOWNLOADS_DIRECTORY_NAME)
 	, remoteMapDownloadsDirectoryName(DEFAULT_REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME)
@@ -273,6 +276,7 @@ SettingsManager::SettingsManager(SettingsManager && s) noexcept
 	, networkTimeout(s.networkTimeout)
 	, apiBaseURL(std::move(s.apiBaseURL))
 	, remoteModsListFileName(std::move(s.remoteModsListFileName))
+	, remoteGamesListFileName(std::move(s.remoteGamesListFileName))
 	, remoteDownloadsDirectoryName(std::move(s.remoteDownloadsDirectoryName))
 	, remoteModDownloadsDirectoryName(std::move(s.remoteModDownloadsDirectoryName))
 	, remoteMapDownloadsDirectoryName(std::move(s.remoteMapDownloadsDirectoryName))
@@ -321,6 +325,7 @@ SettingsManager::SettingsManager(const SettingsManager & s)
 	, networkTimeout(s.networkTimeout)
 	, apiBaseURL(s.apiBaseURL)
 	, remoteModsListFileName(s.remoteModsListFileName)
+	, remoteGamesListFileName(s.remoteGamesListFileName)
 	, remoteDownloadsDirectoryName(s.remoteDownloadsDirectoryName)
 	, remoteModDownloadsDirectoryName(s.remoteModDownloadsDirectoryName)
 	, remoteMapDownloadsDirectoryName(s.remoteMapDownloadsDirectoryName)
@@ -371,6 +376,7 @@ SettingsManager & SettingsManager::operator = (SettingsManager && s) noexcept {
 		networkTimeout = s.networkTimeout;
 		apiBaseURL = std::move(s.apiBaseURL);
 		remoteModsListFileName = std::move(s.remoteModsListFileName);
+		remoteGamesListFileName = std::move(s.remoteGamesListFileName);
 		remoteDownloadsDirectoryName = std::move(s.remoteDownloadsDirectoryName);
 		remoteModDownloadsDirectoryName = std::move(s.remoteModDownloadsDirectoryName);
 		remoteMapDownloadsDirectoryName = std::move(s.remoteMapDownloadsDirectoryName);
@@ -424,6 +430,7 @@ SettingsManager & SettingsManager::operator = (const SettingsManager & s) {
 	networkTimeout = s.networkTimeout;
 	apiBaseURL = s.apiBaseURL;
 	remoteModsListFileName = s.remoteModsListFileName;
+	remoteGamesListFileName = s.remoteGamesListFileName;
 	remoteDownloadsDirectoryName = s.remoteDownloadsDirectoryName;
 	remoteModDownloadsDirectoryName =s.remoteModDownloadsDirectoryName;
 	remoteMapDownloadsDirectoryName = s.remoteMapDownloadsDirectoryName;
@@ -478,6 +485,7 @@ void SettingsManager::reset() {
 	networkTimeout = DEFAULT_NETWORK_TIMEOUT;
 	apiBaseURL = DEFAULT_API_BASE_URL;
 	remoteModsListFileName = DEFAULT_REMOTE_MODS_LIST_FILE_NAME;
+	remoteGamesListFileName = DEFAULT_REMOTE_GAMES_LIST_FILE_NAME;
 	remoteDownloadsDirectoryName = DEFAULT_REMOTE_DOWNLOADS_DIRECTORY_NAME;
 	remoteModDownloadsDirectoryName = DEFAULT_REMOTE_MOD_DOWNLOADS_DIRECTORY_NAME;
 	remoteMapDownloadsDirectoryName = DEFAULT_REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME;
@@ -636,6 +644,8 @@ rapidjson::Document SettingsManager::toJSON() const {
 	apiCategoryValue.AddMember(rapidjson::StringRef(API_BASE_URL_PROPERTY_NAME), apiBaseURLValue, allocator);
 	rapidjson::Value remoteModsListFileNameValue(remoteModsListFileName.c_str(), allocator);
 	apiCategoryValue.AddMember(rapidjson::StringRef(REMOTE_MOD_LIST_FILE_NAME_PROPERTY_NAME), remoteModsListFileNameValue, allocator);
+	rapidjson::Value remoteGamesListFileNameValue(remoteGamesListFileName.c_str(), allocator);
+	apiCategoryValue.AddMember(rapidjson::StringRef(REMOTE_GAME_LIST_FILE_NAME_PROPERTY_NAME), remoteGamesListFileNameValue, allocator);
 	rapidjson::Value remoteDownloadsDirectoryNameValue(remoteDownloadsDirectoryName.c_str(), allocator);
 	apiCategoryValue.AddMember(rapidjson::StringRef(REMOTE_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME), remoteDownloadsDirectoryNameValue, allocator);
 	rapidjson::Value remoteModDownloadsDirectoryNameValue(remoteModDownloadsDirectoryName.c_str(), allocator);
@@ -822,6 +832,7 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 
 		assignStringSetting(apiBaseURL, apiCategoryValue, API_BASE_URL_PROPERTY_NAME);
 		assignStringSetting(remoteModsListFileName, apiCategoryValue, REMOTE_MOD_LIST_FILE_NAME_PROPERTY_NAME);
+		assignStringSetting(remoteGamesListFileName, apiCategoryValue, REMOTE_GAME_LIST_FILE_NAME_PROPERTY_NAME);
 		assignStringSetting(remoteDownloadsDirectoryName, apiCategoryValue, REMOTE_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
 		assignStringSetting(remoteModDownloadsDirectoryName, apiCategoryValue, REMOTE_MOD_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
 		assignStringSetting(remoteMapDownloadsDirectoryName, apiCategoryValue, REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);

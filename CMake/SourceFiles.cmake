@@ -6,7 +6,20 @@ set(SOURCE_FILES
 	Download/CachedPackageFile.cpp
 	Download/DownloadCache.cpp
 	Download/DownloadManager.cpp
+	Game/GameDownload.h
+	Game/GameDownload.cpp
+	Game/GameDownloadCollection.h
+	Game/GameDownloadCollection.cpp
+	Game/GameDownloadCollectionBroadcaster.h
+	Game/GameDownloadCollectionBroadcaster.cpp
+	Game/GameDownloadCollectionListener.h
+	Game/GameDownloadCollectionListener.cpp
+	Game/GameDownloadFile.h
+	Game/GameDownloadFile.cpp
+	Game/GameDownloadVersion.h
+	Game/GameDownloadVersion.cpp
 	Game/GameLocator.cpp
+	Game/GameManager.cpp
 	Game/GameVersion.cpp
 	Game/GameVersionCollection.cpp
 	Game/GameVersionCollectionBroadcaster.cpp

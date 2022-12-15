@@ -3,6 +3,7 @@
 #include "Download/DownloadManager.h"
 #include "Environment.h"
 #include "Game/GameLocator.h"
+#include "Game/GameManager.h"
 #include "Game/GameVersion.h"
 #include "Game/GameVersionCollection.h"
 #include "Group/Group.h"
@@ -24,6 +25,7 @@
 #include "Project.h"
 
 #include <Analytics/Segment/SegmentAnalytics.h>
+#include <Archive/Zip/ZipArchive.h>
 #include <Arguments/ArgumentParser.h>
 #include <Location/GeoLocationService.h>
 #include <Network/HTTPRequest.h>
@@ -35,7 +37,6 @@
 #include <Utilities/NumberUtilities.h>
 #include <Utilities/StringUtilities.h>
 #include <Utilities/Utilities.h>
-#include <Zip/ZipArchive.h>
 
 #include <date/tz.h>
 #include <fmt/core.h>
@@ -68,6 +69,7 @@ ModManager::ModManager()
 	, m_selectedModVersionIndex(0)
 	, m_selectedModVersionTypeIndex(0)
 	, m_gameVersions(std::make_shared<GameVersionCollection>())
+	, m_gameManager(std::make_unique<GameManager>(m_httpService, m_settings))
 	, m_mods(std::make_shared<ModCollection>())
 	, m_favouriteMods(std::make_shared<FavouriteModCollection>())
 	, m_organizedMods(std::make_shared<OrganizedModCollection>(m_mods, m_favouriteMods, m_gameVersions))
@@ -183,6 +185,11 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 			spdlog::error("Failed to initialize download manager!");
 			return false;
 		}
+	}
+
+	if(!m_gameManager->initialize()) {
+		spdlog::error("Failed to initialize game manager!");
+		return false;
 	}
 
 	m_gameType = m_settings->gameType;
@@ -1079,7 +1086,7 @@ bool ModManager::runSelectedMod() {
 		}
 
 		if(selectedGameVersion->doesRequireCombinedGroup()) {
-			std::string dukeNukemGroupPath(Utilities::joinPaths(selectedGameVersion->getGamePath(), "DUKE3D.GRP"));
+			std::string dukeNukemGroupPath(Utilities::joinPaths(selectedGameVersion->getGamePath(), Group::DUKE_NUKEM_3D_GROUP_FILE_NAME));
 			combinedGroup = std::make_unique<Group>(dukeNukemGroupPath);
 
 			if(!combinedGroup->load()) {
@@ -2049,7 +2056,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 	std::shared_ptr<GroupFile> groupFile;
 	std::string zipArchiveFilePath;
 	std::unique_ptr<ZipArchive> zipArchive;
-	std::optional<std::string> optionalSHA1;
+	std::string fileSHA1;
 
 	spdlog::info("Updating '{}' mod hashes...", mod.getName());
 
@@ -2099,17 +2106,17 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 			continue;
 		}
 
-		optionalSHA1 = Utilities::getFileSHA1Hash(downloadFilePath);
+		fileSHA1 = Utilities::getFileSHA1Hash(downloadFilePath);
 
-		if(!optionalSHA1.has_value()) {
+		if(fileSHA1.empty()) {
 			spdlog::error("Failed to hash mod '{}' download file '{}'.", mod.getName(), modFile->getFileName());
 			continue;
 		}
 
-		if(modDownload->getSHA1() != optionalSHA1.value()) {
-			spdlog::info("Updating mod '{}' download file '{}' SHA1 hash from '{}' to '{}'.", mod.getName(), modDownload->getFileName(), modDownload->getSHA1(), optionalSHA1.value());
+		if(modDownload->getSHA1() != fileSHA1) {
+			spdlog::info("Updating mod '{}' download file '{}' SHA1 hash from '{}' to '{}'.", mod.getName(), modDownload->getFileName(), modDownload->getSHA1(), fileSHA1);
 
-			modDownload->setSHA1(optionalSHA1.value());
+			modDownload->setSHA1(fileSHA1);
 
 			numberOfFileHashesUpdated++;
 		}
@@ -2136,17 +2143,17 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 				continue;
 			}
 
-			optionalSHA1 = Utilities::getFileSHA1Hash(screenshotFilePath);
+			fileSHA1 = Utilities::getFileSHA1Hash(screenshotFilePath);
 
-			if(!optionalSHA1.has_value()) {
+			if(fileSHA1.empty()) {
 				spdlog::error("Failed to hash mod '{}' screenshot file '{}'.", mod.getName(), modFile->getFileName());
 				continue;
 			}
 
-			if(modScreenshot->getSHA1() != optionalSHA1.value()) {
-				spdlog::info("Updating mod '{}' screenshot file '{}' SHA1 hash from '{}' to '{}'.", mod.getName(), modScreenshot->getFileName(), modScreenshot->getSHA1(), optionalSHA1.value());
+			if(modScreenshot->getSHA1() != fileSHA1) {
+				spdlog::info("Updating mod '{}' screenshot file '{}' SHA1 hash from '{}' to '{}'.", mod.getName(), modScreenshot->getFileName(), modScreenshot->getSHA1(), fileSHA1);
 
-				modScreenshot->setSHA1(optionalSHA1.value());
+				modScreenshot->setSHA1(fileSHA1);
 
 				numberOfFileHashesUpdated++;
 			}
@@ -2180,17 +2187,17 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 				continue;
 			}
 
-			optionalSHA1 = Utilities::getFileSHA1Hash(imageFilePath);
+			fileSHA1 = Utilities::getFileSHA1Hash(imageFilePath);
 
-			if(!optionalSHA1.has_value()) {
+			if(fileSHA1.empty()) {
 				spdlog::error("Failed to hash mod '{}' image file '{}'.", mod.getName(), modFile->getFileName());
 				continue;
 			}
 
-			if(modImage->getSHA1() != optionalSHA1.value()) {
-				spdlog::info("Updating mod '{}' image file '{}' SHA1 hash from '{}' to '{}'.", mod.getName(), modImage->getFileName(), modImage->getSHA1(), optionalSHA1.value());
+			if(modImage->getSHA1() != fileSHA1) {
+				spdlog::info("Updating mod '{}' image file '{}' SHA1 hash from '{}' to '{}'.", mod.getName(), modImage->getFileName(), modImage->getSHA1(), fileSHA1);
 
-				modImage->setSHA1(optionalSHA1.value());
+				modImage->setSHA1(fileSHA1);
 
 				numberOfFileHashesUpdated++;
 			}
@@ -2263,7 +2270,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 						continue;
 					}
 
-					optionalSHA1.reset();
+					fileSHA1 = "";
 
 					// eDuke32 mod files can be read straight out of the group or zip file, and are not stored separately
 					if(modGameVersion->isEDuke32() && modFile->getType() != "zip" && modFile->getType() != "grp") {
@@ -2273,7 +2280,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 								continue;
 							}
 
-							std::weak_ptr<ZipArchive::Entry> zipArchiveEntry(zipArchive->getEntry(modFile->getFileName(), false));
+							std::weak_ptr<ArchiveEntry> zipArchiveEntry(zipArchive->getEntry(modFile->getFileName(), false));
 
 							if(zipArchiveEntry.expired()) {
 								spdlog::error("Mod file '{}' not found in zip file '{}'.", modFile->getFileName(), zipArchiveFilePath);
@@ -2287,7 +2294,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 								continue;
 							}
 
-							optionalSHA1 = zipArchiveEntryData->getSHA1();
+							fileSHA1 = zipArchiveEntryData->getSHA1();
 						}
 						else if(!groupFilePath.empty()) {
 							if(group == nullptr) {
@@ -2302,7 +2309,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 								continue;
 							}
 
-							optionalSHA1 = groupFile->getData().getSHA1();
+							fileSHA1 = groupFile->getData().getSHA1();
 						}
 					}
 					else {
@@ -2313,18 +2320,18 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 							continue;
 						}
 
-						optionalSHA1 = Utilities::getFileSHA1Hash(modFilePath);
+						fileSHA1 = Utilities::getFileSHA1Hash(modFilePath);
 					}
 
-					if(!optionalSHA1.has_value()) {
+					if(fileSHA1.empty()) {
 						spdlog::error("Failed to hash '{}' mod file '{}'.", mod.getFullName(i, j), modFile->getFileName());
 						continue;
 					}
 
-					if(modFile->getSHA1() != optionalSHA1.value()) {
-						spdlog::info("Updating '{}' mod file '{}' SHA1 hash from '{}' to '{}'.", mod.getFullName(i, j), modFile->getFileName(), modFile->getSHA1(), optionalSHA1.value());
+					if(modFile->getSHA1() != fileSHA1) {
+						spdlog::info("Updating '{}' mod file '{}' SHA1 hash from '{}' to '{}'.", mod.getFullName(i, j), modFile->getFileName(), modFile->getSHA1(), fileSHA1);
 
-						modFile->setSHA1(optionalSHA1.value());
+						modFile->setSHA1(fileSHA1);
 
 						numberOfFileHashesUpdated++;
 					}
