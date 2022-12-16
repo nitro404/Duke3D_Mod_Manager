@@ -29,7 +29,6 @@ class ModVersion;
 class ModVersionType;
 class Script;
 class ScriptArguments;
-class SettingsManager;
 
 class ModManager final : public Application {
 public:
@@ -43,7 +42,6 @@ public:
 	void run();
 
 	bool isUsingLocalMode() const;
-	std::shared_ptr<SettingsManager> getSettings() const;
 	std::shared_ptr<OrganizedModCollection> getOrganizedMods() const;
 	std::string getModsListFilePath() const;
 	std::string getModsDirectoryPath() const;
@@ -154,7 +152,6 @@ private:
 	bool m_localMode;
 	bool m_demoRecordingEnabled;
 	std::shared_ptr<ArgumentParser> m_arguments;
-	std::shared_ptr<SettingsManager> m_settings;
 	std::unique_ptr<DownloadManager> m_downloadManager;
 	GameType m_gameType;
 	std::shared_ptr<GameVersion> m_preferredGameVersion;

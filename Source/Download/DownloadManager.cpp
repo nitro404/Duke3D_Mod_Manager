@@ -30,9 +30,8 @@
 
 using namespace std::chrono_literals;
 
-DownloadManager::DownloadManager(std::shared_ptr<SettingsManager> settings)
+DownloadManager::DownloadManager()
 	: m_initialized(false)
-	, m_settings(settings)
 	, m_downloadCache(std::make_unique<DownloadCache>()) { }
 
 DownloadManager::~DownloadManager() = default;
@@ -48,11 +47,6 @@ bool DownloadManager::initialize() {
 
 	if(!HTTPService::getInstance()->isInitialized()) {
 		spdlog::error("Failed to initialize download manager, HTTP service not initialized!");
-		return false;
-	}
-
-	if(m_settings == nullptr) {
-		spdlog::error("Failed to initialize download manager, invalid settings manager provided.");
 		return false;
 	}
 
@@ -89,94 +83,84 @@ size_t DownloadManager::numberOfDownloadedMods() const {
 }
 
 std::string DownloadManager::getDownloadCacheFilePath() const {
-	if(m_settings == nullptr) {
-		return {};
-	}
+	SettingsManager * settings = SettingsManager::getInstance();
 
-	if(m_settings->downloadsDirectoryPath.empty()) {
+	if(settings->downloadsDirectoryPath.empty()) {
 		spdlog::error("Missing downloads directory path setting.");
 		return {};
 	}
 
-	if(m_settings->downloadCacheFileName.empty()) {
+	if(settings->downloadCacheFileName.empty()) {
 		spdlog::error("Missing download cache file name setting.");
 		return {};
 	}
 
-	return Utilities::joinPaths(m_settings->downloadsDirectoryPath, m_settings->downloadCacheFileName);
+	return Utilities::joinPaths(settings->downloadsDirectoryPath, settings->downloadCacheFileName);
 }
 
 std::string DownloadManager::getCachedModListFilePath() const {
-	if(m_settings == nullptr) {
-		return {};
-	}
+	SettingsManager * settings = SettingsManager::getInstance();
 
-	if(m_settings->downloadsDirectoryPath.empty()) {
+	if(settings->downloadsDirectoryPath.empty()) {
 		spdlog::error("Missing downloads directory path setting.");
 		return {};
 	}
 
-	if(m_settings->modDownloadsDirectoryName.empty()) {
+	if(settings->modDownloadsDirectoryName.empty()) {
 		spdlog::error("Missing mod downloads directory name setting.");
 		return {};
 	}
 
-	if(m_settings->remoteModsListFileName.empty()) {
+	if(settings->remoteModsListFileName.empty()) {
 		spdlog::error("Missing remote mods list file name setting.");
 		return {};
 	}
 
-	return Utilities::joinPaths(m_settings->downloadsDirectoryPath, m_settings->modDownloadsDirectoryName, m_settings->remoteModsListFileName);
+	return Utilities::joinPaths(settings->downloadsDirectoryPath, settings->modDownloadsDirectoryName, settings->remoteModsListFileName);
 }
 
 std::string DownloadManager::getDownloadedModsDirectoryPath() const {
-	if(m_settings == nullptr) {
-		return {};
-	}
+	SettingsManager * settings = SettingsManager::getInstance();
 
-	if(m_settings->downloadsDirectoryPath.empty()) {
+	if(settings->downloadsDirectoryPath.empty()) {
 		spdlog::error("Missing downloads directory path setting.");
 		return {};
 	}
 
-	if(m_settings->modDownloadsDirectoryName.empty()) {
+	if(settings->modDownloadsDirectoryName.empty()) {
 		spdlog::error("Missing mod downloads directory name setting.");
 		return {};
 	}
 
-	return Utilities::joinPaths(m_settings->downloadsDirectoryPath, m_settings->modDownloadsDirectoryName);
+	return Utilities::joinPaths(settings->downloadsDirectoryPath, settings->modDownloadsDirectoryName);
 }
 
 std::string DownloadManager::getDownloadedMapsDirectoryPath() const {
-	if(m_settings == nullptr) {
-		return {};
-	}
+	SettingsManager * settings = SettingsManager::getInstance();
 
-	if(m_settings->downloadsDirectoryPath.empty()) {
+	if(settings->downloadsDirectoryPath.empty()) {
 		spdlog::error("Missing downloads directory path setting.");
 		return {};
 	}
 
-	if(m_settings->mapDownloadsDirectoryName.empty()) {
+	if(settings->mapDownloadsDirectoryName.empty()) {
 		spdlog::error("Missing map downloads directory name setting.");
 		return {};
 	}
 
-	return Utilities::joinPaths(m_settings->downloadsDirectoryPath, m_settings->mapDownloadsDirectoryName);
+	return Utilities::joinPaths(settings->downloadsDirectoryPath, settings->mapDownloadsDirectoryName);
 }
 
 bool DownloadManager::createRequiredDirectories() {
-	if(m_settings == nullptr) {
-		return false;
-	}
+	SettingsManager * settings = SettingsManager::getInstance();
 
-	if(m_settings->downloadsDirectoryPath.empty()) {
+	if(settings->downloadsDirectoryPath.empty()) {
 		spdlog::error("Missing downloads directory path setting.");
 		return false;
 	}
 
 	std::error_code errorCode;
-	std::filesystem::path downloadsDirectoryPath(m_settings->downloadsDirectoryPath);
+	std::filesystem::path downloadsDirectoryPath(settings->downloadsDirectoryPath);
 
 	if(!std::filesystem::is_directory(downloadsDirectoryPath)) {
 		std::filesystem::create_directories(downloadsDirectoryPath, errorCode);
@@ -190,9 +174,9 @@ bool DownloadManager::createRequiredDirectories() {
 	}
 
 	std::array<std::filesystem::path, 3> downloadSubdirectories = {
-		Utilities::joinPaths(m_settings->downloadsDirectoryPath, m_settings->modDownloadsDirectoryName),
-		Utilities::joinPaths(m_settings->downloadsDirectoryPath, m_settings->mapDownloadsDirectoryName),
-		Utilities::joinPaths(m_settings->downloadsDirectoryPath, m_settings->gameDownloadsDirectoryName)
+		Utilities::joinPaths(settings->downloadsDirectoryPath, settings->modDownloadsDirectoryName),
+		Utilities::joinPaths(settings->downloadsDirectoryPath, settings->mapDownloadsDirectoryName),
+		Utilities::joinPaths(settings->downloadsDirectoryPath, settings->gameDownloadsDirectoryName)
 	};
 
 	for(const std::filesystem::path & subdirectory : downloadSubdirectories) {
@@ -220,17 +204,15 @@ bool DownloadManager::saveDownloadCache() const {
 }
 
 bool DownloadManager::downloadModList(bool force) {
-	if(m_settings == nullptr) {
-		return false;
-	}
+	SettingsManager * settings = SettingsManager::getInstance();
 
 	HTTPService * httpService = HTTPService::getInstance();
 
 	std::shared_ptr<CachedFile> cachedModListFile(m_downloadCache->getCachedModListFile());
 
-	std::string modListFileName(m_settings->remoteModsListFileName);
+	std::string modListFileName(settings->remoteModsListFileName);
 	std::string modListLocalFilePath(Utilities::joinPaths(getDownloadedModsDirectoryPath(), modListFileName));
-	std::string modListRemoteFilePath(Utilities::joinPaths(m_settings->remoteDownloadsDirectoryName, m_settings->remoteModDownloadsDirectoryName, modListFileName));
+	std::string modListRemoteFilePath(Utilities::joinPaths(settings->remoteDownloadsDirectoryName, settings->remoteModDownloadsDirectoryName, modListFileName));
 	std::string modListURL(Utilities::joinPaths(httpService->getBaseURL(), modListRemoteFilePath));
 
 	spdlog::info("Downloading Duke Nukem 3D mod list from: '{}'...", modListURL);
@@ -295,6 +277,7 @@ bool DownloadManager::downloadModGameVersion(ModGameVersion * modGameVersion, Ga
 		return false;
 	}
 
+	SettingsManager * settings = SettingsManager::getInstance();
 	HTTPService * httpService = HTTPService::getInstance();
 
 	if(!ModGameVersion::isValid(modGameVersion)) {
@@ -323,9 +306,9 @@ bool DownloadManager::downloadModGameVersion(ModGameVersion * modGameVersion, Ga
 
 	std::shared_ptr<CachedPackageFile> cachedModPackageFile(m_downloadCache->getCachedPackageFile(modDownload.get()));
 
-	std::string modDownloadLocalBasePath(Utilities::joinPaths(m_settings->downloadsDirectoryPath, m_settings->modDownloadsDirectoryName, gameVersion->getModDirectoryName()));
+	std::string modDownloadLocalBasePath(Utilities::joinPaths(settings->downloadsDirectoryPath, settings->modDownloadsDirectoryName, gameVersion->getModDirectoryName()));
 	std::string modDownloadLocalFilePath(Utilities::joinPaths(modDownloadLocalBasePath, modDownload->getFileName()));
-	std::string modDownloadRemoteFilePath(Utilities::joinPaths(m_settings->remoteDownloadsDirectoryName, m_settings->remoteModDownloadsDirectoryName, modDownload->getSubfolder(), Utilities::toLowerCase(gameVersion->getModDirectoryName()), modDownload->getFileName()));
+	std::string modDownloadRemoteFilePath(Utilities::joinPaths(settings->remoteDownloadsDirectoryName, settings->remoteModDownloadsDirectoryName, modDownload->getSubfolder(), Utilities::toLowerCase(gameVersion->getModDirectoryName()), modDownload->getFileName()));
 	std::string modDownloadURL(Utilities::joinPaths(httpService->getBaseURL(), modDownloadRemoteFilePath));
 
 	spdlog::info("Downloading '{}' mod from: '{}'...", modGameVersion->getFullName(), modDownloadURL);

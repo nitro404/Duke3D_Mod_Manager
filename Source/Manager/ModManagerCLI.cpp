@@ -738,13 +738,15 @@ bool ModManager::CLI::updateGameTypePrompt(const std::string & args) {
 		return false;
 	}
 
+	SettingsManager * settings = SettingsManager::getInstance();
+
 	std::optional<GameType> optionalGameType(promptForGameType(args));
 
-	if(!optionalGameType.has_value() || m_modManager->getSettings()->gameType == optionalGameType.value()) {
+	if(!optionalGameType.has_value() || settings->gameType == optionalGameType.value()) {
 		return false;
 	}
 
-	std::string previousGameTypeName(Utilities::toCapitalCase(magic_enum::enum_name(m_modManager->getSettings()->gameType)));
+	std::string previousGameTypeName(Utilities::toCapitalCase(magic_enum::enum_name(settings->gameType)));
 	std::string newGameTypeName(Utilities::toCapitalCase(magic_enum::enum_name(optionalGameType.value())));
 
 	fmt::print("Changing game type from '{}' to '{}'.\n\n", previousGameTypeName, newGameTypeName);
@@ -769,6 +771,8 @@ std::optional<GameType> ModManager::CLI::promptForGameType(const std::string & a
 		return {};
 	}
 
+	SettingsManager * settings = SettingsManager::getInstance();
+
 	std::vector<std::string> gameTypeNames;
 	const auto & gameTypes = magic_enum::enum_values<GameType>();
 
@@ -776,7 +780,7 @@ std::optional<GameType> ModManager::CLI::promptForGameType(const std::string & a
 		gameTypeNames.push_back(Utilities::toCapitalCase(magic_enum::enum_name(gameTypes[i])));
 	}
 
-	std::string promptMessage(fmt::format("Current game type is set to: '{}' (default: '{}')\n\nChoose a game type:", Utilities::toCapitalCase(magic_enum::enum_name(m_modManager->getSettings()->gameType)), Utilities::toCapitalCase(magic_enum::enum_name(ModManager::DEFAULT_GAME_TYPE))));
+	std::string promptMessage(fmt::format("Current game type is set to: '{}' (default: '{}')\n\nChoose a game type:", Utilities::toCapitalCase(magic_enum::enum_name(settings->gameType)), Utilities::toCapitalCase(magic_enum::enum_name(ModManager::DEFAULT_GAME_TYPE))));
 
 	size_t gameTypeIndex = getValuePrompt(gameTypeNames, promptMessage, args);
 
@@ -823,6 +827,8 @@ std::shared_ptr<GameVersion> ModManager::CLI::promptForPreferredGameVersion(cons
 		return nullptr;
 	}
 
+	SettingsManager * settings = SettingsManager::getInstance();
+
 	std::shared_ptr<GameVersion> gameVersion;
 	std::shared_ptr<GameVersionCollection> gameVersions(m_modManager->getGameVersions());
 	std::vector<std::string> gameVersionNames;
@@ -832,7 +838,7 @@ std::shared_ptr<GameVersion> ModManager::CLI::promptForPreferredGameVersion(cons
 	}
 
 	std::stringstream preferredGameVersionPromptMessage;
-	preferredGameVersionPromptMessage << fmt::format("Current preferred game version is set to: '{}' (default: '{}')\n\n", m_modManager->getSettings()->preferredGameVersion, SettingsManager::DEFAULT_PREFERRED_GAME_VERSION);
+	preferredGameVersionPromptMessage << fmt::format("Current preferred game version is set to: '{}' (default: '{}')\n\n", settings->preferredGameVersion, SettingsManager::DEFAULT_PREFERRED_GAME_VERSION);
 	preferredGameVersionPromptMessage << "Choose a preferred game version:";
 
 	size_t gameVersionIndex = getValuePrompt(gameVersionNames, preferredGameVersionPromptMessage.str(), args);
@@ -916,14 +922,16 @@ bool ModManager::CLI::updateIPAddressPrompt(const std::string & args) {
 		return false;
 	}
 
+	SettingsManager * settings = SettingsManager::getInstance();
+
 	std::string ipAddress(promptForIPAddress(args));
 
 	if(ipAddress.empty()) {
 		return false;
 	}
 
-	std::string previousIPAddress(m_modManager->getSettings()->dosboxServerIPAddress);
-	m_modManager->getSettings()->dosboxServerIPAddress = ipAddress;
+	std::string previousIPAddress(settings->dosboxServerIPAddress);
+	settings->dosboxServerIPAddress = ipAddress;
 
 	fmt::print("Server IP address changed to: '{}'.\n\n", ipAddress);
 
@@ -945,6 +953,8 @@ std::string ModManager::CLI::promptForIPAddress(const std::string & args) const 
 		return "";
 	}
 
+	SettingsManager * settings = SettingsManager::getInstance();
+
 	std::string input, data, formattedData;
 	std::string trimmedArgs(Utilities::trimString(args));
 	bool skipInput = !trimmedArgs.empty();
@@ -957,7 +967,7 @@ std::string ModManager::CLI::promptForIPAddress(const std::string & args) const 
 			skipInput = false;
 		}
 		else {
-			fmt::print("Current server IP Address: '{}'.\n\n", m_modManager->getSettings()->dosboxServerIPAddress);
+			fmt::print("Current server IP Address: '{}'.\n\n", settings->dosboxServerIPAddress);
 			fmt::print("Enter new server IP Address:\n");
 			fmt::print("> ");
 
@@ -1002,6 +1012,8 @@ bool ModManager::CLI::updatePortPrompt(const std::string & args) {
 		return false;
 	}
 
+	SettingsManager * settings = SettingsManager::getInstance();
+
 	std::optional<uint16_t> optionalServerPort(promptForPort(args));
 
 	if(!optionalServerPort.has_value()) {
@@ -1011,12 +1023,12 @@ bool ModManager::CLI::updatePortPrompt(const std::string & args) {
 	uint16_t previousServerPort = 0;
 
 	if(m_modManager->getGameType() == GameType::Server) {
-		previousServerPort = m_modManager->getSettings()->dosboxLocalServerPort;
-		m_modManager->getSettings()->dosboxLocalServerPort = optionalServerPort.value();
+		previousServerPort = settings->dosboxLocalServerPort;
+		settings->dosboxLocalServerPort = optionalServerPort.value();
 	}
 	else {
-		previousServerPort = m_modManager->getSettings()->dosboxRemoteServerPort;
-		m_modManager->getSettings()->dosboxRemoteServerPort = optionalServerPort.value();
+		previousServerPort = settings->dosboxRemoteServerPort;
+		settings->dosboxRemoteServerPort = optionalServerPort.value();
 	}
 
 	std::string portTypeName(m_modManager->getGameType() == GameType::Server ? "Local" : "Remote");
@@ -1042,6 +1054,8 @@ std::optional<uint16_t> ModManager::CLI::promptForPort(const std::string & args)
 		return {};
 	}
 
+	SettingsManager * settings = SettingsManager::getInstance();
+
 	bool error = false;
 	std::string input, data, formattedData;
 	std::string trimmedArgs(Utilities::trimString(args));
@@ -1052,7 +1066,7 @@ std::optional<uint16_t> ModManager::CLI::promptForPort(const std::string & args)
 	while(true) {
 		clearOutput();
 
-		currentPort = m_modManager->getGameType() == GameType::Server ? m_modManager->getSettings()->dosboxLocalServerPort : m_modManager->getSettings()->dosboxRemoteServerPort;
+		currentPort = m_modManager->getGameType() == GameType::Server ? settings->dosboxLocalServerPort : settings->dosboxRemoteServerPort;
 
 		if(skipInput) {
 			data = trimmedArgs;

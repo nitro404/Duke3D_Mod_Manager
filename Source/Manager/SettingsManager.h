@@ -3,6 +3,8 @@
 
 #include "Game/GameType.h"
 
+#include <Singleton/Singleton.h>
+
 #include <rapidjson/document.h>
 
 #include <chrono>
@@ -10,14 +12,10 @@
 
 class ArgumentParser;
 
-class SettingsManager final {
+class SettingsManager final : public Singleton<SettingsManager> {
 public:
 	SettingsManager();
-	SettingsManager(SettingsManager && s) noexcept;
-	SettingsManager(const SettingsManager & s);
-	SettingsManager & operator = (SettingsManager && s) noexcept;
-	SettingsManager & operator = (const SettingsManager & s);
-	~SettingsManager();
+	virtual ~SettingsManager();
 
 	void reset();
 
@@ -128,6 +126,12 @@ public:
 	std::string remoteGameDownloadsDirectoryName;
 	bool segmentAnalyticsEnabled;
 	std::string segmentAnalyticsDataFileName;
+
+private:
+	SettingsManager(const SettingsManager &) = delete;
+	SettingsManager(SettingsManager &&) noexcept = delete;
+	const SettingsManager & operator = (const SettingsManager &) = delete;
+	const SettingsManager & operator = (SettingsManager &&) noexcept = delete;
 };
 
 #endif // _SETTINGS_MANAGER_H_

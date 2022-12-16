@@ -4,14 +4,13 @@
 class DownloadCache;
 class GameVersionCollection;
 class ModGameVersion;
-class SettingsManager;
 
 #include <memory>
 #include <string>
 
 class DownloadManager final {
 public:
-	DownloadManager(std::shared_ptr<SettingsManager> settings);
+	DownloadManager();
 	~DownloadManager();
 
 	bool isInitialized() const;
@@ -32,7 +31,6 @@ private:
 	bool saveDownloadCache() const;
 
 	bool m_initialized;
-	std::shared_ptr<SettingsManager> m_settings;
 	std::unique_ptr<DownloadCache> m_downloadCache;
 
 	DownloadManager(const DownloadManager &) = delete;

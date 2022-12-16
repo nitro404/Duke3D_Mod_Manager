@@ -87,9 +87,8 @@ static const std::array<GameFileInformation, 11> ATOMIC_EDITION_GAME_FILE_INFO_L
 	GameFileInformation{ "ULTRAMID.INI", { "54a404652aecfddf73aea0c11326f9f95fdd1e25" } }
 };
 
-GameManager::GameManager(std::shared_ptr<SettingsManager> settings)
-	: m_initialized(false)
-	, m_settings(settings) { }
+GameManager::GameManager()
+	: m_initialized(false) { }
 
 GameManager::~GameManager() { }
 
@@ -120,7 +119,9 @@ bool GameManager::updateGameDownloadList(bool force) const {
 		return false;
 	}
 
-	std::string gameListRemoteFilePath(Utilities::joinPaths(m_settings->remoteDownloadsDirectoryName, m_settings->remoteGameDownloadsDirectoryName, m_settings->remoteGamesListFileName));
+	SettingsManager * settings = SettingsManager::getInstance();
+
+	std::string gameListRemoteFilePath(Utilities::joinPaths(settings->remoteDownloadsDirectoryName, settings->remoteGameDownloadsDirectoryName, settings->remoteGamesListFileName));
 	std::string gameListURL(Utilities::joinPaths(httpService->getBaseURL(), gameListRemoteFilePath));
 
 	spdlog::info("Downloading Duke Nukem 3D game download list from: '{}'...", gameListURL);
@@ -265,22 +266,24 @@ std::string GameManager::getRemoteGameDownloadsBaseURL() const {
 		return {};
 	}
 
-	if(m_settings->apiBaseURL.empty()) {
+	SettingsManager * settings = SettingsManager::getInstance();
+
+	if(settings->apiBaseURL.empty()) {
 		spdlog::error("Missing API base URL setting.");
 		return {};
 	}
 
-	if(m_settings->remoteDownloadsDirectoryName.empty()) {
+	if(settings->remoteDownloadsDirectoryName.empty()) {
 		spdlog::error("Missing remote downloads directory name setting.");
 		return {};
 	}
 
-	if(m_settings->remoteGameDownloadsDirectoryName.empty()) {
+	if(settings->remoteGameDownloadsDirectoryName.empty()) {
 		spdlog::error("Missing remote game downloads directory name setting.");
 		return {};
 	}
 
-	return Utilities::joinPaths(m_settings->apiBaseURL, m_settings->remoteDownloadsDirectoryName, m_settings->remoteGameDownloadsDirectoryName);
+	return Utilities::joinPaths(settings->apiBaseURL, settings->remoteDownloadsDirectoryName, settings->remoteGameDownloadsDirectoryName);
 }
 
 std::string GameManager::getGroupDownloadURL(const std::string & gameName) const {
