@@ -21,7 +21,7 @@ public:
 		DOS
 	};
 
-	GameVersion(const std::string & name, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, const std::string & conFileArgumentFlag, const std::string & groupFileArgumentFlag, const std::string & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::string & respawnModeArgumentFlag, const std::string & weaponSwitchOrderArgumentFlag, const std::string & disableMonstersArgumentFlag, const std::string & disableSoundArgumentFlag, const std::string & disableMusicArgumentFlag, const std::string & modDirectoryName, const std::optional<std::string> & setupExecutableName = {}, const std::optional<std::string> & groupFileInstallPath = {}, const std::optional<std::string> & defFileArgumentFlag = {}, const std::optional<bool> & requiresCombinedGroup = {}, const std::optional<bool> & requiresDOSBox = {}, const std::string & website = std::string(), const std::string & sourceCodeURL = std::string(), const std::vector<OperatingSystem> & supportedOperatingSystems = std::vector<OperatingSystem>(), const std::vector<std::string> & compatibleGameVersions = std::vector<std::string>());
+	GameVersion(const std::string & name, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, bool supportsSubdirectories, const std::string & conFileArgumentFlag, const std::string & groupFileArgumentFlag, const std::string & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::string & respawnModeArgumentFlag, const std::string & weaponSwitchOrderArgumentFlag, const std::string & disableMonstersArgumentFlag, const std::string & disableSoundArgumentFlag, const std::string & disableMusicArgumentFlag, const std::string & modDirectoryName, const std::optional<std::string> & setupExecutableName = {}, const std::optional<std::string> & groupFileInstallPath = {}, const std::optional<std::string> & defFileArgumentFlag = {}, const std::optional<bool> & requiresCombinedGroup = {}, const std::optional<bool> & requiresDOSBox = {}, const std::string & website = std::string(), const std::string & sourceCodeURL = std::string(), const std::vector<OperatingSystem> & supportedOperatingSystems = std::vector<OperatingSystem>(), const std::vector<std::string> & compatibleGameVersions = std::vector<std::string>());
 	GameVersion(GameVersion && gameVersion) noexcept;
 	GameVersion(const GameVersion & gameVersion);
 	GameVersion & operator = (GameVersion && gameVersion) noexcept;
@@ -56,6 +56,8 @@ public:
 	void setModDirectoryName(const std::string & modDirectoryName);
 	bool hasRelativeConFilePath() const;
 	void setRelativeConFilePath(bool relativeConFilePath);
+	bool doesSupportSubdirectories() const;
+	void setSupportsSubdirectories(bool supportsSubdirectories);
 	const std::string & getConFileArgumentFlag() const;
 	bool setConFileArgumentFlag(const std::string & flag);
 	const std::string & getGroupFileArgumentFlag() const;
@@ -164,6 +166,7 @@ private:
 	std::string m_sourceCodeURL;
 	bool m_localWorkingDirectory;
 	bool m_relativeConFilePath;
+	bool m_supportsSubdirectories;
 	std::string m_conFileArgumentFlag;
 	std::string m_groupFileArgumentFlag;
 	std::optional<std::string> m_defFileArgumentFlag;
