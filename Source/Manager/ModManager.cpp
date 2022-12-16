@@ -64,12 +64,11 @@ ModManager::ModManager()
 	, m_localMode(false)
 	, m_demoRecordingEnabled(false)
 	, m_settings(std::make_unique<SettingsManager>())
-	, m_httpService(std::make_unique<HTTPService>())
 	, m_gameType(ModManager::DEFAULT_GAME_TYPE)
 	, m_selectedModVersionIndex(0)
 	, m_selectedModVersionTypeIndex(0)
 	, m_gameVersions(std::make_shared<GameVersionCollection>())
-	, m_gameManager(std::make_unique<GameManager>(m_httpService, m_settings))
+	, m_gameManager(std::make_unique<GameManager>(m_settings))
 	, m_mods(std::make_shared<ModCollection>())
 	, m_favouriteMods(std::make_shared<FavouriteModCollection>())
 	, m_organizedMods(std::make_shared<OrganizedModCollection>(m_mods, m_favouriteMods, m_gameVersions))
@@ -130,16 +129,18 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 		m_settings->networkTimeout
 	};
 
-	if(!m_httpService->initialize(configuration)) {
+	HTTPService * httpService = HTTPService::getInstance();
+
+	if(!httpService->initialize(configuration)) {
 		spdlog::error("Failed to initialize HTTP service!");
 		return false;
 	}
 
-	m_httpService->setUserAgent(HTTP_USER_AGENT);
+	httpService->setUserAgent(HTTP_USER_AGENT);
 
 	GeoLocationService * geoLocationService = GeoLocationService::getInstance();
 
-	if(!geoLocationService->initialize(m_httpService, FREE_GEO_IP_API_KEY)) {
+	if(!geoLocationService->initialize(FREE_GEO_IP_API_KEY)) {
 		spdlog::error("Failed to initialize geo location service!");
 		return false;
 	}
@@ -152,7 +153,6 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 		configuration.includeIPAddress = false;
 		configuration.includeGeoLocation = true;
 		configuration.dataStorageFilePath = Utilities::joinPaths(m_settings->cacheDirectoryPath, m_settings->segmentAnalyticsDataFileName);
-		configuration.httpService = m_httpService;
 		configuration.applicationName = "Duke Nukem 3D Mod Manager";
 		configuration.applicationVersion = APPLICATION_VERSION;
 		configuration.applicationBuild = APPLICATION_COMMIT_HASH;
@@ -179,7 +179,7 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 	}
 
 	if(!m_localMode) {
-		m_downloadManager = std::make_unique<DownloadManager>(m_httpService, m_settings);
+		m_downloadManager = std::make_unique<DownloadManager>(m_settings);
 
 		if(!m_downloadManager->initialize()) {
 			spdlog::error("Failed to initialize download manager!");
@@ -321,10 +321,6 @@ bool ModManager::isUsingLocalMode() const {
 
 std::shared_ptr<SettingsManager> ModManager::getSettings() const {
 	return m_settings;
-}
-
-std::shared_ptr<HTTPService> ModManager::getHTTPService() const {
-	return m_httpService;
 }
 
 std::shared_ptr<OrganizedModCollection> ModManager::getOrganizedMods() const {

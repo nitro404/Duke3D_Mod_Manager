@@ -3,7 +3,6 @@
 
 class DownloadCache;
 class GameVersionCollection;
-class HTTPService;
 class ModGameVersion;
 class SettingsManager;
 
@@ -12,7 +11,7 @@ class SettingsManager;
 
 class DownloadManager final {
 public:
-	DownloadManager(std::shared_ptr<HTTPService> httpService, std::shared_ptr<SettingsManager> settings);
+	DownloadManager(std::shared_ptr<SettingsManager> settings);
 	~DownloadManager();
 
 	bool isInitialized() const;
@@ -33,7 +32,6 @@ private:
 	bool saveDownloadCache() const;
 
 	bool m_initialized;
-	std::shared_ptr<HTTPService> m_httpService;
 	std::shared_ptr<SettingsManager> m_settings;
 	std::unique_ptr<DownloadCache> m_downloadCache;
 

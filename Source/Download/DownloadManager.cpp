@@ -30,9 +30,8 @@
 
 using namespace std::chrono_literals;
 
-DownloadManager::DownloadManager(std::shared_ptr<HTTPService> httpService, std::shared_ptr<SettingsManager> settings)
+DownloadManager::DownloadManager(std::shared_ptr<SettingsManager> settings)
 	: m_initialized(false)
-	, m_httpService(httpService)
 	, m_settings(settings)
 	, m_downloadCache(std::make_unique<DownloadCache>()) { }
 
@@ -47,8 +46,8 @@ bool DownloadManager::initialize() {
 		return true;
 	}
 
-	if(m_httpService == nullptr || !m_httpService->isInitialized()) {
-		spdlog::error("Failed to initialize download manager, invalid HTTP service provided.");
+	if(!HTTPService::getInstance()->isInitialized()) {
+		spdlog::error("Failed to initialize download manager, HTTP service not initialized!");
 		return false;
 	}
 
@@ -221,26 +220,28 @@ bool DownloadManager::saveDownloadCache() const {
 }
 
 bool DownloadManager::downloadModList(bool force) {
-	if(m_httpService == nullptr || m_settings == nullptr) {
+	if(m_settings == nullptr) {
 		return false;
 	}
+
+	HTTPService * httpService = HTTPService::getInstance();
 
 	std::shared_ptr<CachedFile> cachedModListFile(m_downloadCache->getCachedModListFile());
 
 	std::string modListFileName(m_settings->remoteModsListFileName);
 	std::string modListLocalFilePath(Utilities::joinPaths(getDownloadedModsDirectoryPath(), modListFileName));
 	std::string modListRemoteFilePath(Utilities::joinPaths(m_settings->remoteDownloadsDirectoryName, m_settings->remoteModDownloadsDirectoryName, modListFileName));
-	std::string modListURL(Utilities::joinPaths(m_httpService->getBaseURL(), modListRemoteFilePath));
+	std::string modListURL(Utilities::joinPaths(httpService->getBaseURL(), modListRemoteFilePath));
 
 	spdlog::info("Downloading Duke Nukem 3D mod list from: '{}'...", modListURL);
 
-	std::shared_ptr<HTTPRequest> request(m_httpService->createRequest(HTTPRequest::Method::Get, modListRemoteFilePath));
+	std::shared_ptr<HTTPRequest> request(httpService->createRequest(HTTPRequest::Method::Get, modListRemoteFilePath));
 
 	if(!force && cachedModListFile != nullptr) {
 		request->setIfNoneMatchETag(cachedModListFile->getETag());
 	}
 
-	std::future<std::shared_ptr<HTTPResponse>> futureResponse(m_httpService->sendRequest(request));
+	std::future<std::shared_ptr<HTTPResponse>> futureResponse(httpService->sendRequest(request));
 
 	if(!futureResponse.valid()) {
 		spdlog::error("Failed to create Duke Nukem 3D mod list file HTTP request!");
@@ -294,6 +295,8 @@ bool DownloadManager::downloadModGameVersion(ModGameVersion * modGameVersion, Ga
 		return false;
 	}
 
+	HTTPService * httpService = HTTPService::getInstance();
+
 	if(!ModGameVersion::isValid(modGameVersion)) {
 		spdlog::error("Failed to download mod, invalid mod game version provided!");
 		return false;
@@ -323,11 +326,11 @@ bool DownloadManager::downloadModGameVersion(ModGameVersion * modGameVersion, Ga
 	std::string modDownloadLocalBasePath(Utilities::joinPaths(m_settings->downloadsDirectoryPath, m_settings->modDownloadsDirectoryName, gameVersion->getModDirectoryName()));
 	std::string modDownloadLocalFilePath(Utilities::joinPaths(modDownloadLocalBasePath, modDownload->getFileName()));
 	std::string modDownloadRemoteFilePath(Utilities::joinPaths(m_settings->remoteDownloadsDirectoryName, m_settings->remoteModDownloadsDirectoryName, modDownload->getSubfolder(), Utilities::toLowerCase(gameVersion->getModDirectoryName()), modDownload->getFileName()));
-	std::string modDownloadURL(Utilities::joinPaths(m_httpService->getBaseURL(), modDownloadRemoteFilePath));
+	std::string modDownloadURL(Utilities::joinPaths(httpService->getBaseURL(), modDownloadRemoteFilePath));
 
 	spdlog::info("Downloading '{}' mod from: '{}'...", modGameVersion->getFullName(), modDownloadURL);
 
-	std::shared_ptr<HTTPRequest> request(m_httpService->createRequest(HTTPRequest::Method::Get, modDownloadRemoteFilePath));
+	std::shared_ptr<HTTPRequest> request(httpService->createRequest(HTTPRequest::Method::Get, modDownloadRemoteFilePath));
 
 	request->setNetworkTimeout(30min);
 
@@ -335,7 +338,7 @@ bool DownloadManager::downloadModGameVersion(ModGameVersion * modGameVersion, Ga
 		request->setIfNoneMatchETag(cachedModPackageFile->getETag());
 	}
 
-	std::future<std::shared_ptr<HTTPResponse>> futureResponse(m_httpService->sendRequest(request));
+	std::future<std::shared_ptr<HTTPResponse>> futureResponse(httpService->sendRequest(request));
 
 	if(!futureResponse.valid()) {
 		spdlog::error("Failed to create '{}' mod package file HTTP request!", modGameVersion->getFullName());

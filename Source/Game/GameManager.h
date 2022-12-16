@@ -6,12 +6,11 @@
 
 class GameDownloadCollection;
 class GameVersion;
-class HTTPService;
 class SettingsManager;
 
 class GameManager final {
 public:
-	GameManager(std::shared_ptr<HTTPService> httpService, std::shared_ptr<SettingsManager> settings);
+	GameManager(std::shared_ptr<SettingsManager> settings);
 	~GameManager();
 
 	bool isInitialized() const;
@@ -35,7 +34,6 @@ private:
 	std::string getFallbackGroupDownloadSHA1(const std::string & gameName) const;
 
 	bool m_initialized;
-	std::shared_ptr<HTTPService> m_httpService;
 	std::shared_ptr<SettingsManager> m_settings;
 	mutable std::unique_ptr<GameDownloadCollection> m_gameDownloads;
 	mutable std::string m_gameListFileETag;

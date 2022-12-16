@@ -20,7 +20,6 @@ class FavouriteModCollection;
 class GameManager;
 class GameVersion;
 class GameVersionCollection;
-class HTTPService;
 class Mod;
 class ModAuthorInformation;
 class ModCollection;
@@ -45,7 +44,6 @@ public:
 
 	bool isUsingLocalMode() const;
 	std::shared_ptr<SettingsManager> getSettings() const;
-	std::shared_ptr<HTTPService> getHTTPService() const;
 	std::shared_ptr<OrganizedModCollection> getOrganizedMods() const;
 	std::string getModsListFilePath() const;
 	std::string getModsDirectoryPath() const;
@@ -157,7 +155,6 @@ private:
 	bool m_demoRecordingEnabled;
 	std::shared_ptr<ArgumentParser> m_arguments;
 	std::shared_ptr<SettingsManager> m_settings;
-	std::shared_ptr<HTTPService> m_httpService;
 	std::unique_ptr<DownloadManager> m_downloadManager;
 	GameType m_gameType;
 	std::shared_ptr<GameVersion> m_preferredGameVersion;

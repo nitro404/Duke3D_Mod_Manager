@@ -87,9 +87,8 @@ static const std::array<GameFileInformation, 11> ATOMIC_EDITION_GAME_FILE_INFO_L
 	GameFileInformation{ "ULTRAMID.INI", { "54a404652aecfddf73aea0c11326f9f95fdd1e25" } }
 };
 
-GameManager::GameManager(std::shared_ptr<HTTPService> httpService, std::shared_ptr<SettingsManager> settings)
+GameManager::GameManager(std::shared_ptr<SettingsManager> settings)
 	: m_initialized(false)
-	, m_httpService(httpService)
 	, m_settings(settings) { }
 
 GameManager::~GameManager() { }
@@ -99,7 +98,11 @@ bool GameManager::isInitialized() const {
 }
 
 bool GameManager::initialize() {
-	if(m_initialized || m_httpService == nullptr || !m_httpService->isInitialized()) {
+	if(m_initialized) {
+		return false;
+	}
+
+	if(!HTTPService::getInstance()->isInitialized()) {
 		return false;
 	}
 
@@ -111,22 +114,24 @@ bool GameManager::initialize() {
 }
 
 bool GameManager::updateGameDownloadList(bool force) const {
-	if(m_httpService == nullptr || !m_httpService->isInitialized()) {
+	HTTPService * httpService = HTTPService::getInstance();
+
+	if(!httpService->isInitialized()) {
 		return false;
 	}
 
 	std::string gameListRemoteFilePath(Utilities::joinPaths(m_settings->remoteDownloadsDirectoryName, m_settings->remoteGameDownloadsDirectoryName, m_settings->remoteGamesListFileName));
-	std::string gameListURL(Utilities::joinPaths(m_httpService->getBaseURL(), gameListRemoteFilePath));
+	std::string gameListURL(Utilities::joinPaths(httpService->getBaseURL(), gameListRemoteFilePath));
 
 	spdlog::info("Downloading Duke Nukem 3D game download list from: '{}'...", gameListURL);
 
-	std::shared_ptr<HTTPRequest> request(m_httpService->createRequest(HTTPRequest::Method::Get, gameListURL));
+	std::shared_ptr<HTTPRequest> request(httpService->createRequest(HTTPRequest::Method::Get, gameListURL));
 
 	if(!force && !m_gameListFileETag.empty()) {
 		request->setIfNoneMatchETag(m_gameListFileETag);
 	}
 
-	std::shared_ptr<HTTPResponse> response(m_httpService->sendRequestAndWait(request));
+	std::shared_ptr<HTTPResponse> response(httpService->sendRequestAndWait(request));
 
 	if(response->isFailure()) {
 		spdlog::error("Failed to download Duke Nukem 3D game download list with error: {}", response->getErrorMessage());
@@ -327,6 +332,8 @@ std::string GameManager::getJFDuke3DDownloadURL() const {
 		return {};
 	}
 
+	HTTPService * httpService = HTTPService::getInstance();
+
 	size_t schemeSuffixIndex = JFDUKE32_DOWNLOAD_PAGE_URL.find("://");
 
 	if(schemeSuffixIndex == std::string::npos) {
@@ -342,11 +349,11 @@ std::string GameManager::getJFDuke3DDownloadURL() const {
 		downloadPageBaseURL = std::string_view(JFDUKE32_DOWNLOAD_PAGE_URL.data(), firstPathSeparatorIndex);
 	}
 
-	std::shared_ptr<HTTPRequest> downloadPageRequest(m_httpService->createRequest(HTTPRequest::Method::Get, JFDUKE32_DOWNLOAD_PAGE_URL));
+	std::shared_ptr<HTTPRequest> downloadPageRequest(httpService->createRequest(HTTPRequest::Method::Get, JFDUKE32_DOWNLOAD_PAGE_URL));
 	downloadPageRequest->setConnectionTimeout(5s);
 	downloadPageRequest->setNetworkTimeout(10s);
 
-	std::future<std::shared_ptr<HTTPResponse>> futureResponse(m_httpService->sendRequest(downloadPageRequest));
+	std::future<std::shared_ptr<HTTPResponse>> futureResponse(httpService->sendRequest(downloadPageRequest));
 
 	if(!futureResponse.valid()) {
 		spdlog::error("Failed to create JFDuke3D download page HTTP request!");
@@ -432,11 +439,13 @@ std::string GameManager::getEDuke32DownloadURL() const {
 		return {};
 	}
 
-	std::shared_ptr<HTTPRequest> downloadPageRequest(m_httpService->createRequest(HTTPRequest::Method::Get, EDUKE32_DOWNLOAD_PAGE_URL));
+	HTTPService * httpService = HTTPService::getInstance();
+
+	std::shared_ptr<HTTPRequest> downloadPageRequest(httpService->createRequest(HTTPRequest::Method::Get, EDUKE32_DOWNLOAD_PAGE_URL));
 	downloadPageRequest->setConnectionTimeout(5s);
 	downloadPageRequest->setNetworkTimeout(10s);
 
-	std::future<std::shared_ptr<HTTPResponse>> futureResponse(m_httpService->sendRequest(downloadPageRequest));
+	std::future<std::shared_ptr<HTTPResponse>> futureResponse(httpService->sendRequest(downloadPageRequest));
 
 	if(!futureResponse.valid()) {
 		spdlog::error("Failed to create eDuke32 download page HTTP request!");
@@ -514,11 +523,13 @@ std::string GameManager::getRazeDownloadURL() const {
 		return {};
 	}
 
-	std::shared_ptr<HTTPRequest> downloadPageRequest(m_httpService->createRequest(HTTPRequest::Method::Get, RAZE_LATEST_RELEASE_URL));
+	HTTPService * httpService = HTTPService::getInstance();
+
+	std::shared_ptr<HTTPRequest> downloadPageRequest(httpService->createRequest(HTTPRequest::Method::Get, RAZE_LATEST_RELEASE_URL));
 	downloadPageRequest->setConnectionTimeout(5s);
 	downloadPageRequest->setNetworkTimeout(10s);
 
-	std::future<std::shared_ptr<HTTPResponse>> futureResponse(m_httpService->sendRequest(downloadPageRequest));
+	std::future<std::shared_ptr<HTTPResponse>> futureResponse(httpService->sendRequest(downloadPageRequest));
 
 	if(!futureResponse.valid()) {
 		spdlog::error("Failed to create latest Raze release information HTTP request!");
@@ -600,11 +611,13 @@ std::string GameManager::getRedNukemDownloadURL() const {
 		return {};
 	}
 
-	std::shared_ptr<HTTPRequest> downloadPageRequest(m_httpService->createRequest(HTTPRequest::Method::Get, RED_NUKEM_DOWNLOAD_PAGE_URL));
+	HTTPService * httpService = HTTPService::getInstance();
+
+	std::shared_ptr<HTTPRequest> downloadPageRequest(httpService->createRequest(HTTPRequest::Method::Get, RED_NUKEM_DOWNLOAD_PAGE_URL));
 	downloadPageRequest->setConnectionTimeout(5s);
 	downloadPageRequest->setNetworkTimeout(10s);
 
-	std::future<std::shared_ptr<HTTPResponse>> futureResponse(m_httpService->sendRequest(downloadPageRequest));
+	std::future<std::shared_ptr<HTTPResponse>> futureResponse(httpService->sendRequest(downloadPageRequest));
 
 	if(!futureResponse.valid()) {
 		spdlog::error("Failed to create RedNukem download page HTTP request!");
@@ -722,6 +735,8 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		return false;
 	}
 
+	HTTPService * httpService = HTTPService::getInstance();
+
 	if(!std::filesystem::exists(std::filesystem::path(destinationDirectoryPath))) {
 		std::error_code errorCode;
 		std::filesystem::create_directories(destinationDirectoryPath, errorCode);
@@ -760,9 +775,9 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 
 	spdlog::info("Downloading '{}' game files package from: '{}'...", gameVersion.getName(), gameDownloadURL);
 
-	std::shared_ptr<HTTPRequest> request(m_httpService->createRequest(HTTPRequest::Method::Get, gameDownloadURL));
+	std::shared_ptr<HTTPRequest> request(httpService->createRequest(HTTPRequest::Method::Get, gameDownloadURL));
 
-	std::shared_ptr<HTTPResponse> response(m_httpService->sendRequestAndWait(request));
+	std::shared_ptr<HTTPResponse> response(httpService->sendRequestAndWait(request));
 
 	if(response->isFailure()) {
 		spdlog::error("Failed to download '{}' game files package with error: {}", gameVersion.getName(), response->getErrorMessage());
@@ -1072,6 +1087,8 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 		return false;
 	}
 
+	HTTPService * httpService = HTTPService::getInstance();
+
 	if(!std::filesystem::is_directory(std::filesystem::path(directoryPath))) {
 		spdlog::error("Destination directory path does not exist!");
 		return false;
@@ -1144,9 +1161,9 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 
 	spdlog::info("Downloading Duke Nukem 3D {} group file from: '{}'...", gameName, groupDownloadURL);
 
-	std::shared_ptr<HTTPRequest> request(m_httpService->createRequest(HTTPRequest::Method::Get, groupDownloadURL));
+	std::shared_ptr<HTTPRequest> request(httpService->createRequest(HTTPRequest::Method::Get, groupDownloadURL));
 
-	std::future<std::shared_ptr<HTTPResponse>> futureResponse(m_httpService->sendRequest(request));
+	std::future<std::shared_ptr<HTTPResponse>> futureResponse(httpService->sendRequest(request));
 
 	if(!futureResponse.valid()) {
 		spdlog::error("Failed to create Duke Nukem 3D group file HTTP request!");
