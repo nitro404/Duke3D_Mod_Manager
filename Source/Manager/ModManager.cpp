@@ -192,11 +192,6 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 		}
 	}
 
-	if(!m_gameManager->initialize()) {
-		spdlog::error("Failed to initialize game manager!");
-		return false;
-	}
-
 	m_gameType = settings->gameType;
 
 	bool saveGameVersions = false;
@@ -223,6 +218,11 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 		settings->preferredGameVersion = m_preferredGameVersion->getName();
 
 		spdlog::warn("Game configuration for game version '{}' is missing, changing preferred game version to '{}.", settings->preferredGameVersion, m_preferredGameVersion->getName());
+	}
+
+	if(!m_gameManager->initialize()) {
+		spdlog::error("Failed to initialize game manager!");
+		return false;
 	}
 
 	if(!m_mods->loadFrom(getModsListFilePath())) {
