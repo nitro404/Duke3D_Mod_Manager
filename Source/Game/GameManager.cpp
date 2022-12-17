@@ -214,7 +214,7 @@ std::string GameManager::getGameDownloadURL(const std::string & gameName) {
 		return getEDuke32DownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
 	else if(gameName == GameVersion::RAZE.getName()) {
-		return getRazeDownloadURL();
+		return getRazeDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
 	else if(gameName == GameVersion::RED_NUKEM.getName()) {
 		return getRedNukemDownloadURL();
@@ -624,7 +624,7 @@ std::string GameManager::getEDuke32DownloadURL(DeviceInformationBridge::Operatin
 	return Utilities::joinPaths(EDUKE32_DOWNLOAD_PAGE_URL, finalDownloadFileName);
 }
 
-std::string GameManager::getRazeDownloadURL() const {
+std::string GameManager::getRazeDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const {
 	static const std::string WINDOWS_X64_ARCHITECTURE_IDENTIFIER("arm64");
 	static const std::string LINUX_IDENTIFIER("linux");
 	static const std::string MACOS_IDENTIFIER("mac");
@@ -635,19 +635,10 @@ std::string GameManager::getRazeDownloadURL() const {
 		return {};
 	}
 
-	DeviceInformationBridge * deviceInformationBridge = DeviceInformationBridge::getInstance();
+	std::shared_ptr<GameVersion> razeGameVersion(m_gameVersions->getGameVersion(GameVersion::RAZE.getName()));
+	const GameVersion * razeGameVersionRaw = razeGameVersion != nullptr ? razeGameVersion.get() : &GameVersion::RAZE;
 
-	std::optional<DeviceInformationBridge::OperatingSystemType> optionalOperatingSystemType(deviceInformationBridge->getOperatingSystemType());
-
-	if(!optionalOperatingSystemType.has_value()) {
-		spdlog::error("Failed to determine operating system type.");
-		return {};
-	}
-
-	std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalOperatingSystemArchitectureType(deviceInformationBridge->getOperatingSystemArchitectureType());
-
-	if(!optionalOperatingSystemArchitectureType.has_value()) {
-		spdlog::error("Failed to determine operating system architecture type.");
+	if(!razeGameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
 		return {};
 	}
 
@@ -662,7 +653,7 @@ std::string GameManager::getRazeDownloadURL() const {
 	std::shared_ptr<GitHubReleaseAsset> currentReleaseAsset;
 	std::shared_ptr<GitHubReleaseAsset> latestReleaseAsset;
 
-	if(optionalOperatingSystemType.value() == DeviceInformationBridge::OperatingSystemType::Windows && optionalOperatingSystemArchitectureType.value() == DeviceInformationBridge::OperatingSystemArchitectureType::x64) {
+	if(operatingSystemType == DeviceInformationBridge::OperatingSystemType::Windows && operatingSystemArchitectureType == DeviceInformationBridge::OperatingSystemArchitectureType::x64) {
 		for(size_t i = 0; i < latestRelease->numberOfAssets(); i++) {
 			currentReleaseAsset = latestRelease->getAsset(i);
 
@@ -691,28 +682,28 @@ std::string GameManager::getRazeDownloadURL() const {
 			}
 
 			if(lowerCaseAssetFileName.find(LINUX_IDENTIFIER) != std::string::npos) {
-				if(optionalOperatingSystemType.value() != DeviceInformationBridge::OperatingSystemType::Linux) {
+				if(operatingSystemType != DeviceInformationBridge::OperatingSystemType::Linux) {
 					continue;
 				}
 
 				latestReleaseAsset = currentReleaseAsset;
 			}
 			else if(lowerCaseAssetFileName.find(MACOS_IDENTIFIER) != std::string::npos) {
-				if(optionalOperatingSystemType.value() != DeviceInformationBridge::OperatingSystemType::MacOS) {
+				if(operatingSystemType != DeviceInformationBridge::OperatingSystemType::MacOS) {
 					continue;
 				}
 
 				latestReleaseAsset = currentReleaseAsset;
 			}
 
-			if(optionalOperatingSystemType.value() == DeviceInformationBridge::OperatingSystemType::Windows) {
+			if(operatingSystemType == DeviceInformationBridge::OperatingSystemType::Windows) {
 				latestReleaseAsset = currentReleaseAsset;
 			}
 		}
 	}
 
 	if(latestReleaseAsset == nullptr) {
-		spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}'.", GameVersion::RAZE.getName(), magic_enum::enum_name(optionalOperatingSystemType.value()));
+		spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}'.", GameVersion::RAZE.getName(), magic_enum::enum_name(operatingSystemType));
 		return {};
 	}
 
