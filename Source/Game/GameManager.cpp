@@ -217,7 +217,7 @@ std::string GameManager::getGameDownloadURL(const std::string & gameName) {
 		return getRazeDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
 	else if(gameName == GameVersion::RED_NUKEM.getName()) {
-		return getRedNukemDownloadURL();
+		return getRedNukemDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
 	else if(gameName == GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getName()) {
 		return getBelgianChocolateDuke3DDownloadURL();
@@ -797,9 +797,19 @@ std::string GameManager::getBelgianChocolateDuke3DDownloadURL() const {
 	return latestReleaseAsset->getDownloadURL();
 }
 
-std::string GameManager::getRedNukemDownloadURL() const {
+std::string GameManager::getRedNukemDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const {
+	const std::string WINDOWS_X86_ARCHITECTURE_IDENTIFIER("win32");
+	const std::string WINDOWS_X64_ARCHITECTURE_IDENTIFIER("win64");
+
 	if(!m_initialized) {
 		spdlog::error("Game manager not initialized!");
+		return {};
+	}
+
+	std::shared_ptr<GameVersion> redNukemGameVersion(m_gameVersions->getGameVersion(GameVersion::RED_NUKEM.getName()));
+	const GameVersion * redNukemGameVersionRaw = redNukemGameVersion != nullptr ? redNukemGameVersion.get() : &GameVersion::RED_NUKEM;
+
+	if(!redNukemGameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
 		return {};
 	}
 
@@ -859,8 +869,10 @@ std::string GameManager::getRedNukemDownloadURL() const {
 	const tinyxml2::XMLElement * downloadContainerElement = nullptr;
 	std::vector<const tinyxml2::XMLElement *> downloadLinks;
 	const char * downloadLinkRaw = nullptr;
-	std::string_view downloadLink;
+	std::string_view currentDownloadLink;
 	const tinyxml2::XMLElement * currentBodyChildElement = bodyElement->FirstChildElement();
+	std::string windowsX86DownloadLink;
+	std::string windowsX64DownloadLink;
 
 	while(true) {
 		if(currentBodyChildElement == nullptr) {
@@ -887,12 +899,18 @@ std::string GameManager::getRedNukemDownloadURL() const {
 							downloadLinkRaw = (*i)->Attribute("href");
 
 							if(downloadLinkRaw != nullptr) {
-								downloadLink = downloadLinkRaw;
+								currentDownloadLink = downloadLinkRaw;
 
-								if(downloadLink.find("rednukem") != std::string::npos &&
-								   downloadLink.find("win64") != std::string::npos &&
-								   downloadLink.find("debug") == std::string::npos) {
-									return std::string(downloadLink);
+								if(currentDownloadLink.find("rednukem") == std::string::npos ||
+								   currentDownloadLink.find("debug") != std::string::npos) {
+									continue;
+								}
+
+								if(currentDownloadLink.find(WINDOWS_X86_ARCHITECTURE_IDENTIFIER) != std::string::npos) {
+									windowsX86DownloadLink = currentDownloadLink;
+								}
+								else if(currentDownloadLink.find(WINDOWS_X64_ARCHITECTURE_IDENTIFIER) != std::string::npos) {
+									windowsX64DownloadLink = currentDownloadLink;
 								}
 							}
 							else {
@@ -916,9 +934,27 @@ std::string GameManager::getRedNukemDownloadURL() const {
 		currentBodyChildElement = currentBodyChildElement->NextSiblingElement();
 	}
 
-	spdlog::error("Failed to determine RedNukem download URL from download page XHTML.");
+	std::string finalDownloadLink;
 
-	return {};
+	if(operatingSystemArchitectureType == DeviceInformationBridge::OperatingSystemArchitectureType::x64) {
+		if(!windowsX64DownloadLink.empty()) {
+			finalDownloadLink = windowsX64DownloadLink;
+		}
+		else {
+			finalDownloadLink = windowsX86DownloadLink;
+		}
+	}
+	else if(operatingSystemArchitectureType == DeviceInformationBridge::OperatingSystemArchitectureType::x86) {
+		finalDownloadLink = windowsX86DownloadLink;
+	}
+
+	if(finalDownloadLink.empty()) {
+		spdlog::error("Failed to determine RedNukem download URL from download page XHTML.");
+
+		return {};
+	}
+
+	return finalDownloadLink;
 }
 
 bool GameManager::installGame(const GameVersion & gameVersion, const std::string & destinationDirectoryPath, bool useFallback, bool overwrite) {
