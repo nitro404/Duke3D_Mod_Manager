@@ -248,7 +248,7 @@ std::string GameManager::getFallbackGameDownloadURL(const std::string & gameName
 				gameDownloadFile = m_gameDownloads->getLatestGameDownloadFile(gameName, GameDownloadFile::Type::Game, optionalOperatingSystemType.value(), DeviceInformationBridge::OperatingSystemArchitectureType::x86);
 
 				if(gameDownloadFile == nullptr) {
-					spdlog::error("Could not find '{}' game file download information for '{}' ({} or {}).", gameName, magic_enum::enum_name(optionalOperatingSystemType.value()), DeviceInformationBridge::OperatingSystemArchitectureType::x64, DeviceInformationBridge::OperatingSystemArchitectureType::x86);
+					spdlog::error("Could not find '{}' game file download information for '{}' ({} or {}).", gameName, magic_enum::enum_name(optionalOperatingSystemType.value()), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x64), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x86));
 					return {};
 				}
 
@@ -1072,12 +1072,14 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 				}
 			}
 		}
+	}
 
-		// don't need to install the group file or verify it separately when using a fallback download for either of the original game versions, since it's already installed & verified
-		if(!isOriginalGameFallback && gameVersion.hasGroupFileInstallPath()) {
-			if(!installGroupFile(gameVersion.getName(), Utilities::joinPaths(destinationDirectoryPath, gameVersion.getGroupFileInstallPath().value()), false, overwrite)) {
-				return false;
-			}
+	// don't need to install the group file or verify it separately when using a fallback download for either of the original game versions, since it's already installed & verified
+	if (!isOriginalGameFallback && gameVersion.hasGroupFileInstallPath()) {
+		std::string groupFileType(Utilities::areStringsEqual(gameVersion.getName(), GameVersion::ORIGINAL_REGULAR_VERSION.getName()) ? GameVersion::ORIGINAL_REGULAR_VERSION.getName() : GameVersion::ORIGINAL_ATOMIC_EDITION.getName());
+
+		if (!installGroupFile(groupFileType, Utilities::joinPaths(destinationDirectoryPath, gameVersion.getGroupFileInstallPath().value()), false, overwrite)) {
+			return false;
 		}
 	}
 
