@@ -220,7 +220,7 @@ std::string GameManager::getGameDownloadURL(const std::string & gameName) {
 		return getRedNukemDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
 	else if(gameName == GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getName()) {
-		return getBelgianChocolateDuke3DDownloadURL();
+		return getBelgianChocolateDuke3DDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
 
 	return {};
@@ -710,28 +710,17 @@ std::string GameManager::getRazeDownloadURL(DeviceInformationBridge::OperatingSy
 	return latestReleaseAsset->getDownloadURL();
 }
 
-std::string GameManager::getBelgianChocolateDuke3DDownloadURL() const {
-	static const std::string X86_ARCHITECTURE_IDENTIFIER("win32");
-	static const std::string X64_ARCHITECTURE_IDENTIFIER("win64");
+std::string GameManager::getBelgianChocolateDuke3DDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const {
+	static const std::string WINDOWS_X86_ARCHITECTURE_IDENTIFIER("win32");
+	static const std::string WINDOWS_X64_ARCHITECTURE_IDENTIFIER("win64");
 
 	if(!m_initialized) {
 		spdlog::error("Game manager not initialized!");
 		return {};
 	}
 
-	DeviceInformationBridge * deviceInformationBridge = DeviceInformationBridge::getInstance();
-
-	std::optional<DeviceInformationBridge::OperatingSystemType> optionalOperatingSystemType(deviceInformationBridge->getOperatingSystemType());
-
-	if(!optionalOperatingSystemType.has_value()) {
-		spdlog::error("Failed to determine operating system type.");
-		return {};
-	}
-
-	std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalOperatingSystemArchitectureType(deviceInformationBridge->getOperatingSystemArchitectureType());
-
-	if(!optionalOperatingSystemArchitectureType.has_value()) {
-		spdlog::error("Failed to determine operating system architecture type.");
+	// Note: While Belgian Chocolate Duke Nukem 3D does compile on Linux and MacOS, no binary files are currently available on GitHub
+	if(operatingSystemType != DeviceInformationBridge::OperatingSystemType::Windows) {
 		return {};
 	}
 
@@ -745,13 +734,13 @@ std::string GameManager::getBelgianChocolateDuke3DDownloadURL() const {
 
 	std::string_view architectureIdentifier;
 
-	switch(optionalOperatingSystemArchitectureType.value()) {
+	switch(operatingSystemArchitectureType) {
 		case DeviceInformationBridge::OperatingSystemArchitectureType::x86: {
-			architectureIdentifier = X86_ARCHITECTURE_IDENTIFIER;
+			architectureIdentifier = WINDOWS_X86_ARCHITECTURE_IDENTIFIER;
 			break;
 		}
 		case DeviceInformationBridge::OperatingSystemArchitectureType::x64: {
-			architectureIdentifier = X64_ARCHITECTURE_IDENTIFIER;
+			architectureIdentifier = WINDOWS_X64_ARCHITECTURE_IDENTIFIER;
 			break;
 		}
 	}
@@ -769,23 +758,23 @@ std::string GameManager::getBelgianChocolateDuke3DDownloadURL() const {
 	}
 
 	if(latestReleaseAsset == nullptr) {
-		switch(optionalOperatingSystemArchitectureType.value()) {
+		switch(operatingSystemArchitectureType) {
 			case DeviceInformationBridge::OperatingSystemArchitectureType::x86: {
-				spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}' ({}).",  GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getName(), magic_enum::enum_name(optionalOperatingSystemType.value()), magic_enum::enum_name(optionalOperatingSystemArchitectureType.value()));
+				spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}' ({}).",  GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getName(), magic_enum::enum_name(operatingSystemType), magic_enum::enum_name(operatingSystemArchitectureType));
 				return {};
 			}
 			case DeviceInformationBridge::OperatingSystemArchitectureType::x64: {
 				for(size_t i = 0; i < latestRelease->numberOfAssets(); i++) {
 					currentReleaseAsset = latestRelease->getAsset(i);
 
-					if(Utilities::toLowerCase(currentReleaseAsset->getFileName()).find(X86_ARCHITECTURE_IDENTIFIER) != std::string::npos) {
+					if(Utilities::toLowerCase(currentReleaseAsset->getFileName()).find(WINDOWS_X86_ARCHITECTURE_IDENTIFIER) != std::string::npos) {
 						latestReleaseAsset = currentReleaseAsset;
 						break;
 					}
 				}
 
 				if(latestReleaseAsset == nullptr) {
-					spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}' ({} or {}).", GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getName(), magic_enum::enum_name(optionalOperatingSystemType.value()), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x64), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x86));
+					spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}' ({} or {}).", GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getName(), magic_enum::enum_name(operatingSystemType), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x64), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x86));
 					return {};
 				}
 
