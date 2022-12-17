@@ -25,7 +25,7 @@ public:
 	std::string getGroupDownloadURL(const std::string & gameName) const;
 	std::string getFallbackGroupDownloadURL(const std::string & gameName) const;
 	std::string getJFDuke3DDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const;
-	std::string getEDuke32DownloadURL() const;
+	std::string getEDuke32DownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const;
 	std::string getRazeDownloadURL() const;
 	std::string getRedNukemDownloadURL() const;
 	std::string getBelgianChocolateDuke3DDownloadURL() const;

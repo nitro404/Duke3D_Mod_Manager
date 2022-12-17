@@ -211,7 +211,7 @@ std::string GameManager::getGameDownloadURL(const std::string & gameName) {
 		return getJFDuke3DDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
 	else if(gameName == GameVersion::EDUKE32.getName()) {
-		return getEDuke32DownloadURL();
+		return getEDuke32DownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
 	else if(gameName == GameVersion::RAZE.getName()) {
 		return getRazeDownloadURL();
@@ -505,9 +505,19 @@ std::string GameManager::getJFDuke3DDownloadURL(DeviceInformationBridge::Operati
 	}
 }
 
-std::string GameManager::getEDuke32DownloadURL() const {
+std::string GameManager::getEDuke32DownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const {
+	static const std::string WINDOWS_X86_ARCHITECTURE_IDENTIFIER("win32");
+	static const std::string WINDOWS_X64_ARCHITECTURE_IDENTIFIER("win64");
+
 	if(!m_initialized) {
 		spdlog::error("Game manager not initialized!");
+		return {};
+	}
+
+	std::shared_ptr<GameVersion> eDuke32GameVersion(m_gameVersions->getGameVersion(GameVersion::EDUKE32.getName()));
+	const GameVersion * eDuke32GameVersionRaw = eDuke32GameVersion != nullptr ? eDuke32GameVersion.get() : &GameVersion::EDUKE32;
+
+	if(!eDuke32GameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
 		return {};
 	}
 
@@ -562,7 +572,9 @@ std::string GameManager::getEDuke32DownloadURL() const {
 		return {};
 	}
 
-	std::string_view downloadFileName;
+	std::string_view currentDownloadFileName;
+	std::string windowsX86DownloadFileName;
+	std::string windowsX64DownloadFileName;
 	const tinyxml2::XMLElement * listingEntryLinkElement = nullptr;
 	const tinyxml2::XMLElement * listingEntryElement = listingElement->FirstChildElement();
 
@@ -574,19 +586,42 @@ std::string GameManager::getEDuke32DownloadURL() const {
 		listingEntryLinkElement = Utilities::findXMLElementWithName(listingEntryElement, "a");
 
 		if(listingEntryLinkElement != nullptr) {
-			downloadFileName = listingEntryLinkElement->Attribute("href");
+			currentDownloadFileName = listingEntryLinkElement->Attribute("href");
 
-			if(downloadFileName.find("eduke32") == 0 && downloadFileName.find("win64") != std::string::npos && downloadFileName.find("debug") == std::string::npos) {
-				return Utilities::joinPaths(EDUKE32_DOWNLOAD_PAGE_URL, downloadFileName);
+			if(currentDownloadFileName.find("eduke32") == 0 && currentDownloadFileName.find("debug") == std::string::npos) {
+				if(currentDownloadFileName.find(WINDOWS_X86_ARCHITECTURE_IDENTIFIER) != std::string::npos) {
+					windowsX86DownloadFileName = currentDownloadFileName;
+				}
+				else if(currentDownloadFileName.find(WINDOWS_X64_ARCHITECTURE_IDENTIFIER) != std::string::npos) {
+					windowsX64DownloadFileName = currentDownloadFileName;
+				}
 			}
 		}
 
 		listingEntryElement = listingEntryElement->NextSiblingElement();
 	}
 
-	spdlog::error("Failed to determine eDuke32 download URL from download page XHTML.");
+	std::string finalDownloadFileName;
 
-	return {};
+	if(operatingSystemArchitectureType == DeviceInformationBridge::OperatingSystemArchitectureType::x64) {
+		if(!windowsX64DownloadFileName.empty()) {
+			finalDownloadFileName = windowsX64DownloadFileName;
+		}
+		else {
+			finalDownloadFileName = windowsX86DownloadFileName;
+		}
+	}
+	else if(operatingSystemArchitectureType == DeviceInformationBridge::OperatingSystemArchitectureType::x86) {
+		finalDownloadFileName = windowsX86DownloadFileName;
+	}
+
+	if(finalDownloadFileName.empty()) {
+		spdlog::error("Failed to determine eDuke32 download URL from download page XHTML.");
+
+		return {};
+	}
+
+	return Utilities::joinPaths(EDUKE32_DOWNLOAD_PAGE_URL, finalDownloadFileName);
 }
 
 std::string GameManager::getRazeDownloadURL() const {
