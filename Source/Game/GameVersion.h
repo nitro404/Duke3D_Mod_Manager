@@ -97,8 +97,10 @@ public:
 
 	size_t numberOfSupportedOperatingSystems() const;
 	bool hasSupportedOperatingSystem(OperatingSystem operatingSystem) const;
+	bool hasSupportedOperatingSystemType(DeviceInformationBridge::OperatingSystemType operatingSystemType) const;
 	bool hasSupportedOperatingSystemWithName(const std::string & operatingSystemName) const;
 	size_t indexOfSupportedOperatingSystem(OperatingSystem operatingSystem) const;
+	size_t indexOfSupportedOperatingSystemType(DeviceInformationBridge::OperatingSystemType operatingSystemType) const;
 	size_t indexOfSupportedOperatingSystemWithName(const std::string & operatingSystemName) const;
 	std::optional<OperatingSystem> getSupportedOperatingSystem(size_t index) const;
 	bool addSupportedOperatingSystem(OperatingSystem operatingSystem);

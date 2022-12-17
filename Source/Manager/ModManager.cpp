@@ -221,7 +221,7 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 		spdlog::warn("Game configuration for game version '{}' is missing, changing preferred game version to '{}.", settings->preferredGameVersion, m_preferredGameVersion->getName());
 	}
 
-	if(!m_gameManager->initialize()) {
+	if(!m_gameManager->initialize(m_gameVersions)) {
 		spdlog::error("Failed to initialize game manager!");
 		return false;
 	}

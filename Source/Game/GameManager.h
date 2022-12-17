@@ -1,6 +1,10 @@
 #ifndef _GAME_MANAGER_H_
 #define _GAME_MANAGER_H_
 
+#include "GameVersionCollection.h"
+
+#include <Platform/DeviceInformationBridge.h>
+
 #include <memory>
 #include <string>
 
@@ -13,14 +17,14 @@ public:
 	~GameManager();
 
 	bool isInitialized() const;
-	bool initialize();
+	bool initialize(std::shared_ptr<GameVersionCollection> gameVersions);
 	bool updateGameDownloadList(bool force = false) const;
 	std::string getGameDownloadURL(const std::string & gameName);
 	std::string getRemoteGameDownloadsBaseURL() const;
 	std::string getFallbackGameDownloadURL(const std::string & gameName) const;
 	std::string getGroupDownloadURL(const std::string & gameName) const;
 	std::string getFallbackGroupDownloadURL(const std::string & gameName) const;
-	std::string getJFDuke3DDownloadURL() const;
+	std::string getJFDuke3DDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const;
 	std::string getEDuke32DownloadURL() const;
 	std::string getRazeDownloadURL() const;
 	std::string getRedNukemDownloadURL() const;
@@ -34,6 +38,7 @@ private:
 	std::string getFallbackGroupDownloadSHA1(const std::string & gameName) const;
 
 	bool m_initialized;
+	std::shared_ptr<GameVersionCollection> m_gameVersions;
 	mutable std::unique_ptr<GameDownloadCollection> m_gameDownloads;
 	mutable std::string m_gameListFileETag;
 };

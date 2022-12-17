@@ -13,7 +13,6 @@
 #include <Archive/ArchiveFactoryRegistry.h>
 #include <GitHub/GitHubService.h>
 #include <Network/HTTPService.h>
-#include <Platform/DeviceInformationBridge.h>
 #include <Utilities/FileUtilities.h>
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
@@ -92,14 +91,16 @@ bool GameManager::isInitialized() const {
 	return m_initialized;
 }
 
-bool GameManager::initialize() {
-	if(m_initialized) {
+bool GameManager::initialize(std::shared_ptr<GameVersionCollection> gameVersions) {
+	if(m_initialized || !GameVersionCollection::isValid(gameVersions.get())) {
 		return false;
 	}
 
 	if(!HTTPService::getInstance()->isInitialized()) {
 		return false;
 	}
+
+	m_gameVersions = gameVersions;
 
 	updateGameDownloadList();
 
@@ -189,8 +190,25 @@ std::string GameManager::getGameDownloadURL(const std::string & gameName) {
 	else if(gameName == GameVersion::ORIGINAL_ATOMIC_EDITION.getName()) {
 		return Utilities::joinPaths(getRemoteGameDownloadsBaseURL(), ATOMIC_EDITION_GAME_FILES_FILE_NAME);
 	}
-	else if(gameName == GameVersion::JFDUKE3D.getName()) {
-		return getJFDuke3DDownloadURL();
+
+	DeviceInformationBridge * deviceInformationBridge = DeviceInformationBridge::getInstance();
+
+	std::optional<DeviceInformationBridge::OperatingSystemType> optionalOperatingSystemType(deviceInformationBridge->getOperatingSystemType());
+
+	if(!optionalOperatingSystemType.has_value()) {
+		spdlog::error("Failed to determine operating system type.");
+		return {};
+	}
+
+	std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalOperatingSystemArchitectureType(deviceInformationBridge->getOperatingSystemArchitectureType());
+
+	if(!optionalOperatingSystemArchitectureType.has_value()) {
+		spdlog::error("Failed to determine operating system architecture type.");
+		return {};
+	}
+
+	if(gameName == GameVersion::JFDUKE3D.getName()) {
+		return getJFDuke3DDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
 	else if(gameName == GameVersion::EDUKE32.getName()) {
 		return getEDuke32DownloadURL();
@@ -329,9 +347,19 @@ std::string GameManager::getFallbackGroupDownloadSHA1(const std::string & gameNa
 	return {};
 }
 
-std::string GameManager::getJFDuke3DDownloadURL() const {
+std::string GameManager::getJFDuke3DDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const {
+	static const std::string WINDOWS_IDENTIFIER("win");
+	static const std::string WINDOWS_X86_ARCHITECTURE_IDENTIFIER("x86");
+
 	if(!m_initialized) {
 		spdlog::error("Game manager not initialized!");
+		return {};
+	}
+
+	std::shared_ptr<GameVersion> jfDuke3DGameVersion(m_gameVersions->getGameVersion(GameVersion::JFDUKE3D.getName()));
+	const GameVersion * jfDuke3DGameVersionRaw = jfDuke3DGameVersion != nullptr ? jfDuke3DGameVersion.get() : &GameVersion::JFDUKE3D;
+
+	if(!jfDuke3DGameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
 		return {};
 	}
 
@@ -410,7 +438,12 @@ std::string GameManager::getJFDuke3DDownloadURL() const {
 	std::vector<const tinyxml2::XMLElement *> downloadLinkElements(Utilities::findXMLElementsWithName(downloadElement, "a"));
 
 	const char * classAttributeRawValue = nullptr;
+	const char * linkAttributeRawValue = nullptr;
 	std::string_view classAttributeValue;
+	std::string_view linkAttributeValue;
+	std::string downloadPath;
+	std::string windowsX86DownloadPath;
+	std::string windowsX64DownloadPath;
 
 	for(std::vector<const tinyxml2::XMLElement *>::const_iterator i = downloadLinkElements.cbegin(); i != downloadLinkElements.cend(); ++i) {
 		classAttributeRawValue = (*i)->Attribute("class");
@@ -419,21 +452,57 @@ std::string GameManager::getJFDuke3DDownloadURL() const {
 			continue;
 		}
 
+		linkAttributeRawValue = (*i)->Attribute("href");
+
+		if(linkAttributeRawValue == nullptr) {
+			continue;
+		}
+
 		classAttributeValue = classAttributeRawValue;
+		linkAttributeValue = linkAttributeRawValue;
 
-		if(classAttributeValue.find("win") != std::string::npos && classAttributeValue.find("x86") == std::string::npos) {
-			std::string_view downloadLink((*i)->Attribute("href"));
-
-			if(downloadLink.empty() || downloadLink[0] != '/') {
-				return Utilities::joinPaths(JFDUKE32_DOWNLOAD_PAGE_URL, downloadLink);
+		if(operatingSystemType == DeviceInformationBridge::OperatingSystemType::MacOS) {
+			if(classAttributeValue.find("mac") != std::string::npos) {
+				downloadPath = linkAttributeValue;
 			}
-			else {
-				return Utilities::joinPaths(downloadPageBaseURL, downloadLink);
+		}
+		else if(operatingSystemType == DeviceInformationBridge::OperatingSystemType::Windows) {
+			if(classAttributeValue.find("win") != std::string::npos) {
+				if(classAttributeValue.find("x86") == std::string::npos) {
+					windowsX86DownloadPath = linkAttributeValue;
+				}
+				else {
+					windowsX64DownloadPath = linkAttributeValue;
+				}
 			}
 		}
 	}
 
-	return {};
+	if(operatingSystemType == DeviceInformationBridge::OperatingSystemType::Windows) {
+		if(operatingSystemArchitectureType == DeviceInformationBridge::OperatingSystemArchitectureType::x64) {
+			if(!windowsX64DownloadPath.empty()) {
+				downloadPath = windowsX64DownloadPath;
+			}
+			else {
+				downloadPath = windowsX86DownloadPath;
+			}
+		}
+		else if(operatingSystemArchitectureType == DeviceInformationBridge::OperatingSystemArchitectureType::x86) {
+			downloadPath = windowsX86DownloadPath;
+		}
+	}
+
+	if(downloadPath.empty()) {
+		spdlog::error("Failed to determine JFDuke3D download URL from download page XHTML.");
+		return {};
+	}
+
+	if(downloadPath[0] != '/') {
+		return Utilities::joinPaths(JFDUKE32_DOWNLOAD_PAGE_URL, downloadPath);
+	}
+	else {
+		return Utilities::joinPaths(downloadPageBaseURL, downloadPath);
+	}
 }
 
 std::string GameManager::getEDuke32DownloadURL() const {

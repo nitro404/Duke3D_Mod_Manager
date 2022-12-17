@@ -633,6 +633,16 @@ bool GameVersion::hasSupportedOperatingSystem(OperatingSystem operatingSystem) c
 	return std::find(std::begin(m_supportedOperatingSystems), std::end(m_supportedOperatingSystems), operatingSystem) != std::end(m_supportedOperatingSystems);
 }
 
+bool GameVersion::hasSupportedOperatingSystemType(DeviceInformationBridge::OperatingSystemType operatingSystemType) const {
+	std::optional<OperatingSystem> optionalOperatingSystem(convertOperatingSystemType(operatingSystemType));
+
+	if(!optionalOperatingSystem.has_value()) {
+		return false;
+	}
+
+	return hasSupportedOperatingSystem(optionalOperatingSystem.value());
+}
+
 bool GameVersion::hasSupportedOperatingSystemWithName(const std::string & operatingSystemName) const {
 	std::optional<OperatingSystem> optionalOperatingSystem(magic_enum::enum_cast<OperatingSystem>(operatingSystemName));
 
@@ -651,6 +661,16 @@ size_t GameVersion::indexOfSupportedOperatingSystem(OperatingSystem operatingSys
 	}
 
 	return operatingSystemIterator - std::begin(m_supportedOperatingSystems);
+}
+
+size_t GameVersion::indexOfSupportedOperatingSystemType(DeviceInformationBridge::OperatingSystemType operatingSystemType) const {
+	std::optional<OperatingSystem> optionalOperatingSystem(convertOperatingSystemType(operatingSystemType));
+
+	if(!optionalOperatingSystem.has_value()) {
+		return std::numeric_limits<size_t>::max();
+	}
+
+	return indexOfSupportedOperatingSystem(optionalOperatingSystem.value());
 }
 
 size_t GameVersion::indexOfSupportedOperatingSystemWithName(const std::string & operatingSystemName) const {
