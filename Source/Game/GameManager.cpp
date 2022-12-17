@@ -46,12 +46,7 @@ static const std::string ATOMIC_EDITION_FALLBACK_DOWNLOAD_SHA1("ac2df3fb75f84584
 
 static const std::string JFDUKE32_DOWNLOAD_PAGE_URL("http://www.jonof.id.au/jfduke3d");
 static const std::string EDUKE32_DOWNLOAD_PAGE_URL("https://dukeworld.com/eduke32/synthesis/latest");
-static const std::string RAZE_LATEST_RELEASE_URL("https://api.github.com/repos/coelckers/Raze/releases/latest");
 static const std::string RED_NUKEM_DOWNLOAD_PAGE_URL("https://lerppu.net/wannabethesis");
-
-static constexpr const char * GITHUB_ASSETS_JSON_PROPERTY_NAME = "assets";
-static constexpr const char * GITHUB_ASSET_NAME_JSON_PROPERTY_NAME = "name";
-static constexpr const char * GITHUB_ASSET_BROWSER_DOWNLOAD_URL_JSON_PROPERTY_NAME = "browser_download_url";
 
 struct GameFileInformation {
 	std::string fileName;
@@ -526,91 +521,98 @@ std::string GameManager::getEDuke32DownloadURL() const {
 }
 
 std::string GameManager::getRazeDownloadURL() const {
+	static const std::string WINDOWS_X64_ARCHITECTURE_IDENTIFIER("arm64");
+	static const std::string LINUX_IDENTIFIER("linux");
+	static const std::string MACOS_IDENTIFIER("mac");
+	static const std::string PDB_IDENTIFIER("pdb");
+
 	if(!m_initialized) {
 		spdlog::error("Game manager not initialized!");
 		return {};
 	}
 
-	HTTPService * httpService = HTTPService::getInstance();
+	DeviceInformationBridge * deviceInformationBridge = DeviceInformationBridge::getInstance();
 
-	std::shared_ptr<HTTPRequest> downloadPageRequest(httpService->createRequest(HTTPRequest::Method::Get, RAZE_LATEST_RELEASE_URL));
-	downloadPageRequest->setConnectionTimeout(5s);
-	downloadPageRequest->setNetworkTimeout(10s);
+	std::optional<DeviceInformationBridge::OperatingSystemType> optionalOperatingSystemType(deviceInformationBridge->getOperatingSystemType());
 
-	std::future<std::shared_ptr<HTTPResponse>> futureResponse(httpService->sendRequest(downloadPageRequest));
-
-	if(!futureResponse.valid()) {
-		spdlog::error("Failed to create latest Raze release information HTTP request!");
+	if(!optionalOperatingSystemType.has_value()) {
+		spdlog::error("Failed to determine operating system type.");
 		return {};
 	}
 
-	futureResponse.wait();
+	std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalOperatingSystemArchitectureType(deviceInformationBridge->getOperatingSystemArchitectureType());
 
-	std::shared_ptr<HTTPResponse> response(futureResponse.get());
-
-	if(response->isFailure()) {
-		spdlog::error("Failed to retrieve latest Raze release information with error: {}", response->getErrorMessage());
+	if(!optionalOperatingSystemArchitectureType.has_value()) {
+		spdlog::error("Failed to determine operating system architecture type.");
 		return {};
 	}
 
-	if(response->isFailureStatusCode()) {
-		std::string statusCodeName(HTTPUtilities::getStatusCodeName(response->getStatusCode()));
-		spdlog::error("Failed to get latest Raze release information ({}{})!", response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
+	GitHubService * gitHubService = GitHubService::getInstance();
+
+	std::unique_ptr<GitHubRelease> latestRelease(gitHubService->getLatestRelease(GameVersion::RAZE.getSourceCodeURL()));
+
+	if(latestRelease == nullptr) {
 		return {};
 	}
 
-	std::unique_ptr<rapidjson::Document> document(response->getBodyAsJSON());
+	std::shared_ptr<GitHubReleaseAsset> currentReleaseAsset;
+	std::shared_ptr<GitHubReleaseAsset> latestReleaseAsset;
 
-	if(document == nullptr) {
-		spdlog::error("Failed to parse GitHub release JSON data.");
-		return {};
-	}
+	if(optionalOperatingSystemType.value() == DeviceInformationBridge::OperatingSystemType::Windows && optionalOperatingSystemArchitectureType.value() == DeviceInformationBridge::OperatingSystemArchitectureType::x64) {
+		for(size_t i = 0; i < latestRelease->numberOfAssets(); i++) {
+			currentReleaseAsset = latestRelease->getAsset(i);
 
-	response.reset();
-
-	if(!document->HasMember(GITHUB_ASSETS_JSON_PROPERTY_NAME) || !(*document)[GITHUB_ASSETS_JSON_PROPERTY_NAME].IsArray()) {
-		spdlog::error("Missing or invalid Raze GitHub release asset list.");
-		return {};
-	}
-
-	std::string assetName;
-	std::string lowerCaseAssetName;
-	const rapidjson::Value & assets((*document)[GITHUB_ASSETS_JSON_PROPERTY_NAME]);
-	std::vector<std::string> downloadLinks;
-
-	for(rapidjson::Value::ConstValueIterator i = assets.Begin(); i != assets.End(); ++i) {
-		const rapidjson::Value & asset(*i);
-
-		if(!asset.IsObject() ||
-		   !asset.HasMember(GITHUB_ASSET_NAME_JSON_PROPERTY_NAME) ||
-		   !asset[GITHUB_ASSET_NAME_JSON_PROPERTY_NAME].IsString() ||
-		   !asset.HasMember(GITHUB_ASSET_BROWSER_DOWNLOAD_URL_JSON_PROPERTY_NAME) ||
-		   !asset[GITHUB_ASSET_BROWSER_DOWNLOAD_URL_JSON_PROPERTY_NAME].IsString()) {
-			continue;
+			if(Utilities::toLowerCase(currentReleaseAsset->getFileName()).find(WINDOWS_X64_ARCHITECTURE_IDENTIFIER) != std::string::npos) {
+				latestReleaseAsset = currentReleaseAsset;
+				break;
+			}
 		}
-
-		assetName = asset[GITHUB_ASSET_NAME_JSON_PROPERTY_NAME].GetString();
-		lowerCaseAssetName = Utilities::toLowerCase(assetName);
-
-		if(lowerCaseAssetName.find("linux") != std::string::npos ||
-		   lowerCaseAssetName.find("mac") != std::string::npos ||
-		   lowerCaseAssetName.find("pdb") != std::string::npos) {
-			continue;
-		}
-
-		downloadLinks.push_back(asset[GITHUB_ASSET_BROWSER_DOWNLOAD_URL_JSON_PROPERTY_NAME].GetString());
 	}
 
-	if(downloadLinks.empty()) {
-		spdlog::error("Could not find Raze download URL from GitHub release asset list.");
+	if(latestReleaseAsset == nullptr) {
+		std::string lowerCaseAssetFileName;
+
+		for(size_t i = 0; i < latestRelease->numberOfAssets(); i++) {
+			currentReleaseAsset = latestRelease->getAsset(i);
+			lowerCaseAssetFileName = Utilities::toLowerCase(currentReleaseAsset->getFileName());
+
+			if(lowerCaseAssetFileName.find(PDB_IDENTIFIER) != std::string::npos ||
+			   lowerCaseAssetFileName.find(WINDOWS_X64_ARCHITECTURE_IDENTIFIER) != std::string::npos) {
+				continue;
+			}
+
+			if(latestReleaseAsset != nullptr) {
+				spdlog::warn("Found multiple '{}' asset downloads, GitHub release may be misconfigured.", GameVersion::RAZE.getName());
+				continue;
+			}
+
+			if(lowerCaseAssetFileName.find(LINUX_IDENTIFIER) != std::string::npos) {
+				if(optionalOperatingSystemType.value() != DeviceInformationBridge::OperatingSystemType::Linux) {
+					continue;
+				}
+
+				latestReleaseAsset = currentReleaseAsset;
+			}
+			else if(lowerCaseAssetFileName.find(MACOS_IDENTIFIER) != std::string::npos) {
+				if(optionalOperatingSystemType.value() != DeviceInformationBridge::OperatingSystemType::MacOS) {
+					continue;
+				}
+
+				latestReleaseAsset = currentReleaseAsset;
+			}
+
+			if(optionalOperatingSystemType.value() == DeviceInformationBridge::OperatingSystemType::Windows) {
+				latestReleaseAsset = currentReleaseAsset;
+			}
+		}
+	}
+
+	if(latestReleaseAsset == nullptr) {
+		spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}'.", GameVersion::RAZE.getName(), magic_enum::enum_name(optionalOperatingSystemType.value()));
 		return {};
 	}
 
-	if(downloadLinks.size() != 1) {
-		spdlog::warn("Found multiple Raze asset downloads, GitHub release may be mis-configured.");
-	}
-
-	return downloadLinks[0];
+	return latestReleaseAsset->getDownloadURL();
 }
 
 std::string GameManager::getBelgianChocolateDuke3DDownloadURL() const {
