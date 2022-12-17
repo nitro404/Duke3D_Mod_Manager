@@ -137,12 +137,15 @@ private:
 	size_t checkForMissingExecutables() const;
 	size_t updateAllFileHashes(bool save = true, bool skipHashedFiles = true);
 	size_t updateModHashes(Mod & mod, bool skipHashedFiles = true, std::optional<size_t> versionIndex = {}, std::optional<size_t> versionTypeIndex = {});
-	bool createTemporaryDirectory();
+	bool createApplicationTemporaryDirectory();
+	bool createGameTemporaryDirectory(const GameVersion & gameVersion);
+	bool removeGameTemporaryDirectory(const GameVersion & gameVersion);
 	bool areSymlinkSettingsValid() const;
+	bool areSymlinksSupported() const;
 	bool createSymlink(const std::string & symlinkName, const std::string & symlinkTarget, const std::string & symlinkDestinationDirectory) const;
 	bool removeSymlink(const std::string & symlinkName, const std::string & symlinkDestinationDirectory) const;
-	bool createSymlinks(const GameVersion & gameVersion, bool createTempSymlink = true);
-	bool removeSymlinks(const GameVersion & gameVersion);
+	bool createSymlinksOrCopyTemporaryFiles(const GameVersionCollection & gameVersions, const GameVersion & gameVersion, const ModGameVersion * selectedModGameVersion, const std::string & customMap, bool createTempSymlink = true, std::vector<std::string> * temporaryCopiedFilePaths = nullptr);
+	bool removeSymlinksOrTemporaryFiles(const GameVersion & gameVersion, const std::vector<std::string> * temporaryCopiedFilePaths = nullptr);
 	size_t deleteFilesWithSuffix(const std::string & suffix, const std::string & path = "");
 	size_t renameFilesWithSuffixTo(const std::string & fromSuffix, const std::string & toSuffix, const std::string & path = "");
 	static void displayArgumentHelp();
