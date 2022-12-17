@@ -24,6 +24,7 @@ public:
 	std::string getEDuke32DownloadURL() const;
 	std::string getRazeDownloadURL() const;
 	std::string getRedNukemDownloadURL() const;
+	std::string getBelgianChocolateDuke3DDownloadURL() const;
 	bool installGame(const GameVersion & gameVersion, const std::string & destinationDirectoryPath, bool useFallback = false, bool overwrite = false);
 	bool installGroupFile(const std::string & gameName, const std::string & directoryPath, bool useFallback = false, bool overwrite = false) const;
 
