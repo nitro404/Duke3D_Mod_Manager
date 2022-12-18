@@ -14,6 +14,7 @@ Duke Nukem 3D Mod Manager Settings.json
 Duke Nukem 3D Game Versions.json
 Duke Nukem 3D Favourite Mods.json
 Segment Analytics Cache.json
+*.conf.in
 *.ncb
 *.sdf
 *.suo

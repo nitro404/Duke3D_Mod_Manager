@@ -55,10 +55,6 @@ public:
 	static const char * DEFAULT_DOSBOX_DIRECTORY_PATH;
 	static const char * DEFAULT_DOSBOX_ARGUMENTS;
 	static const char * DEFAULT_DOSBOX_DATA_DIRECTORY_NAME;
-	static const char * DEFAULT_DOSBOX_GAME_SCRIPT_FILE_NAME;
-	static const char * DEFAULT_DOSBOX_SETUP_SCRIPT_FILE_NAME;
-	static const char * DEFAULT_DOSBOX_CLIENT_SCRIPT_FILE_NAME;
-	static const char * DEFAULT_DOSBOX_SERVER_SCRIPT_FILE_NAME;
 	static const GameType DEFAULT_GAME_TYPE;
 	static const std::string DEFAULT_PREFERRED_GAME_VERSION;
 	static const char * DEFAULT_DOSBOX_SERVER_IP_ADDRESS;
@@ -104,10 +100,6 @@ public:
 	std::string dosboxDirectoryPath;
 	std::string dosboxArguments;
 	std::string dosboxDataDirectoryName;
-	std::string dosboxGameScriptFileName;
-	std::string dosboxSetupScriptFileName;
-	std::string dosboxClientScriptFileName;
-	std::string dosboxServerScriptFileName;
 	GameType gameType;
 	std::string preferredGameVersion;
 	std::string dosboxServerIPAddress;

@@ -148,6 +148,11 @@ private:
 	bool removeSymlinksOrTemporaryFiles(const GameVersion & gameVersion, const std::vector<std::string> * temporaryCopiedFilePaths = nullptr);
 	size_t deleteFilesWithSuffix(const std::string & suffix, const std::string & path = "");
 	size_t renameFilesWithSuffixTo(const std::string & fromSuffix, const std::string & toSuffix, const std::string & path = "");
+	static size_t createDOSBoxTemplateScriptFiles(bool overwrite = false);
+	static size_t createDOSBoxTemplateScriptFiles(const std::string & directoryPath, bool overwrite = false);
+	static bool createDOSBoxTemplateScriptFile(GameType gameType, const std::string & directoryPath, bool overwrite = false);
+	static std::string getDOSBoxTemplateScriptFileName(GameType gameType);
+	static std::string generateDOSBoxTemplateScriptFileData(GameType gameType);
 	static void displayArgumentHelp();
 	static void printSpacing(size_t length);
 

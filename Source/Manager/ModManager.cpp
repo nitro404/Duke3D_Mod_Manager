@@ -48,6 +48,7 @@
 #include <conio.h>
 #include <errno.h>
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <optional>
 #include <regex>
@@ -127,6 +128,8 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 	}
 
 	date::set_install(Utilities::joinPaths(settings->dataDirectoryPath, settings->timeZoneDataDirectoryName));
+
+	createDOSBoxTemplateScriptFiles();
 
 	HTTPConfiguration configuration = {
 		Utilities::joinPaths(settings->dataDirectoryPath, settings->curlDataDirectoryName),
@@ -1554,33 +1557,14 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 
 	if(selectedGameVersion->doesRequireDOSBox()) {
 		Script dosboxScript;
-		std::string dosboxScriptFilePath;
 
 		scriptArgs.addArgument("COMMAND", executableName + command.str());
 
 		std::string dosboxDataDirectoryPath(Utilities::joinPaths(settings->dataDirectoryPath, settings->dosboxDataDirectoryName));
+		std::string dosboxTemplateScriptFilePath(Utilities::joinPaths(dosboxDataDirectoryPath, getDOSBoxTemplateScriptFileName(m_gameType)));
 
-		switch(m_gameType) {
-			case GameType::Game: {
-				dosboxScriptFilePath = Utilities::joinPaths(dosboxDataDirectoryPath, settings->dosboxGameScriptFileName);
-				break;
-			}
-			case GameType::Setup: {
-				dosboxScriptFilePath = Utilities::joinPaths(dosboxDataDirectoryPath, settings->dosboxSetupScriptFileName);
-				break;
-			}
-			case GameType::Client: {
-				dosboxScriptFilePath = Utilities::joinPaths(dosboxDataDirectoryPath, settings->dosboxClientScriptFileName);
-				break;
-			}
-			case GameType::Server: {
-				dosboxScriptFilePath = Utilities::joinPaths(dosboxDataDirectoryPath, settings->dosboxServerScriptFileName);
-				break;
-			}
-		}
-
-		if(!dosboxScript.readFrom(dosboxScriptFilePath)) {
-			spdlog::error("Failed to load DOSBox script file: '{}'.", dosboxScriptFilePath);
+		if(!dosboxScript.readFrom(dosboxTemplateScriptFilePath)) {
+			spdlog::error("Failed to load DOSBox template script file: '{}'.", dosboxTemplateScriptFilePath);
 			return {};
 		}
 
@@ -2830,6 +2814,91 @@ size_t ModManager::renameFilesWithSuffixTo(const std::string & fromSuffix, const
 	}
 
 	return numberOfFilesRenamed;
+}
+
+size_t ModManager::createDOSBoxTemplateScriptFiles(bool overwrite) {
+	SettingsManager* settings = SettingsManager::getInstance();
+
+	return createDOSBoxTemplateScriptFiles(Utilities::joinPaths(settings->dataDirectoryPath, settings->dosboxDataDirectoryName), overwrite);
+}
+
+size_t ModManager::createDOSBoxTemplateScriptFiles(const std::string & directoryPath, bool overwrite) {
+	size_t numberOfDOSBoxTemplateScriptFilesCreated = 0;
+
+	for(GameType gameType : magic_enum::enum_values<GameType>()) {
+		if(createDOSBoxTemplateScriptFile(gameType, directoryPath, overwrite)) {
+			numberOfDOSBoxTemplateScriptFilesCreated++;
+		}
+	}
+
+	return numberOfDOSBoxTemplateScriptFilesCreated;
+}
+
+bool ModManager::createDOSBoxTemplateScriptFile(GameType gameType, const std::string & directoryPath, bool overwrite) {
+	if(!directoryPath.empty()) {
+		std::filesystem::path outputDirectoryPath(directoryPath);
+
+		if(!std::filesystem::is_directory(outputDirectoryPath)) {
+			std::error_code errorCode;
+			std::filesystem::create_directories(outputDirectoryPath, errorCode);
+
+			if(errorCode) {
+				spdlog::error("Cannot create '{}' DOSBox template script file, output directory '{}' creation failed: {}", magic_enum::enum_name(gameType), directoryPath, errorCode.message());
+				return false;
+			}
+		}
+	}
+
+	std::string templateScriptFileName(getDOSBoxTemplateScriptFileName(gameType));
+	std::string templateScriptFilePath(Utilities::joinPaths(directoryPath, templateScriptFileName));
+
+	if(std::filesystem::is_regular_file(std::filesystem::path(templateScriptFilePath)) && !overwrite) {
+		spdlog::debug("'{}' DOSBox template script already exists at '{}', specify overwrite to replace.", templateScriptFilePath);
+		return false;
+	}
+
+	std::string templateScriptFileData(generateDOSBoxTemplateScriptFileData(gameType));
+
+	std::ofstream fileStream(templateScriptFilePath);
+
+	if(!fileStream.is_open()) {
+		return false;
+	}
+
+	fileStream.write(reinterpret_cast<const char *>(templateScriptFileData.data()), templateScriptFileData.size());
+
+	fileStream.close();
+
+	spdlog::info("Created '{}' DOSBox template file script '{}' in directory '{}'.", magic_enum::enum_name(gameType), templateScriptFileName, directoryPath);
+
+	return true;
+}
+
+std::string ModManager::getDOSBoxTemplateScriptFileName(GameType gameType) {
+	return Utilities::toLowerCase(magic_enum::enum_name(gameType)) + ".conf.in";
+}
+
+std::string ModManager::generateDOSBoxTemplateScriptFileData(GameType gameType) {
+	std::stringstream templateStream;
+
+	templateStream << "MOUNT C \":GAMEPATH:\"" << std::endl;
+	templateStream << "C:" << std::endl;
+
+	if(gameType == GameType::Client || gameType == GameType::Server) {
+		templateStream << "IPX ENABLE" << std::endl;
+
+		if(gameType == GameType::Client) {
+			templateStream << "IPXNET CONNECT :IP: :PORT:" << std::endl;
+		}
+		else if(gameType == GameType::Server) {
+			templateStream << "IPXNET STARTSERVER :PORT:" << std::endl;
+		}
+	}
+
+	templateStream << ":COMMAND:" << std::endl;
+	templateStream << "EXIT" << std::endl;
+
+	return templateStream.str();
 }
 
 void ModManager::printSpacing(size_t length) {

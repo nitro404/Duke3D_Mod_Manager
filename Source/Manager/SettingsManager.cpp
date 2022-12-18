@@ -68,12 +68,6 @@ static constexpr const char * DOSBOX_EXECUTABLE_FILE_NAME_PROPERTY_NAME = EXECUT
 static constexpr const char * DOSBOX_ARGUMENTS_PROPERTY_NAME = "arguments";
 static constexpr const char * DOSBOX_DATA_DIRECTORY_NAME_PROPERTY_NAME = DATA_DIRECTORY_NAME;
 
-static constexpr const char * DOSBOX_SCRIPTS_CATEGORY_NAME = "scriptFileNames";
-static constexpr const char * DOSBOX_GAME_SCRIPT_FILE_NAME_PROPERTY_NAME = "game";
-static constexpr const char * DOSBOX_SETUP_SCRIPT_FILE_NAME_PROPERTY_NAME = "setup";
-static constexpr const char * DOSBOX_CLIENT_SCRIPT_FILE_NAME_PROPERTY_NAME = "client";
-static constexpr const char * DOSBOX_SERVER_SCRIPT_FILE_NAME_PROPERTY_NAME = "server";
-
 static constexpr const char * DOSBOX_NETWORKING_CATEGORY_NAME = "networking";
 static constexpr const char * DOSBOX_SERVER_IP_ADDRESS_PROPERTY_NAME = "serverIPAddress";
 
@@ -131,10 +125,6 @@ const char * SettingsManager::DEFAULT_DOSBOX_EXECUTABLE_FILE_NAME = "dosbox.exe"
 const char * SettingsManager::DEFAULT_DOSBOX_DIRECTORY_PATH = "DOSBox";
 const char * SettingsManager::DEFAULT_DOSBOX_ARGUMENTS = "-noconsole";
 const char * SettingsManager::DEFAULT_DOSBOX_DATA_DIRECTORY_NAME = "DOSBox";
-const char * SettingsManager::DEFAULT_DOSBOX_GAME_SCRIPT_FILE_NAME = "duke3d.conf.in";
-const char * SettingsManager::DEFAULT_DOSBOX_SETUP_SCRIPT_FILE_NAME = "duke3d_setup.conf.in";
-const char * SettingsManager::DEFAULT_DOSBOX_CLIENT_SCRIPT_FILE_NAME = "duke3d_client.conf.in";
-const char * SettingsManager::DEFAULT_DOSBOX_SERVER_SCRIPT_FILE_NAME = "duke3d_server.conf.in";
 const GameType SettingsManager::DEFAULT_GAME_TYPE = ModManager::DEFAULT_GAME_TYPE;
 const std::string SettingsManager::DEFAULT_PREFERRED_GAME_VERSION(ModManager::DEFAULT_PREFERRED_GAME_VERSION);
 const char * SettingsManager::DEFAULT_DOSBOX_SERVER_IP_ADDRESS = "127.0.0.1";
@@ -213,10 +203,6 @@ SettingsManager::SettingsManager()
 	, dosboxDirectoryPath(DEFAULT_DOSBOX_DIRECTORY_PATH)
 	, dosboxArguments(DEFAULT_DOSBOX_ARGUMENTS)
 	, dosboxDataDirectoryName(DEFAULT_DOSBOX_DATA_DIRECTORY_NAME)
-	, dosboxGameScriptFileName(DEFAULT_DOSBOX_GAME_SCRIPT_FILE_NAME)
-	, dosboxSetupScriptFileName(DEFAULT_DOSBOX_SETUP_SCRIPT_FILE_NAME)
-	, dosboxClientScriptFileName(DEFAULT_DOSBOX_CLIENT_SCRIPT_FILE_NAME)
-	, dosboxServerScriptFileName(DEFAULT_DOSBOX_SERVER_SCRIPT_FILE_NAME)
 	, dosboxServerIPAddress(DEFAULT_DOSBOX_SERVER_IP_ADDRESS)
 	, gameType(DEFAULT_GAME_TYPE)
 	, preferredGameVersion(DEFAULT_PREFERRED_GAME_VERSION)
@@ -265,10 +251,6 @@ void SettingsManager::reset() {
 	dosboxDirectoryPath = DEFAULT_DOSBOX_DIRECTORY_PATH;
 	dosboxArguments = DEFAULT_DOSBOX_ARGUMENTS;
 	dosboxDataDirectoryName = DEFAULT_DOSBOX_DATA_DIRECTORY_NAME;
-	dosboxGameScriptFileName = DEFAULT_DOSBOX_GAME_SCRIPT_FILE_NAME;
-	dosboxSetupScriptFileName = DEFAULT_DOSBOX_SETUP_SCRIPT_FILE_NAME;
-	dosboxClientScriptFileName = DEFAULT_DOSBOX_CLIENT_SCRIPT_FILE_NAME;
-	dosboxServerScriptFileName = DEFAULT_DOSBOX_SERVER_SCRIPT_FILE_NAME;
 	dosboxServerIPAddress = DEFAULT_DOSBOX_SERVER_IP_ADDRESS;
 	gameType = DEFAULT_GAME_TYPE;
 	preferredGameVersion = DEFAULT_PREFERRED_GAME_VERSION;
@@ -387,19 +369,6 @@ rapidjson::Document SettingsManager::toJSON() const {
 	dosboxCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_ARGUMENTS_PROPERTY_NAME), dosboxArgumentsValue, allocator);
 	rapidjson::Value dosboxDataDirectroryNameValue(dosboxDataDirectoryName.c_str(), allocator);
 	dosboxCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_DATA_DIRECTORY_NAME_PROPERTY_NAME), dosboxDataDirectroryNameValue, allocator);
-
-	rapidjson::Value dosboxScriptsCategoryValue(rapidjson::kObjectType);
-
-	rapidjson::Value dosboxGameScriptFileNameValue(dosboxGameScriptFileName.c_str(), allocator);
-	dosboxScriptsCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_GAME_SCRIPT_FILE_NAME_PROPERTY_NAME), dosboxGameScriptFileNameValue, allocator);
-	rapidjson::Value dosboxSetupScriptFileNameValue(dosboxSetupScriptFileName.c_str(), allocator);
-	dosboxScriptsCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_SETUP_SCRIPT_FILE_NAME_PROPERTY_NAME), dosboxSetupScriptFileNameValue, allocator);
-	rapidjson::Value dosboxClientScriptFileNameValue(dosboxClientScriptFileName.c_str(), allocator);
-	dosboxScriptsCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_CLIENT_SCRIPT_FILE_NAME_PROPERTY_NAME), dosboxClientScriptFileNameValue, allocator);
-	rapidjson::Value dosboxServerScriptFileNameValue(dosboxServerScriptFileName.c_str(), allocator);
-	dosboxScriptsCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_SERVER_SCRIPT_FILE_NAME_PROPERTY_NAME), dosboxServerScriptFileNameValue, allocator);
-
-	dosboxCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_SCRIPTS_CATEGORY_NAME), dosboxScriptsCategoryValue, allocator);
 
 	rapidjson::Value dosboxNetworkingCategoryValue(rapidjson::kObjectType);
 
@@ -561,15 +530,6 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 		assignStringSetting(dosboxExecutableFileName, dosboxCategoryValue, DOSBOX_EXECUTABLE_FILE_NAME_PROPERTY_NAME);
 		assignStringSetting(dosboxArguments, dosboxCategoryValue, DOSBOX_ARGUMENTS_PROPERTY_NAME);
 		assignStringSetting(dosboxDataDirectoryName, dosboxCategoryValue, DOSBOX_DATA_DIRECTORY_NAME_PROPERTY_NAME);
-
-		if(dosboxCategoryValue.HasMember(DOSBOX_SCRIPTS_CATEGORY_NAME) && dosboxCategoryValue[DOSBOX_SCRIPTS_CATEGORY_NAME].IsObject()) {
-			const rapidjson::Value & dosboxScriptsCategoryValue = dosboxCategoryValue[DOSBOX_SCRIPTS_CATEGORY_NAME];
-
-			assignStringSetting(dosboxGameScriptFileName, dosboxScriptsCategoryValue, DOSBOX_GAME_SCRIPT_FILE_NAME_PROPERTY_NAME);
-			assignStringSetting(dosboxSetupScriptFileName, dosboxScriptsCategoryValue, DOSBOX_SETUP_SCRIPT_FILE_NAME_PROPERTY_NAME);
-			assignStringSetting(dosboxClientScriptFileName, dosboxScriptsCategoryValue, DOSBOX_CLIENT_SCRIPT_FILE_NAME_PROPERTY_NAME);
-			assignStringSetting(dosboxServerScriptFileName, dosboxScriptsCategoryValue, DOSBOX_SERVER_SCRIPT_FILE_NAME_PROPERTY_NAME);
-		}
 
 		if(dosboxCategoryValue.HasMember(DOSBOX_NETWORKING_CATEGORY_NAME) && dosboxCategoryValue[DOSBOX_NETWORKING_CATEGORY_NAME].IsObject()) {
 			const rapidjson::Value & dosboxNetworkingCategoryValue = dosboxCategoryValue[DOSBOX_NETWORKING_CATEGORY_NAME];
