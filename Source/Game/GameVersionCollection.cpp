@@ -19,6 +19,11 @@
 #include <filesystem>
 #include <fstream>
 
+static constexpr const char * JSON_FILE_FORMAT_VERSION_PROPERTY_NAME = "fileFormatVersion";
+static constexpr const char * JSON_GAME_VERSIONS_PROPERTY_NAME = "gameVersions";
+
+const std::string GameVersionCollection::FILE_FORMAT_VERSION = "1.0.0";
+
 GameVersionCollection::GameVersionCollection() = default;
 
 GameVersionCollection::GameVersionCollection(const std::vector<GameVersion> & gameVersions) {
@@ -365,31 +370,74 @@ size_t GameVersionCollection::checkForMissingExecutables(const std::string & nam
 }
 
 rapidjson::Document GameVersionCollection::toJSON() const {
-	rapidjson::Document gameVersionsValue(rapidjson::kArrayType);
-	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator = gameVersionsValue.GetAllocator();
+	rapidjson::Document gameVersionsDocument(rapidjson::kObjectType);
+	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator = gameVersionsDocument.GetAllocator();
+
+	rapidjson::Value fileFormatVersionValue(FILE_FORMAT_VERSION.c_str(), allocator);
+	gameVersionsDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
+
+	rapidjson::Value gamesVersionsValue(rapidjson::kArrayType);
 
 	for(std::vector<std::shared_ptr<GameVersion>>::const_iterator i = m_gameVersions.begin(); i != m_gameVersions.end(); ++i) {
-		gameVersionsValue.PushBack((*i)->toJSON(allocator), allocator);
+		gamesVersionsValue.PushBack((*i)->toJSON(allocator), allocator);
 	}
 
-	return gameVersionsValue;
+	gameVersionsDocument.AddMember(rapidjson::StringRef(JSON_GAME_VERSIONS_PROPERTY_NAME), gamesVersionsValue, allocator);
+
+	return gameVersionsDocument;
 }
 
 std::unique_ptr<GameVersionCollection> GameVersionCollection::parseFrom(const rapidjson::Value & gameVersionCollectionValue) {
-	if(!gameVersionCollectionValue.IsArray()) {
-		spdlog::error("Invalid game version collection type: '{}', expected 'array'.", Utilities::typeToString(gameVersionCollectionValue.GetType()));
+	if(!gameVersionCollectionValue.IsObject()) {
+		spdlog::error("Invalid game version collection type: '{}', expected 'object'.", Utilities::typeToString(gameVersionCollectionValue.GetType()));
+		return nullptr;
+	}
+
+	if(gameVersionCollectionValue.HasMember(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME)) {
+		const rapidjson::Value & fileFormatVersionValue = gameVersionCollectionValue[JSON_FILE_FORMAT_VERSION_PROPERTY_NAME];
+
+		if(!fileFormatVersionValue.IsString()) {
+			spdlog::error("Invalid game version collection file format version type: '{}', expected: 'string'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
+			return false;
+		}
+
+		std::optional<std::uint8_t> optionalVersionComparison(Utilities::compareVersions(fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION));
+
+		if(!optionalVersionComparison.has_value()) {
+			spdlog::error("Invalid game version collection file format version: '{}'.", fileFormatVersionValue.GetString());
+			return false;
+		}
+
+		if(*optionalVersionComparison != 0) {
+			spdlog::error("Unsupported game version collection file format version: '{}', only version '{}' is supported.", fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION);
+			return false;
+		}
+	}
+	else {
+		spdlog::warn("Game version collection JSON data is missing file format version, and may fail to load correctly!");
+	}
+
+	if(!gameVersionCollectionValue.HasMember(JSON_GAME_VERSIONS_PROPERTY_NAME)) {
+		spdlog::error("Game version collection is missing '{}' property'.", JSON_GAME_VERSIONS_PROPERTY_NAME);
+		return nullptr;
+	}
+
+	const rapidjson::Value & gameVersionsValue = gameVersionCollectionValue[JSON_GAME_VERSIONS_PROPERTY_NAME];
+
+	if(!gameVersionsValue.IsArray()) {
+		spdlog::error("Invalid game version collection '{}' type: '{}', expected 'array'.", Utilities::typeToString(gameVersionsValue.GetType()));
 		return nullptr;
 	}
 
 	std::unique_ptr<GameVersionCollection> newGameVersionCollection = std::make_unique<GameVersionCollection>();
 
-	if(gameVersionCollectionValue.Empty()) {
+	if(gameVersionsValue.Empty()) {
 		return newGameVersionCollection;
 	}
 
 	std::unique_ptr<GameVersion> newGameVersion;
 
-	for(rapidjson::Value::ConstValueIterator i = gameVersionCollectionValue.Begin(); i != gameVersionCollectionValue.End(); ++i) {
+	for(rapidjson::Value::ConstValueIterator i = gameVersionsValue.Begin(); i != gameVersionsValue.End(); ++i) {
 		newGameVersion = GameVersion::parseFrom(*i);
 
 		if(!GameVersion::isValid(newGameVersion.get())) {

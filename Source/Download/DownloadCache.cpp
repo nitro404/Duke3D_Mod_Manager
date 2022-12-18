@@ -19,12 +19,16 @@
 #include <filesystem>
 #include <fstream>
 
+static constexpr const char * JSON_DOWNLOAD_CACHE_FILE_FORMAT_VERSION_PROPERTY_NAME = "fileFormatVersion";
 static constexpr const char * JSON_DOWNLOAD_CACHE_MOD_LIST_PROPERTY_NAME = "modList";
 static constexpr const char * JSON_DOWNLOAD_CACHE_PACKAGES_PROPERTY_NAME = "packages";
-static const std::array<std::string_view, 2> JSON_CACHED_PACKAGE_FILE_PROPERTY_NAMES = {
+static const std::array<std::string_view, 3> JSON_CACHED_PACKAGE_FILE_PROPERTY_NAMES = {
+	JSON_DOWNLOAD_CACHE_FILE_FORMAT_VERSION_PROPERTY_NAME,
 	JSON_DOWNLOAD_CACHE_MOD_LIST_PROPERTY_NAME,
 	JSON_DOWNLOAD_CACHE_PACKAGES_PROPERTY_NAME
 };
+
+const std::string DownloadCache::FILE_FORMAT_VERSION = "1.0.0";
 
 DownloadCache::DownloadCache() = default;
 
@@ -211,6 +215,9 @@ rapidjson::Document DownloadCache::toJSON() const {
 	rapidjson::Document downloadCacheDocument(rapidjson::kObjectType);
 	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator = downloadCacheDocument.GetAllocator();
 
+	rapidjson::Value fileFormatVersionValue(FILE_FORMAT_VERSION.c_str(), allocator);
+	downloadCacheDocument.AddMember(rapidjson::StringRef(JSON_DOWNLOAD_CACHE_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
+
 	if(m_cachedModListFile != nullptr) {
 		rapidjson::Value modListValue(m_cachedModListFile->toJSON(allocator));
 		downloadCacheDocument.AddMember(rapidjson::StringRef(JSON_DOWNLOAD_CACHE_MOD_LIST_PROPERTY_NAME), modListValue, allocator);
@@ -231,6 +238,30 @@ std::unique_ptr<DownloadCache> DownloadCache::parseFrom(const rapidjson::Value &
 	if(!downloadCacheValue.IsObject()) {
 		spdlog::error("Invalid download cache type: '{}', expected 'object'.", Utilities::typeToString(downloadCacheValue.GetType()));
 		return nullptr;
+	}
+
+	if(downloadCacheValue.HasMember(JSON_DOWNLOAD_CACHE_FILE_FORMAT_VERSION_PROPERTY_NAME)) {
+		const rapidjson::Value & fileFormatVersionValue = downloadCacheValue[JSON_DOWNLOAD_CACHE_FILE_FORMAT_VERSION_PROPERTY_NAME];
+
+		if(!fileFormatVersionValue.IsString()) {
+			spdlog::error("Invalid download cache file format version type: '{}', expected: 'string'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
+			return false;
+		}
+
+		std::optional<std::uint8_t> optionalVersionComparison(Utilities::compareVersions(fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION));
+
+		if(!optionalVersionComparison.has_value()) {
+			spdlog::error("Invalid download cache file format version: '{}'.", fileFormatVersionValue.GetString());
+			return false;
+		}
+
+		if(*optionalVersionComparison != 0) {
+			spdlog::error("Unsupported download cache file format version: '{}', only version '{}' is supported.", fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION);
+			return false;
+		}
+	}
+	else {
+		spdlog::warn("Download cache JSON data is missing file format version, and may fail to load correctly!");
 	}
 
 	std::unique_ptr<DownloadCache> newDownloadCache(std::make_unique<DownloadCache>());

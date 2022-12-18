@@ -20,11 +20,10 @@
 #include <filesystem>
 #include <fstream>
 
-static constexpr const char * JSON_GAME_DOWNLOAD_COLLECTION_GAMES_PROPERTY_NAME = "games";
+static constexpr const char * JSON_FILE_FORMAT_VERSION_PROPERTY_NAME = "fileFormatVersion";
+static constexpr const char * JSON_GAME_DOWNLOADS_PROPERTY_NAME = "gameDownloads";
 
-static const std::array<std::string_view, 1> JSON_GAME_DOWNLOAD_COLLECTION_PROPERTY_NAMES = {
-	JSON_GAME_DOWNLOAD_COLLECTION_GAMES_PROPERTY_NAME
-};
+const std::string GameDownloadCollection::FILE_FORMAT_VERSION = "1.0.0";
 
 GameDownloadCollection::GameDownloadCollection()
 	: GameDownloadCollectionBroadcaster() { }
@@ -246,13 +245,16 @@ rapidjson::Document GameDownloadCollection::toJSON() const {
 	rapidjson::Document gameDownloadCollectionValue(rapidjson::kObjectType);
 	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator = gameDownloadCollectionValue.GetAllocator();
 
-	rapidjson::Value gamesValue(rapidjson::kArrayType);
+	rapidjson::Value fileFormatVersionValue(FILE_FORMAT_VERSION.c_str(), allocator);
+	gameDownloadCollectionValue.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
+
+	rapidjson::Value gameDownloadsValue(rapidjson::kArrayType);
 
 	for(std::vector<std::shared_ptr<GameDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		gamesValue.PushBack((*i)->toJSON(allocator), allocator);
+		gameDownloadsValue.PushBack((*i)->toJSON(allocator), allocator);
 	}
 
-	gameDownloadCollectionValue.AddMember(rapidjson::StringRef(JSON_GAME_DOWNLOAD_COLLECTION_GAMES_PROPERTY_NAME), gamesValue, allocator);
+	gameDownloadCollectionValue.AddMember(rapidjson::StringRef(JSON_GAME_DOWNLOADS_PROPERTY_NAME), gameDownloadsValue, allocator);
 
 	return gameDownloadCollectionValue;
 }
@@ -263,27 +265,51 @@ std::unique_ptr<GameDownloadCollection> GameDownloadCollection::parseFrom(const 
 		return nullptr;
 	}
 
-	if(!modCollectionValue.HasMember(JSON_GAME_DOWNLOAD_COLLECTION_GAMES_PROPERTY_NAME)) {
-		spdlog::error("Game download collection is missing '{}' property'.", JSON_GAME_DOWNLOAD_COLLECTION_GAMES_PROPERTY_NAME);
+	if(modCollectionValue.HasMember(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME)) {
+		const rapidjson::Value & fileFormatVersionValue = modCollectionValue[JSON_FILE_FORMAT_VERSION_PROPERTY_NAME];
+
+		if(!fileFormatVersionValue.IsString()) {
+			spdlog::error("Invalid game download collection file format version type: '{}', expected: 'string'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
+			return false;
+		}
+
+		std::optional<std::uint8_t> optionalVersionComparison(Utilities::compareVersions(fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION));
+
+		if(!optionalVersionComparison.has_value()) {
+			spdlog::error("Invalid game download collection file format version: '{}'.", fileFormatVersionValue.GetString());
+			return false;
+		}
+
+		if(*optionalVersionComparison != 0) {
+			spdlog::error("Unsupported game download collection file format version: '{}', only version '{}' is supported.", fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION);
+			return false;
+		}
+	}
+	else {
+		spdlog::warn("Game download collection JSON data is missing file format version, and may fail to load correctly!");
+	}
+
+	if(!modCollectionValue.HasMember(JSON_GAME_DOWNLOADS_PROPERTY_NAME)) {
+		spdlog::error("Game download collection is missing '{}' property'.", JSON_GAME_DOWNLOADS_PROPERTY_NAME);
 		return nullptr;
 	}
 
-	const rapidjson::Value & gamesValue = modCollectionValue[JSON_GAME_DOWNLOAD_COLLECTION_GAMES_PROPERTY_NAME];
+	const rapidjson::Value & gameDownloadsValue = modCollectionValue[JSON_GAME_DOWNLOADS_PROPERTY_NAME];
 
-	if(!gamesValue.IsArray()) {
-		spdlog::error("Invalid game download collection games list type: '{}', expected 'array'.", Utilities::typeToString(gamesValue.GetType()));
+	if(!gameDownloadsValue.IsArray()) {
+		spdlog::error("Invalid game download collection games list type: '{}', expected 'array'.", Utilities::typeToString(gameDownloadsValue.GetType()));
 		return nullptr;
 	}
 
 	std::unique_ptr<GameDownloadCollection> newGameDownloadCollection(std::make_unique<GameDownloadCollection>());
 
-	if(gamesValue.Empty()) {
+	if(gameDownloadsValue.Empty()) {
 		return newGameDownloadCollection;
 	}
 
 	std::unique_ptr<GameDownload> newDownload;
 
-	for(rapidjson::Value::ConstValueIterator i = gamesValue.Begin(); i != gamesValue.End(); ++i) {
+	for(rapidjson::Value::ConstValueIterator i = gameDownloadsValue.Begin(); i != gameDownloadsValue.End(); ++i) {
 		newDownload = GameDownload::parseFrom(*i);
 
 		if(!GameDownload::isValid(newDownload.get())) {

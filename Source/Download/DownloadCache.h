@@ -41,6 +41,8 @@ public:
 	bool isValid() const;
 	static bool isValid(const DownloadCache * d);
 
+	static const std::string FILE_FORMAT_VERSION;
+
 private:
 	std::unique_ptr<CachedFile> createCachedFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag);
 	std::unique_ptr<CachedPackageFile> createCachedPackageFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag);

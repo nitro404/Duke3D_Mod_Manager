@@ -65,6 +65,9 @@ public:
 	bool operator == (const ModCollection & m) const;
 	bool operator != (const ModCollection & m) const;
 
+	static const std::string GAME_ID;
+	static const std::string FILE_FORMAT_VERSION;
+
 private:
 	void notifyCollectionChanged() const;
 

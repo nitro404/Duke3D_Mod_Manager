@@ -4,6 +4,7 @@
 #include "ModManager.h"
 
 #include <Arguments/ArgumentParser.h>
+#include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
 
 #include <magic_enum.hpp>
@@ -25,7 +26,7 @@ static constexpr const char * DIRECTORY_PATH = "directoryPath";
 static constexpr const char * DATA_DIRECTORY_NAME = "dataDirectoryName";
 static constexpr const char * EXECUTABLE_FILE_NAME = "executableFileName";
 
-static constexpr const char * FILE_FORMAT_VERSION_PROPERTY_NAME = "version";
+static constexpr const char * FILE_FORMAT_VERSION_PROPERTY_NAME = "fileFormatVersion";
 static constexpr const char * GAME_TYPE_PROPERTY_NAME = "gameType";
 static constexpr const char * DATA_DIRECTORY_PATH_PROPERTY_NAME = "dataDirectoryPath";
 static constexpr const char * APP_TEMP_DIRECTORY_PATH_PROPERTY_NAME = "appTempDirectoryPath";
@@ -104,7 +105,7 @@ static constexpr const char * SEGMENT_ANALYTICS_ENABLED_PROPERTY_NAME = "enabled
 static constexpr const char * SEGMENT_ANALYTICS_DATA_FILE_NAME_PROPERTY_NAME = "dataFileName";
 
 const char * SettingsManager::FILE_FORMAT_VERSION = "1.0.0";
-const char * SettingsManager::DEFAULT_SETTINGS_FILE_PATH = "Duke Nukem 3D Mod Manager.json";
+const char * SettingsManager::DEFAULT_SETTINGS_FILE_PATH = "Duke Nukem 3D Mod Manager Settings.json";
 const char * SettingsManager::DEFAULT_MODS_LIST_FILE_PATH = "Duke Nukem 3D Mod List.xml";
 const char * SettingsManager::DEFAULT_FAVOURITE_MODS_LIST_FILE_PATH = "Duke Nukem 3D Favourite Mods.json";
 const char * SettingsManager::DEFAULT_GAME_VERSIONS_LIST_FILE_PATH = "Duke Nukem 3D Game Versions.json";
@@ -118,7 +119,7 @@ const char * SettingsManager::DEFAULT_MOD_SOURCE_FILES_DIRECTORY_PATH = "";
 const char * SettingsManager::DEFAULT_MAPS_DIRECTORY_PATH = "";
 const char * SettingsManager::DEFAULT_MAPS_SYMLINK_NAME = "Maps";
 const char * SettingsManager::DEFAULT_DOWNLOADS_DIRECTORY_PATH = "Downloads";
-const char * SettingsManager::DEFAULT_DOWNLOAD_CACHE_FILE_NAME = "Cache.json";
+const char * SettingsManager::DEFAULT_DOWNLOAD_CACHE_FILE_NAME = "Download Cache.json";
 const char * SettingsManager::DEFAULT_MOD_DOWNLOADS_DIRECTORY_NAME = "Mods";
 const char * SettingsManager::DEFAULT_MAP_DOWNLOADS_DIRECTORY_NAME = "Maps";
 const char * SettingsManager::DEFAULT_GAME_DOWNLOADS_DIRECTORY_NAME = "Games";
@@ -153,7 +154,7 @@ const char * SettingsManager::DEFAULT_REMOTE_MOD_DOWNLOADS_DIRECTORY_NAME = "mod
 const char * SettingsManager::DEFAULT_REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME = "maps";
 const char * SettingsManager::DEFAULT_REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME = "games";
 const bool SettingsManager::DEFAULT_SEGMENT_ANALYTICS_ENABLED = true;
-const char * SettingsManager::DEFAULT_SEGMENT_ANALYTICS_DATA_FILE_NAME = "Segment Analytics.json";
+const char * SettingsManager::DEFAULT_SEGMENT_ANALYTICS_DATA_FILE_NAME = "Segment Analytics Cache.json";
 
 static bool assignStringSetting(std::string & setting, const rapidjson::Value & categoryValue, const std::string & propertyName) {
 	if(propertyName.empty() || !categoryValue.IsObject() || !categoryValue.HasMember(propertyName.c_str())) {
@@ -479,25 +480,27 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 	}
 
 	if(settingsDocument.HasMember(FILE_FORMAT_VERSION_PROPERTY_NAME)) {
-		if(!settingsDocument[FILE_FORMAT_VERSION_PROPERTY_NAME].IsString()) {
-			spdlog::error("Invalid settings file version: '{}', expected: '{}'.", settingsDocument[FILE_FORMAT_VERSION_PROPERTY_NAME].GetString(), FILE_FORMAT_VERSION);
+		const rapidjson::Value & fileFormatVersionValue = settingsDocument[FILE_FORMAT_VERSION_PROPERTY_NAME];
+
+		if(!fileFormatVersionValue.IsString()) {
+			spdlog::error("Invalid settings file format version type: '{}', expected: 'string'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
 			return false;
 		}
 
-		std::optional<std::uint8_t> optionalVersionComparison(Utilities::compareVersions(settingsDocument[FILE_FORMAT_VERSION_PROPERTY_NAME].GetString(), FILE_FORMAT_VERSION));
+		std::optional<std::uint8_t> optionalVersionComparison(Utilities::compareVersions(fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION));
 
 		if(!optionalVersionComparison.has_value()) {
-			spdlog::error("Invalid settings file version: '{}'.", settingsDocument[FILE_FORMAT_VERSION_PROPERTY_NAME].GetString());
+			spdlog::error("Invalid settings file format version: '{}'.", fileFormatVersionValue.GetString());
 			return false;
 		}
 
 		if(*optionalVersionComparison != 0) {
-			spdlog::error("Unsupported settings file version: '{}', only version '{}' is supported.", settingsDocument[FILE_FORMAT_VERSION_PROPERTY_NAME].GetString(), FILE_FORMAT_VERSION);
+			spdlog::error("Unsupported settings file format version: '{}', only version '{}' is supported.", fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION);
 			return false;
 		}
 	}
 	else {
-		spdlog::warn("Settings file is missing version, and may fail to load correctly!");
+		spdlog::warn("Settings file is missing file format version, and may fail to load correctly!");
 	}
 
 	if(settingsDocument.HasMember(GAME_TYPE_PROPERTY_NAME) && settingsDocument[GAME_TYPE_PROPERTY_NAME].IsString()) {

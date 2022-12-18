@@ -56,6 +56,8 @@ public:
 	bool operator == (const GameDownloadCollection & c) const;
 	bool operator != (const GameDownloadCollection & c) const;
 
+	static const std::string FILE_FORMAT_VERSION;
+
 private:
 	void notifyCollectionChanged() const;
 

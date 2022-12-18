@@ -1,5 +1,6 @@
 {
-	"games": [
+	"fileFormatVersion": "1.0.0",
+	"gameDownloads": [
 		{
 			"name": "Regular Version 1.3",
 			"versions": [

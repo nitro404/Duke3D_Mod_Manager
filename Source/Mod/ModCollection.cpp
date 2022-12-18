@@ -31,6 +31,16 @@
 
 static const std::string XML_MODS_ELEMENT_NAME("mods");
 
+static const std::string XML_GAME_ID_ATTRIBUTE_NAME("game_id");
+static const std::string XML_FILE_FORMAT_VERSION_ATTRIBUTE_NAME("file_format_version");
+
+static constexpr const char * JSON_MODS_PROPERTY_NAME("mods");
+static constexpr const char * JSON_GAME_ID_PROPERTY_NAME("gameID");
+static constexpr const char * JSON_FILE_FORMAT_VERSION_PROPERTY_NAME("fileFormatVersion");
+
+const std::string ModCollection::GAME_ID("duke_nukem_3d");
+const std::string ModCollection::FILE_FORMAT_VERSION("1.0.0");
+
 ModCollection::ModCollection()
 	: ModCollectionBroadcaster() { }
 
@@ -268,14 +278,20 @@ void ModCollection::clearMods() {
 }
 
 rapidjson::Document ModCollection::toJSON() const {
-	rapidjson::Document modsValue(rapidjson::kArrayType);
-	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator = modsValue.GetAllocator();
+	rapidjson::Document modsDocument(rapidjson::kArrayType);
+	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator = modsDocument.GetAllocator();
+
+	rapidjson::Value gameIDValue(GAME_ID.c_str(), allocator);
+	modsDocument.AddMember(rapidjson::StringRef(JSON_GAME_ID_PROPERTY_NAME), gameIDValue, allocator);
+
+	rapidjson::Value fileFormatVersionValue(FILE_FORMAT_VERSION.c_str(), allocator);
+	modsDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
 
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_mods.begin(); i != m_mods.end(); ++i) {
-		modsValue.PushBack((*i)->toJSON(allocator), allocator);
+		modsDocument.PushBack((*i)->toJSON(allocator), allocator);
 	}
 
-	return modsValue;
+	return modsDocument;
 }
 
 tinyxml2::XMLElement * ModCollection::toXML(tinyxml2::XMLDocument * document) const {
@@ -285,6 +301,9 @@ tinyxml2::XMLElement * ModCollection::toXML(tinyxml2::XMLDocument * document) co
 
 	tinyxml2::XMLElement * modsElement = document->NewElement(XML_MODS_ELEMENT_NAME.c_str());
 
+	modsElement->SetAttribute(XML_GAME_ID_ATTRIBUTE_NAME.c_str(), GAME_ID.c_str());
+	modsElement->SetAttribute(XML_FILE_FORMAT_VERSION_ATTRIBUTE_NAME.c_str(), FILE_FORMAT_VERSION.c_str());
+
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_mods.begin(); i != m_mods.end(); ++i) {
 		modsElement->InsertEndChild((*i)->toXML(document));
 	}
@@ -293,20 +312,78 @@ tinyxml2::XMLElement * ModCollection::toXML(tinyxml2::XMLDocument * document) co
 }
 
 std::unique_ptr<ModCollection> ModCollection::parseFrom(const rapidjson::Value & modCollectionValue) {
-	if(!modCollectionValue.IsArray()) {
-		spdlog::error("Invalid mod collection type: '{}', expected 'array'.", Utilities::typeToString(modCollectionValue.GetType()));
+	if(!modCollectionValue.IsObject()) {
+		spdlog::error("Invalid mod collection type: '{}', expected 'object'.", Utilities::typeToString(modCollectionValue.GetType()));
+		return nullptr;
+	}
+
+	// verify file format version
+	if(modCollectionValue.HasMember(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME)) {
+		const rapidjson::Value & fileFormatVersionValue = modCollectionValue[JSON_FILE_FORMAT_VERSION_PROPERTY_NAME];
+
+		if(!fileFormatVersionValue.IsString()) {
+			spdlog::error("Invalid mod collection file format version type: '{}', expected: 'string'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
+			return false;
+		}
+
+		std::optional<std::uint8_t> optionalVersionComparison(Utilities::compareVersions(fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION));
+
+		if(!optionalVersionComparison.has_value()) {
+			spdlog::error("Invalid mod collection file format version: '{}'.", fileFormatVersionValue.GetString());
+			return false;
+		}
+
+		if(*optionalVersionComparison != 0) {
+			spdlog::error("Unsupported mod collection file format version: '{}', only version '{}' is supported.", fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION);
+			return false;
+		}
+	}
+	else {
+		spdlog::warn("Mod collection JSON data is missing file format version, and may fail to load correctly!");
+	}
+
+	// verify game identifier
+	if(!modCollectionValue.HasMember(JSON_GAME_ID_PROPERTY_NAME)) {
+		spdlog::error("Mod collection is missing '{}' property'.", JSON_GAME_ID_PROPERTY_NAME);
+		return nullptr;
+	}
+
+	const rapidjson::Value & gameIDValue = modCollectionValue[JSON_GAME_ID_PROPERTY_NAME];
+
+	if(!gameIDValue.IsString()) {
+		spdlog::error("Mod collection has an invalid '{}' property type: '{}', expected 'string'.", JSON_GAME_ID_PROPERTY_NAME, Utilities::typeToString(gameIDValue.GetType()));
+		return nullptr;
+	}
+
+	std::string gameID(Utilities::trimString(gameIDValue.GetString()));
+
+	if(!Utilities::areStringsEqual(gameID, GAME_ID)) {
+		spdlog::error("Unsupported mod collection game identifier '{}', expected '{}'.", gameID, GAME_ID);
+		return nullptr;
+	}
+
+	// parse mods list
+	if(!modCollectionValue.HasMember(JSON_MODS_PROPERTY_NAME)) {
+		spdlog::error("Mod collection is missing '{}' property'.", JSON_MODS_PROPERTY_NAME);
+		return nullptr;
+	}
+
+	const rapidjson::Value & modsValue = modCollectionValue[JSON_MODS_PROPERTY_NAME];
+
+	if(!modsValue.IsArray()) {
+		spdlog::error("Invalid mod collection type: '{}', expected 'array'.", Utilities::typeToString(modsValue.GetType()));
 		return nullptr;
 	}
 
 	std::unique_ptr<ModCollection> newModCollection(std::make_unique<ModCollection>());
 
-	if(modCollectionValue.Empty()) {
+	if(modsValue.Empty()) {
 		return newModCollection;
 	}
 
 	std::unique_ptr<Mod> newMod;
 
-	for(rapidjson::Value::ConstValueIterator i = modCollectionValue.Begin(); i != modCollectionValue.End(); ++i) {
+	for(rapidjson::Value::ConstValueIterator i = modsValue.Begin(); i != modsValue.End(); ++i) {
 		newMod = Mod::parseFrom(*i);
 
 		if(!Mod::isValid(newMod.get())) {
@@ -336,6 +413,39 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const tinyxml2::XMLEleme
 
 	if(modsElement->Name() != XML_MODS_ELEMENT_NAME) {
 		spdlog::error("Invalid element name '{}', expected '{}'!", modsElement->Name(), XML_MODS_ELEMENT_NAME);
+		return nullptr;
+	}
+
+	// verify file format version
+	const char * fileFormatVersion = modsElement->Attribute(XML_FILE_FORMAT_VERSION_ATTRIBUTE_NAME.c_str());
+
+	if(fileFormatVersion != nullptr && Utilities::stringLength(fileFormatVersion) != 0) {
+		std::optional<std::uint8_t> optionalVersionComparison(Utilities::compareVersions(fileFormatVersion, FILE_FORMAT_VERSION));
+
+		if(!optionalVersionComparison.has_value()) {
+			spdlog::error("Invalid mod collection file format version: '{}'.", fileFormatVersion);
+			return false;
+		}
+
+		if(*optionalVersionComparison != 0) {
+			spdlog::error("Unsupported mod collection file format version: '{}', only version '{}' is supported.", fileFormatVersion, FILE_FORMAT_VERSION);
+			return false;
+		}
+	}
+	else {
+		spdlog::warn("Mod collection XML data element '{}' is missing file format version attribute '{}', and may fail to load correctly!", XML_MODS_ELEMENT_NAME, XML_FILE_FORMAT_VERSION_ATTRIBUTE_NAME);
+	}
+
+	// verify game identifier
+	const char * gameID = modsElement->Attribute(XML_GAME_ID_ATTRIBUTE_NAME.c_str());
+
+	if(gameID == nullptr || Utilities::stringLength(gameID) == 0) {
+		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_GAME_ID_ATTRIBUTE_NAME, XML_MODS_ELEMENT_NAME);
+		return nullptr;
+	}
+
+	if(!Utilities::areStringsEqual(gameID, GAME_ID)) {
+		spdlog::error("Unsupported mod collection game identifier '{}', expected '{}'.", gameID, GAME_ID);
 		return nullptr;
 	}
 
