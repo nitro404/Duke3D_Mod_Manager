@@ -96,13 +96,7 @@ bool GameManager::initialize(std::shared_ptr<GameVersionCollection> gameVersions
 		return false;
 	}
 
-	if(!HTTPService::getInstance()->isInitialized()) {
-		return false;
-	}
-
 	m_gameVersions = gameVersions;
-
-	updateGameDownloadList();
 
 	m_initialized = true;
 
@@ -356,14 +350,18 @@ std::string GameManager::getJFDuke3DDownloadURL(DeviceInformationBridge::Operati
 		return {};
 	}
 
+	HTTPService * httpService = HTTPService::getInstance();
+
+	if(!httpService->isInitialized()) {
+		return {};
+	}
+
 	std::shared_ptr<GameVersion> jfDuke3DGameVersion(m_gameVersions->getGameVersion(GameVersion::JFDUKE3D.getName()));
 	const GameVersion * jfDuke3DGameVersionRaw = jfDuke3DGameVersion != nullptr ? jfDuke3DGameVersion.get() : &GameVersion::JFDUKE3D;
 
 	if(!jfDuke3DGameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
 		return {};
 	}
-
-	HTTPService * httpService = HTTPService::getInstance();
 
 	size_t schemeSuffixIndex = JFDUKE32_DOWNLOAD_PAGE_URL.find("://");
 
@@ -514,14 +512,18 @@ std::string GameManager::getEDuke32DownloadURL(DeviceInformationBridge::Operatin
 		return {};
 	}
 
+	HTTPService * httpService = HTTPService::getInstance();
+
+	if(!httpService->isInitialized()) {
+		return {};
+	}
+
 	std::shared_ptr<GameVersion> eDuke32GameVersion(m_gameVersions->getGameVersion(GameVersion::EDUKE32.getName()));
 	const GameVersion * eDuke32GameVersionRaw = eDuke32GameVersion != nullptr ? eDuke32GameVersion.get() : &GameVersion::EDUKE32;
 
 	if(!eDuke32GameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
 		return {};
 	}
-
-	HTTPService * httpService = HTTPService::getInstance();
 
 	std::shared_ptr<HTTPRequest> downloadPageRequest(httpService->createRequest(HTTPRequest::Method::Get, EDUKE32_DOWNLOAD_PAGE_URL));
 	downloadPageRequest->setConnectionTimeout(5s);
@@ -795,14 +797,18 @@ std::string GameManager::getRedNukemDownloadURL(DeviceInformationBridge::Operati
 		return {};
 	}
 
+	HTTPService * httpService = HTTPService::getInstance();
+
+	if(!httpService->isInitialized()) {
+		return {};
+	}
+
 	std::shared_ptr<GameVersion> redNukemGameVersion(m_gameVersions->getGameVersion(GameVersion::RED_NUKEM.getName()));
 	const GameVersion * redNukemGameVersionRaw = redNukemGameVersion != nullptr ? redNukemGameVersion.get() : &GameVersion::RED_NUKEM;
 
 	if(!redNukemGameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
 		return {};
 	}
-
-	HTTPService * httpService = HTTPService::getInstance();
 
 	std::shared_ptr<HTTPRequest> downloadPageRequest(httpService->createRequest(HTTPRequest::Method::Get, RED_NUKEM_DOWNLOAD_PAGE_URL));
 	downloadPageRequest->setConnectionTimeout(5s);
@@ -953,6 +959,10 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 	}
 
 	HTTPService * httpService = HTTPService::getInstance();
+
+	if(!httpService->isInitialized()) {
+		return false;
+	}
 
 	if(!std::filesystem::exists(std::filesystem::path(destinationDirectoryPath))) {
 		std::error_code errorCode;
@@ -1306,8 +1316,6 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 		return false;
 	}
 
-	HTTPService * httpService = HTTPService::getInstance();
-
 	if(!std::filesystem::is_directory(std::filesystem::path(directoryPath))) {
 		spdlog::error("Destination directory path does not exist!");
 		return false;
@@ -1360,6 +1368,12 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 
 			return true;
 		}
+	}
+
+	HTTPService * httpService = HTTPService::getInstance();
+
+	if(!httpService->isInitialized()) {
+		return false;
 	}
 
 	std::string groupDownloadURL;
@@ -1420,29 +1434,35 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 			return false;
 		}
 	}
-	else if(m_gameDownloads != nullptr) {
-		std::shared_ptr<GameDownload> gameDownload(m_gameDownloads->getDownloadWithName(gameName));
+	else {
+		if(m_gameDownloads == nullptr) {
+			updateGameDownloadList();
+		}
 
-		if(gameDownload != nullptr && gameDownload->numberOfVersions() != 0) {
-			std::string groupFileDownloadFileName(Utilities::getFileName(groupDownloadURL));
+		if(m_gameDownloads != nullptr) {
+			std::shared_ptr<GameDownload> gameDownload(m_gameDownloads->getDownloadWithName(gameName));
 
-			std::shared_ptr<GameDownloadVersion> gameDownloadVersion(gameDownload->getVersion(0));
-			std::shared_ptr<GameDownloadFile> groupFileDownload(gameDownloadVersion->getFileWithName(groupFileDownloadFileName));
+			if(gameDownload != nullptr && gameDownload->numberOfVersions() != 0) {
+				std::string groupFileDownloadFileName(Utilities::getFileName(groupDownloadURL));
 
-			if(groupFileDownload != nullptr) {
-				std::string responseSHA1(response->getBodySHA1());
+				std::shared_ptr<GameDownloadVersion> gameDownloadVersion(gameDownload->getVersion(0));
+				std::shared_ptr<GameDownloadFile> groupFileDownload(gameDownloadVersion->getFileWithName(groupFileDownloadFileName));
 
-				if(responseSHA1 == groupFileDownload->getSHA1()) {
-					spdlog::debug("Duke Nukem 3D {} group file archive SHA1 hash validated.", gameName);
-				}
-				else {
-					spdlog::error("Duke Nukem 3D {} group file archive '{}' SHA1 hash validation failed! Expected '{}', but calculated: '{}'.", gameName, Utilities::getFileName(groupDownloadURL), groupFileDownload->getSHA1(), responseSHA1);
+				if(groupFileDownload != nullptr) {
+					std::string responseSHA1(response->getBodySHA1());
 
-					if(!useFallback) {
-						return installGroupFile(gameName, directoryPath, true, overwrite);
+					if(responseSHA1 == groupFileDownload->getSHA1()) {
+						spdlog::debug("Duke Nukem 3D {} group file archive SHA1 hash validated.", gameName);
 					}
+					else {
+						spdlog::error("Duke Nukem 3D {} group file archive '{}' SHA1 hash validation failed! Expected '{}', but calculated: '{}'.", gameName, Utilities::getFileName(groupDownloadURL), groupFileDownload->getSHA1(), responseSHA1);
 
-					return false;
+						if(!useFallback) {
+							return installGroupFile(gameName, directoryPath, true, overwrite);
+						}
+
+						return false;
+					}
 				}
 			}
 		}
