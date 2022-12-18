@@ -1189,9 +1189,12 @@ bool ModManager::runSelectedMod() {
 
 	segmentAnalytics->flush();
 
-	spdlog::info("Executing Command: {}", command);
+	std::string workingDirectory(selectedGameVersion->doesRequireDOSBox() ? settings->dosboxDirectoryPath : selectedGameVersion->getGamePath());
 
-	std::unique_ptr<Process> gameProcess(ProcessCreator::getInstance()->createProcess(command, selectedGameVersion->getGamePath()));
+	spdlog::info("Using working directory: '{}'.", workingDirectory);
+	spdlog::info("Executing command: {}", command);
+
+	std::unique_ptr<Process> gameProcess(ProcessCreator::getInstance()->createProcess(command, workingDirectory));
 
 	if(gameProcess != nullptr) {
 		gameProcess->wait();
