@@ -512,7 +512,7 @@ bool ModCollection::loadFromXML(const std::string & filePath) {
 	tinyxml2::XMLError result = modCollectionDocument.LoadFile(filePath.c_str());
 
 	if(result != tinyxml2::XML_SUCCESS) {
-		spdlog::error("Failed to load mod collection from XML file '{}' with error code: '{}'.", filePath, magic_enum::enum_name(result));
+		spdlog::error("Failed to load mod collection from XML file '{}' with error code: '{}', and message: '{}'.", filePath, magic_enum::enum_name(result), modCollectionDocument.ErrorStr());
 		return false;
 	}
 
