@@ -86,7 +86,6 @@ static constexpr const char * TIME_ZONE_DATA_DIRECTORY_NAME_PROPERTY_NAME = DATA
 
 static constexpr const char * CURL_CATEGORY_NAME = "curl";
 static constexpr const char * CURL_DATA_DIRECTORY_NAME_PROPERTY_NAME = DATA_DIRECTORY_NAME;
-static constexpr const char * CURL_CERTIFICATE_AUTHORITY_STORE_FILE_NAME_PROPERTY_NAME = "certificateAuthorityStoreFileName";
 static constexpr const char * CURL_CONNECTION_TIMEOUT_PROPERTY_NAME = "connectionTimeout";
 static constexpr const char * CURL_NETWORK_TIMEOUT_PROPERTY_NAME = "networkTimeout";
 
@@ -143,7 +142,6 @@ const uint16_t SettingsManager::DEFAULT_DOSBOX_LOCAL_SERVER_PORT = 31337;
 const uint16_t SettingsManager::DEFAULT_DOSBOX_REMOTE_SERVER_PORT = 31337;
 const char * SettingsManager::DEFAULT_TIME_ZONE_DATA_DIRECTORY_NAME = "Time Zone";
 const char * SettingsManager::DEFAULT_CURL_DATA_DIRECTORY_NAME = "cURL";
-const char * SettingsManager::DEFAULT_CERTIFICATE_AUTHORITY_STORE_FILE_NAME = "cacert.pem";
 const std::chrono::seconds SettingsManager::DEFAULT_CONNECTION_TIMEOUT = 30s;
 const std::chrono::seconds SettingsManager::DEFAULT_NETWORK_TIMEOUT = 1min;
 const char * SettingsManager::DEFAULT_API_BASE_URL = "http://duke3dmods.com";
@@ -226,7 +224,6 @@ SettingsManager::SettingsManager()
 	, dosboxRemoteServerPort(DEFAULT_DOSBOX_REMOTE_SERVER_PORT)
 	, timeZoneDataDirectoryName(DEFAULT_TIME_ZONE_DATA_DIRECTORY_NAME)
 	, curlDataDirectoryName(DEFAULT_CURL_DATA_DIRECTORY_NAME)
-	, certificateAuthorityStoreFileName(DEFAULT_CERTIFICATE_AUTHORITY_STORE_FILE_NAME)
 	, connectionTimeout(DEFAULT_CONNECTION_TIMEOUT)
 	, networkTimeout(DEFAULT_NETWORK_TIMEOUT)
 	, apiBaseURL(DEFAULT_API_BASE_URL)
@@ -279,7 +276,6 @@ void SettingsManager::reset() {
 	dosboxRemoteServerPort = DEFAULT_DOSBOX_REMOTE_SERVER_PORT;
 	timeZoneDataDirectoryName = DEFAULT_TIME_ZONE_DATA_DIRECTORY_NAME;
 	curlDataDirectoryName = DEFAULT_CURL_DATA_DIRECTORY_NAME;
-	certificateAuthorityStoreFileName = DEFAULT_CERTIFICATE_AUTHORITY_STORE_FILE_NAME;
 	connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
 	networkTimeout = DEFAULT_NETWORK_TIMEOUT;
 	apiBaseURL = DEFAULT_API_BASE_URL;
@@ -432,8 +428,6 @@ rapidjson::Document SettingsManager::toJSON() const {
 
 	rapidjson::Value curlDataDirectoryNameValue(curlDataDirectoryName.c_str(), allocator);
 	curlCategoryValue.AddMember(rapidjson::StringRef(CURL_DATA_DIRECTORY_NAME_PROPERTY_NAME), curlDataDirectoryNameValue, allocator);
-	rapidjson::Value curlCertificateAuthorityStoreFilePathValue(certificateAuthorityStoreFileName.c_str(), allocator);
-	curlCategoryValue.AddMember(rapidjson::StringRef(CURL_CERTIFICATE_AUTHORITY_STORE_FILE_NAME_PROPERTY_NAME), curlCertificateAuthorityStoreFilePathValue, allocator);
 	curlCategoryValue.AddMember(rapidjson::StringRef(CURL_CONNECTION_TIMEOUT_PROPERTY_NAME), rapidjson::Value(connectionTimeout.count()), allocator);
 	curlCategoryValue.AddMember(rapidjson::StringRef(CURL_NETWORK_TIMEOUT_PROPERTY_NAME), rapidjson::Value(networkTimeout.count()), allocator);
 
@@ -620,7 +614,6 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 		const rapidjson::Value & curlCategoryValue = settingsDocument[CURL_CATEGORY_NAME];
 
 		assignStringSetting(curlDataDirectoryName, curlCategoryValue, CURL_DATA_DIRECTORY_NAME_PROPERTY_NAME);
-		assignStringSetting(certificateAuthorityStoreFileName, curlCategoryValue, CURL_CERTIFICATE_AUTHORITY_STORE_FILE_NAME_PROPERTY_NAME);
 
 		if(curlCategoryValue.HasMember(CURL_CONNECTION_TIMEOUT_PROPERTY_NAME) && curlCategoryValue[CURL_CONNECTION_TIMEOUT_PROPERTY_NAME].IsUint64()) {
 			connectionTimeout = std::chrono::seconds(curlCategoryValue[CURL_CONNECTION_TIMEOUT_PROPERTY_NAME].GetUint64());

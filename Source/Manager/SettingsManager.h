@@ -66,7 +66,6 @@ public:
 	static const uint16_t DEFAULT_DOSBOX_REMOTE_SERVER_PORT;
 	static const char * DEFAULT_TIME_ZONE_DATA_DIRECTORY_NAME;
 	static const char * DEFAULT_CURL_DATA_DIRECTORY_NAME;
-	static const char * DEFAULT_CERTIFICATE_AUTHORITY_STORE_FILE_NAME;
 	static const std::chrono::seconds DEFAULT_CONNECTION_TIMEOUT;
 	static const std::chrono::seconds DEFAULT_NETWORK_TIMEOUT;
 	static const char * DEFAULT_API_BASE_URL;
@@ -116,7 +115,6 @@ public:
 	uint16_t dosboxRemoteServerPort;
 	std::string timeZoneDataDirectoryName;
 	std::string curlDataDirectoryName;
-	std::string certificateAuthorityStoreFileName;
 	std::chrono::seconds connectionTimeout;
 	std::chrono::seconds networkTimeout;
 	std::string apiBaseURL;

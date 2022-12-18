@@ -129,7 +129,7 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 	date::set_install(Utilities::joinPaths(settings->dataDirectoryPath, settings->timeZoneDataDirectoryName));
 
 	HTTPConfiguration configuration = {
-		Utilities::joinPaths(settings->dataDirectoryPath, settings->curlDataDirectoryName, settings->certificateAuthorityStoreFileName),
+		Utilities::joinPaths(settings->dataDirectoryPath, settings->curlDataDirectoryName),
 		settings->apiBaseURL,
 		settings->connectionTimeout,
 		settings->networkTimeout
