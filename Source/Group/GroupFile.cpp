@@ -130,18 +130,6 @@ bool GroupFile::writeTo(const std::string & basePath, bool overwrite, const std:
 		return false;
 	}
 
-	if(!basePath.empty()) {
-		if(!std::filesystem::exists(std::filesystem::path(basePath))) {
-			std::error_code errorCode;
-			std::filesystem::create_directories(basePath, errorCode);
-
-			if(errorCode) {
-				spdlog::error("Failed to create directory structure for base path '{}': {}", basePath, errorCode.message());
-				return false;
-			}
-		}
-	}
-
 	std::ofstream fileStream(filePath, std::ios::binary);
 
 	if(!fileStream.is_open()) {
