@@ -118,6 +118,7 @@ public:
 	std::string remoteGameDownloadsDirectoryName;
 	bool segmentAnalyticsEnabled;
 	std::string segmentAnalyticsDataFileName;
+	std::map<std::string, std::string> fileETags;
 
 private:
 	SettingsManager(const SettingsManager &) = delete;

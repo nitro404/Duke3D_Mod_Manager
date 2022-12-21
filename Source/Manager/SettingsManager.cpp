@@ -97,6 +97,8 @@ static constexpr const char * SEGMENT_ANALYTICS_CATEGORY_NAME = "segment";
 static constexpr const char * SEGMENT_ANALYTICS_ENABLED_PROPERTY_NAME = "enabled";
 static constexpr const char * SEGMENT_ANALYTICS_DATA_FILE_NAME_PROPERTY_NAME = "dataFileName";
 
+static constexpr const char * FILE_ETAGS_PROPERTY_NAME = "fileETags";
+
 const char * SettingsManager::FILE_FORMAT_VERSION = "1.0.0";
 const char * SettingsManager::DEFAULT_SETTINGS_FILE_PATH = "Duke Nukem 3D Mod Manager Settings.json";
 const char * SettingsManager::DEFAULT_MODS_LIST_FILE_PATH = "Duke Nukem 3D Mod List.xml";
@@ -269,6 +271,7 @@ void SettingsManager::reset() {
 	remoteGameDownloadsDirectoryName = DEFAULT_REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME;
 	segmentAnalyticsEnabled = DEFAULT_SEGMENT_ANALYTICS_ENABLED;
 	segmentAnalyticsDataFileName = DEFAULT_SEGMENT_ANALYTICS_DATA_FILE_NAME;
+	fileETags.clear();
 }
 
 rapidjson::Document SettingsManager::toJSON() const {
@@ -432,6 +435,16 @@ rapidjson::Document SettingsManager::toJSON() const {
 	analyticsCategoryValue.AddMember(rapidjson::StringRef(SEGMENT_ANALYTICS_CATEGORY_NAME), segmentAnalyticsCategoryValue, allocator);
 
 	settingsDocument.AddMember(rapidjson::StringRef(ANALYTICS_CATEGORY_NAME), analyticsCategoryValue, allocator);
+
+	rapidjson::Value fileETagsValue(rapidjson::kObjectType);
+
+	for(std::map<std::string, std::string>::const_iterator i = fileETags.begin(); i != fileETags.end(); ++i) {
+		rapidjson::Value fileNameValue(i->first.c_str(), allocator);
+		rapidjson::Value fileETagValue(i->second.c_str(), allocator);
+		fileETagsValue.AddMember(fileNameValue, fileETagValue, allocator);
+	}
+
+	settingsDocument.AddMember(rapidjson::StringRef(FILE_ETAGS_PROPERTY_NAME), fileETagsValue, allocator);
 
 	return settingsDocument;
 }
@@ -604,6 +617,14 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 
 			assignBooleanSetting(segmentAnalyticsEnabled, segmentAnalyticsCategoryValue, SEGMENT_ANALYTICS_ENABLED_PROPERTY_NAME);
 			assignStringSetting(segmentAnalyticsDataFileName, segmentAnalyticsCategoryValue, DEFAULT_SEGMENT_ANALYTICS_DATA_FILE_NAME);
+		}
+	}
+
+	if(settingsDocument.HasMember(FILE_ETAGS_PROPERTY_NAME) && settingsDocument[FILE_ETAGS_PROPERTY_NAME].IsObject()) {
+		const rapidjson::Value & fileETagsValue = settingsDocument[FILE_ETAGS_PROPERTY_NAME];
+
+		for(rapidjson::Value::ConstMemberIterator i = fileETagsValue.MemberBegin(); i != fileETagsValue.MemberEnd(); ++i) {
+			fileETags.emplace(i->name.GetString(), i->value.GetString());
 		}
 	}
 

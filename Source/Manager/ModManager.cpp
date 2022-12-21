@@ -32,6 +32,7 @@
 #include <Network/HTTPResponse.h>
 #include <Network/HTTPService.h>
 #include <Platform/ProcessCreator.h>
+#include <Platform/TimeZoneDataManager.h>
 #include <Script/Script.h>
 #include <Script/ScriptArguments.h>
 #include <Utilities/FileUtilities.h>
@@ -39,7 +40,6 @@
 #include <Utilities/StringUtilities.h>
 #include <Utilities/Utilities.h>
 
-#include <date/tz.h>
 #include <fmt/core.h>
 #include <magic_enum.hpp>
 #include <spdlog/spdlog.h>
@@ -127,10 +127,6 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 		m_localMode = true;
 	}
 
-	date::set_install(Utilities::joinPaths(settings->dataDirectoryPath, settings->timeZoneDataDirectoryName));
-
-	createDOSBoxTemplateScriptFiles();
-
 	HTTPConfiguration configuration = {
 		Utilities::joinPaths(settings->dataDirectoryPath, settings->curlDataDirectoryName),
 		settings->apiBaseURL,
@@ -146,6 +142,12 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 	}
 
 	httpService->setUserAgent(HTTP_USER_AGENT);
+	httpService->updateCertificateAuthorityCertificateAndWait();
+
+	if(!TimeZoneDataManager::getInstance()->initialize(Utilities::joinPaths(settings->dataDirectoryPath, settings->timeZoneDataDirectoryName), settings->fileETags)) {
+		spdlog::error("Failed to initialize time zone data manager!");
+		return false;
+	}
 
 	GeoLocationService * geoLocationService = GeoLocationService::getInstance();
 
@@ -180,6 +182,8 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 			spdlog::error("Failed to initialize Segment analytics!");
 		}
 	}
+
+	createDOSBoxTemplateScriptFiles();
 
 	GameLocator * gameLocator = GameLocator::getInstance();
 
