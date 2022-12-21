@@ -44,7 +44,7 @@ OrganizedModCollection::OrganizedModCollection(std::shared_ptr<ModCollection> mo
 }
 
 OrganizedModCollection::OrganizedModCollection(OrganizedModCollection && m) noexcept
-	: ModCollectionListener()
+	: ModCollectionListener(m)
 	, m_filterType(m.m_filterType)
 	, m_sortType(m.m_sortType)
 	, m_sortDirection(m.m_sortDirection)

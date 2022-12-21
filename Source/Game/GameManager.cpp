@@ -1128,7 +1128,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		// only extract required files from fallback downloads for original game files since there are other files we don't want or need in these archives
 		if(isRegularVersion) {
 			for(const GameFileInformation & gameFileInfo : REGULAR_VERSION_GAME_FILE_INFO_LIST) {
-				if(!extractGameFileFunction(std::shared_ptr<ArchiveEntry>(gameFilesArchive->getFirstEntryWithName(gameFileInfo.fileName, true).lock()), gameFileInfo)) {
+				if(!extractGameFileFunction(std::shared_ptr<ArchiveEntry>(gameFilesArchive->getFirstEntryWithName(gameFileInfo.fileName, true)), gameFileInfo)) {
 					if(!useFallback) {
 						return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
 					}
@@ -1139,7 +1139,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		}
 		else if(isAtomicEdition) {
 			for(const GameFileInformation & gameFileInfo : ATOMIC_EDITION_GAME_FILE_INFO_LIST) {
-				if(!extractGameFileFunction(std::shared_ptr<ArchiveEntry>(gameFilesArchive->getFirstEntryWithName(gameFileInfo.fileName, true).lock()), gameFileInfo)) {
+				if(!extractGameFileFunction(std::shared_ptr<ArchiveEntry>(gameFilesArchive->getFirstEntryWithName(gameFileInfo.fileName, true)), gameFileInfo)) {
 					if(!useFallback) {
 						return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
 					}
@@ -1482,7 +1482,7 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 		return false;
 	}
 
-	std::shared_ptr<ArchiveEntry> groupFileEntry(groupArchive->getFirstEntryWithName(Group::DUKE_NUKEM_3D_GROUP_FILE_NAME, true).lock());
+	std::shared_ptr<ArchiveEntry> groupFileEntry(groupArchive->getFirstEntryWithName(Group::DUKE_NUKEM_3D_GROUP_FILE_NAME, true));
 
 	if(groupFileEntry == nullptr) {
 		spdlog::error("Duke Nukem 3D {} group package file is missing group file entry!", gameName);
