@@ -103,6 +103,54 @@ bool GameManager::initialize(std::shared_ptr<GameVersionCollection> gameVersions
 	return true;
 }
 
+std::string GameManager::getLocalGameDownloadsListFilePath() const {
+	SettingsManager * settings = SettingsManager::getInstance();
+
+	if(settings->remoteGamesListFileName.empty()) {
+		spdlog::error("Missing remote games list file name setting.");
+		return {};
+	}
+
+	return Utilities::joinPaths(settings->downloadsDirectoryPath, settings->gameDownloadsDirectoryName, settings->remoteGamesListFileName);
+}
+
+bool GameManager::shouldUpdateGameDownloadList() const {
+	SettingsManager * settings = SettingsManager::getInstance();
+
+	if(!settings->downloadThrottlingEnabled || !settings->gameDownloadListLastDownloadedTimestamp.has_value()) {
+		return true;
+	}
+
+	std::string localGameDownloadsListFilePath(getLocalGameDownloadsListFilePath());
+
+	if(!std::filesystem::is_regular_file(std::filesystem::path(localGameDownloadsListFilePath))) {
+		return true;
+	}
+
+	return std::chrono::system_clock::now() - settings->gameDownloadListLastDownloadedTimestamp.value() > settings->gameDownloadListUpdateFrequency;
+}
+
+bool GameManager::loadOrUpdateGameDownloadList(bool forceUpdate) const {
+	std::string localGameDownloadsListFilePath(getLocalGameDownloadsListFilePath());
+
+	if(!forceUpdate && std::filesystem::exists(std::filesystem::path(localGameDownloadsListFilePath))) {
+		std::unique_ptr<GameDownloadCollection> gameDownloads(std::make_unique<GameDownloadCollection>());
+
+		if(gameDownloads->loadFrom(localGameDownloadsListFilePath) && GameDownloadCollection::isValid(gameDownloads.get())) {
+			m_gameDownloads = std::move(gameDownloads);
+
+			if(!shouldUpdateGameDownloadList()) {
+				return true;
+			}
+		}
+		else {
+			spdlog::error("Failed to load game download collection from JSON file.");
+		}
+	}
+
+	return updateGameDownloadList(forceUpdate);
+}
+
 bool GameManager::updateGameDownloadList(bool force) const {
 	HTTPService * httpService = HTTPService::getInstance();
 
@@ -119,8 +167,10 @@ bool GameManager::updateGameDownloadList(bool force) const {
 
 	std::shared_ptr<HTTPRequest> request(httpService->createRequest(HTTPRequest::Method::Get, gameListURL));
 
-	if(!force && !m_gameListFileETag.empty()) {
-		request->setIfNoneMatchETag(m_gameListFileETag);
+	std::map<std::string, std::string>::const_iterator fileETagIterator = settings->fileETags.find(settings->remoteGamesListFileName);
+
+	if(!force && fileETagIterator != settings->fileETags.end() && !fileETagIterator->second.empty()) {
+		request->setIfNoneMatchETag(fileETagIterator->second);
 	}
 
 	std::shared_ptr<HTTPResponse> response(httpService->sendRequestAndWait(request));
@@ -132,6 +182,9 @@ bool GameManager::updateGameDownloadList(bool force) const {
 
 	if(response->getStatusCode() == magic_enum::enum_integer(HTTPStatusCode::NotModified)) {
 		spdlog::info("Duke Nukem 3D game download list is already up to date!");
+
+		settings->gameDownloadListLastDownloadedTimestamp = std::chrono::system_clock::now();
+
 		return true;
 	}
 	else if(response->isFailureStatusCode()) {
@@ -156,8 +209,17 @@ bool GameManager::updateGameDownloadList(bool force) const {
 		return false;
 	}
 
+	std::string localGameDownloadsListFilePath(getLocalGameDownloadsListFilePath());
+
+	if(!response->getBody()->writeTo(localGameDownloadsListFilePath, true)) {
+		spdlog::error("Failed to write game download collection JSON data to file: '{}'.", localGameDownloadsListFilePath);
+		return false;
+	}
+
 	m_gameDownloads = std::move(gameDownloads);
-	m_gameListFileETag = response->getETag();
+
+	settings->fileETags.emplace(settings->remoteGamesListFileName, response->getETag());
+	settings->gameDownloadListLastDownloadedTimestamp = std::chrono::system_clock::now();
 
 	return true;
 }
@@ -228,7 +290,7 @@ std::string GameManager::getFallbackGameDownloadURL(const std::string & gameName
 		return ATOMIC_EDITION_FALLBACK_DOWNLOAD_URL;
 	}
 
-	if(!updateGameDownloadList()) {
+	if(!loadOrUpdateGameDownloadList()) {
 		return {};
 	}
 
@@ -1436,7 +1498,7 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 	}
 	else {
 		if(m_gameDownloads == nullptr) {
-			updateGameDownloadList();
+			loadOrUpdateGameDownloadList();
 		}
 
 		if(m_gameDownloads != nullptr) {

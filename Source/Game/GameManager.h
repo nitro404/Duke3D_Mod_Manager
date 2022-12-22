@@ -18,6 +18,9 @@ public:
 
 	bool isInitialized() const;
 	bool initialize(std::shared_ptr<GameVersionCollection> gameVersions);
+	std::string getLocalGameDownloadsListFilePath() const;
+	bool shouldUpdateGameDownloadList() const;
+	bool loadOrUpdateGameDownloadList(bool forceUpdate = false) const;
 	bool updateGameDownloadList(bool force = false) const;
 	std::string getGameDownloadURL(const std::string & gameName);
 	std::string getRemoteGameDownloadsBaseURL() const;
@@ -40,7 +43,6 @@ private:
 	bool m_initialized;
 	std::shared_ptr<GameVersionCollection> m_gameVersions;
 	mutable std::unique_ptr<GameDownloadCollection> m_gameDownloads;
-	mutable std::string m_gameListFileETag;
 };
 
 #endif // _GAME_MANAGER_H_

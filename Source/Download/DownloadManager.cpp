@@ -57,7 +57,7 @@ bool DownloadManager::initialize() {
 
 	loadDownloadCache();
 
-	if(!downloadModList()) {
+	if(shouldUpdateModList() && !downloadModList()) {
 		return false;
 	}
 
@@ -203,6 +203,22 @@ bool DownloadManager::saveDownloadCache() const {
 	return m_downloadCache->saveTo(getDownloadCacheFilePath());
 }
 
+bool DownloadManager::shouldUpdateModList() const {
+	SettingsManager * settings = SettingsManager::getInstance();
+
+	if(!settings->downloadThrottlingEnabled || !settings->modListLastDownloadedTimestamp.has_value()) {
+		return true;
+	}
+
+	std::string modListLocalFilePath(Utilities::joinPaths(getDownloadedModsDirectoryPath(), settings->remoteModsListFileName));
+
+	if(!std::filesystem::is_regular_file(std::filesystem::path(modListLocalFilePath))) {
+		return true;
+	}
+
+	return std::chrono::system_clock::now() - settings->modListLastDownloadedTimestamp.value() > settings->modListUpdateFrequency;
+}
+
 bool DownloadManager::downloadModList(bool force) {
 	SettingsManager * settings = SettingsManager::getInstance();
 
@@ -241,6 +257,9 @@ bool DownloadManager::downloadModList(bool force) {
 
 	if(response->getStatusCode() == magic_enum::enum_integer(HTTPStatusCode::NotModified)) {
 		spdlog::info("Duke Nukem 3D mod list is already up to date!");
+
+		settings->modListLastDownloadedTimestamp = std::chrono::system_clock::now();
+
 		return true;
 	}
 	else if(response->isFailureStatusCode()) {
@@ -257,6 +276,8 @@ bool DownloadManager::downloadModList(bool force) {
 	m_downloadCache->updateCachedModListFile(modListFileName, response->getBody()->getSize(), modListSHA1, response->getETag());
 
 	saveDownloadCache();
+
+	settings->modListLastDownloadedTimestamp = std::chrono::system_clock::now();
 
 	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
 

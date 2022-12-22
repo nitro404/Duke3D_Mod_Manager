@@ -6,6 +6,7 @@
 #include <Arguments/ArgumentParser.h>
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
+#include <Utilities/TimeUtilities.h>
 
 #include <magic_enum.hpp>
 #include <rapidjson/istreamwrapper.h>
@@ -99,6 +100,17 @@ static constexpr const char * SEGMENT_ANALYTICS_DATA_FILE_NAME_PROPERTY_NAME = "
 
 static constexpr const char * FILE_ETAGS_PROPERTY_NAME = "fileETags";
 
+static constexpr const char * DOWNLOAD_THROTTLING_CATEGORY_NAME = "downloadThrottling";
+static constexpr const char * DOWNLOAD_THROTTLING_ENABLED_PROPERTY_NAME = "enabled";
+static constexpr const char * MOD_LIST_LAST_DOWNLOADED_PROPERTY_NAME = "modListLastDownloaded";
+static constexpr const char * MOD_LIST_UPDATE_FREQUENCY_PROPERTY_NAME = "modListUpdateFrequency";
+static constexpr const char * GAME_DOWNLOAD_LIST_LAST_DOWNLOADED_PROPERTY_NAME = "gameDownloadListLastDownloaded";
+static constexpr const char * GAME_DOWNLOAD_LIST_UPDATE_FREQUENCY_PROPERTY_NAME = "gameDownloadListUpdateFrequency";
+static constexpr const char * CACERT_LAST_DOWNLOADED_PROPERTY_NAME = "cacertLastDownloaded";
+static constexpr const char * CACERT_UPDATE_FREQUENCY_PROPERTY_NAME = "cacertUpdateFrequency";
+static constexpr const char * TIME_ZONE_DATA_LAST_DOWNLOADED_PROPERTY_NAME = "timeZoneDataLastDownloaded";
+static constexpr const char * TIME_ZONE_DATA_UPDATE_FREQUENCY_PROPERTY_NAME = "timeZoneDataUpdateFrequency";
+
 const char * SettingsManager::FILE_FORMAT_VERSION = "1.0.0";
 const char * SettingsManager::DEFAULT_SETTINGS_FILE_PATH = "Duke Nukem 3D Mod Manager Settings.json";
 const char * SettingsManager::DEFAULT_MODS_LIST_FILE_PATH = "Duke Nukem 3D Mod List.xml";
@@ -145,6 +157,11 @@ const char * SettingsManager::DEFAULT_REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME = "map
 const char * SettingsManager::DEFAULT_REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME = "games";
 const bool SettingsManager::DEFAULT_SEGMENT_ANALYTICS_ENABLED = true;
 const char * SettingsManager::DEFAULT_SEGMENT_ANALYTICS_DATA_FILE_NAME = "Segment Analytics Cache.json";
+const bool SettingsManager::DEFAULT_DOWNLOAD_THROTTLING_ENABLED = true;
+const std::chrono::minutes SettingsManager::DEFAULT_MOD_LIST_UPDATE_FREQUENCY = std::chrono::minutes(30);
+const std::chrono::minutes SettingsManager::DEFAULT_GAME_DOWNLOAD_LIST_UPDATE_FREQUENCY = std::chrono::minutes(60);
+const std::chrono::minutes SettingsManager::DEFAULT_CACERT_UPDATE_FREQUENCY = std::chrono::hours(2 * 24 * 7); // 2 weeks
+const std::chrono::minutes SettingsManager::DEFAULT_TIME_ZONE_DATA_UPDATE_FREQUENCY = std::chrono::hours(1 * 24 * 7); // 1 week
 
 static bool assignStringSetting(std::string & setting, const rapidjson::Value & categoryValue, const std::string & propertyName) {
 	if(propertyName.empty() || !categoryValue.IsObject() || !categoryValue.HasMember(propertyName.c_str())) {
@@ -174,6 +191,39 @@ static bool assignBooleanSetting(bool & setting, const rapidjson::Value & catego
 	}
 
 	setting = settingValue.GetBool();
+
+	return true;
+}
+
+static bool assignOptionalTimePointSetting(std::optional<std::chrono::time_point<std::chrono::system_clock>> & setting, const rapidjson::Value & categoryValue, const std::string & propertyName) {
+	if(propertyName.empty() || !categoryValue.IsObject() || !categoryValue.HasMember(propertyName.c_str())) {
+		return false;
+	}
+
+	const rapidjson::Value & settingValue = categoryValue[propertyName.c_str()];
+
+	if(!settingValue.IsString()) {
+		return false;
+	}
+
+	setting = Utilities::parseTimePointFromString(settingValue.GetString());
+
+	return setting.has_value();
+}
+
+template <typename T>
+static bool assignChronoSetting(T & setting, const rapidjson::Value & categoryValue, const std::string & propertyName) {
+	if(propertyName.empty() || !categoryValue.IsObject() || !categoryValue.HasMember(propertyName.c_str())) {
+		return false;
+	}
+
+	const rapidjson::Value & settingValue = categoryValue[propertyName.c_str()];
+
+	if(!settingValue.IsUint64()) {
+		return false;
+	}
+
+	setting = T(settingValue.GetUint64());
 
 	return true;
 }
@@ -222,6 +272,11 @@ SettingsManager::SettingsManager()
 	, remoteMapDownloadsDirectoryName(DEFAULT_REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME)
 	, remoteGameDownloadsDirectoryName(DEFAULT_REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME)
 	, segmentAnalyticsEnabled(DEFAULT_SEGMENT_ANALYTICS_ENABLED)
+	, downloadThrottlingEnabled(DEFAULT_DOWNLOAD_THROTTLING_ENABLED)
+	, modListUpdateFrequency(DEFAULT_MOD_LIST_UPDATE_FREQUENCY)
+	, gameDownloadListUpdateFrequency(DEFAULT_GAME_DOWNLOAD_LIST_UPDATE_FREQUENCY)
+	, cacertUpdateFrequency(DEFAULT_CACERT_UPDATE_FREQUENCY)
+	, timeZoneDataUpdateFrequency(DEFAULT_TIME_ZONE_DATA_UPDATE_FREQUENCY)
 	, segmentAnalyticsDataFileName(DEFAULT_SEGMENT_ANALYTICS_DATA_FILE_NAME) { }
 
 SettingsManager::~SettingsManager() = default;
@@ -271,6 +326,15 @@ void SettingsManager::reset() {
 	remoteGameDownloadsDirectoryName = DEFAULT_REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME;
 	segmentAnalyticsEnabled = DEFAULT_SEGMENT_ANALYTICS_ENABLED;
 	segmentAnalyticsDataFileName = DEFAULT_SEGMENT_ANALYTICS_DATA_FILE_NAME;
+	downloadThrottlingEnabled = DEFAULT_DOWNLOAD_THROTTLING_ENABLED;
+	modListLastDownloadedTimestamp.reset();
+	modListUpdateFrequency = DEFAULT_MOD_LIST_UPDATE_FREQUENCY;
+	gameDownloadListLastDownloadedTimestamp.reset();
+	gameDownloadListUpdateFrequency = DEFAULT_GAME_DOWNLOAD_LIST_UPDATE_FREQUENCY;
+	cacertLastDownloadedTimestamp.reset();
+	cacertUpdateFrequency = DEFAULT_CACERT_UPDATE_FREQUENCY;
+	timeZoneDataLastDownloadedTimestamp.reset();
+	timeZoneDataUpdateFrequency = DEFAULT_TIME_ZONE_DATA_UPDATE_FREQUENCY;
 	fileETags.clear();
 }
 
@@ -435,6 +499,40 @@ rapidjson::Document SettingsManager::toJSON() const {
 	analyticsCategoryValue.AddMember(rapidjson::StringRef(SEGMENT_ANALYTICS_CATEGORY_NAME), segmentAnalyticsCategoryValue, allocator);
 
 	settingsDocument.AddMember(rapidjson::StringRef(ANALYTICS_CATEGORY_NAME), analyticsCategoryValue, allocator);
+
+	rapidjson::Value downloadThrottlingCategoryValue(rapidjson::kObjectType);
+
+	downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(DOWNLOAD_THROTTLING_ENABLED_PROPERTY_NAME), rapidjson::Value(downloadThrottlingEnabled), allocator);
+
+	if(modListLastDownloadedTimestamp.has_value()) {
+		rapidjson::Value modListLastDownloadedValue(Utilities::timePointToString(modListLastDownloadedTimestamp.value(), Utilities::TimeFormat::ISO8601).c_str(), allocator);
+		downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(MOD_LIST_LAST_DOWNLOADED_PROPERTY_NAME), modListLastDownloadedValue, allocator);
+	}
+
+	downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(MOD_LIST_UPDATE_FREQUENCY_PROPERTY_NAME), rapidjson::Value(modListUpdateFrequency.count()), allocator);
+
+	if(gameDownloadListLastDownloadedTimestamp.has_value()) {
+		rapidjson::Value gameDownloadListLastDownloadedValue(Utilities::timePointToString(gameDownloadListLastDownloadedTimestamp.value(), Utilities::TimeFormat::ISO8601).c_str(), allocator);
+		downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(GAME_DOWNLOAD_LIST_LAST_DOWNLOADED_PROPERTY_NAME), gameDownloadListLastDownloadedValue, allocator);
+	}
+
+	downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(GAME_DOWNLOAD_LIST_UPDATE_FREQUENCY_PROPERTY_NAME), rapidjson::Value(gameDownloadListUpdateFrequency.count()), allocator);
+
+	if(cacertLastDownloadedTimestamp.has_value()) {
+		rapidjson::Value cacertLastDownloadedValue(Utilities::timePointToString(cacertLastDownloadedTimestamp.value(), Utilities::TimeFormat::ISO8601).c_str(), allocator);
+		downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(CACERT_LAST_DOWNLOADED_PROPERTY_NAME), cacertLastDownloadedValue, allocator);
+	}
+
+	downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(CACERT_UPDATE_FREQUENCY_PROPERTY_NAME), rapidjson::Value(cacertUpdateFrequency.count()), allocator);
+
+	if(timeZoneDataLastDownloadedTimestamp.has_value()) {
+		rapidjson::Value timeZoneDataLastDownloadedValue(Utilities::timePointToString(timeZoneDataLastDownloadedTimestamp.value(), Utilities::TimeFormat::ISO8601).c_str(), allocator);
+		downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(TIME_ZONE_DATA_LAST_DOWNLOADED_PROPERTY_NAME), timeZoneDataLastDownloadedValue, allocator);
+	}
+
+	downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(TIME_ZONE_DATA_UPDATE_FREQUENCY_PROPERTY_NAME), rapidjson::Value(timeZoneDataUpdateFrequency.count()), allocator);
+
+	settingsDocument.AddMember(rapidjson::StringRef(DOWNLOAD_THROTTLING_CATEGORY_NAME), downloadThrottlingCategoryValue, allocator);
 
 	rapidjson::Value fileETagsValue(rapidjson::kObjectType);
 
@@ -618,6 +716,20 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 			assignBooleanSetting(segmentAnalyticsEnabled, segmentAnalyticsCategoryValue, SEGMENT_ANALYTICS_ENABLED_PROPERTY_NAME);
 			assignStringSetting(segmentAnalyticsDataFileName, segmentAnalyticsCategoryValue, DEFAULT_SEGMENT_ANALYTICS_DATA_FILE_NAME);
 		}
+	}
+
+	if(settingsDocument.HasMember(DOWNLOAD_THROTTLING_CATEGORY_NAME) && settingsDocument[DOWNLOAD_THROTTLING_CATEGORY_NAME].IsObject()) {
+		const rapidjson::Value & downloadThrottlingValue = settingsDocument[DOWNLOAD_THROTTLING_CATEGORY_NAME];
+
+		assignBooleanSetting(downloadThrottlingEnabled, downloadThrottlingValue, DOWNLOAD_THROTTLING_ENABLED_PROPERTY_NAME);
+		assignOptionalTimePointSetting(modListLastDownloadedTimestamp, downloadThrottlingValue, MOD_LIST_LAST_DOWNLOADED_PROPERTY_NAME);
+		assignChronoSetting(modListUpdateFrequency, downloadThrottlingValue, MOD_LIST_UPDATE_FREQUENCY_PROPERTY_NAME);
+		assignOptionalTimePointSetting(gameDownloadListLastDownloadedTimestamp, downloadThrottlingValue, GAME_DOWNLOAD_LIST_LAST_DOWNLOADED_PROPERTY_NAME);
+		assignChronoSetting(gameDownloadListUpdateFrequency, downloadThrottlingValue, GAME_DOWNLOAD_LIST_UPDATE_FREQUENCY_PROPERTY_NAME);
+		assignOptionalTimePointSetting(cacertLastDownloadedTimestamp, downloadThrottlingValue, CACERT_LAST_DOWNLOADED_PROPERTY_NAME);
+		assignChronoSetting(cacertUpdateFrequency, downloadThrottlingValue, CACERT_UPDATE_FREQUENCY_PROPERTY_NAME);
+		assignOptionalTimePointSetting(timeZoneDataLastDownloadedTimestamp, downloadThrottlingValue, TIME_ZONE_DATA_LAST_DOWNLOADED_PROPERTY_NAME);
+		assignChronoSetting(timeZoneDataUpdateFrequency, downloadThrottlingValue, TIME_ZONE_DATA_UPDATE_FREQUENCY_PROPERTY_NAME);
 	}
 
 	if(settingsDocument.HasMember(FILE_ETAGS_PROPERTY_NAME) && settingsDocument[FILE_ETAGS_PROPERTY_NAME].IsObject()) {

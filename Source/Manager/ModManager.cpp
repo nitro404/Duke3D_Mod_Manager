@@ -142,11 +142,23 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 	}
 
 	httpService->setUserAgent(HTTP_USER_AGENT);
-	httpService->updateCertificateAuthorityCertificateAndWait();
 
-	if(!TimeZoneDataManager::getInstance()->initialize(Utilities::joinPaths(settings->dataDirectoryPath, settings->timeZoneDataDirectoryName), settings->fileETags)) {
+	if(!settings->downloadThrottlingEnabled || !settings->cacertLastDownloadedTimestamp.has_value() || std::chrono::system_clock::now() - settings->cacertLastDownloadedTimestamp.value() > settings->cacertUpdateFrequency) {
+		if(httpService->updateCertificateAuthorityCertificateAndWait()) {
+			settings->cacertLastDownloadedTimestamp = std::chrono::system_clock::now();
+		}
+	}
+
+	bool timeZoneDataUpdated = false;
+	bool shouldUpdateTimeZoneData = !settings->downloadThrottlingEnabled || !settings->timeZoneDataLastDownloadedTimestamp.has_value() || std::chrono::system_clock::now() - settings->timeZoneDataLastDownloadedTimestamp.value() > settings->timeZoneDataUpdateFrequency;
+
+	if(!TimeZoneDataManager::getInstance()->initialize(Utilities::joinPaths(settings->dataDirectoryPath, settings->timeZoneDataDirectoryName), settings->fileETags, shouldUpdateTimeZoneData, false, &timeZoneDataUpdated)) {
 		spdlog::error("Failed to initialize time zone data manager!");
 		return false;
+	}
+
+	if(timeZoneDataUpdated) {
+		settings->timeZoneDataLastDownloadedTimestamp = std::chrono::system_clock::now();
 	}
 
 	GeoLocationService * geoLocationService = GeoLocationService::getInstance();

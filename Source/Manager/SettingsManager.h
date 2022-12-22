@@ -8,6 +8,7 @@
 #include <rapidjson/document.h>
 
 #include <chrono>
+#include <optional>
 #include <string>
 
 class ArgumentParser;
@@ -73,6 +74,11 @@ public:
 	static const char * DEFAULT_REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME;
 	static const bool DEFAULT_SEGMENT_ANALYTICS_ENABLED;
 	static const char * DEFAULT_SEGMENT_ANALYTICS_DATA_FILE_NAME;
+	static const bool DEFAULT_DOWNLOAD_THROTTLING_ENABLED;
+	static const std::chrono::minutes DEFAULT_MOD_LIST_UPDATE_FREQUENCY;
+	static const std::chrono::minutes DEFAULT_GAME_DOWNLOAD_LIST_UPDATE_FREQUENCY;
+	static const std::chrono::minutes DEFAULT_CACERT_UPDATE_FREQUENCY;
+	static const std::chrono::minutes DEFAULT_TIME_ZONE_DATA_UPDATE_FREQUENCY;
 
 	std::string modsListFilePath;
 	std::string favouriteModsListFilePath;
@@ -118,6 +124,16 @@ public:
 	std::string remoteGameDownloadsDirectoryName;
 	bool segmentAnalyticsEnabled;
 	std::string segmentAnalyticsDataFileName;
+	bool downloadThrottlingEnabled;
+	std::optional<std::chrono::time_point<std::chrono::system_clock>> modListLastDownloadedTimestamp;
+	std::chrono::minutes modListUpdateFrequency;
+	std::optional<std::chrono::time_point<std::chrono::system_clock>> gameDownloadListLastDownloadedTimestamp;
+	std::chrono::minutes gameDownloadListUpdateFrequency;
+	std::optional<std::chrono::time_point<std::chrono::system_clock>> cacertLastDownloadedTimestamp;
+	std::chrono::minutes cacertUpdateFrequency;
+	std::optional<std::chrono::time_point<std::chrono::system_clock>> timeZoneDataLastDownloadedTimestamp;
+	std::chrono::minutes timeZoneDataUpdateFrequency;
+
 	std::map<std::string, std::string> fileETags;
 
 private:
