@@ -2869,7 +2869,7 @@ bool ModManager::createDOSBoxTemplateScriptFile(GameType gameType, const std::st
 	std::string templateScriptFilePath(Utilities::joinPaths(directoryPath, templateScriptFileName));
 
 	if(std::filesystem::is_regular_file(std::filesystem::path(templateScriptFilePath)) && !overwrite) {
-		spdlog::debug("'{}' DOSBox template script already exists at '{}', specify overwrite to replace.", templateScriptFilePath);
+		spdlog::debug("'{}' DOSBox template script already exists at '{}', specify overwrite to replace.", magic_enum::enum_name(gameType), templateScriptFilePath);
 		return false;
 	}
 
