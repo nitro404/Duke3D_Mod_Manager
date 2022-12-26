@@ -14,6 +14,23 @@ const char GameConfiguration::SECTION_NAME_START_CHARACTER = '[';
 const char GameConfiguration::SECTION_NAME_END_CHARACTER = ']';
 const char GameConfiguration::ASSIGNMENT_CHARACTER = '=';
 const char GameConfiguration::EMPTY_VALUE_CHARACTER = '~';
+const std::string GameConfiguration::WEAPON_KEY_DEFINITION_ENTRY_NAME_PREFIX("Weapon_");
+const std::string GameConfiguration::COMBAT_MACRO_ENTRY_NAME_PREFIX("CommbatMacro#");
+const std::string GameConfiguration::PHONE_NAME_ENTRY_NAME_PREFIX("PhoneName#");
+const std::string GameConfiguration::PHONE_NUMBER_ENTRY_NAME_PREFIX("PhoneNumber#");
+
+const std::array<std::string, 10> GameConfiguration::DEFAULT_COMBAT_MACROS = {
+	"An inspiration for birth control.",
+	"You're gonna die for that!",
+	"It hurts to be you.",
+	"Lucky Son of a Bitch.",
+	"Hmmm....Payback time.",
+	"You bottom dwelling scum sucker.",
+	"Damn, you're ugly.",
+	"Ha ha ha...Wasted!",
+	"You suck!",
+	"AARRRGHHHHH!!!"
+};
 
 bool GameConfiguration::NameComparator::operator () (const std::string & nameA, const std::string & nameB) const {
 	return std::lexicographical_compare(nameA.begin(), nameA.end(), nameB.begin(), nameB.end(), [](unsigned char a, unsigned char b) {

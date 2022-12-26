@@ -222,6 +222,11 @@ public:
 	static const char SECTION_NAME_END_CHARACTER;
 	static const char ASSIGNMENT_CHARACTER;
 	static const char EMPTY_VALUE_CHARACTER;
+	static const std::string WEAPON_KEY_DEFINITION_ENTRY_NAME_PREFIX;
+	static const std::string COMBAT_MACRO_ENTRY_NAME_PREFIX;
+	static const std::string PHONE_NAME_ENTRY_NAME_PREFIX;
+	static const std::string PHONE_NUMBER_ENTRY_NAME_PREFIX;
+	static const std::array<std::string, 10> DEFAULT_COMBAT_MACROS;
 
 private:
 	void updateParent();

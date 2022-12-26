@@ -4,6 +4,8 @@
 
 #include <Utilities/StringUtilities.h>
 
+#include <fmt/core.h>
+
 #include <sstream>
 
 std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfiguration(const std::string & gameName) {
@@ -97,16 +99,11 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 	keyDefinitionsSection->addMultiStringEntry("Strafe_Right", ".", "");
 	keyDefinitionsSection->addMultiStringEntry("Aim_Up", "Home", "KPad7");
 	keyDefinitionsSection->addMultiStringEntry("Aim_Down", "End", "Kpad1");
-	keyDefinitionsSection->addMultiStringEntry("Weapon_1", "1", "");
-	keyDefinitionsSection->addMultiStringEntry("Weapon_2", "2", "");
-	keyDefinitionsSection->addMultiStringEntry("Weapon_3", "3", "");
-	keyDefinitionsSection->addMultiStringEntry("Weapon_4", "4", "");
-	keyDefinitionsSection->addMultiStringEntry("Weapon_5", "5", "");
-	keyDefinitionsSection->addMultiStringEntry("Weapon_6", "6", "");
-	keyDefinitionsSection->addMultiStringEntry("Weapon_7", "7", "");
-	keyDefinitionsSection->addMultiStringEntry("Weapon_8", "8", "");
-	keyDefinitionsSection->addMultiStringEntry("Weapon_9", "9", "");
-	keyDefinitionsSection->addMultiStringEntry("Weapon_10", "0", "");
+
+	for(size_t i = 1; i <= 10; i++) {
+		keyDefinitionsSection->addMultiStringEntry(fmt::format("{}{}", WEAPON_KEY_DEFINITION_ENTRY_NAME_PREFIX, i), fmt::format("{}", i % 10) , "");
+	}
+
 	keyDefinitionsSection->addMultiStringEntry("Inventory", "Enter", "KpdEnt");
 	keyDefinitionsSection->addMultiStringEntry("Inventory_Left", "[", "");
 	keyDefinitionsSection->addMultiStringEntry("Inventory_Right", "]", "");
@@ -239,50 +236,17 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 
 	communicationSetupSection->addStringEntry("PhoneNumber", "");
 	communicationSetupSection->addIntegerEntry("ConnectType", 0);
-	communicationSetupSection->addStringEntry("CommbatMacro#0", "An inspiration for birth control.");
-	communicationSetupSection->addStringEntry("CommbatMacro#1", "You're gonna die for that!");
-	communicationSetupSection->addStringEntry("CommbatMacro#2", "It hurts to be you.");
-	communicationSetupSection->addStringEntry("CommbatMacro#3", "Lucky Son of a Bitch.");
-	communicationSetupSection->addStringEntry("CommbatMacro#4", "Hmmm....Payback time.");
-	communicationSetupSection->addStringEntry("CommbatMacro#5", "You bottom dwelling scum sucker.");
-	communicationSetupSection->addStringEntry("CommbatMacro#6", "Damn, you're ugly.");
-	communicationSetupSection->addStringEntry("CommbatMacro#7", "Ha ha ha...Wasted!");
-	communicationSetupSection->addStringEntry("CommbatMacro#8", "You suck!");
-	communicationSetupSection->addStringEntry("CommbatMacro#9", "AARRRGHHHHH!!!");
-	communicationSetupSection->addStringEntry("PhoneName#0", "");
-	communicationSetupSection->addStringEntry("PhoneNumber#0", "");
-	communicationSetupSection->addStringEntry("PhoneName#1", "");
-	communicationSetupSection->addStringEntry("PhoneNumber#1", "");
-	communicationSetupSection->addStringEntry("PhoneName#2", "");
-	communicationSetupSection->addStringEntry("PhoneNumber#2", "");
-	communicationSetupSection->addStringEntry("PhoneName#3", "");
-	communicationSetupSection->addStringEntry("PhoneNumber#3", "");
-	communicationSetupSection->addStringEntry("PhoneName#4", "");
-	communicationSetupSection->addStringEntry("PhoneNumber#4", "");
-	communicationSetupSection->addStringEntry("PhoneName#5", "");
-	communicationSetupSection->addStringEntry("PhoneNumber#5", "");
-	communicationSetupSection->addStringEntry("PhoneName#6", "");
-	communicationSetupSection->addStringEntry("PhoneNumber#6", "");
-	communicationSetupSection->addStringEntry("PhoneName#7", "");
-	communicationSetupSection->addStringEntry("PhoneNumber#7", "");
-	communicationSetupSection->addStringEntry("PhoneName#8", "");
-	communicationSetupSection->addStringEntry("PhoneNumber#8", "");
-	communicationSetupSection->addStringEntry("PhoneName#9", "");
-	communicationSetupSection->addStringEntry("PhoneNumber#9", "");
 
-	if(isAtomicEdition) {
-		communicationSetupSection->addStringEntry("PhoneName#10", "");
-		communicationSetupSection->addStringEntry("PhoneNumber#10", "");
-		communicationSetupSection->addStringEntry("PhoneName#11", "");
-		communicationSetupSection->addStringEntry("PhoneNumber#11", "");
-		communicationSetupSection->addStringEntry("PhoneName#12", "");
-		communicationSetupSection->addStringEntry("PhoneNumber#12", "");
-		communicationSetupSection->addStringEntry("PhoneName#13", "");
-		communicationSetupSection->addStringEntry("PhoneNumber#13", "");
-		communicationSetupSection->addStringEntry("PhoneName#14", "");
-		communicationSetupSection->addStringEntry("PhoneNumber#14", "");
-		communicationSetupSection->addStringEntry("PhoneName#15", "");
-		communicationSetupSection->addStringEntry("PhoneNumber#15", "");
+	for(size_t i = 0; i < DEFAULT_COMBAT_MACROS.size(); i++) {
+		communicationSetupSection->addStringEntry(fmt::format("{}{}", COMBAT_MACRO_ENTRY_NAME_PREFIX, i), DEFAULT_COMBAT_MACROS[i]);
+	}
+
+	size_t numberOfPhoneNumbers = isAtomicEdition ? 16 : 10;
+
+	for(size_t i = 0; i < numberOfPhoneNumbers; i++) {
+		communicationSetupSection->addStringEntry(fmt::format("{}{}", PHONE_NAME_ENTRY_NAME_PREFIX, i), "");
+		communicationSetupSection->addStringEntry(fmt::format("{}{}", PHONE_NUMBER_ENTRY_NAME_PREFIX, i), "");
+
 	}
 
 	return gameConfiguration;
