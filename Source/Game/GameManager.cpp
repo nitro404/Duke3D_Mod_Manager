@@ -1,5 +1,6 @@
 #include "GameManager.h"
 
+#include "Configuration/GameConfiguration.h"
 #include "GameDownload.h"
 #include "GameDownloadCollection.h"
 #include "GameDownloadFile.h"
@@ -1355,6 +1356,32 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 				}
 				else {
 					spdlog::error("Failed to crack '{}' game executable at path: '{}'.", gameVersion.getName(), atomicEditionGameExecutablePath);
+				}
+			}
+		}
+
+		if(isRegularVersion || isAtomicEdition) {
+			std::unique_ptr<GameConfiguration> gameConfiguration(GameConfiguration::generateDefaultGameConfiguration(gameVersion.getName()));
+
+			if(gameConfiguration == nullptr) {
+				spdlog::warn("Failed to generate default game configuration.");
+			}
+			else {
+				if(!gameConfiguration->updateForDOSBox()) {
+					spdlog::warn("Failed to update default game configuration for use with DOSBox.");
+				}
+
+				if(!gameConfiguration->updateWithBetterControls()) {
+					spdlog::warn("Failed to update default game configuration with better controls.");
+				}
+
+				std::string gameConfigurationFilePath(Utilities::joinPaths(destinationDirectoryPath, GameConfiguration::DEFAULT_GAME_CONFIGURATION_FILE_NAME));
+
+				if(gameConfiguration->saveTo(gameConfigurationFilePath)) {
+					spdlog::info("Successfully generated and saved default game configuration to file: '{}'.", gameConfigurationFilePath);
+				}
+				else {
+					spdlog::warn("Failed to save default game configuration to file: '{}'.", gameConfigurationFilePath);
 				}
 			}
 		}

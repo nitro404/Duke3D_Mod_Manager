@@ -14,6 +14,7 @@ const char GameConfiguration::SECTION_NAME_START_CHARACTER = '[';
 const char GameConfiguration::SECTION_NAME_END_CHARACTER = ']';
 const char GameConfiguration::ASSIGNMENT_CHARACTER = '=';
 const char GameConfiguration::EMPTY_VALUE_CHARACTER = '~';
+const std::string GameConfiguration::DEFAULT_GAME_CONFIGURATION_FILE_NAME("DUKE3D.CFG");
 const std::string GameConfiguration::SETUP_SECTION_NAME("Setup");
 const std::string GameConfiguration::SETUP_VERSION_ENTRY_NAME("SetupVersion");
 const std::string GameConfiguration::REGULAR_VERSION_SETUP_VERSION("1.3D");

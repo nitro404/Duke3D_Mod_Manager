@@ -234,6 +234,7 @@ public:
 	static const char SECTION_NAME_END_CHARACTER;
 	static const char ASSIGNMENT_CHARACTER;
 	static const char EMPTY_VALUE_CHARACTER;
+	static const std::string DEFAULT_GAME_CONFIGURATION_FILE_NAME;
 	static const std::string SETUP_SECTION_NAME;
 	static const std::string SETUP_VERSION_ENTRY_NAME;
 	static const std::string REGULAR_VERSION_SETUP_VERSION;
