@@ -65,6 +65,7 @@ public:
 	static const char * DEFAULT_CURL_DATA_DIRECTORY_NAME;
 	static const std::chrono::seconds DEFAULT_CONNECTION_TIMEOUT;
 	static const std::chrono::seconds DEFAULT_NETWORK_TIMEOUT;
+	static const std::chrono::seconds DEFAULT_TRANSFER_TIMEOUT;
 	static const char * DEFAULT_API_BASE_URL;
 	static const char * DEFAULT_REMOTE_MODS_LIST_FILE_NAME;
 	static const char * DEFAULT_REMOTE_GAMES_LIST_FILE_NAME;
@@ -115,6 +116,7 @@ public:
 	std::string curlDataDirectoryName;
 	std::chrono::seconds connectionTimeout;
 	std::chrono::seconds networkTimeout;
+	std::chrono::seconds transferTimeout;
 	std::string apiBaseURL;
 	std::string remoteModsListFileName;
 	std::string remoteGamesListFileName;

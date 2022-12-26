@@ -336,7 +336,7 @@ bool DownloadManager::downloadModGameVersion(ModGameVersion * modGameVersion, Ga
 
 	std::shared_ptr<HTTPRequest> request(httpService->createRequest(HTTPRequest::Method::Get, modDownloadRemoteFilePath));
 
-	request->setNetworkTimeout(30min);
+	request->setNetworkTimeout(15s);
 
 	if(!force && cachedModPackageFile != nullptr) {
 		request->setIfNoneMatchETag(cachedModPackageFile->getETag());

@@ -131,7 +131,8 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 		Utilities::joinPaths(settings->dataDirectoryPath, settings->curlDataDirectoryName),
 		settings->apiBaseURL,
 		settings->connectionTimeout,
-		settings->networkTimeout
+		settings->networkTimeout,
+		settings->transferTimeout
 	};
 
 	HTTPService * httpService = HTTPService::getInstance();
@@ -294,6 +295,7 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 	properties["apiBaseURL"] = settings->apiBaseURL;
 	properties["connectionTimeout"] = settings->connectionTimeout.count();
 	properties["networkTimeout"] = settings->networkTimeout.count();
+	properties["transferTimeout"] = settings->transferTimeout.count();
 
 	segmentAnalytics->track("Application Initialized", properties);
 
