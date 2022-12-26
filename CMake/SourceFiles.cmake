@@ -2,6 +2,9 @@ include_guard()
 
 set(SOURCE_FILES
 	Main.cpp
+	Configuration/GameConfiguration.cpp
+	Configuration/GameConfigurationEntry.cpp
+	Configuration/GameConfigurationSection.cpp
 	Download/CachedFile.cpp
 	Download/CachedPackageFile.cpp
 	Download/DownloadCache.cpp
@@ -47,6 +50,7 @@ set(SOURCE_FILES
 )
 
 set(HEADER_FILES
+	Configuration/GameConfiguration.h
 	Download/CachedFile.h
 	Download/CachedPackageFile.h
 	Download/DownloadCache.h
