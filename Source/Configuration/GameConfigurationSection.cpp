@@ -342,6 +342,96 @@ bool GameConfiguration::Section::addEntry(std::shared_ptr<Entry> entry) {
 	return m_parentGameConfiguration->addEntryToSection(entry, *this);
 }
 
+bool GameConfiguration::Section::addEmptyEntry(const std::string & entryName) {
+	if(!Entry::isNameValid(entryName)) {
+		return false;
+	}
+
+	std::shared_ptr<Entry> entry(std::make_shared<Entry>(entryName));
+	entry->setEmpty();
+
+	if(!entry->isValid(false)) {
+		return false;
+	}
+
+	return addEntry(entry);
+}
+
+bool GameConfiguration::Section::addIntegerEntry(const std::string & entryName, uint64_t value) {
+	if(!Entry::isNameValid(entryName)) {
+		return false;
+	}
+
+	std::shared_ptr<Entry> entry(std::make_shared<Entry>(entryName));
+	entry->setIntegerValue(value);
+
+	if(!entry->isValid(false)) {
+		return false;
+	}
+
+	return addEntry(entry);
+}
+
+bool GameConfiguration::Section::addHexadecimalEntryUsingDecimal(const std::string & entryName, uint64_t value) {
+	if(!Entry::isNameValid(entryName)) {
+		return false;
+	}
+
+	std::shared_ptr<Entry> entry(std::make_shared<Entry>(entryName));
+	entry->setHexadecimalValueFromDecimal(value);
+
+	if(!entry->isValid(false)) {
+		return false;
+	}
+
+	return addEntry(entry);
+}
+
+bool GameConfiguration::Section::addStringEntry(const std::string & entryName, const std::string & value) {
+	if(!Entry::isNameValid(entryName)) {
+		return false;
+	}
+
+	std::shared_ptr<Entry> entry(std::make_shared<Entry>(entryName));
+	entry->setStringValue(value);
+
+	if(!entry->isValid(false)) {
+		return false;
+	}
+
+	return addEntry(entry);
+}
+
+bool GameConfiguration::Section::addMultiStringEntry(const std::string & entryName, const std::string & valueA, const std::string & valueB) {
+	if(!Entry::isNameValid(entryName)) {
+		return false;
+	}
+
+	std::shared_ptr<Entry> entry(std::make_shared<Entry>(entryName));
+	entry->setMultiStringValue(valueA, valueB);
+
+	if(!entry->isValid(false)) {
+		return false;
+	}
+
+	return addEntry(entry);
+}
+
+bool GameConfiguration::Section::addMultiStringEntry(const std::string & entryName, const std::vector<std::string> & values) {
+	if(!Entry::isNameValid(entryName)) {
+		return false;
+	}
+
+	std::shared_ptr<Entry> entry(std::make_shared<Entry>(entryName));
+	entry->setMultiStringValue(values);
+
+	if(!entry->isValid(false)) {
+		return false;
+	}
+
+	return addEntry(entry);
+}
+
 bool GameConfiguration::Section::removeEntry(size_t index) {
 	if(m_parentGameConfiguration == nullptr || index >= m_entries.size()) {
 		return false;
@@ -485,7 +575,11 @@ std::unique_ptr<GameConfiguration::Section> GameConfiguration::Section::parseFro
 }
 
 bool GameConfiguration::Section::isValid(bool validateParents) const {
-	if(!isNameValid(m_name) || m_parentGameConfiguration == nullptr) {
+	if(!isNameValid(m_name)) {
+		return false;
+	}
+
+	if(validateParents && m_parentGameConfiguration == nullptr) {
 		return false;
 	}
 

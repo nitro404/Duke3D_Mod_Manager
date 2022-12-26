@@ -4,6 +4,7 @@ set(SOURCE_FILES
 	Main.cpp
 	Configuration/GameConfiguration.cpp
 	Configuration/GameConfigurationEntry.cpp
+	Configuration/GameConfigurationGenerator.cpp
 	Configuration/GameConfigurationSection.cpp
 	Download/CachedFile.cpp
 	Download/CachedPackageFile.cpp

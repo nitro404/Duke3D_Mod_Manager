@@ -128,6 +128,14 @@ public:
 		std::shared_ptr<Entry> getEntry(size_t index) const;
 		std::shared_ptr<Entry> getEntryWithName(const std::string & entryName) const;
 		bool addEntry(std::shared_ptr<Entry> entry);
+		bool addEmptyEntry(const std::string & entryName);
+		bool addIntegerEntry(const std::string & entryName, uint64_t value);
+		bool addHexadecimalEntryUsingDecimal(const std::string & entryName, uint64_t value);
+		bool addStringEntry(const std::string & entryName, const std::string & value);
+		bool addMultiStringEntry(const std::string & entryName, const std::string & valueA, const std::string & valueB);
+		template <size_t N>
+		bool addMultiStringEntry(const std::string & entryName, const std::array<std::string, N> & values);
+		bool addMultiStringEntry(const std::string & entryName, const std::vector<std::string> & values);
 		bool removeEntry(size_t index);
 		bool removeEntry(const Entry & entry);
 		bool removeEntryWithName(const std::string & entryName);
@@ -194,6 +202,8 @@ public:
 	bool removeSectionWithName(const std::string & sectionName);
 	void clearSections();
 
+	static std::unique_ptr<GameConfiguration> generateDefaultGameConfiguration(const std::string & gameName);
+
 	std::string toString() const;
 	static std::unique_ptr<GameConfiguration> parseFrom(const std::string & data);
 
@@ -232,6 +242,22 @@ void GameConfiguration::Entry::setMultiStringValue(const std::array<std::string,
 	}
 
 	m_value = multiStringValue;
+}
+
+template <size_t N>
+bool GameConfiguration::Section::addMultiStringEntry(const std::string & entryName, const std::array<std::string, N> & values) {
+	if(!Entry::isNameValid(entryName)) {
+		return false;
+	}
+
+	std::shared_ptr<Entry> entry(std::make_shared<Entry>(entryName));
+	entry->setMultiStringValue(values);
+
+	if(!entry->isValid(false)) {
+		return false;
+	}
+
+	return addEntry(entry);
 }
 
 #endif // _GAME_CONFIGURATION_H_
