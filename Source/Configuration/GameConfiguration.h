@@ -136,6 +136,14 @@ public:
 		template <size_t N>
 		bool addMultiStringEntry(const std::string & entryName, const std::array<std::string, N> & values);
 		bool addMultiStringEntry(const std::string & entryName, const std::vector<std::string> & values);
+		bool setEntryEmptyValue(const std::string & entryName, bool create = false);
+		bool setEntryIntegerValue(const std::string & entryName, uint64_t value, bool create = false);
+		bool setEntryHexadecimalValueUsingDecimal(const std::string & entryName, uint64_t value, bool create = false);
+		bool setEntryStringValue(const std::string & entryName, const std::string & value, bool create = false);
+		bool setEntryMultiStringValue(const std::string & entryName, const std::string & valueA, const std::string & valueB, bool create = false);
+		template <size_t N>
+		bool setEntryMultiStringValue(const std::string & entryName, const std::array<std::string, N> & values, bool create = false);
+		bool setEntryMultiStringValue(const std::string & entryName, const std::vector<std::string> & values, bool create = false);
 		bool removeEntry(size_t index);
 		bool removeEntry(const Entry & entry);
 		bool removeEntryWithName(const std::string & entryName);
@@ -155,6 +163,7 @@ public:
 
 	private:
 		static std::string formatComments(const std::string & unformattedComments);
+		std::shared_ptr<Entry> getOrCreateEntry(const std::string & entryName, bool create, bool & exists);
 		void updateParent();
 
 		std::string m_name;
@@ -203,6 +212,7 @@ public:
 	void clearSections();
 
 	static std::unique_ptr<GameConfiguration> generateDefaultGameConfiguration(const std::string & gameName);
+	bool updateForDOSBox();
 
 	std::string toString() const;
 	static std::unique_ptr<GameConfiguration> parseFrom(const std::string & data);
@@ -222,6 +232,24 @@ public:
 	static const char SECTION_NAME_END_CHARACTER;
 	static const char ASSIGNMENT_CHARACTER;
 	static const char EMPTY_VALUE_CHARACTER;
+	static const std::string SETUP_SECTION_NAME;
+	static const std::string SETUP_VERSION_ENTRY_NAME;
+	static const std::string REGULAR_VERSION_SETUP_VERSION;
+	static const std::string ATOMIC_EDITION_SETUP_VERSION;
+	static const std::string SCREEN_SETUP_SECTION_NAME;
+	static const std::string SCREEN_MODE_ENTRY_NAME;
+	static const std::string SCREEN_WIDTH_ENTRY_NAME;
+	static const std::string SCREEN_HEIGHT_ENTRY_NAME;
+	static const std::string SCREEN_MODE_ENTRY_NAME;
+	static const std::string SCREEN_WIDTH_ENTRY_NAME;
+	static const std::string SCREEN_HEIGHT_ENTRY_NAME;
+	static const std::string SOUND_SETUP_SECTION_NAME;
+	static const std::string FX_DEVICE_ENTRY_NAME;
+	static const std::string MUSIC_DEVICE_ENTRY_NAME;
+	static const std::string FX_VOLUME_ENTRY_NAME;
+	static const std::string MUSIC_VOLUME_ENTRY_NAME;
+	static const std::string NUM_BITS_ENTRY_NAME;
+	static const std::string MIX_RATE_ENTRY_NAME;
 	static const std::string WEAPON_KEY_DEFINITION_ENTRY_NAME_PREFIX;
 	static const std::string COMBAT_MACRO_ENTRY_NAME_PREFIX;
 	static const std::string PHONE_NAME_ENTRY_NAME_PREFIX;
@@ -263,6 +291,20 @@ bool GameConfiguration::Section::addMultiStringEntry(const std::string & entryNa
 	}
 
 	return addEntry(entry);
+}
+
+template <size_t N>
+bool GameConfiguration::Section::setEntryMultiStringValue(const std::string & entryName, const std::array<std::string, N> & values, bool create) {
+	bool entryExists = false;
+	std::shared_ptr<Entry> entry(getOrCreateEntry(entryName, create, entryExists));
+
+	entry->setMultiStringValue(values);
+
+	if(!entryExists) {
+		return addEntry(entry);
+	}
+
+	return true;
 }
 
 #endif // _GAME_CONFIGURATION_H_

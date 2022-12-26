@@ -133,7 +133,7 @@ static bool removeComment(std::string & originalComments, size_t index) {
 }
 
 GameConfiguration::Section::Section(const std::string & name, const std::string & precedingComments, const std::string & followingComments)
-	: m_name(Utilities::trimString(name))
+	: m_name(name)
 	, m_precedingComments(precedingComments)
 	, m_followingComments(followingComments)
 	, m_parentGameConfiguration(nullptr) { }
@@ -430,6 +430,109 @@ bool GameConfiguration::Section::addMultiStringEntry(const std::string & entryNa
 	}
 
 	return addEntry(entry);
+}
+
+std::shared_ptr<GameConfiguration::Entry> GameConfiguration::Section::getOrCreateEntry(const std::string & entryName, bool create, bool & exists) {
+	if(!Entry::isNameValid(entryName)) {
+		return nullptr;
+	}
+
+	std::shared_ptr<Entry> entry(getEntryWithName(entryName));
+	bool entryExists = entry != nullptr;
+
+	if(!entryExists) {
+		if(!create) {
+			return nullptr;
+		}
+
+		entry = std::make_shared<Entry>(entryName);
+	}
+
+	if(!entry->isValid(false)) {
+		return nullptr;
+	}
+
+	exists = entryExists;
+
+	return entry;
+}
+
+bool GameConfiguration::Section::setEntryEmptyValue(const std::string & entryName, bool create) {
+	bool entryExists = false;
+	std::shared_ptr<Entry> entry(getOrCreateEntry(entryName, create, entryExists));
+
+	entry->setEmpty();
+
+	if(!entryExists) {
+		return addEntry(entry);
+	}
+
+	return true;
+}
+
+bool GameConfiguration::Section::setEntryIntegerValue(const std::string & entryName, uint64_t value, bool create) {
+	bool entryExists = false;
+	std::shared_ptr<Entry> entry(getOrCreateEntry(entryName, create, entryExists));
+
+	entry->setIntegerValue(value);
+
+	if(!entryExists) {
+		return addEntry(entry);
+	}
+
+	return true;
+}
+
+bool GameConfiguration::Section::setEntryHexadecimalValueUsingDecimal(const std::string & entryName, uint64_t value, bool create) {
+	bool entryExists = false;
+	std::shared_ptr<Entry> entry(getOrCreateEntry(entryName, create, entryExists));
+
+	entry->setHexadecimalValueFromDecimal(value);
+
+	if(!entryExists) {
+		return addEntry(entry);
+	}
+
+	return true;
+}
+
+bool GameConfiguration::Section::setEntryStringValue(const std::string & entryName, const std::string & value, bool create) {
+	bool entryExists = false;
+	std::shared_ptr<Entry> entry(getOrCreateEntry(entryName, create, entryExists));
+
+	entry->setStringValue(value);
+
+	if(!entryExists) {
+		return addEntry(entry);
+	}
+
+	return true;
+}
+
+bool GameConfiguration::Section::setEntryMultiStringValue(const std::string & entryName, const std::string & valueA, const std::string & valueB, bool create) {
+	bool entryExists = false;
+	std::shared_ptr<Entry> entry(getOrCreateEntry(entryName, create, entryExists));
+
+	entry->setMultiStringValue(valueA, valueB);
+
+	if(!entryExists) {
+		return addEntry(entry);
+	}
+
+	return true;
+}
+
+bool GameConfiguration::Section::setEntryMultiStringValue(const std::string & entryName, const std::vector<std::string> & values, bool create) {
+	bool entryExists = false;
+	std::shared_ptr<Entry> entry(getOrCreateEntry(entryName, create, entryExists));
+
+	entry->setMultiStringValue(values);
+
+	if(!entryExists) {
+		return addEntry(entry);
+	}
+
+	return true;
 }
 
 bool GameConfiguration::Section::removeEntry(size_t index) {

@@ -19,7 +19,7 @@ const std::string & getAssignmentString() {
 }
 
 GameConfiguration::Entry::Entry(const std::string & name)
-	: m_name(Utilities::trimString(name))
+	: m_name(name)
 	, m_type(Type::Empty)
 	, m_parentSection(nullptr)
 	, m_parentGameConfiguration(nullptr) { }

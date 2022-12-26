@@ -5,30 +5,29 @@
 #include <Utilities/StringUtilities.h>
 
 #include <fmt/core.h>
+#include <spdlog/spdlog.h>
 
 #include <sstream>
 
 std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfiguration(const std::string & gameName) {
-	static const std::string SETUP_VERSION_ENTRY_NAME("SetupVersion");
-
 	bool isRegularVersion = Utilities::areStringsEqual(gameName, GameVersion::ORIGINAL_REGULAR_VERSION.getName());
 	bool isAtomicEdition = Utilities::areStringsEqual(gameName, GameVersion::ORIGINAL_ATOMIC_EDITION.getName());
 
 	std::unique_ptr<GameConfiguration> gameConfiguration(std::make_unique<GameConfiguration>());
 
 	// create setup section
-	std::shared_ptr<Section> setupSection(std::make_shared<Section>("Setup", "", "Setup File for Duke Nukem 3D"));
+	std::shared_ptr<Section> setupSection(std::make_shared<Section>(SETUP_SECTION_NAME, "", "Setup File for Duke Nukem 3D"));
 	gameConfiguration->addSection(setupSection);
 
 	if(isRegularVersion) {
-		setupSection->addStringEntry(SETUP_VERSION_ENTRY_NAME, "1.3D");
+		setupSection->addStringEntry(SETUP_VERSION_ENTRY_NAME, REGULAR_VERSION_SETUP_VERSION);
 	}
 	else if(isAtomicEdition) {
-		setupSection->addStringEntry(SETUP_VERSION_ENTRY_NAME, "1.4");
+		setupSection->addStringEntry(SETUP_VERSION_ENTRY_NAME, ATOMIC_EDITION_SETUP_VERSION);
 	}
 
 	// create screen setup section
-	std::shared_ptr<Section> screenSetupSection(std::make_shared<Section>("Screen Setup", " \n "));
+	std::shared_ptr<Section> screenSetupSection(std::make_shared<Section>(SCREEN_SETUP_SECTION_NAME, " \n "));
 	gameConfiguration->addSection(screenSetupSection);
 
 	std::stringstream screenSetupSectionFollowingCommentsStream;
@@ -51,22 +50,22 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 	screenSetupSectionFollowingCommentsStream << " ";
 	screenSetupSection->setFollowingComments(screenSetupSectionFollowingCommentsStream.str());
 
-	screenSetupSection->addIntegerEntry("ScreenMode", 2);
-	screenSetupSection->addIntegerEntry("ScreenWidth", 320);
-	screenSetupSection->addIntegerEntry("ScreenHeight", 200);
+	screenSetupSection->addIntegerEntry(SCREEN_MODE_ENTRY_NAME, 2);
+	screenSetupSection->addIntegerEntry(SCREEN_WIDTH_ENTRY_NAME, 320);
+	screenSetupSection->addIntegerEntry(SCREEN_HEIGHT_ENTRY_NAME, 200);
 
 	// create sound setup section
-	std::shared_ptr<Section> soundSetupSection(std::make_shared<Section>("Sound Setup", " \n ", " \n "));
+	std::shared_ptr<Section> soundSetupSection(std::make_shared<Section>(SOUND_SETUP_SECTION_NAME, " \n ", " \n "));
 	gameConfiguration->addSection(soundSetupSection);
 
-	soundSetupSection->addIntegerEntry("FXDevice", 13);
-	soundSetupSection->addIntegerEntry("MusicDevice", 13);
-	soundSetupSection->addIntegerEntry("FXVolume", 220);
-	soundSetupSection->addIntegerEntry("MusicVolume", 200);
+	soundSetupSection->addIntegerEntry(FX_DEVICE_ENTRY_NAME, 13);
+	soundSetupSection->addIntegerEntry(MUSIC_DEVICE_ENTRY_NAME, 13);
+	soundSetupSection->addIntegerEntry(FX_VOLUME_ENTRY_NAME, 220);
+	soundSetupSection->addIntegerEntry(MUSIC_VOLUME_ENTRY_NAME, 200);
 	soundSetupSection->addIntegerEntry("NumVoices", 8);
 	soundSetupSection->addIntegerEntry("NumChannels", 2);
-	soundSetupSection->addIntegerEntry("NumBits", 1);
-	soundSetupSection->addIntegerEntry("MixRate", 11000);
+	soundSetupSection->addIntegerEntry(NUM_BITS_ENTRY_NAME, 1);
+	soundSetupSection->addIntegerEntry(MIX_RATE_ENTRY_NAME, 11000);
 	soundSetupSection->addHexadecimalEntryUsingDecimal("MidiPort", 0x330);
 	soundSetupSection->addHexadecimalEntryUsingDecimal("BlasterAddress", 0x220);
 	soundSetupSection->addIntegerEntry("BlasterType", 6);
@@ -250,4 +249,75 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 	}
 
 	return gameConfiguration;
+}
+
+bool GameConfiguration::updateForDOSBox() {
+	std::shared_ptr<Section> setupSection(getSectionWithName(SETUP_SECTION_NAME));
+
+	if(setupSection == nullptr) {
+		return false;
+	}
+
+	std::shared_ptr<Entry> setupVersionEntry(setupSection->getEntryWithName(SETUP_VERSION_ENTRY_NAME));
+
+	if(setupVersionEntry == nullptr || !setupVersionEntry->isString()) {
+		return false;
+	}
+
+	bool isRegularVersion = false;
+	bool isAtomicEdition = false;
+
+	if(Utilities::areStringsEqual(setupVersionEntry->getStringValue(), REGULAR_VERSION_SETUP_VERSION)) {
+		isRegularVersion = true;
+	}
+	else if(Utilities::areStringsEqual(setupVersionEntry->getStringValue(), ATOMIC_EDITION_SETUP_VERSION)) {
+		isAtomicEdition = true;
+	}
+	else {
+		spdlog::warn("Unexpected setup version '{}', expected '{}' or '{}'. Assuming configuration file version is for Atomic Edition / Plutonium Pak.", setupVersionEntry->getStringValue(), REGULAR_VERSION_SETUP_VERSION, ATOMIC_EDITION_SETUP_VERSION);
+
+		isAtomicEdition = true;
+	}
+
+	std::shared_ptr<Section> screenSetupSection(getSectionWithName(SCREEN_SETUP_SECTION_NAME));
+
+	if(screenSetupSection == nullptr) {
+		return false;
+	}
+
+	std::shared_ptr<Section> soundSetupSection(getSectionWithName(SOUND_SETUP_SECTION_NAME));
+
+	if(soundSetupSection == nullptr) {
+		return false;
+	}
+
+	if(!screenSetupSection->setEntryIntegerValue(SCREEN_MODE_ENTRY_NAME, 1, true)) { return false; }
+	if(!screenSetupSection->setEntryIntegerValue(SCREEN_WIDTH_ENTRY_NAME, 800, true)) { return false; }
+	if(!screenSetupSection->setEntryIntegerValue(SCREEN_HEIGHT_ENTRY_NAME, 600, true)) { return false; }
+	if(!screenSetupSection->setEntryIntegerValue("Shadows", 1, true)) { return false; }
+
+	if(isAtomicEdition) {
+		if(!screenSetupSection->setEntryStringValue("Password", "", true)) { return false; }
+	}
+	else {
+		if(!screenSetupSection->setEntryStringValue("Environment", "", true)) { return false; }
+	}
+
+	if(!screenSetupSection->setEntryIntegerValue("Detail", 1, true)) { return false; }
+	if(!screenSetupSection->setEntryIntegerValue("Tilt", 1, true)) { return false; }
+	if(!screenSetupSection->setEntryIntegerValue("Messages", 1, true)) { return false; }
+	if(!screenSetupSection->setEntryIntegerValue("Out", 0, true)) { return false; }
+	if(!screenSetupSection->setEntryIntegerValue("ScreenSize", 4, true)) { return false; }
+	if(!screenSetupSection->setEntryIntegerValue("ScreenGamma", 0, true)) { return false; }
+
+	if(!soundSetupSection->setEntryIntegerValue(FX_DEVICE_ENTRY_NAME, 0, true)) { return false; }
+	if(!soundSetupSection->setEntryIntegerValue(MUSIC_DEVICE_ENTRY_NAME, 0, true)) { return false; }
+	if(!soundSetupSection->setEntryIntegerValue(NUM_BITS_ENTRY_NAME, 16, true)) { return false; }
+	if(!soundSetupSection->setEntryIntegerValue(MIX_RATE_ENTRY_NAME, isAtomicEdition ? 44000 : 22000, true)) { return false; }
+	if(!soundSetupSection->setEntryIntegerValue("SoundToggle", 1, true)) { return false; }
+	if(!soundSetupSection->setEntryIntegerValue("VoiceToggle", 1, true)) { return false; }
+	if(!soundSetupSection->setEntryIntegerValue("AmbienceToggle", 1, true)) { return false; }
+	if(!soundSetupSection->setEntryIntegerValue("MusicToggle", 1, true)) { return false; }
+
+	return true;
 }
