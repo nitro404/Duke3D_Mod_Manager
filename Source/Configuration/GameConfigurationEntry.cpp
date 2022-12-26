@@ -195,15 +195,29 @@ void GameConfiguration::Entry::setStringValue(const std::string & value) {
 	m_value = value;
 }
 
-bool GameConfiguration::Entry::setMultiStringValue(const std::string value, size_t index) {
-	if(!std::holds_alternative<std::vector<std::string>>(m_value)) {
-		return false;
+bool GameConfiguration::Entry::setMultiStringValue(const std::string & value, size_t index, bool resizeValue) {
+	if(m_type != Type::MultiString) {
+		m_type = Type::MultiString;
+		m_value = std::vector<std::string>();
 	}
 
 	std::vector<std::string> & multiStringValue = std::get<std::vector<std::string>>(m_value);
 
 	if(index >= multiStringValue.size()) {
-		return false;
+		if(!resizeValue) {
+			return false;
+		}
+		else {
+			if(index == std::numeric_limits<size_t>::max()) {
+				return false;
+			}
+
+			size_t numberOfValuesToInsert = multiStringValue.size() - index + 1;
+
+			for(size_t i = 0; i < numberOfValuesToInsert; i++) {
+				multiStringValue.push_back("");
+			}
+		}
 	}
 
 	multiStringValue[index] = value;

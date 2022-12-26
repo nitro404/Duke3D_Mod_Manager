@@ -63,7 +63,7 @@ public:
 		void setIntegerValue(int64_t value);
 		void setHexadecimalValueFromDecimal(int64_t value);
 		void setStringValue(const std::string & value);
-		bool setMultiStringValue(const std::string value, size_t index);
+		bool setMultiStringValue(const std::string & value, size_t index, bool resizeValue = false);
 		void setMultiStringValue(const std::string & valueA, const std::string & valueB);
 		template <size_t N>
 		void setMultiStringValue(const std::array<std::string, N> & value);
@@ -136,14 +136,15 @@ public:
 		template <size_t N>
 		bool addMultiStringEntry(const std::string & entryName, const std::array<std::string, N> & values);
 		bool addMultiStringEntry(const std::string & entryName, const std::vector<std::string> & values);
-		bool setEntryEmptyValue(const std::string & entryName, bool create = false);
-		bool setEntryIntegerValue(const std::string & entryName, uint64_t value, bool create = false);
-		bool setEntryHexadecimalValueUsingDecimal(const std::string & entryName, uint64_t value, bool create = false);
-		bool setEntryStringValue(const std::string & entryName, const std::string & value, bool create = false);
-		bool setEntryMultiStringValue(const std::string & entryName, const std::string & valueA, const std::string & valueB, bool create = false);
+		bool setEntryEmptyValue(const std::string & entryName, bool createEntry = false);
+		bool setEntryIntegerValue(const std::string & entryName, uint64_t value, bool createEntry = false);
+		bool setEntryHexadecimalValueUsingDecimal(const std::string & entryName, uint64_t value, bool createEntry = false);
+		bool setEntryStringValue(const std::string & entryName, const std::string & value, bool createEntry = false);
+		bool setEntryMultiStringValue(const std::string & entryName, const std::string & value, size_t index, bool resizeValue = false, bool createEntry = false);
+		bool setEntryMultiStringValue(const std::string & entryName, const std::string & valueA, const std::string & valueB, bool createEntry = false);
 		template <size_t N>
-		bool setEntryMultiStringValue(const std::string & entryName, const std::array<std::string, N> & values, bool create = false);
-		bool setEntryMultiStringValue(const std::string & entryName, const std::vector<std::string> & values, bool create = false);
+		bool setEntryMultiStringValue(const std::string & entryName, const std::array<std::string, N> & values, bool createEntry = false);
+		bool setEntryMultiStringValue(const std::string & entryName, const std::vector<std::string> & values, bool createEntry = false);
 		bool removeEntry(size_t index);
 		bool removeEntry(const Entry & entry);
 		bool removeEntryWithName(const std::string & entryName);
@@ -213,6 +214,7 @@ public:
 
 	static std::unique_ptr<GameConfiguration> generateDefaultGameConfiguration(const std::string & gameName);
 	bool updateForDOSBox();
+	bool updateWithBetterControls();
 
 	std::string toString() const;
 	static std::unique_ptr<GameConfiguration> parseFrom(const std::string & data);
@@ -250,13 +252,32 @@ public:
 	static const std::string MUSIC_VOLUME_ENTRY_NAME;
 	static const std::string NUM_BITS_ENTRY_NAME;
 	static const std::string MIX_RATE_ENTRY_NAME;
+	static const std::string KEY_DEFINITIONS_SECTION_NAME;
+	static const std::string MOVE_FORWARD_ENTRY_NAME;
+	static const std::string MOVE_BACKWARD_ENTRY_NAME;
+	static const std::string TURN_LEFT_ENTRY_NAME;
+	static const std::string TURN_RIGHT_ENTRY_NAME;
+	static const std::string FIRE_ENTRY_NAME;
+	static const std::string OPEN_ENTRY_NAME;
+	static const std::string JUMP_ENTRY_NAME;
+	static const std::string STRAFE_LEFT_ENTRY_NAME;
+	static const std::string STRAFE_RIGHT_ENTRY_NAME;
+	static const std::string SHOW_OPPONENTS_WEAPON_ENTRY_NAME;
+	static const std::string MAP_FOLLOW_MODE_ENTRY_NAME;
 	static const std::string WEAPON_KEY_DEFINITION_ENTRY_NAME_PREFIX;
+	static const std::string CONTROLS_SECTION_NAME;
+	static const std::string MOUSE_AIMING_FLIPPED_ENTRY_NAME;
+	static const std::string MOUSE_BUTTON_1_ENTRY_NAME;
+	static const std::string MOUSE_BUTTON_CLICKED_1_ENTRY_NAME;
+	static const std::string MOUSE_BUTTON_2_ENTRY_NAME;
 	static const std::string COMBAT_MACRO_ENTRY_NAME_PREFIX;
 	static const std::string PHONE_NAME_ENTRY_NAME_PREFIX;
 	static const std::string PHONE_NUMBER_ENTRY_NAME_PREFIX;
+	static const std::string MISC_SECTION_NAME;
 	static const std::array<std::string, 10> DEFAULT_COMBAT_MACROS;
 
 private:
+	bool determineGameVersion(bool & isRegularVersion, bool & isAtomicEdition);
 	void updateParent();
 
 	std::string m_filePath;

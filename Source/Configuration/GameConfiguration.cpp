@@ -29,10 +29,28 @@ const std::string GameConfiguration::FX_VOLUME_ENTRY_NAME("FXVolume");
 const std::string GameConfiguration::MUSIC_VOLUME_ENTRY_NAME("MusicVolume");
 const std::string GameConfiguration::NUM_BITS_ENTRY_NAME("NumBits");
 const std::string GameConfiguration::MIX_RATE_ENTRY_NAME("MixRate");
+const std::string GameConfiguration::KEY_DEFINITIONS_SECTION_NAME("KeyDefinitions");
 const std::string GameConfiguration::WEAPON_KEY_DEFINITION_ENTRY_NAME_PREFIX("Weapon_");
 const std::string GameConfiguration::COMBAT_MACRO_ENTRY_NAME_PREFIX("CommbatMacro#");
 const std::string GameConfiguration::PHONE_NAME_ENTRY_NAME_PREFIX("PhoneName#");
 const std::string GameConfiguration::PHONE_NUMBER_ENTRY_NAME_PREFIX("PhoneNumber#");
+const std::string GameConfiguration::MISC_SECTION_NAME("Misc");
+const std::string GameConfiguration::MOVE_FORWARD_ENTRY_NAME("Move_Forward");
+const std::string GameConfiguration::MOVE_BACKWARD_ENTRY_NAME("Move_Backward");
+const std::string GameConfiguration::TURN_LEFT_ENTRY_NAME("Turn_Left");
+const std::string GameConfiguration::TURN_RIGHT_ENTRY_NAME("Turn_Right");
+const std::string GameConfiguration::FIRE_ENTRY_NAME("Fire");
+const std::string GameConfiguration::OPEN_ENTRY_NAME("Open");
+const std::string GameConfiguration::JUMP_ENTRY_NAME("Jump");
+const std::string GameConfiguration::STRAFE_LEFT_ENTRY_NAME("Strafe_Left");
+const std::string GameConfiguration::STRAFE_RIGHT_ENTRY_NAME("Strafe_Right");
+const std::string GameConfiguration::SHOW_OPPONENTS_WEAPON_ENTRY_NAME("Show_Opponents_Weapon");
+const std::string GameConfiguration::MAP_FOLLOW_MODE_ENTRY_NAME("Map_Follow_Mode");
+const std::string GameConfiguration::CONTROLS_SECTION_NAME("Controls");
+const std::string GameConfiguration::MOUSE_AIMING_FLIPPED_ENTRY_NAME("MouseAimingFlipped");
+const std::string GameConfiguration::MOUSE_BUTTON_1_ENTRY_NAME("MouseButton1");
+const std::string GameConfiguration::MOUSE_BUTTON_CLICKED_1_ENTRY_NAME("MouseButtonClicked1");
+const std::string GameConfiguration::MOUSE_BUTTON_2_ENTRY_NAME("MouseButton2");
 
 const std::array<std::string, 10> GameConfiguration::DEFAULT_COMBAT_MACROS = {
 	"An inspiration for birth control.",

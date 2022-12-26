@@ -432,16 +432,16 @@ bool GameConfiguration::Section::addMultiStringEntry(const std::string & entryNa
 	return addEntry(entry);
 }
 
-std::shared_ptr<GameConfiguration::Entry> GameConfiguration::Section::getOrCreateEntry(const std::string & entryName, bool create, bool & exists) {
+std::shared_ptr<GameConfiguration::Entry> GameConfiguration::Section::getOrCreateEntry(const std::string & entryName, bool createEntry, bool & entryExists) {
 	if(!Entry::isNameValid(entryName)) {
 		return nullptr;
 	}
 
 	std::shared_ptr<Entry> entry(getEntryWithName(entryName));
-	bool entryExists = entry != nullptr;
+	bool doesEntryAlreadyExist = entry != nullptr;
 
-	if(!entryExists) {
-		if(!create) {
+	if(!doesEntryAlreadyExist) {
+		if(!createEntry) {
 			return nullptr;
 		}
 
@@ -452,7 +452,7 @@ std::shared_ptr<GameConfiguration::Entry> GameConfiguration::Section::getOrCreat
 		return nullptr;
 	}
 
-	exists = entryExists;
+	entryExists = doesEntryAlreadyExist;
 
 	return entry;
 }
@@ -470,9 +470,9 @@ bool GameConfiguration::Section::setEntryEmptyValue(const std::string & entryNam
 	return true;
 }
 
-bool GameConfiguration::Section::setEntryIntegerValue(const std::string & entryName, uint64_t value, bool create) {
+bool GameConfiguration::Section::setEntryIntegerValue(const std::string & entryName, uint64_t value, bool createEntry) {
 	bool entryExists = false;
-	std::shared_ptr<Entry> entry(getOrCreateEntry(entryName, create, entryExists));
+	std::shared_ptr<Entry> entry(getOrCreateEntry(entryName, createEntry, entryExists));
 
 	entry->setIntegerValue(value);
 
@@ -483,9 +483,9 @@ bool GameConfiguration::Section::setEntryIntegerValue(const std::string & entryN
 	return true;
 }
 
-bool GameConfiguration::Section::setEntryHexadecimalValueUsingDecimal(const std::string & entryName, uint64_t value, bool create) {
+bool GameConfiguration::Section::setEntryHexadecimalValueUsingDecimal(const std::string & entryName, uint64_t value, bool createEntry) {
 	bool entryExists = false;
-	std::shared_ptr<Entry> entry(getOrCreateEntry(entryName, create, entryExists));
+	std::shared_ptr<Entry> entry(getOrCreateEntry(entryName, createEntry, entryExists));
 
 	entry->setHexadecimalValueFromDecimal(value);
 
@@ -496,9 +496,9 @@ bool GameConfiguration::Section::setEntryHexadecimalValueUsingDecimal(const std:
 	return true;
 }
 
-bool GameConfiguration::Section::setEntryStringValue(const std::string & entryName, const std::string & value, bool create) {
+bool GameConfiguration::Section::setEntryStringValue(const std::string & entryName, const std::string & value, bool createEntry) {
 	bool entryExists = false;
-	std::shared_ptr<Entry> entry(getOrCreateEntry(entryName, create, entryExists));
+	std::shared_ptr<Entry> entry(getOrCreateEntry(entryName, createEntry, entryExists));
 
 	entry->setStringValue(value);
 
@@ -509,9 +509,24 @@ bool GameConfiguration::Section::setEntryStringValue(const std::string & entryNa
 	return true;
 }
 
-bool GameConfiguration::Section::setEntryMultiStringValue(const std::string & entryName, const std::string & valueA, const std::string & valueB, bool create) {
+bool GameConfiguration::Section::setEntryMultiStringValue(const std::string & entryName, const std::string & value, size_t index, bool resizeValue, bool createEntry) {
 	bool entryExists = false;
-	std::shared_ptr<Entry> entry(getOrCreateEntry(entryName, create, entryExists));
+	std::shared_ptr<Entry> entry(getOrCreateEntry(entryName, createEntry, entryExists));
+
+	if(!entry->setMultiStringValue(value, index, resizeValue)) {
+		return false;
+	}
+
+	if(!entryExists) {
+		return addEntry(entry);
+	}
+
+	return true;
+}
+
+bool GameConfiguration::Section::setEntryMultiStringValue(const std::string & entryName, const std::string & valueA, const std::string & valueB, bool createEntry) {
+	bool entryExists = false;
+	std::shared_ptr<Entry> entry(getOrCreateEntry(entryName, createEntry, entryExists));
 
 	entry->setMultiStringValue(valueA, valueB);
 
@@ -522,9 +537,9 @@ bool GameConfiguration::Section::setEntryMultiStringValue(const std::string & en
 	return true;
 }
 
-bool GameConfiguration::Section::setEntryMultiStringValue(const std::string & entryName, const std::vector<std::string> & values, bool create) {
+bool GameConfiguration::Section::setEntryMultiStringValue(const std::string & entryName, const std::vector<std::string> & values, bool createEntry) {
 	bool entryExists = false;
-	std::shared_ptr<Entry> entry(getOrCreateEntry(entryName, create, entryExists));
+	std::shared_ptr<Entry> entry(getOrCreateEntry(entryName, createEntry, entryExists));
 
 	entry->setMultiStringValue(values);
 

@@ -9,6 +9,34 @@
 
 #include <sstream>
 
+bool GameConfiguration::determineGameVersion(bool & isRegularVersion, bool & isAtomicEdition) {
+	std::shared_ptr<Section> setupSection(getSectionWithName(SETUP_SECTION_NAME));
+
+	if(setupSection == nullptr) {
+		return false;
+	}
+
+	std::shared_ptr<Entry> setupVersionEntry(setupSection->getEntryWithName(SETUP_VERSION_ENTRY_NAME));
+
+	if(setupVersionEntry == nullptr || !setupVersionEntry->isString()) {
+		return false;
+	}
+
+	if(Utilities::areStringsEqual(setupVersionEntry->getStringValue(), REGULAR_VERSION_SETUP_VERSION)) {
+		isRegularVersion = true;
+	}
+	else if(Utilities::areStringsEqual(setupVersionEntry->getStringValue(), ATOMIC_EDITION_SETUP_VERSION)) {
+		isAtomicEdition = true;
+	}
+	else {
+		spdlog::warn("Unexpected setup version '{}', expected '{}' or '{}'. Assuming game configuration version is for Atomic Edition / Plutonium Pak.", setupVersionEntry->getStringValue(), REGULAR_VERSION_SETUP_VERSION, ATOMIC_EDITION_SETUP_VERSION);
+
+		isAtomicEdition = true;
+	}
+
+	return true;
+}
+
 std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfiguration(const std::string & gameName) {
 	bool isRegularVersion = Utilities::areStringsEqual(gameName, GameVersion::ORIGINAL_REGULAR_VERSION.getName());
 	bool isAtomicEdition = Utilities::areStringsEqual(gameName, GameVersion::ORIGINAL_ATOMIC_EDITION.getName());
@@ -76,26 +104,26 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 	soundSetupSection->addIntegerEntry("ReverseStereo", 0);
 
 	// create key definitions section
-	std::shared_ptr<Section> keyDefinitionsSection(std::make_shared<Section>("KeyDefinitions", " \n ", " \n "));
+	std::shared_ptr<Section> keyDefinitionsSection(std::make_shared<Section>(KEY_DEFINITIONS_SECTION_NAME, " \n ", " \n "));
 	gameConfiguration->addSection(keyDefinitionsSection);
 
-	keyDefinitionsSection->addMultiStringEntry("Move_Forward", "Up", "Kpad8");
-	keyDefinitionsSection->addMultiStringEntry("Move_Backward", "Down", "Kpad2");
-	keyDefinitionsSection->addMultiStringEntry("Turn_Left", "Left", "Kpad4");
-	keyDefinitionsSection->addMultiStringEntry("Turn_Right", "Right", "KPad6");
+	keyDefinitionsSection->addMultiStringEntry(MOVE_FORWARD_ENTRY_NAME, "Up", "Kpad8");
+	keyDefinitionsSection->addMultiStringEntry(MOVE_BACKWARD_ENTRY_NAME, "Down", "Kpad2");
+	keyDefinitionsSection->addMultiStringEntry(TURN_LEFT_ENTRY_NAME, "Left", "Kpad4");
+	keyDefinitionsSection->addMultiStringEntry(TURN_RIGHT_ENTRY_NAME, "Right", "KPad6");
 	keyDefinitionsSection->addMultiStringEntry("Strafe", "LAlt", "RAlt");
-	keyDefinitionsSection->addMultiStringEntry("Fire", "LCtrl", "RCtrl");
-	keyDefinitionsSection->addMultiStringEntry("Open", "Space", "");
+	keyDefinitionsSection->addMultiStringEntry(FIRE_ENTRY_NAME, "LCtrl", "RCtrl");
+	keyDefinitionsSection->addMultiStringEntry(OPEN_ENTRY_NAME, "Space", "");
 	keyDefinitionsSection->addMultiStringEntry("Run", "LShift", "RShift");
 	keyDefinitionsSection->addMultiStringEntry("AutoRun", "CapLck", "");
-	keyDefinitionsSection->addMultiStringEntry("Jump", "A", "/");
+	keyDefinitionsSection->addMultiStringEntry(JUMP_ENTRY_NAME, "A", "/");
 	keyDefinitionsSection->addMultiStringEntry("Crouch", "Z", "");
 	keyDefinitionsSection->addMultiStringEntry("Look_Up", "PgUp", "Kpad9");
 	keyDefinitionsSection->addMultiStringEntry("Look_Down", "PgDn", "Kpad3");
 	keyDefinitionsSection->addMultiStringEntry("Look_Left", "Insert", "Kpad0");
 	keyDefinitionsSection->addMultiStringEntry("Look_Right", "Delete", "Kpad.");
-	keyDefinitionsSection->addMultiStringEntry("Strafe_Left", ",", "");
-	keyDefinitionsSection->addMultiStringEntry("Strafe_Right", ".", "");
+	keyDefinitionsSection->addMultiStringEntry(STRAFE_LEFT_ENTRY_NAME, ",", "");
+	keyDefinitionsSection->addMultiStringEntry(STRAFE_RIGHT_ENTRY_NAME, ".", "");
 	keyDefinitionsSection->addMultiStringEntry("Aim_Up", "Home", "KPad7");
 	keyDefinitionsSection->addMultiStringEntry("Aim_Down", "End", "Kpad1");
 
@@ -117,8 +145,8 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 	keyDefinitionsSection->addMultiStringEntry("Enlarge_Screen", "=", "Kpad+");
 	keyDefinitionsSection->addMultiStringEntry("Center_View", "KPad5", "");
 	keyDefinitionsSection->addMultiStringEntry("Holster_Weapon", "ScrLck", "");
-	keyDefinitionsSection->addMultiStringEntry("Show_Opponents_Weapon", "W", "");
-	keyDefinitionsSection->addMultiStringEntry("Map_Follow_Mode", "F", "");
+	keyDefinitionsSection->addMultiStringEntry(SHOW_OPPONENTS_WEAPON_ENTRY_NAME, "W", "");
+	keyDefinitionsSection->addMultiStringEntry(MAP_FOLLOW_MODE_ENTRY_NAME, "F", "");
 	keyDefinitionsSection->addMultiStringEntry("See_Coop_View", "K", "");
 	keyDefinitionsSection->addMultiStringEntry("Mouse_Aiming", "U", "");
 	keyDefinitionsSection->addMultiStringEntry("Toggle_Crosshair", "I", "");
@@ -156,14 +184,14 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 	controlsSection->addIntegerEntry("MouseAiming", 0);
 
 	if(isAtomicEdition) {
-		controlsSection->addIntegerEntry("MouseAimingFlipped", 0);
+		controlsSection->addIntegerEntry(MOUSE_AIMING_FLIPPED_ENTRY_NAME, 0);
 	}
 
 	controlsSection->addStringEntry("MouseButton0", "Fire");
 	controlsSection->addStringEntry("MouseButtonClicked0", "");
-	controlsSection->addStringEntry("MouseButton1", "Strafe");
-	controlsSection->addStringEntry("MouseButtonClicked1", "Open");
-	controlsSection->addStringEntry("MouseButton2", "Move_Forward");
+	controlsSection->addStringEntry(MOUSE_BUTTON_1_ENTRY_NAME, "Strafe");
+	controlsSection->addStringEntry(MOUSE_BUTTON_CLICKED_1_ENTRY_NAME, "Open");
+	controlsSection->addStringEntry(MOUSE_BUTTON_2_ENTRY_NAME, "Move_Forward");
 	controlsSection->addStringEntry("MouseButtonClicked2", "");
 	controlsSection->addStringEntry("JoystickButton0", "Fire");
 	controlsSection->addStringEntry("JoystickButtonClicked0", "");
@@ -252,31 +280,11 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 }
 
 bool GameConfiguration::updateForDOSBox() {
-	std::shared_ptr<Section> setupSection(getSectionWithName(SETUP_SECTION_NAME));
-
-	if(setupSection == nullptr) {
-		return false;
-	}
-
-	std::shared_ptr<Entry> setupVersionEntry(setupSection->getEntryWithName(SETUP_VERSION_ENTRY_NAME));
-
-	if(setupVersionEntry == nullptr || !setupVersionEntry->isString()) {
-		return false;
-	}
-
 	bool isRegularVersion = false;
 	bool isAtomicEdition = false;
 
-	if(Utilities::areStringsEqual(setupVersionEntry->getStringValue(), REGULAR_VERSION_SETUP_VERSION)) {
-		isRegularVersion = true;
-	}
-	else if(Utilities::areStringsEqual(setupVersionEntry->getStringValue(), ATOMIC_EDITION_SETUP_VERSION)) {
-		isAtomicEdition = true;
-	}
-	else {
-		spdlog::warn("Unexpected setup version '{}', expected '{}' or '{}'. Assuming configuration file version is for Atomic Edition / Plutonium Pak.", setupVersionEntry->getStringValue(), REGULAR_VERSION_SETUP_VERSION, ATOMIC_EDITION_SETUP_VERSION);
-
-		isAtomicEdition = true;
+	if(!determineGameVersion(isRegularVersion, isAtomicEdition)) {
+		return false;
 	}
 
 	std::shared_ptr<Section> screenSetupSection(getSectionWithName(SCREEN_SETUP_SECTION_NAME));
@@ -318,6 +326,87 @@ bool GameConfiguration::updateForDOSBox() {
 	if(!soundSetupSection->setEntryIntegerValue("VoiceToggle", 1, true)) { return false; }
 	if(!soundSetupSection->setEntryIntegerValue("AmbienceToggle", 1, true)) { return false; }
 	if(!soundSetupSection->setEntryIntegerValue("MusicToggle", 1, true)) { return false; }
+
+	return true;
+}
+
+bool GameConfiguration::updateWithBetterControls() {
+	bool isRegularVersion = false;
+	bool isAtomicEdition = false;
+
+	if(!determineGameVersion(isRegularVersion, isAtomicEdition)) {
+		return false;
+	}
+
+	std::shared_ptr<Section> keyDefinitionsSection(getSectionWithName(KEY_DEFINITIONS_SECTION_NAME));
+
+	if(keyDefinitionsSection == nullptr) {
+		return false;
+	}
+
+	std::shared_ptr<Section> controlsSection(getSectionWithName(CONTROLS_SECTION_NAME));
+
+	if(controlsSection == nullptr) {
+		return false;
+	}
+
+	if(!keyDefinitionsSection->setEntryMultiStringValue(MOVE_FORWARD_ENTRY_NAME, "W", 0, true, true)) { return false; }
+	if(!keyDefinitionsSection->setEntryMultiStringValue(MOVE_BACKWARD_ENTRY_NAME, "S", 0, true, true)) { return false; }
+	if(!keyDefinitionsSection->setEntryMultiStringValue(TURN_LEFT_ENTRY_NAME, "", 0, true, true)) { return false; }
+	if(!keyDefinitionsSection->setEntryMultiStringValue(TURN_RIGHT_ENTRY_NAME, "", 0, true, true)) { return false; }
+	if(!keyDefinitionsSection->setEntryMultiStringValue(FIRE_ENTRY_NAME, "", 0, true, true)) { return false; }
+	if(!keyDefinitionsSection->setEntryMultiStringValue(OPEN_ENTRY_NAME, "E", "F", true)) { return false; }
+	if(!keyDefinitionsSection->setEntryMultiStringValue(JUMP_ENTRY_NAME, "Space", 0, true, true)) { return false; }
+	if(!keyDefinitionsSection->setEntryMultiStringValue(STRAFE_LEFT_ENTRY_NAME, "A", 1, true, true)) { return false; }
+	if(!keyDefinitionsSection->setEntryMultiStringValue(STRAFE_RIGHT_ENTRY_NAME, "D", 1, true, true)) { return false; }
+
+	std::shared_ptr<Entry> showOpponentsWeaponEntry(getEntryWithName(SHOW_OPPONENTS_WEAPON_ENTRY_NAME));
+
+	if(showOpponentsWeaponEntry != nullptr) {
+		if(Utilities::areStringsEqual(showOpponentsWeaponEntry->getMultiStringValue(0), "W")) {
+			if(!showOpponentsWeaponEntry->setMultiStringValue("", 0, true)) { return false; }
+		}
+		else if(Utilities::areStringsEqual(showOpponentsWeaponEntry->getMultiStringValue(1), "W")) {
+			if(!showOpponentsWeaponEntry->setMultiStringValue("", 1, true)) { return false; }
+		}
+	}
+	else {
+		if(!keyDefinitionsSection->setEntryMultiStringValue(SHOW_OPPONENTS_WEAPON_ENTRY_NAME, "", 0, true, true)) { return false; }
+	}
+
+	std::shared_ptr<Entry> mapFollowModeEntry(getEntryWithName(MAP_FOLLOW_MODE_ENTRY_NAME));
+
+	if(mapFollowModeEntry != nullptr) {
+		if(Utilities::areStringsEqual(mapFollowModeEntry->getMultiStringValue(0), "F")) {
+			if(!mapFollowModeEntry->setMultiStringValue("", 0, true)) { return false; }
+		}
+		else if(Utilities::areStringsEqual(mapFollowModeEntry->getMultiStringValue(1), "F")) {
+			if(!mapFollowModeEntry->setMultiStringValue("", 1, true)) { return false; }
+		}
+	}
+	else {
+		if(!keyDefinitionsSection->setEntryMultiStringValue(MAP_FOLLOW_MODE_ENTRY_NAME, "", 0, true, true)) { return false; }
+	}
+
+	if(!controlsSection->setEntryIntegerValue(MOUSE_AIMING_FLIPPED_ENTRY_NAME, 1, true)) { return false; }
+	if(!controlsSection->setEntryStringValue(MOUSE_BUTTON_1_ENTRY_NAME, "Open", true)) { return false; }
+	if(!controlsSection->setEntryStringValue(MOUSE_BUTTON_CLICKED_1_ENTRY_NAME, "", true)) { return false; }
+	if(!controlsSection->setEntryStringValue(MOUSE_BUTTON_2_ENTRY_NAME, "Jump", true)) { return false; }
+
+	if(isAtomicEdition) {
+		if(!controlsSection->setEntryIntegerValue("GameMouseAiming", 1, true)) { return false; }
+		if(!controlsSection->setEntryIntegerValue("AimingFlag", 1, true)) { return false; }
+	}
+
+	std::shared_ptr<Section> miscSection(getSectionWithName(MISC_SECTION_NAME));
+
+	if(miscSection == nullptr) {
+		miscSection = std::shared_ptr<Section>(new Section(MISC_SECTION_NAME));
+		addSection(miscSection);
+	}
+
+	if(!miscSection->setEntryIntegerValue("RunMode", 1, true)) { return false; }
+	if(!miscSection->setEntryIntegerValue("Crosshairs", 1, true)) { return false; }
 
 	return true;
 }
