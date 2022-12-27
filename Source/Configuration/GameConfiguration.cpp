@@ -77,12 +77,14 @@ GameConfiguration::GameConfiguration() { }
 GameConfiguration::GameConfiguration(GameConfiguration && c) noexcept
 	: m_filePath(std::move(c.m_filePath))
 	, m_entries(std::move(c.m_entries))
-	, m_sections(std::move(c.m_sections)) {
+	, m_sections(std::move(c.m_sections))
+	, m_orderedSectionNames(std::move(c.m_orderedSectionNames)) {
 	updateParent();
 }
 
 GameConfiguration::GameConfiguration(const GameConfiguration & c)
-	: m_filePath(c.m_filePath) {
+	: m_filePath(c.m_filePath)
+	, m_orderedSectionNames(c.m_orderedSectionNames) {
 	for(EntryMap::const_iterator i = c.m_entries.cbegin(); i != c.m_entries.cend(); ++i) {
 		m_entries.emplace(i->first, std::make_shared<Entry>(*i->second));
 	}
@@ -101,6 +103,7 @@ GameConfiguration & GameConfiguration::operator = (GameConfiguration && c) noexc
 		m_filePath = std::move(c.m_filePath);
 		m_entries = std::move(c.m_entries);
 		m_sections = std::move(c.m_sections);
+		m_orderedSectionNames = std::move(c.m_orderedSectionNames);
 
 		updateParent();
 	}
@@ -110,6 +113,8 @@ GameConfiguration & GameConfiguration::operator = (GameConfiguration && c) noexc
 
 GameConfiguration & GameConfiguration::operator = (const GameConfiguration & c) {
 	clearSections();
+
+	m_orderedSectionNames = c.m_orderedSectionNames;
 
 	for(EntryMap::const_iterator i = c.m_entries.cbegin(); i != c.m_entries.cend(); ++i) {
 		m_entries.emplace(i->first, std::make_shared<Entry>(*i->second));
@@ -331,6 +336,44 @@ bool GameConfiguration::hasSectionWithName(const std::string & sectionName) cons
 	return m_sections.find(sectionName) != m_sections.cend();
 }
 
+size_t GameConfiguration::indexOfSection(const Section & section) const {
+	std::vector<std::string>::const_iterator orderedSectionNameIterator = std::find_if(m_orderedSectionNames.cbegin(), m_orderedSectionNames.cend(), [section](const std::string & sectionName) {
+		return Utilities::areStringsEqualIgnoreCase(section.m_name, sectionName);
+	});
+
+	if(orderedSectionNameIterator == m_orderedSectionNames.cend()) {
+		return std::numeric_limits<size_t>::max();
+	}
+
+	size_t sectionIndex = orderedSectionNameIterator - m_orderedSectionNames.cbegin();
+
+	std::shared_ptr<Section> sharedSection(getSection(section));
+
+	if(sharedSection == nullptr) {
+		return std::numeric_limits<size_t>::max();
+	}
+
+	return sectionIndex;
+}
+
+size_t GameConfiguration::indexOfSectionWithName(const std::string & sectionName) const {
+	std::shared_ptr<Section> sharedSection(getSectionWithName(sectionName));
+
+	if(sharedSection == nullptr) {
+		return std::numeric_limits<size_t>::max();
+	}
+
+	return indexOfSection(*sharedSection);
+}
+
+std::shared_ptr<GameConfiguration::Section> GameConfiguration::getSection(size_t index) const {
+	if(index >= m_orderedSectionNames.size()) {
+		return nullptr;
+	}
+
+	return getSection(m_orderedSectionNames[index]);
+}
+
 std::shared_ptr<GameConfiguration::Section> GameConfiguration::getSection(const Section & section) const {
 	std::shared_ptr<Section> sharedSection(getSectionWithName(section.getName()));
 
@@ -351,6 +394,14 @@ std::shared_ptr<GameConfiguration::Section> GameConfiguration::getSectionWithNam
 	return sectionIterator->second;
 }
 
+bool GameConfiguration::setSectionName(size_t index, const std::string & newSectionName) {
+	if(index >= m_orderedSectionNames.size()) {
+		return false;
+	}
+
+	return setSectionName(m_orderedSectionNames[index], newSectionName);
+}
+
 bool GameConfiguration::setSectionName(const std::string & oldSectionName, const std::string & newSectionName) {
 	std::shared_ptr<Section> sharedSection(getSection(oldSectionName));
 
@@ -368,12 +419,12 @@ bool GameConfiguration::setSectionName(Section & section, const std::string & ne
 
 	std::shared_ptr<Section> sharedSection(getSection(section));
 
-	if(sharedSection == nullptr || m_sections.erase(section.getName()) == 0) {
+	if(sharedSection == nullptr || m_sections.erase(section.m_name) == 0) {
 		return false;
 	}
 
+	m_orderedSectionNames[indexOfSectionWithName(section.m_name)] = newSectionName;
 	section.m_name = newSectionName;
-
 	m_sections.emplace(newSectionName, sharedSection);
 
 	return true;
@@ -400,8 +451,17 @@ bool GameConfiguration::addSection(std::shared_ptr<Section> section) {
 	}
 
 	m_sections.emplace(section->getName(), section);
+	m_orderedSectionNames.push_back(section->getName());
 
 	return true;
+}
+
+bool GameConfiguration::removeSection(size_t index) {
+	if(index >= m_orderedSectionNames.size()) {
+		return false;
+	}
+
+	return removeSection(m_orderedSectionNames[index]);
 }
 
 bool GameConfiguration::removeSection(const Section & section) {
@@ -420,6 +480,7 @@ bool GameConfiguration::removeSection(const Section & section) {
 	}
 
 	sharedSection->m_parentGameConfiguration = nullptr;
+	m_orderedSectionNames.erase(m_orderedSectionNames.begin() + indexOfSection(*sharedSection));
 
 	return m_sections.erase(sharedSection->getName()) != 0;
 }
@@ -445,17 +506,22 @@ void GameConfiguration::clearSections() {
 
 	m_entries.clear();
 	m_sections.clear();
+	m_orderedSectionNames.clear();
 }
 
 std::string GameConfiguration::toString() const {
 	std::stringstream gameConfigurationStream;
 
-	for(SectionMap::const_iterator i = m_sections.cbegin(); i != m_sections.cend(); ++i) {
+	std::shared_ptr<Section> currentSection;
+
+	for(const std::string & sectionName : m_orderedSectionNames) {
+		currentSection = m_sections.find(sectionName)->second;
+
 		if(gameConfigurationStream.tellp() != 0) {
 			gameConfigurationStream << std::endl;
 		}
 
-		gameConfigurationStream << i->second->toString();
+		gameConfigurationStream << currentSection->toString();
 	}
 
 	return gameConfigurationStream.str();
@@ -500,6 +566,7 @@ std::unique_ptr<GameConfiguration> GameConfiguration::parseFrom(const std::strin
 		}
 
 		gameConfiguration->m_sections.emplace(section->getName(), section);
+		gameConfiguration->m_orderedSectionNames.push_back(section->getName());
 	}
 
 	if(!gameConfiguration->isValid()) {
@@ -586,7 +653,8 @@ bool GameConfiguration::isValid(bool validateParents) const {
 	for(EntryMap::const_iterator i = m_entries.cbegin(); i != m_entries.cend(); ++i) {
 		if(!Entry::isValid(i->second.get(), validateParents) ||
 		   !Entry::isNameValid(i->first) ||
-		   !Utilities::areStringsEqual(i->first, i->second->getName())) {
+		   !Utilities::areStringsEqual(i->first, i->second->getName()) ||
+		   m_sections.size() != m_orderedSectionNames.size()) {
 			return false;
 		}
 
@@ -612,6 +680,12 @@ bool GameConfiguration::isValid(bool validateParents) const {
 			if(!hasEntry(*sectionEntry)) {
 				return false;
 			}
+		}
+	}
+
+	for(const std::string & sectionName : m_orderedSectionNames) {
+		if(m_sections.find(sectionName) == m_sections.cend()) {
+			return false;
 		}
 	}
 

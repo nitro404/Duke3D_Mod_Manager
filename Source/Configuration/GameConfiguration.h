@@ -203,11 +203,16 @@ public:
 	size_t numberOfSections() const;
 	bool hasSection(const Section & section) const;
 	bool hasSectionWithName(const std::string & sectionName) const;
+	size_t indexOfSection(const Section & section) const;
+	size_t indexOfSectionWithName(const std::string & sectionName) const;
+	std::shared_ptr<Section> getSection(size_t index) const;
 	std::shared_ptr<Section> getSection(const Section & section) const;
 	std::shared_ptr<Section> getSectionWithName(const std::string & sectionName) const;
+	bool setSectionName(size_t index, const std::string & newSectionName);
 	bool setSectionName(const std::string & oldSectionName, const std::string & newSectionName);
 	bool setSectionName(Section & section, const std::string & newSectionName);
 	bool addSection(std::shared_ptr<Section> section);
+	bool removeSection(size_t index);
 	bool removeSection(const Section & section);
 	bool removeSectionWithName(const std::string & sectionName);
 	void clearSections();
@@ -284,6 +289,7 @@ private:
 	std::string m_filePath;
 	EntryMap m_entries;
 	SectionMap m_sections;
+	std::vector<std::string> m_orderedSectionNames;
 };
 
 template <size_t N>
