@@ -8,7 +8,7 @@
 
 #include <sstream>
 
-const std::string & getAssignmentString() {
+static const std::string & getAssignmentString() {
 	static std::string s_assignmentString;
 
 	if(s_assignmentString.empty()) {
@@ -16,6 +16,30 @@ const std::string & getAssignmentString() {
 	}
 
 	return s_assignmentString;
+}
+
+static std::vector<std::string> parseQuotedValues(const std::string & data) {
+	size_t startIndex = 0;
+	size_t endIndex = std::numeric_limits<size_t>::max();
+	std::vector<std::string> values;
+
+	while(true) {
+		startIndex = data.find_first_of("\"", endIndex + 1);
+
+		if(startIndex == std::string::npos) {
+			break;
+		}
+
+		endIndex = data.find_first_of("\"", startIndex + 1);
+
+		if(endIndex == std::string::npos) {
+			break;
+		}
+
+		values.emplace_back(data.data() + startIndex + 1, endIndex - startIndex - 1);
+	}
+
+	return values;
 }
 
 GameConfiguration::Entry::Entry(const std::string & name)
@@ -371,7 +395,7 @@ std::unique_ptr<GameConfiguration::Entry> GameConfiguration::Entry::parseFrom(st
 		}
 		else {
 			entry->m_type = Type::MultiString;
-			entry->m_value = Utilities::regularExpressionStringSplit(std::string(stringValue), "\" \"");
+			entry->m_value = parseQuotedValues(value);
 		}
 	}
 	else {
