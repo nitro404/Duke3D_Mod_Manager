@@ -272,6 +272,21 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 
 	m_organizedMods->organize();
 
+	std::filesystem::path mapsDirectoryPath(getMapsDirectoryPath());
+
+	if(!mapsDirectoryPath.empty() && !std::filesystem::is_directory(mapsDirectoryPath)) {
+		std::error_code errorCode;
+
+		std::filesystem::create_directories(mapsDirectoryPath, errorCode);
+
+		if(errorCode) {
+			spdlog::warn("Failed to create maps directory structure '{}'.", mapsDirectoryPath.string(), errorCode.message());
+		}
+		else {
+			spdlog::info("Created maps directory structure: '{}'.", mapsDirectoryPath.string());
+		}
+	}
+
 	m_initialized = true;
 
 	checkForMissingExecutables();
