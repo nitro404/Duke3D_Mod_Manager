@@ -620,18 +620,13 @@ bool GameConfiguration::saveTo(const std::string & filePath, bool overwrite, boo
 	}
 
 	if(createParentDirectories) {
-		std::filesystem::path destinationFileBasePath(Utilities::getFilePath(filePath));
+		std::error_code errorCode;
+		Utilities::createDirectoryStructureForFilePath(filePath, errorCode);
 
-		if(!destinationFileBasePath.empty() && !std::filesystem::exists(std::filesystem::path(destinationFileBasePath))) {
-			std::error_code errorCode;
-			std::filesystem::create_directories(destinationFileBasePath, errorCode);
-
-			if(errorCode) {
-				spdlog::error("Failed to create file destination directory structure for path '{}': {}", destinationFileBasePath.string(), errorCode.message());
-				return false;
-			}
+		if(errorCode) {
+			spdlog::error("Failed to create file destination directory structure for file path '{}': {}", filePath, errorCode.message());
+			return false;
 		}
-
 	}
 
 	std::ofstream fileStream(filePath, std::ios::binary);
