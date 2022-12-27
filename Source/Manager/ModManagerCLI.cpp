@@ -307,6 +307,7 @@ void ModManager::CLI::runMenu() {
 			return;
 		}
 
+		error = false;
 		selectedIndex = Utilities::parseUnsignedInteger(data, &error);
 
 		if(!error) {
