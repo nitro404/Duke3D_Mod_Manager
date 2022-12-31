@@ -1109,11 +1109,11 @@ bool ModManager::runSelectedMod() {
 
 	std::vector<std::string> temporaryCopiedFilePaths;
 
-	if(!createSymlinksOrCopyTemporaryFiles(*m_gameVersions, *selectedGameVersion, selectedModGameVersion.get(), customMap, shouldConfigureApplicationTemporaryDirectory, &temporaryCopiedFilePaths)) {
+	if(shouldConfigureApplicationTemporaryDirectory && !createApplicationTemporaryDirectory()) {
 		return false;
 	}
 
-	if(shouldConfigureApplicationTemporaryDirectory && !createApplicationTemporaryDirectory()) {
+	if(!createSymlinksOrCopyTemporaryFiles(*m_gameVersions, *selectedGameVersion, selectedModGameVersion.get(), customMap, shouldConfigureApplicationTemporaryDirectory, &temporaryCopiedFilePaths)) {
 		return false;
 	}
 
