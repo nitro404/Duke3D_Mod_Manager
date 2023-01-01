@@ -72,13 +72,14 @@ ModManager::ModManager()
 	, m_gameManager(std::make_unique<GameManager>())
 	, m_mods(std::make_shared<ModCollection>())
 	, m_favouriteMods(std::make_shared<FavouriteModCollection>())
-	, m_organizedMods(std::make_shared<OrganizedModCollection>(m_mods, m_favouriteMods, m_gameVersions))
-	, m_cli(std::make_unique<ModManager::CLI>(this)) {
+	, m_organizedMods(std::make_shared<OrganizedModCollection>(m_mods, m_favouriteMods, m_gameVersions)) {
 	assignPlatformFactories();
 
 	FactoryRegistry::getInstance().setFactory<SettingsManager>([]() {
 		return std::make_unique<SettingsManager>();
 	});
+
+	m_organizedMods->addListener(*this);
 }
 
 ModManager::~ModManager() {
@@ -89,24 +90,38 @@ bool ModManager::isInitialized() const {
 	return m_initialized;
 }
 
-bool ModManager::initialize(int argc, char * argv[], bool start) {
+bool ModManager::initialize(int argc, char * argv[]) {
+	if(m_initialized) {
+		return true;
+	}
+
+	std::shared_ptr<ArgumentParser> arguments;
+
+	if(argc != 0) {
+		arguments = std::make_shared<ArgumentParser>(argc, argv);
+	}
+
+	return initialize(arguments);
+}
+
+bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 	if(m_initialized) {
 		return true;
 	}
 
 	bool localModeSet = false;
 
-	if(argc != 0) {
-		m_arguments = std::make_shared<ArgumentParser>(argc, argv);
+	if(arguments != nullptr) {
+		m_arguments = arguments;
 
 		if(m_arguments->hasArgument("?")) {
 			displayArgumentHelp();
-			return false;
+			return true;
 		}
 
 		if(m_arguments->hasArgument("version")) {
 			fmt::print("{}\n", APPLICATION_VERSION);
-			return false;
+			return true;
 		}
 
 		if(m_arguments->hasArgument("local")) {
@@ -303,10 +318,10 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 	properties["gameType"] = Utilities::toCapitalCase(magic_enum::enum_name(settings->gameType));
 	properties["preferredGameVersion"] = settings->preferredGameVersion;
 	properties["numberOfDownloadedMods"] = m_downloadManager != nullptr ? m_downloadManager->numberOfDownloadedMods() : 0;
-	properties["dosBoxArguments"] = settings->dosboxArguments;
-	properties["dosBoxServerIPAddress"] = settings->dosboxServerIPAddress;
-	properties["dosBoxServerLocalPort"] = settings->dosboxLocalServerPort;
-	properties["dosBoxServerRemotePort"] = settings->dosboxRemoteServerPort;
+	properties["dosboxArguments"] = settings->dosboxArguments;
+	properties["dosboxServerIPAddress"] = settings->dosboxServerIPAddress;
+	properties["dosboxServerLocalPort"] = settings->dosboxLocalServerPort;
+	properties["dosboxServerRemotePort"] = settings->dosboxRemoteServerPort;
 	properties["apiBaseURL"] = settings->apiBaseURL;
 	properties["connectionTimeout"] = settings->connectionTimeout.count();
 	properties["networkTimeout"] = settings->networkTimeout.count();
@@ -314,7 +329,7 @@ bool ModManager::initialize(int argc, char * argv[], bool start) {
 
 	segmentAnalytics->track("Application Initialized", properties);
 
-	if(!handleArguments(m_arguments.get(), start)) {
+	if(!handleArguments(m_arguments.get())) {
 		return false;
 	}
 
@@ -349,14 +364,6 @@ bool ModManager::uninitialize() {
 	m_initialized = false;
 
 	return true;
-}
-
-void ModManager::run() {
-	if(!m_initialized) {
-		return;
-	}
-
-	m_cli->runMenu();
 }
 
 bool ModManager::isUsingLocalMode() const {
@@ -411,7 +418,7 @@ bool ModManager::setGameType(const std::string & gameTypeName) {
 	std::optional<GameType> gameTypeOptional = magic_enum::enum_cast<GameType>(Utilities::toPascalCase(gameTypeName));
 
 	if(gameTypeOptional.has_value()) {
-		m_gameType = gameTypeOptional.value();
+		setGameType(gameTypeOptional.value());
 
 		return true;
 	}
@@ -420,9 +427,13 @@ bool ModManager::setGameType(const std::string & gameTypeName) {
 }
 
 void ModManager::setGameType(GameType gameType) {
-	m_gameType = gameType;
+	if(m_gameType != gameType) {
+		m_gameType = gameType;
 
-	SettingsManager::getInstance()->gameType = m_gameType;
+		SettingsManager::getInstance()->gameType = m_gameType;
+
+		notifyGameTypeChanged();
+	}
 }
 
 bool ModManager::hasPreferredGameVersion() const {
@@ -431,6 +442,41 @@ bool ModManager::hasPreferredGameVersion() const {
 
 std::shared_ptr<GameVersion> ModManager::getPreferredGameVersion() const {
 	return m_preferredGameVersion;
+}
+
+std::shared_ptr<GameVersion> ModManager::getSelectedGameVersion() const {
+	std::shared_ptr<GameVersion> selectedGameVersion;
+
+	if(m_arguments != nullptr && m_arguments->hasArgument("game") && !m_arguments->getFirstValue("game").empty()) {
+		std::string gameVersionName(m_arguments->getFirstValue("game"));
+
+		selectedGameVersion = m_gameVersions->getGameVersion(gameVersionName);
+
+		if(selectedGameVersion == nullptr) {
+			spdlog::error("Could not find game version override for '{}'.", gameVersionName);
+			return nullptr;
+		}
+	}
+	else {
+		if(m_preferredGameVersion == nullptr) {
+			spdlog::error("No preferred game version selected.");
+			return nullptr;
+		}
+
+		selectedGameVersion = m_preferredGameVersion;
+	}
+
+	if(!selectedGameVersion->isValid()) {
+		spdlog::error("Invalid selected game version.");
+		return false;
+	}
+
+	if(!selectedGameVersion->isConfigured()) {
+		spdlog::error("Selected game version is not configured.");
+		return false;
+	}
+
+	return selectedGameVersion;
 }
 
 bool ModManager::setPreferredGameVersion(const std::string & gameVersionName) {
@@ -446,8 +492,12 @@ bool ModManager::setPreferredGameVersion(std::shared_ptr<GameVersion> gameVersio
 		return false;
 	}
 
-	m_preferredGameVersion = gameVersion;
-	SettingsManager::getInstance()->preferredGameVersion = m_preferredGameVersion->getName();
+	if(m_preferredGameVersion == nullptr || !Utilities::areStringsEqualIgnoreCase(m_preferredGameVersion->getName(), gameVersion->getName())) {
+		m_preferredGameVersion = gameVersion;
+		SettingsManager::getInstance()->preferredGameVersion = m_preferredGameVersion->getName();
+
+		notifyPreferredGameVersionChanged();
+	}
 
 	return true;
 }
@@ -461,7 +511,55 @@ const std::string & ModManager::getDOSBoxServerIPAddress() const {
 }
 
 void ModManager::setDOSBoxServerIPAddress(const std::string & ipAddress) {
-	SettingsManager::getInstance()->dosboxServerIPAddress = Utilities::trimString(ipAddress);
+	SettingsManager * settings = SettingsManager::getInstance();
+
+	std::string formattedIPAddress(Utilities::trimString(ipAddress));
+
+	if(!Utilities::areStringsEqual(settings->dosboxServerIPAddress, formattedIPAddress)) {
+		settings->dosboxServerIPAddress = formattedIPAddress;
+
+		notifyDOSBoxServerIPAddressChanged();
+	}
+}
+
+uint16_t ModManager::getDOSBoxLocalServerPort() const {
+	return SettingsManager::getInstance()->dosboxLocalServerPort;
+}
+
+void ModManager::setDOSBoxLocalServerPort(uint16_t port) {
+	SettingsManager * settings = SettingsManager::getInstance();
+
+	if(settings->dosboxLocalServerPort != port) {
+		settings->dosboxLocalServerPort = port;
+
+		notifyDOSBoxLocalServerPortChanged();
+	}
+}
+
+uint16_t ModManager::getDOSBoxRemoteServerPort() const {
+	return SettingsManager::getInstance()->dosboxRemoteServerPort;
+}
+
+void ModManager::setDOSBoxRemoteServerPort(uint16_t port) {
+	SettingsManager * settings = SettingsManager::getInstance();
+
+	if(settings->dosboxRemoteServerPort != port) {
+		settings->dosboxRemoteServerPort = port;
+
+		notifyDOSBoxRemoteServerPortChanged();
+	}
+}
+
+bool ModManager::hasModSelected() const {
+	return m_selectedMod != nullptr;
+}
+
+bool ModManager::hasModVersionSelected() const {
+	return m_selectedModVersionIndex != std::numeric_limits<size_t>::max();
+}
+
+bool ModManager::hasModVersionTypeSelected() const {
+	return m_selectedModVersionTypeIndex != std::numeric_limits<size_t>::max();
 }
 
 std::shared_ptr<Mod> ModManager::getSelectedMod() const {
@@ -511,7 +609,13 @@ bool ModManager::setSelectedMod(const std::string & name) {
 }
 
 bool ModManager::setSelectedMod(std::shared_ptr<Mod> mod) {
-	if(mod != nullptr && !mod->isValid()) {
+	if(!Mod::isValid(mod.get())) {
+		m_selectedMod = nullptr;
+		m_selectedModVersionIndex = std::numeric_limits<size_t>::max();
+		m_selectedModVersionTypeIndex = std::numeric_limits<size_t>::max();
+
+		notifyModSelectionChanged();
+
 		return false;
 	}
 
@@ -519,15 +623,78 @@ bool ModManager::setSelectedMod(std::shared_ptr<Mod> mod) {
 		m_selectedMod = mod;
 		m_selectedModVersionIndex = std::numeric_limits<size_t>::max();
 		m_selectedModVersionTypeIndex = std::numeric_limits<size_t>::max();
+
+		if(m_selectedMod != nullptr) {
+			if(m_selectedMod->numberOfVersions() == 1) {
+				m_selectedModVersionIndex = 0;
+			}
+			else {
+				m_selectedModVersionIndex = m_selectedMod->indexOfPreferredVersion();
+			}
+
+			if(m_selectedModVersionIndex != std::numeric_limits<size_t>::max()) {
+				std::shared_ptr<ModVersion> selectedModVersion(m_selectedMod->getVersion(m_selectedModVersionIndex));
+
+				if(selectedModVersion->numberOfTypes() == 1) {
+					m_selectedModVersionTypeIndex = 0;
+				}
+				else {
+					m_selectedModVersionTypeIndex = m_selectedMod->indexOfDefaultVersionType();
+				}
+			}
+		}
+
+		notifyModSelectionChanged();
 	}
+
+	return true;
+}
+
+bool ModManager::setSelectedMod(const ModMatch & modMatch) {
+	if(!modMatch.isValid()) {
+		return false;
+	}
+
+	m_selectedMod = modMatch.getMod();
+	m_selectedModVersionTypeIndex = modMatch.getModVersionTypeIndex();
+	m_selectedModVersionIndex = modMatch.getModVersionIndex();
+
+	if(m_selectedModVersionIndex == std::numeric_limits<size_t>::max()) {
+		if(m_selectedMod->numberOfVersions() == 1) {
+			m_selectedModVersionIndex = 0;
+		}
+		else {
+			m_selectedModVersionIndex = m_selectedMod->indexOfPreferredVersion();
+		}
+	}
+
+	if(m_selectedModVersionIndex != std::numeric_limits<size_t>::max()) {
+		std::shared_ptr<ModVersion> selectedModVersion(m_selectedMod->getVersion(m_selectedModVersionIndex));
+
+		if(selectedModVersion->numberOfTypes() == 1) {
+			m_selectedModVersionTypeIndex = 0;
+		}
+		else {
+			m_selectedModVersionTypeIndex = m_selectedMod->indexOfDefaultVersionType();
+		}
+	}
+
+	notifyModSelectionChanged();
 
 	return true;
 }
 
 bool ModManager::setSelectedModVersionIndex(size_t modVersionIndex) {
 	if(modVersionIndex == std::numeric_limits<size_t>::max()) {
+		bool modSelectionChanged = m_selectedModVersionIndex != std::numeric_limits<size_t>::max() ||
+								   m_selectedModVersionTypeIndex != std::numeric_limits<size_t>::max();
+
 		m_selectedModVersionIndex = std::numeric_limits<size_t>::max();
 		m_selectedModVersionTypeIndex = std::numeric_limits<size_t>::max();
+
+		if(modSelectionChanged) {
+			notifyModSelectionChanged();
+		}
 
 		return true;
 	}
@@ -542,9 +709,19 @@ bool ModManager::setSelectedModVersionIndex(size_t modVersionIndex) {
 		newModVersionIndex = modVersionIndex;
 	}
 
-	if(newModVersionIndex != m_selectedModVersionIndex) {
+	if(m_selectedModVersionIndex != newModVersionIndex) {
 		m_selectedModVersionIndex = newModVersionIndex;
 		m_selectedModVersionTypeIndex = std::numeric_limits<size_t>::max();
+		std::shared_ptr<ModVersion> selectedModVersion(m_selectedMod->getVersion(m_selectedModVersionIndex));
+
+		if(selectedModVersion->numberOfTypes() == 1) {
+			m_selectedModVersionTypeIndex = 0;
+		}
+		else {
+			m_selectedModVersionTypeIndex = m_selectedMod->indexOfDefaultVersionType();
+		}
+
+		notifyModSelectionChanged();
 	}
 
 	return true;
@@ -552,7 +729,13 @@ bool ModManager::setSelectedModVersionIndex(size_t modVersionIndex) {
 
 bool ModManager::setSelectedModVersionTypeIndex(size_t modVersionTypeIndex) {
 	if(modVersionTypeIndex == std::numeric_limits<size_t>::max()) {
+		bool modVersionTypeChanged = m_selectedModVersionTypeIndex != std::numeric_limits<size_t>::max();
+
 		m_selectedModVersionTypeIndex = std::numeric_limits<size_t>::max();
+
+		if(modVersionTypeChanged) {
+			notifyModSelectionChanged();
+		}
 
 		return true;
 	}
@@ -568,51 +751,45 @@ bool ModManager::setSelectedModVersionTypeIndex(size_t modVersionTypeIndex) {
 		newModVersionTypeIndex = modVersionTypeIndex;
 	}
 
-	m_selectedModVersionTypeIndex = newModVersionTypeIndex;
+	if(m_selectedModVersionTypeIndex != newModVersionTypeIndex) {
+		m_selectedModVersionTypeIndex = newModVersionTypeIndex;
+
+		notifyModSelectionChanged();
+	}
 
 	return true;
 }
 
 bool ModManager::selectRandomMod(bool selectPreferredVersion, bool selectFirstVersionType) {
-	if(!m_initialized || m_organizedMods->numberOfMods() == 0) {
+	if(!m_initialized) {
 		return false;
 	}
 
-	setSelectedMod(m_organizedMods->getMod(Utilities::randomInteger(0, m_organizedMods->numberOfMods() - 1)));
-
-	if(selectPreferredVersion) {
-		setSelectedModVersionIndex(m_selectedMod->indexOfPreferredVersion());
-
-		if(selectFirstVersionType) {
-			setSelectedModVersionTypeIndex(0);
-		}
-	}
-
-	return true;
+	return m_organizedMods->selectRandomMod();
 }
 
 bool ModManager::selectRandomGameVersion() {
-	if(!m_initialized || m_organizedMods->numberOfGameVersions() == 0) {
+	if(!m_initialized) {
 		return false;
 	}
 
-	return m_organizedMods->setSelectedGameVersion(Utilities::randomInteger(0, m_organizedMods->numberOfGameVersions() - 1));
+	return m_organizedMods->selectRandomGameVersion();
 }
 
 bool ModManager::selectRandomTeam() {
-	if(!m_initialized || m_organizedMods->numberOfTeams() == 0) {
+	if(!m_initialized) {
 		return false;
 	}
 
-	return m_organizedMods->setSelectedTeam(Utilities::randomInteger(0, m_organizedMods->numberOfTeams() - 1));
+	return m_organizedMods->selectRandomTeam();
 }
 
 bool ModManager::selectRandomAuthor() {
-	if(!m_initialized || m_organizedMods->numberOfAuthors() == 0) {
+	if(!m_initialized) {
 		return false;
 	}
 
-	return m_organizedMods->setSelectedAuthor(Utilities::randomInteger(0, m_organizedMods->numberOfAuthors() - 1));
+	return m_organizedMods->selectRandomAuthor();
 }
 
 std::vector<ModMatch> ModManager::searchForMod(const std::vector<std::shared_ptr<Mod>> & mods, const std::string & query) {
@@ -896,12 +1073,36 @@ size_t ModManager::searchForAndSelectAuthor(const std::string & query, std::vect
 }
 
 void ModManager::clearSelectedMod() {
+	bool selectedModChanged = m_selectedMod != nullptr;
+
 	m_selectedMod = nullptr;
 	m_selectedModVersionIndex = std::numeric_limits<size_t>::max();
 	m_selectedModVersionTypeIndex = std::numeric_limits<size_t>::max();
+
+	if(selectedModChanged) {
+		notifyModSelectionChanged();
+	}
 }
 
-bool ModManager::runSelectedMod() {
+bool ModManager::isModSupportedOnSelectedGameVersion() {
+	if(m_selectedMod == nullptr || m_selectedModVersionIndex == std::numeric_limits<size_t>::max() || m_selectedModVersionTypeIndex == std::numeric_limits<size_t>::max()) {
+		return false;
+	}
+
+	std::shared_ptr<GameVersion> selectedGameVersion(getSelectedGameVersion());
+
+	if(selectedGameVersion == nullptr) {
+		return false;
+	}
+
+	std::shared_ptr<ModVersionType> selectedModVersionType(m_selectedMod->getVersion(m_selectedModVersionIndex)->getType(m_selectedModVersionTypeIndex));
+
+	std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(selectedGameVersion->getCompatibleModGameVersions(selectedModVersionType->getGameVersions()));
+
+	return !compatibleModGameVersions.empty();
+}
+
+bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersion, std::shared_ptr<ModGameVersion> alternateModGameVersion) {
 	if(!m_initialized) {
 		return false;
 	}
@@ -910,34 +1111,9 @@ bool ModManager::runSelectedMod() {
 
 	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
 
-	std::shared_ptr<GameVersion> selectedGameVersion;
+	std::shared_ptr<GameVersion> selectedGameVersion(alternateGameVersion != nullptr ? alternateGameVersion : getSelectedGameVersion());
 
-	if(m_arguments != nullptr && m_arguments->hasArgument("game") && !m_arguments->getFirstValue("game").empty()) {
-		std::string gameVersionName(m_arguments->getFirstValue("game"));
-
-		selectedGameVersion = m_gameVersions->getGameVersion(gameVersionName);
-
-		if(selectedGameVersion == nullptr) {
-			spdlog::error("Could not find game version override for '{}'.", gameVersionName);
-			return false;
-		}
-	}
-	else {
-		if(m_preferredGameVersion == nullptr) {
-			spdlog::error("No preferred game version selected.");
-			return false;
-		}
-
-		selectedGameVersion = m_preferredGameVersion;
-	}
-
-	if(!selectedGameVersion->isValid()) {
-		spdlog::error("Invalid preferred game version.");
-		return false;
-	}
-
-	if(!selectedGameVersion->isConfigured()) {
-		spdlog::error("Preferred game version is not configured.");
+	if(selectedGameVersion == nullptr) {
 		return false;
 	}
 
@@ -952,24 +1128,18 @@ bool ModManager::runSelectedMod() {
 		}
 
 		if(m_selectedModVersionIndex == std::numeric_limits<size_t>::max()) {
-			setSelectedModVersionIndex(0);
-
-			if(m_selectedMod->numberOfVersions() > 1) {
-				if(!m_cli->updateSelectedModVersionPrompt()) {
-					return false;
-				}
+			if(m_selectedModVersionIndex == std::numeric_limits<size_t>::max()) {
+				spdlog::error("No mod version selected.");
+				return false;
 			}
 		}
 
 		selectedModVersion = m_selectedMod->getVersion(m_selectedModVersionIndex);
 
 		if(m_selectedModVersionTypeIndex == std::numeric_limits<size_t>::max()) {
-			setSelectedModVersionTypeIndex(0);
-
-			if (selectedModVersion->numberOfTypes() > 1) {
-				if (!m_cli->updateSelectedModVersionTypePrompt()) {
-					return false;
-				}
+			if(m_selectedModVersionTypeIndex == std::numeric_limits<size_t>::max()) {
+				spdlog::error("No mod version type selected.");
+				return false;
 			}
 		}
 
@@ -978,20 +1148,17 @@ bool ModManager::runSelectedMod() {
 		std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(selectedGameVersion->getCompatibleModGameVersions(selectedModVersionType->getGameVersions()));
 
 		if(compatibleModGameVersions.empty()) {
-			std::string additionalPromptMessage(fmt::format("{} is not supported on {}.", m_selectedMod->getFullName(m_selectedModVersionIndex, m_selectedModVersionTypeIndex), selectedGameVersion->getName()));
+			spdlog::error("{} is not supported on {}.", m_selectedMod->getFullName(m_selectedModVersionIndex, m_selectedModVersionTypeIndex), selectedGameVersion->getName());
+			return false;
+		}
 
-			std::optional<std::pair<std::shared_ptr<GameVersion>, std::shared_ptr<ModGameVersion>>> optionalGameAndModGameVersionSelection(m_cli->runUnsupportedModVersionTypePrompt(selectedModVersionType, additionalPromptMessage));
-
-			if(!optionalGameAndModGameVersionSelection.has_value()) {
-				spdlog::error("Alternative game version not selected, aborting launch.");
-
+		if(alternateModGameVersion != nullptr) {
+			if(alternateModGameVersion->getParentModVersionType() != selectedModVersionType.get()) {
+				spdlog::error("Provided alternate game version does not belong to '{}'.", m_selectedMod->getFullName(m_selectedModVersionIndex, m_selectedModVersionTypeIndex));
 				return false;
 			}
 
-			spdlog::info("Using game version '{}' since '{}' is not supported on '{}'.", optionalGameAndModGameVersionSelection.value().first->getName(), m_selectedMod->getFullName(m_selectedModVersionIndex, m_selectedModVersionTypeIndex), selectedGameVersion->getName());
-
-			selectedGameVersion = optionalGameAndModGameVersionSelection.value().first;
-			selectedModGameVersion = optionalGameAndModGameVersionSelection.value().second;
+			selectedModGameVersion = alternateModGameVersion;
 		}
 		else {
 			selectedModGameVersion = compatibleModGameVersions[0];
@@ -1639,7 +1806,7 @@ std::string ModManager::generateDOSBoxCommand(const Script & script, const Scrip
 	return Utilities::trimString(command.str());
 }
 
-bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
+bool ModManager::handleArguments(const ArgumentParser * args) {
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	if(args != nullptr) {
@@ -1670,9 +1837,8 @@ bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
 						bool error = ipAddress.empty() || ipAddress.find_first_of(" \t") != std::string::npos;
 
 						if(error) {
-							spdlog::warn("Invalid IP Address entered in arguments: '{}'.", ipAddress);
-
-							m_cli->updateIPAddressPrompt();
+							spdlog::error("Invalid IP Address entered in arguments: '{}'.", ipAddress);
+							return false;
 						}
 						else {
 							settings->dosboxServerIPAddress = ipAddress;
@@ -1691,9 +1857,8 @@ bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
 						}
 
 						if(error) {
-							spdlog::warn("Invalid {} Server Port entered in arguments: '{}'.", m_gameType == GameType::Server ? "Local" : "Remote", portData);
-
-							m_cli->updatePortPrompt();
+							spdlog::error("Invalid {} Server Port entered in arguments: '{}'.", m_gameType == GameType::Server ? "Local" : "Remote", portData);
+							return false;
 						}
 						else {
 							if(m_gameType == GameType::Server) {
@@ -1763,7 +1928,11 @@ bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
 					fmt::print("Found {} matches:\n", modMatches.size());
 
 					for(size_t i = 0; i < modMatches.size(); i++) {
-						printSpacing(Utilities::unsignedLongLength(modMatches.size()) - Utilities::unsignedLongLength(i + 1));
+						size_t spacingLength = Utilities::unsignedLongLength(modMatches.size()) - Utilities::unsignedLongLength(i + 1);
+
+						for(size_t i = 0; i < spacingLength; i++) {
+							fmt::print(" ");
+						}
 
 						fmt::print("{}. {}\n", i + 1, modMatches[i].toString());
 					}
@@ -1783,7 +1952,7 @@ bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
 
 			selectRandomMod(true, true);
 
-			fmt::print("Selected random mod: '{}'\n", m_selectedMod->getFullName(m_selectedModVersionIndex, m_selectedModVersionTypeIndex));
+			spdlog::info("Selected random mod: '{}'\n", m_selectedMod->getFullName(m_selectedModVersionIndex, m_selectedModVersionTypeIndex));
 			fmt::print("\n");
 
 			runSelectedMod();
@@ -1806,10 +1975,6 @@ bool ModManager::handleArguments(const ArgumentParser * args, bool start) {
 
 			return true;
 		}
-	}
-
-	if(start) {
-		run();
 	}
 
 	return true;
@@ -2429,36 +2594,44 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 	return numberOfFileHashesUpdated;
 }
 
+std::string ModManager::getArgumentHelpInfo() {
+	std::stringstream argumentHelpStream;
+
+	argumentHelpStream << APPLICATION_NAME << " version " << APPLICATION_VERSION << " arguments:\n";
+	argumentHelpStream << " -f \"Custom Settings.json\" - specifies an alternate settings file to use.\n";
+	argumentHelpStream << " --type Game/Setup/Client/Server - specifies game type, default: Game.\n";
+	argumentHelpStream << " --game \"Game Version\" - specifies the game version to run.\n";
+	argumentHelpStream << " --ip 127.0.0.1 - specifies host ip address if running in client mode.\n";
+	argumentHelpStream << " --port 1337 - specifies server port when running in client or server mode.\n";
+	argumentHelpStream << " -g MOD.GRP - manually specifies a group or zip file to use. Can be specified multiple times.\n";
+	argumentHelpStream << " -x MOD.CON - manually specifies a game con file to use.\n";
+	argumentHelpStream << " -h MOD.DEF - manually specifies a game def file to use.\n";
+	argumentHelpStream << " --map _ZOO.MAP - manually specifies a user map file to load.\n";
+	argumentHelpStream << " --search \"Full Mod Name\" - searches for and selects the mod with a full or partially matching name, and optional version / type.\n";
+	argumentHelpStream << " --random - randomly selects a mod to run.\n";
+	argumentHelpStream << " -n - runs normal Duke Nukem 3D without any mods.\n";
+	argumentHelpStream << " -v # - selects an episode (1-4+).\n";
+	argumentHelpStream << " -l # - selects a level (1-11).\n";
+	argumentHelpStream << " -s # - selects a skill level (1-4).\n";
+	argumentHelpStream << " -r - enables demo recording.\n";
+	argumentHelpStream << " -d DEMO3.DMO - plays back the specified demo file.\n";
+	argumentHelpStream << " -t # - respawn mode: 1 = monsters, 2 = items, 3 = inventory, x = all.\n";
+	argumentHelpStream << " -u 8675309241 - set preferred weapon switch order, as a string of 10 digits.\n";
+	argumentHelpStream << " -m disable monsters.\n";
+	argumentHelpStream << " --ns disable sound.\n";
+	argumentHelpStream << " --nm disable music.\n";
+	argumentHelpStream << " --local - runs the mod manager in local mode.\n";
+	argumentHelpStream << " -- <args> - specify arguments to pass through to the target game executable when executing.\n";
+	argumentHelpStream << " --hash-new - updates unhashed SHA1 file hashes (developer use only!).\n";
+	argumentHelpStream << " --hash-all - updates all SHA1 file hashes (developer use only!).\n";
+	argumentHelpStream << " --version - displays the application version.\n";
+	argumentHelpStream << " -? - displays this help message.\n";
+
+	return argumentHelpStream.str();
+}
+
 void ModManager::displayArgumentHelp() {
-	fmt::print("Duke Nukem 3D Mod Manager version {} arguments:\n", APPLICATION_VERSION);
-	fmt::print(" -f \"Custom Settings.json\" - specifies an alternate settings file to use.\n");
-	fmt::print(" --type Game/Setup/Client/Server - specifies game type, default: Game.\n");
-	fmt::print(" --game \"Game Version\" - specifies the game version to run.\n");
-	fmt::print(" --ip 127.0.0.1 - specifies host ip address if running in client mode.\n");
-	fmt::print(" --port 1337 - Specifies server port when running in client or server mode.\n");
-	fmt::print(" -g MOD.GRP - manually specifies a group or zip file to use. Can be specified multiple times.\n");
-	fmt::print(" -x MOD.CON - manually specifies a game con file to use.\n");
-	fmt::print(" -h MOD.DEF - manually specifies a game def file to use.\n");
-	fmt::print(" --map ZOO.MAP - manually specifies a user map file to load.\n");
-	fmt::print(" --search \"Full Mod Name\" - searches for and selects the mod with a full or partially matching name, and optional version / type.\n");
-	fmt::print(" --random - randomly selects a mod to run.\n");
-	fmt::print(" -n - runs normal Duke Nukem 3D without any mods.\n");
-	fmt::print(" -v # - selects an episode (1-4+).\n");
-	fmt::print(" -l # - selects a level (1-11).\n");
-	fmt::print(" -s # - selects a skill level (1-4).\n");
-	fmt::print(" -r - enables demo recording.\n");
-	fmt::print(" -d DEMO3.DMO - plays back the specified demo file.\n");
-	fmt::print(" -t # - respawn mode: 1 = monsters, 2 = items, 3 = inventory, x = all.\n");
-	fmt::print(" -u 8675309241 - set preferred weapon switch order, as a string of 10 digits.\n");
-	fmt::print(" -m disable monsters.\n");
-	fmt::print(" --ns disable sound.\n");
-	fmt::print(" --nm disable music.\n");
-	fmt::print(" --local - runs the mod manager in local mode.\n");
-	fmt::print(" -- <args> - specify arguments to pass through to the target game executable when executing.\n");
-	fmt::print(" --hash-new - updates unhashed SHA1 file hashes (developer use only!).\n");
-	fmt::print(" --hash-all - updates all SHA1 file hashes (developer use only!).\n");
-	fmt::print(" --version - displays the application version.\n");
-	fmt::print(" -? - displays this help message.\n");
+	fmt::print(getArgumentHelpInfo());
 }
 
 bool ModManager::createApplicationTemporaryDirectory() {
@@ -2934,8 +3107,130 @@ std::string ModManager::generateDOSBoxTemplateScriptFileData(GameType gameType) 
 	return templateStream.str();
 }
 
-void ModManager::printSpacing(size_t length) {
-	for(size_t i = 0; i < length; i++) {
-		fmt::print(" ");
+ModManager::Listener::~Listener() { }
+
+void ModManager::Listener::modSelectionChanged(const std::shared_ptr<Mod> & mod, size_t modVersionIndex, size_t modVersionTypeIndex) { }
+
+void ModManager::Listener::gameTypeChanged(GameType gameType) { }
+
+void ModManager::Listener::preferredGameVersionChanged(const std::shared_ptr<GameVersion> & gameVersion) { }
+
+void ModManager::Listener::dosboxServerIPAddressChanged(const std::string & ipAddress) { }
+
+void ModManager::Listener::dosboxLocalServerPortChanged(uint16_t port) { }
+
+void ModManager::Listener::dosboxRemoteServerPortChanged(uint16_t port) { }
+
+size_t ModManager::numberOfListeners() const {
+	return m_listeners.size();
+}
+
+bool ModManager::hasListener(const Listener & listener) const {
+	for(std::vector<Listener *>::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i) {
+		if(*i == &listener) {
+			return true;
+		}
 	}
+
+	return false;
+}
+
+size_t ModManager::indexOfListener(const Listener & listener) const {
+	for(size_t i = 0; i < m_listeners.size(); i++) {
+		if(m_listeners[i] == &listener) {
+			return i;
+		}
+	}
+
+	return std::numeric_limits<size_t>::max();
+}
+
+ModManager::Listener * ModManager::getListener(size_t index) const {
+	if(index >= m_listeners.size()) {
+		return nullptr;
+	}
+
+	return m_listeners[index];
+}
+
+bool ModManager::addListener(Listener & listener) {
+	if(!hasListener(listener)) {
+		m_listeners.push_back(&listener);
+
+		return true;
+	}
+
+	return false;
+}
+
+bool ModManager::removeListener(size_t index) {
+	if(index >= m_listeners.size()) {
+		return false;
+	}
+
+	m_listeners.erase(m_listeners.begin() + index);
+
+	return true;
+}
+
+bool ModManager::removeListener(const Listener & listener) {
+	for(std::vector<Listener *>::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i) {
+		if(*i == &listener) {
+			m_listeners.erase(i);
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void ModManager::clearListeners() {
+	m_listeners.clear();
+}
+
+void ModManager::notifyModSelectionChanged() {
+	for(Listener * listener : m_listeners) {
+		listener->modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex);
+	}
+}
+
+void ModManager::notifyGameTypeChanged() {
+	for(Listener * listener : m_listeners) {
+		listener->gameTypeChanged(m_gameType);
+	}
+}
+
+void ModManager::notifyPreferredGameVersionChanged() {
+	for(Listener * listener : m_listeners) {
+		listener->preferredGameVersionChanged(m_preferredGameVersion);
+	}
+}
+
+void ModManager::notifyDOSBoxServerIPAddressChanged() {
+	SettingsManager * settings = SettingsManager::getInstance();
+
+	for(Listener * listener : m_listeners) {
+		listener->dosboxServerIPAddressChanged(settings->dosboxServerIPAddress);
+	}
+}
+
+void ModManager::notifyDOSBoxLocalServerPortChanged() {
+	SettingsManager * settings = SettingsManager::getInstance();
+
+	for(Listener * listener : m_listeners) {
+		listener->dosboxLocalServerPortChanged(settings->dosboxLocalServerPort);
+	}
+}
+
+void ModManager::notifyDOSBoxRemoteServerPortChanged() {
+	SettingsManager * settings = SettingsManager::getInstance();
+
+	for(Listener * listener : m_listeners) {
+		listener->dosboxRemoteServerPortChanged(settings->dosboxRemoteServerPort);
+	}
+}
+
+void ModManager::selectedModChanged(const std::shared_ptr<Mod> & mod) {
+	setSelectedMod(mod);
 }

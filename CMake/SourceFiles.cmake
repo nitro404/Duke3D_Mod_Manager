@@ -1,7 +1,6 @@
 include_guard()
 
-set(SOURCE_FILES
-	Main.cpp
+set(MAIN_SOURCE_FILES
 	Configuration/GameConfiguration.cpp
 	Configuration/GameConfigurationEntry.cpp
 	Configuration/GameConfigurationGenerator.cpp
@@ -26,7 +25,6 @@ set(SOURCE_FILES
 	Group/Group.cpp
 	Group/GroupFile.cpp
 	Manager/ModManager.cpp
-	Manager/ModManagerCLI.cpp
 	Manager/ModMatch.cpp
 	Manager/SettingsManager.cpp
 	Manager/Windows/ModManagerWindows.cpp
@@ -50,7 +48,7 @@ set(SOURCE_FILES
 	Mod/OrganizedModCollection.cpp
 )
 
-set(HEADER_FILES
+set(MAIN_HEADER_FILES
 	Configuration/GameConfiguration.h
 	Download/CachedFile.h
 	Download/CachedPackageFile.h
@@ -98,12 +96,24 @@ set(HEADER_FILES
 	Mod/OrganizedModCollection.h
 )
 
-set(SOURCE_FILES_WINDOWS
+set(MAIN_SOURCE_FILES_WINDOWS
 	Game/Windows/GameLocatorWindows.cpp
 )
 
-list(APPEND SOURCE_FILES ${SOURCE_FILES_${PLATFORM_UPPER}})
-list(APPEND HEADER_FILES ${HEADER_FILES_${PLATFORM_UPPER}})
+set(CLI_SOURCE_FILES
+	CLI/CLIMain.cpp
+	CLI/ModManagerCLI.cpp
+)
+
+set(CLI_HEADER_FILES
+	CLI/ModManagerCLI.h
+)
+
+list(APPEND SOURCE_FILES ${MAIN_SOURCE_FILES} ${MAIN_SOURCE_FILES_${PLATFORM_UPPER}})
+list(APPEND HEADER_FILES ${MAIN_HEADER_FILES} ${MAIN_HEADER_FILES_${PLATFORM_UPPER}})
+
+list(APPEND SOURCE_FILES ${CLI_SOURCE_FILES})
+list(APPEND HEADER_FILES ${CLI_HEADER_FILES})
 
 list(TRANSFORM SOURCE_FILES PREPEND "${_SOURCE_DIRECTORY}/")
 list(TRANSFORM HEADER_FILES PREPEND "${_SOURCE_DIRECTORY}/")

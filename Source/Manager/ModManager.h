@@ -30,16 +30,28 @@ class ModVersionType;
 class Script;
 class ScriptArguments;
 
-class ModManager final : public Application {
+class ModManager final : public Application,
+						 public OrganizedModCollection::Listener {
 public:
+	class Listener {
+	public:
+		virtual ~Listener();
+
+		virtual void modSelectionChanged(const std::shared_ptr<Mod> & mod, size_t modVersionIndex, size_t modVersionTypeIndex);
+		virtual void gameTypeChanged(GameType gameType);
+		virtual void preferredGameVersionChanged(const std::shared_ptr<GameVersion> & gameVersion);
+		virtual void dosboxServerIPAddressChanged(const std::string & ipAddress);
+		virtual void dosboxLocalServerPortChanged(uint16_t port);
+		virtual void dosboxRemoteServerPortChanged(uint16_t port);
+	};
+
 	ModManager();
 	virtual ~ModManager();
 
 	bool isInitialized() const;
-	bool initialize(int argc, char * argv[], bool start = true);
+	bool initialize(int argc = 0, char * argv[] = nullptr);
+	bool initialize(std::shared_ptr<ArgumentParser> arguments);
 	bool uninitialize();
-
-	void run();
 
 	bool isUsingLocalMode() const;
 	std::shared_ptr<OrganizedModCollection> getOrganizedMods() const;
@@ -53,6 +65,7 @@ public:
 
 	bool hasPreferredGameVersion() const;
 	std::shared_ptr<GameVersion> getPreferredGameVersion() const;
+	std::shared_ptr<GameVersion> getSelectedGameVersion() const;
 	bool setPreferredGameVersion(const std::string & gameVersionName);
 	bool setPreferredGameVersion(std::shared_ptr<GameVersion> gameVersion);
 
@@ -60,7 +73,14 @@ public:
 
 	const std::string & getDOSBoxServerIPAddress() const;
 	void setDOSBoxServerIPAddress(const std::string & ipAddress);
+	uint16_t getDOSBoxLocalServerPort() const;
+	void setDOSBoxLocalServerPort(uint16_t port);
+	uint16_t getDOSBoxRemoteServerPort() const;
+	void setDOSBoxRemoteServerPort(uint16_t port);
 
+	bool hasModSelected() const;
+	bool hasModVersionSelected() const;
+	bool hasModVersionTypeSelected() const;
 	std::shared_ptr<Mod> getSelectedMod() const;
 	std::shared_ptr<ModVersion> getSelectedModVersion() const;
 	std::shared_ptr<ModVersionType> getSelectedModVersionType() const;
@@ -69,6 +89,7 @@ public:
 	size_t getSelectedModVersionTypeIndex() const;
 	bool setSelectedMod(const std::string & name);
 	bool setSelectedMod(std::shared_ptr<Mod> mod);
+	bool setSelectedMod(const ModMatch & modMatch);
 	bool setSelectedModVersionIndex(size_t modVersionIndex);
 	bool setSelectedModVersionTypeIndex(size_t modVersionTypeIndex);
 	bool selectRandomMod(bool selectPreferredVersion, bool selectFirstVersionType);
@@ -81,52 +102,36 @@ public:
 	size_t searchForAndSelectAuthor(const std::string & query, std::vector<std::shared_ptr<ModAuthorInformation>> * matches = nullptr);
 	void clearSelectedMod();
 
-	bool runSelectedMod();
+	bool isModSupportedOnSelectedGameVersion();
+	bool runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersion = nullptr, std::shared_ptr<ModGameVersion> alternateModGameVersion = nullptr);
+
+	size_t numberOfListeners() const;
+	bool hasListener(const Listener & listener) const;
+	size_t indexOfListener(const Listener & listener) const;
+	Listener * getListener(size_t index) const;
+	bool addListener(Listener & listener);
+	bool removeListener(size_t index);
+	bool removeListener(const Listener & listener);
+	void clearListeners();
+	void notifyModSelectionChanged();
+	void notifyGameTypeChanged();
+	void notifyPreferredGameVersionChanged();
+	void notifyDOSBoxServerIPAddressChanged();
+	void notifyDOSBoxLocalServerPortChanged();
+	void notifyDOSBoxRemoteServerPortChanged();
+
+	static std::string getArgumentHelpInfo();
+
+	// OrganizedModCollection::Listener Virtuals
+	void selectedModChanged(const std::shared_ptr<Mod> & mod);
 
 	static const GameType DEFAULT_GAME_TYPE;
 	static const std::string DEFAULT_PREFERRED_GAME_VERSION;
 	static const std::string HTTP_USER_AGENT;
 
 private:
-	class CLI final {
-	public:
-		CLI(ModManager * modManager);
-		~CLI();
-
-		void runMenu();
-		bool updateFilterTypePrompt(const std::string & args = "");
-		std::optional<OrganizedModCollection::FilterType> promptForFilterType(const std::string & args = "") const;
-		bool runSortPrompt(const std::string & args = "");
-		bool updateGameTypePrompt(const std::string & args = "");
-		std::optional<GameType> promptForGameType(const std::string & args = "") const;
-		bool updatePreferredGameVersionPrompt(const std::string & args = "");
-		std::shared_ptr<GameVersion> promptForPreferredGameVersion(const std::string & args = "") const;
-		std::optional<std::pair<std::shared_ptr<GameVersion>, std::shared_ptr<ModGameVersion>>> runUnsupportedModVersionTypePrompt(std::shared_ptr<ModVersionType> modVersionType, const std::string & promptMessage = "") const;
-		bool updateIPAddressPrompt(const std::string & args = "");
-		std::string promptForIPAddress(const std::string & args = "") const;
-		bool updatePortPrompt(const std::string & args = "");
-		std::optional<uint16_t> promptForPort(const std::string & args = "") const;
-		bool runSelectRandomModPrompt(bool selectPreferredVersion, bool selectFirstVersionType);
-		bool runSearchPrompt(const std::string & args = "");
-		bool updateSelectedModVersionPrompt();
-		bool updateSelectedModVersionTypePrompt();
-
-	private:
-		static size_t getValuePrompt(const std::vector<std::string> & values, const std::string & promptMessage = "", const std::string & args = "");
-		static std::string getArguments(const std::string & data);
-		static void pause();
-		static void clearOutput();
-
-		ModManager * m_modManager;
-
-		CLI(const CLI &) = delete;
-		CLI(CLI &&) noexcept = delete;
-		const CLI & operator = (const CLI &) = delete;
-		const CLI & operator = (CLI &&) noexcept = delete;
-	};
-
 	void assignPlatformFactories();
-	bool handleArguments(const ArgumentParser * args, bool start);
+	bool handleArguments(const ArgumentParser * args);
 	std::string generateCommand(std::shared_ptr<ModGameVersion> modGameVersion, std::shared_ptr<GameVersion> selectedGameVersion, ScriptArguments & scriptArgs, std::string_view combinedGroupFileName = "", bool * customMod = nullptr, std::string * customMap = nullptr) const;
 	std::string generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const std::string & dosboxPath, const  std::string & dosboxArguments) const;
 	size_t checkForUnlinkedModFiles() const;
@@ -154,7 +159,6 @@ private:
 	static std::string getDOSBoxTemplateScriptFileName(GameType gameType);
 	static std::string generateDOSBoxTemplateScriptFileData(GameType gameType);
 	static void displayArgumentHelp();
-	static void printSpacing(size_t length);
 
 	bool m_initialized;
 	bool m_localMode;
@@ -171,7 +175,7 @@ private:
 	std::shared_ptr<ModCollection> m_mods;
 	std::shared_ptr<FavouriteModCollection> m_favouriteMods;
 	std::shared_ptr<OrganizedModCollection> m_organizedMods;
-	std::unique_ptr<CLI> m_cli;
+	std::vector<Listener *> m_listeners;
 
 	ModManager(const ModManager &) = delete;
 	ModManager(ModManager &&) noexcept = delete;
