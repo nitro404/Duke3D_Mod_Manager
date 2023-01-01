@@ -112,6 +112,11 @@ static constexpr const char * CACERT_UPDATE_FREQUENCY_PROPERTY_NAME = "cacertUpd
 static constexpr const char * TIME_ZONE_DATA_LAST_DOWNLOADED_PROPERTY_NAME = "timeZoneDataLastDownloaded";
 static constexpr const char * TIME_ZONE_DATA_UPDATE_FREQUENCY_PROPERTY_NAME = "timeZoneDataUpdateFrequency";
 
+static constexpr const char * WINDOW_CATEGORY_NAME = "window";
+
+static constexpr const char * WINDOW_POSITION_PROPERTY_NAME = "position";
+static constexpr const char * WINDOW_SIZE_PROPERTY_NAME = "size";
+
 const char * SettingsManager::FILE_FORMAT_VERSION = "1.0.0";
 const char * SettingsManager::DEFAULT_SETTINGS_FILE_PATH = "Duke Nukem 3D Mod Manager Settings.json";
 const char * SettingsManager::DEFAULT_MODS_LIST_FILE_PATH = "Duke Nukem 3D Mod List.xml";
@@ -164,6 +169,9 @@ const std::chrono::minutes SettingsManager::DEFAULT_MOD_LIST_UPDATE_FREQUENCY = 
 const std::chrono::minutes SettingsManager::DEFAULT_GAME_DOWNLOAD_LIST_UPDATE_FREQUENCY = std::chrono::minutes(60);
 const std::chrono::minutes SettingsManager::DEFAULT_CACERT_UPDATE_FREQUENCY = std::chrono::hours(2 * 24 * 7); // 2 weeks
 const std::chrono::minutes SettingsManager::DEFAULT_TIME_ZONE_DATA_UPDATE_FREQUENCY = std::chrono::hours(1 * 24 * 7); // 1 week
+const Point SettingsManager::DEFAULT_WINDOW_POSITION(-1, -1);
+const Dimension SettingsManager::DEFAULT_WINDOW_SIZE(1024, 768);
+const Dimension SettingsManager::MINIMUM_WINDOW_SIZE(800, 600);
 
 static bool assignStringSetting(std::string & setting, const rapidjson::Value & categoryValue, const std::string & propertyName) {
 	if(propertyName.empty() || !categoryValue.IsObject() || !categoryValue.HasMember(propertyName.c_str())) {
@@ -230,6 +238,42 @@ static bool assignChronoSetting(T & setting, const rapidjson::Value & categoryVa
 	return true;
 }
 
+static bool assignPointSetting(Point & setting, const rapidjson::Value & categoryValue, const std::string & propertyName) {
+	if(propertyName.empty() || !categoryValue.IsObject() || !categoryValue.HasMember(propertyName.c_str())) {
+		return false;
+	}
+
+	const rapidjson::Value & settingValue = categoryValue[propertyName.c_str()];
+
+	std::optional<Point> optionalPoint(Point::parseFrom(settingValue));
+
+	if(!optionalPoint.has_value()) {
+		return false;
+	}
+
+	setting = std::move(optionalPoint.value());
+
+	return true;
+}
+
+static bool assignDimensionSetting(Dimension & setting, const rapidjson::Value & categoryValue, const std::string & propertyName) {
+	if(propertyName.empty() || !categoryValue.IsObject() || !categoryValue.HasMember(propertyName.c_str())) {
+		return false;
+	}
+
+	const rapidjson::Value & settingValue = categoryValue[propertyName.c_str()];
+
+	std::optional<Dimension> optionalDimension(Dimension::parseFrom(settingValue));
+
+	if(!optionalDimension.has_value()) {
+		return false;
+	}
+
+	setting = std::move(optionalDimension.value());
+
+	return true;
+}
+
 SettingsManager::SettingsManager()
 	: modsListFilePath(DEFAULT_MODS_LIST_FILE_PATH)
 	, favouriteModsListFilePath(DEFAULT_FAVOURITE_MODS_LIST_FILE_PATH)
@@ -280,7 +324,9 @@ SettingsManager::SettingsManager()
 	, gameDownloadListUpdateFrequency(DEFAULT_GAME_DOWNLOAD_LIST_UPDATE_FREQUENCY)
 	, cacertUpdateFrequency(DEFAULT_CACERT_UPDATE_FREQUENCY)
 	, timeZoneDataUpdateFrequency(DEFAULT_TIME_ZONE_DATA_UPDATE_FREQUENCY)
-	, segmentAnalyticsDataFileName(DEFAULT_SEGMENT_ANALYTICS_DATA_FILE_NAME) { }
+	, segmentAnalyticsDataFileName(DEFAULT_SEGMENT_ANALYTICS_DATA_FILE_NAME)
+	, windowPosition(DEFAULT_WINDOW_POSITION)
+	, windowSize(DEFAULT_WINDOW_SIZE) { }
 
 SettingsManager::~SettingsManager() = default;
 
@@ -339,6 +385,8 @@ void SettingsManager::reset() {
 	cacertUpdateFrequency = DEFAULT_CACERT_UPDATE_FREQUENCY;
 	timeZoneDataLastDownloadedTimestamp.reset();
 	timeZoneDataUpdateFrequency = DEFAULT_TIME_ZONE_DATA_UPDATE_FREQUENCY;
+	windowPosition = DEFAULT_WINDOW_POSITION;
+	windowSize = DEFAULT_WINDOW_SIZE;
 	fileETags.clear();
 }
 
@@ -538,6 +586,15 @@ rapidjson::Document SettingsManager::toJSON() const {
 	downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(TIME_ZONE_DATA_UPDATE_FREQUENCY_PROPERTY_NAME), rapidjson::Value(timeZoneDataUpdateFrequency.count()), allocator);
 
 	settingsDocument.AddMember(rapidjson::StringRef(DOWNLOAD_THROTTLING_CATEGORY_NAME), downloadThrottlingCategoryValue, allocator);
+
+	rapidjson::Value windowCategoryValue(rapidjson::kObjectType);
+
+	rapidjson::Value windowPositionValue(windowPosition.toJSON(allocator));
+	windowCategoryValue.AddMember(rapidjson::StringRef(WINDOW_POSITION_PROPERTY_NAME), windowPositionValue, allocator);
+	rapidjson::Value windowSizeValue(windowSize.toJSON(allocator));
+	windowCategoryValue.AddMember(rapidjson::StringRef(WINDOW_SIZE_PROPERTY_NAME), windowSizeValue, allocator);
+
+	settingsDocument.AddMember(rapidjson::StringRef(WINDOW_CATEGORY_NAME), windowCategoryValue, allocator);
 
 	rapidjson::Value fileETagsValue(rapidjson::kObjectType);
 
@@ -739,6 +796,13 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 		assignChronoSetting(cacertUpdateFrequency, downloadThrottlingValue, CACERT_UPDATE_FREQUENCY_PROPERTY_NAME);
 		assignOptionalTimePointSetting(timeZoneDataLastDownloadedTimestamp, downloadThrottlingValue, TIME_ZONE_DATA_LAST_DOWNLOADED_PROPERTY_NAME);
 		assignChronoSetting(timeZoneDataUpdateFrequency, downloadThrottlingValue, TIME_ZONE_DATA_UPDATE_FREQUENCY_PROPERTY_NAME);
+	}
+
+	if(settingsDocument.HasMember(WINDOW_CATEGORY_NAME) && settingsDocument[WINDOW_CATEGORY_NAME].IsObject()) {
+		const rapidjson::Value & windowCategoryValue = settingsDocument[WINDOW_CATEGORY_NAME];
+
+		assignPointSetting(windowPosition, windowCategoryValue, WINDOW_POSITION_PROPERTY_NAME);
+		assignDimensionSetting(windowSize, windowCategoryValue, WINDOW_SIZE_PROPERTY_NAME);
 	}
 
 	if(settingsDocument.HasMember(FILE_ETAGS_PROPERTY_NAME) && settingsDocument[FILE_ETAGS_PROPERTY_NAME].IsObject()) {

@@ -100,6 +100,28 @@ set(MAIN_SOURCE_FILES_WINDOWS
 	Game/Windows/GameLocatorWindows.cpp
 )
 
+set(GUI_SOURCE_FILES
+	GUI/ConsolePanel.cpp
+	GUI/Logging/CustomLogTextControl.cpp
+	GUI/Logging/LogSinkWX.cpp
+	GUI/Logging/PreformattedLogFormatter.cpp
+	GUI/ModBrowserPanel.cpp
+	GUI/ModManagerApplication.cpp
+	GUI/ModManagerFrame.cpp
+	GUI/WXUtilities.cpp
+)
+
+set(GUI_HEADER_FILES
+	GUI/ConsolePanel.h
+	GUI/Logging/CustomLogTextControl.h
+	GUI/Logging/LogSinkWX.h
+	GUI/Logging/PreformattedLogFormatter.h
+	GUI/ModBrowserPanel.h
+	GUI/ModManagerApplication.h
+	GUI/ModManagerFrame.h
+	GUI/WXUtilities.h
+)
+
 set(CLI_SOURCE_FILES
 	CLI/CLIMain.cpp
 	CLI/ModManagerCLI.cpp
@@ -112,8 +134,13 @@ set(CLI_HEADER_FILES
 list(APPEND SOURCE_FILES ${MAIN_SOURCE_FILES} ${MAIN_SOURCE_FILES_${PLATFORM_UPPER}})
 list(APPEND HEADER_FILES ${MAIN_HEADER_FILES} ${MAIN_HEADER_FILES_${PLATFORM_UPPER}})
 
-list(APPEND SOURCE_FILES ${CLI_SOURCE_FILES})
-list(APPEND HEADER_FILES ${CLI_HEADER_FILES})
+if(GUI_ENABLED)
+	list(APPEND SOURCE_FILES ${GUI_SOURCE_FILES})
+	list(APPEND HEADER_FILES ${GUI_HEADER_FILES})
+else()
+	list(APPEND SOURCE_FILES ${CLI_SOURCE_FILES})
+	list(APPEND HEADER_FILES ${CLI_HEADER_FILES})
+endif()
 
 list(TRANSFORM SOURCE_FILES PREPEND "${_SOURCE_DIRECTORY}/")
 list(TRANSFORM HEADER_FILES PREPEND "${_SOURCE_DIRECTORY}/")
