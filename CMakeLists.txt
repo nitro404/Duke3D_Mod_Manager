@@ -6,6 +6,8 @@ set(_SOURCE_DIRECTORY "Source")
 set(_RESOURCES_DIRECTORY "Resources")
 set(_LIBRARY_DIRECTORY "Libraries")
 set(_PROJECT_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${_SOURCE_DIRECTORY}/Project.h")
+set(APPLICATION_NAME "Duke Nukem 3D Mod Manager")
+string(REPLACE " " "" _PROJECT_NAME ${APPLICATION_NAME})
 
 add_subdirectory(${_LIBRARY_DIRECTORY}/Core)
 
@@ -14,7 +16,7 @@ list(APPEND CMAKE_MODULE_PATH "${CORE_DIRECTORY}/CMake")
 include(Modules/GetGitCommitHash)
 include(Hunter/HunterInit)
 
-project(DukeNukem3DModManager VERSION 0.0.1 LANGUAGES C CXX)
+project(${_PROJECT_NAME} VERSION 0.0.1 LANGUAGES C CXX)
 
 include(Environment)
 include(ThirdPartyLibraries)
