@@ -70,7 +70,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_modSearchTextField->Bind(wxEVT_TEXT, &ModBrowserPanel::onModSearchTextChanged, this);
 	m_modSearchTextField->Bind(wxEVT_SEARCHCTRL_CANCEL_BTN, &ModBrowserPanel::onModSearchCancelled, this);
 
-	m_selectRandomModButton = new wxButton(modListOptionsPanel, wxID_ANY, "Select Random", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "Select Random Mod");
+	m_selectRandomModButton = new wxButton(modListOptionsPanel, wxID_ANY, "Random", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "Select Random Mod");
 	m_selectRandomModButton->Bind(wxEVT_BUTTON, &ModBrowserPanel::onSelectRandomModButtonPressed, this);
 
 	if(m_modManager->getOrganizedMods()->numberOfMods() == 0) {
@@ -78,16 +78,19 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	}
 
 	wxStaticText * modListFilterTypeLabel = new wxStaticText(modListOptionsPanel, wxID_ANY, "Filter Type:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	modListFilterTypeLabel->SetFont(modListFilterTypeLabel->GetFont().MakeBold());
 	m_modListFilterTypeComboBox = new wxComboBox(modListOptionsPanel, wxID_ANY, std::string(magic_enum::enum_name(OrganizedModCollection::DEFAULT_FILTER_TYPE)), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<OrganizedModCollection::FilterType>(), 0, wxDefaultValidator, "Mod List Filter Type");
 	m_modListFilterTypeComboBox->SetEditable(false);
 	m_modListFilterTypeComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onModListFilterTypeSelected, this);
 
 	wxStaticText * modListSortTypeLabel = new wxStaticText(modListOptionsPanel, wxID_ANY, "Sort Type:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	modListSortTypeLabel->SetFont(modListSortTypeLabel->GetFont().MakeBold());
 	m_modListSortTypeComboBox = new wxComboBox(modListOptionsPanel, wxID_ANY, std::string(magic_enum::enum_name(OrganizedModCollection::DEFAULT_SORT_TYPE)), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<OrganizedModCollection::SortType>(), 0, wxDefaultValidator, "Mod List Sort Type");
 	m_modListSortTypeComboBox->SetEditable(false);
 	m_modListSortTypeComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onModListSortTypeSelected, this);
 
-	wxStaticText * modListSortDirectionLabel = new wxStaticText(modListOptionsPanel, wxID_ANY, "Sort Direction:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	wxStaticText * modListSortDirectionLabel = new wxStaticText(modListOptionsPanel, wxID_ANY, "Direction:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	modListSortDirectionLabel->SetFont(modListSortDirectionLabel->GetFont().MakeBold());
 	m_modListSortDirectionComboBox = new wxComboBox(modListOptionsPanel, wxID_ANY, std::string(magic_enum::enum_name(OrganizedModCollection::DEFAULT_SORT_DIRECTION)), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<OrganizedModCollection::SortDirection>(), 0, wxDefaultValidator, "Mod List Sort Direction");
 	m_modListSortDirectionComboBox->SetEditable(false);
 	m_modListSortDirectionComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onModListSortDirectionSelected, this);
@@ -95,18 +98,22 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	wxPanel * modSelectionPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, "Mod Selection");
 
 	m_modListLabel = new wxStaticText(modSelectionPanel, wxID_ANY, "Mods", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_modListLabel->SetFont(m_modListLabel->GetFont().MakeBold());
 	m_modListBox = new wxListBox(modSelectionPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, WXUtilities::createItemWXArrayString(m_modManager->getOrganizedMods()->getOrganizedItemDisplayNames()), wxLB_SINGLE | wxLB_ALWAYS_SB);
 	m_modListBox->Bind(wxEVT_LISTBOX, &ModBrowserPanel::onModSelected, this);
 
 	m_modVersionListLabel = new wxStaticText(modSelectionPanel, wxID_ANY, "Mod Versions", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_modVersionListLabel->SetFont(m_modVersionListLabel->GetFont().MakeBold());
 	m_modVersionListBox = new wxListBox(modSelectionPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, {}, wxLB_SINGLE | wxLB_ALWAYS_SB);
 	m_modVersionListBox->Bind(wxEVT_LISTBOX, &ModBrowserPanel::onModVersionSelected, this);
 
 	m_modVersionTypeListLabel = new wxStaticText(modSelectionPanel, wxID_ANY, "Mod Version Types", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_modVersionTypeListLabel->SetFont(m_modVersionTypeListLabel->GetFont().MakeBold());
 	m_modVersionTypeListBox = new wxListBox(modSelectionPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, {}, wxLB_SINGLE | wxLB_ALWAYS_SB);
 	m_modVersionTypeListBox->Bind(wxEVT_LISTBOX, &ModBrowserPanel::onModVersionTypeSelected, this);
 
 	m_modInfoBox = new wxStaticBox(modSelectionPanel, wxID_ANY, "Mod Information", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Mod Information");
+	m_modInfoBox->SetOwnFont(m_modInfoBox->GetFont().MakeBold());
 
 	m_modInfoPanel = new wxScrolledWindow(m_modInfoBox, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, "Mod Information");
 	m_modInfoPanel->SetScrollRate(5, 5);
@@ -160,6 +167,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_gameOptionsPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, "Game Options");
 
 	wxStaticText * ipAddressLabel = new wxStaticText(m_gameOptionsPanel, wxID_ANY, "IP Address:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	ipAddressLabel->SetFont(ipAddressLabel->GetFont().MakeBold());
 	m_ipAddressTextField = new wxTextCtrl(m_gameOptionsPanel, wxID_ANY, m_modManager->getDOSBoxServerIPAddress(), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "Server IP Address");
 	m_ipAddressTextField->Bind(wxEVT_TEXT, &ModBrowserPanel::onIPAddressTextChanged, this);
 
@@ -171,25 +179,30 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	}
 
 	std::optional<uint16_t> optionalDOSBoxServerPort;
+	std::string portLabelCaption;
 
 	switch(m_modManager->getGameType()) {
 		case GameType::Game:
 		case GameType::Setup: {
+			portLabelCaption = "Port";
 			break;
 		}
 
 		case GameType::Client: {
+			portLabelCaption = "Remote Port";
 			optionalDOSBoxServerPort = m_modManager->getDOSBoxRemoteServerPort();
 			break;
 		}
 
 		case GameType::Server: {
+			portLabelCaption = "Local Port";
 			optionalDOSBoxServerPort = m_modManager->getDOSBoxLocalServerPort();
 			break;
 		}
 	}
 
-	m_portLabel = new wxStaticText(m_gameOptionsPanel, wxID_ANY, "Port:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_portLabel = new wxStaticText(m_gameOptionsPanel, wxID_ANY, fmt::format("{}:", portLabelCaption), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_portLabel->SetFont(m_portLabel->GetFont().MakeBold());
 	m_portTextField = new wxTextCtrl(m_gameOptionsPanel, wxID_ANY, optionalDOSBoxServerPort.has_value() ? std::to_string(optionalDOSBoxServerPort.value()) : "", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "Server Port");
 	m_portTextField->Bind(wxEVT_TEXT, &ModBrowserPanel::onPortTextChanged, this);
 
@@ -201,6 +214,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	}
 
 	wxStaticText * modGameTypeLabel = new wxStaticText(m_gameOptionsPanel, wxID_ANY, "Game Type:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	modGameTypeLabel->SetFont(modGameTypeLabel->GetFont().MakeBold());
 	m_modGameTypeComboBox = new wxComboBox(m_gameOptionsPanel, wxID_ANY, std::string(magic_enum::enum_name(m_modManager->getGameType())), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<GameType>(), 0, wxDefaultValidator, "Mod Game Type");
 	m_modGameTypeComboBox->SetEditable(false);
 	m_modGameTypeComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onModGameTypeSelected, this);
@@ -208,6 +222,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	std::shared_ptr<GameVersion> preferredGameVersion(m_modManager->getPreferredGameVersion());
 
 	wxStaticText * modGameVersionLabel = new wxStaticText(m_gameOptionsPanel, wxID_ANY, "Game Version:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	modGameVersionLabel->SetFont(modGameVersionLabel->GetFont().MakeBold());
 	m_modGameVersionComboBox = new wxComboBox(m_gameOptionsPanel, wxID_ANY, preferredGameVersion == nullptr ? "" : preferredGameVersion->getName(), wxDefaultPosition, wxDefaultSize, WXUtilities::createItemWXArrayString(GameVersionCollection::getGameVersionDisplayNamesFrom(m_modManager->getGameVersions()->getGameVersions(), false)), 0, wxDefaultValidator, "Mod Game Versions");
 	m_modGameVersionComboBox->SetEditable(false);
 	m_modGameVersionComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onModGameVersionSelected, this);
