@@ -32,6 +32,7 @@ public:
 	size_t indexOfGameVersion(const std::string & name) const;
 	std::shared_ptr<GameVersion> getGameVersion(size_t index) const;
 	std::shared_ptr<GameVersion> getGameVersion(const std::string & name) const;
+	const std::vector<std::shared_ptr<GameVersion>> & getGameVersions() const;
 	std::vector<std::shared_ptr<GameVersion>> getGameVersionsCompatibleWith(size_t index, bool includeSupported = false, std::optional<bool> configured = {}) const;
 	std::vector<std::shared_ptr<GameVersion>> getGameVersionsCompatibleWith(const std::string & name, bool includeSupported = false, std::optional<bool> configured = {}) const;
 	std::vector<std::shared_ptr<GameVersion>> getGameVersionsCompatibleWith(const GameVersion & gameVersion, bool includeSupported = false, std::optional<bool> configured = {}) const;
@@ -39,6 +40,8 @@ public:
 	std::vector<std::pair<std::shared_ptr<GameVersion>, std::vector<std::shared_ptr<ModGameVersion>>>> getGameVersionsCompatibleWith(const std::vector<std::shared_ptr<ModGameVersion>> & modGameVersions, bool includeSupported = false, std::optional<bool> configured = {}) const;
 	std::vector<std::shared_ptr<GameVersion>> getConfiguredGameVersions() const;
 	std::vector<std::shared_ptr<GameVersion>> getUnconfiguredGameVersions() const;
+	std::vector<std::string> getGameVersionDisplayNames(bool prependItemNumber = true) const;
+	static std::vector<std::string> getGameVersionDisplayNamesFrom(const std::vector<std::shared_ptr<GameVersion>> & gameVersions, bool prependItemNumber = true);
 	bool addGameVersion(const GameVersion & gameVersion);
 	size_t addGameVersions(const std::vector<GameVersion> & gameVersions);
 	size_t addGameVersions(const std::vector<std::shared_ptr<GameVersion>> & gameVersions);

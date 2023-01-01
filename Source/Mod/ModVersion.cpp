@@ -246,6 +246,21 @@ const std::vector<std::shared_ptr<ModVersionType>> & ModVersion::getTypes() cons
 	return m_types;
 }
 
+std::vector<std::string> ModVersion::getTypeDisplayNames(const std::string & emptySubstitution) const {
+	std::vector<std::string> typeDisplayNames;
+
+	for(const std::shared_ptr<ModVersionType> & type : m_types) {
+		if(type->getType().empty()) {
+			typeDisplayNames.push_back(emptySubstitution);
+		}
+		else {
+			typeDisplayNames.push_back(type->getType());
+		}
+	}
+
+	return typeDisplayNames;
+}
+
 bool ModVersion::addType(const ModVersionType & type) {
 	if(!type.isValid() || hasType(type)) {
 		return false;
@@ -524,7 +539,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const tinyxml2::XMLElement * m
 	const char * modVersionRepairedData = modVersionElement->Attribute(XML_MOD_VERSION_REPAIRED_ATTRIBUTE_NAME.c_str());
 
 	std::optional<Date> modVersionReleaseDateOptional;
-	
+
 	if(modVersionReleaseDate != nullptr) {
 		modVersionReleaseDateOptional = Date::parseFrom(modVersionReleaseDate);
 	}

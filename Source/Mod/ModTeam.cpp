@@ -10,6 +10,7 @@
 #include <tinyxml2.h>
 
 #include <array>
+#include <sstream>
 #include <string_view>
 
 static const std::string XML_MOD_TEAM_ELEMENT_NAME("team");
@@ -167,6 +168,50 @@ const std::string & ModTeam::getProvinceOrState() const {
 
 const std::string & ModTeam::getCountry() const {
 	return m_country;
+}
+
+bool ModTeam::hasLocation() const {
+	return !m_county.empty() ||
+		   !m_city.empty() ||
+		   !m_province.empty() ||
+		   !m_state.empty() ||
+		   !m_country.empty();
+}
+
+std::string ModTeam::getLocation() const {
+	std::stringstream locationStream;
+
+	if(!m_county.empty()) {
+		locationStream << m_county;
+	}
+
+	if(!m_city.empty()) {
+		if(locationStream.tellp() != 0) {
+			locationStream << ", ";
+		}
+
+		locationStream << m_city;
+	}
+
+	const std::string & provinceOrState = getProvinceOrState();
+
+	if(!provinceOrState.empty()) {
+		if(locationStream.tellp() != 0) {
+			locationStream << ", ";
+		}
+
+		locationStream << provinceOrState;
+	}
+
+	if(!m_country.empty()) {
+		if(locationStream.tellp() != 0) {
+			locationStream << ", ";
+		}
+
+		locationStream << m_country;
+	}
+
+	return locationStream.str();
 }
 
 const Mod * ModTeam::getParentMod() const {

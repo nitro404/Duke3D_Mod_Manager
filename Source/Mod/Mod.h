@@ -12,6 +12,7 @@
 #include <vector>
 
 class GameVersion;
+class GameVersionCollection;
 class ModDownload;
 class ModGameVersion;
 class ModImage;
@@ -41,6 +42,7 @@ public:
 	const std::string & getType() const;
 	const std::string & getPreferredVersionName() const;
 	size_t indexOfPreferredVersion() const;
+	size_t indexOfDefaultVersionType() const;
 	std::shared_ptr<ModVersion> getPreferredVersion() const;
 	const std::string & getDefaultVersionType() const;
 	std::optional<Date> getLatestReleaseDate() const;
@@ -48,6 +50,7 @@ public:
 	std::string getLatestReleaseDateAsString() const;
 	std::string getInitialReleaseDateAsString() const;
 	const std::string & getWebsite() const;
+	bool hasTeam() const;
 	std::shared_ptr<ModTeam> getTeam() const;
 
 	void setID(const std::string & id);
@@ -72,6 +75,7 @@ public:
 	size_t indexOfLatestVersion() const;
 	std::shared_ptr<ModVersion> getLatestVersion() const;
 	const std::vector<std::shared_ptr<ModVersion>> & getVersions() const;
+	std::vector<std::string> getVersionDisplayNames(const std::string & emptySubstitution) const;
 	bool addVersion(const ModVersion & version);
 	bool removeVersion(size_t index);
 	bool removeVersion(const ModVersion & version);
@@ -144,7 +148,7 @@ public:
 	size_t numberOfNotes() const;
 	bool hasNote(const std::string & note) const;
 	size_t indexOfNote(const std::string & note) const;
-	std::optional<std::string> getNote(size_t index) const;
+	std::string getNote(size_t index) const;
 	const std::vector<std::string> & getNotes() const;
 	bool addNote(const std::string & note);
 	bool removeNote(size_t index);
@@ -154,7 +158,7 @@ public:
 	size_t numberOfRelatedMods() const;
 	bool hasRelatedMod(const std::string & relatedModID) const;
 	size_t indexOfRelatedMod(const std::string & relatedModID) const;
-	std::optional<std::string> getRelatedMod(size_t index) const;
+	std::string getRelatedMod(size_t index) const;
 	const std::vector<std::string> & getRelatedMods() const;
 	bool addRelatedMod(const std::string & relatedModID);
 	bool removeRelatedMod(size_t index);
@@ -168,6 +172,14 @@ public:
 
 	bool isGameVersionSupported(const GameVersion & gameVersion) const;
 	bool isGameVersionCompatible(const GameVersion & gameVersion) const;
+	std::vector<std::shared_ptr<GameVersion>> getSupportedGameVersions(const GameVersionCollection & gameVersions) const;
+	std::vector<std::shared_ptr<GameVersion>> getSupportedGameVersions(const std::vector<std::shared_ptr<GameVersion>> & gameVersions) const;
+	std::vector<std::string> getSupportedGameVersionNames(const GameVersionCollection & gameVersions) const;
+	std::vector<std::string> getSupportedGameVersionNames(const std::vector<std::shared_ptr<GameVersion>> & gameVersions) const;
+	std::vector<std::shared_ptr<GameVersion>> getCompatibleGameVersions(const GameVersionCollection & gameVersions) const;
+	std::vector<std::shared_ptr<GameVersion>> getCompatibleGameVersions(const std::vector<std::shared_ptr<GameVersion>> & gameVersions) const;
+	std::vector<std::string> getCompatibleGameVersionNames(const GameVersionCollection & gameVersions) const;
+	std::vector<std::string> getCompatibleGameVersionNames(const std::vector<std::shared_ptr<GameVersion>> & gameVersions) const;
 
 	bool checkVersions(bool verbose = true) const;
 	bool checkVersionTypes(bool verbose = true) const;

@@ -1,6 +1,7 @@
 #include "Mod.h"
 
 #include "Game/GameVersion.h"
+#include "Game/GameVersionCollection.h"
 #include "ModDownload.h"
 #include "ModGameVersion.h"
 #include "ModImage.h"
@@ -281,6 +282,10 @@ size_t Mod::indexOfPreferredVersion() const {
 	return indexOfVersion(m_preferredVersion);
 }
 
+size_t Mod::indexOfDefaultVersionType() const {
+	return getPreferredVersion()->indexOfType(m_defaultVersionType);
+}
+
 std::shared_ptr<ModVersion> Mod::getPreferredVersion() const {
 	return getVersion(m_preferredVersion);
 }
@@ -325,6 +330,10 @@ const std::string & Mod::getWebsite() const {
 	return m_website;
 }
 
+bool Mod::hasTeam() const {
+	return m_team != nullptr;
+}
+
 std::shared_ptr<ModTeam> Mod::getTeam() const {
 	return m_team;
 }
@@ -364,6 +373,10 @@ void Mod::removeTeam() {
 }
 
 bool Mod::addTeamMember(const ModTeamMember & teamMember) {
+	if(m_team == nullptr) {
+		return false;
+	}
+
 	return m_team->addMember(teamMember);
 }
 
@@ -487,6 +500,21 @@ std::shared_ptr<ModVersion> Mod::getLatestVersion() const {
 
 const std::vector<std::shared_ptr<ModVersion>> & Mod::getVersions() const {
 	return m_versions;
+}
+
+std::vector<std::string> Mod::getVersionDisplayNames(const std::string & emptySubstitution) const {
+	std::vector<std::string> versionDisplayNames;
+
+	for(const std::shared_ptr<ModVersion> & version : m_versions) {
+		if(version->getVersion().empty()) {
+			versionDisplayNames.push_back(emptySubstitution);
+		}
+		else {
+			versionDisplayNames.push_back(version->getVersion());
+		}
+	}
+
+	return versionDisplayNames;
 }
 
 bool Mod::addVersion(const ModVersion & version) {
@@ -1224,7 +1252,7 @@ size_t Mod::indexOfNote(const std::string & note) const {
 	return std::numeric_limits<size_t>::max();
 }
 
-std::optional<std::string> Mod::getNote(size_t index) const {
+std::string Mod::getNote(size_t index) const {
 	if(index >= m_notes.size()) {
 		return {};
 	}
@@ -1294,7 +1322,7 @@ size_t Mod::indexOfRelatedMod(const std::string & relatedMod) const {
 	return std::numeric_limits<size_t>::max();
 }
 
-std::optional<std::string> Mod::getRelatedMod(size_t index) const {
+std::string Mod::getRelatedMod(size_t index) const {
 	if(index >= m_relatedMods.size()) {
 		return {};
 	}
@@ -2340,6 +2368,70 @@ bool Mod::isGameVersionCompatible(const GameVersion & gameVersion) const {
 	}
 
 	return false;
+}
+
+std::vector<std::shared_ptr<GameVersion>> Mod::getSupportedGameVersions(const GameVersionCollection & gameVersions) const {
+	return getSupportedGameVersions(gameVersions.getGameVersions());
+}
+
+std::vector<std::shared_ptr<GameVersion>> Mod::getSupportedGameVersions(const std::vector<std::shared_ptr<GameVersion>> & gameVersions) const {
+	std::vector<std::shared_ptr<GameVersion>> supportedGameVersions;
+
+	for(const std::shared_ptr<GameVersion> & gameVersion : gameVersions) {
+		if(isGameVersionSupported(*gameVersion)) {
+			supportedGameVersions.push_back(gameVersion);
+		}
+	}
+
+	return supportedGameVersions;
+}
+
+std::vector<std::string> Mod::getSupportedGameVersionNames(const GameVersionCollection & gameVersions) const {
+	return getSupportedGameVersionNames(gameVersions.getGameVersions());
+}
+
+std::vector<std::string> Mod::getSupportedGameVersionNames(const std::vector<std::shared_ptr<GameVersion>> & gameVersions) const {
+	std::vector<std::string> supportedGameVersionNames;
+
+	for(const std::shared_ptr<GameVersion> & gameVersion : gameVersions) {
+		if(isGameVersionSupported(*gameVersion)) {
+			supportedGameVersionNames.push_back(gameVersion->getName());
+		}
+	}
+
+	return supportedGameVersionNames;
+}
+
+std::vector<std::shared_ptr<GameVersion>> Mod::getCompatibleGameVersions(const GameVersionCollection & gameVersions) const {
+	return getCompatibleGameVersions(gameVersions.getGameVersions());
+}
+
+std::vector<std::shared_ptr<GameVersion>> Mod::getCompatibleGameVersions(const std::vector<std::shared_ptr<GameVersion>> & gameVersions) const {
+	std::vector<std::shared_ptr<GameVersion>> compatibleGameVersions;
+
+	for(const std::shared_ptr<GameVersion> & gameVersion : gameVersions) {
+		if(isGameVersionCompatible(*gameVersion)) {
+			compatibleGameVersions.push_back(gameVersion);
+		}
+	}
+
+	return compatibleGameVersions;
+}
+
+std::vector<std::string> Mod::getCompatibleGameVersionNames(const GameVersionCollection & gameVersions) const {
+	return getCompatibleGameVersionNames(gameVersions.getGameVersions());
+}
+
+std::vector<std::string> Mod::getCompatibleGameVersionNames(const std::vector<std::shared_ptr<GameVersion>> & gameVersions) const {
+	std::vector<std::string> compatibleGameVersionNames;
+
+	for(const std::shared_ptr<GameVersion> & gameVersion : gameVersions) {
+		if(isGameVersionCompatible(*gameVersion)) {
+			compatibleGameVersionNames.push_back(gameVersion->getName());
+		}
+	}
+
+	return compatibleGameVersionNames;
 }
 
 bool Mod::checkVersions(bool verbose) const {

@@ -37,6 +37,8 @@ public:
 	const std::string & getState() const;
 	const std::string & getProvinceOrState() const;
 	const std::string & getCountry() const;
+	bool hasLocation() const;
+	std::string getLocation() const;
 	const Mod * getParentMod() const;
 
 	void setName(const std::string & name);

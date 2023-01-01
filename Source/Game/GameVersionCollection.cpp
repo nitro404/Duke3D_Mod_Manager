@@ -137,6 +137,10 @@ std::shared_ptr<GameVersion> GameVersionCollection::getGameVersion(const std::st
 	return nullptr;
 }
 
+const std::vector<std::shared_ptr<GameVersion>> & GameVersionCollection::getGameVersions() const {
+	return m_gameVersions;
+}
+
 std::vector<std::shared_ptr<GameVersion>> GameVersionCollection::getGameVersionsCompatibleWith(size_t index, bool includeSupported, std::optional<bool> configured) const {
 	std::vector<std::shared_ptr<GameVersion>> compatibleGameVersions;
 
@@ -232,6 +236,28 @@ std::vector<std::shared_ptr<GameVersion>> GameVersionCollection::getUnconfigured
 	}
 
 	return unconfiguredGameVersions;
+}
+
+std::vector<std::string> GameVersionCollection::getGameVersionDisplayNames(bool prependItemNumber) const {
+	return getGameVersionDisplayNamesFrom(m_gameVersions, prependItemNumber);
+}
+
+std::vector<std::string> GameVersionCollection::getGameVersionDisplayNamesFrom(const std::vector<std::shared_ptr<GameVersion>> & gameVersions, bool prependItemNumber) {
+	std::vector<std::string> gameVersionDisplayNames;
+
+	for(size_t i = 0; i < gameVersions.size(); i++) {
+		std::stringstream gameVersionStream;
+
+		if(prependItemNumber) {
+			gameVersionStream << i + 1 << ": ";
+		}
+
+		gameVersionStream << gameVersions[i]->getName();
+
+		gameVersionDisplayNames.push_back(gameVersionStream.str());
+	}
+
+	return gameVersionDisplayNames;
 }
 
 bool GameVersionCollection::addGameVersion(const GameVersion & gameVersion) {

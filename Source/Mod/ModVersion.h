@@ -53,6 +53,7 @@ public:
 	std::shared_ptr<ModVersionType> getType(size_t index) const;
 	std::shared_ptr<ModVersionType> getType(const std::string & type) const;
 	const std::vector<std::shared_ptr<ModVersionType>> & getTypes() const;
+	std::vector<std::string> getTypeDisplayNames(const std::string & emptySubstitution = {}) const;
 	bool addType(const ModVersionType & type);
 	bool removeType(size_t index);
 	bool removeType(const std::string & type);
