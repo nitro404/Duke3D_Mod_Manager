@@ -58,6 +58,7 @@ public:
 	const std::vector<std::shared_ptr<GameVersion>> & getOrganizedGameVersions() const;
 	std::shared_ptr<FavouriteModCollection> getFavouriteModCollection() const;
 	std::shared_ptr<GameVersionCollection> getGameVersionCollection() const;
+	std::vector<std::string> getOrganizedItemDisplayNames(bool prependItemNumber = true) const;
 	FilterType getFilterType() const;
 	SortType getSortType() const;
 	SortDirection getSortDirection() const;
@@ -74,6 +75,10 @@ public:
 	bool shouldDisplayGameVersions() const;
 	bool shouldDisplayTeams() const;
 	bool shouldDisplayAuthors() const;
+	size_t indexOfSelectedItem() const;
+	bool selectItem(size_t index);
+	bool selectRandomItem();
+	void clearSelectedItems();
 
 	size_t numberOfMods() const;
 	bool hasMod(const Mod & mod) const;
@@ -85,6 +90,12 @@ public:
 	std::shared_ptr<Mod> getMod(size_t index) const;
 	std::shared_ptr<Mod> getMod(const std::string & id) const;
 	std::shared_ptr<Mod> getModWithName(const std::string & name) const;
+	std::shared_ptr<Mod> getSelectedMod() const;
+	bool setSelectedMod(size_t index);
+	bool setSelectedMod(const std::string & name);
+	bool setSelectedMod(const Mod * mod);
+	bool selectRandomMod();
+	void clearSelectedMod();
 
 	size_t numberOfGameVersions() const;
 	bool hasGameVersion(const GameVersion & gameVersion) const;
@@ -98,6 +109,7 @@ public:
 	bool setSelectedGameVersion(size_t index);
 	bool setSelectedGameVersion(const std::string & gameVersion);
 	bool setSelectedGameVersion(const GameVersion * gameVersion);
+	bool selectRandomGameVersion();
 	void clearSelectedGameVersion();
 
 	size_t getSupportedModCountForGameVersion(const GameVersion & gameVersion) const;
@@ -107,6 +119,8 @@ public:
 
 	size_t numberOfTeams() const;
 	bool hasTeamInfo(const std::string & name) const;
+	size_t indexOfTeamInfo(const ModAuthorInformation & teamInfo) const;
+	size_t indexOfTeamInfo(const std::string & name) const;
 	std::shared_ptr<ModAuthorInformation> getTeamInfo(size_t index) const;
 	std::shared_ptr<ModAuthorInformation> getTeamInfo(const std::string & name) const;
 	void incrementTeamModCount(size_t index);
@@ -116,10 +130,13 @@ public:
 	bool setSelectedTeam(size_t index);
 	bool setSelectedTeam(const std::string & name);
 	bool setSelectedTeam(const ModAuthorInformation * teamInfo);
+	bool selectRandomTeam();
 	void clearSelectedTeam();
 
 	size_t numberOfAuthors() const;
 	bool hasAuthorInfo(const std::string & name) const;
+	size_t indexOfAuthorInfo(const ModAuthorInformation & authorInfo) const;
+	size_t indexOfAuthorInfo(const std::string & name) const;
 	std::shared_ptr<ModAuthorInformation> getAuthorInfo(size_t index) const;
 	std::shared_ptr<ModAuthorInformation> getAuthorInfo(const std::string & name) const;
 	void incrementAuthorModCount(size_t index);
@@ -129,6 +146,7 @@ public:
 	bool setSelectedAuthor(size_t index);
 	bool setSelectedAuthor(const std::string & name);
 	bool setSelectedAuthor(const ModAuthorInformation * authorInfo);
+	bool selectRandomAuthor();
 	void clearSelectedAuthor();
 
 	virtual void modCollectionUpdated() override;
@@ -177,6 +195,7 @@ private:
 	std::vector<std::shared_ptr<ModAuthorInformation>> m_authors;
 	std::map<std::string, size_t> m_gameVersionSupportedModCountMap;
 	std::map<std::string, size_t> m_gameVersionCompatibleModCountMap;
+	std::shared_ptr<Mod> m_selectedMod;
 	std::shared_ptr<GameVersion> m_selectedGameVersion;
 	std::shared_ptr<ModAuthorInformation> m_selectedTeam;
 	std::shared_ptr<ModAuthorInformation> m_selectedAuthor;
