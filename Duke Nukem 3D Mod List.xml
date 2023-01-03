@@ -155,7 +155,7 @@
 		</downloads>
 	</mod>
 	<mod name="Action Duke Nukem 3D - Elite Forces" id="action_duke_nukem_3d_elite_forces" type="Total Conversion" version="Demo" website="http://www.dukeworld.com/action">
-		<team name="Action Duke Team" email="clarejoc@powerup.com.au">
+		<team name="Action Duke Team" email="clarejoc@powerup.com.au" country="Australia">
 			<member name="Derek Braun" alias="AiC"/>
 			<member name="YauTja"/>
 			<member name="Ryan Sickler" alias="X1997XII"/>
@@ -1777,7 +1777,7 @@
 			<download filename="Homeward-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" sha1="5cbd93c49e376fc333fc75967b22e1cc9d6e5e3a"/>
 		</downloads>
 	</mod>
-	<mod name="I-Duke" id="i_duke" type="Partial Conversion">
+	<mod name="I-Duke" id="i_duke" type="Partial Conversion" version="2.0">
 		<team>
 			<member name="Ivan Petrosevic" email="darkmooninn@hotmail.com"/>
 		</team>
@@ -3553,7 +3553,7 @@
 			<download filename="Stargate_SG-1_In_the_Hands_of_a_Serpent_Beta_2-ModMgrA.zip" version="Beta 2" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" sha1="93d5ac07ac30644547da6f933ef10056634c89d5"/>
 		</downloads>
 	</mod>
-	<mod name="Starship Troopers" id="starship_troopers" type="Total Conversion" version="1.0" website="http://www.dukeworld.com/starshiptroopers">
+	<mod name="Starship Troopers" id="starship_troopers" type="Total Conversion" version="1.1B" website="http://www.dukeworld.com/starshiptroopers">
 		<team name="Bgame Productions" email="bgame@madmzone.com" country="Croatia">
 			<member name="Moloch" email="moloch@3dportal.com"/>
 			<member name="Boris" alias="C3PO"/>
@@ -5660,7 +5660,7 @@
 		</screenshots>
 	</mod>
 	<mod name="Scorpion Tank" id="scorpion_tank" type="Enemy Replacement" website="http://members.xoom.com/Ug_Bum">
-		<team county="New Zealand">
+		<team country="New Zealand">
 			<member name="Sam Harris" email="samth@ihug.co.nz"/>
 		</team>
 		<files>
@@ -7845,7 +7845,7 @@
 			<download filename="The_Final_Missions-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" sha1="f2ebfc5d0c20e040ad2c17ddfa1ff495836cdfa4"/>
 		</downloads>
 	</mod>
-	<mod name="The Real Bad Ass" id="the_real_bad_ass" type="Episode">
+	<mod name="The Real Bad Ass" id="the_real_bad_ass" type="Episode" version="V2">
 		<team country="France">
 			<member name="Olivier Delatour" alias="Ray Tracer" email="ray.tracer@wanadoo.fr"/>
 			<member name="Yann Costes"/>
@@ -8201,7 +8201,7 @@
 			<download filename="Dookie_Nukem_3D_1.0-ModMgrE.zip" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="34bb25a1cee52603be57aa91aac16d87f13a7652"/>
 		</downloads>
 	</mod>
-	<mod name="Doom Weapons (2)" id="doom_weapons_2" type="Weapon Patch" version="1.0" website="http://M210.duke4.net">
+	<mod name="Doom Weapons (2)" id="doom_weapons_2" type="Weapon Patch" version="1.1" website="http://M210.duke4.net">
 		<team>
 			<member name="Alexander Makarov" alias="M210"/>
 		</team>
