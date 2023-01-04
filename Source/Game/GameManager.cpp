@@ -1128,7 +1128,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 	bool isJFDuke3D = gameVersion.getName() == GameVersion::JFDUKE3D.getName();
 	bool isOriginalGameFallback = useFallback && (isRegularVersion || isAtomicEdition);
 
-	std::function<bool(std::shared_ptr<ArchiveEntry>, const GameFileInformation &)> extractGameFileFunction([gameVersion, gameDownloadURL, destinationDirectoryPath, overwrite](std::shared_ptr<ArchiveEntry> gameFileEntry, const GameFileInformation & gameFileInfo) {
+	std::function<bool(std::shared_ptr<ArchiveEntry>, const GameFileInformation &)> extractGameFileFunction([&gameVersion, &gameDownloadURL, &destinationDirectoryPath, overwrite](std::shared_ptr<ArchiveEntry> gameFileEntry, const GameFileInformation & gameFileInfo) {
 		if(gameFileEntry == nullptr) {
 			// skip missing game files that aren't required
 			if(!gameFileInfo.required) {
@@ -1261,7 +1261,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		}
 	}
 	else if(isRegularVersion || isAtomicEdition) {
-		std::function<bool(const GameFileInformation &)> gameFileSHA1VerificationFunction([gameVersion, destinationDirectoryPath](const GameFileInformation & gameFileInfo) {
+		std::function<bool(const GameFileInformation &)> gameFileSHA1VerificationFunction([&gameVersion, &destinationDirectoryPath](const GameFileInformation & gameFileInfo) {
 			bool gameFileSHA1Verified = false;
 			std::string calculatedGameFileSHA1(Utilities::getFileSHA1Hash(Utilities::joinPaths(destinationDirectoryPath, gameFileInfo.fileName)));
 

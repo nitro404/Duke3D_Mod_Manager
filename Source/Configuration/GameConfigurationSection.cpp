@@ -279,13 +279,13 @@ size_t GameConfiguration::Section::numberOfEntries() const {
 }
 
 bool GameConfiguration::Section::hasEntry(const Entry & entry) const {
-	return std::find_if(std::begin(m_entries), std::end(m_entries), [entry](const std::shared_ptr<Entry> & currentEntry) {
+	return std::find_if(std::begin(m_entries), std::end(m_entries), [&entry](const std::shared_ptr<Entry> & currentEntry) {
 		return &entry == currentEntry.get();
 	}) != std::end(m_entries);
 }
 
 bool GameConfiguration::Section::hasEntryWithName(const std::string & entryName) const {
-	return std::find_if(std::begin(m_entries), std::end(m_entries), [entryName](const std::shared_ptr<Entry> & currentEntry) {
+	return std::find_if(std::begin(m_entries), std::end(m_entries), [&entryName](const std::shared_ptr<Entry> & currentEntry) {
 		return Utilities::areStringsEqualIgnoreCase(entryName, currentEntry->getName());
 	}) != std::end(m_entries);
 }

@@ -337,7 +337,7 @@ bool GameConfiguration::hasSectionWithName(const std::string & sectionName) cons
 }
 
 size_t GameConfiguration::indexOfSection(const Section & section) const {
-	std::vector<std::string>::const_iterator orderedSectionNameIterator = std::find_if(m_orderedSectionNames.cbegin(), m_orderedSectionNames.cend(), [section](const std::string & sectionName) {
+	std::vector<std::string>::const_iterator orderedSectionNameIterator = std::find_if(m_orderedSectionNames.cbegin(), m_orderedSectionNames.cend(), [&section](const std::string & sectionName) {
 		return Utilities::areStringsEqualIgnoreCase(section.m_name, sectionName);
 	});
 
