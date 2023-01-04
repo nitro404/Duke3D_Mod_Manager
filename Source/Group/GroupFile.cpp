@@ -1,4 +1,4 @@
-#include "GroupFile.h"
+#include "Group.h"
 
 #include <Utilities/FileUtilities.h>
 #include <Utilities/StringUtilities.h>
@@ -14,49 +14,80 @@ const uint8_t GroupFile::MAX_FILE_NAME_LENGTH = 12;
 const bool GroupFile::DEFAULT_OVERWRITE_FILES = false;
 
 GroupFile::GroupFile(const std::string & fileName)
-	: m_fileName(Utilities::trimString(fileName)) { }
+	: m_fileName(formatFileName(fileName))
+	, m_data(std::make_unique<ByteBuffer>())
+	, m_modified(false)
+	, m_parentGroup(nullptr) { }
 
 GroupFile::GroupFile(const std::string & fileName, const uint8_t * data, size_t size)
-	: m_fileName(Utilities::trimString(fileName))
-	, m_data(data, data == nullptr ? 0 : size) { }
+	: m_fileName(formatFileName(fileName))
+	, m_data(std::make_unique<ByteBuffer>(data, data == nullptr ? 0 : size))
+	, m_modified(false)
+	, m_parentGroup(nullptr) { }
 
 GroupFile::GroupFile(const std::string & fileName, const std::vector<uint8_t> & data)
-	: m_fileName(Utilities::trimString(fileName))
-	, m_data(data) { }
-
-GroupFile::GroupFile(const std::string & fileName, ByteBuffer && data) noexcept
-	: m_fileName(Utilities::trimString(fileName))
-	, m_data(std::move(data)) { }
+	: m_fileName(formatFileName(fileName))
+	, m_data(std::make_unique<ByteBuffer>(data))
+	, m_modified(false)
+	, m_parentGroup(nullptr) { }
 
 GroupFile::GroupFile(const std::string & fileName, const ByteBuffer & data)
-	: m_fileName(Utilities::trimString(fileName))
-	, m_data(data) { }
+	: m_fileName(formatFileName(fileName))
+	, m_data(std::make_unique<ByteBuffer>(data))
+	, m_modified(false)
+	, m_parentGroup(nullptr) { }
 
-GroupFile::GroupFile(GroupFile && g) noexcept
-	: m_fileName(std::move(g.m_fileName))
-	, m_data(std::move(g.m_data)) { }
+GroupFile::GroupFile(const std::string & fileName, std::unique_ptr<ByteBuffer> data)
+	: m_fileName(formatFileName(fileName))
+	, m_data(std::move(data))
+	, m_modified(false)
+	, m_parentGroup(nullptr) { }
 
-GroupFile::GroupFile(const GroupFile & g)
-	: m_fileName(g.m_fileName)
-	, m_data(g.m_data) { }
+GroupFile::GroupFile(GroupFile && f) noexcept
+	: m_fileName(std::move(f.m_fileName))
+	, m_data(std::move(f.m_data))
+	, m_modified(false)
+	, m_parentGroup(nullptr) { }
 
-GroupFile & GroupFile::operator = (GroupFile && g) noexcept {
-	if(this != &g) {
-		m_fileName = std::move(g.m_fileName);
-		m_data = std::move(g.m_data);
+GroupFile::GroupFile(const GroupFile & f)
+	: m_fileName(f.m_fileName)
+	, m_data(std::make_unique<ByteBuffer>(f.m_data->getData()))
+	, m_modified(false)
+	, m_parentGroup(nullptr) { }
+
+GroupFile & GroupFile::operator = (GroupFile && f) noexcept {
+	if(this != &f) {
+		m_fileName = std::move(f.m_fileName);
+		m_data = std::move(f.m_data);
+
+		setModified(true);
 	}
 
 	return *this;
 }
 
-GroupFile & GroupFile::operator = (const GroupFile & g) {
-	m_fileName = g.m_fileName;
-	m_data = g.m_data;
+GroupFile & GroupFile::operator = (const GroupFile & f) {
+	m_fileName = f.m_fileName;
+	m_data->setData(f.m_data->getData());
+
+	setModified(true);
 
 	return *this;
 }
 
-GroupFile::~GroupFile() = default;
+GroupFile::~GroupFile() {
+	m_parentGroup = nullptr;
+}
+
+bool GroupFile::isModified() const {
+	return m_modified;
+}
+
+void GroupFile::setModified(bool modified) const {
+	m_modified = modified;
+
+	notifyGroupFileModified();
+}
 
 const std::string & GroupFile::getFileName() const {
 	return m_fileName;
@@ -67,57 +98,101 @@ std::string_view GroupFile::getFileExtension() const {
 }
 
 size_t GroupFile::getSize() const {
-	return m_data.getSize();
+	return m_data->getSize();
+}
+
+std::string GroupFile::getSizeAsString() const {
+	size_t size = getSize();
+
+	if(size < 1000) {
+		return fmt::format("{} B", size);
+	}
+	else if(size < 1000000) {
+		return fmt::format("{:.2f} KB", size / 1000.0);
+	}
+	else {
+		return fmt::format("{:.2f} MB", size / 1000000.0);
+	}
 }
 
 const ByteBuffer & GroupFile::getData() const {
-	return m_data;
+	return *m_data;
 }
 
-void GroupFile::setFileName(const std::string & fileName) {
-	m_fileName = Utilities::trimString(fileName);
+std::unique_ptr<ByteBuffer> GroupFile::transferData() {
+	std::unique_ptr<ByteBuffer> data(std::move(m_data));
+
+	m_data = std::make_unique<ByteBuffer>();
+
+	return std::move(data);
+}
+
+bool GroupFile::setFileName(const std::string & newFileName) {
+	if(newFileName.empty() || newFileName.length() > GroupFile::MAX_FILE_NAME_LENGTH) {
+		return false;
+	}
+
+	if(Utilities::areStringsEqualIgnoreCase(m_fileName, newFileName)) {
+		return true;
+	}
+
+	if(m_parentGroup != nullptr && m_parentGroup->hasFile(newFileName)) {
+		return false;
+	}
+
+	m_fileName = Utilities::toUpperCase(newFileName);
+
+	setModified(true);
+
+	return true;
 }
 
 void GroupFile::setData(const uint8_t * data, size_t size) {
-	m_data.clear();
+	m_data->setData(data, size);
 
-	if(data == nullptr || size == 0) {
-		return;
-	}
-
-	m_data.resize(size, 0);
-	memcpy(m_data.getRawData(), data, size);
-}
-
-void GroupFile::setData(std::vector<uint8_t> && data) noexcept {
-	m_data = std::move(data);
+	setModified(true);
 }
 
 void GroupFile::setData(const std::vector<uint8_t> & data) {
-	m_data = data;
+	m_data->setData(data);
+
+	setModified(true);
 }
 
 void GroupFile::setData(const ByteBuffer & data) {
-	m_data = data;
+	m_data->setData(data);
+
+	setModified(true);
+}
+
+void GroupFile::setData(std::unique_ptr<ByteBuffer> data) {
+	m_data = std::move(data);
+
+	setModified(true);
 }
 
 void GroupFile::clearData() {
-	m_data.clear();
+	m_data->clear();
+
+	setModified(true);
 }
 
-std::string GroupFile::toString() const {
-	return fmt::format("{0} ({1} byte{2})", m_fileName, m_data.getSize(), m_data.getSize() == 1 ? "" : "s");
+Group * GroupFile::getParentGroup() const {
+	return m_parentGroup;
 }
 
 bool GroupFile::isValid() const {
-	return !m_fileName.empty() && m_fileName.length() <= MAX_FILE_NAME_LENGTH;
+	return !m_fileName.empty() &&
+		   m_fileName.length() <= MAX_FILE_NAME_LENGTH &&
+		   m_data != nullptr;
 }
 
-bool GroupFile::isValid(const GroupFile * g) {
-	return g != nullptr && g->isValid();
+bool GroupFile::isValid(const GroupFile * f) {
+	return f != nullptr &&
+		   f->isValid();
 }
 
-bool GroupFile::writeTo(const std::string & basePath, bool overwrite, const std::string & alternateFileName) const {
+bool GroupFile::writeTo(const std::string & basePath, bool overwrite, const std::string & alternateFileName, bool createParentDirectories) const {
 	if(!isValid()) {
 		spdlog::error("Failed to write '{}' file, file is not valid.", m_fileName);
 		return false;
@@ -130,24 +205,99 @@ bool GroupFile::writeTo(const std::string & basePath, bool overwrite, const std:
 		return false;
 	}
 
-	std::ofstream fileStream(filePath, std::ios::binary);
-
-	if(!fileStream.is_open()) {
+	if(!m_data->writeTo(filePath, overwrite, createParentDirectories)) {
 		spdlog::error("Failed to open write stream for file '{}'.", filePath);
 		return false;
 	}
 
-	fileStream.write(reinterpret_cast<const char *>(m_data.getRawData()), m_data.getSize());
+	return true;
+}
 
-	fileStream.close();
+std::string GroupFile::formatFileName(std::string_view fileName) {
+	return Utilities::toUpperCase(Utilities::truncateFileName(fileName, MAX_FILE_NAME_LENGTH));
+}
+
+bool GroupFile::operator == (const GroupFile & f) const {
+	return Utilities::areStringsEqualIgnoreCase(m_fileName, f.m_fileName) &&
+		   *m_data == *f.m_data;
+}
+
+bool GroupFile::operator != (const GroupFile & f) const {
+	return !operator == (f);
+}
+
+GroupFile::Listener::~Listener() { }
+
+size_t GroupFile::numberOfListeners() const {
+	return m_listeners.size();
+}
+
+bool GroupFile::hasListener(const Listener & listener) const {
+	for(std::vector<Listener *>::const_iterator i = m_listeners.cbegin(); i != m_listeners.cend(); ++i) {
+		if(*i == &listener) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+size_t GroupFile::indexOfListener(const Listener & listener) const {
+	for(size_t i = 0; i < m_listeners.size(); i++) {
+		if(m_listeners[i] == &listener) {
+			return i;
+		}
+	}
+
+	return std::numeric_limits<size_t>::max();
+}
+
+GroupFile::Listener * GroupFile::getListener(size_t index) const {
+	if(index >= m_listeners.size()) {
+		return nullptr;
+	}
+
+	return m_listeners[index];
+}
+
+bool GroupFile::addListener(Listener & listener) {
+	if(!hasListener(listener)) {
+		m_listeners.push_back(&listener);
+
+		return true;
+	}
+
+	return false;
+}
+
+bool GroupFile::removeListener(size_t index) {
+	if(index >= m_listeners.size()) {
+		return false;
+	}
+
+	m_listeners.erase(m_listeners.cbegin() + index);
 
 	return true;
 }
 
-bool GroupFile::operator == (const GroupFile & g) const {
-	return Utilities::areStringsEqualIgnoreCase(m_fileName, g.m_fileName) && m_data == g.m_data;
+bool GroupFile::removeListener(const Listener & listener) {
+	for(std::vector<Listener *>::const_iterator i = m_listeners.cbegin(); i != m_listeners.cend(); ++i) {
+		if(*i == &listener) {
+			m_listeners.erase(i);
+
+			return true;
+		}
+	}
+
+	return false;
 }
 
-bool GroupFile::operator != (const GroupFile & g) const {
-	return !operator == (g);
+void GroupFile::clearListeners() {
+	m_listeners.clear();
+}
+
+void GroupFile::notifyGroupFileModified() const {
+	for(Listener * listener : m_listeners) {
+		listener->groupFileModified(this, m_modified);
+	}
 }

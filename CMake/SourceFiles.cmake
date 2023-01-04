@@ -102,6 +102,8 @@ set(MAIN_SOURCE_FILES_WINDOWS
 
 set(GUI_SOURCE_FILES
 	GUI/ConsolePanel.cpp
+	GUI/GroupEditorPanel.cpp
+	GUI/GroupPanel.cpp
 	GUI/Logging/CustomLogTextControl.cpp
 	GUI/Logging/LogSinkWX.cpp
 	GUI/Logging/PreformattedLogFormatter.cpp
@@ -113,6 +115,8 @@ set(GUI_SOURCE_FILES
 
 set(GUI_HEADER_FILES
 	GUI/ConsolePanel.h
+	GUI/GroupEditorPanel.h
+	GUI/GroupPanel.h
 	GUI/Logging/CustomLogTextControl.h
 	GUI/Logging/LogSinkWX.h
 	GUI/Logging/PreformattedLogFormatter.h

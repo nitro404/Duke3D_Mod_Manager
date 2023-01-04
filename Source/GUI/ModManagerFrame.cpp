@@ -1,6 +1,7 @@
 #include "ModManagerFrame.h"
 
 #include "ConsolePanel.h"
+#include "GroupEditorPanel.h"
 #include "ModBrowserPanel.h"
 #include "Project.h"
 #include "Manager/SettingsManager.h"
@@ -50,6 +51,9 @@ ModManagerFrame::ModManagerFrame(std::shared_ptr<ModManager> modManager)
 		ModBrowserPanel * modBrowserPanel = new ModBrowserPanel(modManager, notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 		notebook->AddPage(modBrowserPanel, "Mod Browser");
 	}
+
+	GroupEditorPanel * groupEditorPanel = new GroupEditorPanel(notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+	notebook->AddPage(groupEditorPanel, "Group Editor");
 
 	ConsolePanel * consolePanel = new ConsolePanel(notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 	notebook->AddPage(consolePanel, "Console");

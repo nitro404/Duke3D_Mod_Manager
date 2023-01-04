@@ -31,6 +31,7 @@ namespace WXUtilities {
 	wxArrayString createItemWXArrayString(const std::vector<std::string> & items);
 	template <typename E>
 	wxArrayString createEnumWXArrayString();
+	void setButtonEnabled(wxButton * button, bool enabled);
 
 	template <typename E>
 	wxArrayString createEnumWXArrayString() {

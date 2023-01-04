@@ -1294,9 +1294,9 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 		if(selectedGameVersion->doesRequireCombinedGroup()) {
 			std::string dukeNukemGroupPath(Utilities::joinPaths(selectedGameVersion->getGamePath(), Group::DUKE_NUKEM_3D_GROUP_FILE_NAME));
-			combinedGroup = std::make_unique<Group>(dukeNukemGroupPath);
+			combinedGroup = Group::loadFrom(dukeNukemGroupPath);
 
-			if(!combinedGroup->load()) {
+			if(combinedGroup == nullptr) {
 				spdlog::error("Failed to load Duke Nukem 3D group for creation of combined group from file path: '{}'.", dukeNukemGroupPath);
 				return false;
 			}
@@ -1318,9 +1318,9 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 		for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = modFiles.begin(); i != modFiles.end(); ++i) {
 			std::string modGroupPath(Utilities::joinPaths(getModsDirectoryPath(), m_gameVersions->getGameVersion(selectedModGameVersion->getGameVersion())->getModDirectoryName(), (*i)->getFileName()));
-			std::unique_ptr<Group> modGroup(std::make_unique<Group>(modGroupPath));
+			std::unique_ptr<Group> modGroup(Group::loadFrom(modGroupPath));
 
-			if(modGroup->load()) {
+			if(modGroup != nullptr) {
 				if(!m_demoRecordingEnabled) {
 					size_t numberOfDemosExtracted = modGroup->extractAllFilesWithExtension("DMO", selectedGameVersion->getGamePath());
 
@@ -2009,7 +2009,7 @@ size_t ModManager::checkForUnlinkedModFilesForGameVersion(const GameVersion & ga
 
 	std::map<std::string, std::vector<std::shared_ptr<ModFile>>> linkedModFiles;
 
-	for(const std::filesystem::directory_entry& e : std::filesystem::directory_iterator(gameModsPath)) {
+	for(const std::filesystem::directory_entry & e : std::filesystem::directory_iterator(gameModsPath)) {
 		if(e.is_regular_file()) {
 			linkedModFiles[std::string(Utilities::getFileName(e.path().string()))] = std::vector<std::shared_ptr<ModFile>>();
 		}
@@ -2496,11 +2496,9 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 						if(modGroupFile != nullptr) {
 							groupFilePath = Utilities::joinPaths(gameModsPath, modGroupFile->getFileName());
 
-							group = std::make_unique<Group>(groupFilePath);
+							group = Group::loadFrom(groupFilePath);
 
-							if(!group->load()) {
-								group.reset();
-
+							if(group == nullptr) {
 								spdlog::error("Failed to open mod group file '{}'.", groupFilePath);
 							}
 						}
@@ -2546,7 +2544,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 								continue;
 							}
 
-							groupFile = group->getFile(modFile->getFileName());
+							groupFile = group->getFileWithName(modFile->getFileName());
 
 							if(groupFile == nullptr) {
 								spdlog::error("Mod file '{}' not found in group file '{}'.", modFile->getFileName(), groupFilePath);

@@ -10,50 +10,104 @@
 #include <string>
 #include <vector>
 
-class Group final {
+class Group final : public GroupFile::Listener {
 public:
-	Group(std::string_view filePath);
+	class Listener {
+	public:
+		virtual ~Listener();
+
+		virtual void groupModified(const Group * group, bool modified) = 0;
+	};
+
+	Group(std::string_view filePath = {});
 	Group(Group && g) noexcept;
 	Group(const Group & g);
 	Group & operator = (Group && g) noexcept;
 	Group & operator = (const Group & g);
-	~Group();
+	virtual ~Group();
 
+	bool isModified() const;
 	const std::string & getFilePath() const;
 	std::string_view getFileName() const;
 	std::string_view getFileExtension() const;
 	void setFilePath(const std::string & filePath);
 
 	size_t numberOfFiles() const;
-	bool hasFile(const std::string & fileName) const;
-	bool hasFile(const GroupFile & groupFile) const;
-	size_t indexOfFile(const std::string & fileName) const;
-	size_t indexOfFile(const GroupFile & groupFile) const;
+	bool hasFile(const GroupFile & file) const;
+	bool hasFileWithName(const std::string & fileName) const;
+	size_t indexOfFile(const GroupFile & file) const;
+	size_t indexOfFileWithName(const std::string & fileName) const;
+	size_t indexOfFirstFileWithExtension(const std::string & extension) const;
+	size_t indexOfLastFileWithExtension(const std::string & extension) const;
 	std::shared_ptr<GroupFile> getFile(size_t index) const;
-	std::shared_ptr<GroupFile> getFile(const std::string & fileName) const;
+	std::shared_ptr<GroupFile> getFileWithName(const std::string & fileName) const;
+	std::shared_ptr<GroupFile> getFirstFileWithExtension(const std::string & extension) const;
+	std::shared_ptr<GroupFile> getLastFileWithExtension(const std::string & extension) const;
+	const std::vector<std::shared_ptr<GroupFile>> & getFiles() const;
 	std::vector<std::shared_ptr<GroupFile>> getFilesWithExtension(const std::string & extension) const;
 	std::vector<std::string> getFileExtensions() const;
+	std::string getFileExtensionsAsString() const;
 	bool extractFile(size_t index, const std::string & directory, bool overwrite = GroupFile::DEFAULT_OVERWRITE_FILES) const;
-	bool extractFile(const std::string & fileName, const std::string & directory, bool overwrite = GroupFile::DEFAULT_OVERWRITE_FILES) const;
+	bool extractFileWithName(const std::string & fileName, const std::string & directory, bool overwrite = GroupFile::DEFAULT_OVERWRITE_FILES) const;
+	bool extractFirstFileWithExtension(const std::string & extension, const std::string & directory, bool overwrite = GroupFile::DEFAULT_OVERWRITE_FILES) const;
+	bool extractLastFileWithExtension(const std::string & extension, const std::string & directory, bool overwrite = GroupFile::DEFAULT_OVERWRITE_FILES) const;
 	size_t extractAllFilesWithExtension(const std::string & extension, const std::string & directory, bool overwrite = GroupFile::DEFAULT_OVERWRITE_FILES) const;
 	size_t extractAllFiles(const std::string & directory, bool overwrite = GroupFile::DEFAULT_OVERWRITE_FILES) const;
-	bool addFile(const GroupFile & groupFile, bool replace = DEFAULT_REPLACE_FILES);
+	bool addFile(const std::string & filePath, bool replace = DEFAULT_REPLACE_FILES);
+	bool addFile(std::unique_ptr<GroupFile> file, bool replace = DEFAULT_REPLACE_FILES);
+	bool addFile(const GroupFile & file, bool replace = DEFAULT_REPLACE_FILES);
+	bool addFiles(const std::vector<std::string> & filesPaths, bool replace = DEFAULT_REPLACE_FILES);
 	bool addFiles(const std::vector<std::shared_ptr<GroupFile>> & files, bool replace = DEFAULT_REPLACE_FILES);
 	bool addFiles(const Group & group, bool replace = DEFAULT_REPLACE_FILES);
+	bool renameFile(size_t index, const std::string & newFileName);
+	bool renameFile(const GroupFile & file, const std::string & newFileName);
+	bool renameFile(const std::string & oldFileName, const std::string & newFileName);
+	bool replaceFile(size_t index, const std::string & newFilePath, bool keepExistingFileName = true);
+	bool replaceFile(size_t index, std::unique_ptr<GroupFile> file, bool keepExistingFileName = true);
+	bool replaceFile(size_t index, const GroupFile & file, bool keepExistingFileName = true);
+	bool replaceFile(size_t index, std::unique_ptr<ByteBuffer> data);
+	bool replaceFile(size_t index, const std::vector<uint8_t> & data);
+	bool replaceFile(const GroupFile & file, const std::string & newFilePath, bool keepExistingFileName = true);
+	bool replaceFile(const GroupFile & file, std::unique_ptr<GroupFile> newFile, bool keepExistingFileName = true);
+	bool replaceFile(const GroupFile & file, const GroupFile & newFile, bool keepExistingFileName = true);
+	bool replaceFile(const GroupFile & file, std::unique_ptr<ByteBuffer> data);
+	bool replaceFile(const GroupFile & file, const std::vector<uint8_t> & data);
+	bool replaceFileWithName(const std::string & fileName, const std::string & newFilePath, bool keepExistingFileName = true);
+	bool replaceFileWithName(const std::string & fileName, std::unique_ptr<GroupFile> newFile, bool keepExistingFileName = true);
+	bool replaceFileWithName(const std::string & fileName, const GroupFile & newFile, bool keepExistingFileName = true);
+	bool replaceFileWithName(const std::string & fileName, std::unique_ptr<ByteBuffer> data);
+	bool replaceFileWithName(const std::string & fileName, const std::vector<uint8_t> & data);
 	bool removeFile(size_t index);
-	bool removeFile(const std::string & fileName);
-	bool removeFile(const GroupFile & groupFile);
-	size_t removeFiles(const std::vector<std::string> & fileNames);
+	bool removeFile(const GroupFile & file);
+	bool removeFileWithName(const std::string & fileName);
 	size_t removeFiles(const std::vector<std::shared_ptr<GroupFile>> & files);
+	size_t removeFilesByName(const std::vector<std::string> & fileNames);
 	void clearFiles();
 
 	std::string toString() const;
 
-	bool load();
+	bool isValid(bool verifyParent = true) const;
+	static bool isValid(const Group * g, bool verifyParent = true);
+
+	static std::unique_ptr<Group> createFrom(const std::string & directoryPath);
+	static std::unique_ptr<Group> loadFrom(const std::string & filePath);
 	bool save(bool overwrite = true) const;
 
 	size_t getGroupSize() const;
-	bool verifyAllFiles() const;
+	std::string getGroupSizeAsString() const;
+
+	size_t numberOfListeners() const;
+	bool hasListener(const Listener & listener) const;
+	size_t indexOfListener(const Listener & listener) const;
+	Listener * getListener(size_t index) const;
+	bool addListener(Listener & listener);
+	bool removeListener(size_t index);
+	bool removeListener(const Listener & listener);
+	void clearListeners();
+	void notifyGroupModified() const;
+
+	// GroupFile Virtuals
+	virtual void groupFileModified(const GroupFile * groupFile, bool modified) override;
 
 	bool operator == (const Group & g) const;
 	bool operator != (const Group & g) const;
@@ -73,8 +127,13 @@ public:
 	static const std::string HEADER_TEXT;
 
 private:
+	void setModified(bool modified) const;
+	void updateParentGroup();
+
 	std::string m_filePath;
 	std::vector<std::shared_ptr<GroupFile>> m_files;
+	mutable bool m_modified;
+	mutable std::vector<Listener *> m_listeners;
 };
 
 #endif // _GROUP_H_

@@ -36,4 +36,16 @@ namespace WXUtilities {
 		return itemsArrayString;
 	}
 
+	void setButtonEnabled(wxButton * button, bool enabled) {
+		if(button == nullptr) {
+			return;
+		}
+
+		if(enabled) {
+			button->Enable();
+		}
+		else {
+			button->Disable();
+		}
+	}
 }
