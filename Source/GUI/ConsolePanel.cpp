@@ -16,7 +16,7 @@ ConsolePanel::ConsolePanel(wxWindow * parent, wxWindowID windowID, const wxPoint
 	m_logger = new CustomLogTextControl(m_logTextArea);
 	m_logger->SetLogLevel(wxLOG_Debug);
 	delete m_logger->SetFormatter(m_logFormatter);
-	m_logger->SetActiveTarget(m_logger);
+	delete m_logger->SetActiveTarget(m_logger);
 
 	wxBoxSizer * consoleBoxSizer = new wxBoxSizer(wxVERTICAL);
 	consoleBoxSizer->Add(m_logTextArea, 1, wxEXPAND | wxALL, 0);

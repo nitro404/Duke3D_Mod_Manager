@@ -11,17 +11,18 @@
 #include <LibraryInformation.h>
 
 #include <spdlog/spdlog.h>
-#include <wx/bookctrl.h>
 
-ModManagerFrame::ModManagerFrame(std::shared_ptr<ModManager> modManager)
-	: wxFrame(nullptr, wxID_ANY, APPLICATION_NAME, WXUtilities::createWXPoint(SettingsManager::getInstance()->windowPosition), WXUtilities::createWXSize(SettingsManager::getInstance()->windowSize))
+ModManagerFrame::ModManagerFrame()
+	: wxFrame(nullptr, wxID_ANY, APPLICATION_NAME, wxDefaultPosition, wxDefaultSize)
+	, m_initialized(false)
 #if wxUSE_MENUS
 	, m_resetWindowPositionMenuItem(nullptr)
 	, m_resetWindowSizeMenuItem(nullptr)
 #endif // wxUSE_MENUS
-{
+	, m_notebook(nullptr)
+	, m_settingsManagerPanel(nullptr)
+	, m_listener(nullptr) {
 	SetIcon(wxICON(D3DMODMGR_ICON));
-	SetMinSize(WXUtilities::createWXSize(SettingsManager::MINIMUM_WINDOW_SIZE));
 
 #if wxUSE_MENUS
 	wxMenu * fileMenu = new wxMenu();
@@ -44,19 +45,47 @@ ModManagerFrame::ModManagerFrame(std::shared_ptr<ModManager> modManager)
 
 	SetMenuBar(menuBar);
 #endif // wxUSE_MENUS
+}
 
-	wxNotebook * notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_TOP, "Main");
+ModManagerFrame::~ModManagerFrame() {
+	m_settingsManagerPanel->removeListener(*this);
+}
 
-	if(modManager->isInitialized()) {
-		ModBrowserPanel * modBrowserPanel = new ModBrowserPanel(modManager, notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-		notebook->AddPage(modBrowserPanel, "Mod Browser");
+bool ModManagerFrame::isInitialized() const {
+	return m_initialized;
+}
+
+bool ModManagerFrame::initialize(std::shared_ptr<ModManager> modManager) {
+	if(m_initialized) {
+		return true;
 	}
 
-	GroupEditorPanel * groupEditorPanel = new GroupEditorPanel(notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-	notebook->AddPage(groupEditorPanel, "Group Editor");
+	if(modManager == nullptr) {
+		return false;
+	}
 
-	ConsolePanel * consolePanel = new ConsolePanel(notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-	notebook->AddPage(consolePanel, "Console");
+	SetPosition(WXUtilities::createWXPoint(SettingsManager::getInstance()->windowPosition));
+	SetSize(WXUtilities::createWXSize(SettingsManager::getInstance()->windowSize));
+	SetMinSize(WXUtilities::createWXSize(SettingsManager::MINIMUM_WINDOW_SIZE));
+
+	m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_TOP, "Main");
+	m_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGING, &ModManagerFrame::onNotebookPageChanging, this);
+	m_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &ModManagerFrame::onNotebookPageChanged, this);
+
+	if(modManager->isInitialized()) {
+		ModBrowserPanel * modBrowserPanel = new ModBrowserPanel(modManager, m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+		m_notebook->AddPage(modBrowserPanel, "Mod Browser");
+	}
+
+	GroupEditorPanel * groupEditorPanel = new GroupEditorPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+	m_notebook->AddPage(groupEditorPanel, "Group Editor");
+
+	m_settingsManagerPanel = new SettingsManagerPanel(modManager, m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+	m_settingsManagerPanel->addListener(*this);
+	m_notebook->AddPage(m_settingsManagerPanel, "Settings");
+
+	ConsolePanel * consolePanel = new ConsolePanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+	m_notebook->AddPage(consolePanel, "Console");
 
 	if(!modManager->isInitialized()) {
 		wxMessageBox(
@@ -70,14 +99,29 @@ ModManagerFrame::ModManagerFrame(std::shared_ptr<ModManager> modManager)
 			wxOK | wxICON_ERROR,
 			this
 		);
+
+		return false;
 	}
+
+	m_initialized = true;
+
+	return true;
 }
 
-ModManagerFrame::~ModManagerFrame() {
-	SettingsManager * settings = SettingsManager::getInstance();
+bool ModManagerFrame::hasListener() const {
+	return m_listener != nullptr;
+}
 
-	settings->windowPosition = WXUtilities::createPoint(GetPosition());
-	settings->windowSize = WXUtilities::createDimension(GetSize());
+ModManagerFrame::Listener * ModManagerFrame::getListener() const {
+	return m_listener;
+}
+
+void ModManagerFrame::setListener(Listener & listener) {
+	m_listener = &listener;
+}
+
+void ModManagerFrame::clearListener() {
+	m_listener = nullptr;
 }
 
 #if wxUSE_MENUS
@@ -96,8 +140,41 @@ void ModManagerFrame::onMenuBarItemPressed(wxCommandEvent & event) {
 }
 #endif // wxUSE_MENUS
 
+void ModManagerFrame::onNotebookPageChanging(wxBookCtrlEvent & event) {
+	wxWindow * currentPage = m_notebook->GetPage(m_notebook->GetSelection());
+
+	if(dynamic_cast<SettingsManagerPanel *>(currentPage) != nullptr) {
+		SettingsManagerPanel * settingsManagerPanel = static_cast<SettingsManagerPanel *>(currentPage);
+
+		if(!settingsManagerPanel->isModified()) {
+			return;
+		}
+
+		int result = wxMessageBox("You have unsaved settings modifications.\nWould you like to save settings and re-load the application, or discard your changes?", "Save Settings", wxYES_NO | wxCANCEL | wxICON_INFORMATION, this);
+
+		if(result == wxYES) {
+			settingsManagerPanel->save();
+			event.Veto();
+		}
+		else if(result == wxNO) {
+			static_cast<SettingsManagerPanel *>(currentPage)->discard();
+		}
+		else if(result == wxCANCEL) {
+			event.Veto();
+		}
+	}
+}
+
+void ModManagerFrame::onNotebookPageChanged(wxBookCtrlEvent & event) {
+	wxWindow * currentPage = m_notebook->GetPage(m_notebook->GetSelection());
+
+	if(dynamic_cast<SettingsManagerPanel *>(currentPage) != nullptr) {
+		static_cast<SettingsManagerPanel *>(currentPage)->discard();
+	}
+}
+
 void ModManagerFrame::onQuit(wxCommandEvent& WXUNUSED(event)) {
-	Close(true);
+	Close();
 }
 
 void ModManagerFrame::onAbout(wxCommandEvent& WXUNUSED(event)) {
@@ -118,6 +195,28 @@ void ModManagerFrame::onAbout(wxCommandEvent& WXUNUSED(event)) {
 		this
 	);
 }
+
+void ModManagerFrame::settingsChanged() { }
+
+void ModManagerFrame::settingsReset() {
+	requestReload();
+}
+
+void ModManagerFrame::settingsDiscarded() { }
+
+void ModManagerFrame::settingsSaved() {
+	requestReload();
+}
+
+void ModManagerFrame::requestReload() {
+	if(m_listener != nullptr) {
+		m_listener->reloadRequested();
+	}
+
+	Close();
+}
+
+ModManagerFrame::Listener::~Listener() { }
 
 wxBEGIN_EVENT_TABLE(ModManagerFrame, wxFrame)
 	EVT_MENU(wxID_EXIT, ModManagerFrame::onQuit)

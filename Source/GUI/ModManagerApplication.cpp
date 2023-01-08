@@ -1,11 +1,11 @@
 #include "ModManagerApplication.h"
 
 #include "Logging/LogSinkWX.h"
-#include "Manager/ModManager.h"
-#include "ModManagerFrame.h"
+#include "Manager/SettingsManager.h"
 #include "Project.h"
+#include "WXUtilities.h"
 
-#include <Arguments/ArgumentParser.h>
+#include <Application/ComponentRegistry.h>
 #include <LibraryInformation.h>
 #include <Logging/LogSystem.h>
 
@@ -18,33 +18,25 @@
 #include <wx/version.h>
 
 ModManagerApplication::ModManagerApplication()
-	: m_modManager(std::make_shared<ModManager>())
-	, m_logSinkWX(std::make_shared<LogSinkWX>()) {
+	: m_modManagerFrame(new ModManagerFrame())
+	, m_newModManagerFrame(nullptr)
+	, m_reloadRequired(false) {
 	SetAppDisplayName(APPLICATION_NAME);
-	LogSystem::getInstance()->addLogSink(m_logSinkWX);
 
-	LibraryInformation * libraryInformation = LibraryInformation::getInstance();
-	libraryInformation->addLibrary("LibPNG", PNG_LIBPNG_VER_STRING);
-	libraryInformation->addLibrary("wxWidgets", fmt::format("{}.{}.{}.{}", wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER, wxSUBRELEASE_NUMBER));
+	ComponentRegistry::getInstance().registerGlobalComponents();
 }
 
 ModManagerApplication::~ModManagerApplication() { }
 
-void ModManagerApplication::displayArgumentHelp() {
-	wxMessageBox(ModManager::getArgumentHelpInfo(), "Argument Information", wxOK | wxICON_INFORMATION);
-}
+void ModManagerApplication::initialize() {
+	m_modManager = std::make_shared<ModManager>();
+	m_logSinkWX = std::make_shared<LogSinkWX>();
 
-bool ModManagerApplication::OnInit() {
-	std::shared_ptr<ArgumentParser> arguments;
+	LibraryInformation * libraryInformation = LibraryInformation::getInstance();
+	libraryInformation->addLibrary("LibPNG", PNG_LIBPNG_VER_STRING);
+	libraryInformation->addLibrary("wxWidgets", fmt::format("{}.{}.{}.{}", wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER, wxSUBRELEASE_NUMBER));
 
-	if(wxAppConsole::argc != 0) {
-		arguments = std::make_shared<ArgumentParser>(wxAppConsole::argc, wxAppConsole::argv);
-	}
-
-	if(arguments->hasArgument("?")) {
-		displayArgumentHelp();
-		return false;
-	}
+	LogSystem::getInstance()->addLogSink(m_logSinkWX);
 
 	std::unique_ptr<wxProgressDialog> initializingProgressDialog(std::make_unique<wxProgressDialog>(
 		"Initializing",
@@ -56,16 +48,58 @@ bool ModManagerApplication::OnInit() {
 
 	initializingProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
 
-	if(!m_modManager->initialize(arguments)) {
+	if(!m_modManager->initialize(m_arguments)) {
 		spdlog::error("{} initialization failed!", APPLICATION_NAME);
 	}
 
-	ModManagerFrame * frame = new ModManagerFrame(m_modManager);
-	frame->Show(true);
+	m_modManagerFrame->Bind(wxEVT_CLOSE_WINDOW, &ModManagerApplication::onFrameClosed, this);
+	m_modManagerFrame->setListener(*this);
+	m_modManagerFrame->initialize(m_modManager);
+	m_modManagerFrame->Show(true);
 
 	m_logSinkWX->initialize();
 
 	initializingProgressDialog->Update(1);
+}
+
+void ModManagerApplication::reload() {
+	m_reloadRequired = true;
+	m_newModManagerFrame = new ModManagerFrame();
+}
+
+void ModManagerApplication::displayArgumentHelp() {
+	wxMessageBox(ModManager::getArgumentHelpInfo(), "Argument Information", wxOK | wxICON_INFORMATION);
+}
+
+void ModManagerApplication::onFrameClosed(wxCloseEvent & event) {
+	SettingsManager * settings = SettingsManager::getInstance();
+
+	settings->windowPosition = WXUtilities::createPoint(m_modManagerFrame->GetPosition());
+	settings->windowSize = WXUtilities::createDimension(m_modManagerFrame->GetSize());
+
+	m_modManagerFrame->Destroy();
+
+	if(m_reloadRequired) {
+		m_reloadRequired = false;
+		LogSystem::getInstance()->removeLogSink(m_logSinkWX);
+		ComponentRegistry::getInstance().deleteAllComponents();
+		m_modManagerFrame = m_newModManagerFrame;
+		m_newModManagerFrame = nullptr;
+		initialize();
+	}
+}
+
+bool ModManagerApplication::OnInit() {
+	if(wxAppConsole::argc != 0) {
+		m_arguments = std::make_shared<ArgumentParser>(wxAppConsole::argc, wxAppConsole::argv);
+	}
+
+	if(m_arguments->hasArgument("?")) {
+		displayArgumentHelp();
+		return false;
+	}
+
+	initialize();
 
 	return true;
 }
@@ -82,7 +116,13 @@ void ModManagerApplication::CleanUp() {
 	m_logSinkWX.reset();
 	m_modManager.reset();
 
+	ComponentRegistry::getInstance().deleteAllGlobalComponents();
+
 	wxApp::CleanUp();
+}
+
+void ModManagerApplication::reloadRequested() {
+	reload();
 }
 
 IMPLEMENT_APP(ModManagerApplication)
