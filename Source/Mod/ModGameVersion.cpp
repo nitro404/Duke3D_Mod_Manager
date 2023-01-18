@@ -678,7 +678,7 @@ bool ModGameVersion::isGameVersionSupported(const GameVersion & gameVersion) con
 bool ModGameVersion::isGameVersionCompatible(const GameVersion & gameVersion) const {
 	return gameVersion.isValid() &&
 		   isGameVersionSupported(gameVersion) ||
-		   gameVersion.hasCompatibleGameVersion(m_gameVersion);
+		   gameVersion.hasCompatibleGameVersionWithName(m_gameVersion);
 }
 
 bool ModGameVersion::isValid() const {

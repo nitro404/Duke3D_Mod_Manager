@@ -18,6 +18,7 @@ class GameVersionCollection final : public GameVersionCollectionBroadcaster {
 public:
 	GameVersionCollection();
 	GameVersionCollection(const std::vector<GameVersion> & gameVersions);
+	GameVersionCollection(const std::vector<const GameVersion *> & gameVersions);
 	GameVersionCollection(const std::vector<std::shared_ptr<GameVersion>> & gameVersions);
 	GameVersionCollection(GameVersionCollection && g) noexcept;
 	GameVersionCollection(const GameVersionCollection & g);
@@ -27,11 +28,11 @@ public:
 
 	size_t numberOfGameVersions() const;
 	bool hasGameVersion(const GameVersion & gameVersion) const;
-	bool hasGameVersion(const std::string & name) const;
+	bool hasGameVersionWithName(const std::string & name) const;
 	size_t indexOfGameVersion(const GameVersion & gameVersion) const;
-	size_t indexOfGameVersion(const std::string & name) const;
+	size_t indexOfGameVersionWithName(const std::string & name) const;
 	std::shared_ptr<GameVersion> getGameVersion(size_t index) const;
-	std::shared_ptr<GameVersion> getGameVersion(const std::string & name) const;
+	std::shared_ptr<GameVersion> getGameVersionWithName(const std::string & name) const;
 	const std::vector<std::shared_ptr<GameVersion>> & getGameVersions() const;
 	std::vector<std::shared_ptr<GameVersion>> getGameVersionsCompatibleWith(size_t index, bool includeSupported = false, std::optional<bool> configured = {}) const;
 	std::vector<std::shared_ptr<GameVersion>> getGameVersionsCompatibleWith(const std::string & name, bool includeSupported = false, std::optional<bool> configured = {}) const;
@@ -42,12 +43,15 @@ public:
 	std::vector<std::shared_ptr<GameVersion>> getUnconfiguredGameVersions() const;
 	std::vector<std::string> getGameVersionDisplayNames(bool prependItemNumber = true) const;
 	static std::vector<std::string> getGameVersionDisplayNamesFrom(const std::vector<std::shared_ptr<GameVersion>> & gameVersions, bool prependItemNumber = true);
+	static std::vector<std::string> getGameVersionDisplayNamesFrom(const std::vector<const GameVersion *> & gameVersions, bool prependItemNumber = true);
 	bool addGameVersion(const GameVersion & gameVersion);
+	bool addGameVersion(std::shared_ptr<GameVersion> gameVersion);
 	size_t addGameVersions(const std::vector<GameVersion> & gameVersions);
+	size_t addGameVersions(const std::vector<const GameVersion *> & gameVersions);
 	size_t addGameVersions(const std::vector<std::shared_ptr<GameVersion>> & gameVersions);
 	bool removeGameVersion(size_t index);
 	bool removeGameVersion(const GameVersion & gameVersion);
-	bool removeGameVersion(const std::string & name);
+	bool removeGameVersionWithName(const std::string & name);
 	size_t addMissingDefaultGameVersions();
 	void setDefaultGameVersions();
 	void clearGameVersions();

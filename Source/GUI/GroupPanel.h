@@ -53,7 +53,7 @@ public:
 	void clearListeners();
 	void notifyGroupFileSelectionChanged();
 
-	// Group Virtuals
+	// Group::Listener Virtuals
 	virtual void groupModified(const Group * group, bool modified) override;
 
 private:

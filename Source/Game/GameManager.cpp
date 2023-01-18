@@ -104,6 +104,10 @@ bool GameManager::initialize(std::shared_ptr<GameVersionCollection> gameVersions
 	return true;
 }
 
+std::shared_ptr<GameVersionCollection> GameManager::getGameVersions() const {
+	return m_gameVersions;
+}
+
 std::string GameManager::getLocalGameDownloadsListFilePath() const {
 	SettingsManager * settings = SettingsManager::getInstance();
 
@@ -226,13 +230,13 @@ bool GameManager::updateGameDownloadList(bool force) const {
 }
 
 bool GameManager::isGameDownloadable(const std::string & gameName) {
-	return gameName == GameVersion::ORIGINAL_REGULAR_VERSION.getName() ||
-		   gameName == GameVersion::ORIGINAL_ATOMIC_EDITION.getName() ||
-		   gameName == GameVersion::JFDUKE3D.getName() ||
-		   gameName == GameVersion::EDUKE32.getName() ||
-		   gameName == GameVersion::RAZE.getName() ||
-		   gameName == GameVersion::RED_NUKEM.getName() ||
-		   gameName == GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getName();;
+	return Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_REGULAR_VERSION.getName()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_ATOMIC_EDITION.getName()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::JFDUKE3D.getName()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::EDUKE32.getName()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::RAZE.getName()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::RED_NUKEM.getName()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getName());
 }
 
 std::string GameManager::getGameDownloadURL(const std::string & gameName) {
@@ -419,7 +423,7 @@ std::string GameManager::getJFDuke3DDownloadURL(DeviceInformationBridge::Operati
 		return {};
 	}
 
-	std::shared_ptr<GameVersion> jfDuke3DGameVersion(m_gameVersions->getGameVersion(GameVersion::JFDUKE3D.getName()));
+	std::shared_ptr<GameVersion> jfDuke3DGameVersion(m_gameVersions->getGameVersionWithName(GameVersion::JFDUKE3D.getName()));
 	const GameVersion * jfDuke3DGameVersionRaw = jfDuke3DGameVersion != nullptr ? jfDuke3DGameVersion.get() : &GameVersion::JFDUKE3D;
 
 	if(!jfDuke3DGameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
@@ -581,7 +585,7 @@ std::string GameManager::getEDuke32DownloadURL(DeviceInformationBridge::Operatin
 		return {};
 	}
 
-	std::shared_ptr<GameVersion> eDuke32GameVersion(m_gameVersions->getGameVersion(GameVersion::EDUKE32.getName()));
+	std::shared_ptr<GameVersion> eDuke32GameVersion(m_gameVersions->getGameVersionWithName(GameVersion::EDUKE32.getName()));
 	const GameVersion * eDuke32GameVersionRaw = eDuke32GameVersion != nullptr ? eDuke32GameVersion.get() : &GameVersion::EDUKE32;
 
 	if(!eDuke32GameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
@@ -700,7 +704,7 @@ std::string GameManager::getRazeDownloadURL(DeviceInformationBridge::OperatingSy
 		return {};
 	}
 
-	std::shared_ptr<GameVersion> razeGameVersion(m_gameVersions->getGameVersion(GameVersion::RAZE.getName()));
+	std::shared_ptr<GameVersion> razeGameVersion(m_gameVersions->getGameVersionWithName(GameVersion::RAZE.getName()));
 	const GameVersion * razeGameVersionRaw = razeGameVersion != nullptr ? razeGameVersion.get() : &GameVersion::RAZE;
 
 	if(!razeGameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
@@ -866,7 +870,7 @@ std::string GameManager::getRedNukemDownloadURL(DeviceInformationBridge::Operati
 		return {};
 	}
 
-	std::shared_ptr<GameVersion> redNukemGameVersion(m_gameVersions->getGameVersion(GameVersion::RED_NUKEM.getName()));
+	std::shared_ptr<GameVersion> redNukemGameVersion(m_gameVersions->getGameVersionWithName(GameVersion::RED_NUKEM.getName()));
 	const GameVersion * redNukemGameVersionRaw = redNukemGameVersion != nullptr ? redNukemGameVersion.get() : &GameVersion::RED_NUKEM;
 
 	if(!redNukemGameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {

@@ -56,7 +56,7 @@ public:
 	void clearListeners();
 
 	// SettingPanel::Listener Virtuals
-	virtual void settingModified(SettingPanel * settingPanel) override;
+	virtual void settingModified(SettingPanel & settingPanel) override;
 
 private:
 	void notifySettingsChanged();

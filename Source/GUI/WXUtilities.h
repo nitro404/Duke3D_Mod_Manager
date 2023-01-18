@@ -32,6 +32,7 @@ namespace WXUtilities {
 	template <typename E>
 	wxArrayString createEnumWXArrayString();
 	void setButtonEnabled(wxButton * button, bool enabled);
+	void setTextControlEnabled(wxTextCtrl * textControl, bool enabled);
 
 	template <typename E>
 	wxArrayString createEnumWXArrayString() {

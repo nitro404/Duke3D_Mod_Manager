@@ -84,7 +84,7 @@ public:
 	void onCloseButtonPressed(wxCommandEvent & event);
 	void onCloseAllButtonPressed(wxCommandEvent & event);
 
-	// GroupPanel Virtuals
+	// GroupPanel::Listener Virtuals
 	virtual void groupModified(GroupPanel * groupPanel, bool modified) override;
 	virtual void groupFileSelectionChanged(GroupPanel * groupPanel) override;
 

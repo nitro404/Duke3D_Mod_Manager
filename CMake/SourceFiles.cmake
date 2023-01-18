@@ -102,6 +102,8 @@ set(MAIN_SOURCE_FILES_WINDOWS
 
 set(GUI_SOURCE_FILES
 	GUI/ConsolePanel.cpp
+	GUI/GameManagerPanel.cpp
+	GUI/GameVersionPanel.cpp
 	GUI/GroupEditorPanel.cpp
 	GUI/GroupPanel.cpp
 	GUI/Logging/CustomLogTextControl.cpp
@@ -117,6 +119,8 @@ set(GUI_SOURCE_FILES
 
 set(GUI_HEADER_FILES
 	GUI/ConsolePanel.h
+	GUI/GameManagerPanel.h
+	GUI/GameVersionPanel.h
 	GUI/GroupEditorPanel.h
 	GUI/GroupPanel.h
 	GUI/Logging/CustomLogTextControl.h

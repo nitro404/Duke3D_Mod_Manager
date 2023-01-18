@@ -48,4 +48,17 @@ namespace WXUtilities {
 			button->Disable();
 		}
 	}
+
+	void setTextControlEnabled(wxTextCtrl * textControl, bool enabled) {
+		if(textControl == nullptr) {
+			return;
+		}
+
+		if(enabled) {
+			textControl->Enable();
+		}
+		else {
+			textControl->Disable();
+		}
+	}
 }

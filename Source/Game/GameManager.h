@@ -18,6 +18,7 @@ public:
 
 	bool isInitialized() const;
 	bool initialize(std::shared_ptr<GameVersionCollection> gameVersions);
+	std::shared_ptr<GameVersionCollection> getGameVersions() const;
 	std::string getLocalGameDownloadsListFilePath() const;
 	bool shouldUpdateGameDownloadList() const;
 	bool loadOrUpdateGameDownloadList(bool forceUpdate = false) const;

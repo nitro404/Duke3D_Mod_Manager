@@ -360,8 +360,8 @@ void SettingsManagerPanel::notifySettingsSaved() {
 	}
 }
 
-void SettingsManagerPanel::settingModified(SettingPanel * settingPanel) {
-	if(settingPanel->isModified()) {
+void SettingsManagerPanel::settingModified(SettingPanel & settingPanel) {
+	if(settingPanel.isModified()) {
 		m_modified = true;
 
 		updateButtons();

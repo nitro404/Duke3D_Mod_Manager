@@ -32,7 +32,7 @@ GroupEditorPanel::GroupEditorPanel(wxWindow * parent, wxWindowID windowID, const
 	, m_closeButton(nullptr)
 	, m_closeAllButton(nullptr) {
 
-	m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_TOP, "Groups");
+	m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_TOP | wxNB_MULTILINE, "Groups");
 	m_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &GroupEditorPanel::onNotebookPageChanged, this);
 
 	wxScrolledWindow * actionsPanel = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, "Group Actions");
@@ -791,6 +791,7 @@ bool GroupEditorPanel::closeGroupPanel(size_t groupPanelIndex) {
 	}
 
 	GroupPanel * groupPanel = getGroupPanel(groupPanelIndex);
+	groupPanel->removeListener(*this);
 	m_notebook->RemovePage(groupPanelIndex);
 	delete groupPanel;
 
@@ -805,7 +806,6 @@ bool GroupEditorPanel::closeCurrentGroupPanel() {
 	}
 
 	GroupPanel * groupPanel = getGroupPanel(currentGroupPanelIndex);
-	groupPanel->removeListener(*this);
 
 	if(!closeGroupPanel(currentGroupPanelIndex)) {
 		return false;

@@ -311,7 +311,7 @@ bool DownloadManager::downloadModGameVersion(ModGameVersion * modGameVersion, Ga
 		return false;
 	}
 
-	std::shared_ptr<GameVersion> gameVersion(gameVersions->getGameVersion(modGameVersion->getGameVersion()));
+	std::shared_ptr<GameVersion> gameVersion(gameVersions->getGameVersionWithName(modGameVersion->getGameVersion()));
 
 	if(gameVersion == nullptr) {
 		spdlog::error("Failed to download '{}' mod, could not find '{}' game version! Is your game version configuration file missing information?", modGameVersion->getParentModVersionType()->getFullName(), modGameVersion->getGameVersion());

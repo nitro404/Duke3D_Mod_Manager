@@ -70,6 +70,8 @@ public:
 	bool setPreferredGameVersion(std::shared_ptr<GameVersion> gameVersion);
 
 	std::shared_ptr<GameVersionCollection> getGameVersions() const;
+	std::shared_ptr<GameManager> getGameManager() const;
+	std::shared_ptr<DownloadManager> getDownloadManager() const;
 
 	const std::string & getDOSBoxServerIPAddress() const;
 	void setDOSBoxServerIPAddress(const std::string & ipAddress);
@@ -164,14 +166,14 @@ private:
 	bool m_localMode;
 	bool m_demoRecordingEnabled;
 	std::shared_ptr<ArgumentParser> m_arguments;
-	std::unique_ptr<DownloadManager> m_downloadManager;
+	std::shared_ptr<DownloadManager> m_downloadManager;
 	GameType m_gameType;
 	std::shared_ptr<GameVersion> m_preferredGameVersion;
 	std::shared_ptr<Mod> m_selectedMod;
 	size_t m_selectedModVersionIndex;
 	size_t m_selectedModVersionTypeIndex;
 	std::shared_ptr<GameVersionCollection> m_gameVersions;
-	std::unique_ptr<GameManager> m_gameManager;
+	std::shared_ptr<GameManager> m_gameManager;
 	std::shared_ptr<ModCollection> m_mods;
 	std::shared_ptr<FavouriteModCollection> m_favouriteMods;
 	std::shared_ptr<OrganizedModCollection> m_organizedMods;

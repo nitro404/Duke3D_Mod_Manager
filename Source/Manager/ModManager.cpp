@@ -69,7 +69,7 @@ ModManager::ModManager()
 	, m_selectedModVersionIndex(0)
 	, m_selectedModVersionTypeIndex(0)
 	, m_gameVersions(std::make_shared<GameVersionCollection>())
-	, m_gameManager(std::make_unique<GameManager>())
+	, m_gameManager(std::make_shared<GameManager>())
 	, m_mods(std::make_shared<ModCollection>())
 	, m_favouriteMods(std::make_shared<FavouriteModCollection>())
 	, m_organizedMods(std::make_shared<OrganizedModCollection>(m_mods, m_favouriteMods, m_gameVersions)) {
@@ -220,7 +220,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 	}
 
 	if(!m_localMode) {
-		m_downloadManager = std::make_unique<DownloadManager>();
+		m_downloadManager = std::make_shared<DownloadManager>();
 
 		if(!m_downloadManager->initialize()) {
 			spdlog::error("Failed to initialize download manager!");
@@ -247,7 +247,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 
 	m_gameVersions->addMissingDefaultGameVersions();
 
-	m_preferredGameVersion = m_gameVersions->getGameVersion(settings->preferredGameVersion);
+	m_preferredGameVersion = m_gameVersions->getGameVersionWithName(settings->preferredGameVersion);
 
 	if(m_preferredGameVersion == nullptr) {
 		m_preferredGameVersion = m_gameVersions->getGameVersion(0);
@@ -450,7 +450,7 @@ std::shared_ptr<GameVersion> ModManager::getSelectedGameVersion() const {
 	if(m_arguments != nullptr && m_arguments->hasArgument("game") && !m_arguments->getFirstValue("game").empty()) {
 		std::string gameVersionName(m_arguments->getFirstValue("game"));
 
-		selectedGameVersion = m_gameVersions->getGameVersion(gameVersionName);
+		selectedGameVersion = m_gameVersions->getGameVersionWithName(gameVersionName);
 
 		if(selectedGameVersion == nullptr) {
 			spdlog::error("Could not find game version override for '{}'.", gameVersionName);
@@ -484,7 +484,7 @@ bool ModManager::setPreferredGameVersion(const std::string & gameVersionName) {
 		return false;
 	}
 
-	return setPreferredGameVersion(m_gameVersions->getGameVersion(gameVersionName));
+	return setPreferredGameVersion(m_gameVersions->getGameVersionWithName(gameVersionName));
 }
 
 bool ModManager::setPreferredGameVersion(std::shared_ptr<GameVersion> gameVersion) {
@@ -504,6 +504,14 @@ bool ModManager::setPreferredGameVersion(std::shared_ptr<GameVersion> gameVersio
 
 std::shared_ptr<GameVersionCollection> ModManager::getGameVersions() const {
 	return m_gameVersions;
+}
+
+std::shared_ptr<GameManager> ModManager::getGameManager() const {
+	return m_gameManager;
+}
+
+std::shared_ptr<DownloadManager> ModManager::getDownloadManager() const {
+	return m_downloadManager;
 }
 
 const std::string & ModManager::getDOSBoxServerIPAddress() const {
@@ -1317,7 +1325,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		std::vector<std::shared_ptr<ModFile>> modFiles(selectedModGameVersion->getFilesOfType("grp"));
 
 		for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = modFiles.begin(); i != modFiles.end(); ++i) {
-			std::string modGroupPath(Utilities::joinPaths(getModsDirectoryPath(), m_gameVersions->getGameVersion(selectedModGameVersion->getGameVersion())->getModDirectoryName(), (*i)->getFileName()));
+			std::string modGroupPath(Utilities::joinPaths(getModsDirectoryPath(), m_gameVersions->getGameVersionWithName(selectedModGameVersion->getGameVersion())->getModDirectoryName(), (*i)->getFileName()));
 			std::unique_ptr<Group> modGroup(Group::loadFrom(modGroupPath));
 
 			if(modGroup != nullptr) {
@@ -1481,12 +1489,12 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			return {};
 		}
 
-		if(!Utilities::areStringsEqualIgnoreCase(modGameVersion->getGameVersion(), selectedGameVersion->getName()) && !selectedGameVersion->hasCompatibleGameVersion(modGameVersion->getGameVersion())) {
+		if(!Utilities::areStringsEqualIgnoreCase(modGameVersion->getGameVersion(), selectedGameVersion->getName()) && !selectedGameVersion->hasCompatibleGameVersionWithName(modGameVersion->getGameVersion())) {
 			spdlog::error("Game version '{}' is not compatible with '{}'.", selectedGameVersion->getName(), modGameVersion->getGameVersion());
 			return {};
 		}
 
-		targetGameVersion = m_gameVersions->getGameVersion(modGameVersion->getGameVersion());
+		targetGameVersion = m_gameVersions->getGameVersionWithName(modGameVersion->getGameVersion());
 
 		if(targetGameVersion == nullptr) {
 			spdlog::error("Missing game configuration for '{}'.", modGameVersion->getGameVersion());
@@ -2154,7 +2162,7 @@ size_t ModManager::checkModForMissingFiles(const Mod & mod, std::optional<size_t
 
 			for(size_t k = 0; k < modVersionType->numberOfGameVersions(); k++) {
 				modGameVersion = modVersionType->getGameVersion(k);
-				gameVersion = m_gameVersions->getGameVersion(modGameVersion->getGameVersion());
+				gameVersion = m_gameVersions->getGameVersionWithName(modGameVersion->getGameVersion());
 
 				if(!GameVersion::isValid(gameVersion.get())) {
 					spdlog::warn("Skipping checking invalid '{}' mod game version '{}', invalid game configuration.", mod.getFullName(i, j), modGameVersion->getGameVersion());
@@ -2322,7 +2330,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 				continue;
 			}
 
-			gameVersion = m_gameVersions->getGameVersion(modDownload->getGameVersion());
+			gameVersion = m_gameVersions->getGameVersionWithName(modDownload->getGameVersion());
 
 			if(gameVersion == nullptr) {
 				spdlog::warn("Could not find game configuration for game version '{}', skipping hash of download file: '{}'.", modDownload->getGameVersion(), modDownload->getFileName());
@@ -2465,7 +2473,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 
 			for(size_t k = 0; k < modVersionType->numberOfGameVersions(); k++) {
 				modGameVersion = modVersionType->getGameVersion(k);
-				gameVersion = m_gameVersions->getGameVersion(modGameVersion->getGameVersion());
+				gameVersion = m_gameVersions->getGameVersionWithName(modGameVersion->getGameVersion());
 
 				if(!GameVersion::isValid(gameVersion.get())) {
 					spdlog::warn("Mod '{}' game version #{} is not valid, skipping hashing of mod files.", mod.getFullName(i, j), k + 1);
@@ -2871,7 +2879,7 @@ bool ModManager::createSymlinksOrCopyTemporaryFiles(const GameVersionCollection 
 			}
 
 			std::string modFileFileName(modFile->getFileName());
-			std::string modFileSourceFilePath(Utilities::joinPaths(getModsDirectoryPath(), gameVersions.getGameVersion(selectedModGameVersion->getGameVersion())->getModDirectoryName(), modFileFileName));
+			std::string modFileSourceFilePath(Utilities::joinPaths(getModsDirectoryPath(), gameVersions.getGameVersionWithName(selectedModGameVersion->getGameVersion())->getModDirectoryName(), modFileFileName));
 			std::string modFileDestinationFilePath(Utilities::joinPaths(fileDestinationDirectoryPath, modFileFileName));
 
 			std::error_code errorCode;
