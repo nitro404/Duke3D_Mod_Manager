@@ -87,7 +87,7 @@ GroupEditorPanel::GroupEditorPanel(wxWindow * parent, wxWindowID windowID, const
 	m_closeAllButton->Bind(wxEVT_BUTTON, &GroupEditorPanel::onCloseAllButtonPressed, this);
 	m_closeAllButton->Disable();
 
-	int border = 5;
+	int border = 2;
 
 	wxWrapSizer * actionsPanelSizer = new wxWrapSizer(wxVERTICAL);
 	actionsPanelSizer->Add(m_newButton, 1, wxEXPAND | wxHORIZONTAL, border);
@@ -106,10 +106,10 @@ GroupEditorPanel::GroupEditorPanel(wxWindow * parent, wxWindowID windowID, const
 	actionsPanel->SetSizerAndFit(actionsPanelSizer);
 
 	wxGridBagSizer * groupEditorPanelSizer = new wxGridBagSizer(border, border);
-	groupEditorPanelSizer->Add(m_notebook, wxGBPosition(0, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
-	groupEditorPanelSizer->Add(actionsPanel, wxGBPosition(0, 1), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
+	groupEditorPanelSizer->Add(actionsPanel, wxGBPosition(0, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
+	groupEditorPanelSizer->Add(m_notebook, wxGBPosition(0, 1), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
 	groupEditorPanelSizer->AddGrowableRow(0, 0);
-	groupEditorPanelSizer->AddGrowableCol(0, 0);
+	groupEditorPanelSizer->AddGrowableCol(1, 0);
 	SetSizerAndFit(groupEditorPanelSizer);
 
 	update();
