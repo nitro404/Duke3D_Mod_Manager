@@ -529,6 +529,34 @@ bool ModVersionType::isGameVersionCompatible(const GameVersion & gameVersion) co
 	return false;
 }
 
+std::vector<std::shared_ptr<ModGameVersion>> ModVersionType::getCompatibleModGameVersions(const GameVersion & gameVersion) const {
+	if(!gameVersion.isValid()) {
+		return {};
+	}
+
+	std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions;
+
+	for(const std::shared_ptr<ModGameVersion> & modGameVersion : m_gameVersions) {
+		if(modGameVersion->isGameVersionCompatible(gameVersion)) {
+			compatibleModGameVersions.push_back(modGameVersion);
+		}
+	}
+
+	return compatibleModGameVersions;
+}
+
+std::vector<std::string> ModVersionType::getCompatibleModGameVersionNames(const GameVersion & gameVersion) const {
+	std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(getCompatibleModGameVersions(gameVersion));
+	std::vector<std::string> compatibleModGameVersionNames;
+	compatibleModGameVersionNames.reserve(compatibleModGameVersions.size());
+
+	for(const std::shared_ptr<ModGameVersion> & modGameVersion : compatibleModGameVersions) {
+		compatibleModGameVersionNames.push_back(modGameVersion->getGameVersion());
+	}
+
+	return compatibleModGameVersionNames;
+}
+
 bool ModVersionType::isValid(const ModVersionType * t) {
 	return t != nullptr && t->isValid();
 }

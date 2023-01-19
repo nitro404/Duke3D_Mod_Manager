@@ -37,7 +37,7 @@ public:
 	public:
 		virtual ~Listener();
 
-		virtual void modSelectionChanged(const std::shared_ptr<Mod> & mod, size_t modVersionIndex, size_t modVersionTypeIndex);
+		virtual void modSelectionChanged(const std::shared_ptr<Mod> & mod, size_t modVersionIndex, size_t modVersionTypeIndex, size_t modGameVersionIndex);
 		virtual void gameTypeChanged(GameType gameType);
 		virtual void preferredGameVersionChanged(const std::shared_ptr<GameVersion> & gameVersion);
 		virtual void dosboxServerIPAddressChanged(const std::string & ipAddress);
@@ -83,17 +83,21 @@ public:
 	bool hasModSelected() const;
 	bool hasModVersionSelected() const;
 	bool hasModVersionTypeSelected() const;
+	bool hasModGameVersionSelected() const;
 	std::shared_ptr<Mod> getSelectedMod() const;
 	std::shared_ptr<ModVersion> getSelectedModVersion() const;
 	std::shared_ptr<ModVersionType> getSelectedModVersionType() const;
+	std::shared_ptr<ModGameVersion> getSelectedModGameVersion() const;
 	std::optional<std::string> getSelectedModName() const;
 	size_t getSelectedModVersionIndex() const;
 	size_t getSelectedModVersionTypeIndex() const;
+	size_t getSelectedModGameVersionIndex() const;
 	bool setSelectedMod(const std::string & name);
 	bool setSelectedMod(std::shared_ptr<Mod> mod);
 	bool setSelectedMod(const ModMatch & modMatch);
 	bool setSelectedModVersionIndex(size_t modVersionIndex);
 	bool setSelectedModVersionTypeIndex(size_t modVersionTypeIndex);
+	bool setSelectedModGameVersionIndex(size_t modGameVersionIndex);
 	bool selectRandomMod(bool selectPreferredVersion, bool selectFirstVersionType);
 	bool selectRandomGameVersion();
 	bool selectRandomTeam();
@@ -172,6 +176,7 @@ private:
 	std::shared_ptr<Mod> m_selectedMod;
 	size_t m_selectedModVersionIndex;
 	size_t m_selectedModVersionTypeIndex;
+	size_t m_selectedModGameVersionIndex;
 	std::shared_ptr<GameVersionCollection> m_gameVersions;
 	std::shared_ptr<GameManager> m_gameManager;
 	std::shared_ptr<ModCollection> m_mods;

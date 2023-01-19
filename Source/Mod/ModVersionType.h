@@ -57,6 +57,8 @@ public:
 
 	bool isGameVersionSupported(const GameVersion & gameVersion) const;
 	bool isGameVersionCompatible(const GameVersion & gameVersion) const;
+	std::vector<std::shared_ptr<ModGameVersion>> getCompatibleModGameVersions(const GameVersion & gameVersion) const;
+	std::vector<std::string> getCompatibleModGameVersionNames(const GameVersion & gameVersion) const;
 
 	bool isValid() const;
 	static bool isValid(const ModVersionType * t);

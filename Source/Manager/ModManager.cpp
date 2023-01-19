@@ -66,8 +66,9 @@ ModManager::ModManager()
 	, m_localMode(false)
 	, m_demoRecordingEnabled(false)
 	, m_gameType(ModManager::DEFAULT_GAME_TYPE)
-	, m_selectedModVersionIndex(0)
-	, m_selectedModVersionTypeIndex(0)
+	, m_selectedModVersionIndex(std::numeric_limits<size_t>::max())
+	, m_selectedModVersionTypeIndex(std::numeric_limits<size_t>::max())
+	, m_selectedModGameVersionIndex(std::numeric_limits<size_t>::max())
 	, m_gameVersions(std::make_shared<GameVersionCollection>())
 	, m_gameManager(std::make_shared<GameManager>())
 	, m_mods(std::make_shared<ModCollection>())
@@ -454,10 +455,10 @@ std::shared_ptr<GameVersion> ModManager::getSelectedGameVersion() const {
 
 		if(selectedGameVersion == nullptr) {
 			spdlog::error("Could not find game version override for '{}'.", gameVersionName);
-			return nullptr;
 		}
 	}
-	else {
+
+	if(selectedGameVersion == nullptr) {
 		if(m_preferredGameVersion == nullptr) {
 			spdlog::error("No preferred game version selected.");
 			return nullptr;
@@ -466,13 +467,8 @@ std::shared_ptr<GameVersion> ModManager::getSelectedGameVersion() const {
 		selectedGameVersion = m_preferredGameVersion;
 	}
 
-	if(!selectedGameVersion->isValid()) {
+	if(!GameVersion::isValid(selectedGameVersion.get())) {
 		spdlog::error("Invalid selected game version.");
-		return false;
-	}
-
-	if(!selectedGameVersion->isConfigured()) {
-		spdlog::error("Selected game version is not configured.");
 		return false;
 	}
 
@@ -496,6 +492,22 @@ bool ModManager::setPreferredGameVersion(std::shared_ptr<GameVersion> gameVersio
 		m_preferredGameVersion = gameVersion;
 		SettingsManager::getInstance()->preferredGameVersion = m_preferredGameVersion->getName();
 
+		m_selectedModGameVersionIndex = std::numeric_limits<size_t>::max();
+		std::shared_ptr<ModVersionType> selectedModVersionType(getSelectedModVersionType());
+
+		if(selectedModVersionType != nullptr) {
+			std::shared_ptr<GameVersion> selectedGameVersion(getSelectedGameVersion());
+
+			if(selectedGameVersion != nullptr) {
+				std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(selectedModVersionType->getCompatibleModGameVersions(*selectedGameVersion));
+
+				if(!compatibleModGameVersions.empty()) {
+					m_selectedModGameVersionIndex = selectedModVersionType->indexOfGameVersion(compatibleModGameVersions.back()->getGameVersion());
+				}
+			}
+		}
+
+		notifyModSelectionChanged();
 		notifyPreferredGameVersionChanged();
 	}
 
@@ -570,6 +582,10 @@ bool ModManager::hasModVersionTypeSelected() const {
 	return m_selectedModVersionTypeIndex != std::numeric_limits<size_t>::max();
 }
 
+bool ModManager::hasModGameVersionSelected() const {
+	return m_selectedModGameVersionIndex != std::numeric_limits<size_t>::max();
+}
+
 std::shared_ptr<Mod> ModManager::getSelectedMod() const {
 	return m_selectedMod;
 }
@@ -583,10 +599,6 @@ std::shared_ptr<ModVersion> ModManager::getSelectedModVersion() const {
 }
 
 std::shared_ptr<ModVersionType> ModManager::getSelectedModVersionType() const {
-	if(m_selectedMod == nullptr) {
-		return nullptr;
-	}
-
 	std::shared_ptr<ModVersion> selectedModVersion(getSelectedModVersion());
 
 	if(selectedModVersion == nullptr || m_selectedModVersionTypeIndex >= selectedModVersion->numberOfTypes()) {
@@ -594,6 +606,16 @@ std::shared_ptr<ModVersionType> ModManager::getSelectedModVersionType() const {
 	}
 
 	return selectedModVersion->getType(m_selectedModVersionTypeIndex);
+}
+
+std::shared_ptr<ModGameVersion> ModManager::getSelectedModGameVersion() const {
+	std::shared_ptr<ModVersionType> selectedModVersionType(getSelectedModVersionType());
+
+	if(selectedModVersionType == nullptr || m_selectedModGameVersionIndex >= selectedModVersionType->numberOfGameVersions()) {
+		return nullptr;
+	}
+
+	return selectedModVersionType->getGameVersion(m_selectedModGameVersionIndex);
 }
 
 std::optional<std::string> ModManager::getSelectedModName() const {
@@ -612,6 +634,10 @@ size_t ModManager::getSelectedModVersionTypeIndex() const {
 	return m_selectedModVersionTypeIndex;
 }
 
+size_t ModManager::getSelectedModGameVersionIndex() const {
+	return m_selectedModGameVersionIndex;
+}
+
 bool ModManager::setSelectedMod(const std::string & name) {
 	return setSelectedMod(m_mods->getMod(name));
 }
@@ -621,6 +647,7 @@ bool ModManager::setSelectedMod(std::shared_ptr<Mod> mod) {
 		m_selectedMod = nullptr;
 		m_selectedModVersionIndex = std::numeric_limits<size_t>::max();
 		m_selectedModVersionTypeIndex = std::numeric_limits<size_t>::max();
+		m_selectedModGameVersionIndex = std::numeric_limits<size_t>::max();
 
 		notifyModSelectionChanged();
 
@@ -631,6 +658,7 @@ bool ModManager::setSelectedMod(std::shared_ptr<Mod> mod) {
 		m_selectedMod = mod;
 		m_selectedModVersionIndex = std::numeric_limits<size_t>::max();
 		m_selectedModVersionTypeIndex = std::numeric_limits<size_t>::max();
+		m_selectedModGameVersionIndex = std::numeric_limits<size_t>::max();
 
 		if(m_selectedMod != nullptr) {
 			if(m_selectedMod->numberOfVersions() == 1) {
@@ -648,6 +676,19 @@ bool ModManager::setSelectedMod(std::shared_ptr<Mod> mod) {
 				}
 				else {
 					m_selectedModVersionTypeIndex = m_selectedMod->indexOfDefaultVersionType();
+				}
+
+				if(m_selectedModVersionTypeIndex != std::numeric_limits<size_t>::max()) {
+					std::shared_ptr<ModVersionType> selectedModVersionType(selectedModVersion->getType(m_selectedModVersionTypeIndex));
+					std::shared_ptr<GameVersion> selectedGameVersion(getSelectedGameVersion());
+
+					if(selectedGameVersion != nullptr) {
+						std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(selectedModVersionType->getCompatibleModGameVersions(*selectedGameVersion));
+
+						if(!compatibleModGameVersions.empty()) {
+							m_selectedModGameVersionIndex = selectedModVersionType->indexOfGameVersion(compatibleModGameVersions.back()->getGameVersion());
+						}
+					}
 				}
 			}
 		}
@@ -685,6 +726,19 @@ bool ModManager::setSelectedMod(const ModMatch & modMatch) {
 		else {
 			m_selectedModVersionTypeIndex = m_selectedMod->indexOfDefaultVersionType();
 		}
+
+		if(m_selectedModVersionTypeIndex != std::numeric_limits<size_t>::max()) {
+			std::shared_ptr<ModVersionType> selectedModVersionType(selectedModVersion->getType(m_selectedModVersionTypeIndex));
+			std::shared_ptr<GameVersion> selectedGameVersion(getSelectedGameVersion());
+
+			if(selectedGameVersion != nullptr) {
+				std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(selectedModVersionType->getCompatibleModGameVersions(*selectedGameVersion));
+
+				if(!compatibleModGameVersions.empty()) {
+					m_selectedModGameVersionIndex = selectedModVersionType->indexOfGameVersion(compatibleModGameVersions.back()->getGameVersion());
+				}
+			}
+		}
 	}
 
 	notifyModSelectionChanged();
@@ -695,10 +749,12 @@ bool ModManager::setSelectedMod(const ModMatch & modMatch) {
 bool ModManager::setSelectedModVersionIndex(size_t modVersionIndex) {
 	if(modVersionIndex == std::numeric_limits<size_t>::max()) {
 		bool modSelectionChanged = m_selectedModVersionIndex != std::numeric_limits<size_t>::max() ||
-								   m_selectedModVersionTypeIndex != std::numeric_limits<size_t>::max();
+								   m_selectedModVersionTypeIndex != std::numeric_limits<size_t>::max() ||
+								   m_selectedModGameVersionIndex != std::numeric_limits<size_t>::max();
 
 		m_selectedModVersionIndex = std::numeric_limits<size_t>::max();
 		m_selectedModVersionTypeIndex = std::numeric_limits<size_t>::max();
+		m_selectedModGameVersionIndex = std::numeric_limits<size_t>::max();
 
 		if(modSelectionChanged) {
 			notifyModSelectionChanged();
@@ -720,6 +776,7 @@ bool ModManager::setSelectedModVersionIndex(size_t modVersionIndex) {
 	if(m_selectedModVersionIndex != newModVersionIndex) {
 		m_selectedModVersionIndex = newModVersionIndex;
 		m_selectedModVersionTypeIndex = std::numeric_limits<size_t>::max();
+		m_selectedModGameVersionIndex = std::numeric_limits<size_t>::max();
 		std::shared_ptr<ModVersion> selectedModVersion(m_selectedMod->getVersion(m_selectedModVersionIndex));
 
 		if(selectedModVersion->numberOfTypes() == 1) {
@@ -727,6 +784,19 @@ bool ModManager::setSelectedModVersionIndex(size_t modVersionIndex) {
 		}
 		else {
 			m_selectedModVersionTypeIndex = m_selectedMod->indexOfDefaultVersionType();
+		}
+
+		if(m_selectedModVersionTypeIndex != std::numeric_limits<size_t>::max()) {
+			std::shared_ptr<ModVersionType> selectedModVersionType(selectedModVersion->getType(m_selectedModVersionTypeIndex));
+			std::shared_ptr<GameVersion> selectedGameVersion(getSelectedGameVersion());
+
+			if(selectedGameVersion != nullptr) {
+				std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(selectedModVersionType->getCompatibleModGameVersions(*selectedGameVersion));
+
+				if(!compatibleModGameVersions.empty()) {
+					m_selectedModGameVersionIndex = selectedModVersionType->indexOfGameVersion(compatibleModGameVersions.back()->getGameVersion());
+				}
+			}
 		}
 
 		notifyModSelectionChanged();
@@ -737,9 +807,11 @@ bool ModManager::setSelectedModVersionIndex(size_t modVersionIndex) {
 
 bool ModManager::setSelectedModVersionTypeIndex(size_t modVersionTypeIndex) {
 	if(modVersionTypeIndex == std::numeric_limits<size_t>::max()) {
-		bool modVersionTypeChanged = m_selectedModVersionTypeIndex != std::numeric_limits<size_t>::max();
+		bool modVersionTypeChanged = m_selectedModVersionTypeIndex != std::numeric_limits<size_t>::max() ||
+									 m_selectedModGameVersionIndex != std::numeric_limits<size_t>::max();
 
 		m_selectedModVersionTypeIndex = std::numeric_limits<size_t>::max();
+		m_selectedModGameVersionIndex = std::numeric_limits<size_t>::max();
 
 		if(modVersionTypeChanged) {
 			notifyModSelectionChanged();
@@ -753,14 +825,68 @@ bool ModManager::setSelectedModVersionTypeIndex(size_t modVersionTypeIndex) {
 	}
 
 	size_t newModVersionTypeIndex = std::numeric_limits<size_t>::max();
-	std::shared_ptr<ModVersion> modVersion = m_selectedMod->getVersion(m_selectedModVersionIndex);
+	std::shared_ptr<ModVersion> selectedModVersion(m_selectedMod->getVersion(m_selectedModVersionIndex));
 
-	if(modVersionTypeIndex < modVersion->numberOfTypes()) {
+	if(modVersionTypeIndex < selectedModVersion->numberOfTypes()) {
 		newModVersionTypeIndex = modVersionTypeIndex;
 	}
 
 	if(m_selectedModVersionTypeIndex != newModVersionTypeIndex) {
 		m_selectedModVersionTypeIndex = newModVersionTypeIndex;
+		m_selectedModGameVersionIndex = std::numeric_limits<size_t>::max();
+
+		if(m_selectedModVersionTypeIndex != std::numeric_limits<size_t>::max()) {
+			std::shared_ptr<ModVersionType> selectedModVersionType(selectedModVersion->getType(m_selectedModVersionTypeIndex));
+			std::shared_ptr<GameVersion> selectedGameVersion(getSelectedGameVersion());
+
+			if(selectedGameVersion != nullptr) {
+				std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(selectedModVersionType->getCompatibleModGameVersions(*selectedGameVersion));
+
+				if(!compatibleModGameVersions.empty()) {
+					m_selectedModGameVersionIndex = selectedModVersionType->indexOfGameVersion(compatibleModGameVersions.back()->getGameVersion());
+				}
+			}
+		}
+
+		notifyModSelectionChanged();
+	}
+
+	return true;
+}
+
+bool ModManager::setSelectedModGameVersionIndex(size_t modGameVersionIndex) {
+	if(modGameVersionIndex == std::numeric_limits<size_t>::max()) {
+		bool modGameVersionChanged = m_selectedModGameVersionIndex != std::numeric_limits<size_t>::max();
+
+		m_selectedModGameVersionIndex = std::numeric_limits<size_t>::max();
+
+		if(modGameVersionChanged) {
+			notifyModSelectionChanged();
+		}
+
+		return true;
+	}
+
+	if(!Mod::isValid(m_selectedMod.get()) || m_selectedModVersionIndex >= m_selectedMod->numberOfVersions()) {
+		return false;
+	}
+
+	std::shared_ptr<ModVersion> selectedModVersion(m_selectedMod->getVersion(m_selectedModVersionIndex));
+
+	if(m_selectedModVersionTypeIndex >= selectedModVersion->numberOfTypes()) {
+		return false;
+	}
+
+	std::shared_ptr<ModVersionType> selectedModVersionType(selectedModVersion->getType(m_selectedModVersionTypeIndex));
+	std::shared_ptr<GameVersion> selectedGameVersion(getSelectedGameVersion());
+	size_t newModGameVersionIndex = std::numeric_limits<size_t>::max();
+
+	if(modGameVersionIndex < selectedModVersionType->numberOfGameVersions() && selectedGameVersion != nullptr && selectedModVersionType->isGameVersionCompatible(*selectedGameVersion)) {
+		newModGameVersionIndex = modGameVersionIndex;
+	}
+
+	if(m_selectedModGameVersionIndex != newModGameVersionIndex) {
+		m_selectedModGameVersionIndex = newModGameVersionIndex;
 
 		notifyModSelectionChanged();
 	}
@@ -1125,6 +1251,11 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		return false;
 	}
 
+	if(!selectedGameVersion->isConfigured()) {
+		spdlog::error("Game version '{}' is not configured.", selectedGameVersion->getName());
+		return false;
+	}
+
 	std::shared_ptr<ModVersion> selectedModVersion;
 	std::shared_ptr<ModVersionType> selectedModVersionType;
 	std::shared_ptr<ModGameVersion> selectedModGameVersion;
@@ -1169,7 +1300,14 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 			selectedModGameVersion = alternateModGameVersion;
 		}
 		else {
-			selectedModGameVersion = compatibleModGameVersions[0];
+			if(m_selectedModGameVersionIndex != std::numeric_limits<size_t>::max()) {
+				selectedModGameVersion = selectedModVersionType->getGameVersion(m_selectedModGameVersionIndex);
+			}
+			else {
+				spdlog::warn("No mod game version selected, auto-selecting default version.");
+
+				selectedModGameVersion = compatibleModGameVersions.back();
+			}
 		}
 	}
 
@@ -3115,7 +3253,7 @@ std::string ModManager::generateDOSBoxTemplateScriptFileData(GameType gameType) 
 
 ModManager::Listener::~Listener() { }
 
-void ModManager::Listener::modSelectionChanged(const std::shared_ptr<Mod> & mod, size_t modVersionIndex, size_t modVersionTypeIndex) { }
+void ModManager::Listener::modSelectionChanged(const std::shared_ptr<Mod> & mod, size_t modVersionIndex, size_t modVersionTypeIndex, size_t modGameVersionIndex) { }
 
 void ModManager::Listener::gameTypeChanged(GameType gameType) { }
 
@@ -3197,7 +3335,7 @@ void ModManager::clearListeners() {
 
 void ModManager::notifyModSelectionChanged() {
 	for(Listener * listener : m_listeners) {
-		listener->modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex);
+		listener->modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
 	}
 }
 

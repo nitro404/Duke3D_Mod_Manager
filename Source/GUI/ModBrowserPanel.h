@@ -37,6 +37,7 @@ public:
 	void updateModList();
 	void updateModVersionList();
 	void updateModVersionTypeList();
+	void updateModGameVersionList();
 	void updateModSelection();
 	void updateModInfo();
 	void updateModGameType();
@@ -55,13 +56,14 @@ public:
 	void onModVersionSelected(wxCommandEvent & event);
 	void onModVersionTypeSelected(wxCommandEvent & event);
 	void onModGameVersionSelected(wxCommandEvent & event);
+	void onPreferredGameVersionSelected(wxCommandEvent & event);
 	void onIPAddressTextChanged(wxCommandEvent & event);
 	void onPortTextChanged(wxCommandEvent & event);
 	void onModGameTypeSelected(wxCommandEvent & event);
 	void onLaunchModButtonPressed(wxCommandEvent & event);
 
 	// ModManager::Listener Virtuals
-	virtual void modSelectionChanged(const std::shared_ptr<Mod> & mod, size_t modVersionIndex, size_t modVersionTypeIndex) override;
+	virtual void modSelectionChanged(const std::shared_ptr<Mod> & mod, size_t modVersionIndex, size_t modVersionTypeIndex, size_t modGameVersionIndex) override;
 	virtual void gameTypeChanged(GameType gameType) override;
 	virtual void preferredGameVersionChanged(const std::shared_ptr<GameVersion> & gameVersion) override;
 	virtual void dosboxServerIPAddressChanged(const std::string & ipAddress) override;
@@ -95,6 +97,8 @@ private:
 	wxListBox * m_modVersionListBox;
 	wxStaticText * m_modVersionTypeListLabel;
 	wxListBox * m_modVersionTypeListBox;
+	wxStaticText * m_modGameVersionListLabel;
+	wxListBox * m_modGameVersionListBox;
 	wxStaticBox * m_modInfoBox;
 	wxScrolledWindow * m_modInfoPanel;
 	wxStaticText * m_modNameText;
