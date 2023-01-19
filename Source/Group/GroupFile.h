@@ -65,7 +65,6 @@ public:
 	bool removeListener(size_t index);
 	bool removeListener(const Listener & listener);
 	void clearListeners();
-	void notifyGroupFileModified() const;
 
 	bool operator == (const GroupFile & f) const;
 	bool operator != (const GroupFile & f) const;
@@ -75,6 +74,7 @@ public:
 
 private:
 	void setModified(bool modified) const;
+	void notifyGroupFileModified() const;
 
 	std::string m_fileName;
 	std::unique_ptr<ByteBuffer> m_data;

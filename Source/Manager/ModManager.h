@@ -115,12 +115,6 @@ public:
 	bool removeListener(size_t index);
 	bool removeListener(const Listener & listener);
 	void clearListeners();
-	void notifyModSelectionChanged();
-	void notifyGameTypeChanged();
-	void notifyPreferredGameVersionChanged();
-	void notifyDOSBoxServerIPAddressChanged();
-	void notifyDOSBoxLocalServerPortChanged();
-	void notifyDOSBoxRemoteServerPortChanged();
 
 	static std::string getArgumentHelpInfo();
 
@@ -155,6 +149,12 @@ private:
 	bool removeSymlinksOrTemporaryFiles(const GameVersion & gameVersion, const std::vector<std::string> * temporaryCopiedFilePaths = nullptr);
 	size_t deleteFilesWithSuffix(const std::string & suffix, const std::string & path = "");
 	size_t renameFilesWithSuffixTo(const std::string & fromSuffix, const std::string & toSuffix, const std::string & path = "");
+	void notifyModSelectionChanged();
+	void notifyGameTypeChanged();
+	void notifyPreferredGameVersionChanged();
+	void notifyDOSBoxServerIPAddressChanged();
+	void notifyDOSBoxLocalServerPortChanged();
+	void notifyDOSBoxRemoteServerPortChanged();
 	static size_t createDOSBoxTemplateScriptFiles(bool overwrite = false);
 	static size_t createDOSBoxTemplateScriptFiles(const std::string & directoryPath, bool overwrite = false);
 	static bool createDOSBoxTemplateScriptFile(GameType gameType, const std::string & directoryPath, bool overwrite = false);

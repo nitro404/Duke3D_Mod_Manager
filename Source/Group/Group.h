@@ -104,7 +104,6 @@ public:
 	bool removeListener(size_t index);
 	bool removeListener(const Listener & listener);
 	void clearListeners();
-	void notifyGroupModified() const;
 
 	// GroupFile Virtuals
 	virtual void groupFileModified(const GroupFile * groupFile, bool modified) override;
@@ -128,6 +127,7 @@ public:
 
 private:
 	void setModified(bool modified) const;
+	void notifyGroupModified() const;
 	void updateParentGroup();
 
 	std::string m_filePath;

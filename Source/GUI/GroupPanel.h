@@ -51,12 +51,13 @@ public:
 	bool removeListener(size_t index);
 	bool removeListener(const Listener & listener);
 	void clearListeners();
-	void notifyGroupFileSelectionChanged();
 
 	// Group::Listener Virtuals
 	virtual void groupModified(const Group * group, bool modified) override;
 
 private:
+	void notifyGroupFileSelectionChanged();
+
 	std::unique_ptr<Group> m_group;
 	mutable std::vector<Listener *> m_listeners;
 

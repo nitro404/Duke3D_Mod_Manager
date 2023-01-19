@@ -183,16 +183,6 @@ public:
 	bool removeListener(size_t index);
 	bool removeListener(const Listener & listener);
 	void clearListeners();
-	void notifyFilterTypeChanged();
-	void notifySortOptionsChanged();
-	void notifySelectedModChanged();
-	void notifySelectedGameVersionChanged();
-	void notifySelectedTeamChanged();
-	void notifySelectedAuthorChanged();
-	void notifyOrganizedModCollectionChanged();
-	void notifyOrganizedModGameVersionCollectionChanged();
-	void notifyOrganizedModTeamCollectionChanged();
-	void notifyOrganizedModAuthorCollectionChanged();
 
 	bool operator == (const OrganizedModCollection & m) const;
 	bool operator != (const OrganizedModCollection & m) const;
@@ -210,6 +200,16 @@ private:
 	void updateGameVersionModCounts();
 	void updateGameVersionSupportedModCounts();
 	void updateGameVersionCompatibleModCounts();
+	void notifyFilterTypeChanged();
+	void notifySortOptionsChanged();
+	void notifySelectedModChanged();
+	void notifySelectedGameVersionChanged();
+	void notifySelectedTeamChanged();
+	void notifySelectedAuthorChanged();
+	void notifyOrganizedModCollectionChanged();
+	void notifyOrganizedModGameVersionCollectionChanged();
+	void notifyOrganizedModTeamCollectionChanged();
+	void notifyOrganizedModAuthorCollectionChanged();
 
 	std::vector<std::shared_ptr<Mod>> mergeSortMods(std::vector<std::shared_ptr<Mod>> mods);
 	std::vector<std::shared_ptr<Mod>> mergeMods(std::vector<std::shared_ptr<Mod>> left, std::vector<std::shared_ptr<Mod>> right);
