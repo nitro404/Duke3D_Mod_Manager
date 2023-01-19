@@ -73,6 +73,7 @@ private:
 	wxStaticText * m_fileSizeLabel;
 	wxStaticText * m_fileSizeText;
 	wxBoxSizer * m_fileInfoBoxSizer;
+	wxFlexGridSizer * m_groupPropertiesSizer;
 };
 
 #endif // _GROUP_INFO_PANEL_H_

@@ -22,7 +22,8 @@ GroupPanel::GroupPanel(std::unique_ptr<Group> group, wxWindow * parent, wxWindow
 	, m_numberOfFilesSelectedText(nullptr)
 	, m_fileSizeLabel(nullptr)
 	, m_fileSizeText(nullptr)
-	, m_fileInfoBoxSizer(nullptr) {
+	, m_fileInfoBoxSizer(nullptr)
+	, m_groupPropertiesSizer(nullptr) {
 	wxPanel * groupPropertiesPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 
 	wxPanel * numberOfFilesPropertyPanel = new wxPanel(groupPropertiesPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
@@ -99,11 +100,11 @@ GroupPanel::GroupPanel(std::unique_ptr<Group> group, wxWindow * parent, wxWindow
 	fileInfoPanelSizer->Add(m_fileSizeText, 1, wxEXPAND | wxHORIZONTAL);
 	m_fileInfoPanel->SetSizer(fileInfoPanelSizer);
 
-	wxFlexGridSizer * groupPropertiesSizer = new wxFlexGridSizer(4, border * 2, border * 2);
-	groupPropertiesSizer->Add(numberOfFilesPropertyPanel, 0, 0, border);
-	groupPropertiesSizer->Add(groupSizePropertyPanel, 0, 0, border);
-	groupPropertiesSizer->Add(fileExtensionsPropertyPanel, 0, 0, border);
-	groupPropertiesPanel->SetSizer(groupPropertiesSizer);
+	m_groupPropertiesSizer = new wxFlexGridSizer(4, border * 2, border * 2);
+	m_groupPropertiesSizer->Add(numberOfFilesPropertyPanel, 0, 0, border);
+	m_groupPropertiesSizer->Add(groupSizePropertyPanel, 0, 0, border);
+	m_groupPropertiesSizer->Add(fileExtensionsPropertyPanel, 0, 0, border);
+	groupPropertiesPanel->SetSizer(m_groupPropertiesSizer);
 
 	wxGridBagSizer * groupInfoSizer = new wxGridBagSizer(border, border);
 	groupInfoSizer->Add(groupPropertiesPanel, wxGBPosition(0, 0), wxGBSpan(1, 2), wxEXPAND | wxHORIZONTAL, border);
@@ -215,6 +216,8 @@ void GroupPanel::update() {
 	m_fileListBox->Set(fileNames);
 
 	updateFileInfo();
+
+	m_groupPropertiesSizer->Layout();
 }
 
 void GroupPanel::updateFileInfo() {
