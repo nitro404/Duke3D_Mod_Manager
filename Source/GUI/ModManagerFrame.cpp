@@ -79,6 +79,10 @@ bool ModManagerFrame::initialize(std::shared_ptr<ModManager> modManager) {
 
 		GameManagerPanel * gameManagerPanel = new GameManagerPanel(modManager->getGameManager(), m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 		m_notebook->AddPage(gameManagerPanel, "Game Manager");
+
+		if(modManager->hasPreferredGameVersion()) {
+			gameManagerPanel->selectPanelWithGameVersion(*modManager->getPreferredGameVersion());
+		}
 	}
 
 	GroupEditorPanel * groupEditorPanel = new GroupEditorPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);

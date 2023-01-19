@@ -121,6 +121,16 @@ bool GameManagerPanel::hasPanelWithGameVersion(const GameVersion * gameVersion) 
 	return false;
 }
 
+bool GameManagerPanel::hasPanelWithGameVersionName(const std::string & name) const {
+	for(size_t i = 0; i < m_notebook->GetPageCount(); i++) {
+		if(Utilities::areStringsEqualIgnoreCase(getGameVersion(i)->getName(), name)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 size_t GameManagerPanel::indexOfGameVersionPanel(const GameVersionPanel * gameVersionPanel) const {
 	for(size_t i = 0; i < m_notebook->GetPageCount(); i++) {
 		if(m_notebook->GetPage(i) == gameVersionPanel) {
@@ -189,6 +199,40 @@ std::shared_ptr<GameVersion> GameManagerPanel::getCurrentGameVersion() const {
 	}
 
 	return gameVersionPanel->getGameVersion();
+}
+
+bool GameManagerPanel::selectGameVersionPanel(size_t gameVersionPanelIndex) {
+	if(gameVersionPanelIndex >= m_notebook->GetPageCount()) {
+		return false;
+	}
+
+	m_notebook->ChangeSelection(gameVersionPanelIndex);
+
+	return true;
+}
+
+bool GameManagerPanel::selectPanelWithGameVersion(const GameVersion & gameVersion) {
+	size_t gameVersionPanelIndex = indexOfPanelWithGameVersion(&gameVersion);
+
+	if(gameVersionPanelIndex == std::numeric_limits<size_t>::max()) {
+		return false;
+	}
+
+	m_notebook->ChangeSelection(gameVersionPanelIndex);
+
+	return true;
+}
+
+bool GameManagerPanel::selectPanelWithGameVersionName(const std::string & name) {
+	size_t gameVersionPanelIndex = indexOfPanelWithGameVersionName(name);
+
+	if(gameVersionPanelIndex == std::numeric_limits<size_t>::max()) {
+		return false;
+	}
+
+	m_notebook->ChangeSelection(gameVersionPanelIndex);
+
+	return true;
 }
 
 bool GameManagerPanel::saveGameVersions() {

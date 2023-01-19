@@ -29,6 +29,7 @@ public:
 
 	bool hasGameVersionPanel(const GameVersionPanel * gameVersionPanel) const;
 	bool hasPanelWithGameVersion(const GameVersion * gameVersion) const;
+	bool hasPanelWithGameVersionName(const std::string & name) const;
 	size_t indexOfGameVersionPanel(const GameVersionPanel * gameVersionPanel) const;
 	size_t indexOfPanelWithGameVersion(const GameVersion * gameVersion) const;
 	size_t indexOfPanelWithGameVersionName(const std::string & name) const;
@@ -38,6 +39,9 @@ public:
 	GameVersionPanel * getCurrentGameVersionPanel() const;
 	std::shared_ptr<GameVersion> getGameVersion(size_t gameVersionPanelIndex) const;
 	std::shared_ptr<GameVersion> getCurrentGameVersion() const;
+	bool selectGameVersionPanel(size_t gameVersionPanelIndex);
+	bool selectPanelWithGameVersion(const GameVersion & gameVersion);
+	bool selectPanelWithGameVersionName(const std::string & name);
 
 	bool saveGameVersions();
 
