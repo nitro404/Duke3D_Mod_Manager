@@ -1,6 +1,7 @@
 #ifndef _SETTINGS_MANAGER_PANEL_H_
 #define _SETTINGS_MANAGER_PANEL_H_
 
+#include "Game/GameVersionCollectionListener.h"
 #include "SettingPanel.h"
 
 #include <wx/wxprec.h>
@@ -16,10 +17,12 @@
 #include <functional>
 #include <memory>
 
+class GameVersionCollection;
 class ModManager;
 
 class SettingsManagerPanel final : public wxPanel,
-								   public SettingPanel::Listener {
+								   public SettingPanel::Listener,
+								   public GameVersionCollectionListener {
 public:
 	class Listener {
 	public:
@@ -58,13 +61,19 @@ public:
 	// SettingPanel::Listener Virtuals
 	virtual void settingModified(SettingPanel & settingPanel) override;
 
+	// GameVersionCollectionListener Virtuals
+	virtual void gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) override;
+	virtual void gameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) override;
+
 private:
 	void notifySettingsChanged();
 	void notifySettingsReset();
 	void notifySettingsDiscarded();
 	void notifySettingsSaved();
 
+	std::shared_ptr<ModManager> m_modManager;
 	std::vector<SettingPanel *> m_settingsPanels;
+	StringChoiceSettingPanel * m_preferredGameVersionSettingPanel;
 	bool m_modified;
 	std::vector<Listener *> m_listeners;
 	wxButton * m_discardChangesButton;

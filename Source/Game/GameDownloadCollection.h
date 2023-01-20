@@ -59,7 +59,7 @@ public:
 	static const std::string FILE_FORMAT_VERSION;
 
 private:
-	void notifyCollectionChanged() const;
+	void notifyCollectionChanged();
 
 	std::vector<std::shared_ptr<GameDownload>> m_downloads;
 };

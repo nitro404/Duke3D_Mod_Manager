@@ -296,12 +296,12 @@ SettingPanel * SettingPanel::createOptionalStringSettingPanel(std::optional<std:
 	return createOptionalStringSettingPanel<void>([&setting]() { return setting; }, [&setting](const std::string & newSetting) { setting = newSetting; }, [&setting]() { setting.reset(); }, defaultSetting, name, parent, parentSizer, minLength, maxLength, customValidatorFunction);
 }
 
-SettingPanel * SettingPanel::createStringChoiceSettingPanel(std::string & setting, std::string defaultSetting, const std::string & name, const std::vector<std::string> & choices, wxWindow * parent, wxSizer * parentSizer) {
+StringChoiceSettingPanel * SettingPanel::createStringChoiceSettingPanel(std::string & setting, std::string defaultSetting, const std::string & name, const std::vector<std::string> & choices, wxWindow * parent, wxSizer * parentSizer) {
 	if(parent == nullptr) {
 		return nullptr;
 	}
 
-	SettingPanel * settingPanel = new SettingPanel(name, parent);
+	StringChoiceSettingPanel * settingPanel = new StringChoiceSettingPanel(name, parent);
 
 	settingPanel->m_changedFunction = [settingPanel](wxCommandEvent & event) {
 		settingPanel->setModified(true);
@@ -331,6 +331,10 @@ SettingPanel * SettingPanel::createStringChoiceSettingPanel(std::string & settin
 
 	settingPanel->m_setEditableFunction = [settingComboBox](bool editable) {
 		settingComboBox->SetEditable(editable);
+	};
+
+	settingPanel->m_setChoicesFunction = [settingComboBox](const std::vector<std::string> & choices) {
+		settingComboBox->Set(WXUtilities::createItemWXArrayString(choices));
 	};
 
 	wxBoxSizer * settingBoxSizer = new wxBoxSizer(wxVERTICAL);
@@ -503,4 +507,21 @@ SettingPanel * SettingPanel::createStringMultiChoiceSettingPanel(std::function<c
 	}
 
 	return settingPanel;
+}
+
+StringChoiceSettingPanel::StringChoiceSettingPanel(const std::string & name, wxWindow * parent)
+	: SettingPanel(name, parent) { }
+
+StringChoiceSettingPanel::~StringChoiceSettingPanel() { }
+
+bool StringChoiceSettingPanel::setChoices(const std::vector<std::string> & choices) {
+	if(m_setChoicesFunction == nullptr) {
+		return false;
+	}
+
+	m_setChoicesFunction(choices);
+
+	discard();
+
+	return true;
 }

@@ -1,6 +1,7 @@
 #ifndef _GAME_VERSION_COLLECTION_H_
 #define _GAME_VERSION_COLLECTION_H_
 
+#include "GameVersion.h"
 #include "GameVersionCollectionBroadcaster.h"
 
 #include <rapidjson/document.h>
@@ -11,10 +12,10 @@
 #include <string>
 #include <vector>
 
-class GameVersion;
 class ModGameVersion;
 
-class GameVersionCollection final : public GameVersionCollectionBroadcaster {
+class GameVersionCollection final : public GameVersionCollectionBroadcaster,
+									public GameVersion::Listener {
 public:
 	GameVersionCollection();
 	GameVersionCollection(const std::vector<GameVersion> & gameVersions);
@@ -75,8 +76,12 @@ public:
 
 	static const std::string FILE_FORMAT_VERSION;
 
+	// GameVersion::Listener Virtuals
+	virtual void gameVersionModified(GameVersion & gameVersion) override;
+
 private:
-	void notifyCollectionChanged() const;
+	void notifyCollectionSizeChanged();
+	void notifyGameVersionModified(GameVersion & gameVersion);
 
 	std::vector<std::shared_ptr<GameVersion>> m_gameVersions;
 };

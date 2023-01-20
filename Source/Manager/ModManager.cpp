@@ -84,6 +84,9 @@ ModManager::ModManager()
 }
 
 ModManager::~ModManager() {
+	m_organizedMods->removeListener(*this);
+	m_gameVersions->removeListener(*this);
+
 	SegmentAnalytics::destroyInstance();
 }
 
@@ -247,6 +250,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 	}
 
 	m_gameVersions->addMissingDefaultGameVersions();
+	m_gameVersions->addListener(*this);
 
 	m_preferredGameVersion = m_gameVersions->getGameVersionWithName(settings->preferredGameVersion);
 
@@ -3377,4 +3381,25 @@ void ModManager::notifyDOSBoxRemoteServerPortChanged() {
 
 void ModManager::selectedModChanged(const std::shared_ptr<Mod> & mod) {
 	setSelectedMod(mod);
+}
+
+void ModManager::gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) {
+	if(m_preferredGameVersion != nullptr && !m_gameVersions->hasGameVersion(*m_preferredGameVersion.get())) {
+		SettingsManager * settings = SettingsManager::getInstance();
+
+		if(m_gameVersions->numberOfGameVersions() == 0) {
+			m_preferredGameVersion = nullptr;
+			settings->preferredGameVersion.clear();
+		}
+		else {
+			m_preferredGameVersion = m_gameVersions->getGameVersion(0);
+			settings->preferredGameVersion = m_preferredGameVersion->getName();
+		}
+	}
+}
+
+void ModManager::gameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) {
+	if(m_preferredGameVersion.get() == &gameVersion) {
+		SettingsManager::getInstance()->preferredGameVersion = gameVersion.getName();
+	}
 }

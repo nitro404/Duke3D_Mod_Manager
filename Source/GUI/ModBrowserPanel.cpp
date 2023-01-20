@@ -61,10 +61,11 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	, m_portLabel(nullptr)
 	, m_portTextField(nullptr)
 	, m_modGameTypeComboBox(nullptr)
-	, m_modGameVersionComboBox(nullptr)
+	, m_preferredGameVersionComboBox(nullptr)
 	, m_launchModButton(nullptr) {
 	m_modManager->addListener(*this);
 	m_modManager->getOrganizedMods()->addListener(*this);
+	m_modManager->getGameVersions()->addListener(*this);
 
 	wxPanel * modListOptionsPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, "Mod List Options");
 
@@ -228,11 +229,11 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 
 	std::shared_ptr<GameVersion> preferredGameVersion(m_modManager->getPreferredGameVersion());
 
-	wxStaticText * modGameVersionLabel = new wxStaticText(m_gameOptionsPanel, wxID_ANY, "Game Version:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
-	modGameVersionLabel->SetFont(modGameVersionLabel->GetFont().MakeBold());
-	m_modGameVersionComboBox = new wxComboBox(m_gameOptionsPanel, wxID_ANY, preferredGameVersion == nullptr ? "" : preferredGameVersion->getName(), wxDefaultPosition, wxDefaultSize, WXUtilities::createItemWXArrayString(GameVersionCollection::getGameVersionDisplayNamesFrom(m_modManager->getGameVersions()->getGameVersions(), false)), 0, wxDefaultValidator, "Mod Game Versions");
-	m_modGameVersionComboBox->SetEditable(false);
-	m_modGameVersionComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onPreferredGameVersionSelected, this);
+	wxStaticText * preferredGameVersionLabel = new wxStaticText(m_gameOptionsPanel, wxID_ANY, "Game Version:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	preferredGameVersionLabel->SetFont(preferredGameVersionLabel->GetFont().MakeBold());
+	m_preferredGameVersionComboBox = new wxComboBox(m_gameOptionsPanel, wxID_ANY, preferredGameVersion == nullptr ? "" : preferredGameVersion->getName(), wxDefaultPosition, wxDefaultSize, WXUtilities::createItemWXArrayString(GameVersionCollection::getGameVersionDisplayNamesFrom(m_modManager->getGameVersions()->getGameVersions(), false)), 0, wxDefaultValidator, "Mod Game Versions");
+	m_preferredGameVersionComboBox->SetEditable(false);
+	m_preferredGameVersionComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onPreferredGameVersionSelected, this);
 
 	m_launchModButton = new wxButton(m_gameOptionsPanel, wxID_ANY, "Launch Mod", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "Launch Mod");
 	m_launchModButton->Disable();
@@ -315,8 +316,8 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	gameOptionsSizer->Add(m_portTextField, wxGBPosition(0, 3), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
 	gameOptionsSizer->Add(modGameTypeLabel, wxGBPosition(0, 4), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
 	gameOptionsSizer->Add(m_modGameTypeComboBox, wxGBPosition(0, 5), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
-	gameOptionsSizer->Add(modGameVersionLabel, wxGBPosition(0, 6), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
-	gameOptionsSizer->Add(m_modGameVersionComboBox, wxGBPosition(0, 7), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
+	gameOptionsSizer->Add(preferredGameVersionLabel, wxGBPosition(0, 6), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
+	gameOptionsSizer->Add(m_preferredGameVersionComboBox, wxGBPosition(0, 7), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
 	gameOptionsSizer->Add(m_launchModButton, wxGBPosition(0, 8), wxGBSpan(1, 1), wxSTRETCH_NOT | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, border);
 	gameOptionsSizer->AddGrowableRow(0, 1);
 	gameOptionsSizer->AddGrowableCol(0, 1);
@@ -340,6 +341,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 ModBrowserPanel::~ModBrowserPanel() {
 	m_modManager->removeListener(*this);
 	m_modManager->getOrganizedMods()->removeListener(*this);
+	m_modManager->getGameVersions()->removeListener(*this);
 }
 
 void ModBrowserPanel::update() {
@@ -753,9 +755,15 @@ void ModBrowserPanel::updatePreferredGameVersion() {
 		return;
 	}
 
-	m_modGameVersionComboBox->SetSelection(preferredGameVersionIndex);
+	m_preferredGameVersionComboBox->SetSelection(preferredGameVersionIndex);
 
 	updateModGameVersionList();
+}
+
+void ModBrowserPanel::updatePreferredGameVersionList() {
+	m_preferredGameVersionComboBox->Set(WXUtilities::createItemWXArrayString(m_modManager->getGameVersions()->getGameVersionDisplayNames(false)));
+
+	updatePreferredGameVersion();
 }
 
 void ModBrowserPanel::updateDOSBoxServerSettings() {
@@ -948,7 +956,7 @@ void ModBrowserPanel::onModGameTypeSelected(wxCommandEvent & event) {
 }
 
 void ModBrowserPanel::onPreferredGameVersionSelected(wxCommandEvent & event) {
-	int selectedModGameVersionIndex = m_modGameVersionComboBox->GetSelection();
+	int selectedModGameVersionIndex = m_preferredGameVersionComboBox->GetSelection();
 
 	if(selectedModGameVersionIndex != wxNOT_FOUND) {
 		m_modManager->setPreferredGameVersion(m_modManager->getGameVersions()->getGameVersion(selectedModGameVersionIndex));
@@ -1245,4 +1253,12 @@ void ModBrowserPanel::organizedModTeamCollectionChanged(const std::vector<std::s
 
 void ModBrowserPanel::organizedModAuthorCollectionChanged(const std::vector<std::shared_ptr<ModAuthorInformation>> & organizedMods) {
 	updateModList();
+}
+
+void ModBrowserPanel::gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) {
+	updatePreferredGameVersionList();
+}
+
+void ModBrowserPanel::gameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) {
+	updatePreferredGameVersionList();
 }

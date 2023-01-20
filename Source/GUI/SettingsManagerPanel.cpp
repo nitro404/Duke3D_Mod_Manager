@@ -14,10 +14,13 @@
 
 SettingsManagerPanel::SettingsManagerPanel(std::shared_ptr<ModManager> modManager, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "Settings")
+	, m_modManager(modManager)
 	, m_modified(false)
 	, m_discardChangesButton(nullptr)
 	, m_saveSettingsButton(nullptr) {
 	SettingsManager * settings = SettingsManager::getInstance();
+
+	m_modManager->getGameVersions()->addListener(*this);
 
 	int wrapSizerOrientation = wxHORIZONTAL;
 
@@ -41,7 +44,8 @@ SettingsManagerPanel::SettingsManagerPanel(std::shared_ptr<ModManager> modManage
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->gameTempDirectoryName, SettingsManager::DEFAULT_GAME_TEMP_DIRECTORY_NAME, "Game Temp Directory Name", generalSettingsPanel, generalSettingsSizer, 1));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->tempSymlinkName, SettingsManager::DEFAULT_TEMP_SYMLINK_NAME, "Temp Symbolic Link Name", generalSettingsPanel, generalSettingsSizer, 1));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->cacheDirectoryPath, SettingsManager::DEFAULT_CACHE_DIRECTORY_PATH, "Cache Directory Path", generalSettingsPanel, generalSettingsSizer, 1));
-	m_settingsPanels.push_back(SettingPanel::createStringChoiceSettingPanel(settings->preferredGameVersion, SettingsManager::DEFAULT_PREFERRED_GAME_VERSION, "Preferred Game Version", modManager->getGameVersions()->getGameVersionDisplayNames(false), generalSettingsPanel, generalSettingsSizer));
+	m_preferredGameVersionSettingPanel = SettingPanel::createStringChoiceSettingPanel(settings->preferredGameVersion, SettingsManager::DEFAULT_PREFERRED_GAME_VERSION, "Preferred Game Version", modManager->getGameVersions()->getGameVersionDisplayNames(false), generalSettingsPanel, generalSettingsSizer);
+	m_settingsPanels.push_back(m_preferredGameVersionSettingPanel);
 	m_settingsPanels.push_back(SettingPanel::createEnumSettingPanel<GameType>(settings->gameType, SettingsManager::DEFAULT_GAME_TYPE, "Game Type", generalSettingsPanel, generalSettingsSizer));
 
 	wxWrapSizer * downloadsSettingsSizer = new wxWrapSizer(wrapSizerOrientation);
@@ -148,6 +152,8 @@ SettingsManagerPanel::SettingsManagerPanel(std::shared_ptr<ModManager> modManage
 }
 
 SettingsManagerPanel::~SettingsManagerPanel() {
+	m_modManager->getGameVersions()->removeListener(*this);
+
 	for(SettingPanel * settingPanel : m_settingsPanels) {
 		settingPanel->removeListener(*this);
 	}
@@ -367,4 +373,12 @@ void SettingsManagerPanel::settingModified(SettingPanel & settingPanel) {
 		updateButtons();
 		notifySettingsChanged();
 	}
+}
+
+void SettingsManagerPanel::gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) {
+	m_preferredGameVersionSettingPanel->setChoices(gameVersionCollection.getGameVersionDisplayNames(false));
+}
+
+void SettingsManagerPanel::gameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) {
+	m_preferredGameVersionSettingPanel->setChoices(gameVersionCollection.getGameVersionDisplayNames(false));
 }

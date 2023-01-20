@@ -419,9 +419,9 @@ bool GameDownloadCollection::saveToJSON(const std::string & filePath, bool overw
 	return true;
 }
 
-void GameDownloadCollection::notifyCollectionChanged() const {
+void GameDownloadCollection::notifyCollectionChanged() {
 	for(size_t i = 0; i < numberOfListeners(); i++) {
-		getListener(i)->gameDownloadCollectionUpdated();
+		getListener(i)->gameDownloadCollectionUpdated(*this);
 	}
 }
 

@@ -165,9 +165,13 @@ public:
 	bool selectRandomAuthor();
 	void clearSelectedAuthor();
 
+	// ModCollectionListener Virtuals
 	virtual void modCollectionUpdated() override;
 	virtual void favouriteModCollectionUpdated() override;
-	virtual void gameVersionCollectionUpdated() override;
+
+	// GameVersionCollectionListener Virtuals
+	virtual void gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) override;
+	virtual void gameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) override;
 
 	void organize();
 

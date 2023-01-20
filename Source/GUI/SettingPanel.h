@@ -20,7 +20,9 @@
 #include <string>
 #include <vector>
 
-class SettingPanel final : public wxPanel {
+class StringChoiceSettingPanel;
+
+class SettingPanel : public wxPanel {
 public:
 	class Listener {
 	public:
@@ -67,7 +69,7 @@ public:
 	static SettingPanel * createOptionalStringSettingPanel(std::function<std::optional<std::string>()> getSettingValueFunction, std::function<R(const std::string &)> setSettingValueFunction, std::function<void()> clearSettingValueFunction, std::optional<std::string> defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, size_t minLength = 0, size_t maxLength = std::numeric_limits<size_t>::max(), std::function<bool(const SettingPanel *)> customValidatorFunction = nullptr);
 	template <typename E>
 	static SettingPanel * createEnumSettingPanel(E & setting, E defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer);
-	static SettingPanel * createStringChoiceSettingPanel(std::string & setting, std::string defaultSetting, const std::string & name, const std::vector<std::string> & choices, wxWindow * parent, wxSizer * parentSizer);
+	static StringChoiceSettingPanel * createStringChoiceSettingPanel(std::string & setting, std::string defaultSetting, const std::string & name, const std::vector<std::string> & choices, wxWindow * parent, wxSizer * parentSizer);
 	static SettingPanel * createStringMultiChoiceSettingPanel(std::vector<std::string> & setting, const std::string & name, bool caseSensitive, const std::vector<std::string> & choices, wxWindow * parent, size_t minimumNumberOfSelectedItems = 0, wxSizer * parentSizer = nullptr);
 	static SettingPanel * createStringMultiChoiceSettingPanel(std::function<const std::vector<std::string> &()> getSettingValueFunction, std::function<bool(const std::string &)> hasSettingEntryFunction, std::function<bool(const std::string &)> addSettingEntryFunction, std::function<bool(const std::string &)> removeSettingEntryFunction, const std::string & name, bool caseSensitive, const std::vector<std::string> & choices, wxWindow * parent, size_t minimumNumberOfSelectedItems = 0, wxSizer * parentSizer = nullptr);
 	template <typename E>
@@ -75,9 +77,10 @@ public:
 	template <typename E>
 	static SettingPanel * createEnumMultiChoiceSettingPanel(std::function<const std::vector<E> &()> getSettingValueFunction, std::function<bool(E)> hasSettingEntryFunction, std::function<bool(E)> addSettingEntryFunction, std::function<bool(E)> removeSettingEntryFunction, const std::string & name, wxWindow * parent, size_t minimumNumberOfSelectedItems = 0, wxSizer * parentSizer = nullptr);
 
-private:
+protected:
 	SettingPanel(const std::string & name, wxWindow * parent);
 
+private:
 	void setModified(bool modified);
 	void notifySettingModified();
 
@@ -93,6 +96,21 @@ private:
 	std::function<void()> m_resetFunction;
 	std::function<void(bool)> m_setEditableFunction;
 	std::vector<Listener *> m_listeners;
+};
+
+class StringChoiceSettingPanel final : public SettingPanel {
+	friend class SettingPanel;
+
+public:
+	virtual ~StringChoiceSettingPanel();
+
+	bool setChoices(const std::vector<std::string> & choices);
+
+protected:
+	StringChoiceSettingPanel(const std::string & name, wxWindow * parent);
+
+private:
+	std::function<void(const std::vector<std::string> & choices)> m_setChoicesFunction;
 };
 
 template <typename T>

@@ -1,6 +1,7 @@
 #ifndef _MOD_BROWSER_PANEL_H_
 #define _MOD_BROWSER_PANEL_H_
 
+#include "Game/GameVersionCollectionListener.h"
 #include "Manager/ModManager.h"
 #include "Mod/OrganizedModCollection.h"
 
@@ -18,13 +19,15 @@
 #include <wx/srchctrl.h>
 
 class GameVersion;
+class GameVersionCollection;
 class Mod;
 class ModAuthorInformation;
 class ModManager;
 
 class ModBrowserPanel final : public wxPanel,
 							  public ModManager::Listener,
-							  public OrganizedModCollection::Listener {
+							  public OrganizedModCollection::Listener,
+							  public GameVersionCollectionListener {
 public:
 	ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
 	virtual ~ModBrowserPanel();
@@ -42,6 +45,7 @@ public:
 	void updateModInfo();
 	void updateModGameType();
 	void updatePreferredGameVersion();
+	void updatePreferredGameVersionList();
 	void updateDOSBoxServerSettings();
 	void updateDOSBoxServerIPAddress();
 	void updateDOSBoxServerPort();
@@ -81,6 +85,10 @@ public:
 	virtual void organizedModGameVersionCollectionChanged(const std::vector<std::shared_ptr<GameVersion>> & organizedMods) override;
 	virtual void organizedModTeamCollectionChanged(const std::vector<std::shared_ptr<ModAuthorInformation>> & organizedMods) override;
 	virtual void organizedModAuthorCollectionChanged(const std::vector<std::shared_ptr<ModAuthorInformation>> & organizedMods) override;
+
+	// GameVersionCollectionListener Virtuals
+	virtual void gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) override;
+	virtual void gameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) override;
 
 private:
 	std::shared_ptr<ModManager> m_modManager;
@@ -124,7 +132,7 @@ private:
 	wxStaticText * m_portLabel;
 	wxTextCtrl * m_portTextField;
 	wxComboBox * m_modGameTypeComboBox;
-	wxComboBox * m_modGameVersionComboBox;
+	wxComboBox * m_preferredGameVersionComboBox;
 	wxButton * m_launchModButton;
 };
 

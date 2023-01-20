@@ -39,17 +39,28 @@ GameVersionCollection::GameVersionCollection(const std::vector<std::shared_ptr<G
 }
 
 GameVersionCollection::GameVersionCollection(GameVersionCollection && g) noexcept
-	: m_gameVersions(std::move(g.m_gameVersions)) { }
+	: m_gameVersions(std::move(g.m_gameVersions)) {
+	for(std::shared_ptr<GameVersion> & gameVersion : m_gameVersions) {
+		gameVersion->clearListeners();
+		gameVersion->addListener(*this);
+	}
+}
 
 GameVersionCollection::GameVersionCollection(const GameVersionCollection & g) {
 	for(std::vector<std::shared_ptr<GameVersion>>::const_iterator i = g.m_gameVersions.begin(); i != g.m_gameVersions.end(); ++i) {
 		m_gameVersions.push_back(std::make_shared<GameVersion>(**i));
+		m_gameVersions.back()->addListener(*this);
 	}
 }
 
 GameVersionCollection & GameVersionCollection::operator = (GameVersionCollection && g) noexcept {
 	if(this != &g) {
 		m_gameVersions = std::move(g.m_gameVersions);
+
+		for(std::shared_ptr<GameVersion> & gameVersion : m_gameVersions) {
+			gameVersion->clearListeners();
+			gameVersion->addListener(*this);
+		}
 	}
 
 	return *this;
@@ -60,12 +71,17 @@ GameVersionCollection & GameVersionCollection::operator = (const GameVersionColl
 
 	for(std::vector<std::shared_ptr<GameVersion>>::const_iterator i = g.m_gameVersions.begin(); i != g.m_gameVersions.end(); ++i) {
 		m_gameVersions.push_back(std::make_shared<GameVersion>(**i));
+		m_gameVersions.back()->addListener(*this);
 	}
 
 	return *this;
 }
 
-GameVersionCollection::~GameVersionCollection() { }
+GameVersionCollection::~GameVersionCollection() {
+	for(std::shared_ptr<GameVersion> & gameVersion : m_gameVersions) {
+		gameVersion->removeListener(*this);
+	}
+}
 
 size_t GameVersionCollection::numberOfGameVersions() const {
 	return m_gameVersions.size();
@@ -266,8 +282,9 @@ bool GameVersionCollection::addGameVersion(const GameVersion & gameVersion) {
 	}
 
 	m_gameVersions.push_back(std::make_shared<GameVersion>(gameVersion));
+	m_gameVersions.back()->addListener(*this);
 
-	notifyCollectionChanged();
+	notifyCollectionSizeChanged();
 
 	return true;
 }
@@ -278,8 +295,9 @@ bool GameVersionCollection::addGameVersion(std::shared_ptr<GameVersion> gameVers
 	}
 
 	m_gameVersions.push_back(gameVersion);
+	m_gameVersions.back()->addListener(*this);
 
-	notifyCollectionChanged();
+	notifyCollectionSizeChanged();
 
 	return true;
 }
@@ -329,9 +347,10 @@ bool GameVersionCollection::removeGameVersion(size_t index) {
 		return false;
 	}
 
+	m_gameVersions[index]->removeListener(*this);
 	m_gameVersions.erase(m_gameVersions.begin() + index);
 
-	notifyCollectionChanged();
+	notifyCollectionSizeChanged();
 
 	return true;
 }
@@ -369,9 +388,13 @@ void GameVersionCollection::setDefaultGameVersions() {
 }
 
 void GameVersionCollection::clearGameVersions() {
+	for(std::shared_ptr<GameVersion> & gameVersion : m_gameVersions) {
+		gameVersion->removeListener(*this);
+	}
+
 	m_gameVersions.clear();
 
-	notifyCollectionChanged();
+	notifyCollectionSizeChanged();
 }
 
 size_t GameVersionCollection::checkForMissingExecutables() const {
@@ -478,8 +501,6 @@ std::unique_ptr<GameVersionCollection> GameVersionCollection::parseFrom(const ra
 		newGameVersionCollection->m_gameVersions.push_back(std::shared_ptr<GameVersion>(newGameVersion.release()));
 	}
 
-	newGameVersionCollection->notifyCollectionChanged();
-
 	return newGameVersionCollection;
 }
 
@@ -534,7 +555,7 @@ bool GameVersionCollection::loadFromJSON(const std::string & filePath, bool auto
 
 	m_gameVersions = gameVersionCollection->m_gameVersions;
 
-	notifyCollectionChanged();
+	notifyCollectionSizeChanged();
 
 	return true;
 }
@@ -579,9 +600,9 @@ bool GameVersionCollection::saveToJSON(const std::string & filePath, bool overwr
 	return true;
 }
 
-void GameVersionCollection::notifyCollectionChanged() const {
+void GameVersionCollection::notifyCollectionSizeChanged() {
 	for(size_t i = 0; i < numberOfListeners(); i++) {
-		getListener(i)->gameVersionCollectionUpdated();
+		getListener(i)->gameVersionCollectionSizeChanged(*this);
 	}
 }
 
@@ -622,4 +643,14 @@ bool GameVersionCollection::operator == (const GameVersionCollection & g) const 
 
 bool GameVersionCollection::operator != (const GameVersionCollection & g) const {
 	return !operator == (g);
+}
+
+void GameVersionCollection::gameVersionModified(GameVersion & gameVersion) {
+	notifyGameVersionModified(gameVersion);
+}
+
+void GameVersionCollection::notifyGameVersionModified(GameVersion & gameVersion) {
+	for(size_t i = 0; i < numberOfListeners(); i++) {
+		getListener(i)->gameVersionCollectionItemModified(*this, gameVersion);
+	}
 }

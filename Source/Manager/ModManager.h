@@ -2,6 +2,7 @@
 #define _MOD_MANAGER_H_
 
 #include "Game/GameType.h"
+#include "Game/GameVersionCollectionListener.h"
 #include "Mod/OrganizedModCollection.h"
 
 #include <Analytics/Segment/SegmentAnalytics.h>
@@ -31,7 +32,8 @@ class Script;
 class ScriptArguments;
 
 class ModManager final : public Application,
-						 public OrganizedModCollection::Listener {
+						 public OrganizedModCollection::Listener,
+						 public GameVersionCollectionListener {
 public:
 	class Listener {
 	public:
@@ -123,7 +125,11 @@ public:
 	static std::string getArgumentHelpInfo();
 
 	// OrganizedModCollection::Listener Virtuals
-	void selectedModChanged(const std::shared_ptr<Mod> & mod);
+	virtual void selectedModChanged(const std::shared_ptr<Mod> & mod) override;
+
+	// GameVersionCollectionListener Virtuals
+	virtual void gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) override;
+	virtual void gameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) override;
 
 	static const GameType DEFAULT_GAME_TYPE;
 	static const std::string DEFAULT_PREFERRED_GAME_VERSION;

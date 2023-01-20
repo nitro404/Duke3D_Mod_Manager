@@ -1300,7 +1300,15 @@ void OrganizedModCollection::favouriteModCollectionUpdated() {
 	}
 }
 
-void OrganizedModCollection::gameVersionCollectionUpdated() {
+void OrganizedModCollection::gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) {
+	updateGameVersionList();
+
+	if(m_filterType == FilterType::SupportedGameVersions || m_filterType == FilterType::CompatibleGameVersions) {
+		organize();
+	}
+}
+
+void OrganizedModCollection::gameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) {
 	updateGameVersionList();
 
 	if(m_filterType == FilterType::SupportedGameVersions || m_filterType == FilterType::CompatibleGameVersions) {
