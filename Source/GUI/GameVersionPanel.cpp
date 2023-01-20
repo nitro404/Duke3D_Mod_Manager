@@ -62,7 +62,17 @@ GameVersionPanel::GameVersionPanel(std::shared_ptr<GameVersion> gameVersion, wxW
 	wxStaticBox * compatibleGameVersionsBox = new wxStaticBox(this, wxID_ANY, "Compatible Game Versions", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Compatible Game Versions");
 	compatibleGameVersionsBox->SetOwnFont(compatibleGameVersionsBox->GetFont().MakeBold());
 
-	SettingPanel * compatibleGameVersionsPanel = SettingPanel::createStringMultiChoiceSettingPanel(std::bind(&GameVersion::getCompatibleGameVersions, m_gameVersion.get()), std::bind(&GameVersion::hasCompatibleGameVersionWithName, m_gameVersion.get(), std::placeholders::_1), std::bind(&GameVersion::addCompatibleGameVersionWithName, m_gameVersion.get(), std::placeholders::_1), std::bind(&GameVersion::removeCompatibleGameVersionWithName, m_gameVersion.get(), std::placeholders::_1), "Compatible Game Versions", false, GameVersionCollection::getGameVersionDisplayNamesFrom(GameVersion::DEFAULT_GAME_VERSIONS, false), compatibleGameVersionsBox);
+	std::vector<std::string> compatibleGameVersionNames(GameVersionCollection::getGameVersionDisplayNamesFrom(GameVersion::DEFAULT_GAME_VERSIONS, false));
+
+	std::vector<std::string>::const_iterator currentGameVersionNameIterator(std::find_if(compatibleGameVersionNames.cbegin(), compatibleGameVersionNames.cend(), [gameVersion](const std::string & currentGameVersionName) {
+		return Utilities::areStringsEqualIgnoreCase(gameVersion->getName(), currentGameVersionName);
+	}));
+
+	if(currentGameVersionNameIterator != compatibleGameVersionNames.cend()) {
+		compatibleGameVersionNames.erase(currentGameVersionNameIterator);
+	}
+
+	SettingPanel * compatibleGameVersionsPanel = SettingPanel::createStringMultiChoiceSettingPanel(std::bind(&GameVersion::getCompatibleGameVersions, m_gameVersion.get()), std::bind(&GameVersion::hasCompatibleGameVersionWithName, m_gameVersion.get(), std::placeholders::_1), std::bind(&GameVersion::addCompatibleGameVersionWithName, m_gameVersion.get(), std::placeholders::_1), std::bind(&GameVersion::removeCompatibleGameVersionWithName, m_gameVersion.get(), std::placeholders::_1), "Compatible Game Versions", false, compatibleGameVersionNames, compatibleGameVersionsBox);
 	m_settingsPanels.push_back(compatibleGameVersionsPanel);
 
 	wxStaticBox * supportedOperatingSystemsBox = new wxStaticBox(this, wxID_ANY, "Supported Operating Systems", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Supported Operating Systems");
