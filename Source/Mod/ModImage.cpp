@@ -255,8 +255,7 @@ std::unique_ptr<ModImage> ModImage::parseFrom(const rapidjson::Value & modImageV
 		}
 
 		if(!propertyHandled) {
-			spdlog::error("Mod image has unexpected property '{}'.", i->name.GetString());
-			return nullptr;
+			spdlog::warn("Mod image has unexpected property '{}'.", i->name.GetString());
 		}
 	}
 
@@ -416,8 +415,7 @@ std::unique_ptr<ModImage> ModImage::parseFrom(const tinyxml2::XMLElement * modIm
 		}
 
 		if(!attributeHandled) {
-			spdlog::error("Element '{}' has unexpected attribute '{}'.", name, modImageAttribute->Name());
-			return nullptr;
+			spdlog::warn("Element '{}' has unexpected attribute '{}'.", name, modImageAttribute->Name());
 		}
 
 		modImageAttribute = modImageAttribute->Next();
@@ -425,8 +423,7 @@ std::unique_ptr<ModImage> ModImage::parseFrom(const tinyxml2::XMLElement * modIm
 
 	// check for unexpected mod image element child elements
 	if(modImageElement->FirstChildElement() != nullptr) {
-		spdlog::error("Element '{}' has an unexpected child element.", name);
-		return nullptr;
+		spdlog::warn("Element '{}' has an unexpected child element.", name);
 	}
 
 	// read the mod image attributes

@@ -408,8 +408,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const rapidjson::Value & modVe
 		}
 
 		if(!propertyHandled) {
-			spdlog::error("Mod version has unexpected property '{}'.", i->name.GetString());
-			return nullptr;
+			spdlog::warn("Mod version has unexpected property '{}'.", i->name.GetString());
 		}
 	}
 
@@ -526,8 +525,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const tinyxml2::XMLElement * m
 		}
 
 		if(!attributeHandled) {
-			spdlog::error("Element '{}' has unexpected attribute '{}'.", XML_MOD_VERSION_ELEMENT_NAME, modVersionAttribute->Name());
-			return nullptr;
+			spdlog::warn("Element '{}' has unexpected attribute '{}'.", XML_MOD_VERSION_ELEMENT_NAME, modVersionAttribute->Name());
 		}
 
 		modVersionAttribute = modVersionAttribute->Next();

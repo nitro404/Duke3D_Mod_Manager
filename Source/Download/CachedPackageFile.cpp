@@ -151,8 +151,7 @@ std::unique_ptr<CachedPackageFile> CachedPackageFile::parseFrom(const rapidjson:
 		}
 
 		if(!propertyHandled) {
-			spdlog::error("Cached package file has unexpected property '{}'.", i->name.GetString());
-			return nullptr;
+			spdlog::warn("Cached package file has unexpected property '{}'.", i->name.GetString());
 		}
 	}
 

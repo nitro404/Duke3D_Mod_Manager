@@ -412,8 +412,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const rapidjson::Value & mod
 		}
 
 		if(!propertyHandled) {
-			spdlog::error("Mod download has unexpected property '{}'.", i->name.GetString());
-			return nullptr;
+			spdlog::warn("Mod download has unexpected property '{}'.", i->name.GetString());
 		}
 	}
 
@@ -630,8 +629,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const tinyxml2::XMLElement *
 		}
 
 		if(!attributeHandled) {
-			spdlog::error("Element '{}' has unexpected attribute '{}'.", XML_MOD_DOWNLOAD_ELEMENT_NAME, modDownloadAttribute->Name());
-			return nullptr;
+			spdlog::warn("Element '{}' has unexpected attribute '{}'.", XML_MOD_DOWNLOAD_ELEMENT_NAME, modDownloadAttribute->Name());
 		}
 
 		modDownloadAttribute = modDownloadAttribute->Next();
@@ -639,8 +637,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const tinyxml2::XMLElement *
 
 	// check for unexpected mod download element child elements
 	if(modDownloadElement->FirstChildElement() != nullptr) {
-		spdlog::error("Element '{}' has an unexpected child element.", XML_MOD_DOWNLOAD_ELEMENT_NAME);
-		return nullptr;
+		spdlog::warn("Element '{}' has an unexpected child element.", XML_MOD_DOWNLOAD_ELEMENT_NAME);
 	}
 
 	// read the mod download attributes

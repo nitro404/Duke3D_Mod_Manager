@@ -271,8 +271,7 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const rapidjson::Value &
 		}
 
 		if(!propertyHandled) {
-			spdlog::error("Mod team member has unexpected property '{}'.", i->name.GetString());
-			return nullptr;
+			spdlog::warn("Mod team member has unexpected property '{}'.", i->name.GetString());
 		}
 	}
 
@@ -404,8 +403,7 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const tinyxml2::XMLEleme
 		}
 
 		if(!attributeHandled) {
-			spdlog::error("Element '{}' has unexpected attribute '{}'.", XML_MOD_TEAM_MEMBER_ELEMENT_NAME, modTeamMemberAttribute->Name());
-			return nullptr;
+			spdlog::warn("Element '{}' has unexpected attribute '{}'.", XML_MOD_TEAM_MEMBER_ELEMENT_NAME, modTeamMemberAttribute->Name());
 		}
 
 		modTeamMemberAttribute = modTeamMemberAttribute->Next();
@@ -413,8 +411,7 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const tinyxml2::XMLEleme
 
 	// check for unexpected mod team member element child elements
 	if(modTeamMemberElement->FirstChildElement() != nullptr) {
-		spdlog::error("Element '{}' has an unexpected child element.", XML_MOD_TEAM_MEMBER_ELEMENT_NAME);
-		return nullptr;
+		spdlog::warn("Element '{}' has an unexpected child element.", XML_MOD_TEAM_MEMBER_ELEMENT_NAME);
 	}
 
 	// read the mod team attributes

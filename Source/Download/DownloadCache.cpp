@@ -22,7 +22,7 @@
 static constexpr const char * JSON_DOWNLOAD_CACHE_FILE_FORMAT_VERSION_PROPERTY_NAME = "fileFormatVersion";
 static constexpr const char * JSON_DOWNLOAD_CACHE_MOD_LIST_PROPERTY_NAME = "modList";
 static constexpr const char * JSON_DOWNLOAD_CACHE_PACKAGES_PROPERTY_NAME = "packages";
-static const std::array<std::string_view, 3> JSON_CACHED_PACKAGE_FILE_PROPERTY_NAMES = {
+static const std::array<std::string_view, 3> JSON_DOWNLOAD_CACHE_PROPERTY_NAMES = {
 	JSON_DOWNLOAD_CACHE_FILE_FORMAT_VERSION_PROPERTY_NAME,
 	JSON_DOWNLOAD_CACHE_MOD_LIST_PROPERTY_NAME,
 	JSON_DOWNLOAD_CACHE_PACKAGES_PROPERTY_NAME
@@ -238,6 +238,24 @@ std::unique_ptr<DownloadCache> DownloadCache::parseFrom(const rapidjson::Value &
 	if(!downloadCacheValue.IsObject()) {
 		spdlog::error("Invalid download cache type: '{}', expected 'object'.", Utilities::typeToString(downloadCacheValue.GetType()));
 		return nullptr;
+	}
+
+	// check for unhandled download cache properties
+	bool propertyHandled = false;
+
+	for(rapidjson::Value::ConstMemberIterator i = downloadCacheValue.MemberBegin(); i != downloadCacheValue.MemberEnd(); ++i) {
+		propertyHandled = false;
+
+		for(const std::string_view propertyName : JSON_DOWNLOAD_CACHE_PROPERTY_NAMES) {
+			if(i->name.GetString() == propertyName) {
+				propertyHandled = true;
+				break;
+			}
+		}
+
+		if(!propertyHandled) {
+			spdlog::warn("Download cache has unexpected property '{}'.", i->name.GetString());
+		}
 	}
 
 	if(downloadCacheValue.HasMember(JSON_DOWNLOAD_CACHE_FILE_FORMAT_VERSION_PROPERTY_NAME)) {

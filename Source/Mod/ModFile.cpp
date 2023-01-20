@@ -224,8 +224,7 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const rapidjson::Value & modFileValu
 		}
 
 		if(!propertyHandled) {
-			spdlog::error("Mod file has unexpected property '{}'.", i->name.GetString());
-			return nullptr;
+			spdlog::warn("Mod file has unexpected property '{}'.", i->name.GetString());
 		}
 	}
 
@@ -337,8 +336,7 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const tinyxml2::XMLElement * modFile
 		}
 
 		if(!attributeHandled) {
-			spdlog::error("Element '{}' has unexpected attribute '{}'.", XML_MOD_FILE_ELEMENT_NAME, modFileAttribute->Name());
-			return nullptr;
+			spdlog::warn("Element '{}' has unexpected attribute '{}'.", XML_MOD_FILE_ELEMENT_NAME, modFileAttribute->Name());
 		}
 
 		modFileAttribute = modFileAttribute->Next();
@@ -346,8 +344,7 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const tinyxml2::XMLElement * modFile
 
 	// check for unexpected mod file element child elements
 	if(modFileElement->FirstChildElement() != nullptr) {
-		spdlog::error("Element '{}' has an unexpected child element.", XML_MOD_FILE_ELEMENT_NAME);
-		return nullptr;
+		spdlog::warn("Element '{}' has an unexpected child element.", XML_MOD_FILE_ELEMENT_NAME);
 	}
 
 	// read the mod file attributes

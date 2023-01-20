@@ -149,8 +149,7 @@ std::unique_ptr<ModVideo> ModVideo::parseFrom(const rapidjson::Value & modVideoV
 		}
 
 		if(!propertyHandled) {
-			spdlog::error("Mod video has unexpected property '{}'.", i->name.GetString());
-			return nullptr;
+			spdlog::warn("Mod video has unexpected property '{}'.", i->name.GetString());
 		}
 	}
 
@@ -248,8 +247,7 @@ std::unique_ptr<ModVideo> ModVideo::parseFrom(const tinyxml2::XMLElement * modVi
 		}
 
 		if(!attributeHandled) {
-			spdlog::error("Element '{}' has unexpected attribute '{}'.", XML_MOD_VIDEO_ELEMENT_NAME, modVideoAttribute->Name());
-			return nullptr;
+			spdlog::warn("Element '{}' has unexpected attribute '{}'.", XML_MOD_VIDEO_ELEMENT_NAME, modVideoAttribute->Name());
 		}
 
 		modVideoAttribute = modVideoAttribute->Next();
@@ -257,8 +255,7 @@ std::unique_ptr<ModVideo> ModVideo::parseFrom(const tinyxml2::XMLElement * modVi
 
 	// check for unexpected mod video element child elements
 	if(modVideoElement->FirstChildElement() != nullptr) {
-		spdlog::error("Element '{}' has an unexpected child element.", XML_MOD_VIDEO_ELEMENT_NAME);
-		return nullptr;
+		spdlog::warn("Element '{}' has an unexpected child element.", XML_MOD_VIDEO_ELEMENT_NAME);
 	}
 
 	// read the mod video attributes

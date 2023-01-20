@@ -1363,8 +1363,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		}
 
 		if(!propertyHandled) {
-			spdlog::error("Game version has unexpected property '{}'.", i->name.GetString());
-			return nullptr;
+			spdlog::warn("Game version has unexpected property '{}'.", i->name.GetString());
 		}
 	}
 

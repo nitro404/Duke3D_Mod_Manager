@@ -491,8 +491,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value
 		}
 
 		if(!propertyHandled) {
-			spdlog::error("Mod game version has unexpected property '{}'.", i->name.GetString());
-			return nullptr;
+			spdlog::warn("Mod game version has unexpected property '{}'.", i->name.GetString());
 		}
 	}
 
@@ -595,8 +594,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const tinyxml2::XMLEle
 		}
 
 		if(!attributeHandled) {
-			spdlog::error("Element '{}' has unexpected attribute '{}'.", XML_MOD_GAME_VERSION_ELEMENT_NAME, modGameVersionAttribute->Name());
-			return nullptr;
+			spdlog::warn("Element '{}' has unexpected attribute '{}'.", XML_MOD_GAME_VERSION_ELEMENT_NAME, modGameVersionAttribute->Name());
 		}
 
 		modGameVersionAttribute = modGameVersionAttribute->Next();

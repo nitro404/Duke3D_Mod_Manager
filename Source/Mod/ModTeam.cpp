@@ -520,8 +520,7 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const rapidjson::Value & modTeamValu
 		}
 
 		if(!propertyHandled) {
-			spdlog::error("Mod team has unexpected property '{}'.", i->name.GetString());
-			return nullptr;
+			spdlog::warn("Mod team has unexpected property '{}'.", i->name.GetString());
 		}
 	}
 
@@ -704,8 +703,7 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const tinyxml2::XMLElement * modTeam
 		}
 
 		if(!attributeHandled) {
-			spdlog::error("Element '{}' has unexpected attribute '{}'.", XML_MOD_TEAM_ELEMENT_NAME, modTeamAttribute->Name());
-			return nullptr;
+			spdlog::warn("Element '{}' has unexpected attribute '{}'.", XML_MOD_TEAM_ELEMENT_NAME, modTeamAttribute->Name());
 		}
 
 		modTeamAttribute = modTeamAttribute->Next();

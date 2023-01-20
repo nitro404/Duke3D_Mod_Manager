@@ -1593,8 +1593,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 		}
 
 		if(!propertyHandled) {
-			spdlog::error("Mod has unexpected property '{}'.", i->name.GetString());
-			return nullptr;
+			spdlog::warn("Mod has unexpected property '{}'.", i->name.GetString());
 		}
 	}
 
@@ -1968,8 +1967,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 		}
 
 		if(!attributeHandled) {
-			spdlog::error("Element '{}' has unexpected attribute '{}'.", XML_MOD_ELEMENT_NAME, modAttribute->Name());
-			return nullptr;
+			spdlog::warn("Element '{}' has unexpected attribute '{}'.", XML_MOD_ELEMENT_NAME, modAttribute->Name());
 		}
 
 		modAttribute = modAttribute->Next();
@@ -1994,8 +1992,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 		}
 
 		if(!elementHandled) {
-			spdlog::error("Element '{}' has unexpected child element '{}'.", XML_MOD_ELEMENT_NAME, modChildElement->Name());
-			return nullptr;
+			spdlog::warn("Element '{}' has unexpected child element '{}'.", XML_MOD_ELEMENT_NAME, modChildElement->Name());
 		}
 
 		modChildElement = modChildElement->NextSiblingElement();

@@ -115,8 +115,7 @@ std::unique_ptr<ModIdentifier> ModIdentifier::parseFrom(const rapidjson::Value &
 		}
 
 		if(!propertyHandled) {
-			spdlog::error("Mod identifier has unexpected property '{}'.", i->name.GetString());
-			return nullptr;
+			spdlog::warn("Mod identifier has unexpected property '{}'.", i->name.GetString());
 		}
 	}
 
