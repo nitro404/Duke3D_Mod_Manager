@@ -94,9 +94,9 @@ public:
 	size_t getSelectedModVersionIndex() const;
 	size_t getSelectedModVersionTypeIndex() const;
 	size_t getSelectedModGameVersionIndex() const;
-	bool setSelectedMod(const std::string & name);
+	bool setSelectedModByName(const std::string & name);
 	bool setSelectedMod(std::shared_ptr<Mod> mod);
-	bool setSelectedMod(const ModMatch & modMatch);
+	bool setSelectedModFromMatch(const ModMatch & modMatch);
 	bool setSelectedModVersionIndex(size_t modVersionIndex);
 	bool setSelectedModVersionTypeIndex(size_t modVersionTypeIndex);
 	bool setSelectedModGameVersionIndex(size_t modGameVersionIndex);

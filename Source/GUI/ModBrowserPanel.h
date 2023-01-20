@@ -50,6 +50,9 @@ public:
 	void updateDOSBoxServerIPAddress();
 	void updateDOSBoxServerPort();
 
+	void clear();
+	void clearSearch();
+
 	void onModSearchTextChanged(wxCommandEvent & event);
 	void onModSearchCancelled(wxCommandEvent & event);
 	void onSelectRandomModButtonPressed(wxCommandEvent & event);
@@ -64,6 +67,7 @@ public:
 	void onIPAddressTextChanged(wxCommandEvent & event);
 	void onPortTextChanged(wxCommandEvent & event);
 	void onModGameTypeSelected(wxCommandEvent & event);
+	void onClearButtonPressed(wxCommandEvent & event);
 	void onLaunchModButtonPressed(wxCommandEvent & event);
 
 	// ModManager::Listener Virtuals
@@ -133,6 +137,7 @@ private:
 	wxTextCtrl * m_portTextField;
 	wxComboBox * m_modGameTypeComboBox;
 	wxComboBox * m_preferredGameVersionComboBox;
+	wxButton * m_clearButton;
 	wxButton * m_launchModButton;
 };
 

@@ -62,6 +62,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	, m_portTextField(nullptr)
 	, m_modGameTypeComboBox(nullptr)
 	, m_preferredGameVersionComboBox(nullptr)
+	, m_clearButton(nullptr)
 	, m_launchModButton(nullptr) {
 	m_modManager->addListener(*this);
 	m_modManager->getOrganizedMods()->addListener(*this);
@@ -235,6 +236,9 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_preferredGameVersionComboBox->SetEditable(false);
 	m_preferredGameVersionComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onPreferredGameVersionSelected, this);
 
+	m_clearButton = new wxButton(m_gameOptionsPanel, wxID_ANY, "Clear", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "Clear");
+	m_clearButton->Bind(wxEVT_BUTTON, &ModBrowserPanel::onClearButtonPressed, this);
+
 	m_launchModButton = new wxButton(m_gameOptionsPanel, wxID_ANY, "Launch Mod", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "Launch Mod");
 	m_launchModButton->Disable();
 	m_launchModButton->Bind(wxEVT_BUTTON, &ModBrowserPanel::onLaunchModButtonPressed, this);
@@ -318,7 +322,8 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	gameOptionsSizer->Add(m_modGameTypeComboBox, wxGBPosition(0, 5), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
 	gameOptionsSizer->Add(preferredGameVersionLabel, wxGBPosition(0, 6), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
 	gameOptionsSizer->Add(m_preferredGameVersionComboBox, wxGBPosition(0, 7), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
-	gameOptionsSizer->Add(m_launchModButton, wxGBPosition(0, 8), wxGBSpan(1, 1), wxSTRETCH_NOT | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, border);
+	gameOptionsSizer->Add(m_clearButton, wxGBPosition(0, 8), wxGBSpan(1, 1), wxSTRETCH_NOT | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, border);
+	gameOptionsSizer->Add(m_launchModButton, wxGBPosition(0, 9), wxGBSpan(1, 1), wxSTRETCH_NOT | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, border);
 	gameOptionsSizer->AddGrowableRow(0, 1);
 	gameOptionsSizer->AddGrowableCol(0, 1);
 	gameOptionsSizer->AddGrowableCol(1, 1);
@@ -828,16 +833,32 @@ void ModBrowserPanel::updateDOSBoxServerPort() {
 	}
 }
 
+void ModBrowserPanel::clear() {
+	std::shared_ptr<OrganizedModCollection> organizedMods(m_modManager->getOrganizedMods());
+	organizedMods->clearSelectedItems();
+	organizedMods->setFilterType(OrganizedModCollection::FilterType::None);
+
+	clearSearch();
+
+	m_clearButton->Disable();
+}
+
+void ModBrowserPanel::clearSearch() {
+	m_modMatches.clear();
+	m_searchQuery.clear();
+	m_modSearchTextField->Clear();
+}
+
 void ModBrowserPanel::onModSearchTextChanged(wxCommandEvent & event) {
 	m_searchQuery = event.GetString();
+
+	m_clearButton->Enable();
 
 	updateModList();
 }
 
 void ModBrowserPanel::onModSearchCancelled(wxCommandEvent & event) {
-	m_modMatches.clear();
-	m_searchQuery.clear();
-	m_modSearchTextField->Clear();
+	clearSearch();
 
 	updateModList();
 }
@@ -855,6 +876,8 @@ void ModBrowserPanel::onModListFilterTypeSelected(wxCommandEvent & event) {
 
 	if(selectedFilterTypeIndex != wxNOT_FOUND) {
 		m_modManager->getOrganizedMods()->setFilterType(magic_enum::enum_value<OrganizedModCollection::FilterType>(selectedFilterTypeIndex));
+
+		m_clearButton->Enable();
 	}
 }
 
@@ -893,7 +916,7 @@ void ModBrowserPanel::onModSelected(wxCommandEvent & event) {
 		m_modSearchTextField->Clear();
 		updateModList();
 		m_modManager->getOrganizedMods()->setSelectedMod(modMatch.getMod().get());
-		m_modManager->setSelectedMod(modMatch);
+		m_modManager->setSelectedModFromMatch(modMatch);
 	}
 }
 
@@ -988,6 +1011,10 @@ void ModBrowserPanel::onPortTextChanged(wxCommandEvent & event) {
 			}
 		}
 	}
+}
+
+void ModBrowserPanel::onClearButtonPressed(wxCommandEvent & event) {
+	clear();
 }
 
 void ModBrowserPanel::onLaunchModButtonPressed(wxCommandEvent & event) {
@@ -1184,6 +1211,8 @@ void ModBrowserPanel::onLaunchModButtonPressed(wxCommandEvent & event) {
 
 void ModBrowserPanel::modSelectionChanged(const std::shared_ptr<Mod> & mod, size_t modVersionIndex, size_t modVersionTypeIndex, size_t modGameVersionIndex) {
 	updateModSelection();
+
+	m_clearButton->Enable();
 }
 
 void ModBrowserPanel::gameTypeChanged(GameType gameType) {

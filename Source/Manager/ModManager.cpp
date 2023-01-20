@@ -642,7 +642,7 @@ size_t ModManager::getSelectedModGameVersionIndex() const {
 	return m_selectedModGameVersionIndex;
 }
 
-bool ModManager::setSelectedMod(const std::string & name) {
+bool ModManager::setSelectedModByName(const std::string & name) {
 	return setSelectedMod(m_mods->getMod(name));
 }
 
@@ -703,7 +703,7 @@ bool ModManager::setSelectedMod(std::shared_ptr<Mod> mod) {
 	return true;
 }
 
-bool ModManager::setSelectedMod(const ModMatch & modMatch) {
+bool ModManager::setSelectedModFromMatch(const ModMatch & modMatch) {
 	if(!modMatch.isValid()) {
 		return false;
 	}
