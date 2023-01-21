@@ -237,6 +237,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_preferredGameVersionComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onPreferredGameVersionSelected, this);
 
 	m_clearButton = new wxButton(m_gameOptionsPanel, wxID_ANY, "Clear", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "Clear");
+	m_clearButton->Disable();
 	m_clearButton->Bind(wxEVT_BUTTON, &ModBrowserPanel::onClearButtonPressed, this);
 
 	m_launchModButton = new wxButton(m_gameOptionsPanel, wxID_ANY, "Launch Mod", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "Launch Mod");
