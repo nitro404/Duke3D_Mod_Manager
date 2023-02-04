@@ -150,6 +150,7 @@ public:
 	static std::optional<OperatingSystem> convertOperatingSystemType(DeviceInformationBridge::OperatingSystemType operatingSystemType);
 
 	bool isConfigured() const;
+	static bool isConfigured(const GameVersion * gameVersion);
 	bool isValid() const;
 	static bool isValid(const GameVersion * gameVersion);
 

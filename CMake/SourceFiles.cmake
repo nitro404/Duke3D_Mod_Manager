@@ -5,6 +5,13 @@ set(MAIN_SOURCE_FILES
 	Configuration/GameConfigurationEntry.cpp
 	Configuration/GameConfigurationGenerator.cpp
 	Configuration/GameConfigurationSection.cpp
+	DOSBox/DOSBoxDownload.cpp
+	DOSBox/DOSBoxDownloadCollection.cpp
+	DOSBox/DOSBoxDownloadFile.cpp
+	DOSBox/DOSBoxDownloadVersion.cpp
+	DOSBox/DOSBoxManager.cpp
+	DOSBox/DOSBoxVersion.cpp
+	DOSBox/DOSBoxVersionCollection.cpp
 	Download/CachedFile.cpp
 	Download/CachedPackageFile.cpp
 	Download/DownloadCache.cpp
@@ -50,6 +57,13 @@ set(MAIN_SOURCE_FILES
 
 set(MAIN_HEADER_FILES
 	Configuration/GameConfiguration.h
+	DOSBox/DOSBoxDownload.h
+	DOSBox/DOSBoxDownloadCollection.h
+	DOSBox/DOSBoxDownloadFile.h
+	DOSBox/DOSBoxDownloadVersion.h
+	DOSBox/DOSBoxManager.h
+	DOSBox/DOSBoxVersion.h
+	DOSBox/DOSBoxVersionCollection.h
 	Download/CachedFile.h
 	Download/CachedPackageFile.h
 	Download/DownloadCache.h
@@ -102,6 +116,9 @@ set(MAIN_SOURCE_FILES_WINDOWS
 
 set(GUI_SOURCE_FILES
 	GUI/ConsolePanel.cpp
+	GUI/DOSBoxManagerPanel.cpp
+	GUI/DOSBoxSettingsPanel.cpp
+	GUI/DOSBoxVersionPanel.cpp
 	GUI/GameManagerPanel.cpp
 	GUI/GameVersionPanel.cpp
 	GUI/GroupEditorPanel.cpp
@@ -119,6 +136,9 @@ set(GUI_SOURCE_FILES
 
 set(GUI_HEADER_FILES
 	GUI/ConsolePanel.h
+	GUI/DOSBoxManagerPanel.h
+	GUI/DOSBoxSettingsPanel.h
+	GUI/DOSBoxVersionPanel.h
 	GUI/GameManagerPanel.h
 	GUI/GameVersionPanel.h
 	GUI/GroupEditorPanel.h

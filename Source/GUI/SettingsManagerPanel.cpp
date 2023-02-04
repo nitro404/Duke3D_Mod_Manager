@@ -1,8 +1,8 @@
 #include "SettingsManagerPanel.h"
 
+#include "Game/GameVersionCollection.h"
 #include "Manager/ModManager.h"
 #include "Manager/SettingsManager.h"
-#include "Game/GameVersionCollection.h"
 #include "Project.h"
 #include "SettingPanel.h"
 #include "WXUtilities.h"
@@ -15,12 +15,17 @@
 SettingsManagerPanel::SettingsManagerPanel(std::shared_ptr<ModManager> modManager, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "Settings")
 	, m_modManager(modManager)
+	, m_preferredDOSBoxVersionSettingPanel(nullptr)
+	, m_preferredGameVersionSettingPanel(nullptr)
 	, m_modified(false)
 	, m_discardChangesButton(nullptr)
 	, m_saveSettingsButton(nullptr) {
 	SettingsManager * settings = SettingsManager::getInstance();
+	std::shared_ptr<DOSBoxVersionCollection> dosboxVersions(m_modManager->getDOSBoxVersions());
+	std::shared_ptr<GameVersionCollection> gameVersions(m_modManager->getGameVersions());
 
-	m_modManager->getGameVersions()->addListener(*this);
+	dosboxVersions->addListener(*this);
+	gameVersions->addListener(*this);
 
 	int wrapSizerOrientation = wxHORIZONTAL;
 
@@ -44,7 +49,7 @@ SettingsManagerPanel::SettingsManagerPanel(std::shared_ptr<ModManager> modManage
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->gameTempDirectoryName, SettingsManager::DEFAULT_GAME_TEMP_DIRECTORY_NAME, "Game Temp Directory Name", generalSettingsPanel, generalSettingsSizer, 1));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->tempSymlinkName, SettingsManager::DEFAULT_TEMP_SYMLINK_NAME, "Temp Symbolic Link Name", generalSettingsPanel, generalSettingsSizer, 1));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->cacheDirectoryPath, SettingsManager::DEFAULT_CACHE_DIRECTORY_PATH, "Cache Directory Path", generalSettingsPanel, generalSettingsSizer, 1));
-	m_preferredGameVersionSettingPanel = SettingPanel::createStringChoiceSettingPanel(settings->preferredGameVersion, SettingsManager::DEFAULT_PREFERRED_GAME_VERSION, "Preferred Game Version", modManager->getGameVersions()->getGameVersionDisplayNames(false), generalSettingsPanel, generalSettingsSizer);
+	m_preferredGameVersionSettingPanel = SettingPanel::createStringChoiceSettingPanel(settings->preferredGameVersion, SettingsManager::DEFAULT_PREFERRED_GAME_VERSION, "Preferred Game Version", gameVersions->getGameVersionDisplayNames(false), generalSettingsPanel, generalSettingsSizer);
 	m_settingsPanels.push_back(m_preferredGameVersionSettingPanel);
 	m_settingsPanels.push_back(SettingPanel::createEnumSettingPanel<GameType>(settings->gameType, SettingsManager::DEFAULT_GAME_TYPE, "Game Type", generalSettingsPanel, generalSettingsSizer));
 
@@ -59,12 +64,14 @@ SettingsManagerPanel::SettingsManagerPanel(std::shared_ptr<ModManager> modManage
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->modDownloadsDirectoryName, SettingsManager::DEFAULT_MOD_DOWNLOADS_DIRECTORY_NAME, "Mod Downloads Directory Name", downloadsSettingsPanel, downloadsSettingsSizer, 1));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->mapDownloadsDirectoryName, SettingsManager::DEFAULT_MAP_DOWNLOADS_DIRECTORY_NAME, "Map Downloads Directory Name", downloadsSettingsPanel, downloadsSettingsSizer, 1));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->gameDownloadsDirectoryName, SettingsManager::DEFAULT_GAME_DOWNLOADS_DIRECTORY_NAME, "Game Downloads Directory Name", downloadsSettingsPanel, downloadsSettingsSizer, 1));
+	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxDownloadsDirectoryName, SettingsManager::DEFAULT_DOSBOX_DOWNLOADS_DIRECTORY_NAME, "DOSBox Downloads Directory Name", downloadsSettingsPanel, downloadsSettingsSizer, 1));
 	m_settingsPanels.push_back(SettingPanel::createChronoSettingPanel(settings->connectionTimeout, SettingsManager::DEFAULT_CONNECTION_TIMEOUT, "Connection Timeout", downloadsSettingsPanel, downloadsSettingsSizer));
 	m_settingsPanels.push_back(SettingPanel::createChronoSettingPanel(settings->networkTimeout, SettingsManager::DEFAULT_NETWORK_TIMEOUT, "Network Timeout", downloadsSettingsPanel, downloadsSettingsSizer));
 	m_settingsPanels.push_back(SettingPanel::createChronoSettingPanel(settings->transferTimeout, SettingsManager::DEFAULT_TRANSFER_TIMEOUT, "Transfer Timeout", downloadsSettingsPanel, downloadsSettingsSizer));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->apiBaseURL, SettingsManager::DEFAULT_API_BASE_URL, "API Base URL", downloadsSettingsPanel, downloadsSettingsSizer, 1));
 	m_settingsPanels.push_back(SettingPanel::createBooleanSettingPanel(settings->downloadThrottlingEnabled, SettingsManager::DEFAULT_DOWNLOAD_THROTTLING_ENABLED, "Download Throttling", downloadsSettingsPanel, downloadsSettingsSizer));
 	m_settingsPanels.push_back(SettingPanel::createChronoSettingPanel(settings->modListUpdateFrequency, SettingsManager::DEFAULT_MOD_LIST_UPDATE_FREQUENCY, "Mod List Update Frequency", downloadsSettingsPanel, downloadsSettingsSizer));
+	m_settingsPanels.push_back(SettingPanel::createChronoSettingPanel(settings->dosboxDownloadListUpdateFrequency, SettingsManager::DEFAULT_DOSBOX_DOWNLOAD_LIST_UPDATE_FREQUENCY, "DOSBox Download List Update Frequency", downloadsSettingsPanel, downloadsSettingsSizer));
 	m_settingsPanels.push_back(SettingPanel::createChronoSettingPanel(settings->gameDownloadListUpdateFrequency, SettingsManager::DEFAULT_GAME_DOWNLOAD_LIST_UPDATE_FREQUENCY, "Game Download List Update Frequency", downloadsSettingsPanel, downloadsSettingsSizer));
 	m_settingsPanels.push_back(SettingPanel::createChronoSettingPanel(settings->cacertUpdateFrequency, SettingsManager::DEFAULT_TIME_ZONE_DATA_UPDATE_FREQUENCY, "CACert Update Frequency", downloadsSettingsPanel, downloadsSettingsSizer));
 
@@ -74,8 +81,9 @@ SettingsManagerPanel::SettingsManagerPanel(std::shared_ptr<ModManager> modManage
 
 	wxPanel * dosboxSettingsPanel = new wxPanel(dosboxSettingsBox, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 
-	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxExecutableFileName, SettingsManager::DEFAULT_DOSBOX_EXECUTABLE_FILE_NAME, "Application Executable Name", dosboxSettingsPanel, dosboxSettingsSizer, 1));
-	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxDirectoryPath, SettingsManager::DEFAULT_DOSBOX_DIRECTORY_PATH, "Application Directory Path", dosboxSettingsPanel, dosboxSettingsSizer, 1));
+	m_preferredDOSBoxVersionSettingPanel = SettingPanel::createStringChoiceSettingPanel(settings->preferredDOSBoxVersion, SettingsManager::DEFAULT_PREFERRED_DOSBOX_VERSION, "Preferred DOSBox Version", dosboxVersions->getDOSBoxVersionDisplayNames(false), dosboxSettingsPanel, dosboxSettingsSizer);
+	m_settingsPanels.push_back(m_preferredDOSBoxVersionSettingPanel);
+	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxVersionsListFilePath, SettingsManager::DEFAULT_DOSBOX_VERSIONS_LIST_FILE_PATH, "DOSBox Versions List File Path", dosboxSettingsPanel, dosboxSettingsSizer));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxArguments, SettingsManager::DEFAULT_DOSBOX_ARGUMENTS, "Application Arguments", dosboxSettingsPanel, dosboxSettingsSizer));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxDataDirectoryName, SettingsManager::DEFAULT_DOSBOX_DATA_DIRECTORY_NAME, "Data Directory Name", dosboxSettingsPanel, dosboxSettingsSizer));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxServerIPAddress, SettingsManager::DEFAULT_DOSBOX_SERVER_IP_ADDRESS, "Server IP Address", dosboxSettingsPanel, dosboxSettingsSizer));
@@ -140,7 +148,7 @@ SettingsManagerPanel::SettingsManagerPanel(std::shared_ptr<ModManager> modManage
 	settingsPanelSizer->Add(analyticsSettingsBox, wxGBPosition(2, 1), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
 	settingsPanelSizer->Add(actionsPanel, wxGBPosition(3, 0), wxGBSpan(1, 2), wxEXPAND | wxHORIZONTAL, border);
 	settingsPanelSizer->AddGrowableRow(0, 2);
-	settingsPanelSizer->AddGrowableRow(1, 2);
+	settingsPanelSizer->AddGrowableRow(1, 3);
 	settingsPanelSizer->AddGrowableRow(2, 1);
 	settingsPanelSizer->AddGrowableCol(0, 3);
 	settingsPanelSizer->AddGrowableCol(1, 1);
@@ -152,6 +160,7 @@ SettingsManagerPanel::SettingsManagerPanel(std::shared_ptr<ModManager> modManage
 }
 
 SettingsManagerPanel::~SettingsManagerPanel() {
+	m_modManager->getDOSBoxVersions()->removeListener(*this);
 	m_modManager->getGameVersions()->removeListener(*this);
 
 	for(SettingPanel * settingPanel : m_settingsPanels) {
@@ -373,6 +382,14 @@ void SettingsManagerPanel::settingModified(SettingPanel & settingPanel) {
 		updateButtons();
 		notifySettingsChanged();
 	}
+}
+
+void SettingsManagerPanel::dosboxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection) {
+	m_preferredDOSBoxVersionSettingPanel->setChoices(dosboxVersionCollection.getDOSBoxVersionDisplayNames(false));
+}
+
+void SettingsManagerPanel::dosboxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion) {
+	m_preferredDOSBoxVersionSettingPanel->setChoices(dosboxVersionCollection.getDOSBoxVersionDisplayNames(false));
 }
 
 void SettingsManagerPanel::gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) {

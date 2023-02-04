@@ -1,6 +1,7 @@
 #ifndef _MOD_MANAGER_H_
 #define _MOD_MANAGER_H_
 
+#include "DOSBox/DOSBoxVersionCollection.h"
 #include "Game/GameType.h"
 #include "Game/GameVersionCollectionListener.h"
 #include "Mod/OrganizedModCollection.h"
@@ -16,6 +17,9 @@
 #include <vector>
 
 class ArgumentParser;
+class DOSBoxManager;
+class DOSBoxVersion;
+class DOSBoxVersionCollection;
 class DownloadManager;
 class FavouriteModCollection;
 class GameManager;
@@ -33,18 +37,20 @@ class ScriptArguments;
 
 class ModManager final : public Application,
 						 public OrganizedModCollection::Listener,
+						 public DOSBoxVersionCollection::Listener,
 						 public GameVersionCollectionListener {
 public:
 	class Listener {
 	public:
 		virtual ~Listener();
 
-		virtual void modSelectionChanged(const std::shared_ptr<Mod> & mod, size_t modVersionIndex, size_t modVersionTypeIndex, size_t modGameVersionIndex);
-		virtual void gameTypeChanged(GameType gameType);
-		virtual void preferredGameVersionChanged(const std::shared_ptr<GameVersion> & gameVersion);
-		virtual void dosboxServerIPAddressChanged(const std::string & ipAddress);
-		virtual void dosboxLocalServerPortChanged(uint16_t port);
-		virtual void dosboxRemoteServerPortChanged(uint16_t port);
+		virtual void modSelectionChanged(const std::shared_ptr<Mod> & mod, size_t modVersionIndex, size_t modVersionTypeIndex, size_t modGameVersionIndex) = 0;
+		virtual void gameTypeChanged(GameType gameType) = 0;
+		virtual void preferredDOSBoxVersionChanged(const std::shared_ptr<DOSBoxVersion> & dosboxVersion) = 0;
+		virtual void preferredGameVersionChanged(const std::shared_ptr<GameVersion> & gameVersion) = 0;
+		virtual void dosboxServerIPAddressChanged(const std::string & ipAddress) = 0;
+		virtual void dosboxLocalServerPortChanged(uint16_t port) = 0;
+		virtual void dosboxRemoteServerPortChanged(uint16_t port) = 0;
 	};
 
 	ModManager();
@@ -65,12 +71,20 @@ public:
 	bool setGameType(const std::string & gameType);
 	void setGameType(GameType gameType);
 
+	bool hasPreferredDOSBoxVersion() const;
+	std::shared_ptr<DOSBoxVersion> getPreferredDOSBoxVersion() const;
+	std::shared_ptr<DOSBoxVersion> getSelectedDOSBoxVersion() const;
+	bool setPreferredDOSBoxVersion(const std::string & dosboxVersionName);
+	bool setPreferredDOSBoxVersion(std::shared_ptr<DOSBoxVersion> dosboxVersion);
+
 	bool hasPreferredGameVersion() const;
 	std::shared_ptr<GameVersion> getPreferredGameVersion() const;
 	std::shared_ptr<GameVersion> getSelectedGameVersion() const;
 	bool setPreferredGameVersion(const std::string & gameVersionName);
 	bool setPreferredGameVersion(std::shared_ptr<GameVersion> gameVersion);
 
+	std::shared_ptr<DOSBoxManager> getDOSBoxManager() const;
+	std::shared_ptr<DOSBoxVersionCollection> getDOSBoxVersions() const;
 	std::shared_ptr<GameVersionCollection> getGameVersions() const;
 	std::shared_ptr<GameManager> getGameManager() const;
 	std::shared_ptr<DownloadManager> getDownloadManager() const;
@@ -127,11 +141,16 @@ public:
 	// OrganizedModCollection::Listener Virtuals
 	virtual void selectedModChanged(const std::shared_ptr<Mod> & mod) override;
 
+	// DOSBoxVersionCollection::Listener Virtuals
+	virtual void dosboxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection) override;
+	virtual void dosboxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion) override;
+
 	// GameVersionCollectionListener Virtuals
 	virtual void gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) override;
 	virtual void gameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) override;
 
 	static const GameType DEFAULT_GAME_TYPE;
+	static const std::string DEFAULT_PREFERRED_DOSBOX_VERSION;
 	static const std::string DEFAULT_PREFERRED_GAME_VERSION;
 	static const std::string HTTP_USER_AGENT;
 
@@ -139,7 +158,7 @@ private:
 	void assignPlatformFactories();
 	bool handleArguments(const ArgumentParser * args);
 	std::string generateCommand(std::shared_ptr<ModGameVersion> modGameVersion, std::shared_ptr<GameVersion> selectedGameVersion, ScriptArguments & scriptArgs, std::string_view combinedGroupFileName = "", bool * customMod = nullptr, std::string * customMap = nullptr) const;
-	std::string generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const std::string & dosboxPath, const  std::string & dosboxArguments) const;
+	std::string generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const DOSBoxVersion & dosboxVersion, const  std::string & dosboxArguments) const;
 	size_t checkForUnlinkedModFiles() const;
 	size_t checkForUnlinkedModFilesForGameVersion(const GameVersion & gameVersion) const;
 	size_t checkModForMissingFiles(const std::string & modName, std::optional<size_t> versionIndex = {}, std::optional<size_t> versionTypeIndex = {}) const;
@@ -161,6 +180,7 @@ private:
 	size_t renameFilesWithSuffixTo(const std::string & fromSuffix, const std::string & toSuffix, const std::string & path = "");
 	void notifyModSelectionChanged();
 	void notifyGameTypeChanged();
+	void notifyPreferredDOSBoxVersionChanged();
 	void notifyPreferredGameVersionChanged();
 	void notifyDOSBoxServerIPAddressChanged();
 	void notifyDOSBoxLocalServerPortChanged();
@@ -178,11 +198,13 @@ private:
 	std::shared_ptr<ArgumentParser> m_arguments;
 	std::shared_ptr<DownloadManager> m_downloadManager;
 	GameType m_gameType;
+	std::shared_ptr<DOSBoxVersion> m_preferredDOSBoxVersion;
 	std::shared_ptr<GameVersion> m_preferredGameVersion;
 	std::shared_ptr<Mod> m_selectedMod;
 	size_t m_selectedModVersionIndex;
 	size_t m_selectedModVersionTypeIndex;
 	size_t m_selectedModGameVersionIndex;
+	std::shared_ptr<DOSBoxManager> m_dosboxManager;
 	std::shared_ptr<GameVersionCollection> m_gameVersions;
 	std::shared_ptr<GameManager> m_gameManager;
 	std::shared_ptr<ModCollection> m_mods;

@@ -138,7 +138,7 @@ bool GameManager::shouldUpdateGameDownloadList() const {
 bool GameManager::loadOrUpdateGameDownloadList(bool forceUpdate) const {
 	std::string localGameDownloadsListFilePath(getLocalGameDownloadsListFilePath());
 
-	if(!forceUpdate && std::filesystem::exists(std::filesystem::path(localGameDownloadsListFilePath))) {
+	if(!forceUpdate && std::filesystem::is_regular_file(std::filesystem::path(localGameDownloadsListFilePath))) {
 		std::unique_ptr<GameDownloadCollection> gameDownloads(std::make_unique<GameDownloadCollection>());
 
 		if(gameDownloads->loadFrom(localGameDownloadsListFilePath) && GameDownloadCollection::isValid(gameDownloads.get())) {
@@ -652,7 +652,7 @@ std::string GameManager::getEDuke32DownloadURL(DeviceInformationBridge::Operatin
 			break;
 		}
 
-		listingEntryLinkElement = Utilities::findXMLElementWithName(listingEntryElement, "a");
+		listingEntryLinkElement = Utilities::findFirstXMLElementWithName(listingEntryElement, "a");
 
 		if(listingEntryLinkElement != nullptr) {
 			currentDownloadFileName = listingEntryLinkElement->Attribute("href");
@@ -694,7 +694,7 @@ std::string GameManager::getEDuke32DownloadURL(DeviceInformationBridge::Operatin
 }
 
 std::string GameManager::getRazeDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const {
-	static const std::string WINDOWS_X64_ARCHITECTURE_IDENTIFIER("arm64");
+	static const std::string ARM64_ARCHITECTURE_IDENTIFIER("arm64");
 	static const std::string LINUX_IDENTIFIER("linux");
 	static const std::string MACOS_IDENTIFIER("mac");
 	static const std::string PDB_IDENTIFIER("pdb");
@@ -721,53 +721,39 @@ std::string GameManager::getRazeDownloadURL(DeviceInformationBridge::OperatingSy
 
 	std::shared_ptr<GitHubReleaseAsset> currentReleaseAsset;
 	std::shared_ptr<GitHubReleaseAsset> latestReleaseAsset;
+	std::string lowerCaseAssetFileName;
 
-	if(operatingSystemType == DeviceInformationBridge::OperatingSystemType::Windows && operatingSystemArchitectureType == DeviceInformationBridge::OperatingSystemArchitectureType::x64) {
-		for(size_t i = 0; i < latestRelease->numberOfAssets(); i++) {
-			currentReleaseAsset = latestRelease->getAsset(i);
+	for(size_t i = 0; i < latestRelease->numberOfAssets(); i++) {
+		currentReleaseAsset = latestRelease->getAsset(i);
+		lowerCaseAssetFileName = Utilities::toLowerCase(currentReleaseAsset->getFileName());
 
-			if(Utilities::toLowerCase(currentReleaseAsset->getFileName()).find(WINDOWS_X64_ARCHITECTURE_IDENTIFIER) != std::string::npos) {
-				latestReleaseAsset = currentReleaseAsset;
-				break;
-			}
+		if(lowerCaseAssetFileName.find(PDB_IDENTIFIER) != std::string::npos ||
+		   lowerCaseAssetFileName.find(ARM64_ARCHITECTURE_IDENTIFIER) != std::string::npos) {
+			continue;
 		}
-	}
 
-	if(latestReleaseAsset == nullptr) {
-		std::string lowerCaseAssetFileName;
+		if(latestReleaseAsset != nullptr) {
+			spdlog::warn("Found multiple '{}' asset downloads, GitHub release may be misconfigured.", GameVersion::RAZE.getName());
+			continue;
+		}
 
-		for(size_t i = 0; i < latestRelease->numberOfAssets(); i++) {
-			currentReleaseAsset = latestRelease->getAsset(i);
-			lowerCaseAssetFileName = Utilities::toLowerCase(currentReleaseAsset->getFileName());
-
-			if(lowerCaseAssetFileName.find(PDB_IDENTIFIER) != std::string::npos ||
-			   lowerCaseAssetFileName.find(WINDOWS_X64_ARCHITECTURE_IDENTIFIER) != std::string::npos) {
+		if(lowerCaseAssetFileName.find(LINUX_IDENTIFIER) != std::string::npos) {
+			if(operatingSystemType != DeviceInformationBridge::OperatingSystemType::Linux) {
 				continue;
 			}
 
-			if(latestReleaseAsset != nullptr) {
-				spdlog::warn("Found multiple '{}' asset downloads, GitHub release may be misconfigured.", GameVersion::RAZE.getName());
+			latestReleaseAsset = currentReleaseAsset;
+		}
+		else if(lowerCaseAssetFileName.find(MACOS_IDENTIFIER) != std::string::npos) {
+			if(operatingSystemType != DeviceInformationBridge::OperatingSystemType::MacOS) {
 				continue;
 			}
 
-			if(lowerCaseAssetFileName.find(LINUX_IDENTIFIER) != std::string::npos) {
-				if(operatingSystemType != DeviceInformationBridge::OperatingSystemType::Linux) {
-					continue;
-				}
+			latestReleaseAsset = currentReleaseAsset;
+		}
 
-				latestReleaseAsset = currentReleaseAsset;
-			}
-			else if(lowerCaseAssetFileName.find(MACOS_IDENTIFIER) != std::string::npos) {
-				if(operatingSystemType != DeviceInformationBridge::OperatingSystemType::MacOS) {
-					continue;
-				}
-
-				latestReleaseAsset = currentReleaseAsset;
-			}
-
-			if(operatingSystemType == DeviceInformationBridge::OperatingSystemType::Windows) {
-				latestReleaseAsset = currentReleaseAsset;
-			}
+		if(operatingSystemType == DeviceInformationBridge::OperatingSystemType::Windows) {
+			latestReleaseAsset = currentReleaseAsset;
 		}
 	}
 
@@ -919,7 +905,7 @@ std::string GameManager::getRedNukemDownloadURL(DeviceInformationBridge::Operati
 		return {};
 	}
 
-	const tinyxml2::XMLElement * bodyElement = Utilities::findXMLElementWithName(document.RootElement(), "body");
+	const tinyxml2::XMLElement * bodyElement = Utilities::findFirstXMLElementWithName(document.RootElement(), "body");
 
 	if(bodyElement == nullptr) {
 		spdlog::error("RedNukem download page XHTML is missing 'body' element.");

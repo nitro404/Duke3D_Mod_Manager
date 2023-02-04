@@ -297,6 +297,10 @@ SettingPanel * SettingPanel::createOptionalStringSettingPanel(std::optional<std:
 }
 
 StringChoiceSettingPanel * SettingPanel::createStringChoiceSettingPanel(std::string & setting, std::string defaultSetting, const std::string & name, const std::vector<std::string> & choices, wxWindow * parent, wxSizer * parentSizer) {
+	return createStringChoiceSettingPanel([&setting]() { return setting; }, [&setting](const std::string & newSetting) { setting = newSetting; return true; }, defaultSetting, name, choices, parent, parentSizer);
+}
+
+StringChoiceSettingPanel * SettingPanel::createStringChoiceSettingPanel(std::function<std::string()> getSettingValueFunction, std::function<bool(const std::string &)> setSettingValueFunction, std::string defaultSetting, const std::string & name, const std::vector<std::string> & choices, wxWindow * parent, wxSizer * parentSizer) {
 	if(parent == nullptr) {
 		return nullptr;
 	}
@@ -309,7 +313,7 @@ StringChoiceSettingPanel * SettingPanel::createStringChoiceSettingPanel(std::str
 
 	wxStaticText * settingLabel = new wxStaticText(settingPanel, wxID_ANY, name, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 	settingLabel->SetFont(settingLabel->GetFont().MakeBold());
-	wxComboBox * settingComboBox = new wxComboBox(settingPanel, wxID_ANY, setting, wxDefaultPosition, wxDefaultSize, WXUtilities::createItemWXArrayString(choices), 0, wxDefaultValidator, name);
+	wxComboBox * settingComboBox = new wxComboBox(settingPanel, wxID_ANY, getSettingValueFunction(), wxDefaultPosition, wxDefaultSize, WXUtilities::createItemWXArrayString(choices), 0, wxDefaultValidator, name);
 	settingComboBox->SetEditable(false);
 	settingComboBox->Bind(wxEVT_COMBOBOX, settingPanel->m_changedFunction, wxID_ANY, wxID_ANY);
 
@@ -317,12 +321,12 @@ StringChoiceSettingPanel * SettingPanel::createStringChoiceSettingPanel(std::str
 		return settingComboBox->GetValue();
 	};
 
-	settingPanel->m_saveFunction = [settingComboBox, &setting]() {
-		setting = settingComboBox->GetValue();
+	settingPanel->m_saveFunction = [settingComboBox, setSettingValueFunction]() {
+		setSettingValueFunction(settingComboBox->GetValue());
 	};
 
-	settingPanel->m_discardFunction = [settingComboBox, &setting]() {
-		settingComboBox->ChangeValue(setting);
+	settingPanel->m_discardFunction = [settingComboBox, getSettingValueFunction]() {
+		settingComboBox->ChangeValue(getSettingValueFunction());
 	};
 
 	settingPanel->m_resetFunction = [settingComboBox, defaultSetting]() {

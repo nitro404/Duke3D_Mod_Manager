@@ -1,0 +1,90 @@
+{
+	"fileFormatVersion": "1.0.0",
+	"dosboxDownloads": [
+		{
+			"name": "DOSBox",
+			"versions": [
+				{
+					"version": "0.74-3",
+					"releaseDate": "June 16, 2021",
+					"files": [
+						{
+							"fileName": "DOSBox0.74-3-win32-installer.exe",
+							"fileSize": 1493703,
+							"sha1": "c8c1f5a5d17336607c886444518e74e3d1a4e041",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x86"
+						},
+						{
+							"fileName": "DOSBox-0.74-3-3.dmg",
+							"fileSize": 4181094,
+							"sha1": "e32b2c4ab5d6f5430851811765b7176d0bfc4059",
+							"operatingSystem": "MacOS"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "DOSBox Staging",
+			"versions": [
+				{
+					"version": "0.80.1",
+					"releaseDate": "Janury 7, 2023",
+					"files": [
+						{
+							"fileName": "dosbox-staging-windows-x86_64-v0.80.1.zip",
+							"fileSize": 13133526,
+							"sha1": "0ea83d558873527fe026b94b24b6f0808bf45f15",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x64"
+						},
+						{
+							"fileName": "dosbox-staging-linux-v0.80.1.tar.xz",
+							"fileSize": 2599016,
+							"sha1": "cc3735ab1636bf555706695050179fa54dc277a7",
+							"operatingSystem": "Linux"
+						},
+						{
+							"fileName": "dosbox-staging-macOS-v0.80.1.dmg",
+							"fileSize": 8613000,
+							"sha1": "120b89250bbf7ae03193cca88eff92e965dfd44f",
+							"operatingSystem": "MacOS"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "DOSBox-X",
+			"versions": [
+				{
+					"version": "2022.12.26",
+					"releaseDate": "December 26, 2022",
+					"files": [
+						{
+							"fileName": "dosbox-x-vsbuild-win32-20221226190454.zip",
+							"fileSize": 39461265,
+							"sha1": "b9807305c24942fca1ccf90affb6f7d3d818768f",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x86"
+						},
+						{
+							"fileName": "dosbox-x-vsbuild-win64-20221226190454.zip",
+							"fileSize": 41533589,
+							"sha1": "a8303a3c0bfab6479689ac5c6b048a5c1fd9f31d",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x64"
+						},
+						{
+							"fileName": "dosbox-x-macosx-x86_64-20221226190321.zip",
+							"fileSize": 44983343,
+							"sha1": "3888e691dcfd97b203dd3620ea54d2f81204bd00",
+							"operatingSystem": "MacOS"
+						}
+					]
+				}
+			]
+		}
+	]
+}

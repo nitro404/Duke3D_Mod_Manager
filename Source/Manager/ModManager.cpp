@@ -1,5 +1,7 @@
 #include "ModManager.h"
 
+#include "DOSBox/DOSBoxManager.h"
+#include "DOSBox/DOSBoxVersion.h"
 #include "Download/DownloadManager.h"
 #include "Environment.h"
 #include "Game/GameLocator.h"
@@ -57,6 +59,7 @@
 using namespace std::chrono_literals;
 
 const GameType ModManager::DEFAULT_GAME_TYPE = GameType::Game;
+const std::string ModManager::DEFAULT_PREFERRED_DOSBOX_VERSION(DOSBoxVersion::DOSBOX.getName());
 const std::string ModManager::DEFAULT_PREFERRED_GAME_VERSION(GameVersion::ORIGINAL_ATOMIC_EDITION.getName());
 const std::string ModManager::HTTP_USER_AGENT("DukeNukem3DModManager/" + APPLICATION_VERSION);
 
@@ -69,6 +72,7 @@ ModManager::ModManager()
 	, m_selectedModVersionIndex(std::numeric_limits<size_t>::max())
 	, m_selectedModVersionTypeIndex(std::numeric_limits<size_t>::max())
 	, m_selectedModGameVersionIndex(std::numeric_limits<size_t>::max())
+	, m_dosboxManager(std::make_shared<DOSBoxManager>())
 	, m_gameVersions(std::make_shared<GameVersionCollection>())
 	, m_gameManager(std::make_shared<GameManager>())
 	, m_mods(std::make_shared<ModCollection>())
@@ -84,6 +88,7 @@ ModManager::ModManager()
 }
 
 ModManager::~ModManager() {
+	m_dosboxManager->getDOSBoxVersions()->removeListener(*this);
 	m_organizedMods->removeListener(*this);
 	m_gameVersions->removeListener(*this);
 
@@ -234,7 +239,24 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 
 	m_gameType = settings->gameType;
 
-	bool saveGameVersions = false;
+	if(!m_dosboxManager->initialize()) {
+		spdlog::error("Failed to initialize DOSBox manager!");
+		return false;
+	}
+
+	std::shared_ptr<DOSBoxVersionCollection> dosboxVersions(m_dosboxManager->getDOSBoxVersions());
+
+	m_preferredDOSBoxVersion = dosboxVersions->getDOSBoxVersionWithName(settings->preferredDOSBoxVersion);
+
+	if(m_preferredDOSBoxVersion == nullptr) {
+		m_preferredDOSBoxVersion = dosboxVersions->getDOSBoxVersion(0);
+		settings->preferredDOSBoxVersion = m_preferredDOSBoxVersion->getName();
+
+		spdlog::warn("DOSBox configuration for game version '{}' is missing, changing preferred game version to '{}.", settings->preferredDOSBoxVersion, m_preferredDOSBoxVersion->getName());
+	}
+
+	dosboxVersions->addListener(*this);
+
 	bool gameVersionsLoaded = m_gameVersions->loadFrom(settings->gameVersionsListFilePath);
 
 	if(!gameVersionsLoaded || m_gameVersions->numberOfGameVersions() == 0) {
@@ -360,6 +382,7 @@ bool ModManager::uninitialize() {
 	m_mods->clearMods();
 
 	settings->save(m_arguments.get());
+	m_dosboxManager->getDOSBoxVersions()->saveTo(settings->dosboxVersionsListFilePath);
 	m_gameVersions->saveTo(settings->gameVersionsListFilePath);
 
 	if(m_arguments != nullptr) {
@@ -441,6 +464,67 @@ void ModManager::setGameType(GameType gameType) {
 	}
 }
 
+bool ModManager::hasPreferredDOSBoxVersion() const {
+	return m_preferredDOSBoxVersion != nullptr;
+}
+
+std::shared_ptr<DOSBoxVersion> ModManager::getPreferredDOSBoxVersion() const {
+	return m_preferredDOSBoxVersion;
+}
+
+std::shared_ptr<DOSBoxVersion> ModManager::getSelectedDOSBoxVersion() const {
+	std::shared_ptr<DOSBoxVersion> selectedDOSBoxVersion;
+
+	if(m_arguments != nullptr && m_arguments->hasArgument("dosbox") && !m_arguments->getFirstValue("dosbox").empty()) {
+		std::string dosboxVersionName(m_arguments->getFirstValue("dosbox"));
+
+		selectedDOSBoxVersion = m_dosboxManager->getDOSBoxVersions()->getDOSBoxVersionWithName(dosboxVersionName);
+
+		if(selectedDOSBoxVersion == nullptr) {
+			spdlog::error("Could not find DOSBox version override for '{}'.", dosboxVersionName);
+		}
+	}
+
+	if(selectedDOSBoxVersion == nullptr) {
+		if(m_preferredDOSBoxVersion == nullptr) {
+			spdlog::error("No preferred DOSBox version selected.");
+			return nullptr;
+		}
+
+		selectedDOSBoxVersion = m_preferredDOSBoxVersion;
+	}
+
+	if(!DOSBoxVersion::isValid(selectedDOSBoxVersion.get())) {
+		spdlog::error("Invalid selected DOSBox version.");
+		return false;
+	}
+
+	return selectedDOSBoxVersion;
+}
+
+bool ModManager::setPreferredDOSBoxVersion(const std::string & dosboxVersionName) {
+	if(dosboxVersionName.empty()) {
+		return false;
+	}
+
+	return setPreferredDOSBoxVersion(m_dosboxManager->getDOSBoxVersions()->getDOSBoxVersionWithName(dosboxVersionName));
+}
+
+bool ModManager::setPreferredDOSBoxVersion(std::shared_ptr<DOSBoxVersion> dosboxVersion) {
+	if(dosboxVersion == nullptr || !dosboxVersion->isValid()) {
+		return false;
+	}
+
+	if(m_preferredDOSBoxVersion == nullptr || !Utilities::areStringsEqualIgnoreCase(m_preferredDOSBoxVersion->getName(), dosboxVersion->getName())) {
+		m_preferredDOSBoxVersion = dosboxVersion;
+		SettingsManager::getInstance()->preferredDOSBoxVersion = m_preferredDOSBoxVersion->getName();
+
+		notifyPreferredDOSBoxVersionChanged();
+	}
+
+	return true;
+}
+
 bool ModManager::hasPreferredGameVersion() const {
 	return m_preferredGameVersion != nullptr;
 }
@@ -516,6 +600,14 @@ bool ModManager::setPreferredGameVersion(std::shared_ptr<GameVersion> gameVersio
 	}
 
 	return true;
+}
+
+std::shared_ptr<DOSBoxManager> ModManager::getDOSBoxManager() const {
+	return m_dosboxManager;
+}
+
+std::shared_ptr<DOSBoxVersionCollection> ModManager::getDOSBoxVersions() const {
+	return m_dosboxManager->getDOSBoxVersions();
 }
 
 std::shared_ptr<GameVersionCollection> ModManager::getGameVersions() const {
@@ -1542,7 +1634,14 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 	segmentAnalytics->flush();
 
-	std::string workingDirectory(selectedGameVersion->doesRequireDOSBox() ? settings->dosboxDirectoryPath : selectedGameVersion->getGamePath());
+	std::shared_ptr<DOSBoxVersion> selectedDOSBoxVersion(getSelectedDOSBoxVersion());
+
+	if(!selectedDOSBoxVersion->isConfigured()) {
+		spdlog::error("Selected DOSBox version '{}' is not configured.", selectedDOSBoxVersion->getName());
+		return false;
+	}
+
+	std::string workingDirectory(selectedGameVersion->doesRequireDOSBox() ? selectedDOSBoxVersion->getDirectoryPath() : selectedGameVersion->getGamePath());
 
 	spdlog::info("Using working directory: '{}'.", workingDirectory);
 	spdlog::info("Executing command: {}", command);
@@ -1598,8 +1697,10 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 		return {};
 	}
 
-	if(selectedGameVersion->doesRequireDOSBox() && settings->dosboxDirectoryPath.empty()) {
-		spdlog::error("Empty DOSBox path.");
+	std::shared_ptr<DOSBoxVersion> selectedDOSBoxVersion(getSelectedDOSBoxVersion());
+
+	if(selectedGameVersion->doesRequireDOSBox() && !DOSBoxVersion::isConfigured(selectedDOSBoxVersion.get())) {
+		spdlog::error("Selected DOSBox version '{}' is not configured.", selectedDOSBoxVersion != nullptr ? selectedDOSBoxVersion->getName() : "N/A");
 		return {};
 	}
 
@@ -1906,6 +2007,18 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 	}
 
 	if(selectedGameVersion->doesRequireDOSBox()) {
+		std::shared_ptr<DOSBoxVersion> selectedDOSBoxVersion(getSelectedDOSBoxVersion());
+
+		if(selectedDOSBoxVersion == nullptr) {
+			spdlog::error("No DOSBox version selected.");
+			return {};
+		}
+
+		if(!selectedDOSBoxVersion->isConfigured()) {
+			spdlog::error("Selected DOSBox version '{}' is not configured.", selectedGameVersion->getName());
+			return {};
+		}
+
 		Script dosboxScript;
 
 		scriptArgs.addArgument("COMMAND", executableName + command.str());
@@ -1918,22 +2031,22 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			return {};
 		}
 
-		return generateDOSBoxCommand(dosboxScript, scriptArgs, Utilities::joinPaths(settings->dosboxDirectoryPath, settings->dosboxExecutableFileName), settings->dosboxArguments);
+		return generateDOSBoxCommand(dosboxScript, scriptArgs, *selectedDOSBoxVersion, settings->dosboxArguments);
 	}
 
 	return "\"" +  Utilities::joinPaths(selectedGameVersion->getGamePath(), executableName) + "\"" + command.str();
 }
 
-std::string ModManager::generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const std::string & dosboxPath, const std::string & dosboxArguments) const {
+std::string ModManager::generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const DOSBoxVersion & dosboxVersion, const std::string & dosboxArguments) const {
 	static const std::regex unescapedQuotesRegExp("(?:^\"|([^\\\\])\")");
 
-	if(dosboxPath.empty()) {
+	if(!dosboxVersion.isConfigured()) {
 		return std::string();
 	}
 
 	std::stringstream command;
 
-	command << fmt::format("\"{}\" {} ", dosboxPath, dosboxArguments);
+	command << fmt::format("\"{}\" {} ", Utilities::joinPaths(dosboxVersion.getDirectoryPath(), dosboxVersion.getExecutableName()), dosboxArguments);
 
 	std::string line;
 	std::string formattedLine;
@@ -2361,16 +2474,7 @@ size_t ModManager::checkAllModsForMissingFiles() const {
 size_t ModManager::checkForMissingExecutables() const {
 	size_t numberOfMissingExecutables = 0;
 
-	SettingsManager * settings = SettingsManager::getInstance();
-
-	std::string fullDOSBoxExecutablePath(Utilities::joinPaths(settings->dosboxDirectoryPath, settings->dosboxExecutableFileName));
-
-	if(!std::filesystem::is_regular_file(std::filesystem::path(fullDOSBoxExecutablePath))) {
-		numberOfMissingExecutables++;
-
-		spdlog::warn("Missing DOSBox executable: '{}'.", fullDOSBoxExecutablePath);
-	}
-
+	numberOfMissingExecutables += m_dosboxManager->getDOSBoxVersions()->checkForMissingExecutables();
 	numberOfMissingExecutables += m_gameVersions->checkForMissingExecutables();
 
 	return numberOfMissingExecutables++;
@@ -2748,6 +2852,7 @@ std::string ModManager::getArgumentHelpInfo() {
 	argumentHelpStream << APPLICATION_NAME << " version " << APPLICATION_VERSION << " arguments:\n";
 	argumentHelpStream << " -f \"Custom Settings.json\" - specifies an alternate settings file to use.\n";
 	argumentHelpStream << " --type Game/Setup/Client/Server - specifies game type, default: Game.\n";
+	argumentHelpStream << " --dosbox \"DOSBox Version\" - specifies the DOSBox version to use.\n";
 	argumentHelpStream << " --game \"Game Version\" - specifies the game version to run.\n";
 	argumentHelpStream << " --ip 127.0.0.1 - specifies host ip address if running in client mode.\n";
 	argumentHelpStream << " --port 1337 - specifies server port when running in client or server mode.\n";
@@ -3257,18 +3362,6 @@ std::string ModManager::generateDOSBoxTemplateScriptFileData(GameType gameType) 
 
 ModManager::Listener::~Listener() { }
 
-void ModManager::Listener::modSelectionChanged(const std::shared_ptr<Mod> & mod, size_t modVersionIndex, size_t modVersionTypeIndex, size_t modGameVersionIndex) { }
-
-void ModManager::Listener::gameTypeChanged(GameType gameType) { }
-
-void ModManager::Listener::preferredGameVersionChanged(const std::shared_ptr<GameVersion> & gameVersion) { }
-
-void ModManager::Listener::dosboxServerIPAddressChanged(const std::string & ipAddress) { }
-
-void ModManager::Listener::dosboxLocalServerPortChanged(uint16_t port) { }
-
-void ModManager::Listener::dosboxRemoteServerPortChanged(uint16_t port) { }
-
 size_t ModManager::numberOfListeners() const {
 	return m_listeners.size();
 }
@@ -3349,6 +3442,12 @@ void ModManager::notifyGameTypeChanged() {
 	}
 }
 
+void ModManager::notifyPreferredDOSBoxVersionChanged() {
+	for(Listener * listener : m_listeners) {
+		listener->preferredDOSBoxVersionChanged(m_preferredDOSBoxVersion);
+	}
+}
+
 void ModManager::notifyPreferredGameVersionChanged() {
 	for(Listener * listener : m_listeners) {
 		listener->preferredGameVersionChanged(m_preferredGameVersion);
@@ -3381,6 +3480,29 @@ void ModManager::notifyDOSBoxRemoteServerPortChanged() {
 
 void ModManager::selectedModChanged(const std::shared_ptr<Mod> & mod) {
 	setSelectedMod(mod);
+}
+
+void ModManager::dosboxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection) {
+	std::shared_ptr<DOSBoxVersionCollection> dosboxVersions(m_dosboxManager->getDOSBoxVersions());
+
+	if(m_preferredDOSBoxVersion != nullptr && !dosboxVersions->hasDOSBoxVersion(*m_preferredDOSBoxVersion.get())) {
+		SettingsManager * settings = SettingsManager::getInstance();
+
+		if(dosboxVersions->numberOfDOSBoxVersions() == 0) {
+			m_preferredDOSBoxVersion = nullptr;
+			settings->preferredDOSBoxVersion.clear();
+		}
+		else {
+			m_preferredDOSBoxVersion = dosboxVersions->getDOSBoxVersion(0);
+			settings->preferredDOSBoxVersion = m_preferredDOSBoxVersion->getName();
+		}
+	}
+}
+
+void ModManager::dosboxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion) {
+	if(m_preferredDOSBoxVersion.get() == &dosboxVersion) {
+		SettingsManager::getInstance()->preferredDOSBoxVersion = dosboxVersion.getName();
+	}
 }
 
 void ModManager::gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) {

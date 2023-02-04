@@ -58,14 +58,15 @@ static constexpr const char * DOWNLOADS_DIRECTORY_PATH_PROPERTY_NAME = DIRECTORY
 static constexpr const char * DOWNLOAD_CACHE_FILE_NAME_PROPERTY_NAME = "cacheFileName";
 static constexpr const char * MOD_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "mods";
 static constexpr const char * MAP_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "maps";
+static constexpr const char * DOSBOX_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "dosbox";
 static constexpr const char * GAME_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "games";
 
 static constexpr const char * CACHE_CATEGORY_NAME = "cache";
 static constexpr const char * CACHE_DIRECTORY_PATH_PROPERTY_NAME = DIRECTORY_PATH;
 
 static constexpr const char * DOSBOX_CATEGORY_NAME = "dosbox";
-static constexpr const char * DOSBOX_DIRECTORY_PATH_PROPERTY_NAME = DIRECTORY_PATH;
-static constexpr const char * DOSBOX_EXECUTABLE_FILE_NAME_PROPERTY_NAME = EXECUTABLE_FILE_NAME;
+static constexpr const char * DOSBOX_VERSIONS_LIST_FILE_PATH_PROPERTY_NAME = LIST_FILE_PATH;
+static constexpr const char * PREFERRED_DOSBOX_VERSION_PROPERTY_NAME = "preferred";
 static constexpr const char * DOSBOX_ARGUMENTS_PROPERTY_NAME = "arguments";
 static constexpr const char * DOSBOX_DATA_DIRECTORY_NAME_PROPERTY_NAME = DATA_DIRECTORY_NAME;
 
@@ -88,10 +89,12 @@ static constexpr const char * CURL_TRANSFER_TIMEOUT_PROPERTY_NAME = "transferTim
 static constexpr const char * API_CATEGORY_NAME = "api";
 static constexpr const char * API_BASE_URL_PROPERTY_NAME = "baseURL";
 static constexpr const char * REMOTE_MOD_LIST_FILE_NAME_PROPERTY_NAME = "remoteModListFileName";
+static constexpr const char * REMOTE_DOSBOX_VERSIONS_LIST_FILE_NAME_PROPERTY_NAME = "remoteDOSBoxVersionListFileName";
 static constexpr const char * REMOTE_GAME_LIST_FILE_NAME_PROPERTY_NAME = "remoteGameListFileName";
 static constexpr const char * REMOTE_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "remoteDownloadsDirectoryName";
 static constexpr const char * REMOTE_MOD_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "remoteModDownloadsDirectoryName";
 static constexpr const char * REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "remoteMapDownloadsDirectoryName";
+static constexpr const char * REMOTE_DOSBOX_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "remoteDOSBoxDownloadsDirectoryName";
 static constexpr const char * REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "remoteGameDownloadsDirectoryName";
 
 static constexpr const char * ANALYTICS_CATEGORY_NAME = "analytics";
@@ -105,6 +108,8 @@ static constexpr const char * DOWNLOAD_THROTTLING_CATEGORY_NAME = "downloadThrot
 static constexpr const char * DOWNLOAD_THROTTLING_ENABLED_PROPERTY_NAME = "enabled";
 static constexpr const char * MOD_LIST_LAST_DOWNLOADED_PROPERTY_NAME = "modListLastDownloaded";
 static constexpr const char * MOD_LIST_UPDATE_FREQUENCY_PROPERTY_NAME = "modListUpdateFrequency";
+static constexpr const char * DOSBOX_DOWNLOAD_LIST_LAST_DOWNLOADED_PROPERTY_NAME = "dosboxDownloadListLastDownloaded";
+static constexpr const char * DOSBOX_DOWNLOAD_LIST_UPDATE_FREQUENCY_PROPERTY_NAME = "dosboxDownloadListUpdateFrequency";
 static constexpr const char * GAME_DOWNLOAD_LIST_LAST_DOWNLOADED_PROPERTY_NAME = "gameDownloadListLastDownloaded";
 static constexpr const char * GAME_DOWNLOAD_LIST_UPDATE_FREQUENCY_PROPERTY_NAME = "gameDownloadListUpdateFrequency";
 static constexpr const char * CACERT_LAST_DOWNLOADED_PROPERTY_NAME = "cacertLastDownloaded";
@@ -135,18 +140,19 @@ const std::string SettingsManager::DEFAULT_DOWNLOADS_DIRECTORY_PATH("Downloads")
 const std::string SettingsManager::DEFAULT_DOWNLOAD_CACHE_FILE_NAME("Download Cache.json");
 const std::string SettingsManager::DEFAULT_MOD_DOWNLOADS_DIRECTORY_NAME("Mods");
 const std::string SettingsManager::DEFAULT_MAP_DOWNLOADS_DIRECTORY_NAME("Maps");
+const std::string SettingsManager::DEFAULT_DOSBOX_DOWNLOADS_DIRECTORY_NAME("DOSBox");
 const std::string SettingsManager::DEFAULT_GAME_DOWNLOADS_DIRECTORY_NAME("Games");
 const std::string SettingsManager::DEFAULT_DATA_DIRECTORY_PATH("Data");
 const std::string SettingsManager::DEFAULT_APP_TEMP_DIRECTORY_PATH("Temp");
 const std::string SettingsManager::DEFAULT_GAME_TEMP_DIRECTORY_NAME("Temp");
 const std::string SettingsManager::DEFAULT_TEMP_SYMLINK_NAME("Temp");
 const std::string SettingsManager::DEFAULT_CACHE_DIRECTORY_PATH("Cache");
-const std::string SettingsManager::DEFAULT_DOSBOX_EXECUTABLE_FILE_NAME("dosbox.exe");
-const std::string SettingsManager::DEFAULT_DOSBOX_DIRECTORY_PATH("DOSBox");
 const std::string SettingsManager::DEFAULT_DOSBOX_ARGUMENTS("-noconsole");
 const std::string SettingsManager::DEFAULT_DOSBOX_DATA_DIRECTORY_NAME("DOSBox");
 const GameType SettingsManager::DEFAULT_GAME_TYPE = ModManager::DEFAULT_GAME_TYPE;
 const std::string SettingsManager::DEFAULT_PREFERRED_GAME_VERSION(ModManager::DEFAULT_PREFERRED_GAME_VERSION);
+const std::string SettingsManager::DEFAULT_DOSBOX_VERSIONS_LIST_FILE_PATH("DOSBox Versions.json");
+const std::string SettingsManager::DEFAULT_PREFERRED_DOSBOX_VERSION(ModManager::DEFAULT_PREFERRED_DOSBOX_VERSION);
 const std::string SettingsManager::DEFAULT_DOSBOX_SERVER_IP_ADDRESS("127.0.0.1");
 const uint16_t SettingsManager::DEFAULT_DOSBOX_LOCAL_SERVER_PORT = 31337;
 const uint16_t SettingsManager::DEFAULT_DOSBOX_REMOTE_SERVER_PORT = 31337;
@@ -157,15 +163,18 @@ const std::chrono::seconds SettingsManager::DEFAULT_NETWORK_TIMEOUT = 30s;
 const std::chrono::seconds SettingsManager::DEFAULT_TRANSFER_TIMEOUT = 0s;
 const std::string SettingsManager::DEFAULT_API_BASE_URL("http://duke3dmods.com");
 const std::string SettingsManager::DEFAULT_REMOTE_MODS_LIST_FILE_NAME("duke3d_mods.xml");
+const std::string SettingsManager::DEFAULT_REMOTE_DOSBOX_VERSIONS_LIST_FILE_NAME("dosbox_versions.json");
 const std::string SettingsManager::DEFAULT_REMOTE_GAMES_LIST_FILE_NAME("duke3d_games.json");
 const std::string SettingsManager::DEFAULT_REMOTE_DOWNLOADS_DIRECTORY_NAME("downloads");
 const std::string SettingsManager::DEFAULT_REMOTE_MOD_DOWNLOADS_DIRECTORY_NAME("mods");
 const std::string SettingsManager::DEFAULT_REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME("maps");
+const std::string SettingsManager::DEFAULT_REMOTE_DOSBOX_DOWNLOADS_DIRECTORY_NAME("dosbox");
 const std::string SettingsManager::DEFAULT_REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME("games");
 const bool SettingsManager::DEFAULT_SEGMENT_ANALYTICS_ENABLED = true;
 const std::string SettingsManager::DEFAULT_SEGMENT_ANALYTICS_DATA_FILE_NAME("Segment Analytics Cache.json");
 const bool SettingsManager::DEFAULT_DOWNLOAD_THROTTLING_ENABLED = true;
 const std::chrono::minutes SettingsManager::DEFAULT_MOD_LIST_UPDATE_FREQUENCY = std::chrono::minutes(30);
+const std::chrono::minutes SettingsManager::DEFAULT_DOSBOX_DOWNLOAD_LIST_UPDATE_FREQUENCY = std::chrono::minutes(120);
 const std::chrono::minutes SettingsManager::DEFAULT_GAME_DOWNLOAD_LIST_UPDATE_FREQUENCY = std::chrono::minutes(60);
 const std::chrono::minutes SettingsManager::DEFAULT_CACERT_UPDATE_FREQUENCY = std::chrono::hours(2 * 24 * 7); // 2 weeks
 const std::chrono::minutes SettingsManager::DEFAULT_TIME_ZONE_DATA_UPDATE_FREQUENCY = std::chrono::hours(1 * 24 * 7); // 1 week
@@ -297,13 +306,13 @@ SettingsManager::SettingsManager()
 	, gameTempDirectoryName(DEFAULT_GAME_TEMP_DIRECTORY_NAME)
 	, tempSymlinkName(DEFAULT_TEMP_SYMLINK_NAME)
 	, cacheDirectoryPath(DEFAULT_CACHE_DIRECTORY_PATH)
-	, dosboxExecutableFileName(DEFAULT_DOSBOX_EXECUTABLE_FILE_NAME)
-	, dosboxDirectoryPath(DEFAULT_DOSBOX_DIRECTORY_PATH)
 	, dosboxArguments(DEFAULT_DOSBOX_ARGUMENTS)
 	, dosboxDataDirectoryName(DEFAULT_DOSBOX_DATA_DIRECTORY_NAME)
 	, dosboxServerIPAddress(DEFAULT_DOSBOX_SERVER_IP_ADDRESS)
 	, gameType(DEFAULT_GAME_TYPE)
 	, preferredGameVersion(DEFAULT_PREFERRED_GAME_VERSION)
+	, dosboxVersionsListFilePath(DEFAULT_DOSBOX_VERSIONS_LIST_FILE_PATH)
+	, preferredDOSBoxVersion(DEFAULT_PREFERRED_DOSBOX_VERSION)
 	, dosboxLocalServerPort(DEFAULT_DOSBOX_LOCAL_SERVER_PORT)
 	, dosboxRemoteServerPort(DEFAULT_DOSBOX_REMOTE_SERVER_PORT)
 	, timeZoneDataDirectoryName(DEFAULT_TIME_ZONE_DATA_DIRECTORY_NAME)
@@ -347,19 +356,20 @@ void SettingsManager::reset() {
 	downloadCacheFileName = DEFAULT_DOWNLOAD_CACHE_FILE_NAME;
 	modDownloadsDirectoryName = DEFAULT_MOD_DOWNLOADS_DIRECTORY_NAME;
 	mapDownloadsDirectoryName = DEFAULT_MAP_DOWNLOADS_DIRECTORY_NAME;
+	dosboxDownloadsDirectoryName = DEFAULT_DOSBOX_DOWNLOADS_DIRECTORY_NAME;
 	gameDownloadsDirectoryName = DEFAULT_GAME_DOWNLOADS_DIRECTORY_NAME;
 	dataDirectoryPath = DEFAULT_DATA_DIRECTORY_PATH;
 	appTempDirectoryPath = DEFAULT_APP_TEMP_DIRECTORY_PATH;
 	gameTempDirectoryName = DEFAULT_GAME_TEMP_DIRECTORY_NAME;
 	tempSymlinkName = DEFAULT_TEMP_SYMLINK_NAME;
 	cacheDirectoryPath = DEFAULT_CACHE_DIRECTORY_PATH;
-	dosboxExecutableFileName = DEFAULT_DOSBOX_EXECUTABLE_FILE_NAME;
-	dosboxDirectoryPath = DEFAULT_DOSBOX_DIRECTORY_PATH;
 	dosboxArguments = DEFAULT_DOSBOX_ARGUMENTS;
 	dosboxDataDirectoryName = DEFAULT_DOSBOX_DATA_DIRECTORY_NAME;
 	dosboxServerIPAddress = DEFAULT_DOSBOX_SERVER_IP_ADDRESS;
 	gameType = DEFAULT_GAME_TYPE;
 	preferredGameVersion = DEFAULT_PREFERRED_GAME_VERSION;
+	dosboxVersionsListFilePath = DEFAULT_DOSBOX_VERSIONS_LIST_FILE_PATH;
+	preferredDOSBoxVersion = DEFAULT_PREFERRED_DOSBOX_VERSION;
 	dosboxLocalServerPort = DEFAULT_DOSBOX_LOCAL_SERVER_PORT;
 	dosboxRemoteServerPort = DEFAULT_DOSBOX_REMOTE_SERVER_PORT;
 	timeZoneDataDirectoryName = DEFAULT_TIME_ZONE_DATA_DIRECTORY_NAME;
@@ -369,16 +379,20 @@ void SettingsManager::reset() {
 	transferTimeout = DEFAULT_TRANSFER_TIMEOUT;
 	apiBaseURL = DEFAULT_API_BASE_URL;
 	remoteModsListFileName = DEFAULT_REMOTE_MODS_LIST_FILE_NAME;
+	remoteDOSBoxVersionsListFileName = DEFAULT_REMOTE_DOSBOX_VERSIONS_LIST_FILE_NAME;
 	remoteGamesListFileName = DEFAULT_REMOTE_GAMES_LIST_FILE_NAME;
 	remoteDownloadsDirectoryName = DEFAULT_REMOTE_DOWNLOADS_DIRECTORY_NAME;
 	remoteModDownloadsDirectoryName = DEFAULT_REMOTE_MOD_DOWNLOADS_DIRECTORY_NAME;
 	remoteMapDownloadsDirectoryName = DEFAULT_REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME;
+	remoteDOSBoxDownloadsDirectoryName = DEFAULT_REMOTE_DOSBOX_DOWNLOADS_DIRECTORY_NAME;
 	remoteGameDownloadsDirectoryName = DEFAULT_REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME;
 	segmentAnalyticsEnabled = DEFAULT_SEGMENT_ANALYTICS_ENABLED;
 	segmentAnalyticsDataFileName = DEFAULT_SEGMENT_ANALYTICS_DATA_FILE_NAME;
 	downloadThrottlingEnabled = DEFAULT_DOWNLOAD_THROTTLING_ENABLED;
 	modListLastDownloadedTimestamp.reset();
 	modListUpdateFrequency = DEFAULT_MOD_LIST_UPDATE_FREQUENCY;
+	dosboxDownloadListLastDownloadedTimestamp.reset();
+	dosboxDownloadListUpdateFrequency = DEFAULT_DOSBOX_DOWNLOAD_LIST_UPDATE_FREQUENCY;
 	gameDownloadListLastDownloadedTimestamp.reset();
 	gameDownloadListUpdateFrequency = DEFAULT_GAME_DOWNLOAD_LIST_UPDATE_FREQUENCY;
 	cacertLastDownloadedTimestamp.reset();
@@ -466,6 +480,8 @@ rapidjson::Document SettingsManager::toJSON() const {
 	downloadsCategoryValue.AddMember(rapidjson::StringRef(MOD_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME), modDownloadsDirectoryNameValue, allocator);
 	rapidjson::Value mapDownloadsDirectoryNameValue(mapDownloadsDirectoryName.c_str(), allocator);
 	downloadsCategoryValue.AddMember(rapidjson::StringRef(MAP_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME), mapDownloadsDirectoryNameValue, allocator);
+	rapidjson::Value dosboxDownloadsDirectoryNameValue(dosboxDownloadsDirectoryName.c_str(), allocator);
+	downloadsCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME), dosboxDownloadsDirectoryNameValue, allocator);
 	rapidjson::Value gameDownloadsDirectoryNameValue(gameDownloadsDirectoryName.c_str(), allocator);
 	downloadsCategoryValue.AddMember(rapidjson::StringRef(GAME_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME), gameDownloadsDirectoryNameValue, allocator);
 
@@ -480,10 +496,10 @@ rapidjson::Document SettingsManager::toJSON() const {
 
 	rapidjson::Value dosboxCategoryValue(rapidjson::kObjectType);
 
-	rapidjson::Value dosboxDirectoryPathValue(dosboxDirectoryPath.c_str(), allocator);
-	dosboxCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_DIRECTORY_PATH_PROPERTY_NAME), dosboxDirectoryPathValue, allocator);
-	rapidjson::Value dosboxExecutableFileNameValue(dosboxExecutableFileName.c_str(), allocator);
-	dosboxCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_EXECUTABLE_FILE_NAME_PROPERTY_NAME), dosboxExecutableFileNameValue, allocator);
+	rapidjson::Value dosboxVersionsListFilePathValue(dosboxVersionsListFilePath.c_str(), allocator);
+	dosboxCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_VERSIONS_LIST_FILE_PATH_PROPERTY_NAME), dosboxVersionsListFilePathValue, allocator);
+	rapidjson::Value preferredDOSBoxVersionValue(preferredDOSBoxVersion.c_str(), allocator);
+	dosboxCategoryValue.AddMember(rapidjson::StringRef(PREFERRED_DOSBOX_VERSION_PROPERTY_NAME), preferredDOSBoxVersionValue, allocator);
 	rapidjson::Value dosboxArgumentsValue(dosboxArguments.c_str(), allocator);
 	dosboxCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_ARGUMENTS_PROPERTY_NAME), dosboxArgumentsValue, allocator);
 	rapidjson::Value dosboxDataDirectroryNameValue(dosboxDataDirectoryName.c_str(), allocator);
@@ -528,6 +544,8 @@ rapidjson::Document SettingsManager::toJSON() const {
 	apiCategoryValue.AddMember(rapidjson::StringRef(API_BASE_URL_PROPERTY_NAME), apiBaseURLValue, allocator);
 	rapidjson::Value remoteModsListFileNameValue(remoteModsListFileName.c_str(), allocator);
 	apiCategoryValue.AddMember(rapidjson::StringRef(REMOTE_MOD_LIST_FILE_NAME_PROPERTY_NAME), remoteModsListFileNameValue, allocator);
+	rapidjson::Value remoteDOSBoxListFileNameValue(remoteDOSBoxVersionsListFileName.c_str(), allocator);
+	apiCategoryValue.AddMember(rapidjson::StringRef(REMOTE_DOSBOX_VERSIONS_LIST_FILE_NAME_PROPERTY_NAME), remoteDOSBoxListFileNameValue, allocator);
 	rapidjson::Value remoteGamesListFileNameValue(remoteGamesListFileName.c_str(), allocator);
 	apiCategoryValue.AddMember(rapidjson::StringRef(REMOTE_GAME_LIST_FILE_NAME_PROPERTY_NAME), remoteGamesListFileNameValue, allocator);
 	rapidjson::Value remoteDownloadsDirectoryNameValue(remoteDownloadsDirectoryName.c_str(), allocator);
@@ -536,6 +554,8 @@ rapidjson::Document SettingsManager::toJSON() const {
 	apiCategoryValue.AddMember(rapidjson::StringRef(REMOTE_MOD_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME), remoteModDownloadsDirectoryNameValue, allocator);
 	rapidjson::Value remoteMapDownloadsDirectoryNameValue(remoteMapDownloadsDirectoryName.c_str(), allocator);
 	apiCategoryValue.AddMember(rapidjson::StringRef(REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME), remoteMapDownloadsDirectoryNameValue, allocator);
+	rapidjson::Value remoteDOSBoxDownloadsDirectoryNameValue(remoteDOSBoxDownloadsDirectoryName.c_str(), allocator);
+	apiCategoryValue.AddMember(rapidjson::StringRef(REMOTE_DOSBOX_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME), remoteDOSBoxDownloadsDirectoryNameValue, allocator);
 	rapidjson::Value remoteGameDownloadsDirectoryNameValue(remoteGameDownloadsDirectoryName.c_str(), allocator);
 	apiCategoryValue.AddMember(rapidjson::StringRef(REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME), remoteGameDownloadsDirectoryNameValue, allocator);
 
@@ -563,6 +583,13 @@ rapidjson::Document SettingsManager::toJSON() const {
 	}
 
 	downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(MOD_LIST_UPDATE_FREQUENCY_PROPERTY_NAME), rapidjson::Value(modListUpdateFrequency.count()), allocator);
+
+	if(dosboxDownloadListLastDownloadedTimestamp.has_value()) {
+		rapidjson::Value dosboxDownloadListLastDownloadedValue(Utilities::timePointToString(dosboxDownloadListLastDownloadedTimestamp.value(), Utilities::TimeFormat::ISO8601).c_str(), allocator);
+		downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_DOWNLOAD_LIST_LAST_DOWNLOADED_PROPERTY_NAME), dosboxDownloadListLastDownloadedValue, allocator);
+	}
+
+	downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_DOWNLOAD_LIST_UPDATE_FREQUENCY_PROPERTY_NAME), rapidjson::Value(dosboxDownloadListUpdateFrequency.count()), allocator);
 
 	if(gameDownloadListLastDownloadedTimestamp.has_value()) {
 		rapidjson::Value gameDownloadListLastDownloadedValue(Utilities::timePointToString(gameDownloadListLastDownloadedTimestamp.value(), Utilities::TimeFormat::ISO8601).c_str(), allocator);
@@ -687,6 +714,7 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 		assignStringSetting(downloadCacheFileName, downloadsCategoryValue, DOWNLOAD_CACHE_FILE_NAME_PROPERTY_NAME);
 		assignStringSetting(modDownloadsDirectoryName, downloadsCategoryValue, MOD_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
 		assignStringSetting(mapDownloadsDirectoryName, downloadsCategoryValue, MAP_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
+		assignStringSetting(dosboxDownloadsDirectoryName, downloadsCategoryValue, DOSBOX_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
 		assignStringSetting(gameDownloadsDirectoryName, downloadsCategoryValue, GAME_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
 	}
 
@@ -699,8 +727,8 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 	if(settingsDocument.HasMember(DOSBOX_CATEGORY_NAME) && settingsDocument[DOSBOX_CATEGORY_NAME].IsObject()) {
 		const rapidjson::Value & dosboxCategoryValue = settingsDocument[DOSBOX_CATEGORY_NAME];
 
-		assignStringSetting(dosboxDirectoryPath, dosboxCategoryValue, DOSBOX_DIRECTORY_PATH_PROPERTY_NAME);
-		assignStringSetting(dosboxExecutableFileName, dosboxCategoryValue, DOSBOX_EXECUTABLE_FILE_NAME_PROPERTY_NAME);
+		assignStringSetting(dosboxVersionsListFilePath, dosboxCategoryValue, DOSBOX_VERSIONS_LIST_FILE_PATH_PROPERTY_NAME);
+		assignStringSetting(preferredDOSBoxVersion, dosboxCategoryValue, PREFERRED_DOSBOX_VERSION_PROPERTY_NAME);
 		assignStringSetting(dosboxArguments, dosboxCategoryValue, DOSBOX_ARGUMENTS_PROPERTY_NAME);
 		assignStringSetting(dosboxDataDirectoryName, dosboxCategoryValue, DOSBOX_DATA_DIRECTORY_NAME_PROPERTY_NAME);
 
@@ -766,10 +794,12 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 
 		assignStringSetting(apiBaseURL, apiCategoryValue, API_BASE_URL_PROPERTY_NAME);
 		assignStringSetting(remoteModsListFileName, apiCategoryValue, REMOTE_MOD_LIST_FILE_NAME_PROPERTY_NAME);
+		assignStringSetting(remoteDOSBoxVersionsListFileName, apiCategoryValue, REMOTE_DOSBOX_VERSIONS_LIST_FILE_NAME_PROPERTY_NAME);
 		assignStringSetting(remoteGamesListFileName, apiCategoryValue, REMOTE_GAME_LIST_FILE_NAME_PROPERTY_NAME);
 		assignStringSetting(remoteDownloadsDirectoryName, apiCategoryValue, REMOTE_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
 		assignStringSetting(remoteModDownloadsDirectoryName, apiCategoryValue, REMOTE_MOD_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
 		assignStringSetting(remoteMapDownloadsDirectoryName, apiCategoryValue, REMOTE_MAP_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
+		assignStringSetting(remoteDOSBoxDownloadsDirectoryName, apiCategoryValue, REMOTE_DOSBOX_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
 		assignStringSetting(remoteGameDownloadsDirectoryName, apiCategoryValue, REMOTE_GAME_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
 	}
 
@@ -790,6 +820,8 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 		assignBooleanSetting(downloadThrottlingEnabled, downloadThrottlingValue, DOWNLOAD_THROTTLING_ENABLED_PROPERTY_NAME);
 		assignOptionalTimePointSetting(modListLastDownloadedTimestamp, downloadThrottlingValue, MOD_LIST_LAST_DOWNLOADED_PROPERTY_NAME);
 		assignChronoSetting(modListUpdateFrequency, downloadThrottlingValue, MOD_LIST_UPDATE_FREQUENCY_PROPERTY_NAME);
+		assignOptionalTimePointSetting(dosboxDownloadListLastDownloadedTimestamp, downloadThrottlingValue, DOSBOX_DOWNLOAD_LIST_LAST_DOWNLOADED_PROPERTY_NAME);
+		assignChronoSetting(dosboxDownloadListUpdateFrequency, downloadThrottlingValue, DOSBOX_DOWNLOAD_LIST_UPDATE_FREQUENCY_PROPERTY_NAME);
 		assignOptionalTimePointSetting(gameDownloadListLastDownloadedTimestamp, downloadThrottlingValue, GAME_DOWNLOAD_LIST_LAST_DOWNLOADED_PROPERTY_NAME);
 		assignChronoSetting(gameDownloadListUpdateFrequency, downloadThrottlingValue, GAME_DOWNLOAD_LIST_UPDATE_FREQUENCY_PROPERTY_NAME);
 		assignOptionalTimePointSetting(cacertLastDownloadedTimestamp, downloadThrottlingValue, CACERT_LAST_DOWNLOADED_PROPERTY_NAME);

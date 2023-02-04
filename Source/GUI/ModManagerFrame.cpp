@@ -1,6 +1,7 @@
 #include "ModManagerFrame.h"
 
 #include "ConsolePanel.h"
+#include "DOSBoxManagerPanel.h"
 #include "GameManagerPanel.h"
 #include "GroupEditorPanel.h"
 #include "ModBrowserPanel.h"
@@ -76,6 +77,9 @@ bool ModManagerFrame::initialize(std::shared_ptr<ModManager> modManager) {
 	if(modManager->isInitialized()) {
 		ModBrowserPanel * modBrowserPanel = new ModBrowserPanel(modManager, m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 		m_notebook->AddPage(modBrowserPanel, "Mod Browser");
+
+		DOSBoxManagerPanel * dosboxManagerPanel = new DOSBoxManagerPanel(modManager, m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+		m_notebook->AddPage(dosboxManagerPanel, "DOSBox Manager");
 
 		GameManagerPanel * gameManagerPanel = new GameManagerPanel(modManager->getGameManager(), m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 		m_notebook->AddPage(gameManagerPanel, "Game Manager");

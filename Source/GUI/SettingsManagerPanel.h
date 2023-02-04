@@ -1,6 +1,7 @@
 #ifndef _SETTINGS_MANAGER_PANEL_H_
 #define _SETTINGS_MANAGER_PANEL_H_
 
+#include "DOSBox/DOSBoxVersionCollection.h"
 #include "Game/GameVersionCollectionListener.h"
 #include "SettingPanel.h"
 
@@ -22,6 +23,7 @@ class ModManager;
 
 class SettingsManagerPanel final : public wxPanel,
 								   public SettingPanel::Listener,
+								   public DOSBoxVersionCollection::Listener,
 								   public GameVersionCollectionListener {
 public:
 	class Listener {
@@ -61,6 +63,10 @@ public:
 	// SettingPanel::Listener Virtuals
 	virtual void settingModified(SettingPanel & settingPanel) override;
 
+	// DOSBoxVersionCollection::Listener Virtuals
+	virtual void dosboxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection) override;
+	virtual void dosboxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion) override;
+
 	// GameVersionCollectionListener Virtuals
 	virtual void gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) override;
 	virtual void gameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) override;
@@ -73,6 +79,7 @@ private:
 
 	std::shared_ptr<ModManager> m_modManager;
 	std::vector<SettingPanel *> m_settingsPanels;
+	StringChoiceSettingPanel * m_preferredDOSBoxVersionSettingPanel;
 	StringChoiceSettingPanel * m_preferredGameVersionSettingPanel;
 	bool m_modified;
 	std::vector<Listener *> m_listeners;

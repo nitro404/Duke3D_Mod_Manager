@@ -28,6 +28,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	, m_modListFilterTypeComboBox(nullptr)
 	, m_modListSortTypeComboBox(nullptr)
 	, m_modListSortDirectionComboBox(nullptr)
+	, m_clearButton(nullptr)
 	, m_modListLabel(nullptr)
 	, m_modListBox(nullptr)
 	, m_modVersionListLabel(nullptr)
@@ -60,11 +61,12 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	, m_ipAddressTextField(nullptr)
 	, m_portLabel(nullptr)
 	, m_portTextField(nullptr)
+	, m_preferredDOSBoxVersionComboBox(nullptr)
 	, m_modGameTypeComboBox(nullptr)
 	, m_preferredGameVersionComboBox(nullptr)
-	, m_clearButton(nullptr)
 	, m_launchModButton(nullptr) {
 	m_modManager->addListener(*this);
+	m_modManager->getDOSBoxVersions()->addListener(*this);
 	m_modManager->getOrganizedMods()->addListener(*this);
 	m_modManager->getGameVersions()->addListener(*this);
 
@@ -98,6 +100,10 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_modListSortDirectionComboBox = new wxComboBox(modListOptionsPanel, wxID_ANY, std::string(magic_enum::enum_name(OrganizedModCollection::DEFAULT_SORT_DIRECTION)), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<OrganizedModCollection::SortDirection>(), 0, wxDefaultValidator, "Mod List Sort Direction");
 	m_modListSortDirectionComboBox->SetEditable(false);
 	m_modListSortDirectionComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onModListSortDirectionSelected, this);
+
+	m_clearButton = new wxButton(modListOptionsPanel, wxID_ANY, "Clear", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "Clear");
+	m_clearButton->Disable();
+	m_clearButton->Bind(wxEVT_BUTTON, &ModBrowserPanel::onClearButtonPressed, this);
 
 	wxPanel * modSelectionPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, "Mod Selection");
 
@@ -213,6 +219,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_portLabel = new wxStaticText(m_gameOptionsPanel, wxID_ANY, fmt::format("{}:", portLabelCaption), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_portLabel->SetFont(m_portLabel->GetFont().MakeBold());
 	m_portTextField = new wxTextCtrl(m_gameOptionsPanel, wxID_ANY, optionalDOSBoxServerPort.has_value() ? std::to_string(optionalDOSBoxServerPort.value()) : "", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "Server Port");
+	m_portTextField->SetMaxSize(wxSize(50, m_portTextField->GetMaxHeight()));
 	m_portTextField->Bind(wxEVT_TEXT, &ModBrowserPanel::onPortTextChanged, this);
 
 	if(m_modManager->getGameType() == GameType::Client || m_modManager->getGameType() == GameType::Server) {
@@ -221,6 +228,14 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	else {
 		m_portTextField->Disable();
 	}
+
+	std::shared_ptr<DOSBoxVersion> preferredDOSBoxVersion(m_modManager->getPreferredDOSBoxVersion());
+
+	wxStaticText * preferredDOSBoxVersionLabel = new wxStaticText(m_gameOptionsPanel, wxID_ANY, "DOSBox:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	preferredDOSBoxVersionLabel->SetFont(preferredDOSBoxVersionLabel->GetFont().MakeBold());
+	m_preferredDOSBoxVersionComboBox = new wxComboBox(m_gameOptionsPanel, wxID_ANY, preferredDOSBoxVersion == nullptr ? "" : preferredDOSBoxVersion->getName(), wxDefaultPosition, wxDefaultSize, WXUtilities::createItemWXArrayString(m_modManager->getDOSBoxVersions()->getDOSBoxVersionDisplayNames(false)), 0, wxDefaultValidator, "DOSBox Versions");
+	m_preferredDOSBoxVersionComboBox->SetEditable(false);
+	m_preferredDOSBoxVersionComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onPreferredDOSBoxVersionSelected, this);
 
 	wxStaticText * modGameTypeLabel = new wxStaticText(m_gameOptionsPanel, wxID_ANY, "Game Type:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	modGameTypeLabel->SetFont(modGameTypeLabel->GetFont().MakeBold());
@@ -232,13 +247,9 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 
 	wxStaticText * preferredGameVersionLabel = new wxStaticText(m_gameOptionsPanel, wxID_ANY, "Game Version:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	preferredGameVersionLabel->SetFont(preferredGameVersionLabel->GetFont().MakeBold());
-	m_preferredGameVersionComboBox = new wxComboBox(m_gameOptionsPanel, wxID_ANY, preferredGameVersion == nullptr ? "" : preferredGameVersion->getName(), wxDefaultPosition, wxDefaultSize, WXUtilities::createItemWXArrayString(GameVersionCollection::getGameVersionDisplayNamesFrom(m_modManager->getGameVersions()->getGameVersions(), false)), 0, wxDefaultValidator, "Mod Game Versions");
+	m_preferredGameVersionComboBox = new wxComboBox(m_gameOptionsPanel, wxID_ANY, preferredGameVersion == nullptr ? "" : preferredGameVersion->getName(), wxDefaultPosition, wxDefaultSize, WXUtilities::createItemWXArrayString(m_modManager->getGameVersions()->getGameVersionDisplayNames(false)), 0, wxDefaultValidator, "Mod Game Versions");
 	m_preferredGameVersionComboBox->SetEditable(false);
 	m_preferredGameVersionComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onPreferredGameVersionSelected, this);
-
-	m_clearButton = new wxButton(m_gameOptionsPanel, wxID_ANY, "Clear", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "Clear");
-	m_clearButton->Disable();
-	m_clearButton->Bind(wxEVT_BUTTON, &ModBrowserPanel::onClearButtonPressed, this);
 
 	m_launchModButton = new wxButton(m_gameOptionsPanel, wxID_ANY, "Launch Mod", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "Launch Mod");
 	m_launchModButton->Disable();
@@ -255,6 +266,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	modListOptionsSizer->Add(m_modListSortTypeComboBox, wxGBPosition(0, 5), wxGBSpan(1, 1), wxSTRETCH_NOT | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, border);
 	modListOptionsSizer->Add(modListSortDirectionLabel, wxGBPosition(0, 6), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
 	modListOptionsSizer->Add(m_modListSortDirectionComboBox, wxGBPosition(0, 7), wxGBSpan(1, 1), wxSTRETCH_NOT | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, border);
+	modListOptionsSizer->Add(m_clearButton, wxGBPosition(0, 8), wxGBSpan(1, 1), wxSTRETCH_NOT | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, border);
 	modListOptionsSizer->AddGrowableRow(0, 1);
 	modListOptionsSizer->AddGrowableCol(0, 6);
 	modListOptionsSizer->AddGrowableCol(1, 1);
@@ -264,6 +276,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	modListOptionsSizer->AddGrowableCol(5, 1);
 	modListOptionsSizer->AddGrowableCol(6, 1);
 	modListOptionsSizer->AddGrowableCol(7, 1);
+	modListOptionsSizer->AddGrowableCol(8, 1);
 	modListOptionsPanel->SetSizerAndFit(modListOptionsSizer);
 
 	wxGridBagSizer * modSelectionSizer = new wxGridBagSizer(0, 0);
@@ -319,12 +332,13 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	gameOptionsSizer->Add(m_ipAddressTextField, wxGBPosition(0, 1), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
 	gameOptionsSizer->Add(m_portLabel, wxGBPosition(0, 2), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
 	gameOptionsSizer->Add(m_portTextField, wxGBPosition(0, 3), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
-	gameOptionsSizer->Add(modGameTypeLabel, wxGBPosition(0, 4), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
-	gameOptionsSizer->Add(m_modGameTypeComboBox, wxGBPosition(0, 5), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
-	gameOptionsSizer->Add(preferredGameVersionLabel, wxGBPosition(0, 6), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
-	gameOptionsSizer->Add(m_preferredGameVersionComboBox, wxGBPosition(0, 7), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
-	gameOptionsSizer->Add(m_clearButton, wxGBPosition(0, 8), wxGBSpan(1, 1), wxSTRETCH_NOT | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, border);
-	gameOptionsSizer->Add(m_launchModButton, wxGBPosition(0, 9), wxGBSpan(1, 1), wxSTRETCH_NOT | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, border);
+	gameOptionsSizer->Add(preferredDOSBoxVersionLabel, wxGBPosition(0, 4), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
+	gameOptionsSizer->Add(m_preferredDOSBoxVersionComboBox, wxGBPosition(0, 5), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
+	gameOptionsSizer->Add(modGameTypeLabel, wxGBPosition(0, 6), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
+	gameOptionsSizer->Add(m_modGameTypeComboBox, wxGBPosition(0, 7), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
+	gameOptionsSizer->Add(preferredGameVersionLabel, wxGBPosition(0, 8), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
+	gameOptionsSizer->Add(m_preferredGameVersionComboBox, wxGBPosition(0, 9), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
+	gameOptionsSizer->Add(m_launchModButton, wxGBPosition(0, 10), wxGBSpan(1, 1), wxSTRETCH_NOT | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, border);
 	gameOptionsSizer->AddGrowableRow(0, 1);
 	gameOptionsSizer->AddGrowableCol(0, 1);
 	gameOptionsSizer->AddGrowableCol(1, 1);
@@ -335,6 +349,8 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	gameOptionsSizer->AddGrowableCol(6, 1);
 	gameOptionsSizer->AddGrowableCol(7, 1);
 	gameOptionsSizer->AddGrowableCol(8, 1);
+	gameOptionsSizer->AddGrowableCol(9, 1);
+	gameOptionsSizer->AddGrowableCol(10, 1);
 	m_gameOptionsPanel->SetSizerAndFit(gameOptionsSizer);
 
 	wxBoxSizer * modBrowserSizer = new wxBoxSizer(wxVERTICAL);
@@ -346,6 +362,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 
 ModBrowserPanel::~ModBrowserPanel() {
 	m_modManager->removeListener(*this);
+	m_modManager->getDOSBoxVersions()->removeListener(*this);
 	m_modManager->getOrganizedMods()->removeListener(*this);
 	m_modManager->getGameVersions()->removeListener(*this);
 }
@@ -354,6 +371,7 @@ void ModBrowserPanel::update() {
 	updateModListFilterType();
 	updateModListSortOptions();
 	updateModGameType();
+	updatePreferredDOSBoxVersion();
 	updatePreferredGameVersion();
 	updateModSelection();
 }
@@ -738,6 +756,28 @@ void ModBrowserPanel::updateModInfo() {
 	}
 }
 
+void ModBrowserPanel::updatePreferredDOSBoxVersion() {
+	std::shared_ptr<DOSBoxVersion> preferredDOSBoxVersion(m_modManager->getPreferredDOSBoxVersion());
+
+	if(preferredDOSBoxVersion == nullptr) {
+		return;
+	}
+
+	size_t preferredDOSBoxVersionIndex = m_modManager->getDOSBoxVersions()->indexOfDOSBoxVersion(*preferredDOSBoxVersion);
+
+	if(preferredDOSBoxVersionIndex == std::numeric_limits<size_t>::max()) {
+		return;
+	}
+
+	m_preferredDOSBoxVersionComboBox->SetSelection(preferredDOSBoxVersionIndex);
+}
+
+void ModBrowserPanel::updatePreferredDOSBoxVersionList() {
+	m_preferredDOSBoxVersionComboBox->Set(WXUtilities::createItemWXArrayString(m_modManager->getDOSBoxVersions()->getDOSBoxVersionDisplayNames(false)));
+
+	updatePreferredDOSBoxVersion();
+}
+
 void ModBrowserPanel::updateModGameType() {
 	std::optional<uint64_t> optionalGameTypeIndex = magic_enum::enum_index(m_modManager->getGameType());
 
@@ -971,6 +1011,14 @@ void ModBrowserPanel::onModGameVersionSelected(wxCommandEvent & event) {
 	m_launchModButton->Enable();
 }
 
+void ModBrowserPanel::onPreferredDOSBoxVersionSelected(wxCommandEvent & event) {
+	int selectedDOSBoxVersionIndex = m_preferredDOSBoxVersionComboBox->GetSelection();
+
+	if(selectedDOSBoxVersionIndex != wxNOT_FOUND) {
+		m_modManager->setPreferredDOSBoxVersion(m_modManager->getDOSBoxVersions()->getDOSBoxVersion(selectedDOSBoxVersionIndex));
+	}
+}
+
 void ModBrowserPanel::onModGameTypeSelected(wxCommandEvent & event) {
 	int selectedModGameTypeIndex = m_modGameTypeComboBox->GetSelection();
 
@@ -1068,6 +1116,7 @@ void ModBrowserPanel::onLaunchModButtonPressed(wxCommandEvent & event) {
 	size_t selectedModVersionTypeIndex = m_modManager->getSelectedModVersionTypeIndex();
 	std::string fullModName(selectedMod->getFullName(selectedModVersionIndex, selectedModVersionTypeIndex));
 	std::shared_ptr<GameVersion> selectedGameVersion(m_modManager->getSelectedGameVersion());
+	std::shared_ptr<DOSBoxVersion> selectedDOSBoxVersion(m_modManager->getSelectedDOSBoxVersion());
 
 	if(!m_modManager->isModSupportedOnSelectedGameVersion()) {
 		std::vector<std::shared_ptr<ModGameVersion>> * modGameVersions = nullptr;
@@ -1183,9 +1232,24 @@ void ModBrowserPanel::onLaunchModButtonPressed(wxCommandEvent & event) {
 		if(!activeGameVersion->isConfigured()) {
 			wxMessageBox(
 				fmt::format(
-					"Failed to launch '{}', game version '{}' is not configured.",
+					"Failed to launch '{}', game version '{}' is not configured/installed.",
 					selectedMod->getName(),
 					activeGameVersion->getName()
+				),
+				"Launch Failed",
+				wxOK | wxICON_ERROR,
+				this
+			);
+
+			return;
+		}
+
+		if(activeGameVersion->doesRequireDOSBox() && !selectedDOSBoxVersion->isConfigured()) {
+			wxMessageBox(
+				fmt::format(
+					"Failed to launch '{}', '{}' is not configured/installed.",
+					selectedMod->getName(),
+					selectedDOSBoxVersion->getName()
 				),
 				"Launch Failed",
 				wxOK | wxICON_ERROR,
@@ -1221,6 +1285,10 @@ void ModBrowserPanel::gameTypeChanged(GameType gameType) {
 	updateDOSBoxServerSettings();
 }
 
+void ModBrowserPanel::preferredDOSBoxVersionChanged(const std::shared_ptr<DOSBoxVersion> & dosboxVersion) {
+	updatePreferredDOSBoxVersion();
+}
+
 void ModBrowserPanel::preferredGameVersionChanged(const std::shared_ptr<GameVersion> & gameVersion) {
 	updatePreferredGameVersion();
 }
@@ -1230,13 +1298,13 @@ void ModBrowserPanel::dosboxServerIPAddressChanged(const std::string & ipAddress
 }
 
 void ModBrowserPanel::dosboxLocalServerPortChanged(uint16_t port) {
-	if(m_modManager->getGameType() == GameType::Client) {
+	if(m_modManager->getGameType() == GameType::Server) {
 		m_portTextField->SetValue(std::to_string(port));
 	}
 }
 
 void ModBrowserPanel::dosboxRemoteServerPortChanged(uint16_t port) {
-	if(m_modManager->getGameType() == GameType::Server) {
+	if(m_modManager->getGameType() == GameType::Client) {
 		m_portTextField->SetValue(std::to_string(port));
 	}
 }
@@ -1283,6 +1351,14 @@ void ModBrowserPanel::organizedModTeamCollectionChanged(const std::vector<std::s
 
 void ModBrowserPanel::organizedModAuthorCollectionChanged(const std::vector<std::shared_ptr<ModAuthorInformation>> & organizedMods) {
 	updateModList();
+}
+
+void ModBrowserPanel::dosboxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection) {
+	updatePreferredDOSBoxVersionList();
+}
+
+void ModBrowserPanel::dosboxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion) {
+	updatePreferredDOSBoxVersionList();
 }
 
 void ModBrowserPanel::gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) {

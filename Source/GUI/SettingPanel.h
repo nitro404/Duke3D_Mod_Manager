@@ -1,6 +1,7 @@
 #ifndef _SETTING_PANEL_H_
 #define _SETTING_PANEL_H_
 
+#include <Utilities/StringUtilities.h>
 #include <Utilities/Utilities.h>
 
 #include <fmt/core.h>
@@ -60,6 +61,8 @@ public:
 	template <typename T>
 	static SettingPanel * createIntegerSettingPanel(T & setting, T defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, size_t minValue = std::numeric_limits<T>::min(), size_t maxValue = std::numeric_limits<T>::max(), std::function<bool(const SettingPanel *)> customValidatorFunction = nullptr);
 	template <typename T>
+	static SettingPanel * createIntegerSettingPanel(std::function<T()> getSettingValueFunction, std::function<void(T)> setSettingValueFunction, T defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, size_t minValue = std::numeric_limits<T>::min(), size_t maxValue = std::numeric_limits<T>::max(), std::function<bool(const SettingPanel *)> customValidatorFunction = nullptr);
+	template <typename T>
 	static SettingPanel * createChronoSettingPanel(T & setting, T defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, std::function<bool(const SettingPanel *)> customValidatorFunction = nullptr);
 	static SettingPanel * createStringSettingPanel(std::string & setting, std::string defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, size_t minLength = 0, size_t maxLength = std::numeric_limits<size_t>::max(), std::function<bool(const SettingPanel *)> customValidatorFunction = nullptr);
 	template <typename R>
@@ -70,6 +73,7 @@ public:
 	template <typename E>
 	static SettingPanel * createEnumSettingPanel(E & setting, E defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer);
 	static StringChoiceSettingPanel * createStringChoiceSettingPanel(std::string & setting, std::string defaultSetting, const std::string & name, const std::vector<std::string> & choices, wxWindow * parent, wxSizer * parentSizer);
+	static StringChoiceSettingPanel * createStringChoiceSettingPanel(std::function<std::string()> getSettingValueFunction, std::function<bool(const std::string &)> setSettingValueFunction, std::string defaultSetting, const std::string & name, const std::vector<std::string> & choices, wxWindow * parent, wxSizer * parentSizer);
 	static SettingPanel * createStringMultiChoiceSettingPanel(std::vector<std::string> & setting, const std::string & name, bool caseSensitive, const std::vector<std::string> & choices, wxWindow * parent, size_t minimumNumberOfSelectedItems = 0, wxSizer * parentSizer = nullptr);
 	static SettingPanel * createStringMultiChoiceSettingPanel(std::function<const std::vector<std::string> &()> getSettingValueFunction, std::function<bool(const std::string &)> hasSettingEntryFunction, std::function<bool(const std::string &)> addSettingEntryFunction, std::function<bool(const std::string &)> removeSettingEntryFunction, const std::string & name, bool caseSensitive, const std::vector<std::string> & choices, wxWindow * parent, size_t minimumNumberOfSelectedItems = 0, wxSizer * parentSizer = nullptr);
 	template <typename E>
@@ -114,7 +118,12 @@ private:
 };
 
 template <typename T>
-static SettingPanel * SettingPanel::createIntegerSettingPanel(T & setting, T defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, size_t minValue, size_t maxValue, std::function<bool(const SettingPanel *)> customValidatorFunction) {
+SettingPanel * SettingPanel::createIntegerSettingPanel(T & setting, T defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, size_t minValue, size_t maxValue, std::function<bool(const SettingPanel *)> customValidatorFunction) {
+	return createIntegerSettingPanel<T>([&setting]() { return setting; }, [&setting](T newSetting) { setting = newSetting; }, defaultSetting, name, parent, parentSizer, minValue, maxValue, customValidatorFunction);
+}
+
+template <typename T>
+SettingPanel * SettingPanel::createIntegerSettingPanel(std::function<T()> getSettingValueFunction, std::function<void(T)> setSettingValueFunction, T defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, size_t minValue, size_t maxValue, std::function<bool(const SettingPanel *)> customValidatorFunction) {
 	if(parent == nullptr) {
 		return nullptr;
 	}
@@ -129,7 +138,7 @@ static SettingPanel * SettingPanel::createIntegerSettingPanel(T & setting, T def
 
 	wxStaticText * settingLabel = new wxStaticText(settingPanel, wxID_ANY, name, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 	settingLabel->SetFont(settingLabel->GetFont().MakeBold());
-	wxTextCtrl * settingTextField = new wxTextCtrl(settingPanel, wxID_ANY, std::to_string(setting), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, name);
+	wxTextCtrl * settingTextField = new wxTextCtrl(settingPanel, wxID_ANY, std::to_string(getSettingValueFunction()), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, name);
 	settingTextField->Bind(wxEVT_TEXT, settingPanel->m_changedFunction, wxID_ANY, wxID_ANY);
 
 	settingPanel->m_getValueFunction = [settingTextField]() {
@@ -158,17 +167,17 @@ static SettingPanel * SettingPanel::createIntegerSettingPanel(T & setting, T def
 		}
 	};
 
-	settingPanel->m_saveFunction = [settingTextField, &setting]() {
+	settingPanel->m_saveFunction = [settingTextField, setSettingValueFunction]() {
 		if(std::is_signed<T>()) {
-			setting = static_cast<T>(Utilities::parseLong(settingTextField->GetValue(), nullptr));
+			setSettingValueFunction(static_cast<T>(Utilities::parseLong(settingTextField->GetValue(), nullptr)));
 		}
 		else {
-			setting = static_cast<T>(Utilities::parseUnsignedLong(settingTextField->GetValue(), nullptr));
+			setSettingValueFunction(static_cast<T>(Utilities::parseUnsignedLong(settingTextField->GetValue(), nullptr)));
 		}
 	};
 
-	settingPanel->m_discardFunction = [settingTextField, &setting]() {
-		settingTextField->ChangeValue(std::to_string(setting));
+	settingPanel->m_discardFunction = [settingTextField, getSettingValueFunction]() {
+		settingTextField->ChangeValue(std::to_string(getSettingValueFunction()));
 	};
 
 	settingPanel->m_resetFunction = [settingTextField, defaultSetting]() {
@@ -192,7 +201,7 @@ static SettingPanel * SettingPanel::createIntegerSettingPanel(T & setting, T def
 }
 
 template <typename T>
-static SettingPanel * SettingPanel::createChronoSettingPanel(T & setting, T defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, std::function<bool(const SettingPanel *)> customValidatorFunction) {
+SettingPanel * SettingPanel::createChronoSettingPanel(T & setting, T defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, std::function<bool(const SettingPanel *)> customValidatorFunction) {
 	if(parent == nullptr) {
 		return nullptr;
 	}
@@ -403,7 +412,7 @@ SettingPanel * SettingPanel::createOptionalStringSettingPanel(std::function<std:
 }
 
 template <typename E>
-static SettingPanel * SettingPanel::createEnumSettingPanel(E & setting, E defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer) {
+SettingPanel * SettingPanel::createEnumSettingPanel(E & setting, E defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer) {
 	if(parent == nullptr) {
 		return nullptr;
 	}

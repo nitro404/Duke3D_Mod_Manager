@@ -901,7 +901,7 @@ const std::string & GameVersion::getWebsite() const {
 void GameVersion::setWebsite(const std::string & website) {
 	std::string formattedWebsite(Utilities::trimString(website));
 
-	if(Utilities::areStringsEqual(m_website, website)) {
+	if(Utilities::areStringsEqual(m_website, formattedWebsite)) {
 		return;
 	}
 
@@ -1681,7 +1681,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & playDemoArgumentFlagValue = gameVersionValue[JSON_PLAY_DEMO_ARGUMENT_FLAG_PROPERTY_NAME];
 
 		if(!playDemoArgumentFlagValue.IsString()) {
-			spdlog::error("Mod file '{}' property has invalid type: '{}', expected 'string'.", JSON_PLAY_DEMO_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(playDemoArgumentFlagValue.GetType()));
+			spdlog::error("Game version '{}' property has invalid type: '{}', expected 'string'.", JSON_PLAY_DEMO_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(playDemoArgumentFlagValue.GetType()));
 			return nullptr;
 		}
 
@@ -1816,7 +1816,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & defFileArgumentFlagValue = gameVersionValue[JSON_DEF_FILE_ARGUMENT_FLAG_PROPERTY_NAME];
 
 		if(!defFileArgumentFlagValue.IsString()) {
-			spdlog::error("Mod file '{}' property has invalid type: '{}', expected 'string'.", JSON_DEF_FILE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(defFileArgumentFlagValue.GetType()));
+			spdlog::error("Game version '{}' property has invalid type: '{}', expected 'string'.", JSON_DEF_FILE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(defFileArgumentFlagValue.GetType()));
 			return nullptr;
 		}
 
@@ -1852,7 +1852,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & websiteValue = gameVersionValue[JSON_WEBSITE_PROPERTY_NAME];
 
 		if(!websiteValue.IsString()) {
-			spdlog::error("Mod file '{}' property has invalid type: '{}', expected 'string'.", JSON_WEBSITE_PROPERTY_NAME, Utilities::typeToString(websiteValue.GetType()));
+			spdlog::error("Game version '{}' property has invalid type: '{}', expected 'string'.", JSON_WEBSITE_PROPERTY_NAME, Utilities::typeToString(websiteValue.GetType()));
 			return nullptr;
 		}
 
@@ -1864,7 +1864,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & sourceCodeURLValue = gameVersionValue[JSON_SOURCE_CODE_URL_PROPERTY_NAME];
 
 		if(!sourceCodeURLValue.IsString()) {
-			spdlog::error("Mod file '{}' property has invalid type: '{}', expected 'string'.", JSON_SOURCE_CODE_URL_PROPERTY_NAME, Utilities::typeToString(sourceCodeURLValue.GetType()));
+			spdlog::error("Game version '{}' property has invalid type: '{}', expected 'string'.", JSON_SOURCE_CODE_URL_PROPERTY_NAME, Utilities::typeToString(sourceCodeURLValue.GetType()));
 			return nullptr;
 		}
 
@@ -1962,6 +1962,10 @@ std::optional<GameVersion::OperatingSystem> GameVersion::convertOperatingSystemT
 bool GameVersion::isConfigured() const {
 	return isValid() &&
 		   !m_gamePath.empty();
+}
+
+bool GameVersion::isConfigured(const GameVersion * gameVersion) {
+	return gameVersion != nullptr && gameVersion->isConfigured();
 }
 
 bool GameVersion::isValid() const {
