@@ -8952,4 +8952,23 @@
 			<mod id="lameduke_forever"/>
 		</related>
 	</mod>
+	<mod name="Phoenix Holocaust" id="phoenix_holocaust" type="Total Conversion" website="https://www.moddb.com/mods/phoenix-holocaust">
+		<team country="Italy">
+			<member name="Mark Kaminari" alias="MarkKaminari00" website="https://www.youtube.com/@markkaminari007"/>
+		</team>
+		<files>
+			<version release_date="April 3, 2022">
+				<type>
+					<game type="JFDuke3D" state="Native">
+						<file name="PHOENIX.CON" type="con" sha1="3d5988a400499bb001d1c29b80a19afef623cd63"/>
+						<file name="PHOENIX.GRP" type="grp" sha1="ce42cdda0fda4c06e35b3256424dcf0a46091cbd"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Phoenix_holocaust-.zip" game="JFDuke3D" type="Original Files" sha1="2ad62a2358dc45ba397004efa39471a702be33aa"/>
+			<download filename="Phoenix_Holocaust-ModMgrJF.zip" game="JFDuke3D" type="Mod Manager Files" state="Native" sha1="512c2f9148110b73d000a255f877f44dd38a656d"/>
+		</downloads>
+	</mod>
 </mods>
