@@ -64,8 +64,8 @@ GameVersionPanel::GameVersionPanel(std::shared_ptr<GameVersion> gameVersion, wxW
 
 	std::vector<std::string> compatibleGameVersionNames(GameVersionCollection::getGameVersionDisplayNamesFrom(GameVersion::DEFAULT_GAME_VERSIONS, false));
 
-	std::vector<std::string>::const_iterator currentGameVersionNameIterator(std::find_if(compatibleGameVersionNames.cbegin(), compatibleGameVersionNames.cend(), [gameVersion](const std::string & currentGameVersionName) {
-		return Utilities::areStringsEqualIgnoreCase(gameVersion->getName(), currentGameVersionName);
+	std::vector<std::string>::const_iterator currentGameVersionNameIterator(std::find_if(compatibleGameVersionNames.cbegin(), compatibleGameVersionNames.cend(), [this](const std::string & currentGameVersionName) {
+		return Utilities::areStringsEqualIgnoreCase(m_gameVersion->getName(), currentGameVersionName);
 	}));
 
 	if(currentGameVersionNameIterator != compatibleGameVersionNames.cend()) {
