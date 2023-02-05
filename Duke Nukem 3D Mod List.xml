@@ -8240,6 +8240,9 @@
 			<download filename="lame_Duke_in_Duke_3d.rar" version="0.02" game="eDuke32" type="Original Files" sha1="fb383e2eaee167e2c092a136d687b258a1c088dd"/>
 			<download filename="Lameduke_Forever_0.02-ModMgrE.zip" version="0.02" game="eDuke32" type="Mod Manager Files" state="Native" sha1="08c70af2f8e8073af1e33918d0db191183e70b2a"/>
 		</downloads>
+		<related>
+			<mod id="lameduke_95_redux"/>
+		</related>
 	</mod>
 	<mod name="Duke Nukem 64" id="duke_nukem_64" type="Total Conversion" version="0.9.3" website="https://www.moddb.com/mods/dn64">
 		<team>
@@ -8926,5 +8929,27 @@
 			<download filename="Duke_Nukem_Extinction_Demo_1-ModMgrE.zip" version="Demo 1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="55fe38a5e7315c156f366b22061bcc2bd6d7a5dd"/>
 			<download filename="Duke_Nukem_Extinction_Demo_2-ModMgrE.zip" version="Demo 2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b7815766353373d140a8efc744d0f3cae8fee27c"/>
 		</downloads>
+	</mod>
+	<mod name="Lameduke 95 Redux" id="lameduke_95_redux" type="Total Conversion" website="https://www.moddb.com/mods/lameduke-redux">
+		<team country="Italy">
+			<member name="Mark Kaminari" alias="MarkKaminari00" website="https://www.youtube.com/@markkaminari007"/>
+		</team>
+		<files>
+			<version release_date="November 30, 2022">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="LD95RDUX.CON" type="con" sha1="1100dd831fccbe232f31db4ac7f42eadba7e9a00"/>
+						<file name="Lameduke_95_Redux.zip" type="zip" sha1="83a5f4210304bd7a59059ea2f6cbf5a1b46d7c30"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="LAME95REDUX.ZIP" game="eDuke32" type="Original Files" sha1="f35a1f3a9add6c7a9fe0a258de1b7c61b577721b"/>
+			<download filename="Lameduke_95_Redux-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="1366a320fac7e893cb7276fa9bde71b2c6147d3d"/>
+		</downloads>
+		<related>
+			<mod id="lameduke_forever"/>
+		</related>
 	</mod>
 </mods>
