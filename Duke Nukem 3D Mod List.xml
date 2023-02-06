@@ -8469,6 +8469,7 @@
 		</downloads>
 		<similar>
 			<mod id="lameduke_95_redux"/>
+			<mod id="duke_nukem_3d_legacy_edition"/>
 		</similar>
 	</mod>
 	<mod name="Duke Nukem 64" id="duke_nukem_64" type="Total Conversion" version="0.9.3" website="https://www.moddb.com/mods/dn64">
@@ -9234,6 +9235,7 @@
 		</downloads>
 		<similar>
 			<mod id="lameduke_forever"/>
+			<mod id="duke_nukem_3d_legacy_edition"/>
 		</similar>
 	</mod>
 	<mod name="Phoenix Holocaust" id="phoenix_holocaust" type="Total Conversion" website="https://www.moddb.com/mods/phoenix-holocaust">
@@ -9312,6 +9314,43 @@
 			<download filename="DNA4PC.zip" filesize="17515368" version="Alpha" game="Atomic" type="Original Files" sha1="8294ee7ad949c15fcaceba56dbf33de2f55e7d7e"/>
 			<download filename="Duke_Nukem_Advance_4_PC_Alpha-ModMgrA.zip" filesize="319063" version="Alpha" game="Atomic" type="Mod Manager Files" state="Native" sha1="4e61fc5d7320c9c98ec750926d7aaa5d4236ee5b"/>
 		</downloads>
+	</mod>
+	<mod name="Duke Nukem 3D - Legacy Edition" id="duke_nukem_3d_legacy_edition" type="Total Conversion" version="1.2.3" website="https://www.moddb.com/mods/duke-nukem-3d-legacy-edition">
+		<team country="Brazil">
+			<member name="Março Aurélio Andrade" alias="marcolino123" discord="marcolino123#1304" website="https://www.moddb.com/members/marcolino123"/>
+		</team>
+		<files>
+			<version id="1.1" release_date="November 4, 2022">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="LEGACYE.CON" type="con" sha1="TODO_SHA1"/>
+						<file name="legacy.def" type="def" sha1="TODO_SHA1"/>
+						<file name="Duke_Nukem_3D_-_Legacy_Edition_1.1.zip" type="zip" sha1="TODO_SHA1"/>
+					</game>
+				</type>
+			</version>
+			<version id="1.2.3" release_date="November 18, 2022">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="LEGACYE.CON" type="con" sha1="TODO_SHA1"/>
+						<file name="legacy.def" type="def" sha1="TODO_SHA1"/>
+						<file name="Duke_Nukem_3D_-_Legacy_Edition_1.2.3.zip" type="zip" sha1="TODO_SHA1"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Patch_10to11.zip" version="1.1" special="Patch" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="Duke_Nukem_3D_-_Legacy_Edition_1.1.zip" version="1.1" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="Patch_12Fix.zip" version="1.2" special="Patch" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="Duke_Nukem_3D_-_Legacy_Edition_1.2.3.zip" version="1.2.3" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="Duke_Nukem_3D_-_Legacy_Edition_1.1-ModMgrE.zip" version="1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+			<download filename="Duke_Nukem_3D_-_Legacy_Edition_1.2.3-ModMgrE.zip" version="1.2.3" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+		</downloads>
+		<related>
+			<mod id="lameduke_forever"/>
+			<mod id="lameduke_95_redux"/>
+		</related>
 	</mod>
 	<mod name="Plug and Pray Remake" id="plug_and_pray_remake" type="Total Conversion" website="http://forums.duke4.net/topic/6770-plug-and-pray-remake">
 		<team>
