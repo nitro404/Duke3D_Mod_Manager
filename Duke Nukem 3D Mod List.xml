@@ -9010,4 +9010,23 @@
 			<download filename="Fatal_Mode_(Atomic)_1.0-ModMgrE.zip" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="0cc38f87ebfb30b2446f8cf9d845886397d652fb"/>
 		</downloads>
 	</mod>
+	<mod name="Duke Nukem Advance 4 PC" id="duke_nukem_advance_4_pc" type="Total Conversion" version="Alpha" website="https://github.com/voxelvoid/DNA4PC">
+		<team>
+			<member name="Voxelvoid" website="https://voxelvoid.itch.io"/>
+		</team>
+		<files>
+			<version id="Alpha" release_date="July 9, 2022">
+				<type>
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="DNA4PC.CON" type="con" sha1="b832f0842689aea1dc81ac5c3d36cf12301f264e"/>
+						<file name="DNA4PC.GRP" type="grp" sha1="d423160e66628ac6d9913a16d22c840e4488c970"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="DNA4PC.zip" version="Alpha" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="8294ee7ad949c15fcaceba56dbf33de2f55e7d7e"/>
+			<download filename="Duke_Nukem_Advance_4_PC_Alpha-ModMgrA.zip" version="Alpha" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="4e61fc5d7320c9c98ec750926d7aaa5d4236ee5b"/>
+		</downloads>
+	</mod>
 </mods>
