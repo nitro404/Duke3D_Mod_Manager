@@ -9029,4 +9029,24 @@
 			<download filename="Duke_Nukem_Advance_4_PC_Alpha-ModMgrA.zip" version="Alpha" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="4e61fc5d7320c9c98ec750926d7aaa5d4236ee5b"/>
 		</downloads>
 	</mod>
+	<mod name="Plug and Pray Remake" id="plug_and_pray_remake" type="Total Conversion" website="http://forums.duke4.net/topic/6770-plug-and-pray-remake">
+		<team country="Germany">
+			<member name="ozelot47"/>
+		</team>
+		<files>
+			<version release_date="September 24, 2013">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="PNP.CON" type="con" sha1="02e836b48ddefd1db4a8c6d797502ef8c79f067e"/>
+						<file name="pnp.def" type="def" sha1="66b1f616f9413b63893d5a6a7651c2e1d72620c2"/>
+						<file name="Plug_and_Pray_Remake.zip" type="zip" sha1="79621a9df20035521e6db0de2e645afede56528a"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="PNP.rar" game="eDuke32" type="Original Files" sha1="7203499deb03a0f7cd481279da34aea8c80e7884"/>
+			<download filename="Plug_and_Pray_Remake-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="67b0f7bcc7545cc3b9387ebb7fb8dde2b9c79d62"/>
+		</downloads>
+	</mod>
 </mods>
