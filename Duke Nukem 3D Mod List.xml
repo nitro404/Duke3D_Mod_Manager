@@ -8990,4 +8990,24 @@
 			<download filename="Shaky_Grounds-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="472f8100769b7a858b1e75896b5670dc16550fcd"/>
 		</downloads>
 	</mod>
+	<mod name="Fatal Mode (Atomic)" id="fatal_mode_atomic" type="Total Conversion" version="1.0" website="https://www.moddb.com/mods/duke3d-fatal-mode-atomic">
+		<team country="Hungary">
+			<member name="Oszkár Winkler" alias="oscarincage" email="oscarincage@gmail.com" website="https://www.moddb.com/members/oscarincage"/>
+		</team>
+		<files>
+			<version id="1.0" release_date="March 12, 2020">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="FATAL.CON" type="con" sha1="2a7d951deaae7f88e398137d9e34b61c4c0e0d38"/>
+						<file name="FatalModeAtomic.def" type="def" sha1="e338ab41cbac9631d0beba1bdf99aa1ea9561345"/>
+						<file name="Fatal_Mode_(Atomic)_1.0.zip" type="zip" sha1="040810498ba9ad9b859a6e6d0d969eb0589cd070"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="duke3d_fatal_mode_atomic_10.zip" version="1.0" game="eDuke32" type="Original Files" sha1="550eaa15c3431723c7ff65eee5861e055c868715"/>
+			<download filename="Fatal_Mode_(Atomic)_1.0-ModMgrE.zip" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="0cc38f87ebfb30b2446f8cf9d845886397d652fb"/>
+		</downloads>
+	</mod>
 </mods>
