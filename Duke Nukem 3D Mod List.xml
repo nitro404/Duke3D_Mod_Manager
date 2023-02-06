@@ -2521,7 +2521,7 @@
 			<member name="Carl Smith"/>
 			<member name="Kris Maes"/>
 			<member name="B. Krash"/>
-			<member name="Merlijn v. Oostrum" email="merlijn_redhot@hotmail.com"/>
+			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com"/>
 			<member name="Monster Radio Man"/>
 			<member name="Robbie Langton"/>
 			<member name="Andrew Irvine"/>
@@ -7693,7 +7693,7 @@
 	</mod>
 	<mod name="Red Series" id="red_series" type="Episode">
 		<team email="jersomer@popmail.com">
-			<member name="Merlijn v. Oostrum" email="merlijn_redhot@hotmail.com"/>
+			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com"/>
 		</team>
 		<files>
 			<version release_date="January 1, 2009">
@@ -8426,8 +8426,8 @@
 		<team>
 			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com"/>
 			<member name="sebabdukeboss20"/>
-			<member name="Merlijn Van Oostrum" email="merlijn_redhot@hotmail.com"/>
-			<member name="Maarten Van Oostrum"/>
+			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com"/>
+			<member name="Maarten van Oostrum"/>
 			<member name="Forge"/>
 			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com"/>
 			<member name="Jolteon"/>
@@ -8969,6 +8969,25 @@
 		<downloads>
 			<download filename="Phoenix_holocaust-.zip" game="JFDuke3D" type="Original Files" sha1="2ad62a2358dc45ba397004efa39471a702be33aa"/>
 			<download filename="Phoenix_Holocaust-ModMgrJF.zip" game="JFDuke3D" type="Mod Manager Files" state="Native" sha1="512c2f9148110b73d000a255f877f44dd38a656d"/>
+		</downloads>
+	</mod>
+	<mod name="Shaky Grounds" id="shaky_grounds" type="Episode" website="https://www.moddb.com/mods/shaky-grounds">
+		<team>
+			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com"/>
+		</team>
+		<files>
+			<version release_date="November 12, 2021">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="SHAKY.CON" type="con" sha1="0c197bb82d9726d2d394f7520eda59cd3e14eb3a"/>
+						<file name="SHAKYGROUNDS.GRP" type="grp" sha1="03a9430739ff704738346c98ba21a0ae6a331a2a"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Shaky_Grounds.zip" game="eDuke32" type="Original Files" sha1="fab8cfb31ee545e15e9c49f0a492b8b6728265fc"/>
+			<download filename="Shaky_Grounds-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="472f8100769b7a858b1e75896b5670dc16550fcd"/>
 		</downloads>
 	</mod>
 </mods>
