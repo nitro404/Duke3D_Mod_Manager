@@ -9162,4 +9162,31 @@
 			<note>Replaces episode 1 levels 1, 2, 5 &amp; 7, and episode 2 level 1.</note>
 		</notes>
 	</mod>
+	<mod name="Theros" id="theros" type="Dukematch" version="1.1">
+		<team>
+			<member name="Theros"/>
+		</team>
+		<files>
+			<version id="1.1" release_date="November 9, 1996">
+				<type>
+					<game type="Regular Version 1.3" state="Native">
+						<file name="THEROS.CON" type="con" sha1="e49ab637887ee1906cf29aa9a875ee26bf092777"/>
+						<file name="THEROS.GRP" type="grp" sha1="e10cf28d291e1824e34952fcb6f66315ad9decc2"/>
+					</game>
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="THEROS.CON" type="con" sha1="acfba09c0a333a310920fadd683f6afb0a07a645"/>
+						<file name="THEROS.GRP" type="grp" sha1="46e0816fed23e971f52189423d210a804482f641"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="e2maps.zip" version="1.1" game="Regular Version 1.3" type="Original Files" sha1="4126f3714c266e1a225566e3ac00dd88bb49e519"/>
+			<download filename="Theros-ModMgrR.zip" version="1.1" game="Regular Version 1.3" type="Mod Manager Files" state="Native" sha1="292abed5d8180bae766a0793f5a0c3100cf209d5"/>
+			<download filename="Theros-ModMgrA.zip" version="1.1" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="41a1693189bd3d2d7b0bcd3699ee3e3229d795b6"/>
+		</downloads>
+		<notes>
+			<note>Replaces episode 2.</note>
+		</notes>
+	</mod>
 </mods>
