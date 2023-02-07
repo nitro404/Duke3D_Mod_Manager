@@ -9111,4 +9111,28 @@
 			<mod id="zykov_eddys_aliens"/>
 		</related>
 	</mod>
+	<mod name="Alien Infiltration" id="alien_infiltration" type="Episode">
+		<team>
+			<member name="Adrian Messecar" email="aia96@jps.net"/>
+		</team>
+		<files>
+			<version release_date="November 19, 1997">
+				<type>
+					<game type="Regular Version 1.3" state="Native">
+						<file name="AIGBSC.CON" type="con" sha1="56b28c68291d9a699f6711374f6c3a28823d5f07"/>
+						<file name="AIGBSC.GRP" type="grp" sha1="8e19ccf680bd32a3b75215c614b93f507c4e6f04"/>
+					</game>
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="AIGBSC.CON" type="con" sha1="6c657688b2fd7a880ae50c0e4c8d6a414cad6d7c"/>
+						<file name="AIGBSC.GRP" type="grp" sha1="11511c800949ca8c238b1d9090c785d0f60bfbb1"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="aigbsc.zip" game="Regular Version 1.3" type="Original Files" sha1="d9485f67ee839cc36c90fe43228e0e364f5dfb24"/>
+			<download filename="Alien_Infiltration-ModMgrR.zip" game="Regular Version 1.3" type="Mod Manager Files" state="Native" sha1="45f53abe4f7fdb5e65d316d6f0e314c5c445aa16"/>
+			<download filename="Alien_Infiltration-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="037ab4945f70ead0cb635c77c4f053b2790e27ba"/>
+		</downloads>
+	</mod>
 </mods>
