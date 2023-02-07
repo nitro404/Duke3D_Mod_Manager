@@ -9135,4 +9135,31 @@
 			<download filename="Alien_Infiltration-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="037ab4945f70ead0cb635c77c4f053b2790e27ba"/>
 		</downloads>
 	</mod>
+	<mod name="The Military Base" id="the_military_base" type="Episode">
+		<team>
+			<member name="ktyrr" email="ktyrr@midusa.net"/>
+		</team>
+		<files>
+			<version>
+				<type>
+					<game type="Regular Version 1.3" state="Native">
+						<file name="MILITARY.CON" type="con" sha1="a0f298e474e97da1c2197b6ce9b8e7902c74eea1"/>
+						<file name="MILITARY.GRP" type="grp" sha1="e6bb44c817827e9f8f17bb8882de171c908249c7"/>
+					</game>
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="MILITARY.CON" type="con" sha1="6adf43f6a73c0ef2dc3d41e33d8e9ff730ec2c7c"/>
+						<file name="MILITARY.GRP" type="grp" sha1="176260b93c071ab9c99013a741ab3f1fb99276e2"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="military.zip" game="Regular Version 1.3" type="Original Files" sha1="6840f4145d5bb83d4708d32c41ffa55d55a9a609"/>
+			<download filename="The_Military_Base-ModMgrR.zip" game="Regular Version 1.3" type="Mod Manager Files" state="Native" sha1="39daffa445bedbd7051b9f1e343c4f1ea12d563b"/>
+			<download filename="The_Military_Base-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="a2e5adf129686142f7833c09150b1ab9e4b783b7"/>
+		</downloads>
+		<notes>
+			<note>Replaces episode 1 levels 1, 2, 5 &amp; 7, and episode 2 level 1.</note>
+		</notes>
+	</mod>
 </mods>
