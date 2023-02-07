@@ -297,6 +297,11 @@
 			<download filename="Aliens-ModMgrR.zip" game="Regular Version 1.3" type="Mod Manager Files" state="Native" sha1="b2544004734e538572cb05549c183280bc84482e"/>
 			<download filename="Aliens-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" sha1="ef6374a0b1a8c2d662110ff58ff528f3317808d5"/>
 		</downloads>
+		<related>
+			<mod id="aliens_2"/>
+			<mod id="aliens_3"/>
+			<mod id="zykov_eddys_aliens"/>
+		</related>
 	</mod>
 	<mod name="All 4 One" id="all_4_one" type="Total Conversion">
 		<files>
@@ -7980,6 +7985,11 @@
 			<download filename="aliens.zip" version="Demo" game="JFDuke3D" type="Original Files" sha1="4f4d5064011ed4a42e5976d397a1c9f745de694b"/>
 			<download filename="Zykov_Eddy&apos;s_Aliens_Demo-ModMgrJF.zip" version="Demo" game="JFDuke3D" type="Mod Manager Files" state="Native" sha1="b7bc71dcb14a9031a210e115cf2c3ec71df4cf9e"/>
 		</downloads>
+		<related>
+			<mod id="aliens"/>
+			<mod id="aliens_2"/>
+			<mod id="aliens_3"/>
+		</related>
 	</mod>
 	<!-- eDuke32 -->
 	<mod name="Aliens (2)" id="aliens_2" type="Total Conversion" version="Demo 1.0">
@@ -7998,6 +8008,11 @@
 			<download filename="Aliensdemo.rar" version="Demo 1.0" game="eDuke32" type="Original Files" sha1="d8c3f5a061e75ae926bee5f2759c3c72a8eb3bdf"/>
 			<download filename="Aliens_Demo_1.0-ModMgrE.zip" version="Demo 1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="0f5ce29ff625d8fb004150990b86e6c515de9f95"/>
 		</downloads>
+		<related>
+			<mod id="aliens"/>
+			<mod id="aliens_3"/>
+			<mod id="zykov_eddys_aliens"/>
+		</related>
 	</mod>
 	<mod name="A.Dream Trilogy" id="a_dream_trilogy" type="Total Conversion">
 		<team country="Russia">
@@ -9048,5 +9063,52 @@
 			<download filename="PNP.rar" game="eDuke32" type="Original Files" sha1="7203499deb03a0f7cd481279da34aea8c80e7884"/>
 			<download filename="Plug_and_Pray_Remake-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="67b0f7bcc7545cc3b9387ebb7fb8dde2b9c79d62"/>
 		</downloads>
+	</mod>
+	<mod name="Aliens (3)" id="aliens_3" type="Partial Conversion" version="1.0">
+		<team country="United States">
+			<member name="Jonathan Cacy" alias="LizardKing" email="x84913a4@cadet2.usma.edu"/>
+		</team>
+		<files>
+			<version id="1.0" release_date="September 15, 1996">
+				<type>
+					<game type="Regular Version 1.3" state="Native">
+						<file name="ALIENS10.CON" type="con" sha1="85f60110609b2293a232dcf3eaa62b6d74ecfa9c"/>
+						<file name="ALIENS10.GRP" type="grp" sha1="1cf28866251aff50510b364bd0e3ce97b8624121"/>
+					</game>
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="ALIENS10.CON" type="con" sha1="6e6bc8d3efc739e748db21a60dedd8ce86848c75"/>
+						<file name="ALIENS10.GRP" type="grp" sha1="28956a03e0b6377b888dd8cbb8627a85ab42ca84"/>
+					</game>
+				</type>
+			</version>
+			<version id="2.0" release_date="September 23, 1996">
+				<type>
+					<game type="Regular Version 1.3" state="Native">
+						<file name="ALIENS20.CON" type="con" sha1="9c10bda55a511871258bbd5350d030d18c136bc9"/>
+						<file name="ALIENS20.GRP" type="grp" sha1="fc0e97150d9335089b35da1c77c5a229ac9ba66b"/>
+					</game>
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="ALIENS20.CON" type="con" sha1="c3522735d925a4c829befcb29200764ba7df0043"/>
+						<file name="ALIENS20.GRP" type="grp" sha1="264fe79bc9e0cbb3b9ee39b15c90a1c893ab38f0"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="aliens10.zip" version="1.0" game="Regular Version 1.3" type="Original Files" sha1="46ca4f5da920ff795ac01fd5d38c010e04c0a318"/>
+			<download filename="aliens20.zip" version="2.0" game="Regular Version 1.3" type="Original Files" sha1="27657e6750a785f930538a6bb40c96f8370c5860"/>
+			<download filename="Aliens_1.0-ModMgrR.zip" version="1.0" game="Regular Version 1.3" type="Mod Manager Files" state="Native" sha1="c9751292312b0cf8d8042b6775543f09a80191ed"/>
+			<download filename="Aliens_1.0-ModMgrA.zip" version="1.0" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="f39f8b5ad43c59280b6b6b95349e223d907f3fad"/>
+			<download filename="Aliens_2.0-ModMgrR.zip" version="2.0" game="Regular Version 1.3" type="Mod Manager Files" state="Native" sha1="c1e12ca747199f1e029aaef39fb46f42421dcad7"/>
+			<download filename="Aliens_2.0-ModMgrA.zip" version="2.0" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="d915395848c50341fca0e13817689c3e89aa25cf"/>
+		</downloads>
+		<notes>
+			<note>Version 1.0 is single player, 2.0 is Dukematch only.</note>
+		</notes>
+		<related>
+			<mod id="aliens"/>
+			<mod id="aliens_2"/>
+			<mod id="zykov_eddys_aliens"/>
+		</related>
 	</mod>
 </mods>
