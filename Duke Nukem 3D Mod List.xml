@@ -9302,4 +9302,24 @@
 			<download filename="Turok_Nukem_(Vanilla)-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="5df430589f0eb35abfa7a0b33602da57a5b14c38"/>
 		</downloads>
 	</mod>
+	<mod name="Back in Business" id="back_in_business" type="Episode" version="1.0">
+		<team>
+			<member name="Alex Pistol" email="aleks4duke@gmail.com" discord="ShrinkDuke" steam="Ledsbourne" />
+		</team>
+		<files>
+			<version id="1.0" release_date="December 14, 2020">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="BUSINESS.CON" type="con" sha1="5c70c644f5f84a6da6461a924342da1e6d8aca0c"/>
+						<file name="BACK_IN_BUSINESS.GRP" type="grp" sha1="27cb58e685651007872aafe5c68f16411c840ce8"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="BACKINBUSINESS.ZIP" version="1.0" game="eDuke32" type="Original Files" sha1="286e13c7590581f139287139cff34a63e37287b3"/>
+			<download filename="BACKINBUSINESS_ALTERNATIVE_MUSIC.zip" special="Music Patch" game="eDuke32" type="Original Files" sha1="7604825bba4f5b5051074c8adcb9c535d14423f8"/>
+			<download filename="Back_in_Business_1.0-ModMgrE.zip" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b22720c554a5a579cf809c14d314fb646a7c616e"/>
+		</downloads>
+	</mod>
 </mods>
