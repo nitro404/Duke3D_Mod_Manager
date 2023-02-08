@@ -9322,4 +9322,33 @@
 			<download filename="Back_in_Business_1.0-ModMgrE.zip" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b22720c554a5a579cf809c14d314fb646a7c616e"/>
 		</downloads>
 	</mod>
+	<mod name="Downtown Journey" id="downtown_journey" type="Episode" version="1.1" website="https://www.moddb.com/mods/pretomurara">
+		<team country="Brazil">
+			<member name="Preto Murara" email="pretomurara@gmail.com"/>
+		</team>
+		<files>
+			<version id="1.0" release_date="October 17, 2020">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DOWNTOWN.CON" type="con" sha1="233a6024e209d71d389c86b5742810b0fdc3caba"/>
+						<file name="DOWNTOWN_JOURNEY_1.0.GRP" type="grp" sha1="6e48e4c5137dddf632ad8a525f5189c0b728f203"/>
+					</game>
+				</type>
+			</version>
+			<version id="1.1" release_date="November 17, 2020">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DOWNTOWN.CON" type="con" sha1="233a6024e209d71d389c86b5742810b0fdc3caba"/>
+						<file name="DOWNTOWN_JOURNEY_1.1.GRP" type="grp" sha1="7a49c0f7bdc2454fd51f96f9f19f9a5fc18ead0d"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Downtown_Journey.zip" version="1.0" game="eDuke32" type="Original Files" sha1="b2b9c4040042efedacd13eb51889fad8f4148a75"/>
+			<download filename="Downtown_Journey_1.1.zip" version="1.1" game="eDuke32" type="Original Files" sha1="ed76125b079e0db57973647f10ad881e196111ed"/>
+			<download filename="Downtown_Journey_1.0-ModMgrE.zip" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="a85e58614679df2f1904ae96e9161fe976a46924"/>
+			<download filename="Downtown_Journey_1.1-ModMgrE.zip" version="1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="17caa809e0645c6b46dd2e684e05f8aeafc8ff3a"/>
+		</downloads>
+	</mod>
 </mods>
