@@ -9261,4 +9261,25 @@
 			<download filename="Teletubbies-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" sha1="7ebaf1fabdbba66b15353a0485a3d94e0b9aae89"/>
 		</downloads>
 	</mod>
+	<mod name="Star Wars Map Pack" id="star_wars_map_pack" type="Total Conversion">
+		<files>
+			<version release_date="December 5, 1998">
+				<type>
+					<game type="Regular Version 1.3" state="Native">
+						<file name="STRWRS.CON" type="con" sha1="29e4ed71d77c47604fc397f5599830e8e460d098"/>
+						<file name="STRWRS.GRP" type="grp" sha1="f3c804e95cf3b7db1b1611687660b9d288793619"/>
+					</game>
+					<game type="Atomic Edition 1.4/1.5" state="Converted">
+						<file name="STRWRS.CON" type="con" sha1="5cf155463f99afaec3a6ba4dc85d8cfa0f46b3f6"/>
+						<file name="STRWRS.GRP" type="grp" sha1="ce167e350b185b185aa15b08c1127b473b70ae2a"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="strwrs.zip" game="Regular Version 1.3" type="Original Files" sha1="1148d6dbc4be4ed10b41a1095f1d74980e14e524"/>
+			<download filename="Star_Wars_Map_Pack-ModMgrR.zip" game="Regular Version 1.3" type="Mod Manager Files" state="Native" sha1="da71581e7be707f69f0d6843c1783eebdc8379db"/>
+			<download filename="Star_Wars_Map_Pack-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" sha1="31c12f1617d8e2ba608f6ca1ed6c5f02e6536870"/>
+		</downloads>
+	</mod>
 </mods>
