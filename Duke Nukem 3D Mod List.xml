@@ -971,7 +971,7 @@
 			<member name="Mike Shaws"/>
 			<member name="Bruce Sparhawk. B D EYES"/>
 			<member name="Gloryroader"/>
-			<member name="Jason Mclauchlin"/>
+			<member name="Jason F. Mclauchlin" email="jfmcl@grove.net"/>
 			<member name="David Whitman"/>
 			<member name="Chris Muir"/>
 			<member name="Dopefish"/>
@@ -1573,7 +1573,7 @@
 			<member name="Jonah Bishop" email="jonahb@3dportal.com"/>
 			<member name="Will Mabie"/>
 			<member name="Andr&#225;s Piroska"/>
-			<member name="Jason Mclauchlin"/>
+			<member name="Jason F. Mclauchlin" email="jfmcl@grove.net"/>
 			<member name="Christopher Roode"/>
 			<member name="Gabe Sheets" alias="Fetusboy"/>
 			<member name="J. Sipos" alias="JS"/>
@@ -9187,6 +9187,33 @@
 		</downloads>
 		<notes>
 			<note>Replaces episode 2.</note>
+		</notes>
+	</mod>
+	<mod name="The Real City" id="the_real_city" type="Episode">
+		<team>
+			<member name="Jason F. Mclauchlin" email="jfmcl@grove.net"/>
+		</team>
+		<files>
+			<version release_date="March 17, 1997">
+				<type>
+					<game type="Regular Version 1.3" state="Native">
+						<file name="REALCITY.CON" type="con" sha1="6c164de2ecda96bc440de155dd5cede474f11221"/>
+						<file name="REALCITY.GRP" type="grp" sha1="9c67aff0f7030577e756163f07f26812732beab3"/>
+					</game>
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="REALCITY.CON" type="con" sha1="70e032e03e6d201e913970dc8d769c1c087388b1"/>
+						<file name="REALCITY.GRP" type="grp" sha1="89f64bb7e3433ceba82ebb58bf3cbf8cd0ba3e5b"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="realcity.zip" game="Regular Version 1.3" type="Original Files" sha1="a97ff7c07799ca46d5dd8e5ff42f6ee06998405e"/>
+			<download filename="The_Real_City-ModMgrR.zip" game="Regular Version 1.3" type="Mod Manager Files" state="Native" sha1="343354757c19624ea578bf62bc023234cc291a9b"/>
+			<download filename="The_Real_City-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="c8db0342ba33a3d91dcb11c72b230d588de87e70"/>
+		</downloads>
+		<notes>
+			<note>Replaces episodes 2 &amp; 3.</note>
 		</notes>
 	</mod>
 </mods>
