@@ -9282,4 +9282,24 @@
 			<download filename="Star_Wars_Map_Pack-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" sha1="31c12f1617d8e2ba608f6ca1ed6c5f02e6536870"/>
 		</downloads>
 	</mod>
+	<mod name="Turok Nukem (Vanilla)" id="turok_nukem_vanilla" type="Episode">
+		<team>
+			<member name="Duke64Nukem" alias="Kamikaze Nukem" email="duke64nukem@gmail.com"/>
+		</team>
+		<files>
+			<version release_date="July 28, 2017">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="TUROK.CON" type="con" sha1="09ee612d456925a05dc3d3559d8505f0605c0ae7"/>
+						<file name="turok.def" type="def" sha1="203cbfd7afe55029d705da42fb2afe09c082443d"/>
+						<file name="Turok_Nukem_(Vanilla).zip" type="zip" sha1="5285c73e7eae59221a39253c5da33db1914dae89"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Turok_Nukem_Vanilla.zip" game="eDuke32" type="Original Files" sha1="62bc9d1ce2630275ea6ffa1a694ed70529ba4b30"/>
+			<download filename="Turok_Nukem_(Vanilla)-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="5df430589f0eb35abfa7a0b33602da57a5b14c38"/>
+		</downloads>
+	</mod>
 </mods>
