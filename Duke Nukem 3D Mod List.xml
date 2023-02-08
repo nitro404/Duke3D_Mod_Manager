@@ -2602,6 +2602,12 @@
 			<download filename="Nuclear_Winter_Demo-ModMgrA.zip" version="Demo" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="977f22ff136415433622f843dbfc36338fd04b0e"/>
 			<download filename="Nuclear_Winter-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="cd6d3979b441340c31af3ad432a303f980c7407b"/>
 		</downloads>
+		<related>
+			<mod id="xmas_duke_96"/>
+			<mod id="xmas_1997"/>
+			<mod id="duke_nukem_xmas_2014"/>
+			<mod id="driving_home_for_christmas"/>
+		</related>
 	</mod>
 	<mod name="Nuke the Bastards" id="nuke_the_bastards" type="Episode">
 		<team>
@@ -4513,6 +4519,12 @@
 			<download filename="Xmas_Duke_96-ModMgrR.zip" game="Regular Version 1.3" type="Mod Manager Files" state="Converted" sha1="51bc6f4aaf652456b459eb75c45c91faaed9b7f7"/>
 			<download filename="Xmas_Duke_96-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" sha1="aff0e0c3e0d361c2d4d4188258aa6cb902620fc4"/>
 		</downloads>
+		<related>
+			<mod id="nuclear_winter"/>
+			<mod id="xmas_1997"/>
+			<mod id="duke_nukem_xmas_2014"/>
+			<mod id="driving_home_for_christmas"/>
+		</related>
 	</mod>
 	<mod name="Y2K Nuklear Meltdown" id="y2k_nuklear_meltdown" type="Total Conversion" version="Demo 1.2" website="http://www.dukeworld.com/dukey2k">
 		<team email="dukey2ktc@hotmail.com">
@@ -6315,6 +6327,12 @@
 			<download filename="xmas97.ZIP" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="0c4666c676a3f61de5da1487552236be4273db0a"/>
 			<download filename="XMAS_1997-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="f5c84df1161c71f1c3681105bd0de2cf74523ea6"/>
 		</downloads>
+		<related>
+			<mod id="nuclear_winter"/>
+			<mod id="xmas_duke_96"/>
+			<mod id="duke_nukem_xmas_2014"/>
+			<mod id="driving_home_for_christmas"/>
+		</related>
 	</mod>
 	<mod name="Glock 18" id="glock_18" type="Weapon Patch">
 		<files>
@@ -6944,6 +6962,12 @@
 			<download filename="DHFC.rar" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="b76f3de5087db0aa275369523ecc676a4646bf24"/>
 			<download filename="Driving_Home_for_Christmas-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="e69b4e851c4be706996337f71b8f9242a85fe7b3"/>
 		</downloads>
+		<related>
+			<mod id="nuclear_winter"/>
+			<mod id="xmas_duke_96"/>
+			<mod id="xmas_1997"/>
+			<mod id="duke_nukem_xmas_2014"/>
+		</related>
 	</mod>
 	<mod name="The End of the World" id="the_end_of_the_world" type="Partial Conversion">
 		<team>
@@ -9350,5 +9374,31 @@
 			<download filename="Downtown_Journey_1.0-ModMgrE.zip" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="a85e58614679df2f1904ae96e9161fe976a46924"/>
 			<download filename="Downtown_Journey_1.1-ModMgrE.zip" version="1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="17caa809e0645c6b46dd2e684e05f8aeafc8ff3a"/>
 		</downloads>
+	</mod>
+	<mod name="Duke Nukem Xmas 2014" id="duke_nukem_xmas_2014" type="Total Conversion" version="1.0" website="http://www.moddb.com/mods/duke-nukem-xmas-2014">
+		<team name="Balls of Steal Team">
+			<member name="Artem Nevincahny" email="artem.neva@gmail.com"/>
+		</team>
+		<files>
+			<version id="1.0" release_date="December 25, 2014">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="XMAS2014.CON" type="con" sha1="021367febc403587159252efe8019c9756897f1a"/>
+						<file name="Xmas2014.def" type="def" sha1="31c05bae60098f558585a1e85f458427585b69ba"/>
+						<file name="Duke_Nukem_Xmas_2014_1.0.zip" type="zip" sha1="78e6d4a4d9cce69a37e1c75ca2e023c8a09d68bc"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="dnxmas2014.zip" version="1.0" game="eDuke32" type="Original Files" sha1="7e3be259c5114947e5b804d28ff29650e1c1252b"/>
+			<download filename="Duke_Nukem_Xmas_2014_1.0-ModMgrE.zip" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="37983bdba333dd91b5b477724d20f85f53f87f20"/>
+		</downloads>
+		<related>
+			<mod id="nuclear_winter"/>
+			<mod id="xmas_duke_96"/>
+			<mod id="xmas_1997"/>
+			<mod id="driving_home_for_christmas"/>
+		</related>
 	</mod>
 </mods>
