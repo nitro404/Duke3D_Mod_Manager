@@ -9240,4 +9240,25 @@
 			<download filename="Explorer-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="3060ecd6460a8c8435d9c254b054ff8ac33f9619"/>
 		</downloads>
 	</mod>
+	<mod name="Teletubbies" id="teletubbies" type="Enemy Replacement">
+		<files>
+			<version release_date="Februrary 24, 2001">
+				<type>
+					<game type="Regular Version 1.3" state="Native">
+						<file name="TELETUBB.CON" type="con" sha1="7faca80d3d36d0f67abb94a4589d87f0f43a052d"/>
+						<file name="TELETUBB.GRP" type="grp" sha1="982a5eea92df3e30a40a5cb47998b8eeff155e3f"/>
+					</game>
+					<game type="Atomic Edition 1.4/1.5" state="Converted">
+						<file name="TELETUBB.CON" type="con" sha1="74c7987944177391e5007a6a17f0395853a2f4b2"/>
+						<file name="TELETUBB.GRP" type="grp" sha1="8652aac18ca3a9a25efe3a1253bde49147bd10a5"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Teletubbies.7z" game="Regular Version 1.3" type="Original Files" sha1="adf4bd09bf243939dc5d80b1859d1b0318ab767c"/>
+			<download filename="Teletubbies-ModMgrR.zip" game="Regular Version 1.3" type="Mod Manager Files" state="Native" sha1="deac7229408fe9aa2e1783373e36b8ca43951e78"/>
+			<download filename="Teletubbies-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" sha1="7ebaf1fabdbba66b15353a0485a3d94e0b9aae89"/>
+		</downloads>
+	</mod>
 </mods>
