@@ -11567,6 +11567,45 @@
 			<download filename="Duke_Nukem_Forever_Gloves-ModMgrE.zip" filesize="740483" game="eDuke32" type="Mod Manager Files" state="Native" sha1="0c886353f6a7ece6e0fc743fe2c8d1fa9e785457"/>
 		</downloads>
 	</mod>
+	<mod name="Pink" id="pink" type="Partial Conversion" version_type="1">
+		<team country="France">
+			<member name="The Wizard of Oz" email="wizard.of.oz@wanadoo.fr"/>
+		</team>
+		<files>
+			<version release_date="March 13, 1999">
+				<type id="1">
+					<game type="Regular Version 1.3" state="Native">
+						<file name="PINK.CON" type="con" sha1="TODO_SHA1"/>
+						<file name="PINK.GRP" type="grp" sha1="TODO_SHA1"/>
+					</game>
+					<!--
+					<game type="Atomic Edition 1.4/1.5" state="Converted">
+						<file name="TODO_CON.CON" type="con" sha1="TODO_SHA1"/>
+						<file name="TODO_GRP.GRP" type="grp" sha1="TODO_SHA1"/>
+					</game>
+				-->
+				</type>
+				<type id="2">
+					<game type="Regular Version 1.3" state="Native">
+						<file name="PINK.CON" type="con" sha1="TODO_SHA1"/>
+						<file name="PINK.GRP" type="grp" sha1="TODO_SHA1"/>
+						<file name="PINK2.GRP" type="grp" sha1="TODO_SHA1"/>
+					</game>
+					<!--
+					<game type="Atomic Edition 1.4/1.5" state="Converted">
+						<file name="TODO_CON.CON" type="con" sha1="TODO_SHA1"/>
+						<file name="TODO_GRP.GRP" type="grp" sha1="TODO_SHA1"/>
+					</game>
+					-->
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="pink.zip" game="Regular Version 1.3" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="Pink-ModMgrR.zip" game="Regular Version 1.3" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+			<download filename="Pink-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" sha1="TODO_SHA1"/>
+		</downloads>
+	</mod>
 	<mod name="Dark Place" id="dark_place" type="Episode">
 		<team>
 			<member name="Taivo Maripuu" email="taivo.maripuu.001@mail.ee" country="Estonia"/>
