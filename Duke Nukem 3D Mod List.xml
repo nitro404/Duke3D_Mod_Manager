@@ -6234,6 +6234,12 @@
 			<download filename="Duke_CTF_1.3-ModMgrR.zip" filesize="1541338" version="1.3" game="Regular" type="Mod Manager Files" state="Native" sha1="ed7a8a0525dcfa56cb287d11850ef7b863c0fb40"/>
 			<download filename="Duke_CTF_1.3-ModMgrA.zip" filesize="1675728" version="1.3" game="Atomic" type="Mod Manager Files" state="Converted" sha1="cf776f41f6356f6619033d9ff982029c516d38ad"/>
 		</downloads>
+		<related>
+			<mod id="capture_the_flag_extreme"/>
+			<mod id="capture_the_flag"/>
+			<mod id="hollywood_ctf"/>
+			<mod id="duke_arena"/>
+		</related>
 	</mod>
 	<mod name="Deathmatch - Total Conversion" id="deathmatch_total_conversion" type="Dukematch" version="1.3" website="http://www.ntdm.gmxhome.de">
 		<team name="The Napalm Team" email="ntdm1@web.de" country="Germany">
@@ -6766,6 +6772,12 @@
 			<download filename="ctfext09.zip" filesize="115400" version="0.9" game="Atomic" type="Original Files" sha1="374ab285e95b3cf5a1833ccccfef3079c0ea55a8"/>
 			<download filename="Capture_the_Flag_!EXTREME!_0.9-ModMgrA.zip" filesize="137179" version="0.9" game="Atomic" type="Mod Manager Files" state="Native" sha1="5168c994c41e60d158cce2e19c3f662607784411"/>
 		</downloads>
+		<related>
+			<mod id="duke_ctf"/>
+			<mod id="capture_the_flag"/>
+			<mod id="hollywood_ctf"/>
+			<mod id="duke_arena"/>
+		</related>
 	</mod>
 	<mod name="DaikariN" id="daikarin" type="Episode">
 		<team>
@@ -7618,6 +7630,12 @@
 			<download filename="Capture_the_Flag_2.3-ModMgrR.zip" filesize="1568619" version="2.3" game="Regular" type="Mod Manager Files" state="Native" sha1="6c6dc050318f53bfdb399f9209a8fb844b16ddc1"/>
 			<download filename="Capture_the_Flag_2.3-ModMgrA.zip" filesize="1781439" version="2.3" game="Atomic" type="Mod Manager Files" state="Converted" sha1="05a86e1d7621cf65c005e63d5c3a9f2a85e9c57c"/>
 		</downloads>
+		<related>
+			<mod id="duke_ctf"/>
+			<mod id="capture_the_flag_extreme"/>
+			<mod id="hollywood_ctf"/>
+			<mod id="duke_arena"/>
+		</related>
 	</mod>
 	<mod name="The Ultimatum" id="the_ultimatum" type="Episode">
 		<team>
@@ -7779,6 +7797,12 @@
 			<download filename="HollyWood_CTF-ModMgrR.zip" filesize="801424" game="Regular" type="Mod Manager Files" state="Native" sha1="d8e4ae10765a2ce136c0e9074cae1585145c9064"/>
 			<download filename="HollyWood_CTF-ModMgrA.zip" filesize="1010646" game="Atomic" type="Mod Manager Files" state="Converted" sha1="3805100da921b98693d8124d8475fba05657fb1c"/>
 		</downloads>
+		<related>
+			<mod id="duke_ctf"/>
+			<mod id="capture_the_flag_extreme"/>
+			<mod id="capture_the_flag"/>
+			<mod id="duke_arena"/>
+		</related>
 	</mod>
 	<mod name="Indy Tour" id="indy_tour" type="Episode" version="V1">
 		<team>
@@ -9434,6 +9458,39 @@
 		<notes>
 			<note>Replaces episode 1 levels 1, 2, 5 &amp; 7, and episode 2 level 1.</note>
 		</notes>
+	</mod>
+	<mod name="Duke Arena" id="duke_arena" type="Dukematch" version="2.8 Beta" website="http://www.dukeworld.com/dukearena">
+		<team email="dukearena@btinternet.com">
+			<member name="Tom Juby" alias="TJ" email="tibbar@btinternet.com"/>
+			<member name="Andrew Otis" alias="T-Rex" email="t_rex3d@hotmail.com"/>
+			<member name="nyk"/>
+			<member name="Corvin"/>
+		</team>
+		<files>
+			<version id="2.8 Beta" release_date="February 28, 2000">
+				<type>
+					<game type="Regular Version 1.3" state="Native">
+						<file name="DARENA.CON" type="con" sha1="6a1414cf20b3ce5e58c39cb41a2e6073aa92555f"/>
+						<file name="DARENA.GRP" type="grp" sha1="TODO_SHA1"/>
+					</game>
+					<game type="Atomic Edition 1.4/1.5" state="Converted">
+						<file name="DARENA.CON" type="con" sha1="TODO_SHA1"/>
+						<file name="DARENA.GRP" type="grp" sha1="TODO_SHA1"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="darenabeta.zip" version="2.8 Beta" game="Regular Version 1.3" type="Original Files" sha1="308ec7c8968bf8ac8309a7b580e79604283d19c7"/>
+			<download filename="Duke_Arena_2.8_Beta-ModMgrR.zip" version="2.8 Beta" game="Regular Version 1.3" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+			<download filename="Duke_Arena_2.8_Beta-ModMgrA.zip" version="2.8 Beta" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" sha1="TODO_SHA1"/>
+		</downloads>
+		<related>
+			<mod id="duke_ctf"/>
+			<mod id="capture_the_flag_extreme"/>
+			<mod id="capture_the_flag"/>
+			<mod id="hollywood_ctf"/>
+		</related>
 	</mod>
 	<mod name="Theros" id="theros" type="Dukematch" version="1.1">
 		<team>
