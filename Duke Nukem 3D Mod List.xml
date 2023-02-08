@@ -2420,7 +2420,7 @@
 		</related>
 	</mod>
 	<mod name="Mic Episode" id="mic_episode" type="Episode" website="http://come.to/micheld">
-		<team>
+		<team country="France">
 			<member name="Michel Dorange" email="micheld@club-internet.fr"/>
 		</team>
 		<versions>
