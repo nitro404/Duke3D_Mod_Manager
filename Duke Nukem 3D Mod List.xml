@@ -9401,4 +9401,23 @@
 			<mod id="driving_home_for_christmas"/>
 		</related>
 	</mod>
+	<mod name="DukeRUS" id="dukerus" type="Translation" website="http://M210.duke4.net">
+		<team>
+			<member name="Alexander Makarov" alias="M210"/>
+		</team>
+		<files>
+			<version release_date="April 10, 2012">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DUKERUS.CON" type="con" sha1="9cde15624ad0c2452fb5a1453ee92bccf7645a1a"/>
+						<file name="DUKERUS.GRP" type="grp" sha1="cdf70bde7d33098edb661ce6518cb0372157b5af"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="dukerus.rar" game="eDuke32" type="Original Files" sha1="de765ea2eec13dff13c20eac4540c3c67b1fa868"/>
+			<download filename="DukeRUS-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="29e3b260c7fbc7c3e6bd888e1b6545c5bb84c898"/>
+		</downloads>
+	</mod>
 </mods>
