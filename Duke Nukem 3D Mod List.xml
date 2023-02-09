@@ -6514,8 +6514,8 @@
 		</downloads>
 	</mod>
 	<mod name="Crazy Dookie Fun" id="crazy_dookie_fun" type="Partial Conversion" version="1.0" website="http://eddyprojects.blogspot.ru">
-		<team>
-			<member name="Zykov Eddy" email="edik.zykov@yahoo.com"/>
+		<team country="Russia">
+			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com"/>
 		</team>
 		<files>
 			<version id="1.0" release_date="November 18, 2014">
@@ -7995,7 +7995,7 @@
 	</mod>
 	<mod name="Zykov Eddy&apos;s Aliens" id="zykov_eddys_aliens" type="Total Conversion" version="Demo">
 		<team country="Russia">
-			<member name="Zykov Eddy" email="edik.zykov@yahoo.com"/>
+			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com"/>
 		</team>
 		<files>
 			<version id="Demo" release_date="November 27, 2008">
@@ -8040,7 +8040,7 @@
 	</mod>
 	<mod name="A.Dream Trilogy" id="a_dream_trilogy" type="Total Conversion">
 		<team country="Russia">
-			<member name="Zykov Eddy" email="edik.zykov@yahoo.com"/>
+			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com"/>
 		</team>
 		<files>
 			<version release_date="February 6, 2011">
@@ -8057,7 +8057,7 @@
 	</mod>
 	<mod name="Arctic Alert!" id="arctic_alert" type="Total Conversion" website="http://mydukemods.ucoz.ru">
 		<team country="Russia">
-			<member name="Zykov Eddy" email="edik.zykov@mail.ru"/>
+			<member name="Zykov Eddy" email="edik.zykov@mail.ru" website="http://www.eddyprojects.blogspot.com"/>
 		</team>
 		<files>
 			<version release_date="November 3, 2008">
@@ -9441,5 +9441,25 @@
 		<notes>
 			<note>Maps are missing a large number of textures.</note>
 		</notes>
+	</mod>
+	<mod name="Quake TC" id="quake_tc" type="Total Conversion" version="Demo" website="https://forums.duke4.net/topic/4749-quake-tc-demo">
+		<team name="Russia">
+			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com"/>
+		</team>
+		<files>
+			<version id="Demo" release_date="August 17, 2011">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="QUAKETC.CON" type="con" sha1="fc4624c31438f4001a067e01b671d79d601e8e02"/>
+						<file name="quake.def" type="def" sha1="2bb4bf2dd105e1c11c5156b146ad984e8eba6daa"/>
+						<file name="Quake_TC_Demo.zip" type="zip" sha1="b430e0510eef81a79b16cfab924e6605712f314c"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="quakedemo.zip" version="Demo" game="eDuke32" type="Original Files" sha1="9ae1e8051fda978518868fcc26068b2cb184e4f2"/>
+			<download filename="Quake_TC_Demo-ModMgrE.zip" version="Demo" game="eDuke32" type="Mod Manager Files" state="Native" sha1="77ae3710bc09b5be687bf683fee8b3a86a15e1ec"/>
+		</downloads>
 	</mod>
 </mods>
