@@ -9462,4 +9462,24 @@
 			<download filename="Quake_TC_Demo-ModMgrE.zip" version="Demo" game="eDuke32" type="Mod Manager Files" state="Native" sha1="77ae3710bc09b5be687bf683fee8b3a86a15e1ec"/>
 		</downloads>
 	</mod>
+	<mod name="Outpost X" id="outpost_x" type="Episode">
+		<team country="Belgium">
+			<member name="Sangluss" email="sangmahn@hotmail.com"/>
+		</team>
+		<files>
+			<version release_date="April 15, 2009">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="OXgame.con" type="con" sha1="e17ad916f7325866f7a00128176a960a8a6fd576"/>
+						<file name="outpostx.def" type="def" sha1="a2e8c06327d7cf7711e0a4994b36f6097a5072e5"/>
+						<file name="Outpost_X.zip" type="zip" sha1="4cbf8b7e0880a66829ba796fa7513abfb1138c27"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="outpost.zip" game="eDuke32" type="Original Files" sha1="5edd2ae4a83c095af46c047757594651fb025689"/>
+			<download filename="Outpost_X-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c9669c4a6f70c8cd84189b1038e0b68e451dee40"/>
+		</downloads>
+	</mod>
 </mods>
