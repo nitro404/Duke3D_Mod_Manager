@@ -9871,6 +9871,26 @@
 			<mod id="decay"/>
 		</related>
 	</mod>
+	<mod name="Duke Nukem Stranded" id="duke_nukem_stranded" type="Total Conversion" version="0.1">
+		<team>
+			<member name="The Commander"/>
+		</team>
+		<versions>
+			<version id="0.1" release_date="October 24, 2009">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DNS_cons/DNSGAME.CON" size="151008" type="con" sha1="7d7d2e258eb3e53ca81001f71faf980ca074ae6c"/>
+						<file name="DNS.def" size="2772" type="def" sha1="8fb1d5c440b62514ede61b8e2dcaeb7e2c1a5b3b"/>
+						<file name="Duke_Nukem_Stranded_0.1.zip" size="3598917" type="zip" sha1="aaecfb94fe9684d1391e1c6b591b9a6899407a59"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="DNS.rar" version="0.1" game="eDuke32" type="Original Files"/>
+			<download filename="Duke_Nukem_Stranded_0.1-ModMgrE.zip" version="0.1" game="eDuke32" type="Mod Manager Files" state="Native"/>
+		</downloads>
+	</mod>
 	<mod name="Metropolitan Mayhem" id="metropolitan_mayhem" type="Episode" website="https://www.moddb.com/mods/metropolitan-mayhem">
 		<team>
 			<member name="Corentin Dallay" alias="MetHy"/>
