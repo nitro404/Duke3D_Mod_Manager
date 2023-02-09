@@ -9504,4 +9504,57 @@
 			<download filename="Metropolitan_Mayhem-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="8f9d66e1a16494e341988e44ffa5cb0c8a7d68ce"/>
 		</downloads>
 	</mod>
+	<mod name="Duke Nukem: Total Meltdown" id="duke_nukem_total_meltdown" type="Total Conversion" version="1.0.3" website="https://www.moddb.com/mods/dntm">
+		<team>
+			<member name="Daedolon"/>
+			<member name="Fox"/>
+			<member name="Hendricks266"/>
+			<member name="Nukey"/>
+			<member name="oasiz"/>
+			<member name="TerminX" email="terminx@theoffspring.net"/>
+		</team>
+		<files>
+			<version id="1.0" release_date="March 1, 2018">
+				<game type="eDuke32" state="Native">
+					<file name="cons/load.con" type="con" sha1="ffcedc5f483235acf096929d082025c3b558652a"/>
+					<file name="defs/load.def" type="def" sha1="978cf19aaf1bec10809789ce6b2e99b7683b134c"/>
+					<file name="Duke_Nukem_Total_Meltdown_1.0.zip" type="zip" sha1="2180f356bd6c078fb7b05b9caf4534d10c1fcb84"/>
+				</game>
+			</version>
+			<version id="1.0.1" release_date="March 1, 2018">
+				<game type="eDuke32" state="Native">
+					<file name="cons/load.con" type="con" sha1="ffcedc5f483235acf096929d082025c3b558652a"/>
+					<file name="defs/load.def" type="def" sha1="978cf19aaf1bec10809789ce6b2e99b7683b134c"/>
+					<file name="Duke_Nukem_Total_Meltdown_1.0.1.zip" type="zip" sha1="2e1fa27e3273feb7a4e5c6021c3fc3374db743f6"/>
+				</game>
+			</version>
+			<version id="1.0.2" release_date="March 7, 2018">
+				<game type="eDuke32" state="Native">
+					<file name="cons/load.con" type="con" sha1="ffcedc5f483235acf096929d082025c3b558652a"/>
+					<file name="defs/load.def" type="def" sha1="978cf19aaf1bec10809789ce6b2e99b7683b134c"/>
+					<file name="Duke_Nukem_Total_Meltdown_1.0.2.zip" type="zip" sha1="bbd6bf49e572e0e49343ef5cd79cabdbaeabf9fb"/>
+				</game>
+			</version>
+			<version id="1.0.3" release_date="March 14, 2018">
+				<game type="eDuke32" state="Native">
+					<file name="cons/load.con" type="con" sha1="ffcedc5f483235acf096929d082025c3b558652a"/>
+					<file name="defs/load.def" type="def" sha1="978cf19aaf1bec10809789ce6b2e99b7683b134c"/>
+					<file name="Duke_Nukem_Total_Meltdown_1.0.3.zip" type="zip" sha1="df16f9ae625f66778daeaab4e95efe53ae553de8"/>
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="duketm_v1.0.zip" version="1.0" game="eDuke32" type="Original Files" sha1="83348adbcf8757ce0165f543275458b78d108076"/>
+			<download filename="duketm_v1.0.1.zip" version="1.0.1" game="eDuke32" type="Original Files" sha1="936845d5fe9423d305d83fd3acacae53b5ad45c5"/>
+			<download filename="duketm_v1.0.1_patch.zip" version="1.0.1" special="Patch" game="eDuke32" type="Original Files" sha1="73a835092ab3b7ed2f9c584059ab5e52cea72a62"/>
+			<download filename="duketm_v1.0.2.zip" version="1.0.2" game="eDuke32" type="Original Files" sha1="68375bbbe30b479a0aff4c976bfe0bed7e5418ad"/>
+			<download filename="duketm_v1.0.2_patch.zip" version="1.0.2" special="Patch" game="eDuke32" type="Original Files" sha1="d640cbdc567471a234b9f4fd6aa83b667ce515d6"/>
+			<download filename="duketm_v1.0.3.zip" version="1.0.3" game="eDuke32" type="Original Files" sha1="60555624237a766437ad2ba88957a8c97d041500"/>
+			<download filename="duketm_v1.0.3_patch.zip" version="1.0.3" special="Patch" game="eDuke32" type="Original Files" sha1="77ff78daf6d08cf8249bec41543329b6335cbe4f"/>
+			<download filename="Duke_Nukem_Total_Meltdown_1.0-ModMgrE.zip" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="cd332d601dc8ec52583d9502b18659b130d2f78a"/>
+			<download filename="Duke_Nukem_Total_Meltdown_1.0.1-ModMgrE.zip" version="1.0.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e2926cb81b325c42a64e921bb52c91f705921865"/>
+			<download filename="Duke_Nukem_Total_Meltdown_1.0.2-ModMgrE.zip" version="1.0.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e27cfbb0591d552f4ff299e12d6f59f13f3e5235"/>
+			<download filename="Duke_Nukem_Total_Meltdown_1.0.3-ModMgrE.zip" version="1.0.3" game="eDuke32" type="Mod Manager Files" state="Native" sha1="46ad987125cbfaf67b00d3a047d95f6876915e47"/>
+		</downloads>
+	</mod>
 </mods>
