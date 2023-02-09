@@ -9733,6 +9733,26 @@
 			<download filename="Outpost_X-ModMgrE.zip" filesize="5838218" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c9669c4a6f70c8cd84189b1038e0b68e451dee40"/>
 		</downloads>
 	</mod>
+	<mod name="Duke Nukem Stranded" id="duke_nukem_stranded" type="Total Conversion" version="0.1" version_type="TODO_TYPE" website="TODO_WEBSITE">
+		<team>
+			<member name="The Commander"/>
+		</team>
+		<files>
+			<version id="0.1" release_date="October 24, 2009">
+				<type id="TODO_TYPE">
+					<game type="eDuke32" state="Native">
+						<file name="DNS_cons/DNSGAME.CON" type="con" sha1="TODO_SHA1"/>
+						<file name="DNS/DNS.def" type="def" sha1="TODO_SHA1"/>
+						<file name="Duke_Nukem_Stranded_0.1.zip" type="zip" sha1="TODO_SHA1"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="DNS.rar" version="0.1" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="Duke_Nukem_Stranded_0.1-ModMgrE.zip" version="0.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+		</downloads>
+	</mod>
 	<mod name="Metropolitan Mayhem" id="metropolitan_mayhem" type="Episode" website="https://www.moddb.com/mods/metropolitan-mayhem">
 		<team>
 			<member name="Corentin Dallay" alias="MetHy"/>
