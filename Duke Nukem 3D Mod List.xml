@@ -9733,6 +9733,37 @@
 			<download filename="Outpost_X-ModMgrE.zip" filesize="5838218" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c9669c4a6f70c8cd84189b1038e0b68e451dee40"/>
 		</downloads>
 	</mod>
+	<mod name="Duke Nukem Red Alert" id="duke_nukem_red_alert" type="TODO_GENERAL_TYPE" version="1.2a" website="TODO_WEBSITE">
+		<team name="TODO_TEAM_NAME" website="TODO_TEAM_WEBSITE" email="TODO_TEAM_EMAIL" country="TODO_TEAM_COUNTRY">
+			<member name="TODO_MEMBER_NAME" alias="TODO_MEMBER_ALIAS" email="TODO_MEMBER_EMAIL" website="TODO_MEMBER_WEBSITE"/>
+		</team>
+		<files>
+			<!--<version id="1.2" release_date="TODO_DATE">
+				<type id="Tech Demo">
+					<game type="eDuke32" state="Native">
+						<file name="RA_cons/RA.CON" type="con" sha1="TODO_SHA1"/>
+						<file name="RA.def" type="def" sha1="TODO_SHA1"/>
+						<file name="Duke_Nukem_Red_Alert_1.2_Tech_Demo.zip" type="zip" sha1="TODO_SHA1"/>
+					</game>
+				</type>
+			</version>-->
+			<version id="1.2a" release_date="TODO_DATE">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="RA_cons/RA.CON" type="con" sha1="TODO_SHA1"/>
+						<file name="RA.def" type="def" sha1="TODO_SHA1"/>
+						<file name="Duke_Nukem_Red_Alert_1.2a.zip" type="zip" sha1="TODO_SHA1"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Red_Alert_Tech_Demo_V1.2.7z" version="1.2" special="Tech Demo" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="DNRA_v1.2a.rar" version="1.2a" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="Duke_Nukem_Red_Alert_1.2_Tech_Demo-ModMgrE.zip" version="1.2a" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+			<download filename="Duke_Nukem_Red_Alert_1.2a-ModMgrE.zip" version="1.2a" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+		</downloads>
+	</mod>
 	<mod name="Metropolitan Mayhem" id="metropolitan_mayhem" type="Episode" website="https://www.moddb.com/mods/metropolitan-mayhem">
 		<team>
 			<member name="Corentin Dallay" alias="MetHy"/>
