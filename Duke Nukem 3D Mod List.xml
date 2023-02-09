@@ -9733,6 +9733,60 @@
 			<download filename="Outpost_X-ModMgrE.zip" filesize="5838218" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c9669c4a6f70c8cd84189b1038e0b68e451dee40"/>
 		</downloads>
 	</mod>
+<!--
+TODO: clean up versions so they match 100%
+TODO: remove 'finished' version and leave it blank
+-->
+	<mod name="Blood Crossmatching" id="blood_crossmatching" type="Total Conversion" website="http://M210.duke4.net">
+		<team>
+			<member name="Alexander Makarov" alias="M210"/>
+			<member name="fgsfds"/>
+		</team>
+		<files>
+			<!--
+			<version id="Alpha" release_date="October 17, 2010">
+				<game type="eDuke32" state="Native">
+					<file name="blcons/BLOODTC.CON" type="con" sha1="TODO_SHA1"/>
+					<file name="bloodtc.def" type="def" sha1="TODO_SHA1"/>
+					<file name="Blood_TC_Alpha.zip" type="zip" sha1="TODO_SHA1"/>
+				</game>
+			</version>
+			-->
+			<version release_date="December 25, 2016">
+				<game type="eDuke32" state="Native">
+					<file name="blcons/bloodcm.con" type="con" sha1="TODO_SHA1"/>
+					<file name="BLOODCM.DEF" type="def" sha1="TODO_SHA1"/>
+					<file name="Blood_Crossmatching.zip" type="zip" sha1="TODO_SHA1"/>
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="BloodTC_Alpha.rar" version="Alpha" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="BloodTC_Alpha2.rar" version="Alpha 2" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="BloodTC_12.12.2010.rar" version="12.12.2010" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="BloodTCautoload.rar" version="26.01.2011" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="BloodTC_05.02.2011.rar" version="05.02.2011" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="BloodTC_29.09.2012.2015.rar" version="29.09.2012" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="BloodTC_15.10.2012.2013.rar" version="15.10.2012" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="BloodTC_v06.2013.zip" version="05.06.2013" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="bloodcm_v08.2015.2016.zip" version="28.08.2015" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="BloodCM_v02.2016.2018.zip" version="10.02.2016" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="BloodCM_12.2016.zip" version="25.12.2016" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="bloodcm_finished.zip" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="Blood_Crossmatching_Alpha-ModMgrE.zip" version="Alpha" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+			<download filename="Blood_Crossmatching_Alpha_2-ModMgrE.zip" version="Alpha 2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+			<download filename="Blood_Crossmatching_12.12.2010-ModMgrE.zip" version="12.12.2010" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+			<download filename="Blood_Crossmatching_26.01.2011-ModMgrE.zip" version="26.01.2011" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+			<download filename="Blood_Crossmatching_05.02.2011-ModMgrE.zip" version="05.02.2011" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+			<download filename="Blood_Crossmatching_29.09.2012-ModMgrE.zip" version="29.09.2012" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+			<download filename="Blood_Crossmatching_15.10.2012-ModMgrE.zip" version="15.10.2012" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+			<download filename="Blood_Crossmatching_05.06.2013-ModMgrE.zip" version="05.06.2013" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+			<download filename="Blood_Crossmatching_28.08.2015-ModMgrE.zip" version="28.08.2015" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+			<download filename="Blood_Crossmatching_10.02.2016-ModMgrE.zip" version="10.02.2016" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+			<download filename="Blood_Crossmatching_25.12.2016-ModMgrE.zip" version="25.12.2016" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+			<download filename="Blood_Crossmatching-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+		</downloads>
+	</mod>
 	<mod name="Metropolitan Mayhem" id="metropolitan_mayhem" type="Episode" website="https://www.moddb.com/mods/metropolitan-mayhem">
 		<team>
 			<member name="Corentin Dallay" alias="MetHy"/>
