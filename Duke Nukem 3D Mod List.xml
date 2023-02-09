@@ -9420,4 +9420,26 @@
 			<download filename="DukeRUS-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="29e3b260c7fbc7c3e6bd888e1b6545c5bb84c898"/>
 		</downloads>
 	</mod>
+	<mod name="The Seventh Son" id="the_seventh_son" type="Episode" website="http://es.geocities.com/pescapantanos">
+		<team country="Spain" city="Málaga">
+			<member name="Daniel González Alcobre" alias="Papamonos" email="papamonos2@hotmail.com" />
+		</team>
+		<files>
+			<version release_date="February 13, 2009">
+				<type>
+					<game type="JFDuke3D" state="Native">
+						<file name="7THSON.CON" type="con" sha1="ad6878033732cc578ea564b1368c40dce4bc043f"/>
+						<file name="7THSON.GRP" type="grp" sha1="7d738c1dc77b91abdfd2e11601d1560384dd8f04"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="the7thson1.zip" game="JFDuke3D" type="Original Files" sha1="4d40156991ad4ea14781389733a909411a6cb38e"/>
+			<download filename="The_Seventh_Son-ModMgrJF.zip" game="JFDuke3D" type="Mod Manager Files" state="Native" sha1="70631627c85af0cc933743c074fc5c0914ce406a"/>
+		</downloads>
+		<notes>
+			<note>Maps are missing a large number of textures.</note>
+		</notes>
+	</mod>
 </mods>
