@@ -8387,7 +8387,7 @@
 	</mod>
 	<mod name="Duke Hard" id="duke_hard" type="Episode" version="1.2.1" website="http://www.moddb.com/mods/duke-hard">
 		<team>
-			<member name="MetHy"/>
+			<member name="MetHy" alias="MetHunter"/>
 			<member name="Cage"/>
 			<member name="Daedolon"/>
 			<member name="Dukebot"/>
@@ -8397,7 +8397,7 @@
 			<member name="Michael Crisp" alias="Micky C"/>
 			<member name="Mikko Sandt" email="sirpa.sandt@pp.inet.fi"/>
 			<member name="Mister Sinister"/>
-			<member name="MRCK"/>
+			<member name="Aymeric Nocus" alias="MRCK"/>
 			<member name="Paul B"/>
 			<member name="Steambull"/>
 			<member name="Stumpy"/>
@@ -9480,6 +9480,28 @@
 		<downloads>
 			<download filename="outpost.zip" game="eDuke32" type="Original Files" sha1="5edd2ae4a83c095af46c047757594651fb025689"/>
 			<download filename="Outpost_X-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c9669c4a6f70c8cd84189b1038e0b68e451dee40"/>
+		</downloads>
+	</mod>
+	<mod name="Metropolitan Mayhem" id="metropolitan_mayhem" type="Episode" website="https://www.moddb.com/mods/metropolitan-mayhem">
+		<team>
+			<member name="MetHy" alias="MetHunter"/>
+			<member name="Aymeric Nocus" alias="MRCK"/>
+			<member name="Mikko Sandt" alias="Jackotrades" email="sirpa.sandt@pp.inet.fi"/>
+			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com"/>
+		</team>
+		<files>
+			<version release_date="March 2, 2012">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="METRO.CON" type="con" sha1="76c321e358362643d7d968b3194960929eb16f99"/>
+						<file name="METROPOLITAN_MAYHEM.GRP" type="grp" sha1="83ac79225a438d161109e1dd0de3622e8556d295"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="metropolitan.zip" game="eDuke32" type="Original Files" sha1="a82fc8bbd5be36ed10df502539a29213c685cfa3"/>
+			<download filename="Metropolitan_Mayhem-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="8f9d66e1a16494e341988e44ffa5cb0c8a7d68ce"/>
 		</downloads>
 	</mod>
 </mods>
