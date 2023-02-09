@@ -8631,7 +8631,7 @@
 			<download filename="Duke_Hard_1.2.1-ModMgrE.zip" filesize="44728140" version="1.2.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c9ea637a8b366fbcd1a735d38315cd50a0a69e56"/>
 		</downloads>
 	</mod>
-	<mod name="Duke Nukem: Weapon of Mass Destruction" id="duke_nukem_weapon_of_mass_destruction" type="Total Conversion" version="1.20" website="https://www.moddb.com/mods/duke-nukem-weapon-of-mass-destruction">
+	<mod name="Duke Nukem: Weapon of Mass Destruction" id="duke_nukem_weapon_of_mass_destruction" type="Total Conversion" version="1.51b" website="https://www.moddb.com/mods/duke-nukem-weapon-of-mass-destruction">
 		<team>
 			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld" discord="Danarama#9209"/>
 		</team>
@@ -8643,10 +8643,37 @@
 					<file name="Duke_Nukem_-_Weapon_of_Mass_Destruction_1.20.zip" size="13924339" type="zip" sha1="9db11e28161e88e98b6c89eed740400d395d9805"/>
 				</game>
 			</version>
+			<version id="1.43" release_date="September 22, 2008">
+				<game type="eDuke32" state="Native">
+					<file name="dtgame.con" type="con" sha1="TODO_SHA1"/>
+					<file name="dt.def" type="def" sha1="TODO_SHA1"/>
+					<file name="Duke_Nukem_-_Weapon_of_Mass_Destruction_1.43.zip" type="zip" sha1="TODO_SHA1"/>
+				</game>
+			</version>
+			<version id="1.50" release_date="September 25, 2008">
+				<game type="eDuke32" state="Native">
+					<file name="dnwmd_cons/dtgame.con" type="con" sha1="TODO_SHA1"/>
+					<file name="dt.def" type="def" sha1="TODO_SHA1"/>
+					<file name="Duke_Nukem_-_Weapon_of_Mass_Destruction_1.50.zip" type="zip" sha1="TODO_SHA1"/>
+				</game>
+			</version>
+			<version id="1.51b" release_date="November 4, 2022">
+				<game type="eDuke32" state="Native">
+					<file name="dnwmd_cons/dtgame.con" type="con" sha1="TODO_SHA1"/>
+					<file name="dt.def" type="def" sha1="TODO_SHA1"/>
+					<file name="Duke_Nukem_-_Weapon_of_Mass_Destruction_1.51b.zip" type="zip" sha1="TODO_SHA1"/>
+				</game>
+			</version>
 		</versions>
 		<downloads>
 			<download filename="DNWMD.rar" filesize="13062549" version="1.20" game="eDuke32" type="Original Files" sha1="0ec10eead7d474d3e5bead4bc8db55fe2d57f033"/>
-			<download filename="Duke_Nukem_-_Weapon_of_Mass_Destruction_1.20-ModMgrE.zip" filesize="13742209" version="1.20" game="eDuke32" type="Mod Manager Files" state="Native" sha1="0fcbc962b38b0e3af78fdfa0e667ffb91c7145a9"/>
+			<download filename="DNWMD143.1.rar" version="1.43" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="DNWMD15.rar" version="1.50" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="DNWMD.1.zip" version="1.51b" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="Duke_Nukem_-_Weapon_of_Mass_Destruction_1.20-ModMgrE.zip" filesize="13742209" version="1.20" game="eDuke32" type="Mod Manager Files" state="Native" sha1="0fcbc962b38b0e3af78fdf
+			<download filename="Duke_Nukem_-_Weapon_of_Mass_Destruction_1.43-ModMgrE.zip" version="1.43" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+			<download filename="Duke_Nukem_-_Weapon_of_Mass_Destruction_1.50-ModMgrE.zip" version="1.50" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+			<download filename="Duke_Nukem_-_Weapon_of_Mass_Destruction_1.51b-ModMgrE.zip" version="1.51b" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
 		</downloads>
 	</mod>
 	<mod name="Alien Armageddon" id="alien_armageddon" type="Total Conversion" version="4.67" website="https://www.moddb.com/mods/duke-nukem-alien-armageddon">
