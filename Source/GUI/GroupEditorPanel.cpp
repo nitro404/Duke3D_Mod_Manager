@@ -679,9 +679,10 @@ size_t GroupEditorPanel::extractFilesFromGroup(const Group * group, const std::v
 	bool overwriteFiles = false;
 	std::vector<std::string> existingFileNames;
 	std::stringstream existingFileNamesStream;
+	std::string destinationDirectoryPath(extractFilesDialog.GetPath());
 
 	for(const std::shared_ptr<GroupFile> & file : files) {
-		if(!std::filesystem::exists(std::filesystem::path(Utilities::joinPaths(basePath, file->getFileName())))) {
+		if(!std::filesystem::exists(std::filesystem::path(Utilities::joinPaths(destinationDirectoryPath, file->getFileName())))) {
 			continue;
 		}
 
@@ -693,8 +694,6 @@ size_t GroupEditorPanel::extractFilesFromGroup(const Group * group, const std::v
 
 		existingFileNamesStream << '\'' << file->getFileName() << '\'';
 	}
-
-	std::string destinationDirectoryPath(extractFilesDialog.GetPath());
 
 	if(!existingFileNames.empty()) {
 		bool singleFile = existingFileNames.size() == 1;
