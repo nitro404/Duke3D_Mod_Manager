@@ -9755,6 +9755,25 @@
 			<download filename="Metropolitan_Mayhem-ModMgrE.zip" filesize="633140" game="eDuke32" type="Mod Manager Files" state="Native" sha1="8f9d66e1a16494e341988e44ffa5cb0c8a7d68ce"/>
 		</downloads>
 	</mod>
+	<mod name="DukeCraft" id="dukecraft" type="Partial Conversion">
+		<team>
+			<member name="Mblackwell" email="Mblackwell50@hotmail.com"/>
+		</team>
+		<files>
+			<version release_date="September 6, 2006">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DCRAFT.CON" type="con" sha1="TODO_SHA1"/>
+						<file name="DCRAFT.GRP" type="grp" sha1="TODO_SHA1"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="DukeCraft-09-06-2006.rar" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="DukeCraft-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+		</downloads>
+	</mod>
 	<mod name="Duke Nukem: Total Meltdown" id="duke_nukem_total_meltdown" type="Total Conversion" version="1.0.3" website="https://www.moddb.com/mods/dntm">
 		<team>
 			<member name="Daedolon"/>
