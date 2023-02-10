@@ -9557,4 +9557,25 @@
 			<download filename="Duke_Nukem_Total_Meltdown_1.0.3-ModMgrE.zip" version="1.0.3" game="eDuke32" type="Mod Manager Files" state="Native" sha1="46ad987125cbfaf67b00d3a047d95f6876915e47"/>
 		</downloads>
 	</mod>
+	<mod name="Duke Nukem: Taking Boise" id="duke_nukem_taking_boise" type="Episode" website="https://www.moddb.com/mods/duke-nukem-taking-boise">
+		<team name="YayFace Productions">
+			<member name="Alan A. Nick" alias="opusvideo" email="anickvideo@gmail.com" website="http://www.youtube.com/opusvideo2001"/>
+			<member name="Mark Hadley"/>
+			<member name="Ryan Lennox"/>
+		</team>
+		<files>
+			<version release_date="December 17, 2013">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="BGAME.CON" type="con" sha1="b13b3650f165343de6b3cb26b9c4f820aa630403"/>
+						<file name="TAKING_BOISE.GRP" type="grp" sha1="acdd7ef7df37962cee5b02b18b83a9098dc17e75"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="boise_2013.zip" game="eDuke32" type="Original Files" sha1="184fa7b48cd8457a93b081131da9683df81c1e88"/>
+			<download filename="Duke_Nukem_-_Taking_Boise-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="ab591434913b21b7b587a58e8aa8e2a7a448b72c"/>
+		</downloads>
+	</mod>
 </mods>
