@@ -9578,4 +9578,38 @@
 			<download filename="Duke_Nukem_-_Taking_Boise-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="ab591434913b21b7b587a58e8aa8e2a7a448b72c"/>
 		</downloads>
 	</mod>
+	<mod name="Dukebike" id="dukebike" type="Experimental">
+		<team>
+			<member name="Muelsa" email="samdenice@hotmail.com"/>
+		</team>
+		<files>
+			<version id="Alpha Test 1.0" release_date="Januay 1, 2010">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DUKEBIKE.CON" type="con" sha1="18bc2d0c53fb5bc73f687f91ddc8b1e8c35b52bf"/>
+						<file name="dukebike.def" type="def" sha1="06322d0c145aeacc3ff2e4155de846d135c214df"/>
+						<file name="Dukebike_Alpha_Test_1.0.zip" type="zip" sha1="bce52bf78e708608959be2812cbb40ac6aa85461"/>
+					</game>
+				</type>
+			</version>
+			<version release_date="September 4, 2010">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DUKEBIKE.CON" type="con" sha1="3662ae914dc3a13e7915fd1fdec892c415a7e956"/>
+						<file name="dukebike.def" type="def" sha1="cacc71aa1a097abd4fc2e75cf5706f9760da5032"/>
+						<file name="Dukebike.zip" type="zip" sha1="bb02b6daff5cf667a6382d498572f279edfbad05"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="dukebike_mod_alpha-test_ 1.0.rar" version="Alpha Test 1.0" game="eDuke32" type="Original Files" sha1="b1f9bcb2fbb1a340e17f2cfd9a877b8816651335"/>
+			<download filename="dukebike.7z" game="eDuke32" type="Original Files" sha1="497fc62e48db9f622c540d159ca003b5f62782bd"/>
+			<download filename="Dukebike_Alpha_Test_1.0-ModMgrE.zip" version="Alpha Test 1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="58a7771b43bb4ed2846ce52c2e11b075986c7113"/>
+			<download filename="Dukebike-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="76daaf5873a3001cccb4cd6900dcb145fd2bc3ad"/>
+		</downloads>
+		<note>
+			<note>Doesn't appear to work with the latest version of eDuke32.</note>
+		</note>
+	</mod>
 </mods>
