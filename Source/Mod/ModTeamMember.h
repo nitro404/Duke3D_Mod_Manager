@@ -18,7 +18,7 @@ class ModTeamMember final {
 	friend class ModTeam;
 
 public:
-	ModTeamMember(const std::string & name, const std::string & alias = std::string(), const std::string & email = std::string(), const std::string & website = std::string());
+	ModTeamMember(const std::string & name, const std::string & alias = {}, const std::string & email = {}, const std::string & website = {});
 	ModTeamMember(ModTeamMember && m) noexcept;
 	ModTeamMember(const ModTeamMember & m);
 	ModTeamMember & operator = (ModTeamMember && m) noexcept;
@@ -28,7 +28,10 @@ public:
 	const std::string & getName() const;
 	const std::string & getAlias() const;
 	const std::string & getEmail() const;
+	const std::string & getTwitter() const;
 	const std::string & getWebsite() const;
+	const std::string & getDiscord() const;
+	const std::string & getSteamID() const;
 	const std::string & getAIM() const;
 	const std::string & getICQ() const;
 	const std::string & getPhoneNumber() const;
@@ -38,7 +41,10 @@ public:
 	void setName(const std::string & name);
 	void setAlias(const std::string & alias);
 	void setEmail(const std::string & email);
+	void setTwitter(const std::string & twitter);
 	void setWebsite(const std::string & website);
+	void setDiscord(const std::string & discord);
+	void setSteamID(const std::string & steamID);
 	void setAIM(const std::string & aim);
 	void setICQ(const std::string & icq);
 	void setPhoneNumber(const std::string & phoneNumber);
@@ -61,7 +67,10 @@ private:
 	std::string m_name;
 	std::string m_alias;
 	std::string m_email;
+	std::string m_twitter;
 	std::string m_website;
+	std::string m_discord;
+	std::string m_steamID;
 	std::string m_aim;
 	std::string m_icq;
 	std::string m_phoneNumber;
