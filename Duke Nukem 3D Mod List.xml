@@ -9698,4 +9698,23 @@
 			<download filename="Fallout_2-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c9a009b8c73f2637e10c55ab3706b287bf6a9c45"/>
 		</downloads>
 	</mod>
+	<mod name="Halls of Doom" id="halls_of_doom" type="Episode">
+		<team country="Russia">
+			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com"/>
+		</team>
+		<files>
+			<version release_date="September 8, 2014">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="HALLSOFDOOM.CON" type="con" sha1="806f226f331540c1dcf4e23649f1eda864bfc1e1"/>
+						<file name="Halls_of_Doom.zip" type="zip" sha1="61a605241cadee6bc0f581a90632c21180019bc1"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="halls_of_doom.zip" game="eDuke32" type="Original Files" sha1="f567a98ea7f6b9c0489259b06196bea3c96a841c"/>
+			<download filename="Halls_of_Doom-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e74f50aad1df746923bb1f7160a5d360262004d5"/>
+		</downloads>
+	</mod>
 </mods>
