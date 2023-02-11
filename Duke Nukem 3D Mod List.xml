@@ -9679,4 +9679,23 @@
 			<download filename="Haunted_Nukem_2.1-ModMgrE.zip" version="2.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="373ef31f7546bf5ff383adfa03855a57c2eefc32"/>
 		</downloads>
 	</mod>
+	<mod name="Fallout (2)" id="fallout_2" type="Total Conversion">
+		<team>
+			<member name="Nfelli64"/>
+		</team>
+		<files>
+			<version release_date="September 27, 2009">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="FALLOUT2.CON" type="con" sha1="bc41f116d55fe2e627bb82ad61016214af04a0c2"/>
+						<file name="FALLOUT2.GRP" type="grp" sha1="6fa821c81f41f93ad4fa538b85305852ba1b9949"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="FALLOUT.7z" game="eDuke32" type="Original Files" sha1="2bd49e15a4706d5f3a1ae994562d7262d26fb8fe"/>
+			<download filename="Fallout_2-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c9a009b8c73f2637e10c55ab3706b287bf6a9c45"/>
+		</downloads>
+	</mod>
 </mods>
