@@ -9812,6 +9812,25 @@
 			<mod id="plug_n_pray"/>
 		</similar>
 	</mod>
+	<mod name="Doom TC" id="doom_tc" type="Total Conversion" version="1.21" website="http://M210.duke4.net">
+		<team>
+			<member name="Alexander Makarov" alias="M210"/>
+		</team>
+		<files>
+			<version id="1.21" release_date="January 20, 2016">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="cons/edoomtc.con" type="con" sha1="TODO_SHA1"/>
+						<file name="Doom_TC_1.21.zip" type="zip" sha1="TODO_SHA1"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="edoomtc_1.21.rar" version="1.21" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="Doom_TC_1.21-ModMgrE.zip" version="1.21" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+		</downloads>
+	</mod>
 	<mod name="Electric Highways" id="electric_highways" type="Total Conversion" version="1.1.0" website="https://gamejolt.com/games/electric-highways/89123">
 		<team>
 			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com"/>
