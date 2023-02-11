@@ -9647,4 +9647,36 @@
 			<mod id="duke_nukem_xmas_2014"/>
 		</related>
 	</mod>
+	<mod name="Haunted Nukem" id="haunted_nukem" type="Total Conversion" version="2.1" website="https://www.moddb.com/mods/haunted-nukem">
+		<team>
+			<member name="Duke64Nukem" alias="Kamikaze Nukem" email="duke64nukem@gmail.com"/>
+			<member name="bullerbuller7"/>
+		</team>
+		<files>
+			<version id="1.0" release_date="October 31, 2015">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="HAUNTED.CON" type="con" sha1="0e370af0b088e62408abeff325747411bf41c3f8"/>
+						<file name="haunted.def" type="def" sha1="a5fc07f1784cd6924aed12babb66f9f11f26dfac"/>
+						<file name="Haunted_Nukem_1.0.zip" type="zip" sha1="cc9a9d70de580589ad4469c8d879dbb31bb85b84"/>
+					</game>
+				</type>
+			</version>
+			<version id="2.1" release_date="October 31, 2017">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="HAUNTED.CON" type="con" sha1="4987123348e2f02ab2ec5d418b051ab2e5085b82"/>
+						<file name="haunted.def" type="def" sha1="607e53580aa71b2dab78cbd454a00ab86214425e"/>
+						<file name="Haunted_Nukem_2.1.zip" type="zip" sha1="4a716e262a2233cbd018a91c11db983a686d1ddf"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Haunted_Nukem.4.rar" version="1.0" game="eDuke32" type="Original Files" sha1="7eed88aa9cadd862d562eace3f59d9ace5b9396c"/>
+			<download filename="Haunted_Nukem-v2.1.zip" version="2.1" game="eDuke32" type="Original Files" sha1="0afd4d15d0b129a73d8988ed362a676da08f22e6"/>
+			<download filename="Haunted_Nukem_1.0-ModMgrE.zip" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b925ae3e58800945491329a878c7e5e2c40a8e74"/>
+			<download filename="Haunted_Nukem_2.1-ModMgrE.zip" version="2.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="373ef31f7546bf5ff383adfa03855a57c2eefc32"/>
+		</downloads>
+	</mod>
 </mods>
