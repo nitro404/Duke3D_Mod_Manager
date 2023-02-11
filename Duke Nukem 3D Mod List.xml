@@ -9717,4 +9717,46 @@
 			<download filename="Halls_of_Doom-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e74f50aad1df746923bb1f7160a5d360262004d5"/>
 		</downloads>
 	</mod>
+	<mod name="Hardcore" id="hardcore" type="Total Conversion" version="1.3" website="https://www.moddb.com/mods/david-bjorge">
+		<team>
+			<member name="David Bjorge" alias="Dukeis1" website="https://www.moddb.com/company/david-bjorge"/>
+		</team>
+		<files>
+			<version id="1.0" release_date="August 16, 2015">
+				<game type="eDuke32" state="Native">
+					<file name="HARDCORE.CON" type="con" sha1="b26a4d0a0a47607ed5e1ddc19d0c49c0acbdcf40"/>
+					<file name="Hardcore_1.0.zip" type="zip" sha1="32e2bf92c295efee0490891ad22d5f46f083027e"/>
+				</game>
+			</version>
+			<version id="1.1" release_date="August 18, 2015">
+				<game type="eDuke32" state="Native">
+					<file name="HARDCORE.CON" type="con" sha1="b26a4d0a0a47607ed5e1ddc19d0c49c0acbdcf40"/>
+					<file name="Hardcore_1.1.zip" type="zip" sha1="fdc184c97c36980ea25ca6c3f49ec6ab1af99b8e"/>
+				</game>
+			</version>
+			<version id="1.2" release_date="December 30, 2015">
+				<game type="eDuke32" state="Native">
+					<file name="HARDCORE.CON" type="con" sha1="b26a4d0a0a47607ed5e1ddc19d0c49c0acbdcf40"/>
+					<file name="Hardcore_1.2.zip" type="zip" sha1="294711e9ed22e76f942ebd178df7dad9ec402147"/>
+				</game>
+			</version>
+			<version id="1.3" release_date="Januay 26, 2017">
+				<game type="eDuke32" state="Native">
+					<file name="HARDCORE.CON" type="con" sha1="5cc6bd61bf384f58b28a933e981f8bc098ccaad6"/>
+					<file name="hardcore.def" type="def" sha1="bec2c3d9862fcd07feec13fe269f92d22524233d"/>
+					<file name="Hardcore_1.3.zip" type="zip" sha1="2dddb6d0dd711250013b5df6457f45e75c799e4d"/>
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Hardcore_Mod_V1.0.zip" version="1.0" game="eDuke32" type="Original Files" sha1="9089f8be8325ae0c67f06b4084cd57488e1f6afe"/>
+			<download filename="Hardcore_Mod_V1.1.zip" version="1.1" game="eDuke32" type="Original Files" sha1="72bef9ee0c07b0e3382fbf7ab608c190026bf7ec"/>
+			<download filename="Hardcore_Mod_V1.2.zip" version="1.2" game="eDuke32" type="Original Files" sha1="e94184bd85289e7d05ddb8b269a6b50e0a71aafa"/>
+			<download filename="Hardcore_Mod_V1.3.zip" version="1.3" game="eDuke32" type="Original Files" sha1="ff40f26c3057511bc4f39c390391b39d1570348c"/>
+			<download filename="Hardcore_1.0-ModMgrE.zip" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e1a13bf859cce16165d2f1598460f611086a6c82"/>
+			<download filename="Hardcore_1.1-ModMgrE.zip" version="1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="990c16796d2c4672dc7ff3399bfb5eb6fb59f8f3"/>
+			<download filename="Hardcore_1.2-ModMgrE.zip" version="1.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e50960db83be20293fc2151a7ea4fe4be6d71da4"/>
+			<download filename="Hardcore_1.3-ModMgrE.zip" version="1.3" game="eDuke32" type="Mod Manager Files" state="Native" sha1="5f610a713af9a7f2a95926bc9c3a5b3e708f58e9"/>
+		</downloads>
+	</mod>
 </mods>
