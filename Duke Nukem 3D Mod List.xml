@@ -9926,4 +9926,20 @@
 			<download filename="KaiseR_Land-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="197ffa29e7a73d3f45e30e9c5fc71c30f1dec24f"/>
 		</downloads>
 	</mod>
+	<mod name="Dungeon Keeper" id="dungeon_keeper" type="Partial Conversion" version="0.1">
+		<files>
+			<version id="0.1" release_date="June 16, 2013">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="KEEPERTC.CON" type="con" sha1="c1116e0381bc5b3e642acf6f3786cd57c9144c4a"/>
+						<file name="KEEPER01.GRP" type="zip" sha1="29a61c6d5b5e84dca4049a3e94700f12ab13d92b"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="keepertc_0.1.rar" version="0.1" game="eDuke32" type="Original Files" sha1="dd6aab1def6db841ba974d87cfa13238a02ceda3"/>
+			<download filename="Dungeon_Keeper_0.1-ModMgrE.zip" version="0.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="642f117c98442ba636f36f5bb193ae57513cac8a"/>
+		</downloads>
+	</mod>
 </mods>
