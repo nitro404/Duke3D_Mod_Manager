@@ -9906,4 +9906,24 @@
 			<download filename="Infestation_in_Time_0.0-ModMgrE.zip" version="0.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="d894aa49023191334729383536a6fc454ec7be9b"/>
 		</downloads>
 	</mod>
+	<mod name="KaiseR Land" id="kaiser_land" type="Episode" website="http://www.bur.st/~duke3d">
+		<team country="France">
+			<member name="KaiseR" email="ksr@cegetel.net"/>
+		</team>
+		<files>
+			<version release_date="March 8, 2009">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="KAISER.CON" type="con" sha1="1240198f79be6a2f957325d47484b189ba29fe0b"/>
+						<file name="kaiserland.def" type="def" sha1="2677383ecbe6ecb92e19efa83aa020c6e76f66cf"/>
+						<file name="KaiseR_Land.zip" type="zip" sha1="4b20b8886209047d7b6eba65276c248df78c1547"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="KaiseR_Land.rar" game="eDuke32" type="Original Files" sha1="6331d5e780b555de7e31f555d6740d71b6cc3175"/>
+			<download filename="KaiseR_Land-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="197ffa29e7a73d3f45e30e9c5fc71c30f1dec24f"/>
+		</downloads>
+	</mod>
 </mods>
