@@ -9672,6 +9672,27 @@
 			<mod id="plug_n_pray"/>
 		</related>
 	</mod>
+	<mod name="Electric Highways" id="electric_highways" type="TODO_GENERAL_TYPE" website="https://gamejolt.com/games/electric-highways/89123">
+		<team>
+			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com"/>
+			<member name="Xitilon" website="http://r0.faisu.net"/>
+		</team>
+		<files>
+			<version release_date="September 15, 2015">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="EH_GAME.CON" type="con" sha1="TODO_SHA1"/>
+						<file name="eh.def" type="def" sha1="TODO_SHA1"/>
+						<file name="Electric_Highways.zip" type="zip" sha1="TODO_SHA1"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Electric-Highways.zip" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="Electric_Highways-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+		</downloads>
+	</mod>
 	<mod name="Duke Nukem: Taking Boise" id="duke_nukem_taking_boise" type="Episode" website="https://www.moddb.com/mods/duke-nukem-taking-boise">
 		<team name="YayFace Productions">
 			<member name="Alan A. Nick" alias="opusvideo" email="anickvideo@gmail.com" website="http://www.youtube.com/opusvideo2001"/>
