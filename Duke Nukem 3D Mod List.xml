@@ -9759,4 +9759,24 @@
 			<download filename="Hardcore_1.3-ModMgrE.zip" version="1.3" game="eDuke32" type="Mod Manager Files" state="Native" sha1="5f610a713af9a7f2a95926bc9c3a5b3e708f58e9"/>
 		</downloads>
 	</mod>
+	<mod name="HardG" id="hardg" type="Total Conversion" website="http://www.planetduke.com/amc">
+		<team>
+			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com"/>
+			<member name="Geoffrey van Dijk" alias="Fakir Baba" email="fakirnogwat@hotmail.com"/>
+		</team>
+		<files>
+			<version release_date="April 1, 2007">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="HARDG.CON" type="con" sha1="c162b3fc560dd30d180af0aca30b0fd8eee3b1bf"/>
+						<file name="HARDG.GRP" type="grp" sha1="f1e764d524068414508e3d524f2750942880822b"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="hardgfinal.zip" game="eDuke32" type="Original Files" sha1="d264e1653b7616f131c43160ef7deb9d14b80229"/>
+			<download filename="HardG-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="089a30d0d6a19dc304f0aa716fd28198f4f80561"/>
+		</downloads>
+	</mod>
 </mods>
