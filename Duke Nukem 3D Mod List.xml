@@ -10104,6 +10104,33 @@
 			<download filename="Hardcore_1.3-ModMgrE.zip" filesize="6366486" version="1.3" game="eDuke32" type="Mod Manager Files" state="Native" sha1="5f610a713af9a7f2a95926bc9c3a5b3e708f58e9"/>
 		</downloads>
 	</mod>
+	<mod name="Hectic Realms" id="hectic_realms" type="Total Conversion" version="Demo" website="https://www.moddb.com/mods/hectic-realms">
+		<team>
+			<member name="Mike Norvak"/>
+			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com"/>
+			<member name="Cage"/>
+		</team>
+		<files>
+			<version id="Demo" release_date="February 24, 2018">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="WGR2GAME.CON" type="con" sha1="TODO_SHA1"/>
+						<file name="wgr2.def" type="def" sha1="TODO_SHA1"/>
+						<file name="Hectic_Realms_Demo.zip" type="zip" sha1="TODO_SHA1"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="HECTIC_REALMS_DEMO.zip" version="Demo" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="Hectic_Realms_Demo-ModMgrE.zip" version="Demo" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+		</downloads>
+		<!--
+			TODO: waterfall audio issue on level 1
+			TODO: rendering issues on level 2
+			TODO: possible crash?  WGR2PLAYER.CON:5159: starttrack: invalid level 11 or null music for volume 0 level 11
+		-->
+	</mod>
 	<mod name="HardG" id="hardg" type="Total Conversion" website="http://www.planetduke.com/amc">
 		<team>
 			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
