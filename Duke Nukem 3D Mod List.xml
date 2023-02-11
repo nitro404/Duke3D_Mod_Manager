@@ -9613,9 +9613,9 @@
 			<download filename="Dukebike_Alpha_Test_1.0-ModMgrE.zip" version="Alpha Test 1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="58a7771b43bb4ed2846ce52c2e11b075986c7113"/>
 			<download filename="Dukebike-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="76daaf5873a3001cccb4cd6900dcb145fd2bc3ad"/>
 		</downloads>
-		<note>
+		<notes>
 			<note>Doesn't appear to work with the latest version of eDuke32.</note>
-		</note>
+		</notes>
 	</mod>
 	<mod name="Fallout Freeze" id="fallout_freeze" type="Total Conversion" version="1.1" website="https://brullov.itch.io/fallout-freeze">
 		<team name="Brullov Studios" website="https://brullov-studios.itch.io">
