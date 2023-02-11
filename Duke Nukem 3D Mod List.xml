@@ -9886,4 +9886,24 @@
 			<download filename="Mr_The_Killer_2.1.4-ModMgrE.zip" version="2.1.4" game="eDuke32" type="Mod Manager Files" state="Native" sha1="30477776edb666c74688e742c6ece376c9892ab7"/>
 		</downloads>
 	</mod>
+	<mod name="Infestation in Time" id="infestation_in_time" type="Total Conversion" version="0.0" website="http://www.mydukemods.ucoz.ru">
+		<team name="Zykov Eddy Software" email="edik.zykov@mail.ru" country="Russia">
+			<member name="Zykov Eddy" alias="E.Z" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com"/>
+		</team>
+		<files>
+			<version id="0.0" release_date="December 11, 2008">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="IITGAME.CON" type="con" sha1="4878f9733fed41242fb50165308f5e5764528d11"/>
+						<file name="IITTC.DEF" type="def" sha1="38d6dec13e3578d831c3a630eefec75b1cd95c30"/>
+						<file name="Infestation_in_Time_0.0.zip" type="zip" sha1="bcc83c38c5a0ca838810514099e1d23e581575f0"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="IIT.zip" version="0.0" game="eDuke32" type="Original Files" sha1="a788ef74b98e2c46ae81cafee7304f28dac9e896"/>
+			<download filename="Infestation_in_Time_0.0-ModMgrE.zip" version="0.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="d894aa49023191334729383536a6fc454ec7be9b"/>
+		</downloads>
+	</mod>
 </mods>
