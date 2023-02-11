@@ -2607,6 +2607,7 @@
 			<mod id="xmas_1997"/>
 			<mod id="duke_nukem_xmas_2014"/>
 			<mod id="driving_home_for_christmas"/>
+			<mod id="fallout_freeze"/>
 		</related>
 	</mod>
 	<mod name="Nuke the Bastards" id="nuke_the_bastards" type="Episode">
@@ -4524,6 +4525,7 @@
 			<mod id="xmas_1997"/>
 			<mod id="duke_nukem_xmas_2014"/>
 			<mod id="driving_home_for_christmas"/>
+			<mod id="fallout_freeze"/>
 		</related>
 	</mod>
 	<mod name="Y2K Nuklear Meltdown" id="y2k_nuklear_meltdown" type="Total Conversion" version="Demo 1.2" website="http://www.dukeworld.com/dukey2k">
@@ -6332,6 +6334,7 @@
 			<mod id="xmas_duke_96"/>
 			<mod id="duke_nukem_xmas_2014"/>
 			<mod id="driving_home_for_christmas"/>
+			<mod id="fallout_freeze"/>
 		</related>
 	</mod>
 	<mod name="Glock 18" id="glock_18" type="Weapon Patch">
@@ -6967,6 +6970,7 @@
 			<mod id="xmas_duke_96"/>
 			<mod id="xmas_1997"/>
 			<mod id="duke_nukem_xmas_2014"/>
+			<mod id="fallout_freeze"/>
 		</related>
 	</mod>
 	<mod name="The End of the World" id="the_end_of_the_world" type="Partial Conversion">
@@ -9399,6 +9403,7 @@
 			<mod id="xmas_duke_96"/>
 			<mod id="xmas_1997"/>
 			<mod id="driving_home_for_christmas"/>
+			<mod id="fallout_freeze"/>
 		</related>
 	</mod>
 	<mod name="DukeRUS" id="dukerus" type="Translation" website="http://M210.duke4.net">
@@ -9611,5 +9616,35 @@
 		<note>
 			<note>Doesn't appear to work with the latest version of eDuke32.</note>
 		</note>
+	</mod>
+	<mod name="Fallout Freeze" id="fallout_freeze" type="Total Conversion" version="1.1" website="https://brullov.itch.io/fallout-freeze">
+		<team name="Brullov Studios" website="https://brullov-studios.itch.io">
+			<member name="Artem Brullov" twitter="@brullov_art" website="https://itch.io/profile/brullov"/>
+			<member name="Oasiz"/>
+			<member name="RichardStorm"/>
+			<member name="Cage"/>
+		</team>
+		<files>
+			<version id="1.1" release_date="January 2, 2021">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="FF11.CON" type="con" sha1="6fc9981661e86cee4e4600f1fd1d22c39044ae3c"/>
+						<file name="blend.def" type="def" sha1="a9c45489d117d54954f3d1ed027263aa2b9e25ee"/>
+						<file name="Fallout_Freeze_1.1.zip" type="zip" sha1="bf4e1aaf2273210fa4b46810a468eb31f431c2e7"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Fallout_Freeze_v1.1.zip" version="1.1" game="eDuke32" type="Original Files" sha1="62529e6a33d46ef8bc90b66d56f0d85b2000fe23"/>
+			<download filename="Fallout_Freeze_1.1-ModMgrE.zip" version="1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="d745323f21978da5a2f341fbf70b52495b192649"/>
+		</downloads>
+		<related>
+			<mod id="nuclear_winter"/>
+			<mod id="xmas_duke_96"/>
+			<mod id="xmas_1997"/>
+			<mod id="driving_home_for_christmas"/>
+			<mod id="duke_nukem_xmas_2014"/>
+		</related>
 	</mod>
 </mods>
