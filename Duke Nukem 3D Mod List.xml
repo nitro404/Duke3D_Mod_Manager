@@ -9779,4 +9779,24 @@
 			<download filename="HardG-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="089a30d0d6a19dc304f0aa716fd28198f4f80561"/>
 		</downloads>
 	</mod>
+	<mod name="KickAss Duke" id="kickass_duke" type="Total Conversion" version="1.13" website="https://www.moddb.com/mods/kickass-duke">
+		<team country="Italy">
+			<member name="Riccardo Capogna" alias=" RichardStorm" email="riccardo.capogna@yahoo.it"/>
+		</team>
+		<files>
+			<version id="1.13" release_date="November 28, 2022">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="KICKASS.CON" type="con" sha1="7580df8f968aec23efe43e555fbbe83cb81c9c78"/>
+						<file name="kickass.def" type="def" sha1="6dfe3d025a04ace42d93515967a7a72cd96cdd09"/>
+						<file name="KickAss_Duke_1.13.zip" type="zip" sha1="437c825dfd6b15c2173ff9405b3a25533c3b7948"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="KickAssDuke_1_13.zip" version="1.13" game="eDuke32" type="Original Files" sha1="d92cb6377ad158f8796933f83c7db1ba4671a975"/>
+			<download filename="KickAss_Duke_1.13-ModMgrE.zip" version="1.13" game="eDuke32" type="Mod Manager Files" state="Native" sha1="35db257257a2d670731816054e2e2adf20cb6d8f"/>
+		</downloads>
+	</mod>
 </mods>
