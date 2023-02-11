@@ -9799,4 +9799,91 @@
 			<download filename="KickAss_Duke_1.13-ModMgrE.zip" version="1.13" game="eDuke32" type="Mod Manager Files" state="Native" sha1="35db257257a2d670731816054e2e2adf20cb6d8f"/>
 		</downloads>
 	</mod>
+	<mod name="Mr The Killer" id="mr_the_killer" type="Total Conversion" version="2.1.4" website="http://www.mrthekiller.com">
+		<team country="France">
+			<member name="Seb Luca" email="seb.luca.productions@gmail.com" website="http://www.sebluca.com"/>
+			<member name="Raquel De Miranda" alias="Merween" twitter="@r_demiranda"/>
+			<member name="Likali"/>
+			<member name="Richoult" email="teamjavras@gmail.com" website="http://www.teamjavras.fr/Javras"/>
+			<member name="Appolo" email="capostagno.arno@gmail.com" website="http://apollolegacyinc.be" twitter="@ApolloLegacy01"/>
+			<member name="Xzimnut" website="http://www.weeklymp3.fr"/>
+			<member name="Angor de Redjak" twitter="@Angor_de_Redjak"/>
+		</team>
+		<files>
+			<version id="2.01" release_date="November 17, 2018">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="MTK.CON" type="con" sha1="572e039d440712cf0e72aaa84ebf0d2244c5982e"/>
+						<file name="Mr_The_Killer_2.01.zip" type="zip" sha1="3a7612aa8b85520480f5877961dcbebf6a8a6a81"/>
+					</game>
+				</type>
+			</version>
+			<version id="2.03" release_date="August 29, 2019">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="MTK.CON" type="con" sha1="8eede903cd62dde0e6dfd19eb18df9ab39fe5ad9"/>
+						<file name="Mr_The_Killer_2.03.zip" type="zip" sha1="9e5644e7208fb53070b419b0a1c3e4feabca0d5d"/>
+					</game>
+				</type>
+			</version>
+			<version id="2.051" release_date="December 15, 2019">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="MTK.CON" type="con" sha1="ab320483689ad8613a8cb8c38f7eb0df362ef8e9"/>
+						<file name="Mr_The_Killer_2.051.zip" type="zip" sha1="4d879c6a52ac6021f49c83e9e0d5c3a8bd4612e4"/>
+					</game>
+				</type>
+			</version>
+			<version id="2.1" release_date="January 6, 2020">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="MTK.CON" type="con" sha1="c6499413c24930494c8056af1b29de429d8f305e"/>
+						<file name="Mr_The_Killer_2.1.zip" type="zip" sha1="d8d3bad13fc0676770a6a29b5795fef6faef1b2d"/>
+					</game>
+				</type>
+			</version>
+			<version id="2.1.1" release_date="February 19, 2021">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="MTK.CON" type="con" sha1="f03ce153f2832fe7080a83c687c68193816aeff1"/>
+						<file name="Mr_The_Killer_2.1.1.zip" type="zip" sha1="aebac60e9f84e39e2f6de8e0dbb90360d66c670a"/>
+					</game>
+				</type>
+			</version>
+			<version id="2.1.3" release_date="September 26, 2021">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="MTK.CON" type="con" sha1="1faa814c537197b5a2b74c777169d7e84bd54f55"/>
+						<file name="mtk.def" type="def" sha1="0568f8812dc55f228e80eb137f533abf8f96f4fe"/>
+						<file name="Mr_The_Killer_2.1.3.zip" type="zip" sha1="4820a7d235a1a10a9af1060ca41034daaa81b2d5"/>
+					</game>
+				</type>
+			</version>
+			<version id="2.1.4" release_date="July 8, 2022">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="MTK.CON" type="con" sha1="a35cd8ca09fbab361c882443ddcf728ffdf0e1d4"/>
+						<file name="mtk.def" type="def" sha1="0568f8812dc55f228e80eb137f533abf8f96f4fe"/>
+						<file name="Mr_The_Killer_2.1.4.zip" type="zip" sha1="09912b88f9821cf7976120b86f854ad63bd4af17"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Mr_The_Killer_-_v2.01.zip" version="2.01" game="eDuke32" type="Original Files" sha1="9969f5911a661c6e6bb45b289d5fb3502cecc065"/>
+			<download filename="Mr_The_Killer_-_v2.03.zip" version="2.03" game="eDuke32" type="Original Files" sha1="13b564ccce72689563dc2839a1debf23e3b31c7e"/>
+			<download filename="Mr_The_Killer_-_v2.051.zip" version="2.051" game="eDuke32" type="Original Files" sha1="0bb9494f517e9062dad12e1547e62bb7e7f55075"/>
+			<download filename="Mr_The_Killer_-_v2.1.zip" version="2.1" game="eDuke32" type="Original Files" sha1="1bcbedcf7aed4723e59a4cc70144a82aa578096d"/>
+			<download filename="Mr_The_Killer_-_v2.1.1.zip" version="2.1.1" game="eDuke32" type="Original Files" sha1="36a4bec87c25758491f3aa7ea30e8ac012d20d17"/>
+			<download filename="Mr_The_Killer_-_v2.1.3.zip" version="2.1.3" game="eDuke32" type="Original Files" sha1="cfc98221806d122500090082de2f40609c3df44f"/>
+			<download filename="Mr_The_Killer_-_v2.1.4.zip" version="2.1.4" game="eDuke32" type="Original Files" sha1="33411f93743956e9c423bfd3b1f6a771186b4b4c"/>
+			<download filename="Mr_The_Killer_2.01-ModMgrE.zip" version="2.01" game="eDuke32" type="Mod Manager Files" state="Native" sha1="4ed60d5a50659e57c1c7f2d224d7995c77bf1b7d"/>
+			<download filename="Mr_The_Killer_2.03-ModMgrE.zip" version="2.03" game="eDuke32" type="Mod Manager Files" state="Native" sha1="113e193c8fa58f743a63a5e0503bd0df02d2d9fd"/>
+			<download filename="Mr_The_Killer_2.051-ModMgrE.zip" version="2.051" game="eDuke32" type="Mod Manager Files" state="Native" sha1="187c677442d685d88bc9ab671be84a9dc9ccba0e"/>
+			<download filename="Mr_The_Killer_2.1-ModMgrE.zip" version="2.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b8eb70a63fdcb281b5d3052ea50b41c9fb0b7b05"/>
+			<download filename="Mr_The_Killer_2.1.1-ModMgrE.zip" version="2.1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="a6513a7d537adcaf29509fb3b8c12218147013c6"/>
+			<download filename="Mr_The_Killer_2.1.3-ModMgrE.zip" version="2.1.3" game="eDuke32" type="Mod Manager Files" state="Native" sha1="6f532ad9ab21203494cb32880804af20c7273712"/>
+			<download filename="Mr_The_Killer_2.1.4-ModMgrE.zip" version="2.1.4" game="eDuke32" type="Mod Manager Files" state="Native" sha1="30477776edb666c74688e742c6ece376c9892ab7"/>
+		</downloads>
+	</mod>
 </mods>
