@@ -10601,6 +10601,29 @@
 			<download filename="Oblivion_3D_Final-ModMgrE.zip" filesize="81638624" version="Final" game="eDuke32" type="Mod Manager Files" state="Native" sha1="7ff0c9e6fc4c3d04e5b63b392f7e6be81de2f49f"/>
 		</downloads>
 	</mod>
+	<mod name="SilverballZ" id="silverballz" type="Total Conversion" website="https://manicware.itch.io/silverballz">
+		<team name="Manicware" website="https://manicware.itch.io">
+			<member name="Sanek"/>
+			<member name="Mblackwell" email="Mblackwell50@hotmail.com"/>
+			<member name="Brandon Blume" alias="MusicallyInspired"/>
+			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com"/>
+		</team>
+		<versions>
+			<version release_date="February 25, 2019">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="SB.CON" type="con"/>
+						<file name="sb.def" type="def"/>
+						<file name="SilverballZ.zip" type="zip"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="SilverballZ.zip" game="eDuke32" type="Original Files"/>
+			<download filename="SilverballZ-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native"/>
+		</downloads>
+	</mod>
 	<mod name="Operation Multiverse" id="operation_multiverse" type="Total Conversion" version="1.0" website="https://www.moddb.com/mods/operation-multiverse">
 		<team>
 			<member name="David Bjorge" alias="Dukeis1" website="https://www.moddb.com/company/david-bjorge"/>
