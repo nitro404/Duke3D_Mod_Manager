@@ -360,7 +360,7 @@
 	</mod>
 	<mod name="Aqua" id="aqua" type="Partial Conversion" website="http://www.netrover.com/~benroff">
 		<team>
-			<member name="Ben Roffelsen" email="benroff@netrover.com"/>
+			<member name="Ben Roffelsen" alias="Pale Rider" email="benroff@netrover.com"/>
 		</team>
 		<files>
 			<version release_date="November 16, 1996">
@@ -1559,7 +1559,7 @@
 		<team name="Akimbo Productions">
 			<member name="Vincent Civiletti" alias="Akimbo"/>
 			<member name="Ken Nign" alias="Duneboy"/>
-			<member name="Ben Roffelsen" alias="Pale Rider"/>
+			<member name="Ben Roffelsen" alias="Pale Rider" email="benroff@netrover.com"/>
 			<member name="Donald Fregeau Jr."/>
 			<member name="Michael Denee"/>
 			<member name="Alex Gibson" alias="Trancefiend"/>
@@ -2517,7 +2517,7 @@
 			<member name="Ricky Pierrot"/>
 			<member name="Akimbo"/>
 			<member name="Alfredo Palazuelos"/>
-			<member name="Scott Haslam"/>
+			<member name="Scott Haslam" alias="Dagger"/>
 			<member name="Nicolas G"/>
 			<member name="Anthony Gomez"/>
 			<member name="Alex Harris"/>
@@ -4378,7 +4378,7 @@
 			<member name="Markus Bengtsson"/>
 			<member name="Eric Fullerton"/>
 			<member name="Kodiak Bear"/>
-			<member name="Dhiarmid Campbell"/>
+			<member name="Dhiarmid Bruce Campbell"/>
 			<member name="David J. Reid"/>
 		</team>
 		<files>
@@ -5992,7 +5992,7 @@
 	</mod>
 	<mod name="City Terror" id="city_terror" type="Dukematch" version="Gold Edition">
 		<team name="E. E. M.">
-			<member name="Rob Wijkstra" alias="Highwire"/>
+			<member name="Rob Wijkstra" alias="HighWire" email="Rob_Wijkstra@hotmail.com"/>
 			<member name="Tom Veenstra" alias="I&apos;m gonna get myself a chaingun!"/>
 			<member name="Erwin de Lange" alias="Maze"/>
 			<member name="The Gangster"/>
@@ -9998,6 +9998,65 @@
 		<downloads>
 			<download filename="Ninjas_with_Guitars_BETA_TEST_v0.1_.zip" version="Beta Test 0.1" game="eDuke32" type="Original Files" sha1="8f06c59f2394f34cde0d61af302d1802d19c3a36"/>
 			<download filename="Ninjas_with_Guitars_Beta_Test_0.1-ModMgrE.zip" version="Beta Test 0.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="299839b80becd1c4eead05aa88408cb6ff99bbdb"/>
+		</downloads>
+	</mod>
+	<mod name="Nuclear Showdown" id="nuclear_showdown" type="Total Conversion" version="2.1" website="https://www.moddb.com/mods/nuclear-showdown-redux">
+		<team email="Jstanf36@ntlworld.com">
+			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com"/>
+			<member name="Michael Caraballo"/>
+			<member name="Robert Caraballo"/>
+			<member name="Olivier Boucher"/>
+			<member name="Alias Conrad Coldwood"/>
+			<member name="Geoffrey van Dijk" alias="Fakir Baba" email="fakirnogwat@hotmail.com"/>
+			<member name="Rob Wijkstra" alias="HighWire" email="Rob_Wijkstra@hotmail.com"/>
+			<member name="Mariusz"/>
+			<member name="Ben Roffelsen" alias="Pale Rider" email="benroff@netrover.com"/>
+			<member name="James Duncan"/>
+			<member name="Eric Boltjes"/>
+			<member name="Eddie Campbell"/>
+			<member name="Mike Beaulieu"/>
+			<member name="Nathan Orr"/>
+			<member name="Scott Haslam" alias="Dagger"/>
+			<member name="Bobby Portis"/>
+			<member name="Robert Travis"/>
+			<member name="Maarten Pinxten" email="mfpinxten@hotmail.com"/>
+		</team>
+		<files>
+			<version id="1.1" release_date="August 29, 2009">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="ICDGAME.CON" type="con" sha1="96fa34609f732292474eb3bc30eec7a56c26448f"/>
+						<file name="ns.def" type="def" sha1="18961ba756a2260940f5733d7ded93fda1c6492b"/>
+						<file name="Nuclear_Showdown_1.1.zip" type="zip" sha1="9be068785d5a75d4be83383a7199c21ae7958cd7"/>
+					</game>
+				</type>
+			</version>
+			<version id="2.0" release_date="November 5, 2016">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="ICDGAME.CON" type="con" sha1="866d50fe1b19f3d3595ad754131eb606e14b1c43"/>
+						<file name="ns.def" type="def" sha1="8e59009714f2f68951261a8af50e4592b2ba7ef7"/>
+						<file name="Nuclear_Showdown_2.0.zip" type="zip" sha1="a2e92539771e6de829b7d7e51e88803ad9c8a5f1"/>
+					</game>
+				</type>
+			</version>
+			<version id="2.1" release_date="November 22, 2016">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="ICDGAME.CON" type="con" sha1="7507101cd95df40907a5a950d76c3da72fa297c2"/>
+						<file name="ns.def" type="def" sha1="5f03f54c169bf5c8b67c581daae7584e2fdb5052"/>
+						<file name="Nuclear_Showdown_2.1.zip" type="zip" sha1="0d382a33717d7bb59d26a333d334b0d71a030770"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Nuclear_Showdown_v1.1.rar" version="1.1" game="eDuke32" type="Original Files" sha1="96bba275ebb246c6ceeecab60362381643256876"/>
+			<download filename="Nuclear_Showdown_v2.zip" version="2.0" game="eDuke32" type="Original Files" sha1="637dbda313d980a639dd233c4fcdf05d12cdcc2a"/>
+			<download filename="Nuclear_Showdown_V2.1.zip" version="2.1" game="eDuke32" type="Original Files" sha1="6b39a130d7427d3048c9411fd7a527f89fa03b5a"/>
+			<download filename="Nuclear_Showdown_1.1-ModMgrE.zip" version="1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="f8a5d89c1da983cfc90bad4e2859ed4e1f50af2f"/>
+			<download filename="Nuclear_Showdown_2.0-ModMgrE.zip" version="2.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="f573ef92b58ba9849d3b634cfae5c76201f90a23"/>
+			<download filename="Nuclear_Showdown_2.1-ModMgrE.zip" version="2.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c666ebdb2b07cc040f604bf4ea43816f0e11c78e"/>
 		</downloads>
 	</mod>
 </mods>
