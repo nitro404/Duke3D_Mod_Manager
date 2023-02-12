@@ -10192,4 +10192,24 @@
 			<download filename="Spooky-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="bddf92053edcf469f03c52a0f395a816bfa67756"/>
 		</downloads>
 	</mod>
+	<mod name="Stargate Atlantis" id="stargate_atlantis" type="Total Conversion">
+		<team>
+			<member name="The Commander" email="codynz3000@hotmail.com"/>
+		</team>
+		<files>
+			<version release_date="October 25, 2010">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="Stargate.con" type="con" sha1="c993ca12d8a49c05497f9e7d6fec22323f4729a8"/>
+						<file name="Stargate.def" type="def" sha1="42233250119fd8039116d160ea35882c4362c808"/>
+						<file name="Stargate_Atlantis.zip" type="zip" sha1="ac28048d5c8fa0cf4fa0ecaf4195df608be99d8d"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="stargate tc crap.rar" game="eDuke32" type="Original Files" sha1="ff3d30adee2cec798f9426a4df73e1baa3143094"/>
+			<download filename="Stargate_Atlantis-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="2c96d5ff764a446e7befb36c31312ace0252fcf6"/>
+		</downloads>
+	</mod>
 </mods>
