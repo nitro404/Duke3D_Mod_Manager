@@ -10108,4 +10108,67 @@
 			<download filename="Oblivion_3D_Final-ModMgrE.zip" version="Final" game="eDuke32" type="Mod Manager Files" state="Native" sha1="7ff0c9e6fc4c3d04e5b63b392f7e6be81de2f49f"/>
 		</downloads>
 	</mod>
+	<mod name="Operation Multiverse" id="operation_multiverse" type="Total Conversion" version="1.0" website="https://www.moddb.com/mods/operation-multiverse">
+		<team>
+			<member name="David Bjorge" alias="Dukeis1" website="https://www.moddb.com/company/david-bjorge"/>
+		</team>
+		<files>
+			<version id="Alpha" release_date="September 16, 2017">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="MULTIVERSE.CON" type="con" sha1="f7a2b2036555622a786b757d7e1f804fce65bcb9"/>
+						<file name="multiverse.def" type="def" sha1="1766336a511c55a0918de8f006fe770ef62b2c59"/>
+						<file name="Operation_Multiverse_Alpha.zip" type="zip" sha1="bf45354e3910ba94feb98e8f068fc123db907264"/>
+					</game>
+				</type>
+				<type id="Wolfenstein 3D Voxel Pack">
+					<game type="eDuke32" state="Native">
+						<file name="MULTIVERSE.CON" type="con" sha1="f7a2b2036555622a786b757d7e1f804fce65bcb9"/>
+						<file name="voxels.def" type="def" sha1="84c7bc608f3cfe2b071be84f55b841f5c8dacccb"/>
+						<file name="Operation_Multiverse_Alpha.zip" type="zip" sha1="bf45354e3910ba94feb98e8f068fc123db907264"/>
+					</game>
+				</type>
+			</version>
+			<version id="1.0" release_date="September 22, 2017">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="MULTIVERSE.CON" type="con" sha1="82c57690fab6f7f09fadf9bd64f62ebf7d3ec2df"/>
+						<file name="multiverse.def" type="def" sha1="1766336a511c55a0918de8f006fe770ef62b2c59"/>
+						<file name="Operation_Multiverse_1.0.zip" type="zip" sha1="e1c3de2bdbd59d315aa68ab70762840907a93966"/>
+					</game>
+				</type>
+				<type id="Wolfenstein 3D Voxel Pack">
+					<game type="eDuke32" state="Native">
+						<file name="MULTIVERSE.CON" type="con" sha1="82c57690fab6f7f09fadf9bd64f62ebf7d3ec2df"/>
+						<file name="voxels.def" type="def" sha1="84c7bc608f3cfe2b071be84f55b841f5c8dacccb"/>
+						<file name="Operation_Multiverse_1.0.zip" type="zip" sha1="e1c3de2bdbd59d315aa68ab70762840907a93966"/>
+					</game>
+				</type>
+			</version>
+			<version id="1.1" release_date="April 26, 2019">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="MULTIVERSE.CON" type="con" sha1="cc2028b11ed5b49ba1f1358df4247e628c625c22"/>
+						<file name="multiverse.def" type="def" sha1="1c3b30c930426cd74398adec01afeb0fd3bb13db"/>
+						<file name="Operation_Multiverse_1.1.zip" type="zip" sha1="0445a6d774d3d24450f2f6bb8081ea1fdf2e19eb"/>
+					</game>
+				</type>
+				<type id="Wolfenstein 3D Voxel Pack">
+					<game type="eDuke32" state="Native">
+						<file name="MULTIVERSE.CON" type="con" sha1="cc2028b11ed5b49ba1f1358df4247e628c625c22"/>
+						<file name="voxels.def" type="def" sha1="84c7bc608f3cfe2b071be84f55b841f5c8dacccb"/>
+						<file name="Operation_Multiverse_1.1.zip" type="zip" sha1="0445a6d774d3d24450f2f6bb8081ea1fdf2e19eb"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Multiverse_Alpha_Release.zip" version="Alpha" game="eDuke32" type="Original Files" sha1="cc9c48b395f07600877e047a719462f665b06956"/>
+			<download filename="Operation_Multiverse_1.0.zip" version="1.0" game="eDuke32" type="Original Files" sha1="5af6ce2d81bd9a53a47301d4a16f39a72a55d7e6"/>
+			<download filename="Operation_Multiverse_1.1.zip" version="1.1" game="eDuke32" type="Original Files" sha1="5877f273e4935dcd82321059b9f5afd3d7e64a52"/>
+			<download filename="Operation_Multiverse_Alpha-ModMgrE.zip" version="Alpha" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b04f3ee8f5e43fa3b162981b50bb72fe1acabb33"/>
+			<download filename="Operation_Multiverse_1.0-ModMgrE.zip" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="29d26b19ebe661ae758a85f29aa02e41d72e9b87"/>
+			<download filename="Operation_Multiverse_1.1-ModMgrE.zip" version="1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="804e877c389d97012909effd0577309db8fa7ee9"/>
+		</downloads>
+	</mod>
 </mods>
