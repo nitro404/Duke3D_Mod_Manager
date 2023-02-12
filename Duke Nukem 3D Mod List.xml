@@ -10171,4 +10171,25 @@
 			<download filename="Operation_Multiverse_1.1-ModMgrE.zip" version="1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="804e877c389d97012909effd0577309db8fa7ee9"/>
 		</downloads>
 	</mod>
+	<mod name="Spooky" id="spooky" type="Partial Conversion" website="https://forums.duke4.net/topic/11447-spookymod">
+		<team>
+			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com"/>
+			<member name="sebabdukeboss20"/>
+		</team>
+		<files>
+			<version release_date="October 31, 2020">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="SPOOKY.CON" type="con" sha1="20e269bbad27ad1bfe27078878af473be79207ea"/>
+						<file name="spooky.def" type="def" sha1="9b3ab2180652dfc1a4f67dc0c1c004b666cabe04"/>
+						<file name="Spooky.zip" type="zip" sha1="b32644353c50a303da61c9d6f6bf80356ab18513"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="spookymod.zip" game="eDuke32" type="Original Files" sha1="fe23a32f6e4f0c1dfe4a24bf1e96369f800158c7"/>
+			<download filename="Spooky-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="bddf92053edcf469f03c52a0f395a816bfa67756"/>
+		</downloads>
+	</mod>
 </mods>
