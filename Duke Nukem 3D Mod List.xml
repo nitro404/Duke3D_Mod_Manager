@@ -9270,7 +9270,7 @@
 	</mod>
 	<mod name="Teletubbies" id="teletubbies" type="Enemy Replacement">
 		<files>
-			<version release_date="Februrary 24, 2001">
+			<version release_date="February 24, 2001">
 				<type>
 					<game type="Regular Version 1.3" state="Native">
 						<file name="TELETUBB.CON" type="con" sha1="7faca80d3d36d0f67abb94a4589d87f0f43a052d"/>
@@ -9982,6 +9982,22 @@
 			<download filename="Moonbase_Accident_1.0-ModMgrE.zip" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="a2c90af39e29412661ff394df7940dd26988e7da"/>
 			<download filename="Moonbase_Accident_1.2.1-ModMgrE.zip" version="1.2.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="6723bdef65e958cbe234129d2402f8a295cea939"/>
 			<download filename="Moonbase_Accident_1.2.2-ModMgrE.zip" version="1.2.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="53d97e8be097b44176fe00b351e58cfcf6ada1ae"/>
+		</downloads>
+	</mod>
+	<mod name="Ninjas with Guitars" id="ninjas_with_guitars" type="Dukematch" version="Beta Test 0.1">
+		<files>
+			<version id="Beta Test 0.1" release_date="February 7, 2011">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="NWGBT01.CON" type="con" sha1="f38f1798628fae80c63f40ef3102373c6c01afc5"/>
+						<file name="NINJAS_WITH_GUITARS_BETA_TEST_0.1.GRP" type="grp" sha1="0600b474b2ecb21fba6965e8a8391f3d655671a2"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Ninjas_with_Guitars_BETA_TEST_v0.1_.zip" version="Beta Test 0.1" game="eDuke32" type="Original Files" sha1="8f06c59f2394f34cde0d61af302d1802d19c3a36"/>
+			<download filename="Ninjas_with_Guitars_Beta_Test_0.1-ModMgrE.zip" version="Beta Test 0.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="299839b80becd1c4eead05aa88408cb6ff99bbdb"/>
 		</downloads>
 	</mod>
 </mods>
