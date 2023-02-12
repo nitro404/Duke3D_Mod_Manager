@@ -9942,4 +9942,46 @@
 			<download filename="Dungeon_Keeper_0.1-ModMgrE.zip" version="0.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="642f117c98442ba636f36f5bb193ae57513cac8a"/>
 		</downloads>
 	</mod>
+	<mod name="Moonbase Accident" id="moonbase_accident" type="Episode" version="1.2.2" website="http://members.lycos.co.uk/piterplus">
+		<team email="zykov@bk.ru" country="Russia">
+			<member name="Zykov Eddy" alias="Piterplus" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com"/>
+		</team>
+		<files>
+			<version id="1.0" release_date="January 17, 2008">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="AEZ.CON" type="con" sha1="1554c1a144aa4cedf4d605b857f575de938d1ec5"/>
+						<file name="A.EZ_episode.def" type="def" sha1="ee686ceef2c846046709b786d9823c1deceea0d6"/>
+						<file name="Moonbase_Accident_1.0.zip" type="zip" sha1="a2cd527b2e17c17a3020e79388236c79aea08031"/>
+					</game>
+				</type>
+			</version>
+			<version id="1.2.1" release_date="August 4, 2008">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="AEZ.CON" type="con" sha1="1554c1a144aa4cedf4d605b857f575de938d1ec5"/>
+						<file name="A.EZ_episode.def" type="def" sha1="642a3c12760a50bbbd0de253994d50e10f1080b8"/>
+						<file name="Moonbase_Accident_1.2.1.zip" type="zip" sha1="1a50b3e37e3f288c328cdfb4f7dedef1b7e2325b"/>
+					</game>
+				</type>
+			</version>
+			<version id="1.2.2" release_date="August 4, 2008">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="AEZ.CON" type="con" sha1="1554c1a144aa4cedf4d605b857f575de938d1ec5"/>
+						<file name="A.EZ_episode.def" type="def" sha1="642a3c12760a50bbbd0de253994d50e10f1080b8"/>
+						<file name="Moonbase_Accident_1.2.2.zip" type="zip" sha1="a2c69c4fc3b3d0088bd61ac67d40e13d4a674432"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="A.EZ_episode.zip" version="1.0" game="eDuke32" type="Original Files" sha1="073a1ab2c849917e6afbf6d3e7bc9998020cc86d"/>
+			<download filename="A.EZ_episode_1.2_install.zip" version="1.2.1" game="eDuke32" type="Original Files" sha1="9a5b5d8d9434b5c4ea48bb12f6a564295d2e4974"/>
+			<download filename="ma.zip" version="1.2.2" game="eDuke32" type="Original Files" sha1="30481248600b764a93856e6777019a441e8b7073"/>
+			<download filename="Moonbase_Accident_1.0-ModMgrE.zip" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="a2c90af39e29412661ff394df7940dd26988e7da"/>
+			<download filename="Moonbase_Accident_1.2.1-ModMgrE.zip" version="1.2.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="6723bdef65e958cbe234129d2402f8a295cea939"/>
+			<download filename="Moonbase_Accident_1.2.2-ModMgrE.zip" version="1.2.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="53d97e8be097b44176fe00b351e58cfcf6ada1ae"/>
+		</downloads>
+	</mod>
 </mods>
