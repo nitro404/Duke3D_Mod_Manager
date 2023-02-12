@@ -10059,4 +10059,53 @@
 			<download filename="Nuclear_Showdown_2.1-ModMgrE.zip" version="2.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c666ebdb2b07cc040f604bf4ea43816f0e11c78e"/>
 		</downloads>
 	</mod>
+	<mod name="Oblivion 3D" id="oblivion_3d" type="Total Conversion" version="Final" website="http://zaxtor.net/OblivionTC/Oblivion_Index_Page.html">
+		<team website="http://obliviontc.bravehost.com/index.html">
+			<member name="Cedric Lutes" alias="Zaxtor Znort" email="zaxtor2001@yahoo.com" website="http://www.angelfire.com/theforce/zaxtor2001dukenukem"/>
+		</team>
+		<files>
+			<version id="1.0 Demo" release_date="June 16, 2004">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="OBLIVION.CON" type="con" sha1="afa85728e9829b47b84e52de013dc11e2a46d81c"/>
+						<file name="OBLIVION_3D_1.0_DEMO.GRP" type="grp" sha1="a88ac62a4db8ec880ded96969fdd51af5debeda9"/>
+					</game>
+				</type>
+			</version>
+			<version id="1.2 Demo" release_date="December 28, 2004">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="OBLIVION.CON" type="con" sha1="da3f402a949daa631ab9eaeedab5e2e312d46ae8"/>
+						<file name="OBLIVION_3D_1.2_DEMO.GRP" type="grp" sha1="25662ce8b9e8da2b5875a19bccb1e794e15290ae"/>
+					</game>
+				</type>
+			</version>
+			<version id="1.3 Demo" release_date="May 13, 2006">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="OBLIVION.CON" type="con" sha1="5d8fdbf90ef2695b1d34b3b12e880dd0e9234e2f"/>
+						<file name="OBLIVION_3D_1.3_DEMO.GRP" type="grp" sha1="b15e674412218ff0a875c1221a4fc34ffde7d045"/>
+					</game>
+				</type>
+			</version>
+			<version id="Final" release_date="February 5, 2009">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="OBLIVION.CON" type="con" sha1="c3c6e986bae05afced15f343660ee3bcb727a68d"/>
+						<file name="OBLIVION_3D_FINAL.GRP" type="grp" sha1="18db2c885a21c43d39e9f18727d3851a77b6ec8e"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="oblivion1.zip" version="1.0 Demo" game="eDuke32" type="Original Files" sha1="fd3c57c6977981c8fc692b1c7f03087c5756acec"/>
+			<download filename="oblivion1v2.zip" version="1.2 Demo" game="eDuke32" type="Original Files" sha1="ab700220b9ba95367025306a0f53f10593f0c8da"/>
+			<download filename="oblivionv3.zip" version="1.3 Demo" game="eDuke32" type="Original Files" sha1="6571c144b8f97a6d4347b3194738626c34fadd91"/>
+			<download filename="oblivionfinal.zip" version="Final" game="eDuke32" type="Original Files" sha1="6bfdad794aa61d20b079dc3357760e820e44796f"/>
+			<download filename="Oblivion_3D_1.0_Demo-ModMgrE.zip" version="1.0 Demo" game="eDuke32" type="Mod Manager Files" state="Native" sha1="ecff111bf2253d5f999ff609ddc7791bae92d0e8"/>
+			<download filename="Oblivion_3D_1.2_Demo-ModMgrE.zip" version="1.2 Demo" game="eDuke32" type="Mod Manager Files" state="Native" sha1="85f5a54cfc9fa0f86c818c0e613520a6354ba86e"/>
+			<download filename="Oblivion_3D_1.3_Demo-ModMgrE.zip" version="1.3 Demo" game="eDuke32" type="Mod Manager Files" state="Native" sha1="a85b0c89ec7a528de75cd076e2f287927bad4e98"/>
+			<download filename="Oblivion_3D_Final-ModMgrE.zip" version="Final" game="eDuke32" type="Mod Manager Files" state="Native" sha1="7ff0c9e6fc4c3d04e5b63b392f7e6be81de2f49f"/>
+		</downloads>
+	</mod>
 </mods>
