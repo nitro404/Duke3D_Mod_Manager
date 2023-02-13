@@ -1535,7 +1535,7 @@
 	</mod>
 	<mod name="Evil Incarnate" id="evil_incarnate" type="Total Conversion" version="Demo" website="http://www.nitro404.com/mods/evil_incarnate.php">
 		<team>
-			<member name="Kevin Scroggins" alias="nitro glycerine" email="nitro404@gmail.com"/>
+			<member name="Kevin Scroggins" alias="nitro glycerine" email="nitro404@gmail.com" twitter="nitro404" website="http://www.nitro404.com" steam="nitro4004"/>
 			<member name="Tristan Graham" alias="Khorrus" email="tristan.l.graham@gmail.com"/>
 		</team>
 		<files>
@@ -3928,7 +3928,7 @@
 	</mod>
 	<mod name="Toon Nukem" id="toon_nukem" type="Total Conversion" version="Demo" website="http://www.nitro404.com/mods/toon_nukem.php">
 		<team>
-			<member name="Kevin Scroggins" alias="nitro glycerine" email="nitro404@gmail.com"/>
+			<member name="Kevin Scroggins" alias="nitro glycerine" email="nitro404@gmail.com" twitter="nitro404" website="http://www.nitro404.com" steam="nitro4004"/>
 			<member name="Jacek Gordinier"/>
 		</team>
 		<files>
@@ -6259,7 +6259,7 @@
 	</mod>
 	<mod name="Dank Nukem 420: Blaze It" id="dank_nukem_420_blaze_it" type="Total Conversion" version="0.0.1" website="https://github.com/nitro404/Dank_Nukem_420">
 		<team>
-			<member name="Kevin Scroggins" alias="nitro glycerine" email="nitro404@gmail.com"/>
+			<member name="Kevin Scroggins" alias="nitro glycerine" email="nitro404@gmail.com" twitter="nitro404" website="http://www.nitro404.com" steam="nitro4004"/>
 			<member name="Adam Ciccarino" alias="with_milk"/>
 		</team>
 		<files>

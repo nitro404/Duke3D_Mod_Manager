@@ -30,6 +30,8 @@ public:
 	const std::string & getEmail() const;
 	const std::string & getTwitter() const;
 	const std::string & getWebsite() const;
+	const std::string & getYouTube() const;
+	const std::string & getGitHub() const;
 	const std::string & getDiscord() const;
 	const std::string & getSteamID() const;
 	const std::string & getAIM() const;
@@ -43,6 +45,8 @@ public:
 	void setEmail(const std::string & email);
 	void setTwitter(const std::string & twitter);
 	void setWebsite(const std::string & website);
+	void setYouTube(const std::string & youTube);
+	void setGitHub(const std::string & gitHub);
 	void setDiscord(const std::string & discord);
 	void setSteamID(const std::string & steamID);
 	void setAIM(const std::string & aim);
@@ -69,6 +73,8 @@ private:
 	std::string m_email;
 	std::string m_twitter;
 	std::string m_website;
+	std::string m_youTube;
+	std::string m_gitHub;
 	std::string m_discord;
 	std::string m_steamID;
 	std::string m_aim;
