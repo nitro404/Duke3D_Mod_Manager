@@ -1551,8 +1551,8 @@
 			<download filename="Evil_Incarnate_Demo-ModMgrA.zip" version="Demo" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="fe09b0763dc62862d235db8a127e59a28b1776d1"/>
 		</downloads>
 		<videos>
-			<video url="https://www.youtube.com/watch?v=7md1CCJatU0" width="480" height="385"/>
-			<video url="https://www.youtube.com/watch?v=VQzigkZS4W0" width="480" height="385"/>
+			<video url="https://www.youtube.com/watch?v=7md1CCJatU0" title="Evil Incarnate Level 1" width="480" height="385"/>
+			<video url="https://www.youtube.com/watch?v=VQzigkZS4W0" title="Evil Incarnate Level 2" width="480" height="385"/>
 		</videos>
 	</mod>
 	<mod name="Extreme Justice" id="extreme_justice" type="Total Conversion" website="http://www.dukeworld.com/criticalmass">
@@ -3943,7 +3943,7 @@
 			<download filename="Toon_Nukem_Demo-ModMgrA.zip" version="Demo" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="38b64a20c24a4f8aae2fceeaab1645fcaf7c984e"/>
 		</downloads>
 		<videos>
-			<video url="https://www.youtube.com/watch?v=IeSW5utrKC4" width="480" height="385"/>
+			<video url="https://www.youtube.com/watch?v=IeSW5utrKC4" title="Toon Nukem Level 1" width="480" height="385"/>
 		</videos>
 	</mod>
 	<mod name="Total Apocalypse" id="total_apocalypse" type="Total Conversion">
@@ -10255,6 +10255,11 @@
 			<download filename="SuperNukemBrosV6.1.zip" version="6.1" game="eDuke32" type="Original Files" sha1="6a7c42bde804c6d1d39d7bbb969bdcbf74478ebe"/>
 			<download filename="Super_Nukem_Bros-ModMgrE.zip" version="6.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="6dffad1b712b6d760914c64a06e1759d78b41ea4"/>
 		</downloads>
+		<videos>
+			<video url="https://www.youtube.com/watch?v=VMj64WvtLjw" title="Super Nukem Bros. Trailer"/>
+			<video url="https://www.youtube.com/watch?v=w-9umiLBEhU" title="Super Nukem Bros. Mod - Bridges to Nowhere (Map Preview)"/>
+			<video url="https://www.youtube.com/watch?v=wLlBDs4yL7E" title="Super Nukem Bros. - A Super Mario Bros. Tribute"/>
+		</videos>
 	</mod>
 	<mod name="TamDuke" id="tamduke" type="Episode" version="1.2" website="http://www.tamduke.kk4.fi">
 		<files>

@@ -18,7 +18,7 @@ class ModVideo final {
 	friend class Mod;
 
 public:
-	ModVideo(const std::string & url, uint16_t width, uint16_t height);
+	ModVideo(const std::string & url, const std::string & title, uint16_t width = 0, uint16_t height = 0);
 	ModVideo(ModVideo && v) noexcept;
 	ModVideo(const ModVideo & v);
 	ModVideo & operator = (ModVideo && v) noexcept;
@@ -26,11 +26,13 @@ public:
 	~ModVideo();
 
 	const std::string & getURL() const;
+	const std::string & getTitle() const;
 	uint16_t getWidth() const;
 	uint16_t getHeight() const;
 	const Mod * getParentMod() const;
 
 	void setURL(const std::string & url);
+	void setTitle(const std::string & title);
 	void setWidth(uint16_t width);
 	void setHeight(uint16_t height);
 
@@ -50,6 +52,7 @@ protected:
 
 private:
 	std::string m_url;
+	std::string m_title;
 	uint16_t m_width;
 	uint16_t m_height;
 	const Mod * m_parentMod;

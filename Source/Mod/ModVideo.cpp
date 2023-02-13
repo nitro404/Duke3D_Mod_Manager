@@ -13,37 +13,44 @@
 
 static const std::string XML_MOD_VIDEO_ELEMENT_NAME("video");
 static const std::string XML_MOD_VIDEO_URL_ATTRIBUTE_NAME("url");
+static const std::string XML_MOD_VIDEO_TITLE_ATTRIBUTE_NAME("title");
 static const std::string XML_MOD_VIDEO_WIDTH_ATTRIBUTE_NAME("width");
 static const std::string XML_MOD_VIDEO_HEIGHT_ATTRIBUTE_NAME("height");
-static const std::array<std::string_view, 3> XML_MOD_VIDEO_ATTRIBUTE_NAMES = {
+static const std::array<std::string_view, 4> XML_MOD_VIDEO_ATTRIBUTE_NAMES = {
 	XML_MOD_VIDEO_URL_ATTRIBUTE_NAME,
+	XML_MOD_VIDEO_TITLE_ATTRIBUTE_NAME,
 	XML_MOD_VIDEO_WIDTH_ATTRIBUTE_NAME,
 	XML_MOD_VIDEO_HEIGHT_ATTRIBUTE_NAME
 };
 
 static constexpr const char * JSON_MOD_VIDEO_URL_PROPERTY_NAME = "url";
+static constexpr const char * JSON_MOD_VIDEO_TITLE_PROPERTY_NAME = "title";
 static constexpr const char * JSON_MOD_VIDEO_WIDTH_PROPERTY_NAME = "width";
 static constexpr const char * JSON_MOD_VIDEO_HEIGHT_PROPERTY_NAME = "height";
-static const std::array<std::string_view, 3> JSON_MOD_VIDEO_PROPERTY_NAMES = {
+static const std::array<std::string_view, 4> JSON_MOD_VIDEO_PROPERTY_NAMES = {
 	JSON_MOD_VIDEO_URL_PROPERTY_NAME,
+	JSON_MOD_VIDEO_TITLE_PROPERTY_NAME,
 	JSON_MOD_VIDEO_WIDTH_PROPERTY_NAME,
 	JSON_MOD_VIDEO_HEIGHT_PROPERTY_NAME
 };
 
-ModVideo::ModVideo(const std::string & url, uint16_t width, uint16_t height)
+ModVideo::ModVideo(const std::string & url, const std::string & title, uint16_t width, uint16_t height)
 	: m_url(Utilities::trimString(url))
+	, m_title(Utilities::trimString(title))
 	, m_width(width)
 	, m_height(height)
 	, m_parentMod(nullptr) { }
 
 ModVideo::ModVideo(ModVideo && v) noexcept
 	: m_url(std::move(v.m_url))
+	, m_title(std::move(v.m_title))
 	, m_width(v.m_width)
 	, m_height(v.m_height)
 	, m_parentMod(nullptr) { }
 
 ModVideo::ModVideo(const ModVideo & v)
 	: m_url(v.m_url)
+	, m_title(v.m_title)
 	, m_width(v.m_width)
 	, m_height(v.m_height)
 	, m_parentMod(nullptr) { }
@@ -51,6 +58,7 @@ ModVideo::ModVideo(const ModVideo & v)
 ModVideo & ModVideo::operator = (ModVideo && v) noexcept {
 	if(this != &v) {
 		m_url = std::move(v.m_url);
+		m_title = std::move(v.m_title);
 		m_width = v.m_width;
 		m_height = v.m_height;
 	}
@@ -60,6 +68,7 @@ ModVideo & ModVideo::operator = (ModVideo && v) noexcept {
 
 ModVideo & ModVideo::operator = (const ModVideo & v) {
 	m_url = v.m_url;
+	m_title = v.m_title;
 	m_width = v.m_width;
 	m_height = v.m_height;
 
@@ -72,6 +81,10 @@ ModVideo::~ModVideo() {
 
 const std::string & ModVideo::getURL() const {
 	return m_url;
+}
+
+const std::string & ModVideo::getTitle() const {
+	return m_title;
 }
 
 uint16_t ModVideo::getWidth() const {
@@ -88,6 +101,10 @@ const Mod * ModVideo::getParentMod() const {
 
 void ModVideo::setURL(const std::string & url) {
 	m_url = Utilities::trimString(url);
+}
+
+void ModVideo::setTitle(const std::string & title) {
+	m_title = Utilities::trimString(title);
 }
 
 void ModVideo::setWidth(uint16_t width) {
@@ -108,6 +125,9 @@ rapidjson::Value ModVideo::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtA
 	rapidjson::Value urlValue(m_url.c_str(), allocator);
 	modVideoValue.AddMember(rapidjson::StringRef(JSON_MOD_VIDEO_URL_PROPERTY_NAME), urlValue, allocator);
 
+	rapidjson::Value titleValue(m_title.c_str(), allocator);
+	modVideoValue.AddMember(rapidjson::StringRef(JSON_MOD_VIDEO_TITLE_PROPERTY_NAME), titleValue, allocator);
+
 	modVideoValue.AddMember(rapidjson::StringRef(JSON_MOD_VIDEO_WIDTH_PROPERTY_NAME), rapidjson::Value(m_width), allocator);
 
 	modVideoValue.AddMember(rapidjson::StringRef(JSON_MOD_VIDEO_HEIGHT_PROPERTY_NAME), rapidjson::Value(m_height), allocator);
@@ -123,6 +143,7 @@ tinyxml2::XMLElement * ModVideo::toXML(tinyxml2::XMLDocument * document) const {
 	tinyxml2::XMLElement * modVideoElement = document->NewElement(XML_MOD_VIDEO_ELEMENT_NAME.c_str());
 
 	modVideoElement->SetAttribute(XML_MOD_VIDEO_URL_ATTRIBUTE_NAME.c_str(), m_url.c_str());
+	modVideoElement->SetAttribute(XML_MOD_VIDEO_TITLE_ATTRIBUTE_NAME.c_str(), m_title.c_str());
 	modVideoElement->SetAttribute(XML_MOD_VIDEO_WIDTH_ATTRIBUTE_NAME.c_str(), m_width);
 	modVideoElement->SetAttribute(XML_MOD_VIDEO_HEIGHT_ATTRIBUTE_NAME.c_str(), m_height);
 
@@ -173,48 +194,65 @@ std::unique_ptr<ModVideo> ModVideo::parseFrom(const rapidjson::Value & modVideoV
 		return nullptr;
 	}
 
+	// parse mod video title
+	std::string modVideoTitle;
+
+	if(modVideoValue.HasMember(JSON_MOD_VIDEO_TITLE_PROPERTY_NAME)) {
+		const rapidjson::Value & modVideoTitleValue = modVideoValue[JSON_MOD_VIDEO_TITLE_PROPERTY_NAME];
+
+		if(!modVideoTitleValue.IsString()) {
+			spdlog::error("Mod video has an invalid '{}' property type: '{}', expected 'string'.", JSON_MOD_VIDEO_TITLE_PROPERTY_NAME, Utilities::typeToString(modVideoTitleValue.GetType()));
+			return nullptr;
+		}
+
+		modVideoTitle = Utilities::trimString(modVideoTitleValue.GetString());
+
+		if(modVideoTitle.empty()) {
+			spdlog::error("Mod video '{}' property cannot be empty.", JSON_MOD_VIDEO_TITLE_PROPERTY_NAME);
+			return nullptr;
+		}
+	}
+
 	// parse mod video width
-	if(!modVideoValue.HasMember(JSON_MOD_VIDEO_WIDTH_PROPERTY_NAME)) {
-		spdlog::error("Mod video is missing '{}' property'.", JSON_MOD_VIDEO_WIDTH_PROPERTY_NAME);
-		return nullptr;
-	}
+	uint32_t modVideoWidth = 0;
 
-	const rapidjson::Value & modVideoWidthValue = modVideoValue[JSON_MOD_VIDEO_WIDTH_PROPERTY_NAME];
+	if(modVideoValue.HasMember(JSON_MOD_VIDEO_WIDTH_PROPERTY_NAME)) {
+		const rapidjson::Value & modVideoWidthValue = modVideoValue[JSON_MOD_VIDEO_WIDTH_PROPERTY_NAME];
 
-	if(!modVideoWidthValue.IsUint()) {
-		spdlog::error("Mod video has an invalid '{}' property type: '{}', expected unsigned integer 'number'.", JSON_MOD_VIDEO_WIDTH_PROPERTY_NAME, Utilities::typeToString(modVideoWidthValue.GetType()));
-		return nullptr;
-	}
+		if(!modVideoWidthValue.IsUint()) {
+			spdlog::error("Mod video has an invalid '{}' property type: '{}', expected unsigned integer 'number'.", JSON_MOD_VIDEO_WIDTH_PROPERTY_NAME, Utilities::typeToString(modVideoWidthValue.GetType()));
+			return nullptr;
+		}
 
-	uint32_t modVideoWidth = modVideoWidthValue.GetUint();
+		modVideoWidth = modVideoWidthValue.GetUint();
 
-	if(modVideoWidth > std::numeric_limits<uint16_t>::max()) {
-		spdlog::error("Mod video '{}' property value has an invalid value: '{}', expected unsigned integer 'number' between 1 and {} inclusively.", JSON_MOD_VIDEO_WIDTH_PROPERTY_NAME, modVideoWidth, std::numeric_limits<uint8_t>::max());
-		return nullptr;
+		if(modVideoWidth > std::numeric_limits<uint16_t>::max()) {
+			spdlog::error("Mod video '{}' property value has an invalid value: '{}', expected unsigned integer 'number' between 1 and {} inclusively.", JSON_MOD_VIDEO_WIDTH_PROPERTY_NAME, modVideoWidth, std::numeric_limits<uint8_t>::max());
+			return nullptr;
+		}
 	}
 
 	// parse mod video height
-	if(!modVideoValue.HasMember(JSON_MOD_VIDEO_HEIGHT_PROPERTY_NAME)) {
-		spdlog::error("Mod video is missing '{}' property'.", JSON_MOD_VIDEO_HEIGHT_PROPERTY_NAME);
-		return nullptr;
-	}
+	uint32_t modVideoHeight = 0;
 
-	const rapidjson::Value & modVideoHeightValue = modVideoValue[JSON_MOD_VIDEO_HEIGHT_PROPERTY_NAME];
+	if(modVideoValue.HasMember(JSON_MOD_VIDEO_HEIGHT_PROPERTY_NAME)) {
+		const rapidjson::Value & modVideoHeightValue = modVideoValue[JSON_MOD_VIDEO_HEIGHT_PROPERTY_NAME];
 
-	if(!modVideoHeightValue.IsUint()) {
-		spdlog::error("Mod video has an invalid '{}' property type: '{}', expected unsigned integer 'number'.", JSON_MOD_VIDEO_HEIGHT_PROPERTY_NAME, Utilities::typeToString(modVideoHeightValue.GetType()));
-		return nullptr;
-	}
+		if(!modVideoHeightValue.IsUint()) {
+			spdlog::error("Mod video has an invalid '{}' property type: '{}', expected unsigned integer 'number'.", JSON_MOD_VIDEO_HEIGHT_PROPERTY_NAME, Utilities::typeToString(modVideoHeightValue.GetType()));
+			return nullptr;
+		}
 
-	uint32_t modVideoHeight = modVideoHeightValue.GetUint();
+		modVideoHeight = modVideoHeightValue.GetUint();
 
-	if(modVideoHeight > std::numeric_limits<uint16_t>::max()) {
-		spdlog::error("Mod video '{}' property value has an invalid value: '{}', expected unsigned integer 'number' between 1 and {} inclusively.", JSON_MOD_VIDEO_HEIGHT_PROPERTY_NAME, modVideoHeight, std::numeric_limits<uint8_t>::max());
-		return nullptr;
+		if(modVideoHeight > std::numeric_limits<uint16_t>::max()) {
+			spdlog::error("Mod video '{}' property value has an invalid value: '{}', expected unsigned integer 'number' between 1 and {} inclusively.", JSON_MOD_VIDEO_HEIGHT_PROPERTY_NAME, modVideoHeight, std::numeric_limits<uint8_t>::max());
+			return nullptr;
+		}
 	}
 
 	// initialize the mod video
-	return std::make_unique<ModVideo>(modVideoURL, static_cast<uint16_t>(modVideoWidth), static_cast<uint16_t>(modVideoHeight));
+	return std::make_unique<ModVideo>(modVideoURL, modVideoTitle, static_cast<uint16_t>(modVideoWidth), static_cast<uint16_t>(modVideoHeight));
 }
 
 std::unique_ptr<ModVideo> ModVideo::parseFrom(const tinyxml2::XMLElement * modVideoElement) {
@@ -266,46 +304,40 @@ std::unique_ptr<ModVideo> ModVideo::parseFrom(const tinyxml2::XMLElement * modVi
 		return nullptr;
 	}
 
-	const char * modVideoWidthData = modVideoElement->Attribute(XML_MOD_VIDEO_WIDTH_ATTRIBUTE_NAME.c_str());
-
-	if(modVideoWidthData == nullptr || Utilities::stringLength(modVideoWidthData) == 0) {
-		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_VIDEO_WIDTH_ATTRIBUTE_NAME, XML_MOD_VIDEO_ELEMENT_NAME);
-		return nullptr;
-	}
-
-	const char * modVideoHeightData = modVideoElement->Attribute(XML_MOD_VIDEO_HEIGHT_ATTRIBUTE_NAME.c_str());
-
-	if(modVideoHeightData == nullptr || Utilities::stringLength(modVideoHeightData) == 0) {
-		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_VIDEO_HEIGHT_ATTRIBUTE_NAME, XML_MOD_VIDEO_ELEMENT_NAME);
-		return nullptr;
-	}
+	const char * modVideoTitle = modVideoElement->Attribute(XML_MOD_VIDEO_TITLE_ATTRIBUTE_NAME.c_str());
 
 	bool error = false;
+	uint32_t modVideoWidth = 0;
+	uint32_t modVideoHeight = 0;
+	const char * modVideoWidthData = modVideoElement->Attribute(XML_MOD_VIDEO_WIDTH_ATTRIBUTE_NAME.c_str());
+	const char * modVideoHeightData = modVideoElement->Attribute(XML_MOD_VIDEO_HEIGHT_ATTRIBUTE_NAME.c_str());
 
-	uint32_t modVideoWidth = Utilities::parseUnsignedInteger(modVideoWidthData, &error);
+	if(modVideoWidthData != nullptr && Utilities::stringLength(modVideoWidthData) != 0) {
+		modVideoWidth = Utilities::parseUnsignedInteger(modVideoWidthData, &error);
 
-	if(error || modVideoWidth < 1 || modVideoWidth > std::numeric_limits<uint16_t>::max()) {
-		spdlog::error("Attribute '{}' in element '{}' has an invalid value: '{}', expected integer number between 1 and {} inclusively.", XML_MOD_VIDEO_WIDTH_ATTRIBUTE_NAME, XML_MOD_VIDEO_ELEMENT_NAME, modVideoWidthData, std::numeric_limits<uint16_t>::max());
-		return nullptr;
+		if(error || modVideoWidth < 1 || modVideoWidth > std::numeric_limits<uint16_t>::max()) {
+			spdlog::error("Attribute '{}' in element '{}' has an invalid value: '{}', expected integer number between 1 and {} inclusively.", XML_MOD_VIDEO_WIDTH_ATTRIBUTE_NAME, XML_MOD_VIDEO_ELEMENT_NAME, modVideoWidthData, std::numeric_limits<uint16_t>::max());
+			return nullptr;
+		}
 	}
 
-	uint32_t modVideoHeight = Utilities::parseUnsignedInteger(modVideoHeightData, &error);
+	if(modVideoHeightData != nullptr && Utilities::stringLength(modVideoHeightData) != 0) {
+		modVideoHeight = Utilities::parseUnsignedInteger(modVideoHeightData, &error);
 
-	if(error || modVideoHeight < 1 || modVideoHeight > std::numeric_limits<uint16_t>::max()) {
-		spdlog::error("Attribute '{}' in element '{}' has an invalid value: '{}', expected integer number between 1 and {} inclusively.", XML_MOD_VIDEO_HEIGHT_ATTRIBUTE_NAME, XML_MOD_VIDEO_ELEMENT_NAME, modVideoHeightData, std::numeric_limits<uint16_t>::max());
-		return nullptr;
+		if(error || modVideoHeight < 1 || modVideoHeight > std::numeric_limits<uint16_t>::max()) {
+			spdlog::error("Attribute '{}' in element '{}' has an invalid value: '{}', expected integer number between 1 and {} inclusively.", XML_MOD_VIDEO_HEIGHT_ATTRIBUTE_NAME, XML_MOD_VIDEO_ELEMENT_NAME, modVideoHeightData, std::numeric_limits<uint16_t>::max());
+			return nullptr;
+		}
 	}
 
 	// initialize the mod video
-	std::unique_ptr<ModVideo> newModVideo = std::make_unique<ModVideo>(modVideoURL, static_cast<uint16_t>(modVideoWidth), static_cast<uint16_t>(modVideoHeight));
+	std::unique_ptr<ModVideo> newModVideo = std::make_unique<ModVideo>(modVideoURL, modVideoTitle != nullptr ? modVideoTitle : Utilities::emptyString, static_cast<uint16_t>(modVideoWidth), static_cast<uint16_t>(modVideoHeight));
 
 	return newModVideo;
 }
 
 bool ModVideo::isValid() const {
-	return !m_url.empty() &&
-		   m_width != 0 &&
-		   m_height != 0;
+	return !m_url.empty();
 }
 
 bool ModVideo::isValid(const ModVideo * v) {
@@ -315,7 +347,8 @@ bool ModVideo::isValid(const ModVideo * v) {
 bool ModVideo::operator == (const ModVideo & v) const {
 	return m_width == v.m_width &&
 		   m_height == v.m_height &&
-		   Utilities::areStringsEqualIgnoreCase(m_url, v.m_url);
+		   Utilities::areStringsEqualIgnoreCase(m_url, v.m_url) &&
+		   Utilities::areStringsEqualIgnoreCase(m_title, v.m_title);
 }
 
 bool ModVideo::operator != (const ModVideo & v) const {
