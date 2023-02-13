@@ -906,7 +906,7 @@
 			<member name="Geoffrey van Dijk" alias="Fakir Baba" email="fakirnogwat@hotmail.com"/>
 			<member name="Maarten van Oostrum"/>
 			<member name="Iggy"/>
-			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com"/>
+			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
 			<member name="William Gee" email="geewillywizz@live.com"/>
 		</team>
 		<files>
@@ -1168,7 +1168,7 @@
 	<mod name="Duke Nukem vs. The Army of Death" id="duke_nukem_vs_the_army_of_death" type="Total Conversion">
 		<team>
 			<member name="Geoffrey van Dijk" alias="Fakir Baba" email="fakirnogwat@hotmail.com"/>
-			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com"/>
+			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
 		</team>
 		<files>
 			<version release_date="March 5, 2004">
@@ -1819,7 +1819,7 @@
 	</mod>
 	<mod name="Imagination World" id="imagination_world" type="Total Conversion" version="1.1" version_type="Single Player" website="http://www.geocities.com/jstanf35">
 		<team name="JS Games">
-			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com"/>
+			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
 		</team>
 		<files>
 			<version id="1.1" release_date="March 8, 2003">
@@ -8397,7 +8397,7 @@
 			<member name="Dukebot"/>
 			<member name="Forge"/>
 			<member name="High Treason"/>
-			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com"/>
+			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
 			<member name="Michael Crisp" alias="Micky C"/>
 			<member name="Mikko Sandt" email="sirpa.sandt@pp.inet.fi"/>
 			<member name="Mister Sinister"/>
@@ -8472,7 +8472,7 @@
 			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com"/>
 			<member name="Maarten van Oostrum"/>
 			<member name="Forge"/>
-			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com"/>
+			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
 			<member name="Jolteon"/>
 			<member name="Mickey C"/>
 			<member name="AliCatGamer"/>
@@ -9761,7 +9761,7 @@
 	</mod>
 	<mod name="HardG" id="hardg" type="Total Conversion" website="http://www.planetduke.com/amc">
 		<team>
-			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com"/>
+			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
 			<member name="Geoffrey van Dijk" alias="Fakir Baba" email="fakirnogwat@hotmail.com"/>
 		</team>
 		<files>
@@ -10002,7 +10002,7 @@
 	</mod>
 	<mod name="Nuclear Showdown" id="nuclear_showdown" type="Total Conversion" version="2.1" website="https://www.moddb.com/mods/nuclear-showdown-redux">
 		<team email="Jstanf36@ntlworld.com">
-			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com"/>
+			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
 			<member name="Michael Caraballo"/>
 			<member name="Robert Caraballo"/>
 			<member name="Olivier Boucher"/>
