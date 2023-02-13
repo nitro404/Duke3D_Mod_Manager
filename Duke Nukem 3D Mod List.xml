@@ -10308,4 +10308,29 @@
 			<download filename="The_Christmas_Project_1.01-ModMgrE.zip" version="1.01" game="eDuke32" type="Mod Manager Files" state="Native" sha1="7bd441349fcb1ab7ac9e3c00ae9a8a1fc2a053e1"/>
 		</downloads>
 	</mod>
+	<mod name="White Noise" id="white_noise" type="Total Conversion" version="0.9" website="https://www.moddb.com/games/duke-nukem-3d/addons/white-noise">
+		<team country="Germany">
+			<member name="uLTra" youtube="ultra8103"/>
+			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com"/>
+		</team>
+		<files>
+			<version id="0.9" release_date="November 13, 2019">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="WNGAME.CON" type="con" sha1="8ff25eb2f28ea0bbf15b7582c15febc212ce0723"/>
+						<file name="wnoise.def" type="def" sha1="dc642ae21848b3b3d6b3a7b2cf33ac58a8a646fc"/>
+						<file name="White_Noise_0.9.zip" type="zip" sha1="a88b1fd053d8c6dff70d453fe936c5cac15f073f"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="WHITENOISE.9.zip" version="0.9" game="eDuke32" type="Original Files" sha1="e29702f8de0c018e7913637e4ebbcc6d65adf1ea"/>
+			<download filename="White_Noise_0.9-ModMgrE.zip" version="0.9" game="eDuke32" type="Mod Manager Files" state="Native" sha1="45d69fe6866fd4782a68fd9bc8074e4733a1dc13"/>
+		</downloads>
+		<videos>
+			<video url="https://www.youtube.com/watch?v=i2S__f2bqhQ" title="White Noise Teaser"/>
+			<video url="https://www.youtube.com/watch?v=JidyMZLNEt0" title="White Noise Walkthrough"/>
+		</videos>
+	</mod>
 </mods>
