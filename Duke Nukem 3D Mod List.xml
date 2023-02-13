@@ -2212,7 +2212,7 @@
 			<member name="Bill Gallop"/>
 			<member name="The Phantom"/>
 			<member name="Chris Abdo"/>
-			<member name="Shadowpaw"/>
+			<member name="ShadowPaw"/>
 			<member name="Matt Yohe"/>
 			<member name="Harrison Norby"/>
 			<member name="Al" alias="Venom"/>
@@ -9332,7 +9332,7 @@
 	</mod>
 	<mod name="Back in Business" id="back_in_business" type="Episode" version="1.0">
 		<team>
-			<member name="Alex Pistol" email="aleks4duke@gmail.com" discord="ShrinkDuke" steam="Ledsbourne" />
+			<member name="Alex Pistol" email="aleks4duke@gmail.com" discord="ShrinkDuke" steam="Ledsbourne"/>
 		</team>
 		<files>
 			<version id="1.0" release_date="December 14, 2020">
@@ -9427,7 +9427,7 @@
 	</mod>
 	<mod name="The Seventh Son" id="the_seventh_son" type="Episode" website="http://es.geocities.com/pescapantanos">
 		<team country="Spain" city="Málaga">
-			<member name="Daniel González Alcobre" alias="Papamonos" email="papamonos2@hotmail.com" />
+			<member name="Daniel González Alcobre" alias="Papamonos" email="papamonos2@hotmail.com"/>
 		</team>
 		<files>
 			<version release_date="February 13, 2009">
@@ -10210,6 +10210,30 @@
 		<downloads>
 			<download filename="stargate tc crap.rar" game="eDuke32" type="Original Files" sha1="ff3d30adee2cec798f9426a4df73e1baa3143094"/>
 			<download filename="Stargate_Atlantis-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="2c96d5ff764a446e7befb36c31312ace0252fcf6"/>
+		</downloads>
+	</mod>
+	<mod name="Suburbs" id="suburbs" type="Total Conversion" version="Demo 0.1c" website="http://suburbs.port5.com">
+		<team name="Criminal Productions">
+			<member name="Roberto Diaz Moratilla" alias="TCMasteR" email="tcmaster2000@mixmail.com" icq="65269677"/>
+			<member name="Risto Paasivirta" alias="MekManiak"/>
+			<member name="Jeremy Ford" alias="Gorefest61"/>
+			<member name="James Hollidge" alias="Cyborg" email="cyborg_jim@yahoo.com"/>
+			<member name="Charlie Honig" alias="Conan"/>
+			<member name="Shadow"/>
+		</team>
+		<files>
+			<version id="Demo 0.1c" release_date="December 16, 2000">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="SUBURBS.CON" type="con" sha1="2c483d2f8a52d1b3bee1bb9321515cfa256d5889"/>
+						<file name="SUBURBS.GRP" type="grp" sha1="cca327d985ae420234a7a316ac61ac2d8cf64980"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Suburbs_TC_Demo.zip" version="Demo 0.1c" game="eDuke32" type="Original Files" sha1="87af0e293a33c5d629ae393c897994bbac4d2527"/>
+			<download filename="Suburbs-ModMgrE.zip" version="Demo 0.1c" game="eDuke32" type="Mod Manager Files" state="Native" sha1="3111371df53b5da9ae4ffe0abfda8f8a2c8fd870"/>
 		</downloads>
 	</mod>
 </mods>
