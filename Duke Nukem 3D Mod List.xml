@@ -11551,6 +11551,26 @@
 			<note>Replaces episode 2.</note>
 		</notes>
 	</mod>
+	<mod name="Survival" id="survival" type="Total Conversion" version="2.0">
+		<team name="JsGames">
+			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
+		</team>
+		<files>
+			<version id="2.0" release_date="July 17, 2006">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="SEduke.CON" type="con" sha1="TODO_SHA1"/>
+						<file name="survival.def" type="def" sha1="TODO_SHA1"/>
+						<file name="Survival_2.0.zip" type="zip" sha1="TODO_SHA1"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Survivalv2.zip" version="2.0" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="Survival_2.0-ModMgrE.zip" version="2.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+		</downloads>
+	</mod>
 	<mod name="Duke Nukem Forever Gloves" id="duke_nukem_forever_gloves" type="Weapon Patch" website="https://www.moddb.com/games/duke-nukem-3d/addons/dnf-gloves">
 		<versions>
 			<version release_date="September 26, 2022">
