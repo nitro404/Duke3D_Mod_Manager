@@ -10256,4 +10256,21 @@
 			<download filename="Super_Nukem_Bros-ModMgrE.zip" version="6.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="6dffad1b712b6d760914c64a06e1759d78b41ea4"/>
 		</downloads>
 	</mod>
+	<mod name="TamDuke" id="tamduke" type="Episode" version="1.2" website="http://www.tamduke.kk4.fi">
+		<files>
+			<version id="1.2" release_date="December 6, 2015">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="TAMDUKE.CON" type="con" sha1="93579b1944aadcb573c0631198f29150c977045f"/>
+						<file name="tamduke.def" type="def" sha1="31b5fa5f1c8127c3b6e44cdd52b609fa7c886655"/>
+						<file name="TamDuke_1.2.zip" type="zip" sha1="e55e66c4efc021b480d414ced7a0dd71a5b9ed84"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="tamduke.zip" version="1.2" game="eDuke32" type="Original Files" sha1="42bcedf70a7d326363a4cb3e80961fa02aaa6c62"/>
+			<download filename="TamDuke_1.2-ModMgrE.zip" version="1.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="07d453da68881d4080c3ec640b9a4b255cc79d70"/>
+		</downloads>
+	</mod>
 </mods>
