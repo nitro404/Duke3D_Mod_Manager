@@ -1720,8 +1720,8 @@
 			<member name="Shoma"/>
 			<member name="Raziel"/>
 			<member name="Mel Havok"/>
-			<member name="Mr Blackwell"/>
-			<member name="Rusty Nails"/>
+			<member name="Mblackwell" email="Mblackwell50@hotmail.com"/>
+			<member name="Rusty Nails" email="R_nails20@hotmail.com"/>
 			<member name="Anthony"/>
 			<member name="Chris Phyffer"/>
 			<member name="Eliseu Gouveia"/>
@@ -10271,6 +10271,36 @@
 		<downloads>
 			<download filename="tamduke.zip" version="1.2" game="eDuke32" type="Original Files" sha1="42bcedf70a7d326363a4cb3e80961fa02aaa6c62"/>
 			<download filename="TamDuke_1.2-ModMgrE.zip" version="1.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="07d453da68881d4080c3ec640b9a4b255cc79d70"/>
+		</downloads>
+	</mod>
+	<mod name="The Christmas Project" id="the_christmas_project" type="Total Conversion" version="1.01">
+		<team>
+			<member name="Mblackwell" email="Mblackwell50@hotmail.com"/>
+			<member name="Rusty Nails" email="R_nails20@hotmail.com"/>
+		</team>
+		<files>
+			<version id="1.00" release_date="December 20, 2003">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="TCP.CON" type="con" sha1="756c541899dce0c7c8b966bce60cb047042eb238"/>
+						<file name="The_Christmas_Project_1.00.zip" type="zip" sha1="23c1a6ad08fd569e4d9d3467def4b67c64bdbf16"/>
+					</game>
+				</type>
+			</version>
+			<version id="1.01" release_date="April 29, 2006">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="TCP.CON" type="con" sha1="20a1fec77c0873369036bb0fc738afe23ad3e834"/>
+						<file name="The_Christmas_Project_1.01.zip" type="zip" sha1="7007293627e7271d8625b42aaf9233772a290530"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="TCP.zip" version="1.00" game="eDuke32" type="Original Files" sha1="7e475ed490d744587ca40f3b0fe31645cda2a39a"/>
+			<download filename="TCPpatch.zip" version="1.01" game="eDuke32" type="Original Files" sha1="f4e447bdd55fcd853b1a76331b518656f868f28f"/>
+			<download filename="The_Christmas_Project_1.00-ModMgrE.zip" version="1.00" game="eDuke32" type="Mod Manager Files" state="Native" sha1="86d83f6b3a8db8112a940fb72f38485f035a6e28"/>
+			<download filename="The_Christmas_Project_1.01-ModMgrE.zip" version="1.01" game="eDuke32" type="Mod Manager Files" state="Native" sha1="7bd441349fcb1ab7ac9e3c00ae9a8a1fc2a053e1"/>
 		</downloads>
 	</mod>
 </mods>
