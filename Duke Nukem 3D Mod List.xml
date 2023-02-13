@@ -8480,7 +8480,7 @@
 			<member name="Batsuey"/>
 			<member name="Major Tom"/>
 			<member name="Never Forgotten"/>
-			<member name="NUKEMDAVE"/>
+			<member name="NUKEMDAVE" twitter="NUKEMDAVE" steam="NUKEMDAVE" github="NUKEMDAVE" youtube="NUKEMDAVE"/>
 			<member name="Cernex"/>
 			<member name="Doom64hunter"/>
 			<member name="Geedra"/>
@@ -9619,7 +9619,7 @@
 	</mod>
 	<mod name="Fallout Freeze" id="fallout_freeze" type="Total Conversion" version="1.1" website="https://brullov.itch.io/fallout-freeze">
 		<team name="Brullov Studios" website="https://brullov-studios.itch.io">
-			<member name="Artem Brullov" twitter="@brullov_art" website="https://itch.io/profile/brullov"/>
+			<member name="Artem Brullov" twitter="brullov_art" website="https://itch.io/profile/brullov"/>
 			<member name="Oasiz"/>
 			<member name="RichardStorm"/>
 			<member name="Cage"/>
@@ -9802,12 +9802,12 @@
 	<mod name="Mr The Killer" id="mr_the_killer" type="Total Conversion" version="2.1.4" website="http://www.mrthekiller.com">
 		<team country="France">
 			<member name="Seb Luca" email="seb.luca.productions@gmail.com" website="http://www.sebluca.com"/>
-			<member name="Raquel De Miranda" alias="Merween" twitter="@r_demiranda"/>
+			<member name="Raquel De Miranda" alias="Merween" twitter="r_demiranda"/>
 			<member name="Likali"/>
 			<member name="Richoult" email="teamjavras@gmail.com" website="http://www.teamjavras.fr/Javras"/>
-			<member name="Appolo" email="capostagno.arno@gmail.com" website="http://apollolegacyinc.be" twitter="@ApolloLegacy01"/>
+			<member name="Appolo" email="capostagno.arno@gmail.com" website="http://apollolegacyinc.be" twitter="ApolloLegacy01"/>
 			<member name="Xzimnut" website="http://www.weeklymp3.fr"/>
-			<member name="Angor de Redjak" twitter="@Angor_de_Redjak"/>
+			<member name="Angor de Redjak" twitter="Angor_de_Redjak"/>
 		</team>
 		<files>
 			<version id="2.01" release_date="November 17, 2018">
@@ -10234,6 +10234,26 @@
 		<downloads>
 			<download filename="Suburbs_TC_Demo.zip" version="Demo 0.1c" game="eDuke32" type="Original Files" sha1="87af0e293a33c5d629ae393c897994bbac4d2527"/>
 			<download filename="Suburbs-ModMgrE.zip" version="Demo 0.1c" game="eDuke32" type="Mod Manager Files" state="Native" sha1="3111371df53b5da9ae4ffe0abfda8f8a2c8fd870"/>
+		</downloads>
+	</mod>
+	<mod name="Super Nukem Bros." id="super_nukem_bros" type="Total Conversion" version="6.1" website="https://www.moddb.com/mods/super-nukem-bros">
+		<team>
+			<member name="NUKEMDAVE" twitter="NUKEMDAVE" steam="NUKEMDAVE" github="NUKEMDAVE" youtube="NUKEMDAVE"/>
+		</team>
+		<files>
+			<version id="6.1" release_date="September 14, 2018">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="SNB.CON" type="con" sha1="178f15fd4a5b63834e3812fb5ec6460cefeb9e6e"/>
+						<file name="snb.def" type="def" sha1="558277ca2d31b880d49309ec37ec7abe361e878c"/>
+						<file name="Super_Nukem_Bros.zip" type="zip" sha1="f29b9e83e6b8bac0bea0122eae752246c08e6ab5"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="SuperNukemBrosV6.1.zip" version="6.1" game="eDuke32" type="Original Files" sha1="6a7c42bde804c6d1d39d7bbb969bdcbf74478ebe"/>
+			<download filename="Super_Nukem_Bros-ModMgrE.zip" version="6.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="6dffad1b712b6d760914c64a06e1759d78b41ea4"/>
 		</downloads>
 	</mod>
 </mods>
