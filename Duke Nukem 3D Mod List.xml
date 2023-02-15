@@ -10371,4 +10371,24 @@
 			<download filename="WG_The_Abyss_Episode-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="6881b228a4bdfc42bb749a251be15bef263314a7"/>
 		</downloads>
 	</mod>
+	<mod name="Blast Radius" id="blast_radius" type="Episode" website="https://www.moddb.com/mods/duke-nukem-3d-blast-radius">
+		<team country="France">
+			<member name="Aymeric Nocus" alias="ck3D" email="aymeric-nocus@tele2.fr" website="https://www.ko-fi.com/blastradius" youtube="MisterCK"/>
+			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld"/>
+		</team>
+		<files>
+			<version release_date="February 13, 2023">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DN3DBR.CON" type="con" sha1="9b7705a9e06cd215e761f7c1d6e52190ff4b5c08"/>
+						<file name="Blast_Radius.zip" type="zip" sha1="633799e06ecc1e6a11f3cfce7910ca976498be88"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="DN3DBR.rar" game="eDuke32" type="Original Files" sha1="9bda873436277cdcf1d8fa59e66e5065ea043850"/>
+			<download filename="Blast_Radius-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="10b1922e4824f2c025d1971c68d99fc1fd6bbe89"/>
+		</downloads>
+	</mod>
 </mods>
