@@ -10352,4 +10352,23 @@
 			<download filename="The_Chronic-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="dfcdb5d4dac86098311b41377aa368c28bd5bf85"/>
 		</downloads>
 	</mod>
+	<mod name="WG The Abyss Episode" id="wg_the_abyss_episode" type="Episode">
+		<team country="New Zealand">
+			<member name="William Gee" email="geewillywizz@gmail.com" website="http://wg.duke4.net"/>
+		</team>
+		<files>
+			<version release_date="May 20, 2021">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="THEABYSS.CON" type="con" sha1="7c8fdb841847e9c7e3c126926cb4ea81c3ee68a7"/>
+						<file name="THEABYSS.GRP" type="grp" sha1="c5e856aec3ecec5901223af4f18309ff9b0c931c"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="WGTHEABBYSS.zip" game="eDuke32" type="Original Files" sha1="8f3be464c77bc5a74cdcc412bb8a2a505701cd49"/>
+			<download filename="WG_The_Abyss_Episode-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="6881b228a4bdfc42bb749a251be15bef263314a7"/>
+		</downloads>
+	</mod>
 </mods>
