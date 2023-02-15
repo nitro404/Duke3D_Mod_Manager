@@ -10653,6 +10653,45 @@
 			<download filename="The_Christmas_Project_1.01-ModMgrE.zip" filesize="7666648" version="1.01" game="eDuke32" type="Mod Manager Files" state="Native" sha1="7bd441349fcb1ab7ac9e3c00ae9a8a1fc2a053e1"/>
 		</downloads>
 	</mod>
+	<mod name="William JCM's Weapon Pak" id="william_jcms_weapon_pak" type="Weapon Patch" version="V3 Rev8 Update 1">
+		<team>
+			<member name="William JCM" alias="TODO_MEMBER_ALIAS" email="TODO_MEMBER_EMAIL" website="http://williamjcm.webnode.com"/>
+		</team>
+		<files>
+			<version id="V3" release_date="TODO_DATE">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="WJCM.CON" type="con" sha1="TODO_SHA1"/>
+						<file name="WJCM3.GRP" type="grp" sha1="TODO_SHA1"/>
+					</game>
+				</type>
+			</version>
+			<version id="V3 Rev6" release_date="TODO_DATE">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="WJCM.CON" type="con" sha1="TODO_SHA1"/>
+						<file name="WJCM31.GRP" type="grp" sha1="TODO_SHA1"/>
+					</game>
+				</type>
+			</version>
+			<version id="V3 Rev8 Update 1" release_date="TODO_DATE">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="WJCM.CON" type="con" sha1="TODO_SHA1"/>
+						<file name="WJCM33.GRP" type="grp" sha1="TODO_SHA1"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="wjcm3.zip" version="V3" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="wjcm31.zip" version="V3 Rev6" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="wjcm33.zip" version="V3 Rev8 Update 1" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="William_JCMs_Weapon_Pak_V3-ModMgrE.zip" version="V3" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+			<download filename="William_JCMs_Weapon_Pak_V3_Rev6-ModMgrE.zip" version="V3 Rev6" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+			<download filename="William_JCMs_Weapon_Pak_V3_Rev8_Update_1-ModMgrE.zip" version="V3 Rev8 Update 1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+		</downloads>
+	</mod>
 	<mod name="White Noise" id="white_noise" type="Total Conversion" version="0.9" website="https://www.moddb.com/games/duke-nukem-3d/addons/white-noise">
 		<team country="Germany">
 			<member name="uLTra" youtube="ultra8103"/>
