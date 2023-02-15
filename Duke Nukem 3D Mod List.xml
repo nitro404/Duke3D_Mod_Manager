@@ -10333,4 +10333,23 @@
 			<video url="https://www.youtube.com/watch?v=JidyMZLNEt0" title="White Noise Walkthrough"/>
 		</videos>
 	</mod>
+	<mod name="The Chronic" id="the_chronic" type="Episode">
+		<team country="Russia">
+			<member name="Sanek" email="bechtin7@mail.ru"/>
+		</team>
+		<files>
+			<version release_date="June 27, 2009">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="CHRONIC.CON" type="con" sha1="9400294045ce561d046b1649c70eddf63b9077ac"/>
+						<file name="CHRONIC.GRP" type="grp" sha1="647f443784ade8dbff0b392e0b76be5347526744"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="the_chronic.zip" game="eDuke32" type="Original Files" sha1="9a49890e43774c05943583b60eff5a4f849a6e05"/>
+			<download filename="The_Chronic-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="dfcdb5d4dac86098311b41377aa368c28bd5bf85"/>
+		</downloads>
+	</mod>
 </mods>
