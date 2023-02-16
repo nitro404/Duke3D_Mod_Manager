@@ -10463,4 +10463,23 @@
 			<download filename="Independence_Day-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="d2c9ccaf1f49fc4c86e70b20237fbf5ab93b35ba"/>
 		</downloads>
 	</mod>
+	<mod name="On Vacation" id="on_vacation" type="Episode">
+		<team country="Russia">
+			<member name="Sanek" email="bechtin7@mail.ru"/>
+		</team>
+		<files>
+			<version release_date="June 1, 2010">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="OV.CON" type="con" sha1="0a6f1ea2ed15fd1de7db29903bda00d2ab7add26"/>
+						<file name="ON_VACATION.GRP" type="grp" sha1="71a1e1a5128de2c32a50f764d48e6c39a40e5fec"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="On Vacation.zip" game="eDuke32" type="Original Files" sha1="43351a12f0b82dbe0d0ac02c5ae1cd6dfb73e98e"/>
+			<download filename="On_Vacation-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="4542ee84971df129db9cd5771664cbc0996e8573"/>
+		</downloads>
+	</mod>
 </mods>
