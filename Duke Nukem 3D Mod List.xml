@@ -675,7 +675,7 @@
 		<team>
 			<member name="Geoffrey van Dijk" alias="Fakir Baba" email="fakirnogwat@hotmail.com"/>
 			<member name="The Commander" email="codynz3000@hotmail.com"/>
-			<member name="Hudson"/>
+			<member name="Andrew Childs" alias="Hudson"/>
 		</team>
 		<files>
 			<version id="Demo" release_date="September 2, 2005">
@@ -8185,7 +8185,7 @@
 	</mod>
 	<mod name="Decay" id="decay" type="Total Conversion" version="1.0">
 		<team name="Thought Process">
-			<member name="Hudson"/>
+			<member name="Andrew Childs" alias="Hudson"/>
 			<member name="Mblackwell" email="Mblackwell50@hotmail.com"/>
 			<member name="Mark"/>
 			<member name="chicken"/>
@@ -10480,6 +10480,26 @@
 		<downloads>
 			<download filename="On Vacation.zip" game="eDuke32" type="Original Files" sha1="43351a12f0b82dbe0d0ac02c5ae1cd6dfb73e98e"/>
 			<download filename="On_Vacation-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="4542ee84971df129db9cd5771664cbc0996e8573"/>
+		</downloads>
+	</mod>
+	<mod name="Zombie Crisis" id="zombie_crisis" type="Total Conversion" website="https://www.moddb.com/games/zombie-crisis">
+		<team>
+			<member name="Andrew Childs" alias="Hudson"/>
+			<member name="Geoffrey van Dijk" alias="Fakir Baba" email="fakirnogwat@hotmail.com"/>
+		</team>
+		<files>
+			<version release_date="February 16, 2008">
+				<type>
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="ZCRISIS.CON" type="con" sha1="719df6212b12618f29db4ba47e382771d9e3e200"/>
+						<file name="ZCRISIS.GRP" type="grp" sha1="dfb199ef13610d0cfe9ae865b2bfd1b2150602f8"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Zombie_Crisis.zip" game="Regular Version 1.3" type="Original Files" sha1="dc5f0b80cba5e099cc6fb6d14ab67ce667c61f24"/>
+			<download filename="Zombie_Crisis-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="c2050a705f08930cc721c59c24faf83ac2046783"/>
 		</downloads>
 	</mod>
 </mods>
