@@ -10424,4 +10424,23 @@
 			<mod id="fallout_freeze"/>
 		</related>
 	</mod>
+	<mod name="Duke Nukem in Russia (New Year)" id="duke_nukem_in_russia" type="Total Conversion" website="http://www.coolduke.narod.ru/maps.htm">
+		<team country="Russia">
+			<member name="Igor" email="igor99911@yandex.ru"/>
+		</team>
+		<files>
+			<version release_date="May 30, 2008">
+				<type>
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="RUSSIA.CON" type="con" sha1="564721976f7e8592ce0b6b4ef0557c4b1b8e2f7c"/>
+						<file name="RUSSIA.GRP" type="grp" sha1="fb69a5837001d2fb7f3e8a7e4dc54c9be030c23d"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="dninrus.zip" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="289d093bbddc9c1727e2db10a51ae391d08ce19f"/>
+			<download filename="Duke_Nukem_in_Russia_(New_Year)-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="738e302b6eb1da78513cb29574a0aa0328eb3111"/>
+		</downloads>
+	</mod>
 </mods>
