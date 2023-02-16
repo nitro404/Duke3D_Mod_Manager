@@ -2608,6 +2608,7 @@
 			<mod id="duke_nukem_xmas_2014"/>
 			<mod id="driving_home_for_christmas"/>
 			<mod id="fallout_freeze"/>
+			<mod id="countdown_to_christmas"/>
 		</related>
 	</mod>
 	<mod name="Nuke the Bastards" id="nuke_the_bastards" type="Episode">
@@ -4526,6 +4527,7 @@
 			<mod id="duke_nukem_xmas_2014"/>
 			<mod id="driving_home_for_christmas"/>
 			<mod id="fallout_freeze"/>
+			<mod id="countdown_to_christmas"/>
 		</related>
 	</mod>
 	<mod name="Y2K Nuklear Meltdown" id="y2k_nuklear_meltdown" type="Total Conversion" version="Demo 1.2" website="http://www.dukeworld.com/dukey2k">
@@ -6335,6 +6337,7 @@
 			<mod id="duke_nukem_xmas_2014"/>
 			<mod id="driving_home_for_christmas"/>
 			<mod id="fallout_freeze"/>
+			<mod id="countdown_to_christmas"/>
 		</related>
 	</mod>
 	<mod name="Glock 18" id="glock_18" type="Weapon Patch">
@@ -6971,6 +6974,7 @@
 			<mod id="xmas_1997"/>
 			<mod id="duke_nukem_xmas_2014"/>
 			<mod id="fallout_freeze"/>
+			<mod id="countdown_to_christmas"/>
 		</related>
 	</mod>
 	<mod name="The End of the World" id="the_end_of_the_world" type="Partial Conversion">
@@ -9404,6 +9408,7 @@
 			<mod id="xmas_1997"/>
 			<mod id="driving_home_for_christmas"/>
 			<mod id="fallout_freeze"/>
+			<mod id="countdown_to_christmas"/>
 		</related>
 	</mod>
 	<mod name="DukeRUS" id="dukerus" type="Translation" website="http://M210.duke4.net">
@@ -9645,6 +9650,7 @@
 			<mod id="xmas_1997"/>
 			<mod id="driving_home_for_christmas"/>
 			<mod id="duke_nukem_xmas_2014"/>
+			<mod id="countdown_to_christmas"/>
 		</related>
 	</mod>
 	<mod name="Haunted Nukem" id="haunted_nukem" type="Total Conversion" version="2.1" website="https://www.moddb.com/mods/haunted-nukem">
@@ -10390,5 +10396,32 @@
 			<download filename="DN3DBR.rar" game="eDuke32" type="Original Files" sha1="9bda873436277cdcf1d8fa59e66e5065ea043850"/>
 			<download filename="Blast_Radius-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="10b1922e4824f2c025d1971c68d99fc1fd6bbe89"/>
 		</downloads>
+	</mod>
+	<mod name="Countdown to Christmas" id="countdown_to_christmas" type="Total Conversion">
+		<team country="Russia">
+			<member name="Sanek" email="bechtin7@mail.ru"/>
+		</team>
+		<files>
+			<version release_date="December 24, 2009">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="XMAS.CON" type="con" sha1="6684a0be36b99f40610e9f6ae8a91db883d52462"/>
+						<file name="COUNTDOWN_TO_CHRISTMAS.GRP" type="grp" sha1="9c56e02dabd664541300e3cdcbe3084dbb7ad110"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Countdown To Christmas.zip" game="eDuke32" type="Original Files" sha1="6c829c768003fc62899b41182684843a43403c0a"/>
+			<download filename="Countdown_to_Christmas-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="db7abe17bef8799114922480f02edaa91a1fb45a"/>
+		</downloads>
+		<related>
+			<mod id="nuclear_winter"/>
+			<mod id="xmas_duke_96"/>
+			<mod id="xmas_1997"/>
+			<mod id="duke_nukem_xmas_2014"/>
+			<mod id="driving_home_for_christmas"/>
+			<mod id="fallout_freeze"/>
+		</related>
 	</mod>
 </mods>
