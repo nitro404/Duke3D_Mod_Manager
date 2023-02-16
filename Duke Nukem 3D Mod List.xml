@@ -10443,4 +10443,24 @@
 			<download filename="Duke_Nukem_in_Russia_(New_Year)-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="738e302b6eb1da78513cb29574a0aa0328eb3111"/>
 		</downloads>
 	</mod>
+	<mod name="Independence Day" id="independence_day" type="Episode">
+		<team>
+			<member name="Jeremy Mason" email="JereMan916@aol.com"/>
+		</team>
+		<files>
+			<version release_date="February 10, 1999">
+				<type>
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="ID.CON" type="con" sha1="afcdbf5b36a6c36ac973af3a020cf9c24c31e689"/>
+						<file name="ID.GRP" type="grp" sha1="c7d52de5d9889a2ba79331a8a195bbc16962c897"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="allid4s.zip" special="All Levels" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="6ae7851607c955578476f646b749e8323a31deed"/>
+			<download filename="goodid4s.zip" special="Good Levels" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="26527c843a5186d6fd86ab944c8a38b3ac6f75a3"/>
+			<download filename="Independence_Day-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="d2c9ccaf1f49fc4c86e70b20237fbf5ab93b35ba"/>
+		</downloads>
+	</mod>
 </mods>
