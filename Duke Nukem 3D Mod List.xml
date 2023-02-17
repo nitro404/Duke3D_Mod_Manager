@@ -1665,7 +1665,7 @@
 			<download filename="Fusion_Beta_0.1-ModMgrA.zip" version="Beta 0.1" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="0e264ea62049e4dc24e53c94eaee991b95e3441e"/>
 		</downloads>
 	</mod>
-	<mod name="Future TC" id="future_tc" type="Total Conversion">
+	<mod name="Future TC (Duke 2088)" id="future_tc" type="Total Conversion">
 		<team>
 			<member name="Mikko Sandt" email="sirpa.sandt@pp.inet.fi"/>
 		</team>
