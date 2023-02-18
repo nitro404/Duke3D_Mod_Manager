@@ -817,6 +817,22 @@
 			<mod id="ultima_tc"/>
 		</related>
 	</mod>
+	<mod name="Cranium PAK" id="cranium_pak" type="Total Conversion">
+		<team country="Finland">
+			<member name="Juha Toivokoski" email="Toivokoski@Mbnet.Fi"/>
+		</team>
+		<files>
+			<version release_date="August 9, 1997">
+				<file name="CRANPAK.CON" type="con" sha1="TODO_SHA1"/>
+				<file name="CRANPAK.GRP" type="grp" sha1="TODO_SHA1"/>
+			</version>
+		</files>
+		<downloads>
+			<download filename="craniumPAK.zip" game="Regular Version 1.3" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="Cranium_PAK-ModMgrR.zip" game="Regular Version 1.3" type="Mod Manager Files" sha1="TODO_SHA1"/>
+			<download filename="Cranium_PAK-ModMgrR.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" sha1="TODO_SHA1"/>
+		</downloads>
+	</mod>
 	<mod name="Dark Castle 1" id="dark_castle_1" type="Total Conversion" website="http://www.geocities/ain_tempus/darkcastle">
 		<team>
 			<member name="Frater Diatonica Dracona" email="diatonica_dracona@yahoo.com"/>
