@@ -771,6 +771,30 @@
 			<download filename="Dark_Castle_1-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="f6854cb833ca80e1dfd7b4585d4a95f28a980461"/>
 		</downloads>
 	</mod>
+	<mod name="Dawn of Thrawn" id="dawn_of_thrawn" type="Map" website="http://www.geocities.com/area51/3055">
+		<team>
+			<member name="Han Solo" email="mfalcon@geocities.com"/>
+		</team>
+		<files>
+			<version>
+				<type>
+					<game type="Regular Version 1.3" state="Converted">
+						<file name="THRAWN.CON" type="con" sha1="a2735aad65ad5bda4855846942f67fa517c5c33d"/>
+						<file name="THRAWN.GRP" type="grp" sha1="90b25b7cc7d28d116e1d7e0b89362bfcf6cc9a89"/>
+					</game>
+					<game type="Atomic Edition 1.4/1.5" state="Converted">
+						<file name="THRAWN.CON" type="con" sha1="6f77e67b9526c8433974b3ba9fb088901afff0a8"/>
+						<file name="THRAWN.GRP" type="grp" sha1="c2c149d251a509f199af55731777971f8380d713"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Thrawn1.zip" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="7b70bb930ebc7004b7de43933dbee1e598bcd455"/>
+			<download filename="Dawn_of_Thrawn-ModMgrR.zip" game="Regular Version 1.3" type="Mod Manager Files" state="Converted" sha1="3bc641a8962a504386798816fc4bf37c6d306a58"/>
+			<download filename="Dawn_of_Thrawn-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" sha1="eec83879309b2811836d6ea14c8ff1f94f290044"/>
+		</downloads>
+	</mod>
 	<mod name="Delta Force" id="delta_force" type="Total Conversion" version="Demo">
 		<files>
 			<version id="Demo" release_date="August 28, 2000">
