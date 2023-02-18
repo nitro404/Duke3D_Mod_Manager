@@ -9095,6 +9095,10 @@
 			<download filename="PNP.rar" game="eDuke32" type="Original Files" sha1="7203499deb03a0f7cd481279da34aea8c80e7884"/>
 			<download filename="Plug_and_Pray_Remake-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="67b0f7bcc7545cc3b9387ebb7fb8dde2b9c79d62"/>
 		</downloads>
+		<related>
+			<mod id="plug_n_pray"/>
+			<mod id="duke_nukem_total_meltdown"/>
+		</related>
 	</mod>
 	<mod name="Aliens (3)" id="aliens_3" type="Partial Conversion" version="1.0">
 		<team country="United States">
@@ -9566,6 +9570,10 @@
 			<download filename="Duke_Nukem_Total_Meltdown_1.0.2-ModMgrE.zip" version="1.0.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e27cfbb0591d552f4ff299e12d6f59f13f3e5235"/>
 			<download filename="Duke_Nukem_Total_Meltdown_1.0.3-ModMgrE.zip" version="1.0.3" game="eDuke32" type="Mod Manager Files" state="Native" sha1="46ad987125cbfaf67b00d3a047d95f6876915e47"/>
 		</downloads>
+		<related>
+			<mod id="plug_and_pray_remake"/>
+			<mod id="plug_n_pray"/>
+		</related>
 	</mod>
 	<mod name="Duke Nukem: Taking Boise" id="duke_nukem_taking_boise" type="Episode" website="https://www.moddb.com/mods/duke-nukem-taking-boise">
 		<team name="YayFace Productions">
@@ -10581,5 +10589,34 @@
 			<note>Liquidator is an obscure Russian game illegally made using the Build Engine which was published in 1998 by Alex &amp; Aigo of the Akella Company.</note>
 			<note>The game logic &amp; data has been partially translated to English and converted to work with the original version of Duke Nukem 3D by fgsfds.</note>
 		</notes>
+	</mod>
+	<mod name="Plug'n Pray" id="plug_n_pray" type="Episode">
+		<team>
+			<member name="DUKE"/>
+			<member name="Dopefish7950"/>
+		</team>
+		<files>
+			<version release_date="June 1, 2008">
+				<type>
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="PNP.CON" type="con" sha1="02e836b48ddefd1db4a8c6d797502ef8c79f067e"/>
+						<file name="PNP.GRP" type="grp" sha1="0b1bb7f7bfdd2c9851a5a69c6c4e1f5f50c654b9"/>
+					</game>
+					<game type="eDuke32" state="Native">
+						<file name="PNP.CON" type="con" sha1="02e836b48ddefd1db4a8c6d797502ef8c79f067e"/>
+						<file name="Plug_n_Pray.zip" type="zip" sha1="2ad60817053c5b1555ab471c5a968a45dbe4a020"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Plug_n_Pray.zip" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="10f9c43fea01fbe7c305c61db0d931a3940ea3db"/>
+			<download filename="Plug_n_Pray-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="ecbf26218e85dd30280b41aa49606530204c9d83"/>
+			<download filename="Plug_n_Pray-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="3ac0c09516a879d946343783abce4eb3cd2dc605"/>
+		</downloads>
+		<related>
+			<mod id="plug_and_pray_remake"/>
+			<mod id="duke_nukem_total_meltdown"/>
+		</related>
 	</mod>
 </mods>
