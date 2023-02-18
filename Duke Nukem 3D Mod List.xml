@@ -6735,6 +6735,23 @@
 			<download filename="Critical_Mass-ModMgrA.zip" filesize="2061431" game="Atomic" type="Mod Manager Files" state="Native" sha1="36014046aff784e2583d2caaf7ca73d52cde43d5"/>
 		</downloads>
 	</mod>
+	<mod name="Crossroads" id="crossroads" type="TODO_MOD_TYPE" version="1.0.1">
+		<team name="Lezing Entertainment" country="Russia" website="http://www.lezsite.narod.ru">
+			<member name="Maxim Chinyakin" alias="Lezing" email="slike1990@mail.ru"/>
+		</team>
+		<files>
+			<version id="1.0.1" release_date="TODO_RELEASE_DATE">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="CROSSRDS.CON" type="con" sha1="TODO_SHA1"/>
+					<file name="CROSSRDS.GRP" type="grp" sha1="TODO_SHA1"/>
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Crossroads.7z" version="1.0.1" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="Crossroads-ModMgrA.zip" version="1.0.1" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+		</downloads>
+	</mod>
 	<mod name="Cursed Lands" id="cursed_lands" type="Total Conversion" version="1.1">
 		<team name="N.G.S. Productions"/>
 		<versions>
