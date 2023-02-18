@@ -11067,6 +11067,25 @@
 			<note>The game logic &amp; data has been partially translated to English and converted to work with the original version of Duke Nukem 3D by fgsfds.</note>
 		</notes>
 	</mod>
+	<mod name="Naferia's Reign: The Invasion of the Dark Mistress" id="naferias_reign_the_invasion_of_the_dark_mistress" type="Total Conversion" version="5.22" website="http://naferia.duke4.net" repository="https://github.com/LordMisfit/NR-IotDM">
+		<team website="http://www.moddb.com/mods/9889/naferias-reign-the-dark-mistress" country="United States" state="Ohio">
+			<member name="Jack Walker" alias="Lord Misfit" email="clint20@neo.rr.com" website="http://misfittechstudios.netii.net" github="LordMisfit"/>
+		</team>
+		<files>
+			<version id="5.22" release_date="December 24, 2012">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="NR.CON" type="con" sha1="TODO_SHA1"/>
+						<file name="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.22.zip" type="zip" sha1="TODO_SHA1"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="NR-Normalv5.22.12242012.7z" version="5.22" game="eDuke32" type="Original Files" sha1="TODO_SHA1"/>
+			<download filename="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress-ModMgrE.zip" version="5.22" game="eDuke32" type="Mod Manager Files" state="Native" sha1="TODO_SHA1"/>
+		</downloads>
+	</mod>
 	<mod name="Plug&apos;n Pray" id="plug_n_pray" type="Episode">
 		<team>
 			<member name="DUKE"/>
