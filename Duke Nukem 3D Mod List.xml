@@ -6259,7 +6259,7 @@
 			<image filename="title.gif" type="logo" subfolder="misc" width="300" height="150" caption="Speedtrax Racing" sha1="616f6a0e31cd6a35087a6c0adafeb82e14ea2006"/>
 		</images>
 	</mod>
-	<mod name="Dank Nukem 420: Blaze It" id="dank_nukem_420_blaze_it" type="Total Conversion" version="0.0.1" website="https://github.com/nitro404/Dank_Nukem_420">
+	<mod name="Dank Nukem 420: Blaze It" id="dank_nukem_420_blaze_it" type="Total Conversion" version="0.0.1" repository="https://github.com/nitro404/Dank_Nukem_420">
 		<team>
 			<member name="Kevin Scroggins" alias="nitro glycerine" email="nitro404@gmail.com" twitter="nitro404" website="http://www.nitro404.com" steam="nitro4004"/>
 			<member name="Adam Ciccarino" alias="with_milk"/>
@@ -8952,7 +8952,7 @@
 			<download filename="Attrition_2.0-ModMgrE.zip" version="2.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="5b994d72537856686f33eceae4c3da63f0e3ffba"/>
 		</downloads>
 	</mod>
-	<mod name="Duke Nukem Extinction" id="duke_nukem_extinction" type="Map" version="Demo 2" website="https://github.com/pavigna/Duke-Nukem-Extinction">
+	<mod name="Duke Nukem Extinction" id="duke_nukem_extinction" type="Map" version="Demo 2" repository="https://github.com/pavigna/Duke-Nukem-Extinction">
 		<team>
 			<member name="Pavigna"/>
 		</team>
@@ -9057,7 +9057,7 @@
 			<download filename="Fatal_Mode_(Atomic)_1.0-ModMgrE.zip" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="0cc38f87ebfb30b2446f8cf9d845886397d652fb"/>
 		</downloads>
 	</mod>
-	<mod name="Duke Nukem Advance 4 PC" id="duke_nukem_advance_4_pc" type="Total Conversion" version="Alpha" website="https://github.com/voxelvoid/DNA4PC">
+	<mod name="Duke Nukem Advance 4 PC" id="duke_nukem_advance_4_pc" type="Total Conversion" version="Alpha" repository="https://github.com/voxelvoid/DNA4PC">
 		<team>
 			<member name="Voxelvoid" website="https://voxelvoid.itch.io"/>
 		</team>
@@ -10554,7 +10554,7 @@
 			<download filename="Dannys_Weapon_Mod-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="c2eb592aff99d689a4754ad2fd8a00bcc30552a6"/>
 		</downloads>
 	</mod>
-	<mod name="Liquidator 3D" id="liquidator_3d" type="Unofficial Game" version="1.4" website="https://github.com/fgsfds/Liquidator-3D">
+	<mod name="Liquidator 3D" id="liquidator_3d" type="Unofficial Game" version="1.4" repository="https://github.com/fgsfds/Liquidator-3D">
 		<team name="Partizan Software" country="Russia">
 			<member name="fgsfds" twitter="fgsfds228"/>
 			<member name="Alex"/>

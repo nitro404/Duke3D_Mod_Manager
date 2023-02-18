@@ -30,6 +30,7 @@ static constexpr const char * JSON_MOD_TYPE_PROPERTY_NAME = "type";
 static constexpr const char * JSON_MOD_PREFERRED_VERSION_NAME_PROPERTY_NAME = "preferredVersion";
 static constexpr const char * JSON_MOD_DEFAULT_VERSION_TYPE_PROPERTY_NAME = "defaultVersionType";
 static constexpr const char * JSON_MOD_WEBSITE_PROPERTY_NAME = "website";
+static constexpr const char * JSON_MOD_REPOSITORY_URL_PROPERTY_NAME = "repositoryURL";
 static constexpr const char * JSON_MOD_TEAM_PROPERTY_NAME = "team";
 static constexpr const char * JSON_MOD_VERSIONS_PROPERTY_NAME = "versions";
 static constexpr const char * JSON_MOD_DOWNLOADS_PROPERTY_NAME = "downloads";
@@ -38,13 +39,14 @@ static constexpr const char * JSON_MOD_IMAGES_PROPERTY_NAME = "images";
 static constexpr const char * JSON_MOD_VIDEOS_PROPERTY_NAME = "videos";
 static constexpr const char * JSON_MOD_NOTES_PROPERTY_NAME = "notes";
 static constexpr const char * JSON_MOD_RELATED_MODS_PROPERTY_NAME = "relatedMods";
-static const std::array<std::string_view, 14> JSON_MOD_PROPERTY_NAMES = {
+static const std::array<std::string_view, 15> JSON_MOD_PROPERTY_NAMES = {
 	JSON_MOD_ID_PROPERTY_NAME,
 	JSON_MOD_NAME_PROPERTY_NAME,
 	JSON_MOD_TYPE_PROPERTY_NAME,
 	JSON_MOD_PREFERRED_VERSION_NAME_PROPERTY_NAME,
 	JSON_MOD_DEFAULT_VERSION_TYPE_PROPERTY_NAME,
 	JSON_MOD_WEBSITE_PROPERTY_NAME,
+	JSON_MOD_REPOSITORY_URL_PROPERTY_NAME,
 	JSON_MOD_TEAM_PROPERTY_NAME,
 	JSON_MOD_VERSIONS_PROPERTY_NAME,
 	JSON_MOD_DOWNLOADS_PROPERTY_NAME,
@@ -76,20 +78,22 @@ static const std::array<std::string_view, 8> XML_MOD_CHILD_ELEMENT_NAMES = {
 	XML_RELATED_ELEMENT_NAME,
 	XML_NOTES_ELEMENT_NAME
 };
+
 static const std::string XML_MOD_ID_ATTRIBUTE_NAME("id");
 static const std::string XML_MOD_NAME_ATTRIBUTE_NAME("name");
 static const std::string XML_MOD_TYPE_ATTRIBUTE_NAME("type");
-
 static const std::string XML_MOD_VERSION_ATTRIBUTE_NAME("version");
 static const std::string XML_MOD_VERSION_TYPE_ATTRIBUTE_NAME("version_type");
 static const std::string XML_MOD_WEBSITE_ATTRIBUTE_NAME("website");
-static const std::array<std::string_view, 6> XML_MOD_ATTRIBUTE_NAMES = {
+static const std::string XML_MOD_REPOSITORY_ATTRIBUTE_NAME("repository");
+static const std::array<std::string_view, 7> XML_MOD_ATTRIBUTE_NAMES = {
 	XML_MOD_ID_ATTRIBUTE_NAME,
 	XML_MOD_NAME_ATTRIBUTE_NAME,
 	XML_MOD_TYPE_ATTRIBUTE_NAME,
 	XML_MOD_VERSION_ATTRIBUTE_NAME,
 	XML_MOD_VERSION_TYPE_ATTRIBUTE_NAME,
-	XML_MOD_WEBSITE_ATTRIBUTE_NAME
+	XML_MOD_WEBSITE_ATTRIBUTE_NAME,
+	XML_MOD_REPOSITORY_ATTRIBUTE_NAME
 };
 static const std::string XML_RELATED_MOD_ID_ATTRIBUTE_NAME("id");
 
@@ -105,6 +109,7 @@ Mod::Mod(Mod && m) noexcept
 	, m_preferredVersion(std::move(m.m_preferredVersion))
 	, m_defaultVersionType(std::move(m.m_defaultVersionType))
 	, m_website(std::move(m.m_website))
+	, m_repositoryURL(std::move(m.m_repositoryURL))
 	, m_team(m.m_team == nullptr ? nullptr : std::move(m.m_team))
 	, m_versions(std::move(m.m_versions))
 	, m_downloads(std::move(m.m_downloads))
@@ -122,7 +127,8 @@ Mod::Mod(const Mod & m)
 	, m_type(m.m_type)
 	, m_preferredVersion(m.m_preferredVersion)
 	, m_defaultVersionType(m.m_defaultVersionType)
-	, m_website(m.m_website) {
+	, m_website(m.m_website)
+	, m_repositoryURL(m.m_repositoryURL) {
 	if(m.m_team != nullptr) {
 		m_team = std::make_shared<ModTeam>(*m.m_team);
 	}
@@ -166,6 +172,7 @@ Mod & Mod::operator = (Mod && m) noexcept {
 		m_preferredVersion = std::move(m.m_preferredVersion);
 		m_defaultVersionType = std::move(m.m_defaultVersionType);
 		m_website = std::move(m.m_website);
+		m_repositoryURL = std::move(m.m_repositoryURL);
 		m_team = m.m_team == nullptr ? nullptr : std::move(m.m_team);
 		m_versions = std::move(m.m_versions);
 		m_downloads = std::move(m.m_downloads);
@@ -194,6 +201,7 @@ Mod & Mod::operator = (const Mod & m) {
 	m_preferredVersion = m.m_preferredVersion;
 	m_defaultVersionType = m.m_defaultVersionType;
 	m_website = m.m_website;
+	m_repositoryURL = m.m_repositoryURL;
 	m_team = m.m_team == nullptr ? nullptr : std::make_shared<ModTeam>(*m.m_team);
 
 	for(std::vector<std::shared_ptr<ModVersion>>::const_iterator i = m.m_versions.begin(); i != m.m_versions.end(); ++i) {
@@ -326,6 +334,10 @@ const std::string & Mod::getWebsite() const {
 	return m_website;
 }
 
+const std::string & Mod::getRepositoryURL() const {
+	return m_repositoryURL;
+}
+
 bool Mod::hasTeam() const {
 	return m_team != nullptr;
 }
@@ -356,6 +368,10 @@ void Mod::setDefaultVersionType(const std::string & versionType) {
 
 void Mod::setWebsite(const std::string & website) {
 	m_website = Utilities::trimString(website);
+}
+
+void Mod::setRepositoryURL(const std::string & repositoryURL) {
+	m_repositoryURL = Utilities::trimString(repositoryURL);
 }
 
 void Mod::setTeam(const ModTeam & team) {
@@ -1391,6 +1407,11 @@ rapidjson::Value Mod::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAlloca
 		modValue.AddMember(rapidjson::StringRef(JSON_MOD_WEBSITE_PROPERTY_NAME), websiteValue, allocator);
 	}
 
+	if(!m_repositoryURL.empty()) {
+		rapidjson::Value repositoryURLValue(m_repositoryURL.c_str(), allocator);
+		modValue.AddMember(rapidjson::StringRef(JSON_MOD_REPOSITORY_URL_PROPERTY_NAME), repositoryURLValue, allocator);
+	}
+
 	if(m_team != nullptr) {
 		rapidjson::Value teamValue(m_team->toJSON(allocator));
 		modValue.AddMember(rapidjson::StringRef(JSON_MOD_TEAM_PROPERTY_NAME), teamValue, allocator);
@@ -1488,6 +1509,10 @@ tinyxml2::XMLElement * Mod::toXML(tinyxml2::XMLDocument * document) const {
 
 	if(!m_website.empty()) {
 		modElement->SetAttribute(XML_MOD_WEBSITE_ATTRIBUTE_NAME.c_str(), m_website.c_str());
+	}
+
+	if(!m_repositoryURL.empty()) {
+		modElement->SetAttribute(XML_MOD_REPOSITORY_ATTRIBUTE_NAME.c_str(), m_repositoryURL.c_str());
 	}
 
 	if(m_team != nullptr) {
@@ -1690,6 +1715,18 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 		}
 
 		newMod->setWebsite(modWebsiteValue.GetString());
+	}
+
+	// parse the mod repository URL property
+	if(modValue.HasMember(JSON_MOD_REPOSITORY_URL_PROPERTY_NAME)) {
+		const rapidjson::Value & modRepositoryURLValue = modValue[JSON_MOD_REPOSITORY_URL_PROPERTY_NAME];
+
+		if(!modRepositoryURLValue.IsString()) {
+			spdlog::error("Mod '{}' '{}' property has invalid type: '{}', expected 'string'.", modID, JSON_MOD_REPOSITORY_URL_PROPERTY_NAME, Utilities::typeToString(modRepositoryURLValue.GetType()));
+			return nullptr;
+		}
+
+		newMod->setRepositoryURL(modRepositoryURLValue.GetString());
 	}
 
 	// parse the mod team property
@@ -2024,8 +2061,11 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 	// read the mod version type attribute value
 	const char * modVersionType = modElement->Attribute(XML_MOD_VERSION_TYPE_ATTRIBUTE_NAME.c_str());
 
-	// read the mod release date attribute value
+	// read the mod website attribute value
 	const char * modWebsite = modElement->Attribute(XML_MOD_WEBSITE_ATTRIBUTE_NAME.c_str());
+
+	// read the mod repository URL attribute value
+	const char * modRepositoryURL = modElement->Attribute(XML_MOD_REPOSITORY_ATTRIBUTE_NAME.c_str());
 
 	// initialize the mod
 	std::unique_ptr<Mod> mod = std::make_unique<Mod>(modID, modName, modType);
@@ -2040,6 +2080,10 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 
 	if(modWebsite != nullptr) {
 		mod->setWebsite(modWebsite);
+	}
+
+	if(modRepositoryURL != nullptr) {
+		mod->setRepositoryURL(modRepositoryURL);
 	}
 
 	// check for the mod team element
@@ -2746,7 +2790,8 @@ bool Mod::operator == (const Mod & m) const {
 	   !Utilities::areStringsEqualIgnoreCase(m_type, m.m_type) ||
 	   !Utilities::areStringsEqualIgnoreCase(m_preferredVersion, m.m_preferredVersion) ||
 	   !Utilities::areStringsEqualIgnoreCase(m_defaultVersionType, m.m_defaultVersionType) ||
-	   !Utilities::areStringsEqualIgnoreCase(m_website, m.m_website) ||
+	   !Utilities::areStringsEqualIgnoreCase(m_website, m.m_website)||
+	   !Utilities::areStringsEqualIgnoreCase(m_repositoryURL, m.m_repositoryURL) ||
 	   (m_team == nullptr && m.m_team != nullptr) ||
 	   (m_team != nullptr && m.m_team == nullptr) ||
 	   m_versions.size() == m.m_versions.size() ||

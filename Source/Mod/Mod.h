@@ -50,6 +50,7 @@ public:
 	std::string getLatestReleaseDateAsString() const;
 	std::string getInitialReleaseDateAsString() const;
 	const std::string & getWebsite() const;
+	const std::string & getRepositoryURL() const;
 	bool hasTeam() const;
 	std::shared_ptr<ModTeam> getTeam() const;
 
@@ -59,6 +60,7 @@ public:
 	void setPreferredVersionName(const std::string & preferredVersionName);
 	void setDefaultVersionType(const std::string & versionType);
 	void setWebsite(const std::string & website);
+	void setRepositoryURL(const std::string & repositoryURL);
 	void setTeam(const ModTeam & team);
 	void removeTeam();
 	bool addTeamMember(const ModTeamMember & teamMember);
@@ -201,6 +203,7 @@ private:
 	std::string m_preferredVersion;
 	std::string m_defaultVersionType;
 	std::string m_website;
+	std::string m_repositoryURL;
 	std::shared_ptr<ModTeam> m_team;
 	std::vector<std::shared_ptr<ModVersion>> m_versions;
 	std::vector<std::shared_ptr<ModDownload>> m_downloads;
