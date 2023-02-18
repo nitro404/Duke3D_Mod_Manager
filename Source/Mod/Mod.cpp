@@ -240,10 +240,6 @@ const std::string & Mod::getName() const {
 }
 
 std::string Mod::getFullName(size_t versionIndex, size_t versionTypeIndex) const {
-	if(!isValid()) {
-		return "";
-	}
-
 	std::stringstream fullModName;
 	fullModName << m_name;
 
