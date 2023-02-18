@@ -10546,4 +10546,40 @@
 			<download filename="Dannys_Weapon_Mod-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="c2eb592aff99d689a4754ad2fd8a00bcc30552a6"/>
 		</downloads>
 	</mod>
+	<mod name="Liquidator 3D" id="liquidator_3d" type="Unofficial Game" version="1.4" website="https://github.com/fgsfds/Liquidator-3D">
+		<team name="Partizan Software" country="Russia">
+			<member name="fgsfds" twitter="fgsfds228"/>
+			<member name="Alex"/>
+			<member name="Aigo"/>
+		</team>
+		<files>
+			<version id="1.4" release_date="February 10, 2020">
+				<type>
+					<game type="Regular Version 1.3" state="Native">
+						<file name="LIQUID3D.CON" type="con" sha1="01fb6136e59039ccff474f6cb7ced4df1ddb8381"/>
+						<file name="LIQUID3D.GRP" type="grp" sha1="f6f6372ffa0caaafe4c71a019de4fca4860d99e5"/>
+					</game>
+					<game type="Atomic Edition 1.4/1.5" state="Converted">
+						<file name="LIQUID3D.CON" type="con" sha1="4873e7ec30dc1c3e36b37145ef05683b7f47fcb1"/>
+						<file name="LIQUID3D.GRP" type="grp" sha1="010d3aa4c91956cc51b7941ccc35b81749652bbd"/>
+					</game>
+					<game type="eDuke32" state="Native">
+						<file name="EDUKE.CON" type="con" sha1="dbb1caea49ef5d5e31a40179ffedec7bf1069a67"/>
+						<file name="duke3d.def" type="def" sha1="361c438871d1b710d44e54f9c74053a16ce3a4d2"/>
+						<file name="Liquidator_3D_1.4.zip" type="zip" sha1="a6ec8230b9e17895fc11618a2d29191a94ce4b82"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Liquidator-3D-1.4.zip" version="1.4" game="Regular Version 1.3" type="Original Files" sha1="84dd191645e8c22f32ea7b382960b8712e1e2874"/>
+			<download filename="Liquidator_3D-ModMgrR.zip" version="1.4" game="Regular Version 1.3" type="Mod Manager Files" state="Native" sha1="44671a4a3bff74cdbf84a7ec90c3170652fbf7b2"/>
+			<download filename="Liquidator_3D-ModMgrA.zip" version="1.4" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" sha1="940fe8efea412cc990343e5fd0c0961ca411e57a"/>
+			<download filename="Liquidator_3D-ModMgrE.zip" version="1.4" game="eDuke32" type="Mod Manager Files" state="Native" sha1="d311edaadf6b1a1e89c42bef7fc74317e86b9b7d"/>
+		</downloads>
+		<notes>
+			<note>Liquidator is an obscure Russian game illegally made using the Build Engine which was published in 1998 by Alex &amp; Aigo of the Akella Company.</note>
+			<note>The game logic &amp; data has been partially translated to English and converted to work with the original version of Duke Nukem 3D by fgsfds.</note>
+		</notes>
+	</mod>
 </mods>
