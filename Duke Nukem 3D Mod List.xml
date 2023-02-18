@@ -8732,7 +8732,7 @@
 			</version>
 		</files>
 		<downloads>
-			<download filename="113657_dukearmy.zip" version="1.0" game="Regular Version 1.3" type="Original Files" sha1="c33647e3f20666836bd60ec9ef569c74b484ebb0"/>
+			<download filename="dukearmy.zip" version="1.0" game="Regular Version 1.3" type="Original Files" sha1="c33647e3f20666836bd60ec9ef569c74b484ebb0"/>
 			<download filename="dukearmy3_13.zip" version="3.13" game="eDuke32" type="Original Files" sha1="2cf28e60fb1b849d34404f4850abf3f06f503309"/>
 			<download filename="dukearmy3_14.zip" version="3.14" game="eDuke32" type="Original Files" sha1="5366ac59c13fb8fea2135d977a65553d829c8652"/>
 			<download filename="dukearmy3_15.zip" version="3.15" game="eDuke32" type="Original Files" sha1="966adc6dc8458d796657511dc009fc6123095949"/>
@@ -10525,6 +10525,25 @@
 		<downloads>
 			<download filename="NAM.zip" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="0dfda5cfe3e4a15e735e8ef1dca23182875ca79b"/>
 			<download filename="NAM-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" sha1="c8e8a15e21933a7cb9a9fd4ad004f91bbacaefc3"/>
+		</downloads>
+	</mod>
+	<mod name="Danny&apos;s Weapon Mod" id="dannys_weapon_mod" type="Weapon Patch">
+		<team>
+			<member name="Danny Paez" email="dpaez16@yahoo.com"/>
+		</team>
+		<files>
+			<version release_date="June 10, 2010">
+				<type>
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="DWM.CON" type="con" sha1="47169485013070fc5170ed30899a8a941d6459c4"/>
+						<file name="DWM.GRP" type="grp" sha1="fb66f2a803e663824c74f2817f1bfd270db5dc49"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Dannys_Weapon_Mod.rar" game="Regular Version 1.3" type="Original Files" sha1="9d09d1febaf22f03a405e1f9cab56e65d9ee166a"/>
+			<download filename="Dannys_Weapon_Mod-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="c2eb592aff99d689a4754ad2fd8a00bcc30552a6"/>
 		</downloads>
 	</mod>
 </mods>
