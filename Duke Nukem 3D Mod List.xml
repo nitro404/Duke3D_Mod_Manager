@@ -7258,10 +7258,22 @@
 			<download filename="mystdemo.zip" filesize="3509415" version="Demo 1" game="Atomic" type="Original Files" sha1="09528ad1c97ab373fe75716573baee912a3aa525"/>
 			<download filename="mystdem2.zip" filesize="2054876" version="Demo 2" game="Atomic" type="Original Files" sha1="62c0ec2aafe92b2c266018f477328c912b080237"/>
 			<download filename="mystdem3.zip" filesize="3431754" version="Demo 3" game="Atomic" type="Original Files" sha1="ab14f5ff8709af889d3ae85b2760982e53c780d6"/>
+			<download filename="agestime.exe" version="TODO_VERSION" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files"/>
 			<download filename="agestime.txt" filesize="37619" version="1.0" game="Atomic" type="Documentation" sha1="54e2569da4e98f242616584110f6c597bbc0ba90"/>
 			<download filename="aitfull.zip" filesize="19424312" version="1.0" game="Atomic" type="Original Files" sha1="320042aaf01a750a1dcfbc052f077f13b4378e91"/>
 			<download filename="ait10-11.zip" filesize="6424259" version="1.1" special="Patch" game="Atomic" type="Original Files" sha1="ac4eb3e13333c3d4dd897925c1abd15d9fae4649"/>
 			<download filename="ait10-11.txt" filesize="2065" version="1.1" special="Patch" game="Atomic" type="Documentation" sha1="b29e89fd16fa983cb695e1e5b08a765e1b9dd140"/>
+			<download filename="ages02.zip" version="TODO_VERSION" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files"/>
+			<download filename="ages03.zip" version="TODO_VERSION" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files"/>
+			<download filename="ages04.zip" version="TODO_VERSION" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files"/>
+			<download filename="ages05.zip" version="TODO_VERSION" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files"/>
+			<download filename="ages06.zip" version="TODO_VERSION" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files"/>
+			<download filename="ages07.zip" version="TODO_VERSION" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files"/>
+			<download filename="ages08.zip" version="TODO_VERSION" subfolder="original" game="Atomic Edition 1.4/1.5" type="Original Files"/>
+			<download filename="macait.sea" version="TODO_VERSION" subfolder="original" game="Atomic Edition 1.4/1.5" type="Mac Version"/>
+			<download filename="macaitreadme.sea" version="TODO_VERSION" subfolder="original" game="Atomic Edition 1.4/1.5" type="Documentation"/>
+			<download filename="macaitreadme.txt" version="TODO_VERSION" subfolder="original" game="Atomic Edition 1.4/1.5" type="Documentation"/>
+			<download filename="ait10-11.txt" filesize="2065" version="1.1" special="Patch" game="Atomic Edition 1.4/1.5" type="Documentation" sha1="b29e89fd16fa983cb695e1e5b08a765e1b9dd140"/>
 			<download filename="Mystique_-_Ages_in_Time_Demo_1-ModMgrA.zip" filesize="3471485" version="Demo 1" game="Atomic" type="Mod Manager Files" state="Native" sha1="bd9254e16c369300c3e314aeddd0163b68b9807e"/>
 			<download filename="Mystique_-_Ages_in_Time_Demo_2-ModMgrA.zip" filesize="2032874" version="Demo 2" game="Atomic" type="Mod Manager Files" state="Native" sha1="8040b9163f54670017a9055785a9b6efee562806"/>
 			<download filename="Mystique_-_Ages_in_Time_Demo_3-ModMgrA.zip" filesize="3403159" version="Demo 3" game="Atomic" type="Mod Manager Files" state="Native" sha1="469bd96356c47c443fc58fe3fdf0eb4d6a303545"/>
