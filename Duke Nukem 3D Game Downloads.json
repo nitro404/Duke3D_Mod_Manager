@@ -2,6 +2,25 @@
 	"fileFormatVersion": "1.0.0",
 	"gameDownloads": [
 		{
+			"name": "LameDuke",
+			"versions": [
+				{
+					"version": "1.0",
+					"releaseDate": "January 29, 1997",
+					"files": [
+						{
+							"fileName": "lameduke.zip",
+							"fileSize": 4021011,
+							"type": "Game",
+							"sha1": "41ae6fe00aa57aef38d5744cb18ca9e25bc73bbb",
+							"operatingSystem": "DOS",
+							"processorArchitecture": "x86"
+						}
+					]
+				}
+			]
+		},
+		{
 			"name": "Regular Version 1.3",
 			"versions": [
 				{

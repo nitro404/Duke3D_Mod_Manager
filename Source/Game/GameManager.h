@@ -39,7 +39,7 @@ public:
 	static bool isGameDownloadable(const std::string & gameName);
 
 private:
-	std::string getFallbackGroupDownloadSHA1(const std::string & gameName) const;
+	std::string getFallbackGameDownloadSHA1(const std::string & gameName) const;
 
 	bool m_initialized;
 	std::shared_ptr<GameVersionCollection> m_gameVersions;

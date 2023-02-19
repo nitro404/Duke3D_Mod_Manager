@@ -73,7 +73,7 @@ public:
 	void onPortTextChanged(wxCommandEvent & event);
 	void onModGameTypeSelected(wxCommandEvent & event);
 	void onClearButtonPressed(wxCommandEvent & event);
-	void onLaunchModButtonPressed(wxCommandEvent & event);
+	void onLaunchButtonPressed(wxCommandEvent & event);
 
 	// ModManager::Listener Virtuals
 	virtual void modSelectionChanged(const std::shared_ptr<Mod> & mod, size_t modVersionIndex, size_t modVersionTypeIndex, size_t modGameVersionIndex) override;
@@ -149,7 +149,7 @@ private:
 	wxComboBox * m_preferredDOSBoxVersionComboBox;
 	wxComboBox * m_modGameTypeComboBox;
 	wxComboBox * m_preferredGameVersionComboBox;
-	wxButton * m_launchModButton;
+	wxButton * m_launchButton;
 };
 
 #endif // _MOD_BROWSER_PANEL_H_

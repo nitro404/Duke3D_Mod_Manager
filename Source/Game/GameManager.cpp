@@ -33,14 +33,17 @@
 
 using namespace std::chrono_literals;
 
-static const std::string REGULAR_VERSION_GAME_FILES_FILE_NAME("Duke_Nukem_3D_-_Regular_Version_Game_Files.zip");
-static const std::string REGULAR_VERSION_GROUP_FILE_NAME("Duke_Nukem_3D_-_Regular_Version_Group.zip");
-static const std::string ATOMIC_EDITION_GAME_FILES_FILE_NAME("Duke_Nukem_3D_-_Atomic_Edition_Game_Files.zip");
-static const std::string ATOMIC_EDITION_GROUP_FILE_NAME("Duke_Nukem_3D_-_Atomic_Edition_Group.zip");
+static const std::string LAMEDUKE_DOWNLOAD_FILE_NAME("lameduke.zip");
+static const std::string REGULAR_VERSION_GAME_FILES_DOWNLOAD_FILE_NAME("Duke_Nukem_3D_-_Regular_Version_Game_Files.zip");
+static const std::string REGULAR_VERSION_GROUP_DOWNLOAD_FILE_NAME("Duke_Nukem_3D_-_Regular_Version_Group.zip");
+static const std::string ATOMIC_EDITION_GAME_FILES_DOWNLOAD_FILE_NAME("Duke_Nukem_3D_-_Atomic_Edition_Game_Files.zip");
+static const std::string ATOMIC_EDITION_GROUP_DOWNLOAD_FILE_NAME("Duke_Nukem_3D_-_Atomic_Edition_Group.zip");
 
+static const std::string LAMEDUKE_FALLBACK_DOWNLOAD_URL("https://archive.org/download/lameduke/lameduke.zip"); // https://archive.org/details/lameduke
 static const std::string REGULAR_VERSION_FALLBACK_DOWNLOAD_URL("https://archive.org/download/DUKE3D_DOS/DUKE3D.zip"); // https://archive.org/details/DUKE3D_DOS
 static const std::string ATOMIC_EDITION_FALLBACK_DOWNLOAD_URL("https://archive.org/download/duke-3d-atomic3datomictweak/Duke3d_ATOMIC.rar"); // https://archive.org/details/duke-3d-atomic3datomictweak
 
+static const std::string LAMEDUKE_DOWNLOAD_SHA1("41ae6fe00aa57aef38d5744cb18ca9e25bc73bbb");
 static const std::string REGULAR_VERSION_FALLBACK_DOWNLOAD_SHA1("9bc975193ccc4738a31fe2dc6958f0b34135b9ae");
 static const std::string ATOMIC_EDITION_FALLBACK_DOWNLOAD_SHA1("ac2df3fb75f84584cadc82db00ef46ab21ef6a95");
 
@@ -81,6 +84,112 @@ static const std::array<GameFileInformation, 11> ATOMIC_EDITION_GAME_FILE_INFO_L
 	GameFileInformation{ "SETUP.EXE",    { "861db7aa6dfc868b6a0b333b4cb091e276a18832" } },
 	GameFileInformation{ "TENGAME.INI",  { "01a0f0e66fb05f5b2de72a8dd3ad19cdfa4ae323" }, false },
 	GameFileInformation{ "ULTRAMID.INI", { "54a404652aecfddf73aea0c11326f9f95fdd1e25" } }
+};
+
+static const std::array<GameFileInformation, 103> LAMEDUKE_GAME_FILE_INFO_LIST = {
+	GameFileInformation{ "BIGLITE.VOC",  { "a1aff591e958e82a91a3606ab76f7deab25b0e2b" } },
+	GameFileInformation{ "BODYBLOP.VOC", { "e2e8288cdfa91d1c78a7574df81d4515717b4bd5" } },
+	GameFileInformation{ "BROWNEYE.MID", { "a99fdeb0997d3b4c99c96538fa19929949c56cfa" } },
+	GameFileInformation{ "CLIPIN.VOC",   { "f9fb586bbd3560e495a4d538bde38e1fcf9aca30" } },
+	GameFileInformation{ "CLIPOUT.VOC",  { "a76d608e8733437b266927ba92f2b4b23b13a191" } },
+	GameFileInformation{ "COPTER.VOC",   { "9f204c3b1e6638b728a1b6962e57aed969b70d39" } },
+	GameFileInformation{ "D3D.EXE",      { "484f2fa2010aee608c7805f13c80093674343d0c" } },
+	GameFileInformation{ "DEFS.CON",     { "4c00b2028b4d8e9d9f37701a42c88065b48c1a20" } },
+	GameFileInformation{ "DOOR1.VOC",    { "58a9782876bc4609efc0e7d252bdf4763c36c641" } },
+	GameFileInformation{ "DOOR2.VOC",    { "e29fd0cb34cc67a09af2c6183714523484719acd" } },
+	GameFileInformation{ "DOS4GW.EXE",   { "b6c2bed388c6ea1b3c02b941c9541500598f2de0" } },
+	GameFileInformation{ "DRIPPING.VOC", { "59c701bff7e47b6edf15c7499047743ce52dc7ce" } },
+	GameFileInformation{ "E2M1.MID",     { "ff490de338a4ed78363fa4ac71596f2fc6a42cac" } },
+	GameFileInformation{ "ELEV1.VOC",    { "cede502c5ad7ebd183cd9ee03585227c9aa3c0fe" } },
+	GameFileInformation{ "ELEV2.VOC",    { "728fcbd79606eaad9d7db3594947fbe56468973b" } },
+	GameFileInformation{ "ELEV3.VOC",    { "e8d2b05a50c5b1e9369f25b6fdd7988b373f1ce3" } },
+	GameFileInformation{ "EXPL1.VOC",    { "4c4958c1e7167ae19c39d7419ae747516ff052c5" } },
+	GameFileInformation{ "FASTWAY.MID",  { "ff490de338a4ed78363fa4ac71596f2fc6a42cac" } },
+	GameFileInformation{ "FILE_ID.DIZ",  { "7114f45db77c10e8f2a79b848ac9520fabe647bd" } },
+	GameFileInformation{ "FTA_HF.VOC",   { "d4753c68aadce2528ed987b47e20cb8744e858b0" } },
+	GameFileInformation{ "FTA_HM.VOC",   { "045e363fa675b4b2f3c18a5c17c21e6f6fd3c056" } },
+	GameFileInformation{ "FTA_R.VOC",    { "01483b1794e8444b324752c94f9205bb48e7e5ae" } },
+	GameFileInformation{ "GAME.CON",     { "03b9ea6acb41f8f6282328edd18c1c329621ed0b" } },
+	GameFileInformation{ "GETWEAPN.VOC", { "adc82b90b41d3c76a5395e1dd2528fe13928de22" } },
+	GameFileInformation{ "GLASS.VOC",    { "422c44cf999c7e0fbd0b3ebfa6bfbcf97e29c162" } },
+	GameFileInformation{ "GO.BAT",       { "cfdeebe2104e4e6c9d701a3d6badd785a5ed4ba6" } },
+	GameFileInformation{ "GUN1.VOC",     { "e56446e2f01e24d716a176614ab0de83b9079997" } },
+	GameFileInformation{ "JETPAKI.VOC",  { "a7398407ccf310f5df5a5287cad964be160df792" } },
+	GameFileInformation{ "JETPAKOF.VOC", { "303c75c499b7598a72e934f22bc9d2928917ff81" } },
+	GameFileInformation{ "JETPAKON.VOC", { "9ca60a5da8640bea6178982fd18240f7a5a8fe1d" } },
+	GameFileInformation{ "JUMP.VOC",     { "5bdece71b1c654555b72fb18cb1d58516ce07042" } },
+	GameFileInformation{ "KNUCKLE.VOC",  { "51ff67d7d13a2b0d638d3d1345657e976bb58e6a" } },
+	GameFileInformation{ "L1.MAP",       { "d2da8e361760e5c056998ccd8f0fba1b6d63f0b2" } },
+	GameFileInformation{ "L2.MAP",       { "821c6378dd13df306744efc0d585e487931b8636" } },
+	GameFileInformation{ "L3.MAP",       { "5b0d21ae42b44f55159a7b8fd29466f9da69de61" } },
+	GameFileInformation{ "L4.MAP",       { "5a7c8bd8c2d513f8ce95e0e55127803649c9a450" } },
+	GameFileInformation{ "L5.MAP",       { "cd8842674926b234ec6082bddc89d07fe6f0aea3" } },
+	GameFileInformation{ "L6.MAP",       { "5c2f7df3d2fa10cb7c4464dd990976ff36b81ddd" } },
+	GameFileInformation{ "L7.MAP",       { "41faf4d019d0db03288f56aa3ff216e13a308eb8" } },
+	GameFileInformation{ "L8.MAP",       { "1beb444d9a7c876620db39e37f1ada5a911141f7" } },
+	GameFileInformation{ "L9.MAP",       { "030ef2305a46edfd0b81dac46bfab0cb31018199" } },
+	GameFileInformation{ "LAMEDUKE.TXT", { "9a4a56604ec9e74e3956dae7614048724debe02b" } },
+	GameFileInformation{ "LAND.VOC",     { "876807adeb5c96f91bb0a0e82566df8118b9c091" } },
+	GameFileInformation{ "LITEFLCK.VOC", { "34762b9ec26f44ea5f5b3bd9e6a349d93983a69b" } },
+	GameFileInformation{ "LOOKUP.DAT",   { "eecc70f7d4d9f883956ab17b82c4005f3a4b1f93" } },
+	GameFileInformation{ "M1.MAP",       { "06addf61eb7b2c981b05e8a44640ab164a7e64c2" } },
+	GameFileInformation{ "M2.MAP",       { "c3e169e5780a57fada97dc96eec3e527979f0c90" } },
+	GameFileInformation{ "M3.MAP",       { "8c5399b0a89a6e783a41a7e6c19e212bc966ad35" } },
+	GameFileInformation{ "M4.MAP",       { "bcaf01023a9f54fb02378d1e1df969d4761f3cf1" } },
+	GameFileInformation{ "M5.MAP",       { "16f7daf2604efe6b24a2f460c5e88e6094c43da7" } },
+	GameFileInformation{ "M6.MAP",       { "ee6692c6c442912d05340f8ada4dae9f24f79982" } },
+	GameFileInformation{ "M7.MAP",       { "046f6d6f3b453507c4a2d454e9bddc5a510aa5c9" } },
+	GameFileInformation{ "M8.MAP",       { "b280d8bf297d2b2627e9d3ea61931159b9455ef2" } },
+	GameFileInformation{ "MISTACHE.MID", { "6e4bbbd8c19d8080158cfa4ef47c112e8bee58c9" } },
+	GameFileInformation{ "MUSIC.CON",    { "e97f4492cee60e5307afe0e5e6b20ec400d7d566" } },
+	GameFileInformation{ "MYDEMO_0.DMO", { "4e80185f5ad2ec3fd4cc1b599f37e70980f35246" } },
+	GameFileInformation{ "MYDEMO_1.DMO", { "ded58c20db6acc912ab28b59f1a19c104c3930e8" } },
+	GameFileInformation{ "MYDEMO_2.DMO", { "482bf0f6aa9949e9f3a5c686a96a0ba5e9a34031" } },
+	GameFileInformation{ "MYDEMO_3.DMO", { "0f52f5369cf660ba9deb200d0edc2e17ec88dd3b" } },
+	GameFileInformation{ "MYDEMO_4.DMO", { "8668b4d3e2ade968f2bbed194239612e3c2f7d40" } },
+	GameFileInformation{ "MYDEMO_5.DMO", { "609b5f061733fbec6d1d7b5797a8ba620e728744" } },
+	GameFileInformation{ "MYDEMO_6.DMO", { "081535ff024f94227cb1c80165aaad9cd14e173a" } },
+	GameFileInformation{ "MYDEMO_7.DMO", { "6d0779c44a34a2bac8a093149621d317748717b0" } },
+	GameFileInformation{ "N1.MAP",       { "255ce58aa33c0d00c196f9350be3d50c7ae611da" } },
+	GameFileInformation{ "N2.MAP",       { "c163fb086227c9cc116e4daf3d7c2c47b43751b6" } },
+	GameFileInformation{ "N3.MAP",       { "a9300bf1f49b14a53b8be96200fef4c8597fa8dd" } },
+	GameFileInformation{ "N4.MAP",       { "e0232443c01146fd23c19cb79f6cbf9cf670eec5" } },
+	GameFileInformation{ "N5.MAP",       { "6a640df1994b3adf9ae0b655a8d0b4d7594102e1" } },
+	GameFileInformation{ "N6.MAP",       { "316a92ea2dc2753cf925b711a733ccb7f6377ee3" } },
+	GameFileInformation{ "N7.MAP",       { "12f382db7c0b1efbd7245250b6d51a876d5d646e" } },
+	GameFileInformation{ "N8.MAP",       { "c55b076e1e1610236f836d5465d9836162d1d913" } },
+	GameFileInformation{ "O1.MAP",       { "5490c2f988366388adff0e2ed81ae240e12ec3dc" } },
+	GameFileInformation{ "O2.MAP",       { "801e65fae0f75dce40b6202b32cf387be952c9af" } },
+	GameFileInformation{ "O3.MAP",       { "1972e51e9ac58de33215aba3dc2a6cc0f58fe48f" } },
+	GameFileInformation{ "O4.MAP",       { "644d6b37e2e3726108a0883ed7ddfb1775ee7067" } },
+	GameFileInformation{ "ONBOARD.VOC",  { "1e875d9a1e5e9d68c00c4b0a1a9be8458b85cb17" } },
+	GameFileInformation{ "PALETTE.DAT",  { "7fb7cc8093d713ec8a4aeb57751784587d22e67b" } },
+	GameFileInformation{ "REACTOR.VOC",  { "2302ac5090e13cc2a66cb1ecfae6ae3c1d7f788d" } },
+	GameFileInformation{ "README.TXT",   { "9a4a56604ec9e74e3956dae7614048724debe02b" } },
+	GameFileInformation{ "REBOUND.VOC",  { "dfb030929e48e1bd6a079da47056ff41176a5569" } },
+	GameFileInformation{ "RPG.VOC",      { "19c7282cb39f2a825ef1c2e9b5e4a8b30fe093b1" } },
+	GameFileInformation{ "RUNNING.VOC",  { "02d9abb1c23dbdd66cfbe4ff52a3809305fe9795" } },
+	GameFileInformation{ "RUNNINGW.VOC", { "50f4364e7006594e6ac959c369e788c302945b94" } },
+	GameFileInformation{ "SCUBA.VOC",    { "0f2f2652de48916efb452e5f4fd87431957555ae" } },
+	GameFileInformation{ "SETUP.DAT",    { "b522e2269110e1de33957b8c540ebc3598b023c4" } },
+	GameFileInformation{ "SETUP.EXE",    { "cd7e2c5ba6415a51b78eb69c148c45cefc6ae458" } },
+	GameFileInformation{ "SHOOTING.VOC", { "8c1c5b8bdc30bb5c68a4f04e62dcec7812ce7bc9" } },
+	GameFileInformation{ "SQUISH1.VOC",  { "94eb876bafb053d5028c96bad6b21733daf5ece2" } },
+	GameFileInformation{ "SUBWAY.VOC",   { "428012f639bae88872101208118c72c666d192cf" } },
+	GameFileInformation{ "SWITCH.VOC",   { "3453de0ab881a9e25e2208800ff5718230ce1f49" } },
+	GameFileInformation{ "TABLES.DAT",   { "e46b638e982e4f6df796db9573e6e6de235841fd" } },
+	GameFileInformation{ "TILES000.ART", { "1c32e055878823e625fc3e33360a887e24ffe681" } },
+	GameFileInformation{ "TILES001.ART", { "494dbbdc84a20f9456db1a2c1ea6094d5d1b6eae" } },
+	GameFileInformation{ "TILES002.ART", { "3f061f2460116120b698a3631f064daea5e6d74f" } },
+	GameFileInformation{ "TILES003.ART", { "4ca9e7c6e0233d767e21f187cd2d3df7a9f8db5b" } },
+	GameFileInformation{ "TILES004.ART", { "fd8566dbbcf168f00f5f9cdffac0a06b137ae437" } },
+	GameFileInformation{ "TILES005.ART", { "261633119a26564037a3bf9986a634d2ebdc6591" } },
+	GameFileInformation{ "TILES006.ART", { "54443e4520ba253fb3d34e153affca1a79e3922a" } },
+	GameFileInformation{ "TILES007.ART", { "a79ce810fe2549d7457d8013ef3a4d2b1fc6bf8b" } },
+	GameFileInformation{ "USERDEFS.TMP", { "80b636059adeaa2eb420cf49e7d5d1e19b7599af" } },
+	GameFileInformation{ "WAR1.MAP",     { "368cb78ef802e85e4249d197b844d78c85697aee" } },
+	GameFileInformation{ "WAR2.MAP",     { "b480f7e50acd26e93dccd3ada7257172eed14887" } },
+	GameFileInformation{ "WATERFAL.VOC", { "db78e7f4390b724c34796e061b8a3232f085d3c1" } }
 };
 
 GameManager::GameManager()
@@ -230,7 +339,8 @@ bool GameManager::updateGameDownloadList(bool force) const {
 }
 
 bool GameManager::isGameDownloadable(const std::string & gameName) {
-	return Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_REGULAR_VERSION.getName()) ||
+	return Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::LAMEDUKE.getName()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_REGULAR_VERSION.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_ATOMIC_EDITION.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::JFDUKE3D.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::EDUKE32.getName()) ||
@@ -245,11 +355,14 @@ std::string GameManager::getGameDownloadURL(const std::string & gameName) {
 		return {};
 	}
 
-	if(gameName == GameVersion::ORIGINAL_REGULAR_VERSION.getName()) {
-		return Utilities::joinPaths(getRemoteGameDownloadsBaseURL(), REGULAR_VERSION_GAME_FILES_FILE_NAME);
+	if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::LAMEDUKE.getName())) {
+		return Utilities::joinPaths(getRemoteGameDownloadsBaseURL(), REGULAR_VERSION_GAME_FILES_DOWNLOAD_FILE_NAME);
 	}
-	else if(gameName == GameVersion::ORIGINAL_ATOMIC_EDITION.getName()) {
-		return Utilities::joinPaths(getRemoteGameDownloadsBaseURL(), ATOMIC_EDITION_GAME_FILES_FILE_NAME);
+	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_REGULAR_VERSION.getName())) {
+		return Utilities::joinPaths(getRemoteGameDownloadsBaseURL(), REGULAR_VERSION_GAME_FILES_DOWNLOAD_FILE_NAME);
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_ATOMIC_EDITION.getName())) {
+		return Utilities::joinPaths(getRemoteGameDownloadsBaseURL(), ATOMIC_EDITION_GAME_FILES_DOWNLOAD_FILE_NAME);
 	}
 
 	DeviceInformationBridge * deviceInformationBridge = DeviceInformationBridge::getInstance();
@@ -268,19 +381,19 @@ std::string GameManager::getGameDownloadURL(const std::string & gameName) {
 		return {};
 	}
 
-	if(gameName == GameVersion::JFDUKE3D.getName()) {
+	if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::JFDUKE3D.getName())) {
 		return getJFDuke3DDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
-	else if(gameName == GameVersion::EDUKE32.getName()) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::EDUKE32.getName())) {
 		return getEDuke32DownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
-	else if(gameName == GameVersion::RAZE.getName()) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::RAZE.getName())) {
 		return getRazeDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
-	else if(gameName == GameVersion::RED_NUKEM.getName()) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::RED_NUKEM.getName())) {
 		return getRedNukemDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
-	else if(gameName == GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getName()) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getName())) {
 		return getBelgianChocolateDuke3DDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
 
@@ -288,10 +401,13 @@ std::string GameManager::getGameDownloadURL(const std::string & gameName) {
 }
 
 std::string GameManager::getFallbackGameDownloadURL(const std::string & gameName) const {
-	if(gameName == GameVersion::ORIGINAL_REGULAR_VERSION.getName()) {
+	if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::LAMEDUKE.getName())) {
+		return LAMEDUKE_FALLBACK_DOWNLOAD_URL;
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_REGULAR_VERSION.getName())) {
 		return REGULAR_VERSION_FALLBACK_DOWNLOAD_URL;
 	}
-	else if(gameName == GameVersion::ORIGINAL_ATOMIC_EDITION.getName()) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_ATOMIC_EDITION.getName())) {
 		return ATOMIC_EDITION_FALLBACK_DOWNLOAD_URL;
 	}
 
@@ -373,11 +489,11 @@ std::string GameManager::getGroupDownloadURL(const std::string & gameName) const
 
 	std::string_view groupFileName;
 
-	if(gameName == GameVersion::ORIGINAL_REGULAR_VERSION.getName()) {
-		groupFileName = REGULAR_VERSION_GROUP_FILE_NAME;
+	if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_REGULAR_VERSION.getName())) {
+		groupFileName = REGULAR_VERSION_GROUP_DOWNLOAD_FILE_NAME;
 	}
-	else if(gameName == GameVersion::ORIGINAL_ATOMIC_EDITION.getName()) {
-		groupFileName = ATOMIC_EDITION_GROUP_FILE_NAME;
+	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_ATOMIC_EDITION.getName())) {
+		groupFileName = ATOMIC_EDITION_GROUP_DOWNLOAD_FILE_NAME;
 	}
 	else {
 		return {};
@@ -387,21 +503,24 @@ std::string GameManager::getGroupDownloadURL(const std::string & gameName) const
 }
 
 std::string GameManager::getFallbackGroupDownloadURL(const std::string & gameName) const {
-	if(gameName == GameVersion::ORIGINAL_REGULAR_VERSION.getName()) {
+	if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_REGULAR_VERSION.getName())) {
 		return REGULAR_VERSION_FALLBACK_DOWNLOAD_URL;
 	}
-	else if(gameName == GameVersion::ORIGINAL_ATOMIC_EDITION.getName()) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_ATOMIC_EDITION.getName())) {
 		return ATOMIC_EDITION_FALLBACK_DOWNLOAD_URL;
 	}
 
 	return {};
 }
 
-std::string GameManager::getFallbackGroupDownloadSHA1(const std::string & gameName) const {
-	if(gameName == GameVersion::ORIGINAL_REGULAR_VERSION.getName()) {
+std::string GameManager::getFallbackGameDownloadSHA1(const std::string & gameName) const {
+	if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::LAMEDUKE.getName())) {
+		return LAMEDUKE_DOWNLOAD_SHA1;
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_REGULAR_VERSION.getName())) {
 		return REGULAR_VERSION_FALLBACK_DOWNLOAD_SHA1;
 	}
-	else if(gameName == GameVersion::ORIGINAL_ATOMIC_EDITION.getName()) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_ATOMIC_EDITION.getName())) {
 		return ATOMIC_EDITION_FALLBACK_DOWNLOAD_SHA1;
 	}
 
@@ -1038,11 +1157,13 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 	}
 
 	std::string gameDownloadURL;
+	std::string expectedGameDownloadSHA1;
 
 	if(useFallback) {
 		spdlog::info("Using fallback Duke Nukem 3D game files download URL.");
 
 		gameDownloadURL = getFallbackGameDownloadURL(gameVersion.getName());
+		expectedGameDownloadSHA1 = getFallbackGameDownloadSHA1(gameVersion.getName());
 	}
 	else {
 		gameDownloadURL = getGameDownloadURL(gameVersion.getName());
@@ -1085,15 +1206,28 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 	if(!expectedArchiveMD5Hash.empty()) {
 		std::string actualArchiveMD5Hash(response->getBodyMD5(ByteBuffer::HashFormat::Base64));
 
-		if(actualArchiveMD5Hash == expectedArchiveMD5Hash) {
+		if(Utilities::areStringsEqual(actualArchiveMD5Hash, expectedArchiveMD5Hash)) {
 			spdlog::debug("Validated MD5 hash of '{}' game files package.", gameVersion.getName());
 		}
 		else {
-			spdlog::error("Failed to validate MD5 hash of '{}' game files package! Expected base 64 MD5 hash: '{}', actual: '{}'.", expectedArchiveMD5Hash, actualArchiveMD5Hash);
+			spdlog::error("Failed to validate MD5 hash of '{}' game files package! Expected base 64 MD5 hash: '{}', actual: '{}'.", gameVersion.getName(), expectedArchiveMD5Hash, actualArchiveMD5Hash);
 
 			if(!useFallback) {
 				return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
 			}
+
+			return false;
+		}
+	}
+
+	if(!expectedGameDownloadSHA1.empty()) {
+		std::string actualGameDownloadSHA1(response->getBodySHA1());
+
+		if(Utilities::areStringsEqual(expectedGameDownloadSHA1, actualGameDownloadSHA1)) {
+			spdlog::debug("Validated SHA1 hash of '{}' game files package.", gameVersion.getName());
+		}
+		else {
+			spdlog::error("Failed to validate SHA1 hash of '{}' game files package! Expected SHA1 hash: '{}', actual: '{}'.", gameVersion.getName(), expectedGameDownloadSHA1, actualGameDownloadSHA1);
 
 			return false;
 		}
@@ -1113,10 +1247,11 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		return false;
 	}
 
-	bool isRegularVersion = gameVersion.getName() == GameVersion::ORIGINAL_REGULAR_VERSION.getName();
-	bool isAtomicEdition = gameVersion.getName() == GameVersion::ORIGINAL_ATOMIC_EDITION.getName();
-	bool isJFDuke3D = gameVersion.getName() == GameVersion::JFDUKE3D.getName();
-	bool isOriginalGameFallback = useFallback && (isRegularVersion || isAtomicEdition);
+	bool isLameDuke = Utilities::areStringsEqualIgnoreCase(gameVersion.getName(), GameVersion::LAMEDUKE.getName());
+	bool isRegularVersion = Utilities::areStringsEqualIgnoreCase(gameVersion.getName(), GameVersion::ORIGINAL_REGULAR_VERSION.getName());
+	bool isAtomicEdition = Utilities::areStringsEqualIgnoreCase(gameVersion.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName());
+	bool isJFDuke3D = Utilities::areStringsEqualIgnoreCase(gameVersion.getName(), GameVersion::JFDUKE3D.getName());
+	bool isOriginalGameFallback = useFallback && (isLameDuke || isRegularVersion || isAtomicEdition);
 
 	std::function<bool(std::shared_ptr<ArchiveEntry>, const GameFileInformation &)> extractGameFileFunction([&gameVersion, &gameDownloadURL, &destinationDirectoryPath, overwrite](std::shared_ptr<ArchiveEntry> gameFileEntry, const GameFileInformation & gameFileInfo) {
 		if(gameFileEntry == nullptr) {
@@ -1140,7 +1275,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		std::string calculatedGameFileSHA1(gameFileData->getSHA1());
 
 		for(const std::string & expectedGameFileSHA1 : gameFileInfo.hashes) {
-			if(calculatedGameFileSHA1 == expectedGameFileSHA1) {
+			if(Utilities::areStringsEqual(calculatedGameFileSHA1, expectedGameFileSHA1)) {
 				gameFileSHA1Verified = true;
 				break;
 			}
@@ -1179,7 +1314,18 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 
 	if(isOriginalGameFallback) {
 		// only extract required files from fallback downloads for original game files since there are other files we don't want or need in these archives
-		if(isRegularVersion) {
+		if(isLameDuke) {
+			for(const GameFileInformation & gameFileInfo : LAMEDUKE_GAME_FILE_INFO_LIST) {
+				if(!extractGameFileFunction(std::shared_ptr<ArchiveEntry>(gameFilesArchive->getFirstEntryWithName(gameFileInfo.fileName, true)), gameFileInfo)) {
+					if(!useFallback) {
+						return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
+					}
+
+					return false;
+				}
+			}
+		}
+		else if(isRegularVersion) {
 			for(const GameFileInformation & gameFileInfo : REGULAR_VERSION_GAME_FILE_INFO_LIST) {
 				if(!extractGameFileFunction(std::shared_ptr<ArchiveEntry>(gameFilesArchive->getFirstEntryWithName(gameFileInfo.fileName, true)), gameFileInfo)) {
 					if(!useFallback) {
@@ -1266,7 +1412,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 			}
 
 			for(const std::string & expectedGameFileSHA1 : gameFileInfo.hashes) {
-				if(calculatedGameFileSHA1 == expectedGameFileSHA1) {
+				if(Utilities::areStringsEqual(calculatedGameFileSHA1, expectedGameFileSHA1)) {
 					gameFileSHA1Verified = true;
 					break;
 				}
@@ -1407,7 +1553,7 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 		return false;
 	}
 
-	if(!useFallback && gameName == GameVersion::ORIGINAL_ATOMIC_EDITION.getName()) {
+	if(!useFallback && Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_ATOMIC_EDITION.getName())) {
 		GameLocator * gameLocator = GameLocator::getInstance();
 
 		for(size_t i = 0; i < gameLocator->numberOfGamePaths(); i++) {
@@ -1423,13 +1569,13 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 			if(groupSHA1.empty()) {
 				spdlog::error("Failed to calculate SHA1 hash of Duke Nukem 3D group file: '{}'!", sourceGroupFilePath);
 			}
-			else if(groupSHA1 == Group::DUKE_NUKEM_3D_ATOMIC_EDITION_GROUP_SHA1_FILE_HASH) {
+			else if(Utilities::areStringsEqual(groupSHA1, Group::DUKE_NUKEM_3D_ATOMIC_EDITION_GROUP_SHA1_FILE_HASH)) {
 				spdlog::debug("Verified '{}' group file SHA1 hash.", GameVersion::ORIGINAL_ATOMIC_EDITION.getName());
 			}
-			else if(groupSHA1 == Group::DUKE_NUKEM_3D_WORLD_TOUR_GROUP_SHA1_FILE_HASH) {
+			else if(Utilities::areStringsEqual(groupSHA1, Group::DUKE_NUKEM_3D_WORLD_TOUR_GROUP_SHA1_FILE_HASH)) {
 				spdlog::debug("Verified '{}' group file SHA1 hash.", GameVersion::ORIGINAL_ATOMIC_EDITION.getName());
 			}
-			else if(groupSHA1 == Group::DUKE_NUKEM_3D_REGULAR_VERSION_GROUP_SHA1_FILE_HASH) {
+			else if(Utilities::areStringsEqual(groupSHA1, Group::DUKE_NUKEM_3D_REGULAR_VERSION_GROUP_SHA1_FILE_HASH)) {
 				spdlog::error("Calculated '{}' SHA1 hash for Duke Nukem 3D group file '{}', when '{}' group file was expected! This may cause unexpected gameplay issues.", GameVersion::ORIGINAL_REGULAR_VERSION.getName(), sourceGroupFilePath, GameVersion::ORIGINAL_ATOMIC_EDITION.getName());
 			}
 			else {
@@ -1505,11 +1651,11 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 	if(useFallback) {
 		std::string responseSHA1(response->getBodySHA1());
 
-		if(getFallbackGroupDownloadSHA1(gameName) == responseSHA1) {
+		if(Utilities::areStringsEqual(getFallbackGameDownloadSHA1(gameName), responseSHA1)) {
 			spdlog::debug("Duke Nukem 3D {} fallback group file archive SHA1 hash validated.", gameName);
 		}
 		else {
-			spdlog::error("Duke Nukem 3D {} fallback group file archive '{}' SHA1 hash validation failed! Expected '{}', but calculated: '{}'.", gameName, getFallbackGroupDownloadURL(gameName), getFallbackGroupDownloadSHA1(gameName), responseSHA1);
+			spdlog::error("Duke Nukem 3D {} fallback group file archive '{}' SHA1 hash validation failed! Expected '{}', but calculated: '{}'.", gameName, getFallbackGroupDownloadURL(gameName), getFallbackGameDownloadSHA1(gameName), responseSHA1);
 			return false;
 		}
 	}
@@ -1530,7 +1676,7 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 				if(groupFileDownload != nullptr) {
 					std::string responseSHA1(response->getBodySHA1());
 
-					if(responseSHA1 == groupFileDownload->getSHA1()) {
+					if(Utilities::areStringsEqual(responseSHA1, groupFileDownload->getSHA1())) {
 						spdlog::debug("Duke Nukem 3D {} group file archive SHA1 hash validated.", gameName);
 					}
 					else {
@@ -1596,7 +1742,7 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 
 	std::string_view expectedGroupSHA1;
 
-	if(gameName == GameVersion::ORIGINAL_REGULAR_VERSION.getName()) {
+	if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_REGULAR_VERSION.getName())) {
 		expectedGroupSHA1 = Group::DUKE_NUKEM_3D_REGULAR_VERSION_GROUP_SHA1_FILE_HASH;
 	}
 	else {
@@ -1606,7 +1752,7 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 	if(calculatedGroupSHA1.empty()) {
 		spdlog::error("Failed to calculate SHA1 hash of downloaded Duke Nukem 3D group file!");
 	}
-	else if(calculatedGroupSHA1 == expectedGroupSHA1) {
+	else if(Utilities::areStringsEqual(calculatedGroupSHA1, expectedGroupSHA1)) {
 		spdlog::debug("Verified downloaded '{}' group file SHA1 hash.", gameName);
 	}
 	else {

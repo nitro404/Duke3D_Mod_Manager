@@ -64,7 +64,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	, m_preferredDOSBoxVersionComboBox(nullptr)
 	, m_modGameTypeComboBox(nullptr)
 	, m_preferredGameVersionComboBox(nullptr)
-	, m_launchModButton(nullptr) {
+	, m_launchButton(nullptr) {
 	m_modManager->addListener(*this);
 	m_modManager->getDOSBoxVersions()->addListener(*this);
 	m_modManager->getOrganizedMods()->addListener(*this);
@@ -251,9 +251,8 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_preferredGameVersionComboBox->SetEditable(false);
 	m_preferredGameVersionComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onPreferredGameVersionSelected, this);
 
-	m_launchModButton = new wxButton(m_gameOptionsPanel, wxID_ANY, "Launch Mod", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "Launch Mod");
-	m_launchModButton->Disable();
-	m_launchModButton->Bind(wxEVT_BUTTON, &ModBrowserPanel::onLaunchModButtonPressed, this);
+	m_launchButton = new wxButton(m_gameOptionsPanel, wxID_ANY, "Launch Game", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "Launch Game/Mod");
+	m_launchButton->Bind(wxEVT_BUTTON, &ModBrowserPanel::onLaunchButtonPressed, this);
 
 	int border = 5;
 
@@ -338,7 +337,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	gameOptionsSizer->Add(m_modGameTypeComboBox, wxGBPosition(0, 7), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
 	gameOptionsSizer->Add(preferredGameVersionLabel, wxGBPosition(0, 8), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
 	gameOptionsSizer->Add(m_preferredGameVersionComboBox, wxGBPosition(0, 9), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxALIGN_CENTER_VERTICAL, border);
-	gameOptionsSizer->Add(m_launchModButton, wxGBPosition(0, 10), wxGBSpan(1, 1), wxSTRETCH_NOT | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, border);
+	gameOptionsSizer->Add(m_launchButton, wxGBPosition(0, 10), wxGBSpan(1, 1), wxSTRETCH_NOT | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, border);
 	gameOptionsSizer->AddGrowableRow(0, 1);
 	gameOptionsSizer->AddGrowableCol(0, 1);
 	gameOptionsSizer->AddGrowableCol(1, 1);
@@ -493,34 +492,42 @@ void ModBrowserPanel::updateModVersionTypeList() {
 	if(m_searchQuery.empty()) {
 		std::shared_ptr<Mod> mod(m_modManager->getSelectedMod());
 
-		if(mod != nullptr && m_modManager->getOrganizedMods()->shouldDisplayMods()) {
-			size_t modVersionIndex = m_modManager->getSelectedModVersionIndex();
-			size_t modVersionTypeIndex = m_modManager->getSelectedModVersionTypeIndex();
+		if(mod != nullptr) {
+			if(m_modManager->getOrganizedMods()->shouldDisplayMods()) {
+				size_t modVersionIndex = m_modManager->getSelectedModVersionIndex();
+				size_t modVersionTypeIndex = m_modManager->getSelectedModVersionTypeIndex();
 
-			if(modVersionIndex != std::numeric_limits<size_t>::max()) {
-				m_modVersionTypeListBox->Set(WXUtilities::createItemWXArrayString(mod->getVersion(modVersionIndex)->getTypeDisplayNames("Default")));
+				if(modVersionIndex != std::numeric_limits<size_t>::max()) {
+					m_modVersionTypeListBox->Set(WXUtilities::createItemWXArrayString(mod->getVersion(modVersionIndex)->getTypeDisplayNames("Default")));
 
-				if(modVersionTypeIndex != std::numeric_limits<size_t>::max()) {
-					m_launchModButton->Enable();
-					m_modVersionTypeListBox->SetSelection(modVersionTypeIndex);
+					if(modVersionTypeIndex != std::numeric_limits<size_t>::max()) {
+						m_launchButton->SetLabel("Launch Mod");
+						m_launchButton->Enable();
+						m_modVersionTypeListBox->SetSelection(modVersionTypeIndex);
+					}
+					else {
+						m_launchButton->Disable();
+						m_modVersionTypeListBox->SetSelection(wxNOT_FOUND);
+					}
 				}
 				else {
-					m_launchModButton->Disable();
-					m_modVersionTypeListBox->SetSelection(wxNOT_FOUND);
+					m_launchButton->Disable();
+					m_modVersionTypeListBox->Clear();
 				}
 			}
 			else {
-				m_launchModButton->Disable();
+				m_launchButton->Disable();
 				m_modVersionTypeListBox->Clear();
 			}
 		}
 		else {
-			m_launchModButton->Disable();
+			m_launchButton->SetLabel("Launch Game");
+			m_launchButton->Enable();
 			m_modVersionTypeListBox->Clear();
 		}
 	}
 	else {
-		m_launchModButton->Disable();
+		m_launchButton->Disable();
 		m_modVersionTypeListBox->Clear();
 	}
 
@@ -1008,7 +1015,8 @@ void ModBrowserPanel::onModGameVersionSelected(wxCommandEvent & event) {
 		spdlog::error("Failed to select mod game version at index: '{}'.", selectedModGameVersionIndex);
 	}
 
-	m_launchModButton->Enable();
+	m_launchButton->SetLabel("Launch Mod");
+	m_launchButton->Enable();
 }
 
 void ModBrowserPanel::onPreferredDOSBoxVersionSelected(wxCommandEvent & event) {
@@ -1066,7 +1074,7 @@ void ModBrowserPanel::onClearButtonPressed(wxCommandEvent & event) {
 	clear();
 }
 
-void ModBrowserPanel::onLaunchModButtonPressed(wxCommandEvent & event) {
+void ModBrowserPanel::onLaunchButtonPressed(wxCommandEvent & event) {
 	if(m_modManager == nullptr || !m_modManager->isInitialized()) {
 		wxMessageBox(
 			"Mod manager is not initialized!",
@@ -1114,115 +1122,119 @@ void ModBrowserPanel::onLaunchModButtonPressed(wxCommandEvent & event) {
 	std::shared_ptr<ModGameVersion> alternateModGameVersion;
 	size_t selectedModVersionIndex = m_modManager->getSelectedModVersionIndex();
 	size_t selectedModVersionTypeIndex = m_modManager->getSelectedModVersionTypeIndex();
-	std::string fullModName(selectedMod->getFullName(selectedModVersionIndex, selectedModVersionTypeIndex));
+	std::string fullModName;
 	std::shared_ptr<GameVersion> selectedGameVersion(m_modManager->getSelectedGameVersion());
 	std::shared_ptr<DOSBoxVersion> selectedDOSBoxVersion(m_modManager->getSelectedDOSBoxVersion());
 
-	if(!m_modManager->isModSupportedOnSelectedGameVersion()) {
-		std::vector<std::shared_ptr<ModGameVersion>> * modGameVersions = nullptr;
-		std::shared_ptr<ModVersionType> selectedModVersionType(selectedMod->getVersion(selectedModVersionIndex)->getType(selectedModVersionTypeIndex));
-		std::vector<std::pair<std::shared_ptr<GameVersion>, std::vector<std::shared_ptr<ModGameVersion>>>> compatibleGameVersions(m_modManager->getGameVersions()->getGameVersionsCompatibleWith(selectedModVersionType->getGameVersions(), true, true));
+	if(selectedMod != nullptr) {
+		fullModName = selectedMod->getFullName(selectedModVersionIndex, selectedModVersionTypeIndex);
 
-		if(compatibleGameVersions.empty()) {
-			wxMessageBox(
-				fmt::format(
-					"Failed to launch '{}', there are no game versions compatible with this mod.",
-					fullModName
-				),
-				"Launch Failed",
-				wxOK | wxICON_ERROR,
-				this
-			);
+		if(!m_modManager->isModSupportedOnSelectedGameVersion()) {
+			std::vector<std::shared_ptr<ModGameVersion>> * modGameVersions = nullptr;
+			std::shared_ptr<ModVersionType> selectedModVersionType(selectedMod->getVersion(selectedModVersionIndex)->getType(selectedModVersionTypeIndex));
+			std::vector<std::pair<std::shared_ptr<GameVersion>, std::vector<std::shared_ptr<ModGameVersion>>>> compatibleGameVersions(m_modManager->getGameVersions()->getGameVersionsCompatibleWith(selectedModVersionType->getGameVersions(), true, true));
 
-			return;
-		}
-		else if(compatibleGameVersions.size() == 1) {
-			alternateGameVersion = compatibleGameVersions[0].first;
-			modGameVersions = &compatibleGameVersions[0].second;
+			if(compatibleGameVersions.empty()) {
+				wxMessageBox(
+					fmt::format(
+						"Failed to launch '{}', there are no game versions compatible with this mod.",
+						fullModName
+					),
+					"Launch Failed",
+					wxOK | wxICON_ERROR,
+					this
+				);
 
-			int result = wxMessageBox(
-				fmt::format(
-					"{}\n"
-					"Launching mod using '{}' instead!",
-					selectedGameVersion != nullptr
-						? fmt::format("'{}' is not supported on '{}'.", fullModName, selectedGameVersion->getName())
-						: "No game version selected.",
-					alternateGameVersion->getName()
-				),
-				"Unsupported Game Version",
-				wxOK | wxCANCEL | wxICON_INFORMATION,
-				this
-			);
-
-			if(result == wxCANCEL) {
 				return;
 			}
-		}
-		else {
-			std::vector<std::string> compatibleGameVersionNames;
+			else if(compatibleGameVersions.size() == 1) {
+				alternateGameVersion = compatibleGameVersions[0].first;
+				modGameVersions = &compatibleGameVersions[0].second;
 
-			for(std::vector<std::pair<std::shared_ptr<GameVersion>, std::vector<std::shared_ptr<ModGameVersion>>>>::const_iterator i = compatibleGameVersions.begin(); i != compatibleGameVersions.end(); ++i) {
-				compatibleGameVersionNames.push_back((*i).first->getName());
+				int result = wxMessageBox(
+					fmt::format(
+						"{}\n"
+						"Launching mod using '{}' instead!",
+						selectedGameVersion != nullptr
+							? fmt::format("'{}' is not supported on '{}'.", fullModName, selectedGameVersion->getName())
+							: "No game version selected.",
+						alternateGameVersion->getName()
+					),
+					"Unsupported Game Version",
+					wxOK | wxCANCEL | wxICON_INFORMATION,
+					this
+				);
+
+				if(result == wxCANCEL) {
+					return;
+				}
+			}
+			else {
+				std::vector<std::string> compatibleGameVersionNames;
+
+				for(std::vector<std::pair<std::shared_ptr<GameVersion>, std::vector<std::shared_ptr<ModGameVersion>>>>::const_iterator i = compatibleGameVersions.begin(); i != compatibleGameVersions.end(); ++i) {
+					compatibleGameVersionNames.push_back((*i).first->getName());
+				}
+
+				int selectedCompatibleGameVersionIndex = wxGetSingleChoiceIndex(
+					fmt::format("{}\nPlease choose an alternative compatible game version to run:",
+						selectedGameVersion != nullptr
+							? fmt::format("'{}' is not supported on '{}'.", fullModName, selectedGameVersion->getName())
+							: "No game version selected."
+					),
+					"Choose Game Version",
+					WXUtilities::createItemWXArrayString(compatibleGameVersionNames),
+					0,
+					this
+				);
+
+				if(selectedCompatibleGameVersionIndex == wxNOT_FOUND) {
+					return;
+				}
+
+				alternateGameVersion = compatibleGameVersions[selectedCompatibleGameVersionIndex].first;
+				modGameVersions = &compatibleGameVersions[selectedCompatibleGameVersionIndex].second;
 			}
 
-			int selectedCompatibleGameVersionIndex = wxGetSingleChoiceIndex(
-				fmt::format("{}\nPlease choose an alternative compatible game version to run:",
-					selectedGameVersion != nullptr
-						? fmt::format("'{}' is not supported on '{}'.", fullModName, selectedGameVersion->getName())
-						: "No game version selected."
-				),
-				"Choose Game Version",
-				WXUtilities::createItemWXArrayString(compatibleGameVersionNames),
-				0,
-				this
-			);
+			if(modGameVersions->empty()) {
+				return;
+			}
+			else if(modGameVersions->size() == 1) {
+				alternateModGameVersion = (*modGameVersions)[0];
+			}
+			else {
+				std::vector<std::string> modGameVersionNames;
 
-			if(selectedCompatibleGameVersionIndex == wxNOT_FOUND) {
+				for(std::vector<std::shared_ptr<ModGameVersion>>::const_iterator i = modGameVersions->begin(); i != modGameVersions->end(); ++i) {
+					modGameVersionNames.push_back((*i)->getFullName());
+				}
+
+				int selectedModGameVersionIndex = wxGetSingleChoiceIndex(
+					fmt::format("Choose a '{}' mod game version to run:", fullModName),
+					"Choose Mod Game Version",
+					WXUtilities::createItemWXArrayString(modGameVersionNames),
+					0,
+					this
+				);
+
+				if(selectedModGameVersionIndex == wxNOT_FOUND) {
+					return;
+				}
+
+				alternateModGameVersion = (*modGameVersions)[selectedModGameVersionIndex];
+			}
+
+			if(alternateGameVersion == nullptr || alternateModGameVersion == nullptr) {
+				spdlog::error("Alternative game version not selected, aborting launch.");
 				return;
 			}
 
-			alternateGameVersion = compatibleGameVersions[selectedCompatibleGameVersionIndex].first;
-			modGameVersions = &compatibleGameVersions[selectedCompatibleGameVersionIndex].second;
-		}
-
-		if(modGameVersions->empty()) {
-			return;
-		}
-		else if(modGameVersions->size() == 1) {
-			alternateModGameVersion = (*modGameVersions)[0];
-		}
-		else {
-			std::vector<std::string> modGameVersionNames;
-
-			for(std::vector<std::shared_ptr<ModGameVersion>>::const_iterator i = modGameVersions->begin(); i != modGameVersions->end(); ++i) {
-				modGameVersionNames.push_back((*i)->getFullName());
+			if(selectedGameVersion != nullptr) {
+				spdlog::info("Using game version '{}' since '{}' is not supported on '{}'.", alternateGameVersion->getName(), fullModName, selectedGameVersion->getName());
 			}
-
-			int selectedModGameVersionIndex = wxGetSingleChoiceIndex(
-				fmt::format("Choose a '{}' mod game version to run:", fullModName),
-				"Choose Mod Game Version",
-				WXUtilities::createItemWXArrayString(modGameVersionNames),
-				0,
-				this
-			);
-
-			if(selectedModGameVersionIndex == wxNOT_FOUND) {
-				return;
+			else {
+				spdlog::info("Using game version '{}' since no game version was selected.", alternateGameVersion->getName());
 			}
-
-			alternateModGameVersion = (*modGameVersions)[selectedModGameVersionIndex];
-		}
-
-		if(alternateGameVersion == nullptr || alternateModGameVersion == nullptr) {
-			spdlog::error("Alternative game version not selected, aborting launch.");
-			return;
-		}
-
-		if(selectedGameVersion != nullptr) {
-			spdlog::info("Using game version '{}' since '{}' is not supported on '{}'.", alternateGameVersion->getName(), fullModName, selectedGameVersion->getName());
-		}
-		else {
-			spdlog::info("Using game version '{}' since no game version was selected.", alternateGameVersion->getName());
 		}
 	}
 
@@ -1232,8 +1244,8 @@ void ModBrowserPanel::onLaunchModButtonPressed(wxCommandEvent & event) {
 		if(!activeGameVersion->isConfigured()) {
 			wxMessageBox(
 				fmt::format(
-					"Failed to launch '{}', game version '{}' is not configured/installed.",
-					selectedMod->getName(),
+					"Failed to launch, game version '{}' is not configured/installed.",
+					!fullModName.empty() ? fmt::format(" '{}'", fullModName) : "",
 					activeGameVersion->getName()
 				),
 				"Launch Failed",
@@ -1247,8 +1259,8 @@ void ModBrowserPanel::onLaunchModButtonPressed(wxCommandEvent & event) {
 		if(activeGameVersion->doesRequireDOSBox() && !selectedDOSBoxVersion->isConfigured()) {
 			wxMessageBox(
 				fmt::format(
-					"Failed to launch '{}', '{}' is not configured/installed.",
-					selectedMod->getName(),
+					"Failed to launch{}, '{}' is not configured/installed.",
+					!fullModName.empty() ? fmt::format(" '{}'", fullModName) : "",
 					selectedDOSBoxVersion->getName()
 				),
 				"Launch Failed",
@@ -1265,7 +1277,7 @@ void ModBrowserPanel::onLaunchModButtonPressed(wxCommandEvent & event) {
 				"\n"
 				"See console for details.",
 				activeGameVersion->getName(),
-				selectedMod == nullptr ? "" : fmt::format(" with mod '{}'", fullModName)
+				!fullModName.empty() ? fmt::format(" with mod '{}'", fullModName) : ""
 			),
 			"Launch Failed",
 			wxOK | wxICON_ERROR,

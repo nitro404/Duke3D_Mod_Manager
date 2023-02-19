@@ -1440,8 +1440,14 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		scriptArgs.addArgument("SETUP", selectedGameVersion->getSetupExecutableName().value());
 	}
 
-	scriptArgs.addArgument("GROUPFLAG", selectedGameVersion->getGroupFileArgumentFlag());
-	scriptArgs.addArgument("CONFLAG", selectedGameVersion->getConFileArgumentFlag());
+	if(selectedGameVersion->hasGroupFileArgumentFlag()) {
+		scriptArgs.addArgument("GROUPFLAG", selectedGameVersion->getGroupFileArgumentFlag().value());
+	}
+
+	if(selectedGameVersion->hasConFileArgumentFlag()) {
+		scriptArgs.addArgument("CONFLAG", selectedGameVersion->getConFileArgumentFlag().value());
+	}
+
 	scriptArgs.addArgument("MAPFLAG", selectedGameVersion->getMapFileArgumentFlag());
 
 	if(selectedGameVersion->hasDefFileArgumentFlag()) {
@@ -1815,9 +1821,14 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			}
 		}
 
+		if(!selectedGameVersion->hasGroupFileArgumentFlag()) {
+			spdlog::error("Game version '{}' does not have a group file argument flag specified in its configuration.", selectedGameVersion->getName());
+			return {};
+		}
+
 		if(!customGroupFiles.empty()) {
 			for(std::vector<std::string>::const_iterator i = customGroupFiles.begin(); i != customGroupFiles.end(); ++i) {
-				command << " " << selectedGameVersion->getGroupFileArgumentFlag() << Utilities::joinPaths(modPath, *i);
+				command << " " << selectedGameVersion->getGroupFileArgumentFlag().value() << Utilities::joinPaths(modPath, *i);
 			}
 		}
 		else if(!combinedGroupFileName.empty()) {
@@ -1833,13 +1844,13 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 				combinedGroupFilePath = combinedGroupFileName;
 			}
 
-			command << " " << selectedGameVersion->getGroupFileArgumentFlag() << Utilities::joinPaths(settings->tempSymlinkName, combinedGroupFileName);
+			command << " " << selectedGameVersion->getGroupFileArgumentFlag().value() << Utilities::joinPaths(settings->tempSymlinkName, combinedGroupFileName);
 		}
 		else {
 			std::vector<std::shared_ptr<ModFile>> groupFiles(modGameVersion->getFilesOfType("grp"));
 
 			for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = groupFiles.begin(); i != groupFiles.end(); ++i) {
-				command << " " << selectedGameVersion->getGroupFileArgumentFlag() << Utilities::joinPaths(modPath, (*i)->getFileName());
+				command << " " << selectedGameVersion->getGroupFileArgumentFlag().value() << Utilities::joinPaths(modPath, (*i)->getFileName());
 			}
 		}
 
@@ -1848,7 +1859,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 				std::vector<std::shared_ptr<ModFile>> zipFiles(modGameVersion->getFilesOfType("zip"));
 
 				for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = zipFiles.begin(); i != zipFiles.end(); ++i) {
-					command << " " << selectedGameVersion->getGroupFileArgumentFlag() << Utilities::joinPaths(modPath, (*i)->getFileName());
+					command << " " << selectedGameVersion->getGroupFileArgumentFlag().value() << Utilities::joinPaths(modPath, (*i)->getFileName());
 				}
 			}
 
@@ -1876,7 +1887,13 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 		}
 
 		if(!conFileName.empty()) {
-			command << " " << selectedGameVersion->getConFileArgumentFlag() << (selectedGameVersion->hasRelativeConFilePath() ? conFileName : Utilities::joinPaths(modPath, conFileName));
+			if(selectedGameVersion->hasConFileArgumentFlag()) {
+				command << " " << selectedGameVersion->getConFileArgumentFlag().value() << (selectedGameVersion->hasRelativeConFilePath() ? conFileName : Utilities::joinPaths(modPath, conFileName));
+			}
+			else {
+				spdlog::error("Game version '{}' does not have a con file argument flag specified in its configuration.", selectedGameVersion->getName());
+				return {};
+			}
 		}
 	}
 
@@ -1958,7 +1975,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			std::optional<uint8_t> optionalSkillNumber(Utilities::parseUnsignedByte(skillNumberData));
 
 			if(optionalSkillNumber.has_value() && optionalSkillNumber.value() >= 1 && optionalSkillNumber.value() <= 4) {
-				command << " " << selectedGameVersion->getSkillArgumentFlag() << std::to_string(optionalSkillNumber.value());
+				command << " " << selectedGameVersion->getSkillArgumentFlag() << std::to_string(optionalSkillNumber.value() - 1 + selectedGameVersion->getSkillStartValue());
 			}
 			else {
 				spdlog::warn("Invalid skill number: '{}'.", skillNumberData);
@@ -1972,8 +1989,13 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 		if(m_arguments->hasArgument("d")) {
 			std::string demoFileName(m_arguments->getFirstValue("d"));
 
-			if(!demoFileName.empty() && selectedGameVersion->hasPlayDemoArgumentFlag()) {
-				command << " " << selectedGameVersion->getPlayDemoArgumentFlag().value() << demoFileName;
+			if(!demoFileName.empty()) {
+				if(selectedGameVersion->hasPlayDemoArgumentFlag()) {
+					command << " " << selectedGameVersion->getPlayDemoArgumentFlag().value() << demoFileName;
+				}
+				else {
+					spdlog::warn("Game version '{}' does not have a play demo argument flag specified in its configuration.", selectedGameVersion->getName());
+				}
 			}
 		}
 
@@ -1981,7 +2003,12 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			std::string respawnMode(m_arguments->getFirstValue("t"));
 
 			if(!respawnMode.empty() && std::regex_match(respawnMode, respawnModeRegExp)) {
-				command << " " << selectedGameVersion->getRespawnModeArgumentFlag() << respawnMode;
+				if(selectedGameVersion->hasRespawnModeArgumentFlag()) {
+					command << " " << selectedGameVersion->getRespawnModeArgumentFlag().value() << respawnMode;
+				}
+				else {
+					spdlog::warn("Game version '{}' does not have a respawn mode argument flag specified in its configuration.", selectedGameVersion->getName());
+				}
 			}
 		}
 
@@ -1989,20 +2016,40 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			std::string weaponSwitchOrder(m_arguments->getFirstValue("u"));
 
 			if(!weaponSwitchOrder.empty() && weaponSwitchOrder.find_first_not_of("0123456789") == std::string::npos) {
-				command << " " << selectedGameVersion->getWeaponSwitchOrderArgumentFlag() << weaponSwitchOrder;
+				if(selectedGameVersion->hasWeaponSwitchOrderArgumentFlag()) {
+					command << " " << selectedGameVersion->getWeaponSwitchOrderArgumentFlag().value() << weaponSwitchOrder;
+				}
+				else {
+					spdlog::warn("Game version '{}' does not have a weapon switch order argument flag specified in its configuration.", selectedGameVersion->getName());
+				}
 			}
 		}
 
 		if(m_arguments->hasArgument("m")) {
-			command << " " << selectedGameVersion->getDisableMonstersArgumentFlag();
+			if(selectedGameVersion->hasDisableMonstersArgumentFlag()) {
+				command << " " << selectedGameVersion->getDisableMonstersArgumentFlag().value();
+			}
+			else {
+				spdlog::warn("Game version '{}' does not have a disable monsters argument flag specified in its configuration.", selectedGameVersion->getName());
+			}
 		}
 
 		if(m_arguments->hasArgument("ns")) {
-			command << " " << selectedGameVersion->getDisableSoundArgumentFlag();
+			if(selectedGameVersion->hasDisableSoundArgumentFlag()) {
+				command << " " << selectedGameVersion->getDisableSoundArgumentFlag().value();
+			}
+			else {
+				spdlog::warn("Game version '{}' does not have a disable sound argument flag specified in its configuration.", selectedGameVersion->getName());
+			}
 		}
 
 		if(m_arguments->hasArgument("nm")) {
-			command << " " << selectedGameVersion->getDisableMusicArgumentFlag();
+			if(selectedGameVersion->hasDisableMusicArgumentFlag()) {
+				command << " " << selectedGameVersion->getDisableMusicArgumentFlag().value();
+			}
+			else {
+				spdlog::warn("Game version '{}' does not have a disable music argument flag specified in its configuration.", selectedGameVersion->getName());
+			}
 		}
 	}
 
