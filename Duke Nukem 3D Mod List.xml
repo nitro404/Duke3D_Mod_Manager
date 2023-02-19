@@ -2072,6 +2072,23 @@
 			<download filename="Leo_Hotel-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="2ea9522e4008460fb4648caa1148b79d1aa767cd"/>
 		</downloads>
 	</mod>
+	<mod name="Lighthouse" id="lighthouse" type="Total Conversion">
+		<team>
+			<member name="Billy Boy" email="gawana@aol.com"/>
+		</team>
+		<files>
+			<version release_date="May 12, 1999">
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="BIGLIGHT.CON" type="con" sha1="37b2bded97b0244609f24a32d363fdcb2da096e1"/>
+					<file name="BIGLIGHT.GRP" type="grp" sha1="2f04fd9ad4856b3855ad7479970b014f2f6e1731"/>
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="biglight.zip" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="8c70826d872a47ad05fe962f0b837d8dda412e75"/>
+			<download filename="Lighthouse-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="8ae840db2835ae54611e4a3335716014506eb118"/>
+		</downloads>
+	</mod>
 	<mod name="Long Haul" id="long_haul" type="Episode">
 		<team>
 			<member name="Robert Carter" email="BobME@AOL.com"/>
