@@ -10718,4 +10718,34 @@
 			<mod id="duke_nukem_total_meltdown"/>
 		</related>
 	</mod>
+	<mod name="Unleashed" id="unleashed" type="Episode" website="http://www.mtnweb.com/~ghn">
+		<team name="DN3D Team Unleashed" email="LastPub@aol.com">
+			<member name="David Graves" email="FreedomGOF@aol.com" website="ftp://members.aol.com/FreedomGOF/Duke"/>
+			<member name="Craig Duckett" alias="Control-Z" email="control-z@control-z.com" website="http://www.control-z.com/duke-index.html"/>
+		</team>
+		<files>
+			<version release_date="September 29, 2008">
+				<type>
+					<game type="Regular Version 1.3" state="Native">
+						<file name="UNLEASHD.CON" type="con" sha1="768e1978294446280293b19a1082b2bc3716bd58"/>
+						<file name="UNLEASHD.GRP" type="grp" sha1="c0e838800e17502ecf3ad8361dae884663e8e789"/>
+					</game>
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="UNLEASHD.CON" type="con" sha1="8e2703c3dae81900f0087fb5d01b67fcde575c99"/>
+						<file name="UNLEASHD.GRP" type="grp" sha1="985b0bdf49a4874083721b669eadd6794afabe46"/>
+					</game>
+					<game type="eDuke32" state="Native">
+						<file name="UNLEASHD.CON" type="con" sha1="8e2703c3dae81900f0087fb5d01b67fcde575c99"/>
+						<file name="UNLEASHED.GRP" type="grp" sha1="c60558d00d5272dc4daed7be8a95226d8a1f9a58"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="unleashed.zip" game="Regular Version 1.3" type="Original Files" sha1="f8130bbd25ebb3a53f6f101531f830e6e3c7adc8"/>
+			<download filename="Unleashed-ModMgrR.zip" game="Regular Version 1.3" type="Mod Manager Files" state="Native" sha1="26241103eb125c1ca80a45bc386d5f518859745e"/>
+			<download filename="Unleashed-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="0824b3b41ad8f676e80fd3eeeeb4843d4de65ddb"/>
+			<download filename="Unleashed-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="60bc774b5a655b35bfaaa85b9fd4fd627785b227"/>
+		</downloads>
+	</mod>
 </mods>
