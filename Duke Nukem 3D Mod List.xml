@@ -10680,6 +10680,8 @@
 		</files>
 		<downloads>
 			<download filename="Liquidator-3D-1.4.zip" version="1.4" game="Regular Version 1.3" type="Original Files" sha1="84dd191645e8c22f32ea7b382960b8712e1e2874"/>
+			<download filename="LIQUIDAT.zip" type="Untranslated Version" sha1="c3b19387636b8d384598f4dea3caccd6aadb5e60"/>
+			<download filename="Liquidator.rar" type="Original Game" sha1="5eea6eb5d78d6fd7522cc97cc870ee188dfa82c6"/>
 			<download filename="Liquidator_3D-ModMgrR.zip" version="1.4" game="Regular Version 1.3" type="Mod Manager Files" state="Native" sha1="44671a4a3bff74cdbf84a7ec90c3170652fbf7b2"/>
 			<download filename="Liquidator_3D-ModMgrA.zip" version="1.4" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" sha1="940fe8efea412cc990343e5fd0c0961ca411e57a"/>
 			<download filename="Liquidator_3D-ModMgrE.zip" version="1.4" game="eDuke32" type="Mod Manager Files" state="Native" sha1="d311edaadf6b1a1e89c42bef7fc74317e86b9b7d"/>
