@@ -3649,6 +3649,64 @@
 			<download filename="Starship_Troopers_1.1B-ModMgrA.zip" version="1.1B" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="e41580fdd213038a792935ec7db47cb1ef3c0849"/>
 		</downloads>
 	</mod>
+	<mod name="StevePAK" id="stevepak" type="Episode" version="V2">
+		<team>
+			<member name="Steve W. Long" email="steve@shorenet.net"/>
+			<member name="Jesse Watkins" alias="Waddy"/>
+			<member name="Chris Wells"/>
+			<member name="Douglas Ulyate"/>
+			<member name="Tommy Carlsson"/>
+			<member name="Daniel Leonard"/>
+			<member name="Richard Ulisky"/>
+			<member name="Derek" alias="Nutwrench"/>
+			<member name="Matt" alias="Drkstr88"/>
+			<member name="Gary Li" alias="King of Cyberia"/>
+			<member name="Malcolm" alias="G4XWA"/>
+			<member name="Al Walsh"/>
+		</team>
+		<files>
+			<version id="V1" release_date="February 6, 2000">
+				<game type="Regular Version 1.3" state="Native">
+					<file name="STEVE_V1.CON" type="con" sha1="c87b53bab6b743565a3dfee9e6ff89c10af5bcae"/>
+					<file name="STEVE_V1.GRP" type="grp" sha1="9aec1294350c55a816f8caa4cc87f836aee97007"/>
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="STEVE_V1.CON" type="con" sha1="b9d4b95d07c933125a5469fa00d31a457d969db5"/>
+					<file name="STEVE_V1.GRP" type="grp" sha1="6c0df6f647330ed23a88a061e4a52a4b19d3882a"/>
+				</game>
+				<game type="eDuke32" state="Native">
+					<file name="STEVE_V1.CON" type="con" sha1="b9d4b95d07c933125a5469fa00d31a457d969db5"/>
+					<file name="STEVE_V1.GRP" type="grp" sha1="11457db01761ec8e959e21c10bbe825ee2e5f540"/>
+				</game>
+			</version>
+			<version id="V2" release_date="February 6, 2000">
+				<game type="Regular Version 1.3" state="Native">
+					<file name="STEVEPAK.CON" type="con" sha1="380cec2a79f48c6b4bbdf3bf3b4c8e5c56b25655"/>
+					<file name="STEVEPAK.GRP" type="grp" sha1="9ecad5f899750d175beddc4786f3fb3f9d30f286"/>
+				</game>
+				<game type="Atomic Edition 1.4/1.5" state="Native">
+					<file name="STEVEPAK.CON" type="con" sha1="82b7244853626aa0177873cdd435aae5033547ea"/>
+					<file name="STEVEPAK.GRP" type="grp" sha1="162d35b0535241d73ed66501ec73208197075bd6"/>
+				</game>
+				<game type="eDuke32" state="Native">
+					<file name="STEVEPAK.CON" type="con" sha1="82b7244853626aa0177873cdd435aae5033547ea"/>
+					<file name="STEVEPAK.GRP" type="grp" sha1="12f87584e6e909214d66b652357c9438dc1c7729"/>
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="e1steve.zip" part="1" numparts="3" version="V1" game="Regular Version 1.3" type="Original Files" sha1="aafa5e5d21515db4ba105caa456da630bde63b90"/>
+			<download filename="e2steve.zip" part="2" numparts="3" version="V1" game="Regular Version 1.3" type="Original Files" sha1="3a1ba4a9ca8212d05219923219cf2eaff3ad96e2"/>
+			<download filename="e3steve.zip" part="3" numparts="3" version="V1" game="Regular Version 1.3" type="Original Files" sha1="255f154116ed1d6722d6ed93ac20a9089f132843"/>
+			<download filename="Stevepak.zip" version="V2" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="4d59408596bf2dc8f80300ee3532a8deb8b1fc6b"/>
+			<download filename="StevePAK_V1-ModMgrR.zip" version="V1" game="Regular Version 1.3" type="Mod Manager Files" state="Native" sha1="d81dfc7a8f7c9d103a7a89873aac5b9a8f9a2edb"/>
+			<download filename="StevePAK_V1-ModMgrA.zip" version="V1" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="2fa7eedf0b15dfc58514e86cc02f65b2e791751c"/>
+			<download filename="StevePAK_V1-ModMgrE.zip" version="V1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="29a5d348c25f94c81f29d5f1a6d0f5fe26f47631"/>
+			<download filename="StevePAK_V2-ModMgrR.zip" version="V2" game="Regular Version 1.3" type="Mod Manager Files" state="Native" sha1="2c1f28dc0e348cb2dc2601d2856f029dc8390e7b"/>
+			<download filename="StevePAK_V2-ModMgrA.zip" version="V2" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="4cc906f2757ff90326e193233c602251083b7c9a"/>
+			<download filename="StevePAK_V2-ModMgrE.zip" version="V2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="1684c424d72ab8c168a3516633ad3be80b052b41"/>
+		</downloads>
+	</mod>
 	<mod name="Terrorist Terror: Follow Your Instincts" id="terrorist_terror_follow_your_instincts" type="Total Conversion" version="1.1" website="http://www.cadvision.com/przepios/tt">
 		<team name="CMV &amp; Acidic Productions">
 			<member name="Reptile" email="przepios@cadvision.com"/>
