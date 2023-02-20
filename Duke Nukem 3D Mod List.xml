@@ -10750,4 +10750,20 @@
 			<download filename="Unleashed-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="60bc774b5a655b35bfaaa85b9fd4fd627785b227"/>
 		</downloads>
 	</mod>
+	<mod name="AltDuke96" id="altduke96" type="Total Conversion" version="1.3.96">
+		<team name="GTD Miscillanious Constructs, unInc.">
+			<member name="Link Halliday" alias="Adereth" website="http://www.geocities.com/adereth_2000/lameduke/index.html"/>
+		</team>
+		<files>
+			<version id="1.3.96" release_date="December 23, 2001">
+				<game type="Beta 1.3.95 (LameDuke)" state="Native">
+					<file name="ALTDK96.GRP" type="grp" sha1="d3e90f127fdab1ec5792755b0bc6be8ee1f9fa0a"/>
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="altduke96.zip" version="1.3.96" game="Beta 1.3.95 (LameDuke)" type="Original Files" sha1="6628176c20f99606f71e48af6a9e90cb2016cf59"/>
+			<download filename="AltDuke96_1.3.96-ModMgrLD.zip" version="1.3.96" game="Beta 1.3.95 (LameDuke)" type="Mod Manager Files" state="Native" sha1="0108d378b945909f8820366028f518fa99caf0cc"/>
+		</downloads>
+	</mod>
 </mods>
