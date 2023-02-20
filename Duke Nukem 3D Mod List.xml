@@ -10782,4 +10782,20 @@
 			<download filename="AltDuke97_1.3.97-ModMgrLD.zip" version="1.3.97" game="Beta 1.3.95 (LameDuke)" type="Mod Manager Files" state="Native" sha1="fbf9c0c47d376c77f9aa5a0ec81472b904cfc923"/>
 		</downloads>
 	</mod>
+	<mod name="Enhanced LameDuke" id="enhanced_lameduke" type="Partial Conversion" version="1.1" website="http://www.geocities.com/southparkduke/lame">
+		<team>
+			<member name="Funduke" email="funduke@hotmail.com"/>
+		</team>
+		<files>
+			<version id="1.1" release_date="June 9, 2003">
+				<game type="Beta 1.3.95 (LameDuke)" state="Native">
+					<file name="ELAME11.GRP" type="grp" sha1="67f87404516a48f139bc3ba14ffdaaa29c0497d7"/>
+				</game>
+			</version>
+		</files>
+		<downloads>
+			<download filename="elame11.zip" version="1.1" game="Beta 1.3.95 (LameDuke)" type="Original Files" sha1="7d3105699078c9c1b676d82b0d95515a4c2fca7a"/>
+			<download filename="Enhanced_LameDuke_1.1-ModMgrLD.zip" version="1.1" game="Beta 1.3.95 (LameDuke)" type="Mod Manager Files" state="Native" sha1="4e86b978550cc0f182262b9026198dac9cd5e19a"/>
+		</downloads>
+	</mod>
 </mods>
