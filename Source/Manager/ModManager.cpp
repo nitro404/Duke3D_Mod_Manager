@@ -1448,7 +1448,9 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		scriptArgs.addArgument("CONFLAG", selectedGameVersion->getConFileArgumentFlag().value());
 	}
 
-	scriptArgs.addArgument("MAPFLAG", selectedGameVersion->getMapFileArgumentFlag());
+	if(selectedGameVersion->hasMapFileArgumentFlag()) {
+		scriptArgs.addArgument("MAPFLAG", selectedGameVersion->getMapFileArgumentFlag().value());
+	}
 
 	if(selectedGameVersion->hasDefFileArgumentFlag()) {
 		scriptArgs.addArgument("DEFFLAG", selectedGameVersion->getDefFileArgumentFlag().value());
@@ -1907,41 +1909,46 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			std::string userMap(m_arguments->getFirstValue("map"));
 
 			if(!userMap.empty()) {
-				scriptArgs.addArgument("MAP", userMap);
+				if(selectedGameVersion->hasMapFileArgumentFlag()) {
+					scriptArgs.addArgument("MAP", userMap);
 
-				if(customMap != nullptr) {
-					*customMap = userMap;
-				}
-
-				command << " " << selectedGameVersion->getMapFileArgumentFlag();
-
-				if(std::filesystem::is_regular_file(std::filesystem::path(Utilities::joinPaths(selectedGameVersion->getGamePath(), userMap)))) {
-					command << userMap;
-				}
-				else {
-					std::string mapsDirectoryPath(getMapsDirectoryPath());
-
-					if(mapsDirectoryPath.empty()) {
-						spdlog::error("Maps directory path is empty.");
-						return {};
+					if(customMap != nullptr) {
+						*customMap = userMap;
 					}
 
-					if(std::filesystem::is_regular_file(std::filesystem::path(Utilities::joinPaths(mapsDirectoryPath, userMap)))) {
-						if(areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories()) {
-							command << Utilities::joinPaths(settings->mapsSymlinkName, userMap);
+					command << " " << selectedGameVersion->getMapFileArgumentFlag().value();
+
+					if(std::filesystem::is_regular_file(std::filesystem::path(Utilities::joinPaths(selectedGameVersion->getGamePath(), userMap)))) {
+						command << userMap;
+					}
+					else {
+						std::string mapsDirectoryPath(getMapsDirectoryPath());
+
+						if(mapsDirectoryPath.empty()) {
+							spdlog::error("Maps directory path is empty.");
+							return {};
 						}
-						else if(selectedGameVersion->doesSupportSubdirectories()) {
-							command << Utilities::joinPaths(settings->gameTempDirectoryName, userMap);
+
+						if(std::filesystem::is_regular_file(std::filesystem::path(Utilities::joinPaths(mapsDirectoryPath, userMap)))) {
+							if(areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories()) {
+								command << Utilities::joinPaths(settings->mapsSymlinkName, userMap);
+							}
+							else if(selectedGameVersion->doesSupportSubdirectories()) {
+								command << Utilities::joinPaths(settings->gameTempDirectoryName, userMap);
+							}
+							else {
+								command << userMap;
+							}
 						}
 						else {
+							spdlog::error("Map '{}' does not exist in game or maps directories.", userMap);
+
 							command << userMap;
 						}
 					}
-					else {
-						spdlog::error("Map '{}' does not exist in game or maps directories.", userMap);
-
-						command << userMap;
-					}
+				}
+				else {
+					spdlog::warn("Game version '{}' does not have a map file argument flag specified in its configuration.", selectedGameVersion->getName());
 				}
 			}
 		}

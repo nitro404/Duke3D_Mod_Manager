@@ -155,7 +155,7 @@ GameVersion::GameVersion()
 	, m_disableMusicArgumentFlag(DEFAULT_DISABLE_MUSIC_ARGUMENT_FLAG)
 	, m_modified(false) { }
 
-GameVersion::GameVersion(const std::string & name, bool removable, bool renamable, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, bool supportsSubdirectories, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::string & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag, const std::optional<std::string> & weaponSwitchOrderArgumentFlag, const std::optional<std::string> & disableMonstersArgumentFlag, const std::optional<std::string> & disableSoundArgumentFlag, const std::optional<std::string> & disableMusicArgumentFlag, const std::optional<std::string> & setupExecutableName, const std::optional<std::string> & groupFileInstallPath, const std::optional<std::string> & defFileArgumentFlag, const std::optional<bool> & requiresCombinedGroup, const std::optional<bool> & requiresGroupFileExtraction, const std::optional<bool> & requiresDOSBox, const std::string & website, const std::string & sourceCodeURL, const std::vector<OperatingSystem> & supportedOperatingSystems, const std::vector<std::string> & compatibleGameVersions)
+GameVersion::GameVersion(const std::string & name, bool removable, bool renamable, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, bool supportsSubdirectories, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag, const std::optional<std::string> & weaponSwitchOrderArgumentFlag, const std::optional<std::string> & disableMonstersArgumentFlag, const std::optional<std::string> & disableSoundArgumentFlag, const std::optional<std::string> & disableMusicArgumentFlag, const std::optional<std::string> & setupExecutableName, const std::optional<std::string> & groupFileInstallPath, const std::optional<std::string> & defFileArgumentFlag, const std::optional<bool> & requiresCombinedGroup, const std::optional<bool> & requiresGroupFileExtraction, const std::optional<bool> & requiresDOSBox, const std::string & website, const std::string & sourceCodeURL, const std::vector<OperatingSystem> & supportedOperatingSystems, const std::vector<std::string> & compatibleGameVersions)
 	: m_name(Utilities::trimString(name))
 	, m_removable(removable)
 	, m_renamable(renamable)
@@ -734,7 +734,11 @@ void GameVersion::clearDefFileArgumentFlag() {
 	setModified(true);
 }
 
-const std::string & GameVersion::getMapFileArgumentFlag() const {
+bool GameVersion::hasMapFileArgumentFlag() const {
+	return m_mapFileArgumentFlag.has_value();
+}
+
+const std::optional<std::string> & GameVersion::getMapFileArgumentFlag() const {
 	return m_mapFileArgumentFlag;
 }
 
@@ -743,7 +747,7 @@ bool GameVersion::setMapFileArgumentFlag(const std::string & flag) {
 		return false;
 	}
 
-	if(Utilities::areStringsEqual(m_mapFileArgumentFlag, flag)) {
+	if(m_mapFileArgumentFlag.has_value() && Utilities::areStringsEqual(m_mapFileArgumentFlag.value(), flag)) {
 		return true;
 	}
 
@@ -752,6 +756,16 @@ bool GameVersion::setMapFileArgumentFlag(const std::string & flag) {
 	setModified(true);
 
 	return true;
+}
+
+void GameVersion::clearMapFileArgumentFlag() {
+	if(!m_mapFileArgumentFlag.has_value()) {
+		return;
+	}
+
+	m_mapFileArgumentFlag.reset();
+
+	setModified(true);
 }
 
 const std::string & GameVersion::getEpisodeArgumentFlag() const {
@@ -1408,8 +1422,10 @@ rapidjson::Value GameVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::C
 		gameVersionValue.AddMember(rapidjson::StringRef(JSON_DEF_FILE_ARGUMENT_FLAG_PROPERTY_NAME), defFileArgumentFlagValue, allocator);
 	}
 
-	rapidjson::Value mapFileArgumentFlagValue(m_mapFileArgumentFlag.c_str(), allocator);
-	gameVersionValue.AddMember(rapidjson::StringRef(JSON_MAP_FILE_ARGUMENT_FLAG_PROPERTY_NAME), mapFileArgumentFlagValue, allocator);
+	if(m_mapFileArgumentFlag.has_value()) {
+		rapidjson::Value mapFileArgumentFlagValue(m_mapFileArgumentFlag.value().c_str(), allocator);
+		gameVersionValue.AddMember(rapidjson::StringRef(JSON_MAP_FILE_ARGUMENT_FLAG_PROPERTY_NAME), mapFileArgumentFlagValue, allocator);
+	}
 
 	rapidjson::Value episodeArgumentFlagValue(m_episodeArgumentFlag.c_str(), allocator);
 	gameVersionValue.AddMember(rapidjson::StringRef(JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME), episodeArgumentFlagValue, allocator);
@@ -1745,23 +1761,22 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 	}
 
 	// parse game version map file argument flag
-	if(!gameVersionValue.HasMember(JSON_MAP_FILE_ARGUMENT_FLAG_PROPERTY_NAME)) {
-		spdlog::error("Game version is missing '{}' property.", JSON_MAP_FILE_ARGUMENT_FLAG_PROPERTY_NAME);
-		return nullptr;
-	}
+	std::optional<std::string> optionalMapFileArgumentFlag;
 
-	const rapidjson::Value & mapFileArgumentFlagValue = gameVersionValue[JSON_MAP_FILE_ARGUMENT_FLAG_PROPERTY_NAME];
+	if(gameVersionValue.HasMember(JSON_MAP_FILE_ARGUMENT_FLAG_PROPERTY_NAME)) {
+		const rapidjson::Value & mapFileArgumentFlagValue = gameVersionValue[JSON_MAP_FILE_ARGUMENT_FLAG_PROPERTY_NAME];
 
-	if(!mapFileArgumentFlagValue.IsString()) {
-		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_MAP_FILE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(mapFileArgumentFlagValue.GetType()));
-		return nullptr;
-	}
+		if(!mapFileArgumentFlagValue.IsString()) {
+			spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_MAP_FILE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(mapFileArgumentFlagValue.GetType()));
+			return nullptr;
+		}
 
-	std::string mapFileArgumentFlag(mapFileArgumentFlagValue.GetString());
+		optionalMapFileArgumentFlag = mapFileArgumentFlagValue.GetString();
 
-	if(mapFileArgumentFlag.empty()) {
-		spdlog::error("Game version '{}' property cannot be empty.", JSON_MAP_FILE_ARGUMENT_FLAG_PROPERTY_NAME);
-		return nullptr;
+		if(optionalMapFileArgumentFlag.value().empty()) {
+			spdlog::error("Game version '{}' property cannot be empty.", JSON_MAP_FILE_ARGUMENT_FLAG_PROPERTY_NAME);
+			return nullptr;
+		}
 	}
 
 	// parse game version episode argument flag
@@ -1998,7 +2013,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 	}
 
 	// initialize the game version
-	std::unique_ptr<GameVersion> newGameVersion = std::make_unique<GameVersion>(name, removable, renamable, gamePath, gameExecutableName, localWorkingDirectory, relativeConFilePath, supportsSubdirectories, modDirectoryName, optionalConFileArgumentFlag, optionalGroupFileArgumentFlag, mapFileArgumentFlag, episodeArgumentFlag, levelArgumentFlag, skillArgumentFlag, skillStartValue, recordDemoArgumentFlag, optionalPlayDemoArgumentFlag, optionalRespawnModeArgumentFlag, optionalWeaponSwitchOrderArgumentFlag, optionalDisableMonstersArgumentFlag, optionalDisableSoundArgumentFlag, optionalDisableMusicArgumentFlag, setupExecutableNameOptional, groupFileInstallPathOptional);
+	std::unique_ptr<GameVersion> newGameVersion = std::make_unique<GameVersion>(name, removable, renamable, gamePath, gameExecutableName, localWorkingDirectory, relativeConFilePath, supportsSubdirectories, modDirectoryName, optionalConFileArgumentFlag, optionalGroupFileArgumentFlag, optionalMapFileArgumentFlag, episodeArgumentFlag, levelArgumentFlag, skillArgumentFlag, skillStartValue, recordDemoArgumentFlag, optionalPlayDemoArgumentFlag, optionalRespawnModeArgumentFlag, optionalWeaponSwitchOrderArgumentFlag, optionalDisableMonstersArgumentFlag, optionalDisableSoundArgumentFlag, optionalDisableMusicArgumentFlag, setupExecutableNameOptional, groupFileInstallPathOptional);
 
 	// parse game version def file argument flag
 	if(gameVersionValue.HasMember(JSON_DEF_FILE_ARGUMENT_FLAG_PROPERTY_NAME)) {
@@ -2175,7 +2190,7 @@ bool GameVersion::isValid() const {
 	   m_modDirectoryName.empty() ||
 	   (m_conFileArgumentFlag.has_value() && m_conFileArgumentFlag.value().empty()) ||
 	   (m_groupFileArgumentFlag.has_value() && m_groupFileArgumentFlag.value().empty()) ||
-	   m_mapFileArgumentFlag.empty() ||
+	   (m_mapFileArgumentFlag.has_value() && m_mapFileArgumentFlag.value().empty()) ||
 	   m_episodeArgumentFlag.empty() ||
 	   m_levelArgumentFlag.empty() ||
 	   m_skillArgumentFlag.empty() ||
