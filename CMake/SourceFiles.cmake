@@ -31,6 +31,7 @@ set(MAIN_SOURCE_FILES
 	Game/NoCDCracker.cpp
 	Group/Group.cpp
 	Group/GroupFile.cpp
+	Manager/InstalledModInfo.cpp
 	Manager/ModManager.cpp
 	Manager/ModMatch.cpp
 	Manager/SettingsManager.cpp
@@ -87,6 +88,7 @@ set(MAIN_HEADER_FILES
 	Group/Group.h
 	Group/GroupFile.h
 	Group/GroupUtilities.h
+	Manager/InstalledModInfo.h
 	Manager/ModManager.h
 	Manager/ModMatch.h
 	Manager/SettingsManager.h

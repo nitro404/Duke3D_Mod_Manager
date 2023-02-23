@@ -25,6 +25,7 @@ class FavouriteModCollection;
 class GameManager;
 class GameVersion;
 class GameVersionCollection;
+class InstalledModInfo;
 class Mod;
 class ModAuthorInformation;
 class ModCollection;
@@ -153,11 +154,12 @@ public:
 	static const std::string DEFAULT_PREFERRED_DOSBOX_VERSION;
 	static const std::string DEFAULT_PREFERRED_GAME_VERSION;
 	static const std::string HTTP_USER_AGENT;
+	static const std::string DEFAULT_BACKUP_FILE_RENAME_SUFFIX;
 
 private:
 	void assignPlatformFactories();
 	bool handleArguments(const ArgumentParser * args);
-	std::string generateCommand(std::shared_ptr<ModGameVersion> modGameVersion, std::shared_ptr<GameVersion> selectedGameVersion, ScriptArguments & scriptArgs, std::string_view combinedGroupFileName = "", bool * customMod = nullptr, std::string * customMap = nullptr) const;
+	std::string generateCommand(std::shared_ptr<ModGameVersion> modGameVersion, std::shared_ptr<GameVersion> selectedGameVersion, ScriptArguments & scriptArgs, std::string_view combinedGroupFileName = "", bool * customMod = nullptr, std::string * customMap = nullptr, std::shared_ptr<GameVersion> * customTargetGameVersion = nullptr, std::vector<std::string> * customGroupFileNames = nullptr) const;
 	std::string generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const DOSBoxVersion & dosboxVersion, const  std::string & dosboxArguments) const;
 	size_t checkForUnlinkedModFiles() const;
 	size_t checkForUnlinkedModFilesForGameVersion(const GameVersion & gameVersion) const;
@@ -167,6 +169,11 @@ private:
 	size_t checkForMissingExecutables() const;
 	size_t updateAllFileHashes(bool save = true, bool skipHashedFiles = true);
 	size_t updateModHashes(Mod & mod, bool skipHashedFiles = true, std::optional<size_t> versionIndex = {}, std::optional<size_t> versionTypeIndex = {});
+	static bool areModFilesPresentInGameDirectory(const GameVersion & gameVersion);
+	static bool areModFilesPresentInGameDirectory(const std::string & gamePath);
+	std::unique_ptr<InstalledModInfo> extractModFilesToGameDirectory(const ModGameVersion & modGameVersion, const GameVersion & selectedGameVersion, const GameVersion & targetGameVersion, const std::vector<std::string> & customGroupFileNames = {});
+	bool removeModFilesFromGameDirectory(const GameVersion & gameVersion);
+	bool removeModFilesFromGameDirectory(const GameVersion & gameVersion, const InstalledModInfo & installedModInfo);
 	bool createApplicationTemporaryDirectory();
 	bool createGameTemporaryDirectory(const GameVersion & gameVersion);
 	bool removeGameTemporaryDirectory(const GameVersion & gameVersion);
