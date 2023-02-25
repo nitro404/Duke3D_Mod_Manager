@@ -32,11 +32,13 @@ static const std::array<std::string_view, 2> JSON_MOD_VERSION_TYPE_PROPERTY_NAME
 
 ModVersionType::ModVersionType(const std::string & type)
 	: m_type(Utilities::trimString(type))
+	, m_hadXMLElement(false)
 	, m_parentModVersion(nullptr) { }
 
 
 ModVersionType::ModVersionType(ModVersionType && t) noexcept
 	: m_type(std::move(t.m_type))
+	, m_hadXMLElement(t.m_hadXMLElement)
 	, m_gameVersions(std::move(t.m_gameVersions))
 	, m_parentModVersion(nullptr) {
 	updateParent();
@@ -44,6 +46,7 @@ ModVersionType::ModVersionType(ModVersionType && t) noexcept
 
 ModVersionType::ModVersionType(const ModVersionType & t)
 	: m_type(t.m_type)
+	, m_hadXMLElement(t.m_hadXMLElement)
 	, m_parentModVersion(nullptr) {
 	for(std::vector<std::shared_ptr<ModGameVersion>>::const_iterator i = t.m_gameVersions.begin(); i != t.m_gameVersions.end(); ++i) {
 		m_gameVersions.push_back(std::make_shared<ModGameVersion>(**i));
@@ -55,6 +58,7 @@ ModVersionType::ModVersionType(const ModVersionType & t)
 ModVersionType & ModVersionType::operator = (ModVersionType && t) noexcept {
 	if(this != &t) {
 		m_type = std::move(t.m_type);
+		m_hadXMLElement = t.m_hadXMLElement;
 		m_gameVersions = std::move(t.m_gameVersions);
 
 		updateParent();
@@ -67,6 +71,7 @@ ModVersionType & ModVersionType::operator = (const ModVersionType & t) {
 	m_gameVersions.clear();
 
 	m_type = t.m_type;
+	m_hadXMLElement = t.m_hadXMLElement;
 
 	for(std::vector<std::shared_ptr<ModGameVersion>>::const_iterator i = t.m_gameVersions.begin(); i != t.m_gameVersions.end(); ++i) {
 		m_gameVersions.push_back(std::make_shared<ModGameVersion>(**i));
@@ -124,6 +129,10 @@ const ModVersion * ModVersionType::getParentModVersion() const {
 
 void ModVersionType::setType(const std::string & type) {
 	m_type = Utilities::trimString(type);
+}
+
+bool ModVersionType::hadXMLElement() const {
+	return m_hadXMLElement;
 }
 
 void ModVersionType::setParentModVersion(const ModVersion * modVersion) {
@@ -391,9 +400,12 @@ std::unique_ptr<ModVersionType> ModVersionType::parseFrom(const tinyxml2::XMLEle
 
 	const tinyxml2::XMLElement * modGameVersionElement = nullptr;
 	std::unique_ptr<ModVersionType> newModVersionType;
+	bool hadXMLElement = false;
 
 	// parse non-default mod version type
 	if(modVersionTypeElement->Name() == XML_MOD_VERSION_TYPE_ELEMENT_NAME) {
+		hadXMLElement = true;
+
 		// check for unhandled mod version type element attributes
 		bool attributeHandled = false;
 		const tinyxml2::XMLAttribute * modVersionTypeAttribute = modVersionTypeElement->FirstAttribute();
@@ -424,6 +436,7 @@ std::unique_ptr<ModVersionType> ModVersionType::parseFrom(const tinyxml2::XMLEle
 
 		// initialize the mod version type
 		newModVersionType = std::make_unique<ModVersionType>(modVersionTypeType == nullptr ? "" : modVersionTypeType);
+		newModVersionType->m_hadXMLElement = hadXMLElement;
 
 		// use the first child element of the mod version type element as the game version element
 		modGameVersionElement = modVersionTypeElement->FirstChildElement();

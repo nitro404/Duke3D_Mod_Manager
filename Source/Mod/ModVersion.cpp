@@ -350,7 +350,7 @@ rapidjson::Value ModVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::Cr
 }
 
 tinyxml2::XMLElement * ModVersion::toXML(tinyxml2::XMLDocument * document) const {
-	static constexpr bool addSingleEmptyVersionTypes = false;
+	static constexpr bool forceAddSingleEmptyVersionTypes = false;
 
 	if(document == nullptr) {
 		return nullptr;
@@ -370,9 +370,10 @@ tinyxml2::XMLElement * ModVersion::toXML(tinyxml2::XMLDocument * document) const
 		modVersionElement->SetAttribute(XML_MOD_VERSION_REPAIRED_ATTRIBUTE_NAME.c_str(), m_repaired.value());
 	}
 
-	if(!addSingleEmptyVersionTypes &&
+	if(!forceAddSingleEmptyVersionTypes &&
 	   m_types.size() == 1 &&
-	   m_types[0]->isDefault()) {
+	   m_types[0]->isDefault() &&
+	   !m_types[0]->hadXMLElement()) {
 		const std::shared_ptr<ModVersionType> modVersionType = m_types[0];
 
 		for(size_t i = 0; i < modVersionType->numberOfGameVersions(); i++) {
@@ -573,7 +574,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const tinyxml2::XMLElement * m
 			break;
 		}
 
-		newModVersionType = std::shared_ptr<ModVersionType>(std::move(ModVersionType::parseFrom(modVersionTypeElement)).release());
+		newModVersionType = std::shared_ptr<ModVersionType>(ModVersionType::parseFrom(modVersionTypeElement).release());
 
 		if(!ModVersionType::isValid(newModVersionType.get())) {
 			spdlog::error("Failed to parse mod version type #{}.", newModVersion->m_types.size() + 1);

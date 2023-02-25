@@ -67,11 +67,13 @@ public:
 	bool operator != (const ModVersionType & t) const;
 
 protected:
+	bool hadXMLElement() const;
 	void setParentModVersion(const ModVersion * modVersion);
 	void updateParent();
 
 private:
 	std::string m_type;
+	bool m_hadXMLElement;
 	std::vector<std::shared_ptr<ModGameVersion>> m_gameVersions;
 	const ModVersion * m_parentModVersion;
 };
