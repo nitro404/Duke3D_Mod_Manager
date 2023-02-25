@@ -128,9 +128,13 @@ rapidjson::Value ModVideo::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtA
 	rapidjson::Value titleValue(m_title.c_str(), allocator);
 	modVideoValue.AddMember(rapidjson::StringRef(JSON_MOD_VIDEO_TITLE_PROPERTY_NAME), titleValue, allocator);
 
-	modVideoValue.AddMember(rapidjson::StringRef(JSON_MOD_VIDEO_WIDTH_PROPERTY_NAME), rapidjson::Value(m_width), allocator);
+	if(m_width != 0) {
+		modVideoValue.AddMember(rapidjson::StringRef(JSON_MOD_VIDEO_WIDTH_PROPERTY_NAME), rapidjson::Value(m_width), allocator);
+	}
 
-	modVideoValue.AddMember(rapidjson::StringRef(JSON_MOD_VIDEO_HEIGHT_PROPERTY_NAME), rapidjson::Value(m_height), allocator);
+	if(m_height != 0) {
+		modVideoValue.AddMember(rapidjson::StringRef(JSON_MOD_VIDEO_HEIGHT_PROPERTY_NAME), rapidjson::Value(m_height), allocator);
+	}
 
 	return modVideoValue;
 }
@@ -144,8 +148,14 @@ tinyxml2::XMLElement * ModVideo::toXML(tinyxml2::XMLDocument * document) const {
 
 	modVideoElement->SetAttribute(XML_MOD_VIDEO_URL_ATTRIBUTE_NAME.c_str(), m_url.c_str());
 	modVideoElement->SetAttribute(XML_MOD_VIDEO_TITLE_ATTRIBUTE_NAME.c_str(), m_title.c_str());
-	modVideoElement->SetAttribute(XML_MOD_VIDEO_WIDTH_ATTRIBUTE_NAME.c_str(), m_width);
-	modVideoElement->SetAttribute(XML_MOD_VIDEO_HEIGHT_ATTRIBUTE_NAME.c_str(), m_height);
+
+	if(m_width != 0) {
+		modVideoElement->SetAttribute(XML_MOD_VIDEO_WIDTH_ATTRIBUTE_NAME.c_str(), m_width);
+	}
+
+	if(m_height != 0) {
+		modVideoElement->SetAttribute(XML_MOD_VIDEO_HEIGHT_ATTRIBUTE_NAME.c_str(), m_height);
+	}
 
 	return modVideoElement;
 }
