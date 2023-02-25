@@ -9700,7 +9700,7 @@
 			<member name="Muelsa" email="samdenice@hotmail.com"/>
 		</team>
 		<files>
-			<version id="Alpha Test 1.0" release_date="Januay 1, 2010">
+			<version id="Alpha Test 1.0" release_date="January 1, 2010">
 				<type>
 					<game type="eDuke32" state="Native">
 						<file name="DUKEBIKE.CON" type="con" sha1="18bc2d0c53fb5bc73f687f91ddc8b1e8c35b52bf"/>
@@ -9853,7 +9853,7 @@
 					<file name="Hardcore_1.2.zip" type="zip" sha1="294711e9ed22e76f942ebd178df7dad9ec402147"/>
 				</game>
 			</version>
-			<version id="1.3" release_date="Januay 26, 2017">
+			<version id="1.3" release_date="January 26, 2017">
 				<game type="eDuke32" state="Native">
 					<file name="HARDCORE.CON" type="con" sha1="5cc6bd61bf384f58b28a933e981f8bc098ccaad6"/>
 					<file name="hardcore.def" type="def" sha1="bec2c3d9862fcd07feec13fe269f92d22524233d"/>
