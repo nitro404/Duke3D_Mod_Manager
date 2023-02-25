@@ -626,11 +626,11 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const tinyxml2::XMLEleme
 	}
 
 	if(teamMemberYouTube != nullptr) {
-		newModTeamMember->setTwitter(teamMemberYouTube);
+		newModTeamMember->setYouTube(teamMemberYouTube);
 	}
 
 	if(teamMemberGitHub != nullptr) {
-		newModTeamMember->setTwitter(teamMemberGitHub);
+		newModTeamMember->setGitHub(teamMemberGitHub);
 	}
 
 	if(teamMemberDiscord != nullptr) {
