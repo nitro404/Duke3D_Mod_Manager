@@ -85,6 +85,7 @@ static constexpr const char * CURL_DATA_DIRECTORY_NAME_PROPERTY_NAME = DATA_DIRE
 static constexpr const char * CURL_CONNECTION_TIMEOUT_PROPERTY_NAME = "connectionTimeout";
 static constexpr const char * CURL_NETWORK_TIMEOUT_PROPERTY_NAME = "networkTimeout";
 static constexpr const char * CURL_TRANSFER_TIMEOUT_PROPERTY_NAME = "transferTimeout";
+static constexpr const char * CURL_VERBOSE_REQUEST_LOGGING_PROPERTY_NAME = "verboseRequestLogging";
 
 static constexpr const char * API_CATEGORY_NAME = "api";
 static constexpr const char * API_BASE_URL_PROPERTY_NAME = "baseURL";
@@ -161,6 +162,7 @@ const std::string SettingsManager::DEFAULT_CURL_DATA_DIRECTORY_NAME("cURL");
 const std::chrono::seconds SettingsManager::DEFAULT_CONNECTION_TIMEOUT = 15s;
 const std::chrono::seconds SettingsManager::DEFAULT_NETWORK_TIMEOUT = 30s;
 const std::chrono::seconds SettingsManager::DEFAULT_TRANSFER_TIMEOUT = 0s;
+const bool SettingsManager::DEFAULT_VERBOSE_REQUEST_LOGGING = false;
 const std::string SettingsManager::DEFAULT_API_BASE_URL("http://duke3dmods.com");
 const std::string SettingsManager::DEFAULT_REMOTE_MODS_LIST_FILE_NAME("duke3d_mods.xml");
 const std::string SettingsManager::DEFAULT_REMOTE_DOSBOX_VERSIONS_LIST_FILE_NAME("dosbox_versions.json");
@@ -320,6 +322,7 @@ SettingsManager::SettingsManager()
 	, connectionTimeout(DEFAULT_CONNECTION_TIMEOUT)
 	, networkTimeout(DEFAULT_NETWORK_TIMEOUT)
 	, transferTimeout(DEFAULT_TRANSFER_TIMEOUT)
+	, verboseRequestLogging(DEFAULT_VERBOSE_REQUEST_LOGGING)
 	, apiBaseURL(DEFAULT_API_BASE_URL)
 	, remoteModsListFileName(DEFAULT_REMOTE_MODS_LIST_FILE_NAME)
 	, remoteGamesListFileName(DEFAULT_REMOTE_GAMES_LIST_FILE_NAME)
@@ -377,6 +380,7 @@ void SettingsManager::reset() {
 	connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
 	networkTimeout = DEFAULT_NETWORK_TIMEOUT;
 	transferTimeout = DEFAULT_TRANSFER_TIMEOUT;
+	verboseRequestLogging = DEFAULT_VERBOSE_REQUEST_LOGGING;
 	apiBaseURL = DEFAULT_API_BASE_URL;
 	remoteModsListFileName = DEFAULT_REMOTE_MODS_LIST_FILE_NAME;
 	remoteDOSBoxVersionsListFileName = DEFAULT_REMOTE_DOSBOX_VERSIONS_LIST_FILE_NAME;
@@ -535,6 +539,7 @@ rapidjson::Document SettingsManager::toJSON() const {
 	curlCategoryValue.AddMember(rapidjson::StringRef(CURL_CONNECTION_TIMEOUT_PROPERTY_NAME), rapidjson::Value(connectionTimeout.count()), allocator);
 	curlCategoryValue.AddMember(rapidjson::StringRef(CURL_NETWORK_TIMEOUT_PROPERTY_NAME), rapidjson::Value(networkTimeout.count()), allocator);
 	curlCategoryValue.AddMember(rapidjson::StringRef(CURL_TRANSFER_TIMEOUT_PROPERTY_NAME), rapidjson::Value(transferTimeout.count()), allocator);
+	curlCategoryValue.AddMember(rapidjson::StringRef(CURL_VERBOSE_REQUEST_LOGGING_PROPERTY_NAME), rapidjson::Value(verboseRequestLogging), allocator);
 
 	settingsDocument.AddMember(rapidjson::StringRef(CURL_CATEGORY_NAME), curlCategoryValue, allocator);
 
@@ -786,6 +791,10 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 
 		if(curlCategoryValue.HasMember(CURL_TRANSFER_TIMEOUT_PROPERTY_NAME) && curlCategoryValue[CURL_TRANSFER_TIMEOUT_PROPERTY_NAME].IsUint64()) {
 			transferTimeout = std::chrono::seconds(curlCategoryValue[CURL_TRANSFER_TIMEOUT_PROPERTY_NAME].GetUint64());
+		}
+
+		if(curlCategoryValue.HasMember(CURL_VERBOSE_REQUEST_LOGGING_PROPERTY_NAME) && curlCategoryValue[CURL_VERBOSE_REQUEST_LOGGING_PROPERTY_NAME].IsBool()) {
+			verboseRequestLogging = curlCategoryValue[CURL_VERBOSE_REQUEST_LOGGING_PROPERTY_NAME].GetBool();
 		}
 	}
 

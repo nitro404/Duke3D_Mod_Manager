@@ -170,6 +170,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 	}
 
 	httpService->setUserAgent(HTTP_USER_AGENT);
+	httpService->setVerboseLoggingEnabled(settings->verboseRequestLogging);
 
 	if(!settings->downloadThrottlingEnabled || !settings->cacertLastDownloadedTimestamp.has_value() || std::chrono::system_clock::now() - settings->cacertLastDownloadedTimestamp.value() > settings->cacertUpdateFrequency) {
 		if(httpService->updateCertificateAuthorityCertificateAndWait()) {
