@@ -10757,13 +10757,13 @@
 		<files>
 			<version id="1.3.96" release_date="December 23, 2001">
 				<game type="Beta 1.3.95 (LameDuke)" state="Native">
-					<file name="ALTDK96.GRP" type="grp" sha1="d3e90f127fdab1ec5792755b0bc6be8ee1f9fa0a"/>
+					<file name="ALTDK96.GRP" type="grp" sha1="754532c477d3955a7ba9d09f35d8c1b4b47d1fe4"/>
 				</game>
 			</version>
 		</files>
 		<downloads>
 			<download filename="altduke96.zip" version="1.3.96" game="Beta 1.3.95 (LameDuke)" type="Original Files" sha1="6628176c20f99606f71e48af6a9e90cb2016cf59"/>
-			<download filename="AltDuke96_1.3.96-ModMgrLD.zip" version="1.3.96" game="Beta 1.3.95 (LameDuke)" type="Mod Manager Files" state="Native" sha1="0108d378b945909f8820366028f518fa99caf0cc"/>
+			<download filename="AltDuke96_1.3.96-ModMgrLD.zip" version="1.3.96" game="Beta 1.3.95 (LameDuke)" type="Mod Manager Files" state="Native" sha1="6377ce232000df300a07751e4d4a482c25f4910e"/>
 		</downloads>
 	</mod>
 	<mod name="AltDuke97" id="altduke97" type="Total Conversion" version="1.3.97" website="http://www.geocities.com/adereth_2000/lameduke/index.html">
@@ -10773,13 +10773,13 @@
 		<files>
 			<version id="1.3.97" release_date="February 6, 2002">
 				<game type="Beta 1.3.95 (LameDuke)" state="Native">
-					<file name="ALTDK97.GRP" type="grp" sha1="45134970905733982fd02b7c43ef7787ff833493"/>
+					<file name="ALTDK97.GRP" type="grp" sha1="7620543e93c6a5fbf9116c9c1d4cfb270cb05fb7"/>
 				</game>
 			</version>
 		</files>
 		<downloads>
 			<download filename="altduke97.zip" version="1.3.97" game="Beta 1.3.95 (LameDuke)" type="Original Files" sha1="4773f4588c6f803cb219893e93872662ff3f769e"/>
-			<download filename="AltDuke97_1.3.97-ModMgrLD.zip" version="1.3.97" game="Beta 1.3.95 (LameDuke)" type="Mod Manager Files" state="Native" sha1="fbf9c0c47d376c77f9aa5a0ec81472b904cfc923"/>
+			<download filename="AltDuke97_1.3.97-ModMgrLD.zip" version="1.3.97" game="Beta 1.3.95 (LameDuke)" type="Mod Manager Files" state="Native" sha1="f318452594bafa26d402e96066a1b5c1df1d32f9"/>
 		</downloads>
 	</mod>
 	<mod name="Enhanced LameDuke" id="enhanced_lameduke" type="Partial Conversion" version="1.1" website="http://www.geocities.com/southparkduke/lame">
