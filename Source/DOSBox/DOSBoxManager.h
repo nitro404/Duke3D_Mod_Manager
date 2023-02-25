@@ -30,6 +30,7 @@ public:
 	static std::string getOriginalDOSBoxDownloadURL(const std::string & version);
 	std::string getLatestOriginalDOSBoxDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
 	std::string getLatestDOSBoxStagingDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
+	std::string getLatestDOSBoxEnhancedCommunityEditionDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
 	std::string getLatestDOSBoxXDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
 	std::unique_ptr<Archive> downloadLatestDOSBoxVersion(const DOSBoxVersion & dosboxVersion, std::string * latestVersion = nullptr) const;
 	std::unique_ptr<Archive> downloadLatestDOSBoxVersion(const DOSBoxVersion & dosboxVersion, DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, bool useFallback = false, std::string * latestVersion = nullptr) const;

@@ -5,6 +5,7 @@
 #include <Manager/SettingsManager.h>
 #include <Network/HTTPService.h>
 #include <Utilities/FileUtilities.h>
+#include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
 #include <Utilities/TidyHTMLUtilities.h>
 #include <Utilities/TinyXML2Utilities.h>
@@ -210,6 +211,9 @@ std::string DOSBoxManager::getLatestDOSBoxDownloadURL(const DOSBoxVersion & dosb
 	if(Utilities::areStringsEqualIgnoreCase(dosboxVersion.getName(), DOSBoxVersion::DOSBOX.getName())) {
 		return getLatestOriginalDOSBoxDownloadURL(operatingSystemType, operatingSystemArchitectureType, latestVersion);
 	}
+	else if(Utilities::areStringsEqualIgnoreCase(dosboxVersion.getName(), DOSBoxVersion::DOSBOX_ECE.getName())) {
+		return getLatestDOSBoxEnhancedCommunityEditionDownloadURL(operatingSystemType, operatingSystemArchitectureType, latestVersion);
+	}
 	else if(Utilities::areStringsEqualIgnoreCase(dosboxVersion.getName(), DOSBoxVersion::DOSBOX_STAGING.getName())) {
 		return getLatestDOSBoxStagingDownloadURL(operatingSystemType, operatingSystemArchitectureType, latestVersion);
 	}
@@ -379,6 +383,230 @@ std::string DOSBoxManager::getLatestOriginalDOSBoxDownloadURL(DeviceInformationB
 	}
 
 	return getOriginalDOSBoxDownloadURL(latestOriginalDOSBoxVersion);
+}
+
+struct DOSBoxECEDownload {
+	std::string name;
+	std::string path;
+	std::string version;
+	uint64_t fileSize = 0;
+	std::chrono::time_point<std::chrono::system_clock> modifiedTimestamp;
+	DeviceInformationBridge::OperatingSystemType operatingSystemType = DeviceInformationBridge::OperatingSystemType::Windows;
+};
+
+static std::vector<DOSBoxECEDownload> getLatestDOSBoxEnhancedCommunityEditionDownloads() {
+	static const std::string DOSBOX_ECE_DOWNLOADS_API_URL("https://yesterplay.net/dosboxece/download/index.php?do=list");
+	static const std::string JSON_SUCCESS_PROPERTY_NAME("success");
+	static const std::string JSON_DOWNLOAD_LIST_PROPERTY_NAME("results");
+	static const std::string JSON_DOWNLOAD_NAME_PROPERTY_NAME("name");
+	static const std::string JSON_DOWNLOAD_PATH_PROPERTY_NAME("path");
+	static const std::string JSON_DOWNLOAD_FILE_SIZE_PROPERTY_NAME("size");
+	static const std::string JSON_DOWNLOAD_MODIFIED_TIMESTAMP_PROPERTY_NAME("mtime");
+	static const std::string JSON_DOWNLOAD_DIRECTORY_FLAG_PROPERTY_NAME("is_dir");
+	static const std::string LINUX_DOWNLOAD_IDENTIFIER("linux");
+	static const std::string SOURCE_CODE_DOWNLOAD_IDENTIFIER("source");
+	static const std::string ECE_DOWNLOAD_IDENTIFIER("ece");
+
+	HTTPService * httpService = HTTPService::getInstance();
+
+	if(!httpService->isInitialized()) {
+		return {};
+	}
+
+	std::shared_ptr<HTTPRequest> downloadInformationRequest(httpService->createRequest(HTTPRequest::Method::Get, DOSBOX_ECE_DOWNLOADS_API_URL));
+	downloadInformationRequest->setConnectionTimeout(5s);
+	downloadInformationRequest->setNetworkTimeout(10s);
+
+	std::shared_ptr<HTTPResponse> downloadInformationResponse(httpService->sendRequestAndWait(downloadInformationRequest));
+
+	if(downloadInformationResponse->isFailure()) {
+		spdlog::error("Failed to retrieve DOSBox Enhanced Community Edition download list with error: {}", downloadInformationResponse->getErrorMessage());
+		return {};
+	}
+	else if(downloadInformationResponse->isFailureStatusCode()) {
+		std::string statusCodeName(HTTPUtilities::getStatusCodeName(downloadInformationResponse->getStatusCode()));
+		spdlog::error("Failed to get DOSBox Enhanced Community Edition download list ({}{})!", downloadInformationResponse->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
+		return {};
+	}
+
+	std::unique_ptr<rapidjson::Document> downloadInformationDocument(downloadInformationResponse->getBodyAsJSON());
+
+	if(downloadInformationDocument == nullptr) {
+		spdlog::error("Failed to parse DOSBox Enhanced Community Edition JSON download information.");
+		return {};
+	}
+
+	downloadInformationResponse.reset();
+
+	if(downloadInformationDocument->HasMember(JSON_SUCCESS_PROPERTY_NAME.c_str())) {
+		const rapidjson::Value & successValue = (*downloadInformationDocument)[JSON_SUCCESS_PROPERTY_NAME.c_str()];
+
+		if(!successValue.IsBool()) {
+			spdlog::error("Invalid DOSBox Enhanced Community Edition download information '{}' property type '{}', expected 'boolean'.", Utilities::typeToString(successValue.GetType()), JSON_SUCCESS_PROPERTY_NAME);
+			return {};
+		}
+
+		if(!successValue.GetBool()) {
+			spdlog::error("DOSBox Enhanced Community Edition download information request failed, '{}' flag set to false.", JSON_SUCCESS_PROPERTY_NAME);
+			return {};
+		}
+	}
+	else {
+		spdlog::warn("DOSBox Enhanced Community Edition download information is missing '{}' property, unable to validate if request succeeded.", JSON_SUCCESS_PROPERTY_NAME);
+	}
+
+	if(!downloadInformationDocument->HasMember(JSON_DOWNLOAD_LIST_PROPERTY_NAME.c_str())) {
+		spdlog::error("DOSBox Enhanced Community Edition download information is missing '{}' property, unable to obtain download list.", JSON_DOWNLOAD_LIST_PROPERTY_NAME);
+		return {};
+	}
+
+	const rapidjson::Value & downloadListValue = (*downloadInformationDocument)[JSON_DOWNLOAD_LIST_PROPERTY_NAME.c_str()];
+
+	if(!downloadListValue.IsArray()) {
+		spdlog::error("Invalid DOSBox Enhanced Community Edition download information '{}' property type '{}', expected 'array'.", JSON_DOWNLOAD_LIST_PROPERTY_NAME, Utilities::typeToString(downloadListValue.GetType()));
+		return {};
+	}
+
+	std::vector<DOSBoxECEDownload> downloads;
+
+	for(rapidjson::Value::ConstValueIterator i = downloadListValue.Begin(); i != downloadListValue.End(); ++i) {
+		const rapidjson::Value & downloadValue = *i;
+
+		if(!downloadValue.IsObject()) {
+			spdlog::error("Invalid DOSBox Enhanced Community Edition download information '{}' entry type '{}', expected 'object'.", JSON_DOWNLOAD_LIST_PROPERTY_NAME, Utilities::typeToString(downloadValue.GetType()));
+			continue;
+		}
+
+		if(downloadValue.HasMember(JSON_DOWNLOAD_DIRECTORY_FLAG_PROPERTY_NAME.c_str()) && downloadValue[JSON_DOWNLOAD_DIRECTORY_FLAG_PROPERTY_NAME.c_str()].GetBool()) {
+			continue;
+		}
+
+		// parse download name
+		if(!downloadValue.HasMember(JSON_DOWNLOAD_NAME_PROPERTY_NAME.c_str())) {
+			spdlog::error("DOSBox Enhanced Community Edition download information '{}' entry #{} is missing '{}' property.", JSON_DOWNLOAD_LIST_PROPERTY_NAME, i - downloadListValue.Begin(), JSON_DOWNLOAD_NAME_PROPERTY_NAME);
+			continue;
+		}
+
+		const rapidjson::Value & nameValue = downloadValue[JSON_DOWNLOAD_NAME_PROPERTY_NAME.c_str()];
+
+		if(!nameValue.IsString()) {
+			spdlog::error("Invalid DOSBox Enhanced Community Edition download information '{}' entry #{} '{}' property type '{}', expected 'string'.", JSON_DOWNLOAD_LIST_PROPERTY_NAME, i - downloadListValue.Begin(), JSON_DOWNLOAD_NAME_PROPERTY_NAME, Utilities::typeToString(nameValue.GetType()));
+			continue;
+		}
+
+		std::string name(nameValue.GetString());
+
+		if(name.empty()) {
+			spdlog::error("Invalid empty DOSBox Enhanced Community Edition download information '{}' entry #{} '{}' property value.", JSON_DOWNLOAD_LIST_PROPERTY_NAME, i - downloadListValue.Begin(), JSON_DOWNLOAD_NAME_PROPERTY_NAME);
+			continue;
+		}
+
+		std::string lowerCaseName(Utilities::toLowerCase(name));
+
+		if(lowerCaseName.find(SOURCE_CODE_DOWNLOAD_IDENTIFIER) != std::string::npos ||
+		   lowerCaseName.find(ECE_DOWNLOAD_IDENTIFIER) == std::string::npos) {
+			continue;
+		}
+
+		// parse download path
+		if(!downloadValue.HasMember(JSON_DOWNLOAD_PATH_PROPERTY_NAME.c_str())) {
+			spdlog::error("DOSBox Enhanced Community Edition download information '{}' entry #{} is missing '{}' property.", JSON_DOWNLOAD_LIST_PROPERTY_NAME, i - downloadListValue.Begin(), JSON_DOWNLOAD_PATH_PROPERTY_NAME);
+			continue;
+		}
+
+		const rapidjson::Value & pathValue = downloadValue[JSON_DOWNLOAD_PATH_PROPERTY_NAME.c_str()];
+
+		if(!pathValue.IsString()) {
+			spdlog::error("Invalid DOSBox Enhanced Community Edition download information '{}' entry #{} '{}' property type '{}', expected 'string'.", JSON_DOWNLOAD_LIST_PROPERTY_NAME, i - downloadListValue.Begin(), JSON_DOWNLOAD_PATH_PROPERTY_NAME, Utilities::typeToString(pathValue.GetType()));
+			continue;
+		}
+
+		std::string path(pathValue.GetString());
+
+		if(path.empty()) {
+			spdlog::error("Invalid empty DOSBox Enhanced Community Edition download information '{}' entry #{} '{}' property value.", JSON_DOWNLOAD_LIST_PROPERTY_NAME, i - downloadListValue.Begin(), JSON_DOWNLOAD_PATH_PROPERTY_NAME);
+			continue;
+		}
+
+		// parse download file size
+		if(!downloadValue.HasMember(JSON_DOWNLOAD_FILE_SIZE_PROPERTY_NAME.c_str())) {
+			spdlog::error("DOSBox Enhanced Community Edition download information '{}' entry #{} is missing '{}' property.", JSON_DOWNLOAD_LIST_PROPERTY_NAME, i - downloadListValue.Begin(), JSON_DOWNLOAD_FILE_SIZE_PROPERTY_NAME);
+			continue;
+		}
+
+		const rapidjson::Value & downloadFileSizeValue = downloadValue[JSON_DOWNLOAD_FILE_SIZE_PROPERTY_NAME.c_str()];
+
+		if(!downloadFileSizeValue.IsUint64()) {
+			spdlog::error("Invalid DOSBox Enhanced Community Edition download information '{}' entry #{} '{}' property type '{}', expected unsigned integer 'number'.", JSON_DOWNLOAD_LIST_PROPERTY_NAME, i - downloadListValue.Begin(), JSON_DOWNLOAD_FILE_SIZE_PROPERTY_NAME, Utilities::typeToString(downloadFileSizeValue.GetType()));
+			continue;
+		}
+
+		uint64_t fileSize = downloadFileSizeValue.GetUint64();
+
+		// parse download file modified timestamp
+		if(!downloadValue.HasMember(JSON_DOWNLOAD_MODIFIED_TIMESTAMP_PROPERTY_NAME.c_str())) {
+			spdlog::error("DOSBox Enhanced Community Edition download information '{}' entry #{} is missing '{}' property.", JSON_DOWNLOAD_LIST_PROPERTY_NAME, i - downloadListValue.Begin(), JSON_DOWNLOAD_MODIFIED_TIMESTAMP_PROPERTY_NAME);
+			continue;
+		}
+
+		const rapidjson::Value & modifiedTimestampValue = downloadValue[JSON_DOWNLOAD_MODIFIED_TIMESTAMP_PROPERTY_NAME.c_str()];
+
+		if(!modifiedTimestampValue.IsUint64()) {
+			spdlog::error("Invalid DOSBox Enhanced Community Edition download information '{}' entry #{} '{}' property type '{}', expected unsigned integer 'number'.", JSON_DOWNLOAD_LIST_PROPERTY_NAME, i - downloadListValue.Begin(), JSON_DOWNLOAD_MODIFIED_TIMESTAMP_PROPERTY_NAME, Utilities::typeToString(modifiedTimestampValue.GetType()));
+			continue;
+		}
+
+		std::chrono::time_point<std::chrono::system_clock> modifiedTimestamp(std::chrono::system_clock::from_time_t(time_t{0}) + std::chrono::milliseconds(modifiedTimestampValue.GetUint64()));
+
+		DeviceInformationBridge::OperatingSystemType operatingSystemType = lowerCaseName.find(LINUX_DOWNLOAD_IDENTIFIER) != std::string::npos ? DeviceInformationBridge::OperatingSystemType::Linux : DeviceInformationBridge::OperatingSystemType::Windows;
+
+		// parse download version
+		std::string version;
+		size_t versionPlatformNameEndIndex = lowerCaseName.find_last_of("(");
+		size_t versionEndIndex = versionPlatformNameEndIndex != std::string::npos ? versionPlatformNameEndIndex - 1 : lowerCaseName.find_last_of(".");
+		size_t versionStartIndex = versionPlatformNameEndIndex != std::string::npos ? lowerCaseName.find_last_of(" ", versionEndIndex - 1) : lowerCaseName.find_last_of(" ");
+
+		if(versionStartIndex != std::string::npos && versionEndIndex != std::string::npos) {
+			versionStartIndex++;
+			versionEndIndex--;
+			version = lowerCaseName.substr(versionStartIndex, versionEndIndex - versionStartIndex + 1);
+		}
+
+		downloads.push_back(DOSBoxECEDownload{ name, path, version, fileSize, modifiedTimestamp, operatingSystemType });
+	}
+
+	return downloads;
+}
+
+std::string DOSBoxManager::getLatestDOSBoxEnhancedCommunityEditionDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion) const {
+	static const std::string DOSBOX_ECE_DOWNLOAD_BASE_URL("https://yesterplay.net/dosboxece/download");
+
+	std::vector<DOSBoxECEDownload> latestDownloads(getLatestDOSBoxEnhancedCommunityEditionDownloads());
+
+	if(latestDownloads.empty()) {
+		spdlog::error("Failed to obtain latest DOSBox Enhanced Community Edition download information.");
+		return {};
+	}
+
+	const DOSBoxECEDownload * latestDownload = nullptr;
+
+	for(const DOSBoxECEDownload & download : latestDownloads) {
+		if(download.operatingSystemType == operatingSystemType) {
+			latestDownload = &download;
+			break;
+		}
+	}
+
+	if(latestDownload == nullptr) {
+		spdlog::error("DOSBox Enhanced Community Edition is not supported on {}.", magic_enum::enum_name(operatingSystemType));
+		return {};
+	}
+
+	if(latestVersion != nullptr) {
+		*latestVersion = latestDownload->version;
+	}
+
+	return Utilities::joinPaths(DOSBOX_ECE_DOWNLOAD_BASE_URL, latestDownload->path);
 }
 
 std::string DOSBoxManager::getLatestDOSBoxStagingDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion) const {
@@ -677,6 +905,7 @@ bool DOSBoxManager::installLatestDOSBoxVersion(const DOSBoxVersion & dosboxVersi
 
 bool DOSBoxManager::isDOSBoxVersionDownloadable(const std::string & dosboxVersionName) {
 	return Utilities::areStringsEqualIgnoreCase(dosboxVersionName, DOSBoxVersion::DOSBOX.getName()) ||
+		   Utilities::areStringsEqualIgnoreCase(dosboxVersionName, DOSBoxVersion::DOSBOX_ECE.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(dosboxVersionName, DOSBoxVersion::DOSBOX_STAGING.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(dosboxVersionName, DOSBoxVersion::DOSBOX_X.getName());
 }

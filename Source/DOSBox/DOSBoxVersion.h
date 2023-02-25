@@ -80,6 +80,7 @@ public:
 	bool operator != (const DOSBoxVersion & dosboxVersion) const;
 
 	static const DOSBoxVersion DOSBOX;
+	static const DOSBoxVersion DOSBOX_ECE;
 	static const DOSBoxVersion DOSBOX_STAGING;
 	static const DOSBoxVersion DOSBOX_X;
 	static const std::vector<const DOSBoxVersion *> DEFAULT_DOSBOX_VERSIONS;

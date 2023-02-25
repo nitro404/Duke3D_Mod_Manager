@@ -26,6 +26,30 @@
 			]
 		},
 		{
+			"name": "DOSBox Enhanced Community Edition",
+			"versions": [
+				{
+					"version": "r4481",
+					"releaseDate": "July 14, 2022",
+					"files": [
+						{
+							"fileName": "DOSBox ECE r4481.7z",
+							"fileSize": 2256727,
+							"sha1": "fe49d5d06bea1089ec2928a3848a393336a35cd1",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x64"
+						},
+						{
+							"fileName": "DOSBox ECE r4481 (Linux).7z",
+							"fileSize": 1458085,
+							"sha1": "48216ac3d9e87b9ebd87049a609b13d35d38672f",
+							"operatingSystem": "Linux"
+						}
+					]
+				}
+			]
+		},
+		{
 			"name": "DOSBox Staging",
 			"versions": [
 				{

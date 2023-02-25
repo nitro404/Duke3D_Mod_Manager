@@ -32,12 +32,14 @@ static const std::array<std::string_view, 8> JSON_PROPERTY_NAMES = {
 
 static const std::string DEFAULT_EXECUTABLE_FILE_NAME("DOSBox.exe");
 
-const DOSBoxVersion DOSBoxVersion::DOSBOX        ("DOSBox",         false, false, DEFAULT_EXECUTABLE_FILE_NAME, "", "https://www.dosbox.com",           "https://sourceforge.net/p/dosbox/code-0/HEAD/tree/dosbox/trunk", { DeviceInformationBridge::OperatingSystemType::Windows, DeviceInformationBridge::OperatingSystemType::Linux, DeviceInformationBridge::OperatingSystemType::MacOS });
-const DOSBoxVersion DOSBoxVersion::DOSBOX_STAGING("DOSBox Staging", true,  false, "dosbox.exe",                 "", "https://dosbox-staging.github.io", "https://github.com/dosbox-staging/dosbox-staging",               { DeviceInformationBridge::OperatingSystemType::Windows, DeviceInformationBridge::OperatingSystemType::Linux, DeviceInformationBridge::OperatingSystemType::MacOS });
-const DOSBoxVersion DOSBoxVersion::DOSBOX_X      ("DOSBox-X",       true,  false, "dosbox-x.exe",               "", "https://dosbox-x.com",             "https://github.com/joncampbell123/dosbox-x",                     { DeviceInformationBridge::OperatingSystemType::Windows, DeviceInformationBridge::OperatingSystemType::Linux, DeviceInformationBridge::OperatingSystemType::MacOS });
+const DOSBoxVersion DOSBoxVersion::DOSBOX        ("DOSBox",                            false, false, DEFAULT_EXECUTABLE_FILE_NAME, "", "https://www.dosbox.com",           "https://sourceforge.net/p/dosbox/code-0/HEAD/tree/dosbox/trunk", { DeviceInformationBridge::OperatingSystemType::Windows, DeviceInformationBridge::OperatingSystemType::Linux, DeviceInformationBridge::OperatingSystemType::MacOS });
+const DOSBoxVersion DOSBoxVersion::DOSBOX_ECE    ("DOSBox Enhanced Community Edition", true,  false, DEFAULT_EXECUTABLE_FILE_NAME, "", "https://yesterplay.net/dosboxece", "",                                                               { DeviceInformationBridge::OperatingSystemType::Windows, DeviceInformationBridge::OperatingSystemType::Linux });
+const DOSBoxVersion DOSBoxVersion::DOSBOX_STAGING("DOSBox Staging",                    true,  false, "dosbox.exe",                 "", "https://dosbox-staging.github.io", "https://github.com/dosbox-staging/dosbox-staging",               { DeviceInformationBridge::OperatingSystemType::Windows, DeviceInformationBridge::OperatingSystemType::Linux, DeviceInformationBridge::OperatingSystemType::MacOS });
+const DOSBoxVersion DOSBoxVersion::DOSBOX_X      ("DOSBox-X",                          true,  false, "dosbox-x.exe",               "", "https://dosbox-x.com",             "https://github.com/joncampbell123/dosbox-x",                     { DeviceInformationBridge::OperatingSystemType::Windows, DeviceInformationBridge::OperatingSystemType::Linux, DeviceInformationBridge::OperatingSystemType::MacOS });
 
 const std::vector<const DOSBoxVersion *> DOSBoxVersion::DEFAULT_DOSBOX_VERSIONS = {
 	&DOSBOX,
+	&DOSBOX_ECE,
 	&DOSBOX_STAGING,
 	&DOSBOX_X
 };
