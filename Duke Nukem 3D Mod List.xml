@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <mods game_id="duke_nukem_3d" file_format_version="1.0.0">
 	<mod name="00 Duke" id="00_duke" type="Total Conversion" version="Demo" website="http://www.geocities.com/TimesSquare/Cavern/1667/00DUKE.html">
 		<team>
@@ -455,7 +455,7 @@
 	<mod name="Be4Ever" id="be4ever" type="Total Conversion">
 		<team>
 			<member name="mr R hund" email="duke_nukem@mindless.com"/>
-			<member name="Bj&#246;rn"/>
+			<member name="Björn"/>
 		</team>
 		<files>
 			<version release_date="August 19, 1998">
@@ -1592,11 +1592,11 @@
 			<member name="Jamie Pohl" alias="Pitboy"/>
 			<member name="Andrew Robinson" alias="Robbo"/>
 			<member name="Tom Welsome" alias="RocketBoy"/>
-			<member name="Daniel Halpern" alias="P&#248;stm&#229;&#241;" email="dwarner@servtech.com"/>
+			<member name="Daniel Halpern" alias="Pøstmåñ" email="dwarner@servtech.com"/>
 			<member name="Bob Averill"/>
 			<member name="Jonah Bishop" email="jonahb@3dportal.com"/>
 			<member name="Will Mabie"/>
-			<member name="Andr&#225;s Piroska"/>
+			<member name="András Piroska"/>
 			<member name="Jason F. Mclauchlin" email="jfmcl@grove.net"/>
 			<member name="Christopher Roode"/>
 			<member name="Gabe Sheets" alias="Fetusboy"/>
@@ -1915,7 +1915,7 @@
 	</mod>
 	<mod name="Intelligent Playing Patch" id="intelligent_playing_patch" type="Partial Conversion" version="1.6b">
 		<team>
-			<member name="&#169;&#246;&#209;gl&#246;m&#235;&#174;&#229;" email="conglomera@eupho.zzn.com"/>
+			<member name="©öÑglömë®å" email="conglomera@eupho.zzn.com"/>
 		</team>
 		<files>
 			<version id="1.6b" release_date="August 12, 1999">
@@ -2456,7 +2456,7 @@
 			<member name="Gabriel Crown" alias="Wolf" email="wolf@geocities.com"/>
 			<member name="Shawn Harkin" alias="The Assassin"/>
 			<member name="Matt" alias="WOLF"/>
-			<member name="Daniel B&#233;rard"/>
+			<member name="Daniel Bérard"/>
 			<member name="A.J. Filiatreault" alias="Napalm-B"/>
 			<member name="Mike Foote" alias="Reaper"/>
 			<member name="Mark Hadley"/>
@@ -2513,7 +2513,7 @@
 	</mod>
 	<mod name="New York Rebellion" id="new_york_rebellion" type="Episode">
 		<team>
-			<member name="Fernando M&#225;rquez" email="cristomarquez@udec.cl"/>
+			<member name="Fernando Márquez" email="cristomarquez@udec.cl"/>
 		</team>
 		<files>
 			<version release_date="December 21, 1996">
@@ -3503,7 +3503,7 @@
 			<member name="Frank Huiskamp" email="j.Huiskamp@gironet.nl"/>
 			<member name="Yoda" email="Stan_Tenzca@hotmail.com"/>
 			<member name="The ANC" email="theanc@hotmail.com"/>
-			<member name="Daniel Halpern" alias="P&#248;stm&#229;&#241;" email="dwarner@servtech.com"/>
+			<member name="Daniel Halpern" alias="Pøstmåñ" email="dwarner@servtech.com"/>
 			<member name="Scythe" email="brycep@telusplanet.net"/>
 		</team>
 		<files>
@@ -3695,9 +3695,9 @@
 			</version>
 		</files>
 		<downloads>
-			<download filename="e1steve.zip" part="1" numparts="3" version="V1" game="Regular Version 1.3" type="Original Files" sha1="aafa5e5d21515db4ba105caa456da630bde63b90"/>
-			<download filename="e2steve.zip" part="2" numparts="3" version="V1" game="Regular Version 1.3" type="Original Files" sha1="3a1ba4a9ca8212d05219923219cf2eaff3ad96e2"/>
-			<download filename="e3steve.zip" part="3" numparts="3" version="V1" game="Regular Version 1.3" type="Original Files" sha1="255f154116ed1d6722d6ed93ac20a9089f132843"/>
+			<download filename="e1steve.zip" version="V1" part="1" numparts="3" game="Regular Version 1.3" type="Original Files" sha1="aafa5e5d21515db4ba105caa456da630bde63b90"/>
+			<download filename="e2steve.zip" version="V1" part="2" numparts="3" game="Regular Version 1.3" type="Original Files" sha1="3a1ba4a9ca8212d05219923219cf2eaff3ad96e2"/>
+			<download filename="e3steve.zip" version="V1" part="3" numparts="3" game="Regular Version 1.3" type="Original Files" sha1="255f154116ed1d6722d6ed93ac20a9089f132843"/>
 			<download filename="Stevepak.zip" version="V2" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="4d59408596bf2dc8f80300ee3532a8deb8b1fc6b"/>
 			<download filename="StevePAK_V1-ModMgrR.zip" version="V1" game="Regular Version 1.3" type="Mod Manager Files" state="Native" sha1="d81dfc7a8f7c9d103a7a89873aac5b9a8f9a2edb"/>
 			<download filename="StevePAK_V1-ModMgrA.zip" version="V1" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="2fa7eedf0b15dfc58514e86cc02f65b2e791751c"/>
@@ -4496,7 +4496,7 @@
 	</mod>
 	<mod name="Wolf 2 Duke" id="wolf_2_duke" type="Total Conversion" version="4.05" website="http://wolf2duke.dukeworld.com">
 		<team name="The Wolf2Duke Team" email="wolf2duke@swipnet.se" country="Sweden">
-			<member name="P&#228;r" email="wolf2duke@swipnet.se"/>
+			<member name="Pär" email="wolf2duke@swipnet.se"/>
 			<member name="Rust"/>
 			<member name="Jamie"/>
 			<member name="Chris"/>
@@ -5460,7 +5460,7 @@
 	</mod>
 	<mod name="Magnum 44" id="magnum_44" type="Weapon Patch">
 		<team country="Sweden">
-			<member name="Simon Mellerg&#229;rdh" email="lemel@algonet.se"/>
+			<member name="Simon Mellergårdh" email="lemel@algonet.se"/>
 		</team>
 		<files>
 			<version release_date="August 27, 1997">
@@ -6704,7 +6704,7 @@
 	</mod>
 	<mod name="DOOM 2" id="doom_2" type="Episode" website="http://www.jsp.umontreal.ca/~leonard">
 		<team city="Montreal" province="Quebec" country="Canada">
-			<member name="Daniel L&#233;onard" email="leonard@jsp.umontreal.ca"/>
+			<member name="Daniel Léonard" email="leonard@jsp.umontreal.ca"/>
 		</team>
 		<files>
 			<version release_date="June 28, 1998">
@@ -8082,10 +8082,9 @@
 			<download filename="Spaced-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" sha1="b88a73c2ee8c2c05e3f0bd4c22bc5c9d4486c0e6"/>
 		</downloads>
 	</mod>
-	<!-- JFDUke3D -->
 	<mod name="Aliens vs Duke" id="aliens_vs_duke" type="Total Conversion" website="http://avd.planetduke.gamespy.com">
 		<team country="Czech Republic">
-			<member name="Marek Kub&#225;&#232;ek" alias="Fallout" email="MKubacek@seznam.cz"/>
+			<member name="Marek Kubáèek" alias="Fallout" email="MKubacek@seznam.cz"/>
 		</team>
 		<files>
 			<version release_date="March 4, 2008">
@@ -8122,7 +8121,6 @@
 			<mod id="aliens_3"/>
 		</related>
 	</mod>
-	<!-- eDuke32 -->
 	<mod name="Aliens (2)" id="aliens_2" type="Total Conversion" version="Demo 1.0">
 		<team>
 			<member name="Rusty Nails" email="R_nails20@hotmail.com"/>
@@ -8583,7 +8581,7 @@
 			<member name="Batsuey"/>
 			<member name="Major Tom"/>
 			<member name="Never Forgotten"/>
-			<member name="NUKEMDAVE" twitter="NUKEMDAVE" steam="NUKEMDAVE" github="NUKEMDAVE" youtube="NUKEMDAVE"/>
+			<member name="NUKEMDAVE" twitter="NUKEMDAVE" youtube="NUKEMDAVE" github="NUKEMDAVE" steam="NUKEMDAVE"/>
 			<member name="Cernex"/>
 			<member name="Doom64hunter"/>
 			<member name="Geedra"/>
@@ -9534,7 +9532,7 @@
 		</downloads>
 	</mod>
 	<mod name="The Seventh Son" id="the_seventh_son" type="Episode" website="http://es.geocities.com/pescapantanos">
-		<team country="Spain" city="Málaga">
+		<team city="Málaga" country="Spain">
 			<member name="Daniel González Alcobre" alias="Papamonos" email="papamonos2@hotmail.com"/>
 		</team>
 		<files>
@@ -9894,7 +9892,7 @@
 	</mod>
 	<mod name="KickAss Duke" id="kickass_duke" type="Total Conversion" version="1.13" website="https://www.moddb.com/mods/kickass-duke">
 		<team country="Italy">
-			<member name="Riccardo Capogna" alias=" RichardStorm" email="riccardo.capogna@yahoo.it"/>
+			<member name="Riccardo Capogna" alias="RichardStorm" email="riccardo.capogna@yahoo.it"/>
 		</team>
 		<files>
 			<version id="1.13" release_date="November 28, 2022">
@@ -9918,7 +9916,7 @@
 			<member name="Raquel De Miranda" alias="Merween" twitter="r_demiranda"/>
 			<member name="Likali"/>
 			<member name="Richoult" email="teamjavras@gmail.com" website="http://www.teamjavras.fr/Javras"/>
-			<member name="Appolo" email="capostagno.arno@gmail.com" website="http://apollolegacyinc.be" twitter="ApolloLegacy01"/>
+			<member name="Appolo" email="capostagno.arno@gmail.com" twitter="ApolloLegacy01" website="http://apollolegacyinc.be"/>
 			<member name="Xzimnut" website="http://www.weeklymp3.fr"/>
 			<member name="Angor de Redjak" twitter="Angor_de_Redjak"/>
 		</team>
@@ -10351,7 +10349,7 @@
 	</mod>
 	<mod name="Super Nukem Bros." id="super_nukem_bros" type="Total Conversion" version="6.1" website="https://www.moddb.com/mods/super-nukem-bros">
 		<team>
-			<member name="NUKEMDAVE" twitter="NUKEMDAVE" steam="NUKEMDAVE" github="NUKEMDAVE" youtube="NUKEMDAVE"/>
+			<member name="NUKEMDAVE" twitter="NUKEMDAVE" youtube="NUKEMDAVE" github="NUKEMDAVE" steam="NUKEMDAVE"/>
 		</team>
 		<files>
 			<version id="6.1" release_date="September 14, 2018">
@@ -10691,7 +10689,7 @@
 			<note>The game logic &amp; data has been partially translated to English and converted to work with the original version of Duke Nukem 3D by fgsfds.</note>
 		</notes>
 	</mod>
-	<mod name="Plug'n Pray" id="plug_n_pray" type="Episode">
+	<mod name="Plug&apos;n Pray" id="plug_n_pray" type="Episode">
 		<team>
 			<member name="DUKE"/>
 			<member name="Dopefish7950"/>
