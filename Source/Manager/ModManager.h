@@ -167,8 +167,8 @@ private:
 	size_t checkModForMissingFiles(const Mod & mod, std::optional<size_t> versionIndex = {}, std::optional<size_t> versionTypeIndex = {}) const;
 	size_t checkAllModsForMissingFiles() const;
 	size_t checkForMissingExecutables() const;
-	size_t updateAllFileHashes(bool save = true, bool skipHashedFiles = true);
-	size_t updateModHashes(Mod & mod, bool skipHashedFiles = true, std::optional<size_t> versionIndex = {}, std::optional<size_t> versionTypeIndex = {});
+	size_t updateFileInfoForAllMods(bool save = true, bool skipPopulatedFiles = true);
+	size_t updateModFileInfo(Mod & mod, bool skipPopulatedFiles = true, std::optional<size_t> versionIndex = {}, std::optional<size_t> versionTypeIndex = {});
 	static bool areModFilesPresentInGameDirectory(const GameVersion & gameVersion);
 	static bool areModFilesPresentInGameDirectory(const std::string & gamePath);
 	std::unique_ptr<InstalledModInfo> extractModFilesToGameDirectory(const ModGameVersion & modGameVersion, const GameVersion & selectedGameVersion, const GameVersion & targetGameVersion, const std::vector<std::string> & customGroupFileNames = {});

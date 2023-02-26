@@ -5,7 +5,7 @@
 
 class ModScreenshot final : public ModImage {
 public:
-	ModScreenshot(const std::string & fileName, uint16_t width, uint16_t height, const std::string & sha1);
+	ModScreenshot(const std::string & fileName, uint64_t fileSize, uint16_t width, uint16_t height, const std::string & sha1);
 	ModScreenshot(ModImage && s) noexcept;
 	ModScreenshot(ModScreenshot && s) noexcept;
 	ModScreenshot(const ModScreenshot & s);

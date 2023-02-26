@@ -2425,13 +2425,13 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	if(args != nullptr) {
-		if(args->hasArgument("hash-new")) {
-			updateAllFileHashes(true, true);
+		if(args->hasArgument("update-new")) {
+			updateFileInfoForAllMods(true, true);
 			return true;
 		}
 
-		if(args->hasArgument("hash-all")) {
-			updateAllFileHashes(true, false);
+		if(args->hasArgument("update-all")) {
+			updateFileInfoForAllMods(true, false);
 			return true;
 		}
 
@@ -2832,7 +2832,7 @@ size_t ModManager::checkForMissingExecutables() const {
 	return numberOfMissingExecutables++;
 }
 
-size_t ModManager::updateAllFileHashes(bool save, bool skipHashedFiles) {
+size_t ModManager::updateFileInfoForAllMods(bool save, bool skipPopulatedFiles) {
 	if(!m_initialized) {
 		return 0;
 	}
@@ -2840,30 +2840,30 @@ size_t ModManager::updateAllFileHashes(bool save, bool skipHashedFiles) {
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	if(settings->modPackageDownloadsDirectoryPath.empty()) {
-		spdlog::warn("Mod package downloads directory path not set, cannot hash some download files!");
+		spdlog::warn("Mod package downloads directory path not set, cannot update info for some download files!");
 	}
 
 	if(settings->modSourceFilesDirectoryPath.empty()) {
-		spdlog::warn("Mod source files directory path not set, cannot hash some download files!");
+		spdlog::warn("Mod source files directory path not set, cannot update file info for some download files!");
 	}
 
 	if(settings->modImagesDirectoryPath.empty()) {
-		spdlog::warn("Mod images directory path not set, cannot hash screenshots or images!");
+		spdlog::warn("Mod images directory path not set, cannot update screenshot or image file info!");
 	}
 
-	spdlog::info("Updating {} file hashes...", skipHashedFiles ? "unhashed" : "all");
+	spdlog::info("Updating info for {} files...", skipPopulatedFiles ? "new" : "all");
 
-	size_t numberOfFileHashesUpdated = 0;
+	size_t numberOfFilesUpdated = 0;
 
 	for(size_t i = 0; i < m_mods->numberOfMods(); i++) {
-		numberOfFileHashesUpdated += updateModHashes(*m_mods->getMod(i), skipHashedFiles);
+		numberOfFilesUpdated += updateModFileInfo(*m_mods->getMod(i), skipPopulatedFiles);
 	}
 
-	if(numberOfFileHashesUpdated != 0) {
-		spdlog::info("Updated {} file hash{}.", numberOfFileHashesUpdated, numberOfFileHashesUpdated == 1 ? "" : "es");
+	if(numberOfFilesUpdated != 0) {
+		spdlog::info("Updated info for {} mod file{}.", numberOfFilesUpdated, numberOfFilesUpdated == 1 ? "" : "s");
 	}
 	else {
-		spdlog::info("No file hashes updated.");
+		spdlog::info("No file info updated.");
 	}
 
 	if(save) {
@@ -2875,10 +2875,10 @@ size_t ModManager::updateAllFileHashes(bool save, bool skipHashedFiles) {
 		}
 	}
 
-	return numberOfFileHashesUpdated;
+	return numberOfFilesUpdated;
 }
 
-size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optional<size_t> versionIndex, std::optional<size_t> versionTypeIndex) {
+size_t ModManager::updateModFileInfo(Mod & mod, bool skipPopulatedFiles, std::optional<size_t> versionIndex, std::optional<size_t> versionTypeIndex) {
 	if(!m_initialized ||
 	   mod.numberOfVersions() == 0 ||
 	   (versionIndex >= mod.numberOfVersions() && versionIndex != std::numeric_limits<size_t>::max())) {
@@ -2887,15 +2887,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 
 	SettingsManager * settings = SettingsManager::getInstance();
 
-	size_t numberOfFileHashesUpdated = 0;
-	std::shared_ptr<ModDownload> modDownload;
-	std::shared_ptr<ModScreenshot> modScreenshot;
-	std::shared_ptr<ModImage> modImage;
-	std::shared_ptr<ModVersion> modVersion;
-	std::shared_ptr<ModVersionType> modVersionType;
-	std::shared_ptr<ModGameVersion> modGameVersion;
-	std::shared_ptr<ModFile> modFile;
-	std::shared_ptr<GameVersion> gameVersion;
+	size_t numberOfFilesUpdated = 0;
 	std::string downloadFilePath;
 	std::string screenshotFilePath;
 	std::string imageFilePath;
@@ -2906,20 +2898,19 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 	std::shared_ptr<GroupFile> groupFile;
 	std::string zipArchiveFilePath;
 	std::unique_ptr<ZipArchive> zipArchive;
-	std::string fileSHA1;
 
-	spdlog::info("Updating '{}' mod hashes...", mod.getName());
+	spdlog::info("Updating '{}' mod file info...", mod.getName());
 
-	// hash mod downloads
+	// update mod downloads file info
 	for(size_t i = 0; i < mod.numberOfDownloads(); i++) {
-		modDownload = mod.getDownload(i);
+		std::shared_ptr<ModDownload> modDownload(mod.getDownload(i));
 
 		if(!ModDownload::isValid(modDownload.get())) {
-			spdlog::warn("Skipping hash of invalid download file #{} for mod '{}'.", i + 1, mod.getName());
+			spdlog::warn("Skipping info update of invalid download file #{} for mod '{}'.", i + 1, mod.getName());
 			continue;
 		}
 
-		if(skipHashedFiles && !modDownload->getSHA1().empty()) {
+		if(skipPopulatedFiles && !modDownload->getSHA1().empty() && modDownload->getFileSize() != 0) {
 			continue;
 		}
 
@@ -2928,10 +2919,10 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 				continue;
 			}
 
-			gameVersion = m_gameVersions->getGameVersionWithName(modDownload->getGameVersion());
+			std::shared_ptr<GameVersion> gameVersion(m_gameVersions->getGameVersionWithName(modDownload->getGameVersion()));
 
 			if(gameVersion == nullptr) {
-				spdlog::warn("Could not find game configuration for game version '{}', skipping hash of download file: '{}'.", modDownload->getGameVersion(), modDownload->getFileName());
+				spdlog::warn("Could not find game configuration for game version '{}', skipping update of download file info: '{}'.", modDownload->getGameVersion(), modDownload->getFileName());
 				continue;
 			}
 
@@ -2942,85 +2933,149 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 				continue;
 			}
 
-			downloadFilePath = Utilities::joinPaths(settings->modSourceFilesDirectoryPath, Utilities::getSafeDirectoryName(mod.getName()));
+			std::string downloadFileBasePath(Utilities::joinPaths(settings->modSourceFilesDirectoryPath, Utilities::getSafeDirectoryName(mod.getName())));
 
-			if(!modDownload->getVersion().empty()) {
-				downloadFilePath = Utilities::joinPaths(downloadFilePath, Utilities::getSafeDirectoryName(modDownload->getVersion()));
+			downloadFilePath = Utilities::joinPaths(downloadFileBasePath, Utilities::getSafeDirectoryName(modDownload->getVersion()), modDownload->getFileName());
+
+			if(modDownload->getVersion().empty() && !std::filesystem::is_regular_file(std::filesystem::path(downloadFilePath))) {
+				downloadFilePath = Utilities::joinPaths(downloadFileBasePath, "Full", modDownload->getFileName());
 			}
 
-			downloadFilePath = Utilities::joinPaths(downloadFilePath, modDownload->getFileName());
+			if(!modDownload->getVersionType().empty() && !std::filesystem::is_regular_file(std::filesystem::path(downloadFilePath))) {
+				downloadFilePath = Utilities::joinPaths(downloadFileBasePath, modDownload->getVersionType(), modDownload->getFileName());
+			}
+
+			if(!modDownload->getSpecial().empty() && !std::filesystem::is_regular_file(std::filesystem::path(downloadFilePath))) {
+				downloadFilePath = Utilities::joinPaths(downloadFileBasePath, modDownload->getSpecial(), modDownload->getFileName());
+			}
 		}
 
 		if(!std::filesystem::is_regular_file(std::filesystem::path(downloadFilePath))) {
-			spdlog::warn("Skipping hash of missing '{}' mod download file: '{}'.", mod.getName(), downloadFilePath);
+			spdlog::warn("Skipping update of missing '{}' mod download file info: '{}'.", mod.getName(), downloadFilePath);
 			continue;
 		}
 
-		fileSHA1 = Utilities::getFileSHA1Hash(downloadFilePath);
+		bool fileSHA1Updated = false;
 
-		if(fileSHA1.empty()) {
-			spdlog::error("Failed to hash mod '{}' download file '{}'.", mod.getName(), modFile->getFileName());
-			continue;
-		}
+		if(!skipPopulatedFiles || modDownload->getSHA1().empty()) {
+			std::string fileSHA1(Utilities::getFileSHA1Hash(downloadFilePath));
 
-		if(modDownload->getSHA1() != fileSHA1) {
-			spdlog::info("Updating mod '{}' download file '{}' SHA1 hash from '{}' to '{}'.", mod.getName(), modDownload->getFileName(), modDownload->getSHA1(), fileSHA1);
-
-			modDownload->setSHA1(fileSHA1);
-
-			numberOfFileHashesUpdated++;
-		}
-	}
-
-	// hash mod screenshots
-	if(!settings->modImagesDirectoryPath.empty()) {
-		for(size_t i = 0; i < mod.numberOfScreenshots(); i++) {
-			modScreenshot = mod.getScreenshot(i);
-
-			if(!ModScreenshot::isValid(modScreenshot.get())) {
-				spdlog::warn("Skipping hash of invalid screenshot file #{} for mod '{}'.", i + 1, mod.getName());
+			if(fileSHA1.empty()) {
+				spdlog::error("Failed to hash mod '{}' download file '{}'.", mod.getName(), modDownload->getFileName());
 				continue;
 			}
 
-			if(skipHashedFiles && !modScreenshot->getSHA1().empty()) {
+			if(modDownload->getSHA1() != fileSHA1) {
+				spdlog::info("Updating mod '{}' download file '{}' SHA1 hash from '{}' to '{}'.", mod.getName(), modDownload->getFileName(), modDownload->getSHA1(), fileSHA1);
+
+				modDownload->setSHA1(fileSHA1);
+
+				fileSHA1Updated = true;
+			}
+		}
+
+		bool fileSizeUpdated = false;
+
+		if(!skipPopulatedFiles || modDownload->getFileSize() == 0) {
+			std::error_code errorCode;
+			uint64_t fileSize = std::filesystem::file_size(std::filesystem::path(downloadFilePath), errorCode);
+
+			if(errorCode) {
+				spdlog::error("Failed to obtain mod '{}' download file '{}' size: {}", mod.getName(), modDownload->getFileName(), errorCode.message());
+				continue;
+			}
+
+			if(modDownload->getFileSize() != fileSize) {
+				spdlog::info("Updating mod '{}' download file '{}' size from {} to {} bytes.", mod.getName(), modDownload->getFileName(), modDownload->getFileSize(), fileSize);
+
+				modDownload->setFileSize(fileSize);
+
+				fileSizeUpdated = true;
+			}
+		}
+
+		if(fileSHA1Updated || fileSizeUpdated) {
+			numberOfFilesUpdated++;
+		}
+	}
+
+	// update mod screenshots file info
+	if(!settings->modImagesDirectoryPath.empty()) {
+		for(size_t i = 0; i < mod.numberOfScreenshots(); i++) {
+			std::shared_ptr<ModScreenshot> modScreenshot(mod.getScreenshot(i));
+
+			if(!ModScreenshot::isValid(modScreenshot.get())) {
+				spdlog::warn("Skipping info update of invalid screenshot file #{} for mod '{}'.", i + 1, mod.getName());
+				continue;
+			}
+
+			if(skipPopulatedFiles && !modScreenshot->getSHA1().empty() && modScreenshot->getFileSize() != 0) {
 				continue;
 			}
 
 			screenshotFilePath = Utilities::joinPaths(settings->modImagesDirectoryPath, mod.getID(), "screenshots", "lg", modScreenshot->getFileName());
 
 			if(!std::filesystem::is_regular_file(std::filesystem::path(screenshotFilePath))) {
-				spdlog::warn("Skipping hash of missing '{}' mod screenshot file: '{}'.", mod.getName(), screenshotFilePath);
+				spdlog::warn("Skipping update of missing '{}' mod screenshot file info: '{}'.", mod.getName(), screenshotFilePath);
 				continue;
 			}
 
-			fileSHA1 = Utilities::getFileSHA1Hash(screenshotFilePath);
+			bool fileSHA1Updated = false;
 
-			if(fileSHA1.empty()) {
-				spdlog::error("Failed to hash mod '{}' screenshot file '{}'.", mod.getName(), modFile->getFileName());
-				continue;
+			if(!skipPopulatedFiles || modScreenshot->getSHA1().empty()) {
+				std::string fileSHA1(Utilities::getFileSHA1Hash(screenshotFilePath));
+
+				if(fileSHA1.empty()) {
+					spdlog::error("Failed to hash mod '{}' screenshot file '{}'.", mod.getName(), modScreenshot->getFileName());
+					continue;
+				}
+
+				if(modScreenshot->getSHA1() != fileSHA1) {
+					spdlog::info("Updating mod '{}' screenshot file '{}' SHA1 hash from '{}' to '{}'.", mod.getName(), modScreenshot->getFileName(), modScreenshot->getSHA1(), fileSHA1);
+
+					modScreenshot->setSHA1(fileSHA1);
+
+					fileSHA1Updated = true;
+				}
 			}
 
-			if(modScreenshot->getSHA1() != fileSHA1) {
-				spdlog::info("Updating mod '{}' screenshot file '{}' SHA1 hash from '{}' to '{}'.", mod.getName(), modScreenshot->getFileName(), modScreenshot->getSHA1(), fileSHA1);
+			bool fileSizeUpdated = false;
 
-				modScreenshot->setSHA1(fileSHA1);
+			if(!skipPopulatedFiles || modScreenshot->getFileSize() == 0) {
+				std::error_code errorCode;
+				uint64_t fileSize = std::filesystem::file_size(std::filesystem::path(screenshotFilePath), errorCode);
 
-				numberOfFileHashesUpdated++;
+				if(errorCode) {
+					spdlog::error("Failed to obtain mod '{}' screenshot file '{}' size: {}", mod.getName(), modScreenshot->getFileName(), errorCode.message());
+					continue;
+				}
+
+				if(modScreenshot->getFileSize() != fileSize) {
+					spdlog::info("Updating mod '{}' screenshot file '{}' size from {} to {} bytes.", mod.getName(), modScreenshot->getFileName(), modScreenshot->getFileSize(), fileSize);
+
+					modScreenshot->setFileSize(fileSize);
+
+					fileSizeUpdated = true;
+				}
+			}
+
+			if(fileSHA1Updated || fileSizeUpdated) {
+				numberOfFilesUpdated++;
 			}
 		}
 	}
 
-	// hash mod images
+	// update mod images file info
 	if(!settings->modImagesDirectoryPath.empty()) {
 		for(size_t i = 0; i < mod.numberOfImages(); i++) {
-			modImage = mod.getImage(i);
+			std::shared_ptr<ModImage> modImage(mod.getImage(i));
 
 			if(!ModImage::isValid(modImage.get())) {
-				spdlog::warn("Skipping hash of invalid image file #{} for mod '{}'.", i + 1, mod.getName());
+				spdlog::warn("Skipping info update of invalid image file #{} for mod '{}'.", i + 1, mod.getName());
 				continue;
 			}
 
-			if(skipHashedFiles && !modImage->getSHA1().empty()) {
+			if(skipPopulatedFiles && !modImage->getSHA1().empty() && modImage->getFileSize() != 0) {
 				continue;
 			}
 
@@ -3033,55 +3088,83 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 			imageFilePath = Utilities::joinPaths(imageFilePath, modImage->getFileName());
 
 			if(!std::filesystem::is_regular_file(std::filesystem::path(imageFilePath))) {
-				spdlog::warn("Skipping hash of missing '{}' mod image file: '{}'.", mod.getName(), imageFilePath);
+				spdlog::warn("Skipping update of missing '{}' mod image file info: '{}'.", mod.getName(), imageFilePath);
 				continue;
 			}
 
-			fileSHA1 = Utilities::getFileSHA1Hash(imageFilePath);
+			bool fileSHA1Updated = false;
 
-			if(fileSHA1.empty()) {
-				spdlog::error("Failed to hash mod '{}' image file '{}'.", mod.getName(), modFile->getFileName());
-				continue;
+			if(!skipPopulatedFiles || modImage->getSHA1().empty()) {
+				std::string fileSHA1(Utilities::getFileSHA1Hash(imageFilePath));
+
+				if(fileSHA1.empty()) {
+					spdlog::error("Failed to hash mod '{}' image file '{}'.", mod.getName(), modImage->getFileName());
+					continue;
+				}
+
+				if(modImage->getSHA1() != fileSHA1) {
+					spdlog::info("Updating mod '{}' image file '{}' SHA1 hash from '{}' to '{}'.", mod.getName(), modImage->getFileName(), modImage->getSHA1(), fileSHA1);
+
+					modImage->setSHA1(fileSHA1);
+
+					fileSHA1Updated = true;
+				}
 			}
 
-			if(modImage->getSHA1() != fileSHA1) {
-				spdlog::info("Updating mod '{}' image file '{}' SHA1 hash from '{}' to '{}'.", mod.getName(), modImage->getFileName(), modImage->getSHA1(), fileSHA1);
+			bool fileSizeUpdated = false;
 
-				modImage->setSHA1(fileSHA1);
+			if(!skipPopulatedFiles || modImage->getFileSize() == 0) {
+				std::error_code errorCode;
+				uint64_t fileSize = std::filesystem::file_size(std::filesystem::path(imageFilePath), errorCode);
 
-				numberOfFileHashesUpdated++;
+				if(errorCode) {
+					spdlog::error("Failed to obtain mod '{}' image file '{}' size: {}", mod.getName(), modImage->getFileName(), errorCode.message());
+					continue;
+				}
+
+				if(modImage->getFileSize() != fileSize) {
+					spdlog::info("Updating mod '{}' image file '{}' size from {} to {} bytes.", mod.getName(), modImage->getFileName(), modImage->getFileSize(), fileSize);
+
+					modImage->setFileSize(fileSize);
+
+					fileSizeUpdated = true;
+				}
+			}
+
+			if(fileSHA1Updated || fileSizeUpdated) {
+				numberOfFilesUpdated++;
 			}
 		}
 	}
 
-	// hash mod files
+	// update mod files info
 	for(size_t i = (versionIndex.has_value() ? versionIndex.value() : 0); i < (versionIndex.has_value() ? versionIndex.value() + 1 : mod.numberOfVersions()); i++) {
 		if(i >= mod.numberOfVersions()) {
 			break;
 		}
 
-		modVersion = mod.getVersion(i);
+		std::shared_ptr<ModVersion> modVersion(mod.getVersion(i));
 
 		for(size_t j = (versionTypeIndex.has_value() ? versionTypeIndex.value() : 0); j < (versionTypeIndex.has_value() ? versionTypeIndex.value() + 1 : modVersion->numberOfTypes()); j++) {
 			if(j >= modVersion->numberOfTypes()) {
 				break;
 			}
 
-			modVersionType = modVersion->getType(j);
+			std::shared_ptr<ModVersionType> modVersionType(modVersion->getType(j));
 
 			for(size_t k = 0; k < modVersionType->numberOfGameVersions(); k++) {
-				modGameVersion = modVersionType->getGameVersion(k);
-				gameVersion = m_gameVersions->getGameVersionWithName(modGameVersion->getGameVersion());
+				std::shared_ptr<ModGameVersion> modGameVersion(modVersionType->getGameVersion(k));
+				std::shared_ptr<GameVersion> gameVersion(m_gameVersions->getGameVersionWithName(modGameVersion->getGameVersion()));
 
 				if(!GameVersion::isValid(gameVersion.get())) {
-					spdlog::warn("Mod '{}' game version #{} is not valid, skipping hashing of mod files.", mod.getFullName(i, j), k + 1);
+					spdlog::warn("Mod '{}' game version #{} is not valid, skipping update of mod files info.", mod.getFullName(i, j), k + 1);
 					continue;
 				}
 
 				gameModsPath = Utilities::joinPaths(settings->modsDirectoryPath, gameVersion->getModDirectoryName());
 
 				if(!std::filesystem::is_directory(gameModsPath)) {
-					spdlog::warn("Mod '{}' '{}' game version directory '{}' does not exist or is not a valid directory, skipping hashing of mod files.", mod.getFullName(i, j), gameVersion->getName(), gameModsPath);
+					spdlog::warn("Mod '{}' '{}' game version directory '{}' does not exist or is not a valid directory, skipping update of mod files info.", mod.getFullName(i, j), gameVersion->getName(), gameModsPath);
 					continue;
 				}
 
@@ -3112,41 +3195,57 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 				}
 
 				for(size_t l = 0; l < modGameVersion->numberOfFiles(); l++) {
-					modFile = modGameVersion->getFile(l);
+					std::shared_ptr<ModFile> modFile(modGameVersion->getFile(l));
 
-					if(skipHashedFiles && !modFile->getSHA1().empty()) {
+					if(skipPopulatedFiles && !modFile->getSHA1().empty() && modFile->getFileSize() != 0) {
 						continue;
 					}
 
-					fileSHA1 = "";
+					std::string fileSHA1;
+					uint64_t fileSize = 0;
 
 					// eDuke32 mod files can be read straight out of the group or zip file, and are not stored separately
 					if(modGameVersion->isEDuke32() && modFile->getType() != "zip" && modFile->getType() != "grp") {
 						if(!zipArchiveFilePath.empty()) {
 							if(zipArchive == nullptr) {
-								spdlog::error("Skipping hash of mod file '{}' since zip archive could not be opened.", zipArchiveFilePath);
+								spdlog::error("Skipping update of mod file '{}' info since zip archive could not be opened.", zipArchiveFilePath);
 								continue;
 							}
 
-							std::weak_ptr<ArchiveEntry> zipArchiveEntry(zipArchive->getEntry(modFile->getFileName(), false));
+							std::shared_ptr<ArchiveEntry> zipArchiveEntry(zipArchive->getEntry(modFile->getFileName(), false));
 
-							if(zipArchiveEntry.expired()) {
+							if(zipArchiveEntry == nullptr) {
 								spdlog::error("Mod file '{}' not found in zip file '{}'.", modFile->getFileName(), zipArchiveFilePath);
 								continue;
 							}
 
-							std::unique_ptr<ByteBuffer> zipArchiveEntryData(zipArchiveEntry.lock()->getData());
-
-							if(zipArchiveEntryData == nullptr) {
-								spdlog::error("Failed to read zip entry '{}' from zip file '{}' into memory.", zipArchiveEntry.lock()->getName(), zipArchiveFilePath);
+							if(!zipArchiveEntry->isFile()) {
+								spdlog::error("Mod file '{}' located in zip file '{}' is not a file.", modFile->getFileName(), zipArchiveFilePath);
 								continue;
 							}
 
-							fileSHA1 = zipArchiveEntryData->getSHA1();
+							if(!skipPopulatedFiles || modFile->getSHA1().empty()) {
+								std::unique_ptr<ByteBuffer> zipArchiveEntryData(zipArchiveEntry->getData());
+
+								if(zipArchiveEntryData == nullptr) {
+									spdlog::error("Failed to read zip entry '{}' from zip file '{}' into memory.", zipArchiveEntry->getName(), zipArchiveFilePath);
+									continue;
+								}
+
+								fileSHA1 = zipArchiveEntryData->getSHA1();
+							}
+
+							if(!skipPopulatedFiles || modFile->getFileSize() == 0) {
+								fileSize = zipArchiveEntry->getUncompressedSize();
+
+								if(fileSize == 0) {
+									fileSize = zipArchiveEntry->getData()->getSize();
+								}
+							}
 						}
 						else if(!groupFilePath.empty()) {
 							if(group == nullptr) {
-								spdlog::error("Skipping hash of mod file '{}' since group could not be opened.", groupFilePath);
+								spdlog::error("Skipping update of mod file '{}' info since group could not be opened.", groupFilePath);
 								continue;
 							}
 
@@ -3157,31 +3256,73 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 								continue;
 							}
 
-							fileSHA1 = groupFile->getData().getSHA1();
+							if(!skipPopulatedFiles || modFile->getSHA1().empty()) {
+								fileSHA1 = groupFile->getData().getSHA1();
+							}
+
+							if(!skipPopulatedFiles || modFile->getFileSize() == 0) {
+								fileSize = groupFile->getSize();
+							}
 						}
 					}
 					else {
 						modFilePath = Utilities::joinPaths(gameModsPath, modFile->getFileName());
 
 						if(!std::filesystem::is_regular_file(std::filesystem::path(modFilePath))) {
-							spdlog::warn("Skipping hash of missing '{}' mod file: '{}'.", mod.getFullName(i, j), modFilePath);
+							spdlog::warn("Skipping update of missing '{}' mod file info: '{}'.", mod.getFullName(i, j), modFilePath);
 							continue;
 						}
 
-						fileSHA1 = Utilities::getFileSHA1Hash(modFilePath);
+						if(!skipPopulatedFiles || modFile->getSHA1().empty()) {
+							fileSHA1 = Utilities::getFileSHA1Hash(modFilePath);
+						}
+
+						if(!skipPopulatedFiles || modFile->getFileSize() == 0) {
+							std::error_code errorCode;
+							fileSize = std::filesystem::file_size(std::filesystem::path(modFilePath), errorCode);
+
+							if(errorCode) {
+								spdlog::error("Failed to obtain '{}' mod file '{}' size: {}", mod.getName(), modFile->getFileName(), errorCode.message());
+								continue;
+							}
+						}
 					}
 
-					if(fileSHA1.empty()) {
-						spdlog::error("Failed to hash '{}' mod file '{}'.", mod.getFullName(i, j), modFile->getFileName());
-						continue;
+					bool fileSHA1Updated = false;
+					bool fileSizeUpdated = false;
+
+					if(!skipPopulatedFiles || modFile->getSHA1().empty()) {
+						if(!fileSHA1.empty()) {
+							if(modFile->getSHA1() != fileSHA1) {
+								spdlog::info("Updating '{}' mod file '{}' SHA1 hash from '{}' to '{}'.", mod.getFullName(i, j), modFile->getFileName(), modFile->getSHA1(), fileSHA1);
+
+								modFile->setSHA1(fileSHA1);
+
+								fileSHA1Updated = true;
+							}
+						}
+						else {
+							spdlog::error("Failed to hash '{}' mod file '{}'.", mod.getFullName(i, j), modFile->getFileName());
+						}
 					}
 
-					if(modFile->getSHA1() != fileSHA1) {
-						spdlog::info("Updating '{}' mod file '{}' SHA1 hash from '{}' to '{}'.", mod.getFullName(i, j), modFile->getFileName(), modFile->getSHA1(), fileSHA1);
+					if(!skipPopulatedFiles || modFile->getFileSize() == 0) {
+						if(fileSize != 0) {
+							if(modFile->getFileSize() != fileSize) {
+								spdlog::info("Updating '{}' mod file '{}' size from {} to {} bytes.", mod.getFullName(i, j), modFile->getFileName(), modFile->getFileSize(), fileSize);
 
-						modFile->setSHA1(fileSHA1);
+								modFile->setFileSize(fileSize);
 
-						numberOfFileHashesUpdated++;
+								fileSizeUpdated = true;
+							}
+						}
+						else {
+							spdlog::error("Failed to obtain '{}' mod file '{}' size.", mod.getFullName(i, j), modFile->getFileName());
+						}
+					}
+
+					if(fileSHA1Updated || fileSizeUpdated) {
+						numberOfFilesUpdated++;
 					}
 				}
 
@@ -3195,7 +3336,7 @@ size_t ModManager::updateModHashes(Mod & mod, bool skipHashedFiles, std::optiona
 		}
 	}
 
-	return numberOfFileHashesUpdated;
+	return numberOfFilesUpdated;
 }
 
 std::string ModManager::getArgumentHelpInfo() {
@@ -3227,8 +3368,6 @@ std::string ModManager::getArgumentHelpInfo() {
 	argumentHelpStream << " --nm disable music.\n";
 	argumentHelpStream << " --local - runs the mod manager in local mode.\n";
 	argumentHelpStream << " -- <args> - specify arguments to pass through to the target game executable when executing.\n";
-	argumentHelpStream << " --hash-new - updates unhashed SHA1 file hashes (developer use only!).\n";
-	argumentHelpStream << " --hash-all - updates all SHA1 file hashes (developer use only!).\n";
 	argumentHelpStream << " --version - displays the application version.\n";
 	argumentHelpStream << " -? - displays this help message.\n";
 

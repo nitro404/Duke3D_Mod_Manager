@@ -21,7 +21,7 @@ class ModDownload final {
 	friend class Mod;
 
 public:
-	ModDownload(const std::string & fileName, const std::string & type, const std::string & sha1 = {});
+	ModDownload(const std::string & fileName, uint64_t fileSize, const std::string & type, const std::string & sha1 = {});
 	ModDownload(ModDownload && d) noexcept;
 	ModDownload(const ModDownload & d);
 	ModDownload & operator = (ModDownload && d) noexcept;
@@ -29,6 +29,7 @@ public:
 	~ModDownload();
 
 	const std::string & getFileName() const;
+	uint64_t getFileSize() const;
 	uint8_t getPartNumber() const;
 	uint8_t getPartCount() const;
 	const std::string & getVersion() const;
@@ -52,6 +53,7 @@ public:
 	std::shared_ptr<ModVersionType> getModVersionType() const;
 
 	void setFileName(const std::string & fileName);
+	void setFileSize(uint64_t fileSize);
 	void setPartNumber(uint8_t partNumber);
 	void setPartCount(uint8_t partCount);
 	void setVersion(const std::string & version);
@@ -86,6 +88,7 @@ protected:
 
 private:
 	std::string m_fileName;
+	uint64_t m_fileSize;
 	uint8_t m_partNumber;
 	uint8_t m_partCount;
 	std::string m_version;

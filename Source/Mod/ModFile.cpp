@@ -17,35 +17,41 @@
 
 static const std::string XML_MOD_FILE_ELEMENT_NAME("file");
 static const std::string XML_MOD_FILE_FILE_NAME_ATTRIBUTE_NAME("name");
+static const std::string XML_MOD_FILE_FILE_SIZE_ATTRIBUTE_NAME("size");
 static const std::string XML_MOD_FILE_TYPE_ATTRIBUTE_NAME("type");
 static const std::string XML_MOD_FILE_SHA1_ATTRIBUTE_NAME("sha1");
 static const std::string XML_MOD_FILE_SHARED_ATTRIBUTE_NAME("shared");
-static const std::array<std::string, 4> XML_MOD_FILE_ATTRIBUTE_NAMES = {
+static const std::array<std::string, 5> XML_MOD_FILE_ATTRIBUTE_NAMES = {
 	XML_MOD_FILE_FILE_NAME_ATTRIBUTE_NAME,
+	XML_MOD_FILE_FILE_SIZE_ATTRIBUTE_NAME,
 	XML_MOD_FILE_TYPE_ATTRIBUTE_NAME,
 	XML_MOD_FILE_SHA1_ATTRIBUTE_NAME,
 	XML_MOD_FILE_SHARED_ATTRIBUTE_NAME
 };
 
 static constexpr const char * JSON_MOD_FILE_FILE_NAME_PROPERTY_NAME = "fileName";
+static constexpr const char * JSON_MOD_FILE_FILE_SIZE_PROPERTY_NAME = "fileSize";
 static constexpr const char * JSON_MOD_FILE_TYPE_PROPERTY_NAME = "type";
 static constexpr const char * JSON_MOD_FILE_SHA1_PROPERTY_NAME = "sha1";
 static constexpr const char * JSON_MOD_FILE_SHARED_PROPERTY_NAME = "shared";
-static const std::array<std::string_view, 4> JSON_MOD_FILE_PROPERTY_NAMES = {
+static const std::array<std::string_view, 5> JSON_MOD_FILE_PROPERTY_NAMES = {
 	JSON_MOD_FILE_FILE_NAME_PROPERTY_NAME,
+	JSON_MOD_FILE_FILE_SIZE_PROPERTY_NAME,
 	JSON_MOD_FILE_TYPE_PROPERTY_NAME,
 	JSON_MOD_FILE_SHA1_PROPERTY_NAME,
 	JSON_MOD_FILE_SHARED_PROPERTY_NAME
 };
 
-ModFile::ModFile(const std::string & fileName, const std::string & type, const std::string & sha1)
+ModFile::ModFile(const std::string & fileName, uint64_t fileSize, const std::string & type, const std::string & sha1)
 	: m_fileName(Utilities::trimString(fileName))
+	, m_fileSize(fileSize)
 	, m_type(Utilities::trimString(type))
 	, m_sha1(Utilities::trimString(sha1))
 	, m_parentModGameVersion(nullptr) { }
 
 ModFile::ModFile(ModFile && f) noexcept
 	: m_fileName(std::move(f.m_fileName))
+	, m_fileSize(f.m_fileSize)
 	, m_type(std::move(f.m_type))
 	, m_sha1(std::move(f.m_sha1))
 	, m_shared(f.m_shared)
@@ -53,6 +59,7 @@ ModFile::ModFile(ModFile && f) noexcept
 
 ModFile::ModFile(const ModFile & f)
 	: m_fileName(f.m_fileName)
+	, m_fileSize(f.m_fileSize)
 	, m_type(f.m_type)
 	, m_sha1(f.m_sha1)
 	, m_shared(f.m_shared)
@@ -61,6 +68,7 @@ ModFile::ModFile(const ModFile & f)
 ModFile & ModFile::operator = (ModFile && f) noexcept {
 	if(this != &f) {
 		m_fileName = std::move(f.m_fileName);
+		m_fileSize = f.m_fileSize;
 		m_type = std::move(f.m_type);
 		m_sha1 = std::move(f.m_sha1);
 		m_shared = f.m_shared;
@@ -71,6 +79,7 @@ ModFile & ModFile::operator = (ModFile && f) noexcept {
 
 ModFile & ModFile::operator = (const ModFile & f) {
 	m_fileName = f.m_fileName;
+	m_fileSize = f.m_fileSize;
 	m_type = f.m_type;
 	m_sha1 = f.m_sha1;
 	m_shared = f.m_shared;
@@ -88,6 +97,10 @@ const std::string & ModFile::getFileName() const {
 
 std::string_view ModFile::getFileExtension() const {
 	return Utilities::getFileExtension(m_fileName);
+}
+
+uint64_t ModFile::getFileSize() const {
+	return m_fileSize;
 }
 
 const std::string & ModFile::getType() const {
@@ -142,6 +155,10 @@ void ModFile::setFileName(const std::string & fileName) {
 	m_fileName = Utilities::trimString(fileName);
 }
 
+void ModFile::setFileSize(uint64_t fileSize) {
+	m_fileSize = fileSize;
+}
+
 void ModFile::setType(const std::string & type) {
 	m_type = Utilities::trimString(type);
 }
@@ -168,6 +185,8 @@ rapidjson::Value ModFile::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAl
 	rapidjson::Value fileNameValue(m_fileName.c_str(), allocator);
 	modFileValue.AddMember(rapidjson::StringRef(JSON_MOD_FILE_FILE_NAME_PROPERTY_NAME), fileNameValue, allocator);
 
+	modFileValue.AddMember(rapidjson::StringRef(JSON_MOD_FILE_FILE_SIZE_PROPERTY_NAME), rapidjson::Value(m_fileSize), allocator);
+
 	rapidjson::Value fileTypeValue(m_type.c_str(), allocator);
 	modFileValue.AddMember(rapidjson::StringRef(JSON_MOD_FILE_TYPE_PROPERTY_NAME), fileTypeValue, allocator);
 
@@ -191,6 +210,11 @@ tinyxml2::XMLElement * ModFile::toXML(tinyxml2::XMLDocument * document) const {
 	tinyxml2::XMLElement * modFileElement = document->NewElement(XML_MOD_FILE_ELEMENT_NAME.c_str());
 
 	modFileElement->SetAttribute(XML_MOD_FILE_FILE_NAME_ATTRIBUTE_NAME.c_str(), m_fileName.c_str());
+
+	if(m_fileSize != 0) {
+		modFileElement->SetAttribute(XML_MOD_FILE_FILE_SIZE_ATTRIBUTE_NAME.c_str(), m_fileSize);
+	}
+
 	modFileElement->SetAttribute(XML_MOD_FILE_TYPE_ATTRIBUTE_NAME.c_str(), m_type.c_str());
 
 	if(m_shared.has_value()) {
@@ -248,6 +272,26 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const rapidjson::Value & modFileValu
 		return nullptr;
 	}
 
+	// parse mod file size
+	if(!modFileValue.HasMember(JSON_MOD_FILE_FILE_SIZE_PROPERTY_NAME)) {
+		spdlog::error("Mod file is missing '{}' property'.", JSON_MOD_FILE_FILE_SIZE_PROPERTY_NAME);
+		return nullptr;
+	}
+
+	const rapidjson::Value & modFileSizeValue = modFileValue[JSON_MOD_FILE_FILE_SIZE_PROPERTY_NAME];
+
+	if(!modFileSizeValue.IsUint64()) {
+		spdlog::error("Mod file has an invalid '{}' property type: '{}', expected unsigned long 'number'.", JSON_MOD_FILE_FILE_SIZE_PROPERTY_NAME, Utilities::typeToString(modFileSizeValue.GetType()));
+		return nullptr;
+	}
+
+	uint64_t modFileSize = modFileSizeValue.GetUint64();
+
+	if(modFileSize == 0) {
+		spdlog::error("Mod file has an invalid '{}' property value, expected positive integer value.", JSON_MOD_FILE_FILE_SIZE_PROPERTY_NAME);
+		return nullptr;
+	}
+
 	// parse mod file type
 	if(!modFileValue.HasMember(JSON_MOD_FILE_TYPE_PROPERTY_NAME)) {
 		spdlog::error("Mod file is missing '{}' property'.", JSON_MOD_FILE_TYPE_PROPERTY_NAME);
@@ -289,7 +333,7 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const rapidjson::Value & modFileValu
 	}
 
 	// initialize the mod file
-	std::unique_ptr<ModFile> newModFile = std::make_unique<ModFile>(modFileName, modFileType, modFileSHA1);
+	std::unique_ptr<ModFile> newModFile = std::make_unique<ModFile>(modFileName, modFileSize, modFileType, modFileSHA1);
 
 	// parse the mod file shared property
 	if(modFileValue.HasMember(JSON_MOD_FILE_SHARED_PROPERTY_NAME)) {
@@ -350,6 +394,7 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const tinyxml2::XMLElement * modFile
 	// read the mod file attributes
 	const char * modFileSharedData = modFileElement->Attribute(XML_MOD_FILE_SHARED_ATTRIBUTE_NAME.c_str());
 	const char * modFileName = modFileElement->Attribute(XML_MOD_FILE_FILE_NAME_ATTRIBUTE_NAME.c_str());
+	const char * modFileSizeData = modFileElement->Attribute(XML_MOD_FILE_FILE_SIZE_ATTRIBUTE_NAME.c_str());
 
 	if(modFileName == nullptr || Utilities::stringLength(modFileName) == 0) {
 		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_FILE_FILE_NAME_ATTRIBUTE_NAME, XML_MOD_FILE_ELEMENT_NAME);
@@ -369,11 +414,21 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const tinyxml2::XMLElement * modFile
 		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_FILE_SHA1_ATTRIBUTE_NAME, XML_MOD_FILE_ELEMENT_NAME);
 		return nullptr;
 	}
+	
+	bool error = false;
+	uint64_t modFileSize = 0;
+
+	if(Utilities::stringLength(modFileSizeData) != 0) {
+		modFileSize = Utilities::parseUnsignedLong(modFileSizeData, &error);
+
+		if(error || modFileSize == 0) {
+			spdlog::error("Attribute '{}' in element '{}' has an invalid value: '{}', expected positive integer number.", XML_MOD_FILE_FILE_SIZE_ATTRIBUTE_NAME, XML_MOD_FILE_ELEMENT_NAME, modFileSizeData);
+			return nullptr;
+		}
+	}
 
 	// initialize the mod file
-	std::unique_ptr<ModFile> newModFile = std::make_unique<ModFile>(modFileName, modFileType, modFileSHA1 == nullptr ? "" : modFileSHA1);
-
-	bool error = false;
+	std::unique_ptr<ModFile> newModFile = std::make_unique<ModFile>(modFileName, modFileSize, modFileType, modFileSHA1 == nullptr ? "" : modFileSHA1);
 
 	if(modFileSharedData != nullptr) {
 		bool shared = Utilities::parseBoolean(modFileSharedData, &error);
@@ -385,7 +440,6 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const tinyxml2::XMLElement * modFile
 
 		newModFile->setShared(shared);
 	}
-
 
 	return newModFile;
 }
@@ -401,7 +455,8 @@ bool ModFile::isValid(const ModFile * f) {
 }
 
 bool ModFile::operator == (const ModFile & f) const {
-	return Utilities::areStringsEqualIgnoreCase(m_fileName, f.m_fileName) &&
+	return m_fileSize == f.m_fileSize &&
+		   Utilities::areStringsEqualIgnoreCase(m_fileName, f.m_fileName) &&
 		   Utilities::areStringsEqualIgnoreCase(m_type, f.m_type) &&
 		   m_sha1 == f.m_sha1 &&
 		   m_shared == f.m_shared;

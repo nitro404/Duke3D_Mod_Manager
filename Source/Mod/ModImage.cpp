@@ -13,14 +13,16 @@
 
 static const std::string XML_MOD_IMAGE_ELEMENT_NAME("image");
 static const std::string XML_MOD_IMAGE_FILE_NAME_ATTRIBUTE_NAME("filename");
+static const std::string XML_MOD_IMAGE_FILE_SIZE_ATTRIBUTE_NAME("filesize");
 static const std::string XML_MOD_IMAGE_TYPE_ATTRIBUTE_NAME("type");
 static const std::string XML_MOD_IMAGE_SUBFOLDER_ATTRIBUTE_NAME("subfolder");
 static const std::string XML_MOD_IMAGE_CAPTION_ATTRIBUTE_NAME("caption");
 static const std::string XML_MOD_IMAGE_WIDTH_ATTRIBUTE_NAME("width");
 static const std::string XML_MOD_IMAGE_HEIGHT_ATTRIBUTE_NAME("height");
 static const std::string XML_MOD_IMAGE_SHA1_ATTRIBUTE_NAME("sha1");
-static const std::array<std::string_view, 7> XML_MOD_IMAGE_ATTRIBUTE_NAMES = {
+static const std::array<std::string_view, 8> XML_MOD_IMAGE_ATTRIBUTE_NAMES = {
 	XML_MOD_IMAGE_FILE_NAME_ATTRIBUTE_NAME,
+	XML_MOD_IMAGE_FILE_SIZE_ATTRIBUTE_NAME,
 	XML_MOD_IMAGE_TYPE_ATTRIBUTE_NAME,
 	XML_MOD_IMAGE_SUBFOLDER_ATTRIBUTE_NAME,
 	XML_MOD_IMAGE_CAPTION_ATTRIBUTE_NAME,
@@ -30,14 +32,16 @@ static const std::array<std::string_view, 7> XML_MOD_IMAGE_ATTRIBUTE_NAMES = {
 };
 
 static constexpr const char * JSON_MOD_IMAGE_FILE_NAME_PROPERTY_NAME = "fileName";
+static constexpr const char * JSON_MOD_IMAGE_FILE_SIZE_PROPERTY_NAME = "fileSize";
 static constexpr const char * JSON_MOD_IMAGE_TYPE_PROPERTY_NAME = "type";
 static constexpr const char * JSON_MOD_IMAGE_SUBFOLDER_PROPERTY_NAME = "subfolder";
 static constexpr const char * JSON_MOD_IMAGE_CAPTION_PROPERTY_NAME = "caption";
 static constexpr const char * JSON_MOD_IMAGE_WIDTH_PROPERTY_NAME = "width";
 static constexpr const char * JSON_MOD_IMAGE_HEIGHT_PROPERTY_NAME = "height";
 static constexpr const char * JSON_MOD_IMAGE_SHA1_PROPERTY_NAME = "sha1";
-static const std::array<std::string_view, 7> JSON_MOD_IMAGE_PROPERTY_NAMES = {
+static const std::array<std::string_view, 8> JSON_MOD_IMAGE_PROPERTY_NAMES = {
 	JSON_MOD_IMAGE_FILE_NAME_PROPERTY_NAME,
+	JSON_MOD_IMAGE_FILE_SIZE_PROPERTY_NAME,
 	JSON_MOD_IMAGE_TYPE_PROPERTY_NAME,
 	JSON_MOD_IMAGE_SUBFOLDER_PROPERTY_NAME,
 	JSON_MOD_IMAGE_CAPTION_PROPERTY_NAME,
@@ -46,8 +50,9 @@ static const std::array<std::string_view, 7> JSON_MOD_IMAGE_PROPERTY_NAMES = {
 	JSON_MOD_IMAGE_SHA1_PROPERTY_NAME
 };
 
-ModImage::ModImage(const std::string & fileName, uint16_t width, uint16_t height, const std::string & sha1)
+ModImage::ModImage(const std::string & fileName, uint64_t fileSize, uint16_t width, uint16_t height, const std::string & sha1)
 	: m_fileName(Utilities::trimString(fileName))
+	, m_fileSize(fileSize)
 	, m_width(width)
 	, m_height(height)
 	, m_sha1(Utilities::trimString(sha1))
@@ -55,6 +60,7 @@ ModImage::ModImage(const std::string & fileName, uint16_t width, uint16_t height
 
 ModImage::ModImage(ModImage && i) noexcept
 	: m_fileName(std::move(i.m_fileName))
+	, m_fileSize(i.m_fileSize)
 	, m_type(std::move(i.m_type))
 	, m_subfolder(std::move(i.m_subfolder))
 	, m_caption(std::move(i.m_caption))
@@ -65,6 +71,7 @@ ModImage::ModImage(ModImage && i) noexcept
 
 ModImage::ModImage(const ModImage & i)
 	: m_fileName(i.m_fileName)
+	, m_fileSize(i.m_fileSize)
 	, m_type(i.m_type)
 	, m_subfolder(i.m_subfolder)
 	, m_caption(i.m_caption)
@@ -76,6 +83,7 @@ ModImage::ModImage(const ModImage & i)
 ModImage & ModImage::operator = (ModImage && i) noexcept {
 	if(this != &i) {
 		m_fileName = std::move(i.m_fileName);
+		m_fileSize = i.m_fileSize;
 		m_type = std::move(i.m_type);
 		m_subfolder = std::move(i.m_subfolder);
 		m_caption = std::move(i.m_caption);
@@ -89,6 +97,7 @@ ModImage & ModImage::operator = (ModImage && i) noexcept {
 
 ModImage & ModImage::operator = (const ModImage & i) {
 	m_fileName = i.m_fileName;
+	m_fileSize = i.m_fileSize;
 	m_type = i.m_type;
 	m_subfolder = i.m_subfolder;
 	m_caption = i.m_caption;
@@ -105,6 +114,10 @@ ModImage::~ModImage() {
 
 const std::string & ModImage::getFileName() const {
 	return m_fileName;
+}
+
+uint64_t ModImage::getFileSize() const {
+	return m_fileSize;
 }
 
 const std::string & ModImage::getType() const {
@@ -137,6 +150,10 @@ const Mod * ModImage::getParentMod() const {
 
 void ModImage::setFileName(const std::string & fileName) {
 	m_fileName = Utilities::trimString(fileName);
+}
+
+void ModImage::setFileSize(uint64_t fileSize) {
+	m_fileSize = fileSize;
 }
 
 void ModImage::setType(const std::string & type) {
@@ -172,6 +189,8 @@ rapidjson::Value ModImage::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtA
 
 	rapidjson::Value fileNameValue(m_fileName.c_str(), allocator);
 	modImageValue.AddMember(rapidjson::StringRef(JSON_MOD_IMAGE_FILE_NAME_PROPERTY_NAME), fileNameValue, allocator);
+
+	modImageValue.AddMember(rapidjson::StringRef(JSON_MOD_IMAGE_FILE_SIZE_PROPERTY_NAME), rapidjson::Value(m_fileSize), allocator);
 
 	if(!m_type.empty()) {
 		rapidjson::Value typeValue(m_type.c_str(), allocator);
@@ -212,6 +231,10 @@ tinyxml2::XMLElement * ModImage::toXML(tinyxml2::XMLDocument * document, const s
 	tinyxml2::XMLElement * modImageElement = document->NewElement(name.c_str());
 
 	modImageElement->SetAttribute(XML_MOD_IMAGE_FILE_NAME_ATTRIBUTE_NAME.c_str(), m_fileName.c_str());
+
+	if(m_fileSize != 0) {
+		modImageElement->SetAttribute(XML_MOD_IMAGE_FILE_SIZE_ATTRIBUTE_NAME.c_str(), m_fileSize);
+	}
 
 	if(!m_type.empty()) {
 		modImageElement->SetAttribute(XML_MOD_IMAGE_TYPE_ATTRIBUTE_NAME.c_str(), m_type.c_str());
@@ -279,6 +302,26 @@ std::unique_ptr<ModImage> ModImage::parseFrom(const rapidjson::Value & modImageV
 		return nullptr;
 	}
 
+	// parse mod image file size
+	if(!modImageValue.HasMember(JSON_MOD_IMAGE_FILE_SIZE_PROPERTY_NAME)) {
+		spdlog::error("Mod image is missing '{}' property'.", JSON_MOD_IMAGE_FILE_SIZE_PROPERTY_NAME);
+		return nullptr;
+	}
+
+	const rapidjson::Value & modImageFileSizeValue = modImageValue[JSON_MOD_IMAGE_FILE_SIZE_PROPERTY_NAME];
+
+	if(!modImageFileSizeValue.IsUint64()) {
+		spdlog::error("Mod image has an invalid '{}' property type: '{}', expected unsigned long 'number'.", JSON_MOD_IMAGE_FILE_SIZE_PROPERTY_NAME, Utilities::typeToString(modImageFileSizeValue.GetType()));
+		return nullptr;
+	}
+
+	uint64_t modImageFileSize = modImageFileSizeValue.GetUint64();
+
+	if(modImageFileSize == 0) {
+		spdlog::error("Mod image has an invalid '{}' property value, expected positive integer value.", JSON_MOD_IMAGE_FILE_SIZE_PROPERTY_NAME);
+		return nullptr;
+	}
+
 	// parse mod image width
 	if(!modImageValue.HasMember(JSON_MOD_IMAGE_WIDTH_PROPERTY_NAME)) {
 		spdlog::error("Mod image is missing '{}' property'.", JSON_MOD_IMAGE_WIDTH_PROPERTY_NAME);
@@ -340,7 +383,7 @@ std::unique_ptr<ModImage> ModImage::parseFrom(const rapidjson::Value & modImageV
 	}
 
 	// initialize the mod image
-	std::unique_ptr<ModImage> newModImage = std::make_unique<ModImage>(modImageFileName, static_cast<uint16_t>(modImageWidth), static_cast<uint16_t>(modImageHeight), modImageSHA1);
+	std::unique_ptr<ModImage> newModImage = std::make_unique<ModImage>(modImageFileName, modImageFileSize, static_cast<uint16_t>(modImageWidth), static_cast<uint16_t>(modImageHeight), modImageSHA1);
 
 	// parse the mod image type property
 	if(modImageValue.HasMember(JSON_MOD_IMAGE_TYPE_PROPERTY_NAME)) {
@@ -429,6 +472,8 @@ std::unique_ptr<ModImage> ModImage::parseFrom(const tinyxml2::XMLElement * modIm
 	// read the mod image attributes
 	const char * modImageFileName = modImageElement->Attribute(XML_MOD_IMAGE_FILE_NAME_ATTRIBUTE_NAME.c_str());
 
+	const char * modImageFileSizeData = modImageElement->Attribute(XML_MOD_IMAGE_FILE_SIZE_ATTRIBUTE_NAME.c_str());
+
 	if(modImageFileName == nullptr || Utilities::stringLength(modImageFileName) == 0) {
 		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_IMAGE_FILE_NAME_ATTRIBUTE_NAME, name);
 		return nullptr;
@@ -449,6 +494,17 @@ std::unique_ptr<ModImage> ModImage::parseFrom(const tinyxml2::XMLElement * modIm
 	}
 
 	bool error = false;
+
+	uint64_t modImageFileSize = 0;
+
+	if(Utilities::stringLength(modImageFileSizeData) != 0) {
+		modImageFileSize = Utilities::parseUnsignedLong(modImageFileSizeData, &error);
+
+		if(error || modImageFileSize == 0) {
+			spdlog::error("Attribute '{}' in element '{}' has an invalid value: '{}', expected positive integer number.", XML_MOD_IMAGE_FILE_SIZE_ATTRIBUTE_NAME, name, modImageFileSizeData);
+			return nullptr;
+		}
+	}
 
 	uint32_t modImageWidth = Utilities::parseUnsignedInteger(modImageWidthData, &error);
 
@@ -476,7 +532,7 @@ std::unique_ptr<ModImage> ModImage::parseFrom(const tinyxml2::XMLElement * modIm
 	const char * modImageCaption = modImageElement->Attribute(XML_MOD_IMAGE_CAPTION_ATTRIBUTE_NAME.c_str());
 
 	// initialize the mod image
-	std::unique_ptr<ModImage> newModImage = std::make_unique<ModImage>(modImageFileName, static_cast<uint16_t>(modImageWidth), static_cast<uint16_t>(modImageHeight), modImageSHA1 == nullptr ? "" : modImageSHA1);
+	std::unique_ptr<ModImage> newModImage = std::make_unique<ModImage>(modImageFileName, modImageFileSize, static_cast<uint16_t>(modImageWidth), static_cast<uint16_t>(modImageHeight), modImageSHA1 == nullptr ? "" : modImageSHA1);
 
 	if(modImageType != nullptr) {
 		newModImage->setType(modImageType);
@@ -505,7 +561,8 @@ bool ModImage::isValid(const ModImage * i) {
 }
 
 bool ModImage::operator == (const ModImage & i) const {
-	return m_width == i.m_width &&
+	return m_fileSize == i.m_fileSize &&
+		   m_width == i.m_width &&
 		   m_height == i.m_height &&
 		   Utilities::areStringsEqualIgnoreCase(m_fileName, i.m_fileName) &&
 		   Utilities::areStringsEqualIgnoreCase(m_type, i.m_type) &&

@@ -2,8 +2,8 @@
 
 static const std::string XML_MOD_SCREENSHOT_ELEMENT_NAME("screenshot");
 
-ModScreenshot::ModScreenshot(const std::string & fileName, uint16_t width, uint16_t height, const std::string & sha1)
-	: ModImage(fileName, width, height, sha1) { }
+ModScreenshot::ModScreenshot(const std::string & fileName, uint64_t fileSize, uint16_t width, uint16_t height, const std::string & sha1)
+	: ModImage(fileName, fileSize, width, height, sha1) { }
 
 ModScreenshot::ModScreenshot(ModImage && i) noexcept
 	: ModImage(std::move(i)) { }

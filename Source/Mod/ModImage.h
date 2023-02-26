@@ -18,7 +18,7 @@ class ModImage {
 	friend class Mod;
 
 public:
-	ModImage(const std::string & fileName, uint16_t width, uint16_t height, const std::string & sha1 = std::string());
+	ModImage(const std::string & fileName, uint64_t fileSize, uint16_t width, uint16_t height, const std::string & sha1 = std::string());
 	ModImage(ModImage && i) noexcept;
 	ModImage(const ModImage & i);
 	ModImage & operator = (ModImage && i) noexcept;
@@ -26,6 +26,7 @@ public:
 	virtual ~ModImage();
 
 	const std::string & getFileName() const;
+	uint64_t getFileSize() const;
 	const std::string & getType() const;
 	const std::string & getSubfolder() const;
 	const std::string & getCaption() const;
@@ -35,6 +36,7 @@ public:
 	const Mod * getParentMod() const;
 
 	void setFileName(const std::string & fileName);
+	void setFileSize(uint64_t fileSize);
 	void setType(const std::string & type);
 	void setSubfolder(const std::string & subfolder);
 	void setCaption(const std::string & caption);
@@ -60,6 +62,7 @@ protected:
 
 private:
 	std::string m_fileName;
+	uint64_t m_fileSize;
 	std::string m_type;
 	std::string m_subfolder;
 	std::string m_caption;

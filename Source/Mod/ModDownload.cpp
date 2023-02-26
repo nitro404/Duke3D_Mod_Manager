@@ -16,6 +16,7 @@
 
 static const std::string XML_MOD_DOWNLOAD_ELEMENT_NAME("download");
 static const std::string XML_MOD_DOWNLOAD_FILE_NAME_ATTRIBUTE_NAME("filename");
+static const std::string XML_MOD_DOWNLOAD_FILE_SIZE_ATTRIBUTE_NAME("filesize");
 static const std::string XML_MOD_DOWNLOAD_PART_NUMBER_ATTRIBUTE_NAME("part");
 static const std::string XML_MOD_DOWNLOAD_PART_COUNT_ATTRIBUTE_NAME("numparts");
 static const std::string XML_MOD_DOWNLOAD_VERSION_ATTRIBUTE_NAME("version");
@@ -27,8 +28,9 @@ static const std::string XML_MOD_DOWNLOAD_SHA1_ATTRIBUTE_NAME("sha1");
 static const std::string XML_MOD_DOWNLOAD_CONVERTED_ATTRIBUTE_NAME("state");
 static const std::string XML_MOD_DOWNLOAD_CORRUPTED_ATTRIBUTE_NAME("corrupted");
 static const std::string XML_MOD_DOWNLOAD_REPAIRED_ATTRIBUTE_NAME("repaired");
-static const std::array<std::string_view, 12> XML_MOD_DOWNLOAD_ATTRIBUTE_NAMES = {
+static const std::array<std::string_view, 13> XML_MOD_DOWNLOAD_ATTRIBUTE_NAMES = {
 	XML_MOD_DOWNLOAD_FILE_NAME_ATTRIBUTE_NAME,
+	XML_MOD_DOWNLOAD_FILE_SIZE_ATTRIBUTE_NAME,
 	XML_MOD_DOWNLOAD_PART_NUMBER_ATTRIBUTE_NAME,
 	XML_MOD_DOWNLOAD_PART_COUNT_ATTRIBUTE_NAME,
 	XML_MOD_DOWNLOAD_VERSION_ATTRIBUTE_NAME,
@@ -43,6 +45,7 @@ static const std::array<std::string_view, 12> XML_MOD_DOWNLOAD_ATTRIBUTE_NAMES =
 };
 
 static constexpr const char * JSON_MOD_DOWNLOAD_FILE_NAME_PROPERTY_NAME = "fileName";
+static constexpr const char * JSON_MOD_DOWNLOAD_FILE_SIZE_PROPERTY_NAME = "fileSize";
 static constexpr const char * JSON_MOD_DOWNLOAD_TYPE_PROPERTY_NAME = "type";
 static constexpr const char * JSON_MOD_DOWNLOAD_SHA1_PROPERTY_NAME = "sha1";
 static constexpr const char * JSON_MOD_DOWNLOAD_PART_NUMBER_PROPERTY_NAME = "partNumber";
@@ -54,8 +57,9 @@ static constexpr const char * JSON_MOD_DOWNLOAD_GAME_VERSION_PROPERTY_NAME = "ga
 static constexpr const char * JSON_MOD_DOWNLOAD_CONVERTED_PROPERTY_NAME = "converted";
 static constexpr const char * JSON_MOD_DOWNLOAD_CORRUPTED_PROPERTY_NAME = "corrupted";
 static constexpr const char * JSON_MOD_DOWNLOAD_REPAIRED_PROPERTY_NAME = "repaired";
-static const std::array<std::string_view, 12> JSON_MOD_DOWNLOAD_PROPERTY_NAMES = {
+static const std::array<std::string_view, 13> JSON_MOD_DOWNLOAD_PROPERTY_NAMES = {
 	JSON_MOD_DOWNLOAD_FILE_NAME_PROPERTY_NAME,
+	JSON_MOD_DOWNLOAD_FILE_SIZE_PROPERTY_NAME,
 	JSON_MOD_DOWNLOAD_TYPE_PROPERTY_NAME,
 	JSON_MOD_DOWNLOAD_SHA1_PROPERTY_NAME,
 	JSON_MOD_DOWNLOAD_PART_NUMBER_PROPERTY_NAME,
@@ -72,8 +76,9 @@ static const std::array<std::string_view, 12> JSON_MOD_DOWNLOAD_PROPERTY_NAMES =
 const std::string ModDownload::ORIGINAL_FILES_TYPE("Original Files");
 const std::string ModDownload::MOD_MANAGER_FILES_TYPE("Mod Manager Files");
 
-ModDownload::ModDownload(const std::string & fileName, const std::string & type, const std::string & sha1)
+ModDownload::ModDownload(const std::string & fileName, uint64_t fileSize, const std::string & type, const std::string & sha1)
 	: m_fileName(Utilities::trimString(fileName))
+	, m_fileSize(fileSize)
 	, m_partNumber(1)
 	, m_partCount(1)
 	, m_type(Utilities::trimString(type))
@@ -82,6 +87,7 @@ ModDownload::ModDownload(const std::string & fileName, const std::string & type,
 
 ModDownload::ModDownload(ModDownload && d) noexcept
 	: m_fileName(std::move(d.m_fileName))
+	, m_fileSize(d.m_fileSize)
 	, m_partNumber(d.m_partNumber)
 	, m_partCount(d.m_partCount)
 	, m_version(std::move(d.m_version))
@@ -97,6 +103,7 @@ ModDownload::ModDownload(ModDownload && d) noexcept
 
 ModDownload::ModDownload(const ModDownload & d)
 	: m_fileName(d.m_fileName)
+	, m_fileSize(d.m_fileSize)
 	, m_partNumber(d.m_partNumber)
 	, m_partCount(d.m_partCount)
 	, m_version(d.m_version)
@@ -113,6 +120,7 @@ ModDownload::ModDownload(const ModDownload & d)
 ModDownload & ModDownload::operator = (ModDownload && d) noexcept {
 	if(this != &d) {
 		m_fileName = std::move(d.m_fileName);
+		m_fileSize = d.m_fileSize;
 		m_partNumber = d.m_partNumber;
 		m_partCount = d.m_partCount;
 		m_version = std::move(d.m_version);
@@ -131,6 +139,7 @@ ModDownload & ModDownload::operator = (ModDownload && d) noexcept {
 
 ModDownload & ModDownload::operator = (const ModDownload & d) {
 	m_fileName = d.m_fileName;
+	m_fileSize = d.m_fileSize;
 	m_partNumber = d.m_partNumber;
 	m_partCount = d.m_partCount;
 	m_version = d.m_version;
@@ -152,6 +161,10 @@ ModDownload::~ModDownload() {
 
 const std::string & ModDownload::getFileName() const {
 	return m_fileName;
+}
+
+uint64_t ModDownload::getFileSize() const {
+	return m_fileSize;
 }
 
 uint8_t ModDownload::getPartNumber() const {
@@ -260,6 +273,10 @@ void ModDownload::setFileName(const std::string & fileName) {
 	m_fileName = Utilities::trimString(fileName);
 }
 
+void ModDownload::setFileSize(uint64_t fileSize) {
+	m_fileSize = fileSize;
+}
+
 void ModDownload::setPartNumber(uint8_t partNumber) {
 	m_partNumber = partNumber;
 }
@@ -326,6 +343,8 @@ rapidjson::Value ModDownload::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::C
 	rapidjson::Value fileNameValue(m_fileName.c_str(), allocator);
 	modDownloadValue.AddMember(rapidjson::StringRef(JSON_MOD_DOWNLOAD_FILE_NAME_PROPERTY_NAME), fileNameValue, allocator);
 
+	modDownloadValue.AddMember(rapidjson::StringRef(JSON_MOD_DOWNLOAD_FILE_SIZE_PROPERTY_NAME), rapidjson::Value(m_fileSize), allocator);
+
 	rapidjson::Value typeValue(m_type.c_str(), allocator);
 	modDownloadValue.AddMember(rapidjson::StringRef(JSON_MOD_DOWNLOAD_TYPE_PROPERTY_NAME), typeValue, allocator);
 
@@ -383,6 +402,10 @@ tinyxml2::XMLElement * ModDownload::toXML(tinyxml2::XMLDocument * document) cons
 	tinyxml2::XMLElement * modDownloadElement = document->NewElement(XML_MOD_DOWNLOAD_ELEMENT_NAME.c_str());
 
 	modDownloadElement->SetAttribute(XML_MOD_DOWNLOAD_FILE_NAME_ATTRIBUTE_NAME.c_str(), m_fileName.c_str());
+
+	if(m_fileSize != 0) {
+		modDownloadElement->SetAttribute(XML_MOD_DOWNLOAD_FILE_SIZE_ATTRIBUTE_NAME.c_str(), m_fileSize);
+	}
 
 	if(!m_version.empty()) {
 		modDownloadElement->SetAttribute(XML_MOD_DOWNLOAD_VERSION_ATTRIBUTE_NAME.c_str(), m_version.c_str());
@@ -510,8 +533,28 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const rapidjson::Value & mod
 		return nullptr;
 	}
 
+	// parse mod download file size
+	if(!modDownloadValue.HasMember(JSON_MOD_DOWNLOAD_FILE_SIZE_PROPERTY_NAME)) {
+		spdlog::error("Mod download is missing '{}' property'.", JSON_MOD_DOWNLOAD_FILE_SIZE_PROPERTY_NAME);
+		return nullptr;
+	}
+
+	const rapidjson::Value & modDownloadFileSizeValue = modDownloadValue[JSON_MOD_DOWNLOAD_FILE_SIZE_PROPERTY_NAME];
+
+	if(!modDownloadFileSizeValue.IsUint64()) {
+		spdlog::error("Mod download has an invalid '{}' property type: '{}', expected unsigned long 'number'.", JSON_MOD_DOWNLOAD_FILE_SIZE_PROPERTY_NAME, Utilities::typeToString(modDownloadFileSizeValue.GetType()));
+		return nullptr;
+	}
+
+	uint64_t modDownloadFileSize = modDownloadFileSizeValue.GetUint64();
+
+	if(modDownloadFileSize == 0) {
+		spdlog::error("Mod download has an invalid '{}' property value, expected positive integer value.", JSON_MOD_DOWNLOAD_FILE_SIZE_PROPERTY_NAME);
+		return nullptr;
+	}
+
 	// initialize the mod download
-	std::unique_ptr<ModDownload> newModDownload = std::make_unique<ModDownload>(modDownloadFileName, modDownloadType, modDownloadSHA1);
+	std::unique_ptr<ModDownload> newModDownload = std::make_unique<ModDownload>(modDownloadFileName, modDownloadFileSize, modDownloadType, modDownloadSHA1);
 
 	bool error = false;
 
@@ -717,9 +760,22 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const tinyxml2::XMLElement *
 	const char * modDownloadPartCountData = modDownloadElement->Attribute(XML_MOD_DOWNLOAD_PART_COUNT_ATTRIBUTE_NAME.c_str());
 	const char * modDownloadCorruptedData = modDownloadElement->Attribute(XML_MOD_DOWNLOAD_CORRUPTED_ATTRIBUTE_NAME.c_str());
 	const char * modDownloadRepairedData = modDownloadElement->Attribute(XML_MOD_DOWNLOAD_REPAIRED_ATTRIBUTE_NAME.c_str());
+	const char * modDownloadFileSizeData = modDownloadElement->Attribute(XML_MOD_DOWNLOAD_FILE_SIZE_ATTRIBUTE_NAME.c_str());
+	
+	bool error = false;
+	uint64_t modDownloadFileSize = 0;
+
+	if(Utilities::stringLength(modDownloadFileSizeData) != 0) {
+		modDownloadFileSize = Utilities::parseUnsignedLong(modDownloadFileSizeData, &error);
+
+		if(error || modDownloadFileSize == 0) {
+			spdlog::error("Attribute '{}' in element '{}' has an invalid value: '{}', expected positive integer number.", XML_MOD_DOWNLOAD_FILE_SIZE_ATTRIBUTE_NAME, XML_MOD_DOWNLOAD_ELEMENT_NAME, modDownloadFileSizeData);
+			return nullptr;
+		}
+	}
 
 	// initialize the mod download
-	std::unique_ptr<ModDownload> newModDownload = std::make_unique<ModDownload>(modDownloadFileName, modDownloadType, modDownloadSHA1 == nullptr ? "" : modDownloadSHA1);
+	std::unique_ptr<ModDownload> newModDownload = std::make_unique<ModDownload>(modDownloadFileName, modDownloadFileSize, modDownloadType, modDownloadSHA1 == nullptr ? "" : modDownloadSHA1);
 
 	if(modDownloadVersion != nullptr) {
 		newModDownload->setVersion(modDownloadVersion);
@@ -736,8 +792,6 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const tinyxml2::XMLElement *
 	if(modDownloadGameVersion != nullptr) {
 		newModDownload->setGameVersion(modDownloadGameVersion);
 	}
-
-	bool error = false;
 
 	if(modDownloadPartCountData != nullptr) {
 		uint32_t partCount = Utilities::parseUnsignedInteger(modDownloadPartCountData, &error);
@@ -816,12 +870,13 @@ bool ModDownload::isValid(const ModDownload * d) {
 }
 
 bool ModDownload::operator == (const ModDownload & d) const {
-	return Utilities::areStringsEqualIgnoreCase(m_fileName, d.m_fileName) &&
+	return m_fileSize == d.m_fileSize &&
 		   m_partNumber == d.m_partNumber &&
 		   m_partCount == d.m_partCount &&
 		   m_converted == d.m_converted &&
 		   m_corrupted == d.m_corrupted &&
 		   m_repaired == d.m_repaired &&
+		   Utilities::areStringsEqualIgnoreCase(m_fileName, d.m_fileName) &&
 		   Utilities::areStringsEqualIgnoreCase(m_version, d.m_version) &&
 		   Utilities::areStringsEqualIgnoreCase(m_versionType, d.m_versionType) &&
 		   Utilities::areStringsEqualIgnoreCase(m_special, d.m_special) &&
