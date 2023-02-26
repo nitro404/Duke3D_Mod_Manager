@@ -10,6 +10,7 @@
 
 class Mod;
 class ModVersion;
+class ModVersionType;
 
 namespace tinyxml2 {
 	class XMLDocument;
@@ -20,7 +21,7 @@ class ModDownload final {
 	friend class Mod;
 
 public:
-	ModDownload(const std::string & fileName, const std::string & type, const std::string & sha1 = std::string());
+	ModDownload(const std::string & fileName, const std::string & type, const std::string & sha1 = {});
 	ModDownload(ModDownload && d) noexcept;
 	ModDownload(const ModDownload & d);
 	ModDownload & operator = (ModDownload && d) noexcept;
@@ -31,6 +32,7 @@ public:
 	uint8_t getPartNumber() const;
 	uint8_t getPartCount() const;
 	const std::string & getVersion() const;
+	const std::string & getVersionType() const;
 	const std::string & getSpecial() const;
 	const std::string & getGameVersion() const;
 	const std::string & getType() const;
@@ -47,11 +49,13 @@ public:
 	std::optional<bool> getRepaired() const;
 	const Mod * getParentMod() const;
 	std::shared_ptr<ModVersion> getModVersion() const;
+	std::shared_ptr<ModVersionType> getModVersionType() const;
 
 	void setFileName(const std::string & fileName);
 	void setPartNumber(uint8_t partNumber);
 	void setPartCount(uint8_t partCount);
 	void setVersion(const std::string & version);
+	void setVersionType(const std::string & versionType);
 	void setSpecial(const std::string & special);
 	void setGameVersion(const std::string & data);
 	void setType(const std::string & type);
@@ -85,6 +89,7 @@ private:
 	uint8_t m_partNumber;
 	uint8_t m_partCount;
 	std::string m_version;
+	std::string m_versionType;
 	std::string m_special;
 	std::string m_gameVersion;
 	std::string m_type;

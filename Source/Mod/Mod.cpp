@@ -744,13 +744,21 @@ std::shared_ptr<ModVersion> Mod::getModVersionForDownload(const ModDownload * mo
 		return nullptr;
 	}
 
+	return getVersion(modDownload->getVersion());
+}
+
+std::shared_ptr<ModVersionType> Mod::getModVersionTypeForDownload(const ModDownload * modDownload) const {
+	if(!ModDownload::isValid(modDownload) || modDownload->getParentMod() != this) {
+		return nullptr;
+	}
+
 	std::shared_ptr<ModVersion> modVersion(getVersion(modDownload->getVersion()));
 
 	if(modVersion == nullptr) {
 		return nullptr;
 	}
 
-	return modVersion;
+	return modVersion->getType(modDownload->getVersionType());
 }
 
 const std::vector<std::shared_ptr<ModDownload>> & Mod::getDownloads() const {

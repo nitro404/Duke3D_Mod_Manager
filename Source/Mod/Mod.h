@@ -20,6 +20,7 @@ class ModScreenshot;
 class ModTeam;
 class ModTeamMember;
 class ModVersion;
+class ModVersionType;
 class ModVideo;
 
 namespace tinyxml2 {
@@ -97,6 +98,7 @@ public:
 	std::optional<std::string> getDownloadFileNameByType(const std::string & type) const;
 	std::shared_ptr<ModDownload> getDownloadForGameVersion(const ModGameVersion * modGameVersion) const;
 	std::shared_ptr<ModVersion> getModVersionForDownload(const ModDownload * modDownload) const;
+	std::shared_ptr<ModVersionType> getModVersionTypeForDownload(const ModDownload * modDownload) const;
 	const std::vector<std::shared_ptr<ModDownload>> & getDownloads() const;
 	bool addDownload(const ModDownload & download);
 	bool removeDownload(size_t index);
