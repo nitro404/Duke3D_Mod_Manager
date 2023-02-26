@@ -1065,7 +1065,7 @@
 		</files>
 		<downloads>
 			<download filename="doomduke20.zip" version="2.0" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="6b5f72136ef48a524df5e77fbaaf33f48ffcffbc"/>
-			<download filename="doomduke21.zip" version="2.1" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="c22b8bbefb1c875d715e53024d5a02cc1762c96d"/>
+			<download filename="doomduke21.zip" version="2.1" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="95ddf33977caea6c1e43f0211e1a2163c07b9970"/>
 			<download filename="doomduke21_patch.zip" version="2.1" special="Patch" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="c22b8bbefb1c875d715e53024d5a02cc1762c96d"/>
 			<download filename="doomduke30.zip" version="3.0" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="c2b5c8b0d0c7b17226bab86aabaa2d533e739312"/>
 			<download filename="doom31.zip" version="3.1" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="08583569833f1a71f27c19f7b5d36a8a21fd5764"/>
@@ -3291,7 +3291,7 @@
 		<downloads>
 			<download filename="rtechtc.zip" version="1.0" game="Regular Version 1.3" type="Original Files" sha1="5456088b974731190384cb889faa0fde6ada98c6"/>
 			<download filename="robtcat.zip" version="1.0" special="Atomic Edition Patch" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="2c2c058551dfd8560cb581f1b1d1bba5820dea1e"/>
-			<download filename="rtechv2.zip" special="Map Pack" type="Maps" sha1="878de61fa2a3874dd4ec260c5587dd6560c87a48"/>
+			<download filename="rtechv2.zip" special="Map Pack" version="1.0" type="Maps" sha1="878de61fa2a3874dd4ec260c5587dd6560c87a48"/>
 			<download filename="Robotech_1.0-ModMgrR.zip" version="1.0" game="Regular Version 1.3" type="Mod Manager Files" state="Native" sha1="00ef5bab8208375a9433d8a8527bb3368b016945"/>
 			<download filename="Robotech_1.0-ModMgrA.zip" version="1.0" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" sha1="99032274e11ba19e5c14ea934e0a3d4e4d9e1874"/>
 		</downloads>
@@ -3955,9 +3955,9 @@
 			<download filename="grune.exe" version="1.2" special="Full Installer" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="568d3e7304e634f092a897686172d70938c4fd17"/>
 			<download filename="patch12.zip" version="1.2" special="Patch" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="c0f15d8605b73872aeac5bfe0863fbc5a99c2117"/>
 			<download filename="grune.sea" version="1.2" type="Mac Version" sha1="db839895ad7fc882eca9c071e3ca1e5aa0eddb7b"/>
-			<download filename="demowalk.zip" special="Demo Walkthrough" type="Map" sha1="68a5af07e7a8c688385da22c8d4244fdb0bf0e1a"/>
-			<download filename="gruguide.zip" special="Strategy Guide" type="Documentation" sha1="c2f4d3ad95fa1c0f6ab86ef6d4b0634439ca5cb2"/>
-			<download filename="gsecrets.zip" special="Secrets" type="Documentation" sha1="884b760f093c750e4f05514dab71a2c6e33b0cd6"/>
+			<download filename="demowalk.zip" special="Demo Walkthrough" version="1.2" type="Map" sha1="68a5af07e7a8c688385da22c8d4244fdb0bf0e1a"/>
+			<download filename="gruguide.zip" special="Strategy Guide" version="1.2" type="Documentation" sha1="c2f4d3ad95fa1c0f6ab86ef6d4b0634439ca5cb2"/>
+			<download filename="gsecrets.zip" special="Secrets" version="1.2" type="Documentation" sha1="884b760f093c750e4f05514dab71a2c6e33b0cd6"/>
 			<download filename="The_Realm_of_Grune_1.2-ModMgrA.zip" version="1.2" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="6304eafe1c85e09bddd650a65696092d7b04feec"/>
 		</downloads>
 	</mod>
@@ -6226,15 +6226,15 @@
 			<download filename="dmp2__2.zip" version="2.2" part="2" numparts="4" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="5d687a7b8cfbf7c1ede7f28f0150ba9f62f733b8"/>
 			<download filename="dmp2__3.zip" version="2.2" part="3" numparts="4" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="bef5e6b8bdb670123dd6b764bd6424a92b11e8a7"/>
 			<download filename="dmp2__4.zip" version="2.2" part="4" numparts="4" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="848aa979c7f3c3d24210073691e6beed25991614"/>
-			<download filename="upddmp23.zip" special="2.2 - 2.3 Update" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="a3201e028b6404600545a156abdb7c4d09f7e9da"/>
 			<download filename="doomdmp.zip" version="2.3" special="Full" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="46876bf9171cfe80942d76a6e77150fe292728b6"/>
-			<download filename="updmp23a.zip" special="2.2 - 2.3a Update" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="0d86d92cecbe0d1405c67c9038c941923d675d35"/>
+			<download filename="upddmp23.zip" version="2.3" special="2.2 - 2.3 Update" game="Atomic Edition 1.4/1.5" type="Patch" sha1="a3201e028b6404600545a156abdb7c4d09f7e9da"/>
 			<download filename="doomd23a.zip" version="2.3a" special="Full" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="e1e96825bf186d3bda2f918e448f3718a14a035d"/>
+			<download filename="updmp23a.zip" version="2.3a" special="2.2 - 2.3a Update" game="Atomic Edition 1.4/1.5" type="Patch" sha1="0d86d92cecbe0d1405c67c9038c941923d675d35"/>
 			<download filename="lck2__1.zip" part="1" numparts="4" special="Level Creation Kit" type="Level Creation Kit" sha1="0a056c6e53f789a2802c6fbd69a0bb2b2a22268a"/>
 			<download filename="lck2__2.zip" part="2" numparts="4" special="Level Creation Kit" type="Level Creation Kit" sha1="8b113de476de032149023d641aa79f0a4d60869d"/>
 			<download filename="lck2__3.zip" part="3" numparts="4" special="Level Creation Kit" type="Level Creation Kit" sha1="6a88ce532a4c00bd5a979af4fc84a894abe398e6"/>
 			<download filename="lck2__4.zip" part="4" numparts="4" special="Level Creation Kit" type="Level Creation Kit" sha1="40a3cc9d908c5d477e0216639e55f4b930be238f"/>
-			<download filename="doomlck2.zip" special="Level Creation Kit Full" type="Level Creation Kit" sha1="c5f8d918a8b91901f16f5645939936ed2e929d51"/>
+			<download filename="doomlck2.zip" special="Level Creation Kit" type="Level Creation Kit" sha1="c5f8d918a8b91901f16f5645939936ed2e929d51"/>
 			<download filename="unf_dmpm.zip" special="Unfinished Maps" type="Maps" sha1="bd52275a6e6182d12b53b89e061ede53ad9bbf5d"/>
 			<download filename="DOOM_Death_Match_Pack_2.2-ModMgrA.zip" version="2.2" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="f1d56301d944377e1889ee42b84262fcadce6ad3"/>
 			<download filename="DOOM_Death_Match_Pack_2.3-ModMgrA.zip" version="2.3" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="28704eb50ff31a45afb8c36302efaa12eace17a4"/>
@@ -6408,8 +6408,8 @@
 		</files>
 		<downloads>
 			<download filename="evilp.zip" version="Incomplete" special="Damaged Archive" corrupted="true" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="be9692e58a539930b5363a7cd1e7752d51d00d08"/>
-			<download filename="evilpeople_arts.rar" special="Recovered Art Files" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="d183a27c95b7e634355f2ff9650499a4df644a23"/>
-			<download filename="new weapons for duke nukem 3D atomic.zip" special="Recovered Weapon Files" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="4eed6c3d609fc5b7234f0d0816c4b3fd3c4e9efd"/>
+			<download filename="evilpeople_arts.rar" special="Recovered Art Files" version="Incomplete" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="d183a27c95b7e634355f2ff9650499a4df644a23"/>
+			<download filename="new weapons for duke nukem 3D atomic.zip" special="Recovered Weapon Files" version="Incomplete" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="4eed6c3d609fc5b7234f0d0816c4b3fd3c4e9efd"/>
 			<download filename="Evil_People_Repaired-ModMgrA.zip" version="Incomplete" repaired="true" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="bef5f35cd3aeef12cd557a487df09a1a81946b01"/>
 		</downloads>
 		<related>
@@ -6830,10 +6830,10 @@
 		<downloads>
 			<download filename="dt-test.zip" version="Test Demo" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="fdb873b0c7294b9c7c845c4e7871bbf9dae9580b"/>
 			<download filename="dtfull.zip" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="6fa921ab607a192c7839968efb21d9cda348a1aa"/>
-			<download filename="dtadd-on.zip" special="Dukematch 2000 Mission Pack" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="7f826b0275e179fd918a8f6a0e38da36fd8fa366"/>
+			<download filename="dtadd-on.zip" version_type="Dukematch 2000 Mission Pack" game="Atomic Edition 1.4/1.5" type="Maps" sha1="7f826b0275e179fd918a8f6a0e38da36fd8fa366"/>
 			<download filename="Duke_Tournament_Test_Demo-ModMgrA.zip" version="Test Demo" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="ab2af72350fb9c726db0bd14de3a7ea23b1cbda2"/>
 			<download filename="Duke_Tournament-ModMgrA.zip" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="7681622f0b65311997de15f6b0f0d7fe3a5b3024"/>
-			<download filename="Duke_Tournament_Dukematch_2000_Mission_Pack-ModMgrA.zip" special="Dukematch 2000 Mission Pack" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="c97cc13381406ecff2198d607491ac62c523c3fa"/>
+			<download filename="Duke_Tournament_Dukematch_2000_Mission_Pack-ModMgrA.zip" version_type="Dukematch 2000 Mission Pack" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="c97cc13381406ecff2198d607491ac62c523c3fa"/>
 		</downloads>
 	</mod>
 	<mod name="Eye of Cul" id="eye_of_cul" type="Episode" website="http://www.geocities.com/eyedecul/duke3d/duke3d.html">
@@ -9089,7 +9089,7 @@
 			</version>
 		</files>
 		<downloads>
-			<download filename="LAME95REDUX.ZIP" game="eDuke32" type="Original Files" sha1="f35a1f3a9add6c7a9fe0a258de1b7c61b577721b"/>
+			<download filename="LAMEDUKE_REDUX.ZIP" game="eDuke32" type="Original Files" sha1="f35a1f3a9add6c7a9fe0a258de1b7c61b577721b"/>
 			<download filename="Lameduke_95_Redux-ModMgrE.zip" game="eDuke32" type="Mod Manager Files" state="Native" sha1="1366a320fac7e893cb7276fa9bde71b2c6147d3d"/>
 		</downloads>
 		<related>
@@ -9361,8 +9361,8 @@
 						<file name="EXPLORER.GRP" type="grp" sha1="b9036f1297e8f29f02f500f8c97bb4221574b2b2"/>
 					</game>
 					<game type="Atomic Edition 1.4/1.5" state="Native">
-						<file name="EXPLORER.CON" type="con" sha1="3614001334f62b43493b9fb219340bac06a67b33"/>
-						<file name="EXPLORER.GRP" type="grp" sha1="b9036f1297e8f29f02f500f8c97bb4221574b2b2"/>
+						<file name="EXPLORER.CON" type="con" sha1="d46bcc2ebf98613ed08771d649bcacadea3c73ec"/>
+						<file name="EXPLORER.GRP" type="grp" sha1="adadda1ccfb045130fcde1f1ae8ac1c082bba752"/>
 					</game>
 				</type>
 			</version>
@@ -9451,7 +9451,7 @@
 		</files>
 		<downloads>
 			<download filename="BACKINBUSINESS.ZIP" version="1.0" game="eDuke32" type="Original Files" sha1="286e13c7590581f139287139cff34a63e37287b3"/>
-			<download filename="BACKINBUSINESS_ALTERNATIVE_MUSIC.zip" special="Music Patch" game="eDuke32" type="Original Files" sha1="7604825bba4f5b5051074c8adcb9c535d14423f8"/>
+			<download filename="BACKINBUSINESS_ALTERNATIVE_MUSIC.zip" special="Music Patch" version="1.0" game="eDuke32" type="Original Files" sha1="7604825bba4f5b5051074c8adcb9c535d14423f8"/>
 			<download filename="Back_in_Business_1.0-ModMgrE.zip" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b22720c554a5a579cf809c14d314fb646a7c616e"/>
 		</downloads>
 	</mod>
@@ -9710,9 +9710,9 @@
 			<version release_date="September 4, 2010">
 				<type>
 					<game type="eDuke32" state="Native">
-						<file name="DUKEBIKE.CON" type="con" sha1="3662ae914dc3a13e7915fd1fdec892c415a7e956"/>
+						<file name="DUKEBIKE.CON" type="con" sha1="523ee905002fc237974f3cfde4769111ccb24c48"/>
 						<file name="dukebike.def" type="def" sha1="cacc71aa1a097abd4fc2e75cf5706f9760da5032"/>
-						<file name="Dukebike.zip" type="zip" sha1="bb02b6daff5cf667a6382d498572f279edfbad05"/>
+						<file name="Dukebike.zip" type="zip" sha1="c63df86e9c53a84d38969168dc205d311b1ede82"/>
 					</game>
 				</type>
 			</version>
@@ -10043,7 +10043,7 @@
 				<type>
 					<game type="eDuke32" state="Native">
 						<file name="KEEPERTC.CON" type="con" sha1="c1116e0381bc5b3e642acf6f3786cd57c9144c4a"/>
-						<file name="KEEPER01.GRP" type="zip" sha1="29a61c6d5b5e84dca4049a3e94700f12ab13d92b"/>
+						<file name="KEEPER01.GRP" type="grp" sha1="29a61c6d5b5e84dca4049a3e94700f12ab13d92b"/>
 					</game>
 				</type>
 			</version>
@@ -10662,7 +10662,7 @@
 				<type>
 					<game type="Regular Version 1.3" state="Native">
 						<file name="LIQUID3D.CON" type="con" sha1="01fb6136e59039ccff474f6cb7ced4df1ddb8381"/>
-						<file name="LIQUID3D.GRP" type="grp" sha1="f6f6372ffa0caaafe4c71a019de4fca4860d99e5"/>
+						<file name="LIQUID3D.GRP" type="grp" sha1="bf3d647b008cc459723c727494756779729475e9"/>
 					</game>
 					<game type="Atomic Edition 1.4/1.5" state="Converted">
 						<file name="LIQUID3D.CON" type="con" sha1="4873e7ec30dc1c3e36b37145ef05683b7f47fcb1"/>
@@ -10755,7 +10755,7 @@
 		<files>
 			<version id="1.3.96" release_date="December 23, 2001">
 				<game type="Beta 1.3.95 (LameDuke)" state="Native">
-					<file name="ALTDK96.GRP" type="grp" sha1="754532c477d3955a7ba9d09f35d8c1b4b47d1fe4"/>
+					<file name="ALTDK96.GRP" type="grp" sha1="d3e90f127fdab1ec5792755b0bc6be8ee1f9fa0a"/>
 				</game>
 			</version>
 		</files>
@@ -10771,7 +10771,7 @@
 		<files>
 			<version id="1.3.97" release_date="February 6, 2002">
 				<game type="Beta 1.3.95 (LameDuke)" state="Native">
-					<file name="ALTDK97.GRP" type="grp" sha1="7620543e93c6a5fbf9116c9c1d4cfb270cb05fb7"/>
+					<file name="ALTDK97.GRP" type="grp" sha1="45134970905733982fd02b7c43ef7787ff833493"/>
 				</game>
 			</version>
 		</files>
