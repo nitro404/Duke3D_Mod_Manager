@@ -193,6 +193,33 @@
 					]
 				}
 			]
+		},
+		{
+			"name": "Belgian Chocolate Duke3D",
+			"versions": [
+				{
+					"version": "2022.07.27 ",
+					"releaseDate": "July 27, 2022",
+					"files": [
+						{
+							"fileName": "chocoduke3d_win64_20220727.zip",
+							"fileSize": 1064642,
+							"type": "Game",
+							"sha1": "0e7df761fe8342331cbee764d26a8fc716b70706",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x64"
+						},
+						{
+							"fileName": "chocoduke3d_win32_20220727.zip",
+							"fileSize": 937057,
+							"type": "Game",
+							"sha1": "4bce776cb3cc8a0a5de88b3f17db809c57745dac",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x86"
+						}
+					]
+				}
+			]
 		}
 	]
 }
