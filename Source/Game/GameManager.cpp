@@ -193,7 +193,8 @@ static const std::array<GameFileInformation, 103> LAMEDUKE_GAME_FILE_INFO_LIST =
 };
 
 GameManager::GameManager()
-	: m_initialized(false) { }
+	: m_initialized(false)
+	, m_gameVersions(std::make_shared<GameVersionCollection>()) { }
 
 GameManager::~GameManager() { }
 
@@ -201,12 +202,28 @@ bool GameManager::isInitialized() const {
 	return m_initialized;
 }
 
-bool GameManager::initialize(std::shared_ptr<GameVersionCollection> gameVersions) {
-	if(m_initialized || !GameVersionCollection::isValid(gameVersions.get())) {
-		return false;
+bool GameManager::initialize() {
+	if(m_initialized) {
+		return true;
 	}
 
-	m_gameVersions = gameVersions;
+	SettingsManager * settings = SettingsManager::getInstance();
+
+	bool gameVersionsLoaded = m_gameVersions->loadFrom(settings->gameVersionsListFilePath);
+
+	if(!gameVersionsLoaded || m_gameVersions->numberOfGameVersions() == 0) {
+		if(!gameVersionsLoaded) {
+			spdlog::warn("Missing or invalid game versions configuration file '{}', using default values.", settings->gameVersionsListFilePath);
+		}
+		else if(m_gameVersions->numberOfGameVersions() == 0) {
+			spdlog::warn("Empty game versions configuration file '{}', using default values.", settings->gameVersionsListFilePath);
+		}
+
+		// use default game version configurations
+		m_gameVersions->setDefaultGameVersions();
+	}
+
+	m_gameVersions->addMissingDefaultGameVersions();
 
 	m_initialized = true;
 

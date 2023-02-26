@@ -76,11 +76,10 @@ ModManager::ModManager()
 	, m_selectedModVersionTypeIndex(std::numeric_limits<size_t>::max())
 	, m_selectedModGameVersionIndex(std::numeric_limits<size_t>::max())
 	, m_dosboxManager(std::make_shared<DOSBoxManager>())
-	, m_gameVersions(std::make_shared<GameVersionCollection>())
 	, m_gameManager(std::make_shared<GameManager>())
 	, m_mods(std::make_shared<ModCollection>())
 	, m_favouriteMods(std::make_shared<FavouriteModCollection>())
-	, m_organizedMods(std::make_shared<OrganizedModCollection>(m_mods, m_favouriteMods, m_gameVersions)) {
+	, m_organizedMods(std::make_shared<OrganizedModCollection>(m_mods, m_favouriteMods, getGameVersions())) {
 	assignPlatformFactories();
 
 	FactoryRegistry::getInstance().setFactory<SettingsManager>([]() {
@@ -91,9 +90,9 @@ ModManager::ModManager()
 }
 
 ModManager::~ModManager() {
-	m_dosboxManager->getDOSBoxVersions()->removeListener(*this);
+	getDOSBoxVersions()->removeListener(*this);
+	getGameVersions()->removeListener(*this);
 	m_organizedMods->removeListener(*this);
-	m_gameVersions->removeListener(*this);
 
 	SegmentAnalytics::destroyInstance();
 }
@@ -248,7 +247,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 		return false;
 	}
 
-	std::shared_ptr<DOSBoxVersionCollection> dosboxVersions(m_dosboxManager->getDOSBoxVersions());
+	std::shared_ptr<DOSBoxVersionCollection> dosboxVersions(getDOSBoxVersions());
 
 	m_preferredDOSBoxVersion = dosboxVersions->getDOSBoxVersionWithName(settings->preferredDOSBoxVersion);
 
@@ -261,36 +260,23 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 
 	dosboxVersions->addListener(*this);
 
-	bool gameVersionsLoaded = m_gameVersions->loadFrom(settings->gameVersionsListFilePath);
-
-	if(!gameVersionsLoaded || m_gameVersions->numberOfGameVersions() == 0) {
-		if(!gameVersionsLoaded) {
-			spdlog::warn("Missing or invalid game versions configuration file '{}', using default values.", settings->gameVersionsListFilePath);
-		}
-		else if(m_gameVersions->numberOfGameVersions() == 0) {
-			spdlog::warn("Empty game versions configuration file '{}', using default values.", settings->gameVersionsListFilePath);
-		}
-
-		// use default game version configurations
-		m_gameVersions->setDefaultGameVersions();
+	if(!m_gameManager->initialize()) {
+		spdlog::error("Failed to initialize game manager!");
+		return false;
 	}
 
-	m_gameVersions->addMissingDefaultGameVersions();
-	m_gameVersions->addListener(*this);
+	std::shared_ptr<GameVersionCollection> gameVersions(getGameVersions());
 
-	m_preferredGameVersion = m_gameVersions->getGameVersionWithName(settings->preferredGameVersion);
+	m_preferredGameVersion = gameVersions->getGameVersionWithName(settings->preferredGameVersion);
 
 	if(m_preferredGameVersion == nullptr) {
-		m_preferredGameVersion = m_gameVersions->getGameVersion(0);
+		m_preferredGameVersion = gameVersions->getGameVersion(0);
 		settings->preferredGameVersion = m_preferredGameVersion->getName();
 
 		spdlog::warn("Game configuration for game version '{}' is missing, changing preferred game version to '{}.", settings->preferredGameVersion, m_preferredGameVersion->getName());
 	}
 
-	if(!m_gameManager->initialize(m_gameVersions)) {
-		spdlog::error("Failed to initialize game manager!");
-		return false;
-	}
+	gameVersions->addListener(*this);
 
 	if(!m_mods->loadFrom(getModsListFilePath())) {
 		spdlog::error("Failed to load mod list '{}'!", getModsListFilePath());
@@ -302,7 +288,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 		return false;
 	}
 
-	if(!m_mods->checkGameVersions(*m_gameVersions)) {
+	if(!m_mods->checkGameVersions(*getGameVersions())) {
 		spdlog::error("Found at least one invalid or missing game version.");
 		return false;
 	}
@@ -386,8 +372,8 @@ bool ModManager::uninitialize() {
 	m_mods->clearMods();
 
 	settings->save(m_arguments.get());
-	m_dosboxManager->getDOSBoxVersions()->saveTo(settings->dosboxVersionsListFilePath);
-	m_gameVersions->saveTo(settings->gameVersionsListFilePath);
+	getDOSBoxVersions()->saveTo(settings->dosboxVersionsListFilePath);
+	getGameVersions()->saveTo(settings->gameVersionsListFilePath);
 
 	if(m_arguments != nullptr) {
 		m_arguments.reset();
@@ -482,7 +468,7 @@ std::shared_ptr<DOSBoxVersion> ModManager::getSelectedDOSBoxVersion() const {
 	if(m_arguments != nullptr && m_arguments->hasArgument("dosbox") && !m_arguments->getFirstValue("dosbox").empty()) {
 		std::string dosboxVersionName(m_arguments->getFirstValue("dosbox"));
 
-		selectedDOSBoxVersion = m_dosboxManager->getDOSBoxVersions()->getDOSBoxVersionWithName(dosboxVersionName);
+		selectedDOSBoxVersion = getDOSBoxVersions()->getDOSBoxVersionWithName(dosboxVersionName);
 
 		if(selectedDOSBoxVersion == nullptr) {
 			spdlog::error("Could not find DOSBox version override for '{}'.", dosboxVersionName);
@@ -511,7 +497,7 @@ bool ModManager::setPreferredDOSBoxVersion(const std::string & dosboxVersionName
 		return false;
 	}
 
-	return setPreferredDOSBoxVersion(m_dosboxManager->getDOSBoxVersions()->getDOSBoxVersionWithName(dosboxVersionName));
+	return setPreferredDOSBoxVersion(getDOSBoxVersions()->getDOSBoxVersionWithName(dosboxVersionName));
 }
 
 bool ModManager::setPreferredDOSBoxVersion(std::shared_ptr<DOSBoxVersion> dosboxVersion) {
@@ -543,7 +529,7 @@ std::shared_ptr<GameVersion> ModManager::getSelectedGameVersion() const {
 	if(m_arguments != nullptr && m_arguments->hasArgument("game") && !m_arguments->getFirstValue("game").empty()) {
 		std::string gameVersionName(m_arguments->getFirstValue("game"));
 
-		selectedGameVersion = m_gameVersions->getGameVersionWithName(gameVersionName);
+		selectedGameVersion = getGameVersions()->getGameVersionWithName(gameVersionName);
 
 		if(selectedGameVersion == nullptr) {
 			spdlog::error("Could not find game version override for '{}'.", gameVersionName);
@@ -572,7 +558,7 @@ bool ModManager::setPreferredGameVersion(const std::string & gameVersionName) {
 		return false;
 	}
 
-	return setPreferredGameVersion(m_gameVersions->getGameVersionWithName(gameVersionName));
+	return setPreferredGameVersion(getGameVersions()->getGameVersionWithName(gameVersionName));
 }
 
 bool ModManager::setPreferredGameVersion(std::shared_ptr<GameVersion> gameVersion) {
@@ -615,7 +601,7 @@ std::shared_ptr<DOSBoxVersionCollection> ModManager::getDOSBoxVersions() const {
 }
 
 std::shared_ptr<GameVersionCollection> ModManager::getGameVersions() const {
-	return m_gameVersions;
+	return m_gameManager->getGameVersions();
 }
 
 std::shared_ptr<GameManager> ModManager::getGameManager() const {
@@ -1424,7 +1410,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	}
 
 	if(!m_localMode && selectedModGameVersion != nullptr) {
-		if(!m_downloadManager->downloadModGameVersion(selectedModGameVersion.get(), m_gameVersions.get())) {
+		if(!m_downloadManager->downloadModGameVersion(selectedModGameVersion.get(), getGameVersions().get())) {
 			spdlog::error("Aborting launch of '{}' mod!", selectedModGameVersion->getFullName());
 			return false;
 		}
@@ -1536,7 +1522,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		return false;
 	}
 
-	if(!createSymlinksOrCopyTemporaryFiles(*m_gameVersions, *selectedGameVersion, selectedModGameVersion.get(), customMap, shouldConfigureApplicationTemporaryDirectory, &temporaryCopiedFilePaths)) {
+	if(!createSymlinksOrCopyTemporaryFiles(*getGameVersions(), *selectedGameVersion, selectedModGameVersion.get(), customMap, shouldConfigureApplicationTemporaryDirectory, &temporaryCopiedFilePaths)) {
 		return false;
 	}
 
@@ -1573,7 +1559,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		std::vector<std::shared_ptr<ModFile>> modFiles(selectedModGameVersion->getFilesOfType("grp"));
 
 		for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = modFiles.begin(); i != modFiles.end(); ++i) {
-			std::string modGroupPath(Utilities::joinPaths(getModsDirectoryPath(), m_gameVersions->getGameVersionWithName(selectedModGameVersion->getGameVersion())->getModDirectoryName(), (*i)->getFileName()));
+			std::string modGroupPath(Utilities::joinPaths(getModsDirectoryPath(), getGameVersions()->getGameVersionWithName(selectedModGameVersion->getGameVersion())->getModDirectoryName(), (*i)->getFileName()));
 			std::unique_ptr<Group> modGroup(Group::loadFrom(modGroupPath));
 
 			if(modGroup != nullptr) {
@@ -2015,7 +2001,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 		return {};
 	}
 
-	if(!GameVersionCollection::isValid(m_gameVersions.get())) {
+	if(!GameVersionCollection::isValid(getGameVersions().get())) {
 		spdlog::error("Invalid game version collection.");
 		return {};
 	}
@@ -2033,7 +2019,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			return {};
 		}
 
-		targetGameVersion = m_gameVersions->getGameVersionWithName(modGameVersion->getGameVersion());
+		targetGameVersion = getGameVersions()->getGameVersionWithName(modGameVersion->getGameVersion());
 
 		if(targetGameVersion == nullptr) {
 			spdlog::error("Missing game configuration for '{}'.", modGameVersion->getGameVersion());
@@ -2602,8 +2588,8 @@ size_t ModManager::checkForUnlinkedModFiles() const {
 
 	size_t numberOfUnlinkedModFiles = 0;
 
-	for(size_t i = 0; i < m_gameVersions->numberOfGameVersions(); i++) {
-		numberOfUnlinkedModFiles += checkForUnlinkedModFilesForGameVersion(*m_gameVersions->getGameVersion(i));
+	for(size_t i = 0; i < getGameVersions()->numberOfGameVersions(); i++) {
+		numberOfUnlinkedModFiles += checkForUnlinkedModFilesForGameVersion(*getGameVersions()->getGameVersion(i));
 	}
 
 	return numberOfUnlinkedModFiles;
@@ -2769,7 +2755,7 @@ size_t ModManager::checkModForMissingFiles(const Mod & mod, std::optional<size_t
 
 			for(size_t k = 0; k < modVersionType->numberOfGameVersions(); k++) {
 				modGameVersion = modVersionType->getGameVersion(k);
-				gameVersion = m_gameVersions->getGameVersionWithName(modGameVersion->getGameVersion());
+				gameVersion = getGameVersions()->getGameVersionWithName(modGameVersion->getGameVersion());
 
 				if(!GameVersion::isValid(gameVersion.get())) {
 					spdlog::warn("Skipping checking invalid '{}' mod game version '{}', invalid game configuration.", mod.getFullName(i, j), modGameVersion->getGameVersion());
@@ -2826,8 +2812,8 @@ size_t ModManager::checkAllModsForMissingFiles() const {
 size_t ModManager::checkForMissingExecutables() const {
 	size_t numberOfMissingExecutables = 0;
 
-	numberOfMissingExecutables += m_dosboxManager->getDOSBoxVersions()->checkForMissingExecutables();
-	numberOfMissingExecutables += m_gameVersions->checkForMissingExecutables();
+	numberOfMissingExecutables += getDOSBoxVersions()->checkForMissingExecutables();
+	numberOfMissingExecutables += getGameVersions()->checkForMissingExecutables();
 
 	return numberOfMissingExecutables++;
 }
@@ -2919,7 +2905,7 @@ size_t ModManager::updateModFileInfo(Mod & mod, bool skipPopulatedFiles, std::op
 				continue;
 			}
 
-			std::shared_ptr<GameVersion> gameVersion(m_gameVersions->getGameVersionWithName(modDownload->getGameVersion()));
+			std::shared_ptr<GameVersion> gameVersion(getGameVersions()->getGameVersionWithName(modDownload->getGameVersion()));
 
 			if(gameVersion == nullptr) {
 				spdlog::warn("Could not find game configuration for game version '{}', skipping update of download file info: '{}'.", modDownload->getGameVersion(), modDownload->getFileName());
@@ -3154,7 +3140,7 @@ size_t ModManager::updateModFileInfo(Mod & mod, bool skipPopulatedFiles, std::op
 
 			for(size_t k = 0; k < modVersionType->numberOfGameVersions(); k++) {
 				std::shared_ptr<ModGameVersion> modGameVersion(modVersionType->getGameVersion(k));
-				std::shared_ptr<GameVersion> gameVersion(m_gameVersions->getGameVersionWithName(modGameVersion->getGameVersion()));
+				std::shared_ptr<GameVersion> gameVersion(getGameVersions()->getGameVersionWithName(modGameVersion->getGameVersion()));
 
 				if(!GameVersion::isValid(gameVersion.get())) {
 					spdlog::warn("Mod '{}' game version #{} is not valid, skipping update of mod files info.", mod.getFullName(i, j), k + 1);
@@ -3974,7 +3960,7 @@ void ModManager::selectedModChanged(const std::shared_ptr<Mod> & mod) {
 }
 
 void ModManager::dosboxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection) {
-	std::shared_ptr<DOSBoxVersionCollection> dosboxVersions(m_dosboxManager->getDOSBoxVersions());
+	std::shared_ptr<DOSBoxVersionCollection> dosboxVersions(getDOSBoxVersions());
 
 	if(m_preferredDOSBoxVersion != nullptr && !dosboxVersions->hasDOSBoxVersion(*m_preferredDOSBoxVersion.get())) {
 		SettingsManager * settings = SettingsManager::getInstance();
@@ -3997,15 +3983,15 @@ void ModManager::dosboxVersionCollectionItemModified(DOSBoxVersionCollection & d
 }
 
 void ModManager::gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) {
-	if(m_preferredGameVersion != nullptr && !m_gameVersions->hasGameVersion(*m_preferredGameVersion.get())) {
+	if(m_preferredGameVersion != nullptr && !getGameVersions()->hasGameVersion(*m_preferredGameVersion.get())) {
 		SettingsManager * settings = SettingsManager::getInstance();
 
-		if(m_gameVersions->numberOfGameVersions() == 0) {
+		if(getGameVersions()->numberOfGameVersions() == 0) {
 			m_preferredGameVersion = nullptr;
 			settings->preferredGameVersion.clear();
 		}
 		else {
-			m_preferredGameVersion = m_gameVersions->getGameVersion(0);
+			m_preferredGameVersion = getGameVersions()->getGameVersion(0);
 			settings->preferredGameVersion = m_preferredGameVersion->getName();
 		}
 	}

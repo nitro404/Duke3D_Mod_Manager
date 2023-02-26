@@ -17,7 +17,7 @@ public:
 	~GameManager();
 
 	bool isInitialized() const;
-	bool initialize(std::shared_ptr<GameVersionCollection> gameVersions);
+	bool initialize();
 	std::shared_ptr<GameVersionCollection> getGameVersions() const;
 	std::string getLocalGameDownloadsListFilePath() const;
 	bool shouldUpdateGameDownloadList() const;

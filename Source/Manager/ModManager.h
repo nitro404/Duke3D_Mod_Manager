@@ -212,7 +212,6 @@ private:
 	size_t m_selectedModVersionTypeIndex;
 	size_t m_selectedModGameVersionIndex;
 	std::shared_ptr<DOSBoxManager> m_dosboxManager;
-	std::shared_ptr<GameVersionCollection> m_gameVersions;
 	std::shared_ptr<GameManager> m_gameManager;
 	std::shared_ptr<ModCollection> m_mods;
 	std::shared_ptr<FavouriteModCollection> m_favouriteMods;
