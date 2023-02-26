@@ -1414,16 +1414,16 @@
 			</version>
 		</files>
 		<downloads>
-			<download filename="disney01.zip" filesize="216798" part="1" numparts="10" game="Regular Version 1.3" type="Original Files" sha1="fb72aa7b0f96073459aaa87657d933a8251d0ca9"/>
-			<download filename="disney02.zip" filesize="1122824" part="2" numparts="10" game="Regular Version 1.3" type="Original Files" sha1="9992f78bc195b15d11d49d9f63df72677287431c"/>
-			<download filename="disney03.zip" filesize="1346497" part="3" numparts="10" game="Regular Version 1.3" type="Original Files" sha1="b18935c220d92f960cec24ed429a6183c7618ab7"/>
-			<download filename="disney04.zip" filesize="1064267" part="4" numparts="10" game="Regular Version 1.3" type="Original Files" sha1="d84e29d4b2b3017e8f0b4467359d177d1f86a4e6"/>
-			<download filename="disney05.zip" filesize="734409" part="5" numparts="10" game="Regular Version 1.3" type="Original Files" sha1="d9b8fda5df4c2e4ccb21d34dbf2b3031dc3352ef"/>
-			<download filename="disney06.zip" filesize="532621" part="6" numparts="10" game="Regular Version 1.3" type="Original Files" sha1="8d4d2903425f4c6a873c52fcb7355c2ab40a2a1f"/>
-			<download filename="disney07.zip" filesize="417459" part="7" numparts="10" game="Regular Version 1.3" type="Original Files" sha1="1d214c46c6c78116ffc643e37634e6a7cbb1d68f"/>
-			<download filename="disney08.zip" filesize="742573" part="8" numparts="10" game="Regular Version 1.3" type="Original Files" sha1="c30a3afbfed4b2fb25a253bdba0913e04f34b28e"/>
-			<download filename="disney09.zip" filesize="1614505" part="9" numparts="10" game="Regular Version 1.3" type="Original Files" sha1="846fcc4a39dda69ad033e5ea2bf488a024cb67a2"/>
-			<download filename="disney10.zip" filesize="2306584" part="10" numparts="10" game="Regular Version 1.3" type="Original Files" sha1="d4b363f8ee2106d27ed2b8b21b918828535c9224"/>
+			<download filename="disney01.zip" filesize="216798" part="1" numparts="10" special="Split Version" game="Regular Version 1.3" type="Original Files" sha1="fb72aa7b0f96073459aaa87657d933a8251d0ca9"/>
+			<download filename="disney02.zip" filesize="1122824" part="2" numparts="10" special="Split Version" game="Regular Version 1.3" type="Original Files" sha1="9992f78bc195b15d11d49d9f63df72677287431c"/>
+			<download filename="disney03.zip" filesize="1346497" part="3" numparts="10" special="Split Version" game="Regular Version 1.3" type="Original Files" sha1="b18935c220d92f960cec24ed429a6183c7618ab7"/>
+			<download filename="disney04.zip" filesize="1064267" part="4" numparts="10" special="Split Version" game="Regular Version 1.3" type="Original Files" sha1="d84e29d4b2b3017e8f0b4467359d177d1f86a4e6"/>
+			<download filename="disney05.zip" filesize="734409" part="5" numparts="10" special="Split Version" game="Regular Version 1.3" type="Original Files" sha1="d9b8fda5df4c2e4ccb21d34dbf2b3031dc3352ef"/>
+			<download filename="disney06.zip" filesize="532621" part="6" numparts="10" special="Split Version" game="Regular Version 1.3" type="Original Files" sha1="8d4d2903425f4c6a873c52fcb7355c2ab40a2a1f"/>
+			<download filename="disney07.zip" filesize="417459" part="7" numparts="10" special="Split Version" game="Regular Version 1.3" type="Original Files" sha1="1d214c46c6c78116ffc643e37634e6a7cbb1d68f"/>
+			<download filename="disney08.zip" filesize="742573" part="8" numparts="10" special="Split Version" game="Regular Version 1.3" type="Original Files" sha1="c30a3afbfed4b2fb25a253bdba0913e04f34b28e"/>
+			<download filename="disney09.zip" filesize="1614505" part="9" numparts="10" special="Split Version" game="Regular Version 1.3" type="Original Files" sha1="846fcc4a39dda69ad033e5ea2bf488a024cb67a2"/>
+			<download filename="disney10.zip" filesize="2306584" part="10" numparts="10" special="Split Version" game="Regular Version 1.3" type="Original Files" sha1="d4b363f8ee2106d27ed2b8b21b918828535c9224"/>
 			<download filename="Disney.zip" filesize="10288654" special="Full" game="Regular Version 1.3" type="Original Files" sha1="39d85a008fbb20d1d342c0fff5e81b606aca63f5"/>
 			<download filename="Dukeland-ModMgrR.zip" filesize="10099859" game="Regular Version 1.3" type="Mod Manager Files" state="Native" sha1="b8ea609bbceb8abefd7230869b1a3ae42fd97a38"/>
 			<download filename="Dukeland-ModMgrA.zip" filesize="10117406" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" sha1="3b382d7d60b56b80c1031b66963f590d0eb93a11"/>
@@ -2314,21 +2314,21 @@
 			</version>
 		</files>
 		<downloads>
-			<download filename="m201.zip" filesize="1340762" version="1.0" part="1" numparts="15" special="Stand Alone Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="38d044202a1f9ec375a88a2a6e76bf58f4ebc910"/>
-			<download filename="m202.zip" filesize="1362644" version="1.0" part="2" numparts="15" special="Stand Alone Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="e631b7048340ff5611af0647dc7abc299414f76b"/>
-			<download filename="m203.zip" filesize="1386443" version="1.0" part="3" numparts="15" special="Stand Alone Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="07e75d07eeceb2dd0065c30d742042497d61d9f4"/>
-			<download filename="m204.zip" filesize="1383632" version="1.0" part="4" numparts="15" special="Stand Alone Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="ff799a3d2bb9b7b0ce1f0b59f86b22ea8a653509"/>
-			<download filename="m205.zip" filesize="1362883" version="1.0" part="5" numparts="15" special="Stand Alone Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="7b7ade72c22254caea0e4cf105cca277e00ad010"/>
-			<download filename="m206.zip" filesize="1368900" version="1.0" part="6" numparts="15" special="Stand Alone Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="4635baf1d6705647c8580e76e5c8854844e60005"/>
-			<download filename="m207.zip" filesize="1335756" version="1.0" part="7" numparts="15" special="Stand Alone Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="ecbd21d455a9457feb10ffc5f11b887693e5b47a"/>
-			<download filename="m208.zip" filesize="1381387" version="1.0" part="8" numparts="15" special="Stand Alone Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="649135ebe731a1a37867a1f363f203a155155e1c"/>
-			<download filename="m209.zip" filesize="1400116" version="1.0" part="9" numparts="15" special="Stand Alone Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="02aeaa4b0463466ea75406949777a11f3e41b0a6"/>
-			<download filename="m210.zip" filesize="1394143" version="1.0" part="10" numparts="15" special="Stand Alone Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="475c6354cf2169946b8d1273e94beb4021333f94"/>
-			<download filename="m211.zip" filesize="1385707" version="1.0" part="11" numparts="15" special="Stand Alone Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="3c3048d248e4a0407ed57017fe06cefd03204447"/>
-			<download filename="m212.zip" filesize="1401631" version="1.0" part="12" numparts="15" special="Stand Alone Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="8a198c8c9f89e259d6ef953fca1639c8f30d0d89"/>
-			<download filename="m213.zip" filesize="1382358" version="1.0" part="13" numparts="15" special="Stand Alone Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="67c20a55efa34dcd357aef2f363d6f890bffab77"/>
-			<download filename="m214.zip" filesize="1395682" version="1.0" part="14" numparts="15" special="Stand Alone Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="3db85460b218436c4137f391fb34aa34a77411fa"/>
-			<download filename="m215.zip" filesize="1087847" version="1.0" part="15" numparts="15" special="Stand Alone Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="f6df0786cc6d7d5223f2bc2d6167bc07c005f10a"/>
+			<download filename="m201.zip" filesize="1340762" version="1.0" part="1" numparts="15" special="Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="38d044202a1f9ec375a88a2a6e76bf58f4ebc910"/>
+			<download filename="m202.zip" filesize="1362644" version="1.0" part="2" numparts="15" special="Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="e631b7048340ff5611af0647dc7abc299414f76b"/>
+			<download filename="m203.zip" filesize="1386443" version="1.0" part="3" numparts="15" special="Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="07e75d07eeceb2dd0065c30d742042497d61d9f4"/>
+			<download filename="m204.zip" filesize="1383632" version="1.0" part="4" numparts="15" special="Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="ff799a3d2bb9b7b0ce1f0b59f86b22ea8a653509"/>
+			<download filename="m205.zip" filesize="1362883" version="1.0" part="5" numparts="15" special="Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="7b7ade72c22254caea0e4cf105cca277e00ad010"/>
+			<download filename="m206.zip" filesize="1368900" version="1.0" part="6" numparts="15" special="Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="4635baf1d6705647c8580e76e5c8854844e60005"/>
+			<download filename="m207.zip" filesize="1335756" version="1.0" part="7" numparts="15" special="Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="ecbd21d455a9457feb10ffc5f11b887693e5b47a"/>
+			<download filename="m208.zip" filesize="1381387" version="1.0" part="8" numparts="15" special="Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="649135ebe731a1a37867a1f363f203a155155e1c"/>
+			<download filename="m209.zip" filesize="1400116" version="1.0" part="9" numparts="15" special="Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="02aeaa4b0463466ea75406949777a11f3e41b0a6"/>
+			<download filename="m210.zip" filesize="1394143" version="1.0" part="10" numparts="15" special="Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="475c6354cf2169946b8d1273e94beb4021333f94"/>
+			<download filename="m211.zip" filesize="1385707" version="1.0" part="11" numparts="15" special="Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="3c3048d248e4a0407ed57017fe06cefd03204447"/>
+			<download filename="m212.zip" filesize="1401631" version="1.0" part="12" numparts="15" special="Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="8a198c8c9f89e259d6ef953fca1639c8f30d0d89"/>
+			<download filename="m213.zip" filesize="1382358" version="1.0" part="13" numparts="15" special="Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="67c20a55efa34dcd357aef2f363d6f890bffab77"/>
+			<download filename="m214.zip" filesize="1395682" version="1.0" part="14" numparts="15" special="Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="3db85460b218436c4137f391fb34aa34a77411fa"/>
+			<download filename="m215.zip" filesize="1087847" version="1.0" part="15" numparts="15" special="Split Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="f6df0786cc6d7d5223f2bc2d6167bc07c005f10a"/>
 			<download filename="m2md.zip" filesize="15823512" version="1.0" special="Stand Alone Full Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="f0fb5adcef4ec04bc33e1561db2273d0661b4000"/>
 			<download filename="m2full.zip" filesize="20366450" version="1.0" special="Full Installer" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="5f6e91799bd21474855f86327537253b9f278bc7"/>
 			<download filename="m211ptch.zip" filesize="667172" version="1.1" special="Patch" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="5575ceaf085ad4c9ee7944e293d19f77b0d70de0"/>
@@ -2357,9 +2357,9 @@
 			</version>
 		</files>
 		<downloads>
-			<download filename="mic_e1l1.zip" filesize="45862" part="1" numparts="3" game="All Versions" type="Original Files" sha1="de7959fd43af1d00732fc550f76da3ed4861705f"/>
-			<download filename="mic_e1l2.zip" filesize="71528" part="2" numparts="3" game="All Versions" type="Original Files" sha1="a7ad3ad1b9f21b128998c1f2122ce1bf5ddeea04"/>
-			<download filename="mic-e1l3.zip" filesize="110647" part="3" numparts="3" game="All Versions" type="Original Files" sha1="1a4a136af5cfce68afcd05f42b4400606e48c6f3"/>
+			<download filename="mic_e1l1.zip" filesize="45862" part="1" numparts="3" game="Regular Version 1.3" type="Original Files" sha1="de7959fd43af1d00732fc550f76da3ed4861705f"/>
+			<download filename="mic_e1l2.zip" filesize="71528" part="2" numparts="3" game="Regular Version 1.3" type="Original Files" sha1="a7ad3ad1b9f21b128998c1f2122ce1bf5ddeea04"/>
+			<download filename="mic-e1l3.zip" filesize="110647" part="3" numparts="3" game="Regular Version 1.3" type="Original Files" sha1="1a4a136af5cfce68afcd05f42b4400606e48c6f3"/>
 			<download filename="Mic_Episode-ModMgrR.zip" filesize="264503" game="Regular Version 1.3" type="Mod Manager Files" state="Native" sha1="564447b2ccb4722c0133545a59df8c3bf06df889"/>
 			<download filename="Mic_Episode-ModMgrA.zip" filesize="280978" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="d364c6be5a6ca391811305d4451b0ed2a3df2d3d"/>
 		</downloads>
@@ -3226,15 +3226,15 @@
 			</version>
 		</files>
 		<downloads>
-			<download filename="RE.zip" filesize="922739" version="Demo" part="1" numparts="9" special="Art" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="468f7eb10e4af610f5170bf0644b4eebce586b4b"/>
-			<download filename="RE2.zip" filesize="370881" version="Demo" part="2" numparts="9" special="Art 2 &amp; USER.CON" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="119d6eeebcb24fec02e6a995eb5e8827b186daa6"/>
-			<download filename="RE3.zip" filesize="570439" version="Demo" part="3" numparts="9" special="Art 3" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="fada774e7087c7c670266d7be2e5e29bdc82a275"/>
-			<download filename="RE5.zip" filesize="351474" version="Demo" part="4" numparts="9" special="Art 4" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="26c250e8b8bfacfe5053ce03fc379bf2e161f8ef"/>
-			<download filename="RE6.zip" filesize="795668" version="Demo" part="5" numparts="9" special="Art 5" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="19e380fff3433bd91eb2fc55b003f452b0aa38ec"/>
-			<download filename="REart000.zip" filesize="479046" version="Demo" part="6" numparts="9" special="Art 6" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="c81b285d6daf5396388751d33ed706a73b14101b"/>
-			<download filename="RElevel.zip" filesize="9648" version="Demo" part="7" numparts="9" special="Level" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="b93552d2fb7f2264d991bbb9f494c0e421776494"/>
-			<download filename="confiles.zip" filesize="46708" version="Demo" part="8" numparts="9" special="CON Files" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="263fb96d940a86c3cef02b8fd87b2fe5c02e7327"/>
-			<download filename="RETCreadme.zip" filesize="478" version="Demo" part="9" numparts="9" special="Readme" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="08c88d14421003fc2fea9aab90ec40c1a115d30d"/>
+			<download filename="RE.zip" filesize="922739" version="Demo" part="1" numparts="9" special="Split Version" game="Atomic Edition 1.4/1.5" type="Art 1" sha1="468f7eb10e4af610f5170bf0644b4eebce586b4b"/>
+			<download filename="RE2.zip" filesize="370881" version="Demo" part="2" numparts="9" special="Split Version" game="Atomic Edition 1.4/1.5" type="Art 2 &amp; USER.CON" sha1="119d6eeebcb24fec02e6a995eb5e8827b186daa6"/>
+			<download filename="RE3.zip" filesize="570439" version="Demo" part="3" numparts="9" special="Split Version" game="Atomic Edition 1.4/1.5" type="Art 3" sha1="fada774e7087c7c670266d7be2e5e29bdc82a275"/>
+			<download filename="RE5.zip" filesize="351474" version="Demo" part="4" numparts="9" special="Split Version" game="Atomic Edition 1.4/1.5" type="Art 4" sha1="26c250e8b8bfacfe5053ce03fc379bf2e161f8ef"/>
+			<download filename="RE6.zip" filesize="795668" version="Demo" part="5" numparts="9" special="Split Version" game="Atomic Edition 1.4/1.5" type="Art 5" sha1="19e380fff3433bd91eb2fc55b003f452b0aa38ec"/>
+			<download filename="REart000.zip" filesize="479046" version="Demo" part="6" numparts="9" special="Split Version" game="Atomic Edition 1.4/1.5" type="Art 6" sha1="c81b285d6daf5396388751d33ed706a73b14101b"/>
+			<download filename="RElevel.zip" filesize="9648" version="Demo" part="7" numparts="9" special="Split Version" game="Atomic Edition 1.4/1.5" type="Level" sha1="b93552d2fb7f2264d991bbb9f494c0e421776494"/>
+			<download filename="confiles.zip" filesize="46708" version="Demo" part="8" numparts="9" special="Split Version" game="Atomic Edition 1.4/1.5" type="CON Files" sha1="263fb96d940a86c3cef02b8fd87b2fe5c02e7327"/>
+			<download filename="RETCreadme.zip" filesize="478" version="Demo" part="9" numparts="9" special="Split Version" game="Atomic Edition 1.4/1.5" type="Readme" sha1="08c88d14421003fc2fea9aab90ec40c1a115d30d"/>
 			<download filename="residenteviltcdemo.rar" filesize="2783948" version="Demo" special="Full Version" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="9208d857ea078afd49d37299135cd01c9c3d9fdb"/>
 			<download filename="Resident_Evil_TC_Demo-ModMgrA.zip" filesize="2760179" version="Demo" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="f64f40393b32f01f9af295f0f157dfcfdc982048"/>
 		</downloads>
@@ -6230,11 +6230,11 @@
 			<download filename="upddmp23.zip" filesize="184685" version="2.3" special="2.2 - 2.3 Update" game="Atomic Edition 1.4/1.5" type="Patch" sha1="a3201e028b6404600545a156abdb7c4d09f7e9da"/>
 			<download filename="doomd23a.zip" filesize="4041607" version="2.3a" special="Full" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="e1e96825bf186d3bda2f918e448f3718a14a035d"/>
 			<download filename="updmp23a.zip" filesize="498969" version="2.3a" special="2.2 - 2.3a Update" game="Atomic Edition 1.4/1.5" type="Patch" sha1="0d86d92cecbe0d1405c67c9038c941923d675d35"/>
-			<download filename="lck2__1.zip" filesize="939602" part="1" numparts="4" special="Level Creation Kit" type="Level Creation Kit" sha1="0a056c6e53f789a2802c6fbd69a0bb2b2a22268a"/>
-			<download filename="lck2__2.zip" filesize="940788" part="2" numparts="4" special="Level Creation Kit" type="Level Creation Kit" sha1="8b113de476de032149023d641aa79f0a4d60869d"/>
-			<download filename="lck2__3.zip" filesize="942273" part="3" numparts="4" special="Level Creation Kit" type="Level Creation Kit" sha1="6a88ce532a4c00bd5a979af4fc84a894abe398e6"/>
-			<download filename="lck2__4.zip" filesize="877488" part="4" numparts="4" special="Level Creation Kit" type="Level Creation Kit" sha1="40a3cc9d908c5d477e0216639e55f4b930be238f"/>
-			<download filename="doomlck2.zip" filesize="4102328" special="Level Creation Kit" type="Level Creation Kit" sha1="c5f8d918a8b91901f16f5645939936ed2e929d51"/>
+			<download filename="lck2__1.zip" filesize="939602" part="1" numparts="4" special="Split Version" type="Level Creation Kit" sha1="0a056c6e53f789a2802c6fbd69a0bb2b2a22268a"/>
+			<download filename="lck2__2.zip" filesize="940788" part="2" numparts="4" special="Split Version" type="Level Creation Kit" sha1="8b113de476de032149023d641aa79f0a4d60869d"/>
+			<download filename="lck2__3.zip" filesize="942273" part="3" numparts="4" special="Split Version" type="Level Creation Kit" sha1="6a88ce532a4c00bd5a979af4fc84a894abe398e6"/>
+			<download filename="lck2__4.zip" filesize="877488" part="4" numparts="4" special="Split Version" type="Level Creation Kit" sha1="40a3cc9d908c5d477e0216639e55f4b930be238f"/>
+			<download filename="doomlck2.zip" filesize="4102328" type="Level Creation Kit" sha1="c5f8d918a8b91901f16f5645939936ed2e929d51"/>
 			<download filename="unf_dmpm.zip" filesize="200640" special="Unfinished Maps" type="Maps" sha1="bd52275a6e6182d12b53b89e061ede53ad9bbf5d"/>
 			<download filename="DOOM_Death_Match_Pack_2.2-ModMgrA.zip" filesize="3916166" version="2.2" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="f1d56301d944377e1889ee42b84262fcadce6ad3"/>
 			<download filename="DOOM_Death_Match_Pack_2.3-ModMgrA.zip" filesize="3852692" version="2.3" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="28704eb50ff31a45afb8c36302efaa12eace17a4"/>
