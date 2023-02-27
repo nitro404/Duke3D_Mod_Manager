@@ -136,6 +136,39 @@
 			]
 		},
 		{
+			"name": "NetDuke32",
+			"versions": [
+				{
+					"version": "1.2.1",
+					"releaseDate": "January 7, 2023",
+					"files": [
+						{
+							"fileName": "netduke32_v1.2.1.zip",
+							"fileSize": 12718838,
+							"type": "Game",
+							"sha1": "1c7de9223b15006d68b4ea964b763c23dc1549d7",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x86"
+						},
+					]
+				},
+				{
+					"version": "1.2",
+					"releaseDate": "December 25, 2022",
+					"files": [
+						{
+							"fileName": "netduke32_v1.2.zip",
+							"fileSize": 12580052,
+							"type": "Game",
+							"sha1": "43beebc5369717c4433d84a65da8430f3d7751fe",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x86"
+						}
+					]
+				}
+			]
+		},
+		{
 			"name": "Raze",
 			"versions": [
 				{

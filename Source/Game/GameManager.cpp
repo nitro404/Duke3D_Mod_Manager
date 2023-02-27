@@ -18,6 +18,7 @@
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
 #include <Utilities/TidyHTMLUtilities.h>
+#include <Utilities/TimeUtilities.h>
 #include <Utilities/TinyXML2Utilities.h>
 
 #include <magic_enum.hpp>
@@ -49,6 +50,7 @@ static const std::string ATOMIC_EDITION_FALLBACK_DOWNLOAD_SHA1("ac2df3fb75f84584
 
 static const std::string JFDUKE32_DOWNLOAD_PAGE_URL("http://www.jonof.id.au/jfduke3d");
 static const std::string EDUKE32_DOWNLOAD_PAGE_URL("https://dukeworld.com/eduke32/synthesis/latest");
+static const std::string NETDUKE32_DOWNLOAD_API_URL("https://voidpoint.io/api/graphql");
 static const std::string RED_NUKEM_DOWNLOAD_PAGE_URL("https://lerppu.net/wannabethesis");
 
 struct GameFileInformation {
@@ -361,6 +363,7 @@ bool GameManager::isGameDownloadable(const std::string & gameName) {
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_ATOMIC_EDITION.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::JFDUKE3D.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::EDUKE32.getName()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::NETDUKE32.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::RAZE.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::RED_NUKEM.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getName());
@@ -403,6 +406,9 @@ std::string GameManager::getGameDownloadURL(const std::string & gameName) {
 	}
 	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::EDUKE32.getName())) {
 		return getEDuke32DownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::NETDUKE32.getName())) {
+		return getNetDuke32DownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
 	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::RAZE.getName())) {
 		return getRazeDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
@@ -704,6 +710,421 @@ std::string GameManager::getJFDuke3DDownloadURL(DeviceInformationBridge::Operati
 	else {
 		return Utilities::joinPaths(downloadPageBaseURL, downloadPath);
 	}
+}
+
+struct NetDuke32Release {
+	std::string name;
+	std::string tagName;
+	std::string version;
+	std::string htmlDescription;
+	std::chrono::time_point<std::chrono::system_clock> createdTimestamp;
+	std::chrono::time_point<std::chrono::system_clock> releasedTimestamp;
+	std::string downloadURL;
+	std::string authorUserName;
+	std::string commitTitle;
+	std::string commitHash;
+};
+
+static std::vector<NetDuke32Release> getNetDuke32Releases(size_t maxNumberOfReleases = 10) {
+	static const std::string NETDUKE32_BASE_DOWNLOAD_URL("https://voidpoint.io");
+
+	if(maxNumberOfReleases == 0) {
+		return {};
+	}
+
+	HTTPService * httpService = HTTPService::getInstance();
+
+	if(!httpService->isInitialized()) {
+		return {};
+	}
+
+	std::shared_ptr<HTTPRequest> downloadPageRequest(httpService->createRequest(HTTPRequest::Method::Post, NETDUKE32_DOWNLOAD_API_URL));
+	downloadPageRequest->setConnectionTimeout(5s);
+	downloadPageRequest->setNetworkTimeout(10s);
+
+	rapidjson::Document releaseListGraphQLQueryDocument(rapidjson::kArrayType);
+	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator = releaseListGraphQLQueryDocument.GetAllocator();
+
+	rapidjson::Value queryValue(rapidjson::kObjectType);
+
+	queryValue.AddMember(rapidjson::StringRef("operationName"), rapidjson::StringRef("allReleases"), allocator);
+
+	rapidjson::Value queryVariablesValue(rapidjson::kObjectType);
+
+	queryVariablesValue.AddMember(rapidjson::StringRef("fullPath"), rapidjson::StringRef("StrikerTheHedgefox/eduke32-csrefactor"), allocator);
+	queryVariablesValue.AddMember(rapidjson::StringRef("first"), rapidjson::Value(maxNumberOfReleases), allocator);
+	queryVariablesValue.AddMember(rapidjson::StringRef("sort"), rapidjson::Value("RELEASED_AT_DESC"), allocator);
+
+	queryValue.AddMember(rapidjson::StringRef("variables"), queryVariablesValue, allocator);
+
+	queryValue.AddMember(rapidjson::StringRef("query"), rapidjson::StringRef("query allReleases($fullPath: ID!, $first: Int, $last: Int, $before: String, $after: String, $sort: ReleaseSort) { project(fullPath: $fullPath) { id releases(first: $first last: $last before: $before after: $after sort: $sort) { nodes { ...Release __typename } pageInfo { startCursor hasPreviousPage hasNextPage endCursor __typename } __typename } __typename } } fragment Release on Release { id name tagName tagPath descriptionHtml releasedAt createdAt upcomingRelease historicalRelease assets { count sources { nodes { format url __typename } __typename } links { nodes { id name url directAssetUrl linkType external __typename } __typename } __typename } evidences { nodes { id filepath collectedAt sha __typename } __typename } links { editUrl selfUrl openedIssuesUrl closedIssuesUrl openedMergeRequestsUrl mergedMergeRequestsUrl closedMergeRequestsUrl __typename } commit { id sha webUrl title __typename } author { id webUrl avatarUrl username __typename } milestones { nodes { id title description webPath stats { totalIssuesCount closedIssuesCount __typename } __typename } __typename } __typename }"), allocator);
+
+	releaseListGraphQLQueryDocument.PushBack(queryValue, allocator);
+
+	downloadPageRequest->setBody(releaseListGraphQLQueryDocument);
+
+	std::shared_ptr<HTTPResponse> response(httpService->sendRequestAndWait(downloadPageRequest));
+
+	if(response->isFailure()) {
+		spdlog::error("Failed to retrieve NetDuke32 release list with error: {}", response->getErrorMessage());
+		return {};
+	}
+	else if(response->isFailureStatusCode()) {
+		std::string statusCodeName(HTTPUtilities::getStatusCodeName(response->getStatusCode()));
+		spdlog::error("Failed to get NetDuke32 release list ({}{})!", response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
+		return {};
+	}
+
+	std::unique_ptr<rapidjson::Document> releaseListDocument(response->getBodyAsJSON());
+
+	response.reset();
+
+	if(releaseListDocument == nullptr) {
+		spdlog::error("Failed to parse NetDuke32 release list JSON data.");
+		return {};
+	}
+
+	if(!releaseListDocument->IsArray()) {
+		spdlog::error("Invalid NetDuke32 release list root type '{}', expected 'array'.", Utilities::typeToString(releaseListDocument->GetType()));
+		return {};
+	}
+
+	if(releaseListDocument->Empty()) {
+		spdlog::error("Empty NetDuke32 release list root value, expected non-empty 'array'.");
+		return {};
+	}
+
+	const rapidjson::Value & queryResultValue = (*releaseListDocument)[0];
+
+	if(!queryResultValue.IsObject()) {
+		spdlog::error("Invalid NetDuke32 release list query result type '{}', expected 'object'.", Utilities::typeToString(queryResultValue.GetType()));
+		return {};
+	}
+
+	if(!queryResultValue.HasMember("data")) {
+		spdlog::error("NetDuke32 release list query result is missing 'data' property.");
+		return {};
+	}
+
+	const rapidjson::Value & dataValue = queryResultValue["data"];
+
+	if(!dataValue.IsObject()) {
+		spdlog::error("Invalid NetDuke32 release list query result 'data' type '{}', expected 'object'.", Utilities::typeToString(dataValue.GetType()));
+		return {};
+	}
+
+	if(!dataValue.HasMember("project")) {
+		spdlog::error("NetDuke32 release list query result 'data' is missing 'project' property.");
+		return {};
+	}
+
+	const rapidjson::Value & projectValue = dataValue["project"];
+
+	if(!projectValue.IsObject()) {
+		spdlog::error("Invalid NetDuke32 release list query result 'data' 'project' type '{}', expected 'object'.", Utilities::typeToString(projectValue.GetType()));
+		return {};
+	}
+
+	if(!projectValue.HasMember("releases")) {
+		spdlog::error("NetDuke32 release list query result 'data' 'project' is missing 'releases' property.");
+		return {};
+	}
+
+	const rapidjson::Value & releasesValue = projectValue["releases"];
+
+	if(!releasesValue.IsObject()) {
+		spdlog::error("Invalid NetDuke32 release list query result 'data' 'project' 'releases' type '{}', expected 'object'.", Utilities::typeToString(releasesValue.GetType()));
+		return {};
+	}
+
+	if(!releasesValue.HasMember("nodes")) {
+		spdlog::error("NetDuke32 release list query result 'data' 'project' 'releases' is missing 'nodes' property.");
+		return {};
+	}
+
+	const rapidjson::Value & nodesValue = releasesValue["nodes"];
+
+	if(!nodesValue.IsArray()) {
+		spdlog::error("Invalid NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' type '{}', expected 'array'.", Utilities::typeToString(nodesValue.GetType()));
+		return {};
+	}
+
+	if(nodesValue.Empty()) {
+		spdlog::error("Empty NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' value, expected non-empty 'array'.");
+		return {};
+	}
+
+	std::vector<NetDuke32Release> netDuke32Releases;
+	netDuke32Releases.reserve(nodesValue.Size());
+
+	for(rapidjson::Value::ConstValueIterator i = nodesValue.Begin(); i != nodesValue.End(); ++i) {
+		const rapidjson::Value & releaseNodeValue = *i;
+		NetDuke32Release netDuke32Release;
+
+		if(!releaseNodeValue.IsObject()) {
+			spdlog::error("Invalid NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' entry #{} type '{}', expected 'object'.", i - nodesValue.Begin(), Utilities::typeToString(nodesValue.GetType()));
+			continue;
+		}
+
+		// parse release name property
+		if(!releaseNodeValue.HasMember("name")) {
+			spdlog::error("NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' entry #{} is missing 'name' property.", i - nodesValue.Begin());
+			continue;
+		}
+
+		const rapidjson::Value & nameValue = releaseNodeValue["name"];
+
+		if(!nameValue.IsString()) {
+			spdlog::error("Invalid NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' entry #{} 'name' property type '{}', expected 'string'.", i - nodesValue.Begin(), Utilities::typeToString(nameValue.GetType()));
+			continue;
+		}
+
+		netDuke32Release.name = nameValue.GetString();
+
+		// parse release tag name property
+		if(!releaseNodeValue.HasMember("tagName")) {
+			spdlog::error("NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' entry #{} is missing 'tagName' property.", i - nodesValue.Begin());
+			continue;
+		}
+
+		const rapidjson::Value & tagNameValue = releaseNodeValue["tagName"];
+
+		if(!tagNameValue.IsString()) {
+			spdlog::error("Invalid NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' entry #{} 'tagName' property type '{}', expected 'string'.", i - nodesValue.Begin(), Utilities::typeToString(tagNameValue.GetType()));
+			continue;
+		}
+
+		netDuke32Release.tagName = tagNameValue.GetString();
+
+		// parse release HTML description property
+		if(!releaseNodeValue.HasMember("descriptionHtml")) {
+			spdlog::error("NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' entry #{} is missing 'descriptionHtml' property.", i - nodesValue.Begin());
+			continue;
+		}
+
+		const rapidjson::Value & htmlDescriptionValue = releaseNodeValue["descriptionHtml"];
+
+		if(!htmlDescriptionValue.IsString()) {
+			spdlog::error("Invalid NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' entry #{} 'descriptionHtml' property type '{}', expected 'string'.", i - nodesValue.Begin(), Utilities::typeToString(htmlDescriptionValue.GetType()));
+			continue;
+		}
+
+		netDuke32Release.htmlDescription = htmlDescriptionValue.GetString();
+
+		// parse release created timestamp
+		if(!releaseNodeValue.HasMember("createdAt")) {
+			spdlog::error("NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' entry #{} is missing 'createdAt' property.", i - nodesValue.Begin());
+			continue;
+		}
+
+		const rapidjson::Value & createdAtValue = releaseNodeValue["createdAt"];
+
+		if(!createdAtValue.IsString()) {
+			spdlog::error("Invalid NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' entry #{} 'createdAt' property type '{}', expected 'string'.", i - nodesValue.Begin(), Utilities::typeToString(createdAtValue.GetType()));
+			continue;
+		}
+
+		std::optional<std::chrono::time_point<std::chrono::system_clock>> optionalCreatedTimestamp(Utilities::parseTimePointFromString(createdAtValue.GetString(), Utilities::TimeFormat::ISO8601));
+
+		if(!optionalCreatedTimestamp.has_value()) {
+			spdlog::error("Invalid NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' entry #{} 'createdAt' ISO8601 timestamp string value: '{}'.", i - nodesValue.Begin(), createdAtValue.GetString());
+			continue;
+		}
+
+		netDuke32Release.createdTimestamp = optionalCreatedTimestamp.value();
+
+		// parse release released timestamp
+		if(!releaseNodeValue.HasMember("releasedAt")) {
+			spdlog::error("NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' entry #{} is missing 'releasedAt' property.", i - nodesValue.Begin());
+			continue;
+		}
+
+		const rapidjson::Value & releasedAtValue = releaseNodeValue["releasedAt"];
+
+		if(!releasedAtValue.IsString()) {
+			spdlog::error("Invalid NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' entry #{} 'releasedAt' property type '{}', expected 'string'.", i - nodesValue.Begin(), Utilities::typeToString(releasedAtValue.GetType()));
+			continue;
+		}
+
+		std::optional<std::chrono::time_point<std::chrono::system_clock>> optionalReleasedTimestamp(Utilities::parseTimePointFromString(releasedAtValue.GetString(), Utilities::TimeFormat::ISO8601));
+
+		if(!optionalReleasedTimestamp.has_value()) {
+			spdlog::error("Invalid NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' entry #{} 'releasedAt' ISO8601 timestamp string value: '{}'.", i - nodesValue.Begin(), releasedAtValue.GetString());
+			continue;
+		}
+
+		netDuke32Release.releasedTimestamp = optionalReleasedTimestamp.value();
+
+		// get release author information
+		if(!releaseNodeValue.HasMember("author")) {
+			spdlog::error("NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' entry #{} is missing 'author' property.", i - nodesValue.Begin());
+			continue;
+		}
+
+		const rapidjson::Value & authorValue = releaseNodeValue["author"];
+
+		if(!authorValue.IsObject()) {
+			spdlog::error("Invalid NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' entry #{} 'author' property type '{}', expected 'object'.", i - nodesValue.Begin(), Utilities::typeToString(authorValue.GetType()));
+			continue;
+		}
+
+		// parse author user name
+		if(!authorValue.HasMember("username")) {
+			spdlog::error("NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' entry #{} 'author' is missing 'username' property.", i - nodesValue.Begin());
+			continue;
+		}
+
+		const rapidjson::Value & authorUserNameValue = authorValue["username"];
+
+		if(!authorUserNameValue.IsString()) {
+			spdlog::error("Invalid NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' entry #{} 'author' 'username' property type '{}', expected 'string'.", i - nodesValue.Begin(), Utilities::typeToString(authorUserNameValue.GetType()));
+			continue;
+		}
+
+		netDuke32Release.authorUserName = authorUserNameValue.GetString();
+
+		// get release commit information
+		if(!releaseNodeValue.HasMember("commit")) {
+			spdlog::error("NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' entry #{} is missing 'commit' property.", i - nodesValue.Begin());
+			continue;
+		}
+
+		const rapidjson::Value & commitValue = releaseNodeValue["commit"];
+
+		if(!commitValue.IsObject()) {
+			spdlog::error("Invalid NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' entry #{} 'commit' property type '{}', expected 'object'.", i - nodesValue.Begin(), Utilities::typeToString(commitValue.GetType()));
+			continue;
+		}
+
+		// parse commit title
+		if(!commitValue.HasMember("title")) {
+			spdlog::error("NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' entry #{} 'commit' is missing 'title' property.", i - nodesValue.Begin());
+			continue;
+		}
+
+		const rapidjson::Value & commitTitleValue = commitValue["title"];
+
+		if(!commitTitleValue.IsString()) {
+			spdlog::error("Invalid NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' entry #{} 'commit' 'title' property type '{}', expected 'string'.", i - nodesValue.Begin(), Utilities::typeToString(commitTitleValue.GetType()));
+			continue;
+		}
+
+		netDuke32Release.commitTitle = commitTitleValue.GetString();
+
+		// parse commit hash
+		if(!commitValue.HasMember("sha")) {
+			spdlog::error("NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' entry #{} 'commit' is missing 'sha' property.", i - nodesValue.Begin());
+			continue;
+		}
+
+		const rapidjson::Value & commitShaValue = commitValue["sha"];
+
+		if(!commitShaValue.IsString()) {
+			spdlog::error("Invalid NetDuke32 release list query result 'data' 'project' 'releases' 'nodes' entry #{} 'commit' 'sha' property type '{}', expected 'string'.", i - nodesValue.Begin(), Utilities::typeToString(commitShaValue.GetType()));
+			continue;
+		}
+
+		netDuke32Release.commitHash = commitShaValue.GetString();
+
+		// parse release version from name
+		size_t versionStartIndex = netDuke32Release.name.find_first_of(" ");
+
+		if(versionStartIndex != std::string::npos && netDuke32Release.name.length() >= versionStartIndex + 1) {
+			versionStartIndex++;
+
+			if(netDuke32Release.name.length() >= versionStartIndex + 1 && std::tolower(netDuke32Release.name[versionStartIndex]) == 'v') {
+				versionStartIndex++;
+			}
+
+			netDuke32Release.version = netDuke32Release.name.substr(versionStartIndex);
+		}
+		else {
+			netDuke32Release.version = nameValue.GetString();
+		}
+
+		// parse HTML description into XML data to extract download URL
+		std::string xhtmlDescription(Utilities::tidyHTML(netDuke32Release.htmlDescription));
+
+		if(xhtmlDescription.empty()) {
+			spdlog::error("Failed to tidy NetDuke32 'data' 'project' 'releases' 'nodes' entry #{} HTML description into XHTML.", i - nodesValue.Begin());
+			continue;
+		}
+
+		tinyxml2::XMLDocument descriptionDocument;
+
+		if(descriptionDocument.Parse(xhtmlDescription.c_str(), xhtmlDescription.length()) != tinyxml2::XML_SUCCESS) {
+			spdlog::error("Failed to parse NetDuke32 'data' 'project' 'releases' 'nodes' entry #{} XHTML description with error: '{}'.", i - nodesValue.Begin(), descriptionDocument.ErrorStr());
+			continue;
+		}
+
+		const tinyxml2::XMLElement * descriptionBodyElement = Utilities::findFirstXMLElementWithName(descriptionDocument.RootElement(), "body");
+
+		if(descriptionBodyElement == nullptr) {
+			spdlog::error("NetDuke32 'data' 'project' 'releases' 'nodes' entry #{} XHTML description has no body element.", i - nodesValue.Begin());
+			continue;
+		}
+
+		const tinyxml2::XMLElement * currentElement = descriptionBodyElement->FirstChildElement();
+
+		if(descriptionBodyElement == nullptr) {
+			spdlog::error("NetDuke32 'data' 'project' 'releases' 'nodes' entry #{} XHTML description body element has no children.", i - nodesValue.Begin());
+			continue;
+		}
+
+		do {
+			if(Utilities::findFirstXMLElementContainingText(currentElement, "Download:", true) == nullptr) {
+				continue;
+			}
+
+			const tinyxml2::XMLElement * downloadLinkElement = Utilities::findFirstXMLElementWithName(currentElement, "a");
+
+			if(downloadLinkElement == nullptr) {
+				continue;
+			}
+
+			const char * downloadLinkHref = downloadLinkElement->Attribute("href");
+
+			if(Utilities::stringLength(downloadLinkHref) == 0) {
+				spdlog::error("NetDuke32 'data' 'project' 'releases' 'nodes' entry #{} XHTML description download link is missing or has an empty 'href' attribute value.", i - nodesValue.Begin());
+				continue;
+			}
+
+			netDuke32Release.downloadURL = Utilities::joinPaths(NETDUKE32_BASE_DOWNLOAD_URL, downloadLinkHref);
+
+			break;
+		} while((currentElement = currentElement->NextSiblingElement()) != nullptr);
+
+		if(netDuke32Release.downloadURL.empty()) {
+			spdlog::error("NetDuke32 'data' 'project' 'releases' 'nodes' entry #{} XHTML description is malformed or has no download link.", i - nodesValue.Begin());
+			continue;
+		}
+
+		netDuke32Releases.push_back(netDuke32Release);
+	}
+
+	return netDuke32Releases;
+}
+
+std::string GameManager::getNetDuke32DownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const {
+	if(!m_initialized) {
+		spdlog::error("Game manager not initialized!");
+		return {};
+	}
+
+	std::shared_ptr<GameVersion> netDuke32GameVersion(m_gameVersions->getGameVersionWithName(GameVersion::NETDUKE32.getName()));
+	const GameVersion * netDuke32GameVersionRaw = netDuke32GameVersion != nullptr ? netDuke32GameVersion.get() : &GameVersion::NETDUKE32;
+
+	if(!netDuke32GameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
+		return {};
+	}
+
+	std::vector<NetDuke32Release> netDuke32Releases(getNetDuke32Releases(1));
+
+	if(netDuke32Releases.empty()) {
+		return {};
+	}
+
+	return netDuke32Releases.front().downloadURL;
 }
 
 std::string GameManager::getEDuke32DownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const {

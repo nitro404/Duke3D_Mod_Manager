@@ -3497,7 +3497,7 @@ bool ModManager::createSymlink(const std::string & symlinkTarget, const std::str
 
 	if(std::filesystem::exists(symlinkDestinationPath)) {
 		if(!std::filesystem::is_symlink(symlinkDestinationPath)) {
-			spdlog::error("Failed to remove existing '{}' symlink, unexpected file system entry type.");
+			spdlog::error("Failed to remove existing '{}' symlink, unexpected file system entry type.", symlinkName);
 			return false;
 		}
 

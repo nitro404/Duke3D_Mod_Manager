@@ -131,12 +131,12 @@ const std::string SettingsManager::DEFAULT_GAME_VERSIONS_LIST_FILE_PATH("Duke Nu
 const std::string SettingsManager::DEFAULT_GAME_SYMLINK_NAME("Game");
 const bool SettingsManager::DEFAULT_LOCAL_MODE = false;
 const std::string SettingsManager::DEFAULT_MODS_DIRECTORY_PATH("Mods");
-const std::string SettingsManager::DEFAULT_MODS_SYMLINK_NAME("Mods");
+const std::string SettingsManager::DEFAULT_MODS_SYMLINK_NAME("DNMMMods");
 const std::string SettingsManager::DEFAULT_MOD_PACKAGE_DOWNLOADS_DIRECTORY_PATH("");
 const std::string SettingsManager::DEFAULT_MOD_IMAGES_DIRECTORY_PATH("");
 const std::string SettingsManager::DEFAULT_MOD_SOURCE_FILES_DIRECTORY_PATH("");
 const std::string SettingsManager::DEFAULT_MAPS_DIRECTORY_PATH("");
-const std::string SettingsManager::DEFAULT_MAPS_SYMLINK_NAME("Maps");
+const std::string SettingsManager::DEFAULT_MAPS_SYMLINK_NAME("DNMMMaps");
 const std::string SettingsManager::DEFAULT_DOWNLOADS_DIRECTORY_PATH("Downloads");
 const std::string SettingsManager::DEFAULT_DOWNLOAD_CACHE_FILE_NAME("Download Cache.json");
 const std::string SettingsManager::DEFAULT_MOD_DOWNLOADS_DIRECTORY_NAME("Mods");
@@ -146,7 +146,7 @@ const std::string SettingsManager::DEFAULT_GAME_DOWNLOADS_DIRECTORY_NAME("Games"
 const std::string SettingsManager::DEFAULT_DATA_DIRECTORY_PATH("Data");
 const std::string SettingsManager::DEFAULT_APP_TEMP_DIRECTORY_PATH("Temp");
 const std::string SettingsManager::DEFAULT_GAME_TEMP_DIRECTORY_NAME("Temp");
-const std::string SettingsManager::DEFAULT_TEMP_SYMLINK_NAME("Temp");
+const std::string SettingsManager::DEFAULT_TEMP_SYMLINK_NAME("DNMMTemp");
 const std::string SettingsManager::DEFAULT_CACHE_DIRECTORY_PATH("Cache");
 const std::string SettingsManager::DEFAULT_DOSBOX_ARGUMENTS("-noconsole");
 const std::string SettingsManager::DEFAULT_DOSBOX_DATA_DIRECTORY_NAME("DOSBox");

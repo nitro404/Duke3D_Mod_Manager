@@ -194,6 +194,7 @@ public:
 	static const GameVersion ORIGINAL_ATOMIC_EDITION;
 	static const GameVersion JFDUKE3D;
 	static const GameVersion EDUKE32;
+	static const GameVersion NETDUKE32;
 	//static const GameVersion MEGATON_EDITION;
 	//static const GameVersion WORLD_TOUR;
 	//static const GameVersion BUILDGDX;
