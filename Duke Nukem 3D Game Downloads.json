@@ -231,7 +231,7 @@
 			"name": "Belgian Chocolate Duke3D",
 			"versions": [
 				{
-					"version": "2022.07.27 ",
+					"version": "2022.07.27",
 					"releaseDate": "July 27, 2022",
 					"files": [
 						{
@@ -247,6 +247,25 @@
 							"fileSize": 937057,
 							"type": "Game",
 							"sha1": "4bce776cb3cc8a0a5de88b3f17db809c57745dac",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x86"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Duke3dw",
+			"versions": [
+				{
+					"version": "4.4.0",
+					"releaseDate": "September 15, 2018",
+					"files": [
+						{
+							"fileName": "duke3dw_v440.zip",
+							"fileSize": 1035839,
+							"type": "Game",
+							"sha1": "e83e1d0815fcf257cf611dea70d39aeef2480763",
 							"operatingSystem": "Windows",
 							"processorArchitecture": "x86"
 						}

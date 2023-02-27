@@ -366,7 +366,8 @@ bool GameManager::isGameDownloadable(const std::string & gameName) {
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::NETDUKE32.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::RAZE.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::RED_NUKEM.getName()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getName());
+		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getName()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::DUKE3DW.getName());
 }
 
 std::string GameManager::getGameDownloadURL(const std::string & gameName) {
@@ -418,6 +419,9 @@ std::string GameManager::getGameDownloadURL(const std::string & gameName) {
 	}
 	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getName())) {
 		return getBelgianChocolateDuke3DDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::DUKE3DW.getName())) {
+		return getDuke3dwDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
 
 	return {};
@@ -1560,6 +1564,134 @@ std::string GameManager::getRedNukemDownloadURL(DeviceInformationBridge::Operati
 	}
 
 	return finalDownloadLink;
+}
+
+struct Duke3dwInfo {
+	std::string version;
+	std::string downloadURL;
+};
+
+static Duke3dwInfo getLatestDuke3dwInfo() {
+	static const std::string DUKE3DW_DOWNLOAD_PAGE_URL("http://www.proasm.com/duke/Duke3dw.html");
+	static const std::string VERSION_IDENTIFIER("Version");
+	static const std::string DOWNLOAD_IDENTIFIER("Download");
+	static const std::string DUKE3DW_IDENTIFIER("Duke3dw");
+
+	HTTPService * httpService = HTTPService::getInstance();
+
+	if(!httpService->isInitialized()) {
+		return {};
+	}
+
+	std::shared_ptr<HTTPRequest> downloadPageRequest(httpService->createRequest(HTTPRequest::Method::Get, DUKE3DW_DOWNLOAD_PAGE_URL));
+	downloadPageRequest->setConnectionTimeout(5s);
+	downloadPageRequest->setNetworkTimeout(10s);
+
+	std::shared_ptr<HTTPResponse> response(httpService->sendRequestAndWait(downloadPageRequest));
+
+	if(response->isFailure()) {
+		spdlog::error("Failed to retrieve Duke3dw download page with error: {}", response->getErrorMessage());
+		return {};
+	}
+	else if(response->isFailureStatusCode()) {
+		std::string statusCodeName(HTTPUtilities::getStatusCodeName(response->getStatusCode()));
+		spdlog::error("Failed to get Duke3dw download page ({}{})!", response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
+		return {};
+	}
+
+	std::string pageHTML(Utilities::tidyHTML(response->getBodyAsString()));
+
+	response.reset();
+
+	if(pageHTML.empty()) {
+		spdlog::error("Failed to tidy Duke3dw download page HTML.");
+		return {};
+	}
+
+	Duke3dwInfo info;
+	tinyxml2::XMLDocument document;
+
+	if(document.Parse(pageHTML.c_str(), pageHTML.length()) != tinyxml2::XML_SUCCESS) {
+		spdlog::error("Failed to parse Duke3dw download page XHTML with error: '{}'.", document.ErrorStr());
+		return {};
+	}
+
+	std::vector<const tinyxml2::XMLElement *> linkElements(Utilities::findXMLElementsWithName(document.RootElement(), "a"));
+
+	if(linkElements.empty()) {
+		spdlog::error("No download link elements found on Duke3dw download page.", document.ErrorStr());
+		return {};
+	}
+
+	for(const tinyxml2::XMLElement * linkElement : linkElements) {
+		const tinyxml2::XMLElement * downloadTextElement = Utilities::findFirstXMLElementContainingText(linkElement, DOWNLOAD_IDENTIFIER, false);
+
+		if(downloadTextElement == nullptr ||
+		   !Utilities::doesXMLElementContainText(downloadTextElement, DUKE3DW_IDENTIFIER, false)) {
+			continue;
+		}
+
+		const char * downloadLinkHrefRaw = linkElement->Attribute("href");
+
+		if(Utilities::stringLength(downloadLinkHrefRaw) == 0) {
+			continue;
+		}
+
+		std::string_view downloadLinkHref(downloadLinkHrefRaw);
+		size_t downloadDirectorySeparatorIndex = DUKE3DW_DOWNLOAD_PAGE_URL.find_last_of("/");
+		size_t downloadLinkHrefStartIndex = 0;
+
+		if(downloadLinkHref.find("../") == 0) {
+			downloadDirectorySeparatorIndex = DUKE3DW_DOWNLOAD_PAGE_URL.find_last_of("/", downloadDirectorySeparatorIndex - 1);
+			downloadLinkHrefStartIndex += 3;
+		}
+
+		info.downloadURL = Utilities::joinPaths(std::string_view(DUKE3DW_DOWNLOAD_PAGE_URL.c_str(), downloadDirectorySeparatorIndex), std::string_view(downloadLinkHref.data() + downloadLinkHrefStartIndex, downloadLinkHref.length() - downloadLinkHrefStartIndex));
+
+		break;
+	}
+
+	if(info.downloadURL.empty()) {
+		spdlog::error("Failed to locate Duke3dw download URL in download page XHTML.");
+		return {};
+	}
+
+	const tinyxml2::XMLElement * versionElement = Utilities::findFirstXMLElementContainingText(document.RootElement(), VERSION_IDENTIFIER);
+
+	if(versionElement != nullptr) {
+		const char * versionRaw = versionElement->GetText();
+
+		if(Utilities::stringLength(versionRaw) != 0) {
+			std::string_view version(versionRaw);
+			size_t versionSeparatorIndex = version.find(VERSION_IDENTIFIER);
+
+			if(versionSeparatorIndex != std::string::npos) {
+				versionSeparatorIndex = version.find_first_of(" ", versionSeparatorIndex + VERSION_IDENTIFIER.length());
+
+				if(versionSeparatorIndex != std::string::npos) {
+					info.version = version.substr(versionSeparatorIndex + 1);
+				}
+			}
+		}
+	}
+
+	return info;
+}
+
+std::string GameManager::getDuke3dwDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const {
+	if(!m_initialized) {
+		spdlog::error("Game manager not initialized!");
+		return {};
+	}
+
+	std::shared_ptr<GameVersion> duke3dwGameVersion(m_gameVersions->getGameVersionWithName(GameVersion::DUKE3DW.getName()));
+	const GameVersion * duke3dwGameVersionRaw = duke3dwGameVersion != nullptr ? duke3dwGameVersion.get() : &GameVersion::DUKE3DW;
+
+	if(!duke3dwGameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
+		return {};
+	}
+
+	return getLatestDuke3dwInfo().downloadURL;
 }
 
 bool GameManager::installGame(const GameVersion & gameVersion, const std::string & destinationDirectoryPath, bool useFallback, bool overwrite) {
