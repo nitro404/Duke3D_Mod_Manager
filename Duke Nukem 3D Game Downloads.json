@@ -272,6 +272,25 @@
 					]
 				}
 			]
+		},
+		{
+			"name": "Duke3d_w32",
+			"versions": [
+				{
+					"version": "20.3",
+					"releaseDate": "July 23, 2006",
+					"files": [
+						{
+							"fileName": "duke3d_w32_b20.3_bin.zip",
+							"fileSize": 2170886,
+							"type": "Game",
+							"sha1": "fbbb6e7a8a1bf2e0c39885a46dcb2e571ab13566",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x86"
+						}
+					]
+				}
+			]
 		}
 	]
 }

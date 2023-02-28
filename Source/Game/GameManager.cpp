@@ -367,7 +367,8 @@ bool GameManager::isGameDownloadable(const std::string & gameName) {
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::RAZE.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::RED_NUKEM.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getName()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::DUKE3DW.getName());
+		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::DUKE3DW.getName()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::DUKE3D_W32.getName());
 }
 
 std::string GameManager::getGameDownloadURL(const std::string & gameName) {
@@ -422,6 +423,9 @@ std::string GameManager::getGameDownloadURL(const std::string & gameName) {
 	}
 	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::DUKE3DW.getName())) {
 		return getDuke3dwDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::DUKE3D_W32.getName())) {
+		return getDuke3d_w32DownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
 
 	return {};
@@ -1694,6 +1698,184 @@ std::string GameManager::getDuke3dwDownloadURL(DeviceInformationBridge::Operatin
 	return getLatestDuke3dwInfo().downloadURL;
 }
 
+struct Duke3d_w32Download {
+	std::string version;
+	std::string downloadURL;
+	bool isPatch = false;
+};
+
+static std::vector<Duke3d_w32Download> getDuke3d_w32Downloads() {
+	static const std::string DUKE3D_W32_DOWNLOAD_PAGE_URL("http://www.rancidmeat.com/project.php3?id=1");
+	static const std::string DUKE3D_W32_DOWNLOAD_IDENTIFIER("duke3d_w32_");
+	static const std::string DUKE3D_W32_DOWNLOAD_FILE_EXTENSION("zip");
+	static const std::string DUKE3D_W32_DOWNLOAD_DEVELOPER_BUILD_IDENTIFIER("dev");
+	static const std::string DUKE3D_W32_DOWNLOAD_SOURCE_CODE_IDENTIFIER("src");
+	static const std::string DUKE3D_W32_DOWNLOAD_PATCH_IDENTIFIER("patch");
+
+	HTTPService * httpService = HTTPService::getInstance();
+
+	if(!httpService->isInitialized()) {
+		return {};
+	}
+
+	std::shared_ptr<HTTPRequest> downloadPageRequest(httpService->createRequest(HTTPRequest::Method::Get, DUKE3D_W32_DOWNLOAD_PAGE_URL));
+	downloadPageRequest->setConnectionTimeout(5s);
+	downloadPageRequest->setNetworkTimeout(10s);
+
+	std::shared_ptr<HTTPResponse> response(httpService->sendRequestAndWait(downloadPageRequest));
+
+	if(response->isFailure()) {
+		spdlog::error("Failed to retrieve Duke3d_w32 download page with error: {}", response->getErrorMessage());
+		return {};
+	}
+	else if(response->isFailureStatusCode()) {
+		std::string statusCodeName(HTTPUtilities::getStatusCodeName(response->getStatusCode()));
+		spdlog::error("Failed to get Duke3d_w32 download page ({}{})!", response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
+		return {};
+	}
+
+	std::string pageHTML(Utilities::tidyHTML(response->getBodyAsString()));
+
+	response.reset();
+
+	if(pageHTML.empty()) {
+		spdlog::error("Failed to tidy Duke3d_w32 download page HTML.");
+		return {};
+	}
+
+	Duke3dwInfo info;
+	tinyxml2::XMLDocument document;
+
+	if(document.Parse(pageHTML.c_str(), pageHTML.length()) != tinyxml2::XML_SUCCESS) {
+		spdlog::error("Failed to parse Duke3d_w32 download page XHTML with error: '{}'.", document.ErrorStr());
+		return {};
+	}
+
+	std::vector<const tinyxml2::XMLElement *> linkElements(Utilities::findXMLElementsWithName(document.RootElement(), "a"));
+
+	if(linkElements.empty()) {
+		spdlog::error("No download link elements found on Duke3d_w32 download page.", document.ErrorStr());
+		return {};
+	}
+
+	std::string_view downloadURLBasePath(DUKE3D_W32_DOWNLOAD_PAGE_URL.c_str(), DUKE3D_W32_DOWNLOAD_PAGE_URL.find_last_of("/"));
+	std::vector<Duke3d_w32Download> downloads;
+
+	for(const tinyxml2::XMLElement * linkElement : linkElements) {
+		const char * downloadLinkHrefRaw = linkElement->Attribute("href");
+
+		if(Utilities::stringLength(downloadLinkHrefRaw) == 0) {
+			continue;
+		}
+
+		std::string_view downloadLinkHref(downloadLinkHrefRaw);
+
+		size_t downloadIdentifierIndex = downloadLinkHref.find(DUKE3D_W32_DOWNLOAD_IDENTIFIER);
+
+		if(downloadIdentifierIndex== std::string::npos ||
+		   !Utilities::hasFileExtension(downloadLinkHref, "zip") ||
+		   downloadLinkHref.find(DUKE3D_W32_DOWNLOAD_DEVELOPER_BUILD_IDENTIFIER) != std::string::npos ||
+		   downloadLinkHref.find(DUKE3D_W32_DOWNLOAD_SOURCE_CODE_IDENTIFIER) != std::string::npos) {
+			continue;
+		}
+
+		Duke3d_w32Download download;
+
+		download.downloadURL = Utilities::joinPaths(downloadURLBasePath, downloadLinkHref);
+		download.isPatch = downloadLinkHref.find(DUKE3D_W32_DOWNLOAD_PATCH_IDENTIFIER) != std::string::npos;
+
+		size_t versionStartIndex = downloadLinkHref.find_first_of("0123456789", downloadIdentifierIndex + DUKE3D_W32_DOWNLOAD_IDENTIFIER.length());
+		size_t versionEndIndex = downloadLinkHref.find_last_of("0123456789");
+
+		download.version = std::string_view(downloadLinkHref.data() + versionStartIndex, versionEndIndex - versionStartIndex + 1);
+
+		size_t patchSeparatorIndex = download.version.find_first_of("-");
+
+		if(patchSeparatorIndex != std::string::npos) {
+			download.version[patchSeparatorIndex] = '.';
+		}
+
+		if(Utilities::areStringsEqual(download.version, "19.1") && download.downloadURL.find("bin") == std::string::npos) {
+			continue;
+		}
+
+		downloads.push_back(download);
+	}
+
+	std::stable_sort(downloads.begin(), downloads.end(), [](const Duke3d_w32Download & downloadA, const Duke3d_w32Download & downloadB) {
+		return Utilities::compareVersions(downloadA.version, downloadB.version).value_or(0) > 0;
+	});
+
+	size_t numberOfPatchDownloadsToRemove = 0;
+
+	for(std::vector<Duke3d_w32Download>::const_reverse_iterator i = downloads.crbegin(); i != downloads.crend(); ++i) {
+		if(i->isPatch) {
+			numberOfPatchDownloadsToRemove++;
+		}
+		else {
+			break;
+		}
+	}
+
+	for(size_t i = 0; i < numberOfPatchDownloadsToRemove; i++) {
+		downloads.pop_back();
+	}
+
+	return downloads;
+}
+
+static std::vector<Duke3d_w32Download> getLatestDuke3d_w32Downloads() {
+	std::vector<Duke3d_w32Download> downloads(getDuke3d_w32Downloads());
+
+	std::vector<Duke3d_w32Download>::const_iterator baseDownloadIterator(std::find_if(downloads.cbegin(), downloads.cend(), [](const Duke3d_w32Download & download) {
+		return !download.isPatch;
+	}));
+
+	if(baseDownloadIterator == downloads.cend()) {
+		return {};
+	}
+
+	size_t numberOfDownloadsToRemove = downloads.cend() - baseDownloadIterator - 1;
+
+	for(size_t i = 0; i < numberOfDownloadsToRemove; i++) {
+		downloads.pop_back();
+	}
+
+	return downloads;
+}
+
+std::string GameManager::getDuke3d_w32DownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const {
+	if(!m_initialized) {
+		spdlog::error("Game manager not initialized!");
+		return {};
+	}
+
+	std::shared_ptr<GameVersion> duke3d_w32GameVersion(m_gameVersions->getGameVersionWithName(GameVersion::DUKE3D_W32.getName()));
+	const GameVersion * duke3d_w32GameVersionRaw = duke3d_w32GameVersion != nullptr ? duke3d_w32GameVersion.get() : &GameVersion::DUKE3D_W32;
+
+	if(!duke3d_w32GameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
+		return {};
+	}
+
+	std::vector<Duke3d_w32Download> downloads(getLatestDuke3d_w32Downloads());
+
+	if(downloads.empty()) {
+		return {};
+	}
+
+	// Note: Duke3d_win32 releases are sometimes distributed as multiple patches, and must be applied on top of a prior full release. There is not currently support for downloading and extracting
+	// multiple archives one on top of another, so we will instead download the latest full release for now.
+	std::vector<Duke3d_w32Download>::const_iterator latestFullDownloadIterator(std::find_if(downloads.cbegin(), downloads.cend(), [](const Duke3d_w32Download & download) {
+		return !download.isPatch;
+	}));
+
+	if(latestFullDownloadIterator == downloads.cend()) {
+		return {};
+	}
+
+	return latestFullDownloadIterator->downloadURL;
+}
+
 bool GameManager::installGame(const GameVersion & gameVersion, const std::string & destinationDirectoryPath, bool useFallback, bool overwrite) {
 	if(!m_initialized) {
 		spdlog::error("Game manager not initialized!");
@@ -1820,7 +2002,6 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 	bool isLameDuke = Utilities::areStringsEqualIgnoreCase(gameVersion.getName(), GameVersion::LAMEDUKE.getName());
 	bool isRegularVersion = Utilities::areStringsEqualIgnoreCase(gameVersion.getName(), GameVersion::ORIGINAL_REGULAR_VERSION.getName());
 	bool isAtomicEdition = Utilities::areStringsEqualIgnoreCase(gameVersion.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName());
-	bool isJFDuke3D = Utilities::areStringsEqualIgnoreCase(gameVersion.getName(), GameVersion::JFDUKE3D.getName());
 	bool isOriginalGameFallback = useFallback && (isLameDuke || isRegularVersion || isAtomicEdition);
 
 	std::function<bool(std::shared_ptr<ArchiveEntry>, const GameFileInformation &)> extractGameFileFunction([&gameVersion, &gameDownloadURL, &destinationDirectoryPath, overwrite](std::shared_ptr<ArchiveEntry> gameFileEntry, const GameFileInformation & gameFileInfo) {
@@ -1919,18 +2100,64 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		}
 	}
 	else {
-		if(gameFilesArchive->extractAllEntries(destinationDirectoryPath, true) == 0) {
-			spdlog::error("Failed to extract '{}' game files archive package to '{}'.", gameVersion.getName(), destinationDirectoryPath);
+		if(Utilities::areStringsEqualIgnoreCase(gameVersion.getName(), GameVersion::DUKE3D_W32.getName())) {
+			std::shared_ptr<ArchiveEntry> gameExecutableArchiveEntry(gameFilesArchive->getFirstEntryWithName("duke3d_w32.exe", true));
 
-			if(!useFallback) {
-				return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
+			if(gameExecutableArchiveEntry == nullptr || !gameExecutableArchiveEntry->isFile()) {
+				spdlog::error("Failed to locate '{}' game executable in game files archive package.", gameVersion.getName());
+
+				if(!useFallback) {
+					return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
+				}
+
+				return false;
 			}
 
-			return false;
+			std::string gameFilesBasePath(Utilities::getBasePath(gameExecutableArchiveEntry->getPath()));
+
+			if(gameFilesArchive->extractAllEntriesInSubdirectory(destinationDirectoryPath, gameFilesBasePath, true, true, overwrite) == 0) {
+				spdlog::error("Failed to extract '{}' game files from subdirectory '{}' in archive package to '{}'.", gameVersion.getName(), gameFilesBasePath, destinationDirectoryPath);
+
+				if(!useFallback) {
+					return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
+				}
+
+				return false;
+			}
+
+			static const std::array<std::string, 4> ADDITIONAL_DUKE3D_W32_FILE_NAMES = {
+				"duke3d_w32.chm",
+				"README.txt",
+				"gnu.txt",
+				"3drealms_readme.txt"
+			};
+
+			std::shared_ptr<ArchiveEntry> additionalFileArchiveEntry;
+
+			for(const std::string & additionalFileName : ADDITIONAL_DUKE3D_W32_FILE_NAMES) {
+				additionalFileArchiveEntry = gameFilesArchive->getFirstEntryWithName(additionalFileName);
+
+				if(additionalFileArchiveEntry == nullptr || !additionalFileArchiveEntry->isFile()) {
+					continue;
+				}
+
+				additionalFileArchiveEntry->writeToFile(Utilities::joinPaths(destinationDirectoryPath, additionalFileArchiveEntry->getName()));
+			}
+		}
+		else {
+			if(gameFilesArchive->extractAllEntries(destinationDirectoryPath, true) == 0) {
+				spdlog::error("Failed to extract '{}' game files archive package to '{}'.", gameVersion.getName(), destinationDirectoryPath);
+
+				if(!useFallback) {
+					return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
+				}
+
+				return false;
+			}
 		}
 	}
 
-	if(isJFDuke3D) {
+	if(Utilities::areStringsEqualIgnoreCase(gameVersion.getName(), GameVersion::JFDUKE3D.getName())) {
 		std::filesystem::directory_entry jfDuke3DSubdirectory;
 
 		for(const std::filesystem::directory_entry & entry : std::filesystem::directory_iterator(std::filesystem::path(destinationDirectoryPath))) {

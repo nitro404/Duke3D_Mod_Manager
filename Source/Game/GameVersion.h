@@ -203,6 +203,7 @@ public:
 	static const GameVersion CHOCOLATE_DUKE3D;
 	static const GameVersion BELGIAN_CHOCOLATE_DUKE3D;
 	static const GameVersion DUKE3DW;
+	static const GameVersion DUKE3D_W32;
 	static const std::vector<const GameVersion *> DEFAULT_GAME_VERSIONS;
 
 	static const bool DEFAULT_LOCAL_WORKING_DIRECTORY;

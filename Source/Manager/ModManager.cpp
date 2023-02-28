@@ -2111,6 +2111,16 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 				return {};
 			}
 
+			if(!conFileName.empty()) {
+				if(selectedGameVersion->hasConFileArgumentFlag()) {
+					command << " " << selectedGameVersion->getConFileArgumentFlag().value() << (selectedGameVersion->hasRelativeConFilePath() ? conFileName : Utilities::joinPaths(modPath, conFileName));
+				}
+				else {
+					spdlog::error("Game version '{}' does not have a con file argument flag specified in its configuration.", selectedGameVersion->getName());
+					return {};
+				}
+			}
+
 			if(!customGroupFiles.empty()) {
 				for(std::vector<std::string>::const_iterator i = customGroupFiles.begin(); i != customGroupFiles.end(); ++i) {
 					command << " " << selectedGameVersion->getGroupFileArgumentFlag().value() << Utilities::joinPaths(modPath, *i);
@@ -2168,16 +2178,6 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 					}
 
 					command << " " << selectedGameVersion->getDefFileArgumentFlag().value() << defFileName;
-				}
-			}
-
-			if(!conFileName.empty()) {
-				if(selectedGameVersion->hasConFileArgumentFlag()) {
-					command << " " << selectedGameVersion->getConFileArgumentFlag().value() << (selectedGameVersion->hasRelativeConFilePath() ? conFileName : Utilities::joinPaths(modPath, conFileName));
-				}
-				else {
-					spdlog::error("Game version '{}' does not have a con file argument flag specified in its configuration.", selectedGameVersion->getName());
-					return {};
 				}
 			}
 		}

@@ -109,19 +109,19 @@ GameVersionPanel::GameVersionPanel(std::shared_ptr<GameVersion> gameVersion, wxW
 	argumentsPanel->SetSizerAndFit(argumentsSizer);
 
 	wxBoxSizer * gameInformationBoxSizer = new wxBoxSizer(wxHORIZONTAL);
-	gameInformationBoxSizer->Add(gameInformationPanel, 1, wxEXPAND | wxALL, 20);
+	gameInformationBoxSizer->Add(gameInformationPanel, 1, wxEXPAND | wxALL, 18);
 	gameInformationBox->SetSizer(gameInformationBoxSizer);
 
 	wxBoxSizer * gameConfigurationBoxSizer = new wxBoxSizer(wxHORIZONTAL);
-	gameConfigurationBoxSizer->Add(gameConfigurationPanel, 1, wxEXPAND | wxALL, 20);
+	gameConfigurationBoxSizer->Add(gameConfigurationPanel, 1, wxEXPAND | wxALL, 18);
 	gameConfigurationBox->SetSizer(gameConfigurationBoxSizer);
 
 	wxBoxSizer * compatibleGameVersionsBoxSizer = new wxBoxSizer(wxHORIZONTAL);
-	compatibleGameVersionsBoxSizer->Add(compatibleGameVersionsPanel, 1, wxEXPAND | wxALL, 20);
+	compatibleGameVersionsBoxSizer->Add(compatibleGameVersionsPanel, 1, wxEXPAND | wxALL, 18);
 	compatibleGameVersionsBox->SetSizer(compatibleGameVersionsBoxSizer);
 
 	wxBoxSizer * supportedOperatingSystemsBoxSizer = new wxBoxSizer(wxHORIZONTAL);
-	supportedOperatingSystemsBoxSizer->Add(supportedOperatingSystemsPanel, 1, wxEXPAND | wxALL, 20);
+	supportedOperatingSystemsBoxSizer->Add(supportedOperatingSystemsPanel, 1, wxEXPAND | wxALL, 18);
 	supportedOperatingSystemsBox->SetSizer(supportedOperatingSystemsBoxSizer);
 
 	wxBoxSizer * argumentsBoxSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -134,9 +134,9 @@ GameVersionPanel::GameVersionPanel(std::shared_ptr<GameVersion> gameVersion, wxW
 	gameVersionConfigurationSizer->Add(supportedOperatingSystemsBox, wxGBPosition(2, 1), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
 	gameVersionConfigurationSizer->Add(argumentsBox, wxGBPosition(3, 0), wxGBSpan(1, 2), wxEXPAND | wxALL, border);
 	gameVersionConfigurationSizer->AddGrowableRow(0, 1);
-	gameVersionConfigurationSizer->AddGrowableRow(1, 10);
+	gameVersionConfigurationSizer->AddGrowableRow(1, 18);
 	gameVersionConfigurationSizer->AddGrowableRow(2, 1);
-	gameVersionConfigurationSizer->AddGrowableRow(3, 12);
+	gameVersionConfigurationSizer->AddGrowableRow(3, 20);
 	gameVersionConfigurationSizer->AddGrowableCol(0, 6);
 	gameVersionConfigurationSizer->AddGrowableCol(1, 1);
 	SetSizer(gameVersionConfigurationSizer);

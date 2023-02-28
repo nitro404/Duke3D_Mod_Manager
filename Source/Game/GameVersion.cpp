@@ -101,6 +101,7 @@ const GameVersion GameVersion::RED_NUKEM               ("RedNukem",             
 const GameVersion GameVersion::CHOCOLATE_DUKE3D        ("Chocolate Duke3D",            true,  false, "", "Game.exe",           true,  false, false, "Chocolate", "/x",  "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          {}, {},    {},    {},   {},    "https://fabiensanglard.net/duke3d/chocolate_duke_nukem_3D.php", "https://github.com/fabiensanglard/chocolate_duke3D",                       { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getName(), ORIGINAL_ATOMIC_EDITION.getName() });
 const GameVersion GameVersion::BELGIAN_CHOCOLATE_DUKE3D("Belgian Chocolate Duke3D",    true,  false, "", "ChocoDuke3D.64.exe", true,  false, false, "Belgian",   "/x",  "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", {},    {},    {},   {},    "",                                                              "https://github.com/GPSnoopy/BelgianChocolateDuke3D",                       { OperatingSystem::Windows, OperatingSystem::Linux, OperatingSystem::MacOS }, { ORIGINAL_REGULAR_VERSION.getName(), ORIGINAL_ATOMIC_EDITION.getName() });
 const GameVersion GameVersion::DUKE3DW                 ("Duke3dw",                     true,  false, "", "Duke3dw.exe",        true,  false, true,  "Duke3dw",   "/x",  "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", "/h",  {},    {},   {},    "http://www.proasm.com/duke/Duke3dw.html",                       "",                                                                         { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getName(), ORIGINAL_ATOMIC_EDITION.getName(), JFDUKE3D.getName() });
+const GameVersion GameVersion::DUKE3D_W32              ("Duke3d_w32",                  true,  false, "", "duke3d_w32.exe",     true,  false, false, "Duke_w32",  "/x",  "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", {},    {},    {},   {},    "http://www.rancidmeat.com/project.php3?id=1",                   "",                                                                         { OperatingSystem::Windows },                                                 { ORIGINAL_ATOMIC_EDITION.getName() });
 
 const std::vector<const GameVersion *> GameVersion::DEFAULT_GAME_VERSIONS = {
 	&LAMEDUKE,
@@ -116,7 +117,8 @@ const std::vector<const GameVersion *> GameVersion::DEFAULT_GAME_VERSIONS = {
 	&RED_NUKEM,
 	&CHOCOLATE_DUKE3D,
 	&BELGIAN_CHOCOLATE_DUKE3D,
-	&DUKE3DW
+	&DUKE3DW,
+	&DUKE3D_W32
 };
 
 const bool GameVersion::DEFAULT_LOCAL_WORKING_DIRECTORY = true;
