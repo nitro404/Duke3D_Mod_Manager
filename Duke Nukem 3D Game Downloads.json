@@ -289,6 +289,20 @@
 							"processorArchitecture": "x86"
 						}
 					]
+				},
+				{
+					"version": "19.7.1",
+					"releaseDate": "April 16, 2006",
+					"files": [
+						{
+							"fileName": "Duke3d_Binary_Only_v19.7.1.zip",
+							"fileSize": 849060,
+							"type": "Game",
+							"sha1": "2c3e10aba19c535df4b347e7963d9a8304ce9517",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x86"
+						}
+					]
 				}
 			]
 		},
