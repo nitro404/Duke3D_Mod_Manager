@@ -368,6 +368,7 @@ bool GameManager::isGameDownloadable(const std::string & gameName) {
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::RED_NUKEM.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::DUKE3DW.getName()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::XDUKE.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::DUKE3D_W32.getName());
 }
 
@@ -423,6 +424,9 @@ std::string GameManager::getGameDownloadURL(const std::string & gameName) {
 	}
 	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::DUKE3DW.getName())) {
 		return getDuke3dwDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::XDUKE.getName())) {
+		return getXDukeDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
 	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::DUKE3D_W32.getName())) {
 		return getDuke3d_w32DownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
@@ -1696,6 +1700,120 @@ std::string GameManager::getDuke3dwDownloadURL(DeviceInformationBridge::Operatin
 	}
 
 	return getLatestDuke3dwInfo().downloadURL;
+}
+
+struct XDukeDownload {
+	std::string version;
+	std::string downloadURL;
+};
+
+static std::vector<XDukeDownload> getXDukeDownloads() {
+	static const std::string XDUKE_DOWNLOAD_PAGE_URL("http://vision.gel.ulaval.ca/~klein/duke3d");
+	static const std::string XDUKE_DOWNLOAD_IDENTIFIER("duke3d_");
+
+	HTTPService * httpService = HTTPService::getInstance();
+
+	if(!httpService->isInitialized()) {
+		return {};
+	}
+
+	std::shared_ptr<HTTPRequest> downloadPageRequest(httpService->createRequest(HTTPRequest::Method::Get, XDUKE_DOWNLOAD_PAGE_URL));
+	downloadPageRequest->setConnectionTimeout(5s);
+	downloadPageRequest->setNetworkTimeout(10s);
+
+	std::shared_ptr<HTTPResponse> response(httpService->sendRequestAndWait(downloadPageRequest));
+
+	if(response->isFailure()) {
+		spdlog::error("Failed to retrieve xDuke download page with error: {}", response->getErrorMessage());
+		return {};
+	}
+	else if(response->isFailureStatusCode()) {
+		std::string statusCodeName(HTTPUtilities::getStatusCodeName(response->getStatusCode()));
+		spdlog::error("Failed to get xDuke download page ({}{})!", response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
+		return {};
+	}
+
+	std::string pageHTML(Utilities::tidyHTML(response->getBodyAsString()));
+
+	response.reset();
+
+	if(pageHTML.empty()) {
+		spdlog::error("Failed to tidy xDuke download page HTML.");
+		return {};
+	}
+
+	Duke3dwInfo info;
+	tinyxml2::XMLDocument document;
+
+	if(document.Parse(pageHTML.c_str(), pageHTML.length()) != tinyxml2::XML_SUCCESS) {
+		spdlog::error("Failed to parse xDuke download page XHTML with error: '{}'.", document.ErrorStr());
+		return {};
+	}
+
+	std::vector<const tinyxml2::XMLElement *> linkElements(Utilities::findXMLElementsWithName(document.RootElement(), "a"));
+
+	if(linkElements.empty()) {
+		spdlog::error("No download link elements found on xDuke download page.", document.ErrorStr());
+		return {};
+	}
+
+	std::vector<XDukeDownload> downloads;
+
+	for(const tinyxml2::XMLElement * linkElement : linkElements) {
+		const char * downloadLinkHrefRaw = linkElement->Attribute("href");
+
+		if(Utilities::stringLength(downloadLinkHrefRaw) == 0) {
+			continue;
+		}
+
+		std::string_view downloadLinkHref(downloadLinkHrefRaw);
+
+		if(!Utilities::hasFileExtension(downloadLinkHref, "zip")) {
+			continue;
+		}
+
+		std::string lowerCaseDownloadLinkHref(Utilities::toLowerCase(downloadLinkHref));
+
+		if(lowerCaseDownloadLinkHref.find(XDUKE_DOWNLOAD_IDENTIFIER) != 0) {
+			continue;
+		}
+
+		size_t versionStartIndex = downloadLinkHref.find_first_of("0123456789", XDUKE_DOWNLOAD_IDENTIFIER.length());
+		size_t versionEndIndex = downloadLinkHref.find_last_of("0123456789");
+
+		downloads.push_back(XDukeDownload{
+			std::string(downloadLinkHref.data() + versionStartIndex, versionEndIndex - versionStartIndex + 1),
+			Utilities::joinPaths(XDUKE_DOWNLOAD_PAGE_URL, downloadLinkHref)
+		});
+	}
+
+	std::stable_sort(downloads.begin(), downloads.end(), [](const XDukeDownload & downloadA, const XDukeDownload & downloadB) {
+		return Utilities::compareVersions(downloadA.version, downloadB.version).value_or(0) > 0;
+	});
+
+	return downloads;
+}
+
+std::string GameManager::getXDukeDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const {
+	if(!m_initialized) {
+		spdlog::error("Game manager not initialized!");
+		return {};
+	}
+
+	std::shared_ptr<GameVersion> xDukeGameVersion(m_gameVersions->getGameVersionWithName(GameVersion::XDUKE.getName()));
+	const GameVersion * xDukeGameVersionRaw = xDukeGameVersion != nullptr ? xDukeGameVersion.get() : &GameVersion::XDUKE;
+
+	if(!xDukeGameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
+		return {};
+	}
+
+	std::vector<XDukeDownload> xDukeDownloads(getXDukeDownloads());
+
+	if(xDukeDownloads.empty()) {
+		return {};
+	}
+
+	return xDukeDownloads.front().downloadURL;
 }
 
 struct Duke3d_w32Download {

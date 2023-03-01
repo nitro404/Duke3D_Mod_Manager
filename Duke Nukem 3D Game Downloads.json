@@ -274,6 +274,25 @@
 			]
 		},
 		{
+			"name": "xDuke",
+			"versions": [
+				{
+					"version": "19.8",
+					"releaseDate": "May 21, 2010",
+					"files": [
+						{
+							"fileName": "Duke3d_Binary_Only_v19.8.zip",
+							"fileSize": 624105,
+							"type": "Game",
+							"sha1": "9d3d4fb8df52978a4017d37c0f767d7849b02b7e",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x86"
+						}
+					]
+				}
+			]
+		},
+		{
 			"name": "Duke3d_w32",
 			"versions": [
 				{

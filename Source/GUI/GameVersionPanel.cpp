@@ -134,7 +134,7 @@ GameVersionPanel::GameVersionPanel(std::shared_ptr<GameVersion> gameVersion, wxW
 	gameVersionConfigurationSizer->Add(supportedOperatingSystemsBox, wxGBPosition(2, 1), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
 	gameVersionConfigurationSizer->Add(argumentsBox, wxGBPosition(3, 0), wxGBSpan(1, 2), wxEXPAND | wxALL, border);
 	gameVersionConfigurationSizer->AddGrowableRow(0, 1);
-	gameVersionConfigurationSizer->AddGrowableRow(1, 18);
+	gameVersionConfigurationSizer->AddGrowableRow(1, 14);
 	gameVersionConfigurationSizer->AddGrowableRow(2, 1);
 	gameVersionConfigurationSizer->AddGrowableRow(3, 20);
 	gameVersionConfigurationSizer->AddGrowableCol(0, 6);
