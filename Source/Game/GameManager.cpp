@@ -369,6 +369,7 @@ bool GameManager::isGameDownloadable(const std::string & gameName) {
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::DUKE3DW.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::XDUKE.getName()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::RDUKE.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::DUKE3D_W32.getName());
 }
 
@@ -427,6 +428,9 @@ std::string GameManager::getGameDownloadURL(const std::string & gameName) {
 	}
 	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::XDUKE.getName())) {
 		return getXDukeDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::RDUKE.getName())) {
+		return getRDukeDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
 	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::DUKE3D_W32.getName())) {
 		return getDuke3d_w32DownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
@@ -1814,6 +1818,30 @@ std::string GameManager::getXDukeDownloadURL(DeviceInformationBridge::OperatingS
 	}
 
 	return xDukeDownloads.front().downloadURL;
+}
+
+std::string GameManager::getRDukeDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const {
+	if(!m_initialized) {
+		spdlog::error("Game manager not initialized!");
+		return {};
+	}
+
+	std::shared_ptr<GameVersion> rDukeGameVersion(m_gameVersions->getGameVersionWithName(GameVersion::RDUKE.getName()));
+	const GameVersion * rDukeGameVersionRaw = rDukeGameVersion != nullptr ? rDukeGameVersion.get() : &GameVersion::RDUKE;
+
+	if(!rDukeGameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
+		return {};
+	}
+
+	GitHubService * gitHubService = GitHubService::getInstance();
+
+	std::unique_ptr<GitHubRelease> latestRelease(gitHubService->getLatestRelease(GameVersion::RDUKE.getSourceCodeURL()));
+
+	if(latestRelease == nullptr || latestRelease->numberOfAssets() == 0) {
+		return {};
+	}
+
+	return latestRelease->getAsset(0)->getDownloadURL();
 }
 
 struct Duke3d_w32Download {

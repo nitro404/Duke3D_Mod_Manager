@@ -293,6 +293,25 @@
 			]
 		},
 		{
+			"name": "rDuke",
+			"versions": [
+				{
+					"version": "10",
+					"releaseDate": "April 19, 2020",
+					"files": [
+						{
+							"fileName": "rduke_r10.zip",
+							"fileSize": 606905,
+							"type": "Game",
+							"sha1": "dc564cd169f208dbc94af074dc3444b21d9b682f",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x86"
+						}
+					]
+				}
+			]
+		},
+		{
 			"name": "Duke3d_w32",
 			"versions": [
 				{

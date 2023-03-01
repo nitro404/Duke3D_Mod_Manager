@@ -204,6 +204,7 @@ public:
 	static const GameVersion BELGIAN_CHOCOLATE_DUKE3D;
 	static const GameVersion DUKE3DW;
 	static const GameVersion XDUKE;
+	static const GameVersion RDUKE;
 	static const GameVersion DUKE3D_W32;
 	static const std::vector<const GameVersion *> DEFAULT_GAME_VERSIONS;
 
