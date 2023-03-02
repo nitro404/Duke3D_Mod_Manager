@@ -274,6 +274,67 @@
 			]
 		},
 		{
+			"name": "pkDuke3D",
+			"versions": [
+				{
+					"version": "1.3",
+					"releaseDate": "July 23, 2021",
+					"files": [
+						{
+							"fileName": "pkDuke3D_1_3.zip",
+							"fileSize": 2050655,
+							"type": "Game",
+							"sha1": "63e0e4e11862cb4ccc5142670cbfcbddc0d7cc72",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x86"
+						}
+					]
+				},
+				{
+					"version": "1.2",
+					"releaseDate": "December 7, 2017",
+					"files": [
+						{
+							"fileName": "pkDuke3D_1_2.zip",
+							"fileSize": 1997424,
+							"type": "Game",
+							"sha1": "55ea55cc83a3a13364998f6297c73d477fb730b1",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x86"
+						}
+					]
+				},
+				{
+					"version": "1.1",
+					"releaseDate": "June 8, 2016",
+					"files": [
+						{
+							"fileName": "pkDuke3D_1_1.zip",
+							"fileSize": 1973726,
+							"type": "Game",
+							"sha1": "0bdcd686badeef5e1d8a1adda610bb22fe07f76b",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x86"
+						}
+					]
+				},
+				{
+					"version": "1.0",
+					"releaseDate": "January 23, 2016",
+					"files": [
+						{
+							"fileName": "pkDuke3D_1_0.zip",
+							"fileSize": 1973434,
+							"type": "Game",
+							"sha1": "06effda3d8b1f9da516b98aba62830afc22cba46",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x86"
+						}
+					]
+				}
+			]
+		},
+		{
 			"name": "xDuke",
 			"versions": [
 				{

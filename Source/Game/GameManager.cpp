@@ -12,6 +12,7 @@
 #include "Manager/SettingsManager.h"
 
 #include <Archive/ArchiveFactoryRegistry.h>
+#include <Bitbucket/BitbucketService.h>
 #include <GitHub/GitHubService.h>
 #include <Network/HTTPService.h>
 #include <Utilities/FileUtilities.h>
@@ -368,6 +369,7 @@ bool GameManager::isGameDownloadable(const std::string & gameName) {
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::RED_NUKEM.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::DUKE3DW.getName()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::PKDUKE3D.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::XDUKE.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::RDUKE.getName()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::DUKE3D_W32.getName());
@@ -425,6 +427,9 @@ std::string GameManager::getGameDownloadURL(const std::string & gameName) {
 	}
 	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::DUKE3DW.getName())) {
 		return getDuke3dwDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::PKDUKE3D.getName())) {
+		return getPKDuke3DDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
 	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::XDUKE.getName())) {
 		return getXDukeDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
@@ -1704,6 +1709,30 @@ std::string GameManager::getDuke3dwDownloadURL(DeviceInformationBridge::Operatin
 	}
 
 	return getLatestDuke3dwInfo().downloadURL;
+}
+
+std::string GameManager::getPKDuke3DDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const {
+	if(!m_initialized) {
+		spdlog::error("Game manager not initialized!");
+		return {};
+	}
+
+	std::shared_ptr<GameVersion> duke3dwGameVersion(m_gameVersions->getGameVersionWithName(GameVersion::DUKE3DW.getName()));
+	const GameVersion * duke3dwGameVersionRaw = duke3dwGameVersion != nullptr ? duke3dwGameVersion.get() : &GameVersion::DUKE3DW;
+
+	if(!duke3dwGameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
+		return {};
+	}
+
+	BitbucketService * bitbucketService = BitbucketService::getInstance();
+
+	std::shared_ptr<BitbucketDownload> latestDownload(bitbucketService->getLatestDownload(GameVersion::PKDUKE3D.getSourceCodeURL()));
+
+	if(!BitbucketDownload::isValid(latestDownload.get())) {
+		return {};
+	}
+
+	return latestDownload->getDownloadURL();
 }
 
 struct XDukeDownload {
