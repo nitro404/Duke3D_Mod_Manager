@@ -19,7 +19,7 @@ void LogSinkWX::initialize() {
 	}
 
 	for(const std::pair<wxLogLevel, std::string> & logMessage : m_logMessageCache) {
-		wxLogGeneric(logMessage.first, logMessage.second.data());
+		wxLogGeneric(logMessage.first, "%s", logMessage.second.data());
 	}
 
 	m_logMessageCache.clear();
@@ -75,7 +75,7 @@ void LogSinkWX::sink_it_(const spdlog::details::log_msg & logMessage) {
 	std::string formattedLogMessageWithoutNewlines(formattedLogMessageWithNewlines.data(), formattedLogMessageWithNewlines.find_first_of("\r\n"));
 
 	if(m_initialized) {
-		wxLogGeneric(logLevel, formattedLogMessageWithoutNewlines.data());
+		wxLogGeneric(logLevel, "%s", formattedLogMessageWithoutNewlines.data());
 	}
 	else {
 		m_logMessageCache.push_back(std::make_pair(logLevel, formattedLogMessageWithoutNewlines));
