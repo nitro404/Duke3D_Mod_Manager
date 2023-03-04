@@ -4,6 +4,7 @@
 #include "ModManager.h"
 
 #include <Arguments/ArgumentParser.h>
+#include <Logging/LogSystem.h>
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
 #include <Utilities/TimeUtilities.h>
@@ -28,6 +29,7 @@ static constexpr const char * DATA_DIRECTORY_NAME = "dataDirectoryName";
 static constexpr const char * EXECUTABLE_FILE_NAME = "executableFileName";
 
 static constexpr const char * FILE_FORMAT_VERSION_PROPERTY_NAME = "fileFormatVersion";
+static constexpr const char * LOG_LEVEL_PROPERTY_NAME = "logLevel";
 static constexpr const char * GAME_TYPE_PROPERTY_NAME = "gameType";
 static constexpr const char * DATA_DIRECTORY_PATH_PROPERTY_NAME = "dataDirectoryPath";
 static constexpr const char * APP_TEMP_DIRECTORY_PATH_PROPERTY_NAME = "appTempDirectoryPath";
@@ -414,6 +416,8 @@ rapidjson::Document SettingsManager::toJSON() const {
 
 	rapidjson::Value fileFormatVersionValue(FILE_FORMAT_VERSION.c_str(), allocator);
 	settingsDocument.AddMember(rapidjson::StringRef(FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
+	rapidjson::Value logLevelValue(std::string(magic_enum::enum_name(LogSystem::getInstance()->getLevel())).c_str(), allocator);
+	settingsDocument.AddMember(rapidjson::StringRef(LOG_LEVEL_PROPERTY_NAME), logLevelValue, allocator);
 	rapidjson::Value gameTypeValue(Utilities::toCapitalCase(magic_enum::enum_name(gameType)).c_str(), allocator);
 	settingsDocument.AddMember(rapidjson::StringRef(GAME_TYPE_PROPERTY_NAME), gameTypeValue, allocator);
 	rapidjson::Value dataDirectoryPathValue(dataDirectoryPath.c_str(), allocator);
@@ -676,6 +680,14 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 
 		if(gameTypeOptional.has_value()) {
 			gameType = gameTypeOptional.value();
+		}
+	}
+
+	if(settingsDocument.HasMember(LOG_LEVEL_PROPERTY_NAME) && settingsDocument[LOG_LEVEL_PROPERTY_NAME].IsString()) {
+		std::optional<spdlog::level::level_enum> optionalLogLevel(magic_enum::enum_cast<spdlog::level::level_enum>(settingsDocument[LOG_LEVEL_PROPERTY_NAME].GetString()));
+
+		if(optionalLogLevel.has_value() && optionalLogLevel.value() != spdlog::level::n_levels) {
+			LogSystem::getInstance()->setLevel(optionalLogLevel.value());
 		}
 	}
 
