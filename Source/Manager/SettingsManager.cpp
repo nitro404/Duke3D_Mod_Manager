@@ -181,7 +181,7 @@ const std::chrono::minutes SettingsManager::DEFAULT_GAME_DOWNLOAD_LIST_UPDATE_FR
 const std::chrono::minutes SettingsManager::DEFAULT_CACERT_UPDATE_FREQUENCY = std::chrono::hours(2 * 24 * 7); // 2 weeks
 const std::chrono::minutes SettingsManager::DEFAULT_TIME_ZONE_DATA_UPDATE_FREQUENCY = std::chrono::hours(1 * 24 * 7); // 1 week
 const Point SettingsManager::DEFAULT_WINDOW_POSITION(-1, -1);
-const Dimension SettingsManager::DEFAULT_WINDOW_SIZE(1024, 768);
+const Dimension SettingsManager::DEFAULT_WINDOW_SIZE(1280, 1024);
 const Dimension SettingsManager::MINIMUM_WINDOW_SIZE(800, 600);
 
 static bool assignStringSetting(std::string & setting, const rapidjson::Value & categoryValue, const std::string & propertyName) {
