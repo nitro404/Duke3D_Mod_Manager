@@ -30,17 +30,21 @@ namespace WXUtilities {
 	Colour createColour(const wxColour & colour);
 	wxArrayString createItemWXArrayString(const std::vector<std::string> & items);
 	template <typename E>
-	wxArrayString createEnumWXArrayString();
+	wxArrayString createEnumWXArrayString(const std::vector<E> & disabledEnumValues = {});
 	void setButtonEnabled(wxButton * button, bool enabled);
 	void setTextControlEnabled(wxTextCtrl * textControl, bool enabled);
 
 	template <typename E>
-	wxArrayString createEnumWXArrayString() {
+	wxArrayString createEnumWXArrayString(const std::vector<E> & disabledEnumValues) {
 		wxArrayString enumArrayString;
-		constexpr auto enumNames = magic_enum::enum_names<E>();
+		constexpr auto enumValues = magic_enum::enum_values<E>();
 
-		for(const std::string_view enumName : enumNames) {
-			enumArrayString.Add(Utilities::toCapitalCase(enumName));
+		for(const E enumValue : enumValues) {
+			if(std::find(disabledEnumValues.cbegin(), disabledEnumValues.cend(), enumValue) != disabledEnumValues.cend()) {
+				continue;
+			}
+
+			enumArrayString.Add(Utilities::toCapitalCase(magic_enum::enum_name(enumValue)));
 		}
 
 		return enumArrayString;

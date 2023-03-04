@@ -37,7 +37,7 @@ SettingsManagerPanel::SettingsManagerPanel(std::shared_ptr<ModManager> modManage
 
 	wxPanel * generalSettingsPanel = new wxPanel(generalSettingsBox, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 
-	m_settingsPanels.push_back(SettingPanel::createEnumSettingPanel<spdlog::level::level_enum>(std::bind(&LogSystem::getLevel, LogSystem::getInstance()), std::bind(&LogSystem::setLevel, LogSystem::getInstance(), std::placeholders::_1), LogSystem::DEFAULT_LEVEL, "Log Level", generalSettingsPanel, generalSettingsSizer));
+	m_settingsPanels.push_back(SettingPanel::createEnumSettingPanel<spdlog::level::level_enum>(std::bind(&LogSystem::getLevel, LogSystem::getInstance()), std::bind(&LogSystem::setLevel, LogSystem::getInstance(), std::placeholders::_1), LogSystem::DEFAULT_LEVEL, "Log Level", generalSettingsPanel, generalSettingsSizer, { spdlog::level::level_enum::off, spdlog::level::level_enum::n_levels }));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->favouriteModsListFilePath, SettingsManager::DEFAULT_FAVOURITE_MODS_LIST_FILE_PATH, "Favourite Mods List File Path", generalSettingsPanel, generalSettingsSizer, 1));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->gameVersionsListFilePath, SettingsManager::DEFAULT_GAME_VERSIONS_LIST_FILE_PATH, "Game Versions List File Path", generalSettingsPanel, generalSettingsSizer, 1));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dataDirectoryPath, SettingsManager::DEFAULT_DATA_DIRECTORY_PATH, "Data Directory Path", generalSettingsPanel, generalSettingsSizer, 1));

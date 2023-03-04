@@ -71,9 +71,9 @@ public:
 	template <typename R>
 	static SettingPanel * createOptionalStringSettingPanel(std::function<std::optional<std::string>()> getSettingValueFunction, std::function<R(const std::string &)> setSettingValueFunction, std::function<void()> clearSettingValueFunction, std::optional<std::string> defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, size_t minLength = 0, size_t maxLength = std::numeric_limits<size_t>::max(), std::function<bool(const SettingPanel *)> customValidatorFunction = nullptr);
 	template <typename E>
-	static SettingPanel * createEnumSettingPanel(E & setting, E defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer);
+	static SettingPanel * createEnumSettingPanel(E & setting, E defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, const std::vector<E> & disabledEnumValues);
 	template <typename E>
-	static SettingPanel * createEnumSettingPanel(std::function<E()> getSettingValueFunction, std::function<void(E)> setSettingValueFunction, E defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer);
+	static SettingPanel * createEnumSettingPanel(std::function<E()> getSettingValueFunction, std::function<void(E)> setSettingValueFunction, E defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, const std::vector<E> & disabledEnumValues);
 	static StringChoiceSettingPanel * createStringChoiceSettingPanel(std::string & setting, std::string defaultSetting, const std::string & name, const std::vector<std::string> & choices, wxWindow * parent, wxSizer * parentSizer);
 	static StringChoiceSettingPanel * createStringChoiceSettingPanel(std::function<std::string()> getSettingValueFunction, std::function<bool(const std::string &)> setSettingValueFunction, std::string defaultSetting, const std::string & name, const std::vector<std::string> & choices, wxWindow * parent, wxSizer * parentSizer);
 	static SettingPanel * createStringMultiChoiceSettingPanel(std::vector<std::string> & setting, const std::string & name, bool caseSensitive, const std::vector<std::string> & choices, wxWindow * parent, size_t minimumNumberOfSelectedItems = 0, wxSizer * parentSizer = nullptr);
@@ -414,17 +414,24 @@ SettingPanel * SettingPanel::createOptionalStringSettingPanel(std::function<std:
 }
 
 template <typename E>
-SettingPanel * SettingPanel::createEnumSettingPanel(E & setting, E defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer) {
-	return createEnumSettingPanel<E>([&setting]() -> E & { return setting; }, [&setting](E newSetting) { setting = newSetting; }, defaultSetting, name, parent, parentSizer);
+SettingPanel * SettingPanel::createEnumSettingPanel(E & setting, E defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, const std::vector<E> & disabledEnumValues = {}) {
+	return createEnumSettingPanel<E>([&setting]() -> E & { return setting; }, [&setting](E newSetting) { setting = newSetting; }, defaultSetting, name, parent, parentSizer, disabledEnumValues);
 }
 
 template <typename E>
-SettingPanel * SettingPanel::createEnumSettingPanel(std::function<E()> getSettingValueFunction, std::function<void(E)> setSettingValueFunction, E defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer) {
+SettingPanel * SettingPanel::createEnumSettingPanel(std::function<E()> getSettingValueFunction, std::function<void(E)> setSettingValueFunction, E defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, const std::vector<E> & disabledEnumValues = {}) {
 	if(parent == nullptr) {
 		return nullptr;
 	}
 
 	SettingPanel * settingPanel = new SettingPanel(name, parent);
+
+	constexpr auto enumValues = magic_enum::enum_values<E>();
+	std::vector<E> enabledEnumValues;
+
+	std::copy_if(enumValues.cbegin(), enumValues.cend(), std::back_inserter(enabledEnumValues), [&disabledEnumValues, &enumValues](const E enumValue) {
+		return std::find(disabledEnumValues.cbegin(), disabledEnumValues.cend(), enumValue) == disabledEnumValues.cend();
+	});
 
 	settingPanel->m_changedFunction = [settingPanel](wxCommandEvent & event) {
 		settingPanel->setModified(true);
@@ -432,7 +439,7 @@ SettingPanel * SettingPanel::createEnumSettingPanel(std::function<E()> getSettin
 
 	wxStaticText * settingLabel = new wxStaticText(settingPanel, wxID_ANY, name, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 	settingLabel->SetFont(settingLabel->GetFont().MakeBold());
-	wxComboBox * settingComboBox = new wxComboBox(settingPanel, wxID_ANY, std::string(magic_enum::enum_name(getSettingValueFunction())), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<E>(), 0, wxDefaultValidator, name);
+	wxComboBox * settingComboBox = new wxComboBox(settingPanel, wxID_ANY, Utilities::toCapitalCase(magic_enum::enum_name(getSettingValueFunction())), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<E>(disabledEnumValues), 0, wxDefaultValidator, name);
 	settingComboBox->SetEditable(false);
 	settingComboBox->Bind(wxEVT_COMBOBOX, settingPanel->m_changedFunction, wxID_ANY, wxID_ANY);
 
@@ -440,40 +447,34 @@ SettingPanel * SettingPanel::createEnumSettingPanel(std::function<E()> getSettin
 		return settingComboBox->GetValue();
 	};
 
-	settingPanel->m_defaultValidatorFunction = [settingComboBox]() {
+	settingPanel->m_defaultValidatorFunction = [enumValues, settingComboBox]() {
 		int selection = settingComboBox->GetSelection();
 
-		if(selection == wxNOT_FOUND) {
-			return false;
-		}
-
-		return std::optional<E>(magic_enum::enum_value<E>(selection)).has_value();
+		return selection != wxNOT_FOUND && selection < enumValues.size();
 	};
 
-	settingPanel->m_saveFunction = [settingComboBox, setSettingValueFunction]() {
-		std::optional<E> optionalEnumValue(magic_enum::enum_value<E>(settingComboBox->GetSelection()));
+	settingPanel->m_saveFunction = [enumValues, settingComboBox, setSettingValueFunction]() {
+		setSettingValueFunction(enumValues[settingComboBox->GetSelection()]);
+	};
 
-		if(!optionalEnumValue.has_value()) {
+	settingPanel->m_discardFunction = [enumValues, settingComboBox, getSettingValueFunction]() {
+		auto enumIterator = std::find(enumValues.cbegin(), enumValues.cend(), getSettingValueFunction());
+
+		if(enumIterator == enumValues.cend()) {
 			return;
 		}
 
-		setSettingValueFunction(optionalEnumValue.value());
+		settingComboBox->SetSelection(enumIterator - enumValues.cbegin());
 	};
 
-	settingPanel->m_discardFunction = [settingComboBox, getSettingValueFunction]() {
-		std::optional<uint64_t> optionalEnumIndex = magic_enum::enum_index(getSettingValueFunction());
+	settingPanel->m_resetFunction = [enumValues, settingComboBox, defaultSetting]() {
+		auto enumIterator = std::find(enumValues.cbegin(), enumValues.cend(), defaultSetting);
 
-		if(optionalEnumIndex.has_value()) {
-			settingComboBox->SetSelection(optionalEnumIndex.value());
+		if(enumIterator == enumValues.cend()) {
+			return;
 		}
-	};
 
-	settingPanel->m_resetFunction = [settingComboBox, defaultSetting]() {
-		std::optional<uint64_t> optionalEnumIndex = magic_enum::enum_index(defaultSetting);
-
-		if(optionalEnumIndex.has_value()) {
-			settingComboBox->SetSelection(optionalEnumIndex.value());
-		}
+		settingComboBox->SetSelection(enumIterator - enumValues.cbegin());
 	};
 
 	settingPanel->m_setEditableFunction = [settingComboBox](bool editable) {
