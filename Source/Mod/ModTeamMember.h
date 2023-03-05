@@ -31,6 +31,7 @@ public:
 	const std::string & getTwitter() const;
 	const std::string & getWebsite() const;
 	const std::string & getYouTube() const;
+	const std::string & getReddit() const;
 	const std::string & getGitHub() const;
 	const std::string & getDiscord() const;
 	const std::string & getSteamID() const;
@@ -46,6 +47,7 @@ public:
 	void setTwitter(const std::string & twitter);
 	void setWebsite(const std::string & website);
 	void setYouTube(const std::string & youTube);
+	void setReddit(const std::string & reddit);
 	void setGitHub(const std::string & gitHub);
 	void setDiscord(const std::string & discord);
 	void setSteamID(const std::string & steamID);
@@ -74,6 +76,7 @@ private:
 	std::string m_twitter;
 	std::string m_website;
 	std::string m_youTube;
+	std::string m_reddit;
 	std::string m_gitHub;
 	std::string m_discord;
 	std::string m_steamID;
