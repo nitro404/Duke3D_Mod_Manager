@@ -2913,6 +2913,11 @@ size_t ModManager::updateModFileInfo(Mod & mod, bool skipPopulatedFiles, std::op
 		return 0;
 	}
 
+	if(skipPopulatedFiles && mod.isValid()) {
+		spdlog::info("'{}' mod file info already populated!", mod.getName());
+		return 0;
+	}
+
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	size_t numberOfFilesUpdated = 0;
