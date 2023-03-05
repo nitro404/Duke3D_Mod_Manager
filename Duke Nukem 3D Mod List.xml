@@ -10857,4 +10857,23 @@
 			<download filename="Duke_Nukem_3D_Savior_of_Babes_0.55-ModMgrE.zip" filesize="403047938" version="0.55" game="eDuke32" type="Mod Manager Files" state="Native" sha1="a2c8c36a5f30861f22a9d7d3afbbec276f73f4f9"/>
 		</downloads>
 	</mod>
+	<mod name="Duke Nukem: Halloween Mayhem" id="duke_nukem_-_halloween_mayhem" type="Total Conversion">
+		<team>
+			<member name="G.A.P."/>
+		</team>
+		<files>
+			<version release_date="December 1, 2020">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="HM.CON" size="151196" type="con" sha1="fe36a2d632d421b091b0ffd9568f19e8a91ac481"/>
+						<file name="Duke_Nukem_-_Halloween_Mayhem.zip" size="27445547" type="zip" sha1="6ba2c07b3a1d20c30bdba91a282002362852b520"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Duke_Nukem_Halloween_Mayhem.1.zip" filesize="27530468" game="eDuke32" type="Original Files" sha1="e286948c74c70c86bfbd0054bbed3942855b0405"/>
+			<download filename="Duke_Nukem_-_Halloween_Mayhem-ModMgrE.zip" filesize="27421288" game="eDuke32" type="Mod Manager Files" state="Native" sha1="de491f521806dc2b7d927bbf0a6ba9af8d7e0bd7"/>
+		</downloads>
+	</mod>
 </mods>
