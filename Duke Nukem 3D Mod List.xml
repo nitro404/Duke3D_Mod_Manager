@@ -10965,4 +10965,26 @@
 			<download filename="Anarchy_City_1.1-ModMgrA.zip" filesize="901303" version="1.1" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="066f2b5369409a0548c8b9ba665bcef8a94a4e9e"/>
 		</downloads>
 	</mod>
+	<mod name="Operation: Reckoning" id="operation_-_reckoning" type="Total Conversion" website="https://www.moddb.com/games/duke-nukem-3d/addons/operation-reckoning">
+		<team name="Macabre Conversions">
+			<member name="David Biermann" alias="Merciless Madman" email="DB19961@gmail.com"/>
+			<member name="David Taylor"/>
+			<member name="Ty Towell" email="Ttwyler1995@gmail.com"/>
+			<member name="Joe Zook" email="joey_zook@yahoo.com"/>
+		</team>
+		<files>
+			<version release_date="March 20, 2015">
+				<type>
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="OR.CON" size="151193" type="con" sha1="65905c838c718f0d8bdd9482b00c4fcdff5d39f2"/>
+						<file name="OR.GRP" size="4803000" type="grp" sha1="8dea37b6f2ff2c9bb1682297e74f0df11c7d0c23"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="OR.zip" filesize="4641961" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="004b6efc1c5b49af4c80fa2706b370428efa158f"/>
+			<download filename="Operation_-_Reckoning-ModMgrA.zip" filesize="3259904" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="28420350a092ed686a45135a55cc1906f3ff79bd"/>
+		</downloads>
+	</mod>
 </mods>
