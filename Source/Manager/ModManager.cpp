@@ -1487,10 +1487,10 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 			scriptArgs.addArgument("GROUP", zipFileName);
 		}
 
-		std::optional<std::string> defFileName(selectedModGameVersion->getFirstFileNameOfType("def"));
+		std::vector<std::string> defFileNames(selectedModGameVersion->getFileNamesOfType("def"));
 
-		if(defFileName.has_value()) {
-			scriptArgs.addArgument("DEF", *defFileName);
+		for(const std::string & defFileName : defFileNames) {
+			scriptArgs.addArgument("DEF", defFileName);
 		}
 	}
 
@@ -2053,8 +2053,8 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 	std::stringstream command;
 
 	std::vector<std::string> customGroupFiles;
-	std::string customConFile;
-	std::string customDefFile;
+	std::vector<std::string> customConFiles;
+	std::vector<std::string> customDefFiles;
 
 	if(m_arguments != nullptr) {
 		if(m_arguments->hasArgument("g") ||
@@ -2063,15 +2063,20 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			customGroupFiles = m_arguments->getValues("g");
 
 			if(!customGroupFiles.empty()) {
-				customConFile = m_arguments->getFirstValue("x");
-				customDefFile = m_arguments->getFirstValue("h");
+				customConFiles = m_arguments->getValues("x");
+				customDefFiles = m_arguments->getValues("h");
 
 				for(std::vector<std::string>::const_iterator i = customGroupFiles.begin(); i != customGroupFiles.end(); ++i) {
 					scriptArgs.addArgument("GROUP", *i);
 				}
 
-				scriptArgs.addArgument("CON", customConFile);
-				scriptArgs.addArgument("DEF", customDefFile);
+				for(std::vector<std::string>::const_iterator i = customConFiles.begin(); i != customConFiles.end(); ++i) {
+					scriptArgs.addArgument("CON", *i);
+				}
+
+				for(std::vector<std::string>::const_iterator i = customDefFiles.begin(); i != customDefFiles.end(); ++i) {
+					scriptArgs.addArgument("DEF", *i);
+				}
 
 				if(customMod != nullptr) {
 					*customMod = true;
@@ -2095,16 +2100,16 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 				modPath = settings->gameTempDirectoryName;
 			}
 
-			std::string conFileName;
+			std::vector<std::string> conFileNames;
 
 			if(!customGroupFiles.empty()) {
-				conFileName = customConFile;
+				conFileNames = customConFiles;
 			}
 			else {
-				std::shared_ptr<ModFile> conFile(modGameVersion->getFirstFileOfType("con"));
+				std::vector<std::shared_ptr<ModFile>> conFiles(modGameVersion->getFilesOfType("con"));
 
-				if(conFile != nullptr) {
-					conFileName = conFile->getFileName();
+				for(const std::shared_ptr<ModFile> & conFile : conFiles) {
+					conFileNames.push_back(conFile->getFileName());
 				}
 			}
 
@@ -2113,19 +2118,37 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 				return {};
 			}
 
-			if(!conFileName.empty()) {
-				if(selectedGameVersion->hasConFileArgumentFlag()) {
-					command << " " << selectedGameVersion->getConFileArgumentFlag().value() << (selectedGameVersion->hasRelativeConFilePath() ? conFileName : Utilities::joinPaths(modPath, conFileName));
-				}
-				else {
+			if(!conFileNames.empty()) {
+				if(!selectedGameVersion->hasConFileArgumentFlag()) {
 					spdlog::error("Game version '{}' does not have a con file argument flag specified in its configuration.", selectedGameVersion->getName());
 					return {};
+				}
+				else if(conFileNames.size() > 1 && !selectedGameVersion->hasExtraConFileArgumentFlag()) {
+					spdlog::error("Multiple con files specified, but game version '{}' does not have an extra con file argument flag specified in its configuration.", selectedGameVersion->getName());
+					return {};
+				}
+
+				for(std::vector<std::string>::const_iterator i = conFileNames.cbegin(); i != conFileNames.cend(); ++i) {
+					const std::string & conFileName = *i;
+
+					command << " ";
+
+					if(i == conFileNames.begin()) {
+						command << selectedGameVersion->getConFileArgumentFlag().value();
+					}
+					else {
+						command << selectedGameVersion->getExtraConFileArgumentFlag().value();
+					}
+
+					command << (selectedGameVersion->hasRelativeConFilePath() ? conFileName : Utilities::joinPaths(modPath, conFileName));
 				}
 			}
 
 			if(!customGroupFiles.empty()) {
 				for(std::vector<std::string>::const_iterator i = customGroupFiles.begin(); i != customGroupFiles.end(); ++i) {
-					command << " " << selectedGameVersion->getGroupFileArgumentFlag().value() << Utilities::joinPaths(modPath, *i);
+					const std::string & groupFileName = *i;
+
+					command << " " << selectedGameVersion->getGroupFileArgumentFlag().value() << Utilities::joinPaths(modPath, groupFileName);
 				}
 			}
 			else if(!combinedGroupFileName.empty()) {
@@ -2160,26 +2183,43 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 					}
 				}
 
-				std::string defFileName;
+				std::vector<std::string> defFileNames;
 
 				if(!customGroupFiles.empty()) {
-					defFileName = customDefFile;
+					defFileNames = customDefFiles;
 				}
 				else {
-					std::shared_ptr<ModFile> defFile(modGameVersion->getFirstFileOfType("def"));
+					std::vector<std::shared_ptr<ModFile>> defFiles(modGameVersion->getFilesOfType("def"));
 
-					if(defFile != nullptr) {
-						defFileName = defFile->getFileName();
+					for(const std::shared_ptr<ModFile> & defFile : defFiles) {
+						defFileNames.push_back(defFile->getFileName());
 					}
 				}
 
-				if(!defFileName.empty()) {
+				if(!defFileNames.empty()) {
 					if(!selectedGameVersion->hasDefFileArgumentFlag()) {
 						spdlog::error("Game version '{}' does not have a def file argument flag specified in its configuration.", selectedGameVersion->getName());
 						return {};
 					}
+					else if(defFileNames.size() > 1 && !selectedGameVersion->hasExtraDefFileArgumentFlag()) {
+						spdlog::error("Multiple def files specified, but game version '{}' does not have an extra def file argument flag specified in its configuration.", selectedGameVersion->getName());
+						return {};
+					}
 
-					command << " " << selectedGameVersion->getDefFileArgumentFlag().value() << defFileName;
+					for(std::vector<std::string>::const_iterator i = defFileNames.cbegin(); i != defFileNames.cend(); ++i) {
+						const std::string & defFileName = *i;
+
+						command << " ";
+
+						if(i == defFileNames.begin()) {
+							command << selectedGameVersion->getDefFileArgumentFlag().value();
+						}
+						else {
+							command << selectedGameVersion->getExtraDefFileArgumentFlag().value();
+						}
+
+						command << defFileName;
+					}
 				}
 			}
 		}
@@ -3338,8 +3378,8 @@ std::string ModManager::getArgumentHelpInfo() {
 	argumentHelpStream << " --ip 127.0.0.1 - specifies host ip address if running in client mode.\n";
 	argumentHelpStream << " --port 1337 - specifies server port when running in client or server mode.\n";
 	argumentHelpStream << " -g MOD.GRP - manually specifies a group or zip file to use. Can be specified multiple times.\n";
-	argumentHelpStream << " -x MOD.CON - manually specifies a game con file to use.\n";
-	argumentHelpStream << " -h MOD.DEF - manually specifies a game def file to use.\n";
+	argumentHelpStream << " -x MOD.CON - manually specifies a game con file to use. Can be specified multiple times.\n";
+	argumentHelpStream << " -h MOD.DEF - manually specifies a def file to use. Can be specified multiple times.\n";
 	argumentHelpStream << " --map _ZOO.MAP - manually specifies a user map file to load.\n";
 	argumentHelpStream << " --search \"Full Mod Name\" - searches for and selects the mod with a full or partially matching name, and optional version / type.\n";
 	argumentHelpStream << " --random - randomly selects a mod to run.\n";
