@@ -98,7 +98,7 @@ std::string ModGameVersion::getFullName() const {
 	const Mod * parentMod = getParentMod();
 	const ModVersion * parentModVersion = getParentModVersion();
 
-	if(!Mod::isValid(parentMod) || parentModVersion == nullptr || m_parentModVersionType == nullptr) {
+	if(!Mod::isValid(parentMod, true) || parentModVersion == nullptr || m_parentModVersionType == nullptr) {
 		return "";
 	}
 

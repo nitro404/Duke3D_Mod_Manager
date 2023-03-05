@@ -731,7 +731,7 @@ bool ModManager::setSelectedModByName(const std::string & name) {
 }
 
 bool ModManager::setSelectedMod(std::shared_ptr<Mod> mod) {
-	if(!Mod::isValid(mod.get())) {
+	if(!Mod::isValid(mod.get(), true)) {
 		m_selectedMod = nullptr;
 		m_selectedModVersionIndex = std::numeric_limits<size_t>::max();
 		m_selectedModVersionTypeIndex = std::numeric_limits<size_t>::max();
@@ -851,7 +851,7 @@ bool ModManager::setSelectedModVersionIndex(size_t modVersionIndex) {
 		return true;
 	}
 
-	if(!Mod::isValid(m_selectedMod.get())) {
+	if(!Mod::isValid(m_selectedMod.get(), true)) {
 		return false;
 	}
 
@@ -908,7 +908,7 @@ bool ModManager::setSelectedModVersionTypeIndex(size_t modVersionTypeIndex) {
 		return true;
 	}
 
-	if(!Mod::isValid(m_selectedMod.get()) || m_selectedModVersionIndex >= m_selectedMod->numberOfVersions()) {
+	if(!Mod::isValid(m_selectedMod.get(), true) || m_selectedModVersionIndex >= m_selectedMod->numberOfVersions()) {
 		return false;
 	}
 
@@ -955,7 +955,7 @@ bool ModManager::setSelectedModGameVersionIndex(size_t modGameVersionIndex) {
 		return true;
 	}
 
-	if(!Mod::isValid(m_selectedMod.get()) || m_selectedModVersionIndex >= m_selectedMod->numberOfVersions()) {
+	if(!Mod::isValid(m_selectedMod.get(), true) || m_selectedModVersionIndex >= m_selectedMod->numberOfVersions()) {
 		return false;
 	}
 
@@ -1045,7 +1045,7 @@ std::vector<ModMatch> ModManager::searchForMod(const std::vector<std::shared_ptr
 	for(size_t i = 0; i < mods.size(); i++) {
 		mod = mods[i];
 
-		if(!Mod::isValid(mod.get())) {
+		if(!Mod::isValid(mod.get(), true)) {
 			continue;
 		}
 
@@ -1719,7 +1719,7 @@ std::unique_ptr<InstalledModInfo> ModManager::extractModFilesToGameDirectory(con
 		}
 	};
 
-	if(!modGameVersion.isValid() || !targetGameVersion.isValid() || !removeModFilesFromGameDirectory(selectedGameVersion)) {
+	if(!modGameVersion.isValid(true) || !targetGameVersion.isValid() || !removeModFilesFromGameDirectory(selectedGameVersion)) {
 		return nullptr;
 	}
 
@@ -2011,7 +2011,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 	std::shared_ptr<GameVersion> targetGameVersion;
 
 	if(modGameVersion != nullptr) {
-		if(!modGameVersion->isValid()) {
+		if(!modGameVersion->isValid(true)) {
 			spdlog::error("Invalid mod game version.");
 			return {};
 		}

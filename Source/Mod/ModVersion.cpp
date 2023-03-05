@@ -106,7 +106,7 @@ const std::string & ModVersion::getVersion() const {
 }
 
 std::string ModVersion::getFullName(size_t versionTypeIndex) const {
-	if(!Mod::isValid(m_parentMod)) {
+	if(!Mod::isValid(m_parentMod, true)) {
 		return "";
 	}
 

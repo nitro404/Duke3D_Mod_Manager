@@ -97,7 +97,7 @@ const std::string & ModVersionType::getType() const {
 std::string ModVersionType::getFullName() const {
 	const Mod * parentMod = getParentMod();
 
-	if(!Mod::isValid(parentMod) || m_parentModVersion == nullptr) {
+	if(!Mod::isValid(parentMod, true) || m_parentModVersion == nullptr) {
 		return "";
 	}
 
