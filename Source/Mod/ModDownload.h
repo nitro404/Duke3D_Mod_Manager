@@ -71,11 +71,11 @@ public:
 
 	rapidjson::Value toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const;
 	tinyxml2::XMLElement * toXML(tinyxml2::XMLDocument * document) const;
-	static std::unique_ptr<ModDownload> parseFrom(const rapidjson::Value & modDownloadValue);
-	static std::unique_ptr<ModDownload> parseFrom(const tinyxml2::XMLElement * modDownloadElement);
+	static std::unique_ptr<ModDownload> parseFrom(const rapidjson::Value & modDownloadValue, bool skipFileInfoValidation = false);
+	static std::unique_ptr<ModDownload> parseFrom(const tinyxml2::XMLElement * modDownloadElement, bool skipFileInfoValidation = false);
 
-	bool isValid() const;
-	static bool isValid(const ModDownload * d);
+	bool isValid(bool skipFileInfoValidation = false) const;
+	static bool isValid(const ModDownload * d, bool skipFileInfoValidation = false);
 
 	bool operator == (const ModDownload & d) const;
 	bool operator != (const ModDownload & d) const;

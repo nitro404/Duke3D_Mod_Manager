@@ -153,6 +153,8 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 		m_localMode = true;
 	}
 
+	bool updateFileInfo = m_localMode && m_arguments != nullptr && (m_arguments->hasArgument("update-new") || m_arguments->hasArgument("update-all"));
+
 	HTTPConfiguration configuration = {
 		Utilities::joinPaths(settings->dataDirectoryPath, settings->curlDataDirectoryName),
 		settings->apiBaseURL,
@@ -278,7 +280,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 
 	gameVersions->addListener(*this);
 
-	if(!m_mods->loadFrom(getModsListFilePath())) {
+	if(!m_mods->loadFrom(getModsListFilePath(), updateFileInfo)) {
 		spdlog::error("Failed to load mod list '{}'!", getModsListFilePath());
 		return false;
 	}
@@ -2413,7 +2415,6 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 	if(args != nullptr) {
 		if(args->hasArgument("update-new")) {
 			updateFileInfoForAllMods(true, true);
-			return true;
 		}
 
 		if(args->hasArgument("update-all")) {
@@ -2819,7 +2820,7 @@ size_t ModManager::checkForMissingExecutables() const {
 }
 
 size_t ModManager::updateFileInfoForAllMods(bool save, bool skipPopulatedFiles) {
-	if(!m_initialized) {
+	if(!m_initialized || !m_localMode) {
 		return 0;
 	}
 
@@ -2853,7 +2854,7 @@ size_t ModManager::updateFileInfoForAllMods(bool save, bool skipPopulatedFiles) 
 	}
 
 	if(save) {
-		if(m_mods->saveTo(settings->modsListFilePath)) {
+		if(m_mods->saveTo(settings->modsListFilePath, true)) {
 			spdlog::info("Saved updated mod list to file: '{}'.", settings->modsListFilePath);
 		}
 		else {
@@ -2866,6 +2867,7 @@ size_t ModManager::updateFileInfoForAllMods(bool save, bool skipPopulatedFiles) 
 
 size_t ModManager::updateModFileInfo(Mod & mod, bool skipPopulatedFiles, std::optional<size_t> versionIndex, std::optional<size_t> versionTypeIndex) {
 	if(!m_initialized ||
+	   !m_localMode ||
 	   mod.numberOfVersions() == 0 ||
 	   (versionIndex >= mod.numberOfVersions() && versionIndex != std::numeric_limits<size_t>::max())) {
 		return 0;
@@ -2891,7 +2893,7 @@ size_t ModManager::updateModFileInfo(Mod & mod, bool skipPopulatedFiles, std::op
 	for(size_t i = 0; i < mod.numberOfDownloads(); i++) {
 		std::shared_ptr<ModDownload> modDownload(mod.getDownload(i));
 
-		if(!ModDownload::isValid(modDownload.get())) {
+		if(!ModDownload::isValid(modDownload.get(), true)) {
 			spdlog::warn("Skipping info update of invalid download file #{} for mod '{}'.", i + 1, mod.getName());
 			continue;
 		}
@@ -2990,7 +2992,7 @@ size_t ModManager::updateModFileInfo(Mod & mod, bool skipPopulatedFiles, std::op
 		for(size_t i = 0; i < mod.numberOfScreenshots(); i++) {
 			std::shared_ptr<ModScreenshot> modScreenshot(mod.getScreenshot(i));
 
-			if(!ModScreenshot::isValid(modScreenshot.get())) {
+			if(!ModScreenshot::isValid(modScreenshot.get(), true)) {
 				spdlog::warn("Skipping info update of invalid screenshot file #{} for mod '{}'.", i + 1, mod.getName());
 				continue;
 			}
@@ -3056,7 +3058,7 @@ size_t ModManager::updateModFileInfo(Mod & mod, bool skipPopulatedFiles, std::op
 		for(size_t i = 0; i < mod.numberOfImages(); i++) {
 			std::shared_ptr<ModImage> modImage(mod.getImage(i));
 
-			if(!ModImage::isValid(modImage.get())) {
+			if(!ModImage::isValid(modImage.get(), true)) {
 				spdlog::warn("Skipping info update of invalid image file #{} for mod '{}'.", i + 1, mod.getName());
 				continue;
 			}

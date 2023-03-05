@@ -46,11 +46,11 @@ public:
 
 	rapidjson::Value toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const;
 	virtual tinyxml2::XMLElement * toXML(tinyxml2::XMLDocument * document) const;
-	static std::unique_ptr<ModImage> parseFrom(const rapidjson::Value & modImageValue);
-	static std::unique_ptr<ModImage> parseFrom(const tinyxml2::XMLElement * modImageElement);
+	static std::unique_ptr<ModImage> parseFrom(const rapidjson::Value & modImageValue, bool skipFileInfoValidation = false);
+	static std::unique_ptr<ModImage> parseFrom(const tinyxml2::XMLElement * modImageElement, bool skipFileInfoValidation = false);
 
-	virtual bool isValid() const;
-	static bool isValid(const ModImage * i);
+	virtual bool isValid(bool skipFileInfoValidation = false) const;
+	static bool isValid(const ModImage * i, bool skipFileInfoValidation = false);
 
 	bool operator == (const ModImage & i) const;
 	bool operator != (const ModImage & i) const;
@@ -58,7 +58,7 @@ public:
 protected:
 	void setParentMod(const Mod * mod);
 	tinyxml2::XMLElement * toXML(tinyxml2::XMLDocument * document, const std::string & name) const;
-	static std::unique_ptr<ModImage> parseFrom(const tinyxml2::XMLElement * modImageElement, const std::string & name);
+	static std::unique_ptr<ModImage> parseFrom(const tinyxml2::XMLElement * modImageElement, const std::string & name, bool skipFileInfoValidation = false);
 
 private:
 	std::string m_fileName;

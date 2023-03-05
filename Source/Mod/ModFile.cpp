@@ -228,7 +228,7 @@ tinyxml2::XMLElement * ModFile::toXML(tinyxml2::XMLDocument * document) const {
 	return modFileElement;
 }
 
-std::unique_ptr<ModFile> ModFile::parseFrom(const rapidjson::Value & modFileValue) {
+std::unique_ptr<ModFile> ModFile::parseFrom(const rapidjson::Value & modFileValue, bool skipFileInfoValidation) {
 	if(!modFileValue.IsObject()) {
 		spdlog::error("Invalid mod file type: '{}', expected 'object'.", Utilities::typeToString(modFileValue.GetType()));
 		return nullptr;
@@ -273,23 +273,28 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const rapidjson::Value & modFileValu
 	}
 
 	// parse mod file size
-	if(!modFileValue.HasMember(JSON_MOD_FILE_FILE_SIZE_PROPERTY_NAME)) {
-		spdlog::error("Mod file is missing '{}' property'.", JSON_MOD_FILE_FILE_SIZE_PROPERTY_NAME);
-		return nullptr;
+	uint64_t modFileSize = 0;
+
+	if(modFileValue.HasMember(JSON_MOD_FILE_FILE_SIZE_PROPERTY_NAME)) {
+		const rapidjson::Value & modFileSizeValue = modFileValue[JSON_MOD_FILE_FILE_SIZE_PROPERTY_NAME];
+
+		if(!modFileSizeValue.IsUint64()) {
+			spdlog::error("Mod file has an invalid '{}' property type: '{}', expected unsigned long 'number'.", JSON_MOD_FILE_FILE_SIZE_PROPERTY_NAME, Utilities::typeToString(modFileSizeValue.GetType()));
+			return nullptr;
+		}
+
+		modFileSize = modFileSizeValue.GetUint64();
+
+		if(modFileSize == 0) {
+			spdlog::error("Mod file has an invalid '{}' property value, expected positive integer value.", JSON_MOD_FILE_FILE_SIZE_PROPERTY_NAME);
+			return nullptr;
+		}
 	}
-
-	const rapidjson::Value & modFileSizeValue = modFileValue[JSON_MOD_FILE_FILE_SIZE_PROPERTY_NAME];
-
-	if(!modFileSizeValue.IsUint64()) {
-		spdlog::error("Mod file has an invalid '{}' property type: '{}', expected unsigned long 'number'.", JSON_MOD_FILE_FILE_SIZE_PROPERTY_NAME, Utilities::typeToString(modFileSizeValue.GetType()));
-		return nullptr;
-	}
-
-	uint64_t modFileSize = modFileSizeValue.GetUint64();
-
-	if(modFileSize == 0) {
-		spdlog::error("Mod file has an invalid '{}' property value, expected positive integer value.", JSON_MOD_FILE_FILE_SIZE_PROPERTY_NAME);
-		return nullptr;
+	else {
+		if(!skipFileInfoValidation) {
+			spdlog::error("Mod file is missing '{}' property'.", JSON_MOD_FILE_FILE_SIZE_PROPERTY_NAME);
+			return nullptr;
+		}
 	}
 
 	// parse mod file type
@@ -313,23 +318,28 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const rapidjson::Value & modFileValu
 	}
 
 	// parse the mod file sha1 property
+	std::string modFileSHA1;
+
 	if(!modFileValue.HasMember(JSON_MOD_FILE_SHA1_PROPERTY_NAME)) {
-		spdlog::error("Mod file is missing '{}' property'.", JSON_MOD_FILE_SHA1_PROPERTY_NAME);
-		return nullptr;
+		const rapidjson::Value & modFileSHA1Value = modFileValue[JSON_MOD_FILE_SHA1_PROPERTY_NAME];
+
+		if(!modFileSHA1Value.IsString()) {
+			spdlog::error("Mod file '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_FILE_SHA1_PROPERTY_NAME, Utilities::typeToString(modFileSHA1Value.GetType()));
+			return nullptr;
+		}
+
+		modFileSHA1 = Utilities::trimString(modFileSHA1Value.GetString());
+
+		if(modFileSHA1.empty()) {
+			spdlog::error("Mod file '{}' property cannot be empty.", JSON_MOD_FILE_SHA1_PROPERTY_NAME);
+			return nullptr;
+		}
 	}
-
-	const rapidjson::Value & modFileSHA1Value = modFileValue[JSON_MOD_FILE_SHA1_PROPERTY_NAME];
-
-	if(!modFileSHA1Value.IsString()) {
-		spdlog::error("Mod file '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_FILE_SHA1_PROPERTY_NAME, Utilities::typeToString(modFileSHA1Value.GetType()));
-		return nullptr;
-	}
-
-	std::string modFileSHA1(Utilities::trimString(modFileSHA1Value.GetString()));
-
-	if(modFileSHA1.empty()) {
-		spdlog::error("Mod file '{}' property cannot be empty.", JSON_MOD_FILE_SHA1_PROPERTY_NAME);
-		return nullptr;
+	else {
+		if(!skipFileInfoValidation) {
+			spdlog::error("Mod file is missing '{}' property'.", JSON_MOD_FILE_SHA1_PROPERTY_NAME);
+			return nullptr;
+		}
 	}
 
 	// initialize the mod file
@@ -350,7 +360,7 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const rapidjson::Value & modFileValu
 	return newModFile;
 }
 
-std::unique_ptr<ModFile> ModFile::parseFrom(const tinyxml2::XMLElement * modFileElement) {
+std::unique_ptr<ModFile> ModFile::parseFrom(const tinyxml2::XMLElement * modFileElement, bool skipFileInfoValidation) {
 	if(modFileElement == nullptr) {
 		return nullptr;
 	}
@@ -396,25 +406,25 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const tinyxml2::XMLElement * modFile
 	const char * modFileName = modFileElement->Attribute(XML_MOD_FILE_FILE_NAME_ATTRIBUTE_NAME.c_str());
 	const char * modFileSizeData = modFileElement->Attribute(XML_MOD_FILE_FILE_SIZE_ATTRIBUTE_NAME.c_str());
 
-	if(modFileName == nullptr || Utilities::stringLength(modFileName) == 0) {
+	if(Utilities::stringLength(modFileName) == 0) {
 		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_FILE_FILE_NAME_ATTRIBUTE_NAME, XML_MOD_FILE_ELEMENT_NAME);
 		return nullptr;
 	}
 
 	const char * modFileType = modFileElement->Attribute(XML_MOD_FILE_TYPE_ATTRIBUTE_NAME.c_str());
 
-	if(modFileType == nullptr || Utilities::stringLength(modFileType) == 0) {
+	if(Utilities::stringLength(modFileType) == 0) {
 		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_FILE_TYPE_ATTRIBUTE_NAME, XML_MOD_FILE_ELEMENT_NAME);
 		return nullptr;
 	}
 
 	const char * modFileSHA1 = modFileElement->Attribute(XML_MOD_FILE_SHA1_ATTRIBUTE_NAME.c_str());
 
-	if(modFileSHA1 == nullptr || Utilities::stringLength(modFileSHA1) == 0) {
+	if(!skipFileInfoValidation && Utilities::stringLength(modFileSHA1) == 0) {
 		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_FILE_SHA1_ATTRIBUTE_NAME, XML_MOD_FILE_ELEMENT_NAME);
 		return nullptr;
 	}
-	
+
 	bool error = false;
 	uint64_t modFileSize = 0;
 
@@ -423,6 +433,12 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const tinyxml2::XMLElement * modFile
 
 		if(error || modFileSize == 0) {
 			spdlog::error("Attribute '{}' in element '{}' has an invalid value: '{}', expected positive integer number.", XML_MOD_FILE_FILE_SIZE_ATTRIBUTE_NAME, XML_MOD_FILE_ELEMENT_NAME, modFileSizeData);
+			return nullptr;
+		}
+	}
+	else {
+		if(!skipFileInfoValidation) {
+			spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_FILE_FILE_SIZE_ATTRIBUTE_NAME, XML_MOD_FILE_ELEMENT_NAME);
 			return nullptr;
 		}
 	}
@@ -444,22 +460,28 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const tinyxml2::XMLElement * modFile
 	return newModFile;
 }
 
-bool ModFile::isValid() const {
+bool ModFile::isValid(bool skipFileInfoValidation) const {
+	if(!skipFileInfoValidation) {
+		if(m_fileSize == 0 ||
+		   m_sha1.empty()) {
+			return false;
+		}
+	}
+
 	return !m_fileName.empty() &&
-		   !m_type.empty() &&
-		   !m_sha1.empty();
+		   !m_type.empty();
 }
 
-bool ModFile::isValid(const ModFile * f) {
-	return f != nullptr && f->isValid();
+bool ModFile::isValid(const ModFile * f, bool skipFileInfoValidation) {
+	return f != nullptr && f->isValid(skipFileInfoValidation);
 }
 
 bool ModFile::operator == (const ModFile & f) const {
 	return m_fileSize == f.m_fileSize &&
+		   m_shared == f.m_shared &&
 		   Utilities::areStringsEqualIgnoreCase(m_fileName, f.m_fileName) &&
 		   Utilities::areStringsEqualIgnoreCase(m_type, f.m_type) &&
-		   m_sha1 == f.m_sha1 &&
-		   m_shared == f.m_shared;
+		   m_sha1 == f.m_sha1;
 }
 
 bool ModFile::operator != (const ModFile & f) const {

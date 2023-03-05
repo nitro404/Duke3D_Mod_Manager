@@ -32,18 +32,18 @@ tinyxml2::XMLElement * ModScreenshot::toXML(tinyxml2::XMLDocument * document) co
 	return ModImage::toXML(document, XML_MOD_SCREENSHOT_ELEMENT_NAME);
 }
 
-std::unique_ptr<ModScreenshot> ModScreenshot::parseFrom(const rapidjson::Value & modScreenshotValue) {
-	return std::make_unique<ModScreenshot>(std::move(*std::move(ModImage::parseFrom(modScreenshotValue))));
+std::unique_ptr<ModScreenshot> ModScreenshot::parseFrom(const rapidjson::Value & modScreenshotValue, bool skipFileInfoValidation) {
+	return std::make_unique<ModScreenshot>(std::move(*std::move(ModImage::parseFrom(modScreenshotValue, skipFileInfoValidation))));
 }
 
-std::unique_ptr<ModScreenshot> ModScreenshot::parseFrom(const tinyxml2::XMLElement * modScreenshotElement) {
-	return std::make_unique<ModScreenshot>(std::move(*std::move(ModImage::parseFrom(modScreenshotElement, XML_MOD_SCREENSHOT_ELEMENT_NAME))));
+std::unique_ptr<ModScreenshot> ModScreenshot::parseFrom(const tinyxml2::XMLElement * modScreenshotElement, bool skipFileInfoValidation) {
+	return std::make_unique<ModScreenshot>(std::move(*std::move(ModImage::parseFrom(modScreenshotElement, XML_MOD_SCREENSHOT_ELEMENT_NAME, skipFileInfoValidation))));
 }
 
-bool ModScreenshot::isValid() const {
-	return ModImage::isValid();
+bool ModScreenshot::isValid(bool skipFileInfoValidation) const {
+	return ModImage::isValid(skipFileInfoValidation);
 }
 
-bool ModScreenshot::isValid(const ModScreenshot * s) {
-	return ModImage::isValid(s);
+bool ModScreenshot::isValid(const ModScreenshot * s, bool skipFileInfoValidation) {
+	return ModImage::isValid(s, skipFileInfoValidation);
 }

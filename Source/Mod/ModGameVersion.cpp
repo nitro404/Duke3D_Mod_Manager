@@ -471,7 +471,7 @@ tinyxml2::XMLElement * ModGameVersion::toXML(tinyxml2::XMLDocument * document) c
 	return modGameVersionElement;
 }
 
-std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value & modGameVersionValue) {
+std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value & modGameVersionValue, bool skipFileInfoValidation) {
 	if(!modGameVersionValue.IsObject()) {
 		spdlog::error("Invalid mod game version type: '{}', expected 'object'.", Utilities::typeToString(modGameVersionValue.GetType()));
 		return nullptr;
@@ -544,9 +544,9 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value
 	std::shared_ptr<ModFile> newModFile;
 
 	for(rapidjson::Value::ConstValueIterator i = modFilesValue.Begin(); i != modFilesValue.End(); ++i) {
-		newModFile = std::shared_ptr<ModFile>(std::move(ModFile::parseFrom(*i)).release());
+		newModFile = std::shared_ptr<ModFile>(ModFile::parseFrom(*i, skipFileInfoValidation).release());
 
-		if(!ModFile::isValid(newModFile.get())) {
+		if(!ModFile::isValid(newModFile.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod file #{}.", newModGameVersion->m_files.size() + 1);
 			return nullptr;
 		}
@@ -564,7 +564,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value
 	return newModGameVersion;
 }
 
-std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const tinyxml2::XMLElement * modGameVersionElement) {
+std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const tinyxml2::XMLElement * modGameVersionElement, bool skipFileInfoValidation) {
 	if(modGameVersionElement == nullptr) {
 		return nullptr;
 	}
@@ -646,9 +646,9 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const tinyxml2::XMLEle
 			break;
 		}
 
-		newModFile = std::shared_ptr<ModFile>(std::move(ModFile::parseFrom(modFileElement)).release());
+		newModFile = std::shared_ptr<ModFile>(ModFile::parseFrom(modFileElement, skipFileInfoValidation).release());
 
-		if(!ModFile::isValid(newModFile.get())) {
+		if(!ModFile::isValid(newModFile.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod file #{}.", newModGameVersion->m_files.size() + 1);
 			return nullptr;
 		}
@@ -679,7 +679,7 @@ bool ModGameVersion::isGameVersionCompatible(const GameVersion & gameVersion) co
 		   gameVersion.hasCompatibleGameVersionWithName(m_gameVersion);
 }
 
-bool ModGameVersion::isValid() const {
+bool ModGameVersion::isValid(bool skipFileInfoValidation) const {
 	if(m_gameVersion.empty() ||
 	   m_files.empty()) {
 		return false;
@@ -697,7 +697,7 @@ bool ModGameVersion::isValid() const {
 	}
 
 	for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
-		if(!(*i)->isValid()) {
+		if(!(*i)->isValid(skipFileInfoValidation)) {
 			return false;
 		}
 
@@ -715,8 +715,8 @@ bool ModGameVersion::isValid() const {
 	return true;
 }
 
-bool ModGameVersion::isValid(const ModGameVersion * m) {
-	return m != nullptr && m->isValid();
+bool ModGameVersion::isValid(const ModGameVersion * m, bool skipFileInfoValidation) {
+	return m != nullptr && m->isValid(skipFileInfoValidation);
 }
 
 bool ModGameVersion::operator == (const ModGameVersion & m) const {

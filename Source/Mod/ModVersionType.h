@@ -52,16 +52,16 @@ public:
 
 	rapidjson::Value toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const;
 	tinyxml2::XMLElement * toXML(tinyxml2::XMLDocument * document) const;
-	static std::unique_ptr<ModVersionType> parseFrom(const rapidjson::Value & modVersionTypeValue);
-	static std::unique_ptr<ModVersionType> parseFrom(const tinyxml2::XMLElement * modVersionTypeElement);
+	static std::unique_ptr<ModVersionType> parseFrom(const rapidjson::Value & modVersionTypeValue, bool skipFileInfoValidation = false);
+	static std::unique_ptr<ModVersionType> parseFrom(const tinyxml2::XMLElement * modVersionTypeElement, bool skipFileInfoValidation = false);
 
 	bool isGameVersionSupported(const GameVersion & gameVersion) const;
 	bool isGameVersionCompatible(const GameVersion & gameVersion) const;
 	std::vector<std::shared_ptr<ModGameVersion>> getCompatibleModGameVersions(const GameVersion & gameVersion) const;
 	std::vector<std::string> getCompatibleModGameVersionNames(const GameVersion & gameVersion) const;
 
-	bool isValid() const;
-	static bool isValid(const ModVersionType * t);
+	bool isValid(bool skipFileInfoValidation = false) const;
+	static bool isValid(const ModVersionType * t, bool skipFileInfoValidation = false);
 
 	bool operator == (const ModVersionType & t) const;
 	bool operator != (const ModVersionType & t) const;

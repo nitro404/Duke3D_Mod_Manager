@@ -258,7 +258,7 @@ tinyxml2::XMLElement * ModImage::toXML(tinyxml2::XMLDocument * document, const s
 	return modImageElement;
 }
 
-std::unique_ptr<ModImage> ModImage::parseFrom(const rapidjson::Value & modImageValue) {
+std::unique_ptr<ModImage> ModImage::parseFrom(const rapidjson::Value & modImageValue, bool skipFileInfoValidation) {
 	if(!modImageValue.IsObject()) {
 		spdlog::error("Invalid mod image type: '{}', expected 'object'.", Utilities::typeToString(modImageValue.GetType()));
 		return nullptr;
@@ -303,23 +303,28 @@ std::unique_ptr<ModImage> ModImage::parseFrom(const rapidjson::Value & modImageV
 	}
 
 	// parse mod image file size
-	if(!modImageValue.HasMember(JSON_MOD_IMAGE_FILE_SIZE_PROPERTY_NAME)) {
-		spdlog::error("Mod image is missing '{}' property'.", JSON_MOD_IMAGE_FILE_SIZE_PROPERTY_NAME);
-		return nullptr;
+	uint64_t modImageFileSize = 0;
+
+	if(modImageValue.HasMember(JSON_MOD_IMAGE_FILE_SIZE_PROPERTY_NAME)) {
+		const rapidjson::Value & modImageFileSizeValue = modImageValue[JSON_MOD_IMAGE_FILE_SIZE_PROPERTY_NAME];
+
+		if(!modImageFileSizeValue.IsUint64()) {
+			spdlog::error("Mod image has an invalid '{}' property type: '{}', expected unsigned long 'number'.", JSON_MOD_IMAGE_FILE_SIZE_PROPERTY_NAME, Utilities::typeToString(modImageFileSizeValue.GetType()));
+			return nullptr;
+		}
+
+		modImageFileSize = modImageFileSizeValue.GetUint64();
+
+		if(modImageFileSize == 0) {
+			spdlog::error("Mod image has an invalid '{}' property value, expected positive integer value.", JSON_MOD_IMAGE_FILE_SIZE_PROPERTY_NAME);
+			return nullptr;
+		}
 	}
-
-	const rapidjson::Value & modImageFileSizeValue = modImageValue[JSON_MOD_IMAGE_FILE_SIZE_PROPERTY_NAME];
-
-	if(!modImageFileSizeValue.IsUint64()) {
-		spdlog::error("Mod image has an invalid '{}' property type: '{}', expected unsigned long 'number'.", JSON_MOD_IMAGE_FILE_SIZE_PROPERTY_NAME, Utilities::typeToString(modImageFileSizeValue.GetType()));
-		return nullptr;
-	}
-
-	uint64_t modImageFileSize = modImageFileSizeValue.GetUint64();
-
-	if(modImageFileSize == 0) {
-		spdlog::error("Mod image has an invalid '{}' property value, expected positive integer value.", JSON_MOD_IMAGE_FILE_SIZE_PROPERTY_NAME);
-		return nullptr;
+	else {
+		if(!skipFileInfoValidation) {
+			spdlog::error("Mod image is missing '{}' property'.", JSON_MOD_IMAGE_FILE_SIZE_PROPERTY_NAME);
+			return nullptr;
+		}
 	}
 
 	// parse mod image width
@@ -363,23 +368,28 @@ std::unique_ptr<ModImage> ModImage::parseFrom(const rapidjson::Value & modImageV
 	}
 
 	// parse the mod image sha1 property
-	if(!modImageValue.HasMember(JSON_MOD_IMAGE_SHA1_PROPERTY_NAME)) {
-		spdlog::error("Mod image is missing '{}' property'.", JSON_MOD_IMAGE_SHA1_PROPERTY_NAME);
-		return nullptr;
+	std::string modImageSHA1;
+
+	if(modImageValue.HasMember(JSON_MOD_IMAGE_SHA1_PROPERTY_NAME)) {
+		const rapidjson::Value & modImageSHA1Value = modImageValue[JSON_MOD_IMAGE_SHA1_PROPERTY_NAME];
+
+		if(!modImageSHA1Value.IsString()) {
+			spdlog::error("Mod image '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_IMAGE_SHA1_PROPERTY_NAME, Utilities::typeToString(modImageSHA1Value.GetType()));
+			return nullptr;
+		}
+
+		modImageSHA1 = Utilities::trimString(modImageSHA1Value.GetString());
+
+		if(modImageSHA1.empty()) {
+			spdlog::error("Mod image '{}' property cannot be empty.", JSON_MOD_IMAGE_SHA1_PROPERTY_NAME);
+			return nullptr;
+		}
 	}
-
-	const rapidjson::Value & modImageSHA1Value = modImageValue[JSON_MOD_IMAGE_SHA1_PROPERTY_NAME];
-
-	if(!modImageSHA1Value.IsString()) {
-		spdlog::error("Mod image '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_IMAGE_SHA1_PROPERTY_NAME, Utilities::typeToString(modImageSHA1Value.GetType()));
-		return nullptr;
-	}
-
-	std::string modImageSHA1(Utilities::trimString(modImageSHA1Value.GetString()));
-
-	if(modImageSHA1.empty()) {
-		spdlog::error("Mod image '{}' property cannot be empty.", JSON_MOD_IMAGE_SHA1_PROPERTY_NAME);
-		return nullptr;
+	else {
+		if(!skipFileInfoValidation) {
+			spdlog::error("Mod image is missing '{}' property'.", JSON_MOD_IMAGE_SHA1_PROPERTY_NAME);
+			return nullptr;
+		}
 	}
 
 	// initialize the mod image
@@ -424,11 +434,11 @@ std::unique_ptr<ModImage> ModImage::parseFrom(const rapidjson::Value & modImageV
 	return newModImage;
 }
 
-std::unique_ptr<ModImage> ModImage::parseFrom(const tinyxml2::XMLElement * modImageElement) {
-	return parseFrom(modImageElement, XML_MOD_IMAGE_ELEMENT_NAME);
+std::unique_ptr<ModImage> ModImage::parseFrom(const tinyxml2::XMLElement * modImageElement, bool skipFileInfoValidation) {
+	return parseFrom(modImageElement, XML_MOD_IMAGE_ELEMENT_NAME, skipFileInfoValidation);
 }
 
-std::unique_ptr<ModImage> ModImage::parseFrom(const tinyxml2::XMLElement * modImageElement, const std::string & name) {
+std::unique_ptr<ModImage> ModImage::parseFrom(const tinyxml2::XMLElement * modImageElement, const std::string & name, bool skipFileInfoValidation) {
 	if(modImageElement == nullptr) {
 		return nullptr;
 	}
@@ -505,6 +515,11 @@ std::unique_ptr<ModImage> ModImage::parseFrom(const tinyxml2::XMLElement * modIm
 			return nullptr;
 		}
 	}
+	else {
+		if(!skipFileInfoValidation) {
+			spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_IMAGE_FILE_SIZE_ATTRIBUTE_NAME, name);
+		}
+	}
 
 	uint32_t modImageWidth = Utilities::parseUnsignedInteger(modImageWidthData, &error);
 
@@ -522,7 +537,7 @@ std::unique_ptr<ModImage> ModImage::parseFrom(const tinyxml2::XMLElement * modIm
 
 	const char * modImageSHA1 = modImageElement->Attribute(XML_MOD_IMAGE_SHA1_ATTRIBUTE_NAME.c_str());
 
-	if(modImageSHA1 == nullptr || Utilities::stringLength(modImageSHA1) == 0) {
+	if(!skipFileInfoValidation && Utilities::stringLength(modImageSHA1) == 0) {
 		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_IMAGE_SHA1_ATTRIBUTE_NAME, XML_MOD_IMAGE_ELEMENT_NAME);
 		return nullptr;
 	}
@@ -549,15 +564,21 @@ std::unique_ptr<ModImage> ModImage::parseFrom(const tinyxml2::XMLElement * modIm
 	return newModImage;
 }
 
-bool ModImage::isValid() const {
+bool ModImage::isValid(bool skipFileInfoValidation) const {
+	if(!skipFileInfoValidation) {
+		if(m_fileSize == 0 ||
+		   m_sha1.empty()) {
+			return false;
+		}
+	}
+
 	return !m_fileName.empty() &&
 		   m_width != 0 &&
-		   m_height != 0 &&
-		   !m_sha1.empty();
+		   m_height != 0;
 }
 
-bool ModImage::isValid(const ModImage * i) {
-	return i != nullptr && i->isValid();
+bool ModImage::isValid(const ModImage * i, bool skipFileInfoValidation) {
+	return i != nullptr && i->isValid(skipFileInfoValidation);
 }
 
 bool ModImage::operator == (const ModImage & i) const {

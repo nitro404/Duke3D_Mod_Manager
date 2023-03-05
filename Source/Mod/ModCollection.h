@@ -47,20 +47,20 @@ public:
 
 	rapidjson::Document toJSON() const;
 	tinyxml2::XMLElement * toXML(tinyxml2::XMLDocument* document) const;
-	static std::unique_ptr<ModCollection> parseFrom(const rapidjson::Value & modCollectionValue);
-	static std::unique_ptr<ModCollection> parseFrom(const tinyxml2::XMLElement * modsElement);
+	static std::unique_ptr<ModCollection> parseFrom(const rapidjson::Value & modCollectionValue, bool skipFileInfoValidation = false);
+	static std::unique_ptr<ModCollection> parseFrom(const tinyxml2::XMLElement * modsElement, bool skipFileInfoValidation = false);
 
-	bool loadFrom(const std::string & filePath);
-	bool loadFromXML(const std::string & filePath);
-	bool loadFromJSON(const std::string & filePath);
+	bool loadFrom(const std::string & filePath, bool skipFileInfoValidation = false);
+	bool loadFromXML(const std::string & filePath, bool skipFileInfoValidation = false);
+	bool loadFromJSON(const std::string & filePath, bool skipFileInfoValidation = false);
 	bool saveTo(const std::string & filePath, bool overwrite = true) const;
 	bool saveToXML(const std::string & filePath, bool overwrite = true) const;
 	bool saveToJSON(const std::string & filePath, bool overwrite = true) const;
 
 	bool checkGameVersions(const GameVersionCollection & gameVersions, bool verbose = true) const;
 
-	bool isValid() const;
-	static bool isValid(const ModCollection * m);
+	bool isValid(bool skipFileInfoValidation = false) const;
+	static bool isValid(const ModCollection * m, bool skipFileInfoValidation = false);
 
 	bool operator == (const ModCollection & m) const;
 	bool operator != (const ModCollection & m) const;

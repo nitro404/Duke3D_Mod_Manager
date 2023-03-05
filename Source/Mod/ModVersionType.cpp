@@ -318,7 +318,7 @@ tinyxml2::XMLElement * ModVersionType::toXML(tinyxml2::XMLDocument * document) c
 	return modVersionTypeElement;
 }
 
-std::unique_ptr<ModVersionType> ModVersionType::parseFrom(const rapidjson::Value & modVersionTypeValue) {
+std::unique_ptr<ModVersionType> ModVersionType::parseFrom(const rapidjson::Value & modVersionTypeValue, bool skipFileInfoValidation) {
 	if(!modVersionTypeValue.IsObject()) {
 		spdlog::error("Invalid mod version type: '{}', expected 'object'.", Utilities::typeToString(modVersionTypeValue.GetType()));
 		return nullptr;
@@ -373,9 +373,9 @@ std::unique_ptr<ModVersionType> ModVersionType::parseFrom(const rapidjson::Value
 	std::shared_ptr<ModGameVersion> newModGameVersion;
 
 	for(rapidjson::Value::ConstValueIterator i = modGameVersionsValue.Begin(); i != modGameVersionsValue.End(); ++i) {
-		newModGameVersion = std::shared_ptr<ModGameVersion>(std::move(ModGameVersion::parseFrom(*i)).release());
+		newModGameVersion = std::shared_ptr<ModGameVersion>(ModGameVersion::parseFrom(*i, skipFileInfoValidation).release());
 
-		if(!ModGameVersion::isValid(newModGameVersion.get())) {
+		if(!ModGameVersion::isValid(newModGameVersion.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod game version #{}.", newModVersionType->m_gameVersions.size() + 1);
 			return nullptr;
 		}
@@ -393,7 +393,7 @@ std::unique_ptr<ModVersionType> ModVersionType::parseFrom(const rapidjson::Value
 	return newModVersionType;
 }
 
-std::unique_ptr<ModVersionType> ModVersionType::parseFrom(const tinyxml2::XMLElement * modVersionTypeElement) {
+std::unique_ptr<ModVersionType> ModVersionType::parseFrom(const tinyxml2::XMLElement * modVersionTypeElement, bool skipFileInfoValidation) {
 	if(modVersionTypeElement == nullptr) {
 		return nullptr;
 	}
@@ -466,9 +466,9 @@ std::unique_ptr<ModVersionType> ModVersionType::parseFrom(const tinyxml2::XMLEle
 			break;
 		}
 
-		newModGameVersion = std::shared_ptr<ModGameVersion>(std::move(ModGameVersion::parseFrom(modGameVersionElement)).release());
+		newModGameVersion = std::shared_ptr<ModGameVersion>(ModGameVersion::parseFrom(modGameVersionElement, skipFileInfoValidation).release());
 
-		if(!ModGameVersion::isValid(newModGameVersion.get())) {
+		if(!ModGameVersion::isValid(newModGameVersion.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod game version #{}.", newModVersionType->m_gameVersions.size() + 1);
 			return nullptr;
 		}
@@ -486,30 +486,6 @@ std::unique_ptr<ModVersionType> ModVersionType::parseFrom(const tinyxml2::XMLEle
 	}
 
 	return newModVersionType;
-}
-
-bool ModVersionType::isValid() const {
-	if(m_gameVersions.empty()) {
-		return false;
-	}
-
-	for(std::vector<std::shared_ptr<ModGameVersion>>::const_iterator i = m_gameVersions.begin(); i != m_gameVersions.end(); ++i) {
-		if(!(*i)->isValid()) {
-			return false;
-		}
-
-		if((*i)->getParentModVersionType() != this) {
-			return false;
-		}
-
-		for(std::vector<std::shared_ptr<ModGameVersion>>::const_iterator j = i + 1; j != m_gameVersions.end(); ++j) {
-			if(Utilities::areStringsEqualIgnoreCase((*i)->getGameVersion(), (*j)->getGameVersion())) {
-				return false;
-			}
-		}
-	}
-
-	return true;
 }
 
 bool ModVersionType::isGameVersionSupported(const GameVersion & gameVersion) const {
@@ -568,8 +544,32 @@ std::vector<std::string> ModVersionType::getCompatibleModGameVersionNames(const 
 	return compatibleModGameVersionNames;
 }
 
-bool ModVersionType::isValid(const ModVersionType * t) {
-	return t != nullptr && t->isValid();
+bool ModVersionType::isValid(bool skipFileInfoValidation) const {
+	if(m_gameVersions.empty()) {
+		return false;
+	}
+
+	for(std::vector<std::shared_ptr<ModGameVersion>>::const_iterator i = m_gameVersions.begin(); i != m_gameVersions.end(); ++i) {
+		if(!(*i)->isValid(skipFileInfoValidation)) {
+			return false;
+		}
+
+		if((*i)->getParentModVersionType() != this) {
+			return false;
+		}
+
+		for(std::vector<std::shared_ptr<ModGameVersion>>::const_iterator j = i + 1; j != m_gameVersions.end(); ++j) {
+			if(Utilities::areStringsEqualIgnoreCase((*i)->getGameVersion(), (*j)->getGameVersion())) {
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+bool ModVersionType::isValid(const ModVersionType * t, bool skipFileInfoValidation) {
+	return t != nullptr && t->isValid(skipFileInfoValidation);
 }
 
 bool ModVersionType::operator == (const ModVersionType & t) const {

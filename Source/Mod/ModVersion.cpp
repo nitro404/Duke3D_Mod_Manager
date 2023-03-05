@@ -389,7 +389,7 @@ tinyxml2::XMLElement * ModVersion::toXML(tinyxml2::XMLDocument * document) const
 	return modVersionElement;
 }
 
-std::unique_ptr<ModVersion> ModVersion::parseFrom(const rapidjson::Value & modVersionValue) {
+std::unique_ptr<ModVersion> ModVersion::parseFrom(const rapidjson::Value & modVersionValue, bool skipFileInfoValidation) {
 	if(!modVersionValue.IsObject()) {
 		spdlog::error("Invalid mod version type: '{}', expected 'object'.", Utilities::typeToString(modVersionValue.GetType()));
 		return nullptr;
@@ -476,9 +476,9 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const rapidjson::Value & modVe
 	std::shared_ptr<ModVersionType> newModVersionType;
 
 	for(rapidjson::Value::ConstValueIterator i = modVersionTypesValue.Begin(); i != modVersionTypesValue.End(); ++i) {
-		newModVersionType = std::shared_ptr<ModVersionType>(std::move(ModVersionType::parseFrom(*i)).release());
+		newModVersionType = std::shared_ptr<ModVersionType>(ModVersionType::parseFrom(*i, skipFileInfoValidation).release());
 
-		if(!ModVersionType::isValid(newModVersionType.get())) {
+		if(!ModVersionType::isValid(newModVersionType.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod version type #{}.", newModVersion->m_types.size() + 1);
 			return nullptr;
 		}
@@ -496,7 +496,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const rapidjson::Value & modVe
 	return newModVersion;
 }
 
-std::unique_ptr<ModVersion> ModVersion::parseFrom(const tinyxml2::XMLElement * modVersionElement) {
+std::unique_ptr<ModVersion> ModVersion::parseFrom(const tinyxml2::XMLElement * modVersionElement, bool skipFileInfoValidation) {
 	if(modVersionElement == nullptr) {
 		return nullptr;
 	}
@@ -574,9 +574,9 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const tinyxml2::XMLElement * m
 			break;
 		}
 
-		newModVersionType = std::shared_ptr<ModVersionType>(ModVersionType::parseFrom(modVersionTypeElement).release());
+		newModVersionType = std::shared_ptr<ModVersionType>(ModVersionType::parseFrom(modVersionTypeElement, skipFileInfoValidation).release());
 
-		if(!ModVersionType::isValid(newModVersionType.get())) {
+		if(!ModVersionType::isValid(newModVersionType.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod version type #{}.", newModVersion->m_types.size() + 1);
 			return nullptr;
 		}
@@ -629,13 +629,13 @@ bool ModVersion::isGameVersionCompatible(const GameVersion & gameVersion) const 
 	return false;
 }
 
-bool ModVersion::isValid() const {
+bool ModVersion::isValid(bool skipFileInfoValidation) const {
 	if(m_types.empty()) {
 		return false;
 	}
 
 	for(std::vector<std::shared_ptr<ModVersionType>>::const_iterator i = m_types.begin(); i != m_types.end(); ++i) {
-		if(!(*i)->isValid()) {
+		if(!(*i)->isValid(skipFileInfoValidation)) {
 			return false;
 		}
 
@@ -653,8 +653,8 @@ bool ModVersion::isValid() const {
 	return true;
 }
 
-bool ModVersion::isValid(const ModVersion * m) {
-	return m != nullptr && m->isValid();
+bool ModVersion::isValid(const ModVersion * m, bool skipFileInfoValidation) {
+	return m != nullptr && m->isValid(skipFileInfoValidation);
 }
 
 bool ModVersion::operator == (const ModVersion & m) const {

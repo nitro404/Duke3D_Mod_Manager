@@ -14,11 +14,11 @@ public:
 	virtual ~ModScreenshot();
 
 	virtual tinyxml2::XMLElement * toXML(tinyxml2::XMLDocument * document) const override;
-	static std::unique_ptr<ModScreenshot> parseFrom(const rapidjson::Value & modScreenshotValue);
-	static std::unique_ptr<ModScreenshot> parseFrom(const tinyxml2::XMLElement * modScreenshotElement);
+	static std::unique_ptr<ModScreenshot> parseFrom(const rapidjson::Value & modScreenshotValue, bool skipFileInfoValidation = false);
+	static std::unique_ptr<ModScreenshot> parseFrom(const tinyxml2::XMLElement * modScreenshotElement, bool skipFileInfoValidation = false);
 
-	virtual bool isValid() const override;
-	static bool isValid(const ModScreenshot * s);
+	virtual bool isValid(bool skipFileInfoValidation = false) const override;
+	static bool isValid(const ModScreenshot * s, bool skipFileInfoValidation = false);
 };
 
 #endif // _MOD_SCREENSHOT_H_

@@ -15,6 +15,7 @@
 #include <Utilities/FileUtilities.h>
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
+#include <Utilities/TinyXML2Utilities.h>
 #include <Utilities/Utilities.h>
 
 #include <fmt/core.h>
@@ -311,7 +312,7 @@ tinyxml2::XMLElement * ModCollection::toXML(tinyxml2::XMLDocument * document) co
 	return modsElement;
 }
 
-std::unique_ptr<ModCollection> ModCollection::parseFrom(const rapidjson::Value & modCollectionValue) {
+std::unique_ptr<ModCollection> ModCollection::parseFrom(const rapidjson::Value & modCollectionValue, bool skipFileInfoValidation) {
 	if(!modCollectionValue.IsObject()) {
 		spdlog::error("Invalid mod collection type: '{}', expected 'object'.", Utilities::typeToString(modCollectionValue.GetType()));
 		return nullptr;
@@ -384,9 +385,9 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const rapidjson::Value &
 	std::unique_ptr<Mod> newMod;
 
 	for(rapidjson::Value::ConstValueIterator i = modsValue.Begin(); i != modsValue.End(); ++i) {
-		newMod = Mod::parseFrom(*i);
+		newMod = Mod::parseFrom(*i, skipFileInfoValidation);
 
-		if(!Mod::isValid(newMod.get())) {
+		if(!Mod::isValid(newMod.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod #{}{}!", newModCollection->m_mods.size() + 1, newModCollection->numberOfMods() == 0 ? "" : fmt::format(" (after mod with ID '{}')", newModCollection->getMod(newModCollection->numberOfMods() - 1)->getID()));
 			return nullptr;
 		}
@@ -404,7 +405,7 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const rapidjson::Value &
 	return newModCollection;
 }
 
-std::unique_ptr<ModCollection> ModCollection::parseFrom(const tinyxml2::XMLElement * modsElement) {
+std::unique_ptr<ModCollection> ModCollection::parseFrom(const tinyxml2::XMLElement * modsElement, bool skipFileInfoValidation) {
 	// verify the mods element
 	if(modsElement == nullptr) {
 		spdlog::error("Missing '{}' element!", XML_MODS_ELEMENT_NAME);
@@ -461,9 +462,9 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const tinyxml2::XMLEleme
 			break;
 		}
 
-		newMod = Mod::parseFrom(modElement);
+		newMod = Mod::parseFrom(modElement, skipFileInfoValidation);
 
-		if(!Mod::isValid(newMod.get())) {
+		if(!Mod::isValid(newMod.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod #{}{}!", modCollection->m_mods.size() + 1, modCollection->numberOfMods() == 0 ? "" : fmt::format(" (after mod with ID '{}')", modCollection->getMod(modCollection->numberOfMods() - 1)->getID()));
 			return nullptr;
 		}
@@ -483,7 +484,7 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const tinyxml2::XMLEleme
 	return modCollection;
 }
 
-bool ModCollection::loadFrom(const std::string & filePath) {
+bool ModCollection::loadFrom(const std::string & filePath, bool skipFileInfoValidation) {
 	if(filePath.empty()) {
 		return false;
 	}
@@ -494,16 +495,16 @@ bool ModCollection::loadFrom(const std::string & filePath) {
 		return false;
 	}
 	else if(Utilities::areStringsEqualIgnoreCase(fileExtension, "xml")) {
-		return loadFromXML(filePath);
+		return loadFromXML(filePath, skipFileInfoValidation);
 	}
 	else if(Utilities::areStringsEqualIgnoreCase(fileExtension, "json")) {
-		return loadFromJSON(filePath);
+		return loadFromJSON(filePath, skipFileInfoValidation);
 	}
 
 	return false;
 }
 
-bool ModCollection::loadFromXML(const std::string & filePath) {
+bool ModCollection::loadFromXML(const std::string & filePath, bool skipFileInfoValidation) {
 	if(filePath.empty() || !std::filesystem::is_regular_file(std::filesystem::path(filePath))) {
 		return false;
 	}
@@ -518,9 +519,9 @@ bool ModCollection::loadFromXML(const std::string & filePath) {
 
 	m_mods.clear();
 
-	std::unique_ptr<ModCollection> modCollection(parseFrom(modCollectionDocument.RootElement()));
+	std::unique_ptr<ModCollection> modCollection(parseFrom(modCollectionDocument.RootElement(), skipFileInfoValidation));
 
-	if(!ModCollection::isValid(modCollection.get())) {
+	if(!ModCollection::isValid(modCollection.get(), skipFileInfoValidation)) {
 		spdlog::error("Failed to parse mod collection from XML file '{}'.", filePath);
 		return false;
 	}
@@ -532,7 +533,7 @@ bool ModCollection::loadFromXML(const std::string & filePath) {
 	return true;
 }
 
-bool ModCollection::loadFromJSON(const std::string & filePath) {
+bool ModCollection::loadFromJSON(const std::string & filePath, bool skipFileInfoValidation) {
 	if(filePath.empty() || !std::filesystem::is_regular_file(std::filesystem::path(filePath))) {
 		return false;
 	}
@@ -551,9 +552,9 @@ bool ModCollection::loadFromJSON(const std::string & filePath) {
 
 	fileStream.close();
 
-	std::unique_ptr<ModCollection> modCollection(parseFrom(modsValue));
+	std::unique_ptr<ModCollection> modCollection(parseFrom(modsValue, skipFileInfoValidation));
 
-	if(!ModCollection::isValid(modCollection.get())) {
+	if(!ModCollection::isValid(modCollection.get(), skipFileInfoValidation)) {
 		spdlog::error("Failed to parse mod collection from JSON file '{}'.", filePath);
 		return false;
 	}
@@ -597,10 +598,8 @@ bool ModCollection::saveToXML(const std::string & filePath, bool overwrite) cons
 
 	modCollectionDocument.InsertEndChild(toXML(&modCollectionDocument));
 
-	tinyxml2::XMLError result = modCollectionDocument.SaveFile(filePath.c_str());
-
-	if(result != tinyxml2::XML_SUCCESS) {
-		spdlog::error("Failed to save mod collection to XML file '{}' with error code: '{}'.", filePath, magic_enum::enum_name(result));
+	if(!Utilities::saveXMLDocumentToFile(&modCollectionDocument, filePath, overwrite)) {
+		spdlog::error("Failed to save mod collection to XML file '{}'.", filePath);
 		return false;
 	}
 
@@ -684,9 +683,9 @@ bool ModCollection::checkGameVersions(const GameVersionCollection & gameVersions
 	return true;
 }
 
-bool ModCollection::isValid() const {
+bool ModCollection::isValid(bool skipFileInfoValidation) const {
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_mods.begin(); i != m_mods.end(); ++i) {
-		if(!(*i)->isValid()) {
+		if(!(*i)->isValid(skipFileInfoValidation)) {
 			return false;
 		}
 	}
@@ -694,8 +693,8 @@ bool ModCollection::isValid() const {
 	return true;
 }
 
-bool ModCollection::isValid(const ModCollection * m) {
-	return m != nullptr && m->isValid();
+bool ModCollection::isValid(const ModCollection * m, bool skipFileInfoValidation) {
+	return m != nullptr && m->isValid(skipFileInfoValidation);
 }
 
 bool ModCollection::operator == (const ModCollection & m) const {

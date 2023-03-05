@@ -1602,7 +1602,7 @@ tinyxml2::XMLElement * Mod::toXML(tinyxml2::XMLDocument * document) const {
 	return modElement;
 }
 
-std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
+std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue, bool skipFileInfoValidation) {
 	if(!modValue.IsObject()) {
 		spdlog::error("Invalid mod type: '{}', expected 'object'.", Utilities::typeToString(modValue.GetType()));
 		return nullptr;
@@ -1778,9 +1778,9 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 	std::shared_ptr<ModVersion> newModVersion;
 
 	for(rapidjson::Value::ConstValueIterator i = modVersionsValue.Begin(); i != modVersionsValue.End(); ++i) {
-		newModVersion = std::shared_ptr<ModVersion>(std::move(ModVersion::parseFrom(*i)).release());
+		newModVersion = std::shared_ptr<ModVersion>(ModVersion::parseFrom(*i, skipFileInfoValidation).release());
 
-		if(!ModVersion::isValid(newModVersion.get())) {
+		if(!ModVersion::isValid(newModVersion.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod version #{} for mod with ID '{}'.", newMod->m_versions.size() + 1, modID);
 			return nullptr;
 		}
@@ -1816,9 +1816,9 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 	std::shared_ptr<ModDownload> newModDownload;
 
 	for(rapidjson::Value::ConstValueIterator i = modDownloadsValue.Begin(); i != modDownloadsValue.End(); ++i) {
-		newModDownload = std::shared_ptr<ModDownload>(std::move(ModDownload::parseFrom(*i)).release());
+		newModDownload = std::shared_ptr<ModDownload>(ModDownload::parseFrom(*i, skipFileInfoValidation).release());
 
-		if(!ModDownload::isValid(newModDownload.get())) {
+		if(!ModDownload::isValid(newModDownload.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod download #{} for mod with ID '{}'.", newMod->m_downloads.size() + 1, modID);
 			return nullptr;
 		}
@@ -1845,9 +1845,9 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 		std::shared_ptr<ModScreenshot> newModScreenshot;
 
 		for(rapidjson::Value::ConstValueIterator i = modScreenshotsValue.Begin(); i != modScreenshotsValue.End(); ++i) {
-			newModScreenshot = std::shared_ptr<ModScreenshot>(std::move(ModScreenshot::parseFrom(*i)).release());
+			newModScreenshot = std::shared_ptr<ModScreenshot>(ModScreenshot::parseFrom(*i, skipFileInfoValidation).release());
 
-			if(!ModScreenshot::isValid(newModScreenshot.get())) {
+			if(!ModScreenshot::isValid(newModScreenshot.get(), skipFileInfoValidation)) {
 				spdlog::error("Failed to parse mod screenshot #{} for mod with ID '{}'.", newMod->m_screenshots.size() + 1, modID);
 				return nullptr;
 			}
@@ -1875,9 +1875,9 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 		std::shared_ptr<ModImage> newModImage;
 
 		for(rapidjson::Value::ConstValueIterator i = modImagesValue.Begin(); i != modImagesValue.End(); ++i) {
-			newModImage = std::shared_ptr<ModImage>(std::move(ModImage::parseFrom(*i)).release());
+			newModImage = std::shared_ptr<ModImage>(ModImage::parseFrom(*i, skipFileInfoValidation).release());
 
-			if(!ModImage::isValid(newModImage.get())) {
+			if(!ModImage::isValid(newModImage.get(), skipFileInfoValidation)) {
 				spdlog::error("Failed to parse mod image #{} for mod with ID '{}'.", newMod->m_images.size() + 1, modID);
 				return nullptr;
 			}
@@ -1978,7 +1978,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue) {
 	return newMod;
 }
 
-std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
+std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement, bool skipFileInfoValidation) {
 	if(modElement == nullptr) {
 		return nullptr;
 	}
@@ -2142,9 +2142,9 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 			break;
 		}
 
-		newModVersion = std::shared_ptr<ModVersion>(std::move(ModVersion::parseFrom(modVersionElement)).release());
+		newModVersion = std::shared_ptr<ModVersion>(std::move(ModVersion::parseFrom(modVersionElement, skipFileInfoValidation)).release());
 
-		if(!ModVersion::isValid(newModVersion.get())) {
+		if(!ModVersion::isValid(newModVersion.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod version #{} for '{}' element with ID '{}'.", mod->m_versions.size() + 1, XML_MOD_ELEMENT_NAME, modID);
 			return nullptr;
 		}
@@ -2183,9 +2183,9 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 			break;
 		}
 
-		newModDownload = std::shared_ptr<ModDownload>(std::move(ModDownload::parseFrom(modDownloadElement)).release());
+		newModDownload = std::shared_ptr<ModDownload>(ModDownload::parseFrom(modDownloadElement, skipFileInfoValidation).release());
 
-		if(!ModDownload::isValid(newModDownload.get())) {
+		if(!ModDownload::isValid(newModDownload.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod download #{} for '{}' element with ID '{}'.", mod->m_downloads.size() + 1, XML_MOD_ELEMENT_NAME, modID);
 			return nullptr;
 		}
@@ -2220,9 +2220,9 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 				break;
 			}
 
-			newModScreenshot = std::move(std::shared_ptr<ModScreenshot>(ModScreenshot::parseFrom(modScreenshotElement).release()));
+			newModScreenshot = std::shared_ptr<ModScreenshot>(ModScreenshot::parseFrom(modScreenshotElement, skipFileInfoValidation).release());
 
-			if(!ModScreenshot::isValid(newModScreenshot.get())) {
+			if(!ModScreenshot::isValid(newModScreenshot.get(), skipFileInfoValidation)) {
 				spdlog::error("Failed to parse mod screenshot #{} for '{}' element with ID '{}'.", mod->m_screenshots.size() + 1, XML_MOD_ELEMENT_NAME, modID);
 				return nullptr;
 			}
@@ -2258,9 +2258,9 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement) {
 				break;
 			}
 
-			newModImage = std::shared_ptr<ModImage>(std::move(ModImage::parseFrom(modImageElement)).release());
+			newModImage = std::shared_ptr<ModImage>(ModImage::parseFrom(modImageElement, skipFileInfoValidation).release());
 
-			if(!ModImage::isValid(newModImage.get())) {
+			if(!ModImage::isValid(newModImage.get(), skipFileInfoValidation)) {
 				spdlog::error("Failed to parse mod image #{} for '{}' element with ID '{}'.", mod->m_images.size() + 1, XML_MOD_ELEMENT_NAME, modID);
 				return nullptr;
 			}
@@ -2664,7 +2664,7 @@ bool Mod::checkSplitDownloadsNotMissingParts(bool verbose) const {
 	return true;
 }
 
-bool Mod::isValid() const {
+bool Mod::isValid(bool skipFileInfoValidation) const {
 	if(m_id.empty() ||
 	   m_name.empty() ||
 	   m_type.empty() ||
@@ -2679,7 +2679,7 @@ bool Mod::isValid() const {
 	}
 
 	for(std::vector<std::shared_ptr<ModVersion>>::const_iterator i = m_versions.begin(); i != m_versions.end(); ++i) {
-		if(!(*i)->isValid()) {
+		if(!(*i)->isValid(skipFileInfoValidation)) {
 			return false;
 		}
 
@@ -2695,7 +2695,7 @@ bool Mod::isValid() const {
 	}
 
 	for(std::vector<std::shared_ptr<ModDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		if(!(*i)->isValid()) {
+		if(!(*i)->isValid(skipFileInfoValidation)) {
 			return false;
 		}
 
@@ -2761,8 +2761,8 @@ bool Mod::isValid() const {
 	return true;
 }
 
-bool Mod::isValid(const Mod * m) {
-	return m != nullptr && m->isValid();
+bool Mod::isValid(const Mod * m, bool skipFileInfoValidation) {
+	return m != nullptr && m->isValid(skipFileInfoValidation);
 }
 
 void Mod::updateParent() {
