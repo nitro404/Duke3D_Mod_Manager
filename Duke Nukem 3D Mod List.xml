@@ -3609,7 +3609,7 @@
 	</mod>
 	<mod name="Starship Troopers" id="starship_troopers" type="Total Conversion" version="1.1B" website="http://www.dukeworld.com/starshiptroopers">
 		<team name="Bgame Productions" email="bgame@madmzone.com" country="Croatia">
-			<member name="Moloch" email="moloch@3dportal.com"/>
+			<member name="Berislav Markovic" alias="Moloch" email="moloch@3dportal.com"/>
 			<member name="Boris" alias="C3PO"/>
 		</team>
 		<files>
@@ -10634,7 +10634,7 @@
 	</mod>
 	<mod name="Danny&apos;s Weapon Mod" id="dannys_weapon_mod" type="Weapon Patch">
 		<team>
-			<member name="Danny Paez" email="dpaez16@yahoo.com"/>
+			<member name="Danny Paez" email="dpaez16@yahoo.com" youtube="dukenstein25" reddit="SpoolesJoint"/>
 		</team>
 		<files>
 			<version release_date="June 10, 2010">
