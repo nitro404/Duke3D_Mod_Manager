@@ -10876,4 +10876,45 @@
 			<download filename="Duke_Nukem_-_Halloween_Mayhem-ModMgrE.zip" filesize="27421288" game="eDuke32" type="Mod Manager Files" state="Native" sha1="de491f521806dc2b7d927bbf0a6ba9af8d7e0bd7"/>
 		</downloads>
 	</mod>
+	<mod name="The Way of All Flesh" id="the_way_of_all_flesh" type="Episode" version="1.2" website="https://www.moddb.com/mods/duke-nukem-3d-the-way-of-all-flesh">
+		<team country="Czech Republic">
+			<member name="MissingNO57" email="missingno@seznam.cz" website="https://www.moddb.com/members/missingno57/downloads"/>
+		</team>
+		<files>
+			<version id="1.0" release_date="January 19, 2022">
+				<type>
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="FLESH_10.CON" size="151194" type="con" sha1="0acf7aed52774d91013f22c455d841a1777459b1"/>
+						<file name="FLESH_10.GRP" size="566040" type="grp" sha1="b2a279294038f16da33064777a5e26c6f41cc589"/>
+					</game>
+				</type>
+			</version>
+			<version id="1.1" release_date="January 31, 2022">
+				<type>
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="FLESH_11.CON" size="151194" type="con" sha1="0acf7aed52774d91013f22c455d841a1777459b1"/>
+						<file name="FLESH_11.GRP" size="729737" type="grp" sha1="d459f1b4027d464be99330f0fcd4e5821ba11d3a"/>
+					</game>
+				</type>
+			</version>
+			<version id="1.2" release_date="February 4, 2022">
+				<type>
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="FLESH_12.CON" size="151194" type="con" sha1="0acf7aed52774d91013f22c455d841a1777459b1"/>
+						<file name="FLESH_12.GRP" size="896438" type="grp" sha1="df8ddabf8d6ddd83f7fd815c546d1cef98c06775"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="BLDFLESH.zip" filesize="119951" version="1.0" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="50c5262c9b164444d2529e9eafe9f688c40dfa43"/>
+			<download filename="BLDFLESHv1.1.zip" filesize="165816" version="1.1" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="956ef8a67518fc0796c780c8db08079c1cea2ff4"/>
+			<download filename="BLDFLESHv1.2.zip" filesize="212666" version="1.2" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="ebc7c22afead13f5aa1287ff61ff0a9d6cac8e60"/>
+			<download filename="BSHIP1.0.zip" filesize="33027" special="Bonus Map" game="Atomic Edition 1.4/1.5" type="Map" sha1="55583a6db41d62c98dd461589410938569eefa0e"/>
+			<download filename="BTOWN1.0.zip" filesize="32117" special="Bonus Map" game="Atomic Edition 1.4/1.5" type="Map" sha1="393d1a22795e4297aebeb1669853fd05f549b65a"/>
+			<download filename="The_Way_of_All_Flesh_1.0-ModMgrA.zip" filesize="170475" version="1.0" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="347ab57547161032653d76dc5e545a5525404f49"/>
+			<download filename="The_Way_of_All_Flesh_1.1-ModMgrA.zip" filesize="219960" version="1.1" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="0ecaaa2e00721dc3305e0d1663f8237f0025c204"/>
+			<download filename="The_Way_of_All_Flesh_1.2-ModMgrA.zip" filesize="269197" version="1.2" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="1c004b770b02a8ff3736a0211d01badf6350678c"/>
+		</downloads>
+	</mod>
 </mods>
