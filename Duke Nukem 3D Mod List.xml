@@ -10917,4 +10917,33 @@
 			<download filename="The_Way_of_All_Flesh_1.2-ModMgrA.zip" filesize="269197" version="1.2" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="1c004b770b02a8ff3736a0211d01badf6350678c"/>
 		</downloads>
 	</mod>
+	<mod name="Operation Mallard" id="operation_mallard" type="Total Conversion" version="1.0 Demo" website="https://www.moddb.com/mods/operation-mallard">
+		<team name="J and M">
+			<member name="Jimmy de Visser"/>
+			<member name="Mark"/>
+		</team>
+		<files>
+			<version id="1.0 Demo" release_date="February 11, 2023">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="MALLARD.CON" size="200787" type="con" sha1="038185913227cede1827fad871ba27a982ecd66c"/>
+						<file name="MALLARD.def" size="24846" type="def" sha1="d4629744169a979e4b01aca3664a36b155f1f654"/>
+						<file name="Operation_Mallard_1.0_Demo.zip" size="345511071" type="zip" sha1="4c279c635a01e0da4e2d604bf50bd6412a3e71c1"/>
+					</game>
+				</type>
+				<type id="Black &amp; White Mode">
+					<game type="eDuke32" state="Native">
+						<file name="MALLARD.CON" size="200787" type="con" sha1="038185913227cede1827fad871ba27a982ecd66c"/>
+						<file name="MALLARD.def" size="24846" type="def" sha1="d4629744169a979e4b01aca3664a36b155f1f654"/>
+						<file name="cons/BNW.def" size="899" type="def" sha1="20479eae76674866d3422a2b6588b9835aa6db5e"/>
+						<file name="Operation_Mallard_1.0_Demo.zip" size="345511071" type="zip" sha1="4c279c635a01e0da4e2d604bf50bd6412a3e71c1"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Operation_Mallard.zip" filesize="347209932" version="1.0 Demo" game="eDuke32" type="Original Files" sha1="0b9af426ef76ff4ef1e6c677f9da713914047d3b"/>
+			<download filename="Operation_Mallard_1.0_Demo-ModMgrE.zip" filesize="345411266" version="1.0 Demo" game="eDuke32" type="Mod Manager Files" state="Native" sha1="d357a9bdb6eee8a4c4dc685d1d15cb5a9d4d05cd"/>
+		</downloads>
+	</mod>
 </mods>
