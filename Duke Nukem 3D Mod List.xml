@@ -8502,7 +8502,7 @@
 			<member name="Michael Crisp" alias="Micky C"/>
 			<member name="Mikko Sandt" email="sirpa.sandt@pp.inet.fi"/>
 			<member name="Mister Sinister"/>
-			<member name="Aymeric Nocus" alias="MRCK"/>
+			<member name="Aymeric Nocus" alias="MRCK" email="aymeric-nocus@tele2.fr" youtube="MisterCK"/>
 			<member name="Paul B"/>
 			<member name="Steambull"/>
 			<member name="Stumpy"/>
@@ -9596,7 +9596,7 @@
 	<mod name="Metropolitan Mayhem" id="metropolitan_mayhem" type="Episode" website="https://www.moddb.com/mods/metropolitan-mayhem">
 		<team>
 			<member name="MetHy" alias="MetHunter"/>
-			<member name="Aymeric Nocus" alias="MRCK"/>
+			<member name="Aymeric Nocus" alias="MRCK" email="aymeric-nocus@tele2.fr" youtube="MisterCK"/>
 			<member name="Mikko Sandt" alias="Jackotrades" email="sirpa.sandt@pp.inet.fi"/>
 			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com"/>
 		</team>
@@ -10944,6 +10944,25 @@
 		<downloads>
 			<download filename="Operation_Mallard.zip" filesize="347209932" version="1.0 Demo" game="eDuke32" type="Original Files" sha1="0b9af426ef76ff4ef1e6c677f9da713914047d3b"/>
 			<download filename="Operation_Mallard_1.0_Demo-ModMgrE.zip" filesize="345411266" version="1.0 Demo" game="eDuke32" type="Mod Manager Files" state="Native" sha1="d357a9bdb6eee8a4c4dc685d1d15cb5a9d4d05cd"/>
+		</downloads>
+	</mod>
+	<mod name="Anarchy City" id="anarchy_city" type="Episode" version="1.1">
+		<team country="France">
+			<member name="Aymeric Nocus" alias="ck3D" email="aymeric-nocus@tele2.fr" website="https://www.ko-fi.com/blastradius" youtube="MisterCK"/>
+		</team>
+		<files>
+			<version id="1.1" release_date="May 25, 2004">
+				<type>
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="ANARCHY.CON" size="151035" type="con" sha1="9f9f919bd9fd7802250c8f38bdb602dfa5b81f89"/>
+						<file name="ANARCHY.GRP" size="3628605" type="grp" sha1="7eedffd893b454a45349fc4f8dd844c1bfcb1880"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="anarchycity.zip" filesize="924706" version="1.1" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="b8e0a91dccbbea0b6d7b02a9314d169b28b06c42"/>
+			<download filename="Anarchy_City_1.1-ModMgrA.zip" filesize="901303" version="1.1" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="066f2b5369409a0548c8b9ba665bcef8a94a4e9e"/>
 		</downloads>
 	</mod>
 </mods>
