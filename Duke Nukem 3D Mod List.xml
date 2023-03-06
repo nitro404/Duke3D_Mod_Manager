@@ -11006,4 +11006,23 @@
 			<download filename="Duke_Nukem_-_Battlefront-ModMgrE.zip" filesize="62370952" game="eDuke32" type="Mod Manager Files" state="Native" sha1="0f60568d275ef2ef01e37e8302bccb3e1132a76d"/>
 		</downloads>
 	</mod>
+	<mod name="The Michael Dormuth Saga" id="the_michael_dormuth_saga" type="Map" version="Alpha Build 147">
+		<team email="m.latoski@sasktel.net" city="Regina" province="Sakatchewan" country="Canada">
+			<member name="Mike Latoski" email="m.d.lat@cableregina.com" website="http://www.geocities.com/timessquare/6081"/>
+		</team>
+		<files>
+			<version id="Alpha Build 147" release_date="July 11, 1999">
+				<type>
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="DORMUTH.CON" size="151193" type="con" sha1="536397695d07bfaca4f6089c4068e311231891ee"/>
+						<file name="DORMUTH.GRP" size="585388" type="grp" sha1="40bcd535c9f2f6ab6d37f23dfb68ae54fec15e51"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="TMDSA147.ZIP" filesize="201145" version="Alpha Build 147" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="0b70bbf1726ba5aef96db171229d162bed64831a"/>
+			<download filename="The_Michael_Dormuth_Saga_Alpha_Build_147-ModMgrA.zip" filesize="271264" version="Alpha Build 147" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="5d8c85df4c6eb641d81eaa75a7c5e10e5f24d9d0"/>
+		</downloads>
+	</mod>
 </mods>
