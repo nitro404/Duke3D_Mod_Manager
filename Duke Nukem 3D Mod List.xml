@@ -10987,4 +10987,23 @@
 			<download filename="Operation_-_Reckoning-ModMgrA.zip" filesize="3259904" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="28420350a092ed686a45135a55cc1906f3ff79bd"/>
 		</downloads>
 	</mod>
+	<mod name="Duke Nukem: Battlefront" id="duke_nukem_-_battlefront" type="Dukematch" website="https://www.moddb.com/games/duke-nukem-3d/addons/duke-nukem-battlefront">
+		<team>
+			<member name="G.A.P."/>
+		</team>
+		<files>
+			<version release_date="March 3, 2021">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="BATLFRNT.CON" size="151194" type="con" sha1="bd0bbcca5e70eb7175a29fe84cca9b3f332de510"/>
+						<file name="BATTLEFRONT.GRP" size="64777248" type="grp" sha1="1d176d52802ca328d8b8508cf939f2b889f0e5d4"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="Duke_Nukem_Battlefront.2.rar" filesize="62507119" game="eDuke32" type="Original Files" sha1="1c4ae95768f5c0f6a4799de58404aadd22ab4e73"/>
+			<download filename="Duke_Nukem_-_Battlefront-ModMgrE.zip" filesize="62370952" game="eDuke32" type="Mod Manager Files" state="Native" sha1="0f60568d275ef2ef01e37e8302bccb3e1132a76d"/>
+		</downloads>
+	</mod>
 </mods>
