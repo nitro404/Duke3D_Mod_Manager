@@ -9436,7 +9436,7 @@
 		</downloads>
 	</mod>
 	<mod name="Back in Business" id="back_in_business" type="Episode" version="1.0">
-		<team>
+		<team country="Poland">
 			<member name="Alex Pistol" email="aleks4duke@gmail.com" discord="ShrinkDuke" steam="Ledsbourne"/>
 		</team>
 		<files>
@@ -11023,6 +11023,26 @@
 		<downloads>
 			<download filename="TMDSA147.ZIP" filesize="201145" version="Alpha Build 147" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="0b70bbf1726ba5aef96db171229d162bed64831a"/>
 			<download filename="The_Michael_Dormuth_Saga_Alpha_Build_147-ModMgrA.zip" filesize="271264" version="Alpha Build 147" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="5d8c85df4c6eb641d81eaa75a7c5e10e5f24d9d0"/>
+		</downloads>
+	</mod>
+	<mod name="The Conundrum" id="the_conundrum" type="Episode" version="1.0" website="https://www.moddb.com/mods/the-conundrum">
+		<team country="Poland">
+			<member name="Alex Pistol" email="aleks4duke@gmail.com" discord="Ledsbourne" steam="Ledsbourne"/>
+		</team>
+		<files>
+			<version id="1.0" release_date="January 16, 2022">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="CONUNDRUM.CON" size="151198" type="con" sha1="0ea4260da2664ae55be03fa387172fc74ab1b740"/>
+						<file name="CONUNDRUM.def" size="544" type="def" sha1="9d45e2491de6363eb35fc9fb63ecf579f8c42886"/>
+						<file name="The_Conundrum_1.0.zip" size="9988561" type="zip" sha1="88f82a8d1b2bfde57a12a022d6e61c49c993f9f2"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="THE_CONUNDRUM.zip" filesize="14794618" version="1.0" game="eDuke32" type="Original Files" sha1="103031aa31974c5df97eb6ebfaedee935395a088"/>
+			<download filename="The_Conundrum_1.0-ModMgrE.zip" filesize="9983817" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="8f9da1efd156342fbe40f28495b7084d53971fdd"/>
 		</downloads>
 	</mod>
 </mods>
