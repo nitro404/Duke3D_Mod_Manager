@@ -11045,4 +11045,34 @@
 			<download filename="The_Conundrum_1.0-ModMgrE.zip" filesize="9983817" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="8f9da1efd156342fbe40f28495b7084d53971fdd"/>
 		</downloads>
 	</mod>
+	<mod name="Hunt for Khilafat" id="hunt_for_khilafat" type="Total Conversion" version="1.0" website="https://www.moddb.com/mods/hunt-for-khilafat">
+		<team name="Free Speech Studio">
+			<member name="Jesse Petrilla" email="jesse@datatap.com"/>
+			<member name="Geoffrey van Dijk" alias="Fakir Baba" email="fakirnogwat@hotmail.com"/>
+			<member name="Michael Lee" alias="Life_of_Agony"/>
+			<member name="Arabe Khalid"/>
+		</team>
+		<files>
+			<version id="1.0" release_date="December 31, 2021">
+				<type>
+					<game type="Regular Version 1.3" state="Native">
+						<file name="KHILAFAT.CON" size="96921" type="con" sha1="48bbdfc8edac26e0d66eae25eebe4afa370aaf7c"/>
+						<file name="KHILAFAT.GRP" size="32430266" type="grp" sha1="bcaa5cc1cc1012d95e1f6c01caa5f62f954575b7"/>
+					</game>
+					<game type="Atomic Edition 1.4/1.5" state="Converted">
+						<file name="KHILAFAT.CON" size="147842" type="con" sha1="a9d5e33e2c8a06ae183f03f0dfbec893c7eefb65"/>
+						<file name="KHILAFAT.GRP" size="32989633" type="grp" sha1="a539a3e04a16c991debaf61663160482c7886117"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="HUNT_FOR_KHILAFAT.rar" filesize="31473316" version="1.0" game="Regular Version 1.3" type="Original Files" sha1="f41a2ea9b6c4baad9ce15dc0d6fca7ea79c0dcdb"/>
+			<download filename="Hunt_for_Khilafat_1.0-ModMgrR.zip" filesize="13327445" version="1.0" game="Regular Version 1.3" type="Mod Manager Files" state="Native" sha1="a1b358309921710a7fd71fb0fa91ab8c1f35c363"/>
+			<download filename="Hunt_for_Khilafat_1.0-ModMgrA.zip" filesize="13499727" version="1.0" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Converted" sha1="2e50070e3893216753fed841e65837f9d4a45672"/>
+		</downloads>
+		<notes>
+			<note>Replaces episode 2.</note>
+		</notes>
+	</mod>
 </mods>
