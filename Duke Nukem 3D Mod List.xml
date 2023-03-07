@@ -11075,4 +11075,20 @@
 			<note>Replaces episode 2.</note>
 		</notes>
 	</mod>
+	<mod name="Duke Nukem Forever Gloves" id="duke_nukem_forever_gloves" type="Weapon Patch" website="https://www.moddb.com/games/duke-nukem-3d/addons/dnf-gloves">
+		<files>
+			<version release_date="September 26, 2022">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="gloves.def" size="60822" type="def" sha1="1da2ec1e22ac06b5a7a8c914e57616bea050f855"/>
+						<file name="Duke_Nukem_Forever_Gloves.zip" size="789135" type="zip" sha1="88ac036a2b946bd949d4ba7d38feb6d2ebc91e1c"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="DNF_Gloves.zip" filesize="786763" game="eDuke32" type="Original Files" sha1="4b1632b864b13a8c5f51d26df72d6c7da5c2d79c"/>
+			<download filename="Duke_Nukem_Forever_Gloves-ModMgrE.zip" filesize="740483" game="eDuke32" type="Mod Manager Files" state="Native" sha1="0c886353f6a7ece6e0fc743fe2c8d1fa9e785457"/>
+		</downloads>
+	</mod>
 </mods>
