@@ -1502,6 +1502,10 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		scriptArgs.addArgument("PORT", std::to_string(settings->dosboxLocalServerPort));
 	}
 
+	if(settings->dosboxAutoExit) {
+		scriptArgs.addArgument("EXIT", "EXIT");
+	}
+
 	if(!selectedGameVersion->doesRequireDOSBox() && (m_gameType == GameType::Client || m_gameType == GameType::Server)) {
 		spdlog::info("Network settings are only supported when running in DOSBox, ignoring {} game type setting.", Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)));
 	}
@@ -3879,7 +3883,7 @@ std::string ModManager::generateDOSBoxTemplateScriptFileData(GameType gameType) 
 	}
 
 	templateStream << ":COMMAND:" << std::endl;
-	templateStream << "EXIT" << std::endl;
+	templateStream << "<EXIT|EXIT>" << std::endl;
 
 	return templateStream.str();
 }

@@ -70,6 +70,7 @@ static constexpr const char * DOSBOX_CATEGORY_NAME = "dosbox";
 static constexpr const char * DOSBOX_VERSIONS_LIST_FILE_PATH_PROPERTY_NAME = LIST_FILE_PATH;
 static constexpr const char * PREFERRED_DOSBOX_VERSION_PROPERTY_NAME = "preferred";
 static constexpr const char * DOSBOX_ARGUMENTS_PROPERTY_NAME = "arguments";
+static constexpr const char * DOSBOX_AUTO_EXIT_PROPERTY_NAME = "autoExit";
 static constexpr const char * DOSBOX_DATA_DIRECTORY_NAME_PROPERTY_NAME = DATA_DIRECTORY_NAME;
 
 static constexpr const char * DOSBOX_NETWORKING_CATEGORY_NAME = "networking";
@@ -151,6 +152,7 @@ const std::string SettingsManager::DEFAULT_GAME_TEMP_DIRECTORY_NAME("Temp");
 const std::string SettingsManager::DEFAULT_TEMP_SYMLINK_NAME("DNMMTemp");
 const std::string SettingsManager::DEFAULT_CACHE_DIRECTORY_PATH("Cache");
 const std::string SettingsManager::DEFAULT_DOSBOX_ARGUMENTS("-noconsole");
+const bool SettingsManager::DEFAULT_DOSBOX_AUTO_EXIT = true;
 const std::string SettingsManager::DEFAULT_DOSBOX_DATA_DIRECTORY_NAME("DOSBox");
 const GameType SettingsManager::DEFAULT_GAME_TYPE = ModManager::DEFAULT_GAME_TYPE;
 const std::string SettingsManager::DEFAULT_PREFERRED_GAME_VERSION(ModManager::DEFAULT_PREFERRED_GAME_VERSION);
@@ -311,6 +313,7 @@ SettingsManager::SettingsManager()
 	, tempSymlinkName(DEFAULT_TEMP_SYMLINK_NAME)
 	, cacheDirectoryPath(DEFAULT_CACHE_DIRECTORY_PATH)
 	, dosboxArguments(DEFAULT_DOSBOX_ARGUMENTS)
+	, dosboxAutoExit(DEFAULT_DOSBOX_AUTO_EXIT)
 	, dosboxDataDirectoryName(DEFAULT_DOSBOX_DATA_DIRECTORY_NAME)
 	, dosboxServerIPAddress(DEFAULT_DOSBOX_SERVER_IP_ADDRESS)
 	, gameType(DEFAULT_GAME_TYPE)
@@ -369,6 +372,7 @@ void SettingsManager::reset() {
 	tempSymlinkName = DEFAULT_TEMP_SYMLINK_NAME;
 	cacheDirectoryPath = DEFAULT_CACHE_DIRECTORY_PATH;
 	dosboxArguments = DEFAULT_DOSBOX_ARGUMENTS;
+	dosboxAutoExit = DEFAULT_DOSBOX_AUTO_EXIT;
 	dosboxDataDirectoryName = DEFAULT_DOSBOX_DATA_DIRECTORY_NAME;
 	dosboxServerIPAddress = DEFAULT_DOSBOX_SERVER_IP_ADDRESS;
 	gameType = DEFAULT_GAME_TYPE;
@@ -509,7 +513,9 @@ rapidjson::Document SettingsManager::toJSON() const {
 	rapidjson::Value preferredDOSBoxVersionValue(preferredDOSBoxVersion.c_str(), allocator);
 	dosboxCategoryValue.AddMember(rapidjson::StringRef(PREFERRED_DOSBOX_VERSION_PROPERTY_NAME), preferredDOSBoxVersionValue, allocator);
 	rapidjson::Value dosboxArgumentsValue(dosboxArguments.c_str(), allocator);
+	dosboxCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_AUTO_EXIT_PROPERTY_NAME), rapidjson::Value(dosboxAutoExit), allocator);
 	dosboxCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_ARGUMENTS_PROPERTY_NAME), dosboxArgumentsValue, allocator);
+
 	rapidjson::Value dosboxDataDirectroryNameValue(dosboxDataDirectoryName.c_str(), allocator);
 	dosboxCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_DATA_DIRECTORY_NAME_PROPERTY_NAME), dosboxDataDirectroryNameValue, allocator);
 
@@ -747,6 +753,7 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 		assignStringSetting(dosboxVersionsListFilePath, dosboxCategoryValue, DOSBOX_VERSIONS_LIST_FILE_PATH_PROPERTY_NAME);
 		assignStringSetting(preferredDOSBoxVersion, dosboxCategoryValue, PREFERRED_DOSBOX_VERSION_PROPERTY_NAME);
 		assignStringSetting(dosboxArguments, dosboxCategoryValue, DOSBOX_ARGUMENTS_PROPERTY_NAME);
+		assignBooleanSetting(dosboxAutoExit, dosboxCategoryValue, DOSBOX_AUTO_EXIT_PROPERTY_NAME);
 		assignStringSetting(dosboxDataDirectoryName, dosboxCategoryValue, DOSBOX_DATA_DIRECTORY_NAME_PROPERTY_NAME);
 
 		if(dosboxCategoryValue.HasMember(DOSBOX_NETWORKING_CATEGORY_NAME) && dosboxCategoryValue[DOSBOX_NETWORKING_CATEGORY_NAME].IsObject()) {

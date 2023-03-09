@@ -56,6 +56,7 @@ public:
 	static const std::string DEFAULT_TEMP_SYMLINK_NAME;
 	static const std::string DEFAULT_CACHE_DIRECTORY_PATH;
 	static const std::string DEFAULT_DOSBOX_ARGUMENTS;
+	static const bool DEFAULT_DOSBOX_AUTO_EXIT;
 	static const std::string DEFAULT_DOSBOX_DATA_DIRECTORY_NAME;
 	static const GameType DEFAULT_GAME_TYPE;
 	static const std::string DEFAULT_PREFERRED_GAME_VERSION;
@@ -115,6 +116,7 @@ public:
 	std::string tempSymlinkName;
 	std::string cacheDirectoryPath;
 	std::string dosboxArguments;
+	bool dosboxAutoExit;
 	std::string dosboxDataDirectoryName;
 	GameType gameType;
 	std::string preferredGameVersion;
