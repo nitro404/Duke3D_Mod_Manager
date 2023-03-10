@@ -11091,4 +11091,27 @@
 			<download filename="Duke_Nukem_Forever_Gloves-ModMgrE.zip" filesize="740483" game="eDuke32" type="Mod Manager Files" state="Native" sha1="0c886353f6a7ece6e0fc743fe2c8d1fa9e785457"/>
 		</downloads>
 	</mod>
+	<mod name="Dark Place" id="dark_place" type="Episode">
+		<team country="Estonia">
+			<member name="Taivo Maripuu" email="taivo.maripuu.001@mail.ee"/>
+		</team>
+		<files>
+			<version release_date="April 18, 2005">
+				<type>
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="DARKPLCE.CON" size="151194" type="con" sha1="0e7fc7629680f8bd0cfecf9f1e8a74df7ea2af03"/>
+						<file name="DARKPLCE.GRP" size="2055252" type="grp" sha1="66c99ef8ee3dde455d0ae732fd2228239104fe49"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="dark place.zip" filesize="95480" part="1" numparts="5" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="baa3e580384efb71909d97390ddca4686a7ceede"/>
+			<download filename="dark place2.zip" filesize="98493" part="2" numparts="5" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="fc1a550290770e13a80e341bfffb7e94636e047c"/>
+			<download filename="dark place3.zip" filesize="104831" part="3" numparts="5" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="026be16f6e465d2fbd2db25a835f7c9a4b0f9bd8"/>
+			<download filename="dark place4.zip" filesize="148010" part="4" numparts="5" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="53798c4b8aa6658514b74ad8d89b504d745e61f3"/>
+			<download filename="dark place5.zip" filesize="151435" part="5" numparts="5" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="7a4cb1d26d75ec945a4db14b0f5e64557eaa7194"/>
+			<download filename="Dark_Place-ModMgrA.zip" filesize="649145" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="af040509d9204849d6a3723d6e4f09f2fef2a0e1"/>
+		</downloads>
+	</mod>
 </mods>
