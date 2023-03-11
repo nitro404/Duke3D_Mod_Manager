@@ -11114,4 +11114,23 @@
 			<download filename="Dark_Place-ModMgrA.zip" filesize="649145" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="af040509d9204849d6a3723d6e4f09f2fef2a0e1"/>
 		</downloads>
 	</mod>
+	<mod name="Epic" id="epic" type="Episode" version="1.00000000000000000000000000000001">
+		<team>
+			<member name="Fermion" alias="EMRadiation" email="Fermion420@msn.com"/>
+		</team>
+		<files>
+			<version id="1.00000000000000000000000000000001" release_date="April 3, 1997">
+				<type>
+					<game type="Atomic Edition 1.4/1.5" state="Native">
+						<file name="EPIC.CON" size="151194" type="con" sha1="897aa9e5dac17f0cce564baa675a957b88c59182"/>
+						<file name="EPIC.GRP" size="4391039" type="grp" sha1="f51a4b24e729e916f98af7897f324c86b28fb170"/>
+					</game>
+				</type>
+			</version>
+		</files>
+		<downloads>
+			<download filename="epic.zip" filesize="2020104" version="1.00000000000000000000000000000001" game="Atomic Edition 1.4/1.5" type="Original Files" sha1="dc3fd030b5eb9410827efbc026fdfb3b2c302b8b"/>
+			<download filename="Epic_1.00000000000000000000000000000001-ModMgrE.zip" filesize="2076955" version="1.00000000000000000000000000000001" game="Atomic Edition 1.4/1.5" type="Mod Manager Files" state="Native" sha1="91631fcb07eedb6fcb6d369783ff37c9cfad8535"/>
+		</downloads>
+	</mod>
 </mods>
