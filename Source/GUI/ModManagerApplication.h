@@ -19,6 +19,9 @@
 #include <memory>
 
 class LogSinkWX;
+class ModManagerInitializedEvent;
+class ModManagerInitializationCancelledEvent;
+class ModManagerInitializationFailedEvent;
 
 class ModManagerApplication : public wxApp,
 							  public ModManagerFrame::Listener {
@@ -41,6 +44,10 @@ public:
 
 private:
 	void initialize();
+	void showWindow();
+	void onInitialized(ModManagerInitializedEvent & event);
+	void onInitializationCancelled(ModManagerInitializationCancelledEvent & event);
+	void onInitializationFailed(ModManagerInitializationFailedEvent & event);
 
 	std::shared_ptr<ArgumentParser> m_arguments;
 	std::shared_ptr<ModManager> m_modManager;

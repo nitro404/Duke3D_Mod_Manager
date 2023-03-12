@@ -60,6 +60,8 @@
 
 using namespace std::chrono_literals;
 
+static constexpr uint8_t NUMBER_OF_INITIALIZATION_STEPS = 15;
+
 const GameType ModManager::DEFAULT_GAME_TYPE = GameType::Game;
 const std::string ModManager::DEFAULT_PREFERRED_DOSBOX_VERSION(DOSBoxVersion::DOSBOX.getName());
 const std::string ModManager::DEFAULT_PREFERRED_GAME_VERSION(GameVersion::ORIGINAL_ATOMIC_EDITION.getName());
@@ -69,6 +71,7 @@ const std::string ModManager::DEFAULT_BACKUP_FILE_RENAME_SUFFIX("_");
 ModManager::ModManager()
 	: Application()
 	, m_initialized(false)
+	, m_initializing(false)
 	, m_localMode(false)
 	, m_demoRecordingEnabled(false)
 	, m_gameType(ModManager::DEFAULT_GAME_TYPE)
@@ -79,7 +82,8 @@ ModManager::ModManager()
 	, m_gameManager(std::make_shared<GameManager>())
 	, m_mods(std::make_shared<ModCollection>())
 	, m_favouriteMods(std::make_shared<FavouriteModCollection>())
-	, m_organizedMods(std::make_shared<OrganizedModCollection>(m_mods, m_favouriteMods, getGameVersions())) {
+	, m_organizedMods(std::make_shared<OrganizedModCollection>(m_mods, m_favouriteMods, m_gameManager->getGameVersions()))
+	, m_initializationStep(0) {
 	assignPlatformFactories();
 
 	FactoryRegistry::getInstance().setFactory<SettingsManager>([]() {
@@ -90,6 +94,8 @@ ModManager::ModManager()
 }
 
 ModManager::~ModManager() {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	getDOSBoxVersions()->removeListener(*this);
 	getGameVersions()->removeListener(*this);
 	m_organizedMods->removeListener(*this);
@@ -101,9 +107,29 @@ bool ModManager::isInitialized() const {
 	return m_initialized;
 }
 
-bool ModManager::initialize(int argc, char * argv[]) {
-	if(m_initialized) {
-		return true;
+bool ModManager::isInitializing() const {
+	return m_initializing;
+}
+
+uint8_t ModManager::numberOfInitializationSteps() const {
+	return NUMBER_OF_INITIALIZATION_STEPS;
+}
+
+bool ModManager::notifyInitializationProgress(const std::string & description) {
+	if(!initializationProgress(m_initializationStep++, NUMBER_OF_INITIALIZATION_STEPS, description)) {
+		initializationCancelled();
+
+		return false;
+	}
+
+	return true;
+}
+
+std::future<bool> ModManager::initializeAsync(int argc, char * argv[]) {
+	std::unique_lock<std::recursive_mutex> lock(m_mutex);
+
+	if(m_initialized || m_initializing) {
+		return {};
 	}
 
 	std::shared_ptr<ArgumentParser> arguments;
@@ -112,12 +138,27 @@ bool ModManager::initialize(int argc, char * argv[]) {
 		arguments = std::make_shared<ArgumentParser>(argc, argv);
 	}
 
-	return initialize(arguments);
+	lock.unlock();
+
+	return initializeAsync(arguments);
+}
+
+std::future<bool> ModManager::initializeAsync(std::shared_ptr<ArgumentParser> arguments) {
+	return std::async(std::launch::async, &ModManager::initialize, std::ref(*this), arguments);
 }
 
 bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
-	if(m_initialized) {
-		return true;
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	if(m_initialized || m_initializing) {
+		return false;
+	}
+
+	m_initializing = true;
+	m_initializationStep = 0;
+
+	if(!notifyInitializationProgress("Parsing Arguments")) {
+		return false;
 	}
 
 	bool localModeSet = false;
@@ -127,11 +168,13 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 
 		if(m_arguments->hasArgument("?")) {
 			displayArgumentHelp();
+			initialized();
 			return true;
 		}
 
 		if(m_arguments->hasArgument("version")) {
 			fmt::print("{}\n", APPLICATION_VERSION);
+			initialized();
 			return true;
 		}
 
@@ -145,6 +188,10 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 		}
 	}
 
+	if(!notifyInitializationProgress("Loading Settings")) {
+		return false;
+	}
+
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	settings->load(m_arguments.get());
@@ -154,6 +201,10 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 	}
 
 	bool updateFileInfo = m_localMode && m_arguments != nullptr && (m_arguments->hasArgument("update-new") || m_arguments->hasArgument("update-all"));
+
+	if(!notifyInitializationProgress("Initializing HTTP Service")) {
+		return false;
+	}
 
 	HTTPConfiguration configuration = {
 		Utilities::joinPaths(settings->dataDirectoryPath, settings->curlDataDirectoryName),
@@ -167,6 +218,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 
 	if(!httpService->initialize(configuration)) {
 		spdlog::error("Failed to initialize HTTP service!");
+		initializationFailed();
 		return false;
 	}
 
@@ -179,11 +231,16 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 		}
 	}
 
+	if(!notifyInitializationProgress("Initializing Time Zone Data Manager")) {
+		return false;
+	}
+
 	bool timeZoneDataUpdated = false;
 	bool shouldUpdateTimeZoneData = !settings->downloadThrottlingEnabled || !settings->timeZoneDataLastDownloadedTimestamp.has_value() || std::chrono::system_clock::now() - settings->timeZoneDataLastDownloadedTimestamp.value() > settings->timeZoneDataUpdateFrequency;
 
 	if(!TimeZoneDataManager::getInstance()->initialize(Utilities::joinPaths(settings->dataDirectoryPath, settings->timeZoneDataDirectoryName), settings->fileETags, shouldUpdateTimeZoneData, false, &timeZoneDataUpdated)) {
 		spdlog::error("Failed to initialize time zone data manager!");
+		initializationFailed();
 		return false;
 	}
 
@@ -191,10 +248,19 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 		settings->timeZoneDataLastDownloadedTimestamp = std::chrono::system_clock::now();
 	}
 
+	if(!notifyInitializationProgress("Initializing Geo Location Service")) {
+		return false;
+	}
+
 	GeoLocationService * geoLocationService = GeoLocationService::getInstance();
 
 	if(!geoLocationService->initialize(FREE_GEO_IP_API_KEY)) {
 		spdlog::error("Failed to initialize geo location service!");
+		initializationFailed();
+		return false;
+	}
+
+	if(!notifyInitializationProgress("Initializing Segment Analytics")) {
 		return false;
 	}
 
@@ -225,7 +291,15 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 		}
 	}
 
+	if(!notifyInitializationProgress("Creating DOSBox Template Script Files")) {
+		return false;
+	}
+
 	createDOSBoxTemplateScriptFiles();
+
+	if(!notifyInitializationProgress("Locating Existing Duke Nukem 3D Game Installations")) {
+		return false;
+	}
 
 	GameLocator * gameLocator = GameLocator::getInstance();
 
@@ -233,19 +307,29 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 		spdlog::info("Located {} Duke Nukem 3D game install{}.", gameLocator->numberOfGamePaths(), gameLocator->numberOfGamePaths() == 1 ? "" : "s");
 	}
 
+	if(!notifyInitializationProgress("Initializing Mod Download Manager")) {
+		return false;
+	}
+
 	if(!m_localMode) {
 		m_downloadManager = std::make_shared<DownloadManager>();
 
 		if(!m_downloadManager->initialize()) {
 			spdlog::error("Failed to initialize download manager!");
+			initializationFailed();
 			return false;
 		}
 	}
 
 	m_gameType = settings->gameType;
 
+	if(!notifyInitializationProgress("Initializing DOSBox Manager")) {
+		return false;
+	}
+
 	if(!m_dosboxManager->initialize()) {
 		spdlog::error("Failed to initialize DOSBox manager!");
+		initializationFailed();
 		return false;
 	}
 
@@ -262,8 +346,13 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 
 	dosboxVersions->addListener(*this);
 
+	if(!notifyInitializationProgress("Initializing Game Manager")) {
+		return false;
+	}
+
 	if(!m_gameManager->initialize()) {
 		spdlog::error("Failed to initialize game manager!");
+		initializationFailed();
 		return false;
 	}
 
@@ -280,28 +369,43 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 
 	gameVersions->addListener(*this);
 
+	if(!notifyInitializationProgress("Loading Mod List")) {
+		return false;
+	}
+
 	if(!m_mods->loadFrom(getModsListFilePath(), updateFileInfo)) {
 		spdlog::error("Failed to load mod list '{}'!", getModsListFilePath());
+		initializationFailed();
 		return false;
 	}
 
 	if(m_mods->numberOfMods() == 0) {
 		spdlog::error("No mods loaded!");
+		initializationFailed();
 		return false;
 	}
 
 	if(!m_mods->checkGameVersions(*getGameVersions())) {
 		spdlog::error("Found at least one invalid or missing game version.");
+		initializationFailed();
 		return false;
 	}
 
 	spdlog::info("Loaded {} mod{} from '{}'.", m_mods->numberOfMods(), m_mods->numberOfMods() == 1 ? "" : "s", getModsListFilePath());
+
+	if(!notifyInitializationProgress("Loading Favourite Mod List")) {
+		return false;
+	}
 
 	m_favouriteMods->loadFrom(settings->favouriteModsListFilePath);
 	m_favouriteMods->checkForMissingFavouriteMods(*m_mods.get());
 
 	if(m_favouriteMods->numberOfFavourites() != 0) {
 		spdlog::info("Loaded {} favourite mod{} from '{}'.", m_favouriteMods->numberOfFavourites(), m_favouriteMods->numberOfFavourites() == 1 ? "" : "s", settings->favouriteModsListFilePath);
+	}
+
+	if(!notifyInitializationProgress("Organizing Mods")) {
+		return false;
 	}
 
 	m_organizedMods->organize();
@@ -322,6 +426,10 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 	}
 
 	m_initialized = true;
+
+	if(!notifyInitializationProgress("Checking for Missing Files")) {
+		return false;
+	}
 
 	checkForMissingExecutables();
 
@@ -349,13 +457,46 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 	segmentAnalytics->track("Application Initialized", properties);
 
 	if(!handleArguments(m_arguments.get())) {
+		initializationFailed();
 		return false;
 	}
+
+	if(!notifyInitializationProgress("Initialization Complete")) {
+		return false;
+	}
+
+	initialized();
 
 	return true;
 }
 
+bool ModManager::initializeAndWait(int argc, char * argv[]) {
+	std::future<bool> initializeFuture(initializeAsync(argc, argv));
+
+	if(!initializeFuture.valid()) {
+		return false;
+	}
+
+	initializeFuture.wait();
+
+	return initializeFuture.get();
+}
+
+bool ModManager::initializeAndWait(std::shared_ptr<ArgumentParser> arguments) {
+	std::future<bool> initializeFuture(initializeAsync(arguments));
+
+	if(!initializeFuture.valid()) {
+		return false;
+	}
+
+	initializeFuture.wait();
+
+	return initializeFuture.get();
+}
+
 bool ModManager::uninitialize() {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(!m_initialized) {
 		return false;
 	}
@@ -387,14 +528,20 @@ bool ModManager::uninitialize() {
 }
 
 bool ModManager::isUsingLocalMode() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return m_localMode;
 }
 
 std::shared_ptr<OrganizedModCollection> ModManager::getOrganizedMods() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return m_organizedMods;
 }
 
 std::string ModManager::getModsListFilePath() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(m_localMode) {
 		return SettingsManager::getInstance()->modsListFilePath;
 	}
@@ -407,6 +554,8 @@ std::string ModManager::getModsListFilePath() const {
 }
 
 std::string ModManager::getModsDirectoryPath() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(m_localMode) {
 		return SettingsManager::getInstance()->modsDirectoryPath;
 	}
@@ -419,6 +568,8 @@ std::string ModManager::getModsDirectoryPath() const {
 }
 
 std::string ModManager::getMapsDirectoryPath() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(m_localMode) {
 		return SettingsManager::getInstance()->mapsDirectoryPath;
 	}
@@ -431,10 +582,14 @@ std::string ModManager::getMapsDirectoryPath() const {
 }
 
 GameType ModManager::getGameType() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return m_gameType;
 }
 
 bool ModManager::setGameType(const std::string & gameTypeName) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	std::optional<GameType> gameTypeOptional = magic_enum::enum_cast<GameType>(Utilities::toPascalCase(gameTypeName));
 
 	if(gameTypeOptional.has_value()) {
@@ -447,6 +602,8 @@ bool ModManager::setGameType(const std::string & gameTypeName) {
 }
 
 void ModManager::setGameType(GameType gameType) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(m_gameType != gameType) {
 		m_gameType = gameType;
 
@@ -457,14 +614,20 @@ void ModManager::setGameType(GameType gameType) {
 }
 
 bool ModManager::hasPreferredDOSBoxVersion() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return m_preferredDOSBoxVersion != nullptr;
 }
 
 std::shared_ptr<DOSBoxVersion> ModManager::getPreferredDOSBoxVersion() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return m_preferredDOSBoxVersion;
 }
 
 std::shared_ptr<DOSBoxVersion> ModManager::getSelectedDOSBoxVersion() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	std::shared_ptr<DOSBoxVersion> selectedDOSBoxVersion;
 
 	if(m_arguments != nullptr && m_arguments->hasArgument("dosbox") && !m_arguments->getFirstValue("dosbox").empty()) {
@@ -495,6 +658,8 @@ std::shared_ptr<DOSBoxVersion> ModManager::getSelectedDOSBoxVersion() const {
 }
 
 bool ModManager::setPreferredDOSBoxVersion(const std::string & dosboxVersionName) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(dosboxVersionName.empty()) {
 		return false;
 	}
@@ -503,6 +668,8 @@ bool ModManager::setPreferredDOSBoxVersion(const std::string & dosboxVersionName
 }
 
 bool ModManager::setPreferredDOSBoxVersion(std::shared_ptr<DOSBoxVersion> dosboxVersion) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(dosboxVersion == nullptr || !dosboxVersion->isValid()) {
 		return false;
 	}
@@ -518,14 +685,20 @@ bool ModManager::setPreferredDOSBoxVersion(std::shared_ptr<DOSBoxVersion> dosbox
 }
 
 bool ModManager::hasPreferredGameVersion() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return m_preferredGameVersion != nullptr;
 }
 
 std::shared_ptr<GameVersion> ModManager::getPreferredGameVersion() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return m_preferredGameVersion;
 }
 
 std::shared_ptr<GameVersion> ModManager::getSelectedGameVersion() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	std::shared_ptr<GameVersion> selectedGameVersion;
 
 	if(m_arguments != nullptr && m_arguments->hasArgument("game") && !m_arguments->getFirstValue("game").empty()) {
@@ -556,6 +729,8 @@ std::shared_ptr<GameVersion> ModManager::getSelectedGameVersion() const {
 }
 
 bool ModManager::setPreferredGameVersion(const std::string & gameVersionName) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(gameVersionName.empty()) {
 		return false;
 	}
@@ -564,6 +739,8 @@ bool ModManager::setPreferredGameVersion(const std::string & gameVersionName) {
 }
 
 bool ModManager::setPreferredGameVersion(std::shared_ptr<GameVersion> gameVersion) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(gameVersion == nullptr || !gameVersion->isValid()) {
 		return false;
 	}
@@ -595,30 +772,44 @@ bool ModManager::setPreferredGameVersion(std::shared_ptr<GameVersion> gameVersio
 }
 
 std::shared_ptr<DOSBoxManager> ModManager::getDOSBoxManager() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return m_dosboxManager;
 }
 
 std::shared_ptr<DOSBoxVersionCollection> ModManager::getDOSBoxVersions() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return m_dosboxManager->getDOSBoxVersions();
 }
 
 std::shared_ptr<GameVersionCollection> ModManager::getGameVersions() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return m_gameManager->getGameVersions();
 }
 
 std::shared_ptr<GameManager> ModManager::getGameManager() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return m_gameManager;
 }
 
 std::shared_ptr<DownloadManager> ModManager::getDownloadManager() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return m_downloadManager;
 }
 
 const std::string & ModManager::getDOSBoxServerIPAddress() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return SettingsManager::getInstance()->dosboxServerIPAddress;
 }
 
 void ModManager::setDOSBoxServerIPAddress(const std::string & ipAddress) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	std::string formattedIPAddress(Utilities::trimString(ipAddress));
@@ -631,10 +822,14 @@ void ModManager::setDOSBoxServerIPAddress(const std::string & ipAddress) {
 }
 
 uint16_t ModManager::getDOSBoxLocalServerPort() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return SettingsManager::getInstance()->dosboxLocalServerPort;
 }
 
 void ModManager::setDOSBoxLocalServerPort(uint16_t port) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	if(settings->dosboxLocalServerPort != port) {
@@ -645,10 +840,14 @@ void ModManager::setDOSBoxLocalServerPort(uint16_t port) {
 }
 
 uint16_t ModManager::getDOSBoxRemoteServerPort() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return SettingsManager::getInstance()->dosboxRemoteServerPort;
 }
 
 void ModManager::setDOSBoxRemoteServerPort(uint16_t port) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	if(settings->dosboxRemoteServerPort != port) {
@@ -659,26 +858,38 @@ void ModManager::setDOSBoxRemoteServerPort(uint16_t port) {
 }
 
 bool ModManager::hasModSelected() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return m_selectedMod != nullptr;
 }
 
 bool ModManager::hasModVersionSelected() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return m_selectedModVersionIndex != std::numeric_limits<size_t>::max();
 }
 
 bool ModManager::hasModVersionTypeSelected() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return m_selectedModVersionTypeIndex != std::numeric_limits<size_t>::max();
 }
 
 bool ModManager::hasModGameVersionSelected() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return m_selectedModGameVersionIndex != std::numeric_limits<size_t>::max();
 }
 
 std::shared_ptr<Mod> ModManager::getSelectedMod() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return m_selectedMod;
 }
 
 std::shared_ptr<ModVersion> ModManager::getSelectedModVersion() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(m_selectedMod == nullptr || m_selectedModVersionIndex >= m_selectedMod->numberOfVersions()) {
 		return nullptr;
 	}
@@ -687,6 +898,8 @@ std::shared_ptr<ModVersion> ModManager::getSelectedModVersion() const {
 }
 
 std::shared_ptr<ModVersionType> ModManager::getSelectedModVersionType() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	std::shared_ptr<ModVersion> selectedModVersion(getSelectedModVersion());
 
 	if(selectedModVersion == nullptr || m_selectedModVersionTypeIndex >= selectedModVersion->numberOfTypes()) {
@@ -697,6 +910,8 @@ std::shared_ptr<ModVersionType> ModManager::getSelectedModVersionType() const {
 }
 
 std::shared_ptr<ModGameVersion> ModManager::getSelectedModGameVersion() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	std::shared_ptr<ModVersionType> selectedModVersionType(getSelectedModVersionType());
 
 	if(selectedModVersionType == nullptr || m_selectedModGameVersionIndex >= selectedModVersionType->numberOfGameVersions()) {
@@ -707,6 +922,8 @@ std::shared_ptr<ModGameVersion> ModManager::getSelectedModGameVersion() const {
 }
 
 std::optional<std::string> ModManager::getSelectedModName() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(m_selectedMod == nullptr) {
 		return {};
 	}
@@ -715,22 +932,32 @@ std::optional<std::string> ModManager::getSelectedModName() const {
 }
 
 size_t ModManager::getSelectedModVersionIndex() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return m_selectedModVersionIndex;
 }
 
 size_t ModManager::getSelectedModVersionTypeIndex() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return m_selectedModVersionTypeIndex;
 }
 
 size_t ModManager::getSelectedModGameVersionIndex() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return m_selectedModGameVersionIndex;
 }
 
 bool ModManager::setSelectedModByName(const std::string & name) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return setSelectedMod(m_mods->getMod(name));
 }
 
 bool ModManager::setSelectedMod(std::shared_ptr<Mod> mod) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(!Mod::isValid(mod.get(), true)) {
 		m_selectedMod = nullptr;
 		m_selectedModVersionIndex = std::numeric_limits<size_t>::max();
@@ -788,6 +1015,8 @@ bool ModManager::setSelectedMod(std::shared_ptr<Mod> mod) {
 }
 
 bool ModManager::setSelectedModFromMatch(const ModMatch & modMatch) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(!modMatch.isValid()) {
 		return false;
 	}
@@ -835,6 +1064,8 @@ bool ModManager::setSelectedModFromMatch(const ModMatch & modMatch) {
 }
 
 bool ModManager::setSelectedModVersionIndex(size_t modVersionIndex) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(modVersionIndex == std::numeric_limits<size_t>::max()) {
 		bool modSelectionChanged = m_selectedModVersionIndex != std::numeric_limits<size_t>::max() ||
 								   m_selectedModVersionTypeIndex != std::numeric_limits<size_t>::max() ||
@@ -894,6 +1125,8 @@ bool ModManager::setSelectedModVersionIndex(size_t modVersionIndex) {
 }
 
 bool ModManager::setSelectedModVersionTypeIndex(size_t modVersionTypeIndex) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(modVersionTypeIndex == std::numeric_limits<size_t>::max()) {
 		bool modVersionTypeChanged = m_selectedModVersionTypeIndex != std::numeric_limits<size_t>::max() ||
 									 m_selectedModGameVersionIndex != std::numeric_limits<size_t>::max();
@@ -943,6 +1176,8 @@ bool ModManager::setSelectedModVersionTypeIndex(size_t modVersionTypeIndex) {
 }
 
 bool ModManager::setSelectedModGameVersionIndex(size_t modGameVersionIndex) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(modGameVersionIndex == std::numeric_limits<size_t>::max()) {
 		bool modGameVersionChanged = m_selectedModGameVersionIndex != std::numeric_limits<size_t>::max();
 
@@ -983,6 +1218,8 @@ bool ModManager::setSelectedModGameVersionIndex(size_t modGameVersionIndex) {
 }
 
 bool ModManager::selectRandomMod(bool selectPreferredVersion, bool selectFirstVersionType) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(!m_initialized) {
 		return false;
 	}
@@ -991,6 +1228,8 @@ bool ModManager::selectRandomMod(bool selectPreferredVersion, bool selectFirstVe
 }
 
 bool ModManager::selectRandomGameVersion() {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(!m_initialized) {
 		return false;
 	}
@@ -999,6 +1238,8 @@ bool ModManager::selectRandomGameVersion() {
 }
 
 bool ModManager::selectRandomTeam() {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(!m_initialized) {
 		return false;
 	}
@@ -1007,6 +1248,8 @@ bool ModManager::selectRandomTeam() {
 }
 
 bool ModManager::selectRandomAuthor() {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(!m_initialized) {
 		return false;
 	}
@@ -1124,6 +1367,8 @@ std::vector<ModMatch> ModManager::searchForMod(const std::vector<std::shared_ptr
 }
 
 size_t ModManager::searchForAndSelectGameVersion(const std::string & query, std::vector<std::shared_ptr<GameVersion>> * matches) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(!m_initialized) {
 		return std::numeric_limits<size_t>::max();
 	}
@@ -1181,6 +1426,8 @@ size_t ModManager::searchForAndSelectGameVersion(const std::string & query, std:
 }
 
 size_t ModManager::searchForAndSelectTeam(const std::string & query, std::vector<std::shared_ptr<ModAuthorInformation>> * matches) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(!m_initialized) {
 		return std::numeric_limits<size_t>::max();
 	}
@@ -1238,6 +1485,8 @@ size_t ModManager::searchForAndSelectTeam(const std::string & query, std::vector
 }
 
 size_t ModManager::searchForAndSelectAuthor(const std::string & query, std::vector<std::shared_ptr<ModAuthorInformation>> * matches) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(!m_initialized) {
 		return std::numeric_limits<size_t>::max();
 	}
@@ -1295,6 +1544,8 @@ size_t ModManager::searchForAndSelectAuthor(const std::string & query, std::vect
 }
 
 void ModManager::clearSelectedMod() {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	bool selectedModChanged = m_selectedMod != nullptr;
 
 	m_selectedMod = nullptr;
@@ -1307,6 +1558,8 @@ void ModManager::clearSelectedMod() {
 }
 
 bool ModManager::isModSupportedOnSelectedGameVersion() {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(m_selectedMod == nullptr || m_selectedModVersionIndex == std::numeric_limits<size_t>::max() || m_selectedModVersionTypeIndex == std::numeric_limits<size_t>::max()) {
 		return false;
 	}
@@ -1325,6 +1578,8 @@ bool ModManager::isModSupportedOnSelectedGameVersion() {
 }
 
 bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersion, std::shared_ptr<ModGameVersion> alternateModGameVersion) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(!m_initialized) {
 		return false;
 	}
@@ -1714,6 +1969,8 @@ bool ModManager::areModFilesPresentInGameDirectory(const std::string & gamePath)
 }
 
 std::unique_ptr<InstalledModInfo> ModManager::extractModFilesToGameDirectory(const ModGameVersion & modGameVersion, const GameVersion & selectedGameVersion, const GameVersion & targetGameVersion, const std::vector<std::string> & customGroupFileNames) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	struct FilePathComparator {
 	public:
 		bool operator () (const std::string & filePathA, const std::string & filePathB) const {
@@ -1862,6 +2119,8 @@ std::unique_ptr<InstalledModInfo> ModManager::extractModFilesToGameDirectory(con
 }
 
 bool ModManager::removeModFilesFromGameDirectory(const GameVersion & gameVersion) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(!gameVersion.isConfigured()) {
 		return false;
 	}
@@ -1880,6 +2139,8 @@ bool ModManager::removeModFilesFromGameDirectory(const GameVersion & gameVersion
 }
 
 bool ModManager::removeModFilesFromGameDirectory(const GameVersion & gameVersion, const InstalledModInfo & installedModInfo) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(!gameVersion.isConfigured() || !installedModInfo.isValid() || !std::filesystem::is_directory(std::filesystem::path(gameVersion.getGamePath()))) {
 		return false;
 	}
@@ -1966,6 +2227,8 @@ bool ModManager::removeModFilesFromGameDirectory(const GameVersion & gameVersion
 }
 
 std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameVersion, std::shared_ptr<GameVersion> selectedGameVersion, ScriptArguments & scriptArgs, std::string_view combinedGroupFileName, bool * customMod, std::string * customMap, std::shared_ptr<GameVersion> * customTargetGameVersion, std::vector<std::string> * customGroupFileNames) const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	static const std::regex respawnModeRegExp("[123x]");
 
 	if(!m_initialized) {
@@ -2422,6 +2685,8 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 }
 
 std::string ModManager::generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const DOSBoxVersion & dosboxVersion, const std::string & dosboxArguments) const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	static const std::regex unescapedQuotesRegExp("(?:^\"|([^\\\\])\")");
 
 	if(!dosboxVersion.isConfigured()) {
@@ -2454,6 +2719,8 @@ std::string ModManager::generateDOSBoxCommand(const Script & script, const Scrip
 }
 
 bool ModManager::handleArguments(const ArgumentParser * args) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	if(args != nullptr) {
@@ -2627,6 +2894,8 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 }
 
 size_t ModManager::checkForUnlinkedModFiles() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(!m_initialized) {
 		return 0;
 	}
@@ -2641,6 +2910,8 @@ size_t ModManager::checkForUnlinkedModFiles() const {
 }
 
 size_t ModManager::checkForUnlinkedModFilesForGameVersion(const GameVersion & gameVersion) const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(!m_initialized || !gameVersion.isValid()) {
 		return 0;
 	}
@@ -2753,6 +3024,8 @@ size_t ModManager::checkForUnlinkedModFilesForGameVersion(const GameVersion & ga
 }
 
 size_t ModManager::checkModForMissingFiles(const std::string & modName, std::optional<size_t> versionIndex, std::optional<size_t> versionTypeIndex) const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(!m_initialized) {
 		return 0;
 	}
@@ -2767,6 +3040,8 @@ size_t ModManager::checkModForMissingFiles(const std::string & modName, std::opt
 }
 
 size_t ModManager::checkModForMissingFiles(const Mod & mod, std::optional<size_t> versionIndex, std::optional<size_t> versionTypeIndex) const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(!m_initialized ||
 	   mod.numberOfVersions() == 0 ||
 	   (versionIndex >= mod.numberOfVersions() && versionIndex != std::numeric_limits<size_t>::max())) {
@@ -2837,6 +3112,8 @@ size_t ModManager::checkModForMissingFiles(const Mod & mod, std::optional<size_t
 }
 
 size_t ModManager::checkAllModsForMissingFiles() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(!m_initialized) {
 		return 0;
 	}
@@ -2855,6 +3132,8 @@ size_t ModManager::checkAllModsForMissingFiles() const {
 }
 
 size_t ModManager::checkForMissingExecutables() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	size_t numberOfMissingExecutables = 0;
 
 	numberOfMissingExecutables += getDOSBoxVersions()->checkForMissingExecutables();
@@ -2864,6 +3143,8 @@ size_t ModManager::checkForMissingExecutables() const {
 }
 
 size_t ModManager::updateFileInfoForAllMods(bool save, bool skipPopulatedFiles) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(!m_initialized || !m_localMode) {
 		return 0;
 	}
@@ -2910,6 +3191,8 @@ size_t ModManager::updateFileInfoForAllMods(bool save, bool skipPopulatedFiles) 
 }
 
 size_t ModManager::updateModFileInfo(Mod & mod, bool skipPopulatedFiles, std::optional<size_t> versionIndex, std::optional<size_t> versionTypeIndex) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(!m_initialized ||
 	   !m_localMode ||
 	   mod.numberOfVersions() == 0 ||
@@ -3416,6 +3699,8 @@ void ModManager::displayArgumentHelp() {
 }
 
 bool ModManager::createApplicationTemporaryDirectory() {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	if(settings->appTempDirectoryPath.empty()) {
@@ -3441,6 +3726,8 @@ bool ModManager::createApplicationTemporaryDirectory() {
 }
 
 bool ModManager::createGameTemporaryDirectory(const GameVersion & gameVersion) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	if(!gameVersion.isConfigured()) {
@@ -3473,6 +3760,8 @@ bool ModManager::createGameTemporaryDirectory(const GameVersion & gameVersion) {
 }
 
 bool ModManager::removeGameTemporaryDirectory(const GameVersion & gameVersion) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	if(!gameVersion.isConfigured()) {
@@ -3505,6 +3794,8 @@ bool ModManager::removeGameTemporaryDirectory(const GameVersion & gameVersion) {
 }
 
 bool ModManager::areSymlinkSettingsValid() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	return !settings->gameSymlinkName.empty() &&
@@ -3514,6 +3805,8 @@ bool ModManager::areSymlinkSettingsValid() const {
 }
 
 bool ModManager::areSymlinksSupported() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	static const std::string TEST_SYMLINK_NAME("TestSymlink");
 
 	static std::optional<bool> s_symlinksSupported;
@@ -3530,6 +3823,8 @@ bool ModManager::areSymlinksSupported() const {
 }
 
 bool ModManager::createSymlink(const std::string & symlinkTarget, const std::string & symlinkName, const std::string & symlinkDestinationDirectory) const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(symlinkName.empty() ||
 	   symlinkTarget.empty()) {
 		spdlog::error("Failed to create symlink, invalid arguments provided.");
@@ -3577,6 +3872,8 @@ bool ModManager::createSymlink(const std::string & symlinkTarget, const std::str
 }
 
 bool ModManager::removeSymlink(const std::string & symlinkName, const std::string & symlinkDestinationDirectory) const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(symlinkName.empty()) {
 		spdlog::error("Failed to remove symlink, invalid arguments provided.");
 		return false;
@@ -3606,6 +3903,8 @@ bool ModManager::removeSymlink(const std::string & symlinkName, const std::strin
 }
 
 bool ModManager::createSymlinksOrCopyTemporaryFiles(const GameVersionCollection & gameVersions, const GameVersion & gameVersion, const ModGameVersion * selectedModGameVersion, const std::string & customMap, bool createTempSymlink, std::vector<std::string> * temporaryCopiedFilePaths) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	if(!gameVersion.isConfigured() || !areSymlinkSettingsValid() || (createTempSymlink && settings->appTempDirectoryPath.empty())) {
@@ -3696,6 +3995,8 @@ bool ModManager::createSymlinksOrCopyTemporaryFiles(const GameVersionCollection 
 }
 
 bool ModManager::removeSymlinksOrTemporaryFiles(const GameVersion & gameVersion, const std::vector<std::string> * temporaryCopiedFilePaths) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	if(!gameVersion.isConfigured() || !areSymlinkSettingsValid()) {
@@ -3747,6 +4048,8 @@ bool ModManager::removeSymlinksOrTemporaryFiles(const GameVersion & gameVersion,
 }
 
 size_t ModManager::deleteFilesWithSuffix(const std::string & suffix, const std::string & path) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(suffix.empty()) {
 		return 0;
 	}
@@ -3774,6 +4077,8 @@ size_t ModManager::deleteFilesWithSuffix(const std::string & suffix, const std::
 }
 
 size_t ModManager::renameFilesWithSuffixTo(const std::string & fromSuffix, const std::string & toSuffix, const std::string & path) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(fromSuffix.empty() || toSuffix.empty()) {
 		return 0;
 	}
@@ -3891,10 +4196,14 @@ std::string ModManager::generateDOSBoxTemplateScriptFileData(GameType gameType) 
 ModManager::Listener::~Listener() { }
 
 size_t ModManager::numberOfListeners() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return m_listeners.size();
 }
 
 bool ModManager::hasListener(const Listener & listener) const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	for(std::vector<Listener *>::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i) {
 		if(*i == &listener) {
 			return true;
@@ -3905,6 +4214,8 @@ bool ModManager::hasListener(const Listener & listener) const {
 }
 
 size_t ModManager::indexOfListener(const Listener & listener) const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	for(size_t i = 0; i < m_listeners.size(); i++) {
 		if(m_listeners[i] == &listener) {
 			return i;
@@ -3915,6 +4226,8 @@ size_t ModManager::indexOfListener(const Listener & listener) const {
 }
 
 ModManager::Listener * ModManager::getListener(size_t index) const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(index >= m_listeners.size()) {
 		return nullptr;
 	}
@@ -3923,6 +4236,8 @@ ModManager::Listener * ModManager::getListener(size_t index) const {
 }
 
 bool ModManager::addListener(Listener & listener) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(!hasListener(listener)) {
 		m_listeners.push_back(&listener);
 
@@ -3933,6 +4248,8 @@ bool ModManager::addListener(Listener & listener) {
 }
 
 bool ModManager::removeListener(size_t index) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(index >= m_listeners.size()) {
 		return false;
 	}
@@ -3943,6 +4260,8 @@ bool ModManager::removeListener(size_t index) {
 }
 
 bool ModManager::removeListener(const Listener & listener) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	for(std::vector<Listener *>::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i) {
 		if(*i == &listener) {
 			m_listeners.erase(i);
@@ -3955,34 +4274,46 @@ bool ModManager::removeListener(const Listener & listener) {
 }
 
 void ModManager::clearListeners() {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	m_listeners.clear();
 }
 
 void ModManager::notifyModSelectionChanged() {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	for(Listener * listener : m_listeners) {
 		listener->modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
 	}
 }
 
 void ModManager::notifyGameTypeChanged() {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	for(Listener * listener : m_listeners) {
 		listener->gameTypeChanged(m_gameType);
 	}
 }
 
 void ModManager::notifyPreferredDOSBoxVersionChanged() {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	for(Listener * listener : m_listeners) {
 		listener->preferredDOSBoxVersionChanged(m_preferredDOSBoxVersion);
 	}
 }
 
 void ModManager::notifyPreferredGameVersionChanged() {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	for(Listener * listener : m_listeners) {
 		listener->preferredGameVersionChanged(m_preferredGameVersion);
 	}
 }
 
 void ModManager::notifyDOSBoxServerIPAddressChanged() {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	for(Listener * listener : m_listeners) {
@@ -3991,6 +4322,8 @@ void ModManager::notifyDOSBoxServerIPAddressChanged() {
 }
 
 void ModManager::notifyDOSBoxLocalServerPortChanged() {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	for(Listener * listener : m_listeners) {
@@ -3999,6 +4332,8 @@ void ModManager::notifyDOSBoxLocalServerPortChanged() {
 }
 
 void ModManager::notifyDOSBoxRemoteServerPortChanged() {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	for(Listener * listener : m_listeners) {
@@ -4007,10 +4342,14 @@ void ModManager::notifyDOSBoxRemoteServerPortChanged() {
 }
 
 void ModManager::selectedModChanged(const std::shared_ptr<Mod> & mod) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	setSelectedMod(mod);
 }
 
 void ModManager::dosboxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	std::shared_ptr<DOSBoxVersionCollection> dosboxVersions(getDOSBoxVersions());
 
 	if(m_preferredDOSBoxVersion != nullptr && !dosboxVersions->hasDOSBoxVersion(*m_preferredDOSBoxVersion.get())) {
@@ -4028,12 +4367,16 @@ void ModManager::dosboxVersionCollectionSizeChanged(DOSBoxVersionCollection & do
 }
 
 void ModManager::dosboxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(m_preferredDOSBoxVersion.get() == &dosboxVersion) {
 		SettingsManager::getInstance()->preferredDOSBoxVersion = dosboxVersion.getName();
 	}
 }
 
 void ModManager::gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(m_preferredGameVersion != nullptr && !getGameVersions()->hasGameVersion(*m_preferredGameVersion.get())) {
 		SettingsManager * settings = SettingsManager::getInstance();
 
@@ -4049,6 +4392,8 @@ void ModManager::gameVersionCollectionSizeChanged(GameVersionCollection & gameVe
 }
 
 void ModManager::gameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	if(m_preferredGameVersion.get() == &gameVersion) {
 		SettingsManager::getInstance()->preferredGameVersion = gameVersion.getName();
 	}

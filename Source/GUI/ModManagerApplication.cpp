@@ -10,12 +10,69 @@
 #include <Logging/LogSystem.h>
 
 #include <fmt/core.h>
+#include <magic_enum.hpp>
 #include <png.h>
 #include <spdlog/spdlog.h>
 #include <wx/app.h>
 #include <wx/cmdline.h>
 #include <wx/progdlg.h>
 #include <wx/version.h>
+
+wxDECLARE_EVENT(EVENT_INITIALIZED, ModManagerInitializedEvent);
+wxDECLARE_EVENT(EVENT_INITIALIZATION_CANCELLED, ModManagerInitializationCancelledEvent);
+wxDECLARE_EVENT(EVENT_INITIALIZATION_FAILED, ModManagerInitializationFailedEvent);
+
+class ModManagerInitializedEvent final : public wxEvent {
+public:
+	ModManagerInitializedEvent()
+		: wxEvent(0, EVENT_INITIALIZED) { }
+
+	virtual ~ModManagerInitializedEvent() { }
+
+	virtual wxEvent * Clone() const override {
+		return new ModManagerInitializedEvent(*this);
+	}
+
+	DECLARE_DYNAMIC_CLASS(ModManagerInitializedEvent);
+};
+
+IMPLEMENT_DYNAMIC_CLASS(ModManagerInitializedEvent, wxEvent);
+
+class ModManagerInitializationCancelledEvent final : public wxEvent {
+public:
+	ModManagerInitializationCancelledEvent()
+		: wxEvent(0, EVENT_INITIALIZATION_CANCELLED) { }
+
+	virtual ~ModManagerInitializationCancelledEvent() { }
+
+	virtual wxEvent * Clone() const override {
+		return new ModManagerInitializationCancelledEvent(*this);
+	}
+
+	DECLARE_DYNAMIC_CLASS(ModManagerInitializationCancelledEvent);
+};
+
+IMPLEMENT_DYNAMIC_CLASS(ModManagerInitializationCancelledEvent, wxEvent);
+
+class ModManagerInitializationFailedEvent final : public wxEvent {
+public:
+	ModManagerInitializationFailedEvent()
+		: wxEvent(0, EVENT_INITIALIZATION_FAILED) { }
+
+	virtual ~ModManagerInitializationFailedEvent() { }
+
+	virtual wxEvent * Clone() const override {
+		return new ModManagerInitializationFailedEvent(*this);
+	}
+
+	DECLARE_DYNAMIC_CLASS(ModManagerInitializationFailedEvent);
+};
+
+IMPLEMENT_DYNAMIC_CLASS(ModManagerInitializationFailedEvent, wxEvent);
+
+wxDEFINE_EVENT(EVENT_INITIALIZED, ModManagerInitializedEvent);
+wxDEFINE_EVENT(EVENT_INITIALIZATION_CANCELLED, ModManagerInitializationCancelledEvent);
+wxDEFINE_EVENT(EVENT_INITIALIZATION_FAILED, ModManagerInitializationFailedEvent);
 
 ModManagerApplication::ModManagerApplication()
 	: m_modManagerFrame(new ModManagerFrame())
@@ -38,28 +95,42 @@ void ModManagerApplication::initialize() {
 
 	LogSystem::getInstance()->addLogSink(m_logSinkWX);
 
+	std::string baseInitializationMessage(fmt::format("{} is initializing, please wait...", APPLICATION_NAME));
+
 	std::unique_ptr<wxProgressDialog> initializingProgressDialog(std::make_unique<wxProgressDialog>(
 		"Initializing",
-		fmt::format("{} is initializing, please wait...", APPLICATION_NAME),
-		1,
+		baseInitializationMessage,
+		m_modManager->numberOfInitializationSteps(),
 		nullptr,
-		wxPD_AUTO_HIDE
+		wxPD_AUTO_HIDE | wxPD_CAN_ABORT
 	));
 
 	initializingProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
 
-	if(!m_modManager->initialize(m_arguments)) {
-		spdlog::error("{} initialization failed!", APPLICATION_NAME);
-	}
+	m_modManager->initializationProgress.connect([&initializingProgressDialog, baseInitializationMessage](uint8_t initializationStep, uint8_t initializationStepCount, std::string description) {
+		bool updateResult = initializingProgressDialog->Update(initializationStep, fmt::format("{}\n{}...", baseInitializationMessage, description));
+		initializingProgressDialog->Fit();
 
-	m_modManagerFrame->Bind(wxEVT_CLOSE_WINDOW, &ModManagerApplication::onFrameClosed, this);
-	m_modManagerFrame->setListener(*this);
-	m_modManagerFrame->initialize(m_modManager);
-	m_modManagerFrame->Show(true);
+		return updateResult;
+	});
 
-	m_logSinkWX->initialize();
+	m_modManager->initialized.connect([this]() {
+		QueueEvent(new ModManagerInitializedEvent());
+	});
 
-	initializingProgressDialog->Update(1);
+	m_modManager->initializationCancelled.connect([this]() {
+		QueueEvent(new ModManagerInitializationCancelledEvent());
+	});
+
+	m_modManager->initializationFailed.connect([this]() {
+		QueueEvent(new ModManagerInitializationFailedEvent());
+	});
+
+	Bind(EVENT_INITIALIZED, &ModManagerApplication::onInitialized, this);
+	Bind(EVENT_INITIALIZATION_CANCELLED, &ModManagerApplication::onInitializationCancelled, this);
+	Bind(EVENT_INITIALIZATION_FAILED, &ModManagerApplication::onInitializationFailed, this);
+
+	m_modManager->initializeAsync(m_arguments);
 }
 
 void ModManagerApplication::reload() {
@@ -69,6 +140,32 @@ void ModManagerApplication::reload() {
 
 void ModManagerApplication::displayArgumentHelp() {
 	wxMessageBox(ModManager::getArgumentHelpInfo(), "Argument Information", wxOK | wxICON_INFORMATION);
+}
+
+void ModManagerApplication::showWindow() {
+	m_modManagerFrame->Bind(wxEVT_CLOSE_WINDOW, &ModManagerApplication::onFrameClosed, this);
+	m_modManagerFrame->setListener(*this);
+	m_modManagerFrame->initialize(m_modManager);
+	m_modManagerFrame->Show(true);
+	m_modManagerFrame->Raise();
+
+	m_logSinkWX->initialize();
+}
+
+void ModManagerApplication::onInitialized(ModManagerInitializedEvent & event) {
+	showWindow();
+}
+
+void ModManagerApplication::onInitializationCancelled(ModManagerInitializationCancelledEvent & event) {
+	spdlog::error("{} initialization cancelled!", APPLICATION_NAME);
+
+	m_modManagerFrame->Destroy();
+}
+
+void ModManagerApplication::onInitializationFailed(ModManagerInitializationFailedEvent & event) {
+	spdlog::error("{} initialization failed!", APPLICATION_NAME);
+
+	showWindow();
 }
 
 void ModManagerApplication::onFrameClosed(wxCloseEvent & event) {

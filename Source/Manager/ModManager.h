@@ -9,8 +9,12 @@
 #include <Analytics/Segment/SegmentAnalytics.h>
 #include <Application/Application.h>
 
+#include <boost/signals2.hpp>
+
 #include <cstdint>
+#include <future>
 #include <memory>
+#include <mutex>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -58,8 +62,12 @@ public:
 	virtual ~ModManager();
 
 	bool isInitialized() const;
-	bool initialize(int argc = 0, char * argv[] = nullptr);
-	bool initialize(std::shared_ptr<ArgumentParser> arguments);
+	bool isInitializing() const;
+	uint8_t numberOfInitializationSteps() const;
+	std::future<bool> initializeAsync(int argc = 0, char * argv[] = nullptr);
+	std::future<bool> initializeAsync(std::shared_ptr<ArgumentParser> arguments);
+	bool initializeAndWait(int argc = 0, char * argv[] = nullptr);
+	bool initializeAndWait(std::shared_ptr<ArgumentParser> arguments);
 	bool uninitialize();
 
 	bool isUsingLocalMode() const;
@@ -150,6 +158,11 @@ public:
 	virtual void gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) override;
 	virtual void gameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) override;
 
+	boost::signals2::signal<void ()> initialized;
+	boost::signals2::signal<void ()> initializationCancelled;
+	boost::signals2::signal<void ()> initializationFailed;
+	boost::signals2::signal<bool (uint8_t /* initializationStep */, uint8_t /* initializationStepCount */, std::string /* description */)> initializationProgress;
+
 	static const GameType DEFAULT_GAME_TYPE;
 	static const std::string DEFAULT_PREFERRED_DOSBOX_VERSION;
 	static const std::string DEFAULT_PREFERRED_GAME_VERSION;
@@ -157,6 +170,8 @@ public:
 	static const std::string DEFAULT_BACKUP_FILE_RENAME_SUFFIX;
 
 private:
+	bool initialize(std::shared_ptr<ArgumentParser> arguments);
+	bool notifyInitializationProgress(const std::string & description);
 	void assignPlatformFactories();
 	bool handleArguments(const ArgumentParser * args);
 	std::string generateCommand(std::shared_ptr<ModGameVersion> modGameVersion, std::shared_ptr<GameVersion> selectedGameVersion, ScriptArguments & scriptArgs, std::string_view combinedGroupFileName = "", bool * customMod = nullptr, std::string * customMap = nullptr, std::shared_ptr<GameVersion> * customTargetGameVersion = nullptr, std::vector<std::string> * customGroupFileNames = nullptr) const;
@@ -199,7 +214,8 @@ private:
 	static std::string generateDOSBoxTemplateScriptFileData(GameType gameType);
 	static void displayArgumentHelp();
 
-	bool m_initialized;
+	std::atomic<bool> m_initialized;
+	std::atomic<bool> m_initializing;
 	bool m_localMode;
 	bool m_demoRecordingEnabled;
 	std::shared_ptr<ArgumentParser> m_arguments;
@@ -217,6 +233,8 @@ private:
 	std::shared_ptr<FavouriteModCollection> m_favouriteMods;
 	std::shared_ptr<OrganizedModCollection> m_organizedMods;
 	std::vector<Listener *> m_listeners;
+	uint8_t m_initializationStep;
+	mutable std::recursive_mutex m_mutex;
 
 	ModManager(const ModManager &) = delete;
 	ModManager(ModManager &&) noexcept = delete;

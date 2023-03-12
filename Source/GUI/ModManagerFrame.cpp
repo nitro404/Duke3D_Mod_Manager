@@ -50,7 +50,9 @@ ModManagerFrame::ModManagerFrame()
 }
 
 ModManagerFrame::~ModManagerFrame() {
-	m_settingsManagerPanel->removeListener(*this);
+	if(m_settingsManagerPanel) {
+		m_settingsManagerPanel->removeListener(*this);
+	}
 }
 
 bool ModManagerFrame::isInitialized() const {
