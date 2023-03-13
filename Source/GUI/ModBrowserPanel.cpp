@@ -20,6 +20,44 @@
 
 #include <sstream>
 
+wxDECLARE_EVENT(EVENT_LAUNCH_FAILED, LaunchFailedEvent);
+wxDECLARE_EVENT(EVENT_GAME_PROCESS_TERMINATED, GameProcessTerminatedEvent);
+
+class LaunchFailedEvent final : public wxEvent {
+public:
+	LaunchFailedEvent()
+		: wxEvent(0, EVENT_LAUNCH_FAILED) { }
+
+	virtual ~LaunchFailedEvent() { }
+
+	virtual wxEvent * Clone() const override {
+		return new LaunchFailedEvent(*this);
+	}
+
+	DECLARE_DYNAMIC_CLASS(LaunchFailedEvent);
+};
+
+IMPLEMENT_DYNAMIC_CLASS(LaunchFailedEvent, wxEvent);
+
+class GameProcessTerminatedEvent final : public wxEvent {
+public:
+	GameProcessTerminatedEvent()
+		: wxEvent(0, EVENT_GAME_PROCESS_TERMINATED) { }
+
+	virtual ~GameProcessTerminatedEvent() { }
+
+	virtual wxEvent * Clone() const override {
+		return new GameProcessTerminatedEvent(*this);
+	}
+
+	DECLARE_DYNAMIC_CLASS(GameProcessTerminatedEvent);
+};
+
+IMPLEMENT_DYNAMIC_CLASS(GameProcessTerminatedEvent, wxEvent);
+
+wxDEFINE_EVENT(EVENT_LAUNCH_FAILED, LaunchFailedEvent);
+wxDEFINE_EVENT(EVENT_GAME_PROCESS_TERMINATED, GameProcessTerminatedEvent);
+
 ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "Mod Browser")
 	, m_modManager(modManager)
@@ -69,6 +107,11 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_modManager->getDOSBoxVersions()->addListener(*this);
 	m_modManager->getOrganizedMods()->addListener(*this);
 	m_modManager->getGameVersions()->addListener(*this);
+	m_modManager->launchError.connect(std::bind(&ModBrowserPanel::onLaunchError, this, std::placeholders::_1));
+	m_modManager->gameProcessTerminated.connect(std::bind(&ModBrowserPanel::onGameProcessTerminated, this, std::placeholders::_1, std::placeholders::_2));
+
+	Bind(EVENT_LAUNCH_FAILED, &ModBrowserPanel::onLaunchFailed, this);
+	Bind(EVENT_GAME_PROCESS_TERMINATED, &ModBrowserPanel::onGameProcessEnded, this);
 
 	wxPanel * modListOptionsPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, "Mod List Options");
 
@@ -1238,53 +1281,75 @@ void ModBrowserPanel::onLaunchButtonPressed(wxCommandEvent & event) {
 		}
 	}
 
-	if(!m_modManager->runSelectedMod(alternateGameVersion, alternateModGameVersion)) {
-		std::shared_ptr<GameVersion> activeGameVersion(alternateGameVersion != nullptr ? alternateGameVersion : selectedGameVersion);
+	m_activeGameVersion = alternateGameVersion != nullptr ? alternateGameVersion : selectedGameVersion;
 
-		if(!activeGameVersion->isConfigured()) {
-			wxMessageBox(
-				fmt::format(
-					"Failed to launch, game version '{}' is not configured/installed.",
-					!fullModName.empty() ? fmt::format(" '{}'", fullModName) : "",
-					activeGameVersion->getName()
-				),
-				"Launch Failed",
-				wxOK | wxICON_ERROR,
-				this
-			);
-
-			return;
-		}
-
-		if(activeGameVersion->doesRequireDOSBox() && !selectedDOSBoxVersion->isConfigured()) {
-			wxMessageBox(
-				fmt::format(
-					"Failed to launch{}, '{}' is not configured/installed.",
-					!fullModName.empty() ? fmt::format(" '{}'", fullModName) : "",
-					selectedDOSBoxVersion->getName()
-				),
-				"Launch Failed",
-				wxOK | wxICON_ERROR,
-				this
-			);
-
-			return;
-		}
-
+	if(!m_activeGameVersion->isConfigured()) {
 		wxMessageBox(
 			fmt::format(
-				"Failed to launch '{}'{}!\n"
-				"\n"
-				"See console for details.",
-				activeGameVersion->getName(),
-				!fullModName.empty() ? fmt::format(" with mod '{}'", fullModName) : ""
+				"Failed to launch, game version '{}' is not configured/installed.",
+				!fullModName.empty() ? fmt::format(" '{}'", fullModName) : "",
+				m_activeGameVersion->getName()
 			),
 			"Launch Failed",
 			wxOK | wxICON_ERROR,
 			this
 		);
+
+		return;
 	}
+	else if(m_activeGameVersion->doesRequireDOSBox() && !selectedDOSBoxVersion->isConfigured()) {
+		wxMessageBox(
+			fmt::format(
+				"Failed to launch{}, '{}' is not configured/installed.",
+				!fullModName.empty() ? fmt::format(" '{}'", fullModName) : "",
+				selectedDOSBoxVersion->getName()
+			),
+			"Launch Failed",
+			wxOK | wxICON_ERROR,
+			this
+		);
+
+		return;
+	}
+
+	m_runSelectedModFuture = m_modManager->runSelectedModAsync(alternateGameVersion, alternateModGameVersion);
 }
+
+void ModBrowserPanel::onLaunchError(std::string errorMessage) {
+	std::shared_ptr<Mod> selectedMod(m_modManager->getSelectedMod());
+
+	std::string fullModName(selectedMod != nullptr ? selectedMod->getFullName(m_modManager->getSelectedModVersionIndex(), m_modManager->getSelectedModVersionTypeIndex()) : "");
+
+	wxMessageBox(
+		fmt::format(
+			"Failed to launch '{}'{}!\n"
+			"\n"
+			"{}\n"
+			"\n"
+			"See console for more details.",
+			m_activeGameVersion->getName(),
+			!fullModName.empty() ? fmt::format(" with mod '{}'", fullModName) : "",
+			errorMessage
+		),
+		"Launch Failed",
+		wxOK | wxICON_ERROR,
+		this
+	);
+
+	m_activeGameVersion.reset();
+
+	QueueEvent(new LaunchFailedEvent());
+}
+
+void ModBrowserPanel::onGameProcessTerminated(uint64_t nativeExitCode, bool forceTerminated) {
+	m_activeGameVersion.reset();
+
+	QueueEvent(new GameProcessTerminatedEvent());
+}
+
+void ModBrowserPanel::onLaunchFailed(LaunchFailedEvent & launchFailedEvent) { }
+
+void ModBrowserPanel::onGameProcessEnded(GameProcessTerminatedEvent & gameProcessTerminatedEvent) { }
 
 void ModBrowserPanel::modSelectionChanged(const std::shared_ptr<Mod> & mod, size_t modVersionIndex, size_t modVersionTypeIndex, size_t modGameVersionIndex) {
 	updateModSelection();

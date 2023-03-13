@@ -37,6 +37,7 @@ class ModGameVersion;
 class ModMatch;
 class ModVersion;
 class ModVersionType;
+class Process;
 class Script;
 class ScriptArguments;
 
@@ -134,7 +135,8 @@ public:
 	void clearSelectedMod();
 
 	bool isModSupportedOnSelectedGameVersion();
-	bool runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersion = nullptr, std::shared_ptr<ModGameVersion> alternateModGameVersion = nullptr);
+	std::future<bool> runSelectedModAsync(std::shared_ptr<GameVersion> alternateGameVersion = nullptr, std::shared_ptr<ModGameVersion> alternateModGameVersion = nullptr);
+	bool runSelectedModAndWait(std::shared_ptr<GameVersion> alternateGameVersion = nullptr, std::shared_ptr<ModGameVersion> alternateModGameVersion = nullptr);
 
 	size_t numberOfListeners() const;
 	bool hasListener(const Listener & listener) const;
@@ -162,6 +164,8 @@ public:
 	boost::signals2::signal<void ()> initializationCancelled;
 	boost::signals2::signal<void ()> initializationFailed;
 	boost::signals2::signal<bool (uint8_t /* initializationStep */, uint8_t /* initializationStepCount */, std::string /* description */)> initializationProgress;
+	boost::signals2::signal<void (std::string)> launchError;
+	boost::signals2::signal<void (uint64_t /* nativeExitCode */, bool /* forceTerminated */)> gameProcessTerminated;
 
 	static const GameType DEFAULT_GAME_TYPE;
 	static const std::string DEFAULT_PREFERRED_DOSBOX_VERSION;
@@ -171,6 +175,8 @@ public:
 
 private:
 	bool initialize(std::shared_ptr<ArgumentParser> arguments);
+	bool runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersion = nullptr, std::shared_ptr<ModGameVersion> alternateModGameVersion = nullptr);
+	void notifyLaunchError(const std::string & errorMessage);
 	bool notifyInitializationProgress(const std::string & description);
 	void assignPlatformFactories();
 	bool handleArguments(const ArgumentParser * args);
@@ -232,6 +238,7 @@ private:
 	std::shared_ptr<ModCollection> m_mods;
 	std::shared_ptr<FavouriteModCollection> m_favouriteMods;
 	std::shared_ptr<OrganizedModCollection> m_organizedMods;
+	std::unique_ptr<Process> m_gameProcess;
 	std::vector<Listener *> m_listeners;
 	uint8_t m_initializationStep;
 	mutable std::recursive_mutex m_mutex;

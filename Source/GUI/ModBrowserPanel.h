@@ -19,8 +19,10 @@
 #include <wx/hyperlink.h>
 #include <wx/srchctrl.h>
 
+class GameProcessTerminatedEvent;
 class GameVersion;
 class GameVersionCollection;
+class LaunchFailedEvent;
 class Mod;
 class ModAuthorInformation;
 class ModManager;
@@ -105,7 +107,14 @@ public:
 	virtual void gameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) override;
 
 private:
+	void onLaunchError(std::string errorMessage);
+	void onGameProcessTerminated(uint64_t nativeExitCode, bool forceTerminated);
+	void onLaunchFailed(LaunchFailedEvent & launchFailedEvent);
+	void onGameProcessEnded(GameProcessTerminatedEvent & gameProcessTerminatedEvent);
+
 	std::shared_ptr<ModManager> m_modManager;
+	std::shared_ptr<GameVersion> m_activeGameVersion;
+	std::future<bool> m_runSelectedModFuture;
 	std::string m_searchQuery;
 	std::vector<ModMatch> m_modMatches;
 	wxSearchCtrl * m_modSearchTextField;
