@@ -880,6 +880,10 @@ bool SettingsManager::load(const ArgumentParser * arguments, bool autoCreate) {
 	if(arguments != nullptr) {
 		std::string alternateSettingsFileName(arguments->getFirstValue("f"));
 
+		if(alternateSettingsFileName.empty()) {
+			alternateSettingsFileName = arguments->getFirstValue("file");
+		}
+
 		if(!alternateSettingsFileName.empty()) {
 			spdlog::debug("Loading settings from alternate file: '{}'...", alternateSettingsFileName);
 
@@ -899,6 +903,10 @@ bool SettingsManager::load(const ArgumentParser * arguments, bool autoCreate) {
 bool SettingsManager::save(const ArgumentParser * arguments, bool overwrite) const {
 	if(arguments != nullptr) {
 		std::string alternateSettingsFileName(arguments->getFirstValue("f"));
+
+		if(alternateSettingsFileName.empty()) {
+			alternateSettingsFileName = arguments->getFirstValue("file");
+		}
 
 		if(!alternateSettingsFileName.empty()) {
 			spdlog::debug("Saving settings to alternate file: '{}'...", alternateSettingsFileName);

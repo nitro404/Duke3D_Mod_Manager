@@ -166,7 +166,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 	if(arguments != nullptr) {
 		m_arguments = arguments;
 
-		if(m_arguments->hasArgument("?")) {
+		if(m_arguments->hasArgument("?") || m_arguments->hasArgument("help")) {
 			displayArgumentHelp();
 			initialized();
 			return true;
@@ -183,7 +183,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 			localModeSet = true;
 		}
 
-		if(m_arguments->hasArgument("r")) {
+		if(m_arguments->hasArgument("r") || m_arguments->hasArgument("record")) {
 			m_demoRecordingEnabled = true;
 		}
 	}
@@ -2356,14 +2356,26 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 	std::vector<std::string> customDefFiles;
 
 	if(m_arguments != nullptr) {
-		if(m_arguments->hasArgument("g") ||
-		   m_arguments->hasArgument("x") ||
-		   m_arguments->hasArgument("h")) {
+		if((m_arguments->hasArgument("g") || m_arguments->hasArgument("group")) ||
+		   (m_arguments->hasArgument("x") || m_arguments->hasArgument("con")) ||
+		   (m_arguments->hasArgument("h") || m_arguments->hasArgument("def"))) {
 			customGroupFiles = m_arguments->getValues("g");
+
+			if(customGroupFiles.empty()) {
+				customGroupFiles = m_arguments->getValues("group");
+			}
 
 			if(!customGroupFiles.empty()) {
 				customConFiles = m_arguments->getValues("x");
 				customDefFiles = m_arguments->getValues("h");
+
+				if(customConFiles.empty()) {
+					m_arguments->getValues("con");
+				}
+
+				if(customDefFiles.empty()) {
+					m_arguments->getValues("def");
+				}
 
 				for(std::vector<std::string>::const_iterator i = customGroupFiles.begin(); i != customGroupFiles.end(); ++i) {
 					scriptArgs.addArgument("GROUP", *i);
@@ -2578,8 +2590,13 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			}
 		}
 
-		if(m_arguments->hasArgument("v")) {
+		if(m_arguments->hasArgument("v") || m_arguments->hasArgument("episode")) {
 			std::string episodeNumberData(m_arguments->getFirstValue("v"));
+
+			if(episodeNumberData.empty()) {
+				episodeNumberData = m_arguments->getFirstValue("episode");
+			}
+
 			std::optional<uint8_t> optionalEpisodeNumber(Utilities::parseUnsignedByte(episodeNumberData));
 
 			if(optionalEpisodeNumber.has_value() && optionalEpisodeNumber.value() >= 1) {
@@ -2590,8 +2607,13 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			}
 		}
 
-		if(m_arguments->hasArgument("l")) {
+		if(m_arguments->hasArgument("l") || m_arguments->hasArgument("level")) {
 			std::string levelNumberData(m_arguments->getFirstValue("l"));
+
+			if(levelNumberData.empty()) {
+				levelNumberData = m_arguments->getFirstValue("level");
+			}
+
 			std::optional<uint8_t> optionalLevelNumber(Utilities::parseUnsignedByte(levelNumberData));
 
 			if(optionalLevelNumber.has_value() && optionalLevelNumber.value() >= 1 && optionalLevelNumber.value() <= 11) {
@@ -2602,8 +2624,13 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			}
 		}
 
-		if(m_arguments->hasArgument("s")) {
+		if(m_arguments->hasArgument("s") || m_arguments->hasArgument("skill")) {
 			std::string skillNumberData(m_arguments->getFirstValue("s"));
+
+			if(skillNumberData.empty()) {
+				skillNumberData = m_arguments->getFirstValue("skill");
+			}
+
 			std::optional<uint8_t> optionalSkillNumber(Utilities::parseUnsignedByte(skillNumberData));
 
 			if(optionalSkillNumber.has_value() && optionalSkillNumber.value() >= 1 && optionalSkillNumber.value() <= 4) {
@@ -2618,8 +2645,12 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			command << " " << selectedGameVersion->getRecordDemoArgumentFlag();
 		}
 
-		if(m_arguments->hasArgument("d")) {
+		if(m_arguments->hasArgument("d") || m_arguments->hasArgument("demo")) {
 			std::string demoFileName(m_arguments->getFirstValue("d"));
+
+			if(demoFileName.empty()) {
+				demoFileName = m_arguments->getFirstValue("demo");
+			}
 
 			if(!demoFileName.empty()) {
 				if(selectedGameVersion->hasPlayDemoArgumentFlag()) {
@@ -2631,8 +2662,12 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			}
 		}
 
-		if(m_arguments->hasArgument("t")) {
+		if(m_arguments->hasArgument("t") || m_arguments->hasArgument("respawn")) {
 			std::string respawnMode(m_arguments->getFirstValue("t"));
+
+			if(respawnMode.empty()) {
+				respawnMode = m_arguments->getFirstValue("respawn");
+			}
 
 			if(!respawnMode.empty() && std::regex_match(respawnMode, respawnModeRegExp)) {
 				if(selectedGameVersion->hasRespawnModeArgumentFlag()) {
@@ -2644,8 +2679,12 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			}
 		}
 
-		if(m_arguments->hasArgument("u")) {
+		if(m_arguments->hasArgument("u") || m_arguments->hasArgument("weaponswitch")) {
 			std::string weaponSwitchOrder(m_arguments->getFirstValue("u"));
+
+			if(weaponSwitchOrder.empty()) {
+				weaponSwitchOrder = m_arguments->getFirstValue("weaponswitch");
+			}
 
 			if(!weaponSwitchOrder.empty() && weaponSwitchOrder.find_first_not_of("0123456789") == std::string::npos) {
 				if(selectedGameVersion->hasWeaponSwitchOrderArgumentFlag()) {
@@ -2657,7 +2696,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			}
 		}
 
-		if(m_arguments->hasArgument("m")) {
+		if(m_arguments->hasArgument("m") || m_arguments->hasArgument("nomonsters")) {
 			if(selectedGameVersion->hasDisableMonstersArgumentFlag()) {
 				command << " " << selectedGameVersion->getDisableMonstersArgumentFlag().value();
 			}
@@ -2666,7 +2705,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			}
 		}
 
-		if(m_arguments->hasArgument("ns")) {
+		if(m_arguments->hasArgument("ns") || m_arguments->hasArgument("nosound")) {
 			if(selectedGameVersion->hasDisableSoundArgumentFlag()) {
 				command << " " << selectedGameVersion->getDisableSoundArgumentFlag().value();
 			}
@@ -2675,7 +2714,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			}
 		}
 
-		if(m_arguments->hasArgument("nm")) {
+		if(m_arguments->hasArgument("nm") || m_arguments->hasArgument("nomusic")) {
 			if(selectedGameVersion->hasDisableMusicArgumentFlag()) {
 				command << " " << selectedGameVersion->getDisableMusicArgumentFlag().value();
 			}
@@ -2841,8 +2880,8 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 		}
 
 		if(args->hasArgument("search")) {
-			if(args->hasArgument("random") || args->hasArgument("g") || args->hasArgument("x") || args->hasArgument("n")) {
-				spdlog::error("Redundant arguments specified, please specify either search OR random OR n OR (x AND/OR g).");
+			if(args->hasArgument("random") || (args->hasArgument("g") || args->hasArgument("group")) || (args->hasArgument("x") || args->hasArgument("con")) || (args->hasArgument("n") || args->hasArgument("normal"))) {
+				spdlog::error("Redundant arguments specified, please specify either search OR random OR n/normal OR (x/con AND/OR g/group).");
 				return false;
 			}
 
@@ -2890,8 +2929,8 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 			}
 		}
 		else if(args->hasArgument("random")) {
-			if(args->hasArgument("g") || args->hasArgument("x") || args->hasArgument("n")) {
-				spdlog::error("Redundant arguments specified, please specify either search OR random OR n OR (x AND/OR g).");
+			if((args->hasArgument("g") || args->hasArgument("group")) || (args->hasArgument("x") || args->hasArgument("con")) || (args->hasArgument("n") || args->hasArgument("normal"))) {
+				spdlog::error("Redundant arguments specified, please specify either search OR random OR n/normal OR (x/con AND/OR g/group).");
 				return false;
 			}
 
@@ -2904,9 +2943,9 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 
 			return true;
 		}
-		else if(args->hasArgument("n")) {
-			if(args->hasArgument("g") || args->hasArgument("x")) {
-				spdlog::error("Redundant arguments specified, please specify either search OR random OR n OR (x AND/OR g).");
+		else if(args->hasArgument("n") || args->hasArgument("normal")) {
+			if((args->hasArgument("g") || args->hasArgument("group")) || (args->hasArgument("x") || args->hasArgument("con"))) {
+				spdlog::error("Redundant arguments specified, please specify either search OR random OR n/normal OR (x/con AND/OR g/group).");
 				return false;
 			}
 
@@ -2915,7 +2954,7 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 
 			return true;
 		}
-		else if(args->hasArgument("g") || args->hasArgument("x")) {
+		else if((args->hasArgument("g") || args->hasArgument("group")) || (args->hasArgument("x") || args->hasArgument("con"))) {
 			runSelectedModAndWait();
 
 			return true;
@@ -3695,33 +3734,49 @@ std::string ModManager::getArgumentHelpInfo() {
 	std::stringstream argumentHelpStream;
 
 	argumentHelpStream << APPLICATION_NAME << " version " << APPLICATION_VERSION << " arguments:\n";
-	argumentHelpStream << " -f \"Custom Settings.json\" - specifies an alternate settings file to use.\n";
+	argumentHelpStream << " --file \"Settings.json\" - specifies an alternate settings file to use.\n";
+	argumentHelpStream << " -f \"File.json\" - alias for 'file'.\n";
 	argumentHelpStream << " --type Game/Setup/Client/Server - specifies game type, default: Game.\n";
 	argumentHelpStream << " --dosbox \"DOSBox Version\" - specifies the DOSBox version to use.\n";
 	argumentHelpStream << " --game \"Game Version\" - specifies the game version to run.\n";
 	argumentHelpStream << " --ip 127.0.0.1 - specifies host ip address if running in client mode.\n";
 	argumentHelpStream << " --port 1337 - specifies server port when running in client or server mode.\n";
-	argumentHelpStream << " -g MOD.GRP - manually specifies a group or zip file to use. Can be specified multiple times.\n";
-	argumentHelpStream << " -x MOD.CON - manually specifies a game con file to use. Can be specified multiple times.\n";
-	argumentHelpStream << " -h MOD.DEF - manually specifies a def file to use. Can be specified multiple times.\n";
+	argumentHelpStream << " --group MOD.GRP - manually specifies a group or zip file to use. Can be specified multiple times.\n";
+	argumentHelpStream << " -g FILE.GRP - alias for 'group'.\n";
+	argumentHelpStream << " --con MOD.CON - manually specifies a game con file to use. Can be specified multiple times.\n";
+	argumentHelpStream << " -x FILE.CON - alias for 'con'.\n";
+	argumentHelpStream << " --def MOD.DEF - manually specifies a def file to use. Can be specified multiple times.\n";
+	argumentHelpStream << " -h FILE.DEF - alias for 'def'.\n";
 	argumentHelpStream << " --map _ZOO.MAP - manually specifies a user map file to load.\n";
 	argumentHelpStream << " --search \"Full Mod Name\" - searches for and selects the mod with a full or partially matching name, and optional version / type.\n";
 	argumentHelpStream << " --random - randomly selects a mod to run.\n";
-	argumentHelpStream << " -n - runs normal Duke Nukem 3D without any mods.\n";
-	argumentHelpStream << " -v # - selects an episode (1-4+).\n";
-	argumentHelpStream << " -l # - selects a level (1-11).\n";
-	argumentHelpStream << " -s # - selects a skill level (1-4).\n";
-	argumentHelpStream << " -r - enables demo recording.\n";
-	argumentHelpStream << " -d DEMO3.DMO - plays back the specified demo file.\n";
-	argumentHelpStream << " -t # - respawn mode: 1 = monsters, 2 = items, 3 = inventory, x = all.\n";
-	argumentHelpStream << " -u 8675309241 - set preferred weapon switch order, as a string of 10 digits.\n";
-	argumentHelpStream << " -m disable monsters.\n";
-	argumentHelpStream << " --ns disable sound.\n";
-	argumentHelpStream << " --nm disable music.\n";
+	argumentHelpStream << " --normal - runs normal Duke Nukem 3D without any mods.\n";
+	argumentHelpStream << " -n - alias for 'normal'.\n";
+	argumentHelpStream << " --episode # - selects an episode (1-4+).\n";
+	argumentHelpStream << " -v # - alias for 'episode'\n";
+	argumentHelpStream << " --level # - selects a level (1-11).\n";
+	argumentHelpStream << " -l # - alias for 'level'.\n";
+	argumentHelpStream << " --skill # - selects a skill level (1-4).\n";
+	argumentHelpStream << " -s # - alias for 'skill'.\n";
+	argumentHelpStream << " --record - enables demo recording.\n";
+	argumentHelpStream << " -r - alias for 'record'\n";
+	argumentHelpStream << " --demo DEMO3.DMO - plays back the specified demo file.\n";
+	argumentHelpStream << " -d FILE.DMO - alias for 'demo'\n";
+	argumentHelpStream << " --respawn # - respawn mode: 1 = monsters, 2 = items, 3 = inventory, x = all.\n";
+	argumentHelpStream << " -t # - alias for 'respawn'.\n";
+	argumentHelpStream << " --weaponswitch 8675309241 - set preferred weapon switch order, as a string of 10 digits.\n";
+	argumentHelpStream << " -u 1234567890 - alias for 'switch'.\n";
+	argumentHelpStream << " --nomonsters - disable monsters.\n";
+	argumentHelpStream << " -m - alias for 'nomonsters'.\n";
+	argumentHelpStream << " --nosound - disable sound.\n";
+	argumentHelpStream << " --ns - alias for 'nosound'.\n";
+	argumentHelpStream << " --nomusic - disable music.\n";
+	argumentHelpStream << " --nm - alias for 'nomusic'.\n";
 	argumentHelpStream << " --local - runs the mod manager in local mode.\n";
 	argumentHelpStream << " -- <args> - specify arguments to pass through to the target game executable when executing.\n";
 	argumentHelpStream << " --version - displays the application version.\n";
-	argumentHelpStream << " -? - displays this help message.\n";
+	argumentHelpStream << " --help - displays this help message.\n";
+	argumentHelpStream << " -? - alias for 'help'.\n";
 
 	return argumentHelpStream.str();
 }
