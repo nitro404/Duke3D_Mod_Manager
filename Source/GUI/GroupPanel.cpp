@@ -1,11 +1,13 @@
 #include "GroupPanel.h"
 
+#include "Group/Group.h"
+#include "Group/GroupFile.h"
+#include "WXUtilities.h"
+
 #include <fmt/core.h>
 #include <spdlog/spdlog.h>
 #include <wx/gbsizer.h>
 #include <wx/wrapsizer.h>
-
-#include "WXUtilities.h"
 
 GroupPanel::GroupPanel(std::unique_ptr<Group> group, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "Group Information")
@@ -114,13 +116,13 @@ GroupPanel::GroupPanel(std::unique_ptr<Group> group, wxWindow * parent, wxWindow
 	groupInfoSizer->AddGrowableCol(1, 1);
 	SetSizer(groupInfoSizer);
 
-	m_group->addListener(*this);
+	m_groupModifiedConnection = m_group->modified.connect(std::bind(&GroupPanel::onGroupModified, this, std::placeholders::_1));
 
 	update();
 }
 
 GroupPanel::~GroupPanel() {
-	m_group->removeListener(*this);
+	m_groupModifiedConnection.disconnect();
 }
 
 std::string GroupPanel::getPanelName() const {
@@ -340,10 +342,10 @@ void GroupPanel::notifyGroupFileSelectionChanged() {
 	}
 }
 
-void GroupPanel::groupModified(const Group * group, bool modified) {
+void GroupPanel::onGroupModified(const Group & group) {
 	update();
 
 	for(Listener * listener : m_listeners) {
-		listener->groupModified(this, modified);
+		listener->groupModified(this, group.isModified());
 	}
 }

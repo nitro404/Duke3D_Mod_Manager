@@ -3,6 +3,8 @@
 
 #include <ByteBuffer.h>
 
+#include <boost/signals2.hpp>
+
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -14,13 +16,6 @@ class GroupFile final {
 	friend class Group;
 
 public:
-	class Listener {
-	public:
-		virtual ~Listener();
-
-		virtual void groupFileModified(const GroupFile * file, bool modified) = 0;
-	};
-
 	GroupFile(const std::string & fileName);
 	GroupFile(const std::string & fileName, const uint8_t * data, size_t size);
 	GroupFile(const std::string & fileName, const std::vector<uint8_t> & data);
@@ -57,29 +52,20 @@ public:
 
 	static std::string formatFileName(std::string_view fileName);
 
-	size_t numberOfListeners() const;
-	bool hasListener(const Listener & listener) const;
-	size_t indexOfListener(const Listener & listener) const;
-	Listener * getListener(size_t index) const;
-	bool addListener(Listener & listener);
-	bool removeListener(size_t index);
-	bool removeListener(const Listener & listener);
-	void clearListeners();
-
 	bool operator == (const GroupFile & f) const;
 	bool operator != (const GroupFile & f) const;
+
+	boost::signals2::signal<void (const GroupFile & /* file */)> modified;
 
 	static const uint8_t MAX_FILE_NAME_LENGTH;
 	static const bool DEFAULT_OVERWRITE_FILES;
 
 private:
 	void setModified(bool modified) const;
-	void notifyGroupFileModified() const;
 
 	std::string m_fileName;
 	std::unique_ptr<ByteBuffer> m_data;
 	mutable bool m_modified;
-	mutable std::vector<Listener *> m_listeners;
 	mutable Group * m_parentGroup;
 };
 

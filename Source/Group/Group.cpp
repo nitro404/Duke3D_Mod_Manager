@@ -29,7 +29,7 @@ Group::Group(Group && g) noexcept
 	updateParentGroup();
 
 	for(std::shared_ptr<GroupFile> & file : m_files) {
-		file->addListener(*this);
+		m_fileConnections.push_back(file->modified.connect(std::bind(&Group::onGroupFileModified, this, std::placeholders::_1)));
 	}
 }
 
@@ -43,7 +43,7 @@ Group::Group(const Group & g)
 	updateParentGroup();
 
 	for(std::shared_ptr<GroupFile> & file : m_files) {
-		file->addListener(*this);
+		m_fileConnections.push_back(file->modified.connect(std::bind(&Group::onGroupFileModified, this, std::placeholders::_1)));
 	}
 }
 
@@ -52,11 +52,17 @@ Group & Group::operator = (Group && g) noexcept {
 		m_filePath = std::move(g.m_filePath);
 		m_files = std::move(g.m_files);
 
+		for(boost::signals2::connection fileConnections : m_fileConnections) {
+			fileConnections.disconnect();
+		}
+
+		m_fileConnections.clear();
+
 		updateParentGroup();
 		setModified(true);
 
 		for(std::shared_ptr<GroupFile> & file : m_files) {
-			file->addListener(*this);
+			m_fileConnections.push_back(file->modified.connect(std::bind(&Group::onGroupFileModified, this, std::placeholders::_1)));
 		}
 	}
 
@@ -68,6 +74,12 @@ Group & Group::operator = (const Group & g) {
 
 	m_filePath = g.m_filePath;
 
+	for(boost::signals2::connection fileConnections : m_fileConnections) {
+		fileConnections.disconnect();
+	}
+
+	m_fileConnections.clear();
+
 	for(std::vector<std::shared_ptr<GroupFile>>::const_iterator i = g.m_files.cbegin(); i != g.m_files.cend(); ++i) {
 		m_files.push_back(std::make_shared<GroupFile>(**i));
 	}
@@ -76,15 +88,18 @@ Group & Group::operator = (const Group & g) {
 	setModified(true);
 
 	for(std::shared_ptr<GroupFile> & file : m_files) {
-		file->addListener(*this);
+		m_fileConnections.push_back(file->modified.connect(std::bind(&Group::onGroupFileModified, this, std::placeholders::_1)));
 	}
 
 	return *this;
 }
 
 Group::~Group() {
+	for(boost::signals2::connection fileConnections : m_fileConnections) {
+		fileConnections.disconnect();
+	}
+
 	for(std::shared_ptr<GroupFile> & file : m_files) {
-		file->removeListener(*this);
 		file->m_parentGroup = nullptr;
 	}
 }
@@ -93,8 +108,8 @@ bool Group::isModified() const {
 	return m_modified;
 }
 
-void Group::setModified(bool modified) const {
-	m_modified = modified;
+void Group::setModified(bool value) const {
+	m_modified = value;
 
 	if(!m_modified) {
 		for(const std::shared_ptr<GroupFile> & file : m_files) {
@@ -102,7 +117,7 @@ void Group::setModified(bool modified) const {
 		}
 	}
 
-	notifyGroupModified();
+	modified(*this);
 }
 
 const std::string & Group::getFilePath() const {
@@ -350,7 +365,7 @@ bool Group::addFile(std::unique_ptr<GroupFile> file, bool replace) {
 	if(fileIndex == std::numeric_limits<size_t>::max()) {
 		m_files.emplace_back(file.release());
 		m_files.back()->m_parentGroup = this;
-		m_files.back()->addListener(*this);
+		m_fileConnections.push_back(m_files.back()->modified.connect(std::bind(&Group::onGroupFileModified, this, std::placeholders::_1)));
 
 		setModified(true);
 
@@ -360,7 +375,8 @@ bool Group::addFile(std::unique_ptr<GroupFile> file, bool replace) {
 		if(replace) {
 			m_files[fileIndex] = std::shared_ptr<GroupFile>(file.release());
 			m_files[fileIndex]->m_parentGroup = this;
-			m_files[fileIndex]->addListener(*this);
+			m_fileConnections[fileIndex].disconnect();
+			m_fileConnections[fileIndex] = m_files[fileIndex]->modified.connect(std::bind(&Group::onGroupFileModified, this, std::placeholders::_1));
 
 			setModified(true);
 
@@ -561,7 +577,8 @@ bool Group::removeFile(size_t index) {
 		return false;
 	}
 
-	m_files[index]->removeListener(*this);
+	m_fileConnections[index].disconnect();
+	m_fileConnections.erase(m_fileConnections.cbegin() + index);
 	m_files[index]->m_parentGroup = nullptr;
 	m_files.erase(m_files.cbegin() + index);
 
@@ -614,11 +631,15 @@ size_t Group::removeFilesByName(const std::vector<std::string> & fileNames) {
 }
 
 void Group::clearFiles() {
+	for(boost::signals2::connection fileConnections : m_fileConnections) {
+		fileConnections.disconnect();
+	}
+
 	for(std::shared_ptr<GroupFile> & file : m_files) {
-		file->removeListener(*this);
 		file->m_parentGroup = nullptr;
 	}
 
+	m_fileConnections.clear();
 	m_files.clear();
 
 	setModified(true);
@@ -784,7 +805,7 @@ std::unique_ptr<Group> Group::loadFrom(const std::string & filePath) {
 		}
 
 		file->m_parentGroup = group.get();
-		file->addListener(*group);
+		group->m_fileConnections.push_back(file->modified.connect(std::bind(&Group::onGroupFileModified, *group, std::placeholders::_1)));
 		group->m_files.push_back(file);
 	}
 
@@ -890,84 +911,8 @@ void Group::updateParentGroup() {
 	}
 }
 
-Group::Listener::~Listener() { }
-
-size_t Group::numberOfListeners() const {
-	return m_listeners.size();
-}
-
-bool Group::hasListener(const Listener & listener) const {
-	for(std::vector<Listener *>::const_iterator i = m_listeners.cbegin(); i != m_listeners.cend(); ++i) {
-		if(*i == &listener) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-size_t Group::indexOfListener(const Listener & listener) const {
-	for(size_t i = 0; i < m_listeners.size(); i++) {
-		if(m_listeners[i] == &listener) {
-			return i;
-		}
-	}
-
-	return std::numeric_limits<size_t>::max();
-}
-
-Group::Listener * Group::getListener(size_t index) const {
-	if(index >= m_listeners.size()) {
-		return nullptr;
-	}
-
-	return m_listeners[index];
-}
-
-bool Group::addListener(Listener & listener) {
-	if(!hasListener(listener)) {
-		m_listeners.push_back(&listener);
-
-		return true;
-	}
-
-	return false;
-}
-
-bool Group::removeListener(size_t index) {
-	if(index >= m_listeners.size()) {
-		return false;
-	}
-
-	m_listeners.erase(m_listeners.cbegin() + index);
-
-	return true;
-}
-
-bool Group::removeListener(const Listener & listener) {
-	for(std::vector<Listener *>::const_iterator i = m_listeners.cbegin(); i != m_listeners.cend(); ++i) {
-		if(*i == &listener) {
-			m_listeners.erase(i);
-
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void Group::clearListeners() {
-	m_listeners.clear();
-}
-
-void Group::notifyGroupModified() const {
-	for(Listener * listener : m_listeners) {
-		listener->groupModified(this, m_modified);
-	}
-}
-
-void Group::groupFileModified(const GroupFile * groupFile, bool modified) {
-	if(modified) {
+void Group::onGroupFileModified(const GroupFile & groupFile) {
+	if(groupFile.isModified()) {
 		setModified(true);
 	}
 }

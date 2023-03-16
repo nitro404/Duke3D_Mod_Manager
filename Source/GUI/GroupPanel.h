@@ -1,8 +1,7 @@
 #ifndef _GROUP_INFO_PANEL_H_
 #define _GROUP_INFO_PANEL_H_
 
-#include "Group/Group.h"
-
+#include <boost/signals2.hpp>
 #include <wx/wxprec.h>
 
 #ifdef __BORLANDC__
@@ -14,9 +13,9 @@
 #endif
 
 class Group;
+class GroupFile;
 
-class GroupPanel final : public wxPanel,
-						 public Group::Listener {
+class GroupPanel final : public wxPanel {
 public:
 	class Listener {
 	public:
@@ -52,13 +51,12 @@ public:
 	bool removeListener(const Listener & listener);
 	void clearListeners();
 
-	// Group::Listener Virtuals
-	virtual void groupModified(const Group * group, bool modified) override;
-
 private:
+	void onGroupModified(const Group & group);
 	void notifyGroupFileSelectionChanged();
 
 	std::unique_ptr<Group> m_group;
+	boost::signals2::connection m_groupModifiedConnection;
 	mutable std::vector<Listener *> m_listeners;
 
 	wxStaticText * m_numberOfFilesText;
