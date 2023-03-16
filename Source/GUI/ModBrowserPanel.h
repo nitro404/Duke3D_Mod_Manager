@@ -115,6 +115,8 @@ private:
 	std::shared_ptr<ModManager> m_modManager;
 	std::shared_ptr<GameVersion> m_activeGameVersion;
 	std::future<bool> m_runSelectedModFuture;
+	boost::signals2::connection m_launchErrorConnection;
+	boost::signals2::connection m_gameProcessTerminatedConnection;
 	std::string m_searchQuery;
 	std::vector<ModMatch> m_modMatches;
 	wxSearchCtrl * m_modSearchTextField;

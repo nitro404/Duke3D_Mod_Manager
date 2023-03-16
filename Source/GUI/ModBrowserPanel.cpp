@@ -107,8 +107,8 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_modManager->getDOSBoxVersions()->addListener(*this);
 	m_modManager->getOrganizedMods()->addListener(*this);
 	m_modManager->getGameVersions()->addListener(*this);
-	m_modManager->launchError.connect(std::bind(&ModBrowserPanel::onLaunchError, this, std::placeholders::_1));
-	m_modManager->gameProcessTerminated.connect(std::bind(&ModBrowserPanel::onGameProcessTerminated, this, std::placeholders::_1, std::placeholders::_2));
+	m_launchErrorConnection = m_modManager->launchError.connect(std::bind(&ModBrowserPanel::onLaunchError, this, std::placeholders::_1));
+	m_gameProcessTerminatedConnection = m_modManager->gameProcessTerminated.connect(std::bind(&ModBrowserPanel::onGameProcessTerminated, this, std::placeholders::_1, std::placeholders::_2));
 
 	Bind(EVENT_LAUNCH_FAILED, &ModBrowserPanel::onLaunchFailed, this);
 	Bind(EVENT_GAME_PROCESS_TERMINATED, &ModBrowserPanel::onGameProcessEnded, this);
@@ -403,6 +403,8 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 }
 
 ModBrowserPanel::~ModBrowserPanel() {
+	m_launchErrorConnection.disconnect();
+	m_gameProcessTerminatedConnection.disconnect();
 	m_modManager->removeListener(*this);
 	m_modManager->getDOSBoxVersions()->removeListener(*this);
 	m_modManager->getOrganizedMods()->removeListener(*this);

@@ -55,6 +55,10 @@ private:
 	ModManagerFrame * m_modManagerFrame;
 	ModManagerFrame * m_newModManagerFrame;
 	bool m_reloadRequired;
+	boost::signals2::connection m_modManagerInitializationProgressConnection;
+	boost::signals2::connection m_modManagerInitializedConnection;
+	boost::signals2::connection m_modManagerInitializationCancelledConnection;
+	boost::signals2::connection m_modManagerInitializationFailedConnection;
 };
 
 #endif // _MOD_MANAGER_APPLICATION_H_

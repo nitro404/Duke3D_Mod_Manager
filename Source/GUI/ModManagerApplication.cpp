@@ -107,22 +107,22 @@ void ModManagerApplication::initialize() {
 
 	initializingProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
 
-	m_modManager->initializationProgress.connect([&initializingProgressDialog, baseInitializationMessage](uint8_t initializationStep, uint8_t initializationStepCount, std::string description) {
+	m_modManagerInitializationProgressConnection = m_modManager->initializationProgress.connect([&initializingProgressDialog, baseInitializationMessage](uint8_t initializationStep, uint8_t initializationStepCount, std::string description) {
 		bool updateResult = initializingProgressDialog->Update(initializationStep, fmt::format("{}\n{}...", baseInitializationMessage, description));
 		initializingProgressDialog->Fit();
 
 		return updateResult;
 	});
 
-	m_modManager->initialized.connect([this]() {
+	m_modManagerInitializedConnection = m_modManager->initialized.connect([this]() {
 		QueueEvent(new ModManagerInitializedEvent());
 	});
 
-	m_modManager->initializationCancelled.connect([this]() {
+	m_modManagerInitializationCancelledConnection = m_modManager->initializationCancelled.connect([this]() {
 		QueueEvent(new ModManagerInitializationCancelledEvent());
 	});
 
-	m_modManager->initializationFailed.connect([this]() {
+	m_modManagerInitializationFailedConnection = m_modManager->initializationFailed.connect([this]() {
 		QueueEvent(new ModManagerInitializationFailedEvent());
 	});
 
@@ -173,6 +173,11 @@ void ModManagerApplication::onFrameClosed(wxCloseEvent & event) {
 
 	settings->windowPosition = WXUtilities::createPoint(m_modManagerFrame->GetPosition());
 	settings->windowSize = WXUtilities::createDimension(m_modManagerFrame->GetSize());
+
+	m_modManagerInitializationProgressConnection.disconnect();
+	m_modManagerInitializedConnection.disconnect();
+	m_modManagerInitializationCancelledConnection.disconnect();
+	m_modManagerInitializationFailedConnection.disconnect();
 
 	m_modManagerFrame->Destroy();
 
