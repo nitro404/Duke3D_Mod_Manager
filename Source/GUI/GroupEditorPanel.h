@@ -18,8 +18,9 @@
 
 #include <memory>
 
-class GroupEditorPanel final : public wxPanel,
-							   public GroupPanel::Listener {
+class SignalConnectionGroup;
+
+class GroupEditorPanel final : public wxPanel {
 public:
 	GroupEditorPanel(wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
 	virtual ~GroupEditorPanel();
@@ -69,6 +70,7 @@ public:
 	bool closeCurrentGroupPanel();
 	bool closeAllGroupPanels();
 
+private:
 	void onNotebookPageChanged(wxBookCtrlEvent & event);
 	void onNewButtonPressed(wxCommandEvent & event);
 	void onOpenButtonPressed(wxCommandEvent & event);
@@ -83,12 +85,10 @@ public:
 	void onExtractAllFilesButtonPressed(wxCommandEvent & event);
 	void onCloseButtonPressed(wxCommandEvent & event);
 	void onCloseAllButtonPressed(wxCommandEvent & event);
+	void onGroupModified(GroupPanel & groupPanel);
+	void onGroupFileSelectionChanged(GroupPanel & groupPanel);
 
-	// GroupPanel::Listener Virtuals
-	virtual void groupModified(GroupPanel * groupPanel, bool modified) override;
-	virtual void groupFileSelectionChanged(GroupPanel * groupPanel) override;
-
-private:
+	std::vector<SignalConnectionGroup> m_groupPanelConnections;
 	wxNotebook * m_notebook;
 	wxButton * m_newButton;
 	wxButton * m_openButton;

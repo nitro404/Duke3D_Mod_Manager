@@ -1,5 +1,6 @@
 #include "GroupEditorPanel.h"
 
+#include <Signal/SignalConnectionGroup.h>
 #include <Utilities/FileUtilities.h>
 
 #include "WXUtilities.h"
@@ -290,8 +291,11 @@ bool GroupEditorPanel::addGroupPanel(GroupPanel * groupPanel) {
 		return false;
 	}
 
+	m_groupPanelConnections.push_back(SignalConnectionGroup(
+		groupPanel->groupModified.connect(std::bind(&GroupEditorPanel::onGroupModified, this, std::placeholders::_1)),
+		groupPanel->groupFileSelectionChanged.connect(std::bind(&GroupEditorPanel::onGroupFileSelectionChanged, this, std::placeholders::_1))
+	));
 
-	groupPanel->addListener(*this);
 	m_notebook->AddPage(groupPanel, groupPanel->getPanelName());
 	m_notebook->ChangeSelection(m_notebook->GetPageCount() - 1);
 
@@ -789,8 +793,10 @@ bool GroupEditorPanel::closeGroupPanel(size_t groupPanelIndex) {
 		m_newButton->SetFocus();
 	}
 
+	m_groupPanelConnections[groupPanelIndex].disconnect();
+	m_groupPanelConnections.erase(m_groupPanelConnections.begin() + groupPanelIndex);
+
 	GroupPanel * groupPanel = getGroupPanel(groupPanelIndex);
-	groupPanel->removeListener(*this);
 	m_notebook->RemovePage(groupPanelIndex);
 	delete groupPanel;
 
@@ -881,10 +887,10 @@ void GroupEditorPanel::onCloseAllButtonPressed(wxCommandEvent & event) {
 	closeAllGroupPanels();
 }
 
-void GroupEditorPanel::groupModified(GroupPanel * groupPanel, bool modified) {
-	updateGroupPanel(indexOfGroupPanel(groupPanel));
+void GroupEditorPanel::onGroupModified(GroupPanel & groupPanel) {
+	updateGroupPanel(indexOfGroupPanel(&groupPanel));
 }
 
-void GroupEditorPanel::groupFileSelectionChanged(GroupPanel * groupPanel) {
+void GroupEditorPanel::onGroupFileSelectionChanged(GroupPanel & groupPanel) {
 	updateButtons();
 }

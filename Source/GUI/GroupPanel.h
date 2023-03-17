@@ -17,14 +17,6 @@ class GroupFile;
 
 class GroupPanel final : public wxPanel {
 public:
-	class Listener {
-	public:
-		virtual ~Listener();
-
-		virtual void groupModified(GroupPanel * groupPanel, bool modified) = 0;
-		virtual void groupFileSelectionChanged(GroupPanel * groupPanel) = 0;
-	};
-
 	GroupPanel(std::unique_ptr<Group> group, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
 	virtual ~GroupPanel();
 
@@ -40,25 +32,16 @@ public:
 	void update();
 	void updateFileInfo();
 
-	void onFileSelected(wxCommandEvent & event);
-
-	size_t numberOfListeners() const;
-	bool hasListener(const Listener & listener) const;
-	size_t indexOfListener(const Listener & listener) const;
-	Listener * getListener(size_t index) const;
-	bool addListener(Listener & listener);
-	bool removeListener(size_t index);
-	bool removeListener(const Listener & listener);
-	void clearListeners();
+	boost::signals2::signal<void (GroupPanel & /* groupPanel*/)> groupModified;
+	boost::signals2::signal<void (GroupPanel & /* groupPanel*/)> groupFileSelectionChanged;
 
 private:
+	void onFileSelected(wxCommandEvent & event);
 	void onGroupModified(const Group & group);
 	void notifyGroupFileSelectionChanged();
 
 	std::unique_ptr<Group> m_group;
 	boost::signals2::connection m_groupModifiedConnection;
-	mutable std::vector<Listener *> m_listeners;
-
 	wxStaticText * m_numberOfFilesText;
 	wxStaticText * m_groupSizeText;
 	wxStaticText * m_fileExtensionsText;
