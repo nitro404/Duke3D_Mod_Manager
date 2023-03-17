@@ -3,6 +3,7 @@
 #include "DOSBox/DOSBoxManager.h"
 #include "DOSBox/DOSBoxVersionCollection.h"
 #include "Manager/SettingsManager.h"
+#include "SettingPanel.h"
 
 #include <wx/wrapsizer.h>
 
@@ -45,7 +46,7 @@ DOSBoxSettingsPanel::DOSBoxSettingsPanel(std::shared_ptr<ModManager> modManager,
 	m_dosboxVersionCollectionItemModifiedConnection = dosboxVersions->itemModified.connect(std::bind(&DOSBoxSettingsPanel::onDOSBoxVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
 
 	for(SettingPanel * settingPanel : m_settingsPanels) {
-		settingPanel->addListener(*this);
+		m_settingModifiedConnections.push_back(settingPanel->settingModified.connect(std::bind(&DOSBoxSettingsPanel::onSettingModified, this, std::placeholders::_1)));
 	}
 }
 
@@ -57,8 +58,8 @@ DOSBoxSettingsPanel::~DOSBoxSettingsPanel() {
 	m_dosboxVersionCollectionSizeChangedConnection.disconnect();
 	m_dosboxVersionCollectionItemModifiedConnection.disconnect();
 
-	for(SettingPanel * settingPanel : m_settingsPanels) {
-		settingPanel->removeListener(*this);
+	for(boost::signals2::connection & settingModifiedConnection : m_settingModifiedConnections) {
+		settingModifiedConnection.disconnect();
 	}
 }
 
@@ -150,7 +151,7 @@ void DOSBoxSettingsPanel::resetSettings() {
 	}
 }
 
-void DOSBoxSettingsPanel::settingModified(SettingPanel & settingPanel) {
+void DOSBoxSettingsPanel::onSettingModified(SettingPanel & settingPanel) {
 	dosboxSettingModified(settingPanel);
 }
 

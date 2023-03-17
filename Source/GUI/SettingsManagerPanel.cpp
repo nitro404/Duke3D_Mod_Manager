@@ -165,7 +165,7 @@ SettingsManagerPanel::SettingsManagerPanel(std::shared_ptr<ModManager> modManage
 	SetSizerAndFit(settingsPanelSizer);
 
 	for(SettingPanel * settingPanel : m_settingsPanels) {
-		settingPanel->addListener(*this);
+		m_settingModifiedConnections.push_back(settingPanel->settingModified.connect(std::bind(&SettingsManagerPanel::onSettingModified, this, std::placeholders::_1)));
 	}
 }
 
@@ -175,8 +175,8 @@ SettingsManagerPanel::~SettingsManagerPanel() {
 	m_gameVersionCollectionSizeChangedConnection.disconnect();
 	m_gameVersionCollectionItemModifiedConnection.disconnect();
 
-	for(SettingPanel * settingPanel : m_settingsPanels) {
-		settingPanel->removeListener(*this);
+	for(boost::signals2::connection & settingModifiedConnection : m_settingModifiedConnections) {
+		settingModifiedConnection.disconnect();
 	}
 }
 
@@ -387,7 +387,7 @@ void SettingsManagerPanel::notifySettingsSaved() {
 	}
 }
 
-void SettingsManagerPanel::settingModified(SettingPanel & settingPanel) {
+void SettingsManagerPanel::onSettingModified(SettingPanel & settingPanel) {
 	if(settingPanel.isModified()) {
 		m_modified = true;
 

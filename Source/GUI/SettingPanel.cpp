@@ -89,86 +89,10 @@ void SettingPanel::reset() {
 	setModified(true);
 }
 
-SettingPanel::Listener::~Listener() { }
-
-size_t SettingPanel::numberOfListeners() const {
-	return m_listeners.size();
-}
-
-bool SettingPanel::hasListener(const Listener & listener) const {
-	for(std::vector<Listener *>::const_iterator i = m_listeners.cbegin(); i != m_listeners.cend(); ++i) {
-		if(*i == &listener) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-size_t SettingPanel::indexOfListener(const Listener & listener) const {
-	for(size_t i = 0; i < m_listeners.size(); i++) {
-		if(m_listeners[i] == &listener) {
-			return i;
-		}
-	}
-
-	return std::numeric_limits<size_t>::max();
-}
-
-SettingPanel::Listener * SettingPanel::getListener(size_t index) const {
-	if(index >= m_listeners.size()) {
-		return nullptr;
-	}
-
-	return m_listeners[index];
-}
-
-bool SettingPanel::addListener(Listener & listener) {
-	if(!hasListener(listener)) {
-		m_listeners.push_back(&listener);
-
-		return true;
-	}
-
-	return false;
-}
-
-bool SettingPanel::removeListener(size_t index) {
-	if(index >= m_listeners.size()) {
-		return false;
-	}
-
-	m_listeners.erase(m_listeners.cbegin() + index);
-
-	return true;
-}
-
-bool SettingPanel::removeListener(const Listener & listener) {
-	for(std::vector<Listener *>::const_iterator i = m_listeners.cbegin(); i != m_listeners.cend(); ++i) {
-		if(*i == &listener) {
-			m_listeners.erase(i);
-
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void SettingPanel::clearListeners() {
-	m_listeners.clear();
-}
-
 void SettingPanel::setModified(bool modified) {
 	m_modified = modified;
 
-	notifySettingModified();
-}
-
-void SettingPanel::notifySettingModified() {
-	for(Listener * listener : m_listeners) {
-		listener->settingModified(*this);
-	}
+	settingModified(*this);
 }
 
 SettingPanel * SettingPanel::createBooleanSettingPanel(bool & setting, bool defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer) {

@@ -1,8 +1,6 @@
 #ifndef _SETTINGS_MANAGER_PANEL_H_
 #define _SETTINGS_MANAGER_PANEL_H_
 
-#include "SettingPanel.h"
-
 #include <boost/signals2.hpp>
 #include <wx/wxprec.h>
 
@@ -22,10 +20,11 @@ class DOSBoxVersionCollection;
 class GameVersion;
 class GameVersionCollection;
 class ModManager;
+class SettingPanel;
+class StringChoiceSettingPanel;
 
 class SettingsManagerPanel final
-	: public wxPanel
-	, public SettingPanel::Listener {
+	: public wxPanel {
 public:
 	class Listener {
 	public:
@@ -61,14 +60,12 @@ public:
 	bool removeListener(const Listener & listener);
 	void clearListeners();
 
-	// SettingPanel::Listener Virtuals
-	virtual void settingModified(SettingPanel & settingPanel) override;
-
 private:
 	void onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection);
 	void onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion);
 	void onGameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection);
 	void onGameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion);
+	void onSettingModified(SettingPanel & settingPanel);
 	void notifySettingsChanged();
 	void notifySettingsReset();
 	void notifySettingsDiscarded();
@@ -80,6 +77,7 @@ private:
 	boost::signals2::connection m_gameVersionCollectionSizeChangedConnection;
 	boost::signals2::connection m_gameVersionCollectionItemModifiedConnection;
 	std::vector<SettingPanel *> m_settingsPanels;
+    std::vector<boost::signals2::connection> m_settingModifiedConnections;
 	StringChoiceSettingPanel * m_preferredDOSBoxVersionSettingPanel;
 	StringChoiceSettingPanel * m_preferredGameVersionSettingPanel;
 	bool m_modified;

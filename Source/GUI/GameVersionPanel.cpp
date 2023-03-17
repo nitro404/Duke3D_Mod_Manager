@@ -2,6 +2,7 @@
 
 #include "Game/GameVersionCollection.h"
 #include "Project.h"
+#include "SettingPanel.h"
 
 #include <fmt/core.h>
 #include <spdlog/spdlog.h>
@@ -146,15 +147,15 @@ GameVersionPanel::GameVersionPanel(std::shared_ptr<GameVersion> gameVersion, wxW
 	m_gameVersionModifiedConnection = m_gameVersion->modified.connect(std::bind(&GameVersionPanel::onGameVersionModified, this, std::placeholders::_1));
 
 	for(SettingPanel * settingPanel : m_settingsPanels) {
-		settingPanel->addListener(*this);
+		m_settingModifiedConnections.push_back(settingPanel->settingModified.connect(std::bind(&GameVersionPanel::onSettingModified, this, std::placeholders::_1)));
 	}
 }
 
 GameVersionPanel::~GameVersionPanel() {
 	m_gameVersionModifiedConnection.disconnect();
 
-	for(SettingPanel * settingPanel : m_settingsPanels) {
-		settingPanel->removeListener(*this);
+	for(boost::signals2::connection & settingModifiedConnection : m_settingModifiedConnections) {
+		settingModifiedConnection.disconnect();
 	}
 }
 
@@ -359,7 +360,7 @@ void GameVersionPanel::onGameVersionModified(GameVersion & gameVersion) {
 	update();
 }
 
-void GameVersionPanel::settingModified(SettingPanel & settingPanel) {
+void GameVersionPanel::onSettingModified(SettingPanel & settingPanel) {
 	if(settingPanel.isModified()) {
 		m_modified = true;
 

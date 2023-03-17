@@ -17,8 +17,7 @@
 class DOSBoxVersion;
 
 class DOSBoxVersionPanel final
-	: public wxPanel
-	, public SettingPanel::Listener {
+	: public wxPanel {
 public:
 	class Listener {
 	public:
@@ -53,11 +52,9 @@ public:
 	bool removeListener(const Listener & listener);
 	void clearListeners();
 
-	// SettingPanel::Listener Virtuals
-	virtual void settingModified(SettingPanel & settingPanel) override;
-
 private:
 	void onDOSBoxVersionModified(DOSBoxVersion & dosboxVersion);
+	void onSettingModified(SettingPanel & settingPanel);
 	void notifyDOSBoxVersionSettingChanged(SettingPanel & settingPanel);
 	void notifyDOSBoxVersionChangesDiscarded();
 	void notifyDOSBoxVersionReset();
@@ -66,6 +63,7 @@ private:
 	std::shared_ptr<DOSBoxVersion> m_dosboxVersion;
 	boost::signals2::connection m_dosboxVersionModifiedConnection;
 	std::vector<SettingPanel *> m_settingsPanels;
+    std::vector<boost::signals2::connection> m_settingModifiedConnections;
 	SettingPanel * m_dosboxPathSettingPanel;
 	mutable bool m_modified;
 	mutable std::vector<Listener *> m_listeners;

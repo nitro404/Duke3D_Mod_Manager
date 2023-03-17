@@ -2,7 +2,6 @@
 #define _GAME_VERSION_PANEL_H_
 
 #include "Game/GameVersion.h"
-#include "SettingPanel.h"
 
 #include <boost/signals2.hpp>
 #include <wx/wxprec.h>
@@ -15,8 +14,9 @@
 	#include <wx/wx.h>
 #endif
 
-class GameVersionPanel final : public wxPanel,
-							   public SettingPanel::Listener {
+class SettingPanel;
+
+class GameVersionPanel final : public wxPanel {
 public:
 	class Listener {
 	public:
@@ -51,19 +51,18 @@ public:
 	bool removeListener(const Listener & listener);
 	void clearListeners();
 
-	// SettingPanel::Listener Virtuals
-	virtual void settingModified(SettingPanel & settingPanel) override;
-
 private:
 	void notifyGameVersionSettingChanged(SettingPanel & settingPanel);
 	void notifyGameVersionChangesDiscarded();
 	void notifyGameVersionReset();
 	void notifyGameVersionSaved();
 	void onGameVersionModified(GameVersion & gameVersion);
+	void onSettingModified(SettingPanel & settingPanel);
 
 	std::shared_ptr<GameVersion> m_gameVersion;
 	boost::signals2::connection m_gameVersionModifiedConnection;
 	std::vector<SettingPanel *> m_settingsPanels;
+	std::vector<boost::signals2::connection> m_settingModifiedConnections;
 	SettingPanel * m_gamePathSettingPanel;
 	mutable bool m_modified;
 	mutable std::vector<Listener *> m_listeners;

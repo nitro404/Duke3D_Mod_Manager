@@ -4,6 +4,7 @@
 #include <Utilities/StringUtilities.h>
 #include <Utilities/Utilities.h>
 
+#include <boost/signals2.hpp>
 #include <fmt/core.h>
 #include <wx/wxprec.h>
 
@@ -25,13 +26,6 @@ class StringChoiceSettingPanel;
 
 class SettingPanel : public wxPanel {
 public:
-	class Listener {
-	public:
-		virtual ~Listener();
-
-		virtual void settingModified(SettingPanel & settingPanel) = 0;
-	};
-
 	virtual ~SettingPanel();
 
 	const std::string & getName() const;
@@ -44,15 +38,6 @@ public:
 	bool save();
 	void discard();
 	void reset();
-
-	size_t numberOfListeners() const;
-	bool hasListener(const Listener & listener) const;
-	size_t indexOfListener(const Listener & listener) const;
-	Listener * getListener(size_t index) const;
-	bool addListener(Listener & listener);
-	bool removeListener(size_t index);
-	bool removeListener(const Listener & listener);
-	void clearListeners();
 
 	static SettingPanel * createBooleanSettingPanel(bool & setting, bool defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer);
 	static SettingPanel * createBooleanSettingPanel(std::function<bool()> getSettingValueFunction, std::function<void(bool)> setSettingValueFunction, bool defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer);
@@ -83,12 +68,13 @@ public:
 	template <typename E>
 	static SettingPanel * createEnumMultiChoiceSettingPanel(std::function<const std::vector<E> &()> getSettingValueFunction, std::function<bool(E)> hasSettingEntryFunction, std::function<bool(E)> addSettingEntryFunction, std::function<bool(E)> removeSettingEntryFunction, const std::string & name, wxWindow * parent, size_t minimumNumberOfSelectedItems = 0, wxSizer * parentSizer = nullptr);
 
+	boost::signals2::signal<void (SettingPanel & /* settingPanel */)> settingModified;
+
 protected:
 	SettingPanel(const std::string & name, wxWindow * parent);
 
 private:
 	void setModified(bool modified);
-	void notifySettingModified();
 
 	std::string m_name;
 	bool m_modified;
@@ -101,7 +87,6 @@ private:
 	std::function<void()> m_discardFunction;
 	std::function<void()> m_resetFunction;
 	std::function<void(bool)> m_setEditableFunction;
-	std::vector<Listener *> m_listeners;
 };
 
 class StringChoiceSettingPanel final : public SettingPanel {

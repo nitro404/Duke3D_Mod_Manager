@@ -3,7 +3,6 @@
 
 #include "DOSBox/DOSBoxVersionCollection.h"
 #include "Manager/ModManager.h"
-#include "SettingPanel.h"
 
 #include <boost/signals2.hpp>
 #include <wx/wxprec.h>
@@ -19,9 +18,11 @@
 #include <string>
 #include <vector>
 
+class SettingPanel;
+class StringChoiceSettingPanel;
+
 class DOSBoxSettingsPanel final
-	: public wxStaticBox
-	, public SettingPanel::Listener {
+	: public wxStaticBox {
 public:
 	DOSBoxSettingsPanel(std::shared_ptr<ModManager> modManager, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxALIGN_LEFT, const std::string & title = "DOSBox Settings");
 	virtual ~DOSBoxSettingsPanel();
@@ -33,9 +34,6 @@ public:
 	void discardSettings();
 	void resetSettings();
 
-	// SettingPanel::Listener Virtuals
-	virtual void settingModified(SettingPanel & settingPanel) override;
-
 	boost::signals2::signal<void (SettingPanel & /* settingPanel */)> dosboxSettingModified;
 
 private:
@@ -45,7 +43,8 @@ private:
 	void onDOSBoxRemoteServerPortChanged(uint16_t port);
 	void onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection);
 	void onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion);
-
+	void onSettingModified(SettingPanel & settingPanel);
+	
 	std::shared_ptr<ModManager> m_modManager;
 	boost::signals2::connection m_preferredDOSBoxVersionChangedConnection;
 	boost::signals2::connection m_dosboxServerIPAddressChangedConnection;
@@ -54,6 +53,7 @@ private:
 	boost::signals2::connection m_dosboxVersionCollectionSizeChangedConnection;
 	boost::signals2::connection m_dosboxVersionCollectionItemModifiedConnection;
 	std::vector<SettingPanel *> m_settingsPanels;
+	std::vector<boost::signals2::connection> m_settingModifiedConnections;
 	StringChoiceSettingPanel * m_preferredDOSBoxVersionSettingPanel;
 	bool m_modified;
 };

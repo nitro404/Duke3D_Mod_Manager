@@ -3,6 +3,7 @@
 #include "DOSBox/DOSBoxVersion.h"
 #include "DOSBox/DOSBoxVersionCollection.h"
 #include "Project.h"
+#include "SettingPanel.h"
 #include "WXUtilities.h"
 
 #include <fmt/core.h>
@@ -84,15 +85,15 @@ DOSBoxVersionPanel::DOSBoxVersionPanel(std::shared_ptr<DOSBoxVersion> dosboxVers
 	m_dosboxVersionModifiedConnection = m_dosboxVersion->modified.connect(std::bind(&DOSBoxVersionPanel::onDOSBoxVersionModified, this, std::placeholders::_1));
 
 	for(SettingPanel * settingPanel : m_settingsPanels) {
-		settingPanel->addListener(*this);
+		m_settingModifiedConnections.push_back(settingPanel->settingModified.connect(std::bind(&DOSBoxVersionPanel::onSettingModified, this, std::placeholders::_1)));
 	}
 }
 
 DOSBoxVersionPanel::~DOSBoxVersionPanel() {
 	m_dosboxVersionModifiedConnection.disconnect();
 
-	for(SettingPanel * settingPanel : m_settingsPanels) {
-		settingPanel->removeListener(*this);
+	for(boost::signals2::connection & settingModifiedConnection : m_settingModifiedConnections) {
+		settingModifiedConnection.disconnect();
 	}
 }
 
@@ -296,7 +297,7 @@ void DOSBoxVersionPanel::onDOSBoxVersionModified(DOSBoxVersion & dosboxVersion) 
 	update();
 }
 
-void DOSBoxVersionPanel::settingModified(SettingPanel & settingPanel) {
+void DOSBoxVersionPanel::onSettingModified(SettingPanel & settingPanel) {
 	if(settingPanel.isModified()) {
 		m_modified = true;
 
