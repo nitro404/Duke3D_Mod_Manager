@@ -1,7 +1,7 @@
 #ifndef _MOD_BROWSER_PANEL_H_
 #define _MOD_BROWSER_PANEL_H_
 
-#include "Manager/ModManager.h"
+#include "Game/GameType.h"
 #include "Mod/OrganizedModCollection.h"
 
 #include <boost/signals2.hpp>
@@ -18,6 +18,9 @@
 #include <wx/hyperlink.h>
 #include <wx/srchctrl.h>
 
+#include <future>
+
+class DOSBoxVersion;
 class DOSBoxVersionCollection;
 class GameProcessTerminatedEvent;
 class GameVersion;
@@ -26,9 +29,9 @@ class LaunchFailedEvent;
 class Mod;
 class ModAuthorInformation;
 class ModManager;
+class ModMatch;
 
-class ModBrowserPanel final : public wxPanel,
-							  public ModManager::Listener {
+class ModBrowserPanel final : public wxPanel {
 public:
 	ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
 	virtual ~ModBrowserPanel();
@@ -56,6 +59,7 @@ public:
 	void clear();
 	void clearSearch();
 
+private:
 	void onModSearchTextChanged(wxCommandEvent & event);
 	void onModSearchCancelled(wxCommandEvent & event);
 	void onSelectRandomModButtonPressed(wxCommandEvent & event);
@@ -73,21 +77,17 @@ public:
 	void onModGameTypeSelected(wxCommandEvent & event);
 	void onClearButtonPressed(wxCommandEvent & event);
 	void onLaunchButtonPressed(wxCommandEvent & event);
-
-	// ModManager::Listener Virtuals
-	virtual void modSelectionChanged(const std::shared_ptr<Mod> & mod, size_t modVersionIndex, size_t modVersionTypeIndex, size_t modGameVersionIndex) override;
-	virtual void gameTypeChanged(GameType gameType) override;
-	virtual void preferredDOSBoxVersionChanged(const std::shared_ptr<DOSBoxVersion> & dosboxVersion) override;
-	virtual void preferredGameVersionChanged(const std::shared_ptr<GameVersion> & gameVersion) override;
-	virtual void dosboxServerIPAddressChanged(const std::string & ipAddress) override;
-	virtual void dosboxLocalServerPortChanged(uint16_t port) override;
-	virtual void dosboxRemoteServerPortChanged(uint16_t port) override;
-
-private:
 	void onLaunchError(std::string errorMessage);
 	void onGameProcessTerminated(uint64_t nativeExitCode, bool forceTerminated);
 	void onLaunchFailed(LaunchFailedEvent & launchFailedEvent);
 	void onGameProcessEnded(GameProcessTerminatedEvent & gameProcessTerminatedEvent);
+	void onModSelectionChanged(std::shared_ptr<Mod> mod, size_t modVersionIndex, size_t modVersionTypeIndex, size_t modGameVersionIndex);
+	void onGameTypeChanged(GameType gameType);
+	void onPreferredDOSBoxVersionChanged(std::shared_ptr<DOSBoxVersion> dosboxVersion);
+	void onPreferredGameVersionChanged(std::shared_ptr<GameVersion> gameVersion);
+	void onDOSBoxServerIPAddressChanged(std::string ipAddress);
+	void onDOSBoxLocalServerPortChanged(uint16_t port);
+	void onDOSBoxRemoteServerPortChanged(uint16_t port);
 	void onFilterTypeChanged(OrganizedModCollection::FilterType filterType);
 	void onSortOptionsChanged(OrganizedModCollection::SortType sortType, OrganizedModCollection::SortDirection sortDirection);
 	void onSelectedModChanged(std::shared_ptr<Mod> mod);
@@ -108,6 +108,11 @@ private:
 	std::future<bool> m_runSelectedModFuture;
 	boost::signals2::connection m_launchErrorConnection;
 	boost::signals2::connection m_gameProcessTerminatedConnection;
+	boost::signals2::connection m_preferredDOSBoxVersionChangedConnection;
+	boost::signals2::connection m_preferredGameVersionChangedConnection;
+	boost::signals2::connection m_dosboxServerIPAddressChangedConnection;
+	boost::signals2::connection m_dosboxLocalServerPortChangedConnection;
+	boost::signals2::connection m_dosboxRemoteServerPortChangedConnection;
 	boost::signals2::connection m_filterTypeChangedConnection;
 	boost::signals2::connection m_sortOptionsChangedConnection;
 	boost::signals2::connection m_selectedModChangedConnection;

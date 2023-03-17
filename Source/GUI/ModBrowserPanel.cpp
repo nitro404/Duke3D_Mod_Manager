@@ -106,6 +106,11 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	std::shared_ptr<OrganizedModCollection> organizedMods(m_modManager->getOrganizedMods());
 	std::shared_ptr<DOSBoxVersionCollection> dosboxVersions(m_modManager->getDOSBoxVersions());
 	std::shared_ptr<GameVersionCollection> gameVersions(m_modManager->getGameVersions());
+	m_preferredDOSBoxVersionChangedConnection = m_modManager->preferredDOSBoxVersionChanged.connect(std::bind(&ModBrowserPanel::onPreferredDOSBoxVersionChanged, this, std::placeholders::_1));
+	m_preferredGameVersionChangedConnection = m_modManager->preferredGameVersionChanged.connect(std::bind(&ModBrowserPanel::onPreferredGameVersionChanged, this, std::placeholders::_1));
+	m_dosboxServerIPAddressChangedConnection = m_modManager->dosboxServerIPAddressChanged.connect(std::bind(&ModBrowserPanel::onDOSBoxServerIPAddressChanged, this, std::placeholders::_1));
+	m_dosboxLocalServerPortChangedConnection = m_modManager->dosboxLocalServerPortChanged.connect(std::bind(&ModBrowserPanel::onDOSBoxLocalServerPortChanged, this, std::placeholders::_1));
+	m_dosboxRemoteServerPortChangedConnection = m_modManager->dosboxRemoteServerPortChanged.connect(std::bind(&ModBrowserPanel::onDOSBoxRemoteServerPortChanged, this, std::placeholders::_1));
 	m_filterTypeChangedConnection = organizedMods->filterTypeChanged.connect(std::bind(&ModBrowserPanel::onFilterTypeChanged, this, std::placeholders::_1));
 	m_sortOptionsChangedConnection = organizedMods->sortOptionsChanged.connect(std::bind(&ModBrowserPanel::onSortOptionsChanged, this, std::placeholders::_1, std::placeholders::_2));
 	m_selectedModChangedConnection = organizedMods->selectedModChanged.connect(std::bind(&ModBrowserPanel::onSelectedModChanged, this, std::placeholders::_1));
@@ -120,8 +125,6 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_dosboxVersionCollectionItemModifiedConnection = dosboxVersions->itemModified.connect(std::bind(&ModBrowserPanel::onDOSBoxVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
 	m_gameVersionCollectionSizeChangedConnection = gameVersions->sizeChanged.connect(std::bind(&ModBrowserPanel::onGameVersionCollectionSizeChanged, this, std::placeholders::_1));
 	m_gameVersionCollectionItemModifiedConnection = gameVersions->itemModified.connect(std::bind(&ModBrowserPanel::onGameVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
-
-	m_modManager->addListener(*this);
 
 	m_launchErrorConnection = m_modManager->launchError.connect(std::bind(&ModBrowserPanel::onLaunchError, this, std::placeholders::_1));
 	m_gameProcessTerminatedConnection = m_modManager->gameProcessTerminated.connect(std::bind(&ModBrowserPanel::onGameProcessTerminated, this, std::placeholders::_1, std::placeholders::_2));
@@ -421,6 +424,16 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 ModBrowserPanel::~ModBrowserPanel() {
 	m_launchErrorConnection.disconnect();
 	m_gameProcessTerminatedConnection.disconnect();
+	m_preferredDOSBoxVersionChangedConnection.disconnect();
+	m_preferredGameVersionChangedConnection.disconnect();
+	m_dosboxServerIPAddressChangedConnection.disconnect();
+	m_dosboxLocalServerPortChangedConnection.disconnect();
+	m_dosboxRemoteServerPortChangedConnection.disconnect();
+	m_preferredDOSBoxVersionChangedConnection.disconnect();
+	m_preferredGameVersionChangedConnection.disconnect();
+	m_dosboxServerIPAddressChangedConnection.disconnect();
+	m_dosboxLocalServerPortChangedConnection.disconnect();
+	m_dosboxRemoteServerPortChangedConnection.disconnect();
 	m_filterTypeChangedConnection.disconnect();
 	m_sortOptionsChangedConnection.disconnect();
 	m_selectedModChangedConnection.disconnect();
@@ -435,8 +448,6 @@ ModBrowserPanel::~ModBrowserPanel() {
 	m_dosboxVersionCollectionItemModifiedConnection.disconnect();
 	m_gameVersionCollectionSizeChangedConnection.disconnect();
 	m_gameVersionCollectionItemModifiedConnection.disconnect();
-
-	m_modManager->removeListener(*this);
 }
 
 void ModBrowserPanel::update() {
@@ -1381,36 +1392,36 @@ void ModBrowserPanel::onLaunchFailed(LaunchFailedEvent & launchFailedEvent) { }
 
 void ModBrowserPanel::onGameProcessEnded(GameProcessTerminatedEvent & gameProcessTerminatedEvent) { }
 
-void ModBrowserPanel::modSelectionChanged(const std::shared_ptr<Mod> & mod, size_t modVersionIndex, size_t modVersionTypeIndex, size_t modGameVersionIndex) {
+void ModBrowserPanel::onModSelectionChanged(std::shared_ptr<Mod> mod, size_t modVersionIndex, size_t modVersionTypeIndex, size_t modGameVersionIndex) {
 	updateModSelection();
 
 	m_clearButton->Enable();
 }
 
-void ModBrowserPanel::gameTypeChanged(GameType gameType) {
+void ModBrowserPanel::onGameTypeChanged(GameType gameType) {
 	updateModGameType();
 	updateDOSBoxServerSettings();
 }
 
-void ModBrowserPanel::preferredDOSBoxVersionChanged(const std::shared_ptr<DOSBoxVersion> & dosboxVersion) {
+void ModBrowserPanel::onPreferredDOSBoxVersionChanged(std::shared_ptr<DOSBoxVersion> dosboxVersion) {
 	updatePreferredDOSBoxVersion();
 }
 
-void ModBrowserPanel::preferredGameVersionChanged(const std::shared_ptr<GameVersion> & gameVersion) {
+void ModBrowserPanel::onPreferredGameVersionChanged(std::shared_ptr<GameVersion> gameVersion) {
 	updatePreferredGameVersion();
 }
 
-void ModBrowserPanel::dosboxServerIPAddressChanged(const std::string & ipAddress) {
+void ModBrowserPanel::onDOSBoxServerIPAddressChanged(std::string ipAddress) {
 	m_ipAddressTextField->SetValue(ipAddress);
 }
 
-void ModBrowserPanel::dosboxLocalServerPortChanged(uint16_t port) {
+void ModBrowserPanel::onDOSBoxLocalServerPortChanged(uint16_t port) {
 	if(m_modManager->getGameType() == GameType::Server) {
 		m_portTextField->SetValue(std::to_string(port));
 	}
 }
 
-void ModBrowserPanel::dosboxRemoteServerPortChanged(uint16_t port) {
+void ModBrowserPanel::onDOSBoxRemoteServerPortChanged(uint16_t port) {
 	if(m_modManager->getGameType() == GameType::Client) {
 		m_portTextField->SetValue(std::to_string(port));
 	}

@@ -613,7 +613,7 @@ void ModManager::setGameType(GameType gameType) {
 
 		SettingsManager::getInstance()->gameType = m_gameType;
 
-		notifyGameTypeChanged();
+		gameTypeChanged(m_gameType);
 	}
 }
 
@@ -682,7 +682,7 @@ bool ModManager::setPreferredDOSBoxVersion(std::shared_ptr<DOSBoxVersion> dosbox
 		m_preferredDOSBoxVersion = dosboxVersion;
 		SettingsManager::getInstance()->preferredDOSBoxVersion = m_preferredDOSBoxVersion->getName();
 
-		notifyPreferredDOSBoxVersionChanged();
+		preferredDOSBoxVersionChanged(m_preferredDOSBoxVersion);
 	}
 
 	return true;
@@ -768,8 +768,8 @@ bool ModManager::setPreferredGameVersion(std::shared_ptr<GameVersion> gameVersio
 			}
 		}
 
-		notifyModSelectionChanged();
-		notifyPreferredGameVersionChanged();
+		modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
+		preferredGameVersionChanged(m_preferredGameVersion);
 	}
 
 	return true;
@@ -821,7 +821,7 @@ void ModManager::setDOSBoxServerIPAddress(const std::string & ipAddress) {
 	if(!Utilities::areStringsEqual(settings->dosboxServerIPAddress, formattedIPAddress)) {
 		settings->dosboxServerIPAddress = formattedIPAddress;
 
-		notifyDOSBoxServerIPAddressChanged();
+		dosboxServerIPAddressChanged(settings->dosboxServerIPAddress);
 	}
 }
 
@@ -839,7 +839,7 @@ void ModManager::setDOSBoxLocalServerPort(uint16_t port) {
 	if(settings->dosboxLocalServerPort != port) {
 		settings->dosboxLocalServerPort = port;
 
-		notifyDOSBoxLocalServerPortChanged();
+		dosboxLocalServerPortChanged(settings->dosboxLocalServerPort);
 	}
 }
 
@@ -857,7 +857,7 @@ void ModManager::setDOSBoxRemoteServerPort(uint16_t port) {
 	if(settings->dosboxRemoteServerPort != port) {
 		settings->dosboxRemoteServerPort = port;
 
-		notifyDOSBoxRemoteServerPortChanged();
+		dosboxRemoteServerPortChanged(settings->dosboxRemoteServerPort);
 	}
 }
 
@@ -968,7 +968,7 @@ bool ModManager::setSelectedMod(std::shared_ptr<Mod> mod) {
 		m_selectedModVersionTypeIndex = std::numeric_limits<size_t>::max();
 		m_selectedModGameVersionIndex = std::numeric_limits<size_t>::max();
 
-		notifyModSelectionChanged();
+		modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
 
 		return false;
 	}
@@ -1012,7 +1012,7 @@ bool ModManager::setSelectedMod(std::shared_ptr<Mod> mod) {
 			}
 		}
 
-		notifyModSelectionChanged();
+		modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
 	}
 
 	return true;
@@ -1062,7 +1062,7 @@ bool ModManager::setSelectedModFromMatch(const ModMatch & modMatch) {
 		}
 	}
 
-	notifyModSelectionChanged();
+	modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
 
 	return true;
 }
@@ -1071,16 +1071,16 @@ bool ModManager::setSelectedModVersionIndex(size_t modVersionIndex) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	if(modVersionIndex == std::numeric_limits<size_t>::max()) {
-		bool modSelectionChanged = m_selectedModVersionIndex != std::numeric_limits<size_t>::max() ||
-								   m_selectedModVersionTypeIndex != std::numeric_limits<size_t>::max() ||
-								   m_selectedModGameVersionIndex != std::numeric_limits<size_t>::max();
+		bool didModSelectionChange = m_selectedModVersionIndex != std::numeric_limits<size_t>::max() ||
+									 m_selectedModVersionTypeIndex != std::numeric_limits<size_t>::max() ||
+									 m_selectedModGameVersionIndex != std::numeric_limits<size_t>::max();
 
 		m_selectedModVersionIndex = std::numeric_limits<size_t>::max();
 		m_selectedModVersionTypeIndex = std::numeric_limits<size_t>::max();
 		m_selectedModGameVersionIndex = std::numeric_limits<size_t>::max();
 
-		if(modSelectionChanged) {
-			notifyModSelectionChanged();
+		if(didModSelectionChange) {
+			modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
 		}
 
 		return true;
@@ -1122,7 +1122,7 @@ bool ModManager::setSelectedModVersionIndex(size_t modVersionIndex) {
 			}
 		}
 
-		notifyModSelectionChanged();
+		modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
 	}
 
 	return true;
@@ -1139,7 +1139,7 @@ bool ModManager::setSelectedModVersionTypeIndex(size_t modVersionTypeIndex) {
 		m_selectedModGameVersionIndex = std::numeric_limits<size_t>::max();
 
 		if(modVersionTypeChanged) {
-			notifyModSelectionChanged();
+			modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
 		}
 
 		return true;
@@ -1173,7 +1173,7 @@ bool ModManager::setSelectedModVersionTypeIndex(size_t modVersionTypeIndex) {
 			}
 		}
 
-		notifyModSelectionChanged();
+		modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
 	}
 
 	return true;
@@ -1188,7 +1188,7 @@ bool ModManager::setSelectedModGameVersionIndex(size_t modGameVersionIndex) {
 		m_selectedModGameVersionIndex = std::numeric_limits<size_t>::max();
 
 		if(modGameVersionChanged) {
-			notifyModSelectionChanged();
+			modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
 		}
 
 		return true;
@@ -1215,7 +1215,7 @@ bool ModManager::setSelectedModGameVersionIndex(size_t modGameVersionIndex) {
 	if(m_selectedModGameVersionIndex != newModGameVersionIndex) {
 		m_selectedModGameVersionIndex = newModGameVersionIndex;
 
-		notifyModSelectionChanged();
+		modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
 	}
 
 	return true;
@@ -1557,7 +1557,7 @@ void ModManager::clearSelectedMod() {
 	m_selectedModVersionTypeIndex = std::numeric_limits<size_t>::max();
 
 	if(selectedModChanged) {
-		notifyModSelectionChanged();
+		modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
 	}
 }
 
@@ -4282,154 +4282,6 @@ std::string ModManager::generateDOSBoxTemplateScriptFileData(GameType gameType) 
 	templateStream << "<EXIT|EXIT>" << std::endl;
 
 	return templateStream.str();
-}
-
-ModManager::Listener::~Listener() { }
-
-size_t ModManager::numberOfListeners() const {
-	std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
-	return m_listeners.size();
-}
-
-bool ModManager::hasListener(const Listener & listener) const {
-	std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
-	for(std::vector<Listener *>::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i) {
-		if(*i == &listener) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-size_t ModManager::indexOfListener(const Listener & listener) const {
-	std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
-	for(size_t i = 0; i < m_listeners.size(); i++) {
-		if(m_listeners[i] == &listener) {
-			return i;
-		}
-	}
-
-	return std::numeric_limits<size_t>::max();
-}
-
-ModManager::Listener * ModManager::getListener(size_t index) const {
-	std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
-	if(index >= m_listeners.size()) {
-		return nullptr;
-	}
-
-	return m_listeners[index];
-}
-
-bool ModManager::addListener(Listener & listener) {
-	std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
-	if(!hasListener(listener)) {
-		m_listeners.push_back(&listener);
-
-		return true;
-	}
-
-	return false;
-}
-
-bool ModManager::removeListener(size_t index) {
-	std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
-	if(index >= m_listeners.size()) {
-		return false;
-	}
-
-	m_listeners.erase(m_listeners.begin() + index);
-
-	return true;
-}
-
-bool ModManager::removeListener(const Listener & listener) {
-	std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
-	for(std::vector<Listener *>::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i) {
-		if(*i == &listener) {
-			m_listeners.erase(i);
-
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void ModManager::clearListeners() {
-	std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
-	m_listeners.clear();
-}
-
-void ModManager::notifyModSelectionChanged() {
-	std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
-	for(Listener * listener : m_listeners) {
-		listener->modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
-	}
-}
-
-void ModManager::notifyGameTypeChanged() {
-	std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
-	for(Listener * listener : m_listeners) {
-		listener->gameTypeChanged(m_gameType);
-	}
-}
-
-void ModManager::notifyPreferredDOSBoxVersionChanged() {
-	std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
-	for(Listener * listener : m_listeners) {
-		listener->preferredDOSBoxVersionChanged(m_preferredDOSBoxVersion);
-	}
-}
-
-void ModManager::notifyPreferredGameVersionChanged() {
-	std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
-	for(Listener * listener : m_listeners) {
-		listener->preferredGameVersionChanged(m_preferredGameVersion);
-	}
-}
-
-void ModManager::notifyDOSBoxServerIPAddressChanged() {
-	std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
-	SettingsManager * settings = SettingsManager::getInstance();
-
-	for(Listener * listener : m_listeners) {
-		listener->dosboxServerIPAddressChanged(settings->dosboxServerIPAddress);
-	}
-}
-
-void ModManager::notifyDOSBoxLocalServerPortChanged() {
-	std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
-	SettingsManager * settings = SettingsManager::getInstance();
-
-	for(Listener * listener : m_listeners) {
-		listener->dosboxLocalServerPortChanged(settings->dosboxLocalServerPort);
-	}
-}
-
-void ModManager::notifyDOSBoxRemoteServerPortChanged() {
-	std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
-	SettingsManager * settings = SettingsManager::getInstance();
-
-	for(Listener * listener : m_listeners) {
-		listener->dosboxRemoteServerPortChanged(settings->dosboxRemoteServerPort);
-	}
 }
 
 void ModManager::onSelectedModChanged(std::shared_ptr<Mod> mod) {

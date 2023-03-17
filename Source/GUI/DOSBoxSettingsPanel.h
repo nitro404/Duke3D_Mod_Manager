@@ -21,8 +21,7 @@
 
 class DOSBoxSettingsPanel final
 	: public wxStaticBox
-	, public SettingPanel::Listener
-	, public ModManager::Listener {
+	, public SettingPanel::Listener {
 public:
 	class Listener {
 	public:
@@ -53,20 +52,19 @@ public:
 	// SettingPanel::Listener Virtuals
 	virtual void settingModified(SettingPanel & settingPanel) override;
 
-	// ModManager::Listener Virtuals
-	virtual void modSelectionChanged(const std::shared_ptr<Mod> & mod, size_t modVersionIndex, size_t modVersionTypeIndex, size_t modGameVersionIndex) override;
-	virtual void gameTypeChanged(GameType gameType) override;
-	virtual void preferredDOSBoxVersionChanged(const std::shared_ptr<DOSBoxVersion> & dosboxVersion) override;
-	virtual void preferredGameVersionChanged(const std::shared_ptr<GameVersion> & gameVersion) override;
-	virtual void dosboxServerIPAddressChanged(const std::string & ipAddress) override;
-	virtual void dosboxLocalServerPortChanged(uint16_t port) override;
-	virtual void dosboxRemoteServerPortChanged(uint16_t port) override;
-
 private:
+	void onPreferredDOSBoxVersionChanged(std::shared_ptr<DOSBoxVersion> dosboxVersion);
+	void onDOSBoxServerIPAddressChanged(std::string ipAddress);
+	void onDOSBoxLocalServerPortChanged(uint16_t port);
+	void onDOSBoxRemoteServerPortChanged(uint16_t port);
 	void onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection);
 	void onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion);
 
 	std::shared_ptr<ModManager> m_modManager;
+	boost::signals2::connection m_preferredDOSBoxVersionChangedConnection;
+	boost::signals2::connection m_dosboxServerIPAddressChangedConnection;
+	boost::signals2::connection m_dosboxLocalServerPortChangedConnection;
+	boost::signals2::connection m_dosboxRemoteServerPortChangedConnection;
 	boost::signals2::connection m_dosboxVersionCollectionSizeChangedConnection;
 	boost::signals2::connection m_dosboxVersionCollectionItemModifiedConnection;
 	std::vector<SettingPanel *> m_settingsPanels;

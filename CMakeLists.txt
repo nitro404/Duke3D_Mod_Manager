@@ -37,6 +37,12 @@ if(GUI_ENABLED)
 	set(_GUI_LIBRARIES ${wxWidgets_LIBRARIES})
 endif()
 
+if(MSVC)
+	add_compile_options(/bigobj)
+else()
+	add_compile_options(-Wa,-mbig-obj)
+endif()
+
 add_executable(${PROJECT_NAME} ${_EXECUTABLE_TYPE} ${ALL_FILES})
 
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})

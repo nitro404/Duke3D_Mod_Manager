@@ -42,19 +42,6 @@ class ScriptArguments;
 
 class ModManager final : public Application {
 public:
-	class Listener {
-	public:
-		virtual ~Listener();
-
-		virtual void modSelectionChanged(const std::shared_ptr<Mod> & mod, size_t modVersionIndex, size_t modVersionTypeIndex, size_t modGameVersionIndex) = 0;
-		virtual void gameTypeChanged(GameType gameType) = 0;
-		virtual void preferredDOSBoxVersionChanged(const std::shared_ptr<DOSBoxVersion> & dosboxVersion) = 0;
-		virtual void preferredGameVersionChanged(const std::shared_ptr<GameVersion> & gameVersion) = 0;
-		virtual void dosboxServerIPAddressChanged(const std::string & ipAddress) = 0;
-		virtual void dosboxLocalServerPortChanged(uint16_t port) = 0;
-		virtual void dosboxRemoteServerPortChanged(uint16_t port) = 0;
-	};
-
 	ModManager();
 	virtual ~ModManager();
 
@@ -134,15 +121,6 @@ public:
 	std::future<bool> runSelectedModAsync(std::shared_ptr<GameVersion> alternateGameVersion = nullptr, std::shared_ptr<ModGameVersion> alternateModGameVersion = nullptr);
 	bool runSelectedModAndWait(std::shared_ptr<GameVersion> alternateGameVersion = nullptr, std::shared_ptr<ModGameVersion> alternateModGameVersion = nullptr);
 
-	size_t numberOfListeners() const;
-	bool hasListener(const Listener & listener) const;
-	size_t indexOfListener(const Listener & listener) const;
-	Listener * getListener(size_t index) const;
-	bool addListener(Listener & listener);
-	bool removeListener(size_t index);
-	bool removeListener(const Listener & listener);
-	void clearListeners();
-
 	static std::string getArgumentHelpInfo();
 
 	boost::signals2::signal<void ()> initialized;
@@ -151,6 +129,13 @@ public:
 	boost::signals2::signal<bool (uint8_t /* initializationStep */, uint8_t /* initializationStepCount */, std::string /* description */)> initializationProgress;
 	boost::signals2::signal<void (std::string)> launchError;
 	boost::signals2::signal<void (uint64_t /* nativeExitCode */, bool /* forceTerminated */)> gameProcessTerminated;
+	boost::signals2::signal<void (std::shared_ptr<Mod> /* mod */, size_t /* modVersionIndex */, size_t /* modVersionTypeIndex */, size_t /* modGameVersionIndex */)> modSelectionChanged;
+	boost::signals2::signal<void (GameType /* gameType */)> gameTypeChanged;
+	boost::signals2::signal<void (std::shared_ptr<DOSBoxVersion> /* dosboxVersion */)> preferredDOSBoxVersionChanged;
+	boost::signals2::signal<void (std::shared_ptr<GameVersion> /* gameVersion */)> preferredGameVersionChanged;
+	boost::signals2::signal<void (std::string /* ipAddress */)> dosboxServerIPAddressChanged;
+	boost::signals2::signal<void (uint16_t /* port */)> dosboxLocalServerPortChanged;
+	boost::signals2::signal<void (uint16_t /* port */)> dosboxRemoteServerPortChanged;
 
 	static const GameType DEFAULT_GAME_TYPE;
 	static const std::string DEFAULT_PREFERRED_DOSBOX_VERSION;
@@ -191,13 +176,6 @@ private:
 	bool removeSymlinksOrTemporaryFiles(const GameVersion & gameVersion, const std::vector<std::string> * temporaryCopiedFilePaths = nullptr);
 	size_t deleteFilesWithSuffix(const std::string & suffix, const std::string & path = "");
 	size_t renameFilesWithSuffixTo(const std::string & fromSuffix, const std::string & toSuffix, const std::string & path = "");
-	void notifyModSelectionChanged();
-	void notifyGameTypeChanged();
-	void notifyPreferredDOSBoxVersionChanged();
-	void notifyPreferredGameVersionChanged();
-	void notifyDOSBoxServerIPAddressChanged();
-	void notifyDOSBoxLocalServerPortChanged();
-	void notifyDOSBoxRemoteServerPortChanged();
 	void onSelectedModChanged(std::shared_ptr<Mod> mod);
 	void onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection);
 	void onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion);
@@ -234,7 +212,6 @@ private:
 	std::shared_ptr<OrganizedModCollection> m_organizedMods;
 	boost::signals2::connection m_selectedModChangedConnection;
 	std::unique_ptr<Process> m_gameProcess;
-	std::vector<Listener *> m_listeners;
 	uint8_t m_initializationStep;
 	mutable std::recursive_mutex m_mutex;
 

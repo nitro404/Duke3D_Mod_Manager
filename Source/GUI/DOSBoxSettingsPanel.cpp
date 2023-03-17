@@ -37,8 +37,10 @@ DOSBoxSettingsPanel::DOSBoxSettingsPanel(std::shared_ptr<ModManager> modManager,
 	dosboxSettingsBoxSizer->Add(dosboxSettingsPanel, 1, wxEXPAND | wxALL, 20);
 	SetSizer(dosboxSettingsBoxSizer);
 
-	m_modManager->addListener(*this);
-
+	m_preferredDOSBoxVersionChangedConnection = modManager->preferredDOSBoxVersionChanged.connect(std::bind(&DOSBoxSettingsPanel::onPreferredDOSBoxVersionChanged, this, std::placeholders::_1));
+	m_dosboxServerIPAddressChangedConnection = modManager->dosboxServerIPAddressChanged.connect(std::bind(&DOSBoxSettingsPanel::onDOSBoxServerIPAddressChanged, this, std::placeholders::_1));
+	m_dosboxLocalServerPortChangedConnection = modManager->dosboxLocalServerPortChanged.connect(std::bind(&DOSBoxSettingsPanel::onDOSBoxLocalServerPortChanged, this, std::placeholders::_1));
+	m_dosboxRemoteServerPortChangedConnection = modManager->dosboxRemoteServerPortChanged.connect(std::bind(&DOSBoxSettingsPanel::onDOSBoxRemoteServerPortChanged, this, std::placeholders::_1));
 	m_dosboxVersionCollectionSizeChangedConnection = dosboxVersions->sizeChanged.connect(std::bind(&DOSBoxSettingsPanel::onDOSBoxVersionCollectionSizeChanged, this, std::placeholders::_1));
 	m_dosboxVersionCollectionItemModifiedConnection = dosboxVersions->itemModified.connect(std::bind(&DOSBoxSettingsPanel::onDOSBoxVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
 
@@ -48,10 +50,12 @@ DOSBoxSettingsPanel::DOSBoxSettingsPanel(std::shared_ptr<ModManager> modManager,
 }
 
 DOSBoxSettingsPanel::~DOSBoxSettingsPanel() {
+	m_preferredDOSBoxVersionChangedConnection.disconnect();
+	m_dosboxServerIPAddressChangedConnection.disconnect();
+	m_dosboxLocalServerPortChangedConnection.disconnect();
+	m_dosboxRemoteServerPortChangedConnection.disconnect();
 	m_dosboxVersionCollectionSizeChangedConnection.disconnect();
 	m_dosboxVersionCollectionItemModifiedConnection.disconnect();
-
-	m_modManager->removeListener(*this);
 
 	for(SettingPanel * settingPanel : m_settingsPanels) {
 		settingPanel->removeListener(*this);
@@ -230,24 +234,18 @@ void DOSBoxSettingsPanel::onDOSBoxVersionCollectionItemModified(DOSBoxVersionCol
 	m_preferredDOSBoxVersionSettingPanel->setChoices(dosboxVersionCollection.getDOSBoxVersionDisplayNames(false));
 }
 
-void DOSBoxSettingsPanel::modSelectionChanged(const std::shared_ptr<Mod> & mod, size_t modVersionIndex, size_t modVersionTypeIndex, size_t modGameVersionIndex) { }
-
-void DOSBoxSettingsPanel::gameTypeChanged(GameType gameType) { }
-
-void DOSBoxSettingsPanel::preferredDOSBoxVersionChanged(const std::shared_ptr<DOSBoxVersion> & dosboxVersion) {
+void DOSBoxSettingsPanel::onPreferredDOSBoxVersionChanged(std::shared_ptr<DOSBoxVersion> dosboxVersion) {
 	updateSettings();
 }
 
-void DOSBoxSettingsPanel::preferredGameVersionChanged(const std::shared_ptr<GameVersion> & gameVersion) { }
-
-void DOSBoxSettingsPanel::dosboxServerIPAddressChanged(const std::string & ipAddress) {
+void DOSBoxSettingsPanel::onDOSBoxServerIPAddressChanged(std::string ipAddress) {
 	updateSettings();
 }
 
-void DOSBoxSettingsPanel::dosboxLocalServerPortChanged(uint16_t port) {
+void DOSBoxSettingsPanel::onDOSBoxLocalServerPortChanged(uint16_t port) {
 	updateSettings();
 }
 
-void DOSBoxSettingsPanel::dosboxRemoteServerPortChanged(uint16_t port) {
+void DOSBoxSettingsPanel::onDOSBoxRemoteServerPortChanged(uint16_t port) {
 	updateSettings();
 }
