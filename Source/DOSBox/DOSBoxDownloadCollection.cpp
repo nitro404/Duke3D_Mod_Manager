@@ -154,7 +154,7 @@ bool DOSBoxDownloadCollection::addDownload(const DOSBoxDownload & download) {
 
 	m_downloads.push_back(std::make_shared<DOSBoxDownload>(download));
 
-	notifyCollectionChanged();
+	updated(*this);
 
 	return true;
 }
@@ -166,7 +166,7 @@ bool DOSBoxDownloadCollection::removeDownload(size_t index) {
 
 	m_downloads.erase(m_downloads.begin() + index);
 
-	notifyCollectionChanged();
+	updated(*this);
 
 	return true;
 }
@@ -176,7 +176,7 @@ bool DOSBoxDownloadCollection::removeDownload(const DOSBoxDownload & download) {
 		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), download.getName())) {
 			m_downloads.erase(i);
 
-			notifyCollectionChanged();
+			updated(*this);
 
 			return true;
 		}
@@ -194,7 +194,7 @@ bool DOSBoxDownloadCollection::removeDownloadWithName(const std::string & name) 
 		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
 			m_downloads.erase(i);
 
-			notifyCollectionChanged();
+			updated(*this);
 
 			return true;
 		}
@@ -206,7 +206,7 @@ bool DOSBoxDownloadCollection::removeDownloadWithName(const std::string & name) 
 void DOSBoxDownloadCollection::clearDownloads() {
 	m_downloads.clear();
 
-	notifyCollectionChanged();
+	updated(*this);
 }
 
 rapidjson::Document DOSBoxDownloadCollection::toJSON() const {
@@ -292,8 +292,6 @@ std::unique_ptr<DOSBoxDownloadCollection> DOSBoxDownloadCollection::parseFrom(co
 		newDOSBoxDownloadCollection->m_downloads.push_back(std::shared_ptr<DOSBoxDownload>(newDownload.release()));
 	}
 
-	newDOSBoxDownloadCollection->notifyCollectionChanged();
-
 	return newDOSBoxDownloadCollection;
 }
 
@@ -342,7 +340,7 @@ bool DOSBoxDownloadCollection::loadFromJSON(const std::string & filePath) {
 
 	m_downloads = std::move(modCollection->m_downloads);
 
-	notifyCollectionChanged();
+	updated(*this);
 
 	return true;
 }
@@ -385,82 +383,6 @@ bool DOSBoxDownloadCollection::saveToJSON(const std::string & filePath, bool ove
 	fileStream.close();
 
 	return true;
-}
-
-DOSBoxDownloadCollection::Listener::~Listener() { }
-
-size_t DOSBoxDownloadCollection::numberOfListeners() const {
-	return m_listeners.size();
-}
-
-bool DOSBoxDownloadCollection::hasListener(const Listener & listener) const {
-	for(std::vector<Listener *>::const_iterator i = m_listeners.cbegin(); i != m_listeners.cend(); ++i) {
-		if(*i == &listener) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-size_t DOSBoxDownloadCollection::indexOfListener(const Listener & listener) const {
-	for(size_t i = 0; i < m_listeners.size(); i++) {
-		if(m_listeners[i] == &listener) {
-			return i;
-		}
-	}
-
-	return std::numeric_limits<size_t>::max();
-}
-
-DOSBoxDownloadCollection::Listener * DOSBoxDownloadCollection::getListener(size_t index) const {
-	if(index >= m_listeners.size()) {
-		return nullptr;
-	}
-
-	return m_listeners[index];
-}
-
-bool DOSBoxDownloadCollection::addListener(Listener & listener) {
-	if(!hasListener(listener)) {
-		m_listeners.push_back(&listener);
-
-		return true;
-	}
-
-	return false;
-}
-
-bool DOSBoxDownloadCollection::removeListener(size_t index) {
-	if(index >= m_listeners.size()) {
-		return false;
-	}
-
-	m_listeners.erase(m_listeners.cbegin() + index);
-
-	return true;
-}
-
-bool DOSBoxDownloadCollection::removeListener(const Listener & listener) {
-	for(std::vector<Listener *>::const_iterator i = m_listeners.cbegin(); i != m_listeners.cend(); ++i) {
-		if(*i == &listener) {
-			m_listeners.erase(i);
-
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void DOSBoxDownloadCollection::clearListeners() {
-	m_listeners.clear();
-}
-
-void DOSBoxDownloadCollection::notifyCollectionChanged() {
-	for(Listener * listener : m_listeners) {
-		listener->dosboxDownloadCollectionUpdated(*this);
-	}
 }
 
 bool DOSBoxDownloadCollection::isValid() const {

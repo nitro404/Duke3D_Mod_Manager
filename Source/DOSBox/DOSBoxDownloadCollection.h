@@ -2,10 +2,10 @@
 #define _DOSBOX_DOWNLOAD_COLLECTION_H_
 
 #include "DOSBoxDownloadFile.h"
-#include "DOSBoxVersion.h"
 
 #include <Platform/DeviceInformationBridge.h>
 
+#include <boost/signals2.hpp>
 #include <rapidjson/document.h>
 
 #include <cstdint>
@@ -18,13 +18,6 @@ class DOSBoxDownload;
 
 class DOSBoxDownloadCollection final {
 public:
-	class Listener {
-	public:
-		virtual ~Listener();
-
-		virtual void dosboxDownloadCollectionUpdated(DOSBoxDownloadCollection & dosboxDownloadCollection) = 0;
-	};
-
 	DOSBoxDownloadCollection();
 	DOSBoxDownloadCollection(DOSBoxDownloadCollection && c) noexcept;
 	DOSBoxDownloadCollection(const DOSBoxDownloadCollection & c);
@@ -55,28 +48,18 @@ public:
 	bool saveTo(const std::string & filePath, bool overwrite = true) const;
 	bool saveToJSON(const std::string & filePath, bool overwrite = true) const;
 
-	size_t numberOfListeners() const;
-	bool hasListener(const Listener & listener) const;
-	size_t indexOfListener(const Listener & listener) const;
-	Listener * getListener(size_t index) const;
-	bool addListener(Listener & listener);
-	bool removeListener(size_t index);
-	bool removeListener(const Listener & listener);
-	void clearListeners();
-
 	bool isValid() const;
 	static bool isValid(const DOSBoxDownloadCollection * c);
 
 	bool operator == (const DOSBoxDownloadCollection & c) const;
 	bool operator != (const DOSBoxDownloadCollection & c) const;
 
+	boost::signals2::signal<void (DOSBoxDownloadCollection & /* dosboxDownloads */)> updated;
+
 	static const std::string FILE_FORMAT_VERSION;
 
 private:
-	void notifyCollectionChanged();
-
 	std::vector<std::shared_ptr<DOSBoxDownload>> m_downloads;
-	std::vector<Listener *> m_listeners;
 };
 
 #endif // _DOSBOX_DOWNLOAD_COLLECTION_H_
