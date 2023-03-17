@@ -3,7 +3,6 @@
 #include "Game/GameVersion.h"
 #include "Game/GameVersionCollection.h"
 #include "Mod.h"
-#include "ModCollectionListener.h"
 #include "ModDownload.h"
 #include "ModFile.h"
 #include "ModGameVersion.h"
@@ -42,15 +41,12 @@ static constexpr const char * JSON_FILE_FORMAT_VERSION_PROPERTY_NAME("fileFormat
 const std::string ModCollection::GAME_ID("duke_nukem_3d");
 const std::string ModCollection::FILE_FORMAT_VERSION("1.0.0");
 
-ModCollection::ModCollection()
-	: ModCollectionBroadcaster() { }
+ModCollection::ModCollection() { }
 
 ModCollection::ModCollection(ModCollection && m) noexcept
-	: ModCollectionBroadcaster(std::move(m))
-	, m_mods(std::move(m.m_mods)) { }
+	: m_mods(std::move(m.m_mods)) { }
 
-ModCollection::ModCollection(const ModCollection & m)
-	: ModCollectionBroadcaster(m) {
+ModCollection::ModCollection(const ModCollection & m) {
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m.m_mods.begin(); i != m.m_mods.end(); ++i) {
 		m_mods.push_back(std::make_shared<Mod>(**i));
 	}
@@ -58,8 +54,6 @@ ModCollection::ModCollection(const ModCollection & m)
 
 ModCollection & ModCollection::operator = (ModCollection && m) noexcept {
 	if(this != &m) {
-		ModCollectionBroadcaster::operator = (m);
-
 		m_mods = std::move(m.m_mods);
 	}
 
@@ -67,8 +61,6 @@ ModCollection & ModCollection::operator = (ModCollection && m) noexcept {
 }
 
 ModCollection & ModCollection::operator = (const ModCollection & m) {
-	ModCollectionBroadcaster::operator = (m);
-
 	m_mods.clear();
 
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m.m_mods.begin(); i != m.m_mods.end(); ++i) {
@@ -78,7 +70,7 @@ ModCollection & ModCollection::operator = (const ModCollection & m) {
 	return *this;
 }
 
-ModCollection::~ModCollection() { }
+ModCollection::~ModCollection() = default;
 
 size_t ModCollection::numberOfMods() const {
 	return m_mods.size();
@@ -205,7 +197,7 @@ bool ModCollection::addMod(const Mod & mod) {
 
 	m_mods.push_back(std::make_shared<Mod>(mod));
 
-	notifyCollectionChanged();
+	updated(*this);
 
 	return true;
 }
@@ -217,7 +209,7 @@ bool ModCollection::removeMod(size_t index) {
 
 	m_mods.erase(m_mods.begin() + index);
 
-	notifyCollectionChanged();
+	updated(*this);
 
 	return true;
 }
@@ -227,7 +219,7 @@ bool ModCollection::removeMod(const Mod & mod) {
 		if(Utilities::areStringsEqualIgnoreCase((*i)->getID(), mod.getID())) {
 			m_mods.erase(i);
 
-			notifyCollectionChanged();
+			updated(*this);
 
 			return true;
 		}
@@ -245,7 +237,7 @@ bool ModCollection::removeMod(const std::string & id) {
 		if(Utilities::areStringsEqualIgnoreCase((*i)->getID(), id)) {
 			m_mods.erase(i);
 
-			notifyCollectionChanged();
+			updated(*this);
 
 			return true;
 		}
@@ -263,7 +255,7 @@ bool ModCollection::removeModWithName(const std::string & name) {
 		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
 			m_mods.erase(i);
 
-			notifyCollectionChanged();
+			updated(*this);
 
 			return true;
 		}
@@ -275,7 +267,7 @@ bool ModCollection::removeModWithName(const std::string & name) {
 void ModCollection::clearMods() {
 	m_mods.clear();
 
-	notifyCollectionChanged();
+	updated(*this);
 }
 
 rapidjson::Document ModCollection::toJSON() const {
@@ -400,8 +392,6 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const rapidjson::Value &
 		newModCollection->m_mods.push_back(std::shared_ptr<Mod>(newMod.release()));
 	}
 
-	newModCollection->notifyCollectionChanged();
-
 	return newModCollection;
 }
 
@@ -479,8 +469,6 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const tinyxml2::XMLEleme
 		modElement = modElement->NextSiblingElement();
 	}
 
-	modCollection->notifyCollectionChanged();
-
 	return modCollection;
 }
 
@@ -528,7 +516,7 @@ bool ModCollection::loadFromXML(const std::string & filePath, bool skipFileInfoV
 
 	m_mods = std::move(modCollection->m_mods);
 
-	notifyCollectionChanged();
+	updated(*this);
 
 	return true;
 }
@@ -561,7 +549,7 @@ bool ModCollection::loadFromJSON(const std::string & filePath, bool skipFileInfo
 
 	m_mods = std::move(modCollection->m_mods);
 
-	notifyCollectionChanged();
+	updated(*this);
 
 	return true;
 }
@@ -627,12 +615,6 @@ bool ModCollection::saveToJSON(const std::string & filePath, bool overwrite) con
 	fileStream.close();
 
 	return true;
-}
-
-void ModCollection::notifyCollectionChanged() const {
-	for(size_t i = 0; i < numberOfListeners(); i++) {
-		getListener(i)->modCollectionUpdated();
-	}
 }
 
 bool ModCollection::checkGameVersions(const GameVersionCollection & gameVersions, bool verbose) const {

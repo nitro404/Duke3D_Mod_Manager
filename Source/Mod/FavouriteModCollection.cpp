@@ -3,7 +3,6 @@
 #include "ModIdentifier.h"
 #include "Mod.h"
 #include "ModCollection.h"
-#include "ModCollectionListener.h"
 #include "ModVersion.h"
 #include "ModVersionType.h"
 
@@ -20,15 +19,12 @@
 #include <filesystem>
 #include <fstream>
 
-FavouriteModCollection::FavouriteModCollection()
-	: ModCollectionBroadcaster() { }
+FavouriteModCollection::FavouriteModCollection() { }
 
 FavouriteModCollection::FavouriteModCollection(FavouriteModCollection && m) noexcept
-	: ModCollectionBroadcaster(std::move(m))
-	, m_favourites(std::move(m.m_favourites)) { }
+	: m_favourites(std::move(m.m_favourites)) { }
 
-FavouriteModCollection::FavouriteModCollection(const FavouriteModCollection & m)
-	: ModCollectionBroadcaster(m) {
+FavouriteModCollection::FavouriteModCollection(const FavouriteModCollection & m) {
 	for(std::vector<std::shared_ptr<ModIdentifier>>::const_iterator i = m.m_favourites.begin(); i != m.m_favourites.end(); ++i) {
 		m_favourites.push_back(std::make_shared<ModIdentifier>(**i));
 	}
@@ -36,8 +32,6 @@ FavouriteModCollection::FavouriteModCollection(const FavouriteModCollection & m)
 
 FavouriteModCollection & FavouriteModCollection::operator = (FavouriteModCollection && m) noexcept {
 	if(this != &m) {
-		ModCollectionBroadcaster::operator = (m);
-
 		m_favourites = std::move(m.m_favourites);
 	}
 
@@ -45,8 +39,6 @@ FavouriteModCollection & FavouriteModCollection::operator = (FavouriteModCollect
 }
 
 FavouriteModCollection & FavouriteModCollection::operator = (const FavouriteModCollection & m) {
-	ModCollectionBroadcaster::operator = (m);
-
 	m_favourites.clear();
 
 	for(std::vector<std::shared_ptr<ModIdentifier>>::const_iterator i = m.m_favourites.begin(); i != m.m_favourites.end(); ++i) {
@@ -56,7 +48,7 @@ FavouriteModCollection & FavouriteModCollection::operator = (const FavouriteModC
 	return *this;
 }
 
-FavouriteModCollection::~FavouriteModCollection() { }
+FavouriteModCollection::~FavouriteModCollection() = default;
 
 size_t FavouriteModCollection::numberOfFavourites() {
 	return m_favourites.size();
@@ -231,8 +223,6 @@ bool FavouriteModCollection::parseFrom(const rapidjson::Value & favourites) {
 
 	m_favourites = newFavourites;
 
-	notifyFavouriteModsChanged();
-
 	return true;
 }
 
@@ -380,10 +370,4 @@ bool FavouriteModCollection::operator == (const FavouriteModCollection & m) cons
 
 bool FavouriteModCollection::operator != (const FavouriteModCollection & m) const {
 	return !operator == (m);
-}
-
-void FavouriteModCollection::notifyFavouriteModsChanged() const {
-	for(size_t i = 0; i < numberOfListeners(); i++) {
-		getListener(i)->favouriteModCollectionUpdated();
-	}
 }

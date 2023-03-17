@@ -1,8 +1,7 @@
 #ifndef _FAVOURITE_MOD_COLLECTION_H_
 #define _FAVOURITE_MOD_COLLECTION_H_
 
-#include "ModCollectionBroadcaster.h"
-
+#include <boost/signals2.hpp>
 #include <rapidjson/document.h>
 
 #include <cstdint>
@@ -13,14 +12,14 @@
 class ModIdentifier;
 class ModCollection;
 
-class FavouriteModCollection final : public ModCollectionBroadcaster {
+class FavouriteModCollection final {
 public:
 	FavouriteModCollection();
 	FavouriteModCollection(FavouriteModCollection && m) noexcept;
 	FavouriteModCollection(const FavouriteModCollection & m);
 	FavouriteModCollection & operator = (FavouriteModCollection && m) noexcept;
 	FavouriteModCollection & operator = (const FavouriteModCollection & m);
-	virtual ~FavouriteModCollection();
+	~FavouriteModCollection();
 
 	size_t numberOfFavourites();
 	bool hasFavourite(const ModIdentifier & favourite) const;
@@ -48,8 +47,7 @@ public:
 	bool operator == (const FavouriteModCollection & m) const;
 	bool operator != (const FavouriteModCollection & m) const;
 
-private:
-	void notifyFavouriteModsChanged() const;
+	boost::signals2::signal<void (FavouriteModCollection & /* favouriteMods */)> updated;
 
 private:
 	std::vector<std::shared_ptr<ModIdentifier>> m_favourites;

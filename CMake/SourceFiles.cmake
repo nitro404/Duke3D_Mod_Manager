@@ -36,8 +36,6 @@ set(MAIN_SOURCE_FILES
 	Mod/Mod.cpp
 	Mod/ModAuthorInformation.cpp
 	Mod/ModCollection.cpp
-	Mod/ModCollectionBroadcaster.cpp
-	Mod/ModCollectionListener.cpp
 	Mod/ModDownload.cpp
 	Mod/ModFile.cpp
 	Mod/ModGameVersion.cpp
@@ -88,8 +86,6 @@ set(MAIN_HEADER_FILES
 	Mod/Mod.h
 	Mod/ModAuthorInformation.h
 	Mod/ModCollection.h
-	Mod/ModCollectionBroadcaster.h
-	Mod/ModCollectionListener.h
 	Mod/ModDownload.h
 	Mod/ModFile.h
 	Mod/ModGameVersion.h

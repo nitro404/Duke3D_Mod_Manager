@@ -1,8 +1,6 @@
 #ifndef _ORGANIZED_MOD_COLLECTION_H_
 #define _ORGANIZED_MOD_COLLECTION_H_
 
-#include "ModCollectionListener.h"
-
 #include <boost/signals2.hpp>
 
 #include <cstdint>
@@ -18,7 +16,7 @@ class Mod;
 class ModAuthorInformation;
 class ModCollection;
 
-class OrganizedModCollection final : public ModCollectionListener {
+class OrganizedModCollection final {
 public:
 	enum class SortType {
 		Unsorted,
@@ -67,7 +65,7 @@ public:
 	OrganizedModCollection(const OrganizedModCollection & m);
 	OrganizedModCollection & operator = (OrganizedModCollection && m) noexcept;
 	OrganizedModCollection & operator = (const OrganizedModCollection & m);
-	virtual ~OrganizedModCollection();
+	~OrganizedModCollection();
 
 	std::shared_ptr<ModCollection> getModCollection() const;
 	const std::vector<std::shared_ptr<Mod>> & getOrganizedMods() const;
@@ -165,10 +163,6 @@ public:
 	bool selectRandomAuthor();
 	void clearSelectedAuthor();
 
-	// ModCollectionListener Virtuals
-	virtual void modCollectionUpdated() override;
-	virtual void favouriteModCollectionUpdated() override;
-
 	void organize();
 
 	bool areCurrentSortOptionsValidInCurrentContext();
@@ -210,6 +204,8 @@ private:
 	void notifyOrganizedModGameVersionCollectionChanged();
 	void notifyOrganizedModTeamCollectionChanged();
 	void notifyOrganizedModAuthorCollectionChanged();
+	void onModCollectionUpdated(ModCollection & mods);
+	void onFavouriteModCollectionUpdated(FavouriteModCollection & favouriteMods);
 	void onGameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection);
 	void onGameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion);
 
@@ -224,7 +220,9 @@ private:
 	SortType m_sortType;
 	SortDirection m_sortDirection;
 	std::shared_ptr<ModCollection> m_mods;
+	boost::signals2::connection m_modCollectionUpdatedConnection;
 	std::shared_ptr<FavouriteModCollection> m_favourites;
+	boost::signals2::connection m_favouriteModCollectionUpdatedConnection;
 	std::shared_ptr<GameVersionCollection> m_gameVersions;
 	boost::signals2::connection m_gameVersionCollectionSizeChangedConnection;
 	boost::signals2::connection m_gameVersionCollectionItemModifiedConnection;

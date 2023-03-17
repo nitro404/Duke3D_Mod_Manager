@@ -1,8 +1,7 @@
 #ifndef _MOD_COLLECTION_H_
 #define _MOD_COLLECTION_H_
 
-#include "ModCollectionBroadcaster.h"
-
+#include <boost/signals2.hpp>
 #include <rapidjson/document.h>
 
 #include <cstdint>
@@ -18,14 +17,14 @@ namespace tinyxml2 {
 	class XMLElement;
 }
 
-class ModCollection final : public ModCollectionBroadcaster {
+class ModCollection final {
 public:
 	ModCollection();
 	ModCollection(ModCollection && m) noexcept;
 	ModCollection(const ModCollection & m);
 	ModCollection & operator = (ModCollection && m) noexcept;
 	ModCollection & operator = (const ModCollection & m);
-	virtual ~ModCollection();
+	~ModCollection();
 
 	size_t numberOfMods() const;
 	bool hasMod(const Mod & mod) const;
@@ -65,11 +64,10 @@ public:
 	bool operator == (const ModCollection & m) const;
 	bool operator != (const ModCollection & m) const;
 
+	boost::signals2::signal<void (ModCollection & /* mods */)> updated;
+
 	static const std::string GAME_ID;
 	static const std::string FILE_FORMAT_VERSION;
-
-private:
-	void notifyCollectionChanged() const;
 
 private:
 	std::vector<std::shared_ptr<Mod>> m_mods;
