@@ -44,22 +44,6 @@ public:
 		Authors
 	};
 
-	class Listener {
-	public:
-		virtual ~Listener();
-
-		virtual void filterTypeChanged(FilterType filterType);
-		virtual void sortOptionsChanged(SortType sortType, SortDirection sortDirection);
-		virtual void selectedModChanged(const std::shared_ptr<Mod> & mod);
-		virtual void selectedGameVersionChanged(const std::shared_ptr<GameVersion> & gameVersion);
-		virtual void selectedTeamChanged(const std::shared_ptr<ModAuthorInformation> & team);
-		virtual void selectedAuthorChanged(const std::shared_ptr<ModAuthorInformation> & author);
-		virtual void organizedModCollectionChanged(const std::vector<std::shared_ptr<Mod>> & organizedMods);
-		virtual void organizedModGameVersionCollectionChanged(const std::vector<std::shared_ptr<GameVersion>> & organizedMods);
-		virtual void organizedModTeamCollectionChanged(const std::vector<std::shared_ptr<ModAuthorInformation>> & organizedMods);
-		virtual void organizedModAuthorCollectionChanged(const std::vector<std::shared_ptr<ModAuthorInformation>> & organizedMods);
-	};
-
 	OrganizedModCollection(std::shared_ptr<ModCollection> mods = nullptr, std::shared_ptr<FavouriteModCollection> favourites = nullptr, std::shared_ptr<GameVersionCollection> gameVersions = nullptr);
 	OrganizedModCollection(OrganizedModCollection && m) noexcept;
 	OrganizedModCollection(const OrganizedModCollection & m);
@@ -169,17 +153,19 @@ public:
 	bool areSortOptionsValidInCurrentContext(SortType sortType, FilterType filterType);
 	static bool areSortOptionsValidInContext(SortType sortType, FilterType filterType, bool hasSelectedGameVersion, bool hasSelectedTeam, bool hasSelectedAuthor);
 
-	size_t numberOfListeners() const;
-	bool hasListener(const Listener & listener) const;
-	size_t indexOfListener(const Listener & listener) const;
-	Listener * getListener(size_t index) const;
-	bool addListener(Listener & listener);
-	bool removeListener(size_t index);
-	bool removeListener(const Listener & listener);
-	void clearListeners();
-
 	bool operator == (const OrganizedModCollection & m) const;
 	bool operator != (const OrganizedModCollection & m) const;
+
+	boost::signals2::signal<void (FilterType /* filterType */)> filterTypeChanged;
+	boost::signals2::signal<void (SortType /* sortType */, SortDirection /* sortDirection */)> sortOptionsChanged;
+	boost::signals2::signal<void (std::shared_ptr<Mod> /* mod */)> selectedModChanged;
+	boost::signals2::signal<void (std::shared_ptr<GameVersion> /* gameVersion */)> selectedGameVersionChanged;
+	boost::signals2::signal<void (std::shared_ptr<ModAuthorInformation> /* team */)> selectedTeamChanged;
+	boost::signals2::signal<void (std::shared_ptr<ModAuthorInformation> /* author */)> selectedAuthorChanged;
+	boost::signals2::signal<void (const std::vector<std::shared_ptr<Mod>> & /* organizedMods */)> organizedModCollectionChanged;
+	boost::signals2::signal<void (const std::vector<std::shared_ptr<GameVersion>> & /* organizedMods */)> organizedModGameVersionCollectionChanged;
+	boost::signals2::signal<void (const std::vector<std::shared_ptr<ModAuthorInformation>> & /* organizedMods */)> organizedModTeamCollectionChanged;
+	boost::signals2::signal<void (const std::vector<std::shared_ptr<ModAuthorInformation>> & /* organizedMods */)> organizedModAuthorCollectionChanged;
 
 	static const FilterType DEFAULT_FILTER_TYPE;
 	static const SortType DEFAULT_SORT_TYPE;
@@ -194,16 +180,6 @@ private:
 	void updateGameVersionModCounts();
 	void updateGameVersionSupportedModCounts();
 	void updateGameVersionCompatibleModCounts();
-	void notifyFilterTypeChanged();
-	void notifySortOptionsChanged();
-	void notifySelectedModChanged();
-	void notifySelectedGameVersionChanged();
-	void notifySelectedTeamChanged();
-	void notifySelectedAuthorChanged();
-	void notifyOrganizedModCollectionChanged();
-	void notifyOrganizedModGameVersionCollectionChanged();
-	void notifyOrganizedModTeamCollectionChanged();
-	void notifyOrganizedModAuthorCollectionChanged();
 	void onModCollectionUpdated(ModCollection & mods);
 	void onFavouriteModCollectionUpdated(FavouriteModCollection & favouriteMods);
 	void onGameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection);
@@ -236,7 +212,6 @@ private:
 	std::shared_ptr<GameVersion> m_selectedGameVersion;
 	std::shared_ptr<ModAuthorInformation> m_selectedTeam;
 	std::shared_ptr<ModAuthorInformation> m_selectedAuthor;
-	std::vector<Listener *> m_listeners;
 };
 
 #endif // _ORGANIZED_MOD_COLLECTION_H_

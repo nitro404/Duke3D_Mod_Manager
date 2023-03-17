@@ -3,7 +3,6 @@
 
 #include "DOSBox/DOSBoxVersionCollection.h"
 #include "Game/GameType.h"
-#include "Mod/OrganizedModCollection.h"
 
 #include <Analytics/Segment/SegmentAnalytics.h>
 #include <Application/Application.h>
@@ -36,12 +35,12 @@ class ModGameVersion;
 class ModMatch;
 class ModVersion;
 class ModVersionType;
+class OrganizedModCollection;
 class Process;
 class Script;
 class ScriptArguments;
 
-class ModManager final : public Application,
-						 public OrganizedModCollection::Listener {
+class ModManager final : public Application {
 public:
 	class Listener {
 	public:
@@ -146,9 +145,6 @@ public:
 
 	static std::string getArgumentHelpInfo();
 
-	// OrganizedModCollection::Listener Virtuals
-	virtual void selectedModChanged(const std::shared_ptr<Mod> & mod) override;
-
 	boost::signals2::signal<void ()> initialized;
 	boost::signals2::signal<void ()> initializationCancelled;
 	boost::signals2::signal<void ()> initializationFailed;
@@ -202,6 +198,7 @@ private:
 	void notifyDOSBoxServerIPAddressChanged();
 	void notifyDOSBoxLocalServerPortChanged();
 	void notifyDOSBoxRemoteServerPortChanged();
+	void onSelectedModChanged(std::shared_ptr<Mod> mod);
 	void onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection);
 	void onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion);
 	void onGameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection);
@@ -235,6 +232,7 @@ private:
 	std::shared_ptr<ModCollection> m_mods;
 	std::shared_ptr<FavouriteModCollection> m_favouriteMods;
 	std::shared_ptr<OrganizedModCollection> m_organizedMods;
+	boost::signals2::connection m_selectedModChangedConnection;
 	std::unique_ptr<Process> m_gameProcess;
 	std::vector<Listener *> m_listeners;
 	uint8_t m_initializationStep;

@@ -28,8 +28,7 @@ class ModAuthorInformation;
 class ModManager;
 
 class ModBrowserPanel final : public wxPanel,
-							  public ModManager::Listener,
-							  public OrganizedModCollection::Listener {
+							  public ModManager::Listener {
 public:
 	ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
 	virtual ~ModBrowserPanel();
@@ -84,23 +83,21 @@ public:
 	virtual void dosboxLocalServerPortChanged(uint16_t port) override;
 	virtual void dosboxRemoteServerPortChanged(uint16_t port) override;
 
-	// OrganizedModCollection::Listener Virtuals
-	virtual void filterTypeChanged(OrganizedModCollection::FilterType filterType) override;
-	virtual void sortOptionsChanged(OrganizedModCollection::SortType sortType, OrganizedModCollection::SortDirection sortDirection) override;
-	virtual void selectedModChanged(const std::shared_ptr<Mod> & mod) override;
-	virtual void selectedGameVersionChanged(const std::shared_ptr<GameVersion> & gameVersion) override;
-	virtual void selectedTeamChanged(const std::shared_ptr<ModAuthorInformation> & team) override;
-	virtual void selectedAuthorChanged(const std::shared_ptr<ModAuthorInformation> & author) override;
-	virtual void organizedModCollectionChanged(const std::vector<std::shared_ptr<Mod>> & organizedMods) override;
-	virtual void organizedModGameVersionCollectionChanged(const std::vector<std::shared_ptr<GameVersion>> & organizedMods) override;
-	virtual void organizedModTeamCollectionChanged(const std::vector<std::shared_ptr<ModAuthorInformation>> & organizedMods) override;
-	virtual void organizedModAuthorCollectionChanged(const std::vector<std::shared_ptr<ModAuthorInformation>> & organizedMods) override;
-
 private:
 	void onLaunchError(std::string errorMessage);
 	void onGameProcessTerminated(uint64_t nativeExitCode, bool forceTerminated);
 	void onLaunchFailed(LaunchFailedEvent & launchFailedEvent);
 	void onGameProcessEnded(GameProcessTerminatedEvent & gameProcessTerminatedEvent);
+	void onFilterTypeChanged(OrganizedModCollection::FilterType filterType);
+	void onSortOptionsChanged(OrganizedModCollection::SortType sortType, OrganizedModCollection::SortDirection sortDirection);
+	void onSelectedModChanged(std::shared_ptr<Mod> mod);
+	void onSelectedGameVersionChanged(std::shared_ptr<GameVersion> gameVersion);
+	void onSelectedTeamChanged(std::shared_ptr<ModAuthorInformation> team);
+	void onSelectedAuthorChanged(std::shared_ptr<ModAuthorInformation> author);
+	void onOrganizedModCollectionChanged(const std::vector<std::shared_ptr<Mod>> & organizedMods);
+	void onOrganizedModGameVersionCollectionChanged(const std::vector<std::shared_ptr<GameVersion>> & organizedMods);
+	void onOrganizedModTeamCollectionChanged(const std::vector<std::shared_ptr<ModAuthorInformation>> & organizedMods);
+	void onOrganizedModAuthorCollectionChanged(const std::vector<std::shared_ptr<ModAuthorInformation>> & organizedMods);
 	void onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection);
 	void onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion);
 	void onGameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection);
@@ -111,6 +108,16 @@ private:
 	std::future<bool> m_runSelectedModFuture;
 	boost::signals2::connection m_launchErrorConnection;
 	boost::signals2::connection m_gameProcessTerminatedConnection;
+	boost::signals2::connection m_filterTypeChangedConnection;
+	boost::signals2::connection m_sortOptionsChangedConnection;
+	boost::signals2::connection m_selectedModChangedConnection;
+	boost::signals2::connection m_selectedGameVersionChangedConnection;
+	boost::signals2::connection m_selectedTeamChangedConnection;
+	boost::signals2::connection m_selectedAuthorChangedConnection;
+	boost::signals2::connection m_organizedModCollectionChangedConnection;
+	boost::signals2::connection m_organizedModGameVersionCollectionChangedConnection;
+	boost::signals2::connection m_organizedModTeamCollectionChangedConnection;
+	boost::signals2::connection m_organizedModAuthorCollectionChangedConnection;
 	boost::signals2::connection m_dosboxVersionCollectionSizeChangedConnection;
 	boost::signals2::connection m_dosboxVersionCollectionItemModifiedConnection;
 	boost::signals2::connection m_gameVersionCollectionSizeChangedConnection;

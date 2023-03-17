@@ -329,7 +329,7 @@ void OrganizedModCollection::setModCollection(std::shared_ptr<ModCollection> mod
 		organize();
 	}
 	else {
-		notifyOrganizedModCollectionChanged();
+		organizedModCollectionChanged(m_organizedMods);
 	}
 }
 
@@ -349,7 +349,7 @@ void OrganizedModCollection::setFavouriteModCollection(std::shared_ptr<Favourite
 		organize();
 	}
 	else {
-		notifyOrganizedModCollectionChanged();
+		organizedModCollectionChanged(m_organizedMods);
 	}
 }
 
@@ -371,7 +371,7 @@ void OrganizedModCollection::setGameVersionCollection(std::shared_ptr<GameVersio
 		organize();
 	}
 	else {
-		notifyOrganizedModGameVersionCollectionChanged();
+		organizedModGameVersionCollectionChanged(m_organizedGameVersions);
 	}
 }
 
@@ -381,26 +381,26 @@ bool OrganizedModCollection::setFilterType(FilterType filterType) {
 	if(m_filterType != filterType) {
 		m_filterType = filterType;
 
-		notifyFilterTypeChanged();
+		filterTypeChanged(m_filterType);
 	}
 
 	if(filterType != FilterType::Teams && m_selectedTeam != nullptr) {
 		m_selectedTeam = nullptr;
 
-		notifySelectedTeamChanged();
+		selectedTeamChanged(m_selectedTeam);
 	}
 
 	if(filterType != FilterType::Authors && m_selectedAuthor != nullptr) {
 		m_selectedAuthor = nullptr;
 
-		notifySelectedAuthorChanged();
+		selectedAuthorChanged(m_selectedAuthor);
 	}
 
 	if(!areCurrentSortOptionsValidInCurrentContext()) {
 		m_sortType = OrganizedModCollection::DEFAULT_SORT_TYPE;
 		m_sortDirection = OrganizedModCollection::DEFAULT_SORT_DIRECTION;
 
-		notifySortOptionsChanged();
+		sortOptionsChanged(m_sortType, m_sortDirection);
 
 		shouldOrganize = true;
 	}
@@ -420,7 +420,7 @@ bool OrganizedModCollection::setSortType(SortType sortType) {
 	if(m_sortType != sortType) {
 		m_sortType = sortType;
 
-		notifySortOptionsChanged();
+		sortOptionsChanged(m_sortType, m_sortDirection);
 
 		if(m_sortType == SortType::Unsorted) {
 			updateAuthorList();
@@ -439,7 +439,7 @@ bool OrganizedModCollection::setSortDirection(SortDirection sortDirection) {
 	if(m_sortDirection != sortDirection) {
 		m_sortDirection = sortDirection;
 
-		notifySortOptionsChanged();
+		sortOptionsChanged(m_sortType, m_sortDirection);
 
 		sort();
 	}
@@ -458,7 +458,7 @@ bool OrganizedModCollection::setSortOptions(SortType sortType, SortDirection sor
 		m_sortType = sortType;
 		m_sortDirection = sortDirection;
 
-		notifySortOptionsChanged();
+		sortOptionsChanged(m_sortType, m_sortDirection);
 
 		if(sortTypeChanged && m_sortType == SortType::Unsorted) {
 			updateAuthorList();
@@ -567,32 +567,32 @@ void OrganizedModCollection::clearSelectedItems() {
 	if(m_selectedMod != nullptr) {
 		m_selectedMod = nullptr;
 
-		notifySelectedModChanged();
+		selectedModChanged(m_selectedMod);
 	}
 
 	if(m_selectedGameVersion != nullptr) {
 		m_selectedGameVersion = nullptr;
 
-		notifySelectedGameVersionChanged();
+		selectedGameVersionChanged(m_selectedGameVersion);
 	}
 
 	if(m_selectedAuthor != nullptr) {
 		m_selectedAuthor = nullptr;
 
-		notifySelectedAuthorChanged();
+		selectedAuthorChanged(m_selectedAuthor);
 	}
 
 	if(m_selectedTeam != nullptr) {
 		m_selectedTeam = nullptr;
 
-		notifySelectedTeamChanged();
+		selectedTeamChanged(m_selectedTeam);
 	}
 
 	if(!areCurrentSortOptionsValidInCurrentContext()) {
 		m_sortType = OrganizedModCollection::DEFAULT_SORT_TYPE;
 		m_sortDirection = OrganizedModCollection::DEFAULT_SORT_DIRECTION;
 
-		notifySortOptionsChanged();
+		sortOptionsChanged(m_sortType, m_sortDirection);
 
 		organize();
 	}
@@ -718,7 +718,7 @@ bool OrganizedModCollection::setSelectedMod(size_t index) {
 	if(m_selectedMod != m_organizedMods[index]) {
 		m_selectedMod = m_organizedMods[index];
 
-		notifySelectedModChanged();
+		selectedModChanged(m_selectedMod);
 	}
 
 	return true;
@@ -758,7 +758,7 @@ void OrganizedModCollection::clearSelectedMod() {
 	if(m_selectedMod != nullptr) {
 		m_selectedMod = nullptr;
 
-		notifySelectedModChanged();
+		selectedModChanged(m_selectedMod);
 	}
 }
 
@@ -824,7 +824,7 @@ bool OrganizedModCollection::setSelectedGameVersion(size_t index) {
 	if(m_selectedGameVersion != m_organizedGameVersions[index]) {
 		m_selectedGameVersion = m_organizedGameVersions[index];
 
-		notifySelectedGameVersionChanged();
+		selectedGameVersionChanged(m_selectedGameVersion);
 
 		shouldOrganize = true;
 	}
@@ -833,7 +833,7 @@ bool OrganizedModCollection::setSelectedGameVersion(size_t index) {
 		m_sortType = OrganizedModCollection::DEFAULT_SORT_TYPE;
 		m_sortDirection = OrganizedModCollection::DEFAULT_SORT_DIRECTION;
 
-		notifySortOptionsChanged();
+		sortOptionsChanged(m_sortType, m_sortDirection);
 
 		shouldOrganize = true;
 	}
@@ -879,7 +879,7 @@ void OrganizedModCollection::clearSelectedGameVersion() {
 	if(m_selectedGameVersion != nullptr) {
 		m_selectedGameVersion = nullptr;
 
-		notifySelectedGameVersionChanged();
+		selectedGameVersionChanged(m_selectedGameVersion);
 
 		shouldOrganize = true;
 	}
@@ -888,7 +888,7 @@ void OrganizedModCollection::clearSelectedGameVersion() {
 		m_sortType = OrganizedModCollection::DEFAULT_SORT_TYPE;
 		m_sortDirection = OrganizedModCollection::DEFAULT_SORT_DIRECTION;
 
-		notifySortOptionsChanged();
+		sortOptionsChanged(m_sortType, m_sortDirection);
 
 		shouldOrganize = true;
 	}
@@ -1013,7 +1013,7 @@ bool OrganizedModCollection::setSelectedTeam(size_t index) {
 	if(m_selectedTeam != m_teams[index]) {
 		m_selectedTeam = m_teams[index];
 
-		notifySelectedTeamChanged();
+		selectedTeamChanged(m_selectedTeam);
 
 		shouldOrganize = true;
 	}
@@ -1021,7 +1021,7 @@ bool OrganizedModCollection::setSelectedTeam(size_t index) {
 	if(m_filterType != FilterType::Teams) {
 		m_filterType = FilterType::Teams;
 
-		notifyFilterTypeChanged();
+		filterTypeChanged(m_filterType);
 
 		shouldOrganize = true;
 	}
@@ -1030,7 +1030,7 @@ bool OrganizedModCollection::setSelectedTeam(size_t index) {
 		m_sortType = OrganizedModCollection::DEFAULT_SORT_TYPE;
 		m_sortDirection = OrganizedModCollection::DEFAULT_SORT_DIRECTION;
 
-		notifySortOptionsChanged();
+		sortOptionsChanged(m_sortType, m_sortDirection);
 
 		shouldOrganize = true;
 	}
@@ -1076,7 +1076,7 @@ void OrganizedModCollection::clearSelectedTeam() {
 	if(m_selectedTeam != nullptr) {
 		m_selectedTeam = nullptr;
 
-		notifySelectedTeamChanged();
+		selectedTeamChanged(m_selectedTeam);
 
 		shouldOrganize = true;
 	}
@@ -1085,7 +1085,7 @@ void OrganizedModCollection::clearSelectedTeam() {
 		m_sortType = OrganizedModCollection::DEFAULT_SORT_TYPE;
 		m_sortDirection = OrganizedModCollection::DEFAULT_SORT_DIRECTION;
 
-		notifySortOptionsChanged();
+		sortOptionsChanged(m_sortType, m_sortDirection);
 
 		shouldOrganize = true;
 	}
@@ -1240,7 +1240,7 @@ void OrganizedModCollection::clearSelectedAuthor() {
 	if(m_selectedAuthor != nullptr) {
 		m_selectedAuthor = nullptr;
 
-		notifySelectedAuthorChanged();
+		selectedAuthorChanged(m_selectedAuthor);
 
 		shouldOrganize = true;
 	}
@@ -1249,7 +1249,7 @@ void OrganizedModCollection::clearSelectedAuthor() {
 		m_sortType = OrganizedModCollection::DEFAULT_SORT_TYPE;
 		m_sortDirection = OrganizedModCollection::DEFAULT_SORT_DIRECTION;
 
-		notifySortOptionsChanged();
+		sortOptionsChanged(m_sortType, m_sortDirection);
 
 		shouldOrganize = true;
 	}
@@ -1385,7 +1385,7 @@ void OrganizedModCollection::applyFilter() {
 		}
 	}
 
-	notifyOrganizedModCollectionChanged();
+	organizedModCollectionChanged(m_organizedMods);
 }
 
 void OrganizedModCollection::sort() {
@@ -1401,22 +1401,22 @@ void OrganizedModCollection::sort() {
 			m_organizedMods = mergeSortMods(m_organizedMods);
 			m_organizedGameVersions = mergeSortGameVersions(m_organizedGameVersions);
 
-			notifyOrganizedModCollectionChanged();
-			notifyOrganizedModGameVersionCollectionChanged();
+			organizedModCollectionChanged(m_organizedMods);
+			organizedModGameVersionCollectionChanged(m_organizedGameVersions);
 
 			break;
 		}
 		case FilterType::Teams: {
 			m_teams = mergeSortAuthors(m_teams);
 
-			notifyOrganizedModTeamCollectionChanged();
+			organizedModTeamCollectionChanged(m_teams);
 
 			break;
 		}
 		case FilterType::Authors: {
 			m_authors = mergeSortAuthors(m_authors);
 
-			notifyOrganizedModAuthorCollectionChanged();
+			organizedModAuthorCollectionChanged(m_authors);
 
 			break;
 		}
@@ -1436,7 +1436,7 @@ void OrganizedModCollection::updateGameVersionList() {
 
 	updateGameVersionModCounts();
 
-	notifyOrganizedModGameVersionCollectionChanged();
+	organizedModGameVersionCollectionChanged(m_organizedGameVersions);
 }
 
 void OrganizedModCollection::updateTeamList() {
@@ -1456,7 +1456,7 @@ void OrganizedModCollection::updateTeamList() {
 		}
 	}
 
-	notifyOrganizedModTeamCollectionChanged();
+	organizedModTeamCollectionChanged(m_teams);
 }
 
 void OrganizedModCollection::updateAuthorList() {
@@ -1478,7 +1478,7 @@ void OrganizedModCollection::updateAuthorList() {
 		}
 	}
 
-	notifyOrganizedModAuthorCollectionChanged();
+	organizedModAuthorCollectionChanged(m_authors);
 }
 
 void OrganizedModCollection::updateGameVersionModCounts() {
@@ -1818,156 +1818,6 @@ std::vector<std::shared_ptr<ModAuthorInformation>> OrganizedModCollection::merge
 	}
 
 	return result;
-}
-
-OrganizedModCollection::Listener::~Listener() { }
-
-void OrganizedModCollection::Listener::filterTypeChanged(FilterType filterType) { }
-
-void OrganizedModCollection::Listener::sortOptionsChanged(SortType sortType, SortDirection sortDirection) { }
-
-void OrganizedModCollection::Listener::selectedModChanged(const std::shared_ptr<Mod> & mod) { }
-
-void OrganizedModCollection::Listener::selectedGameVersionChanged(const std::shared_ptr<GameVersion> & gameVersion) { }
-
-void OrganizedModCollection::Listener::selectedTeamChanged(const std::shared_ptr<ModAuthorInformation> & team) { }
-
-void OrganizedModCollection::Listener::selectedAuthorChanged(const std::shared_ptr<ModAuthorInformation> & author) { }
-
-void OrganizedModCollection::Listener::organizedModCollectionChanged(const std::vector<std::shared_ptr<Mod>> & organizedMods) { }
-
-void OrganizedModCollection::Listener::organizedModGameVersionCollectionChanged(const std::vector<std::shared_ptr<GameVersion>> & organizedMods) { }
-
-void OrganizedModCollection::Listener::organizedModTeamCollectionChanged(const std::vector<std::shared_ptr<ModAuthorInformation>> & organizedMods) { }
-
-void OrganizedModCollection::Listener::organizedModAuthorCollectionChanged(const std::vector<std::shared_ptr<ModAuthorInformation>> & organizedMods) { }
-
-size_t OrganizedModCollection::numberOfListeners() const {
-	return m_listeners.size();
-}
-
-bool OrganizedModCollection::hasListener(const Listener & listener) const {
-	for(std::vector<Listener *>::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i) {
-		if(*i == &listener) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-size_t OrganizedModCollection::indexOfListener(const Listener & listener) const {
-	for(size_t i = 0; i < m_listeners.size(); i++) {
-		if(m_listeners[i] == &listener) {
-			return i;
-		}
-	}
-
-	return std::numeric_limits<size_t>::max();
-}
-
-OrganizedModCollection::Listener * OrganizedModCollection::getListener(size_t index) const {
-	if(index >= m_listeners.size()) {
-		return nullptr;
-	}
-
-	return m_listeners[index];
-}
-
-bool OrganizedModCollection::addListener(Listener & listener) {
-	if(!hasListener(listener)) {
-		m_listeners.push_back(&listener);
-
-		return true;
-	}
-
-	return false;
-}
-
-bool OrganizedModCollection::removeListener(size_t index) {
-	if(index >= m_listeners.size()) {
-		return false;
-	}
-
-	m_listeners.erase(m_listeners.begin() + index);
-
-	return true;
-}
-
-bool OrganizedModCollection::removeListener(const Listener & listener) {
-	for(std::vector<Listener *>::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i) {
-		if(*i == &listener) {
-			m_listeners.erase(i);
-
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void OrganizedModCollection::clearListeners() {
-	m_listeners.clear();
-}
-
-void OrganizedModCollection::notifyFilterTypeChanged() {
-	for(Listener * listener : m_listeners) {
-		listener->filterTypeChanged(m_filterType);
-	}
-}
-
-void OrganizedModCollection::notifySortOptionsChanged() {
-	for(Listener * listener : m_listeners) {
-		listener->sortOptionsChanged(m_sortType, m_sortDirection);
-	}
-}
-
-void OrganizedModCollection::notifySelectedModChanged() {
-	for(Listener * listener : m_listeners) {
-		listener->selectedModChanged(m_selectedMod);
-	}
-}
-
-void OrganizedModCollection::notifySelectedGameVersionChanged() {
-	for(Listener * listener : m_listeners) {
-		listener->selectedGameVersionChanged(m_selectedGameVersion);
-	}
-}
-
-void OrganizedModCollection::notifySelectedTeamChanged() {
-	for(Listener * listener : m_listeners) {
-		listener->selectedTeamChanged(m_selectedTeam);
-	}
-}
-
-void OrganizedModCollection::notifySelectedAuthorChanged() {
-	for(Listener * listener : m_listeners) {
-		listener->selectedAuthorChanged(m_selectedAuthor);
-	}
-}
-
-void OrganizedModCollection::notifyOrganizedModCollectionChanged() {
-	for(Listener * listener : m_listeners) {
-		listener->organizedModCollectionChanged(m_organizedMods);
-	}
-}
-
-void OrganizedModCollection::notifyOrganizedModGameVersionCollectionChanged() {
-	for(Listener * listener : m_listeners) {
-		listener->organizedModGameVersionCollectionChanged(m_organizedGameVersions);
-	}
-}
-
-void OrganizedModCollection::notifyOrganizedModTeamCollectionChanged() {
-	for(Listener * listener : m_listeners) {
-		listener->organizedModTeamCollectionChanged(m_teams);
-	}
-}
-
-void OrganizedModCollection::notifyOrganizedModAuthorCollectionChanged() {
-	for(Listener * listener : m_listeners) {
-		listener->organizedModAuthorCollectionChanged(m_authors);
-	}
 }
 
 bool OrganizedModCollection::operator == (const OrganizedModCollection & m) const {

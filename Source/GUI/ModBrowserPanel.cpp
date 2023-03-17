@@ -103,16 +103,25 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	, m_modGameTypeComboBox(nullptr)
 	, m_preferredGameVersionComboBox(nullptr)
 	, m_launchButton(nullptr) {
+	std::shared_ptr<OrganizedModCollection> organizedMods(m_modManager->getOrganizedMods());
 	std::shared_ptr<DOSBoxVersionCollection> dosboxVersions(m_modManager->getDOSBoxVersions());
 	std::shared_ptr<GameVersionCollection> gameVersions(m_modManager->getGameVersions());
-
+	m_filterTypeChangedConnection = organizedMods->filterTypeChanged.connect(std::bind(&ModBrowserPanel::onFilterTypeChanged, this, std::placeholders::_1));
+	m_sortOptionsChangedConnection = organizedMods->sortOptionsChanged.connect(std::bind(&ModBrowserPanel::onSortOptionsChanged, this, std::placeholders::_1, std::placeholders::_2));
+	m_selectedModChangedConnection = organizedMods->selectedModChanged.connect(std::bind(&ModBrowserPanel::onSelectedModChanged, this, std::placeholders::_1));
+	m_selectedGameVersionChangedConnection = organizedMods->selectedGameVersionChanged.connect(std::bind(&ModBrowserPanel::onSelectedGameVersionChanged, this, std::placeholders::_1));
+	m_selectedTeamChangedConnection = organizedMods->selectedTeamChanged.connect(std::bind(&ModBrowserPanel::onSelectedTeamChanged, this, std::placeholders::_1));
+	m_selectedAuthorChangedConnection = organizedMods->selectedAuthorChanged.connect(std::bind(&ModBrowserPanel::onSelectedAuthorChanged, this, std::placeholders::_1));
+	m_organizedModCollectionChangedConnection = organizedMods->organizedModCollectionChanged.connect(std::bind(&ModBrowserPanel::onOrganizedModCollectionChanged, this, std::placeholders::_1));
+	m_organizedModGameVersionCollectionChangedConnection = organizedMods->organizedModGameVersionCollectionChanged.connect(std::bind(&ModBrowserPanel::onOrganizedModGameVersionCollectionChanged, this, std::placeholders::_1));
+	m_organizedModTeamCollectionChangedConnection = organizedMods->organizedModTeamCollectionChanged.connect(std::bind(&ModBrowserPanel::onOrganizedModTeamCollectionChanged, this, std::placeholders::_1));
+	m_organizedModAuthorCollectionChangedConnection = organizedMods->organizedModAuthorCollectionChanged.connect(std::bind(&ModBrowserPanel::onOrganizedModAuthorCollectionChanged, this, std::placeholders::_1));
 	m_dosboxVersionCollectionSizeChangedConnection = dosboxVersions->sizeChanged.connect(std::bind(&ModBrowserPanel::onDOSBoxVersionCollectionSizeChanged, this, std::placeholders::_1));
 	m_dosboxVersionCollectionItemModifiedConnection = dosboxVersions->itemModified.connect(std::bind(&ModBrowserPanel::onDOSBoxVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
 	m_gameVersionCollectionSizeChangedConnection = gameVersions->sizeChanged.connect(std::bind(&ModBrowserPanel::onGameVersionCollectionSizeChanged, this, std::placeholders::_1));
 	m_gameVersionCollectionItemModifiedConnection = gameVersions->itemModified.connect(std::bind(&ModBrowserPanel::onGameVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
 
 	m_modManager->addListener(*this);
-	m_modManager->getOrganizedMods()->addListener(*this);
 
 	m_launchErrorConnection = m_modManager->launchError.connect(std::bind(&ModBrowserPanel::onLaunchError, this, std::placeholders::_1));
 	m_gameProcessTerminatedConnection = m_modManager->gameProcessTerminated.connect(std::bind(&ModBrowserPanel::onGameProcessTerminated, this, std::placeholders::_1, std::placeholders::_2));
@@ -129,7 +138,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_selectRandomModButton = new wxButton(modListOptionsPanel, wxID_ANY, "Random", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "Select Random Mod");
 	m_selectRandomModButton->Bind(wxEVT_BUTTON, &ModBrowserPanel::onSelectRandomModButtonPressed, this);
 
-	if(m_modManager->getOrganizedMods()->numberOfMods() == 0) {
+	if(organizedMods->numberOfMods() == 0) {
 		m_selectRandomModButton->Disable();
 	}
 
@@ -159,7 +168,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 
 	m_modListLabel = new wxStaticText(modSelectionPanel, wxID_ANY, "Mods", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 	m_modListLabel->SetFont(m_modListLabel->GetFont().MakeBold());
-	m_modListBox = new wxListBox(modSelectionPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, WXUtilities::createItemWXArrayString(m_modManager->getOrganizedMods()->getOrganizedItemDisplayNames()), wxLB_SINGLE | wxLB_ALWAYS_SB);
+	m_modListBox = new wxListBox(modSelectionPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, WXUtilities::createItemWXArrayString(organizedMods->getOrganizedItemDisplayNames()), wxLB_SINGLE | wxLB_ALWAYS_SB);
 	m_modListBox->Bind(wxEVT_LISTBOX, &ModBrowserPanel::onModSelected, this);
 
 	m_modVersionListLabel = new wxStaticText(modSelectionPanel, wxID_ANY, "Mod Versions", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
@@ -412,13 +421,22 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 ModBrowserPanel::~ModBrowserPanel() {
 	m_launchErrorConnection.disconnect();
 	m_gameProcessTerminatedConnection.disconnect();
+	m_filterTypeChangedConnection.disconnect();
+	m_sortOptionsChangedConnection.disconnect();
+	m_selectedModChangedConnection.disconnect();
+	m_selectedGameVersionChangedConnection.disconnect();
+	m_selectedTeamChangedConnection.disconnect();
+	m_selectedAuthorChangedConnection.disconnect();
+	m_organizedModCollectionChangedConnection.disconnect();
+	m_organizedModGameVersionCollectionChangedConnection.disconnect();
+	m_organizedModTeamCollectionChangedConnection.disconnect();
+	m_organizedModAuthorCollectionChangedConnection.disconnect();
 	m_dosboxVersionCollectionSizeChangedConnection.disconnect();
 	m_dosboxVersionCollectionItemModifiedConnection.disconnect();
 	m_gameVersionCollectionSizeChangedConnection.disconnect();
 	m_gameVersionCollectionItemModifiedConnection.disconnect();
 
 	m_modManager->removeListener(*this);
-	m_modManager->getOrganizedMods()->removeListener(*this);
 }
 
 void ModBrowserPanel::update() {
@@ -1398,47 +1416,47 @@ void ModBrowserPanel::dosboxRemoteServerPortChanged(uint16_t port) {
 	}
 }
 
-void ModBrowserPanel::filterTypeChanged(OrganizedModCollection::FilterType filterType) {
+void ModBrowserPanel::onFilterTypeChanged(OrganizedModCollection::FilterType filterType) {
 	m_modManager->getOrganizedMods()->clearSelectedItems();
 
 	updateModListFilterType();
 	updateModList();
 }
 
-void ModBrowserPanel::sortOptionsChanged(OrganizedModCollection::SortType sortType, OrganizedModCollection::SortDirection sortDirection) {
+void ModBrowserPanel::onSortOptionsChanged(OrganizedModCollection::SortType sortType, OrganizedModCollection::SortDirection sortDirection) {
 	updateModListSortOptions();
 	updateModList();
 }
 
-void ModBrowserPanel::selectedModChanged(const std::shared_ptr<Mod> & mod) {
+void ModBrowserPanel::onSelectedModChanged(std::shared_ptr<Mod> mod) {
 	updateModSelection();
 }
 
-void ModBrowserPanel::selectedGameVersionChanged(const std::shared_ptr<GameVersion> & gameVersion) {
+void ModBrowserPanel::onSelectedGameVersionChanged(std::shared_ptr<GameVersion> gameVersion) {
 	updateModSelection();
 }
 
-void ModBrowserPanel::selectedTeamChanged(const std::shared_ptr<ModAuthorInformation> & team) {
+void ModBrowserPanel::onSelectedTeamChanged(std::shared_ptr<ModAuthorInformation> team) {
 	updateModSelection();
 }
 
-void ModBrowserPanel::selectedAuthorChanged(const std::shared_ptr<ModAuthorInformation> & author) {
+void ModBrowserPanel::onSelectedAuthorChanged(std::shared_ptr<ModAuthorInformation> author) {
 	updateModSelection();
 }
 
-void ModBrowserPanel::organizedModCollectionChanged(const std::vector<std::shared_ptr<Mod>> & organizedMods) {
+void ModBrowserPanel::onOrganizedModCollectionChanged(const std::vector<std::shared_ptr<Mod>> & organizedMods) {
 	updateModList();
 }
 
-void ModBrowserPanel::organizedModGameVersionCollectionChanged(const std::vector<std::shared_ptr<GameVersion>> & organizedMods) {
+void ModBrowserPanel::onOrganizedModGameVersionCollectionChanged(const std::vector<std::shared_ptr<GameVersion>> & organizedMods) {
 	updateModList();
 }
 
-void ModBrowserPanel::organizedModTeamCollectionChanged(const std::vector<std::shared_ptr<ModAuthorInformation>> & organizedMods) {
+void ModBrowserPanel::onOrganizedModTeamCollectionChanged(const std::vector<std::shared_ptr<ModAuthorInformation>> & organizedMods) {
 	updateModList();
 }
 
-void ModBrowserPanel::organizedModAuthorCollectionChanged(const std::vector<std::shared_ptr<ModAuthorInformation>> & organizedMods) {
+void ModBrowserPanel::onOrganizedModAuthorCollectionChanged(const std::vector<std::shared_ptr<ModAuthorInformation>> & organizedMods) {
 	updateModList();
 }
 

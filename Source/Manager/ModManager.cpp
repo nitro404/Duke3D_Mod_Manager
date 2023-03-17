@@ -90,18 +90,17 @@ ModManager::ModManager()
 		return std::make_unique<SettingsManager>();
 	});
 
-	m_organizedMods->addListener(*this);
+	m_selectedModChangedConnection = m_organizedMods->selectedModChanged.connect(std::bind(&ModManager::onSelectedModChanged, this, std::placeholders::_1));
 }
 
 ModManager::~ModManager() {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
+	m_selectedModChangedConnection.disconnect();
 	m_dosboxVersionCollectionSizeChangedConnection.disconnect();
 	m_dosboxVersionCollectionItemModifiedConnection.disconnect();
 	m_gameVersionCollectionSizeChangedConnection.disconnect();
 	m_gameVersionCollectionItemModifiedConnection.disconnect();
-
-	m_organizedMods->removeListener(*this);
 
 	SegmentAnalytics::destroyInstance();
 }
@@ -4433,7 +4432,7 @@ void ModManager::notifyDOSBoxRemoteServerPortChanged() {
 	}
 }
 
-void ModManager::selectedModChanged(const std::shared_ptr<Mod> & mod) {
+void ModManager::onSelectedModChanged(std::shared_ptr<Mod> mod) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	setSelectedMod(mod);
