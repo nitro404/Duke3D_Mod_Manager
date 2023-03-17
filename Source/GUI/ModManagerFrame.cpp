@@ -4,9 +4,10 @@
 #include "DOSBoxManagerPanel.h"
 #include "GameManagerPanel.h"
 #include "GroupEditorPanel.h"
+#include "Manager/SettingsManager.h"
 #include "ModBrowserPanel.h"
 #include "Project.h"
-#include "Manager/SettingsManager.h"
+#include "SettingsManagerPanel.h"
 #include "WXUtilities.h"
 
 #include <Core.h>
@@ -50,9 +51,7 @@ ModManagerFrame::ModManagerFrame()
 }
 
 ModManagerFrame::~ModManagerFrame() {
-	if(m_settingsManagerPanel) {
-		m_settingsManagerPanel->removeListener(*this);
-	}
+	m_settingsManagerPanelSignalConnectionGroup.disconnect();
 }
 
 bool ModManagerFrame::isInitialized() const {
@@ -95,8 +94,12 @@ bool ModManagerFrame::initialize(std::shared_ptr<ModManager> modManager) {
 	m_notebook->AddPage(groupEditorPanel, "Group Editor");
 
 	m_settingsManagerPanel = new SettingsManagerPanel(modManager, m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-	m_settingsManagerPanel->addListener(*this);
 	m_notebook->AddPage(m_settingsManagerPanel, "Settings");
+
+	m_settingsManagerPanelSignalConnectionGroup = SignalConnectionGroup(
+		m_settingsManagerPanel->settingsReset.connect(std::bind(&ModManagerFrame::onSettingsReset, this)),
+		m_settingsManagerPanel->settingsSaved.connect(std::bind(&ModManagerFrame::onSettingsSaved, this))
+	);
 
 	ConsolePanel * consolePanel = new ConsolePanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 	m_notebook->AddPage(consolePanel, "Console");
@@ -210,15 +213,11 @@ void ModManagerFrame::onAbout(wxCommandEvent& WXUNUSED(event)) {
 	);
 }
 
-void ModManagerFrame::settingsChanged() { }
-
-void ModManagerFrame::settingsReset() {
+void ModManagerFrame::onSettingsReset() {
 	requestReload();
 }
 
-void ModManagerFrame::settingsDiscarded() { }
-
-void ModManagerFrame::settingsSaved() {
+void ModManagerFrame::onSettingsSaved() {
 	requestReload();
 }
 

@@ -1,7 +1,7 @@
 #ifndef _MOD_MANAGER_FRAME_H_
 #define _MOD_MANAGER_FRAME_H_
 
-#include "SettingsManagerPanel.h"
+#include <Signal/SignalConnectionGroup.h>
 
 #include <wx/wxprec.h>
 
@@ -18,9 +18,9 @@
 #include <memory>
 
 class ModManager;
+class SettingsManagerPanel;
 
-class ModManagerFrame final : public wxFrame,
-							  public SettingsManagerPanel::Listener {
+class ModManagerFrame final : public wxFrame {
 public:
 	class Listener {
 	public:
@@ -44,19 +44,14 @@ public:
 	void onMenuBarItemPressed(wxCommandEvent & event);
 #endif // wxUSE_MENUS
 
+private:
+	void requestReload();
 	void onNotebookPageChanging(wxBookCtrlEvent & event);
 	void onNotebookPageChanged(wxBookCtrlEvent & event);
 	void onQuit(wxCommandEvent & event);
 	void onAbout(wxCommandEvent & event);
-
-	// SettingsManagerPanel::Listener Virtuals
-	virtual void settingsChanged() override;
-	virtual void settingsReset() override;
-	virtual void settingsDiscarded() override;
-	virtual void settingsSaved() override;
-
-private:
-	void requestReload();
+	void onSettingsReset();
+	void onSettingsSaved();
 
 #if wxUSE_MENUS
 	wxMenuItem * m_resetWindowPositionMenuItem;
@@ -66,6 +61,7 @@ private:
 	bool m_initialized;
 	wxNotebook * m_notebook;
 	SettingsManagerPanel * m_settingsManagerPanel;
+	SignalConnectionGroup m_settingsManagerPanelSignalConnectionGroup;
 	Listener * m_listener;
 
 	wxDECLARE_EVENT_TABLE();
