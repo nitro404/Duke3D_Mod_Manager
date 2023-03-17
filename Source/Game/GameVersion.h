@@ -3,6 +3,7 @@
 
 #include <Platform/DeviceInformationBridge.h>
 
+#include <boost/signals2.hpp>
 #include <rapidjson/document.h>
 
 #include <memory>
@@ -19,13 +20,6 @@ public:
 		Linux,
 		MacOS,
 		DOS
-	};
-
-	class Listener {
-	public:
-		virtual ~Listener();
-
-		virtual void gameVersionModified(GameVersion & gameVersion) = 0;
 	};
 
 	GameVersion();
@@ -184,17 +178,10 @@ public:
 	bool isValid() const;
 	static bool isValid(const GameVersion * gameVersion);
 
-	size_t numberOfListeners() const;
-	bool hasListener(const Listener & listener) const;
-	size_t indexOfListener(const Listener & listener) const;
-	Listener * getListener(size_t index) const;
-	bool addListener(Listener & listener);
-	bool removeListener(size_t index);
-	bool removeListener(const Listener & listener);
-	void clearListeners();
-
 	bool operator == (const GameVersion & gameVersion) const;
 	bool operator != (const GameVersion & gameVersion) const;
+
+	boost::signals2::signal<void (GameVersion & /* gameVersion */)> modified;
 
 	static const std::string ALL_VERSIONS;
 	static const GameVersion LAMEDUKE;
@@ -237,7 +224,6 @@ public:
 
 private:
 	void setModified(bool modified);
-	void notifyGameVersionModified();
 
 	std::string m_name;
 	bool m_removable;
@@ -275,7 +261,6 @@ private:
 	std::vector<OperatingSystem> m_supportedOperatingSystems;
 	std::vector<std::string> m_compatibleGameVersions;
 	mutable bool m_modified;
-	mutable std::vector<Listener *> m_listeners;
 };
 
 #endif // _GAME_VERSION_H_

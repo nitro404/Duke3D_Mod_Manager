@@ -39,7 +39,8 @@ OrganizedModCollection::OrganizedModCollection(std::shared_ptr<ModCollection> mo
 	}
 
 	if(m_gameVersions != nullptr) {
-		m_gameVersions->addListener(*this);
+		m_gameVersionCollectionSizeChangedConnection = m_gameVersions->sizeChanged.connect(std::bind(&OrganizedModCollection::onGameVersionCollectionSizeChanged, this, std::placeholders::_1));
+		m_gameVersionCollectionItemModifiedConnection = m_gameVersions->itemModified.connect(std::bind(&OrganizedModCollection::onGameVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
 	}
 
 	organize();
@@ -68,7 +69,8 @@ OrganizedModCollection::OrganizedModCollection(OrganizedModCollection && m) noex
 	}
 
 	if(m_gameVersions != nullptr) {
-		m_gameVersions->addListener(*this);
+		m_gameVersionCollectionSizeChangedConnection = m_gameVersions->sizeChanged.connect(std::bind(&OrganizedModCollection::onGameVersionCollectionSizeChanged, this, std::placeholders::_1));
+		m_gameVersionCollectionItemModifiedConnection = m_gameVersions->itemModified.connect(std::bind(&OrganizedModCollection::onGameVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
 	}
 }
 
@@ -96,7 +98,8 @@ OrganizedModCollection::OrganizedModCollection(const OrganizedModCollection & m)
 	}
 
 	if(m_gameVersions != nullptr) {
-		m_gameVersions->addListener(*this);
+		m_gameVersionCollectionSizeChangedConnection = m_gameVersions->sizeChanged.connect(std::bind(&OrganizedModCollection::onGameVersionCollectionSizeChanged, this, std::placeholders::_1));
+		m_gameVersionCollectionItemModifiedConnection = m_gameVersions->itemModified.connect(std::bind(&OrganizedModCollection::onGameVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
 	}
 
 	organize();
@@ -113,10 +116,9 @@ OrganizedModCollection & OrganizedModCollection::operator = (OrganizedModCollect
 		if(m_favourites != nullptr) {
 			m_favourites->removeListener(*this);
 		}
-
-		if(m_gameVersions != nullptr) {
-			m_gameVersions->removeListener(*this);
-		}
+		
+		m_gameVersionCollectionSizeChangedConnection.disconnect();
+		m_gameVersionCollectionItemModifiedConnection.disconnect();
 
 		m_filterType = m.m_filterType;
 		m_sortType = m.m_sortType;
@@ -138,7 +140,8 @@ OrganizedModCollection & OrganizedModCollection::operator = (OrganizedModCollect
 		}
 
 		if(m_gameVersions != nullptr) {
-			m_gameVersions->addListener(*this);
+			m_gameVersionCollectionSizeChangedConnection = m_gameVersions->sizeChanged.connect(std::bind(&OrganizedModCollection::onGameVersionCollectionSizeChanged, this, std::placeholders::_1));
+			m_gameVersionCollectionItemModifiedConnection = m_gameVersions->itemModified.connect(std::bind(&OrganizedModCollection::onGameVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
 		}
 	}
 
@@ -156,9 +159,8 @@ OrganizedModCollection & OrganizedModCollection::operator = (const OrganizedModC
 		m_favourites->removeListener(*this);
 	}
 
-	if(m_gameVersions != nullptr) {
-		m_gameVersions->removeListener(*this);
-	}
+	m_gameVersionCollectionSizeChangedConnection.disconnect();
+	m_gameVersionCollectionItemModifiedConnection.disconnect();
 
 	m_teams.clear();
 	m_authors.clear();
@@ -193,7 +195,8 @@ OrganizedModCollection & OrganizedModCollection::operator = (const OrganizedModC
 	}
 
 	if(m_gameVersions != nullptr) {
-		m_gameVersions->addListener(*this);
+		m_gameVersionCollectionSizeChangedConnection = m_gameVersions->sizeChanged.connect(std::bind(&OrganizedModCollection::onGameVersionCollectionSizeChanged, this, std::placeholders::_1));
+		m_gameVersionCollectionItemModifiedConnection = m_gameVersions->itemModified.connect(std::bind(&OrganizedModCollection::onGameVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
 	}
 
 	organize();
@@ -210,9 +213,8 @@ OrganizedModCollection::~OrganizedModCollection() {
 		m_favourites->removeListener(*this);
 	}
 
-	if(m_gameVersions != nullptr) {
-		m_gameVersions->removeListener(*this);
-	}
+	m_gameVersionCollectionSizeChangedConnection.disconnect();
+	m_gameVersionCollectionItemModifiedConnection.disconnect();
 }
 
 std::shared_ptr<ModCollection> OrganizedModCollection::getModCollection() const {
@@ -384,14 +386,14 @@ void OrganizedModCollection::setGameVersionCollection(std::shared_ptr<GameVersio
 	bool shouldOrganize = m_gameVersions != gameVersions &&
 						  (m_filterType == FilterType::SupportedGameVersions || m_filterType == FilterType::CompatibleGameVersions);
 
-	if(m_gameVersions != nullptr) {
-		m_gameVersions->removeListener(*this);
-	}
+	m_gameVersionCollectionSizeChangedConnection.disconnect();
+	m_gameVersionCollectionItemModifiedConnection.disconnect();
 
 	m_gameVersions = gameVersions;
 
 	if(m_gameVersions != nullptr) {
-		m_gameVersions->addListener(*this);
+		m_gameVersionCollectionSizeChangedConnection = gameVersions->sizeChanged.connect(std::bind(&OrganizedModCollection::onGameVersionCollectionSizeChanged, this, std::placeholders::_1));
+		m_gameVersionCollectionItemModifiedConnection = gameVersions->itemModified.connect(std::bind(&OrganizedModCollection::onGameVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
 	}
 
 	if(shouldOrganize) {
@@ -1300,7 +1302,7 @@ void OrganizedModCollection::favouriteModCollectionUpdated() {
 	}
 }
 
-void OrganizedModCollection::gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) {
+void OrganizedModCollection::onGameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) {
 	updateGameVersionList();
 
 	if(m_filterType == FilterType::SupportedGameVersions || m_filterType == FilterType::CompatibleGameVersions) {
@@ -1308,7 +1310,7 @@ void OrganizedModCollection::gameVersionCollectionSizeChanged(GameVersionCollect
 	}
 }
 
-void OrganizedModCollection::gameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) {
+void OrganizedModCollection::onGameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) {
 	updateGameVersionList();
 
 	if(m_filterType == FilterType::SupportedGameVersions || m_filterType == FilterType::CompatibleGameVersions) {

@@ -103,14 +103,16 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	, m_modGameTypeComboBox(nullptr)
 	, m_preferredGameVersionComboBox(nullptr)
 	, m_launchButton(nullptr) {
-	m_modManager->addListener(*this);
-	m_modManager->getOrganizedMods()->addListener(*this);
-	m_modManager->getGameVersions()->addListener(*this);
-
 	std::shared_ptr<DOSBoxVersionCollection> dosboxVersions(m_modManager->getDOSBoxVersions());
+	std::shared_ptr<GameVersionCollection> gameVersions(m_modManager->getGameVersions());
 
 	m_dosboxVersionCollectionSizeChangedConnection = dosboxVersions->sizeChanged.connect(std::bind(&ModBrowserPanel::onDOSBoxVersionCollectionSizeChanged, this, std::placeholders::_1));
 	m_dosboxVersionCollectionItemModifiedConnection = dosboxVersions->itemModified.connect(std::bind(&ModBrowserPanel::onDOSBoxVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
+	m_gameVersionCollectionSizeChangedConnection = gameVersions->sizeChanged.connect(std::bind(&ModBrowserPanel::onGameVersionCollectionSizeChanged, this, std::placeholders::_1));
+	m_gameVersionCollectionItemModifiedConnection = gameVersions->itemModified.connect(std::bind(&ModBrowserPanel::onGameVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
+
+	m_modManager->addListener(*this);
+	m_modManager->getOrganizedMods()->addListener(*this);
 
 	m_launchErrorConnection = m_modManager->launchError.connect(std::bind(&ModBrowserPanel::onLaunchError, this, std::placeholders::_1));
 	m_gameProcessTerminatedConnection = m_modManager->gameProcessTerminated.connect(std::bind(&ModBrowserPanel::onGameProcessTerminated, this, std::placeholders::_1, std::placeholders::_2));
@@ -412,10 +414,11 @@ ModBrowserPanel::~ModBrowserPanel() {
 	m_gameProcessTerminatedConnection.disconnect();
 	m_dosboxVersionCollectionSizeChangedConnection.disconnect();
 	m_dosboxVersionCollectionItemModifiedConnection.disconnect();
+	m_gameVersionCollectionSizeChangedConnection.disconnect();
+	m_gameVersionCollectionItemModifiedConnection.disconnect();
 
 	m_modManager->removeListener(*this);
 	m_modManager->getOrganizedMods()->removeListener(*this);
-	m_modManager->getGameVersions()->removeListener(*this);
 }
 
 void ModBrowserPanel::update() {
@@ -1447,10 +1450,10 @@ void ModBrowserPanel::onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollect
 	updatePreferredDOSBoxVersionList();
 }
 
-void ModBrowserPanel::gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) {
+void ModBrowserPanel::onGameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) {
 	updatePreferredGameVersionList();
 }
 
-void ModBrowserPanel::gameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) {
+void ModBrowserPanel::onGameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) {
 	updatePreferredGameVersionList();
 }

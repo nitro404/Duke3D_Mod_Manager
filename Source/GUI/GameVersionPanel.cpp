@@ -143,7 +143,7 @@ GameVersionPanel::GameVersionPanel(std::shared_ptr<GameVersion> gameVersion, wxW
 	gameVersionConfigurationSizer->AddGrowableCol(1, 1);
 	SetSizer(gameVersionConfigurationSizer);
 
-	m_gameVersion->addListener(*this);
+	m_gameVersionModifiedConnection = m_gameVersion->modified.connect(std::bind(&GameVersionPanel::onGameVersionModified, this, std::placeholders::_1));
 
 	for(SettingPanel * settingPanel : m_settingsPanels) {
 		settingPanel->addListener(*this);
@@ -151,7 +151,7 @@ GameVersionPanel::GameVersionPanel(std::shared_ptr<GameVersion> gameVersion, wxW
 }
 
 GameVersionPanel::~GameVersionPanel() {
-	m_gameVersion->removeListener(*this);
+	m_gameVersionModifiedConnection.disconnect();
 
 	for(SettingPanel * settingPanel : m_settingsPanels) {
 		settingPanel->removeListener(*this);
@@ -355,7 +355,7 @@ void GameVersionPanel::notifyGameVersionSaved() {
 	}
 }
 
-void GameVersionPanel::gameVersionModified(GameVersion & gameVersion) {
+void GameVersionPanel::onGameVersionModified(GameVersion & gameVersion) {
 	update();
 }
 

@@ -2,8 +2,8 @@
 #define _GAME_VERSION_COLLECTION_H_
 
 #include "GameVersion.h"
-#include "GameVersionCollectionBroadcaster.h"
 
+#include <boost/signals2.hpp>
 #include <rapidjson/document.h>
 
 #include <cstdint>
@@ -14,8 +14,7 @@
 
 class ModGameVersion;
 
-class GameVersionCollection final : public GameVersionCollectionBroadcaster,
-									public GameVersion::Listener {
+class GameVersionCollection final {
 public:
 	GameVersionCollection();
 	GameVersionCollection(const std::vector<GameVersion> & gameVersions);
@@ -25,7 +24,7 @@ public:
 	GameVersionCollection(const GameVersionCollection & g);
 	GameVersionCollection & operator = (GameVersionCollection && g) noexcept;
 	GameVersionCollection & operator = (const GameVersionCollection & g);
-	virtual ~GameVersionCollection();
+	~GameVersionCollection();
 
 	size_t numberOfGameVersions() const;
 	bool hasGameVersion(const GameVersion & gameVersion) const;
@@ -74,16 +73,16 @@ public:
 	bool operator == (const GameVersionCollection & g) const;
 	bool operator != (const GameVersionCollection & g) const;
 
+	boost::signals2::signal<void (GameVersionCollection & /* gameVersions */, GameVersion & /* gameVersion */)> itemModified;
+	boost::signals2::signal<void (GameVersionCollection & /* gameVersions */)> sizeChanged;
+
 	static const std::string FILE_FORMAT_VERSION;
 
-	// GameVersion::Listener Virtuals
-	virtual void gameVersionModified(GameVersion & gameVersion) override;
-
 private:
-	void notifyCollectionSizeChanged();
-	void notifyGameVersionModified(GameVersion & gameVersion);
+	void onGameVersionModified(GameVersion & gameVersion);
 
 	std::vector<std::shared_ptr<GameVersion>> m_gameVersions;
+	std::vector<boost::signals2::connection> m_gameVersionConnections;
 };
 
 #endif // _MOD_COLLECTION_H_

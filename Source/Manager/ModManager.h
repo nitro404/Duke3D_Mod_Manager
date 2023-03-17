@@ -3,7 +3,6 @@
 
 #include "DOSBox/DOSBoxVersionCollection.h"
 #include "Game/GameType.h"
-#include "Game/GameVersionCollectionListener.h"
 #include "Mod/OrganizedModCollection.h"
 
 #include <Analytics/Segment/SegmentAnalytics.h>
@@ -42,8 +41,7 @@ class Script;
 class ScriptArguments;
 
 class ModManager final : public Application,
-						 public OrganizedModCollection::Listener,
-						 public GameVersionCollectionListener {
+						 public OrganizedModCollection::Listener {
 public:
 	class Listener {
 	public:
@@ -151,10 +149,6 @@ public:
 	// OrganizedModCollection::Listener Virtuals
 	virtual void selectedModChanged(const std::shared_ptr<Mod> & mod) override;
 
-	// GameVersionCollectionListener Virtuals
-	virtual void gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) override;
-	virtual void gameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) override;
-
 	boost::signals2::signal<void ()> initialized;
 	boost::signals2::signal<void ()> initializationCancelled;
 	boost::signals2::signal<void ()> initializationFailed;
@@ -210,6 +204,8 @@ private:
 	void notifyDOSBoxRemoteServerPortChanged();
 	void onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection);
 	void onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion);
+	void onGameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection);
+	void onGameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion);
 	static size_t createDOSBoxTemplateScriptFiles(bool overwrite = false);
 	static size_t createDOSBoxTemplateScriptFiles(const std::string & directoryPath, bool overwrite = false);
 	static bool createDOSBoxTemplateScriptFile(GameType gameType, const std::string & directoryPath, bool overwrite = false);
@@ -234,6 +230,8 @@ private:
 	boost::signals2::connection m_dosboxVersionCollectionSizeChangedConnection;
 	boost::signals2::connection m_dosboxVersionCollectionItemModifiedConnection;
 	std::shared_ptr<GameManager> m_gameManager;
+	boost::signals2::connection m_gameVersionCollectionSizeChangedConnection;
+	boost::signals2::connection m_gameVersionCollectionItemModifiedConnection;
 	std::shared_ptr<ModCollection> m_mods;
 	std::shared_ptr<FavouriteModCollection> m_favouriteMods;
 	std::shared_ptr<OrganizedModCollection> m_organizedMods;

@@ -24,8 +24,6 @@ set(MAIN_SOURCE_FILES
 	Game/GameManager.cpp
 	Game/GameVersion.cpp
 	Game/GameVersionCollection.cpp
-	Game/GameVersionCollectionBroadcaster.cpp
-	Game/GameVersionCollectionListener.cpp
 	Game/NoCDCracker.cpp
 	Group/Group.cpp
 	Group/GroupFile.cpp
@@ -78,8 +76,6 @@ set(MAIN_HEADER_FILES
 	Game/GameType.h
 	Game/GameVersion.h
 	Game/GameVersionCollection.h
-	Game/GameVersionCollectionBroadcaster.h
-	Game/GameVersionCollectionListener.h
 	Game/NoCDCracker.h
 	Group/Group.h
 	Group/GroupFile.h

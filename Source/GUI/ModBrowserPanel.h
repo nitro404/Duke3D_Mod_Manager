@@ -1,7 +1,6 @@
 #ifndef _MOD_BROWSER_PANEL_H_
 #define _MOD_BROWSER_PANEL_H_
 
-#include "Game/GameVersionCollectionListener.h"
 #include "Manager/ModManager.h"
 #include "Mod/OrganizedModCollection.h"
 
@@ -30,8 +29,7 @@ class ModManager;
 
 class ModBrowserPanel final : public wxPanel,
 							  public ModManager::Listener,
-							  public OrganizedModCollection::Listener,
-							  public GameVersionCollectionListener {
+							  public OrganizedModCollection::Listener {
 public:
 	ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
 	virtual ~ModBrowserPanel();
@@ -98,10 +96,6 @@ public:
 	virtual void organizedModTeamCollectionChanged(const std::vector<std::shared_ptr<ModAuthorInformation>> & organizedMods) override;
 	virtual void organizedModAuthorCollectionChanged(const std::vector<std::shared_ptr<ModAuthorInformation>> & organizedMods) override;
 
-	// GameVersionCollectionListener Virtuals
-	virtual void gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) override;
-	virtual void gameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) override;
-
 private:
 	void onLaunchError(std::string errorMessage);
 	void onGameProcessTerminated(uint64_t nativeExitCode, bool forceTerminated);
@@ -109,6 +103,8 @@ private:
 	void onGameProcessEnded(GameProcessTerminatedEvent & gameProcessTerminatedEvent);
 	void onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection);
 	void onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion);
+	void onGameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection);
+	void onGameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion);
 
 	std::shared_ptr<ModManager> m_modManager;
 	std::shared_ptr<GameVersion> m_activeGameVersion;
@@ -117,6 +113,8 @@ private:
 	boost::signals2::connection m_gameProcessTerminatedConnection;
 	boost::signals2::connection m_dosboxVersionCollectionSizeChangedConnection;
 	boost::signals2::connection m_dosboxVersionCollectionItemModifiedConnection;
+	boost::signals2::connection m_gameVersionCollectionSizeChangedConnection;
+	boost::signals2::connection m_gameVersionCollectionItemModifiedConnection;
 	std::string m_searchQuery;
 	std::vector<ModMatch> m_modMatches;
 	wxSearchCtrl * m_modSearchTextField;

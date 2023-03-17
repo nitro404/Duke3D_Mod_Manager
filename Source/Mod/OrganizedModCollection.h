@@ -1,8 +1,9 @@
 #ifndef _ORGANIZED_MOD_COLLECTION_H_
 #define _ORGANIZED_MOD_COLLECTION_H_
 
-#include "Game/GameVersionCollectionListener.h"
 #include "ModCollectionListener.h"
+
+#include <boost/signals2.hpp>
 
 #include <cstdint>
 #include <map>
@@ -17,8 +18,7 @@ class Mod;
 class ModAuthorInformation;
 class ModCollection;
 
-class OrganizedModCollection final : public ModCollectionListener,
-                                     public GameVersionCollectionListener {
+class OrganizedModCollection final : public ModCollectionListener {
 public:
 	enum class SortType {
 		Unsorted,
@@ -169,10 +169,6 @@ public:
 	virtual void modCollectionUpdated() override;
 	virtual void favouriteModCollectionUpdated() override;
 
-	// GameVersionCollectionListener Virtuals
-	virtual void gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) override;
-	virtual void gameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) override;
-
 	void organize();
 
 	bool areCurrentSortOptionsValidInCurrentContext();
@@ -214,6 +210,8 @@ private:
 	void notifyOrganizedModGameVersionCollectionChanged();
 	void notifyOrganizedModTeamCollectionChanged();
 	void notifyOrganizedModAuthorCollectionChanged();
+	void onGameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection);
+	void onGameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion);
 
 	std::vector<std::shared_ptr<Mod>> mergeSortMods(std::vector<std::shared_ptr<Mod>> mods);
 	std::vector<std::shared_ptr<Mod>> mergeMods(std::vector<std::shared_ptr<Mod>> left, std::vector<std::shared_ptr<Mod>> right);
@@ -228,6 +226,8 @@ private:
 	std::shared_ptr<ModCollection> m_mods;
 	std::shared_ptr<FavouriteModCollection> m_favourites;
 	std::shared_ptr<GameVersionCollection> m_gameVersions;
+	boost::signals2::connection m_gameVersionCollectionSizeChangedConnection;
+	boost::signals2::connection m_gameVersionCollectionItemModifiedConnection;
 	std::vector<std::shared_ptr<Mod>> m_organizedMods;
 	std::vector<std::shared_ptr<GameVersion>> m_organizedGameVersions;
 	std::vector<std::shared_ptr<ModAuthorInformation>> m_teams;

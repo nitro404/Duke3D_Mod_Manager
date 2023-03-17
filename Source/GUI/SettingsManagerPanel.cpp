@@ -2,6 +2,7 @@
 
 #include "DOSBox/DOSBoxVersion.h"
 #include "DOSBox/DOSBoxVersionCollection.h"
+#include "Game/GameVersion.h"
 #include "Game/GameVersionCollection.h"
 #include "Manager/ModManager.h"
 #include "Manager/SettingsManager.h"
@@ -30,8 +31,8 @@ SettingsManagerPanel::SettingsManagerPanel(std::shared_ptr<ModManager> modManage
 
 	m_dosboxVersionCollectionSizeChangedConnection = dosboxVersions->sizeChanged.connect(std::bind(&SettingsManagerPanel::onDOSBoxVersionCollectionSizeChanged, this, std::placeholders::_1));
 	m_dosboxVersionCollectionItemModifiedConnection = dosboxVersions->itemModified.connect(std::bind(&SettingsManagerPanel::onDOSBoxVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
-
-	gameVersions->addListener(*this);
+	m_gameVersionCollectionSizeChangedConnection = gameVersions->sizeChanged.connect(std::bind(&SettingsManagerPanel::onGameVersionCollectionSizeChanged, this, std::placeholders::_1));
+	m_gameVersionCollectionItemModifiedConnection = gameVersions->itemModified.connect(std::bind(&SettingsManagerPanel::onGameVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
 
 	int wrapSizerOrientation = wxHORIZONTAL;
 
@@ -171,8 +172,8 @@ SettingsManagerPanel::SettingsManagerPanel(std::shared_ptr<ModManager> modManage
 SettingsManagerPanel::~SettingsManagerPanel() {
 	m_dosboxVersionCollectionSizeChangedConnection.disconnect();
 	m_dosboxVersionCollectionItemModifiedConnection.disconnect();
-
-	m_modManager->getGameVersions()->removeListener(*this);
+	m_gameVersionCollectionSizeChangedConnection.disconnect();
+	m_gameVersionCollectionItemModifiedConnection.disconnect();
 
 	for(SettingPanel * settingPanel : m_settingsPanels) {
 		settingPanel->removeListener(*this);
@@ -403,10 +404,10 @@ void SettingsManagerPanel::onDOSBoxVersionCollectionItemModified(DOSBoxVersionCo
 	m_preferredDOSBoxVersionSettingPanel->setChoices(dosboxVersionCollection.getDOSBoxVersionDisplayNames(false));
 }
 
-void SettingsManagerPanel::gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) {
+void SettingsManagerPanel::onGameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) {
 	m_preferredGameVersionSettingPanel->setChoices(gameVersionCollection.getGameVersionDisplayNames(false));
 }
 
-void SettingsManagerPanel::gameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) {
+void SettingsManagerPanel::onGameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) {
 	m_preferredGameVersionSettingPanel->setChoices(gameVersionCollection.getGameVersionDisplayNames(false));
 }

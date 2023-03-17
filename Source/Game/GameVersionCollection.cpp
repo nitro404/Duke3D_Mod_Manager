@@ -1,7 +1,6 @@
 #include "GameVersionCollection.h"
 
 #include "GameVersion.h"
-#include "GameVersionCollectionListener.h"
 #include "Mod/ModGameVersion.h"
 
 #include <Utilities/FileUtilities.h>
@@ -41,25 +40,29 @@ GameVersionCollection::GameVersionCollection(const std::vector<std::shared_ptr<G
 GameVersionCollection::GameVersionCollection(GameVersionCollection && g) noexcept
 	: m_gameVersions(std::move(g.m_gameVersions)) {
 	for(std::shared_ptr<GameVersion> & gameVersion : m_gameVersions) {
-		gameVersion->clearListeners();
-		gameVersion->addListener(*this);
+		m_gameVersionConnections.push_back(gameVersion->modified.connect(std::bind(&GameVersionCollection::onGameVersionModified, this, std::placeholders::_1)));
 	}
 }
 
 GameVersionCollection::GameVersionCollection(const GameVersionCollection & g) {
 	for(std::vector<std::shared_ptr<GameVersion>>::const_iterator i = g.m_gameVersions.begin(); i != g.m_gameVersions.end(); ++i) {
 		m_gameVersions.push_back(std::make_shared<GameVersion>(**i));
-		m_gameVersions.back()->addListener(*this);
+		m_gameVersionConnections.push_back(m_gameVersions.back()->modified.connect(std::bind(&GameVersionCollection::onGameVersionModified, this, std::placeholders::_1)));
 	}
 }
 
 GameVersionCollection & GameVersionCollection::operator = (GameVersionCollection && g) noexcept {
 	if(this != &g) {
+		for(boost::signals2::connection & gameVersionConnection : m_gameVersionConnections) {
+			gameVersionConnection.disconnect();
+		}
+
+		m_gameVersionConnections.clear();
+
 		m_gameVersions = std::move(g.m_gameVersions);
 
 		for(std::shared_ptr<GameVersion> & gameVersion : m_gameVersions) {
-			gameVersion->clearListeners();
-			gameVersion->addListener(*this);
+			m_gameVersionConnections.push_back(gameVersion->modified.connect(std::bind(&GameVersionCollection::onGameVersionModified, this, std::placeholders::_1)));
 		}
 	}
 
@@ -71,15 +74,15 @@ GameVersionCollection & GameVersionCollection::operator = (const GameVersionColl
 
 	for(std::vector<std::shared_ptr<GameVersion>>::const_iterator i = g.m_gameVersions.begin(); i != g.m_gameVersions.end(); ++i) {
 		m_gameVersions.push_back(std::make_shared<GameVersion>(**i));
-		m_gameVersions.back()->addListener(*this);
+		m_gameVersionConnections.push_back(m_gameVersions.back()->modified.connect(std::bind(&GameVersionCollection::onGameVersionModified, this, std::placeholders::_1)));
 	}
 
 	return *this;
 }
 
 GameVersionCollection::~GameVersionCollection() {
-	for(std::shared_ptr<GameVersion> & gameVersion : m_gameVersions) {
-		gameVersion->removeListener(*this);
+	for(boost::signals2::connection & gameVersionConnection : m_gameVersionConnections) {
+		gameVersionConnection.disconnect();
 	}
 }
 
@@ -282,9 +285,9 @@ bool GameVersionCollection::addGameVersion(const GameVersion & gameVersion) {
 	}
 
 	m_gameVersions.push_back(std::make_shared<GameVersion>(gameVersion));
-	m_gameVersions.back()->addListener(*this);
+	m_gameVersionConnections.push_back(m_gameVersions.back()->modified.connect(std::bind(&GameVersionCollection::onGameVersionModified, this, std::placeholders::_1)));
 
-	notifyCollectionSizeChanged();
+	sizeChanged(*this);
 
 	return true;
 }
@@ -295,9 +298,9 @@ bool GameVersionCollection::addGameVersion(std::shared_ptr<GameVersion> gameVers
 	}
 
 	m_gameVersions.push_back(gameVersion);
-	m_gameVersions.back()->addListener(*this);
+	m_gameVersionConnections.push_back(m_gameVersions.back()->modified.connect(std::bind(&GameVersionCollection::onGameVersionModified, this, std::placeholders::_1)));
 
-	notifyCollectionSizeChanged();
+	sizeChanged(*this);
 
 	return true;
 }
@@ -347,10 +350,11 @@ bool GameVersionCollection::removeGameVersion(size_t index) {
 		return false;
 	}
 
-	m_gameVersions[index]->removeListener(*this);
+	m_gameVersionConnections[index].disconnect();
+	m_gameVersionConnections.erase(m_gameVersionConnections.begin() + index);
 	m_gameVersions.erase(m_gameVersions.begin() + index);
 
-	notifyCollectionSizeChanged();
+	sizeChanged(*this);
 
 	return true;
 }
@@ -388,13 +392,14 @@ void GameVersionCollection::setDefaultGameVersions() {
 }
 
 void GameVersionCollection::clearGameVersions() {
-	for(std::shared_ptr<GameVersion> & gameVersion : m_gameVersions) {
-		gameVersion->removeListener(*this);
+	for(boost::signals2::connection & gameVersionConnection : m_gameVersionConnections) {
+		gameVersionConnection.disconnect();
 	}
 
+	m_gameVersionConnections.clear();
 	m_gameVersions.clear();
 
-	notifyCollectionSizeChanged();
+	sizeChanged(*this);
 }
 
 size_t GameVersionCollection::checkForMissingExecutables() const {
@@ -555,7 +560,7 @@ bool GameVersionCollection::loadFromJSON(const std::string & filePath, bool auto
 
 	m_gameVersions = gameVersionCollection->m_gameVersions;
 
-	notifyCollectionSizeChanged();
+	sizeChanged(*this);
 
 	return true;
 }
@@ -600,12 +605,6 @@ bool GameVersionCollection::saveToJSON(const std::string & filePath, bool overwr
 	return true;
 }
 
-void GameVersionCollection::notifyCollectionSizeChanged() {
-	for(size_t i = 0; i < numberOfListeners(); i++) {
-		getListener(i)->gameVersionCollectionSizeChanged(*this);
-	}
-}
-
 bool GameVersionCollection::isValid() const {
 	for(std::vector<std::shared_ptr<GameVersion>>::const_iterator i = m_gameVersions.begin(); i != m_gameVersions.end(); ++i) {
 		if(!(*i)->isValid()) {
@@ -645,12 +644,6 @@ bool GameVersionCollection::operator != (const GameVersionCollection & g) const 
 	return !operator == (g);
 }
 
-void GameVersionCollection::gameVersionModified(GameVersion & gameVersion) {
-	notifyGameVersionModified(gameVersion);
-}
-
-void GameVersionCollection::notifyGameVersionModified(GameVersion & gameVersion) {
-	for(size_t i = 0; i < numberOfListeners(); i++) {
-		getListener(i)->gameVersionCollectionItemModified(*this, gameVersion);
-	}
+void GameVersionCollection::onGameVersionModified(GameVersion & gameVersion) {
+	itemModified(*this, gameVersion);
 }

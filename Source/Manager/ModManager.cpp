@@ -98,8 +98,9 @@ ModManager::~ModManager() {
 
 	m_dosboxVersionCollectionSizeChangedConnection.disconnect();
 	m_dosboxVersionCollectionItemModifiedConnection.disconnect();
+	m_gameVersionCollectionSizeChangedConnection.disconnect();
+	m_gameVersionCollectionItemModifiedConnection.disconnect();
 
-	getGameVersions()->removeListener(*this);
 	m_organizedMods->removeListener(*this);
 
 	SegmentAnalytics::destroyInstance();
@@ -370,7 +371,8 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 		spdlog::warn("Game configuration for game version '{}' is missing, changing preferred game version to '{}.", settings->preferredGameVersion, m_preferredGameVersion->getName());
 	}
 
-	gameVersions->addListener(*this);
+	m_gameVersionCollectionSizeChangedConnection = gameVersions->sizeChanged.connect(std::bind(&ModManager::onGameVersionCollectionSizeChanged, this, std::placeholders::_1));
+	m_gameVersionCollectionItemModifiedConnection = gameVersions->itemModified.connect(std::bind(&ModManager::onGameVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
 
 	if(!notifyInitializationProgress("Loading Mod List")) {
 		return false;
@@ -4464,7 +4466,7 @@ void ModManager::onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection &
 	}
 }
 
-void ModManager::gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) {
+void ModManager::onGameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	if(m_preferredGameVersion != nullptr && !getGameVersions()->hasGameVersion(*m_preferredGameVersion.get())) {
@@ -4481,7 +4483,7 @@ void ModManager::gameVersionCollectionSizeChanged(GameVersionCollection & gameVe
 	}
 }
 
-void ModManager::gameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) {
+void ModManager::onGameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	if(m_preferredGameVersion.get() == &gameVersion) {

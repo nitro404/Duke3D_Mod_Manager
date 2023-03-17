@@ -1,7 +1,6 @@
 #ifndef _SETTINGS_MANAGER_PANEL_H_
 #define _SETTINGS_MANAGER_PANEL_H_
 
-#include "Game/GameVersionCollectionListener.h"
 #include "SettingPanel.h"
 
 #include <boost/signals2.hpp>
@@ -20,12 +19,13 @@
 
 class DOSBoxVersion;
 class DOSBoxVersionCollection;
+class GameVersion;
 class GameVersionCollection;
 class ModManager;
 
-class SettingsManagerPanel final : public wxPanel,
-								   public SettingPanel::Listener,
-								   public GameVersionCollectionListener {
+class SettingsManagerPanel final
+	: public wxPanel
+	, public SettingPanel::Listener {
 public:
 	class Listener {
 	public:
@@ -64,13 +64,11 @@ public:
 	// SettingPanel::Listener Virtuals
 	virtual void settingModified(SettingPanel & settingPanel) override;
 
-	// GameVersionCollectionListener Virtuals
-	virtual void gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) override;
-	virtual void gameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) override;
-
 private:
 	void onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection);
 	void onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion);
+	void onGameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection);
+	void onGameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion);
 	void notifySettingsChanged();
 	void notifySettingsReset();
 	void notifySettingsDiscarded();
@@ -79,6 +77,8 @@ private:
 	std::shared_ptr<ModManager> m_modManager;
 	boost::signals2::connection m_dosboxVersionCollectionSizeChangedConnection;
 	boost::signals2::connection m_dosboxVersionCollectionItemModifiedConnection;
+	boost::signals2::connection m_gameVersionCollectionSizeChangedConnection;
+	boost::signals2::connection m_gameVersionCollectionItemModifiedConnection;
 	std::vector<SettingPanel *> m_settingsPanels;
 	StringChoiceSettingPanel * m_preferredDOSBoxVersionSettingPanel;
 	StringChoiceSettingPanel * m_preferredGameVersionSettingPanel;
