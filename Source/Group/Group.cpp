@@ -52,7 +52,7 @@ Group & Group::operator = (Group && g) noexcept {
 		m_filePath = std::move(g.m_filePath);
 		m_files = std::move(g.m_files);
 
-		for(boost::signals2::connection fileConnections : m_fileConnections) {
+		for(boost::signals2::connection & fileConnections : m_fileConnections) {
 			fileConnections.disconnect();
 		}
 
@@ -74,7 +74,7 @@ Group & Group::operator = (const Group & g) {
 
 	m_filePath = g.m_filePath;
 
-	for(boost::signals2::connection fileConnections : m_fileConnections) {
+	for(boost::signals2::connection & fileConnections : m_fileConnections) {
 		fileConnections.disconnect();
 	}
 
@@ -95,7 +95,7 @@ Group & Group::operator = (const Group & g) {
 }
 
 Group::~Group() {
-	for(boost::signals2::connection fileConnections : m_fileConnections) {
+	for(boost::signals2::connection & fileConnections : m_fileConnections) {
 		fileConnections.disconnect();
 	}
 
@@ -108,7 +108,7 @@ bool Group::isModified() const {
 	return m_modified;
 }
 
-void Group::setModified(bool value) const {
+void Group::setModified(bool value) {
 	m_modified = value;
 
 	if(!m_modified) {
@@ -631,8 +631,8 @@ size_t Group::removeFilesByName(const std::vector<std::string> & fileNames) {
 }
 
 void Group::clearFiles() {
-	for(boost::signals2::connection fileConnections : m_fileConnections) {
-		fileConnections.disconnect();
+	for(boost::signals2::connection & fileConnection : m_fileConnections) {
+		fileConnection.disconnect();
 	}
 
 	for(std::shared_ptr<GroupFile> & file : m_files) {
@@ -814,7 +814,7 @@ std::unique_ptr<Group> Group::loadFrom(const std::string & filePath) {
 	return group;
 }
 
-bool Group::save(bool overwrite) const {
+bool Group::save(bool overwrite) {
 	// verify that the file has a path
 	if(m_filePath.empty()) {
 		spdlog::error("Group has no file name.");
@@ -911,7 +911,7 @@ void Group::updateParentGroup() {
 	}
 }
 
-void Group::onGroupFileModified(const GroupFile & groupFile) {
+void Group::onGroupFileModified(GroupFile & groupFile) {
 	if(groupFile.isModified()) {
 		setModified(true);
 	}

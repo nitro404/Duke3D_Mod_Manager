@@ -55,17 +55,17 @@ public:
 	bool operator == (const GroupFile & f) const;
 	bool operator != (const GroupFile & f) const;
 
-	boost::signals2::signal<void (const GroupFile & /* file */)> modified;
+	boost::signals2::signal<void (GroupFile & /* file */)> modified;
 
 	static const uint8_t MAX_FILE_NAME_LENGTH;
 	static const bool DEFAULT_OVERWRITE_FILES;
 
 private:
-	void setModified(bool modified) const;
+	void setModified(bool modified);
 
 	std::string m_fileName;
 	std::unique_ptr<ByteBuffer> m_data;
-	mutable bool m_modified;
+	bool m_modified;
 	mutable Group * m_parentGroup;
 };
 

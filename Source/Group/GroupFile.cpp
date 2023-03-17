@@ -83,7 +83,7 @@ bool GroupFile::isModified() const {
 	return m_modified;
 }
 
-void GroupFile::setModified(bool value) const {
+void GroupFile::setModified(bool value) {
 	m_modified = value;
 
 	modified(*this);

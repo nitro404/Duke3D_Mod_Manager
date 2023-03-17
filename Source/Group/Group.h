@@ -86,7 +86,7 @@ public:
 
 	static std::unique_ptr<Group> createFrom(const std::string & directoryPath);
 	static std::unique_ptr<Group> loadFrom(const std::string & filePath);
-	bool save(bool overwrite = true) const;
+	bool save(bool overwrite = true);
 
 	size_t getGroupSize() const;
 	std::string getGroupSizeAsString() const;
@@ -94,7 +94,7 @@ public:
 	bool operator == (const Group & g) const;
 	bool operator != (const Group & g) const;
 
-	boost::signals2::signal<void (const Group & /* group */)> modified;
+	boost::signals2::signal<void (Group & /* group */)> modified;
 
 	static const bool DEFAULT_REPLACE_FILES;
 
@@ -111,15 +111,15 @@ public:
 	static const std::string HEADER_TEXT;
 
 private:
-	void setModified(bool modified) const;
-	void onGroupFileModified(const GroupFile & groupFile);
+	void setModified(bool modified);
+	void onGroupFileModified(GroupFile & groupFile);
 	void notifyGroupModified() const;
 	void updateParentGroup();
 
 	std::string m_filePath;
 	std::vector<std::shared_ptr<GroupFile>> m_files;
 	std::vector<boost::signals2::connection> m_fileConnections;
-	mutable bool m_modified;
+	bool m_modified;
 };
 
 #endif // _GROUP_H_
