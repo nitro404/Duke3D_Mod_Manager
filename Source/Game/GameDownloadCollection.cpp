@@ -1,7 +1,6 @@
 #include "GameDownloadCollection.h"
 
 #include "GameDownload.h"
-#include "GameDownloadCollectionListener.h"
 
 #include <Date.h>
 #include <Utilities/FileUtilities.h>
@@ -25,15 +24,12 @@ static constexpr const char * JSON_GAME_DOWNLOADS_PROPERTY_NAME = "gameDownloads
 
 const std::string GameDownloadCollection::FILE_FORMAT_VERSION = "1.0.0";
 
-GameDownloadCollection::GameDownloadCollection()
-	: GameDownloadCollectionBroadcaster() { }
+GameDownloadCollection::GameDownloadCollection() { }
 
 GameDownloadCollection::GameDownloadCollection(GameDownloadCollection && c) noexcept
-	: GameDownloadCollectionBroadcaster(std::move(c))
-	, m_downloads(std::move(c.m_downloads)) { }
+	: m_downloads(std::move(c.m_downloads)) { }
 
-GameDownloadCollection::GameDownloadCollection(const GameDownloadCollection & c)
-	: GameDownloadCollectionBroadcaster(c) {
+GameDownloadCollection::GameDownloadCollection(const GameDownloadCollection & c) {
 	for(std::vector<std::shared_ptr<GameDownload>>::const_iterator i = c.m_downloads.begin(); i != c.m_downloads.end(); ++i) {
 		m_downloads.push_back(std::make_shared<GameDownload>(**i));
 	}
@@ -41,8 +37,6 @@ GameDownloadCollection::GameDownloadCollection(const GameDownloadCollection & c)
 
 GameDownloadCollection & GameDownloadCollection::operator = (GameDownloadCollection && c) noexcept {
 	if(this != &c) {
-		GameDownloadCollectionBroadcaster::operator = (c);
-
 		m_downloads = std::move(c.m_downloads);
 	}
 
@@ -50,8 +44,6 @@ GameDownloadCollection & GameDownloadCollection::operator = (GameDownloadCollect
 }
 
 GameDownloadCollection & GameDownloadCollection::operator = (const GameDownloadCollection & c) {
-	GameDownloadCollectionBroadcaster::operator = (c);
-
 	m_downloads.clear();
 
 	for(std::vector<std::shared_ptr<GameDownload>>::const_iterator i = c.m_downloads.begin(); i != c.m_downloads.end(); ++i) {
@@ -61,7 +53,7 @@ GameDownloadCollection & GameDownloadCollection::operator = (const GameDownloadC
 	return *this;
 }
 
-GameDownloadCollection::~GameDownloadCollection() { }
+GameDownloadCollection::~GameDownloadCollection() = default;
 
 size_t GameDownloadCollection::numberOfDownloads() const {
 	return m_downloads.size();
@@ -186,7 +178,7 @@ bool GameDownloadCollection::addDownload(const GameDownload & download) {
 
 	m_downloads.push_back(std::make_shared<GameDownload>(download));
 
-	notifyCollectionChanged();
+	updated(*this);
 
 	return true;
 }
@@ -198,7 +190,7 @@ bool GameDownloadCollection::removeDownload(size_t index) {
 
 	m_downloads.erase(m_downloads.begin() + index);
 
-	notifyCollectionChanged();
+	updated(*this);
 
 	return true;
 }
@@ -208,7 +200,7 @@ bool GameDownloadCollection::removeDownload(const GameDownload & download) {
 		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), download.getName())) {
 			m_downloads.erase(i);
 
-			notifyCollectionChanged();
+			updated(*this);
 
 			return true;
 		}
@@ -226,7 +218,7 @@ bool GameDownloadCollection::removeDownloadWithName(const std::string & name) {
 		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
 			m_downloads.erase(i);
 
-			notifyCollectionChanged();
+			updated(*this);
 
 			return true;
 		}
@@ -238,7 +230,7 @@ bool GameDownloadCollection::removeDownloadWithName(const std::string & name) {
 void GameDownloadCollection::clearDownloads() {
 	m_downloads.clear();
 
-	notifyCollectionChanged();
+	updated(*this);
 }
 
 rapidjson::Document GameDownloadCollection::toJSON() const {
@@ -324,8 +316,6 @@ std::unique_ptr<GameDownloadCollection> GameDownloadCollection::parseFrom(const 
 		newGameDownloadCollection->m_downloads.push_back(std::shared_ptr<GameDownload>(newDownload.release()));
 	}
 
-	newGameDownloadCollection->notifyCollectionChanged();
-
 	return newGameDownloadCollection;
 }
 
@@ -374,7 +364,7 @@ bool GameDownloadCollection::loadFromJSON(const std::string & filePath) {
 
 	m_downloads = std::move(modCollection->m_downloads);
 
-	notifyCollectionChanged();
+	updated(*this);
 
 	return true;
 }
@@ -417,12 +407,6 @@ bool GameDownloadCollection::saveToJSON(const std::string & filePath, bool overw
 	fileStream.close();
 
 	return true;
-}
-
-void GameDownloadCollection::notifyCollectionChanged() {
-	for(size_t i = 0; i < numberOfListeners(); i++) {
-		getListener(i)->gameDownloadCollectionUpdated(*this);
-	}
 }
 
 bool GameDownloadCollection::isValid() const {

@@ -18,8 +18,6 @@ set(MAIN_SOURCE_FILES
 	Download/DownloadManager.cpp
 	Game/GameDownload.cpp
 	Game/GameDownloadCollection.cpp
-	Game/GameDownloadCollectionBroadcaster.cpp
-	Game/GameDownloadCollectionListener.cpp
 	Game/GameDownloadFile.cpp
 	Game/GameDownloadVersion.cpp
 	Game/GameLocator.cpp
@@ -73,8 +71,6 @@ set(MAIN_HEADER_FILES
 	Project.h
 	Game/GameDownload.h
 	Game/GameDownloadCollection.h
-	Game/GameDownloadCollectionBroadcaster.h
-	Game/GameDownloadCollectionListener.h
 	Game/GameDownloadFile.h
 	Game/GameDownloadVersion.h
 	Game/GameLocator.h

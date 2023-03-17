@@ -1,12 +1,12 @@
 #ifndef _GAME_DOWNLOAD_COLLECTION_H_
 #define _GAME_DOWNLOAD_COLLECTION_H_
 
-#include "GameDownloadCollectionBroadcaster.h"
 #include "GameDownloadFile.h"
 #include "GameVersion.h"
 
 #include <Platform/DeviceInformationBridge.h>
 
+#include <boost/signals2.hpp>
 #include <rapidjson/document.h>
 
 #include <cstdint>
@@ -17,14 +17,14 @@
 
 class GameDownload;
 
-class GameDownloadCollection final : public GameDownloadCollectionBroadcaster {
+class GameDownloadCollection final {
 public:
 	GameDownloadCollection();
 	GameDownloadCollection(GameDownloadCollection && c) noexcept;
 	GameDownloadCollection(const GameDownloadCollection & c);
 	GameDownloadCollection & operator = (GameDownloadCollection && c) noexcept;
 	GameDownloadCollection & operator = (const GameDownloadCollection & c);
-	virtual ~GameDownloadCollection();
+	~GameDownloadCollection();
 
 	size_t numberOfDownloads() const;
 	bool hasDownload(const GameDownload & download) const;
@@ -56,11 +56,11 @@ public:
 	bool operator == (const GameDownloadCollection & c) const;
 	bool operator != (const GameDownloadCollection & c) const;
 
+	boost::signals2::signal<void (GameDownloadCollection & /* gameDownloads */)> updated;
+
 	static const std::string FILE_FORMAT_VERSION;
 
 private:
-	void notifyCollectionChanged();
-
 	std::vector<std::shared_ptr<GameDownload>> m_downloads;
 };
 
