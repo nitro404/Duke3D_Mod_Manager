@@ -70,7 +70,7 @@ DOSBoxManagerPanel::DOSBoxManagerPanel(std::shared_ptr<ModManager> modManager, w
 	m_removeDOSBoxVersionButton->Disable();
 
 	m_dosboxSettingsPanel = new DOSBoxSettingsPanel(modManager, this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "General DOSBox Settings");
-	m_dosboxSettingsPanel->addListener(*this);
+	m_dosboxSettingModifiedConnection = m_dosboxSettingsPanel->dosboxSettingModified.connect(std::bind(&DOSBoxManagerPanel::onDOSBoxSettingModified, this, std::placeholders::_1));
 
 	wxPanel * dosboxSettingsActionsPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, "DOSBox Settings Actions");
 
@@ -126,7 +126,7 @@ DOSBoxManagerPanel::DOSBoxManagerPanel(std::shared_ptr<ModManager> modManager, w
 }
 
 DOSBoxManagerPanel::~DOSBoxManagerPanel() {
-	m_dosboxSettingsPanel->removeListener(*this);
+	m_dosboxSettingModifiedConnection.disconnect();
 }
 
 bool DOSBoxManagerPanel::hasDOSBoxVersionPanel(const DOSBoxVersionPanel * dosboxVersionPanel) const {
@@ -712,7 +712,7 @@ void DOSBoxManagerPanel::notifyDOSBoxSettingsSaved() {
 	}
 }
 
-void DOSBoxManagerPanel::dosboxSettingModified(SettingPanel & settingPanel) {
+void DOSBoxManagerPanel::onDOSBoxSettingModified(SettingPanel & settingPanel) {
 	if(settingPanel.isModified()) {
 		m_modified = true;
 

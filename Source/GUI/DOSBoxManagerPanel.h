@@ -5,6 +5,7 @@
 #include "DOSBoxVersionPanel.h"
 #include "Manager/ModManager.h"
 
+#include <boost/signals2.hpp>
 #include <wx/wxprec.h>
 
 #ifdef __BORLANDC__
@@ -19,8 +20,7 @@
 
 class DOSBoxManagerPanel final
 	: public wxPanel
-	, public DOSBoxVersionPanel::Listener
-	, public DOSBoxSettingsPanel::Listener {
+	, public DOSBoxVersionPanel::Listener {
 public:
 	class Listener {
 	public:
@@ -95,9 +95,6 @@ public:
 	virtual void dosboxVersionReset(DOSBoxVersionPanel & dosboxVersionPanel) override;
 	virtual void dosboxVersionSaved(DOSBoxVersionPanel & dosboxVersionPanel) override;
 
-	// DOSBoxSettingsPanel::Listener Virtuals
-	virtual void dosboxSettingModified(SettingPanel & settingPanel) override;
-
 private:
 	void onNotebookPageChanged(wxBookCtrlEvent & event);
 	void onNewDOSBoxVersionButtonPressed(wxCommandEvent & event);
@@ -110,7 +107,7 @@ private:
 	void onSaveDOSBoxSettingsButtonPressed(wxCommandEvent & event);
 	void onDiscardDOSBoxSettingsChangesButtonPressed(wxCommandEvent & event);
 	void onResetDefaultDOSBoxSettingsButtonPressed(wxCommandEvent & event);
-
+	void onDOSBoxSettingModified(SettingPanel & settingPanel);
 	void notifyDOSBoxSettingsChanged();
 	void notifyDOSBoxSettingsReset();
 	void notifyDOSBoxSettingsDiscarded();
@@ -128,6 +125,7 @@ private:
 	wxButton * m_saveDOSBoxSettingsButton;
 	wxButton * m_discardDOSBoxSettingsChangesButton;
 	DOSBoxSettingsPanel * m_dosboxSettingsPanel;
+	boost::signals2::connection m_dosboxSettingModifiedConnection;
 	bool m_modified;
 	std::vector<Listener *> m_listeners;
 };

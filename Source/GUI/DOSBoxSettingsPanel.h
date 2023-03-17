@@ -23,13 +23,6 @@ class DOSBoxSettingsPanel final
 	: public wxStaticBox
 	, public SettingPanel::Listener {
 public:
-	class Listener {
-	public:
-		virtual ~Listener();
-
-		virtual void dosboxSettingModified(SettingPanel & settingPanel) = 0;
-	};
-
 	DOSBoxSettingsPanel(std::shared_ptr<ModManager> modManager, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxALIGN_LEFT, const std::string & title = "DOSBox Settings");
 	virtual ~DOSBoxSettingsPanel();
 
@@ -40,17 +33,10 @@ public:
 	void discardSettings();
 	void resetSettings();
 
-	size_t numberOfListeners() const;
-	bool hasListener(const Listener & listener) const;
-	size_t indexOfListener(const Listener & listener) const;
-	Listener * getListener(size_t index) const;
-	bool addListener(Listener & listener);
-	bool removeListener(size_t index);
-	bool removeListener(const Listener & listener);
-	void clearListeners();
-
 	// SettingPanel::Listener Virtuals
 	virtual void settingModified(SettingPanel & settingPanel) override;
+
+	boost::signals2::signal<void (SettingPanel & /* settingPanel */)> dosboxSettingModified;
 
 private:
 	void onPreferredDOSBoxVersionChanged(std::shared_ptr<DOSBoxVersion> dosboxVersion);
@@ -70,7 +56,6 @@ private:
 	std::vector<SettingPanel *> m_settingsPanels;
 	StringChoiceSettingPanel * m_preferredDOSBoxVersionSettingPanel;
 	bool m_modified;
-	std::vector<Listener *> m_listeners;
 };
 
 #endif // _DOSBOX_SETTINGS_PANEL_H_
