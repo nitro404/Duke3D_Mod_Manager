@@ -39,25 +39,29 @@ DOSBoxVersionCollection::DOSBoxVersionCollection(const std::vector<std::shared_p
 DOSBoxVersionCollection::DOSBoxVersionCollection(DOSBoxVersionCollection && g) noexcept
 	: m_dosboxVersions(std::move(g.m_dosboxVersions)) {
 	for(std::shared_ptr<DOSBoxVersion> & dosboxVersion : m_dosboxVersions) {
-		dosboxVersion->clearListeners();
-		dosboxVersion->addListener(*this);
+		m_dosboxVersionConnections.push_back(dosboxVersion->modified.connect(std::bind(&DOSBoxVersionCollection::onDOSBoxVersionModified, this, std::placeholders::_1)));
 	}
 }
 
 DOSBoxVersionCollection::DOSBoxVersionCollection(const DOSBoxVersionCollection & g) {
 	for(std::vector<std::shared_ptr<DOSBoxVersion>>::const_iterator i = g.m_dosboxVersions.cbegin(); i != g.m_dosboxVersions.cend(); ++i) {
 		m_dosboxVersions.push_back(std::make_shared<DOSBoxVersion>(**i));
-		m_dosboxVersions.back()->addListener(*this);
+		m_dosboxVersionConnections.push_back(m_dosboxVersions.back()->modified.connect(std::bind(&DOSBoxVersionCollection::onDOSBoxVersionModified, this, std::placeholders::_1)));
 	}
 }
 
 DOSBoxVersionCollection & DOSBoxVersionCollection::operator = (DOSBoxVersionCollection && g) noexcept {
 	if(this != &g) {
+		for(boost::signals2::connection & dosboxVersionConnection : m_dosboxVersionConnections) {
+			dosboxVersionConnection.disconnect();
+		}
+
+		m_dosboxVersionConnections.clear();
+
 		m_dosboxVersions = std::move(g.m_dosboxVersions);
 
 		for(std::shared_ptr<DOSBoxVersion> & dosboxVersion : m_dosboxVersions) {
-			dosboxVersion->clearListeners();
-			dosboxVersion->addListener(*this);
+			m_dosboxVersionConnections.push_back(dosboxVersion->modified.connect(std::bind(&DOSBoxVersionCollection::onDOSBoxVersionModified, this, std::placeholders::_1)));
 		}
 	}
 
@@ -65,19 +69,24 @@ DOSBoxVersionCollection & DOSBoxVersionCollection::operator = (DOSBoxVersionColl
 }
 
 DOSBoxVersionCollection & DOSBoxVersionCollection::operator = (const DOSBoxVersionCollection & g) {
+	for(boost::signals2::connection & dosboxVersionConnection : m_dosboxVersionConnections) {
+		dosboxVersionConnection.disconnect();
+	}
+
+	m_dosboxVersionConnections.clear();
 	m_dosboxVersions.clear();
 
 	for(std::vector<std::shared_ptr<DOSBoxVersion>>::const_iterator i = g.m_dosboxVersions.cbegin(); i != g.m_dosboxVersions.cend(); ++i) {
 		m_dosboxVersions.push_back(std::make_shared<DOSBoxVersion>(**i));
-		m_dosboxVersions.back()->addListener(*this);
+		m_dosboxVersionConnections.push_back(m_dosboxVersions.back()->modified.connect(std::bind(&DOSBoxVersionCollection::onDOSBoxVersionModified, this, std::placeholders::_1)));
 	}
 
 	return *this;
 }
 
 DOSBoxVersionCollection::~DOSBoxVersionCollection() {
-	for(std::shared_ptr<DOSBoxVersion> & dosboxVersion : m_dosboxVersions) {
-		dosboxVersion->removeListener(*this);
+	for(boost::signals2::connection & dosboxVersionConnection : m_dosboxVersionConnections) {
+		dosboxVersionConnection.disconnect();
 	}
 }
 
@@ -211,9 +220,9 @@ bool DOSBoxVersionCollection::addDOSBoxVersion(const DOSBoxVersion & dosboxVersi
 	}
 
 	m_dosboxVersions.push_back(std::make_shared<DOSBoxVersion>(dosboxVersion));
-	m_dosboxVersions.back()->addListener(*this);
+	m_dosboxVersionConnections.push_back(m_dosboxVersions.back()->modified.connect(std::bind(&DOSBoxVersionCollection::onDOSBoxVersionModified, this, std::placeholders::_1)));
 
-	notifyCollectionSizeChanged();
+	sizeChanged(*this);
 
 	return true;
 }
@@ -224,9 +233,9 @@ bool DOSBoxVersionCollection::addDOSBoxVersion(std::shared_ptr<DOSBoxVersion> do
 	}
 
 	m_dosboxVersions.push_back(dosboxVersion);
-	m_dosboxVersions.back()->addListener(*this);
+	m_dosboxVersionConnections.push_back(m_dosboxVersions.back()->modified.connect(std::bind(&DOSBoxVersionCollection::onDOSBoxVersionModified, this, std::placeholders::_1)));
 
-	notifyCollectionSizeChanged();
+	sizeChanged(*this);
 
 	return true;
 }
@@ -276,10 +285,11 @@ bool DOSBoxVersionCollection::removeDOSBoxVersion(size_t index) {
 		return false;
 	}
 
-	m_dosboxVersions[index]->removeListener(*this);
+	m_dosboxVersionConnections[index].disconnect();
+	m_dosboxVersionConnections.erase(m_dosboxVersionConnections.cbegin() + index);
 	m_dosboxVersions.erase(m_dosboxVersions.begin() + index);
 
-	notifyCollectionSizeChanged();
+	sizeChanged(*this);
 
 	return true;
 }
@@ -317,13 +327,14 @@ void DOSBoxVersionCollection::setDefaultDOSBoxVersions() {
 }
 
 void DOSBoxVersionCollection::clearDOSBoxVersions() {
-	for(std::shared_ptr<DOSBoxVersion> & dosboxVersion : m_dosboxVersions) {
-		dosboxVersion->removeListener(*this);
+	for(boost::signals2::connection & dosboxVersionConnection : m_dosboxVersionConnections) {
+		dosboxVersionConnection.disconnect();
 	}
 
+	m_dosboxVersionConnections.clear();
 	m_dosboxVersions.clear();
 
-	notifyCollectionSizeChanged();
+	sizeChanged(*this);
 }
 
 size_t DOSBoxVersionCollection::checkForMissingExecutables() const {
@@ -486,7 +497,7 @@ bool DOSBoxVersionCollection::loadFromJSON(const std::string & filePath, bool au
 
 	m_dosboxVersions = dosboxVersionCollection->m_dosboxVersions;
 
-	notifyCollectionSizeChanged();
+	sizeChanged(*this);
 
 	return true;
 }
@@ -531,80 +542,6 @@ bool DOSBoxVersionCollection::saveToJSON(const std::string & filePath, bool over
 	return true;
 }
 
-size_t DOSBoxVersionCollection::numberOfListeners() const {
-	return m_listeners.size();
-}
-
-bool DOSBoxVersionCollection::hasListener(const Listener & listener) const {
-	for(std::vector<Listener *>::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i) {
-		if(*i == &listener) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-size_t DOSBoxVersionCollection::indexOfListener(const Listener & listener) const {
-	for(size_t i = 0; i < m_listeners.size(); i++) {
-		if(m_listeners[i] == &listener) {
-			return i;
-		}
-	}
-
-	return std::numeric_limits<size_t>::max();
-}
-
-DOSBoxVersionCollection::Listener * DOSBoxVersionCollection::getListener(size_t index) const {
-	if(index >= m_listeners.size()) {
-		return nullptr;
-	}
-
-	return m_listeners[index];
-}
-
-bool DOSBoxVersionCollection::addListener(Listener & listener) {
-	if(!hasListener(listener)) {
-		m_listeners.push_back(&listener);
-
-		return true;
-	}
-
-	return false;
-}
-
-bool DOSBoxVersionCollection::removeListener(size_t index) {
-	if(index >= m_listeners.size()) {
-		return false;
-	}
-
-	m_listeners.erase(m_listeners.begin() + index);
-
-	return true;
-}
-
-bool DOSBoxVersionCollection::removeListener(const Listener & listener) {
-	for(std::vector<Listener *>::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i) {
-		if(*i == &listener) {
-			m_listeners.erase(i);
-
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void DOSBoxVersionCollection::clearListeners() {
-	m_listeners.clear();
-}
-
-void DOSBoxVersionCollection::notifyCollectionSizeChanged() {
-	for(size_t i = 0; i < numberOfListeners(); i++) {
-		getListener(i)->dosboxVersionCollectionSizeChanged(*this);
-	}
-}
-
 bool DOSBoxVersionCollection::isValid() const {
 	for(std::vector<std::shared_ptr<DOSBoxVersion>>::const_iterator i = m_dosboxVersions.begin(); i != m_dosboxVersions.end(); ++i) {
 		if(!(*i)->isValid()) {
@@ -643,14 +580,6 @@ bool DOSBoxVersionCollection::operator != (const DOSBoxVersionCollection & g) co
 	return !operator == (g);
 }
 
-void DOSBoxVersionCollection::dosboxVersionModified(DOSBoxVersion & dosboxVersion) {
-	notifyDOSBoxVersionModified(dosboxVersion);
+void DOSBoxVersionCollection::onDOSBoxVersionModified(DOSBoxVersion & dosboxVersion) {
+	itemModified(*this, dosboxVersion);
 }
-
-void DOSBoxVersionCollection::notifyDOSBoxVersionModified(DOSBoxVersion & dosboxVersion) {
-	for(size_t i = 0; i < numberOfListeners(); i++) {
-		getListener(i)->dosboxVersionCollectionItemModified(*this, dosboxVersion);
-	}
-}
-
-DOSBoxVersionCollection::Listener::~Listener() { }

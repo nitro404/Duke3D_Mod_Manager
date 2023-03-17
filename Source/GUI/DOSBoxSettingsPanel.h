@@ -5,6 +5,7 @@
 #include "Manager/ModManager.h"
 #include "SettingPanel.h"
 
+#include <boost/signals2.hpp>
 #include <wx/wxprec.h>
 
 #ifdef __BORLANDC__
@@ -21,7 +22,6 @@
 class DOSBoxSettingsPanel final
 	: public wxStaticBox
 	, public SettingPanel::Listener
-	, public DOSBoxVersionCollection::Listener
 	, public ModManager::Listener {
 public:
 	class Listener {
@@ -53,10 +53,6 @@ public:
 	// SettingPanel::Listener Virtuals
 	virtual void settingModified(SettingPanel & settingPanel) override;
 
-	// DOSBoxVersionCollection::Listener Virtuals
-	virtual void dosboxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection) override;
-	virtual void dosboxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion) override;
-
 	// ModManager::Listener Virtuals
 	virtual void modSelectionChanged(const std::shared_ptr<Mod> & mod, size_t modVersionIndex, size_t modVersionTypeIndex, size_t modGameVersionIndex) override;
 	virtual void gameTypeChanged(GameType gameType) override;
@@ -67,7 +63,12 @@ public:
 	virtual void dosboxRemoteServerPortChanged(uint16_t port) override;
 
 private:
+	void onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection);
+	void onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion);
+
 	std::shared_ptr<ModManager> m_modManager;
+	boost::signals2::connection m_dosboxVersionCollectionSizeChangedConnection;
+	boost::signals2::connection m_dosboxVersionCollectionItemModifiedConnection;
 	std::vector<SettingPanel *> m_settingsPanels;
 	StringChoiceSettingPanel * m_preferredDOSBoxVersionSettingPanel;
 	bool m_modified;

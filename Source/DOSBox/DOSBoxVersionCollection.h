@@ -3,6 +3,7 @@
 
 #include "DOSBoxVersion.h"
 
+#include <boost/signals2.hpp>
 #include <rapidjson/document.h>
 
 #include <memory>
@@ -10,16 +11,8 @@
 #include <string>
 #include <vector>
 
-class DOSBoxVersionCollection final : public DOSBoxVersion::Listener {
+class DOSBoxVersionCollection final {
 public:
-	class Listener {
-	public:
-		virtual ~Listener();
-
-		virtual void dosboxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection) = 0;
-		virtual void dosboxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion) = 0;
-	};
-
 	DOSBoxVersionCollection();
 	DOSBoxVersionCollection(const std::vector<DOSBoxVersion> & dosboxVersions);
 	DOSBoxVersionCollection(const std::vector<const DOSBoxVersion *> & dosboxVersions);
@@ -66,32 +59,22 @@ public:
 	bool saveTo(const std::string & filePath, bool overwrite = true) const;
 	bool saveToJSON(const std::string & filePath, bool overwrite = true) const;
 
-	size_t numberOfListeners() const;
-	bool hasListener(const Listener & listener) const;
-	size_t indexOfListener(const Listener & listener) const;
-	Listener * getListener(size_t index) const;
-	bool addListener(Listener & listener);
-	bool removeListener(size_t index);
-	bool removeListener(const Listener & listener);
-	void clearListeners();
-
 	bool isValid() const;
 	static bool isValid(const DOSBoxVersionCollection * g);
 
 	bool operator == (const DOSBoxVersionCollection & g) const;
 	bool operator != (const DOSBoxVersionCollection & g) const;
 
+	boost::signals2::signal<void (DOSBoxVersionCollection & /* dosboxVersions */, DOSBoxVersion & /* dosboxVersion */)> itemModified;
+	boost::signals2::signal<void (DOSBoxVersionCollection & /* dosboxVersions */)> sizeChanged;
+
 	static const std::string FILE_FORMAT_VERSION;
 
-	// DOSBoxVersion::Listener Virtuals
-	virtual void dosboxVersionModified(DOSBoxVersion & dosboxVersion) override;
-
 private:
-	void notifyCollectionSizeChanged();
-	void notifyDOSBoxVersionModified(DOSBoxVersion & dosboxVersion);
+	void onDOSBoxVersionModified(DOSBoxVersion & dosboxVersion);
 
 	std::vector<std::shared_ptr<DOSBoxVersion>> m_dosboxVersions;
-	std::vector<Listener *> m_listeners;
+	std::vector<boost::signals2::connection> m_dosboxVersionConnections;
 };
 
 #endif // _DOSBOX_VERSION_COLLECTION_H_

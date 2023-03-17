@@ -43,7 +43,6 @@ class ScriptArguments;
 
 class ModManager final : public Application,
 						 public OrganizedModCollection::Listener,
-						 public DOSBoxVersionCollection::Listener,
 						 public GameVersionCollectionListener {
 public:
 	class Listener {
@@ -152,10 +151,6 @@ public:
 	// OrganizedModCollection::Listener Virtuals
 	virtual void selectedModChanged(const std::shared_ptr<Mod> & mod) override;
 
-	// DOSBoxVersionCollection::Listener Virtuals
-	virtual void dosboxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection) override;
-	virtual void dosboxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion) override;
-
 	// GameVersionCollectionListener Virtuals
 	virtual void gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) override;
 	virtual void gameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) override;
@@ -213,6 +208,8 @@ private:
 	void notifyDOSBoxServerIPAddressChanged();
 	void notifyDOSBoxLocalServerPortChanged();
 	void notifyDOSBoxRemoteServerPortChanged();
+	void onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection);
+	void onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion);
 	static size_t createDOSBoxTemplateScriptFiles(bool overwrite = false);
 	static size_t createDOSBoxTemplateScriptFiles(const std::string & directoryPath, bool overwrite = false);
 	static bool createDOSBoxTemplateScriptFile(GameType gameType, const std::string & directoryPath, bool overwrite = false);
@@ -234,6 +231,8 @@ private:
 	size_t m_selectedModVersionTypeIndex;
 	size_t m_selectedModGameVersionIndex;
 	std::shared_ptr<DOSBoxManager> m_dosboxManager;
+	boost::signals2::connection m_dosboxVersionCollectionSizeChangedConnection;
+	boost::signals2::connection m_dosboxVersionCollectionItemModifiedConnection;
 	std::shared_ptr<GameManager> m_gameManager;
 	std::shared_ptr<ModCollection> m_mods;
 	std::shared_ptr<FavouriteModCollection> m_favouriteMods;

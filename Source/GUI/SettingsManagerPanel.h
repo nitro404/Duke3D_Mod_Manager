@@ -1,10 +1,10 @@
 #ifndef _SETTINGS_MANAGER_PANEL_H_
 #define _SETTINGS_MANAGER_PANEL_H_
 
-#include "DOSBox/DOSBoxVersionCollection.h"
 #include "Game/GameVersionCollectionListener.h"
 #include "SettingPanel.h"
 
+#include <boost/signals2.hpp>
 #include <wx/wxprec.h>
 
 #ifdef __BORLANDC__
@@ -18,12 +18,13 @@
 #include <functional>
 #include <memory>
 
+class DOSBoxVersion;
+class DOSBoxVersionCollection;
 class GameVersionCollection;
 class ModManager;
 
 class SettingsManagerPanel final : public wxPanel,
 								   public SettingPanel::Listener,
-								   public DOSBoxVersionCollection::Listener,
 								   public GameVersionCollectionListener {
 public:
 	class Listener {
@@ -63,21 +64,21 @@ public:
 	// SettingPanel::Listener Virtuals
 	virtual void settingModified(SettingPanel & settingPanel) override;
 
-	// DOSBoxVersionCollection::Listener Virtuals
-	virtual void dosboxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection) override;
-	virtual void dosboxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion) override;
-
 	// GameVersionCollectionListener Virtuals
 	virtual void gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) override;
 	virtual void gameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) override;
 
 private:
+	void onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection);
+	void onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion);
 	void notifySettingsChanged();
 	void notifySettingsReset();
 	void notifySettingsDiscarded();
 	void notifySettingsSaved();
 
 	std::shared_ptr<ModManager> m_modManager;
+	boost::signals2::connection m_dosboxVersionCollectionSizeChangedConnection;
+	boost::signals2::connection m_dosboxVersionCollectionItemModifiedConnection;
 	std::vector<SettingPanel *> m_settingsPanels;
 	StringChoiceSettingPanel * m_preferredDOSBoxVersionSettingPanel;
 	StringChoiceSettingPanel * m_preferredGameVersionSettingPanel;

@@ -96,7 +96,9 @@ ModManager::ModManager()
 ModManager::~ModManager() {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
-	getDOSBoxVersions()->removeListener(*this);
+	m_dosboxVersionCollectionSizeChangedConnection.disconnect();
+	m_dosboxVersionCollectionItemModifiedConnection.disconnect();
+
 	getGameVersions()->removeListener(*this);
 	m_organizedMods->removeListener(*this);
 
@@ -344,7 +346,8 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 		spdlog::warn("DOSBox configuration for game version '{}' is missing, changing preferred game version to '{}.", settings->preferredDOSBoxVersion, m_preferredDOSBoxVersion->getName());
 	}
 
-	dosboxVersions->addListener(*this);
+	m_dosboxVersionCollectionSizeChangedConnection = dosboxVersions->sizeChanged.connect(std::bind(&ModManager::onDOSBoxVersionCollectionSizeChanged, this, std::placeholders::_1));
+	m_dosboxVersionCollectionItemModifiedConnection = dosboxVersions->itemModified.connect(std::bind(&ModManager::onDOSBoxVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
 
 	if(!notifyInitializationProgress("Initializing Game Manager")) {
 		return false;
@@ -4434,7 +4437,7 @@ void ModManager::selectedModChanged(const std::shared_ptr<Mod> & mod) {
 	setSelectedMod(mod);
 }
 
-void ModManager::dosboxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection) {
+void ModManager::onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	std::shared_ptr<DOSBoxVersionCollection> dosboxVersions(getDOSBoxVersions());
@@ -4453,7 +4456,7 @@ void ModManager::dosboxVersionCollectionSizeChanged(DOSBoxVersionCollection & do
 	}
 }
 
-void ModManager::dosboxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion) {
+void ModManager::onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	if(m_preferredDOSBoxVersion.get() == &dosboxVersion) {

@@ -1,9 +1,9 @@
 #ifndef _DOSBOX_VERSION_PANEL_H_
 #define _DOSBOX_VERSION_PANEL_H_
 
-#include "DOSBox/DOSBoxVersion.h"
 #include "SettingPanel.h"
 
+#include <boost/signals2.hpp>
 #include <wx/wxprec.h>
 
 #ifdef __BORLANDC__
@@ -14,9 +14,10 @@
 	#include <wx/wx.h>
 #endif
 
+class DOSBoxVersion;
+
 class DOSBoxVersionPanel final
 	: public wxPanel
-	, public DOSBoxVersion::Listener
 	, public SettingPanel::Listener {
 public:
 	class Listener {
@@ -52,19 +53,18 @@ public:
 	bool removeListener(const Listener & listener);
 	void clearListeners();
 
-	// DOSBoxVersion::Listener Virtuals
-	virtual void dosboxVersionModified(DOSBoxVersion & dosboxVersion) override;
-
 	// SettingPanel::Listener Virtuals
 	virtual void settingModified(SettingPanel & settingPanel) override;
 
 private:
+	void onDOSBoxVersionModified(DOSBoxVersion & dosboxVersion);
 	void notifyDOSBoxVersionSettingChanged(SettingPanel & settingPanel);
 	void notifyDOSBoxVersionChangesDiscarded();
 	void notifyDOSBoxVersionReset();
 	void notifyDOSBoxVersionSaved();
 
 	std::shared_ptr<DOSBoxVersion> m_dosboxVersion;
+	boost::signals2::connection m_dosboxVersionModifiedConnection;
 	std::vector<SettingPanel *> m_settingsPanels;
 	SettingPanel * m_dosboxPathSettingPanel;
 	mutable bool m_modified;

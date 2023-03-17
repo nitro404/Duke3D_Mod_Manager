@@ -1,15 +1,14 @@
 #include "DOSBoxVersionPanel.h"
 
+#include "DOSBox/DOSBoxVersion.h"
 #include "DOSBox/DOSBoxVersionCollection.h"
-
 #include "Project.h"
+#include "WXUtilities.h"
 
 #include <fmt/core.h>
 #include <spdlog/spdlog.h>
 #include <wx/gbsizer.h>
 #include <wx/wrapsizer.h>
-
-#include "WXUtilities.h"
 
 #include <sstream>
 
@@ -82,7 +81,7 @@ DOSBoxVersionPanel::DOSBoxVersionPanel(std::shared_ptr<DOSBoxVersion> dosboxVers
 	dosboxVersionConfigurationSizer->AddGrowableCol(0, 1);
 	SetSizer(dosboxVersionConfigurationSizer);
 
-	m_dosboxVersion->addListener(*this);
+	m_dosboxVersionModifiedConnection = m_dosboxVersion->modified.connect(std::bind(&DOSBoxVersionPanel::onDOSBoxVersionModified, this, std::placeholders::_1));
 
 	for(SettingPanel * settingPanel : m_settingsPanels) {
 		settingPanel->addListener(*this);
@@ -90,7 +89,7 @@ DOSBoxVersionPanel::DOSBoxVersionPanel(std::shared_ptr<DOSBoxVersion> dosboxVers
 }
 
 DOSBoxVersionPanel::~DOSBoxVersionPanel() {
-	m_dosboxVersion->removeListener(*this);
+	m_dosboxVersionModifiedConnection.disconnect();
 
 	for(SettingPanel * settingPanel : m_settingsPanels) {
 		settingPanel->removeListener(*this);
@@ -293,7 +292,7 @@ void DOSBoxVersionPanel::notifyDOSBoxVersionSaved() {
 	}
 }
 
-void DOSBoxVersionPanel::dosboxVersionModified(DOSBoxVersion & dosboxVersion) {
+void DOSBoxVersionPanel::onDOSBoxVersionModified(DOSBoxVersion & dosboxVersion) {
 	update();
 }
 

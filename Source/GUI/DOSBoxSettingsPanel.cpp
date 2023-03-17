@@ -1,6 +1,7 @@
 #include "DOSBoxSettingsPanel.h"
 
 #include "DOSBox/DOSBoxManager.h"
+#include "DOSBox/DOSBoxVersionCollection.h"
 #include "Manager/SettingsManager.h"
 
 #include <wx/wrapsizer.h>
@@ -37,7 +38,9 @@ DOSBoxSettingsPanel::DOSBoxSettingsPanel(std::shared_ptr<ModManager> modManager,
 	SetSizer(dosboxSettingsBoxSizer);
 
 	m_modManager->addListener(*this);
-	dosboxVersions->addListener(*this);
+
+	m_dosboxVersionCollectionSizeChangedConnection = dosboxVersions->sizeChanged.connect(std::bind(&DOSBoxSettingsPanel::onDOSBoxVersionCollectionSizeChanged, this, std::placeholders::_1));
+	m_dosboxVersionCollectionItemModifiedConnection = dosboxVersions->itemModified.connect(std::bind(&DOSBoxSettingsPanel::onDOSBoxVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
 
 	for(SettingPanel * settingPanel : m_settingsPanels) {
 		settingPanel->addListener(*this);
@@ -45,8 +48,10 @@ DOSBoxSettingsPanel::DOSBoxSettingsPanel(std::shared_ptr<ModManager> modManager,
 }
 
 DOSBoxSettingsPanel::~DOSBoxSettingsPanel() {
+	m_dosboxVersionCollectionSizeChangedConnection.disconnect();
+	m_dosboxVersionCollectionItemModifiedConnection.disconnect();
+
 	m_modManager->removeListener(*this);
-	m_modManager->getDOSBoxVersions()->removeListener(*this);
 
 	for(SettingPanel * settingPanel : m_settingsPanels) {
 		settingPanel->removeListener(*this);
@@ -217,11 +222,11 @@ void DOSBoxSettingsPanel::settingModified(SettingPanel & settingPanel) {
 	}
 }
 
-void DOSBoxSettingsPanel::dosboxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection) {
+void DOSBoxSettingsPanel::onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection) {
 	m_preferredDOSBoxVersionSettingPanel->setChoices(dosboxVersionCollection.getDOSBoxVersionDisplayNames(false));
 }
 
-void DOSBoxSettingsPanel::dosboxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion) {
+void DOSBoxSettingsPanel::onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion) {
 	m_preferredDOSBoxVersionSettingPanel->setChoices(dosboxVersionCollection.getDOSBoxVersionDisplayNames(false));
 }
 

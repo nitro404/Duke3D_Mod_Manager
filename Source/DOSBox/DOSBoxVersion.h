@@ -3,6 +3,7 @@
 
 #include "Platform/DeviceInformationBridge.h"
 
+#include <boost/signals2.hpp>
 #include <rapidjson/document.h>
 
 #include <memory>
@@ -11,13 +12,6 @@
 
 class DOSBoxVersion final {
 public:
-	class Listener {
-	public:
-		virtual ~Listener();
-
-		virtual void dosboxVersionModified(DOSBoxVersion & dosboxVersion) = 0;
-	};
-
 	DOSBoxVersion();
 	DOSBoxVersion(const std::string & name, bool removable, bool renamable, const std::string & executableName, const std::string & directoryPath, const std::string & website, const std::string & sourceCodeURL, const std::vector<DeviceInformationBridge::OperatingSystemType> & supportedOperatingSystems = std::vector<DeviceInformationBridge::OperatingSystemType>());
 	DOSBoxVersion(DOSBoxVersion && dosboxVersion) noexcept;
@@ -67,17 +61,10 @@ public:
 	bool isValid() const;
 	static bool isValid(const DOSBoxVersion * dosboxVersion);
 
-	size_t numberOfListeners() const;
-	bool hasListener(const Listener & listener) const;
-	size_t indexOfListener(const Listener & listener) const;
-	Listener * getListener(size_t index) const;
-	bool addListener(Listener & listener);
-	bool removeListener(size_t index);
-	bool removeListener(const Listener & listener);
-	void clearListeners();
-
 	bool operator == (const DOSBoxVersion & dosboxVersion) const;
 	bool operator != (const DOSBoxVersion & dosboxVersion) const;
+
+	boost::signals2::signal<void (DOSBoxVersion & /* dosboxVersion */)> modified;
 
 	static const DOSBoxVersion DOSBOX;
 	static const DOSBoxVersion DOSBOX_ECE;
@@ -87,7 +74,6 @@ public:
 
 private:
 	void setModified(bool modified);
-	void notifyModified();
 
 	std::string m_name;
 	bool m_removable;
@@ -98,7 +84,6 @@ private:
 	std::string m_sourceCodeURL;
 	std::vector<DeviceInformationBridge::OperatingSystemType> m_supportedOperatingSystems;
 	mutable bool m_modified;
-	mutable std::vector<Listener *> m_listeners;
 };
 
 #endif // _DOSBOX_VERSION_H_

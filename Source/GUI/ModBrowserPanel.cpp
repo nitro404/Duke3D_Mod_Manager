@@ -104,9 +104,14 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	, m_preferredGameVersionComboBox(nullptr)
 	, m_launchButton(nullptr) {
 	m_modManager->addListener(*this);
-	m_modManager->getDOSBoxVersions()->addListener(*this);
 	m_modManager->getOrganizedMods()->addListener(*this);
 	m_modManager->getGameVersions()->addListener(*this);
+
+	std::shared_ptr<DOSBoxVersionCollection> dosboxVersions(m_modManager->getDOSBoxVersions());
+
+	m_dosboxVersionCollectionSizeChangedConnection = dosboxVersions->sizeChanged.connect(std::bind(&ModBrowserPanel::onDOSBoxVersionCollectionSizeChanged, this, std::placeholders::_1));
+	m_dosboxVersionCollectionItemModifiedConnection = dosboxVersions->itemModified.connect(std::bind(&ModBrowserPanel::onDOSBoxVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
+
 	m_launchErrorConnection = m_modManager->launchError.connect(std::bind(&ModBrowserPanel::onLaunchError, this, std::placeholders::_1));
 	m_gameProcessTerminatedConnection = m_modManager->gameProcessTerminated.connect(std::bind(&ModBrowserPanel::onGameProcessTerminated, this, std::placeholders::_1, std::placeholders::_2));
 
@@ -276,7 +281,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 
 	wxStaticText * preferredDOSBoxVersionLabel = new wxStaticText(m_gameOptionsPanel, wxID_ANY, "DOSBox:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	preferredDOSBoxVersionLabel->SetFont(preferredDOSBoxVersionLabel->GetFont().MakeBold());
-	m_preferredDOSBoxVersionComboBox = new wxComboBox(m_gameOptionsPanel, wxID_ANY, preferredDOSBoxVersion == nullptr ? "" : preferredDOSBoxVersion->getName(), wxDefaultPosition, wxDefaultSize, WXUtilities::createItemWXArrayString(m_modManager->getDOSBoxVersions()->getDOSBoxVersionDisplayNames(false)), 0, wxDefaultValidator, "DOSBox Versions");
+	m_preferredDOSBoxVersionComboBox = new wxComboBox(m_gameOptionsPanel, wxID_ANY, preferredDOSBoxVersion == nullptr ? "" : preferredDOSBoxVersion->getName(), wxDefaultPosition, wxDefaultSize, WXUtilities::createItemWXArrayString(dosboxVersions->getDOSBoxVersionDisplayNames(false)), 0, wxDefaultValidator, "DOSBox Versions");
 	m_preferredDOSBoxVersionComboBox->SetEditable(false);
 	m_preferredDOSBoxVersionComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onPreferredDOSBoxVersionSelected, this);
 
@@ -405,8 +410,10 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 ModBrowserPanel::~ModBrowserPanel() {
 	m_launchErrorConnection.disconnect();
 	m_gameProcessTerminatedConnection.disconnect();
+	m_dosboxVersionCollectionSizeChangedConnection.disconnect();
+	m_dosboxVersionCollectionItemModifiedConnection.disconnect();
+
 	m_modManager->removeListener(*this);
-	m_modManager->getDOSBoxVersions()->removeListener(*this);
 	m_modManager->getOrganizedMods()->removeListener(*this);
 	m_modManager->getGameVersions()->removeListener(*this);
 }
@@ -1432,11 +1439,11 @@ void ModBrowserPanel::organizedModAuthorCollectionChanged(const std::vector<std:
 	updateModList();
 }
 
-void ModBrowserPanel::dosboxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection) {
+void ModBrowserPanel::onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection) {
 	updatePreferredDOSBoxVersionList();
 }
 
-void ModBrowserPanel::dosboxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion) {
+void ModBrowserPanel::onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion) {
 	updatePreferredDOSBoxVersionList();
 }
 

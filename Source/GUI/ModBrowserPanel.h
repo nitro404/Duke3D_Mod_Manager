@@ -1,11 +1,11 @@
 #ifndef _MOD_BROWSER_PANEL_H_
 #define _MOD_BROWSER_PANEL_H_
 
-#include "DOSBox/DOSBoxVersionCollection.h"
 #include "Game/GameVersionCollectionListener.h"
 #include "Manager/ModManager.h"
 #include "Mod/OrganizedModCollection.h"
 
+#include <boost/signals2.hpp>
 #include <wx/wxprec.h>
 
 #ifdef __BORLANDC__
@@ -19,6 +19,7 @@
 #include <wx/hyperlink.h>
 #include <wx/srchctrl.h>
 
+class DOSBoxVersionCollection;
 class GameProcessTerminatedEvent;
 class GameVersion;
 class GameVersionCollection;
@@ -30,7 +31,6 @@ class ModManager;
 class ModBrowserPanel final : public wxPanel,
 							  public ModManager::Listener,
 							  public OrganizedModCollection::Listener,
-							  public DOSBoxVersionCollection::Listener,
 							  public GameVersionCollectionListener {
 public:
 	ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
@@ -98,10 +98,6 @@ public:
 	virtual void organizedModTeamCollectionChanged(const std::vector<std::shared_ptr<ModAuthorInformation>> & organizedMods) override;
 	virtual void organizedModAuthorCollectionChanged(const std::vector<std::shared_ptr<ModAuthorInformation>> & organizedMods) override;
 
-	// DOSBoxVersionCollection::Listener Virtuals
-	virtual void dosboxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection) override;
-	virtual void dosboxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion) override;
-
 	// GameVersionCollectionListener Virtuals
 	virtual void gameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) override;
 	virtual void gameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) override;
@@ -111,12 +107,16 @@ private:
 	void onGameProcessTerminated(uint64_t nativeExitCode, bool forceTerminated);
 	void onLaunchFailed(LaunchFailedEvent & launchFailedEvent);
 	void onGameProcessEnded(GameProcessTerminatedEvent & gameProcessTerminatedEvent);
+	void onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection);
+	void onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion);
 
 	std::shared_ptr<ModManager> m_modManager;
 	std::shared_ptr<GameVersion> m_activeGameVersion;
 	std::future<bool> m_runSelectedModFuture;
 	boost::signals2::connection m_launchErrorConnection;
 	boost::signals2::connection m_gameProcessTerminatedConnection;
+	boost::signals2::connection m_dosboxVersionCollectionSizeChangedConnection;
+	boost::signals2::connection m_dosboxVersionCollectionItemModifiedConnection;
 	std::string m_searchQuery;
 	std::vector<ModMatch> m_modMatches;
 	wxSearchCtrl * m_modSearchTextField;
