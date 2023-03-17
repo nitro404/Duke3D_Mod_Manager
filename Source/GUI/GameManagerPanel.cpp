@@ -2,6 +2,7 @@
 
 #include "Game/GameManager.h"
 #include "Game/GameVersionCollection.h"
+#include "GameVersionPanel.h"
 #include "Manager/SettingsManager.h"
 #include "SettingPanel.h"
 #include "WXUtilities.h"
@@ -87,7 +88,13 @@ GameManagerPanel::GameManagerPanel(std::shared_ptr<GameManager> gameManager, wxW
 
 	for(const std::shared_ptr<GameVersion> & gameVersion : m_gameManager->getGameVersions()->getGameVersions()) {
 		gameVersionPanel = new GameVersionPanel(gameVersion, m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-		gameVersionPanel->addListener(*this);
+
+		m_gameVersionPanelSignalConnectionGroups.push_back(SignalConnectionGroup(
+			gameVersionPanel->gameVersionSettingChanged.connect(std::bind(&GameManagerPanel::onGameVersionSettingChanged, this, std::placeholders::_1, std::placeholders::_2)),
+			gameVersionPanel->gameVersionChangesDiscarded.connect(std::bind(&GameManagerPanel::onGameVersionChangesDiscarded, this, std::placeholders::_1)),
+			gameVersionPanel->gameVersionReset.connect(std::bind(&GameManagerPanel::onGameVersionReset, this, std::placeholders::_1)),
+			gameVersionPanel->gameVersionSaved.connect(std::bind(&GameManagerPanel::onGameVersionSaved, this, std::placeholders::_1))
+		));
 
 		addGameVersionPanel(gameVersionPanel);
 	}
@@ -96,8 +103,8 @@ GameManagerPanel::GameManagerPanel(std::shared_ptr<GameManager> gameManager, wxW
 }
 
 GameManagerPanel::~GameManagerPanel() {
-	for(size_t i = 0; i < m_notebook->GetPageCount(); i++) {
-		getGameVersionPanel(i)->removeListener(*this);
+	for(SignalConnectionGroup & gameVersionPanelSignalConnectionGroup : m_gameVersionPanelSignalConnectionGroups) {
+		gameVersionPanelSignalConnectionGroup.disconnect();
 	}
 }
 
@@ -306,7 +313,13 @@ bool GameManagerPanel::addGameVersionPanel(GameVersionPanel * gameVersionPanel) 
 		return false;
 	}
 
-	gameVersionPanel->addListener(*this);
+	m_gameVersionPanelSignalConnectionGroups.push_back(SignalConnectionGroup(
+		gameVersionPanel->gameVersionSettingChanged.connect(std::bind(&GameManagerPanel::onGameVersionSettingChanged, this, std::placeholders::_1, std::placeholders::_2)),
+		gameVersionPanel->gameVersionChangesDiscarded.connect(std::bind(&GameManagerPanel::onGameVersionChangesDiscarded, this, std::placeholders::_1)),
+		gameVersionPanel->gameVersionReset.connect(std::bind(&GameManagerPanel::onGameVersionReset, this, std::placeholders::_1)),
+		gameVersionPanel->gameVersionSaved.connect(std::bind(&GameManagerPanel::onGameVersionSaved, this, std::placeholders::_1))
+	));
+
 	m_notebook->AddPage(gameVersionPanel, gameVersionPanel->getPanelName());
 	m_notebook->ChangeSelection(m_notebook->GetPageCount() - 1);
 
@@ -533,8 +546,10 @@ bool GameManagerPanel::removeGameVersion(size_t gameVersionPanelIndex) {
 		m_newButton->SetFocus();
 	}
 
+	m_gameVersionPanelSignalConnectionGroups[gameVersionPanelIndex].disconnect();
+	m_gameVersionPanelSignalConnectionGroups.erase(m_gameVersionPanelSignalConnectionGroups.begin() + gameVersionPanelIndex);
+
 	GameVersionPanel * gameVersionPanel = getGameVersionPanel(gameVersionPanelIndex);
-	gameVersionPanel->removeListener(*this);
 	m_notebook->RemovePage(gameVersionPanelIndex);
 	delete gameVersionPanel;
 
@@ -579,18 +594,18 @@ void GameManagerPanel::onRemoveButtonPressed(wxCommandEvent & event) {
 	removeCurrentGameVersion();
 }
 
-void GameManagerPanel::gameVersionChangesDiscarded(GameVersionPanel & gameVersionPanel) {
+void GameManagerPanel::onGameVersionChangesDiscarded(GameVersionPanel & gameVersionPanel) {
 	updateGameVersionPanel(indexOfGameVersionPanel(&gameVersionPanel));
 }
 
-void GameManagerPanel::gameVersionSettingChanged(GameVersionPanel & gameVersionPanel, SettingPanel & settingPanel) {
+void GameManagerPanel::onGameVersionSettingChanged(GameVersionPanel & gameVersionPanel, SettingPanel & settingPanel) {
 	updateGameVersionPanel(indexOfGameVersionPanel(&gameVersionPanel));
 }
 
-void GameManagerPanel::gameVersionReset(GameVersionPanel & gameVersionPanel) {
+void GameManagerPanel::onGameVersionReset(GameVersionPanel & gameVersionPanel) {
 	updateGameVersionPanel(indexOfGameVersionPanel(&gameVersionPanel));
 }
 
-void GameManagerPanel::gameVersionSaved(GameVersionPanel & gameVersionPanel) {
+void GameManagerPanel::onGameVersionSaved(GameVersionPanel & gameVersionPanel) {
 	updateGameVersionPanel(indexOfGameVersionPanel(&gameVersionPanel));
 }

@@ -1,6 +1,8 @@
 #include "GameVersionPanel.h"
 
+#include "Game/GameVersion.h"
 #include "Game/GameVersionCollection.h"
+#include "GameVersionPanel.h"
 #include "Project.h"
 #include "SettingPanel.h"
 
@@ -223,7 +225,9 @@ bool GameVersionPanel::save() {
 		}
 	}
 
-	notifyGameVersionSaved();
+	m_modified = false;
+
+	gameVersionSaved(*this);
 
 	return true;
 }
@@ -235,7 +239,7 @@ void GameVersionPanel::discard() {
 
 	m_modified = false;
 
-	notifyGameVersionChangesDiscarded();
+	gameVersionChangesDiscarded(*this);
 }
 
 void GameVersionPanel::reset() {
@@ -245,7 +249,7 @@ void GameVersionPanel::reset() {
 
 	m_modified = true;
 
-	notifyGameVersionReset();
+	gameVersionReset(*this);
 }
 
 void GameVersionPanel::discardGamePathChanges() {
@@ -258,104 +262,6 @@ void GameVersionPanel::update() {
 	}
 }
 
-GameVersionPanel::Listener::~Listener() { }
-
-size_t GameVersionPanel::numberOfListeners() const {
-	return m_listeners.size();
-}
-
-bool GameVersionPanel::hasListener(const Listener & listener) const {
-	for(std::vector<Listener *>::const_iterator i = m_listeners.cbegin(); i != m_listeners.cend(); ++i) {
-		if(*i == &listener) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-size_t GameVersionPanel::indexOfListener(const Listener & listener) const {
-	for(size_t i = 0; i < m_listeners.size(); i++) {
-		if(m_listeners[i] == &listener) {
-			return i;
-		}
-	}
-
-	return std::numeric_limits<size_t>::max();
-}
-
-GameVersionPanel::Listener * GameVersionPanel::getListener(size_t index) const {
-	if(index >= m_listeners.size()) {
-		return nullptr;
-	}
-
-	return m_listeners[index];
-}
-
-bool GameVersionPanel::addListener(Listener & listener) {
-	if(!hasListener(listener)) {
-		m_listeners.push_back(&listener);
-
-		return true;
-	}
-
-	return false;
-}
-
-bool GameVersionPanel::removeListener(size_t index) {
-	if(index >= m_listeners.size()) {
-		return false;
-	}
-
-	m_listeners.erase(m_listeners.cbegin() + index);
-
-	return true;
-}
-
-bool GameVersionPanel::removeListener(const Listener & listener) {
-	for(std::vector<Listener *>::const_iterator i = m_listeners.cbegin(); i != m_listeners.cend(); ++i) {
-		if(*i == &listener) {
-			m_listeners.erase(i);
-
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void GameVersionPanel::clearListeners() {
-	m_listeners.clear();
-}
-
-void GameVersionPanel::notifyGameVersionSettingChanged(SettingPanel & settingPanel) {
-	for(Listener * listener : m_listeners) {
-		listener->gameVersionSettingChanged(*this, settingPanel);
-	}
-}
-
-void GameVersionPanel::notifyGameVersionChangesDiscarded() {
-	for(Listener * listener : m_listeners) {
-		listener->gameVersionChangesDiscarded(*this);
-	}
-}
-
-void GameVersionPanel::notifyGameVersionReset() {
-	m_modified = true;
-
-	for(Listener * listener : m_listeners) {
-		listener->gameVersionReset(*this);
-	}
-}
-
-void GameVersionPanel::notifyGameVersionSaved() {
-	m_modified = false;
-
-	for(Listener * listener : m_listeners) {
-		listener->gameVersionSaved(*this);
-	}
-}
-
 void GameVersionPanel::onGameVersionModified(GameVersion & gameVersion) {
 	update();
 }
@@ -364,6 +270,6 @@ void GameVersionPanel::onSettingModified(SettingPanel & settingPanel) {
 	if(settingPanel.isModified()) {
 		m_modified = true;
 
-		notifyGameVersionSettingChanged(settingPanel);
+		gameVersionSettingChanged(*this, settingPanel);
 	}
 }

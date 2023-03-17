@@ -1,9 +1,9 @@
 #ifndef _GAME_MANAGER_PANEL_H_
 #define _GAME_MANAGER_PANEL_H_
 
-#include <wx/wxprec.h>
+#include <Signal/SignalConnectionGroup.h>
 
-#include "GameVersionPanel.h"
+#include <wx/wxprec.h>
 
 #ifdef __BORLANDC__
 	#pragma hdrstop
@@ -18,11 +18,12 @@
 #include <memory>
 
 class GameManager;
+class GameVersion;
 class GameVersionCollection;
+class GameVersionPanel;
 class SettingPanel;
 
-class GameManagerPanel final : public wxPanel,
-							   public GameVersionPanel::Listener {
+class GameManagerPanel final : public wxPanel {
 public:
 	GameManagerPanel(std::shared_ptr<GameManager> gameManager, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
 	virtual ~GameManagerPanel();
@@ -66,6 +67,7 @@ public:
 	bool removeGameVersion(size_t index);
 	bool removeCurrentGameVersion();
 
+private:
 	void onNotebookPageChanged(wxBookCtrlEvent & event);
 	void onNewButtonPressed(wxCommandEvent & event);
 	void onInstallButtonPressed(wxCommandEvent & event);
@@ -74,15 +76,13 @@ public:
 	void onDiscardChangesButtonPressed(wxCommandEvent & event);
 	void onResetButtonPressed(wxCommandEvent & event);
 	void onRemoveButtonPressed(wxCommandEvent & event);
+	void onGameVersionSettingChanged(GameVersionPanel & gameVersionPanel, SettingPanel & settingPanel);
+	void onGameVersionChangesDiscarded(GameVersionPanel & gameVersionPanel);
+	void onGameVersionReset(GameVersionPanel & gameVersionPanel);
+	void onGameVersionSaved(GameVersionPanel & gameVersionPanel);
 
-	// GameVersionPanel::Listener Virtuals
-	virtual void gameVersionSettingChanged(GameVersionPanel & gameVersionPanel, SettingPanel & settingPanel) override;
-	virtual void gameVersionChangesDiscarded(GameVersionPanel & gameVersionPanel) override;
-	virtual void gameVersionReset(GameVersionPanel & gameVersionPanel) override;
-	virtual void gameVersionSaved(GameVersionPanel & gameVersionPanel) override;
-
-private:
 	std::shared_ptr<GameManager> m_gameManager;
+	std::vector<SignalConnectionGroup> m_gameVersionPanelSignalConnectionGroups;
 	wxNotebook * m_notebook;
 	wxButton * m_newButton;
 	wxButton * m_installButton;
