@@ -59,7 +59,7 @@ static const std::array<std::string_view, 15> JSON_MOD_PROPERTY_NAMES = {
 
 static const std::string XML_MOD_ELEMENT_NAME("mod");
 static const std::string XML_MOD_TEAM_ELEMENT_NAME("team");
-static const std::string XML_FILES_ELEMENT_NAME("files");
+static const std::string XML_VERSIONS_ELEMENT_NAME("versions");
 static const std::string XML_DOWNLOADS_ELEMENT_NAME("downloads");
 static const std::string XML_SCREENSHOTS_ELEMENT_NAME("screenshots");
 static const std::string XML_IMAGES_ELEMENT_NAME("images");
@@ -70,7 +70,7 @@ static const std::string XML_NOTES_ELEMENT_NAME("notes");
 static const std::string XML_NOTE_ELEMENT_NAME("note");
 static const std::array<std::string_view, 8> XML_MOD_CHILD_ELEMENT_NAMES = {
 	XML_MOD_TEAM_ELEMENT_NAME,
-	XML_FILES_ELEMENT_NAME,
+	XML_VERSIONS_ELEMENT_NAME,
 	XML_DOWNLOADS_ELEMENT_NAME,
 	XML_SCREENSHOTS_ELEMENT_NAME,
 	XML_IMAGES_ELEMENT_NAME,
@@ -1527,7 +1527,7 @@ tinyxml2::XMLElement * Mod::toXML(tinyxml2::XMLDocument * document) const {
 		modElement->InsertEndChild(m_team->toXML(document));
 	}
 
-	tinyxml2::XMLElement * filesElement = document->NewElement(XML_FILES_ELEMENT_NAME.c_str());
+	tinyxml2::XMLElement * filesElement = document->NewElement(XML_VERSIONS_ELEMENT_NAME.c_str());
 
 	for(std::vector<std::shared_ptr<ModVersion>>::const_iterator i = m_versions.begin(); i != m_versions.end(); ++i) {
 		filesElement->InsertEndChild((*i)->toXML(document));
@@ -2115,15 +2115,15 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement, boo
 	}
 
 	// get mod files element
-	const tinyxml2::XMLElement * modFilesElement = modElement->FirstChildElement(XML_FILES_ELEMENT_NAME.c_str());
+	const tinyxml2::XMLElement * modFilesElement = modElement->FirstChildElement(XML_VERSIONS_ELEMENT_NAME.c_str());
 
 	if(modFilesElement == nullptr) {
-		spdlog::error("Element '{}' is missing from '{}' element with ID '{}'.", XML_FILES_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
+		spdlog::error("Element '{}' is missing from '{}' element with ID '{}'.", XML_VERSIONS_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
 		return nullptr;
 	}
 
-	if(modFilesElement->NextSiblingElement(XML_FILES_ELEMENT_NAME.c_str())) {
-		spdlog::error("Encountered more than one '{}' child element of '{}' element with ID '{}'.", XML_FILES_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
+	if(modFilesElement->NextSiblingElement(XML_VERSIONS_ELEMENT_NAME.c_str())) {
+		spdlog::error("Encountered more than one '{}' child element of '{}' element with ID '{}'.", XML_VERSIONS_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
 		return nullptr;
 	}
 
@@ -2131,7 +2131,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement, boo
 	const tinyxml2::XMLElement * modVersionElement = modFilesElement->FirstChildElement();
 
 	if(modVersionElement == nullptr) {
-		spdlog::error("Element '{}' has no children in element '{}' with ID '{}'.", XML_FILES_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
+		spdlog::error("Element '{}' has no children in element '{}' with ID '{}'.", XML_VERSIONS_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
 		return nullptr;
 	}
 
