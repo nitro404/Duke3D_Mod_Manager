@@ -5,6 +5,8 @@
 #include "DOSBoxVersionPanel.h"
 #include "Manager/ModManager.h"
 
+#include <Signal/SignalConnectionGroup.h>
+
 #include <boost/signals2.hpp>
 #include <wx/wxprec.h>
 
@@ -18,9 +20,10 @@
 
 #include <wx/bookctrl.h>
 
+#include <vector>
+
 class DOSBoxManagerPanel final
-	: public wxPanel
-	, public DOSBoxVersionPanel::Listener {
+	: public wxPanel {
 public:
 	class Listener {
 	public:
@@ -89,12 +92,6 @@ public:
 	bool removeListener(const Listener & listener);
 	void clearListeners();
 
-	// DOSBoxVersionPanel::Listener Virtuals
-	virtual void dosboxVersionSettingChanged(DOSBoxVersionPanel & dosboxVersionPanel, SettingPanel & settingPanel) override;
-	virtual void dosboxVersionChangesDiscarded(DOSBoxVersionPanel & dosboxVersionPanel) override;
-	virtual void dosboxVersionReset(DOSBoxVersionPanel & dosboxVersionPanel) override;
-	virtual void dosboxVersionSaved(DOSBoxVersionPanel & dosboxVersionPanel) override;
-
 private:
 	void onNotebookPageChanged(wxBookCtrlEvent & event);
 	void onNewDOSBoxVersionButtonPressed(wxCommandEvent & event);
@@ -108,12 +105,17 @@ private:
 	void onDiscardDOSBoxSettingsChangesButtonPressed(wxCommandEvent & event);
 	void onResetDefaultDOSBoxSettingsButtonPressed(wxCommandEvent & event);
 	void onDOSBoxSettingModified(SettingPanel & settingPanel);
+	void onDOSBoxVersionSettingChanged(DOSBoxVersionPanel & dosboxVersionPanel, SettingPanel & settingPanel);
+	void onDOSBoxVersionChangesDiscarded(DOSBoxVersionPanel & dosboxVersionPanel);
+	void onDOSBoxVersionReset(DOSBoxVersionPanel & dosboxVersionPanel);
+	void onDOSBoxVersionSaved(DOSBoxVersionPanel & dosboxVersionPanel);
 	void notifyDOSBoxSettingsChanged();
 	void notifyDOSBoxSettingsReset();
 	void notifyDOSBoxSettingsDiscarded();
 	void notifyDOSBoxSettingsSaved();
 
 	std::shared_ptr<ModManager> m_modManager;
+	std::vector<SignalConnectionGroup> m_dosboxVersionPanelSignalConnectionGroups;
 	wxNotebook * m_notebook;
 	wxButton * m_newDOSBoxVersionButton;
 	wxButton * m_installDOSBoxVersionButton;

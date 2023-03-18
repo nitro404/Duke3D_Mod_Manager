@@ -6,6 +6,7 @@
 #include "SettingPanel.h"
 #include "WXUtilities.h"
 
+#include <boost/signals2.hpp>
 #include <fmt/core.h>
 #include <spdlog/spdlog.h>
 #include <wx/gbsizer.h>
@@ -160,7 +161,9 @@ bool DOSBoxVersionPanel::save() {
 		}
 	}
 
-	notifyDOSBoxVersionSaved();
+	m_modified = false;
+
+	dosboxVersionSaved(*this);
 
 	return true;
 }
@@ -172,7 +175,7 @@ void DOSBoxVersionPanel::discard() {
 
 	m_modified = false;
 
-	notifyDOSBoxVersionChangesDiscarded();
+	dosboxVersionChangesDiscarded(*this);
 }
 
 void DOSBoxVersionPanel::reset() {
@@ -182,7 +185,7 @@ void DOSBoxVersionPanel::reset() {
 
 	m_modified = true;
 
-	notifyDOSBoxVersionReset();
+	dosboxVersionReset(*this);
 }
 
 void DOSBoxVersionPanel::discardDOSBoxPathChanges() {
@@ -195,104 +198,6 @@ void DOSBoxVersionPanel::update() {
 	}
 }
 
-DOSBoxVersionPanel::Listener::~Listener() { }
-
-size_t DOSBoxVersionPanel::numberOfListeners() const {
-	return m_listeners.size();
-}
-
-bool DOSBoxVersionPanel::hasListener(const Listener & listener) const {
-	for(std::vector<Listener *>::const_iterator i = m_listeners.cbegin(); i != m_listeners.cend(); ++i) {
-		if(*i == &listener) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-size_t DOSBoxVersionPanel::indexOfListener(const Listener & listener) const {
-	for(size_t i = 0; i < m_listeners.size(); i++) {
-		if(m_listeners[i] == &listener) {
-			return i;
-		}
-	}
-
-	return std::numeric_limits<size_t>::max();
-}
-
-DOSBoxVersionPanel::Listener * DOSBoxVersionPanel::getListener(size_t index) const {
-	if(index >= m_listeners.size()) {
-		return nullptr;
-	}
-
-	return m_listeners[index];
-}
-
-bool DOSBoxVersionPanel::addListener(Listener & listener) {
-	if(!hasListener(listener)) {
-		m_listeners.push_back(&listener);
-
-		return true;
-	}
-
-	return false;
-}
-
-bool DOSBoxVersionPanel::removeListener(size_t index) {
-	if(index >= m_listeners.size()) {
-		return false;
-	}
-
-	m_listeners.erase(m_listeners.cbegin() + index);
-
-	return true;
-}
-
-bool DOSBoxVersionPanel::removeListener(const Listener & listener) {
-	for(std::vector<Listener *>::const_iterator i = m_listeners.cbegin(); i != m_listeners.cend(); ++i) {
-		if(*i == &listener) {
-			m_listeners.erase(i);
-
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void DOSBoxVersionPanel::clearListeners() {
-	m_listeners.clear();
-}
-
-void DOSBoxVersionPanel::notifyDOSBoxVersionSettingChanged(SettingPanel & settingPanel) {
-	for(Listener * listener : m_listeners) {
-		listener->dosboxVersionSettingChanged(*this, settingPanel);
-	}
-}
-
-void DOSBoxVersionPanel::notifyDOSBoxVersionChangesDiscarded() {
-	for(Listener * listener : m_listeners) {
-		listener->dosboxVersionChangesDiscarded(*this);
-	}
-}
-
-void DOSBoxVersionPanel::notifyDOSBoxVersionReset() {
-	m_modified = true;
-
-	for(Listener * listener : m_listeners) {
-		listener->dosboxVersionReset(*this);
-	}
-}
-
-void DOSBoxVersionPanel::notifyDOSBoxVersionSaved() {
-	m_modified = false;
-
-	for(Listener * listener : m_listeners) {
-		listener->dosboxVersionSaved(*this);
-	}
-}
-
 void DOSBoxVersionPanel::onDOSBoxVersionModified(DOSBoxVersion & dosboxVersion) {
 	update();
 }
@@ -301,6 +206,6 @@ void DOSBoxVersionPanel::onSettingModified(SettingPanel & settingPanel) {
 	if(settingPanel.isModified()) {
 		m_modified = true;
 
-		notifyDOSBoxVersionSettingChanged(settingPanel);
+		dosboxVersionSettingChanged(*this, settingPanel);
 	}
 }

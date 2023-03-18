@@ -16,6 +16,7 @@
 #include <wx/bookctrl.h>
 
 #include <memory>
+#include <vector>
 
 class GameManager;
 class GameVersion;

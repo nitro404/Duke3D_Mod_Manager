@@ -117,7 +117,13 @@ DOSBoxManagerPanel::DOSBoxManagerPanel(std::shared_ptr<ModManager> modManager, w
 
 	for(const std::shared_ptr<DOSBoxVersion> & dosboxVersion : dosboxManager->getDOSBoxVersions()->getDOSBoxVersions()) {
 		dosboxVersionPanel = new DOSBoxVersionPanel(dosboxVersion, m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-		dosboxVersionPanel->addListener(*this);
+
+		m_dosboxVersionPanelSignalConnectionGroups.push_back(SignalConnectionGroup(
+			dosboxVersionPanel->dosboxVersionSettingChanged.connect(std::bind(&DOSBoxManagerPanel::onDOSBoxVersionSettingChanged, this, std::placeholders::_1, std::placeholders::_2)),
+			dosboxVersionPanel->dosboxVersionChangesDiscarded.connect(std::bind(&DOSBoxManagerPanel::onDOSBoxVersionChangesDiscarded, this, std::placeholders::_1)),
+			dosboxVersionPanel->dosboxVersionReset.connect(std::bind(&DOSBoxManagerPanel::onDOSBoxVersionReset, this, std::placeholders::_1)),
+			dosboxVersionPanel->dosboxVersionSaved.connect(std::bind(&DOSBoxManagerPanel::onDOSBoxVersionSaved, this, std::placeholders::_1))
+		));
 
 		addDOSBoxVersionPanel(dosboxVersionPanel);
 	}
@@ -127,6 +133,10 @@ DOSBoxManagerPanel::DOSBoxManagerPanel(std::shared_ptr<ModManager> modManager, w
 
 DOSBoxManagerPanel::~DOSBoxManagerPanel() {
 	m_dosboxSettingModifiedConnection.disconnect();
+
+	for(SignalConnectionGroup & dosboxVersionPanelSignalConnectionGroup : m_dosboxVersionPanelSignalConnectionGroups) {
+		dosboxVersionPanelSignalConnectionGroup.disconnect();
+	}
 }
 
 bool DOSBoxManagerPanel::hasDOSBoxVersionPanel(const DOSBoxVersionPanel * dosboxVersionPanel) const {
@@ -376,7 +386,13 @@ bool DOSBoxManagerPanel::addDOSBoxVersionPanel(DOSBoxVersionPanel * dosboxVersio
 		return false;
 	}
 
-	dosboxVersionPanel->addListener(*this);
+	m_dosboxVersionPanelSignalConnectionGroups.push_back(SignalConnectionGroup(
+		dosboxVersionPanel->dosboxVersionSettingChanged.connect(std::bind(&DOSBoxManagerPanel::onDOSBoxVersionSettingChanged, this, std::placeholders::_1, std::placeholders::_2)),
+		dosboxVersionPanel->dosboxVersionChangesDiscarded.connect(std::bind(&DOSBoxManagerPanel::onDOSBoxVersionChangesDiscarded, this, std::placeholders::_1)),
+		dosboxVersionPanel->dosboxVersionReset.connect(std::bind(&DOSBoxManagerPanel::onDOSBoxVersionReset, this, std::placeholders::_1)),
+		dosboxVersionPanel->dosboxVersionSaved.connect(std::bind(&DOSBoxManagerPanel::onDOSBoxVersionSaved, this, std::placeholders::_1))
+	));
+
 	m_notebook->AddPage(dosboxVersionPanel, dosboxVersionPanel->getPanelName());
 	m_notebook->ChangeSelection(m_notebook->GetPageCount() - 1);
 
@@ -604,8 +620,10 @@ bool DOSBoxManagerPanel::removeDOSBoxVersion(size_t dosboxVersionPanelIndex) {
 		m_newDOSBoxVersionButton->SetFocus();
 	}
 
+	m_dosboxVersionPanelSignalConnectionGroups[dosboxVersionPanelIndex].disconnect();
+	m_dosboxVersionPanelSignalConnectionGroups.erase(m_dosboxVersionPanelSignalConnectionGroups.begin() + dosboxVersionPanelIndex);
+
 	DOSBoxVersionPanel * dosboxVersionPanel = getDOSBoxVersionPanel(dosboxVersionPanelIndex);
-	dosboxVersionPanel->removeListener(*this);
 	m_notebook->RemovePage(dosboxVersionPanelIndex);
 	delete dosboxVersionPanel;
 
@@ -753,19 +771,19 @@ void DOSBoxManagerPanel::onRemoveDOSBoxVersionButtonPressed(wxCommandEvent & eve
 	removeCurrentDOSBoxVersion();
 }
 
-void DOSBoxManagerPanel::dosboxVersionChangesDiscarded(DOSBoxVersionPanel & dosboxVersionPanel) {
+void DOSBoxManagerPanel::onDOSBoxVersionChangesDiscarded(DOSBoxVersionPanel & dosboxVersionPanel) {
 	updateDOSBoxVersionPanel(indexOfDOSBoxVersionPanel(&dosboxVersionPanel));
 }
 
-void DOSBoxManagerPanel::dosboxVersionSettingChanged(DOSBoxVersionPanel & dosboxVersionPanel, SettingPanel & settingPanel) {
+void DOSBoxManagerPanel::onDOSBoxVersionSettingChanged(DOSBoxVersionPanel & dosboxVersionPanel, SettingPanel & settingPanel) {
 	updateDOSBoxVersionPanel(indexOfDOSBoxVersionPanel(&dosboxVersionPanel));
 }
 
-void DOSBoxManagerPanel::dosboxVersionReset(DOSBoxVersionPanel & dosboxVersionPanel) {
+void DOSBoxManagerPanel::onDOSBoxVersionReset(DOSBoxVersionPanel & dosboxVersionPanel) {
 	updateDOSBoxVersionPanel(indexOfDOSBoxVersionPanel(&dosboxVersionPanel));
 }
 
-void DOSBoxManagerPanel::dosboxVersionSaved(DOSBoxVersionPanel & dosboxVersionPanel) {
+void DOSBoxManagerPanel::onDOSBoxVersionSaved(DOSBoxVersionPanel & dosboxVersionPanel) {
 	updateDOSBoxVersionPanel(indexOfDOSBoxVersionPanel(&dosboxVersionPanel));
 }
 
