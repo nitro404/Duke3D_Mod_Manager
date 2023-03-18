@@ -25,16 +25,6 @@
 class DOSBoxManagerPanel final
 	: public wxPanel {
 public:
-	class Listener {
-	public:
-		virtual ~Listener();
-
-		virtual void dosboxSettingsChanged() = 0;
-		virtual void dosboxSettingsReset() = 0;
-		virtual void dosboxSettingsDiscarded() = 0;
-		virtual void dosboxSettingsSaved() = 0;
-	};
-
 	DOSBoxManagerPanel(std::shared_ptr<ModManager> modManager, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
 	virtual ~DOSBoxManagerPanel();
 
@@ -83,14 +73,10 @@ public:
 	bool removeDOSBoxVersion(size_t index);
 	bool removeCurrentDOSBoxVersion();
 
-	size_t numberOfListeners() const;
-	bool hasListener(const Listener & listener) const;
-	size_t indexOfListener(const Listener & listener) const;
-	Listener * getListener(size_t index) const;
-	bool addListener(Listener & listener);
-	bool removeListener(size_t index);
-	bool removeListener(const Listener & listener);
-	void clearListeners();
+	boost::signals2::signal<void ()> dosboxSettingsChanged;
+	boost::signals2::signal<void ()> dosboxSettingsReset;
+	boost::signals2::signal<void ()> dosboxSettingsDiscarded;
+	boost::signals2::signal<void ()> dosboxSettingsSaved;
 
 private:
 	void onNotebookPageChanged(wxBookCtrlEvent & event);
@@ -109,10 +95,6 @@ private:
 	void onDOSBoxVersionChangesDiscarded(DOSBoxVersionPanel & dosboxVersionPanel);
 	void onDOSBoxVersionReset(DOSBoxVersionPanel & dosboxVersionPanel);
 	void onDOSBoxVersionSaved(DOSBoxVersionPanel & dosboxVersionPanel);
-	void notifyDOSBoxSettingsChanged();
-	void notifyDOSBoxSettingsReset();
-	void notifyDOSBoxSettingsDiscarded();
-	void notifyDOSBoxSettingsSaved();
 
 	std::shared_ptr<ModManager> m_modManager;
 	std::vector<SignalConnectionGroup> m_dosboxVersionPanelSignalConnectionGroups;
@@ -129,7 +111,6 @@ private:
 	DOSBoxSettingsPanel * m_dosboxSettingsPanel;
 	boost::signals2::connection m_dosboxSettingModifiedConnection;
 	bool m_modified;
-	std::vector<Listener *> m_listeners;
 };
 
 #endif // _DOSBOX_MANAGER_PANEL_H_

@@ -300,7 +300,7 @@ void DOSBoxManagerPanel::resetDefaultDOSBoxSettings() {
 	m_modified = false;
 
 	updateButtons();
-	notifyDOSBoxSettingsReset();
+	dosboxSettingsReset();
 }
 
 void DOSBoxManagerPanel::discardDOSBoxSettings() {
@@ -309,7 +309,7 @@ void DOSBoxManagerPanel::discardDOSBoxSettings() {
 	m_modified = false;
 
 	updateButtons();
-	notifyDOSBoxSettingsDiscarded();
+	dosboxSettingsDiscarded();
 }
 
 bool DOSBoxManagerPanel::saveDOSBoxSettings() {
@@ -320,7 +320,7 @@ bool DOSBoxManagerPanel::saveDOSBoxSettings() {
 	m_modified = false;
 
 	updateButtons();
-	notifyDOSBoxSettingsSaved();
+	dosboxSettingsSaved();
 
 	return true;
 }
@@ -636,106 +636,12 @@ bool DOSBoxManagerPanel::removeCurrentDOSBoxVersion() {
 	return removeDOSBoxVersion(m_notebook->GetSelection());
 }
 
-DOSBoxManagerPanel::Listener::~Listener() { }
-
-size_t DOSBoxManagerPanel::numberOfListeners() const {
-	return m_listeners.size();
-}
-
-bool DOSBoxManagerPanel::hasListener(const Listener & listener) const {
-	for(std::vector<Listener *>::const_iterator i = m_listeners.cbegin(); i != m_listeners.cend(); ++i) {
-		if(*i == &listener) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-size_t DOSBoxManagerPanel::indexOfListener(const Listener & listener) const {
-	for(size_t i = 0; i < m_listeners.size(); i++) {
-		if(m_listeners[i] == &listener) {
-			return i;
-		}
-	}
-
-	return std::numeric_limits<size_t>::max();
-}
-
-DOSBoxManagerPanel::Listener * DOSBoxManagerPanel::getListener(size_t index) const {
-	if(index >= m_listeners.size()) {
-		return nullptr;
-	}
-
-	return m_listeners[index];
-}
-
-bool DOSBoxManagerPanel::addListener(Listener & listener) {
-	if(!hasListener(listener)) {
-		m_listeners.push_back(&listener);
-
-		return true;
-	}
-
-	return false;
-}
-
-bool DOSBoxManagerPanel::removeListener(size_t index) {
-	if(index >= m_listeners.size()) {
-		return false;
-	}
-
-	m_listeners.erase(m_listeners.cbegin() + index);
-
-	return true;
-}
-
-bool DOSBoxManagerPanel::removeListener(const Listener & listener) {
-	for(std::vector<Listener *>::const_iterator i = m_listeners.cbegin(); i != m_listeners.cend(); ++i) {
-		if(*i == &listener) {
-			m_listeners.erase(i);
-
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void DOSBoxManagerPanel::clearListeners() {
-	m_listeners.clear();
-}
-
-void DOSBoxManagerPanel::notifyDOSBoxSettingsChanged() {
-	for(Listener * listener : m_listeners) {
-		listener->dosboxSettingsChanged();
-	}
-}
-
-void DOSBoxManagerPanel::notifyDOSBoxSettingsReset() {
-	for(Listener * listener : m_listeners) {
-		listener->dosboxSettingsReset();
-	}
-}
-
-void DOSBoxManagerPanel::notifyDOSBoxSettingsDiscarded() {
-	for(Listener * listener : m_listeners) {
-		listener->dosboxSettingsDiscarded();
-	}
-}
-
-void DOSBoxManagerPanel::notifyDOSBoxSettingsSaved() {
-	for(Listener * listener : m_listeners) {
-		listener->dosboxSettingsSaved();
-	}
-}
-
 void DOSBoxManagerPanel::onDOSBoxSettingModified(SettingPanel & settingPanel) {
 	if(settingPanel.isModified()) {
 		m_modified = true;
 
 		updateButtons();
-		notifyDOSBoxSettingsChanged();
+		dosboxSettingsChanged();
 	}
 }
 
