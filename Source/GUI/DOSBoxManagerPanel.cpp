@@ -356,7 +356,7 @@ bool DOSBoxManagerPanel::updateDOSBoxVersionPanelName(size_t dosboxVersionPanelI
 		return false;
 	}
 
-	m_notebook->SetPageText(dosboxVersionPanelIndex, dosboxVersionPanel->getPanelName());
+	m_notebook->SetPageText(dosboxVersionPanelIndex, wxString::FromUTF8(dosboxVersionPanel->getPanelName()));
 
 	return true;
 }
@@ -393,7 +393,7 @@ bool DOSBoxManagerPanel::addDOSBoxVersionPanel(DOSBoxVersionPanel * dosboxVersio
 		dosboxVersionPanel->dosboxVersionSaved.connect(std::bind(&DOSBoxManagerPanel::onDOSBoxVersionSaved, this, std::placeholders::_1))
 	));
 
-	m_notebook->AddPage(dosboxVersionPanel, dosboxVersionPanel->getPanelName());
+	m_notebook->AddPage(dosboxVersionPanel, wxString::FromUTF8(dosboxVersionPanel->getPanelName()));
 	m_notebook->ChangeSelection(m_notebook->GetPageCount() - 1);
 
 	updateButtons();

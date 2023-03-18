@@ -237,7 +237,7 @@ StringChoiceSettingPanel * SettingPanel::createStringChoiceSettingPanel(std::fun
 
 	wxStaticText * settingLabel = new wxStaticText(settingPanel, wxID_ANY, name, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 	settingLabel->SetFont(settingLabel->GetFont().MakeBold());
-	wxComboBox * settingComboBox = new wxComboBox(settingPanel, wxID_ANY, getSettingValueFunction(), wxDefaultPosition, wxDefaultSize, WXUtilities::createItemWXArrayString(choices), 0, wxDefaultValidator, name);
+	wxComboBox * settingComboBox = new wxComboBox(settingPanel, wxID_ANY, wxString::FromUTF8(getSettingValueFunction()), wxDefaultPosition, wxDefaultSize, WXUtilities::createItemWXArrayString(choices), 0, wxDefaultValidator, name);
 	settingComboBox->SetEditable(false);
 	settingComboBox->Bind(wxEVT_COMBOBOX, settingPanel->m_changedFunction, wxID_ANY, wxID_ANY);
 
@@ -250,11 +250,11 @@ StringChoiceSettingPanel * SettingPanel::createStringChoiceSettingPanel(std::fun
 	};
 
 	settingPanel->m_discardFunction = [settingComboBox, getSettingValueFunction]() {
-		settingComboBox->ChangeValue(getSettingValueFunction());
+		settingComboBox->ChangeValue(wxString::FromUTF8(getSettingValueFunction()));
 	};
 
 	settingPanel->m_resetFunction = [settingComboBox, defaultSetting]() {
-		settingComboBox->ChangeValue(defaultSetting);
+		settingComboBox->ChangeValue(wxString::FromUTF8(defaultSetting));
 	};
 
 	settingPanel->m_setEditableFunction = [settingComboBox](bool editable) {
@@ -340,7 +340,7 @@ SettingPanel * SettingPanel::createStringMultiChoiceSettingPanel(std::function<c
 	wxWrapSizer * settingSizer = new wxWrapSizer(wxHORIZONTAL);
 
 	for(const std::string & choice : choices) {
-		checkBox = new wxCheckBox(settingPanel, wxID_ANY, choice, wxDefaultPosition, wxDefaultSize, wxCHK_2STATE, wxDefaultValidator, choice);
+		checkBox = new wxCheckBox(settingPanel, wxID_ANY, wxString::FromUTF8(choice), wxDefaultPosition, wxDefaultSize, wxCHK_2STATE, wxDefaultValidator, choice);
 		checkBox->SetFont(checkBox->GetFont().MakeBold());
 		checkBox->SetValue(hasSettingEntryFunction(choice));
 		checkBox->Bind(wxEVT_CHECKBOX, settingPanel->m_changedFunction, wxID_ANY, wxID_ANY);

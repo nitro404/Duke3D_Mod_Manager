@@ -286,7 +286,7 @@ bool GameManagerPanel::updateGameVersionPanelName(size_t gameVersionPanelIndex) 
 		return false;
 	}
 
-	m_notebook->SetPageText(gameVersionPanelIndex, gameVersionPanel->getPanelName());
+	m_notebook->SetPageText(gameVersionPanelIndex, wxString::FromUTF8(gameVersionPanel->getPanelName()));
 
 	return true;
 }
@@ -320,7 +320,7 @@ bool GameManagerPanel::addGameVersionPanel(GameVersionPanel * gameVersionPanel) 
 		gameVersionPanel->gameVersionSaved.connect(std::bind(&GameManagerPanel::onGameVersionSaved, this, std::placeholders::_1))
 	));
 
-	m_notebook->AddPage(gameVersionPanel, gameVersionPanel->getPanelName());
+	m_notebook->AddPage(gameVersionPanel, wxString::FromUTF8(gameVersionPanel->getPanelName()));
 	m_notebook->ChangeSelection(m_notebook->GetPageCount() - 1);
 
 	updateButtons();

@@ -30,7 +30,7 @@ namespace WXUtilities {
 		wxArrayString itemsArrayString;
 
 		for(const std::string & item : items) {
-			itemsArrayString.Add(item);
+			itemsArrayString.Add(wxString::FromUTF8(item));
 		}
 
 		return itemsArrayString;

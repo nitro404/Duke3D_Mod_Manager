@@ -263,7 +263,7 @@ SettingPanel * SettingPanel::createStringSettingPanel(std::function<const std::s
 
 	wxStaticText * settingLabel = new wxStaticText(settingPanel, wxID_ANY, name, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 	settingLabel->SetFont(settingLabel->GetFont().MakeBold());
-	wxTextCtrl * settingTextField = new wxTextCtrl(settingPanel, wxID_ANY, getSettingValueFunction(), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, name);
+	wxTextCtrl * settingTextField = new wxTextCtrl(settingPanel, wxID_ANY, wxString::FromUTF8(getSettingValueFunction()), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, name);
 	settingTextField->SetMinSize(wxSize(150, settingTextField->GetMinSize().y));
 	settingTextField->Bind(wxEVT_TEXT, settingPanel->m_changedFunction, wxID_ANY, wxID_ANY);
 
@@ -282,11 +282,11 @@ SettingPanel * SettingPanel::createStringSettingPanel(std::function<const std::s
 	};
 
 	settingPanel->m_discardFunction = [settingTextField, getSettingValueFunction]() {
-		settingTextField->ChangeValue(getSettingValueFunction());
+		settingTextField->ChangeValue(wxString::FromUTF8(getSettingValueFunction()));
 	};
 
 	settingPanel->m_resetFunction = [settingTextField, defaultSetting]() {
-		settingTextField->ChangeValue(defaultSetting);
+		settingTextField->ChangeValue(wxString::FromUTF8(defaultSetting));
 	};
 
 	settingPanel->m_setEditableFunction = [settingTextField](bool editable) {
@@ -321,7 +321,7 @@ SettingPanel * SettingPanel::createOptionalStringSettingPanel(std::function<std:
 	settingEnabledCheckBox->SetFont(settingEnabledCheckBox->GetFont().MakeBold());
 	settingEnabledCheckBox->SetValue(setting.has_value());
 
-	wxTextCtrl * settingTextField = new wxTextCtrl(settingPanel, wxID_ANY, setting.value_or(""), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, name);
+	wxTextCtrl * settingTextField = new wxTextCtrl(settingPanel, wxID_ANY, wxString::FromUTF8(setting.value_or("")), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, name);
 	settingTextField->SetMinSize(wxSize(150, settingTextField->GetMinSize().y));
 	WXUtilities::setTextControlEnabled(settingTextField, setting.has_value());
 
@@ -364,13 +364,13 @@ SettingPanel * SettingPanel::createOptionalStringSettingPanel(std::function<std:
 	settingPanel->m_discardFunction = [settingTextField, settingEnabledCheckBox, getSettingValueFunction]() {
 		std::optional<std::string> setting(getSettingValueFunction());
 
-		settingTextField->ChangeValue(setting.value_or(""));
+		settingTextField->ChangeValue(wxString::FromUTF8(setting.value_or("")));
 		settingEnabledCheckBox->SetValue(setting.has_value());
 		WXUtilities::setTextControlEnabled(settingTextField, setting.has_value());
 	};
 
 	settingPanel->m_resetFunction = [settingTextField, settingEnabledCheckBox, defaultSetting]() {
-		settingTextField->ChangeValue(defaultSetting.value_or(""));
+		settingTextField->ChangeValue(wxString::FromUTF8(defaultSetting.value_or("")));
 		settingEnabledCheckBox->SetValue(defaultSetting.has_value());
 		WXUtilities::setTextControlEnabled(settingTextField, defaultSetting.has_value());
 	};

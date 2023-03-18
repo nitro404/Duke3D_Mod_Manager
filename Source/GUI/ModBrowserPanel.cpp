@@ -533,7 +533,7 @@ void ModBrowserPanel::updateModList() {
 		m_modMatches = ModManager::searchForMod(organizedMods->getOrganizedMods(), m_searchQuery);
 
 		for(const ModMatch & modMatch : m_modMatches) {
-			modMatchesArrayString.Add(modMatch.toString());
+			modMatchesArrayString.Add(wxString::FromUTF8(modMatch.toString()));
 		}
 
 		m_modListLabel->SetLabelText("Search Results");
@@ -694,7 +694,7 @@ void ModBrowserPanel::updateModInfo() {
 
 		if(mod != nullptr && m_modManager->getOrganizedMods()->shouldDisplayMods()) {
 			m_modInfoPanel->Show();
-			m_modNameText->SetLabelText(mod->getName());
+			m_modNameText->SetLabelText(wxString::FromUTF8(mod->getName()));
 			m_modTypeText->SetLabelText(mod->getType());
 
 			std::optional<Date> optionalInitialReleaseDate(mod->getInitialReleaseDate());
@@ -724,7 +724,7 @@ void ModBrowserPanel::updateModInfo() {
 				supportedGameVersionNamesStream << gameVersionName;
 			}
 
-			m_supportedGameVersionsText->SetLabelText(supportedGameVersionNamesStream.str());
+			m_supportedGameVersionsText->SetLabelText(wxString::FromUTF8(supportedGameVersionNamesStream.str()));
 
 			const std::string & modWebsite = mod->getWebsite();
 
@@ -770,7 +770,7 @@ void ModBrowserPanel::updateModInfo() {
 				}
 
 				if(team->hasLocation()) {
-					m_teamLocationText->SetLabelText(team->getLocation());
+					m_teamLocationText->SetLabelText(wxString::FromUTF8(team->getLocation()));
 
 					m_teamLocationLabel->Show();
 					m_teamLocationText->Show();
@@ -791,7 +791,7 @@ void ModBrowserPanel::updateModInfo() {
 						teamMemberNameStream << team->getMember(i)->getName();
 					}
 
-					m_teamMembersText->SetLabelText(teamMemberNameStream.str());
+					m_teamMembersText->SetLabelText(wxString::FromUTF8(teamMemberNameStream.str()));
 
 					m_teamMembersLabel->Show();
 					m_teamMembersText->Show();
@@ -823,7 +823,7 @@ void ModBrowserPanel::updateModInfo() {
 					notesStream << " - " << mod->getNote(i);
 				}
 
-				m_notesText->SetLabelText(notesStream.str());
+				m_notesText->SetLabelText(wxString::FromUTF8(notesStream.str()));
 
 				m_notesText->Wrap(m_notesText->GetClientSize().GetWidth());
 				m_modInfoPanel->FitInside();
