@@ -3,6 +3,7 @@
 
 #include <Signal/SignalConnectionGroup.h>
 
+#include <boost/signals2.hpp>
 #include <wx/wxprec.h>
 
 #ifdef __BORLANDC__
@@ -22,27 +23,17 @@ class SettingsManagerPanel;
 
 class ModManagerFrame final : public wxFrame {
 public:
-	class Listener {
-	public:
-		virtual ~Listener();
-
-		virtual void reloadRequested() = 0;
-	};
-
 	ModManagerFrame();
 	virtual ~ModManagerFrame();
 
 	bool isInitialized() const;
 	bool initialize(std::shared_ptr<ModManager> modManager);
 
-	bool hasListener() const;
-	Listener * getListener() const;
-	void setListener(Listener & listener);
-	void clearListener();
-
 #if wxUSE_MENUS
 	void onMenuBarItemPressed(wxCommandEvent & event);
 #endif // wxUSE_MENUS
+
+	boost::signals2::signal<void ()> reloadRequested;
 
 private:
 	void requestReload();
@@ -62,7 +53,6 @@ private:
 	wxNotebook * m_notebook;
 	SettingsManagerPanel * m_settingsManagerPanel;
 	SignalConnectionGroup m_settingsManagerPanelSignalConnectionGroup;
-	Listener * m_listener;
 
 	wxDECLARE_EVENT_TABLE();
 };

@@ -143,8 +143,8 @@ void ModManagerApplication::displayArgumentHelp() {
 }
 
 void ModManagerApplication::showWindow() {
+	m_modManagerFrameReloadRequestedConnection = m_modManagerFrame->reloadRequested.connect(std::bind(&ModManagerApplication::onReloadRequested, this));
 	m_modManagerFrame->Bind(wxEVT_CLOSE_WINDOW, &ModManagerApplication::onFrameClosed, this);
-	m_modManagerFrame->setListener(*this);
 	m_modManagerFrame->initialize(m_modManager);
 	m_modManagerFrame->Show(true);
 	m_modManagerFrame->Raise();
@@ -178,6 +178,7 @@ void ModManagerApplication::onFrameClosed(wxCloseEvent & event) {
 	m_modManagerInitializedConnection.disconnect();
 	m_modManagerInitializationCancelledConnection.disconnect();
 	m_modManagerInitializationFailedConnection.disconnect();
+	m_modManagerFrameReloadRequestedConnection.disconnect();
 
 	m_modManagerFrame->Destroy();
 
@@ -223,7 +224,7 @@ void ModManagerApplication::CleanUp() {
 	wxApp::CleanUp();
 }
 
-void ModManagerApplication::reloadRequested() {
+void ModManagerApplication::onReloadRequested() {
 	reload();
 }
 

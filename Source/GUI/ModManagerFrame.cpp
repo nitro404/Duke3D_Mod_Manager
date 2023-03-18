@@ -23,8 +23,7 @@ ModManagerFrame::ModManagerFrame()
 	, m_resetWindowSizeMenuItem(nullptr)
 #endif // wxUSE_MENUS
 	, m_notebook(nullptr)
-	, m_settingsManagerPanel(nullptr)
-	, m_listener(nullptr) {
+	, m_settingsManagerPanel(nullptr) {
 	SetIcon(wxICON(D3DMODMGR_ICON));
 
 #if wxUSE_MENUS
@@ -125,22 +124,6 @@ bool ModManagerFrame::initialize(std::shared_ptr<ModManager> modManager) {
 	return true;
 }
 
-bool ModManagerFrame::hasListener() const {
-	return m_listener != nullptr;
-}
-
-ModManagerFrame::Listener * ModManagerFrame::getListener() const {
-	return m_listener;
-}
-
-void ModManagerFrame::setListener(Listener & listener) {
-	m_listener = &listener;
-}
-
-void ModManagerFrame::clearListener() {
-	m_listener = nullptr;
-}
-
 #if wxUSE_MENUS
 void ModManagerFrame::onMenuBarItemPressed(wxCommandEvent & event) {
 	SettingsManager * settings = SettingsManager::getInstance();
@@ -222,14 +205,10 @@ void ModManagerFrame::onSettingsSaved() {
 }
 
 void ModManagerFrame::requestReload() {
-	if(m_listener != nullptr) {
-		m_listener->reloadRequested();
-	}
+	reloadRequested();
 
 	Close();
 }
-
-ModManagerFrame::Listener::~Listener() { }
 
 wxBEGIN_EVENT_TABLE(ModManagerFrame, wxFrame)
 	EVT_MENU(wxID_EXIT, ModManagerFrame::onQuit)
