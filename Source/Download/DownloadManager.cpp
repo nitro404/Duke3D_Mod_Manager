@@ -219,6 +219,64 @@ bool DownloadManager::shouldUpdateModList() const {
 	return std::chrono::system_clock::now() - settings->modListLastDownloadedTimestamp.value() > settings->modListUpdateFrequency;
 }
 
+bool DownloadManager::isModDownloaded(const Mod * mod) const {
+	if(!Mod::isValid(mod, true)) {
+		return false;
+	}
+
+	for(size_t i = 0; i < mod->numberOfVersions(); i++) {
+		if(isModVersionDownloaded(mod->getVersion(i).get())) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool DownloadManager::isModVersionDownloaded(const ModVersion * modVersion) const {
+	if(!ModVersion::isValid(modVersion, true)) {
+		return false;
+	}
+
+	for(size_t i = 0; i < modVersion->numberOfTypes(); i++) {
+		if(isModVersionTypeDownloaded(modVersion->getType(i).get())) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool DownloadManager::isModVersionTypeDownloaded(const ModVersionType * modVersionType) const {
+	if(!ModVersionType::isValid(modVersionType, true)) {
+		return false;
+	}
+
+	for(size_t i = 0; i < modVersionType->numberOfGameVersions(); i++) {
+		if(isModGameVersionDownloaded(modVersionType->getGameVersion(i).get())) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool DownloadManager::isModGameVersionDownloaded(const ModGameVersion * modGameVersion) const {
+	if(!ModGameVersion::isValid(modGameVersion, true)) {
+		return false;
+	}
+
+	std::shared_ptr<ModDownload> modDownload(modGameVersion->getDownload());
+
+	if(modDownload == nullptr) {
+		spdlog::error("Failed to obtain download for mod game version: '{}'. Is your mod collection data correct?", modGameVersion->getFullName());
+		return false;
+	}
+
+
+	return m_downloadCache->hasCachedPackageFile(modDownload.get());
+}
+
 bool DownloadManager::downloadModList(bool force) {
 	SettingsManager * settings = SettingsManager::getInstance();
 

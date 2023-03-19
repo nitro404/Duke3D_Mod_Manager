@@ -205,6 +205,8 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 		m_localMode = true;
 	}
 
+	m_organizedMods->setLocalMode(m_localMode);
+
 	bool updateFileInfo = m_localMode && m_arguments != nullptr && (m_arguments->hasArgument("update-new") || m_arguments->hasArgument("update-all"));
 
 	if(!notifyInitializationProgress("Initializing HTTP Service")) {
@@ -324,6 +326,8 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 			initializationFailed();
 			return false;
 		}
+
+		m_organizedMods->setDownloadManager(m_downloadManager);
 	}
 
 	m_gameType = settings->gameType;

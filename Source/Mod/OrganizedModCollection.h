@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 
+class DownloadManager;
 class FavouriteModCollection;
 class GameVersion;
 class GameVersionCollection;
@@ -39,6 +40,7 @@ public:
 	enum class FilterType {
 		None,
 		Favourites,
+		Downloaded,
 		SupportedGameVersions,
 		CompatibleGameVersions,
 		Teams,
@@ -52,6 +54,8 @@ public:
 	OrganizedModCollection & operator = (const OrganizedModCollection & m);
 	~OrganizedModCollection();
 
+	bool isUsingLocalMode() const;
+	void setLocalMode(bool localMode);
 	std::shared_ptr<ModCollection> getModCollection() const;
 	const std::vector<std::shared_ptr<Mod>> & getOrganizedMods() const;
 	const std::vector<std::shared_ptr<ModIdentifier>> & getOrganizedFavouriteMods() const;
@@ -62,6 +66,7 @@ public:
 	FilterType getFilterType() const;
 	SortType getSortType() const;
 	SortDirection getSortDirection() const;
+	void setDownloadManager(std::shared_ptr<DownloadManager> downloadManager);
 
 	void setModCollection(std::shared_ptr<ModCollection> mods);
 	void setFavouriteModCollection(std::shared_ptr<FavouriteModCollection> favourites);
@@ -212,6 +217,7 @@ private:
 	std::vector<std::shared_ptr<ModAuthorInformation>> mergeSortAuthors(std::vector<std::shared_ptr<ModAuthorInformation>> authors);
 	std::vector<std::shared_ptr<ModAuthorInformation>> mergeAuthors(std::vector<std::shared_ptr<ModAuthorInformation>> left, std::vector<std::shared_ptr<ModAuthorInformation>> right);
 
+	bool m_localMode;
 	FilterType m_filterType;
 	SortType m_sortType;
 	SortDirection m_sortDirection;
@@ -219,6 +225,7 @@ private:
 	boost::signals2::connection m_modCollectionUpdatedConnection;
 	std::shared_ptr<FavouriteModCollection> m_favouriteMods;
 	boost::signals2::connection m_favouriteModCollectionUpdatedConnection;
+	std::shared_ptr<DownloadManager> m_downloadManager;
 	std::shared_ptr<GameVersionCollection> m_gameVersions;
 	boost::signals2::connection m_gameVersionCollectionSizeChangedConnection;
 	boost::signals2::connection m_gameVersionCollectionItemModifiedConnection;

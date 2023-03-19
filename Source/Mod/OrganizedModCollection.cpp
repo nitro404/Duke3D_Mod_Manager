@@ -1,5 +1,6 @@
 #include "OrganizedModCollection.h"
 
+#include "Download/DownloadManager.h"
 #include "FavouriteModCollection.h"
 #include "Game/GameVersion.h"
 #include "Game/GameVersionCollection.h"
@@ -20,7 +21,8 @@ const OrganizedModCollection::SortType OrganizedModCollection::DEFAULT_SORT_TYPE
 const OrganizedModCollection::SortDirection OrganizedModCollection::DEFAULT_SORT_DIRECTION = SortDirection::Ascending;
 
 OrganizedModCollection::OrganizedModCollection(std::shared_ptr<ModCollection> mods, std::shared_ptr<FavouriteModCollection> favourites, std::shared_ptr<GameVersionCollection> gameVersions)
-	: m_filterType(OrganizedModCollection::DEFAULT_FILTER_TYPE)
+	: m_localMode(false)
+	, m_filterType(OrganizedModCollection::DEFAULT_FILTER_TYPE)
 	, m_sortType(OrganizedModCollection::DEFAULT_SORT_TYPE)
 	, m_sortDirection(OrganizedModCollection::DEFAULT_SORT_DIRECTION)
 	, m_mods(mods)
@@ -47,9 +49,11 @@ OrganizedModCollection::OrganizedModCollection(std::shared_ptr<ModCollection> mo
 }
 
 OrganizedModCollection::OrganizedModCollection(OrganizedModCollection && m) noexcept
-	: m_filterType(m.m_filterType)
+	: m_localMode(m.m_localMode)
+	, m_filterType(m.m_filterType)
 	, m_sortType(m.m_sortType)
 	, m_sortDirection(m.m_sortDirection)
+	, m_downloadManager(m.m_downloadManager)
 	, m_mods(m.m_mods == nullptr ? nullptr : std::move(m.m_mods))
 	, m_favouriteMods(m.m_favouriteMods == nullptr ? nullptr : std::move(m.m_favouriteMods))
 	, m_gameVersions(m.m_gameVersions == nullptr ? nullptr : std::move(m.m_gameVersions))
@@ -74,9 +78,11 @@ OrganizedModCollection::OrganizedModCollection(OrganizedModCollection && m) noex
 }
 
 OrganizedModCollection::OrganizedModCollection(const OrganizedModCollection & m)
-	: m_filterType(m.m_filterType)
+	: m_localMode(m.m_localMode)
+	, m_filterType(m.m_filterType)
 	, m_sortType(m.m_sortType)
 	, m_sortDirection(m.m_sortDirection)
+	, m_downloadManager(m.m_downloadManager)
 	, m_mods(m.m_mods)
 	, m_favouriteMods(m.m_favouriteMods)
 	, m_gameVersions(m.m_gameVersions) {
@@ -110,9 +116,11 @@ OrganizedModCollection & OrganizedModCollection::operator = (OrganizedModCollect
 		m_gameVersionCollectionSizeChangedConnection.disconnect();
 		m_gameVersionCollectionItemModifiedConnection.disconnect();
 
+		m_localMode = m.m_localMode;
 		m_filterType = m.m_filterType;
 		m_sortType = m.m_sortType;
 		m_sortDirection = m.m_sortDirection;
+		m_downloadManager = m.m_downloadManager;
 		m_mods = m.m_mods == nullptr ? nullptr : std::move(m.m_mods);
 		m_favouriteMods = m.m_favouriteMods == nullptr ? nullptr : std::move(m.m_favouriteMods);
 		m_gameVersions = m.m_gameVersions == nullptr ? nullptr : std::move(m.m_gameVersions);
@@ -147,9 +155,11 @@ OrganizedModCollection & OrganizedModCollection::operator = (const OrganizedModC
 	m_teams.clear();
 	m_authors.clear();
 
+	m_localMode = m.m_localMode;
 	m_filterType = m.m_filterType;
 	m_sortType = m.m_sortType;
 	m_sortDirection = m.m_sortDirection;
+	m_downloadManager = m.m_downloadManager;
 	m_mods = m.m_mods;
 	m_favouriteMods = m.m_favouriteMods;
 	m_gameVersions = m.m_gameVersions;
@@ -191,6 +201,22 @@ OrganizedModCollection::~OrganizedModCollection() {
 	m_favouriteModCollectionUpdatedConnection.disconnect();
 	m_gameVersionCollectionSizeChangedConnection.disconnect();
 	m_gameVersionCollectionItemModifiedConnection.disconnect();
+}
+
+bool OrganizedModCollection::isUsingLocalMode() const {
+	return m_localMode;
+}
+
+void OrganizedModCollection::setLocalMode(bool localMode) {
+	if(m_localMode == localMode) {
+		return;
+	}
+
+	m_localMode = localMode;
+
+	if(m_filterType == FilterType::Downloaded) {
+		organize();
+	}
 }
 
 std::shared_ptr<ModCollection> OrganizedModCollection::getModCollection() const {
@@ -328,6 +354,10 @@ OrganizedModCollection::SortType OrganizedModCollection::getSortType() const {
 
 OrganizedModCollection::SortDirection OrganizedModCollection::getSortDirection() const {
 	return m_sortDirection;
+}
+
+void OrganizedModCollection::setDownloadManager(std::shared_ptr<DownloadManager> downloadManager) {
+	m_downloadManager = downloadManager;
 }
 
 void OrganizedModCollection::setModCollection(std::shared_ptr<ModCollection> mods) {
@@ -495,6 +525,7 @@ bool OrganizedModCollection::setSortOptions(SortType sortType, SortDirection sor
 
 bool OrganizedModCollection::shouldDisplayMods() const {
 	return  m_filterType == FilterType::None ||
+		   m_filterType == FilterType::Downloaded ||
 		   (m_filterType == FilterType::Teams && m_selectedTeam != nullptr) ||
 		   (m_filterType == FilterType::Authors && m_selectedAuthor != nullptr) ||
 		   ((m_filterType == FilterType::SupportedGameVersions || m_filterType == FilterType::CompatibleGameVersions) && m_selectedGameVersion != nullptr);
@@ -1464,6 +1495,22 @@ void OrganizedModCollection::applyFilter() {
 			break;
 		}
 
+		case FilterType::Downloaded: {
+			if(m_localMode || m_downloadManager != nullptr) {
+				std::shared_ptr<Mod> mod;
+
+				for(size_t i = 0; i < m_mods->numberOfMods(); i++) {
+					mod = m_mods->getMod(i);
+
+					if(m_localMode || m_downloadManager->isModDownloaded(mod.get())) {
+						m_organizedMods.push_back(mod);
+					}
+				}
+			}
+
+			break;
+		}
+
 		case FilterType::SupportedGameVersions: {
 			if(m_selectedGameVersion != nullptr) {
 				std::shared_ptr<Mod> mod;
@@ -1543,6 +1590,7 @@ void OrganizedModCollection::sort() {
 
 	switch(m_filterType) {
 		case FilterType::None:
+		case FilterType::Downloaded:
 		case FilterType::SupportedGameVersions:
 		case FilterType::CompatibleGameVersions: {
 			m_organizedMods = mergeSortMods(m_organizedMods);
@@ -1706,6 +1754,7 @@ bool OrganizedModCollection::areSortOptionsValidInContext(SortType sortType, Fil
 	}
 
 	if(  filterType == FilterType::None ||
+		 filterType == FilterType::Downloaded ||
 	   ((filterType == FilterType::SupportedGameVersions || filterType == FilterType::CompatibleGameVersions) && hasSelectedGameVersion) ||
 	    (filterType == FilterType::Teams && hasSelectedTeam) ||
 	    (filterType == FilterType::Authors && hasSelectedAuthor)) {
