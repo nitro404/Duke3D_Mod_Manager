@@ -4,9 +4,11 @@
 #include "Game/GameVersionCollection.h"
 #include "Manager/ModManager.h"
 #include "Manager/ModMatch.h"
+#include "Mod/FavouriteModCollection.h"
 #include "Mod/Mod.h"
 #include "Mod/ModAuthorInformation.h"
 #include "Mod/ModGameVersion.h"
+#include "Mod/ModIdentifier.h"
 #include "Mod/ModTeam.h"
 #include "Mod/ModTeamMember.h"
 #include "Mod/ModVersion.h"
@@ -75,6 +77,13 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	, m_modVersionTypeListBox(nullptr)
 	, m_modGameVersionListLabel(nullptr)
 	, m_modGameVersionListBox(nullptr)
+	, m_modPopupMenuItemIndex(wxNOT_FOUND)
+	, m_modListAddFavouriteMenuItem(nullptr)
+	, m_modListRemoveFavouriteMenuItem(nullptr)
+	, m_modVersionPopupMenuItemIndex(wxNOT_FOUND)
+	, m_modVersionListAddFavouriteMenuItem(nullptr)
+	, m_modVersionTypePopupMenuItemIndex(wxNOT_FOUND)
+	, m_modVersionTypeListAddFavouriteMenuItem(nullptr)
 	, m_modInfoBox(nullptr)
 	, m_modInfoPanel(nullptr)
 	, m_modNameText(nullptr)
@@ -114,10 +123,12 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_filterTypeChangedConnection = organizedMods->filterTypeChanged.connect(std::bind(&ModBrowserPanel::onFilterTypeChanged, this, std::placeholders::_1));
 	m_sortOptionsChangedConnection = organizedMods->sortOptionsChanged.connect(std::bind(&ModBrowserPanel::onSortOptionsChanged, this, std::placeholders::_1, std::placeholders::_2));
 	m_selectedModChangedConnection = organizedMods->selectedModChanged.connect(std::bind(&ModBrowserPanel::onSelectedModChanged, this, std::placeholders::_1));
+	m_selectedFavouriteModChangedConnection = organizedMods->selectedFavouriteModChanged.connect(std::bind(&ModBrowserPanel::onSelectedFavouriteModChanged, this, std::placeholders::_1));
 	m_selectedGameVersionChangedConnection = organizedMods->selectedGameVersionChanged.connect(std::bind(&ModBrowserPanel::onSelectedGameVersionChanged, this, std::placeholders::_1));
 	m_selectedTeamChangedConnection = organizedMods->selectedTeamChanged.connect(std::bind(&ModBrowserPanel::onSelectedTeamChanged, this, std::placeholders::_1));
 	m_selectedAuthorChangedConnection = organizedMods->selectedAuthorChanged.connect(std::bind(&ModBrowserPanel::onSelectedAuthorChanged, this, std::placeholders::_1));
 	m_organizedModCollectionChangedConnection = organizedMods->organizedModCollectionChanged.connect(std::bind(&ModBrowserPanel::onOrganizedModCollectionChanged, this, std::placeholders::_1));
+	m_organizedFavouriteModCollectionChangedConnection = organizedMods->organizedFavouriteModCollectionChanged.connect(std::bind(&ModBrowserPanel::onOrganizedFavouriteModCollectionChanged, this, std::placeholders::_1));
 	m_organizedModGameVersionCollectionChangedConnection = organizedMods->organizedModGameVersionCollectionChanged.connect(std::bind(&ModBrowserPanel::onOrganizedModGameVersionCollectionChanged, this, std::placeholders::_1));
 	m_organizedModTeamCollectionChangedConnection = organizedMods->organizedModTeamCollectionChanged.connect(std::bind(&ModBrowserPanel::onOrganizedModTeamCollectionChanged, this, std::placeholders::_1));
 	m_organizedModAuthorCollectionChangedConnection = organizedMods->organizedModAuthorCollectionChanged.connect(std::bind(&ModBrowserPanel::onOrganizedModAuthorCollectionChanged, this, std::placeholders::_1));
@@ -173,21 +184,47 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_modListLabel->SetFont(m_modListLabel->GetFont().MakeBold());
 	m_modListBox = new wxListBox(modSelectionPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, WXUtilities::createItemWXArrayString(organizedMods->getOrganizedItemDisplayNames()), wxLB_SINGLE | wxLB_ALWAYS_SB);
 	m_modListBox->Bind(wxEVT_LISTBOX, &ModBrowserPanel::onModSelected, this);
+	m_modListBox->Bind(wxEVT_RIGHT_UP, &ModBrowserPanel::onModListRightClicked, this);
 
 	m_modVersionListLabel = new wxStaticText(modSelectionPanel, wxID_ANY, "Mod Versions", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 	m_modVersionListLabel->SetFont(m_modVersionListLabel->GetFont().MakeBold());
 	m_modVersionListBox = new wxListBox(modSelectionPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, {}, wxLB_SINGLE | wxLB_ALWAYS_SB);
 	m_modVersionListBox->Bind(wxEVT_LISTBOX, &ModBrowserPanel::onModVersionSelected, this);
+	m_modVersionListBox->Bind(wxEVT_RIGHT_UP, &ModBrowserPanel::onModVersionListRightClicked, this);
 
 	m_modVersionTypeListLabel = new wxStaticText(modSelectionPanel, wxID_ANY, "Mod Version Types", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 	m_modVersionTypeListLabel->SetFont(m_modVersionTypeListLabel->GetFont().MakeBold());
 	m_modVersionTypeListBox = new wxListBox(modSelectionPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, {}, wxLB_SINGLE | wxLB_ALWAYS_SB);
 	m_modVersionTypeListBox->Bind(wxEVT_LISTBOX, &ModBrowserPanel::onModVersionTypeSelected, this);
+	m_modVersionTypeListBox->Bind(wxEVT_RIGHT_UP, &ModBrowserPanel::onModVersionTypeListRightClicked, this);
 
 	m_modGameVersionListLabel = new wxStaticText(modSelectionPanel, wxID_ANY, "Mod Game Versions", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 	m_modGameVersionListLabel->SetFont(m_modGameVersionListLabel->GetFont().MakeBold());
 	m_modGameVersionListBox = new wxListBox(modSelectionPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, {}, wxLB_SINGLE | wxLB_ALWAYS_SB);
 	m_modGameVersionListBox->Bind(wxEVT_LISTBOX, &ModBrowserPanel::onModGameVersionSelected, this);
+
+	m_modListPopupMenu = std::make_unique<wxMenu>();
+	m_modListAddFavouriteMenuItem = new wxMenuItem(m_modListPopupMenu.get(), wxID_ANY, "Add Favourite Mod", wxEmptyString, wxITEM_NORMAL);
+	m_modListRemoveFavouriteMenuItem = new wxMenuItem(m_modListPopupMenu.get(), wxID_ANY, "Remove Favourite Mod", wxEmptyString, wxITEM_NORMAL);
+	wxMenuItem * modListCancelMenuItem = new wxMenuItem(m_modListPopupMenu.get(), wxID_ANY, "Cancel", wxEmptyString, wxITEM_NORMAL);
+	m_modListPopupMenu->Append(m_modListAddFavouriteMenuItem);
+	m_modListPopupMenu->Append(m_modListRemoveFavouriteMenuItem);
+	m_modListPopupMenu->Append(modListCancelMenuItem);
+	m_modListPopupMenu->Bind(wxEVT_MENU, &ModBrowserPanel::onModPopupMenuItemPressed, this);
+
+	m_modVersionListPopupMenu = std::make_unique<wxMenu>();
+	m_modVersionListAddFavouriteMenuItem = new wxMenuItem(m_modVersionListPopupMenu.get(), wxID_ANY, "Add Favourite Mod Version", wxEmptyString, wxITEM_NORMAL);
+	wxMenuItem * modVersionListCancelMenuItem = new wxMenuItem(m_modVersionListPopupMenu.get(), wxID_ANY, "Cancel", wxEmptyString, wxITEM_NORMAL);
+	m_modVersionListPopupMenu->Append(m_modVersionListAddFavouriteMenuItem);
+	m_modVersionListPopupMenu->Append(modVersionListCancelMenuItem);
+	m_modVersionListPopupMenu->Bind(wxEVT_MENU, &ModBrowserPanel::onModVersionPopupMenuItemPressed, this);
+
+	m_modVersionTypeListPopupMenu = std::make_unique<wxMenu>();
+	m_modVersionTypeListAddFavouriteMenuItem = new wxMenuItem(m_modVersionTypeListPopupMenu.get(), wxID_ANY, "Add Favourite Mod Version Type", wxEmptyString, wxITEM_NORMAL);
+	wxMenuItem * modVersionTypeListCancelMenuItem = new wxMenuItem(m_modVersionTypeListPopupMenu.get(), wxID_ANY, "Cancel", wxEmptyString, wxITEM_NORMAL);
+	m_modVersionTypeListPopupMenu->Append(m_modVersionTypeListAddFavouriteMenuItem);
+	m_modVersionTypeListPopupMenu->Append(modVersionTypeListCancelMenuItem);
+	m_modVersionTypeListPopupMenu->Bind(wxEVT_MENU, &ModBrowserPanel::onModVersionTypePopupMenuItemPressed, this);
 
 	m_modInfoBox = new wxStaticBox(modSelectionPanel, wxID_ANY, "Mod Information", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Mod Information");
 	m_modInfoBox->SetOwnFont(m_modInfoBox->GetFont().MakeBold());
@@ -437,10 +474,12 @@ ModBrowserPanel::~ModBrowserPanel() {
 	m_filterTypeChangedConnection.disconnect();
 	m_sortOptionsChangedConnection.disconnect();
 	m_selectedModChangedConnection.disconnect();
+	m_selectedFavouriteModChangedConnection.disconnect();
 	m_selectedGameVersionChangedConnection.disconnect();
 	m_selectedTeamChangedConnection.disconnect();
 	m_selectedAuthorChangedConnection.disconnect();
 	m_organizedModCollectionChangedConnection.disconnect();
+	m_organizedFavouriteModCollectionChangedConnection.disconnect();
 	m_organizedModGameVersionCollectionChangedConnection.disconnect();
 	m_organizedModTeamCollectionChangedConnection.disconnect();
 	m_organizedModAuthorCollectionChangedConnection.disconnect();
@@ -501,6 +540,9 @@ void ModBrowserPanel::updateModList() {
 		if(organizedMods->shouldDisplayMods()) {
 			m_modListLabel->SetLabelText("Mods");
 		}
+		if(organizedMods->shouldDisplayFavouriteMods()) {
+			m_modListLabel->SetLabelText("Favourite Mods");
+		}
 		else if(organizedMods->shouldDisplayGameVersions()) {
 			m_modListLabel->SetLabelText("Game Versions");
 		}
@@ -512,10 +554,6 @@ void ModBrowserPanel::updateModList() {
 		}
 
 		m_modListBox->Set(WXUtilities::createItemWXArrayString(organizedMods->getOrganizedItemDisplayNames()));
-
-		if(organizedMods->numberOfMods() == 0) {
-			m_selectRandomModButton->Enable();
-		}
 
 		if(mod != nullptr) {
 			m_modListBox->SetSelection(organizedMods->indexOfSelectedItem());
@@ -548,8 +586,9 @@ void ModBrowserPanel::updateModList() {
 void ModBrowserPanel::updateModVersionList() {
 	if(m_searchQuery.empty()) {
 		std::shared_ptr<Mod> mod(m_modManager->getSelectedMod());
+		std::shared_ptr<OrganizedModCollection> organizedMods(m_modManager->getOrganizedMods());
 
-		if(mod != nullptr && m_modManager->getOrganizedMods()->shouldDisplayMods()) {
+		if(mod != nullptr && (organizedMods->shouldDisplayMods() || organizedMods->shouldDisplayFavouriteMods())) {
 			size_t modVersionIndex = m_modManager->getSelectedModVersionIndex();
 
 			m_modVersionListBox->Set(WXUtilities::createItemWXArrayString(mod->getVersionDisplayNames("Default")));
@@ -575,9 +614,10 @@ void ModBrowserPanel::updateModVersionList() {
 void ModBrowserPanel::updateModVersionTypeList() {
 	if(m_searchQuery.empty()) {
 		std::shared_ptr<Mod> mod(m_modManager->getSelectedMod());
+		std::shared_ptr<OrganizedModCollection> organizedMods(m_modManager->getOrganizedMods());
 
 		if(mod != nullptr) {
-			if(m_modManager->getOrganizedMods()->shouldDisplayMods()) {
+			if(organizedMods->shouldDisplayMods() || organizedMods->shouldDisplayFavouriteMods()) {
 				size_t modVersionIndex = m_modManager->getSelectedModVersionIndex();
 				size_t modVersionTypeIndex = m_modManager->getSelectedModVersionTypeIndex();
 
@@ -621,8 +661,9 @@ void ModBrowserPanel::updateModVersionTypeList() {
 void ModBrowserPanel::updateModGameVersionList() {
 	if(m_searchQuery.empty()) {
 		std::shared_ptr<Mod> mod(m_modManager->getSelectedMod());
+		std::shared_ptr<OrganizedModCollection> organizedMods(m_modManager->getOrganizedMods());
 
-		if(mod != nullptr && m_modManager->getOrganizedMods()->shouldDisplayMods()) {
+		if(mod != nullptr && (organizedMods->shouldDisplayMods() || organizedMods->shouldDisplayFavouriteMods())) {
 			size_t modVersionIndex = m_modManager->getSelectedModVersionIndex();
 			size_t modVersionTypeIndex = m_modManager->getSelectedModVersionTypeIndex();
 			size_t modGameVersionIndex = m_modManager->getSelectedModGameVersionIndex();
@@ -1103,6 +1144,83 @@ void ModBrowserPanel::onModGameVersionSelected(wxCommandEvent & event) {
 	m_launchButton->Enable();
 }
 
+void ModBrowserPanel::onModListRightClicked(wxMouseEvent & event) {
+	std::shared_ptr<OrganizedModCollection> organizedMods(m_modManager->getOrganizedMods());
+
+	m_modPopupMenuItemIndex = m_modListBox->HitTest(event.GetPosition());
+	m_modListAddFavouriteMenuItem->Enable(m_modPopupMenuItemIndex != wxNOT_FOUND && organizedMods->shouldDisplayMods());
+	m_modListRemoveFavouriteMenuItem->Enable(m_modPopupMenuItemIndex != wxNOT_FOUND && organizedMods->shouldDisplayFavouriteMods());
+
+	m_modListBox->PopupMenu(m_modListPopupMenu.get());
+}
+
+void ModBrowserPanel::onModVersionListRightClicked(wxMouseEvent & event) {
+	m_modVersionPopupMenuItemIndex = m_modVersionListBox->HitTest(event.GetPosition());
+	m_modVersionListAddFavouriteMenuItem->Enable(m_modVersionPopupMenuItemIndex != wxNOT_FOUND);
+
+	m_modVersionListBox->PopupMenu(m_modVersionListPopupMenu.get());
+}
+
+void ModBrowserPanel::onModVersionTypeListRightClicked(wxMouseEvent & event) {
+	m_modVersionTypePopupMenuItemIndex = m_modVersionTypeListBox->HitTest(event.GetPosition());
+	m_modVersionTypeListAddFavouriteMenuItem->Enable(m_modVersionTypePopupMenuItemIndex != wxNOT_FOUND);
+
+	m_modVersionTypeListBox->PopupMenu(m_modVersionTypeListPopupMenu.get());
+}
+
+void ModBrowserPanel::onModPopupMenuItemPressed(wxCommandEvent & event) {
+	std::shared_ptr<OrganizedModCollection> organizedMods(m_modManager->getOrganizedMods());
+
+	if(m_modPopupMenuItemIndex == wxNOT_FOUND) {
+		return;
+	}
+
+	if(event.GetId() == m_modListAddFavouriteMenuItem->GetId()) {
+		if(m_modPopupMenuItemIndex >= organizedMods->numberOfMods()) {
+			return;
+		}
+
+		m_modManager->getFavouriteMods()->addFavourite(ModIdentifier(organizedMods->getMod(m_modPopupMenuItemIndex)->getName()));
+	}
+	else if(event.GetId() == m_modListRemoveFavouriteMenuItem->GetId()) {
+		if(m_modPopupMenuItemIndex >= organizedMods->numberOfFavouriteMods()) {
+			return;
+		}
+
+		m_modManager->getFavouriteMods()->removeFavourite(m_modPopupMenuItemIndex);
+	}
+}
+
+void ModBrowserPanel::onModVersionPopupMenuItemPressed(wxCommandEvent & event) {
+	if(event.GetId() == m_modVersionListAddFavouriteMenuItem->GetId()) {
+		std::shared_ptr<Mod> selectedMod(m_modManager->getSelectedMod());
+
+		if(selectedMod == nullptr || m_modVersionPopupMenuItemIndex == wxNOT_FOUND || m_modVersionPopupMenuItemIndex >= selectedMod->numberOfVersions()) {
+			return;
+		}
+
+		m_modManager->getFavouriteMods()->addFavourite(ModIdentifier(selectedMod->getName(), selectedMod->getVersion(m_modVersionPopupMenuItemIndex)->getVersion()));
+	}
+}
+
+void ModBrowserPanel::onModVersionTypePopupMenuItemPressed(wxCommandEvent & event) {
+	if(event.GetId() == m_modVersionTypeListAddFavouriteMenuItem->GetId()) {
+		std::shared_ptr<Mod> selectedMod(m_modManager->getSelectedMod());
+
+		if(selectedMod == nullptr) {
+			return;
+		}
+
+		std::shared_ptr<ModVersion> selectedModVersion(m_modManager->getSelectedModVersion());
+
+		if(selectedModVersion == nullptr || m_modVersionTypePopupMenuItemIndex == wxNOT_FOUND || m_modVersionTypePopupMenuItemIndex >= selectedModVersion->numberOfTypes()) {
+			return;
+		}
+
+		m_modManager->getFavouriteMods()->addFavourite(ModIdentifier(selectedMod->getName(), selectedModVersion->getVersion(), selectedModVersion->getType(m_modVersionTypePopupMenuItemIndex)->getType()));
+	}
+}
+
 void ModBrowserPanel::onPreferredDOSBoxVersionSelected(wxCommandEvent & event) {
 	int selectedDOSBoxVersionIndex = m_preferredDOSBoxVersionComboBox->GetSelection();
 
@@ -1443,6 +1561,10 @@ void ModBrowserPanel::onSelectedModChanged(std::shared_ptr<Mod> mod) {
 	updateModSelection();
 }
 
+void ModBrowserPanel::onSelectedFavouriteModChanged(std::shared_ptr<ModIdentifier> favouriteMod) {
+	updateModSelection();
+}
+
 void ModBrowserPanel::onSelectedGameVersionChanged(std::shared_ptr<GameVersion> gameVersion) {
 	updateModSelection();
 }
@@ -1459,15 +1581,19 @@ void ModBrowserPanel::onOrganizedModCollectionChanged(const std::vector<std::sha
 	updateModList();
 }
 
-void ModBrowserPanel::onOrganizedModGameVersionCollectionChanged(const std::vector<std::shared_ptr<GameVersion>> & organizedMods) {
+void ModBrowserPanel::onOrganizedFavouriteModCollectionChanged(const std::vector<std::shared_ptr<ModIdentifier>> & organizedFavouriteMods) {
 	updateModList();
 }
 
-void ModBrowserPanel::onOrganizedModTeamCollectionChanged(const std::vector<std::shared_ptr<ModAuthorInformation>> & organizedMods) {
+void ModBrowserPanel::onOrganizedModGameVersionCollectionChanged(const std::vector<std::shared_ptr<GameVersion>> & organizedGameVersions) {
 	updateModList();
 }
 
-void ModBrowserPanel::onOrganizedModAuthorCollectionChanged(const std::vector<std::shared_ptr<ModAuthorInformation>> & organizedMods) {
+void ModBrowserPanel::onOrganizedModTeamCollectionChanged(const std::vector<std::shared_ptr<ModAuthorInformation>> & organizedTeams) {
+	updateModList();
+}
+
+void ModBrowserPanel::onOrganizedModAuthorCollectionChanged(const std::vector<std::shared_ptr<ModAuthorInformation>> & organizedAuthors) {
 	updateModList();
 }
 

@@ -35,6 +35,8 @@ FavouriteModCollection & FavouriteModCollection::operator = (FavouriteModCollect
 		m_favourites = std::move(m.m_favourites);
 	}
 
+	updated(*this);
+
 	return *this;
 }
 
@@ -44,6 +46,8 @@ FavouriteModCollection & FavouriteModCollection::operator = (const FavouriteModC
 	for(std::vector<std::shared_ptr<ModIdentifier>>::const_iterator i = m.m_favourites.begin(); i != m.m_favourites.end(); ++i) {
 		m_favourites.push_back(std::make_shared<ModIdentifier>(**i));
 	}
+
+	updated(*this);
 
 	return *this;
 }
@@ -55,58 +59,31 @@ size_t FavouriteModCollection::numberOfFavourites() {
 }
 
 bool FavouriteModCollection::hasFavourite(const ModIdentifier & favourite) const {
-	for(std::vector<std::shared_ptr<ModIdentifier>>::const_iterator i = m_favourites.begin(); i != m_favourites.end(); ++i) {
-		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), favourite.getName()) &&
-		   Utilities::areStringsEqualIgnoreCase((*i)->getVersion(), favourite.getVersion()) &&
-		   Utilities::areStringsEqualIgnoreCase((*i)->getVersionType(), favourite.getVersionType())) {
-			return true;
-		}
-	}
-
-	return false;
+	return indexOfFavourite(favourite) != std::numeric_limits<size_t>::max();
 }
 
 bool FavouriteModCollection::hasFavourite(const std::string & name, const std::string & version, const std::string & versionType) const {
-	if(name.empty()) {
-		return false;
-	}
-
-	for(std::vector<std::shared_ptr<ModIdentifier>>::const_iterator i = m_favourites.begin(); i != m_favourites.end(); ++i) {
-		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name) &&
-		   Utilities::areStringsEqualIgnoreCase((*i)->getVersion(), version) &&
-		   Utilities::areStringsEqualIgnoreCase((*i)->getVersionType(), versionType)) {
-			return true;
-		}
-	}
-	return false;
+	return indexOfFavourite(name, version, versionType) != std::numeric_limits<size_t>::max();
 }
 
 size_t FavouriteModCollection::indexOfFavourite(const ModIdentifier & favourite) const {
-	for(size_t i = 0; i < m_favourites.size(); i++) {
-		if(Utilities::areStringsEqualIgnoreCase(m_favourites[i]->getName(), favourite.getName()) &&
-		   Utilities::areStringsEqualIgnoreCase(m_favourites[i]->getVersion(), favourite.getVersion()) &&
-		   Utilities::areStringsEqualIgnoreCase(m_favourites[i]->getVersionType(), favourite.getVersionType())) {
-			return i;
-		}
-	}
-
-	return std::numeric_limits<size_t>::max();
-}
-
-size_t FavouriteModCollection::indexOfFavourite(const std::string & name, const std::string & version, const std::string & versionType) const {
-	if(name.empty()) {
+	if(!favourite.isValid()) {
 		return std::numeric_limits<size_t>::max();
 	}
 
-	for(size_t i = 0; i < m_favourites.size(); i++) {
-		if(Utilities::areStringsEqualIgnoreCase(m_favourites[i]->getName(), name) &&
-		   Utilities::areStringsEqualIgnoreCase(m_favourites[i]->getVersion(), version) &&
-		   Utilities::areStringsEqualIgnoreCase(m_favourites[i]->getVersionType(), versionType)) {
-			return i;
-		}
+	std::vector<std::shared_ptr<ModIdentifier>>::const_iterator favouriteModIterator = std::find_if(m_favourites.cbegin(), m_favourites.cend(), [&favourite](const std::shared_ptr<ModIdentifier> & currentFavourite) {
+		return *currentFavourite == favourite;
+	});
+
+	if(favouriteModIterator == m_favourites.cend()) {
+		return std::numeric_limits<size_t>::max();
 	}
 
-	return std::numeric_limits<size_t>::max();
+	return favouriteModIterator - m_favourites.cbegin();
+}
+
+size_t FavouriteModCollection::indexOfFavourite(const std::string & name, const std::string & version, const std::string & versionType) const {
+	return indexOfFavourite(ModIdentifier(name, version, versionType));
 }
 
 std::shared_ptr<ModIdentifier> FavouriteModCollection::getFavourite(size_t index) const {
@@ -118,19 +95,7 @@ std::shared_ptr<ModIdentifier> FavouriteModCollection::getFavourite(size_t index
 }
 
 std::shared_ptr<ModIdentifier> FavouriteModCollection::getFavourite(const std::string & name, const std::string & version, const std::string & versionType) const {
-	if(name.empty()) {
-		return nullptr;
-	}
-
-	for(std::vector<std::shared_ptr<ModIdentifier>>::const_iterator i = m_favourites.begin(); i != m_favourites.end(); ++i) {
-		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name) &&
-		   Utilities::areStringsEqualIgnoreCase((*i)->getVersion(), version) &&
-		   Utilities::areStringsEqualIgnoreCase((*i)->getVersionType(), versionType)) {
-			return *i;
-		}
-	}
-
-	return nullptr;
+	return getFavourite(indexOfFavourite(name, version, versionType));
 }
 
 bool FavouriteModCollection::addFavourite(const ModIdentifier & favourite) {
@@ -139,6 +104,8 @@ bool FavouriteModCollection::addFavourite(const ModIdentifier & favourite) {
 	}
 
 	m_favourites.push_back(std::make_shared<ModIdentifier>(favourite));
+
+	updated(*this);
 
 	return true;
 }
@@ -150,45 +117,24 @@ bool FavouriteModCollection::removeFavourite(size_t index) {
 
 	m_favourites.erase(m_favourites.begin() + index);
 
+	updated(*this);
+
 	return true;
 }
 
 bool FavouriteModCollection::removeFavourite(const ModIdentifier & favourite) {
-	for(std::vector<std::shared_ptr<ModIdentifier>>::const_iterator i = m_favourites.begin(); i != m_favourites.end(); ++i) {
-		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), favourite.getName()) &&
-		   Utilities::areStringsEqualIgnoreCase((*i)->getVersion(), favourite.getVersion()) &&
-		   Utilities::areStringsEqualIgnoreCase((*i)->getVersionType(), favourite.getVersionType())) {
-			m_favourites.erase(i);
-
-			return true;
-		}
-	}
-
-	return false;
+	return removeFavourite(indexOfFavourite(favourite));
 }
 
 bool FavouriteModCollection::removeFavourite(const std::string & name, const std::string & version, const std::string & versionType) {
-	if(name.empty()) {
-		return false;
-	}
-
-	for(std::vector<std::shared_ptr<ModIdentifier>>::const_iterator i = m_favourites.begin(); i != m_favourites.end(); ++i) {
-		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name) &&
-		   Utilities::areStringsEqualIgnoreCase((*i)->getVersion(), version) &&
-		   Utilities::areStringsEqualIgnoreCase((*i)->getVersionType(), versionType)) {
-			m_favourites.erase(i);
-
-			return true;
-		}
-	}
-
-	return false;
+	return removeFavourite(indexOfFavourite(name, version, versionType));
 }
 
 void FavouriteModCollection::clearFavourites() {
 	m_favourites.clear();
-}
 
+	updated(*this);
+}
 
 rapidjson::Document FavouriteModCollection::toJSON() const {
 	rapidjson::Document favourites(rapidjson::kArrayType);
@@ -222,6 +168,8 @@ bool FavouriteModCollection::parseFrom(const rapidjson::Value & favourites) {
 	}
 
 	m_favourites = newFavourites;
+
+	updated(*this);
 
 	return true;
 }

@@ -8,6 +8,7 @@
 #include "ModCollection.h"
 #include "ModTeam.h"
 #include "ModTeamMember.h"
+#include "Mod/ModIdentifier.h"
 
 #include <Utilities/Utilities.h>
 #include <Utilities/StringUtilities.h>
@@ -23,7 +24,7 @@ OrganizedModCollection::OrganizedModCollection(std::shared_ptr<ModCollection> mo
 	, m_sortType(OrganizedModCollection::DEFAULT_SORT_TYPE)
 	, m_sortDirection(OrganizedModCollection::DEFAULT_SORT_DIRECTION)
 	, m_mods(mods)
-	, m_favourites(favourites)
+	, m_favouriteMods(favourites)
 	, m_gameVersions(gameVersions) {
 	if(m_mods != nullptr) {
 		m_modCollectionUpdatedConnection = m_mods->updated.connect(std::bind(&OrganizedModCollection::onModCollectionUpdated, this, std::placeholders::_1));
@@ -33,8 +34,8 @@ OrganizedModCollection::OrganizedModCollection(std::shared_ptr<ModCollection> mo
 		updateAuthorList();
 	}
 
-	if(m_favourites != nullptr) {
-		m_favouriteModCollectionUpdatedConnection = m_favourites->updated.connect(std::bind(&OrganizedModCollection::onFavouriteModCollectionUpdated, this, std::placeholders::_1));
+	if(m_favouriteMods != nullptr) {
+		m_favouriteModCollectionUpdatedConnection = m_favouriteMods->updated.connect(std::bind(&OrganizedModCollection::onFavouriteModCollectionUpdated, this, std::placeholders::_1));
 	}
 
 	if(m_gameVersions != nullptr) {
@@ -50,7 +51,7 @@ OrganizedModCollection::OrganizedModCollection(OrganizedModCollection && m) noex
 	, m_sortType(m.m_sortType)
 	, m_sortDirection(m.m_sortDirection)
 	, m_mods(m.m_mods == nullptr ? nullptr : std::move(m.m_mods))
-	, m_favourites(m.m_favourites == nullptr ? nullptr : std::move(m.m_favourites))
+	, m_favouriteMods(m.m_favouriteMods == nullptr ? nullptr : std::move(m.m_favouriteMods))
 	, m_gameVersions(m.m_gameVersions == nullptr ? nullptr : std::move(m.m_gameVersions))
 	, m_organizedMods(std::move(m.m_organizedMods))
 	, m_organizedGameVersions(std::move(m.m_organizedGameVersions))
@@ -62,8 +63,8 @@ OrganizedModCollection::OrganizedModCollection(OrganizedModCollection && m) noex
 		m_modCollectionUpdatedConnection = m_mods->updated.connect(std::bind(&OrganizedModCollection::onModCollectionUpdated, this, std::placeholders::_1));
 	}
 
-	if(m_favourites != nullptr) {
-		m_favouriteModCollectionUpdatedConnection = m_favourites->updated.connect(std::bind(&OrganizedModCollection::onFavouriteModCollectionUpdated, this, std::placeholders::_1));
+	if(m_favouriteMods != nullptr) {
+		m_favouriteModCollectionUpdatedConnection = m_favouriteMods->updated.connect(std::bind(&OrganizedModCollection::onFavouriteModCollectionUpdated, this, std::placeholders::_1));
 	}
 
 	if(m_gameVersions != nullptr) {
@@ -77,7 +78,7 @@ OrganizedModCollection::OrganizedModCollection(const OrganizedModCollection & m)
 	, m_sortType(m.m_sortType)
 	, m_sortDirection(m.m_sortDirection)
 	, m_mods(m.m_mods)
-	, m_favourites(m.m_favourites)
+	, m_favouriteMods(m.m_favouriteMods)
 	, m_gameVersions(m.m_gameVersions) {
 	if(m_mods != nullptr) {
 		m_modCollectionUpdatedConnection = m_mods->updated.connect(std::bind(&OrganizedModCollection::onModCollectionUpdated, this, std::placeholders::_1));
@@ -90,8 +91,8 @@ OrganizedModCollection::OrganizedModCollection(const OrganizedModCollection & m)
 		m_selectedAuthor = m.m_selectedAuthor == nullptr ? nullptr : getAuthorInfo(m.m_selectedAuthor->getName());
 	}
 
-	if(m_favourites != nullptr) {
-		m_favouriteModCollectionUpdatedConnection = m_favourites->updated.connect(std::bind(&OrganizedModCollection::onFavouriteModCollectionUpdated, this, std::placeholders::_1));
+	if(m_favouriteMods != nullptr) {
+		m_favouriteModCollectionUpdatedConnection = m_favouriteMods->updated.connect(std::bind(&OrganizedModCollection::onFavouriteModCollectionUpdated, this, std::placeholders::_1));
 	}
 
 	if(m_gameVersions != nullptr) {
@@ -113,7 +114,7 @@ OrganizedModCollection & OrganizedModCollection::operator = (OrganizedModCollect
 		m_sortType = m.m_sortType;
 		m_sortDirection = m.m_sortDirection;
 		m_mods = m.m_mods == nullptr ? nullptr : std::move(m.m_mods);
-		m_favourites = m.m_favourites == nullptr ? nullptr : std::move(m.m_favourites);
+		m_favouriteMods = m.m_favouriteMods == nullptr ? nullptr : std::move(m.m_favouriteMods);
 		m_gameVersions = m.m_gameVersions == nullptr ? nullptr : std::move(m.m_gameVersions);
 		m_teams = std::move(m.m_teams);
 		m_authors = std::move(m.m_authors);
@@ -124,8 +125,8 @@ OrganizedModCollection & OrganizedModCollection::operator = (OrganizedModCollect
 			m_modCollectionUpdatedConnection = m_mods->updated.connect(std::bind(&OrganizedModCollection::onModCollectionUpdated, this, std::placeholders::_1));
 		}
 
-		if(m_favourites != nullptr) {
-			m_favouriteModCollectionUpdatedConnection = m_favourites->updated.connect(std::bind(&OrganizedModCollection::onFavouriteModCollectionUpdated, this, std::placeholders::_1));
+		if(m_favouriteMods != nullptr) {
+			m_favouriteModCollectionUpdatedConnection = m_favouriteMods->updated.connect(std::bind(&OrganizedModCollection::onFavouriteModCollectionUpdated, this, std::placeholders::_1));
 		}
 
 		if(m_gameVersions != nullptr) {
@@ -150,7 +151,7 @@ OrganizedModCollection & OrganizedModCollection::operator = (const OrganizedModC
 	m_sortType = m.m_sortType;
 	m_sortDirection = m.m_sortDirection;
 	m_mods = m.m_mods;
-	m_favourites = m.m_favourites;
+	m_favouriteMods = m.m_favouriteMods;
 	m_gameVersions = m.m_gameVersions;
 	m_selectedTeam.reset();
 	m_selectedAuthor.reset();
@@ -171,8 +172,8 @@ OrganizedModCollection & OrganizedModCollection::operator = (const OrganizedModC
 		}
 	}
 
-	if(m_favourites != nullptr) {
-		m_favouriteModCollectionUpdatedConnection = m_favourites->updated.connect(std::bind(&OrganizedModCollection::onFavouriteModCollectionUpdated, this, std::placeholders::_1));
+	if(m_favouriteMods != nullptr) {
+		m_favouriteModCollectionUpdatedConnection = m_favouriteMods->updated.connect(std::bind(&OrganizedModCollection::onFavouriteModCollectionUpdated, this, std::placeholders::_1));
 	}
 
 	if(m_gameVersions != nullptr) {
@@ -200,12 +201,16 @@ const std::vector<std::shared_ptr<Mod>> & OrganizedModCollection::getOrganizedMo
 	return m_organizedMods;
 }
 
+const std::vector<std::shared_ptr<ModIdentifier>> & OrganizedModCollection::getOrganizedFavouriteMods() const {
+	return m_organizedFavouriteMods;
+}
+
 const std::vector<std::shared_ptr<GameVersion>> & OrganizedModCollection::getOrganizedGameVersions() const {
 	return m_organizedGameVersions;
 }
 
 std::shared_ptr<FavouriteModCollection> OrganizedModCollection::getFavouriteModCollection() const {
-	return m_favourites;
+	return m_favouriteMods;
 }
 
 std::shared_ptr<GameVersionCollection> OrganizedModCollection::getGameVersionCollection() const {
@@ -239,6 +244,21 @@ std::vector<std::string> OrganizedModCollection::getOrganizedItemDisplayNames(bo
 			}
 
 			organizedItemDisplayNames.push_back(modTextStream.str());
+		}
+	}
+	else if(shouldDisplayFavouriteMods()) {
+		organizedItemDisplayNames.reserve(m_organizedFavouriteMods.size());
+
+		for(size_t i = 0; i < m_organizedFavouriteMods.size(); i++) {
+			std::stringstream favouriteTextStream;
+
+			if(prependItemNumber) {
+				favouriteTextStream << i + 1 << ": ";
+			}
+
+			favouriteTextStream << m_organizedFavouriteMods[i]->getFullName();
+
+			organizedItemDisplayNames.push_back(favouriteTextStream.str());
 		}
 	}
 	else if(shouldDisplayGameVersions()) {
@@ -334,15 +354,15 @@ void OrganizedModCollection::setModCollection(std::shared_ptr<ModCollection> mod
 }
 
 void OrganizedModCollection::setFavouriteModCollection(std::shared_ptr<FavouriteModCollection> favourites) {
-	bool shouldOrganize = m_favourites != favourites &&
+	bool shouldOrganize = m_favouriteMods != favourites &&
 						  m_filterType == FilterType::Favourites;
 
 	m_favouriteModCollectionUpdatedConnection.disconnect();
 
-	m_favourites = favourites;
+	m_favouriteMods = favourites;
 
-	if(m_favourites != nullptr) {
-		m_favouriteModCollectionUpdatedConnection = m_favourites->updated.connect(std::bind(&OrganizedModCollection::onFavouriteModCollectionUpdated, this, std::placeholders::_1));
+	if(m_favouriteMods != nullptr) {
+		m_favouriteModCollectionUpdatedConnection = m_favouriteMods->updated.connect(std::bind(&OrganizedModCollection::onFavouriteModCollectionUpdated, this, std::placeholders::_1));
 	}
 
 	if(shouldOrganize) {
@@ -475,10 +495,13 @@ bool OrganizedModCollection::setSortOptions(SortType sortType, SortDirection sor
 
 bool OrganizedModCollection::shouldDisplayMods() const {
 	return  m_filterType == FilterType::None ||
-		    m_filterType == FilterType::Favourites ||
 		   (m_filterType == FilterType::Teams && m_selectedTeam != nullptr) ||
 		   (m_filterType == FilterType::Authors && m_selectedAuthor != nullptr) ||
 		   ((m_filterType == FilterType::SupportedGameVersions || m_filterType == FilterType::CompatibleGameVersions) && m_selectedGameVersion != nullptr);
+}
+
+bool OrganizedModCollection::shouldDisplayFavouriteMods() const {
+	return m_filterType == FilterType::Favourites;
 }
 
 bool OrganizedModCollection::shouldDisplayGameVersions() const {
@@ -503,6 +526,13 @@ size_t OrganizedModCollection::indexOfSelectedItem() const {
 		}
 
 		return indexOfMod(*m_selectedMod);
+	}
+	else if(shouldDisplayFavouriteMods()) {
+		if(m_selectedFavouriteMod == nullptr) {
+			return std::numeric_limits<size_t>::max();
+		}
+
+		return indexOfFavouriteMod(*m_selectedFavouriteMod);
 	}
 	else if(shouldDisplayGameVersions()) {
 		if(m_selectedGameVersion == nullptr) {
@@ -533,6 +563,9 @@ bool OrganizedModCollection::selectItem(size_t index) {
 	if(shouldDisplayMods()) {
 		return setSelectedMod(index);
 	}
+	else if(shouldDisplayFavouriteMods()) {
+		return setSelectedFavouriteMod(index);
+	}
 	else if(shouldDisplayGameVersions()) {
 		return setSelectedGameVersion(index);
 	}
@@ -549,6 +582,9 @@ bool OrganizedModCollection::selectItem(size_t index) {
 bool OrganizedModCollection::selectRandomItem() {
 	if(shouldDisplayMods()) {
 		return selectRandomMod();
+	}
+	else if(shouldDisplayFavouriteMods()) {
+		return selectRandomFavouriteMod();
 	}
 	else if(shouldDisplayGameVersions()) {
 		return selectRandomGameVersion();
@@ -568,6 +604,12 @@ void OrganizedModCollection::clearSelectedItems() {
 		m_selectedMod = nullptr;
 
 		selectedModChanged(m_selectedMod);
+	}
+
+	if(m_selectedFavouriteMod != nullptr) {
+		m_selectedFavouriteMod = nullptr;
+
+		selectedFavouriteModChanged(m_selectedFavouriteMod);
 	}
 
 	if(m_selectedGameVersion != nullptr) {
@@ -759,6 +801,94 @@ void OrganizedModCollection::clearSelectedMod() {
 		m_selectedMod = nullptr;
 
 		selectedModChanged(m_selectedMod);
+	}
+}
+
+size_t OrganizedModCollection::numberOfFavouriteMods() {
+	return m_organizedFavouriteMods.size();
+}
+
+bool OrganizedModCollection::hasFavouriteMod(const ModIdentifier & favouriteMod) const {
+	return indexOfFavouriteMod(favouriteMod) != std::numeric_limits<size_t>::max();
+}
+
+bool OrganizedModCollection::hasFavouriteMod(const std::string & name, const std::string & version, const std::string & versionType) const {
+	return indexOfFavouriteMod(name, version, versionType) != std::numeric_limits<size_t>::max();
+}
+
+size_t OrganizedModCollection::indexOfFavouriteMod(const ModIdentifier & favouriteMod) const {
+	if(!favouriteMod.isValid()) {
+		return std::numeric_limits<size_t>::max();
+	}
+
+	std::vector<std::shared_ptr<ModIdentifier>>::const_iterator favouriteModIterator = std::find_if(m_organizedFavouriteMods.cbegin(), m_organizedFavouriteMods.cend(), [&favouriteMod](const std::shared_ptr<ModIdentifier> & currentFavouriteMod) {
+		return *currentFavouriteMod == favouriteMod;
+	});
+
+	if(favouriteModIterator == m_organizedFavouriteMods.cend()) {
+		return std::numeric_limits<size_t>::max();
+	}
+
+	return favouriteModIterator - m_organizedFavouriteMods.cbegin();
+}
+
+size_t OrganizedModCollection::indexOfFavouriteMod(const std::string & name, const std::string & version, const std::string & versionType) const {
+	return indexOfFavouriteMod(ModIdentifier(name, version, versionType));
+}
+
+std::shared_ptr<ModIdentifier> OrganizedModCollection::getFavouriteMod(size_t index) const {
+	if(index >= m_organizedFavouriteMods.size()) {
+		return nullptr;
+	}
+
+	return m_organizedFavouriteMods[index];
+}
+
+std::shared_ptr<ModIdentifier> OrganizedModCollection::getFavouriteMod(const std::string & name, const std::string & version, const std::string & versionType) const {
+	return getFavouriteMod(indexOfFavouriteMod(name, version, versionType));
+}
+
+std::shared_ptr<ModIdentifier> OrganizedModCollection::getSelectedFavouriteMod() const {
+	return m_selectedFavouriteMod;
+}
+
+bool OrganizedModCollection::setSelectedFavouriteMod(size_t index) {
+	if(index >= m_organizedFavouriteMods.size()) {
+		return false;
+	}
+
+	if(m_selectedFavouriteMod != m_organizedFavouriteMods[index]) {
+		m_selectedFavouriteMod = m_organizedFavouriteMods[index];
+
+		selectedFavouriteModChanged(m_selectedFavouriteMod);
+	}
+
+	return true;
+}
+
+bool OrganizedModCollection::setSelectedFavouriteMod(const ModIdentifier & favouriteMod) {
+	if(!favouriteMod.isValid()) {
+		return false;
+	}
+
+	return setSelectedFavouriteMod(indexOfFavouriteMod(favouriteMod));
+}
+
+bool OrganizedModCollection::selectRandomFavouriteMod() {
+	if(m_organizedFavouriteMods.empty()) {
+		return false;
+	}
+
+	setSelectedFavouriteMod(Utilities::randomInteger(0, m_organizedFavouriteMods.size() - 1));
+
+	return true;
+}
+
+void OrganizedModCollection::clearSelectedFavouriteMod() {
+	if(m_selectedFavouriteMod != nullptr) {
+		m_selectedFavouriteMod = nullptr;
+
+		selectedFavouriteModChanged(m_selectedFavouriteMod);
 	}
 }
 
@@ -1305,9 +1435,10 @@ void OrganizedModCollection::applyFilter() {
 	}
 
 	m_organizedMods.clear();
+	m_organizedFavouriteMods.clear();
 
 	if(m_filterType == FilterType::Favourites &&
-	   (m_favourites == nullptr || m_favourites->numberOfFavourites() == 0)) {
+	   (m_favouriteMods == nullptr || m_favouriteMods->numberOfFavourites() == 0)) {
 		return;
 	}
 
@@ -1316,72 +1447,89 @@ void OrganizedModCollection::applyFilter() {
 		return;
 	}
 
-	if(m_filterType == FilterType::None) {
-		for(size_t i = 0; i < m_mods->numberOfMods(); i++) {
-			m_organizedMods.push_back(m_mods->getMod(i));
-		}
-	}
-	else if(m_filterType == FilterType::Favourites) {
-		for(size_t i = 0; i < m_mods->numberOfMods(); i++) {
-			if(m_favourites->hasFavourite(m_mods->getMod(i)->getName())) {
+	switch(m_filterType) {
+		case FilterType::None: {
+			for(size_t i = 0; i < m_mods->numberOfMods(); i++) {
 				m_organizedMods.push_back(m_mods->getMod(i));
 			}
+
+			break;
 		}
-	}
-	else if(m_filterType == FilterType::SupportedGameVersions) {
-		if(m_selectedGameVersion != nullptr) {
-			std::shared_ptr<Mod> mod;
 
-			for(size_t i = 0; i < m_mods->numberOfMods(); i++) {
-				mod = m_mods->getMod(i);
+		case FilterType::Favourites: {
+			for(size_t i = 0; i < m_favouriteMods->numberOfFavourites(); i++) {
+				m_organizedFavouriteMods.push_back(m_favouriteMods->getFavourite(i));
+			}
 
-				if(mod->isGameVersionSupported(*m_selectedGameVersion)) {
-					m_organizedMods.push_back(mod);
+			break;
+		}
+
+		case FilterType::SupportedGameVersions: {
+			if(m_selectedGameVersion != nullptr) {
+				std::shared_ptr<Mod> mod;
+
+				for(size_t i = 0; i < m_mods->numberOfMods(); i++) {
+					mod = m_mods->getMod(i);
+
+					if(mod->isGameVersionSupported(*m_selectedGameVersion)) {
+						m_organizedMods.push_back(mod);
+					}
 				}
 			}
+
+			break;
 		}
-	}
-	else if(m_filterType == FilterType::CompatibleGameVersions) {
-		if(m_selectedGameVersion != nullptr) {
-			std::shared_ptr<Mod> mod;
 
-			for(size_t i = 0; i < m_mods->numberOfMods(); i++) {
-				mod = m_mods->getMod(i);
+		case FilterType::CompatibleGameVersions: {
+			if(m_selectedGameVersion != nullptr) {
+				std::shared_ptr<Mod> mod;
 
-				if(mod->isGameVersionCompatible(*m_selectedGameVersion)) {
-					m_organizedMods.push_back(mod);
+				for(size_t i = 0; i < m_mods->numberOfMods(); i++) {
+					mod = m_mods->getMod(i);
+
+					if(mod->isGameVersionCompatible(*m_selectedGameVersion)) {
+						m_organizedMods.push_back(mod);
+					}
 				}
 			}
+
+			break;
 		}
-	}
-	else if(m_filterType == FilterType::Teams) {
-		if(m_selectedTeam != nullptr) {
-			std::shared_ptr<ModTeam> team;
 
-			for(size_t i = 0; i < m_mods->numberOfMods(); i++) {
-				team = m_mods->getMod(i)->getTeam();
+		case FilterType::Teams: {
+			if(m_selectedTeam != nullptr) {
+				std::shared_ptr<ModTeam> team;
 
-				if(team != nullptr && Utilities::areStringsEqual(team->getName(), m_selectedTeam->getName())) {
-					m_organizedMods.push_back(m_mods->getMod(i));
+				for(size_t i = 0; i < m_mods->numberOfMods(); i++) {
+					team = m_mods->getMod(i)->getTeam();
+
+					if(team != nullptr && Utilities::areStringsEqual(team->getName(), m_selectedTeam->getName())) {
+						m_organizedMods.push_back(m_mods->getMod(i));
+					}
 				}
 			}
+
+			break;
 		}
-	}
-	else if(m_filterType == FilterType::Authors) {
-		if(m_selectedAuthor != nullptr) {
-			std::shared_ptr<ModTeam> team;
 
-			for(size_t i = 0; i < m_mods->numberOfMods(); i++) {
-				team = m_mods->getMod(i)->getTeam();
+		case FilterType::Authors: {
+			if(m_selectedAuthor != nullptr) {
+				std::shared_ptr<ModTeam> team;
 
-				if(team != nullptr && team->numberOfMembers() != 0) {
-					for(size_t j=0;j<team->numberOfMembers();j++) {
-						if(Utilities::areStringsEqual(team->getMember(j)->getName(), m_selectedAuthor->getName())) {
-							m_organizedMods.push_back(m_mods->getMod(i));
+				for(size_t i = 0; i < m_mods->numberOfMods(); i++) {
+					team = m_mods->getMod(i)->getTeam();
+
+					if(team != nullptr && team->numberOfMembers() != 0) {
+						for(size_t j=0;j<team->numberOfMembers();j++) {
+							if(Utilities::areStringsEqual(team->getMember(j)->getName(), m_selectedAuthor->getName())) {
+								m_organizedMods.push_back(m_mods->getMod(i));
+							}
 						}
 					}
 				}
 			}
+
+			break;
 		}
 	}
 
@@ -1395,7 +1543,6 @@ void OrganizedModCollection::sort() {
 
 	switch(m_filterType) {
 		case FilterType::None:
-		case FilterType::Favourites:
 		case FilterType::SupportedGameVersions:
 		case FilterType::CompatibleGameVersions: {
 			m_organizedMods = mergeSortMods(m_organizedMods);
@@ -1403,6 +1550,13 @@ void OrganizedModCollection::sort() {
 
 			organizedModCollectionChanged(m_organizedMods);
 			organizedModGameVersionCollectionChanged(m_organizedGameVersions);
+
+			break;
+		}
+		case FilterType::Favourites: {
+			m_organizedFavouriteMods = mergeSortModIdentifiers(m_organizedFavouriteMods);
+
+			organizedFavouriteModCollectionChanged(m_organizedFavouriteMods);
 
 			break;
 		}
@@ -1552,7 +1706,6 @@ bool OrganizedModCollection::areSortOptionsValidInContext(SortType sortType, Fil
 	}
 
 	if(  filterType == FilterType::None ||
-	     filterType == FilterType::Favourites ||
 	   ((filterType == FilterType::SupportedGameVersions || filterType == FilterType::CompatibleGameVersions) && hasSelectedGameVersion) ||
 	    (filterType == FilterType::Teams && hasSelectedTeam) ||
 	    (filterType == FilterType::Authors && hasSelectedAuthor)) {
@@ -1643,6 +1796,95 @@ std::vector<std::shared_ptr<Mod>> OrganizedModCollection::mergeMods(std::vector<
 			}
 			else {
 				pushLeft = left[0]->numberOfVersions() > right[0]->numberOfVersions();
+			}
+		}
+		else if(m_sortType == SortType::Random) {
+			pushLeft = Utilities::randomInteger(0, 1) == 0;
+		}
+
+		if(pushLeft) {
+			result.push_back(left[0]);
+			left.erase(left.begin());
+		}
+		else {
+			result.push_back(right[0]);
+			right.erase(right.begin());
+		}
+	}
+
+	for(size_t i = 0; i < left.size(); i++) {
+		result.push_back(left[i]);
+	}
+
+	for(size_t i = 0; i < right.size(); i++) {
+		result.push_back(right[i]);
+	}
+
+	return result;
+}
+
+std::vector<std::shared_ptr<ModIdentifier>> OrganizedModCollection::mergeSortModIdentifiers(std::vector<std::shared_ptr<ModIdentifier>> modIdentifiers) {
+	if(modIdentifiers.size() <= 1) {
+		return modIdentifiers;
+	}
+
+	std::vector<std::shared_ptr<ModIdentifier>> left;
+	std::vector<std::shared_ptr<ModIdentifier>> right;
+
+	size_t mid = modIdentifiers.size() / 2;
+
+	for(size_t i = 0; i < mid; i++) {
+		left.push_back(modIdentifiers[i]);
+	}
+
+	for(size_t i = mid; i < modIdentifiers.size(); i++) {
+		right.push_back(modIdentifiers[i]);
+	}
+
+	left = mergeSortModIdentifiers(left);
+	right = mergeSortModIdentifiers(right);
+
+	return mergeModIdentifiers(left, right);
+}
+
+std::vector<std::shared_ptr<ModIdentifier>> OrganizedModCollection::mergeModIdentifiers(std::vector<std::shared_ptr<ModIdentifier>> left, std::vector<std::shared_ptr<ModIdentifier>> right) {
+	std::vector<std::shared_ptr<ModIdentifier>> result;
+
+	bool pushLeft = true;
+
+	while(!left.empty() && !right.empty()) {
+		if(m_sortType == SortType::Name) {
+			int32_t nameComparison = Utilities::compareStringsIgnoreCase(left[0]->getName(), right[0]->getName());
+
+			if(nameComparison != 0) {
+				if(m_sortDirection == SortDirection::Ascending) {
+					pushLeft = nameComparison < 0;
+				}
+				else {
+					pushLeft = nameComparison > 0;
+				}
+			}
+			else {
+				int32_t versionComparison = Utilities::compareStringsIgnoreCase(left[0]->getVersion(), right[0]->getVersion());
+
+				if(versionComparison != 0) {
+					if(m_sortDirection == SortDirection::Ascending) {
+						pushLeft = versionComparison < 0;
+					}
+					else {
+						pushLeft = versionComparison > 0;
+					}
+				}
+				else {
+					int32_t versionTypeComparison = Utilities::compareStringsIgnoreCase(left[0]->getVersionType(), right[0]->getVersionType());
+
+					if(m_sortDirection == SortDirection::Ascending) {
+						pushLeft = versionTypeComparison <= 0;
+					}
+					else {
+						pushLeft = versionTypeComparison > 0;
+					}
+				}
 			}
 		}
 		else if(m_sortType == SortType::Random) {
@@ -1823,8 +2065,8 @@ std::vector<std::shared_ptr<ModAuthorInformation>> OrganizedModCollection::merge
 bool OrganizedModCollection::operator == (const OrganizedModCollection & m) const {
 	if((m_mods == nullptr && m.m_mods != nullptr) ||
 	   (m_mods != nullptr && m.m_mods == nullptr) ||
-	   (m_favourites == nullptr && m.m_favourites != nullptr) ||
-	   (m_favourites != nullptr && m.m_favourites == nullptr) ||
+	   (m_favouriteMods == nullptr && m.m_favouriteMods != nullptr) ||
+	   (m_favouriteMods != nullptr && m.m_favouriteMods == nullptr) ||
 	   (m_gameVersions == nullptr && m.m_gameVersions != nullptr) ||
 	   (m_gameVersions != nullptr && m.m_gameVersions == nullptr) ||
 	   (m_selectedTeam == nullptr && m.m_selectedTeam != nullptr) ||
@@ -1839,7 +2081,7 @@ bool OrganizedModCollection::operator == (const OrganizedModCollection & m) cons
 	   m_sortType != m.m_sortType ||
 	   m_sortDirection != m.m_sortDirection ||
 	   (m_mods != nullptr && m.m_mods != nullptr && *m_mods != *m.m_mods) ||
-	   (m_favourites != nullptr && m.m_favourites != nullptr && *m_favourites != *m.m_favourites) ||
+	   (m_favouriteMods != nullptr && m.m_favouriteMods != nullptr && *m_favouriteMods != *m.m_favouriteMods) ||
 	   (m_gameVersions != nullptr && m.m_gameVersions != nullptr && *m_gameVersions != *m.m_gameVersions)) {
 		return false;
 	}

@@ -32,6 +32,7 @@ class Mod;
 class ModAuthorInformation;
 class ModCollection;
 class ModGameVersion;
+class ModIdentifier;
 class ModMatch;
 class ModVersion;
 class ModVersionType;
@@ -55,6 +56,7 @@ public:
 	bool uninitialize();
 
 	bool isUsingLocalMode() const;
+	std::shared_ptr<FavouriteModCollection> getFavouriteMods() const;
 	std::shared_ptr<OrganizedModCollection> getOrganizedMods() const;
 	std::string getModsListFilePath() const;
 	std::string getModsDirectoryPath() const;
@@ -104,6 +106,7 @@ public:
 	bool setSelectedModByName(const std::string & name);
 	bool setSelectedMod(std::shared_ptr<Mod> mod);
 	bool setSelectedModFromMatch(const ModMatch & modMatch);
+	bool setSelectedMod(const ModIdentifier & modIdentifier);
 	bool setSelectedModVersionIndex(size_t modVersionIndex);
 	bool setSelectedModVersionTypeIndex(size_t modVersionTypeIndex);
 	bool setSelectedModGameVersionIndex(size_t modGameVersionIndex);
@@ -177,6 +180,7 @@ private:
 	size_t deleteFilesWithSuffix(const std::string & suffix, const std::string & path = "");
 	size_t renameFilesWithSuffixTo(const std::string & fromSuffix, const std::string & toSuffix, const std::string & path = "");
 	void onSelectedModChanged(std::shared_ptr<Mod> mod);
+	void onSelectedFavouriteModChanged(std::shared_ptr<ModIdentifier> favouriteMod);
 	void onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection);
 	void onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion);
 	void onGameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection);
@@ -211,6 +215,7 @@ private:
 	std::shared_ptr<FavouriteModCollection> m_favouriteMods;
 	std::shared_ptr<OrganizedModCollection> m_organizedMods;
 	boost::signals2::connection m_selectedModChangedConnection;
+	boost::signals2::connection m_selectedFavouriteModChangedConnection;
 	std::unique_ptr<Process> m_gameProcess;
 	uint8_t m_initializationStep;
 	mutable std::recursive_mutex m_mutex;

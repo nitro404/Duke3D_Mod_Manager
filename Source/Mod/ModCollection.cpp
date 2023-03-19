@@ -57,6 +57,8 @@ ModCollection & ModCollection::operator = (ModCollection && m) noexcept {
 		m_mods = std::move(m.m_mods);
 	}
 
+	updated(*this);
+
 	return *this;
 }
 
@@ -66,6 +68,8 @@ ModCollection & ModCollection::operator = (const ModCollection & m) {
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m.m_mods.begin(); i != m.m_mods.end(); ++i) {
 		m_mods.push_back(std::make_shared<Mod>(**i));
 	}
+
+	updated(*this);
 
 	return *this;
 }

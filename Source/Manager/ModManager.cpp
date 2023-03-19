@@ -18,6 +18,7 @@
 #include "Mod/ModDownload.h"
 #include "Mod/ModFile.h"
 #include "Mod/ModGameVersion.h"
+#include "Mod/ModIdentifier.h"
 #include "Mod/ModImage.h"
 #include "Mod/ModScreenshot.h"
 #include "Mod/ModVersion.h"
@@ -91,12 +92,14 @@ ModManager::ModManager()
 	});
 
 	m_selectedModChangedConnection = m_organizedMods->selectedModChanged.connect(std::bind(&ModManager::onSelectedModChanged, this, std::placeholders::_1));
+	m_selectedFavouriteModChangedConnection = m_organizedMods->selectedFavouriteModChanged.connect(std::bind(&ModManager::onSelectedFavouriteModChanged, this, std::placeholders::_1));
 }
 
 ModManager::~ModManager() {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	m_selectedModChangedConnection.disconnect();
+	m_selectedFavouriteModChangedConnection.disconnect();
 	m_dosboxVersionCollectionSizeChangedConnection.disconnect();
 	m_dosboxVersionCollectionItemModifiedConnection.disconnect();
 	m_gameVersionCollectionSizeChangedConnection.disconnect();
@@ -507,6 +510,11 @@ bool ModManager::uninitialize() {
 
 	SettingsManager * settings = SettingsManager::getInstance();
 
+	settings->save(m_arguments.get());
+	m_favouriteMods->saveTo(settings->favouriteModsListFilePath);
+	getDOSBoxVersions()->saveTo(settings->dosboxVersionsListFilePath);
+	getGameVersions()->saveTo(settings->gameVersionsListFilePath);
+
 	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
 	segmentAnalytics->onApplicationClosed();
 	segmentAnalytics->flush(3s);
@@ -517,10 +525,6 @@ bool ModManager::uninitialize() {
 	m_organizedMods->setGameVersionCollection(nullptr);
 	m_favouriteMods->clearFavourites();
 	m_mods->clearMods();
-
-	settings->save(m_arguments.get());
-	getDOSBoxVersions()->saveTo(settings->dosboxVersionsListFilePath);
-	getGameVersions()->saveTo(settings->gameVersionsListFilePath);
 
 	if(m_arguments != nullptr) {
 		m_arguments.reset();
@@ -535,6 +539,12 @@ bool ModManager::isUsingLocalMode() const {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	return m_localMode;
+}
+
+std::shared_ptr<FavouriteModCollection> ModManager::getFavouriteMods() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	return m_favouriteMods;
 }
 
 std::shared_ptr<OrganizedModCollection> ModManager::getOrganizedMods() const {
@@ -1059,6 +1069,50 @@ bool ModManager::setSelectedModFromMatch(const ModMatch & modMatch) {
 					m_selectedModGameVersionIndex = selectedModVersionType->indexOfGameVersion(compatibleModGameVersions.back()->getGameVersion());
 				}
 			}
+		}
+	}
+
+	modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
+
+	return true;
+}
+
+bool ModManager::setSelectedMod(const ModIdentifier & modIdentifier) {
+	if(!modIdentifier.isValid()) {
+		return false;
+	}
+
+	std::shared_ptr<Mod> selectedMod(m_mods->getModWithName(modIdentifier.getName()));
+
+	if(selectedMod == nullptr) {
+		return false;
+	}
+
+	m_selectedMod = selectedMod;
+
+	m_selectedModVersionIndex = m_selectedMod->indexOfVersion(modIdentifier.getVersion());
+
+	if(m_selectedModVersionIndex == std::numeric_limits<size_t>::max()) {
+		m_selectedModVersionIndex = m_selectedMod->indexOfPreferredVersion();
+	}
+
+	std::shared_ptr<ModVersion> selectedModVersion(m_selectedMod->getVersion(m_selectedModVersionIndex));
+
+	m_selectedModVersionTypeIndex = selectedModVersion->indexOfType(modIdentifier.getVersionType());
+
+	if(m_selectedModVersionTypeIndex == std::numeric_limits<size_t>::max()) {
+		m_selectedModVersionTypeIndex = m_selectedMod->indexOfDefaultVersionType();
+	}
+	
+	std::shared_ptr<ModVersionType> selectedModVersionType(selectedModVersion->getType(m_selectedModVersionTypeIndex));
+
+	std::shared_ptr<GameVersion> selectedGameVersion(getSelectedGameVersion());
+
+	if(selectedGameVersion != nullptr) {
+		std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(selectedModVersionType->getCompatibleModGameVersions(*selectedGameVersion));
+
+		if(!compatibleModGameVersions.empty()) {
+			m_selectedModGameVersionIndex = selectedModVersionType->indexOfGameVersion(compatibleModGameVersions.back()->getGameVersion());
 		}
 	}
 
@@ -4288,6 +4342,17 @@ void ModManager::onSelectedModChanged(std::shared_ptr<Mod> mod) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	setSelectedMod(mod);
+}
+
+void ModManager::onSelectedFavouriteModChanged(std::shared_ptr<ModIdentifier> favouriteMod) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	if(favouriteMod == nullptr) {
+		clearSelectedMod();
+		return;
+	}
+
+	setSelectedMod(*favouriteMod);
 }
 
 void ModManager::onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection) {
