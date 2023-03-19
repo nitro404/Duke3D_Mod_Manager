@@ -159,6 +159,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 		return false;
 	}
 
+	std::chrono::time_point<std::chrono::steady_clock> initializeSteadyStartTimePoint(std::chrono::steady_clock::now());
 	m_initializing = true;
 	m_initializationStep = 0;
 
@@ -450,8 +451,13 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 		checkForUnlinkedModFiles();
 	}
 
+	std::chrono::milliseconds initializationDuration(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - initializeSteadyStartTimePoint));
+
+	spdlog::info("{} initialized successfully after {} milliseconds.", APPLICATION_NAME, initializationDuration.count());
+
 	std::map<std::string, std::any> properties;
 	properties["sessionNumber"] = segmentAnalytics->getSessionNumber();
+	properties["initializationDuration"] = initializationDuration.count();
 	properties["environment"] = Utilities::toCapitalCase(APPLICATION_ENVIRONMENT);
 	properties["gameType"] = Utilities::toCapitalCase(magic_enum::enum_name(settings->gameType));
 	properties["preferredGameVersion"] = settings->preferredGameVersion;
