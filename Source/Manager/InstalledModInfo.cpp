@@ -406,12 +406,12 @@ std::unique_ptr<InstalledModInfo> InstalledModInfo::parseFrom(const rapidjson::V
 	}
 
 	// parse mod installed timestamp
-	if(!modInfoValue.HasMember(JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME.c_str())) {
+	if(!installedModInfoValue.HasMember(JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME.c_str())) {
 		spdlog::error("Installed mod info is missing '{}' property'.", JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME);
 		return nullptr;
 	}
 
-	const rapidjson::Value & installedTimestampValue = modInfoValue[JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME.c_str()];
+	const rapidjson::Value & installedTimestampValue = installedModInfoValue[JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME.c_str()];
 
 	if(!installedTimestampValue.IsString()) {
 		spdlog::error("Installed mod info has an invalid '{}' property type: '{}', expected 'string'.", JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME, Utilities::typeToString(installedTimestampValue.GetType()));
