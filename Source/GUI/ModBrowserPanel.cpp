@@ -115,6 +115,8 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	std::shared_ptr<OrganizedModCollection> organizedMods(m_modManager->getOrganizedMods());
 	std::shared_ptr<DOSBoxVersionCollection> dosboxVersions(m_modManager->getDOSBoxVersions());
 	std::shared_ptr<GameVersionCollection> gameVersions(m_modManager->getGameVersions());
+	m_modSelectionChangedConnection = m_modManager->modSelectionChanged.connect(std::bind(&ModBrowserPanel::onModSelectionChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
+	m_gameTypeChangedConnection = m_modManager->gameTypeChanged.connect(std::bind(&ModBrowserPanel::onGameTypeChanged, this, std::placeholders::_1));
 	m_preferredDOSBoxVersionChangedConnection = m_modManager->preferredDOSBoxVersionChanged.connect(std::bind(&ModBrowserPanel::onPreferredDOSBoxVersionChanged, this, std::placeholders::_1));
 	m_preferredGameVersionChangedConnection = m_modManager->preferredGameVersionChanged.connect(std::bind(&ModBrowserPanel::onPreferredGameVersionChanged, this, std::placeholders::_1));
 	m_dosboxServerIPAddressChangedConnection = m_modManager->dosboxServerIPAddressChanged.connect(std::bind(&ModBrowserPanel::onDOSBoxServerIPAddressChanged, this, std::placeholders::_1));
@@ -461,6 +463,8 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 ModBrowserPanel::~ModBrowserPanel() {
 	m_launchErrorConnection.disconnect();
 	m_gameProcessTerminatedConnection.disconnect();
+	m_modSelectionChangedConnection.disconnect();
+	m_gameTypeChangedConnection.disconnect();
 	m_preferredDOSBoxVersionChangedConnection.disconnect();
 	m_preferredGameVersionChangedConnection.disconnect();
 	m_dosboxServerIPAddressChangedConnection.disconnect();

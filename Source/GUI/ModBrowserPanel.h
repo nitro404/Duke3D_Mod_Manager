@@ -116,6 +116,8 @@ private:
 	std::future<bool> m_runSelectedModFuture;
 	boost::signals2::connection m_launchErrorConnection;
 	boost::signals2::connection m_gameProcessTerminatedConnection;
+	boost::signals2::connection m_modSelectionChangedConnection;
+	boost::signals2::connection m_gameTypeChangedConnection;
 	boost::signals2::connection m_preferredDOSBoxVersionChangedConnection;
 	boost::signals2::connection m_preferredGameVersionChangedConnection;
 	boost::signals2::connection m_dosboxServerIPAddressChangedConnection;
