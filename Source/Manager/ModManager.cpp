@@ -1880,10 +1880,14 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		return false;
 	}
 
-	InstalledModInfo installedModInfo(*selectedModVersion);
+	std::unique_ptr<InstalledModInfo> installedModInfo;
 
-	if(!createSymlinksOrCopyTemporaryFiles(*getGameVersions(), *selectedGameVersion, selectedModGameVersion.get(), customMap, shouldConfigureApplicationTemporaryDirectory, &installedModInfo)) {
-		if(!removeModFilesFromGameDirectory(*selectedGameVersion, installedModInfo)) {
+	if(selectedModVersion != nullptr) {
+		installedModInfo = std::make_unique<InstalledModInfo>(*selectedModVersion);
+	}
+
+	if(!createSymlinksOrCopyTemporaryFiles(*getGameVersions(), *selectedGameVersion, selectedModGameVersion.get(), customMap, shouldConfigureApplicationTemporaryDirectory, installedModInfo.get())) {
+		if(!removeModFilesFromGameDirectory(*selectedGameVersion, *installedModInfo)) {
 			spdlog::error("Failed to remove '{}' mod files from '{}' game directory.", selectedModVersionType->getFullName(), selectedGameVersion->getName());
 		}
 
@@ -1900,7 +1904,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 			std::vector<std::string> originalRenamedDemoFilePaths(ModManager::renameFilesWithSuffixTo("DMO", "DMO" + DEFAULT_BACKUP_FILE_RENAME_SUFFIX, selectedGameVersion->getGamePath()));
 
 			for(const std::string & originalRenamedDemoFilePath : originalRenamedDemoFilePaths) {
-				installedModInfo.addOriginalFile(originalRenamedDemoFilePath);
+				installedModInfo->addOriginalFile(originalRenamedDemoFilePath);
 			}
 		}
 
@@ -1909,7 +1913,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 			combinedGroup = Group::loadFrom(dukeNukemGroupPath);
 
 			if(combinedGroup == nullptr) {
-				if(!removeModFilesFromGameDirectory(*selectedGameVersion, installedModInfo)) {
+				if(!removeModFilesFromGameDirectory(*selectedGameVersion, *installedModInfo)) {
 					spdlog::error("Failed to remove '{}' mod files from '{}' game directory.", selectedModVersionType->getFullName(), selectedGameVersion->getName());
 				}
 
@@ -1942,7 +1946,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 					std::vector<std::shared_ptr<GroupFile>> extractedDemoGroupFiles(modGroup->extractAllFilesWithExtension("DMO", selectedGameVersion->getGamePath()));
 
 					for(const std::shared_ptr<GroupFile> & extractedDemoGroupFile : extractedDemoGroupFiles) {
-						installedModInfo.addModFile(extractedDemoGroupFile->getFileName());
+						installedModInfo->addModFile(extractedDemoGroupFile->getFileName());
 					}
 
 					spdlog::info("Extracted {} demo{} from group file '{}' to game directory '{}'.", extractedDemoGroupFiles.size(), extractedDemoGroupFiles.size() == 1 ? "" : "s", modGroup->getFilePath(), selectedGameVersion->getGamePath());
@@ -1955,7 +1959,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 				}
 			}
 			else if(selectedGameVersion->doesRequireCombinedGroup()) {
-				if(!removeModFilesFromGameDirectory(*selectedGameVersion, installedModInfo)) {
+				if(!removeModFilesFromGameDirectory(*selectedGameVersion, *installedModInfo)) {
 					spdlog::error("Failed to remove '{}' mod files from '{}' game directory.", selectedModVersionType->getFullName(), selectedGameVersion->getName());
 				}
 
@@ -1973,7 +1977,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 				std::filesystem::path relativeCombinedGroupFilePath(std::filesystem::relative(std::filesystem::path(absoluteCombinedGroupFilePath), std::filesystem::path(selectedGameVersion->getGamePath()), errorCode));
 
 				if(!errorCode) {
-					installedModInfo.addModFile(relativeCombinedGroupFilePath.string());
+					installedModInfo->addModFile(relativeCombinedGroupFilePath.string());
 				}
 				else {
 					spdlog::warn("Failed to relativize combined group file path: '{}' against base path: '{}'.", absoluteCombinedGroupFilePath, selectedGameVersion->getGamePath());
@@ -1983,7 +1987,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 			spdlog::info("Saved combined group to file: '{}'.", absoluteCombinedGroupFilePath);
 		}
 		else {
-			if(!removeModFilesFromGameDirectory(*selectedGameVersion, installedModInfo)) {
+			if(!removeModFilesFromGameDirectory(*selectedGameVersion, *installedModInfo)) {
 				spdlog::error("Failed to remove '{}' mod files from '{}' game directory.", selectedModVersionType->getFullName(), selectedGameVersion->getName());
 			}
 
@@ -1996,8 +2000,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	}
 
 	if(m_selectedMod != nullptr && selectedGameVersion->doesRequireGroupFileExtraction()) {
-		if(!extractModFilesToGameDirectory(*selectedModGameVersion, *selectedGameVersion, *customTargetGameVersion, &installedModInfo, customGroupFileNames)) {
-			if(!removeModFilesFromGameDirectory(*selectedGameVersion, installedModInfo)) {
+		if(!extractModFilesToGameDirectory(*selectedModGameVersion, *selectedGameVersion, *customTargetGameVersion, installedModInfo.get(), customGroupFileNames)) {
+			if(!removeModFilesFromGameDirectory(*selectedGameVersion, *installedModInfo)) {
 				spdlog::error("Failed to remove '{}' mod files from '{}' game directory.", selectedModVersionType->getFullName(), selectedGameVersion->getName());
 			}
 
@@ -2007,8 +2011,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		}
 	}
 
-	if(!installedModInfo.isEmpty()) {
-		if(installedModInfo.saveTo(*selectedGameVersion)) {
+	if(installedModInfo != nullptr && !installedModInfo->isEmpty()) {
+		if(installedModInfo->saveTo(*selectedGameVersion)) {
 			spdlog::info("Saved installed mod info to file '{}' in '{}' game directory.", InstalledModInfo::DEFAULT_FILE_NAME, selectedGameVersion->getName());
 		}
 		else {
@@ -2072,8 +2076,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 	m_gameProcess->wait();
 
-	if(!installedModInfo.isEmpty()) {
-		if(!removeModFilesFromGameDirectory(*selectedGameVersion, installedModInfo)) {
+	if(installedModInfo != nullptr && !installedModInfo->isEmpty()) {
+		if(!removeModFilesFromGameDirectory(*selectedGameVersion, *installedModInfo)) {
 			spdlog::error("Failed to remove '{}' mod files from '{}' game directory.", selectedModVersionType->getFullName(), selectedGameVersion->getName());
 		}
 	}
