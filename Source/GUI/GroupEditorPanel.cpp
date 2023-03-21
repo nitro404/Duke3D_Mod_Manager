@@ -655,15 +655,15 @@ bool GroupEditorPanel::renameSelectedFileInCurrentGroup() {
 	return renameSelectedFileInGroup(getCurrentGroup());
 }
 
-size_t GroupEditorPanel::extractFilesFromGroup(const Group * group, const std::vector<std::shared_ptr<GroupFile>> & files) {
+std::vector<std::shared_ptr<GroupFile>> GroupEditorPanel::extractFilesFromGroup(const Group * group, const std::vector<std::shared_ptr<GroupFile>> & files) {
 	if(!Group::isValid(group)) {
-		return 0;
+		return {};
 	}
 
 	for(const std::shared_ptr<GroupFile> & file : files) {
 		if(file->getParentGroup() != group) {
 			spdlog::warn("Tried to extract file which did not belong to the provided group.");
-			return 0;
+			return {};
 		}
 	}
 
@@ -677,7 +677,7 @@ size_t GroupEditorPanel::extractFilesFromGroup(const Group * group, const std::v
 	int extractFilesResult = extractFilesDialog.ShowModal();
 
 	if(extractFilesResult == wxID_CANCEL) {
-		return 0;
+		return {};
 	}
 
 	bool overwriteFiles = false;
@@ -726,46 +726,46 @@ size_t GroupEditorPanel::extractFilesFromGroup(const Group * group, const std::v
 			overwriteFiles = false;
 		}
 		else if(replaceFilesResult == wxCANCEL) {
-			return 0;
+			return {};
 		}
 	}
 
-	size_t extractedFileCount = 0;
+	std::vector<std::shared_ptr<GroupFile>> extractedFiles;
 
 	for(const std::shared_ptr<GroupFile> & file : files) {
 		if(file->writeTo(destinationDirectoryPath, overwriteFiles)) {
-			extractedFileCount++;
+			extractedFiles.push_back(file);
 		}
 	}
 
-	wxMessageBox(fmt::format("Extracted {} file{} to directory: '{}'.", extractedFileCount, extractedFileCount == 1 ? "" : "s", destinationDirectoryPath), "Extraction Summary", wxOK | wxICON_INFORMATION, this);
+	wxMessageBox(fmt::format("Extracted {} file{} to directory: '{}'.", extractedFiles.size(), extractedFiles.size() == 1 ? "" : "s", destinationDirectoryPath), "Extraction Summary", wxOK | wxICON_INFORMATION, this);
 
-	return extractedFileCount;
+	return extractedFiles;
 }
 
-size_t GroupEditorPanel::extractSelectedFilesFromGroup(const Group * group) {
+std::vector<std::shared_ptr<GroupFile>> GroupEditorPanel::extractSelectedFilesFromGroup(const Group * group) {
 	if(!Group::isValid(group)) {
-		return 0;
+		return {};
 	}
 
 	GroupPanel * groupPanel = getPanelWithGroup(group);
 
 	if(groupPanel == nullptr) {
-		return 0;
+		return {};
 	}
 
 	return extractFilesFromGroup(group, groupPanel->getSelectedFiles());
 }
 
-size_t GroupEditorPanel::extractSelectedFilesFromCurrentGroup() {
+std::vector<std::shared_ptr<GroupFile>> GroupEditorPanel::extractSelectedFilesFromCurrentGroup() {
 	return extractSelectedFilesFromGroup(getCurrentGroup());
 }
 
-size_t GroupEditorPanel::extractAllFilesFromGroup(const Group * group) {
+std::vector<std::shared_ptr<GroupFile>> GroupEditorPanel::extractAllFilesFromGroup(const Group * group) {
 	return extractFilesFromGroup(group, group->getFiles());
 }
 
-size_t GroupEditorPanel::extractAllFilesFromCurrentGroup() {
+std::vector<std::shared_ptr<GroupFile>> GroupEditorPanel::extractAllFilesFromCurrentGroup() {
 	return extractAllFilesFromGroup(getCurrentGroup());
 }
 

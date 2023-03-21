@@ -5,6 +5,7 @@
 
 #include "GroupPanel.h"
 #include "Group/Group.h"
+#include "Group/GroupFile.h"
 
 #ifdef __BORLANDC__
 	#pragma hdrstop
@@ -61,11 +62,11 @@ public:
 	bool replaceSelectedFileInCurrentGroup();
 	bool renameSelectedFileInGroup(Group * group);
 	bool renameSelectedFileInCurrentGroup();
-	size_t extractFilesFromGroup(const Group * group, const std::vector<std::shared_ptr<GroupFile>> & files);
-	size_t extractSelectedFilesFromGroup(const Group * group);
-	size_t extractSelectedFilesFromCurrentGroup();
-	size_t extractAllFilesFromGroup(const Group * group);
-	size_t extractAllFilesFromCurrentGroup();
+	std::vector<std::shared_ptr<GroupFile>> extractFilesFromGroup(const Group * group, const std::vector<std::shared_ptr<GroupFile>> & files);
+	std::vector<std::shared_ptr<GroupFile>> extractSelectedFilesFromGroup(const Group * group);
+	std::vector<std::shared_ptr<GroupFile>> extractSelectedFilesFromCurrentGroup();
+	std::vector<std::shared_ptr<GroupFile>> extractAllFilesFromGroup(const Group * group);
+	std::vector<std::shared_ptr<GroupFile>> extractAllFilesFromCurrentGroup();
 	bool closeGroupPanel(size_t index);
 	bool closeCurrentGroupPanel();
 	bool closeAllGroupPanels();

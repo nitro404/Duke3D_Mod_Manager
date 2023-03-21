@@ -295,54 +295,50 @@ std::string Group::getFileExtensionsAsString() const {
 	return fileExtensionsStream.str();
 }
 
-bool Group::extractFile(size_t index, const std::string & directory, bool overwrite) const {
-	if(index >= m_files.size()) {
-		return false;
-	}
-
-	return m_files[index]->writeTo(directory, overwrite);
+std::shared_ptr<GroupFile> Group::extractFile(size_t index, const std::string & directory, bool overwrite) const {
+	return index < m_files.size() && m_files[index]->writeTo(directory, overwrite) ? m_files[index] : nullptr;
 }
 
-bool Group::extractFileWithName(const std::string & fileName, const std::string & directory, bool overwrite) const {
+std::shared_ptr<GroupFile> Group::extractFileWithName(const std::string & fileName, const std::string & directory, bool overwrite) const {
 	return extractFile(indexOfFileWithName(fileName), directory, overwrite);
 }
 
-bool Group::extractFirstFileWithExtension(const std::string & extension, const std::string & directory, bool overwrite) const {
+std::shared_ptr<GroupFile> Group::extractFirstFileWithExtension(const std::string & extension, const std::string & directory, bool overwrite) const {
 	return extractFile(indexOfFirstFileWithExtension(extension), directory, overwrite);
 }
 
-bool Group::extractLastFileWithExtension(const std::string & extension, const std::string & directory, bool overwrite) const {
+std::shared_ptr<GroupFile> Group::extractLastFileWithExtension(const std::string & extension, const std::string & directory, bool overwrite) const {
 	return extractFile(indexOfLastFileWithExtension(extension), directory, overwrite);
 }
 
-size_t Group::extractAllFilesWithExtension(const std::string & extension, const std::string & directory, bool overwrite) const {
+std::vector<std::shared_ptr<GroupFile>> Group::extractAllFilesWithExtension(const std::string & extension, const std::string & directory, bool overwrite) const {
 	if(extension.empty()) {
-		return 0;
+		return {};
 	}
 
-	size_t numberOfExtractedFiles = 0;
+	std::vector<std::shared_ptr<GroupFile>> extractedFiles;
 
 	for(size_t i = 0; i < m_files.size(); i++) {
 		if(Utilities::areStringsEqualIgnoreCase(m_files[i]->getFileExtension(), extension)) {
 			if(extractFile(i, directory, overwrite)) {
-				numberOfExtractedFiles++;
+				extractedFiles.push_back(m_files[i]);
 			}
 		}
 	}
 
-	return numberOfExtractedFiles;
+	return extractedFiles;
 }
 
-size_t Group::extractAllFiles(const std::string & directory, bool overwrite) const {
-	size_t numberOfExtractedFiles = 0;
+std::vector<std::shared_ptr<GroupFile>> Group::extractAllFiles(const std::string & directory, bool overwrite) const {
+	std::vector<std::shared_ptr<GroupFile>> extractedFiles;
 
 	for(size_t i = 0; i < m_files.size(); i++) {
 		if(extractFile(i, directory, overwrite)) {
-			numberOfExtractedFiles++;
+			extractedFiles.push_back(m_files[i]);
 		}
 	}
 
-	return numberOfExtractedFiles;
+	return extractedFiles;
 }
 
 bool Group::addFile(const std::string & filePath, bool replace) {

@@ -165,7 +165,7 @@ private:
 	size_t updateModFileInfo(Mod & mod, bool skipPopulatedFiles = true, std::optional<size_t> versionIndex = {}, std::optional<size_t> versionTypeIndex = {});
 	static bool areModFilesPresentInGameDirectory(const GameVersion & gameVersion);
 	static bool areModFilesPresentInGameDirectory(const std::string & gamePath);
-	std::unique_ptr<InstalledModInfo> extractModFilesToGameDirectory(const ModGameVersion & modGameVersion, const GameVersion & selectedGameVersion, const GameVersion & targetGameVersion, const std::vector<std::string> & customGroupFileNames = {});
+	bool extractModFilesToGameDirectory(const ModGameVersion & modGameVersion, const GameVersion & selectedGameVersion, const GameVersion & targetGameVersion, InstalledModInfo * installedModInfo = nullptr, const std::vector<std::string> & customGroupFileNames = {});
 	bool removeModFilesFromGameDirectory(const GameVersion & gameVersion);
 	bool removeModFilesFromGameDirectory(const GameVersion & gameVersion, const InstalledModInfo & installedModInfo);
 	bool createApplicationTemporaryDirectory();
@@ -175,10 +175,10 @@ private:
 	bool areSymlinksSupported() const;
 	bool createSymlink(const std::string & symlinkName, const std::string & symlinkTarget, const std::string & symlinkDestinationDirectory) const;
 	bool removeSymlink(const std::string & symlinkName, const std::string & symlinkDestinationDirectory) const;
-	bool createSymlinksOrCopyTemporaryFiles(const GameVersionCollection & gameVersions, const GameVersion & gameVersion, const ModGameVersion * selectedModGameVersion, const std::string & customMap, bool createTempSymlink = true, std::vector<std::string> * temporaryCopiedFilePaths = nullptr);
-	bool removeSymlinksOrTemporaryFiles(const GameVersion & gameVersion, const std::vector<std::string> * temporaryCopiedFilePaths = nullptr);
-	size_t deleteFilesWithSuffix(const std::string & suffix, const std::string & path = "");
-	size_t renameFilesWithSuffixTo(const std::string & fromSuffix, const std::string & toSuffix, const std::string & path = "");
+	bool createSymlinksOrCopyTemporaryFiles(const GameVersionCollection & gameVersions, const GameVersion & gameVersion, const ModGameVersion * selectedModGameVersion, const std::string & customMap, bool createTempSymlink = true, InstalledModInfo * installedModInfo = nullptr);
+	bool removeSymlinks(const GameVersion & gameVersion);
+	std::vector<std::string> deleteFilesWithSuffix(const std::string & suffix, const std::string & path = "");
+	std::vector<std::string> renameFilesWithSuffixTo(const std::string & fromSuffix, const std::string & toSuffix, const std::string & path = "");
 	void onSelectedModChanged(std::shared_ptr<Mod> mod);
 	void onSelectedFavouriteModChanged(std::shared_ptr<ModIdentifier> favouriteMod);
 	void onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection);

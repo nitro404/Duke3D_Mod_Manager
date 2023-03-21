@@ -116,6 +116,10 @@ std::chrono::time_point<std::chrono::system_clock> InstalledModInfo::getInstalle
 	return m_installedTimestamp;
 }
 
+bool InstalledModInfo::isEmpty() const {
+	return m_originalFiles.empty() && m_modFiles.empty();
+}
+
 size_t InstalledModInfo::numberOfOriginalFiles() const {
 	return m_originalFiles.size();
 }
@@ -598,8 +602,7 @@ bool InstalledModInfo::saveToJSON(const std::string & filePath, bool overwrite) 
 
 bool InstalledModInfo::isValid() const {
 	if(m_modID.empty() ||
-	   m_modName.empty() ||
-	   m_modFiles.empty()) {
+	   m_modName.empty()) {
 		return false;
 	}
 
