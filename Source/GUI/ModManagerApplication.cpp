@@ -18,6 +18,8 @@
 #include <wx/progdlg.h>
 #include <wx/version.h>
 
+// #include <vld.h>
+
 wxDECLARE_EVENT(EVENT_INITIALIZED, ModManagerInitializedEvent);
 wxDECLARE_EVENT(EVENT_INITIALIZATION_CANCELLED, ModManagerInitializationCancelledEvent);
 wxDECLARE_EVENT(EVENT_INITIALIZATION_FAILED, ModManagerInitializationFailedEvent);
