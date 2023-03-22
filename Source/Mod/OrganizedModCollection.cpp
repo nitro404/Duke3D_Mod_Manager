@@ -1914,24 +1914,40 @@ std::vector<std::shared_ptr<ModIdentifier>> OrganizedModCollection::mergeModIden
 				}
 			}
 			else {
-				int32_t versionComparison = Utilities::compareStringsIgnoreCase(left[0]->getVersion(), right[0]->getVersion());
-
-				if(versionComparison != 0) {
-					if(m_sortDirection == SortDirection::Ascending) {
-						pushLeft = versionComparison < 0;
-					}
-					else {
-						pushLeft = versionComparison > 0;
-					}
+				if(!left[0]->hasVersion()) {
+					pushLeft = false;
+				}
+				else if(!right[0]->hasVersion()) {
+					pushLeft = true;
 				}
 				else {
-					int32_t versionTypeComparison = Utilities::compareStringsIgnoreCase(left[0]->getVersionType(), right[0]->getVersionType());
+					int32_t versionComparison = Utilities::compareStringsIgnoreCase(left[0]->getVersion().value(), right[0]->getVersion().value());
 
-					if(m_sortDirection == SortDirection::Ascending) {
-						pushLeft = versionTypeComparison <= 0;
+					if(versionComparison != 0) {
+						if(m_sortDirection == SortDirection::Ascending) {
+							pushLeft = versionComparison < 0;
+						}
+						else {
+							pushLeft = versionComparison > 0;
+						}
 					}
 					else {
-						pushLeft = versionTypeComparison > 0;
+						if(!left[0]->hasVersionType()) {
+							pushLeft = false;
+						}
+						else if(!right[0]->hasVersionType()) {
+							pushLeft = true;
+						}
+						else {
+							int32_t versionTypeComparison = Utilities::compareStringsIgnoreCase(left[0]->getVersionType().value(), right[0]->getVersionType().value());
+
+							if(m_sortDirection == SortDirection::Ascending) {
+								pushLeft = versionTypeComparison <= 0;
+							}
+							else {
+								pushLeft = versionTypeComparison > 0;
+							}
+						}
 					}
 				}
 			}

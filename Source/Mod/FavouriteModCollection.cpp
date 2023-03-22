@@ -161,7 +161,7 @@ bool FavouriteModCollection::parseFrom(const rapidjson::Value & favourites) {
 
 		if(!ModIdentifier::isValid(newModIdentifier.get())) {
 			spdlog::error("Failed to parse favourite mod #{}.", newFavourites.size() + 1);
-			return false;
+			continue;
 		}
 
 		newFavourites.push_back(std::shared_ptr<ModIdentifier>(newModIdentifier.release()));
@@ -263,35 +263,39 @@ size_t FavouriteModCollection::checkForMissingFavouriteMods(const ModCollection 
 	std::shared_ptr<ModVersionType> modVersionType;
 	size_t numberOfMissingFavouriteMods = 0;
 
-	for(std::vector<std::shared_ptr<ModIdentifier>>::const_iterator i = m_favourites.begin(); i != m_favourites.end(); ++i) {
-		mod = mods.getModWithName((*i)->getName());
+	for(const std::shared_ptr<ModIdentifier> & favouriteMod : m_favourites) {
+		mod = mods.getModWithName(favouriteMod->getName());
 
 		if(mod == nullptr) {
 			numberOfMissingFavouriteMods++;
 
-			spdlog::warn("Missing favourite mod #{}: '{}'.", numberOfMissingFavouriteMods, (*i)->getName());
+			spdlog::warn("Missing favourite mod #{}: '{}'.", numberOfMissingFavouriteMods, favouriteMod->getName());
 
 			continue;
 		}
 
-		modVersion = mod->getVersion((*i)->getVersion());
+		if(favouriteMod->hasVersion()) {
+			modVersion = mod->getVersion(favouriteMod->getVersion().value());
 
-		if(modVersion == nullptr) {
-			numberOfMissingFavouriteMods++;
+			if(modVersion == nullptr) {
+				numberOfMissingFavouriteMods++;
 
-			spdlog::warn("Missing favourite mod #{}: '{}' with version: '{}'.", numberOfMissingFavouriteMods, (*i)->getName(), (*i)->getVersion());
+				spdlog::warn("Missing favourite mod #{}: '{}' with version: '{}'.", numberOfMissingFavouriteMods, favouriteMod->getName(), favouriteMod->getVersion().value());
 
-			continue;
-		}
+				continue;
+			}
 
-		modVersionType = modVersion->getType((*i)->getVersionType());
+			if(favouriteMod->hasVersionType()) {
+				modVersionType = modVersion->getType(favouriteMod->getVersionType().value());
 
-		if(modVersion == nullptr) {
-			numberOfMissingFavouriteMods++;
+				if(modVersion == nullptr) {
+					numberOfMissingFavouriteMods++;
 
-			spdlog::warn("Missing favourite mod #{}: '{}' with version: '{}' and type: '{}'.", numberOfMissingFavouriteMods, (*i)->getName(), (*i)->getVersion(), (*i)->getVersionType());
+					spdlog::warn("Missing favourite mod #{}: '{}' with version: '{}' and type: '{}'.", numberOfMissingFavouriteMods, favouriteMod->getName(), favouriteMod->getVersion().value(), favouriteMod->getVersionType().value());
 
-			continue;
+					continue;
+				}
+			}
 		}
 	}
 

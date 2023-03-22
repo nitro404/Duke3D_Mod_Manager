@@ -19,10 +19,10 @@ static const std::array<std::string_view, 3> JSON_PROPERTY_NAMES = {
 	JSON_VERSION_TYPE_PROPERTY_NAME
 };
 
-ModIdentifier::ModIdentifier(const std::string & name, const std::string & version, const std::string & versionType)
+ModIdentifier::ModIdentifier(const std::string & name, const std::optional<std::string> & version, const std::optional<std::string> & versionType)
 	: m_name(Utilities::trimString(name))
-	, m_version(Utilities::trimString(version))
-	, m_versionType(Utilities::trimString(versionType)) { }
+	, m_version(version.has_value() ? Utilities::trimString(version.value()) : std::optional<std::string>())
+	, m_versionType(versionType.has_value() ? Utilities::trimString(versionType.value()) : std::optional<std::string>()) { }
 
 ModIdentifier::ModIdentifier(ModIdentifier && m) noexcept
 	: m_name(std::move(m.m_name))
@@ -58,16 +58,24 @@ const std::string & ModIdentifier::getName() const {
 	return m_name;
 }
 
-const std::string & ModIdentifier::getVersion() const {
+bool ModIdentifier::hasVersion() const {
+	return m_version.has_value();
+}
+
+const std::optional<std::string> & ModIdentifier::getVersion() const {
 	return m_version;
 }
 
-const std::string & ModIdentifier::getVersionType() const {
+bool ModIdentifier::hasVersionType() const {
+	return m_versionType.has_value();
+}
+
+const std::optional<std::string> & ModIdentifier::getVersionType() const {
 	return m_versionType;
 }
 
 std::string ModIdentifier::getFullName() const {
-	return fmt::format("{}{}{}", m_name, m_version.empty() ? "" : " " + m_version, m_versionType.empty() ? "" : " " + m_versionType);
+	return fmt::format("{}{}{}", m_name, !m_version.has_value() || m_version.value().empty() ? "" : " " + m_version.value(), !m_versionType.has_value() || m_versionType.value().empty() ? "" : " " + m_versionType.value());
 }
 
 void ModIdentifier::setName(const std::string & name) {
@@ -78,8 +86,16 @@ void ModIdentifier::setVersion(const std::string & version) {
 	m_version = Utilities::trimString(version);
 }
 
+void ModIdentifier::clearVersion() {
+	m_version.reset();
+}
+
 void ModIdentifier::setVersionType(const std::string & versionType) {
 	m_versionType = Utilities::trimString(versionType);
+}
+
+void ModIdentifier::clearVersionType() {
+	m_versionType.reset();
 }
 
 rapidjson::Value ModIdentifier::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const {
@@ -87,10 +103,16 @@ rapidjson::Value ModIdentifier::toJSON(rapidjson::MemoryPoolAllocator<rapidjson:
 
 	rapidjson::Value nameValue(m_name.c_str(), allocator);
 	modIdentifierValue.AddMember(rapidjson::StringRef(JSON_NAME_PROPERTY_NAME), nameValue, allocator);
-	rapidjson::Value versionValue(m_version.c_str(), allocator);
-	modIdentifierValue.AddMember(rapidjson::StringRef(JSON_VERSION_PROPERTY_NAME), versionValue, allocator);
-	rapidjson::Value versionTypeValue(m_versionType.c_str(), allocator);
-	modIdentifierValue.AddMember(rapidjson::StringRef(JSON_VERSION_TYPE_PROPERTY_NAME), versionTypeValue, allocator);
+
+	if(m_version.has_value()) {
+		rapidjson::Value versionValue(m_version.value().c_str(), allocator);
+		modIdentifierValue.AddMember(rapidjson::StringRef(JSON_VERSION_PROPERTY_NAME), versionValue, allocator);
+	}
+
+	if(m_versionType.has_value()) {
+		rapidjson::Value versionTypeValue(m_versionType.value().c_str(), allocator);
+		modIdentifierValue.AddMember(rapidjson::StringRef(JSON_VERSION_TYPE_PROPERTY_NAME), versionTypeValue, allocator);
+	}
 
 	return modIdentifierValue;
 }
@@ -140,7 +162,7 @@ std::unique_ptr<ModIdentifier> ModIdentifier::parseFrom(const rapidjson::Value &
 	}
 
 	// parse mod identifier version
-	std::string version;
+	std::optional<std::string> optionalVersion;
 
 	if(modIdentifierValue.HasMember(JSON_VERSION_PROPERTY_NAME)) {
 		const rapidjson::Value & modIdentifierVersionValue = modIdentifierValue[JSON_VERSION_PROPERTY_NAME];
@@ -150,11 +172,11 @@ std::unique_ptr<ModIdentifier> ModIdentifier::parseFrom(const rapidjson::Value &
 			return nullptr;
 		}
 
-		version = modIdentifierVersionValue.GetString();
+		optionalVersion = modIdentifierVersionValue.GetString();
 	}
 
 	// parse mod identifier version type
-	std::string versionType;
+	std::optional<std::string> optionalVersionType;
 
 	if(modIdentifierValue.HasMember(JSON_VERSION_TYPE_PROPERTY_NAME)) {
 		const rapidjson::Value & modIdentifierVersionTypeValue = modIdentifierValue[JSON_VERSION_TYPE_PROPERTY_NAME];
@@ -164,14 +186,22 @@ std::unique_ptr<ModIdentifier> ModIdentifier::parseFrom(const rapidjson::Value &
 			return nullptr;
 		}
 
-		versionType = modIdentifierVersionTypeValue.GetString();
+		optionalVersionType = modIdentifierVersionTypeValue.GetString();
 	}
 
-	return std::make_unique<ModIdentifier>(name, version, versionType);
+	return std::make_unique<ModIdentifier>(name, optionalVersion, optionalVersionType);
 }
 
 bool ModIdentifier::isValid() const {
-	return !m_name.empty();
+	if(m_name.empty()) {
+		return false;
+	}
+
+	if(!m_version.has_value() && m_versionType.has_value()) {
+		return false;
+	}
+
+	return true;
 }
 
 bool ModIdentifier::isValid(const ModIdentifier * m) {
@@ -179,9 +209,21 @@ bool ModIdentifier::isValid(const ModIdentifier * m) {
 }
 
 bool ModIdentifier::operator == (const ModIdentifier & m) const {
-	return Utilities::areStringsEqualIgnoreCase(m_name, m.m_name) &&
-		   Utilities::areStringsEqualIgnoreCase(m_version, m.m_version) &&
-		   Utilities::areStringsEqualIgnoreCase(m_versionType, m.m_versionType);
+	if(!Utilities::areStringsEqualIgnoreCase(m_name, m.m_name) ||
+	   m_version.has_value() != m.m_version.has_value() ||
+	   m_versionType.has_value() != m.m_versionType.has_value()) {
+		return false;
+	}
+
+	if(m_version.has_value() && m.m_version.has_value() && !Utilities::areStringsEqualIgnoreCase(m_version.value(), m.m_version.value())) {
+		return false;
+	}
+
+	if(m_versionType.has_value() && m.m_versionType.has_value() && !Utilities::areStringsEqualIgnoreCase(m_versionType.value(), m.m_versionType.value())) {
+		return false;
+	}
+
+	return true;
 }
 
 bool ModIdentifier::operator != (const ModIdentifier & m) const {
