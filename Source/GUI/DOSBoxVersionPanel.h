@@ -45,8 +45,9 @@ private:
 	std::shared_ptr<DOSBoxVersion> m_dosboxVersion;
 	boost::signals2::connection m_dosboxVersionModifiedConnection;
 	std::vector<SettingPanel *> m_settingsPanels;
-	std::vector<boost::signals2::connection> m_settingModifiedConnections;
+	SettingPanel * m_dosboxIDSettingPanel;
 	SettingPanel * m_dosboxPathSettingPanel;
+	std::vector<boost::signals2::connection> m_settingModifiedConnections;
 	mutable bool m_modified;
 };
 

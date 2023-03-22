@@ -25,17 +25,23 @@ public:
 
 	size_t numberOfDOSBoxVersions() const;
 	bool hasDOSBoxVersion(const DOSBoxVersion & dosboxVersion) const;
-	bool hasDOSBoxVersionWithName(const std::string & name) const;
+	bool hasDOSBoxVersionWithID(const std::string & dosboxVersionID) const;
 	size_t indexOfDOSBoxVersion(const DOSBoxVersion & dosboxVersion) const;
-	size_t indexOfDOSBoxVersionWithName(const std::string & name) const;
+	size_t indexOfDOSBoxVersionWithID(const std::string & dosboxVersionID) const;
 	std::shared_ptr<DOSBoxVersion> getDOSBoxVersion(size_t index) const;
-	std::shared_ptr<DOSBoxVersion> getDOSBoxVersionWithName(const std::string & name) const;
+	std::shared_ptr<DOSBoxVersion> getDOSBoxVersionWithID(const std::string & dosboxVersionID) const;
 	const std::vector<std::shared_ptr<DOSBoxVersion>> & getDOSBoxVersions() const;
 	std::vector<std::shared_ptr<DOSBoxVersion>> getConfiguredDOSBoxVersions() const;
 	std::vector<std::shared_ptr<DOSBoxVersion>> getUnconfiguredDOSBoxVersions() const;
-	std::vector<std::string> getDOSBoxVersionDisplayNames(bool prependItemNumber = true) const;
-	static std::vector<std::string> getDOSBoxVersionDisplayNamesFrom(const std::vector<std::shared_ptr<DOSBoxVersion>> & dosboxVersions, bool prependItemNumber = true);
-	static std::vector<std::string> getDOSBoxVersionDisplayNamesFrom(const std::vector<const DOSBoxVersion *> & dosboxVersions, bool prependItemNumber = true);
+	std::vector<std::string> getDOSBoxVersionIdentifiers() const;
+	static std::vector<std::string> getDOSBoxVersionIdentifiersFrom(const std::vector<std::shared_ptr<DOSBoxVersion>> & dosboxVersions);
+	static std::vector<std::string> getDOSBoxVersionIdentifiersFrom(const std::vector<const DOSBoxVersion *> & dosboxVersions);
+	std::vector<std::string> getDOSBoxVersionLongNames(bool prependItemNumber = true) const;
+	static std::vector<std::string> getDOSBoxVersionLongNamesFrom(const std::vector<std::shared_ptr<DOSBoxVersion>> & dosboxVersions, bool prependItemNumber = true);
+	static std::vector<std::string> getDOSBoxVersionLongNamesFrom(const std::vector<const DOSBoxVersion *> & dosboxVersions, bool prependItemNumber = true);
+	std::vector<std::string> getDOSBoxVersionShortNames(bool prependItemNumber = true) const;
+	static std::vector<std::string> getDOSBoxVersionShortNamesFrom(const std::vector<std::shared_ptr<DOSBoxVersion>> & dosboxVersions, bool prependItemNumber = true);
+	static std::vector<std::string> getDOSBoxVersionShortNamesFrom(const std::vector<const DOSBoxVersion *> & dosboxVersions, bool prependItemNumber = true);
 	bool addDOSBoxVersion(const DOSBoxVersion & dosboxVersion);
 	bool addDOSBoxVersion(std::shared_ptr<DOSBoxVersion> dosboxVersion);
 	size_t addDOSBoxVersions(const std::vector<DOSBoxVersion> & dosboxVersions);
@@ -43,13 +49,13 @@ public:
 	size_t addDOSBoxVersions(const std::vector<std::shared_ptr<DOSBoxVersion>> & dosboxVersions);
 	bool removeDOSBoxVersion(size_t index);
 	bool removeDOSBoxVersion(const DOSBoxVersion & dosboxVersion);
-	bool removeDOSBoxVersionWithName(const std::string & name);
+	bool removeDOSBoxVersionWithID(const std::string & dosboxVersionID);
 	size_t addMissingDefaultDOSBoxVersions();
 	void setDefaultDOSBoxVersions();
 	void clearDOSBoxVersions();
 
 	size_t checkForMissingExecutables() const;
-	size_t checkForMissingExecutables(const std::string & name) const;
+	size_t checkForMissingExecutables(const std::string & dosboxVersionID) const;
 
 	rapidjson::Document toJSON() const;
 	static std::unique_ptr<DOSBoxVersionCollection> parseFrom(const rapidjson::Value & dosboxVersionCollectionValue);

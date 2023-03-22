@@ -64,7 +64,7 @@ using namespace std::chrono_literals;
 static constexpr uint8_t NUMBER_OF_INITIALIZATION_STEPS = 15;
 
 const GameType ModManager::DEFAULT_GAME_TYPE = GameType::Game;
-const std::string ModManager::DEFAULT_PREFERRED_DOSBOX_VERSION(DOSBoxVersion::DOSBOX.getName());
+const std::string ModManager::DEFAULT_PREFERRED_DOSBOX_VERSION(DOSBoxVersion::DOSBOX.getID());
 const std::string ModManager::DEFAULT_PREFERRED_GAME_VERSION(GameVersion::ORIGINAL_ATOMIC_EDITION.getName());
 const std::string ModManager::HTTP_USER_AGENT("DukeNukem3DModManager/" + APPLICATION_VERSION);
 const std::string ModManager::DEFAULT_BACKUP_FILE_RENAME_SUFFIX("_");
@@ -345,13 +345,13 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 
 	std::shared_ptr<DOSBoxVersionCollection> dosboxVersions(getDOSBoxVersions());
 
-	m_preferredDOSBoxVersion = dosboxVersions->getDOSBoxVersionWithName(settings->preferredDOSBoxVersion);
+	m_preferredDOSBoxVersion = dosboxVersions->getDOSBoxVersionWithID(settings->preferredDOSBoxVersion);
 
 	if(m_preferredDOSBoxVersion == nullptr) {
 		m_preferredDOSBoxVersion = dosboxVersions->getDOSBoxVersion(0);
-		settings->preferredDOSBoxVersion = m_preferredDOSBoxVersion->getName();
+		settings->preferredDOSBoxVersion = m_preferredDOSBoxVersion->getID();
 
-		spdlog::warn("DOSBox configuration for game version '{}' is missing, changing preferred game version to '{}.", settings->preferredDOSBoxVersion, m_preferredDOSBoxVersion->getName());
+		spdlog::warn("DOSBox configuration for version with ID '{}' is missing, changing preferred DOSBox version to '{}'.", settings->preferredDOSBoxVersion, m_preferredDOSBoxVersion->getLongName());
 	}
 
 	m_dosboxVersionCollectionSizeChangedConnection = dosboxVersions->sizeChanged.connect(std::bind(&ModManager::onDOSBoxVersionCollectionSizeChanged, this, std::placeholders::_1));
@@ -375,7 +375,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 		m_preferredGameVersion = gameVersions->getGameVersion(0);
 		settings->preferredGameVersion = m_preferredGameVersion->getName();
 
-		spdlog::warn("Game configuration for game version '{}' is missing, changing preferred game version to '{}.", settings->preferredGameVersion, m_preferredGameVersion->getName());
+		spdlog::warn("Game configuration for game version '{}' is missing, changing preferred game version to '{}'.", settings->preferredGameVersion, m_preferredGameVersion->getName());
 	}
 
 	m_gameVersionCollectionSizeChangedConnection = gameVersions->sizeChanged.connect(std::bind(&ModManager::onGameVersionCollectionSizeChanged, this, std::placeholders::_1));
@@ -673,12 +673,12 @@ std::shared_ptr<DOSBoxVersion> ModManager::getSelectedDOSBoxVersion() const {
 	std::shared_ptr<DOSBoxVersion> selectedDOSBoxVersion;
 
 	if(m_arguments != nullptr && m_arguments->hasArgument("dosbox") && !m_arguments->getFirstValue("dosbox").empty()) {
-		std::string dosboxVersionName(m_arguments->getFirstValue("dosbox"));
+		std::string dosboxVersionID(m_arguments->getFirstValue("dosbox"));
 
-		selectedDOSBoxVersion = getDOSBoxVersions()->getDOSBoxVersionWithName(dosboxVersionName);
+		selectedDOSBoxVersion = getDOSBoxVersions()->getDOSBoxVersionWithID(dosboxVersionID);
 
 		if(selectedDOSBoxVersion == nullptr) {
-			spdlog::error("Could not find DOSBox version override for '{}'.", dosboxVersionName);
+			spdlog::error("Could not find DOSBox version override for '{}'.", dosboxVersionID);
 		}
 	}
 
@@ -699,14 +699,14 @@ std::shared_ptr<DOSBoxVersion> ModManager::getSelectedDOSBoxVersion() const {
 	return selectedDOSBoxVersion;
 }
 
-bool ModManager::setPreferredDOSBoxVersion(const std::string & dosboxVersionName) {
+bool ModManager::setPreferredDOSBoxVersion(const std::string & dosboxVersionID) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
-	if(dosboxVersionName.empty()) {
+	if(dosboxVersionID.empty()) {
 		return false;
 	}
 
-	return setPreferredDOSBoxVersion(getDOSBoxVersions()->getDOSBoxVersionWithName(dosboxVersionName));
+	return setPreferredDOSBoxVersion(getDOSBoxVersions()->getDOSBoxVersionWithID(dosboxVersionID));
 }
 
 bool ModManager::setPreferredDOSBoxVersion(std::shared_ptr<DOSBoxVersion> dosboxVersion) {
@@ -716,9 +716,9 @@ bool ModManager::setPreferredDOSBoxVersion(std::shared_ptr<DOSBoxVersion> dosbox
 		return false;
 	}
 
-	if(m_preferredDOSBoxVersion == nullptr || !Utilities::areStringsEqualIgnoreCase(m_preferredDOSBoxVersion->getName(), dosboxVersion->getName())) {
+	if(m_preferredDOSBoxVersion == nullptr || !Utilities::areStringsEqualIgnoreCase(m_preferredDOSBoxVersion->getID(), dosboxVersion->getID())) {
 		m_preferredDOSBoxVersion = dosboxVersion;
-		SettingsManager::getInstance()->preferredDOSBoxVersion = m_preferredDOSBoxVersion->getName();
+		SettingsManager::getInstance()->preferredDOSBoxVersion = m_preferredDOSBoxVersion->getID();
 
 		preferredDOSBoxVersionChanged(m_preferredDOSBoxVersion);
 	}
@@ -1726,7 +1726,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	std::shared_ptr<DOSBoxVersion> selectedDOSBoxVersion(getSelectedDOSBoxVersion());
 
 	if(selectedGameVersion->doesRequireDOSBox() && !selectedDOSBoxVersion->isConfigured()) {
-		notifyLaunchError(fmt::format("Selected DOSBox version '{}' is not configured.", selectedDOSBoxVersion->getName()));
+		notifyLaunchError(fmt::format("Selected DOSBox version '{}' is not configured.", selectedDOSBoxVersion->getLongName()));
 		return false;
 	}
 
@@ -2443,7 +2443,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 	std::shared_ptr<DOSBoxVersion> selectedDOSBoxVersion(getSelectedDOSBoxVersion());
 
 	if(selectedGameVersion->doesRequireDOSBox() && !DOSBoxVersion::isConfigured(selectedDOSBoxVersion.get())) {
-		spdlog::error("Selected DOSBox version '{}' is not configured.", selectedDOSBoxVersion != nullptr ? selectedDOSBoxVersion->getName() : "N/A");
+		spdlog::error("Selected DOSBox version '{}' is not configured.", selectedDOSBoxVersion != nullptr ? selectedDOSBoxVersion->getLongName() : "N/A");
 		return {};
 	}
 
@@ -3897,7 +3897,7 @@ std::string ModManager::getArgumentHelpInfo() {
 	argumentHelpStream << " --file \"Settings.json\" - specifies an alternate settings file to use.\n";
 	argumentHelpStream << " -f \"File.json\" - alias for 'file'.\n";
 	argumentHelpStream << " --type Game/Setup/Client/Server - specifies game type, default: Game.\n";
-	argumentHelpStream << " --dosbox \"DOSBox Version\" - specifies the DOSBox version to use.\n";
+	argumentHelpStream << " --dosbox \"dosbox_staging\" - specifies the ID of the DOSBox version to use.\n";
 	argumentHelpStream << " --game \"Game Version\" - specifies the game version to run.\n";
 	argumentHelpStream << " --ip 127.0.0.1 - specifies host ip address if running in client mode.\n";
 	argumentHelpStream << " --port 1337 - specifies server port when running in client or server mode.\n";
@@ -4509,7 +4509,7 @@ void ModManager::onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & 
 		}
 		else {
 			m_preferredDOSBoxVersion = dosboxVersions->getDOSBoxVersion(0);
-			settings->preferredDOSBoxVersion = m_preferredDOSBoxVersion->getName();
+			settings->preferredDOSBoxVersion = m_preferredDOSBoxVersion->getID();
 		}
 	}
 }
@@ -4518,7 +4518,7 @@ void ModManager::onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection &
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	if(m_preferredDOSBoxVersion.get() == &dosboxVersion) {
-		SettingsManager::getInstance()->preferredDOSBoxVersion = dosboxVersion.getName();
+		SettingsManager::getInstance()->preferredDOSBoxVersion = dosboxVersion.getID();
 	}
 }
 

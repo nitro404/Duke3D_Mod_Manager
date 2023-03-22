@@ -220,16 +220,17 @@ SettingPanel * SettingPanel::createOptionalStringSettingPanel(std::optional<std:
 	return createOptionalStringSettingPanel<void>([&setting]() { return setting; }, [&setting](const std::string & newSetting) { setting = newSetting; }, [&setting]() { setting.reset(); }, defaultSetting, name, parent, parentSizer, minLength, maxLength, customValidatorFunction);
 }
 
-StringChoiceSettingPanel * SettingPanel::createStringChoiceSettingPanel(std::string & setting, std::string defaultSetting, const std::string & name, const std::vector<std::string> & choices, wxWindow * parent, wxSizer * parentSizer) {
-	return createStringChoiceSettingPanel([&setting]() { return setting; }, [&setting](const std::string & newSetting) { setting = newSetting; return true; }, defaultSetting, name, choices, parent, parentSizer);
+StringChoiceSettingPanel * SettingPanel::createStringChoiceSettingPanel(std::string & setting, std::string defaultSetting, const std::string & name, const std::vector<std::string> & choices, wxWindow * parent, wxSizer * parentSizer, const std::vector<std::string> & values) {
+	return createStringChoiceSettingPanel([&setting]() { return setting; }, [&setting](const std::string & newSetting) { setting = newSetting; return true; }, defaultSetting, name, choices, parent, parentSizer, values);
 }
 
-StringChoiceSettingPanel * SettingPanel::createStringChoiceSettingPanel(std::function<std::string()> getSettingValueFunction, std::function<bool(const std::string &)> setSettingValueFunction, std::string defaultSetting, const std::string & name, const std::vector<std::string> & choices, wxWindow * parent, wxSizer * parentSizer) {
+StringChoiceSettingPanel * SettingPanel::createStringChoiceSettingPanel(std::function<std::string()> getSettingValueFunction, std::function<bool(const std::string &)> setSettingValueFunction, std::string defaultSetting, const std::string & name, const std::vector<std::string> & choices, wxWindow * parent, wxSizer * parentSizer, const std::vector<std::string> & values) {
 	if(parent == nullptr) {
 		return nullptr;
 	}
 
 	StringChoiceSettingPanel * settingPanel = new StringChoiceSettingPanel(name, parent);
+	settingPanel->m_values = values.empty() ? choices : values;
 
 	settingPanel->m_changedFunction = [settingPanel](wxCommandEvent & event) {
 		settingPanel->setModified(true);
@@ -237,31 +238,59 @@ StringChoiceSettingPanel * SettingPanel::createStringChoiceSettingPanel(std::fun
 
 	wxStaticText * settingLabel = new wxStaticText(settingPanel, wxID_ANY, name, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 	settingLabel->SetFont(settingLabel->GetFont().MakeBold());
-	wxComboBox * settingComboBox = new wxComboBox(settingPanel, wxID_ANY, wxString::FromUTF8(getSettingValueFunction()), wxDefaultPosition, wxDefaultSize, WXUtilities::createItemWXArrayString(choices), 0, wxDefaultValidator, name);
+	wxComboBox * settingComboBox = new wxComboBox(settingPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, WXUtilities::createItemWXArrayString(choices), 0, wxDefaultValidator, name);
+	std::vector<std::string>::const_iterator currentSettingValueIterator(std::find(settingPanel->m_values.cbegin(), settingPanel->m_values.cend(), getSettingValueFunction()));
+	settingComboBox->SetSelection(currentSettingValueIterator != settingPanel->m_values.cend() ? currentSettingValueIterator - settingPanel->m_values.cbegin() : wxNOT_FOUND);
 	settingComboBox->SetEditable(false);
 	settingComboBox->Bind(wxEVT_COMBOBOX, settingPanel->m_changedFunction, wxID_ANY, wxID_ANY);
 
-	settingPanel->m_getValueFunction = [settingComboBox]() {
-		return settingComboBox->GetValue();
+	settingPanel->m_getValueFunction = [settingPanel, settingComboBox]() {
+		int currentSelectionIndex = settingComboBox->GetSelection();
+
+		if(currentSelectionIndex == wxNOT_FOUND) {
+			return Utilities::emptyString;
+		}
+
+		return settingPanel->m_values[currentSelectionIndex];
 	};
 
-	settingPanel->m_saveFunction = [settingComboBox, setSettingValueFunction]() {
-		setSettingValueFunction(settingComboBox->GetValue());
+	settingPanel->m_saveFunction = [settingPanel, settingComboBox, setSettingValueFunction]() {
+		int currentSelectionIndex = settingComboBox->GetSelection();
+
+		if(currentSelectionIndex == wxNOT_FOUND) {
+			return;
+		}
+
+		setSettingValueFunction(settingPanel->m_values[currentSelectionIndex]);
 	};
 
-	settingPanel->m_discardFunction = [settingComboBox, getSettingValueFunction]() {
-		settingComboBox->ChangeValue(wxString::FromUTF8(getSettingValueFunction()));
+	settingPanel->m_discardFunction = [settingPanel, settingComboBox, getSettingValueFunction]() {
+		std::vector<std::string>::const_iterator currentSettingValueIterator(std::find(settingPanel->m_values.cbegin(), settingPanel->m_values.cend(), getSettingValueFunction()));
+
+		if(currentSettingValueIterator == settingPanel->m_values.cend()) {
+			return;
+		}
+
+		settingComboBox->SetSelection(currentSettingValueIterator - settingPanel->m_values.cbegin());
 	};
 
-	settingPanel->m_resetFunction = [settingComboBox, defaultSetting]() {
-		settingComboBox->ChangeValue(wxString::FromUTF8(defaultSetting));
+	settingPanel->m_resetFunction = [settingPanel, settingComboBox, defaultSetting]() {
+		std::vector<std::string>::const_iterator defaultSettingValueIterator(std::find(settingPanel->m_values.cbegin(), settingPanel->m_values.cend(), defaultSetting));
+
+		if(defaultSettingValueIterator == settingPanel->m_values.cend()) {
+			return;
+		}
+
+		settingComboBox->SetSelection(defaultSettingValueIterator - settingPanel->m_values.cbegin());
 	};
 
 	settingPanel->m_setEditableFunction = [settingComboBox](bool editable) {
 		settingComboBox->SetEditable(editable);
 	};
 
-	settingPanel->m_setChoicesFunction = [settingComboBox](const std::vector<std::string> & choices) {
+	settingPanel->m_setChoicesFunction = [settingPanel, settingComboBox](const std::vector<std::string> & choices, const std::vector<std::string> & values) {
+		settingPanel->m_values = values.empty() ? choices : values;
+
 		settingComboBox->Set(WXUtilities::createItemWXArrayString(choices));
 	};
 
@@ -442,12 +471,12 @@ StringChoiceSettingPanel::StringChoiceSettingPanel(const std::string & name, wxW
 
 StringChoiceSettingPanel::~StringChoiceSettingPanel() { }
 
-bool StringChoiceSettingPanel::setChoices(const std::vector<std::string> & choices) {
+bool StringChoiceSettingPanel::setChoices(const std::vector<std::string> & choices, const std::vector<std::string> & values) {
 	if(m_setChoicesFunction == nullptr) {
 		return false;
 	}
 
-	m_setChoicesFunction(choices);
+	m_setChoicesFunction(choices, values);
 
 	discard();
 

@@ -16,13 +16,14 @@ class DOSBoxDownloadVersion;
 
 class DOSBoxDownload final {
 public:
-	DOSBoxDownload(const std::string & name);
+	DOSBoxDownload(const std::string & id, const std::string & name);
 	DOSBoxDownload(DOSBoxDownload && d) noexcept;
 	DOSBoxDownload(const DOSBoxDownload & d);
 	DOSBoxDownload & operator = (DOSBoxDownload && d) noexcept;
 	DOSBoxDownload & operator = (const DOSBoxDownload & d);
 	~DOSBoxDownload();
 
+	const std::string & getID() const;
 	const std::string & getName() const;
 
 	size_t numberOfVersions() const;
@@ -53,6 +54,7 @@ protected:
 	void updateParent();
 
 private:
+	std::string m_id;
 	std::string m_name;
 	std::vector<std::shared_ptr<DOSBoxDownloadVersion>> m_versions;
 };

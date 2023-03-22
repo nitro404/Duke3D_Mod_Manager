@@ -27,17 +27,17 @@ public:
 
 	size_t numberOfDownloads() const;
 	bool hasDownload(const DOSBoxDownload & download) const;
-	bool hasDownloadWithName(const std::string & name) const;
+	bool hasDownloadWithID(const std::string & dosboxVersionID) const;
 	size_t indexOfDownload(const DOSBoxDownload & download) const;
-	size_t indexOfDownloadWithName(const std::string & name) const;
+	size_t indexOfDownloadWithID(const std::string & dosboxVersionID) const;
 	std::shared_ptr<DOSBoxDownload> getDownload(size_t index) const;
-	std::shared_ptr<DOSBoxDownload> getDownloadWithName(const std::string & name) const;
-	std::shared_ptr<DOSBoxDownloadFile> getLatestDOSBoxDownloadFile(const std::string & dosboxVersionName, DeviceInformationBridge::OperatingSystemType operatingSystemType, std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalOperatingSystemArchitectureType = {}) const;
+	std::shared_ptr<DOSBoxDownload> getDownloadWithID(const std::string & dosboxVersionID) const;
+	std::shared_ptr<DOSBoxDownloadFile> getLatestDOSBoxDownloadFile(const std::string & dosboxVersionID, DeviceInformationBridge::OperatingSystemType operatingSystemType, std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalOperatingSystemArchitectureType = {}) const;
 	const std::vector<std::shared_ptr<DOSBoxDownload>> & getDownloads() const;
 	bool addDownload(const DOSBoxDownload & download);
 	bool removeDownload(size_t index);
 	bool removeDownload(const DOSBoxDownload & download);
-	bool removeDownloadWithName(const std::string & name);
+	bool removeDownloadWithID(const std::string & dosboxVersionID);
 	void clearDownloads();
 
 	rapidjson::Document toJSON() const;

@@ -334,7 +334,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 
 	wxStaticText * preferredDOSBoxVersionLabel = new wxStaticText(m_gameOptionsPanel, wxID_ANY, "DOSBox:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	preferredDOSBoxVersionLabel->SetFont(preferredDOSBoxVersionLabel->GetFont().MakeBold());
-	m_preferredDOSBoxVersionComboBox = new wxComboBox(m_gameOptionsPanel, wxID_ANY, preferredDOSBoxVersion == nullptr ? "" : preferredDOSBoxVersion->getName(), wxDefaultPosition, wxDefaultSize, WXUtilities::createItemWXArrayString(dosboxVersions->getDOSBoxVersionDisplayNames(false)), 0, wxDefaultValidator, "DOSBox Versions");
+	m_preferredDOSBoxVersionComboBox = new wxComboBox(m_gameOptionsPanel, wxID_ANY, preferredDOSBoxVersion == nullptr ? "" : preferredDOSBoxVersion->getShortName(), wxDefaultPosition, wxDefaultSize, WXUtilities::createItemWXArrayString(dosboxVersions->getDOSBoxVersionShortNames(false)), 0, wxDefaultValidator, "DOSBox Versions");
 	m_preferredDOSBoxVersionComboBox->SetEditable(false);
 	m_preferredDOSBoxVersionComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onPreferredDOSBoxVersionSelected, this);
 
@@ -909,7 +909,7 @@ void ModBrowserPanel::updatePreferredDOSBoxVersion() {
 }
 
 void ModBrowserPanel::updatePreferredDOSBoxVersionList() {
-	m_preferredDOSBoxVersionComboBox->Set(WXUtilities::createItemWXArrayString(m_modManager->getDOSBoxVersions()->getDOSBoxVersionDisplayNames(false)));
+	m_preferredDOSBoxVersionComboBox->Set(WXUtilities::createItemWXArrayString(m_modManager->getDOSBoxVersions()->getDOSBoxVersionShortNames(false)));
 
 	updatePreferredDOSBoxVersion();
 }
@@ -1465,7 +1465,7 @@ void ModBrowserPanel::onLaunchButtonPressed(wxCommandEvent & event) {
 			fmt::format(
 				"Failed to launch{}, '{}' is not configured/installed.",
 				!fullModName.empty() ? fmt::format(" '{}'", fullModName) : "",
-				selectedDOSBoxVersion->getName()
+				selectedDOSBoxVersion->getLongName()
 			),
 			"Launch Failed",
 			wxOK | wxICON_ERROR,

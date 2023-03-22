@@ -98,8 +98,8 @@ bool DOSBoxVersionCollection::hasDOSBoxVersion(const DOSBoxVersion & dosboxVersi
 	return indexOfDOSBoxVersion(dosboxVersion) != std::numeric_limits<size_t>::max();
 }
 
-bool DOSBoxVersionCollection::hasDOSBoxVersionWithName(const std::string & name) const {
-	return indexOfDOSBoxVersionWithName(name) != std::numeric_limits<size_t>::max();
+bool DOSBoxVersionCollection::hasDOSBoxVersionWithID(const std::string & dosboxVersionID) const {
+	return indexOfDOSBoxVersionWithID(dosboxVersionID) != std::numeric_limits<size_t>::max();
 }
 
 size_t DOSBoxVersionCollection::indexOfDOSBoxVersion(const DOSBoxVersion & dosboxVersion) const {
@@ -114,13 +114,13 @@ size_t DOSBoxVersionCollection::indexOfDOSBoxVersion(const DOSBoxVersion & dosbo
 	return dosboxVersionIterator - m_dosboxVersions.cbegin();
 }
 
-size_t DOSBoxVersionCollection::indexOfDOSBoxVersionWithName(const std::string & name) const {
-	if(name.empty()) {
+size_t DOSBoxVersionCollection::indexOfDOSBoxVersionWithID(const std::string & dosboxVersionID) const {
+	if(dosboxVersionID.empty()) {
 		return std::numeric_limits<size_t>::max();
 	}
 
-	auto dosboxVersionIterator = std::find_if(m_dosboxVersions.cbegin(), m_dosboxVersions.cend(), [&name](const std::shared_ptr<DOSBoxVersion> & currentDOSBoxVersion) {
-		return Utilities::areStringsEqualIgnoreCase(name, currentDOSBoxVersion->getName());
+	auto dosboxVersionIterator = std::find_if(m_dosboxVersions.cbegin(), m_dosboxVersions.cend(), [&dosboxVersionID](const std::shared_ptr<DOSBoxVersion> & currentDOSBoxVersion) {
+		return Utilities::areStringsEqualIgnoreCase(dosboxVersionID, currentDOSBoxVersion->getID());
 	});
 
 	if(dosboxVersionIterator == m_dosboxVersions.cend()) {
@@ -138,8 +138,8 @@ std::shared_ptr<DOSBoxVersion> DOSBoxVersionCollection::getDOSBoxVersion(size_t 
 	return m_dosboxVersions[index];
 }
 
-std::shared_ptr<DOSBoxVersion> DOSBoxVersionCollection::getDOSBoxVersionWithName(const std::string & name) const {
-	return getDOSBoxVersion(indexOfDOSBoxVersionWithName(name));
+std::shared_ptr<DOSBoxVersion> DOSBoxVersionCollection::getDOSBoxVersionWithID(const std::string & dosboxVersionID) const {
+	return getDOSBoxVersion(indexOfDOSBoxVersionWithID(dosboxVersionID));
 }
 
 const std::vector<std::shared_ptr<DOSBoxVersion>> & DOSBoxVersionCollection::getDOSBoxVersions() const {
@@ -174,12 +174,36 @@ std::vector<std::shared_ptr<DOSBoxVersion>> DOSBoxVersionCollection::getUnconfig
 	return unconfiguredDOSBoxVersions;
 }
 
-std::vector<std::string> DOSBoxVersionCollection::getDOSBoxVersionDisplayNames(bool prependItemNumber) const {
-	return getDOSBoxVersionDisplayNamesFrom(m_dosboxVersions, prependItemNumber);
+std::vector<std::string> DOSBoxVersionCollection::getDOSBoxVersionIdentifiers() const {
+	return getDOSBoxVersionIdentifiersFrom(m_dosboxVersions);
 }
 
-std::vector<std::string> DOSBoxVersionCollection::getDOSBoxVersionDisplayNamesFrom(const std::vector<std::shared_ptr<DOSBoxVersion>> & dosboxVersions, bool prependItemNumber) {
-	std::vector<std::string> dosboxVersionDisplayNames;
+std::vector<std::string> DOSBoxVersionCollection::getDOSBoxVersionIdentifiersFrom(const std::vector<std::shared_ptr<DOSBoxVersion>> & dosboxVersions) {
+	std::vector<std::string> dosboxVersionIdentifiers;
+
+	for(size_t i = 0; i < dosboxVersions.size(); i++) {
+		dosboxVersionIdentifiers.push_back(dosboxVersions[i]->getID());
+	}
+
+	return dosboxVersionIdentifiers;
+}
+
+std::vector<std::string> DOSBoxVersionCollection::getDOSBoxVersionIdentifiersFrom(const std::vector<const DOSBoxVersion *> & dosboxVersions) {
+	std::vector<std::string> dosboxVersionIdentifiers;
+
+	for(size_t i = 0; i < dosboxVersions.size(); i++) {
+		dosboxVersionIdentifiers.push_back(dosboxVersions[i]->getID());
+	}
+
+	return dosboxVersionIdentifiers;
+}
+
+std::vector<std::string> DOSBoxVersionCollection::getDOSBoxVersionLongNames(bool prependItemNumber) const {
+	return getDOSBoxVersionLongNamesFrom(m_dosboxVersions, prependItemNumber);
+}
+
+std::vector<std::string> DOSBoxVersionCollection::getDOSBoxVersionLongNamesFrom(const std::vector<std::shared_ptr<DOSBoxVersion>> & dosboxVersions, bool prependItemNumber) {
+	std::vector<std::string> dosboxVersionLongNames;
 
 	for(size_t i = 0; i < dosboxVersions.size(); i++) {
 		std::stringstream dosboxVersionStream;
@@ -188,16 +212,16 @@ std::vector<std::string> DOSBoxVersionCollection::getDOSBoxVersionDisplayNamesFr
 			dosboxVersionStream << i + 1 << ": ";
 		}
 
-		dosboxVersionStream << dosboxVersions[i]->getName();
+		dosboxVersionStream << dosboxVersions[i]->getLongName();
 
-		dosboxVersionDisplayNames.push_back(dosboxVersionStream.str());
+		dosboxVersionLongNames.push_back(dosboxVersionStream.str());
 	}
 
-	return dosboxVersionDisplayNames;
+	return dosboxVersionLongNames;
 }
 
-std::vector<std::string> DOSBoxVersionCollection::getDOSBoxVersionDisplayNamesFrom(const std::vector<const DOSBoxVersion *> & dosboxVersions, bool prependItemNumber) {
-	std::vector<std::string> dosboxVersionDisplayNames;
+std::vector<std::string> DOSBoxVersionCollection::getDOSBoxVersionLongNamesFrom(const std::vector<const DOSBoxVersion *> & dosboxVersions, bool prependItemNumber) {
+	std::vector<std::string> dosboxVersionLongNames;
 
 	for(size_t i = 0; i < dosboxVersions.size(); i++) {
 		std::stringstream dosboxVersionStream;
@@ -206,16 +230,56 @@ std::vector<std::string> DOSBoxVersionCollection::getDOSBoxVersionDisplayNamesFr
 			dosboxVersionStream << i + 1 << ": ";
 		}
 
-		dosboxVersionStream << dosboxVersions[i]->getName();
+		dosboxVersionStream << dosboxVersions[i]->getLongName();
 
-		dosboxVersionDisplayNames.push_back(dosboxVersionStream.str());
+		dosboxVersionLongNames.push_back(dosboxVersionStream.str());
 	}
 
-	return dosboxVersionDisplayNames;
+	return dosboxVersionLongNames;
+}
+
+std::vector<std::string> DOSBoxVersionCollection::getDOSBoxVersionShortNames(bool prependItemNumber) const {
+	return getDOSBoxVersionShortNamesFrom(m_dosboxVersions, prependItemNumber);
+}
+
+std::vector<std::string> DOSBoxVersionCollection::getDOSBoxVersionShortNamesFrom(const std::vector<std::shared_ptr<DOSBoxVersion>> & dosboxVersions, bool prependItemNumber) {
+	std::vector<std::string> dosboxVersionShortNames;
+
+	for(size_t i = 0; i < dosboxVersions.size(); i++) {
+		std::stringstream dosboxVersionStream;
+
+		if(prependItemNumber) {
+			dosboxVersionStream << i + 1 << ": ";
+		}
+
+		dosboxVersionStream << dosboxVersions[i]->getShortName();
+
+		dosboxVersionShortNames.push_back(dosboxVersionStream.str());
+	}
+
+	return dosboxVersionShortNames;
+}
+
+std::vector<std::string> DOSBoxVersionCollection::getDOSBoxVersionShortNamesFrom(const std::vector<const DOSBoxVersion *> & dosboxVersions, bool prependItemNumber) {
+	std::vector<std::string> dosboxVersionShortNames;
+
+	for(size_t i = 0; i < dosboxVersions.size(); i++) {
+		std::stringstream dosboxVersionStream;
+
+		if(prependItemNumber) {
+			dosboxVersionStream << i + 1 << ": ";
+		}
+
+		dosboxVersionStream << dosboxVersions[i]->getShortName();
+
+		dosboxVersionShortNames.push_back(dosboxVersionStream.str());
+	}
+
+	return dosboxVersionShortNames;
 }
 
 bool DOSBoxVersionCollection::addDOSBoxVersion(const DOSBoxVersion & dosboxVersion) {
-	if(!dosboxVersion.isValid() || hasDOSBoxVersionWithName(dosboxVersion.getName())) {
+	if(!dosboxVersion.isValid() || hasDOSBoxVersionWithID(dosboxVersion.getID())) {
 		return false;
 	}
 
@@ -228,7 +292,7 @@ bool DOSBoxVersionCollection::addDOSBoxVersion(const DOSBoxVersion & dosboxVersi
 }
 
 bool DOSBoxVersionCollection::addDOSBoxVersion(std::shared_ptr<DOSBoxVersion> dosboxVersion) {
-	if(!DOSBoxVersion::isValid(dosboxVersion.get()) || hasDOSBoxVersionWithName(dosboxVersion->getName())) {
+	if(!DOSBoxVersion::isValid(dosboxVersion.get()) || hasDOSBoxVersionWithID(dosboxVersion->getID())) {
 		return false;
 	}
 
@@ -298,19 +362,19 @@ bool DOSBoxVersionCollection::removeDOSBoxVersion(const DOSBoxVersion & dosboxVe
 	return removeDOSBoxVersion(indexOfDOSBoxVersion(dosboxVersion));
 }
 
-bool DOSBoxVersionCollection::removeDOSBoxVersionWithName(const std::string & name) {
-	return removeDOSBoxVersion(indexOfDOSBoxVersionWithName(name));
+bool DOSBoxVersionCollection::removeDOSBoxVersionWithID(const std::string & dosboxVersionID) {
+	return removeDOSBoxVersion(indexOfDOSBoxVersionWithID(dosboxVersionID));
 }
 
 size_t DOSBoxVersionCollection::addMissingDefaultDOSBoxVersions() {
 	size_t numberOfDOSBoxVersionsAdded = 0;
 
 	for(std::vector<const DOSBoxVersion *>::const_iterator i = DOSBoxVersion::DEFAULT_DOSBOX_VERSIONS.cbegin(); i != DOSBoxVersion::DEFAULT_DOSBOX_VERSIONS.cend(); ++i) {
-		if(hasDOSBoxVersionWithName((*i)->getName())) {
+		if(hasDOSBoxVersionWithID((*i)->getID())) {
 			continue;
 		}
 
-		spdlog::info("Adding missing default DOSBox version '{}'.", (*i)->getName());
+		spdlog::info("Adding missing default DOSBox version '{}'.", (*i)->getLongName());
 
 		addDOSBoxVersion(**i);
 
@@ -349,8 +413,8 @@ size_t DOSBoxVersionCollection::checkForMissingExecutables() const {
 	return numberOfMissingExecutables++;
 }
 
-size_t DOSBoxVersionCollection::checkForMissingExecutables(const std::string & name) const {
-	std::shared_ptr<DOSBoxVersion> dosboxVersion = getDOSBoxVersionWithName(name);
+size_t DOSBoxVersionCollection::checkForMissingExecutables(const std::string & dosboxVersionID) const {
+	std::shared_ptr<DOSBoxVersion> dosboxVersion = getDOSBoxVersionWithID(dosboxVersionID);
 
 	if(dosboxVersion == nullptr) {
 		return 0;
@@ -431,12 +495,12 @@ std::unique_ptr<DOSBoxVersionCollection> DOSBoxVersionCollection::parseFrom(cons
 		newDOSBoxVersion = DOSBoxVersion::parseFrom(*i);
 
 		if(!DOSBoxVersion::isValid(newDOSBoxVersion.get())) {
-			spdlog::error("Failed to parse DOSBox version #{}{}!", newDOSBoxVersionCollection->m_dosboxVersions.size() + 1, newDOSBoxVersionCollection->numberOfDOSBoxVersions() == 0 ? "" : fmt::format(" (after DOSBox version '{}')", newDOSBoxVersionCollection->getDOSBoxVersion(newDOSBoxVersionCollection->numberOfDOSBoxVersions() - 1)->getName()));
+			spdlog::error("Failed to parse DOSBox version #{}{}!", newDOSBoxVersionCollection->m_dosboxVersions.size() + 1, newDOSBoxVersionCollection->numberOfDOSBoxVersions() == 0 ? "" : fmt::format(" (after DOSBox version '{}')", newDOSBoxVersionCollection->getDOSBoxVersion(newDOSBoxVersionCollection->numberOfDOSBoxVersions() - 1)->getLongName()));
 			return nullptr;
 		}
 
 		if(newDOSBoxVersionCollection->hasDOSBoxVersion(*newDOSBoxVersion.get())) {
-			spdlog::error("Encountered duplicate DOSBox version #{}{}.", newDOSBoxVersionCollection->m_dosboxVersions.size() + 1, newDOSBoxVersionCollection->numberOfDOSBoxVersions() == 0 ? "" : fmt::format(" (after DOSBox version '{}')", newDOSBoxVersionCollection->getDOSBoxVersion(newDOSBoxVersionCollection->numberOfDOSBoxVersions() - 1)->getName()));
+			spdlog::error("Encountered duplicate DOSBox version #{}{}.", newDOSBoxVersionCollection->m_dosboxVersions.size() + 1, newDOSBoxVersionCollection->numberOfDOSBoxVersions() == 0 ? "" : fmt::format(" (after DOSBox version '{}')", newDOSBoxVersionCollection->getDOSBoxVersion(newDOSBoxVersionCollection->numberOfDOSBoxVersions() - 1)->getLongName()));
 			return nullptr;
 		}
 
@@ -549,7 +613,7 @@ bool DOSBoxVersionCollection::isValid() const {
 		}
 
 		for(std::vector<std::shared_ptr<DOSBoxVersion>>::const_iterator j = i + 1; j != m_dosboxVersions.end(); ++j) {
-			if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), (*j)->getName())) {
+			if(Utilities::areStringsEqualIgnoreCase((*i)->getID(), (*j)->getID())) {
 				return false;
 			}
 		}

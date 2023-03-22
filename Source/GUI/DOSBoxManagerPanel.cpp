@@ -159,9 +159,9 @@ bool DOSBoxManagerPanel::hasPanelWithDOSBoxVersion(const DOSBoxVersion * dosboxV
 	return false;
 }
 
-bool DOSBoxManagerPanel::hasPanelWithDOSBoxVersionName(const std::string & name) const {
+bool DOSBoxManagerPanel::hasPanelWithDOSBoxVersionID(const std::string & dosboxVersionID) const {
 	for(size_t i = 0; i < m_notebook->GetPageCount(); i++) {
-		if(Utilities::areStringsEqualIgnoreCase(getDOSBoxVersion(i)->getName(), name)) {
+		if(Utilities::areStringsEqualIgnoreCase(getDOSBoxVersion(i)->getID(), dosboxVersionID)) {
 			return true;
 		}
 	}
@@ -189,9 +189,9 @@ size_t DOSBoxManagerPanel::indexOfPanelWithDOSBoxVersion(const DOSBoxVersion * d
 	return std::numeric_limits<size_t>::max();
 }
 
-size_t DOSBoxManagerPanel::indexOfPanelWithDOSBoxVersionName(const std::string & name) const {
+size_t DOSBoxManagerPanel::indexOfPanelWithDOSBoxVersionID(const std::string & dosboxVersionID) const {
 	for(size_t i = 0; i < m_notebook->GetPageCount(); i++) {
-		if(Utilities::areStringsEqualIgnoreCase(getDOSBoxVersion(i)->getName(), name)) {
+		if(Utilities::areStringsEqualIgnoreCase(getDOSBoxVersion(i)->getID(), dosboxVersionID)) {
 			return i;
 		}
 	}
@@ -211,8 +211,8 @@ DOSBoxVersionPanel * DOSBoxManagerPanel::getPanelWithDOSBoxVersion(const DOSBoxV
 	return getDOSBoxVersionPanel(indexOfPanelWithDOSBoxVersion(dosboxVersion));
 }
 
-DOSBoxVersionPanel * DOSBoxManagerPanel::getPanelWithDOSBoxVersionName(const std::string & name) const {
-	return getDOSBoxVersionPanel(indexOfPanelWithDOSBoxVersionName(name));
+DOSBoxVersionPanel * DOSBoxManagerPanel::getPanelWithDOSBoxVersionID(const std::string & dosboxVersionID) const {
+	return getDOSBoxVersionPanel(indexOfPanelWithDOSBoxVersionID(dosboxVersionID));
 }
 
 DOSBoxVersionPanel * DOSBoxManagerPanel::getCurrentDOSBoxVersionPanel() const {
@@ -261,8 +261,8 @@ bool DOSBoxManagerPanel::selectPanelWithDOSBoxVersion(const DOSBoxVersion & dosb
 	return true;
 }
 
-bool DOSBoxManagerPanel::selectPanelWithDOSBoxVersionName(const std::string & name) {
-	size_t dosboxVersionPanelIndex = indexOfPanelWithDOSBoxVersionName(name);
+bool DOSBoxManagerPanel::selectPanelWithDOSBoxVersionID(const std::string & dosboxVersionID) {
+	size_t dosboxVersionPanelIndex = indexOfPanelWithDOSBoxVersionID(dosboxVersionID);
 
 	if(dosboxVersionPanelIndex == std::numeric_limits<size_t>::max()) {
 		return false;
@@ -366,7 +366,7 @@ void DOSBoxManagerPanel::updateButtons() {
 	std::shared_ptr<DOSBoxVersion> dosboxVersion = dosboxVersionPanel != nullptr ? dosboxVersionPanel->getDOSBoxVersion() : nullptr;
 
 	bool isDOSBoxVersionModified = dosboxVersionPanel != nullptr ? dosboxVersionPanel->isModified() : false;
-	bool isDOSBoxVersionInstallable = dosboxVersion != nullptr ? DOSBoxManager::isDOSBoxVersionDownloadable(dosboxVersion->getName()) : false;
+	bool isDOSBoxVersionInstallable = dosboxVersion != nullptr ? DOSBoxManager::isDOSBoxVersionDownloadable(*dosboxVersion) : false;
 	bool isDOSBoxVersionInstalled = dosboxVersion != nullptr ? dosboxVersion->hasDirectoryPath() : false;
 	bool isDOSBoxVersionRemovable = dosboxVersion != nullptr ? dosboxVersion->isRemovable() : false;
 
@@ -415,7 +415,7 @@ bool DOSBoxManagerPanel::installDOSBoxVersion(size_t index) {
 	std::shared_ptr<DOSBoxManager> dosboxManager(m_modManager->getDOSBoxManager());
 	std::shared_ptr<DOSBoxVersion> dosboxVersion(dosboxVersionPanel->getDOSBoxVersion());
 
-	if(dosboxVersion->hasDirectoryPath() || !dosboxVersion->hasName() || !DOSBoxManager::isDOSBoxVersionDownloadable(dosboxVersion->getName()) || !dosboxManager->isInitialized()) {
+	if(dosboxVersion->hasDirectoryPath() || !dosboxVersion->hasID() || !dosboxVersion->hasLongName() || !dosboxVersion->hasShortName() || !DOSBoxManager::isDOSBoxVersionDownloadable(*dosboxVersion) || !dosboxManager->isInitialized()) {
 		return false;
 	}
 
@@ -439,7 +439,7 @@ bool DOSBoxManagerPanel::installDOSBoxVersion(size_t index) {
 	}
 
 	for(const std::filesystem::directory_entry & entry : std::filesystem::directory_iterator(std::filesystem::path(destinationDirectoryPath))) {
-		int installToNonEmptyDirectoryResult = wxMessageBox(fmt::format("DOSBox installation installation directory '{}' is not empty!\n\nInstalling to a directory which already contains files may cause issues. Are you sure you would like to install '{}' to this directory?", destinationDirectoryPath, dosboxVersion->getName()), "Non-Empty Installation Directory", wxYES_NO | wxCANCEL | wxICON_WARNING, this);
+		int installToNonEmptyDirectoryResult = wxMessageBox(fmt::format("DOSBox installation installation directory '{}' is not empty!\n\nInstalling to a directory which already contains files may cause issues. Are you sure you would like to install '{}' to this directory?", destinationDirectoryPath, dosboxVersion->getLongName()), "Non-Empty Installation Directory", wxYES_NO | wxCANCEL | wxICON_WARNING, this);
 
 		if(installToNonEmptyDirectoryResult != wxYES) {
 			return false;
@@ -448,13 +448,13 @@ bool DOSBoxManagerPanel::installDOSBoxVersion(size_t index) {
 		break;
 	}
 
-	wxProgressDialog * installingProgressDialog = new wxProgressDialog("Installing", fmt::format("Installing '{}', please wait...", dosboxVersion->getName()), 1, this, wxPD_AUTO_HIDE);
+	wxProgressDialog * installingProgressDialog = new wxProgressDialog("Installing", fmt::format("Installing '{}', please wait...", dosboxVersion->getLongName()), 1, this, wxPD_AUTO_HIDE);
 	installingProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
 
 	if(!dosboxManager->installLatestDOSBoxVersion(*dosboxVersion, destinationDirectoryPath)) {
 		installingProgressDialog->Destroy();
 
-		wxMessageBox(fmt::format("Failed to install '{}' to '{}'!\n\nCheck console for details.", dosboxVersion->getName(), destinationDirectoryPath), "Installation Failed", wxOK | wxICON_ERROR, this);
+		wxMessageBox(fmt::format("Failed to install '{}' to '{}'!\n\nCheck console for details.", dosboxVersion->getLongName(), destinationDirectoryPath), "Installation Failed", wxOK | wxICON_ERROR, this);
 
 		return false;
 	}
@@ -469,7 +469,7 @@ bool DOSBoxManagerPanel::installDOSBoxVersion(size_t index) {
 	installingProgressDialog->Update(1);
 	installingProgressDialog->Destroy();
 
-	wxMessageBox(fmt::format("'{}' was successfully installed to: '{}'!", dosboxVersion->getName(), destinationDirectoryPath), "DOSBox Installed", wxOK | wxICON_INFORMATION, this);
+	wxMessageBox(fmt::format("'{}' was successfully installed to: '{}'!", dosboxVersion->getLongName(), destinationDirectoryPath), "DOSBox Installed", wxOK | wxICON_INFORMATION, this);
 
 	return true;
 }
@@ -487,17 +487,17 @@ bool DOSBoxManagerPanel::uninstallDOSBoxVersion(size_t index) {
 
 	std::shared_ptr<DOSBoxVersion> dosboxVersion = dosboxVersionPanel->getDOSBoxVersion();
 
-	if(!dosboxVersion->hasName() || !dosboxVersion->hasDirectoryPath()) {
+	if(!dosboxVersion->hasID() || !dosboxVersion->hasDirectoryPath()) {
 		return false;
 	}
 
 	if(!std::filesystem::is_directory(std::filesystem::path(dosboxVersion->getDirectoryPath()))) {
-		wxMessageBox(fmt::format("'{}' path '{}' is not a valid directory.", dosboxVersion->getName(), dosboxVersion->getDirectoryPath()), "Uninstall Failed", wxOK | wxICON_WARNING, this);
+		wxMessageBox(fmt::format("'{}' path '{}' is not a valid directory.", dosboxVersion->getLongName(), dosboxVersion->getDirectoryPath()), "Uninstall Failed", wxOK | wxICON_WARNING, this);
 
 		return false;
 	}
 
-	int uninstallConfirmationResult = wxMessageBox(fmt::format("Are you sure you want to uninstall '{}' from '{}'? This will remove all files located in this directory, so be sure to back up any valuable data!", dosboxVersion->getName(), dosboxVersion->getDirectoryPath()), "Uninstall Confirmation", wxYES_NO | wxCANCEL | wxICON_QUESTION, this);
+	int uninstallConfirmationResult = wxMessageBox(fmt::format("Are you sure you want to uninstall '{}' from '{}'? This will remove all files located in this directory, so be sure to back up any valuable data!", dosboxVersion->getLongName(), dosboxVersion->getDirectoryPath()), "Uninstall Confirmation", wxYES_NO | wxCANCEL | wxICON_QUESTION, this);
 
 	if(uninstallConfirmationResult != wxYES) {
 		return false;
@@ -507,7 +507,7 @@ bool DOSBoxManagerPanel::uninstallDOSBoxVersion(size_t index) {
 	std::filesystem::remove_all(std::filesystem::path(dosboxVersion->getDirectoryPath()), errorCode);
 
 	if(errorCode) {
-		wxMessageBox(fmt::format("Failed to remove '{}' dosbox directory '{}': {}", dosboxVersion->getName(), dosboxVersion->getDirectoryPath(), errorCode.message()), "Directory Removal Failed", wxOK | wxICON_ERROR, this);
+		wxMessageBox(fmt::format("Failed to remove '{}' dosbox directory '{}': {}", dosboxVersion->getLongName(), dosboxVersion->getDirectoryPath(), errorCode.message()), "Directory Removal Failed", wxOK | wxICON_ERROR, this);
 		return false;
 	}
 
@@ -518,7 +518,7 @@ bool DOSBoxManagerPanel::uninstallDOSBoxVersion(size_t index) {
 
 	updateButtons();
 
-	wxMessageBox(fmt::format("'{}' was successfully uninstalled!", dosboxVersion->getName()), "DOSBox Uninstalled", wxOK | wxICON_INFORMATION, this);
+	wxMessageBox(fmt::format("'{}' was successfully uninstalled!", dosboxVersion->getLongName()), "DOSBox Uninstalled", wxOK | wxICON_INFORMATION, this);
 
 	return true;
 }
@@ -541,7 +541,7 @@ bool DOSBoxManagerPanel::saveDOSBoxVersion(size_t index) {
 	}
 
 	if(!dosboxVersion->isValid()) {
-		wxMessageBox(fmt::format("'{}' dosbox version is not valid!", dosboxVersion->getName()), "Invalid DOSBox", wxOK | wxICON_WARNING, this);
+		wxMessageBox(fmt::format("'{}' dosbox version is not valid!", dosboxVersion->getLongName()), "Invalid DOSBox", wxOK | wxICON_WARNING, this);
 
 		return false;
 	}
@@ -549,7 +549,7 @@ bool DOSBoxManagerPanel::saveDOSBoxVersion(size_t index) {
 	std::shared_ptr<DOSBoxVersionCollection> dosboxVersions(m_modManager->getDOSBoxVersions());
 
 	if(dosboxVersions->addDOSBoxVersion(dosboxVersion)) {
-		spdlog::info("Added new dosbox version to collection with name '{}'.", dosboxVersion->getName());
+		spdlog::info("Added new dosbox version to collection with name '{}'.", dosboxVersion->getLongName());
 	}
 
 	return saveDOSBoxVersions();
@@ -584,7 +584,7 @@ bool DOSBoxManagerPanel::resetDOSBoxVersion(size_t dosboxVersionPanelIndex) {
 
 	std::shared_ptr<DOSBoxVersion> dosboxVersion = dosboxVersionPanel->getDOSBoxVersion();
 
-	int resetResult = wxMessageBox(fmt::format("Are you sure you want to reset the '{}' dosbox version to its default configuration?", dosboxVersion->hasName() ? dosboxVersion->getName() : "NEW"), "Reset DOSBox", wxICON_QUESTION | wxYES_NO | wxCANCEL, this);
+	int resetResult = wxMessageBox(fmt::format("Are you sure you want to reset the '{}' dosbox version to its default configuration?", dosboxVersion->hasLongName() ? dosboxVersion->getLongName() : "NEW"), "Reset DOSBox", wxICON_QUESTION | wxYES_NO | wxCANCEL, this);
 
 	if(resetResult != wxYES) {
 		return false;
@@ -606,7 +606,7 @@ bool DOSBoxManagerPanel::removeDOSBoxVersion(size_t dosboxVersionPanelIndex) {
 		return false;
 	}
 
-	int removeResult = wxMessageBox(fmt::format("Are you sure you want to remove the '{}' dosbox version?", dosboxVersion->hasName() ? dosboxVersion->getName() : "NEW"), "Remove DOSBox", wxICON_QUESTION | wxYES_NO | wxCANCEL, this);
+	int removeResult = wxMessageBox(fmt::format("Are you sure you want to remove the '{}' dosbox version?", dosboxVersion->hasLongName() ? dosboxVersion->getLongName() : "NEW"), "Remove DOSBox", wxICON_QUESTION | wxYES_NO | wxCANCEL, this);
 
 	if(removeResult != wxYES) {
 		return false;

@@ -22,7 +22,7 @@ DOSBoxSettingsPanel::DOSBoxSettingsPanel(std::shared_ptr<ModManager> modManager,
 	wxWrapSizer * dosboxSettingsSizer = new wxWrapSizer(wxHORIZONTAL);
 	wxPanel * dosboxSettingsPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 
-	m_preferredDOSBoxVersionSettingPanel = SettingPanel::createStringChoiceSettingPanel([modManager = modManager.get()]() { return modManager->getPreferredDOSBoxVersion()->getName(); }, std::bind(static_cast<bool(ModManager::*)(const std::string &)>(&ModManager::setPreferredDOSBoxVersion), modManager.get(), std::placeholders::_1), SettingsManager::DEFAULT_PREFERRED_DOSBOX_VERSION, "Preferred DOSBox Version", dosboxVersions->getDOSBoxVersionDisplayNames(false), dosboxSettingsPanel, dosboxSettingsSizer);
+	m_preferredDOSBoxVersionSettingPanel = SettingPanel::createStringChoiceSettingPanel([modManager = modManager.get()]() { return modManager->getPreferredDOSBoxVersion()->getShortName(); }, std::bind(static_cast<bool(ModManager::*)(const std::string &)>(&ModManager::setPreferredDOSBoxVersion), modManager.get(), std::placeholders::_1), SettingsManager::DEFAULT_PREFERRED_DOSBOX_VERSION, "Preferred DOSBox Version", dosboxVersions->getDOSBoxVersionShortNames(false), dosboxSettingsPanel, dosboxSettingsSizer, dosboxVersions->getDOSBoxVersionIdentifiers());
 	m_settingsPanels.push_back(m_preferredDOSBoxVersionSettingPanel);
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxVersionsListFilePath, SettingsManager::DEFAULT_DOSBOX_VERSIONS_LIST_FILE_PATH, "DOSBox Versions List File Path", dosboxSettingsPanel, dosboxSettingsSizer));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxArguments, SettingsManager::DEFAULT_DOSBOX_ARGUMENTS, "Application Arguments", dosboxSettingsPanel, dosboxSettingsSizer));
@@ -156,11 +156,11 @@ void DOSBoxSettingsPanel::onSettingModified(SettingPanel & settingPanel) {
 }
 
 void DOSBoxSettingsPanel::onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection) {
-	m_preferredDOSBoxVersionSettingPanel->setChoices(dosboxVersionCollection.getDOSBoxVersionDisplayNames(false));
+	m_preferredDOSBoxVersionSettingPanel->setChoices(dosboxVersionCollection.getDOSBoxVersionShortNames(false), dosboxVersionCollection.getDOSBoxVersionIdentifiers());
 }
 
 void DOSBoxSettingsPanel::onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion) {
-	m_preferredDOSBoxVersionSettingPanel->setChoices(dosboxVersionCollection.getDOSBoxVersionDisplayNames(false));
+	m_preferredDOSBoxVersionSettingPanel->setChoices(dosboxVersionCollection.getDOSBoxVersionShortNames(false), dosboxVersionCollection.getDOSBoxVersionIdentifiers());
 }
 
 void DOSBoxSettingsPanel::onPreferredDOSBoxVersionChanged(std::shared_ptr<DOSBoxVersion> dosboxVersion) {

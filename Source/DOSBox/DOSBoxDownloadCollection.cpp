@@ -59,9 +59,9 @@ size_t DOSBoxDownloadCollection::numberOfDownloads() const {
 	return m_downloads.size();
 }
 
-bool DOSBoxDownloadCollection::hasDownload(const DOSBoxDownload & mod) const {
+bool DOSBoxDownloadCollection::hasDownload(const DOSBoxDownload & download) const {
 	for(std::vector<std::shared_ptr<DOSBoxDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), mod.getName())) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getID(), download.getID())) {
 			return true;
 		}
 	}
@@ -69,13 +69,13 @@ bool DOSBoxDownloadCollection::hasDownload(const DOSBoxDownload & mod) const {
 	return false;
 }
 
-bool DOSBoxDownloadCollection::hasDownloadWithName(const std::string & name) const {
-	if(name.empty()) {
+bool DOSBoxDownloadCollection::hasDownloadWithID(const std::string & dosboxVersionID) const {
+	if(dosboxVersionID.empty()) {
 		return false;
 	}
 
 	for(std::vector<std::shared_ptr<DOSBoxDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getID(), dosboxVersionID)) {
 			return true;
 		}
 	}
@@ -85,7 +85,7 @@ bool DOSBoxDownloadCollection::hasDownloadWithName(const std::string & name) con
 
 size_t DOSBoxDownloadCollection::indexOfDownload(const DOSBoxDownload & download) const {
 	for(size_t i = 0; i < m_downloads.size(); i++) {
-		if(Utilities::areStringsEqualIgnoreCase(m_downloads[i]->getName(), download.getName())) {
+		if(Utilities::areStringsEqualIgnoreCase(m_downloads[i]->getID(), download.getID())) {
 			return i;
 		}
 	}
@@ -93,13 +93,13 @@ size_t DOSBoxDownloadCollection::indexOfDownload(const DOSBoxDownload & download
 	return std::numeric_limits<size_t>::max();
 }
 
-size_t DOSBoxDownloadCollection::indexOfDownloadWithName(const std::string & name) const {
-	if(name.empty()) {
+size_t DOSBoxDownloadCollection::indexOfDownloadWithID(const std::string & dosboxVersionID) const {
+	if(dosboxVersionID.empty()) {
 		return std::numeric_limits<size_t>::max();
 	}
 
 	for(size_t i = 0; i < m_downloads.size(); i++) {
-		if(Utilities::areStringsEqualIgnoreCase(m_downloads[i]->getName(), name)) {
+		if(Utilities::areStringsEqualIgnoreCase(m_downloads[i]->getID(), dosboxVersionID)) {
 			return i;
 		}
 	}
@@ -115,13 +115,13 @@ std::shared_ptr<DOSBoxDownload> DOSBoxDownloadCollection::getDownload(size_t ind
 	return m_downloads[index];
 }
 
-std::shared_ptr<DOSBoxDownload> DOSBoxDownloadCollection::getDownloadWithName(const std::string & name) const {
-	if(name.empty()) {
+std::shared_ptr<DOSBoxDownload> DOSBoxDownloadCollection::getDownloadWithID(const std::string & dosboxVersionID) const {
+	if(dosboxVersionID.empty()) {
 		return nullptr;
 	}
 
 	for(std::vector<std::shared_ptr<DOSBoxDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getID(), dosboxVersionID)) {
 			return *i;
 		}
 	}
@@ -129,12 +129,12 @@ std::shared_ptr<DOSBoxDownload> DOSBoxDownloadCollection::getDownloadWithName(co
 	return nullptr;
 }
 
-std::shared_ptr<DOSBoxDownloadFile> DOSBoxDownloadCollection::getLatestDOSBoxDownloadFile(const std::string & dosboxVersionName, DeviceInformationBridge::OperatingSystemType operatingSystem, std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalProcessorArchitecture) const {
-	if(dosboxVersionName.empty()) {
+std::shared_ptr<DOSBoxDownloadFile> DOSBoxDownloadCollection::getLatestDOSBoxDownloadFile(const std::string & dosboxVersionID, DeviceInformationBridge::OperatingSystemType operatingSystem, std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalProcessorArchitecture) const {
+	if(dosboxVersionID.empty()) {
 		return nullptr;
 	}
 
-	std::shared_ptr<DOSBoxDownload> dosboxDownload(getDownloadWithName(dosboxVersionName));
+	std::shared_ptr<DOSBoxDownload> dosboxDownload(getDownloadWithID(dosboxVersionID));
 
 	if(dosboxDownload == nullptr) {
 		return nullptr;
@@ -173,7 +173,7 @@ bool DOSBoxDownloadCollection::removeDownload(size_t index) {
 
 bool DOSBoxDownloadCollection::removeDownload(const DOSBoxDownload & download) {
 	for(std::vector<std::shared_ptr<DOSBoxDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), download.getName())) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getID(), download.getID())) {
 			m_downloads.erase(i);
 
 			updated(*this);
@@ -185,13 +185,13 @@ bool DOSBoxDownloadCollection::removeDownload(const DOSBoxDownload & download) {
 	return false;
 }
 
-bool DOSBoxDownloadCollection::removeDownloadWithName(const std::string & name) {
-	if(name.empty()) {
+bool DOSBoxDownloadCollection::removeDownloadWithID(const std::string & dosboxVersionID) {
+	if(dosboxVersionID.empty()) {
 		return false;
 	}
 
 	for(std::vector<std::shared_ptr<DOSBoxDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getID(), dosboxVersionID)) {
 			m_downloads.erase(i);
 
 			updated(*this);
@@ -281,12 +281,12 @@ std::unique_ptr<DOSBoxDownloadCollection> DOSBoxDownloadCollection::parseFrom(co
 		newDownload = DOSBoxDownload::parseFrom(*i);
 
 		if(!DOSBoxDownload::isValid(newDownload.get())) {
-			spdlog::error("Failed to parse dosbox download #{}{}!", newDOSBoxDownloadCollection->m_downloads.size() + 1, newDOSBoxDownloadCollection->numberOfDownloads() == 0 ? "" : fmt::format(" (after dosbox download with ID '{}')", newDOSBoxDownloadCollection->getDownload(newDOSBoxDownloadCollection->numberOfDownloads() - 1)->getName()));
+			spdlog::error("Failed to parse dosbox download #{}{}!", newDOSBoxDownloadCollection->m_downloads.size() + 1, newDOSBoxDownloadCollection->numberOfDownloads() == 0 ? "" : fmt::format(" (after dosbox download with ID '{}')", newDOSBoxDownloadCollection->getDownload(newDOSBoxDownloadCollection->numberOfDownloads() - 1)->getID()));
 			return nullptr;
 		}
 
 		if(newDOSBoxDownloadCollection->hasDownload(*newDownload.get())) {
-			spdlog::warn("Encountered duplicate dosbox download #{}{}.", newDOSBoxDownloadCollection->m_downloads.size() + 1, newDOSBoxDownloadCollection->numberOfDownloads() == 0 ? "" : fmt::format(" (after dosbox download with ID '{}')", newDOSBoxDownloadCollection->getDownload(newDOSBoxDownloadCollection->numberOfDownloads() - 1)->getName()));
+			spdlog::warn("Encountered duplicate dosbox download #{}{}.", newDOSBoxDownloadCollection->m_downloads.size() + 1, newDOSBoxDownloadCollection->numberOfDownloads() == 0 ? "" : fmt::format(" (after dosbox download with ID '{}')", newDOSBoxDownloadCollection->getDownload(newDOSBoxDownloadCollection->numberOfDownloads() - 1)->getID()));
 		}
 
 		newDOSBoxDownloadCollection->m_downloads.push_back(std::shared_ptr<DOSBoxDownload>(newDownload.release()));

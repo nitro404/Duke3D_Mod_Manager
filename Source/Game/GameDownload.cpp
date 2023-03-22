@@ -27,7 +27,7 @@ GameDownload::GameDownload(GameDownload && v) noexcept
 }
 
 GameDownload::GameDownload(const GameDownload & d)
-	: m_name(std::move(d.m_name)) {
+	: m_name(d.m_name) {
 	for(std::vector<std::shared_ptr<GameDownloadVersion>>::const_iterator i = d.m_versions.begin(); i != d.m_versions.end(); ++i) {
 		m_versions.push_back(std::make_shared<GameDownloadVersion>(**i));
 	}
@@ -372,7 +372,7 @@ bool GameDownload::isValid(const GameDownload * d) {
 
 bool GameDownload::operator == (const GameDownload & v) const {
 	if(m_versions.size() != v.m_versions.size() ||
-	   !Utilities::areStringsEqualIgnoreCase(m_name, v.m_name)) {
+	   !Utilities::areStringsEqual(m_name, v.m_name)) {
 		return false;
 	}
 

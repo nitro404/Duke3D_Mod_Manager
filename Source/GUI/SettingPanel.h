@@ -59,8 +59,8 @@ public:
 	static SettingPanel * createEnumSettingPanel(E & setting, E defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, const std::vector<E> & disabledEnumValues);
 	template <typename E>
 	static SettingPanel * createEnumSettingPanel(std::function<E()> getSettingValueFunction, std::function<void(E)> setSettingValueFunction, E defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, const std::vector<E> & disabledEnumValues);
-	static StringChoiceSettingPanel * createStringChoiceSettingPanel(std::string & setting, std::string defaultSetting, const std::string & name, const std::vector<std::string> & choices, wxWindow * parent, wxSizer * parentSizer);
-	static StringChoiceSettingPanel * createStringChoiceSettingPanel(std::function<std::string()> getSettingValueFunction, std::function<bool(const std::string &)> setSettingValueFunction, std::string defaultSetting, const std::string & name, const std::vector<std::string> & choices, wxWindow * parent, wxSizer * parentSizer);
+	static StringChoiceSettingPanel * createStringChoiceSettingPanel(std::string & setting, std::string defaultSetting, const std::string & name, const std::vector<std::string> & choices, wxWindow * parent, wxSizer * parentSizer, const std::vector<std::string> & values = {});
+	static StringChoiceSettingPanel * createStringChoiceSettingPanel(std::function<std::string()> getSettingValueFunction, std::function<bool(const std::string &)> setSettingValueFunction, std::string defaultSetting, const std::string & name, const std::vector<std::string> & choices, wxWindow * parent, wxSizer * parentSizer, const std::vector<std::string> & values = {});
 	static SettingPanel * createStringMultiChoiceSettingPanel(std::vector<std::string> & setting, const std::string & name, bool caseSensitive, const std::vector<std::string> & choices, wxWindow * parent, size_t minimumNumberOfSelectedItems = 0, wxSizer * parentSizer = nullptr);
 	static SettingPanel * createStringMultiChoiceSettingPanel(std::function<const std::vector<std::string> &()> getSettingValueFunction, std::function<bool(const std::string &)> hasSettingEntryFunction, std::function<bool(const std::string &)> addSettingEntryFunction, std::function<bool(const std::string &)> removeSettingEntryFunction, const std::string & name, bool caseSensitive, const std::vector<std::string> & choices, wxWindow * parent, size_t minimumNumberOfSelectedItems = 0, wxSizer * parentSizer = nullptr);
 	template <typename E>
@@ -95,13 +95,14 @@ class StringChoiceSettingPanel final : public SettingPanel {
 public:
 	virtual ~StringChoiceSettingPanel();
 
-	bool setChoices(const std::vector<std::string> & choices);
+	bool setChoices(const std::vector<std::string> & choices, const std::vector<std::string> & values = {});
 
 protected:
 	StringChoiceSettingPanel(const std::string & name, wxWindow * parent);
 
 private:
-	std::function<void(const std::vector<std::string> & choices)> m_setChoicesFunction;
+	std::vector<std::string> m_values;
+	std::function<void(const std::vector<std::string> & choices, const std::vector<std::string> & values)> m_setChoicesFunction;
 };
 
 template <typename T>

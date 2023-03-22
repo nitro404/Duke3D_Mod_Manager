@@ -90,7 +90,7 @@ SettingsManagerPanel::SettingsManagerPanel(std::shared_ptr<ModManager> modManage
 
 	wxPanel * dosboxSettingsPanel = new wxPanel(dosboxSettingsBox, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 
-	m_preferredDOSBoxVersionSettingPanel = SettingPanel::createStringChoiceSettingPanel(settings->preferredDOSBoxVersion, SettingsManager::DEFAULT_PREFERRED_DOSBOX_VERSION, "Preferred DOSBox Version", dosboxVersions->getDOSBoxVersionDisplayNames(false), dosboxSettingsPanel, dosboxSettingsSizer);
+	m_preferredDOSBoxVersionSettingPanel = SettingPanel::createStringChoiceSettingPanel(settings->preferredDOSBoxVersion, SettingsManager::DEFAULT_PREFERRED_DOSBOX_VERSION, "Preferred DOSBox Version", dosboxVersions->getDOSBoxVersionShortNames(false), dosboxSettingsPanel, dosboxSettingsSizer, dosboxVersions->getDOSBoxVersionIdentifiers());
 	m_settingsPanels.push_back(m_preferredDOSBoxVersionSettingPanel);
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxVersionsListFilePath, SettingsManager::DEFAULT_DOSBOX_VERSIONS_LIST_FILE_PATH, "DOSBox Versions List File Path", dosboxSettingsPanel, dosboxSettingsSizer));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxArguments, SettingsManager::DEFAULT_DOSBOX_ARGUMENTS, "Application Arguments", dosboxSettingsPanel, dosboxSettingsSizer));
@@ -303,11 +303,11 @@ void SettingsManagerPanel::onSettingModified(SettingPanel & settingPanel) {
 }
 
 void SettingsManagerPanel::onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection) {
-	m_preferredDOSBoxVersionSettingPanel->setChoices(dosboxVersionCollection.getDOSBoxVersionDisplayNames(false));
+	m_preferredDOSBoxVersionSettingPanel->setChoices(dosboxVersionCollection.getDOSBoxVersionShortNames(false));
 }
 
 void SettingsManagerPanel::onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion) {
-	m_preferredDOSBoxVersionSettingPanel->setChoices(dosboxVersionCollection.getDOSBoxVersionDisplayNames(false));
+	m_preferredDOSBoxVersionSettingPanel->setChoices(dosboxVersionCollection.getDOSBoxVersionShortNames(false));
 }
 
 void SettingsManagerPanel::onGameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) {

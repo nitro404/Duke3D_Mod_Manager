@@ -13,7 +13,7 @@
 class DOSBoxVersion final {
 public:
 	DOSBoxVersion();
-	DOSBoxVersion(const std::string & name, bool removable, bool renamable, const std::string & executableName, const std::string & directoryPath, const std::string & website, const std::string & sourceCodeURL, const std::vector<DeviceInformationBridge::OperatingSystemType> & supportedOperatingSystems = std::vector<DeviceInformationBridge::OperatingSystemType>());
+	DOSBoxVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool removable, const std::string & executableName, const std::string & directoryPath, const std::string & website, const std::string & sourceCodeURL, const std::vector<DeviceInformationBridge::OperatingSystemType> & supportedOperatingSystems = std::vector<DeviceInformationBridge::OperatingSystemType>());
 	DOSBoxVersion(DOSBoxVersion && dosboxVersion) noexcept;
 	DOSBoxVersion(const DOSBoxVersion & dosboxVersion);
 	DOSBoxVersion & operator = (DOSBoxVersion && dosboxVersion) noexcept;
@@ -21,11 +21,16 @@ public:
 	~DOSBoxVersion();
 
 	bool isModified() const;
-	bool hasName() const;
-	const std::string & getName() const;
-	bool setName(const std::string & name);
+	bool hasID() const;
+	const std::string & getID() const;
+	bool setID(const std::string & id);
+	bool hasShortName() const;
+	const std::string & getShortName() const;
+	bool setShortName(const std::string & shortName);
+	bool hasLongName() const;
+	const std::string & getLongName() const;
+	bool setLongName(const std::string & longName);
 	bool isRemovable() const;
-	bool isRenamable() const;
 	bool hasDirectoryPath() const;
 	const std::string & getDirectoryPath() const;
 	void setDirectoryPath(const std::string & directoryPath);
@@ -75,9 +80,10 @@ public:
 private:
 	void setModified(bool modified);
 
-	std::string m_name;
+	std::string m_id;
+	std::string m_longName;
+	std::string m_shortName;
 	bool m_removable;
-	bool m_renamable;
 	std::string m_executableName;
 	std::string m_directoryPath;
 	std::string m_website;

@@ -30,19 +30,19 @@ public:
 
 	bool hasDOSBoxVersionPanel(const DOSBoxVersionPanel * dosboxVersionPanel) const;
 	bool hasPanelWithDOSBoxVersion(const DOSBoxVersion * dosboxVersion) const;
-	bool hasPanelWithDOSBoxVersionName(const std::string & name) const;
+	bool hasPanelWithDOSBoxVersionID(const std::string & dosboxVersionID) const;
 	size_t indexOfDOSBoxVersionPanel(const DOSBoxVersionPanel * dosboxVersionPanel) const;
 	size_t indexOfPanelWithDOSBoxVersion(const DOSBoxVersion * dosboxVersion) const;
-	size_t indexOfPanelWithDOSBoxVersionName(const std::string & name) const;
+	size_t indexOfPanelWithDOSBoxVersionID(const std::string & dosboxVersionID) const;
 	DOSBoxVersionPanel * getDOSBoxVersionPanel(size_t dosboxVersionPanelIndex) const;
 	DOSBoxVersionPanel * getPanelWithDOSBoxVersion(const DOSBoxVersion * dosboxVersion) const;
-	DOSBoxVersionPanel * getPanelWithDOSBoxVersionName(const std::string & name) const;
+	DOSBoxVersionPanel * getPanelWithDOSBoxVersionID(const std::string & dosboxVersionID) const;
 	DOSBoxVersionPanel * getCurrentDOSBoxVersionPanel() const;
 	std::shared_ptr<DOSBoxVersion> getDOSBoxVersion(size_t dosboxVersionPanelIndex) const;
 	std::shared_ptr<DOSBoxVersion> getCurrentDOSBoxVersion() const;
 	bool selectDOSBoxVersionPanel(size_t dosboxVersionPanelIndex);
 	bool selectPanelWithDOSBoxVersion(const DOSBoxVersion & dosboxVersion);
-	bool selectPanelWithDOSBoxVersionName(const std::string & name);
+	bool selectPanelWithDOSBoxVersionID(const std::string & dosboxVersionID);
 
 	bool saveDOSBoxVersions();
 

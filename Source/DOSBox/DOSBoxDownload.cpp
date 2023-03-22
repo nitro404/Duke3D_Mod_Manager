@@ -10,24 +10,29 @@
 #include <array>
 #include <string_view>
 
+static constexpr const char * JSON_DOSBOX_DOWNLOAD_ID_PROPERTY_NAME = "id";
 static constexpr const char * JSON_DOSBOX_DOWNLOAD_NAME_PROPERTY_NAME = "name";
 static constexpr const char * JSON_DOSBOX_DOWNLOAD_VERSIONS_PROPERTY_NAME = "versions";
-static const std::array<std::string_view, 2> JSON_DOSBOX_DOWNLOAD_PROPERTY_NAMES = {
+static const std::array<std::string_view, 3> JSON_DOSBOX_DOWNLOAD_PROPERTY_NAMES = {
+	JSON_DOSBOX_DOWNLOAD_ID_PROPERTY_NAME,
 	JSON_DOSBOX_DOWNLOAD_NAME_PROPERTY_NAME,
 	JSON_DOSBOX_DOWNLOAD_VERSIONS_PROPERTY_NAME
 };
 
-DOSBoxDownload::DOSBoxDownload(const std::string & name)
-	: m_name(Utilities::trimString(name)) { }
+DOSBoxDownload::DOSBoxDownload(const std::string & id, const std::string & name)
+	: m_id(Utilities::trimString(id))
+	, m_name(Utilities::trimString(name)) { }
 
 DOSBoxDownload::DOSBoxDownload(DOSBoxDownload && v) noexcept
-	: m_name(std::move(v.m_name))
+	: m_id(std::move(v.m_id))
+	, m_name(std::move(v.m_name))
 	, m_versions(std::move(v.m_versions)) {
 	updateParent();
 }
 
 DOSBoxDownload::DOSBoxDownload(const DOSBoxDownload & d)
-	: m_name(std::move(d.m_name)) {
+	: m_id(d.m_id)
+	, m_name(d.m_name) {
 	for(std::vector<std::shared_ptr<DOSBoxDownloadVersion>>::const_iterator i = d.m_versions.begin(); i != d.m_versions.end(); ++i) {
 		m_versions.push_back(std::make_shared<DOSBoxDownloadVersion>(**i));
 	}
@@ -37,6 +42,7 @@ DOSBoxDownload::DOSBoxDownload(const DOSBoxDownload & d)
 
 DOSBoxDownload & DOSBoxDownload::operator = (DOSBoxDownload && d) noexcept {
 	if(this != &d) {
+		m_id = std::move(d.m_id);
 		m_name = std::move(d.m_name);
 		m_versions = std::move(d.m_versions);
 
@@ -49,6 +55,7 @@ DOSBoxDownload & DOSBoxDownload::operator = (DOSBoxDownload && d) noexcept {
 DOSBoxDownload & DOSBoxDownload::operator = (const DOSBoxDownload & d) {
 	m_versions.clear();
 
+	m_id = d.m_id;
 	m_name = d.m_name;
 
 	for(std::vector<std::shared_ptr<DOSBoxDownloadVersion>>::const_iterator i = d.m_versions.begin(); i != d.m_versions.end(); ++i) {
@@ -61,6 +68,10 @@ DOSBoxDownload & DOSBoxDownload::operator = (const DOSBoxDownload & d) {
 }
 
 DOSBoxDownload::~DOSBoxDownload() { }
+
+const std::string & DOSBoxDownload::getID() const {
+	return m_id;
+}
 
 const std::string & DOSBoxDownload::getName() const {
 	return m_name;
@@ -230,6 +241,9 @@ void DOSBoxDownload::updateParent() {
 rapidjson::Value DOSBoxDownload::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const {
 	rapidjson::Value dosboxDownloadVersionValue(rapidjson::kObjectType);
 
+	rapidjson::Value idValue(m_id.c_str(), allocator);
+	dosboxDownloadVersionValue.AddMember(rapidjson::StringRef(JSON_DOSBOX_DOWNLOAD_ID_PROPERTY_NAME), idValue, allocator);
+
 	rapidjson::Value nameValue(m_name.c_str(), allocator);
 	dosboxDownloadVersionValue.AddMember(rapidjson::StringRef(JSON_DOSBOX_DOWNLOAD_NAME_PROPERTY_NAME), nameValue, allocator);
 
@@ -268,7 +282,27 @@ std::unique_ptr<DOSBoxDownload> DOSBoxDownload::parseFrom(const rapidjson::Value
 		}
 	}
 
-	// parse the version property
+	// parse the id property
+	if(!dosboxDownloadVersionValue.HasMember(JSON_DOSBOX_DOWNLOAD_ID_PROPERTY_NAME)) {
+		spdlog::error("DOSBox download is missing '{}' property'.", JSON_DOSBOX_DOWNLOAD_ID_PROPERTY_NAME);
+		return nullptr;
+	}
+
+	const rapidjson::Value & idValue = dosboxDownloadVersionValue[JSON_DOSBOX_DOWNLOAD_ID_PROPERTY_NAME];
+
+	if(!idValue.IsString()) {
+		spdlog::error("DOSBox download '{}' property has invalid type: '{}', expected 'string'.", JSON_DOSBOX_DOWNLOAD_ID_PROPERTY_NAME, Utilities::typeToString(idValue.GetType()));
+		return nullptr;
+	}
+
+	std::string id(idValue.GetString());
+
+	if(id.empty()) {
+		spdlog::error("DOSBox download '{}' property cannot be empty.", JSON_DOSBOX_DOWNLOAD_ID_PROPERTY_NAME, Utilities::typeToString(idValue.GetType()));
+		return nullptr;
+	}
+
+	// parse the name property
 	if(!dosboxDownloadVersionValue.HasMember(JSON_DOSBOX_DOWNLOAD_NAME_PROPERTY_NAME)) {
 		spdlog::error("DOSBox download is missing '{}' property'.", JSON_DOSBOX_DOWNLOAD_NAME_PROPERTY_NAME);
 		return nullptr;
@@ -281,8 +315,15 @@ std::unique_ptr<DOSBoxDownload> DOSBoxDownload::parseFrom(const rapidjson::Value
 		return nullptr;
 	}
 
-	// initialize the name property
-	std::unique_ptr<DOSBoxDownload> newDOSBoxDownload(std::make_unique<DOSBoxDownload>(nameValue.GetString()));
+	std::string name(nameValue.GetString());
+
+	if(name.empty()) {
+		spdlog::error("DOSBox download '{}' property cannot be empty.", JSON_DOSBOX_DOWNLOAD_NAME_PROPERTY_NAME, Utilities::typeToString(nameValue.GetType()));
+		return nullptr;
+	}
+
+	// initialize the DOSBox download
+	std::unique_ptr<DOSBoxDownload> newDOSBoxDownload(std::make_unique<DOSBoxDownload>(id, name));
 
 	// parse the versions property
 	if(!dosboxDownloadVersionValue.HasMember(JSON_DOSBOX_DOWNLOAD_VERSIONS_PROPERTY_NAME)) {
@@ -321,7 +362,8 @@ std::unique_ptr<DOSBoxDownload> DOSBoxDownload::parseFrom(const rapidjson::Value
 }
 
 bool DOSBoxDownload::isValid() const {
-	if(m_name.empty() ||
+	if(m_id.empty() ||
+	   m_name.empty() ||
 	   m_versions.empty()) {
 		return false;
 	}
@@ -351,7 +393,8 @@ bool DOSBoxDownload::isValid(const DOSBoxDownload * d) {
 
 bool DOSBoxDownload::operator == (const DOSBoxDownload & v) const {
 	if(m_versions.size() != v.m_versions.size() ||
-	   !Utilities::areStringsEqualIgnoreCase(m_name, v.m_name)) {
+	   !Utilities::areStringsEqual(m_id, v.m_id) ||
+	   !Utilities::areStringsEqual(m_name, v.m_name)) {
 		return false;
 	}
 

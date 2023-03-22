@@ -2,6 +2,7 @@
 	"fileFormatVersion": "1.0.0",
 	"dosboxDownloads": [
 		{
+			"id": "dosbox",
 			"name": "DOSBox",
 			"versions": [
 				{
@@ -26,6 +27,7 @@
 			]
 		},
 		{
+			"id": "dosbox_ece",
 			"name": "DOSBox Enhanced Community Edition",
 			"versions": [
 				{
@@ -50,6 +52,7 @@
 			]
 		},
 		{
+			"id": "dosbox_staging",
 			"name": "DOSBox Staging",
 			"versions": [
 				{
@@ -80,6 +83,7 @@
 			]
 		},
 		{
+			"id": "dosbox-x",
 			"name": "DOSBox-X",
 			"versions": [
 				{

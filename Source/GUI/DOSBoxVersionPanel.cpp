@@ -17,12 +17,13 @@
 DOSBoxVersionPanel::DOSBoxVersionPanel(std::shared_ptr<DOSBoxVersion> dosboxVersion, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "DOSBox Version")
 	, m_dosboxVersion(dosboxVersion != nullptr ? dosboxVersion : std::make_shared<DOSBoxVersion>())
+	, m_dosboxIDSettingPanel(nullptr)
 	, m_dosboxPathSettingPanel(nullptr)
 	, m_modified(false) {
 	const DOSBoxVersion * defaultDOSBoxVersion = nullptr;
 
 	for(const DOSBoxVersion * currentDefaultDOSBoxVersion : DOSBoxVersion::DEFAULT_DOSBOX_VERSIONS) {
-		if(Utilities::areStringsEqualIgnoreCase(m_dosboxVersion->getName(), currentDefaultDOSBoxVersion->getName())) {
+		if(Utilities::areStringsEqualIgnoreCase(m_dosboxVersion->getID(), currentDefaultDOSBoxVersion->getID())) {
 			defaultDOSBoxVersion = currentDefaultDOSBoxVersion;
 			break;
 		}
@@ -38,8 +39,11 @@ DOSBoxVersionPanel::DOSBoxVersionPanel(std::shared_ptr<DOSBoxVersion> dosboxVers
 
 	wxPanel * dosboxInformationPanel = new wxPanel(dosboxInformationBox, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 
-	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&DOSBoxVersion::getName, m_dosboxVersion.get()), std::bind(&DOSBoxVersion::setName, m_dosboxVersion.get(), std::placeholders::_1), defaultDOSBoxVersion != nullptr ? defaultDOSBoxVersion->getName() : "", "DOSBox Version Name", dosboxInformationPanel, dosboxInformationSizer, 1));
-	m_settingsPanels.back()->setEditable(m_dosboxVersion->isRenamable());
+	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&DOSBoxVersion::getID, m_dosboxVersion.get()), std::bind(&DOSBoxVersion::setID, m_dosboxVersion.get(), std::placeholders::_1), defaultDOSBoxVersion != nullptr ? defaultDOSBoxVersion->getID() : "", "DOSBox Version Identifier", dosboxInformationPanel, dosboxInformationSizer, 1));
+	m_dosboxIDSettingPanel = m_settingsPanels.back();
+	m_dosboxIDSettingPanel->setEditable(!m_dosboxVersion->hasID());
+	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&DOSBoxVersion::getLongName, m_dosboxVersion.get()), std::bind(&DOSBoxVersion::setLongName, m_dosboxVersion.get(), std::placeholders::_1), defaultDOSBoxVersion != nullptr ? defaultDOSBoxVersion->getLongName() : "", "DOSBox Version Long Name", dosboxInformationPanel, dosboxInformationSizer, 1));
+	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&DOSBoxVersion::getShortName, m_dosboxVersion.get()), std::bind(&DOSBoxVersion::setShortName, m_dosboxVersion.get(), std::placeholders::_1), defaultDOSBoxVersion != nullptr ? defaultDOSBoxVersion->getShortName() : "", "DOSBox Version Short Name", dosboxInformationPanel, dosboxInformationSizer, 1));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&DOSBoxVersion::getWebsite, m_dosboxVersion.get()), std::bind(&DOSBoxVersion::setWebsite, m_dosboxVersion.get(), std::placeholders::_1), defaultDOSBoxVersion != nullptr ? defaultDOSBoxVersion->getWebsite() : "", "Website", dosboxInformationPanel, dosboxInformationSizer));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&DOSBoxVersion::getSourceCodeURL, m_dosboxVersion.get()), std::bind(&DOSBoxVersion::setSourceCodeURL, m_dosboxVersion.get(), std::placeholders::_1), defaultDOSBoxVersion != nullptr ? defaultDOSBoxVersion->getSourceCodeURL() : "", "Source Code URL", dosboxInformationPanel, dosboxInformationSizer));
 
@@ -103,7 +107,7 @@ bool DOSBoxVersionPanel::isModified() const {
 }
 
 std::string DOSBoxVersionPanel::getPanelName() const {
-	return m_dosboxVersion->getName().empty() ? "NEW DOSBOX *" : fmt::format("{}{}", m_dosboxVersion->getName(), m_modified ? " *" : "");
+	return m_dosboxVersion->getShortName().empty() ? "NEW DOSBOX *" : fmt::format("{}{}", m_dosboxVersion->getShortName(), m_modified ? " *" : "");
 }
 
 std::shared_ptr<DOSBoxVersion> DOSBoxVersionPanel::getDOSBoxVersion() const {
@@ -162,6 +166,8 @@ bool DOSBoxVersionPanel::save() {
 	}
 
 	m_modified = false;
+
+	m_dosboxIDSettingPanel->setEditable(false);
 
 	dosboxVersionSaved(*this);
 

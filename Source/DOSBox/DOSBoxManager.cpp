@@ -208,16 +208,16 @@ std::string DOSBoxManager::getLatestDOSBoxDownloadURL(const DOSBoxVersion & dosb
 }
 
 std::string DOSBoxManager::getLatestDOSBoxDownloadURL(const DOSBoxVersion & dosboxVersion, DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion) const {
-	if(Utilities::areStringsEqualIgnoreCase(dosboxVersion.getName(), DOSBoxVersion::DOSBOX.getName())) {
+	if(Utilities::areStringsEqualIgnoreCase(dosboxVersion.getID(), DOSBoxVersion::DOSBOX.getID())) {
 		return getLatestOriginalDOSBoxDownloadURL(operatingSystemType, operatingSystemArchitectureType, latestVersion);
 	}
-	else if(Utilities::areStringsEqualIgnoreCase(dosboxVersion.getName(), DOSBoxVersion::DOSBOX_ECE.getName())) {
+	else if(Utilities::areStringsEqualIgnoreCase(dosboxVersion.getID(), DOSBoxVersion::DOSBOX_ECE.getID())) {
 		return getLatestDOSBoxEnhancedCommunityEditionDownloadURL(operatingSystemType, operatingSystemArchitectureType, latestVersion);
 	}
-	else if(Utilities::areStringsEqualIgnoreCase(dosboxVersion.getName(), DOSBoxVersion::DOSBOX_STAGING.getName())) {
+	else if(Utilities::areStringsEqualIgnoreCase(dosboxVersion.getID(), DOSBoxVersion::DOSBOX_STAGING.getID())) {
 		return getLatestDOSBoxStagingDownloadURL(operatingSystemType, operatingSystemArchitectureType, latestVersion);
 	}
-	else if(Utilities::areStringsEqualIgnoreCase(dosboxVersion.getName(), DOSBoxVersion::DOSBOX_X.getName())) {
+	else if(Utilities::areStringsEqualIgnoreCase(dosboxVersion.getID(), DOSBoxVersion::DOSBOX_X.getID())) {
 		return getLatestDOSBoxXDownloadURL(operatingSystemType, operatingSystemArchitectureType, latestVersion);
 	}
 
@@ -271,19 +271,19 @@ std::string DOSBoxManager::getLatestDOSBoxDownloadFallbackURL(const DOSBoxVersio
 		return {};
 	}
 
-	std::shared_ptr<DOSBoxDownloadFile> dosboxDownloadFile(m_dosboxDownloads->getLatestDOSBoxDownloadFile(dosboxVersion.getName(), optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value()));
+	std::shared_ptr<DOSBoxDownloadFile> dosboxDownloadFile(m_dosboxDownloads->getLatestDOSBoxDownloadFile(dosboxVersion.getID(), optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value()));
 
 	if(dosboxDownloadFile == nullptr) {
 		switch(optionalOperatingSystemArchitectureType.value()) {
 			case DeviceInformationBridge::OperatingSystemArchitectureType::x86: {
-				spdlog::error("Could not find '{}' file download information for '{}' ({}).", dosboxVersion.getName(), magic_enum::enum_name(optionalOperatingSystemType.value()), magic_enum::enum_name(optionalOperatingSystemArchitectureType.value()));
+				spdlog::error("Could not find '{}' file download information for '{}' ({}).", dosboxVersion.getLongName(), magic_enum::enum_name(optionalOperatingSystemType.value()), magic_enum::enum_name(optionalOperatingSystemArchitectureType.value()));
 				return {};
 			}
 			case DeviceInformationBridge::OperatingSystemArchitectureType::x64: {
-				dosboxDownloadFile = m_dosboxDownloads->getLatestDOSBoxDownloadFile(dosboxVersion.getName(), optionalOperatingSystemType.value(), DeviceInformationBridge::OperatingSystemArchitectureType::x86);
+				dosboxDownloadFile = m_dosboxDownloads->getLatestDOSBoxDownloadFile(dosboxVersion.getID(), optionalOperatingSystemType.value(), DeviceInformationBridge::OperatingSystemArchitectureType::x86);
 
 				if(dosboxDownloadFile == nullptr) {
-					spdlog::error("Could not find '{}' file download information for '{}' ({} or {}).", dosboxVersion.getName(), magic_enum::enum_name(optionalOperatingSystemType.value()), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x64), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x86));
+					spdlog::error("Could not find '{}' file download information for '{}' ({} or {}).", dosboxVersion.getLongName(), magic_enum::enum_name(optionalOperatingSystemType.value()), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x64), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x86));
 					return {};
 				}
 
@@ -634,7 +634,7 @@ std::string DOSBoxManager::getLatestDOSBoxStagingDownloadURL(DeviceInformationBr
 	}
 
 	if(latestReleaseAsset == nullptr) {
-		spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}'.", DOSBoxVersion::DOSBOX_STAGING.getName(), magic_enum::enum_name(operatingSystemType));
+		spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}'.", DOSBoxVersion::DOSBOX_STAGING.getLongName(), magic_enum::enum_name(operatingSystemType));
 		return {};
 	}
 
@@ -717,13 +717,13 @@ std::string DOSBoxManager::getLatestDOSBoxXDownloadURL(DeviceInformationBridge::
 		}
 
 		if(latestReleaseAsset == nullptr) {
-			spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}' ({} or {}).", DOSBoxVersion::DOSBOX_X.getName(), magic_enum::enum_name(operatingSystemType), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x64), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x86));
+			spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}' ({} or {}).", DOSBoxVersion::DOSBOX_X.getLongName(), magic_enum::enum_name(operatingSystemType), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x64), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x86));
 			return {};
 		}
 	}
 
 	if(latestReleaseAsset == nullptr) {
-		spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}'.", DOSBoxVersion::DOSBOX_X.getName(), magic_enum::enum_name(operatingSystemType));
+		spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}'.", DOSBoxVersion::DOSBOX_X.getLongName(), magic_enum::enum_name(operatingSystemType));
 		return {};
 	}
 
@@ -782,7 +782,7 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const DOSBox
 	std::string latestDOSBoxDownloadURL;
 
 	if(useFallback) {
-		spdlog::info("Using fallback {} application package file download URL.", dosboxVersion.getName());
+		spdlog::info("Using fallback {} application package file download URL.", dosboxVersion.getLongName());
 
 		latestDOSBoxDownloadURL = getLatestDOSBoxDownloadFallbackURL(dosboxVersion, operatingSystemType, operatingSystemArchitectureType, latestVersion);
 	}
@@ -798,14 +798,14 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const DOSBox
 		return nullptr;
 	}
 
-	spdlog::info("Downloading {} {} application archive file from: '{}'...", dosboxVersion.getName(), latestVersion != nullptr ? *latestVersion : "", latestDOSBoxDownloadURL);
+	spdlog::info("Downloading {} {} application archive file from: '{}'...", dosboxVersion.getLongName(), latestVersion != nullptr ? *latestVersion : "", latestDOSBoxDownloadURL);
 
 	std::shared_ptr<HTTPRequest> installerRequest(httpService->createRequest(HTTPRequest::Method::Get, latestDOSBoxDownloadURL));
 
 	std::shared_ptr<HTTPResponse> installerResponse(httpService->sendRequestAndWait(installerRequest));
 
 	if(installerResponse->isFailure()) {
-		spdlog::error("Failed to download {} {} application archive file with error: {}", dosboxVersion.getName(), latestVersion != nullptr ? *latestVersion : "", installerResponse->getErrorMessage());
+		spdlog::error("Failed to download {} {} application archive file with error: {}", dosboxVersion.getLongName(), latestVersion != nullptr ? *latestVersion : "", installerResponse->getErrorMessage());
 
 		if(!useFallback) {
 			return downloadLatestDOSBoxVersion(dosboxVersion, operatingSystemType, operatingSystemArchitectureType, true, latestVersion);
@@ -815,7 +815,7 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const DOSBox
 	}
 	else if(installerResponse->isFailureStatusCode()) {
 		std::string statusCodeName(HTTPUtilities::getStatusCodeName(installerResponse->getStatusCode()));
-		spdlog::error("Failed to download {} {} application files package ({}{})!", dosboxVersion.getName(), latestVersion != nullptr ? *latestVersion : "", installerResponse->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
+		spdlog::error("Failed to download {} {} application files package ({}{})!", dosboxVersion.getLongName(), latestVersion != nullptr ? *latestVersion : "", installerResponse->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
 
 		if(!useFallback) {
 			return downloadLatestDOSBoxVersion(dosboxVersion, operatingSystemType, operatingSystemArchitectureType, true, latestVersion);
@@ -827,7 +827,7 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const DOSBox
 	std::unique_ptr<Archive> dosboxArchive(ArchiveFactoryRegistry::getInstance()->createArchiveFrom(installerResponse->transferBody(), latestDOSBoxDownloadURL));
 
 	if(dosboxArchive == nullptr) {
-		spdlog::error("Failed to create archive for {} {} application archive.", dosboxVersion.getName(), latestVersion != nullptr ? *latestVersion : "");
+		spdlog::error("Failed to create archive for {} {} application archive.", dosboxVersion.getLongName(), latestVersion != nullptr ? *latestVersion : "");
 
 		if(!useFallback) {
 			return downloadLatestDOSBoxVersion(dosboxVersion, operatingSystemType, operatingSystemArchitectureType, true, latestVersion);
@@ -850,7 +850,7 @@ bool DOSBoxManager::installLatestDOSBoxVersion(const DOSBoxVersion & dosboxVersi
 		std::filesystem::create_directories(destinationDirectoryPath, errorCode);
 
 		if(errorCode) {
-			spdlog::error("Failed to create {} installation destination directory structure for path '{}': {}", dosboxVersion.getName(), destinationDirectoryPath, errorCode.message());
+			spdlog::error("Failed to create {} installation destination directory structure for path '{}': {}", dosboxVersion.getLongName(), destinationDirectoryPath, errorCode.message());
 			return false;
 		}
 	}
@@ -859,15 +859,15 @@ bool DOSBoxManager::installLatestDOSBoxVersion(const DOSBoxVersion & dosboxVersi
 	std::unique_ptr<Archive> dosboxArchive(downloadLatestDOSBoxVersion(dosboxVersion, &latestVersion));
 
 	if(dosboxArchive == nullptr) {
-		spdlog::error("Failed to download and create archive for {} {} application archive.", dosboxVersion.getName(), latestVersion);
+		spdlog::error("Failed to download and create archive for {} {} application archive.", dosboxVersion.getLongName(), latestVersion);
 		return false;
 	}
 
-	if(Utilities::areStringsEqualIgnoreCase(dosboxVersion.getName(), DOSBoxVersion::DOSBOX_STAGING.getName())) {
+	if(Utilities::areStringsEqualIgnoreCase(dosboxVersion.getID(), DOSBoxVersion::DOSBOX_STAGING.getID())) {
 		std::shared_ptr<ArchiveEntry> executableFileArchiveEntry(dosboxArchive->getFirstEntryWithName(dosboxVersion.getExecutableName()));
 
 		if(executableFileArchiveEntry == nullptr) {
-			spdlog::error("{} archive is missing executable with file name: '{}'.", dosboxVersion.getName(), dosboxVersion.getExecutableName());
+			spdlog::error("{} archive is missing executable with file name: '{}'.", dosboxVersion.getLongName(), dosboxVersion.getExecutableName());
 			return false;
 		}
 
@@ -875,7 +875,7 @@ bool DOSBoxManager::installLatestDOSBoxVersion(const DOSBoxVersion & dosboxVersi
 
 		return dosboxArchive->extractAllEntriesInSubdirectory(destinationDirectoryPath, applicationArchiveBasePath, true, true, overwrite) != 0;
 	}
-	else if(Utilities::areStringsEqualIgnoreCase(dosboxVersion.getName(), DOSBoxVersion::DOSBOX_X.getName())) {
+	else if(Utilities::areStringsEqualIgnoreCase(dosboxVersion.getID(), DOSBoxVersion::DOSBOX_X.getID())) {
 		std::vector<std::shared_ptr<ArchiveEntry>> executableFileArchiveEntries(dosboxArchive->getEntriesWithName(dosboxVersion.getExecutableName()));
 		std::shared_ptr<ArchiveEntry> sdl2ExecutableArchiveFileEntry;
 
@@ -891,7 +891,7 @@ bool DOSBoxManager::installLatestDOSBoxVersion(const DOSBoxVersion & dosboxVersi
 		}
 
 		if(sdl2ExecutableArchiveFileEntry == nullptr) {
-			spdlog::error("{} archive is missing SDL2 executable with file name: '{}'.", dosboxVersion.getName(), dosboxVersion.getExecutableName());
+			spdlog::error("{} archive is missing SDL2 executable with file name: '{}'.", dosboxVersion.getLongName(), dosboxVersion.getExecutableName());
 			return false;
 		}
 
@@ -903,9 +903,17 @@ bool DOSBoxManager::installLatestDOSBoxVersion(const DOSBoxVersion & dosboxVersi
 	return dosboxArchive->extractAllEntries(destinationDirectoryPath, overwrite) != 0;
 }
 
-bool DOSBoxManager::isDOSBoxVersionDownloadable(const std::string & dosboxVersionName) {
-	return Utilities::areStringsEqualIgnoreCase(dosboxVersionName, DOSBoxVersion::DOSBOX.getName()) ||
-		   Utilities::areStringsEqualIgnoreCase(dosboxVersionName, DOSBoxVersion::DOSBOX_ECE.getName()) ||
-		   Utilities::areStringsEqualIgnoreCase(dosboxVersionName, DOSBoxVersion::DOSBOX_STAGING.getName()) ||
-		   Utilities::areStringsEqualIgnoreCase(dosboxVersionName, DOSBoxVersion::DOSBOX_X.getName());
+bool DOSBoxManager::isDOSBoxVersionDownloadable(const DOSBoxVersion & dosboxVersion) {
+	return isDOSBoxVersionDownloadable(dosboxVersion.getID());
+}
+
+bool DOSBoxManager::isDOSBoxVersionDownloadable(const std::string & dosboxVersionID) {
+	if(dosboxVersionID.empty()) {
+		return false;
+	}
+
+	return Utilities::areStringsEqualIgnoreCase(dosboxVersionID, DOSBoxVersion::DOSBOX.getID()) ||
+		   Utilities::areStringsEqualIgnoreCase(dosboxVersionID, DOSBoxVersion::DOSBOX_ECE.getID()) ||
+		   Utilities::areStringsEqualIgnoreCase(dosboxVersionID, DOSBoxVersion::DOSBOX_STAGING.getID()) ||
+		   Utilities::areStringsEqualIgnoreCase(dosboxVersionID, DOSBoxVersion::DOSBOX_X.getID());
 }

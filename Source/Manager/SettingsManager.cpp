@@ -1,5 +1,6 @@
 #include "SettingsManager.h"
 
+#include "DOSBoxVersion.h"
 #include "Game/GameVersion.h"
 #include "ModManager.h"
 
@@ -144,7 +145,7 @@ const std::string SettingsManager::DEFAULT_DOWNLOADS_DIRECTORY_PATH("Downloads")
 const std::string SettingsManager::DEFAULT_DOWNLOAD_CACHE_FILE_NAME("Download Cache.json");
 const std::string SettingsManager::DEFAULT_MOD_DOWNLOADS_DIRECTORY_NAME("Mods");
 const std::string SettingsManager::DEFAULT_MAP_DOWNLOADS_DIRECTORY_NAME("Maps");
-const std::string SettingsManager::DEFAULT_DOSBOX_DOWNLOADS_DIRECTORY_NAME("DOSBox");
+const std::string SettingsManager::DEFAULT_DOSBOX_DOWNLOADS_DIRECTORY_NAME(DOSBoxVersion::DOSBOX.getID());
 const std::string SettingsManager::DEFAULT_GAME_DOWNLOADS_DIRECTORY_NAME("Games");
 const std::string SettingsManager::DEFAULT_DATA_DIRECTORY_PATH("Data");
 const std::string SettingsManager::DEFAULT_APP_TEMP_DIRECTORY_PATH("Temp");
@@ -957,7 +958,7 @@ bool SettingsManager::loadFrom(const std::string & filePath, bool autoCreate) {
 	fileStream.close();
 
 	if(!parseFrom(settings)) {
-		spdlog::error("Failed to parse settings from file '{}!", filePath);
+		spdlog::error("Failed to parse settings from file '{}'!", filePath);
 		return false;
 	}
 
