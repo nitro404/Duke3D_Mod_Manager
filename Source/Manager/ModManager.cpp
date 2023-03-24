@@ -2068,6 +2068,10 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	properties["gameVersion"] = selectedGameVersion->getName();
 	properties["command"] = command;
 
+	if(selectedGameVersion->doesRequireDOSBox()) {
+		properties["dosboxVersion"] = selectedDOSBoxVersion->getID();
+	}
+
 	if(!customMap.empty()) {
 		properties["customMap"] = customMap;
 	}
