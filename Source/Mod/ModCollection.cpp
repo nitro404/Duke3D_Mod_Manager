@@ -368,7 +368,7 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const rapidjson::Value &
 	const rapidjson::Value & modsValue = modCollectionValue[JSON_MODS_PROPERTY_NAME];
 
 	if(!modsValue.IsArray()) {
-		spdlog::error("Invalid mod collection type: '{}', expected 'array'.", Utilities::typeToString(modsValue.GetType()));
+		spdlog::error("Invalid mod collection '{}' type: '{}', expected 'array'.", JSON_MODS_PROPERTY_NAME, Utilities::typeToString(modsValue.GetType()));
 		return nullptr;
 	}
 

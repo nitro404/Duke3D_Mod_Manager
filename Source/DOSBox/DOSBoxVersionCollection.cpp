@@ -479,7 +479,7 @@ std::unique_ptr<DOSBoxVersionCollection> DOSBoxVersionCollection::parseFrom(cons
 	const rapidjson::Value & dosboxVersionsValue = dosboxVersionCollectionValue[JSON_DOSBOX_VERSIONS_PROPERTY_NAME];
 
 	if(!dosboxVersionsValue.IsArray()) {
-		spdlog::error("Invalid DOSBox version collection '{}' type: '{}', expected 'array'.", Utilities::typeToString(dosboxVersionsValue.GetType()));
+		spdlog::error("Invalid DOSBox version collection '{}' type: '{}', expected 'array'.", JSON_DOSBOX_VERSIONS_PROPERTY_NAME, Utilities::typeToString(dosboxVersionsValue.GetType()));
 		return nullptr;
 	}
 

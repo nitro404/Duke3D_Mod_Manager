@@ -562,7 +562,7 @@ std::unique_ptr<GameVersionCollection> GameVersionCollection::parseFrom(const ra
 	const rapidjson::Value & gameVersionsValue = gameVersionCollectionValue[JSON_GAME_VERSIONS_PROPERTY_NAME];
 
 	if(!gameVersionsValue.IsArray()) {
-		spdlog::error("Invalid game version collection '{}' type: '{}', expected 'array'.", Utilities::typeToString(gameVersionsValue.GetType()));
+		spdlog::error("Invalid game version collection '{}' type: '{}', expected 'array'.", JSON_GAME_VERSIONS_PROPERTY_NAME, Utilities::typeToString(gameVersionsValue.GetType()));
 		return nullptr;
 	}
 

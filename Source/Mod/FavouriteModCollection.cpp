@@ -7,6 +7,7 @@
 #include "ModVersionType.h"
 
 #include <Utilities/FileUtilities.h>
+#include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
 #include <Utilities/Utilities.h>
 
@@ -18,6 +19,11 @@
 
 #include <filesystem>
 #include <fstream>
+
+static constexpr const char * JSON_FILE_FORMAT_VERSION_PROPERTY_NAME = "fileFormatVersion";
+static constexpr const char * JSON_FAVOURITE_MODS_PROPERTY_NAME = "favouriteMods";
+
+const std::string FavouriteModCollection::FILE_FORMAT_VERSION = "1.0.0";
 
 FavouriteModCollection::FavouriteModCollection() { }
 
@@ -137,26 +143,69 @@ void FavouriteModCollection::clearFavourites() {
 }
 
 rapidjson::Document FavouriteModCollection::toJSON() const {
-	rapidjson::Document favourites(rapidjson::kArrayType);
-	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator = favourites.GetAllocator();
+	rapidjson::Document favouriteModsDocument(rapidjson::kObjectType);
+	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator = favouriteModsDocument.GetAllocator();
+
+	rapidjson::Value fileFormatVersionValue(FILE_FORMAT_VERSION.c_str(), allocator);
+	favouriteModsDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
+
+	rapidjson::Value favouriteModsListValue(rapidjson::kArrayType);
 
 	for(std::vector<std::shared_ptr<ModIdentifier>>::const_iterator i = m_favourites.begin(); i != m_favourites.end(); ++i) {
-		favourites.PushBack((*i)->toJSON(allocator), allocator);
+		favouriteModsListValue.PushBack((*i)->toJSON(allocator), allocator);
 	}
 
-	return favourites;
+	favouriteModsDocument.AddMember(rapidjson::StringRef(JSON_FAVOURITE_MODS_PROPERTY_NAME), favouriteModsListValue, allocator);
+
+	return favouriteModsDocument;
 }
 
-bool FavouriteModCollection::parseFrom(const rapidjson::Value & favourites) {
-	if(!favourites.IsArray()) {
-		spdlog::error("Invalid favourites value, expected array.");
-		return false;
+bool FavouriteModCollection::parseFrom(const rapidjson::Value & favouriteModsCollectionValue) {
+	if(!favouriteModsCollectionValue.IsObject()) {
+		spdlog::error("Invalid favourite mods collection type: '{}', expected 'object'.", Utilities::typeToString(favouriteModsCollectionValue.GetType()));
+		return nullptr;
+	}
+
+	if(favouriteModsCollectionValue.HasMember(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME)) {
+		const rapidjson::Value & fileFormatVersionValue = favouriteModsCollectionValue[JSON_FILE_FORMAT_VERSION_PROPERTY_NAME];
+
+		if(!fileFormatVersionValue.IsString()) {
+			spdlog::error("Invalid favourite mods collection version collection file format version type: '{}', expected: 'string'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
+			return false;
+		}
+
+		std::optional<std::uint8_t> optionalVersionComparison(Utilities::compareVersions(fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION));
+
+		if(!optionalVersionComparison.has_value()) {
+			spdlog::error("Invalid favourite mods collection file format version: '{}'.", fileFormatVersionValue.GetString());
+			return false;
+		}
+
+		if(*optionalVersionComparison != 0) {
+			spdlog::error("Unsupported favourite mods collection file format version: '{}', only version '{}' is supported.", fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION);
+			return false;
+		}
+	}
+	else {
+		spdlog::warn("Favourite mods collection JSON data is missing file format version, and may fail to load correctly!");
+	}
+
+	if(!favouriteModsCollectionValue.HasMember(JSON_FAVOURITE_MODS_PROPERTY_NAME)) {
+		spdlog::error("Favourite mods collection is missing '{}' property'.", JSON_FAVOURITE_MODS_PROPERTY_NAME);
+		return nullptr;
+	}
+
+	const rapidjson::Value & favouriteModsValue = favouriteModsCollectionValue[JSON_FAVOURITE_MODS_PROPERTY_NAME];
+
+	if(!favouriteModsValue.IsArray()) {
+		spdlog::error("Invalid favourite mods collection '{}' type: '{}', expected 'array'.", JSON_FAVOURITE_MODS_PROPERTY_NAME, Utilities::typeToString(favouriteModsValue.GetType()));
+		return nullptr;
 	}
 
 	std::unique_ptr<ModIdentifier> newModIdentifier;
 	std::vector<std::shared_ptr<ModIdentifier>> newFavourites;
 
-	for(rapidjson::Value::ConstValueIterator i = favourites.Begin(); i != favourites.End(); ++i) {
+	for(rapidjson::Value::ConstValueIterator i = favouriteModsValue.Begin(); i != favouriteModsValue.End(); ++i) {
 		newModIdentifier = ModIdentifier::parseFrom(*i);
 
 		if(!ModIdentifier::isValid(newModIdentifier.get())) {
