@@ -43,8 +43,9 @@ private:
 	std::shared_ptr<GameVersion> m_gameVersion;
 	boost::signals2::connection m_gameVersionModifiedConnection;
 	std::vector<SettingPanel *> m_settingsPanels;
-	std::vector<boost::signals2::connection> m_settingModifiedConnections;
+	SettingPanel * m_gameVersionIDSettingPanel;
 	SettingPanel * m_gamePathSettingPanel;
+	std::vector<boost::signals2::connection> m_settingModifiedConnections;
 	mutable bool m_modified;
 };
 

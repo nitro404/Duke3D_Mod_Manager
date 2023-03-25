@@ -640,9 +640,9 @@ bool ModCollection::checkGameVersions(const GameVersionCollection & gameVersions
 				for(size_t l = 0; l < modVersionType->numberOfGameVersions(); l++) {
 					modGameVersion = modVersionType->getGameVersion(l);
 
-					if(!gameVersions.hasGameVersionWithName(modGameVersion->getGameVersion())) {
+					if(!gameVersions.hasGameVersionWithID(modGameVersion->getGameVersionID())) {
 						if(verbose) {
-							spdlog::warn("Mod '{}' contains unknown game version: '{}'.", mod->getFullName(j, k), modGameVersion->getGameVersion());
+							spdlog::warn("Mod '{}' contains unknown game version ID: '{}'.", mod->getFullName(j, k), modGameVersion->getGameVersionID());
 						}
 
 						return false;
@@ -654,11 +654,11 @@ bool ModCollection::checkGameVersions(const GameVersionCollection & gameVersions
 		for(size_t j = 0; j < mod->numberOfDownloads(); j++) {
 			modDownload = mod->getDownload(j);
 
-			if(!modDownload->getGameVersion().empty() &&
-			   modDownload->getGameVersion() != GameVersion::ALL_VERSIONS &&
-			   !gameVersions.hasGameVersionWithName(modDownload->getGameVersion())) {
+			if(!modDownload->getGameVersionID().empty() &&
+			   !Utilities::areStringsEqualIgnoreCase(modDownload->getGameVersionID(), GameVersion::ALL_VERSIONS) &&
+			   !gameVersions.hasGameVersionWithID(modDownload->getGameVersionID())) {
 				if(verbose) {
-					spdlog::warn("Mod '{}' has download '{}' with unknown game version: '{}'.", mod->getID(), modDownload->getFileName(), modDownload->getGameVersion());
+					spdlog::warn("Mod '{}' has download '{}' with unknown game version ID: '{}'.", mod->getID(), modDownload->getFileName(), modDownload->getGameVersionID());
 				}
 
 				return false;

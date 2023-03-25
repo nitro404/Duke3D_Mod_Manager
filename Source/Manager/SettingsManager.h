@@ -59,9 +59,9 @@ public:
 	static const bool DEFAULT_DOSBOX_AUTO_EXIT;
 	static const std::string DEFAULT_DOSBOX_DATA_DIRECTORY_NAME;
 	static const GameType DEFAULT_GAME_TYPE;
-	static const std::string DEFAULT_PREFERRED_GAME_VERSION;
+	static const std::string DEFAULT_PREFERRED_GAME_VERSION_ID;
 	static const std::string DEFAULT_DOSBOX_VERSIONS_LIST_FILE_PATH;
-	static const std::string DEFAULT_PREFERRED_DOSBOX_VERSION;
+	static const std::string DEFAULT_PREFERRED_DOSBOX_VERSION_ID;
 	static const std::string DEFAULT_DOSBOX_SERVER_IP_ADDRESS;
 	static const uint16_t DEFAULT_DOSBOX_LOCAL_SERVER_PORT;
 	static const uint16_t DEFAULT_DOSBOX_REMOTE_SERVER_PORT;
@@ -119,9 +119,9 @@ public:
 	bool dosboxAutoExit;
 	std::string dosboxDataDirectoryName;
 	GameType gameType;
-	std::string preferredGameVersion;
+	std::string preferredGameVersionID;
 	std::string dosboxVersionsListFilePath;
-	std::string preferredDOSBoxVersion;
+	std::string preferredDOSBoxVersionID;
 	std::string dosboxServerIPAddress;
 	uint16_t dosboxLocalServerPort;
 	uint16_t dosboxRemoteServerPort;

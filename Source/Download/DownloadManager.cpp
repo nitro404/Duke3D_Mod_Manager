@@ -369,10 +369,10 @@ bool DownloadManager::downloadModGameVersion(ModGameVersion * modGameVersion, Ga
 		return false;
 	}
 
-	std::shared_ptr<GameVersion> gameVersion(gameVersions->getGameVersionWithName(modGameVersion->getGameVersion()));
+	std::shared_ptr<GameVersion> gameVersion(gameVersions->getGameVersionWithID(modGameVersion->getGameVersionID()));
 
 	if(gameVersion == nullptr) {
-		spdlog::error("Failed to download '{}' mod, could not find '{}' game version! Is your game version configuration file missing information?", modGameVersion->getParentModVersionType()->getFullName(), modGameVersion->getGameVersion());
+		spdlog::error("Failed to download '{}' mod, could not find game version with ID '{}'! Is your game version configuration file missing information?", modGameVersion->getParentModVersionType()->getFullName(), modGameVersion->getGameVersionID());
 		return false;
 	}
 
@@ -516,7 +516,7 @@ bool DownloadManager::downloadModGameVersion(ModGameVersion * modGameVersion, Ga
 	properties["modVersion"] = modGameVersion->getParentModVersion()->getVersion();
 	properties["modVersionType"] = modGameVersion->getParentModVersionType()->getType();
 	properties["fullModName"] = modGameVersion->getFullName();
-	properties["gameVersion"] = modGameVersion->getGameVersion();
+	properties["gameVersion"] = modGameVersion->getGameVersionID();
 	properties["fileName"] = modDownload->getFileName();
 	properties["fileSize"] = response->getBody()->getSize();
 	properties["numberOfFiles"] = modDownloadZipArchive->numberOfFiles();

@@ -358,36 +358,36 @@ bool GameManager::updateGameDownloadList(bool force) const {
 	return true;
 }
 
-bool GameManager::isGameDownloadable(const std::string & gameName) {
-	return Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::LAMEDUKE.getName()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_REGULAR_VERSION.getName()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_ATOMIC_EDITION.getName()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::JFDUKE3D.getName()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::EDUKE32.getName()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::NETDUKE32.getName()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::RAZE.getName()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::RED_NUKEM.getName()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getName()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::DUKE3DW.getName()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::PKDUKE3D.getName()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::XDUKE.getName()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::RDUKE.getName()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::DUKE3D_W32.getName());
+bool GameManager::isGameDownloadable(const std::string & gameVersionID) {
+	return Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::LAMEDUKE.getID()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_REGULAR_VERSION.getID()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_ATOMIC_EDITION.getID()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::JFDUKE3D.getID()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::EDUKE32.getID()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::NETDUKE32.getID()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::RAZE.getID()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::RED_NUKEM.getID()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getID()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::DUKE3DW.getID()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::PKDUKE3D.getID()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::XDUKE.getID()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::RDUKE.getID()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::DUKE3D_W32.getID());
 }
 
-std::string GameManager::getGameDownloadURL(const std::string & gameName) {
+std::string GameManager::getGameDownloadURL(const std::string & gameVersionID) {
 	if(!m_initialized) {
 		spdlog::error("Game manager not initialized!");
 		return {};
 	}
 
-	if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::LAMEDUKE.getName())) {
+	if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::LAMEDUKE.getID())) {
 		return Utilities::joinPaths(getRemoteGameDownloadsBaseURL(), REGULAR_VERSION_GAME_FILES_DOWNLOAD_FILE_NAME);
 	}
-	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_REGULAR_VERSION.getName())) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_REGULAR_VERSION.getID())) {
 		return Utilities::joinPaths(getRemoteGameDownloadsBaseURL(), REGULAR_VERSION_GAME_FILES_DOWNLOAD_FILE_NAME);
 	}
-	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_ATOMIC_EDITION.getName())) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_ATOMIC_EDITION.getID())) {
 		return Utilities::joinPaths(getRemoteGameDownloadsBaseURL(), ATOMIC_EDITION_GAME_FILES_DOWNLOAD_FILE_NAME);
 	}
 
@@ -407,51 +407,51 @@ std::string GameManager::getGameDownloadURL(const std::string & gameName) {
 		return {};
 	}
 
-	if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::JFDUKE3D.getName())) {
+	if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::JFDUKE3D.getID())) {
 		return getJFDuke3DDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
-	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::EDUKE32.getName())) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::EDUKE32.getID())) {
 		return getEDuke32DownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
-	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::NETDUKE32.getName())) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::NETDUKE32.getID())) {
 		return getNetDuke32DownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
-	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::RAZE.getName())) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::RAZE.getID())) {
 		return getRazeDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
-	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::RED_NUKEM.getName())) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::RED_NUKEM.getID())) {
 		return getRedNukemDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
-	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getName())) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getID())) {
 		return getBelgianChocolateDuke3DDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
-	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::DUKE3DW.getName())) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::DUKE3DW.getID())) {
 		return getDuke3dwDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
-	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::PKDUKE3D.getName())) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::PKDUKE3D.getID())) {
 		return getPKDuke3DDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
-	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::XDUKE.getName())) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::XDUKE.getID())) {
 		return getXDukeDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
-	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::RDUKE.getName())) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::RDUKE.getID())) {
 		return getRDukeDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
-	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::DUKE3D_W32.getName())) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::DUKE3D_W32.getID())) {
 		return getDuke3d_w32DownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
 
 	return {};
 }
 
-std::string GameManager::getFallbackGameDownloadURL(const std::string & gameName) const {
-	if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::LAMEDUKE.getName())) {
+std::string GameManager::getFallbackGameDownloadURL(const std::string & gameVersionID) const {
+	if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::LAMEDUKE.getID())) {
 		return LAMEDUKE_FALLBACK_DOWNLOAD_URL;
 	}
-	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_REGULAR_VERSION.getName())) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_REGULAR_VERSION.getID())) {
 		return REGULAR_VERSION_FALLBACK_DOWNLOAD_URL;
 	}
-	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_ATOMIC_EDITION.getName())) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_ATOMIC_EDITION.getID())) {
 		return ATOMIC_EDITION_FALLBACK_DOWNLOAD_URL;
 	}
 
@@ -475,19 +475,19 @@ std::string GameManager::getFallbackGameDownloadURL(const std::string & gameName
 		return {};
 	}
 
-	std::shared_ptr<GameDownloadFile> gameDownloadFile(m_gameDownloads->getLatestGameDownloadFile(gameName, GameDownloadFile::Type::Game, optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value()));
+	std::shared_ptr<GameDownloadFile> gameDownloadFile(m_gameDownloads->getLatestGameDownloadFile(gameVersionID, GameDownloadFile::Type::Game, optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value()));
 
 	if(gameDownloadFile == nullptr) {
 		switch(optionalOperatingSystemArchitectureType.value()) {
 			case DeviceInformationBridge::OperatingSystemArchitectureType::x86: {
-				spdlog::error("Could not find '{}' game file download information for '{}' ({}).", gameName, magic_enum::enum_name(optionalOperatingSystemType.value()), magic_enum::enum_name(optionalOperatingSystemArchitectureType.value()));
+				spdlog::error("Could not find '{}' game file download information for '{}' ({}).", gameVersionID, magic_enum::enum_name(optionalOperatingSystemType.value()), magic_enum::enum_name(optionalOperatingSystemArchitectureType.value()));
 				return {};
 			}
 			case DeviceInformationBridge::OperatingSystemArchitectureType::x64: {
-				gameDownloadFile = m_gameDownloads->getLatestGameDownloadFile(gameName, GameDownloadFile::Type::Game, optionalOperatingSystemType.value(), DeviceInformationBridge::OperatingSystemArchitectureType::x86);
+				gameDownloadFile = m_gameDownloads->getLatestGameDownloadFile(gameVersionID, GameDownloadFile::Type::Game, optionalOperatingSystemType.value(), DeviceInformationBridge::OperatingSystemArchitectureType::x86);
 
 				if(gameDownloadFile == nullptr) {
-					spdlog::error("Could not find '{}' game file download information for '{}' ({} or {}).", gameName, magic_enum::enum_name(optionalOperatingSystemType.value()), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x64), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x86));
+					spdlog::error("Could not find '{}' game file download information for '{}' ({} or {}).", gameVersionID, magic_enum::enum_name(optionalOperatingSystemType.value()), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x64), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x86));
 					return {};
 				}
 
@@ -525,7 +525,7 @@ std::string GameManager::getRemoteGameDownloadsBaseURL() const {
 	return Utilities::joinPaths(settings->apiBaseURL, settings->remoteDownloadsDirectoryName, settings->remoteGameDownloadsDirectoryName);
 }
 
-std::string GameManager::getGroupDownloadURL(const std::string & gameName) const {
+std::string GameManager::getGroupDownloadURL(const std::string & gameVersionID) const {
 	if(!m_initialized) {
 		spdlog::error("Game manager not initialized!");
 		return {};
@@ -533,10 +533,10 @@ std::string GameManager::getGroupDownloadURL(const std::string & gameName) const
 
 	std::string_view groupFileName;
 
-	if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_REGULAR_VERSION.getName())) {
+	if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_REGULAR_VERSION.getID())) {
 		groupFileName = REGULAR_VERSION_GROUP_DOWNLOAD_FILE_NAME;
 	}
-	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_ATOMIC_EDITION.getName())) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_ATOMIC_EDITION.getID())) {
 		groupFileName = ATOMIC_EDITION_GROUP_DOWNLOAD_FILE_NAME;
 	}
 	else {
@@ -546,25 +546,25 @@ std::string GameManager::getGroupDownloadURL(const std::string & gameName) const
 	return Utilities::joinPaths(getRemoteGameDownloadsBaseURL(), groupFileName);
 }
 
-std::string GameManager::getFallbackGroupDownloadURL(const std::string & gameName) const {
-	if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_REGULAR_VERSION.getName())) {
+std::string GameManager::getFallbackGroupDownloadURL(const std::string & gameVersionID) const {
+	if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_REGULAR_VERSION.getID())) {
 		return REGULAR_VERSION_FALLBACK_DOWNLOAD_URL;
 	}
-	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_ATOMIC_EDITION.getName())) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_ATOMIC_EDITION.getID())) {
 		return ATOMIC_EDITION_FALLBACK_DOWNLOAD_URL;
 	}
 
 	return {};
 }
 
-std::string GameManager::getFallbackGameDownloadSHA1(const std::string & gameName) const {
-	if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::LAMEDUKE.getName())) {
+std::string GameManager::getFallbackGameDownloadSHA1(const std::string & gameVersionID) const {
+	if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::LAMEDUKE.getID())) {
 		return LAMEDUKE_DOWNLOAD_SHA1;
 	}
-	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_REGULAR_VERSION.getName())) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_REGULAR_VERSION.getID())) {
 		return REGULAR_VERSION_FALLBACK_DOWNLOAD_SHA1;
 	}
-	else if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_ATOMIC_EDITION.getName())) {
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_ATOMIC_EDITION.getID())) {
 		return ATOMIC_EDITION_FALLBACK_DOWNLOAD_SHA1;
 	}
 
@@ -586,7 +586,7 @@ std::string GameManager::getJFDuke3DDownloadURL(DeviceInformationBridge::Operati
 		return {};
 	}
 
-	std::shared_ptr<GameVersion> jfDuke3DGameVersion(m_gameVersions->getGameVersionWithName(GameVersion::JFDUKE3D.getName()));
+	std::shared_ptr<GameVersion> jfDuke3DGameVersion(m_gameVersions->getGameVersionWithID(GameVersion::JFDUKE3D.getID()));
 	const GameVersion * jfDuke3DGameVersionRaw = jfDuke3DGameVersion != nullptr ? jfDuke3DGameVersion.get() : &GameVersion::JFDUKE3D;
 
 	if(!jfDuke3DGameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
@@ -1132,7 +1132,7 @@ std::string GameManager::getNetDuke32DownloadURL(DeviceInformationBridge::Operat
 		return {};
 	}
 
-	std::shared_ptr<GameVersion> netDuke32GameVersion(m_gameVersions->getGameVersionWithName(GameVersion::NETDUKE32.getName()));
+	std::shared_ptr<GameVersion> netDuke32GameVersion(m_gameVersions->getGameVersionWithID(GameVersion::NETDUKE32.getID()));
 	const GameVersion * netDuke32GameVersionRaw = netDuke32GameVersion != nullptr ? netDuke32GameVersion.get() : &GameVersion::NETDUKE32;
 
 	if(!netDuke32GameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
@@ -1163,7 +1163,7 @@ std::string GameManager::getEDuke32DownloadURL(DeviceInformationBridge::Operatin
 		return {};
 	}
 
-	std::shared_ptr<GameVersion> eDuke32GameVersion(m_gameVersions->getGameVersionWithName(GameVersion::EDUKE32.getName()));
+	std::shared_ptr<GameVersion> eDuke32GameVersion(m_gameVersions->getGameVersionWithID(GameVersion::EDUKE32.getID()));
 	const GameVersion * eDuke32GameVersionRaw = eDuke32GameVersion != nullptr ? eDuke32GameVersion.get() : &GameVersion::EDUKE32;
 
 	if(!eDuke32GameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
@@ -1282,7 +1282,7 @@ std::string GameManager::getRazeDownloadURL(DeviceInformationBridge::OperatingSy
 		return {};
 	}
 
-	std::shared_ptr<GameVersion> razeGameVersion(m_gameVersions->getGameVersionWithName(GameVersion::RAZE.getName()));
+	std::shared_ptr<GameVersion> razeGameVersion(m_gameVersions->getGameVersionWithID(GameVersion::RAZE.getID()));
 	const GameVersion * razeGameVersionRaw = razeGameVersion != nullptr ? razeGameVersion.get() : &GameVersion::RAZE;
 
 	if(!razeGameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
@@ -1311,7 +1311,7 @@ std::string GameManager::getRazeDownloadURL(DeviceInformationBridge::OperatingSy
 		}
 
 		if(latestReleaseAsset != nullptr) {
-			spdlog::warn("Found multiple '{}' asset downloads, GitHub release may be misconfigured.", GameVersion::RAZE.getName());
+			spdlog::warn("Found multiple '{}' asset downloads, GitHub release may be misconfigured.", GameVersion::RAZE.getLongName());
 			continue;
 		}
 
@@ -1336,7 +1336,7 @@ std::string GameManager::getRazeDownloadURL(DeviceInformationBridge::OperatingSy
 	}
 
 	if(latestReleaseAsset == nullptr) {
-		spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}'.", GameVersion::RAZE.getName(), magic_enum::enum_name(operatingSystemType));
+		spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}'.", GameVersion::RAZE.getLongName(), magic_enum::enum_name(operatingSystemType));
 		return {};
 	}
 
@@ -1393,7 +1393,7 @@ std::string GameManager::getBelgianChocolateDuke3DDownloadURL(DeviceInformationB
 	if(latestReleaseAsset == nullptr) {
 		switch(operatingSystemArchitectureType) {
 			case DeviceInformationBridge::OperatingSystemArchitectureType::x86: {
-				spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}' ({}).",  GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getName(), magic_enum::enum_name(operatingSystemType), magic_enum::enum_name(operatingSystemArchitectureType));
+				spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}' ({}).",  GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getLongName(), magic_enum::enum_name(operatingSystemType), magic_enum::enum_name(operatingSystemArchitectureType));
 				return {};
 			}
 			case DeviceInformationBridge::OperatingSystemArchitectureType::x64: {
@@ -1407,7 +1407,7 @@ std::string GameManager::getBelgianChocolateDuke3DDownloadURL(DeviceInformationB
 				}
 
 				if(latestReleaseAsset == nullptr) {
-					spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}' ({} or {}).", GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getName(), magic_enum::enum_name(operatingSystemType), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x64), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x86));
+					spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}' ({} or {}).", GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getLongName(), magic_enum::enum_name(operatingSystemType), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x64), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x86));
 					return {};
 				}
 
@@ -1434,7 +1434,7 @@ std::string GameManager::getRedNukemDownloadURL(DeviceInformationBridge::Operati
 		return {};
 	}
 
-	std::shared_ptr<GameVersion> redNukemGameVersion(m_gameVersions->getGameVersionWithName(GameVersion::RED_NUKEM.getName()));
+	std::shared_ptr<GameVersion> redNukemGameVersion(m_gameVersions->getGameVersionWithID(GameVersion::RED_NUKEM.getID()));
 	const GameVersion * redNukemGameVersionRaw = redNukemGameVersion != nullptr ? redNukemGameVersion.get() : &GameVersion::RED_NUKEM;
 
 	if(!redNukemGameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
@@ -1701,7 +1701,7 @@ std::string GameManager::getDuke3dwDownloadURL(DeviceInformationBridge::Operatin
 		return {};
 	}
 
-	std::shared_ptr<GameVersion> duke3dwGameVersion(m_gameVersions->getGameVersionWithName(GameVersion::DUKE3DW.getName()));
+	std::shared_ptr<GameVersion> duke3dwGameVersion(m_gameVersions->getGameVersionWithID(GameVersion::DUKE3DW.getID()));
 	const GameVersion * duke3dwGameVersionRaw = duke3dwGameVersion != nullptr ? duke3dwGameVersion.get() : &GameVersion::DUKE3DW;
 
 	if(!duke3dwGameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
@@ -1717,7 +1717,7 @@ std::string GameManager::getPKDuke3DDownloadURL(DeviceInformationBridge::Operati
 		return {};
 	}
 
-	std::shared_ptr<GameVersion> duke3dwGameVersion(m_gameVersions->getGameVersionWithName(GameVersion::DUKE3DW.getName()));
+	std::shared_ptr<GameVersion> duke3dwGameVersion(m_gameVersions->getGameVersionWithID(GameVersion::DUKE3DW.getID()));
 	const GameVersion * duke3dwGameVersionRaw = duke3dwGameVersion != nullptr ? duke3dwGameVersion.get() : &GameVersion::DUKE3DW;
 
 	if(!duke3dwGameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
@@ -1833,7 +1833,7 @@ std::string GameManager::getXDukeDownloadURL(DeviceInformationBridge::OperatingS
 		return {};
 	}
 
-	std::shared_ptr<GameVersion> xDukeGameVersion(m_gameVersions->getGameVersionWithName(GameVersion::XDUKE.getName()));
+	std::shared_ptr<GameVersion> xDukeGameVersion(m_gameVersions->getGameVersionWithID(GameVersion::XDUKE.getID()));
 	const GameVersion * xDukeGameVersionRaw = xDukeGameVersion != nullptr ? xDukeGameVersion.get() : &GameVersion::XDUKE;
 
 	if(!xDukeGameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
@@ -1855,7 +1855,7 @@ std::string GameManager::getRDukeDownloadURL(DeviceInformationBridge::OperatingS
 		return {};
 	}
 
-	std::shared_ptr<GameVersion> rDukeGameVersion(m_gameVersions->getGameVersionWithName(GameVersion::RDUKE.getName()));
+	std::shared_ptr<GameVersion> rDukeGameVersion(m_gameVersions->getGameVersionWithID(GameVersion::RDUKE.getID()));
 	const GameVersion * rDukeGameVersionRaw = rDukeGameVersion != nullptr ? rDukeGameVersion.get() : &GameVersion::RDUKE;
 
 	if(!rDukeGameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
@@ -2025,7 +2025,7 @@ std::string GameManager::getDuke3d_w32DownloadURL(DeviceInformationBridge::Opera
 		return {};
 	}
 
-	std::shared_ptr<GameVersion> duke3d_w32GameVersion(m_gameVersions->getGameVersionWithName(GameVersion::DUKE3D_W32.getName()));
+	std::shared_ptr<GameVersion> duke3d_w32GameVersion(m_gameVersions->getGameVersionWithID(GameVersion::DUKE3D_W32.getID()));
 	const GameVersion * duke3d_w32GameVersionRaw = duke3d_w32GameVersion != nullptr ? duke3d_w32GameVersion.get() : &GameVersion::DUKE3D_W32;
 
 	if(!duke3d_w32GameVersionRaw->hasSupportedOperatingSystemType(operatingSystemType)) {
@@ -2078,8 +2078,8 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		return false;
 	}
 
-	if(!isGameDownloadable(gameVersion.getName())) {
-		spdlog::error("'{}' is not downloadable.", gameVersion.getName());
+	if(!isGameDownloadable(gameVersion.getID())) {
+		spdlog::error("'{}' is not downloadable.", gameVersion.getLongName());
 		return false;
 	}
 
@@ -2089,26 +2089,26 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 	if(useFallback) {
 		spdlog::info("Using fallback Duke Nukem 3D game files download URL.");
 
-		gameDownloadURL = getFallbackGameDownloadURL(gameVersion.getName());
-		expectedGameDownloadSHA1 = getFallbackGameDownloadSHA1(gameVersion.getName());
+		gameDownloadURL = getFallbackGameDownloadURL(gameVersion.getID());
+		expectedGameDownloadSHA1 = getFallbackGameDownloadSHA1(gameVersion.getID());
 	}
 	else {
-		gameDownloadURL = getGameDownloadURL(gameVersion.getName());
+		gameDownloadURL = getGameDownloadURL(gameVersion.getID());
 	}
 
 	if(gameDownloadURL.empty()) {
-		spdlog::error("Failed to determine download URL for '{}'.", gameVersion.getName());
+		spdlog::error("Failed to determine download URL for '{}'.", gameVersion.getLongName());
 		return false;
 	}
 
-	spdlog::info("Downloading '{}' game files package from: '{}'...", gameVersion.getName(), gameDownloadURL);
+	spdlog::info("Downloading '{}' game files package from: '{}'...", gameVersion.getLongName(), gameDownloadURL);
 
 	std::shared_ptr<HTTPRequest> request(httpService->createRequest(HTTPRequest::Method::Get, gameDownloadURL));
 
 	std::shared_ptr<HTTPResponse> response(httpService->sendRequestAndWait(request));
 
 	if(response->isFailure()) {
-		spdlog::error("Failed to download '{}' game files package with error: {}", gameVersion.getName(), response->getErrorMessage());
+		spdlog::error("Failed to download '{}' game files package with error: {}", gameVersion.getLongName(), response->getErrorMessage());
 
 		if(!useFallback) {
 			return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
@@ -2119,7 +2119,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 
 	if(response->isFailureStatusCode()) {
 		std::string statusCodeName(HTTPUtilities::getStatusCodeName(response->getStatusCode()));
-		spdlog::error("Failed to download '{}' game files package ({}{})!", gameVersion.getName(), response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
+		spdlog::error("Failed to download '{}' game files package ({}{})!", gameVersion.getLongName(), response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
 
 		if(!useFallback) {
 			return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
@@ -2134,10 +2134,10 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		std::string actualArchiveMD5Hash(response->getBodyMD5(ByteBuffer::HashFormat::Base64));
 
 		if(Utilities::areStringsEqual(actualArchiveMD5Hash, expectedArchiveMD5Hash)) {
-			spdlog::debug("Validated MD5 hash of '{}' game files package.", gameVersion.getName());
+			spdlog::debug("Validated MD5 hash of '{}' game files package.", gameVersion.getLongName());
 		}
 		else {
-			spdlog::error("Failed to validate MD5 hash of '{}' game files package! Expected base 64 MD5 hash: '{}', actual: '{}'.", gameVersion.getName(), expectedArchiveMD5Hash, actualArchiveMD5Hash);
+			spdlog::error("Failed to validate MD5 hash of '{}' game files package! Expected base 64 MD5 hash: '{}', actual: '{}'.", gameVersion.getLongName(), expectedArchiveMD5Hash, actualArchiveMD5Hash);
 
 			if(!useFallback) {
 				return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
@@ -2151,21 +2151,21 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		std::string actualGameDownloadSHA1(response->getBodySHA1());
 
 		if(Utilities::areStringsEqual(expectedGameDownloadSHA1, actualGameDownloadSHA1)) {
-			spdlog::debug("Validated SHA1 hash of '{}' game files package.", gameVersion.getName());
+			spdlog::debug("Validated SHA1 hash of '{}' game files package.", gameVersion.getLongName());
 		}
 		else {
-			spdlog::error("Failed to validate SHA1 hash of '{}' game files package! Expected SHA1 hash: '{}', actual: '{}'.", gameVersion.getName(), expectedGameDownloadSHA1, actualGameDownloadSHA1);
+			spdlog::error("Failed to validate SHA1 hash of '{}' game files package! Expected SHA1 hash: '{}', actual: '{}'.", gameVersion.getLongName(), expectedGameDownloadSHA1, actualGameDownloadSHA1);
 
 			return false;
 		}
 	}
 
-	spdlog::info("'{}' game files downloaded successfully after {} ms, extracting to '{}'...", gameVersion.getName(), response->getRequestDuration().value().count(), destinationDirectoryPath);
+	spdlog::info("'{}' game files downloaded successfully after {} ms, extracting to '{}'...", gameVersion.getLongName(), response->getRequestDuration().value().count(), destinationDirectoryPath);
 
 	std::unique_ptr<Archive> gameFilesArchive(ArchiveFactoryRegistry::getInstance()->createArchiveFrom(response->transferBody(), std::string(Utilities::getFileExtension(gameDownloadURL))));
 
 	if(gameFilesArchive == nullptr) {
-		spdlog::error("Failed to create archive handle from '{}' game files archive package!", gameVersion.getName());
+		spdlog::error("Failed to create archive handle from '{}' game files archive package!", gameVersion.getLongName());
 
 		if(!useFallback) {
 			return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
@@ -2174,9 +2174,9 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		return false;
 	}
 
-	bool isLameDuke = Utilities::areStringsEqualIgnoreCase(gameVersion.getName(), GameVersion::LAMEDUKE.getName());
-	bool isRegularVersion = Utilities::areStringsEqualIgnoreCase(gameVersion.getName(), GameVersion::ORIGINAL_REGULAR_VERSION.getName());
-	bool isAtomicEdition = Utilities::areStringsEqualIgnoreCase(gameVersion.getName(), GameVersion::ORIGINAL_ATOMIC_EDITION.getName());
+	bool isLameDuke = Utilities::areStringsEqualIgnoreCase(gameVersion.getID(), GameVersion::LAMEDUKE.getID());
+	bool isRegularVersion = Utilities::areStringsEqualIgnoreCase(gameVersion.getID(), GameVersion::ORIGINAL_REGULAR_VERSION.getID());
+	bool isAtomicEdition = Utilities::areStringsEqualIgnoreCase(gameVersion.getID(), GameVersion::ORIGINAL_ATOMIC_EDITION.getID());
 	bool isOriginalGameFallback = useFallback && (isLameDuke || isRegularVersion || isAtomicEdition);
 
 	std::function<bool(std::shared_ptr<ArchiveEntry>, const GameFileInformation &)> extractGameFileFunction([&gameVersion, &gameDownloadURL, &destinationDirectoryPath, overwrite](std::shared_ptr<ArchiveEntry> gameFileEntry, const GameFileInformation & gameFileInfo) {
@@ -2186,14 +2186,14 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 				return true;
 			}
 
-			spdlog::error("'{}' fallback game files package file '{}' is missing required '{}' file entry!", gameVersion.getName(), Utilities::getFileName(gameDownloadURL), gameFileInfo.fileName);
+			spdlog::error("'{}' fallback game files package file '{}' is missing required '{}' file entry!", gameVersion.getLongName(), Utilities::getFileName(gameDownloadURL), gameFileInfo.fileName);
 			return false;
 		}
 
 		std::unique_ptr<ByteBuffer> gameFileData(gameFileEntry->getData());
 
 		if(gameFileData == nullptr) {
-			spdlog::error("Failed to obtain '{}' fallback '{}' game file data from game files package file '{}'.", gameVersion.getName(), gameFileInfo.fileName, Utilities::getFileName(gameDownloadURL));
+			spdlog::error("Failed to obtain '{}' fallback '{}' game file data from game files package file '{}'.", gameVersion.getLongName(), gameFileInfo.fileName, Utilities::getFileName(gameDownloadURL));
 			return false;
 		}
 
@@ -2209,7 +2209,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 
 		if(!gameFileSHA1Verified) {
 			if(gameFileInfo.hashes.size() == 1) {
-				spdlog::error("'{}' '{}' game file SHA1 hash verification failed. Calculated '{}', but expected: '{}'.", gameVersion.getName(), gameFileInfo.fileName, calculatedGameFileSHA1, gameFileInfo.hashes.front());
+				spdlog::error("'{}' '{}' game file SHA1 hash verification failed. Calculated '{}', but expected: '{}'.", gameVersion.getLongName(), gameFileInfo.fileName, calculatedGameFileSHA1, gameFileInfo.hashes.front());
 			}
 			else {
 				std::stringstream gameFileHashesStream;
@@ -2222,7 +2222,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 					gameFileHashesStream << "'" << gameFileSHA1 << "'";
 				}
 
-				spdlog::error("'{}' '{}' game file SHA1 hash verification failed. Calculated '{}', but expected one of: {}.", gameVersion.getName(), gameFileInfo.fileName, calculatedGameFileSHA1, gameFileHashesStream.str());
+				spdlog::error("'{}' '{}' game file SHA1 hash verification failed. Calculated '{}', but expected one of: {}.", gameVersion.getLongName(), gameFileInfo.fileName, calculatedGameFileSHA1, gameFileHashesStream.str());
 			}
 
 			return false;
@@ -2231,7 +2231,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		std::string gameFileDestinationPath(Utilities::joinPaths(destinationDirectoryPath, gameFileInfo.fileName));
 
 		if(!gameFileData->writeTo(gameFileDestinationPath, overwrite)) {
-			spdlog::error("Failed to write '{}' '{}' game file data from game files package file '{}' to '{}'.", gameVersion.getName(), gameFileInfo.fileName, Utilities::getFileName(gameDownloadURL), gameFileDestinationPath);
+			spdlog::error("Failed to write '{}' '{}' game file data from game files package file '{}' to '{}'.", gameVersion.getLongName(), gameFileInfo.fileName, Utilities::getFileName(gameDownloadURL), gameFileDestinationPath);
 			return false;
 		}
 
@@ -2275,11 +2275,11 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		}
 	}
 	else {
-		if(Utilities::areStringsEqualIgnoreCase(gameVersion.getName(), GameVersion::DUKE3D_W32.getName())) {
+		if(Utilities::areStringsEqualIgnoreCase(gameVersion.getID(), GameVersion::DUKE3D_W32.getID())) {
 			std::shared_ptr<ArchiveEntry> gameExecutableArchiveEntry(gameFilesArchive->getFirstEntryWithName("duke3d_w32.exe", true));
 
 			if(gameExecutableArchiveEntry == nullptr || !gameExecutableArchiveEntry->isFile()) {
-				spdlog::error("Failed to locate '{}' game executable in game files archive package.", gameVersion.getName());
+				spdlog::error("Failed to locate '{}' game executable in game files archive package.", gameVersion.getLongName());
 
 				if(!useFallback) {
 					return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
@@ -2291,7 +2291,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 			std::string gameFilesBasePath(Utilities::getBasePath(gameExecutableArchiveEntry->getPath()));
 
 			if(gameFilesArchive->extractAllEntriesInSubdirectory(destinationDirectoryPath, gameFilesBasePath, true, true, overwrite) == 0) {
-				spdlog::error("Failed to extract '{}' game files from subdirectory '{}' in archive package to '{}'.", gameVersion.getName(), gameFilesBasePath, destinationDirectoryPath);
+				spdlog::error("Failed to extract '{}' game files from subdirectory '{}' in archive package to '{}'.", gameVersion.getLongName(), gameFilesBasePath, destinationDirectoryPath);
 
 				if(!useFallback) {
 					return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
@@ -2321,7 +2321,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		}
 		else {
 			if(gameFilesArchive->extractAllEntries(destinationDirectoryPath, true) == 0) {
-				spdlog::error("Failed to extract '{}' game files archive package to '{}'.", gameVersion.getName(), destinationDirectoryPath);
+				spdlog::error("Failed to extract '{}' game files archive package to '{}'.", gameVersion.getLongName(), destinationDirectoryPath);
 
 				if(!useFallback) {
 					return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
@@ -2332,7 +2332,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		}
 	}
 
-	if(Utilities::areStringsEqualIgnoreCase(gameVersion.getName(), GameVersion::JFDUKE3D.getName())) {
+	if(Utilities::areStringsEqualIgnoreCase(gameVersion.getID(), GameVersion::JFDUKE3D.getID())) {
 		std::filesystem::directory_entry jfDuke3DSubdirectory;
 
 		for(const std::filesystem::directory_entry & entry : std::filesystem::directory_iterator(std::filesystem::path(destinationDirectoryPath))) {
@@ -2350,7 +2350,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 				std::string currentEntryPath(entry.path().string());
 				std::string newEntryPath(Utilities::joinPaths(destinationDirectoryPath, currentEntryPath.substr(currentEntryPath.find(jfDuke3DSubdirectoryPath) + jfDuke3DSubdirectoryPath.length())));
 
-				spdlog::debug("Moving '{}' file '{}' to parent directory...", gameVersion.getName(), Utilities::getFileName(currentEntryPath));
+				spdlog::debug("Moving '{}' file '{}' to parent directory...", gameVersion.getLongName(), Utilities::getFileName(currentEntryPath));
 
 				std::filesystem::rename(std::filesystem::path(currentEntryPath), std::filesystem::path(newEntryPath), errorCode);
 
@@ -2359,12 +2359,12 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 				}
 			}
 
-			spdlog::debug("Removing empty '{}' subdirectory: '{}'...", gameVersion.getName(), Utilities::getFileName(jfDuke3DSubdirectoryPath));
+			spdlog::debug("Removing empty '{}' subdirectory: '{}'...", gameVersion.getLongName(), Utilities::getFileName(jfDuke3DSubdirectoryPath));
 
 			std::filesystem::remove(std::filesystem::path(jfDuke3DSubdirectoryPath), errorCode);
 
 			if(errorCode) {
-				spdlog::error("Failed to remove '{}' subdirectory '{}' with error: {}", gameVersion.getName(), jfDuke3DSubdirectoryPath, errorCode.message());
+				spdlog::error("Failed to remove '{}' subdirectory '{}' with error: {}", gameVersion.getLongName(), jfDuke3DSubdirectoryPath, errorCode.message());
 			}
 		}
 	}
@@ -2379,7 +2379,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 					return true;
 				}
 
-				spdlog::error("Failed to calculate '{}' '{}' game file SHA1.", gameVersion.getName(), gameFileInfo.fileName);
+				spdlog::error("Failed to calculate '{}' '{}' game file SHA1.", gameVersion.getLongName(), gameFileInfo.fileName);
 				return false;
 			}
 
@@ -2392,7 +2392,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 
 			if(!gameFileSHA1Verified) {
 				if(gameFileInfo.hashes.size() == 1) {
-					spdlog::error("'{}' '{}' game file SHA1 hash verification failed. Calculated '{}', but expected: '{}'.", gameVersion.getName(), gameFileInfo.fileName, calculatedGameFileSHA1, gameFileInfo.hashes.front());
+					spdlog::error("'{}' '{}' game file SHA1 hash verification failed. Calculated '{}', but expected: '{}'.", gameVersion.getLongName(), gameFileInfo.fileName, calculatedGameFileSHA1, gameFileInfo.hashes.front());
 				}
 				else {
 					std::stringstream gameFileHashesStream;
@@ -2405,7 +2405,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 						gameFileHashesStream << "'" << gameFileSHA1 << "'";
 					}
 
-					spdlog::error("'{}' '{}' game file SHA1 hash verification failed. Calculated '{}', but expected one of: {}.", gameVersion.getName(), gameFileInfo.fileName, calculatedGameFileSHA1, gameFileHashesStream.str());
+					spdlog::error("'{}' '{}' game file SHA1 hash verification failed. Calculated '{}', but expected one of: {}.", gameVersion.getLongName(), gameFileInfo.fileName, calculatedGameFileSHA1, gameFileHashesStream.str());
 				}
 
 				return false;
@@ -2442,34 +2442,34 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		if(isAtomicEdition) {
 			std::string atomicEditionGameExecutablePath(Utilities::joinPaths(destinationDirectoryPath, gameVersion.getGameExecutableName()));
 
-			spdlog::info("Checking '{}' game executable status...", gameVersion.getName(), atomicEditionGameExecutablePath);
+			spdlog::info("Checking '{}' game executable status...", gameVersion.getLongName(), atomicEditionGameExecutablePath);
 
 			NoCDCracker::GameExecutableStatus gameExecutableStatus = NoCDCracker::getGameExecutableStatus(atomicEditionGameExecutablePath);
 
 			if(None(gameExecutableStatus & NoCDCracker::GameExecutableStatus::Exists)) {
-				spdlog::error("'{}' game executable does not exist at path: '{}'!", gameVersion.getName(), atomicEditionGameExecutablePath);
+				spdlog::error("'{}' game executable does not exist at path: '{}'!", gameVersion.getLongName(), atomicEditionGameExecutablePath);
 			}
 			else if(Any(gameExecutableStatus & NoCDCracker::GameExecutableStatus::Invalid)) {
-				spdlog::error("Invalid '{}' game executable at path: '{}'!", gameVersion.getName(), atomicEditionGameExecutablePath);
+				spdlog::error("Invalid '{}' game executable at path: '{}'!", gameVersion.getLongName(), atomicEditionGameExecutablePath);
 			}
 			else if(Any(gameExecutableStatus & NoCDCracker::GameExecutableStatus::RegularVersion)) {
-				spdlog::error("Found '{}' game executable instead of '{}' at path: '{}'!", GameVersion::ORIGINAL_REGULAR_VERSION.getName(), gameVersion.getName(), atomicEditionGameExecutablePath);
+				spdlog::error("Found '{}' game executable instead of '{}' at path: '{}'!", GameVersion::ORIGINAL_REGULAR_VERSION.getLongName(), gameVersion.getLongName(), atomicEditionGameExecutablePath);
 			}
 			else if(Any(gameExecutableStatus & NoCDCracker::GameExecutableStatus::AtomicEdition)) {
 				if(Any(gameExecutableStatus & NoCDCracker::GameExecutableStatus::Cracked)) {
-					spdlog::info("'{}' game executable already cracked!", gameVersion.getName());
+					spdlog::info("'{}' game executable already cracked!", gameVersion.getLongName());
 				}
 				else if(NoCDCracker::crackGameExecutable(atomicEditionGameExecutablePath)) {
-					spdlog::info("'{}' game executable cracked successfully! CD no longer required.", gameVersion.getName());
+					spdlog::info("'{}' game executable cracked successfully! CD no longer required.", gameVersion.getLongName());
 				}
 				else {
-					spdlog::error("Failed to crack '{}' game executable at path: '{}'.", gameVersion.getName(), atomicEditionGameExecutablePath);
+					spdlog::error("Failed to crack '{}' game executable at path: '{}'.", gameVersion.getLongName(), atomicEditionGameExecutablePath);
 				}
 			}
 		}
 
 		if(isRegularVersion || isAtomicEdition) {
-			std::unique_ptr<GameConfiguration> gameConfiguration(GameConfiguration::generateDefaultGameConfiguration(gameVersion.getName()));
+			std::unique_ptr<GameConfiguration> gameConfiguration(GameConfiguration::generateDefaultGameConfiguration(gameVersion.getID()));
 
 			if(gameConfiguration == nullptr) {
 				spdlog::warn("Failed to generate default game configuration.");
@@ -2497,9 +2497,9 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 
 	// don't need to install the group file or verify it separately when using a fallback download for either of the original game versions, since it's already installed & verified
 	if (!isOriginalGameFallback && gameVersion.hasGroupFileInstallPath()) {
-		std::string groupFileType(Utilities::areStringsEqual(gameVersion.getName(), GameVersion::ORIGINAL_REGULAR_VERSION.getName()) ? GameVersion::ORIGINAL_REGULAR_VERSION.getName() : GameVersion::ORIGINAL_ATOMIC_EDITION.getName());
+		std::string groupFileTypeGameVersionID(Utilities::areStringsEqualIgnoreCase(gameVersion.getID(), GameVersion::ORIGINAL_REGULAR_VERSION.getID()) ? GameVersion::ORIGINAL_REGULAR_VERSION.getID() : GameVersion::ORIGINAL_ATOMIC_EDITION.getID());
 
-		if (!installGroupFile(groupFileType, Utilities::joinPaths(destinationDirectoryPath, gameVersion.getGroupFileInstallPath().value()), false, overwrite)) {
+		if (!installGroupFile(groupFileTypeGameVersionID, Utilities::joinPaths(destinationDirectoryPath, gameVersion.getGroupFileInstallPath().value()), false, overwrite)) {
 			return false;
 		}
 	}
@@ -2507,7 +2507,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 	return true;
 }
 
-bool GameManager::installGroupFile(const std::string & gameName, const std::string & directoryPath, bool useFallback, bool overwrite) const {
+bool GameManager::installGroupFile(const std::string & gameVersionID, const std::string & directoryPath, bool useFallback, bool overwrite) const {
 	if(!m_initialized) {
 		spdlog::error("Game manager not initialized!");
 		return false;
@@ -2525,7 +2525,7 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 		return false;
 	}
 
-	if(!useFallback && Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_ATOMIC_EDITION.getName())) {
+	if(!useFallback && Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_ATOMIC_EDITION.getID())) {
 		GameLocator * gameLocator = GameLocator::getInstance();
 
 		for(size_t i = 0; i < gameLocator->numberOfGamePaths(); i++) {
@@ -2542,13 +2542,13 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 				spdlog::error("Failed to calculate SHA1 hash of Duke Nukem 3D group file: '{}'!", sourceGroupFilePath);
 			}
 			else if(Utilities::areStringsEqual(groupSHA1, Group::DUKE_NUKEM_3D_ATOMIC_EDITION_GROUP_SHA1_FILE_HASH)) {
-				spdlog::debug("Verified '{}' group file SHA1 hash.", GameVersion::ORIGINAL_ATOMIC_EDITION.getName());
+				spdlog::debug("Verified '{}' group file SHA1 hash.", GameVersion::ORIGINAL_ATOMIC_EDITION.getLongName());
 			}
 			else if(Utilities::areStringsEqual(groupSHA1, Group::DUKE_NUKEM_3D_WORLD_TOUR_GROUP_SHA1_FILE_HASH)) {
-				spdlog::debug("Verified '{}' group file SHA1 hash.", GameVersion::ORIGINAL_ATOMIC_EDITION.getName());
+				spdlog::debug("Verified '{}' group file SHA1 hash.", GameVersion::ORIGINAL_ATOMIC_EDITION.getLongName());
 			}
 			else if(Utilities::areStringsEqual(groupSHA1, Group::DUKE_NUKEM_3D_REGULAR_VERSION_GROUP_SHA1_FILE_HASH)) {
-				spdlog::error("Calculated '{}' SHA1 hash for Duke Nukem 3D group file '{}', when '{}' group file was expected! This may cause unexpected gameplay issues.", GameVersion::ORIGINAL_REGULAR_VERSION.getName(), sourceGroupFilePath, GameVersion::ORIGINAL_ATOMIC_EDITION.getName());
+				spdlog::error("Calculated '{}' SHA1 hash for Duke Nukem 3D group file '{}', when '{}' group file was expected! This may cause unexpected gameplay issues.", GameVersion::ORIGINAL_REGULAR_VERSION.getLongName(), sourceGroupFilePath, GameVersion::ORIGINAL_ATOMIC_EDITION.getLongName());
 			}
 			else {
 				spdlog::warn("Unexpected SHA1 hash calculated for Duke Nukem 3D group file '{}'! Game data may be modified, and may cause gameplay issues.", sourceGroupFilePath);
@@ -2573,30 +2573,31 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 		return false;
 	}
 
+	std::string gameVersionLongName(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_REGULAR_VERSION.getID()) ? GameVersion::ORIGINAL_REGULAR_VERSION.getLongName() : GameVersion::ORIGINAL_ATOMIC_EDITION.getLongName());
 	std::string groupDownloadURL;
 
 	if(useFallback) {
-		groupDownloadURL = getFallbackGroupDownloadURL(gameName);
+		groupDownloadURL = getFallbackGroupDownloadURL(gameVersionID);
 
-		spdlog::info("Using fallback Duke Nukem 3D group file download URL.");
+		spdlog::info("Using fallback {} group file download URL.", gameVersionLongName);
 	}
 	else {
-		groupDownloadURL = getGroupDownloadURL(gameName);
+		groupDownloadURL = getGroupDownloadURL(gameVersionID);
 	}
 
 	if(groupDownloadURL.empty()) {
-		spdlog::error("Failed to determine group download URL for '{}'.", gameName);
+		spdlog::error("Failed to determine group download URL for '{}'.", gameVersionLongName);
 		return false;
 	}
 
-	spdlog::info("Downloading Duke Nukem 3D {} group file from: '{}'...", gameName, groupDownloadURL);
+	spdlog::info("Downloading '{}' group file from: '{}'...", gameVersionLongName, groupDownloadURL);
 
 	std::shared_ptr<HTTPRequest> request(httpService->createRequest(HTTPRequest::Method::Get, groupDownloadURL));
 
 	std::future<std::shared_ptr<HTTPResponse>> futureResponse(httpService->sendRequest(request));
 
 	if(!futureResponse.valid()) {
-		spdlog::error("Failed to create Duke Nukem 3D group file HTTP request!");
+		spdlog::error("Failed to create {} group file HTTP request!", gameVersionLongName);
 		return false;
 	}
 
@@ -2605,16 +2606,16 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 	std::shared_ptr<HTTPResponse> response(futureResponse.get());
 
 	if(response->isFailure()) {
-		spdlog::error("Failed to download Duke Nukem 3D group file with error: {}", response->getErrorMessage());
+		spdlog::error("Failed to download {} group file with error: {}", gameVersionLongName, response->getErrorMessage());
 		return false;
 	}
 
 	if(response->isFailureStatusCode()) {
 		std::string statusCodeName(HTTPUtilities::getStatusCodeName(response->getStatusCode()));
-		spdlog::error("Failed to download Duke Nukem 3D group file ({}{})!", response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
+		spdlog::error("Failed to download {} group file ({}{})!", gameVersionLongName, response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
 
 		if(!useFallback) {
-			return installGroupFile(gameName, directoryPath, true, overwrite);
+			return installGroupFile(gameVersionID, directoryPath, true, overwrite);
 		}
 
 		return false;
@@ -2623,11 +2624,11 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 	if(useFallback) {
 		std::string responseSHA1(response->getBodySHA1());
 
-		if(Utilities::areStringsEqual(getFallbackGameDownloadSHA1(gameName), responseSHA1)) {
-			spdlog::debug("Duke Nukem 3D {} fallback group file archive SHA1 hash validated.", gameName);
+		if(Utilities::areStringsEqual(getFallbackGameDownloadSHA1(gameVersionID), responseSHA1)) {
+			spdlog::debug("{} fallback group file archive SHA1 hash validated.", gameVersionLongName);
 		}
 		else {
-			spdlog::error("Duke Nukem 3D {} fallback group file archive '{}' SHA1 hash validation failed! Expected '{}', but calculated: '{}'.", gameName, getFallbackGroupDownloadURL(gameName), getFallbackGameDownloadSHA1(gameName), responseSHA1);
+			spdlog::error("Duke Nukem 3D {} fallback group file archive '{}' SHA1 hash validation failed! Expected '{}', but calculated: '{}'.", gameVersionLongName, getFallbackGroupDownloadURL(gameVersionID), getFallbackGameDownloadSHA1(gameVersionID), responseSHA1);
 			return false;
 		}
 	}
@@ -2637,7 +2638,7 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 		}
 
 		if(m_gameDownloads != nullptr) {
-			std::shared_ptr<GameDownload> gameDownload(m_gameDownloads->getDownloadWithName(gameName));
+			std::shared_ptr<GameDownload> gameDownload(m_gameDownloads->getDownloadWithID(gameVersionID));
 
 			if(gameDownload != nullptr && gameDownload->numberOfVersions() != 0) {
 				std::string groupFileDownloadFileName(Utilities::getFileName(groupDownloadURL));
@@ -2649,13 +2650,13 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 					std::string responseSHA1(response->getBodySHA1());
 
 					if(Utilities::areStringsEqual(responseSHA1, groupFileDownload->getSHA1())) {
-						spdlog::debug("Duke Nukem 3D {} group file archive SHA1 hash validated.", gameName);
+						spdlog::debug("{} group file archive SHA1 hash validated.", gameVersionLongName);
 					}
 					else {
-						spdlog::error("Duke Nukem 3D {} group file archive '{}' SHA1 hash validation failed! Expected '{}', but calculated: '{}'.", gameName, Utilities::getFileName(groupDownloadURL), groupFileDownload->getSHA1(), responseSHA1);
+						spdlog::error("{} group file archive '{}' SHA1 hash validation failed! Expected '{}', but calculated: '{}'.", gameVersionLongName, Utilities::getFileName(groupDownloadURL), groupFileDownload->getSHA1(), responseSHA1);
 
 						if(!useFallback) {
-							return installGroupFile(gameName, directoryPath, true, overwrite);
+							return installGroupFile(gameVersionID, directoryPath, true, overwrite);
 						}
 
 						return false;
@@ -2665,15 +2666,15 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 		}
 	}
 
-	spdlog::info("Duke Nukem 3D {} group file downloaded successfully after {} ms, extracting to '{}'...", gameName, response->getRequestDuration().value().count(), destinationGroupFilePath.string());
+	spdlog::info("{} group file downloaded successfully after {} ms, extracting to '{}'...", gameVersionLongName, response->getRequestDuration().value().count(), destinationGroupFilePath.string());
 
 	std::unique_ptr<Archive> groupArchive(ArchiveFactoryRegistry::getInstance()->createArchiveFrom(response->transferBody(), std::string(Utilities::getFileExtension(groupDownloadURL))));
 
 	if(groupArchive == nullptr) {
-		spdlog::error("Failed to create archive handle from '{}' group package file!", gameName);
+		spdlog::error("Failed to create archive handle from '{}' group package file!", gameVersionLongName);
 
 		if(!useFallback) {
-			return installGroupFile(gameName, directoryPath, true, overwrite);
+			return installGroupFile(gameVersionID, directoryPath, true, overwrite);
 		}
 
 		return false;
@@ -2682,10 +2683,10 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 	std::shared_ptr<ArchiveEntry> groupFileEntry(groupArchive->getFirstEntryWithName(Group::DUKE_NUKEM_3D_GROUP_FILE_NAME, true));
 
 	if(groupFileEntry == nullptr) {
-		spdlog::error("Duke Nukem 3D {} group package file is missing group file entry!", gameName);
+		spdlog::error("{} group package file is missing group file entry!", gameVersionLongName);
 
 		if(!useFallback) {
-			return installGroupFile(gameName, directoryPath, true, overwrite);
+			return installGroupFile(gameVersionID, directoryPath, true, overwrite);
 		}
 
 		return false;
@@ -2694,10 +2695,10 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 	std::unique_ptr<ByteBuffer> groupFileData(groupFileEntry->getData());
 
 	if(groupFileData == nullptr) {
-		spdlog::error("Failed to obtain '{}' group file data from package file.", gameName);
+		spdlog::error("Failed to obtain '{}' group file data from package file.", gameVersionLongName);
 
 		if(!useFallback) {
-			return installGroupFile(gameName, directoryPath, true, overwrite);
+			return installGroupFile(gameVersionID, directoryPath, true, overwrite);
 		}
 
 		return false;
@@ -2706,7 +2707,7 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 	std::string groupFileDestinationPath(Utilities::joinPaths(directoryPath, Group::DUKE_NUKEM_3D_GROUP_FILE_NAME));
 
 	if(!groupFileData->writeTo(groupFileDestinationPath, overwrite)) {
-		spdlog::error("Failed to write '{}' group file data from package file to '{}'.", gameName, groupFileDestinationPath);
+		spdlog::error("Failed to write '{}' group file data from package file to '{}'.", gameVersionLongName, groupFileDestinationPath);
 		return false;
 	}
 
@@ -2714,7 +2715,7 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 
 	std::string_view expectedGroupSHA1;
 
-	if(Utilities::areStringsEqualIgnoreCase(gameName, GameVersion::ORIGINAL_REGULAR_VERSION.getName())) {
+	if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_REGULAR_VERSION.getID())) {
 		expectedGroupSHA1 = Group::DUKE_NUKEM_3D_REGULAR_VERSION_GROUP_SHA1_FILE_HASH;
 	}
 	else {
@@ -2722,13 +2723,13 @@ bool GameManager::installGroupFile(const std::string & gameName, const std::stri
 	}
 
 	if(calculatedGroupSHA1.empty()) {
-		spdlog::error("Failed to calculate SHA1 hash of downloaded Duke Nukem 3D group file!");
+		spdlog::error("Failed to calculate SHA1 hash of downloaded {} group file!", gameVersionLongName);
 	}
 	else if(Utilities::areStringsEqual(calculatedGroupSHA1, expectedGroupSHA1)) {
-		spdlog::debug("Verified downloaded '{}' group file SHA1 hash.", gameName);
+		spdlog::debug("Verified downloaded '{}' group file SHA1 hash.", gameVersionLongName);
 	}
 	else {
-		spdlog::error("Extracted '{}' group file SHA1 hash verification failed! Expected '{}', but calculated '{}'.", gameName, expectedGroupSHA1, calculatedGroupSHA1);
+		spdlog::error("Extracted '{}' group file SHA1 hash verification failed! Expected '{}', but calculated '{}'.", gameVersionLongName, expectedGroupSHA1, calculatedGroupSHA1);
 		return false;
 	}
 

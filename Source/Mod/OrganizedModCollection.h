@@ -118,23 +118,23 @@ public:
 
 	size_t numberOfGameVersions() const;
 	bool hasGameVersion(const GameVersion & gameVersion) const;
-	bool hasGameVersion(const std::string & gameVersion) const;
+	bool hasGameVersionWithID(const std::string & gameVersionID) const;
 	size_t indexOfGameVersion(const GameVersion & gameVersion) const;
-	size_t indexOfGameVersion(const std::string & gameVersion) const;
+	size_t indexOfGameVersionWithID(const std::string & gameVersionID) const;
 	std::shared_ptr<GameVersion> getGameVersion(size_t index) const;
-	std::shared_ptr<GameVersion> getGameVersion(const std::string & gameVersion) const;
+	std::shared_ptr<GameVersion> getGameVersionWithID(const std::string & gameVersionID) const;
 	bool hasSelectedGameVersion() const;
 	std::shared_ptr<GameVersion> getSelectedGameVersion() const;
 	bool setSelectedGameVersion(size_t index);
-	bool setSelectedGameVersion(const std::string & gameVersion);
+	bool setSelectedGameVersionByID(const std::string & gameVersionID);
 	bool setSelectedGameVersion(const GameVersion * gameVersion);
 	bool selectRandomGameVersion();
 	void clearSelectedGameVersion();
 
 	size_t getSupportedModCountForGameVersion(const GameVersion & gameVersion) const;
-	size_t getSupportedModCountForGameVersion(const std::string & gameVersion) const;
+	size_t getSupportedModCountForGameVersionWithID(const std::string & gameVersionID) const;
 	size_t getCompatibleModCountForGameVersion(const GameVersion & gameVersion) const;
-	size_t getCompatibleModCountForGameVersion(const std::string & gameVersion) const;
+	size_t getCompatibleModCountForGameVersionWithID(const std::string & gameVersionID) const;
 
 	size_t numberOfTeams() const;
 	bool hasTeamInfo(const std::string & name) const;

@@ -28,18 +28,18 @@ public:
 
 	size_t numberOfDownloads() const;
 	bool hasDownload(const GameDownload & download) const;
-	bool hasDownloadWithName(const std::string & name) const;
+	bool hasDownloadWithID(const std::string & gameVersionID) const;
 	size_t indexOfDownload(const GameDownload & download) const;
-	size_t indexOfDownloadWithName(const std::string & name) const;
+	size_t indexOfDownloadWithID(const std::string & download) const;
 	std::shared_ptr<GameDownload> getDownload(size_t index) const;
-	std::shared_ptr<GameDownload> getDownloadWithName(const std::string & name) const;
-	std::shared_ptr<GameDownloadFile> getLatestGameDownloadFile(const std::string & gameName, GameDownloadFile::Type downloadType, DeviceInformationBridge::OperatingSystemType operatingSystemType, std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalOperatingSystemArchitectureType = {}) const;
-	std::shared_ptr<GameDownloadFile> getLatestGameDownloadFile(const std::string & gameName, GameDownloadFile::Type downloadType, GameVersion::OperatingSystem operatingSystem, std::optional<GameDownloadFile::ProcessorArchitecture> optionalProcessorArchitecture = {}) const;
+	std::shared_ptr<GameDownload> getDownloadWithID(const std::string & download) const;
+	std::shared_ptr<GameDownloadFile> getLatestGameDownloadFile(const std::string & gameID, GameDownloadFile::Type downloadType, DeviceInformationBridge::OperatingSystemType operatingSystemType, std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalOperatingSystemArchitectureType = {}) const;
+	std::shared_ptr<GameDownloadFile> getLatestGameDownloadFile(const std::string & gameID, GameDownloadFile::Type downloadType, GameVersion::OperatingSystem operatingSystem, std::optional<GameDownloadFile::ProcessorArchitecture> optionalProcessorArchitecture = {}) const;
 	const std::vector<std::shared_ptr<GameDownload>> & getDownloads() const;
 	bool addDownload(const GameDownload & download);
 	bool removeDownload(size_t index);
 	bool removeDownload(const GameDownload & download);
-	bool removeDownloadWithName(const std::string & name);
+	bool removeDownloadWithID(const std::string & download);
 	void clearDownloads();
 
 	rapidjson::Document toJSON() const;

@@ -25,21 +25,21 @@ class ModGameVersion final {
 	friend class ModVersionType;
 
 public:
-	ModGameVersion(const std::string & gameVersion, bool converted = false);
+	ModGameVersion(const std::string & gameVersionID, bool converted = false);
 	ModGameVersion(ModGameVersion && m) noexcept;
 	ModGameVersion(const ModGameVersion & m);
 	ModGameVersion & operator = (ModGameVersion && m) noexcept;
 	ModGameVersion & operator = (const ModGameVersion & m);
 	~ModGameVersion();
 
-	const std::string & getGameVersion() const;
+	const std::string & getGameVersionID() const;
 	std::string getFullName() const;
 	bool isEDuke32() const;
 	bool isConverted() const;
 	const Mod * getParentMod() const;
 	const ModVersion * getParentModVersion() const;
 	const ModVersionType * getParentModVersionType() const;
-	void setGameVersion(const std::string & data);
+	void setGameVersionID(const std::string & gameVersionID);
 	void setConverted(bool converted);
 
 	size_t numberOfFiles() const;
@@ -84,7 +84,7 @@ protected:
 	void updateParent();
 
 private:
-	std::string m_gameVersion;
+	std::string m_gameVersionID;
 	bool m_converted;
 	std::vector<std::shared_ptr<ModFile>> m_files;
 	const ModVersionType * m_parentModVersionType;

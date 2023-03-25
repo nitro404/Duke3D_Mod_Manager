@@ -23,11 +23,11 @@ public:
 	bool shouldUpdateGameDownloadList() const;
 	bool loadOrUpdateGameDownloadList(bool forceUpdate = false) const;
 	bool updateGameDownloadList(bool force = false) const;
-	std::string getGameDownloadURL(const std::string & gameName);
+	std::string getGameDownloadURL(const std::string & gameVersionID);
 	std::string getRemoteGameDownloadsBaseURL() const;
-	std::string getFallbackGameDownloadURL(const std::string & gameName) const;
-	std::string getGroupDownloadURL(const std::string & gameName) const;
-	std::string getFallbackGroupDownloadURL(const std::string & gameName) const;
+	std::string getFallbackGameDownloadURL(const std::string & gameVersionID) const;
+	std::string getGroupDownloadURL(const std::string & gameVersionID) const;
+	std::string getFallbackGroupDownloadURL(const std::string & gameVersionID) const;
 	std::string getJFDuke3DDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const;
 	std::string getEDuke32DownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const;
 	std::string getNetDuke32DownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const;
@@ -40,12 +40,12 @@ public:
 	std::string getRDukeDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const;
 	std::string getDuke3d_w32DownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const;
 	bool installGame(const GameVersion & gameVersion, const std::string & destinationDirectoryPath, bool useFallback = false, bool overwrite = false);
-	bool installGroupFile(const std::string & gameName, const std::string & directoryPath, bool useFallback = false, bool overwrite = false) const;
+	bool installGroupFile(const std::string & gameVersionID, const std::string & directoryPath, bool useFallback = false, bool overwrite = false) const;
 
-	static bool isGameDownloadable(const std::string & gameName);
+	static bool isGameDownloadable(const std::string & gameVersionID);
 
 private:
-	std::string getFallbackGameDownloadSHA1(const std::string & gameName) const;
+	std::string getFallbackGameDownloadSHA1(const std::string & gameVersionID) const;
 
 	bool m_initialized;
 	std::shared_ptr<GameVersionCollection> m_gameVersions;

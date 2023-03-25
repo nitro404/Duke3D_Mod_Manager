@@ -297,14 +297,14 @@ std::vector<std::string> OrganizedModCollection::getOrganizedItemDisplayNames(bo
 				gameVersionTextStream << std::to_string(i + 1) << ": ";
 			}
 
-			gameVersionTextStream << m_organizedGameVersions[i]->getName();
+			gameVersionTextStream << m_organizedGameVersions[i]->getShortName();
 
 			if(m_sortType == OrganizedModCollection::SortType::NumberOfSupportedMods ||
 			   (m_filterType == OrganizedModCollection::FilterType::SupportedGameVersions && m_sortType != OrganizedModCollection::SortType::NumberOfCompatibleMods)) {
-				gameVersionTextStream << " (" << std::to_string(getSupportedModCountForGameVersion(m_organizedGameVersions[i]->getName())) << ")";
+				gameVersionTextStream << " (" << std::to_string(getSupportedModCountForGameVersionWithID(m_organizedGameVersions[i]->getID())) << ")";
 			}
 			else if(m_sortType == OrganizedModCollection::SortType::NumberOfCompatibleMods || m_filterType == OrganizedModCollection::FilterType::CompatibleGameVersions) {
-				gameVersionTextStream << " (" << std::to_string(getCompatibleModCountForGameVersion(m_organizedGameVersions[i]->getName())) << ")";
+				gameVersionTextStream << " (" << std::to_string(getCompatibleModCountForGameVersionWithID(m_organizedGameVersions[i]->getID())) << ")";
 			}
 
 			organizedItemDisplayNames.push_back(gameVersionTextStream.str());
@@ -928,24 +928,24 @@ size_t OrganizedModCollection::numberOfGameVersions() const {
 }
 
 bool OrganizedModCollection::hasGameVersion(const GameVersion & gameVersion) const {
-	return indexOfGameVersion(gameVersion.getName()) != std::numeric_limits<size_t>::max();
+	return indexOfGameVersionWithID(gameVersion.getID()) != std::numeric_limits<size_t>::max();
 }
 
-bool OrganizedModCollection::hasGameVersion(const std::string & gameVersion) const {
-	return indexOfGameVersion(gameVersion) != std::numeric_limits<size_t>::max();
+bool OrganizedModCollection::hasGameVersionWithID(const std::string & gameVersionID) const {
+	return indexOfGameVersionWithID(gameVersionID) != std::numeric_limits<size_t>::max();
 }
 
 size_t OrganizedModCollection::indexOfGameVersion(const GameVersion & gameVersion) const {
-	return indexOfGameVersion(gameVersion.getName());
+	return indexOfGameVersionWithID(gameVersion.getID());
 }
 
-size_t OrganizedModCollection::indexOfGameVersion(const std::string & gameVersion) const {
-	if(gameVersion.empty()) {
+size_t OrganizedModCollection::indexOfGameVersionWithID(const std::string & gameVersionID) const {
+	if(gameVersionID.empty()) {
 		return std::numeric_limits<size_t>::max();
 	}
 
 	for(size_t i = 0; i < m_organizedGameVersions.size(); i++) {
-		if(Utilities::areStringsEqualIgnoreCase(m_organizedGameVersions[i]->getName(), gameVersion)) {
+		if(Utilities::areStringsEqualIgnoreCase(m_organizedGameVersions[i]->getID(), gameVersionID)) {
 			return i;
 		}
 	}
@@ -961,8 +961,8 @@ std::shared_ptr<GameVersion> OrganizedModCollection::getGameVersion(size_t index
 	return m_organizedGameVersions[index];
 }
 
-std::shared_ptr<GameVersion> OrganizedModCollection::getGameVersion(const std::string & gameVersion) const {
-	size_t gameVersionIndex = indexOfGameVersion(gameVersion);
+std::shared_ptr<GameVersion> OrganizedModCollection::getGameVersionWithID(const std::string & gameVersionID) const {
+	size_t gameVersionIndex = indexOfGameVersionWithID(gameVersionID);
 
 	return gameVersionIndex == std::numeric_limits<size_t>::max() ? nullptr : m_organizedGameVersions[gameVersionIndex];
 }
@@ -1006,14 +1006,14 @@ bool OrganizedModCollection::setSelectedGameVersion(size_t index) {
 	return true;
 }
 
-bool OrganizedModCollection::setSelectedGameVersion(const std::string & gameVersion) {
-	if(gameVersion.empty()) {
+bool OrganizedModCollection::setSelectedGameVersionByID(const std::string & gameVersionID) {
+	if(gameVersionID.empty()) {
 		clearSelectedGameVersion();
 
 		return true;
 	}
 
-	return setSelectedGameVersion(indexOfGameVersion(gameVersion));
+	return setSelectedGameVersion(indexOfGameVersionWithID(gameVersionID));
 }
 
 bool OrganizedModCollection::setSelectedGameVersion(const GameVersion * gameVersion) {
@@ -1023,7 +1023,7 @@ bool OrganizedModCollection::setSelectedGameVersion(const GameVersion * gameVers
 		return true;
 	}
 
-	return setSelectedGameVersion(gameVersion->getName());
+	return setSelectedGameVersionByID(gameVersion->getID());
 }
 
 bool OrganizedModCollection::selectRandomGameVersion() {
@@ -1060,21 +1060,21 @@ void OrganizedModCollection::clearSelectedGameVersion() {
 }
 
 size_t OrganizedModCollection::getSupportedModCountForGameVersion(const GameVersion & gameVersion) const {
-	return getSupportedModCountForGameVersion(gameVersion.getName());
+	return getSupportedModCountForGameVersionWithID(gameVersion.getID());
 }
 
-size_t OrganizedModCollection::getSupportedModCountForGameVersion(const std::string & gameVersion) const {
-	std::map<std::string, size_t>::const_iterator gameVersionSupportedModCount(m_gameVersionSupportedModCountMap.find(gameVersion));
+size_t OrganizedModCollection::getSupportedModCountForGameVersionWithID(const std::string & gameVersionID) const {
+	std::map<std::string, size_t>::const_iterator gameVersionSupportedModCount(m_gameVersionSupportedModCountMap.find(gameVersionID));
 
 	return gameVersionSupportedModCount == m_gameVersionSupportedModCountMap.end() ? 0 : gameVersionSupportedModCount->second;
 }
 
 size_t OrganizedModCollection::getCompatibleModCountForGameVersion(const GameVersion & gameVersion) const {
-	return getCompatibleModCountForGameVersion(gameVersion.getName());
+	return getCompatibleModCountForGameVersionWithID(gameVersion.getID());
 }
 
-size_t OrganizedModCollection::getCompatibleModCountForGameVersion(const std::string & gameVersion) const {
-	std::map<std::string, size_t>::const_iterator gameVersionCompatibleModCount(m_gameVersionCompatibleModCountMap.find(gameVersion));
+size_t OrganizedModCollection::getCompatibleModCountForGameVersionWithID(const std::string & gameVersionID) const {
+	std::map<std::string, size_t>::const_iterator gameVersionCompatibleModCount(m_gameVersionCompatibleModCountMap.find(gameVersionID));
 
 	return gameVersionCompatibleModCount == m_gameVersionCompatibleModCountMap.end() ? 0 : gameVersionCompatibleModCount->second;
 }
@@ -1701,13 +1701,13 @@ void OrganizedModCollection::updateGameVersionSupportedModCounts() {
 	for(size_t i = 0; i < m_gameVersions->numberOfGameVersions(); i++) {
 		gameVersion = m_gameVersions->getGameVersion(i);
 
-		m_gameVersionSupportedModCountMap[gameVersion->getName()] = 0;
+		m_gameVersionSupportedModCountMap[gameVersion->getID()] = 0;
 
 		for(size_t j = 0; j < m_mods->numberOfMods(); j++) {
 			mod = m_mods->getMod(j);
 
 			if(mod->isGameVersionSupported(*gameVersion)) {
-				m_gameVersionSupportedModCountMap[gameVersion->getName()]++;
+				m_gameVersionSupportedModCountMap[gameVersion->getID()]++;
 			}
 		}
 	}
@@ -1726,13 +1726,13 @@ void OrganizedModCollection::updateGameVersionCompatibleModCounts() {
 	for(size_t i = 0; i < m_gameVersions->numberOfGameVersions(); i++) {
 		gameVersion = m_gameVersions->getGameVersion(i);
 
-		m_gameVersionCompatibleModCountMap[gameVersion->getName()] = 0;
+		m_gameVersionCompatibleModCountMap[gameVersion->getID()] = 0;
 
 		for(size_t j = 0; j < m_mods->numberOfMods(); j++) {
 			mod = m_mods->getMod(j);
 
 			if(mod->isGameVersionCompatible(*gameVersion)) {
-				m_gameVersionCompatibleModCountMap[gameVersion->getName()]++;
+				m_gameVersionCompatibleModCountMap[gameVersion->getID()]++;
 			}
 		}
 	}
@@ -2009,26 +2009,26 @@ std::vector<std::shared_ptr<GameVersion>> OrganizedModCollection::mergeGameVersi
 	while(!left.empty() && !right.empty()) {
 		if(m_sortType == SortType::Name) {
 			if(m_sortDirection == SortDirection::Ascending) {
-				pushLeft = Utilities::compareStringsIgnoreCase(left[0]->getName(), right[0]->getName()) <= 0;
+				pushLeft = Utilities::compareStringsIgnoreCase(left[0]->getShortName(), right[0]->getShortName()) <= 0;
 			}
 			else {
-				pushLeft = Utilities::compareStringsIgnoreCase(left[0]->getName(), right[0]->getName()) > 0;
+				pushLeft = Utilities::compareStringsIgnoreCase(left[0]->getShortName(), right[0]->getShortName()) > 0;
 			}
 		}
 		else if(m_sortType == SortType::NumberOfSupportedMods) {
 			if(m_sortDirection == SortDirection::Ascending) {
-				pushLeft = getSupportedModCountForGameVersion(left[0]->getName()) <= getSupportedModCountForGameVersion(right[0]->getName());
+				pushLeft = getSupportedModCountForGameVersionWithID(left[0]->getID()) <= getSupportedModCountForGameVersionWithID(right[0]->getID());
 			}
 			else {
-				pushLeft = getSupportedModCountForGameVersion(left[0]->getName()) > getSupportedModCountForGameVersion(right[0]->getName());
+				pushLeft = getSupportedModCountForGameVersionWithID(left[0]->getID()) > getSupportedModCountForGameVersionWithID(right[0]->getID());
 			}
 		}
 		else if(m_sortType == SortType::NumberOfCompatibleMods) {
 			if(m_sortDirection == SortDirection::Ascending) {
-				pushLeft = getCompatibleModCountForGameVersion(left[0]->getName()) <= getCompatibleModCountForGameVersion(right[0]->getName());
+				pushLeft = getCompatibleModCountForGameVersionWithID(left[0]->getID()) <= getCompatibleModCountForGameVersionWithID(right[0]->getID());
 			}
 			else {
-				pushLeft = getCompatibleModCountForGameVersion(left[0]->getName()) > getCompatibleModCountForGameVersion(right[0]->getName());
+				pushLeft = getCompatibleModCountForGameVersionWithID(left[0]->getID()) > getCompatibleModCountForGameVersionWithID(right[0]->getID());
 			}
 		}
 		else if(m_sortType == SortType::Random) {

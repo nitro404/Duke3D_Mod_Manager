@@ -57,7 +57,7 @@ SettingsManagerPanel::SettingsManagerPanel(std::shared_ptr<ModManager> modManage
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->gameTempDirectoryName, SettingsManager::DEFAULT_GAME_TEMP_DIRECTORY_NAME, "Game Temp Directory Name", generalSettingsPanel, generalSettingsSizer, 1));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->tempSymlinkName, SettingsManager::DEFAULT_TEMP_SYMLINK_NAME, "Temp Symbolic Link Name", generalSettingsPanel, generalSettingsSizer, 1));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->cacheDirectoryPath, SettingsManager::DEFAULT_CACHE_DIRECTORY_PATH, "Cache Directory Path", generalSettingsPanel, generalSettingsSizer, 1));
-	m_preferredGameVersionSettingPanel = SettingPanel::createStringChoiceSettingPanel(settings->preferredGameVersion, SettingsManager::DEFAULT_PREFERRED_GAME_VERSION, "Preferred Game Version", gameVersions->getGameVersionDisplayNames(false), generalSettingsPanel, generalSettingsSizer);
+	m_preferredGameVersionSettingPanel = SettingPanel::createStringChoiceSettingPanel(settings->preferredGameVersionID, SettingsManager::DEFAULT_PREFERRED_GAME_VERSION_ID, "Preferred Game Version", gameVersions->getGameVersionShortNames(false), generalSettingsPanel, generalSettingsSizer, gameVersions->getGameVersionIdentifiers());
 	m_settingsPanels.push_back(m_preferredGameVersionSettingPanel);
 	m_settingsPanels.push_back(SettingPanel::createEnumSettingPanel<GameType>(settings->gameType, SettingsManager::DEFAULT_GAME_TYPE, "Game Type", generalSettingsPanel, generalSettingsSizer));
 
@@ -90,7 +90,7 @@ SettingsManagerPanel::SettingsManagerPanel(std::shared_ptr<ModManager> modManage
 
 	wxPanel * dosboxSettingsPanel = new wxPanel(dosboxSettingsBox, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 
-	m_preferredDOSBoxVersionSettingPanel = SettingPanel::createStringChoiceSettingPanel(settings->preferredDOSBoxVersion, SettingsManager::DEFAULT_PREFERRED_DOSBOX_VERSION, "Preferred DOSBox Version", dosboxVersions->getDOSBoxVersionShortNames(false), dosboxSettingsPanel, dosboxSettingsSizer, dosboxVersions->getDOSBoxVersionIdentifiers());
+	m_preferredDOSBoxVersionSettingPanel = SettingPanel::createStringChoiceSettingPanel(settings->preferredDOSBoxVersionID, SettingsManager::DEFAULT_PREFERRED_DOSBOX_VERSION_ID, "Preferred DOSBox Version", dosboxVersions->getDOSBoxVersionShortNames(false), dosboxSettingsPanel, dosboxSettingsSizer, dosboxVersions->getDOSBoxVersionIdentifiers());
 	m_settingsPanels.push_back(m_preferredDOSBoxVersionSettingPanel);
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxVersionsListFilePath, SettingsManager::DEFAULT_DOSBOX_VERSIONS_LIST_FILE_PATH, "DOSBox Versions List File Path", dosboxSettingsPanel, dosboxSettingsSizer));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxArguments, SettingsManager::DEFAULT_DOSBOX_ARGUMENTS, "Application Arguments", dosboxSettingsPanel, dosboxSettingsSizer));
@@ -311,9 +311,9 @@ void SettingsManagerPanel::onDOSBoxVersionCollectionItemModified(DOSBoxVersionCo
 }
 
 void SettingsManagerPanel::onGameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) {
-	m_preferredGameVersionSettingPanel->setChoices(gameVersionCollection.getGameVersionDisplayNames(false));
+	m_preferredGameVersionSettingPanel->setChoices(gameVersionCollection.getGameVersionShortNames(false));
 }
 
 void SettingsManagerPanel::onGameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) {
-	m_preferredGameVersionSettingPanel->setChoices(gameVersionCollection.getGameVersionDisplayNames(false));
+	m_preferredGameVersionSettingPanel->setChoices(gameVersionCollection.getGameVersionShortNames(false));
 }

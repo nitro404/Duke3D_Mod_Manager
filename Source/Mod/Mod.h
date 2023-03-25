@@ -178,12 +178,16 @@ public:
 	bool isGameVersionCompatible(const GameVersion & gameVersion) const;
 	std::vector<std::shared_ptr<GameVersion>> getSupportedGameVersions(const GameVersionCollection & gameVersions) const;
 	std::vector<std::shared_ptr<GameVersion>> getSupportedGameVersions(const std::vector<std::shared_ptr<GameVersion>> & gameVersions) const;
-	std::vector<std::string> getSupportedGameVersionNames(const GameVersionCollection & gameVersions) const;
-	std::vector<std::string> getSupportedGameVersionNames(const std::vector<std::shared_ptr<GameVersion>> & gameVersions) const;
+	std::vector<std::string> getSupportedGameVersionLongNames(const GameVersionCollection & gameVersions) const;
+	std::vector<std::string> getSupportedGameVersionLongNames(const std::vector<std::shared_ptr<GameVersion>> & gameVersions) const;
+	std::vector<std::string> getSupportedGameVersionShortNames(const GameVersionCollection & gameVersions) const;
+	std::vector<std::string> getSupportedGameVersionShortNames(const std::vector<std::shared_ptr<GameVersion>> & gameVersions) const;
 	std::vector<std::shared_ptr<GameVersion>> getCompatibleGameVersions(const GameVersionCollection & gameVersions) const;
 	std::vector<std::shared_ptr<GameVersion>> getCompatibleGameVersions(const std::vector<std::shared_ptr<GameVersion>> & gameVersions) const;
-	std::vector<std::string> getCompatibleGameVersionNames(const GameVersionCollection & gameVersions) const;
-	std::vector<std::string> getCompatibleGameVersionNames(const std::vector<std::shared_ptr<GameVersion>> & gameVersions) const;
+	std::vector<std::string> getCompatibleGameVersionLongNames(const GameVersionCollection & gameVersions) const;
+	std::vector<std::string> getCompatibleGameVersionLongNames(const std::vector<std::shared_ptr<GameVersion>> & gameVersions) const;
+	std::vector<std::string> getCompatibleGameVersionShortNames(const GameVersionCollection & gameVersions) const;
+	std::vector<std::string> getCompatibleGameVersionShortNames(const std::vector<std::shared_ptr<GameVersion>> & gameVersions) const;
 
 	bool checkVersions(bool verbose = true) const;
 	bool checkVersionTypes(bool verbose = true) const;

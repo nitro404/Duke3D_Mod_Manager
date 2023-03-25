@@ -16,13 +16,14 @@ class GameDownloadVersion;
 
 class GameDownload final {
 public:
-	GameDownload(const std::string & name);
+	GameDownload(const std::string & id, const std::string & name);
 	GameDownload(GameDownload && d) noexcept;
 	GameDownload(const GameDownload & d);
 	GameDownload & operator = (GameDownload && d) noexcept;
 	GameDownload & operator = (const GameDownload & d);
 	~GameDownload();
 
+	const std::string & getID() const;
 	const std::string & getName() const;
 
 	size_t numberOfVersions() const;
@@ -54,6 +55,7 @@ protected:
 	void updateParent();
 
 private:
+	std::string m_id;
 	std::string m_name;
 	std::vector<std::shared_ptr<GameDownloadVersion>> m_versions;
 };

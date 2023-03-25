@@ -10,24 +10,29 @@
 #include <array>
 #include <string_view>
 
+static constexpr const char * JSON_GAME_DOWNLOAD_ID_PROPERTY_NAME = "id";
 static constexpr const char * JSON_GAME_DOWNLOAD_NAME_PROPERTY_NAME = "name";
 static constexpr const char * JSON_GAME_DOWNLOAD_VERSIONS_PROPERTY_NAME = "versions";
-static const std::array<std::string_view, 2> JSON_GAME_DOWNLOAD_PROPERTY_NAMES = {
+static const std::array<std::string_view, 3> JSON_GAME_DOWNLOAD_PROPERTY_NAMES = {
+	JSON_GAME_DOWNLOAD_ID_PROPERTY_NAME,
 	JSON_GAME_DOWNLOAD_NAME_PROPERTY_NAME,
 	JSON_GAME_DOWNLOAD_VERSIONS_PROPERTY_NAME
 };
 
-GameDownload::GameDownload(const std::string & name)
-	: m_name(Utilities::trimString(name)) { }
+GameDownload::GameDownload(const std::string & id, const std::string & name)
+	: m_id(Utilities::trimString(id))
+	, m_name(Utilities::trimString(name)) { }
 
 GameDownload::GameDownload(GameDownload && v) noexcept
-	: m_name(std::move(v.m_name))
+	: m_id(std::move(v.m_id))
+	, m_name(std::move(v.m_name))
 	, m_versions(std::move(v.m_versions)) {
 	updateParent();
 }
 
 GameDownload::GameDownload(const GameDownload & d)
-	: m_name(d.m_name) {
+	: m_id(d.m_id)
+	, m_name(d.m_name) {
 	for(std::vector<std::shared_ptr<GameDownloadVersion>>::const_iterator i = d.m_versions.begin(); i != d.m_versions.end(); ++i) {
 		m_versions.push_back(std::make_shared<GameDownloadVersion>(**i));
 	}
@@ -37,6 +42,7 @@ GameDownload::GameDownload(const GameDownload & d)
 
 GameDownload & GameDownload::operator = (GameDownload && d) noexcept {
 	if(this != &d) {
+		m_id = std::move(d.m_id);
 		m_name = std::move(d.m_name);
 		m_versions = std::move(d.m_versions);
 
@@ -49,6 +55,7 @@ GameDownload & GameDownload::operator = (GameDownload && d) noexcept {
 GameDownload & GameDownload::operator = (const GameDownload & d) {
 	m_versions.clear();
 
+	m_id = d.m_id;
 	m_name = d.m_name;
 
 	for(std::vector<std::shared_ptr<GameDownloadVersion>>::const_iterator i = d.m_versions.begin(); i != d.m_versions.end(); ++i) {
@@ -60,7 +67,11 @@ GameDownload & GameDownload::operator = (const GameDownload & d) {
 	return *this;
 }
 
-GameDownload::~GameDownload() { }
+GameDownload::~GameDownload() = default;
+
+const std::string & GameDownload::getID() const {
+	return m_id;
+}
 
 const std::string & GameDownload::getName() const {
 	return m_name;
@@ -251,6 +262,9 @@ void GameDownload::updateParent() {
 rapidjson::Value GameDownload::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const {
 	rapidjson::Value gameDownloadVersionValue(rapidjson::kObjectType);
 
+	rapidjson::Value idValue(m_id.c_str(), allocator);
+	gameDownloadVersionValue.AddMember(rapidjson::StringRef(JSON_GAME_DOWNLOAD_ID_PROPERTY_NAME), idValue, allocator);
+
 	rapidjson::Value nameValue(m_name.c_str(), allocator);
 	gameDownloadVersionValue.AddMember(rapidjson::StringRef(JSON_GAME_DOWNLOAD_NAME_PROPERTY_NAME), nameValue, allocator);
 
@@ -289,7 +303,27 @@ std::unique_ptr<GameDownload> GameDownload::parseFrom(const rapidjson::Value & g
 		}
 	}
 
-	// parse the version property
+	// parse the id property
+	if(!gameDownloadVersionValue.HasMember(JSON_GAME_DOWNLOAD_ID_PROPERTY_NAME)) {
+		spdlog::error("Game download is missing '{}' property'.", JSON_GAME_DOWNLOAD_ID_PROPERTY_NAME);
+		return nullptr;
+	}
+
+	const rapidjson::Value & idValue = gameDownloadVersionValue[JSON_GAME_DOWNLOAD_ID_PROPERTY_NAME];
+
+	if(!idValue.IsString()) {
+		spdlog::error("Game download '{}' property has invalid type: '{}', expected 'string'.", JSON_GAME_DOWNLOAD_ID_PROPERTY_NAME, Utilities::typeToString(idValue.GetType()));
+		return nullptr;
+	}
+
+	std::string id(idValue.GetString());
+
+	if(id.empty()) {
+		spdlog::error("Game download '{}' property cannot be empty.", JSON_GAME_DOWNLOAD_ID_PROPERTY_NAME);
+		return nullptr;
+	}
+
+	// parse the name property
 	if(!gameDownloadVersionValue.HasMember(JSON_GAME_DOWNLOAD_NAME_PROPERTY_NAME)) {
 		spdlog::error("Game download is missing '{}' property'.", JSON_GAME_DOWNLOAD_NAME_PROPERTY_NAME);
 		return nullptr;
@@ -302,8 +336,15 @@ std::unique_ptr<GameDownload> GameDownload::parseFrom(const rapidjson::Value & g
 		return nullptr;
 	}
 
-	// initialize the name property
-	std::unique_ptr<GameDownload> newGameDownload(std::make_unique<GameDownload>(nameValue.GetString()));
+	std::string name(nameValue.GetString());
+
+	if(name.empty()) {
+		spdlog::error("Game download '{}' property cannot be empty.", JSON_GAME_DOWNLOAD_NAME_PROPERTY_NAME);
+		return nullptr;
+	}
+
+	// initialize the game download
+	std::unique_ptr<GameDownload> newGameDownload(std::make_unique<GameDownload>(id, name));
 
 	// parse the versions property
 	if(!gameDownloadVersionValue.HasMember(JSON_GAME_DOWNLOAD_VERSIONS_PROPERTY_NAME)) {
@@ -342,7 +383,8 @@ std::unique_ptr<GameDownload> GameDownload::parseFrom(const rapidjson::Value & g
 }
 
 bool GameDownload::isValid() const {
-	if(m_name.empty() ||
+	if(m_id.empty() ||
+	   m_name.empty() ||
 	   m_versions.empty()) {
 		return false;
 	}
@@ -372,6 +414,7 @@ bool GameDownload::isValid(const GameDownload * d) {
 
 bool GameDownload::operator == (const GameDownload & v) const {
 	if(m_versions.size() != v.m_versions.size() ||
+	   !Utilities::areStringsEqual(m_id, v.m_id) ||
 	   !Utilities::areStringsEqual(m_name, v.m_name)) {
 		return false;
 	}

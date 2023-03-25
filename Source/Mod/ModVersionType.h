@@ -9,6 +9,7 @@
 #include <vector>
 
 class GameVersion;
+class GameVersionCollection;
 class Mod;
 class ModVersion;
 class ModGameVersion;
@@ -37,16 +38,16 @@ public:
 	void setType(const std::string & type);
 
 	size_t numberOfGameVersions() const;
-	bool hasGameVersion(const std::string & gameVersion) const;
+	bool hasGameVersionWithID(const std::string & gameVersionID) const;
 	bool hasGameVersion(const ModGameVersion & gameVersion) const;
-	size_t indexOfGameVersion(const std::string & gameVersion) const;
+	size_t indexOfGameVersionWithID(const std::string & gameVersionID) const;
 	size_t indexOfGameVersion(const ModGameVersion & gameVersion) const;
 	std::shared_ptr<ModGameVersion> getGameVersion(size_t index) const;
-	std::shared_ptr<ModGameVersion> getGameVersion(const std::string & gameVersion) const;
+	std::shared_ptr<ModGameVersion> getGameVersionWithID(const std::string & gameVersionID) const;
 	const std::vector<std::shared_ptr<ModGameVersion>> & getGameVersions() const;
 	bool addGameVersion(const ModGameVersion & gameVersion);
 	bool removeGameVersion(size_t index);
-	bool removeGameVersion(const std::string & gameVersion);
+	bool removeGameVersionWithID(const std::string & gameVersionID);
 	bool removeGameVersion(const ModGameVersion & gameVersion);
 	void clearGameVersions();
 
@@ -58,7 +59,9 @@ public:
 	bool isGameVersionSupported(const GameVersion & gameVersion) const;
 	bool isGameVersionCompatible(const GameVersion & gameVersion) const;
 	std::vector<std::shared_ptr<ModGameVersion>> getCompatibleModGameVersions(const GameVersion & gameVersion) const;
-	std::vector<std::string> getCompatibleModGameVersionNames(const GameVersion & gameVersion) const;
+	std::vector<std::string> getCompatibleModGameVersionIdentifiers(const GameVersion & gameVersion) const;
+	std::vector<std::string> getCompatibleModGameVersionLongNames(const GameVersion & gameVersion, const GameVersionCollection & gameVersions) const;
+	std::vector<std::string> getCompatibleModGameVersionShortNames(const GameVersion & gameVersion, const GameVersionCollection & gameVersions) const;
 
 	bool isValid(bool skipFileInfoValidation = false) const;
 	static bool isValid(const ModVersionType * t, bool skipFileInfoValidation = false);

@@ -18,12 +18,13 @@
 GameVersionPanel::GameVersionPanel(std::shared_ptr<GameVersion> gameVersion, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "Game Version")
 	, m_gameVersion(gameVersion != nullptr ? gameVersion : std::make_shared<GameVersion>())
+	, m_gameVersionIDSettingPanel(nullptr)
 	, m_gamePathSettingPanel(nullptr)
 	, m_modified(false) {
 	const GameVersion * defaultGameVersion = nullptr;
 
 	for(const GameVersion * currentDefaultGameVersion : GameVersion::DEFAULT_GAME_VERSIONS) {
-		if(Utilities::areStringsEqualIgnoreCase(m_gameVersion->getName(), currentDefaultGameVersion->getName())) {
+		if(Utilities::areStringsEqualIgnoreCase(m_gameVersion->getID(), currentDefaultGameVersion->getID())) {
 			defaultGameVersion = currentDefaultGameVersion;
 			break;
 		}
@@ -39,8 +40,11 @@ GameVersionPanel::GameVersionPanel(std::shared_ptr<GameVersion> gameVersion, wxW
 
 	wxPanel * gameInformationPanel = new wxPanel(gameInformationBox, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 
-	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&GameVersion::getName, m_gameVersion.get()), std::bind(&GameVersion::setName, m_gameVersion.get(), std::placeholders::_1), defaultGameVersion != nullptr ? defaultGameVersion->getName() : "", "Game Version Name", gameInformationPanel, gameInformationSizer, 1));
-	m_settingsPanels.back()->setEditable(m_gameVersion->isRenamable());
+	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&GameVersion::getID, m_gameVersion.get()), std::bind(&GameVersion::setID, m_gameVersion.get(), std::placeholders::_1), defaultGameVersion != nullptr ? defaultGameVersion->getID() : "", "Game Version Identifier", gameInformationPanel, gameInformationSizer, 1));
+	m_gameVersionIDSettingPanel = m_settingsPanels.back();
+	m_gameVersionIDSettingPanel->setEditable(!m_gameVersion->hasID());
+	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&GameVersion::getLongName, m_gameVersion.get()), std::bind(&GameVersion::setLongName, m_gameVersion.get(), std::placeholders::_1), defaultGameVersion != nullptr ? defaultGameVersion->getLongName() : "", "Game Version Long Name", gameInformationPanel, gameInformationSizer, 1));
+	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&GameVersion::getShortName, m_gameVersion.get()), std::bind(&GameVersion::setShortName, m_gameVersion.get(), std::placeholders::_1), defaultGameVersion != nullptr ? defaultGameVersion->getShortName() : "", "Game Version Short Name", gameInformationPanel, gameInformationSizer, 1));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&GameVersion::getWebsite, m_gameVersion.get()), std::bind(&GameVersion::setWebsite, m_gameVersion.get(), std::placeholders::_1), defaultGameVersion != nullptr ? defaultGameVersion->getWebsite() : "", "Website", gameInformationPanel, gameInformationSizer));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&GameVersion::getSourceCodeURL, m_gameVersion.get()), std::bind(&GameVersion::setSourceCodeURL, m_gameVersion.get(), std::placeholders::_1), defaultGameVersion != nullptr ? defaultGameVersion->getSourceCodeURL() : "", "Source Code URL", gameInformationPanel, gameInformationSizer));
 
@@ -66,17 +70,20 @@ GameVersionPanel::GameVersionPanel(std::shared_ptr<GameVersion> gameVersion, wxW
 	wxStaticBox * compatibleGameVersionsBox = new wxStaticBox(this, wxID_ANY, "Compatible Game Versions", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Compatible Game Versions");
 	compatibleGameVersionsBox->SetOwnFont(compatibleGameVersionsBox->GetFont().MakeBold());
 
-	std::vector<std::string> compatibleGameVersionNames(GameVersionCollection::getGameVersionDisplayNamesFrom(GameVersion::DEFAULT_GAME_VERSIONS, false));
+	std::vector<std::string> compatibleGameVersionIdentifiers(GameVersionCollection::getGameVersionIdentifiersFrom(GameVersion::DEFAULT_GAME_VERSIONS));
+	std::vector<std::string> compatibleGameVersionShortNames(GameVersionCollection::getGameVersionShortNamesFrom(GameVersion::DEFAULT_GAME_VERSIONS, false));
 
-	std::vector<std::string>::const_iterator currentGameVersionNameIterator(std::find_if(compatibleGameVersionNames.cbegin(), compatibleGameVersionNames.cend(), [this](const std::string & currentGameVersionName) {
-		return Utilities::areStringsEqualIgnoreCase(m_gameVersion->getName(), currentGameVersionName);
+	std::vector<std::string>::const_iterator currentGameVersionIdentifierIterator(std::find_if(compatibleGameVersionIdentifiers.cbegin(), compatibleGameVersionIdentifiers.cend(), [this](const std::string & currentGameVersionID) {
+		return Utilities::areStringsEqualIgnoreCase(m_gameVersion->getID(), currentGameVersionID);
 	}));
 
-	if(currentGameVersionNameIterator != compatibleGameVersionNames.cend()) {
-		compatibleGameVersionNames.erase(currentGameVersionNameIterator);
+	if(currentGameVersionIdentifierIterator != compatibleGameVersionIdentifiers.cend()) {
+		size_t currentGameversionIndex = currentGameVersionIdentifierIterator - compatibleGameVersionIdentifiers.cbegin();
+		compatibleGameVersionIdentifiers.erase(compatibleGameVersionIdentifiers.cbegin() + currentGameversionIndex);
+		compatibleGameVersionShortNames.erase(compatibleGameVersionShortNames.cbegin() + currentGameversionIndex);
 	}
 
-	SettingPanel * compatibleGameVersionsPanel = SettingPanel::createStringMultiChoiceSettingPanel(std::bind(&GameVersion::getCompatibleGameVersions, m_gameVersion.get()), std::bind(&GameVersion::hasCompatibleGameVersionWithName, m_gameVersion.get(), std::placeholders::_1), std::bind(&GameVersion::addCompatibleGameVersionWithName, m_gameVersion.get(), std::placeholders::_1), std::bind(&GameVersion::removeCompatibleGameVersionWithName, m_gameVersion.get(), std::placeholders::_1), "Compatible Game Versions", false, compatibleGameVersionNames, compatibleGameVersionsBox);
+	SettingPanel * compatibleGameVersionsPanel = SettingPanel::createStringMultiChoiceSettingPanel(std::bind(&GameVersion::getCompatibleGameVersionIdentifiers, m_gameVersion.get()), std::bind(&GameVersion::hasCompatibleGameVersionWithID, m_gameVersion.get(), std::placeholders::_1), std::bind(&GameVersion::addCompatibleGameVersionWithID, m_gameVersion.get(), std::placeholders::_1), std::bind(&GameVersion::removeCompatibleGameVersionWithID, m_gameVersion.get(), std::placeholders::_1), "Compatible Game Versions", false, compatibleGameVersionShortNames, compatibleGameVersionsBox, 0, nullptr, compatibleGameVersionIdentifiers);
 	m_settingsPanels.push_back(compatibleGameVersionsPanel);
 
 	wxStaticBox * supportedOperatingSystemsBox = new wxStaticBox(this, wxID_ANY, "Supported Operating Systems", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Supported Operating Systems");
@@ -166,7 +173,7 @@ bool GameVersionPanel::isModified() const {
 }
 
 std::string GameVersionPanel::getPanelName() const {
-	return m_gameVersion->getName().empty() ? "NEW GAME *" : fmt::format("{}{}", m_gameVersion->getName(), m_modified ? " *" : "");
+	return m_gameVersion->hasShortName() ? fmt::format("{}{}", m_gameVersion->getShortName(), m_modified ? " *" : "") : "NEW GAME *";
 }
 
 std::shared_ptr<GameVersion> GameVersionPanel::getGameVersion() const {
@@ -226,6 +233,8 @@ bool GameVersionPanel::save() {
 	}
 
 	m_modified = false;
+
+	m_gameVersionIDSettingPanel->setEditable(false);
 
 	gameVersionSaved(*this);
 

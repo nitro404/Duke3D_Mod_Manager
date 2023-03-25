@@ -44,7 +44,7 @@ private:
 	void onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection);
 	void onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion);
 	void onSettingModified(SettingPanel & settingPanel);
-	
+
 	std::shared_ptr<ModManager> m_modManager;
 	boost::signals2::connection m_preferredDOSBoxVersionChangedConnection;
 	boost::signals2::connection m_dosboxServerIPAddressChangedConnection;

@@ -28,22 +28,30 @@ public:
 
 	size_t numberOfGameVersions() const;
 	bool hasGameVersion(const GameVersion & gameVersion) const;
-	bool hasGameVersionWithName(const std::string & name) const;
+	bool hasGameVersionWithID(const std::string & gameVersionID) const;
 	size_t indexOfGameVersion(const GameVersion & gameVersion) const;
-	size_t indexOfGameVersionWithName(const std::string & name) const;
+	size_t indexOfGameVersionWithID(const std::string & gameVersionID) const;
 	std::shared_ptr<GameVersion> getGameVersion(size_t index) const;
-	std::shared_ptr<GameVersion> getGameVersionWithName(const std::string & name) const;
+	std::shared_ptr<GameVersion> getGameVersionWithID(const std::string & gameVersionID) const;
+	std::string getLongNameOfGameVersionWithID(const std::string & gameVersionID) const;
+	std::string getShortNameOfGameVersionWithID(const std::string & gameVersionID) const;
 	const std::vector<std::shared_ptr<GameVersion>> & getGameVersions() const;
 	std::vector<std::shared_ptr<GameVersion>> getGameVersionsCompatibleWith(size_t index, bool includeSupported = false, std::optional<bool> configured = {}) const;
-	std::vector<std::shared_ptr<GameVersion>> getGameVersionsCompatibleWith(const std::string & name, bool includeSupported = false, std::optional<bool> configured = {}) const;
+	std::vector<std::shared_ptr<GameVersion>> getGameVersionsCompatibleWith(const std::string & gameVersionID, bool includeSupported = false, std::optional<bool> configured = {}) const;
 	std::vector<std::shared_ptr<GameVersion>> getGameVersionsCompatibleWith(const GameVersion & gameVersion, bool includeSupported = false, std::optional<bool> configured = {}) const;
 	std::vector<std::shared_ptr<GameVersion>> getGameVersionsCompatibleWith(const ModGameVersion & modGameVersion, bool includeSupported = false, std::optional<bool> configured = {}) const;
 	std::vector<std::pair<std::shared_ptr<GameVersion>, std::vector<std::shared_ptr<ModGameVersion>>>> getGameVersionsCompatibleWith(const std::vector<std::shared_ptr<ModGameVersion>> & modGameVersions, bool includeSupported = false, std::optional<bool> configured = {}) const;
 	std::vector<std::shared_ptr<GameVersion>> getConfiguredGameVersions() const;
 	std::vector<std::shared_ptr<GameVersion>> getUnconfiguredGameVersions() const;
-	std::vector<std::string> getGameVersionDisplayNames(bool prependItemNumber = true) const;
-	static std::vector<std::string> getGameVersionDisplayNamesFrom(const std::vector<std::shared_ptr<GameVersion>> & gameVersions, bool prependItemNumber = true);
-	static std::vector<std::string> getGameVersionDisplayNamesFrom(const std::vector<const GameVersion *> & gameVersions, bool prependItemNumber = true);
+	std::vector<std::string> getGameVersionIdentifiers() const;
+	static std::vector<std::string> getGameVersionIdentifiersFrom(const std::vector<std::shared_ptr<GameVersion>> & gameVersions);
+	static std::vector<std::string> getGameVersionIdentifiersFrom(const std::vector<const GameVersion *> & gameVersions);
+	std::vector<std::string> getGameVersionLongNames(bool prependItemNumber = true) const;
+	static std::vector<std::string> getGameVersionLongNamesFrom(const std::vector<std::shared_ptr<GameVersion>> & gameVersions, bool prependItemNumber = true);
+	static std::vector<std::string> getGameVersionLongNamesFrom(const std::vector<const GameVersion *> & gameVersions, bool prependItemNumber = true);
+	std::vector<std::string> getGameVersionShortNames(bool prependItemNumber = true) const;
+	static std::vector<std::string> getGameVersionShortNamesFrom(const std::vector<std::shared_ptr<GameVersion>> & gameVersions, bool prependItemNumber = true);
+	static std::vector<std::string> getGameVersionShortNamesFrom(const std::vector<const GameVersion *> & gameVersions, bool prependItemNumber = true);
 	bool addGameVersion(const GameVersion & gameVersion);
 	bool addGameVersion(std::shared_ptr<GameVersion> gameVersion);
 	size_t addGameVersions(const std::vector<GameVersion> & gameVersions);
@@ -51,13 +59,13 @@ public:
 	size_t addGameVersions(const std::vector<std::shared_ptr<GameVersion>> & gameVersions);
 	bool removeGameVersion(size_t index);
 	bool removeGameVersion(const GameVersion & gameVersion);
-	bool removeGameVersionWithName(const std::string & name);
+	bool removeGameVersionWithID(const std::string & gameVersionID);
 	size_t addMissingDefaultGameVersions();
 	void setDefaultGameVersions();
 	void clearGameVersions();
 
 	size_t checkForMissingExecutables() const;
-	size_t checkForMissingExecutables(const std::string & name) const;
+	size_t checkForMissingExecutables(const std::string & gameVersionID) const;
 
 	rapidjson::Document toJSON() const;
 	static std::unique_ptr<GameVersionCollection> parseFrom(const rapidjson::Value & gameVersionCollectionValue);

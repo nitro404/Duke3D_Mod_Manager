@@ -93,7 +93,7 @@ ModDownload::ModDownload(ModDownload && d) noexcept
 	, m_version(std::move(d.m_version))
 	, m_versionType(std::move(d.m_versionType))
 	, m_special(std::move(d.m_special))
-	, m_gameVersion(std::move(d.m_gameVersion))
+	, m_gameVersionID(std::move(d.m_gameVersionID))
 	, m_type(std::move(d.m_type))
 	, m_sha1(std::move(d.m_sha1))
 	, m_converted(d.m_converted)
@@ -109,7 +109,7 @@ ModDownload::ModDownload(const ModDownload & d)
 	, m_version(d.m_version)
 	, m_versionType(d.m_versionType)
 	, m_special(d.m_special)
-	, m_gameVersion(d.m_gameVersion)
+	, m_gameVersionID(d.m_gameVersionID)
 	, m_type(d.m_type)
 	, m_sha1(d.m_sha1)
 	, m_converted(d.m_converted)
@@ -126,7 +126,7 @@ ModDownload & ModDownload::operator = (ModDownload && d) noexcept {
 		m_version = std::move(d.m_version);
 		m_versionType = std::move(d.m_versionType);
 		m_special = std::move(d.m_special);
-		m_gameVersion = std::move(d.m_gameVersion);
+		m_gameVersionID = std::move(d.m_gameVersionID);
 		m_type = std::move(d.m_type);
 		m_sha1 = std::move(d.m_sha1);
 		m_converted = d.m_converted;
@@ -145,7 +145,7 @@ ModDownload & ModDownload::operator = (const ModDownload & d) {
 	m_version = d.m_version;
 	m_versionType = d.m_versionType;
 	m_special = d.m_special;
-	m_gameVersion = d.m_gameVersion;
+	m_gameVersionID = d.m_gameVersionID;
 	m_type = d.m_type;
 	m_sha1 = d.m_sha1;
 	m_converted = d.m_converted;
@@ -187,8 +187,8 @@ const std::string & ModDownload::getSpecial() const {
 	return m_special;
 }
 
-const std::string & ModDownload::getGameVersion() const {
-	return m_gameVersion;
+const std::string & ModDownload::getGameVersionID() const {
+	return m_gameVersionID;
 }
 
 const std::string & ModDownload::getType() const {
@@ -222,7 +222,7 @@ const std::string & ModDownload::getSHA1() const {
 }
 
 bool ModDownload::isEDuke32() const {
-	return Utilities::areStringsEqualIgnoreCase(m_gameVersion, GameVersion::EDUKE32.getName());
+	return Utilities::areStringsEqualIgnoreCase(m_gameVersionID, GameVersion::EDUKE32.getID());
 }
 
 bool ModDownload::isConverted() const {
@@ -297,8 +297,8 @@ void ModDownload::setSpecial(const std::string & special) {
 	m_special = Utilities::trimString(special);
 }
 
-void ModDownload::setGameVersion(const std::string & gameVersion) {
-	m_gameVersion = Utilities::trimString(gameVersion);
+void ModDownload::setGameVersionID(const std::string & gameVersionID) {
+	m_gameVersionID = Utilities::trimString(gameVersionID);
 }
 
 void ModDownload::setType(const std::string & type) {
@@ -369,8 +369,8 @@ rapidjson::Value ModDownload::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::C
 		modDownloadValue.AddMember(rapidjson::StringRef(JSON_MOD_DOWNLOAD_SPECIAL_PROPERTY_NAME), specialValue, allocator);
 	}
 
-	if(!m_gameVersion.empty()) {
-		rapidjson::Value gameVersionValue(m_gameVersion.c_str(), allocator);
+	if(!m_gameVersionID.empty()) {
+		rapidjson::Value gameVersionValue(m_gameVersionID.c_str(), allocator);
 		modDownloadValue.AddMember(rapidjson::StringRef(JSON_MOD_DOWNLOAD_GAME_VERSION_PROPERTY_NAME), gameVersionValue, allocator);
 	}
 
@@ -432,8 +432,8 @@ tinyxml2::XMLElement * ModDownload::toXML(tinyxml2::XMLDocument * document) cons
 		modDownloadElement->SetAttribute(XML_MOD_DOWNLOAD_REPAIRED_ATTRIBUTE_NAME.c_str(), m_repaired.value());
 	}
 
-	if(!m_gameVersion.empty()) {
-		modDownloadElement->SetAttribute(XML_MOD_DOWNLOAD_GAME_VERSION_ATTRIBUTE_NAME.c_str(), m_gameVersion.c_str());
+	if(!m_gameVersionID.empty()) {
+		modDownloadElement->SetAttribute(XML_MOD_DOWNLOAD_GAME_VERSION_ATTRIBUTE_NAME.c_str(), m_gameVersionID.c_str());
 	}
 
 	modDownloadElement->SetAttribute(XML_MOD_DOWNLOAD_TYPE_ATTRIBUTE_NAME.c_str(), m_type.c_str());
@@ -656,7 +656,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const rapidjson::Value & mod
 			return nullptr;
 		}
 
-		newModDownload->setGameVersion(modDownloadGameVersionValue.GetString());
+		newModDownload->setGameVersionID(modDownloadGameVersionValue.GetString());
 	}
 
 	// parse the mod download converted property
@@ -791,7 +791,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const tinyxml2::XMLElement *
 	}
 
 	// initialize the mod download
-	std::unique_ptr<ModDownload> newModDownload = std::make_unique<ModDownload>(modDownloadFileName, modDownloadFileSize, modDownloadType, modDownloadSHA1 == nullptr ? "" : modDownloadSHA1);
+	std::unique_ptr<ModDownload> newModDownload(std::make_unique<ModDownload>(modDownloadFileName, modDownloadFileSize, modDownloadType, modDownloadSHA1 == nullptr ? "" : modDownloadSHA1));
 
 	if(modDownloadVersion != nullptr) {
 		newModDownload->setVersion(modDownloadVersion);
@@ -806,7 +806,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const tinyxml2::XMLElement *
 	}
 
 	if(modDownloadGameVersion != nullptr) {
-		newModDownload->setGameVersion(modDownloadGameVersion);
+		newModDownload->setGameVersionID(modDownloadGameVersion);
 	}
 
 	if(modDownloadPartCountData != nullptr) {
@@ -902,7 +902,7 @@ bool ModDownload::operator == (const ModDownload & d) const {
 		   Utilities::areStringsEqualIgnoreCase(m_version, d.m_version) &&
 		   Utilities::areStringsEqualIgnoreCase(m_versionType, d.m_versionType) &&
 		   Utilities::areStringsEqualIgnoreCase(m_special, d.m_special) &&
-		   Utilities::areStringsEqualIgnoreCase(m_gameVersion, d.m_gameVersion) &&
+		   Utilities::areStringsEqualIgnoreCase(m_gameVersionID, d.m_gameVersionID) &&
 		   Utilities::areStringsEqualIgnoreCase(m_type, d.m_type) &&
 		   m_sha1 == d.m_sha1;
 }

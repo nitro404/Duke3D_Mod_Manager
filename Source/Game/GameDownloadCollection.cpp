@@ -59,9 +59,9 @@ size_t GameDownloadCollection::numberOfDownloads() const {
 	return m_downloads.size();
 }
 
-bool GameDownloadCollection::hasDownload(const GameDownload & mod) const {
+bool GameDownloadCollection::hasDownload(const GameDownload & download) const {
 	for(std::vector<std::shared_ptr<GameDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), mod.getName())) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getID(), download.getID())) {
 			return true;
 		}
 	}
@@ -69,13 +69,13 @@ bool GameDownloadCollection::hasDownload(const GameDownload & mod) const {
 	return false;
 }
 
-bool GameDownloadCollection::hasDownloadWithName(const std::string & name) const {
-	if(name.empty()) {
+bool GameDownloadCollection::hasDownloadWithID(const std::string & gameVersionID) const {
+	if(gameVersionID.empty()) {
 		return false;
 	}
 
 	for(std::vector<std::shared_ptr<GameDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getID(), gameVersionID)) {
 			return true;
 		}
 	}
@@ -85,7 +85,7 @@ bool GameDownloadCollection::hasDownloadWithName(const std::string & name) const
 
 size_t GameDownloadCollection::indexOfDownload(const GameDownload & download) const {
 	for(size_t i = 0; i < m_downloads.size(); i++) {
-		if(Utilities::areStringsEqualIgnoreCase(m_downloads[i]->getName(), download.getName())) {
+		if(Utilities::areStringsEqualIgnoreCase(m_downloads[i]->getID(), download.getID())) {
 			return i;
 		}
 	}
@@ -93,13 +93,13 @@ size_t GameDownloadCollection::indexOfDownload(const GameDownload & download) co
 	return std::numeric_limits<size_t>::max();
 }
 
-size_t GameDownloadCollection::indexOfDownloadWithName(const std::string & name) const {
-	if(name.empty()) {
+size_t GameDownloadCollection::indexOfDownloadWithID(const std::string & gameVersionID) const {
+	if(gameVersionID.empty()) {
 		return std::numeric_limits<size_t>::max();
 	}
 
 	for(size_t i = 0; i < m_downloads.size(); i++) {
-		if(Utilities::areStringsEqualIgnoreCase(m_downloads[i]->getName(), name)) {
+		if(Utilities::areStringsEqualIgnoreCase(m_downloads[i]->getID(), gameVersionID)) {
 			return i;
 		}
 	}
@@ -115,13 +115,13 @@ std::shared_ptr<GameDownload> GameDownloadCollection::getDownload(size_t index) 
 	return m_downloads[index];
 }
 
-std::shared_ptr<GameDownload> GameDownloadCollection::getDownloadWithName(const std::string & name) const {
-	if(name.empty()) {
+std::shared_ptr<GameDownload> GameDownloadCollection::getDownloadWithID(const std::string & gameVersionID) const {
+	if(gameVersionID.empty()) {
 		return nullptr;
 	}
 
 	for(std::vector<std::shared_ptr<GameDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getID(), gameVersionID)) {
 			return *i;
 		}
 	}
@@ -129,8 +129,8 @@ std::shared_ptr<GameDownload> GameDownloadCollection::getDownloadWithName(const 
 	return nullptr;
 }
 
-std::shared_ptr<GameDownloadFile> GameDownloadCollection::getLatestGameDownloadFile(const std::string & gameName, GameDownloadFile::Type downloadType, DeviceInformationBridge::OperatingSystemType operatingSystemType, std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalOperatingSystemArchitectureType) const {
-	if(gameName.empty()) {
+std::shared_ptr<GameDownloadFile> GameDownloadCollection::getLatestGameDownloadFile(const std::string & gameVersionID, GameDownloadFile::Type downloadType, DeviceInformationBridge::OperatingSystemType operatingSystemType, std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalOperatingSystemArchitectureType) const {
+	if(gameVersionID.empty()) {
 		return nullptr;
 	}
 
@@ -150,15 +150,15 @@ std::shared_ptr<GameDownloadFile> GameDownloadCollection::getLatestGameDownloadF
 		}
 	}
 
-	return getLatestGameDownloadFile(gameName, downloadType, optionalOperatingSystem.value(), optionalProcessorArchitecture);
+	return getLatestGameDownloadFile(gameVersionID, downloadType, optionalOperatingSystem.value(), optionalProcessorArchitecture);
 }
 
-std::shared_ptr<GameDownloadFile> GameDownloadCollection::getLatestGameDownloadFile(const std::string & gameName, GameDownloadFile::Type downloadType, GameVersion::OperatingSystem operatingSystem, std::optional<GameDownloadFile::ProcessorArchitecture> optionalProcessorArchitecture) const {
-	if(gameName.empty()) {
+std::shared_ptr<GameDownloadFile> GameDownloadCollection::getLatestGameDownloadFile(const std::string & gameVersionID, GameDownloadFile::Type downloadType, GameVersion::OperatingSystem operatingSystem, std::optional<GameDownloadFile::ProcessorArchitecture> optionalProcessorArchitecture) const {
+	if(gameVersionID.empty()) {
 		return nullptr;
 	}
 
-	std::shared_ptr<GameDownload> gameDownload(getDownloadWithName(gameName));
+	std::shared_ptr<GameDownload> gameDownload(getDownloadWithID(gameVersionID));
 
 	if(gameDownload == nullptr) {
 		return nullptr;
@@ -197,7 +197,7 @@ bool GameDownloadCollection::removeDownload(size_t index) {
 
 bool GameDownloadCollection::removeDownload(const GameDownload & download) {
 	for(std::vector<std::shared_ptr<GameDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), download.getName())) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getID(), download.getID())) {
 			m_downloads.erase(i);
 
 			updated(*this);
@@ -209,13 +209,13 @@ bool GameDownloadCollection::removeDownload(const GameDownload & download) {
 	return false;
 }
 
-bool GameDownloadCollection::removeDownloadWithName(const std::string & name) {
-	if(name.empty()) {
+bool GameDownloadCollection::removeDownloadWithID(const std::string & gameVersionID) {
+	if(gameVersionID.empty()) {
 		return false;
 	}
 
 	for(std::vector<std::shared_ptr<GameDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getID(), gameVersionID)) {
 			m_downloads.erase(i);
 
 			updated(*this);
@@ -305,12 +305,12 @@ std::unique_ptr<GameDownloadCollection> GameDownloadCollection::parseFrom(const 
 		newDownload = GameDownload::parseFrom(*i);
 
 		if(!GameDownload::isValid(newDownload.get())) {
-			spdlog::error("Failed to parse game download #{}{}!", newGameDownloadCollection->m_downloads.size() + 1, newGameDownloadCollection->numberOfDownloads() == 0 ? "" : fmt::format(" (after game download with ID '{}')", newGameDownloadCollection->getDownload(newGameDownloadCollection->numberOfDownloads() - 1)->getName()));
+			spdlog::error("Failed to parse game download #{}{}!", newGameDownloadCollection->m_downloads.size() + 1, newGameDownloadCollection->numberOfDownloads() == 0 ? "" : fmt::format(" (after game download with ID '{}')", newGameDownloadCollection->getDownload(newGameDownloadCollection->numberOfDownloads() - 1)->getID()));
 			return nullptr;
 		}
 
 		if(newGameDownloadCollection->hasDownload(*newDownload.get())) {
-			spdlog::warn("Encountered duplicate game download #{}{}.", newGameDownloadCollection->m_downloads.size() + 1, newGameDownloadCollection->numberOfDownloads() == 0 ? "" : fmt::format(" (after game download with ID '{}')", newGameDownloadCollection->getDownload(newGameDownloadCollection->numberOfDownloads() - 1)->getName()));
+			spdlog::warn("Encountered duplicate game download #{}{}.", newGameDownloadCollection->m_downloads.size() + 1, newGameDownloadCollection->numberOfDownloads() == 0 ? "" : fmt::format(" (after game download with ID '{}')", newGameDownloadCollection->getDownload(newGameDownloadCollection->numberOfDownloads() - 1)->getID()));
 		}
 
 		newGameDownloadCollection->m_downloads.push_back(std::shared_ptr<GameDownload>(newDownload.release()));

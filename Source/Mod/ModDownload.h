@@ -35,7 +35,7 @@ public:
 	const std::string & getVersion() const;
 	const std::string & getVersionType() const;
 	const std::string & getSpecial() const;
-	const std::string & getGameVersion() const;
+	const std::string & getGameVersionID() const;
 	const std::string & getType() const;
 	bool isOriginalFiles() const;
 	bool isModManagerFiles() const;
@@ -59,7 +59,7 @@ public:
 	void setVersion(const std::string & version);
 	void setVersionType(const std::string & versionType);
 	void setSpecial(const std::string & special);
-	void setGameVersion(const std::string & data);
+	void setGameVersionID(const std::string & gameVersionID);
 	void setType(const std::string & type);
 	void setSHA1(const std::string & sha1);
 	void setConverted(bool converted);
@@ -94,7 +94,7 @@ private:
 	std::string m_version;
 	std::string m_versionType;
 	std::string m_special;
-	std::string m_gameVersion;
+	std::string m_gameVersionID;
 	std::string m_type;
 	std::string m_sha1;
 	std::optional<bool> m_converted;

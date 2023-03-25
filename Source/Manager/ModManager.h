@@ -69,13 +69,13 @@ public:
 	bool hasPreferredDOSBoxVersion() const;
 	std::shared_ptr<DOSBoxVersion> getPreferredDOSBoxVersion() const;
 	std::shared_ptr<DOSBoxVersion> getSelectedDOSBoxVersion() const;
-	bool setPreferredDOSBoxVersion(const std::string & dosboxVersionName);
+	bool setPreferredDOSBoxVersionByID(const std::string & dosboxVersionID);
 	bool setPreferredDOSBoxVersion(std::shared_ptr<DOSBoxVersion> dosboxVersion);
 
 	bool hasPreferredGameVersion() const;
 	std::shared_ptr<GameVersion> getPreferredGameVersion() const;
 	std::shared_ptr<GameVersion> getSelectedGameVersion() const;
-	bool setPreferredGameVersion(const std::string & gameVersionName);
+	bool setPreferredGameVersionByID(const std::string & gameVersionID);
 	bool setPreferredGameVersion(std::shared_ptr<GameVersion> gameVersion);
 
 	std::shared_ptr<DOSBoxManager> getDOSBoxManager() const;
@@ -141,8 +141,8 @@ public:
 	boost::signals2::signal<void (uint16_t /* port */)> dosboxRemoteServerPortChanged;
 
 	static const GameType DEFAULT_GAME_TYPE;
-	static const std::string DEFAULT_PREFERRED_DOSBOX_VERSION;
-	static const std::string DEFAULT_PREFERRED_GAME_VERSION;
+	static const std::string DEFAULT_PREFERRED_DOSBOX_VERSION_ID;
+	static const std::string DEFAULT_PREFERRED_GAME_VERSION_ID;
 	static const std::string HTTP_USER_AGENT;
 	static const std::string DEFAULT_BACKUP_FILE_RENAME_SUFFIX;
 

@@ -298,7 +298,7 @@ std::unique_ptr<DOSBoxDownload> DOSBoxDownload::parseFrom(const rapidjson::Value
 	std::string id(idValue.GetString());
 
 	if(id.empty()) {
-		spdlog::error("DOSBox download '{}' property cannot be empty.", JSON_DOSBOX_DOWNLOAD_ID_PROPERTY_NAME, Utilities::typeToString(idValue.GetType()));
+		spdlog::error("DOSBox download '{}' property cannot be empty.", JSON_DOSBOX_DOWNLOAD_ID_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -318,7 +318,7 @@ std::unique_ptr<DOSBoxDownload> DOSBoxDownload::parseFrom(const rapidjson::Value
 	std::string name(nameValue.GetString());
 
 	if(name.empty()) {
-		spdlog::error("DOSBox download '{}' property cannot be empty.", JSON_DOSBOX_DOWNLOAD_NAME_PROPERTY_NAME, Utilities::typeToString(nameValue.GetType()));
+		spdlog::error("DOSBox download '{}' property cannot be empty.", JSON_DOSBOX_DOWNLOAD_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 

@@ -217,7 +217,7 @@ public:
 	bool removeSectionWithName(const std::string & sectionName);
 	void clearSections();
 
-	static std::unique_ptr<GameConfiguration> generateDefaultGameConfiguration(const std::string & gameName);
+	static std::unique_ptr<GameConfiguration> generateDefaultGameConfiguration(const std::string & gameVersionID);
 	bool updateForDOSBox();
 	bool updateWithBetterControls();
 

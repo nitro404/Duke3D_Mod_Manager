@@ -128,9 +128,9 @@ bool GameManagerPanel::hasPanelWithGameVersion(const GameVersion * gameVersion) 
 	return false;
 }
 
-bool GameManagerPanel::hasPanelWithGameVersionName(const std::string & name) const {
+bool GameManagerPanel::hasPanelWithGameVersionID(const std::string & gameVersionID) const {
 	for(size_t i = 0; i < m_notebook->GetPageCount(); i++) {
-		if(Utilities::areStringsEqualIgnoreCase(getGameVersion(i)->getName(), name)) {
+		if(Utilities::areStringsEqualIgnoreCase(getGameVersion(i)->getID(), gameVersionID)) {
 			return true;
 		}
 	}
@@ -158,9 +158,9 @@ size_t GameManagerPanel::indexOfPanelWithGameVersion(const GameVersion * gameVer
 	return std::numeric_limits<size_t>::max();
 }
 
-size_t GameManagerPanel::indexOfPanelWithGameVersionName(const std::string & name) const {
+size_t GameManagerPanel::indexOfPanelWithGameVersionID(const std::string & gameVersionID) const {
 	for(size_t i = 0; i < m_notebook->GetPageCount(); i++) {
-		if(Utilities::areStringsEqualIgnoreCase(getGameVersion(i)->getName(), name)) {
+		if(Utilities::areStringsEqualIgnoreCase(getGameVersion(i)->getID(), gameVersionID)) {
 			return i;
 		}
 	}
@@ -180,8 +180,8 @@ GameVersionPanel * GameManagerPanel::getPanelWithGameVersion(const GameVersion *
 	return getGameVersionPanel(indexOfPanelWithGameVersion(gameVersion));
 }
 
-GameVersionPanel * GameManagerPanel::getPanelWithGameVersionName(const std::string & name) const {
-	return getGameVersionPanel(indexOfPanelWithGameVersionName(name));
+GameVersionPanel * GameManagerPanel::getPanelWithGameVersionID(const std::string & gameVersionID) const {
+	return getGameVersionPanel(indexOfPanelWithGameVersionID(gameVersionID));
 }
 
 GameVersionPanel * GameManagerPanel::getCurrentGameVersionPanel() const {
@@ -230,8 +230,8 @@ bool GameManagerPanel::selectPanelWithGameVersion(const GameVersion & gameVersio
 	return true;
 }
 
-bool GameManagerPanel::selectPanelWithGameVersionName(const std::string & name) {
-	size_t gameVersionPanelIndex = indexOfPanelWithGameVersionName(name);
+bool GameManagerPanel::selectPanelWithGameVersionID(const std::string & gameVersionID) {
+	size_t gameVersionPanelIndex = indexOfPanelWithGameVersionID(gameVersionID);
 
 	if(gameVersionPanelIndex == std::numeric_limits<size_t>::max()) {
 		return false;
@@ -296,7 +296,7 @@ void GameManagerPanel::updateButtons() {
 	std::shared_ptr<GameVersion> gameVersion = gameVersionPanel != nullptr ? gameVersionPanel->getGameVersion() : nullptr;
 
 	bool isGameVersionModified = gameVersionPanel != nullptr ? gameVersionPanel->isModified() : false;
-	bool isGameVersionInstallable = gameVersion != nullptr ? GameManager::isGameDownloadable(gameVersion->getName()) : false;
+	bool isGameVersionInstallable = gameVersion != nullptr ? GameManager::isGameDownloadable(gameVersion->getID()) : false;
 	bool isGameVersionInstalled = gameVersion != nullptr ? gameVersion->hasGamePath() : false;
 	bool isGameVersionRemovable = gameVersion != nullptr ? gameVersion->isRemovable() : false;
 
@@ -341,7 +341,7 @@ bool GameManagerPanel::installGameVersion(size_t index) {
 
 	std::shared_ptr<GameVersion> gameVersion = gameVersionPanel->getGameVersion();
 
-	if(gameVersion->hasGamePath() || !gameVersion->hasName() || !GameManager::isGameDownloadable(gameVersion->getName()) || !m_gameManager->isInitialized()) {
+	if(gameVersion->hasGamePath() || !gameVersion->hasID() || !GameManager::isGameDownloadable(gameVersion->getID()) || !m_gameManager->isInitialized()) {
 		return false;
 	}
 
@@ -365,7 +365,7 @@ bool GameManagerPanel::installGameVersion(size_t index) {
 	}
 
 	for(const std::filesystem::directory_entry & entry : std::filesystem::directory_iterator(std::filesystem::path(destinationDirectoryPath))) {
-		int installToNonEmptyDirectoryResult = wxMessageBox(fmt::format("Game installation installation directory '{}' is not empty!\n\nInstalling to a directory which already contains files may cause issues. Are you sure you would like to install '{}' to this directory?", destinationDirectoryPath, gameVersion->getName()), "Non-Empty Installation Directory", wxYES_NO | wxCANCEL | wxICON_WARNING, this);
+		int installToNonEmptyDirectoryResult = wxMessageBox(fmt::format("Game installation installation directory '{}' is not empty!\n\nInstalling to a directory which already contains files may cause issues. Are you sure you would like to install '{}' to this directory?", destinationDirectoryPath, gameVersion->getLongName()), "Non-Empty Installation Directory", wxYES_NO | wxCANCEL | wxICON_WARNING, this);
 
 		if(installToNonEmptyDirectoryResult != wxYES) {
 			return false;
@@ -374,13 +374,13 @@ bool GameManagerPanel::installGameVersion(size_t index) {
 		break;
 	}
 
-	wxProgressDialog * installingProgressDialog = new wxProgressDialog("Installing", fmt::format("Installing '{}', please wait...", gameVersion->getName()), 1, this, wxPD_AUTO_HIDE);
+	wxProgressDialog * installingProgressDialog = new wxProgressDialog("Installing", fmt::format("Installing '{}', please wait...", gameVersion->getLongName()), 1, this, wxPD_AUTO_HIDE);
 	installingProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
 
 	if(!m_gameManager->installGame(*gameVersion, destinationDirectoryPath)) {
 		installingProgressDialog->Destroy();
 
-		wxMessageBox(fmt::format("Failed to install '{}' to '{}'!\n\nCheck console for details.", gameVersion->getName(), destinationDirectoryPath), "Installation Failed", wxOK | wxICON_ERROR, this);
+		wxMessageBox(fmt::format("Failed to install '{}' to '{}'!\n\nCheck console for details.", gameVersion->getLongName(), destinationDirectoryPath), "Installation Failed", wxOK | wxICON_ERROR, this);
 
 		return false;
 	}
@@ -395,7 +395,7 @@ bool GameManagerPanel::installGameVersion(size_t index) {
 	installingProgressDialog->Update(1);
 	installingProgressDialog->Destroy();
 
-	wxMessageBox(fmt::format("'{}' was successfully installed to: '{}'!", gameVersion->getName(), destinationDirectoryPath), "Game Installed", wxOK | wxICON_INFORMATION, this);
+	wxMessageBox(fmt::format("'{}' was successfully installed to: '{}'!", gameVersion->getLongName(), destinationDirectoryPath), "Game Installed", wxOK | wxICON_INFORMATION, this);
 
 	return true;
 }
@@ -413,17 +413,17 @@ bool GameManagerPanel::uninstallGameVersion(size_t index) {
 
 	std::shared_ptr<GameVersion> gameVersion = gameVersionPanel->getGameVersion();
 
-	if(!gameVersion->hasName() || !gameVersion->hasGamePath()) {
+	if(!gameVersion->hasID() || !gameVersion->hasGamePath()) {
 		return false;
 	}
 
 	if(!std::filesystem::is_directory(std::filesystem::path(gameVersion->getGamePath()))) {
-		wxMessageBox(fmt::format("'{}' path '{}' is not a valid directory.", gameVersion->getName(), gameVersion->getGamePath()), "Uninstall Failed", wxOK | wxICON_WARNING, this);
+		wxMessageBox(fmt::format("'{}' path '{}' is not a valid directory.", gameVersion->getLongName(), gameVersion->getGamePath()), "Uninstall Failed", wxOK | wxICON_WARNING, this);
 
 		return false;
 	}
 
-	int uninstallConfirmationResult = wxMessageBox(fmt::format("Are you sure you want to uninstall '{}' from '{}'? This will remove all files located in this directory, so be sure to back up any valuable data!", gameVersion->getName(), gameVersion->getGamePath()), "Uninstall Confirmation", wxYES_NO | wxCANCEL | wxICON_QUESTION, this);
+	int uninstallConfirmationResult = wxMessageBox(fmt::format("Are you sure you want to uninstall '{}' from '{}'? This will remove all files located in this directory, so be sure to back up any valuable data!", gameVersion->getLongName(), gameVersion->getGamePath()), "Uninstall Confirmation", wxYES_NO | wxCANCEL | wxICON_QUESTION, this);
 
 	if(uninstallConfirmationResult != wxYES) {
 		return false;
@@ -433,7 +433,7 @@ bool GameManagerPanel::uninstallGameVersion(size_t index) {
 	std::filesystem::remove_all(std::filesystem::path(gameVersion->getGamePath()), errorCode);
 
 	if(errorCode) {
-		wxMessageBox(fmt::format("Failed to remove '{}' game directory '{}': {}", gameVersion->getName(), gameVersion->getGamePath(), errorCode.message()), "Directory Removal Failed", wxOK | wxICON_ERROR, this);
+		wxMessageBox(fmt::format("Failed to remove '{}' game directory '{}': {}", gameVersion->getLongName(), gameVersion->getGamePath(), errorCode.message()), "Directory Removal Failed", wxOK | wxICON_ERROR, this);
 		return false;
 	}
 
@@ -444,7 +444,7 @@ bool GameManagerPanel::uninstallGameVersion(size_t index) {
 
 	updateButtons();
 
-	wxMessageBox(fmt::format("'{}' was successfully uninstalled!", gameVersion->getName()), "Game Uninstalled", wxOK | wxICON_INFORMATION, this);
+	wxMessageBox(fmt::format("'{}' was successfully uninstalled!", gameVersion->getLongName()), "Game Uninstalled", wxOK | wxICON_INFORMATION, this);
 
 	return true;
 }
@@ -467,7 +467,7 @@ bool GameManagerPanel::saveGameVersion(size_t index) {
 	}
 
 	if(!gameVersion->isValid()) {
-		wxMessageBox(fmt::format("'{}' game version is not valid!", gameVersion->getName()), "Invalid Game", wxOK | wxICON_WARNING, this);
+		wxMessageBox(fmt::format("'{}' game version is not valid!", gameVersion->getLongName()), "Invalid Game", wxOK | wxICON_WARNING, this);
 
 		return false;
 	}
@@ -475,7 +475,7 @@ bool GameManagerPanel::saveGameVersion(size_t index) {
 	std::shared_ptr<GameVersionCollection> gameVersions(m_gameManager->getGameVersions());
 
 	if(gameVersions->addGameVersion(gameVersion)) {
-		spdlog::info("Added new game version to collection with name '{}'.", gameVersion->getName());
+		spdlog::info("Added new game version to collection with name '{}'.", gameVersion->getLongName());
 	}
 
 	return saveGameVersions();
@@ -510,7 +510,7 @@ bool GameManagerPanel::resetGameVersion(size_t gameVersionPanelIndex) {
 
 	std::shared_ptr<GameVersion> gameVersion = gameVersionPanel->getGameVersion();
 
-	int resetResult = wxMessageBox(fmt::format("Are you sure you want to reset the '{}' game version to its default configuration?", gameVersion->hasName() ? gameVersion->getName() : "NEW"), "Reset Game", wxICON_QUESTION | wxYES_NO | wxCANCEL, this);
+	int resetResult = wxMessageBox(fmt::format("Are you sure you want to reset the '{}' game version to its default configuration?", gameVersion->hasID() ? gameVersion->getLongName() : "NEW"), "Reset Game", wxICON_QUESTION | wxYES_NO | wxCANCEL, this);
 
 	if(resetResult != wxYES) {
 		return false;
@@ -532,7 +532,7 @@ bool GameManagerPanel::removeGameVersion(size_t gameVersionPanelIndex) {
 		return false;
 	}
 
-	int removeResult = wxMessageBox(fmt::format("Are you sure you want to remove the '{}' game version?", gameVersion->hasName() ? gameVersion->getName() : "NEW"), "Remove Game", wxICON_QUESTION | wxYES_NO | wxCANCEL, this);
+	int removeResult = wxMessageBox(fmt::format("Are you sure you want to remove the '{}' game version?", gameVersion->hasID() ? gameVersion->getLongName() : "NEW"), "Remove Game", wxICON_QUESTION | wxYES_NO | wxCANCEL, this);
 
 	if(removeResult != wxYES) {
 		return false;

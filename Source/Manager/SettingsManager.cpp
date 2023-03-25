@@ -1,6 +1,5 @@
 #include "SettingsManager.h"
 
-#include "DOSBoxVersion.h"
 #include "Game/GameVersion.h"
 #include "ModManager.h"
 
@@ -145,7 +144,7 @@ const std::string SettingsManager::DEFAULT_DOWNLOADS_DIRECTORY_PATH("Downloads")
 const std::string SettingsManager::DEFAULT_DOWNLOAD_CACHE_FILE_NAME("Download Cache.json");
 const std::string SettingsManager::DEFAULT_MOD_DOWNLOADS_DIRECTORY_NAME("Mods");
 const std::string SettingsManager::DEFAULT_MAP_DOWNLOADS_DIRECTORY_NAME("Maps");
-const std::string SettingsManager::DEFAULT_DOSBOX_DOWNLOADS_DIRECTORY_NAME(DOSBoxVersion::DOSBOX.getID());
+const std::string SettingsManager::DEFAULT_DOSBOX_DOWNLOADS_DIRECTORY_NAME(ModManager::DEFAULT_PREFERRED_DOSBOX_VERSION_ID);
 const std::string SettingsManager::DEFAULT_GAME_DOWNLOADS_DIRECTORY_NAME("Games");
 const std::string SettingsManager::DEFAULT_DATA_DIRECTORY_PATH("Data");
 const std::string SettingsManager::DEFAULT_APP_TEMP_DIRECTORY_PATH("Temp");
@@ -156,9 +155,9 @@ const std::string SettingsManager::DEFAULT_DOSBOX_ARGUMENTS("-noconsole");
 const bool SettingsManager::DEFAULT_DOSBOX_AUTO_EXIT = true;
 const std::string SettingsManager::DEFAULT_DOSBOX_DATA_DIRECTORY_NAME("DOSBox");
 const GameType SettingsManager::DEFAULT_GAME_TYPE = ModManager::DEFAULT_GAME_TYPE;
-const std::string SettingsManager::DEFAULT_PREFERRED_GAME_VERSION(ModManager::DEFAULT_PREFERRED_GAME_VERSION);
+const std::string SettingsManager::DEFAULT_PREFERRED_GAME_VERSION_ID(ModManager::DEFAULT_PREFERRED_GAME_VERSION_ID);
 const std::string SettingsManager::DEFAULT_DOSBOX_VERSIONS_LIST_FILE_PATH("DOSBox Versions.json");
-const std::string SettingsManager::DEFAULT_PREFERRED_DOSBOX_VERSION(ModManager::DEFAULT_PREFERRED_DOSBOX_VERSION);
+const std::string SettingsManager::DEFAULT_PREFERRED_DOSBOX_VERSION_ID(ModManager::DEFAULT_PREFERRED_DOSBOX_VERSION_ID);
 const std::string SettingsManager::DEFAULT_DOSBOX_SERVER_IP_ADDRESS("127.0.0.1");
 const uint16_t SettingsManager::DEFAULT_DOSBOX_LOCAL_SERVER_PORT = 31337;
 const uint16_t SettingsManager::DEFAULT_DOSBOX_REMOTE_SERVER_PORT = 31337;
@@ -318,9 +317,9 @@ SettingsManager::SettingsManager()
 	, dosboxDataDirectoryName(DEFAULT_DOSBOX_DATA_DIRECTORY_NAME)
 	, dosboxServerIPAddress(DEFAULT_DOSBOX_SERVER_IP_ADDRESS)
 	, gameType(DEFAULT_GAME_TYPE)
-	, preferredGameVersion(DEFAULT_PREFERRED_GAME_VERSION)
+	, preferredGameVersionID(DEFAULT_PREFERRED_GAME_VERSION_ID)
 	, dosboxVersionsListFilePath(DEFAULT_DOSBOX_VERSIONS_LIST_FILE_PATH)
-	, preferredDOSBoxVersion(DEFAULT_PREFERRED_DOSBOX_VERSION)
+	, preferredDOSBoxVersionID(DEFAULT_PREFERRED_DOSBOX_VERSION_ID)
 	, dosboxLocalServerPort(DEFAULT_DOSBOX_LOCAL_SERVER_PORT)
 	, dosboxRemoteServerPort(DEFAULT_DOSBOX_REMOTE_SERVER_PORT)
 	, timeZoneDataDirectoryName(DEFAULT_TIME_ZONE_DATA_DIRECTORY_NAME)
@@ -377,9 +376,9 @@ void SettingsManager::reset() {
 	dosboxDataDirectoryName = DEFAULT_DOSBOX_DATA_DIRECTORY_NAME;
 	dosboxServerIPAddress = DEFAULT_DOSBOX_SERVER_IP_ADDRESS;
 	gameType = DEFAULT_GAME_TYPE;
-	preferredGameVersion = DEFAULT_PREFERRED_GAME_VERSION;
+	preferredGameVersionID = DEFAULT_PREFERRED_GAME_VERSION_ID;
 	dosboxVersionsListFilePath = DEFAULT_DOSBOX_VERSIONS_LIST_FILE_PATH;
-	preferredDOSBoxVersion = DEFAULT_PREFERRED_DOSBOX_VERSION;
+	preferredDOSBoxVersionID = DEFAULT_PREFERRED_DOSBOX_VERSION_ID;
 	dosboxLocalServerPort = DEFAULT_DOSBOX_LOCAL_SERVER_PORT;
 	dosboxRemoteServerPort = DEFAULT_DOSBOX_REMOTE_SERVER_PORT;
 	timeZoneDataDirectoryName = DEFAULT_TIME_ZONE_DATA_DIRECTORY_NAME;
@@ -441,7 +440,7 @@ rapidjson::Document SettingsManager::toJSON() const {
 
 	rapidjson::Value gameVersionsListFilePathValue(gameVersionsListFilePath.c_str(), allocator);
 	gameVersionsCategoryValue.AddMember(rapidjson::StringRef(GAME_VERSIONS_LIST_FILE_PATH_PROPERTY_NAME), gameVersionsListFilePathValue, allocator);
-	rapidjson::Value preferredGameVersionValue(preferredGameVersion.c_str(), allocator);
+	rapidjson::Value preferredGameVersionValue(preferredGameVersionID.c_str(), allocator);
 	gameVersionsCategoryValue.AddMember(rapidjson::StringRef(PREFERRED_GAME_VERSION_PROPERTY_NAME), preferredGameVersionValue, allocator);
 
 	settingsDocument.AddMember(rapidjson::StringRef(GAME_VERSIONS_CATEGORY_NAME), gameVersionsCategoryValue, allocator);
@@ -511,7 +510,7 @@ rapidjson::Document SettingsManager::toJSON() const {
 
 	rapidjson::Value dosboxVersionsListFilePathValue(dosboxVersionsListFilePath.c_str(), allocator);
 	dosboxCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_VERSIONS_LIST_FILE_PATH_PROPERTY_NAME), dosboxVersionsListFilePathValue, allocator);
-	rapidjson::Value preferredDOSBoxVersionValue(preferredDOSBoxVersion.c_str(), allocator);
+	rapidjson::Value preferredDOSBoxVersionValue(preferredDOSBoxVersionID.c_str(), allocator);
 	dosboxCategoryValue.AddMember(rapidjson::StringRef(PREFERRED_DOSBOX_VERSION_PROPERTY_NAME), preferredDOSBoxVersionValue, allocator);
 	rapidjson::Value dosboxArgumentsValue(dosboxArguments.c_str(), allocator);
 	dosboxCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_AUTO_EXIT_PROPERTY_NAME), rapidjson::Value(dosboxAutoExit), allocator);
@@ -709,7 +708,7 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 		const rapidjson::Value & gameVersionsCategoryValue = settingsDocument[GAME_VERSIONS_CATEGORY_NAME];
 
 		assignStringSetting(gameVersionsListFilePath, gameVersionsCategoryValue, GAME_VERSIONS_LIST_FILE_PATH_PROPERTY_NAME);
-		assignStringSetting(preferredGameVersion, gameVersionsCategoryValue, PREFERRED_GAME_VERSION_PROPERTY_NAME);
+		assignStringSetting(preferredGameVersionID, gameVersionsCategoryValue, PREFERRED_GAME_VERSION_PROPERTY_NAME);
 	}
 
 	if(settingsDocument.HasMember(MODS_CATEGORY_NAME) && settingsDocument[MODS_CATEGORY_NAME].IsObject()) {
@@ -752,7 +751,7 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 		const rapidjson::Value & dosboxCategoryValue = settingsDocument[DOSBOX_CATEGORY_NAME];
 
 		assignStringSetting(dosboxVersionsListFilePath, dosboxCategoryValue, DOSBOX_VERSIONS_LIST_FILE_PATH_PROPERTY_NAME);
-		assignStringSetting(preferredDOSBoxVersion, dosboxCategoryValue, PREFERRED_DOSBOX_VERSION_PROPERTY_NAME);
+		assignStringSetting(preferredDOSBoxVersionID, dosboxCategoryValue, PREFERRED_DOSBOX_VERSION_PROPERTY_NAME);
 		assignStringSetting(dosboxArguments, dosboxCategoryValue, DOSBOX_ARGUMENTS_PROPERTY_NAME);
 		assignBooleanSetting(dosboxAutoExit, dosboxCategoryValue, DOSBOX_AUTO_EXIT_PROPERTY_NAME);
 		assignStringSetting(dosboxDataDirectoryName, dosboxCategoryValue, DOSBOX_DATA_DIRECTORY_NAME_PROPERTY_NAME);

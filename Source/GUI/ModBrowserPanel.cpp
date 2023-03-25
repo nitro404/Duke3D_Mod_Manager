@@ -340,7 +340,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 
 	wxStaticText * modGameTypeLabel = new wxStaticText(m_gameOptionsPanel, wxID_ANY, "Game Type:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	modGameTypeLabel->SetFont(modGameTypeLabel->GetFont().MakeBold());
-	m_modGameTypeComboBox = new wxComboBox(m_gameOptionsPanel, wxID_ANY, std::string(magic_enum::enum_name(m_modManager->getGameType())), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<GameType>(), 0, wxDefaultValidator, "Mod Game Type");
+	m_modGameTypeComboBox = new wxComboBox(m_gameOptionsPanel, wxID_ANY, std::string(magic_enum::enum_name(m_modManager->getGameType())), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<GameType>(), 0, wxDefaultValidator, "Game Type");
 	m_modGameTypeComboBox->SetEditable(false);
 	m_modGameTypeComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onModGameTypeSelected, this);
 
@@ -348,7 +348,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 
 	wxStaticText * preferredGameVersionLabel = new wxStaticText(m_gameOptionsPanel, wxID_ANY, "Game Version:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	preferredGameVersionLabel->SetFont(preferredGameVersionLabel->GetFont().MakeBold());
-	m_preferredGameVersionComboBox = new wxComboBox(m_gameOptionsPanel, wxID_ANY, preferredGameVersion == nullptr ? "" : preferredGameVersion->getName(), wxDefaultPosition, wxDefaultSize, WXUtilities::createItemWXArrayString(m_modManager->getGameVersions()->getGameVersionDisplayNames(false)), 0, wxDefaultValidator, "Mod Game Versions");
+	m_preferredGameVersionComboBox = new wxComboBox(m_gameOptionsPanel, wxID_ANY, preferredGameVersion == nullptr ? "" : preferredGameVersion->getShortName(), wxDefaultPosition, wxDefaultSize, WXUtilities::createItemWXArrayString(m_modManager->getGameVersions()->getGameVersionShortNames(false)), 0, wxDefaultValidator, "Game Versions");
 	m_preferredGameVersionComboBox->SetEditable(false);
 	m_preferredGameVersionComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onPreferredGameVersionSelected, this);
 
@@ -666,6 +666,7 @@ void ModBrowserPanel::updateModGameVersionList() {
 	if(m_searchQuery.empty()) {
 		std::shared_ptr<Mod> mod(m_modManager->getSelectedMod());
 		std::shared_ptr<OrganizedModCollection> organizedMods(m_modManager->getOrganizedMods());
+		std::shared_ptr<GameVersionCollection> gameVersions(m_modManager->getGameVersions());
 
 		if(mod != nullptr && (organizedMods->shouldDisplayMods() || organizedMods->shouldDisplayFavouriteMods())) {
 			size_t modVersionIndex = m_modManager->getSelectedModVersionIndex();
@@ -677,21 +678,21 @@ void ModBrowserPanel::updateModGameVersionList() {
 
 				if(modVersionTypeIndex != std::numeric_limits<size_t>::max() && selectedGameVersion != nullptr) {
 					std::shared_ptr<ModVersionType> selectedModVersionType(mod->getVersion(modVersionIndex)->getType(modVersionTypeIndex));
-					std::vector<std::string> compatibleModGameVersionNames(selectedModVersionType->getCompatibleModGameVersionNames(*selectedGameVersion));
-					m_modGameVersionListBox->Set(WXUtilities::createItemWXArrayString(compatibleModGameVersionNames));
+					std::vector<std::string> compatibleModGameVersionShortNames(selectedModVersionType->getCompatibleModGameVersionShortNames(*selectedGameVersion, *gameVersions));
+					m_modGameVersionListBox->Set(WXUtilities::createItemWXArrayString(compatibleModGameVersionShortNames));
 
 					if(modGameVersionIndex != std::numeric_limits<size_t>::max()) {
 						std::shared_ptr<ModGameVersion> selectedModGameVersion(selectedModVersionType->getGameVersion(modGameVersionIndex));
 
-						std::vector<std::string>::const_iterator compatibleModGameVersionNameIterator(std::find_if(compatibleModGameVersionNames.cbegin(), compatibleModGameVersionNames.cend(), [selectedModGameVersion](const std::string & currentModGameVersionName) {
-							return Utilities::areStringsEqualIgnoreCase(selectedModGameVersion->getGameVersion(), currentModGameVersionName);
+						std::vector<std::string>::const_iterator compatibleModGameVersionShortNameIterator(std::find_if(compatibleModGameVersionShortNames.cbegin(), compatibleModGameVersionShortNames.cend(), [gameVersions, selectedModGameVersion](const std::string & currentModGameVersionShortName) {
+							return Utilities::areStringsEqualIgnoreCase(gameVersions->getShortNameOfGameVersionWithID(selectedModGameVersion->getGameVersionID()), currentModGameVersionShortName);
 						}));
 
-						if(compatibleModGameVersionNameIterator != compatibleModGameVersionNames.cend()) {
-							m_modGameVersionListBox->SetSelection(compatibleModGameVersionNameIterator - compatibleModGameVersionNames.cbegin());
+						if(compatibleModGameVersionShortNameIterator != compatibleModGameVersionShortNames.cend()) {
+							m_modGameVersionListBox->SetSelection(compatibleModGameVersionShortNameIterator - compatibleModGameVersionShortNames.cbegin());
 						}
 						else {
-							spdlog::error("Failed to find compatible mod game version name '{}' in list for mod '{}' with selected game version '{}'.", selectedModGameVersion->getGameVersion(), mod->getFullName(modVersionIndex, modVersionTypeIndex), selectedGameVersion->getName());
+							spdlog::error("Failed to find compatible mod game version '{}' in list for mod '{}' with selected game version '{}'.", gameVersions->getLongNameOfGameVersionWithID(selectedModGameVersion->getGameVersionID()), mod->getFullName(modVersionIndex, modVersionTypeIndex), selectedGameVersion->getLongName());
 
 							m_modGameVersionListBox->SetSelection(wxNOT_FOUND);
 						}
@@ -758,18 +759,18 @@ void ModBrowserPanel::updateModInfo() {
 				m_latestReleaseDateText->SetLabelText(optionalLatestReleaseDate.has_value() ? optionalLatestReleaseDate->toString() : "N/A");
 			}
 
-			std::vector<std::string> supportedGameVersionNames(mod->getSupportedGameVersionNames(*m_modManager->getGameVersions()));
-			std::stringstream supportedGameVersionNamesStream;
+			std::vector<std::string> supportedGameVersionLongNames(mod->getSupportedGameVersionLongNames(*m_modManager->getGameVersions()));
+			std::stringstream supportedGameVersionLongNamesStream;
 
-			for(const std::string & gameVersionName : supportedGameVersionNames) {
-				if(supportedGameVersionNamesStream.tellp() != 0) {
-					supportedGameVersionNamesStream << "\n";
+			for(const std::string & gameVersionLongName : supportedGameVersionLongNames) {
+				if(supportedGameVersionLongNamesStream.tellp() != 0) {
+					supportedGameVersionLongNamesStream << "\n";
 				}
 
-				supportedGameVersionNamesStream << gameVersionName;
+				supportedGameVersionLongNamesStream << gameVersionLongName;
 			}
 
-			m_supportedGameVersionsText->SetLabelText(wxString::FromUTF8(supportedGameVersionNamesStream.str()));
+			m_supportedGameVersionsText->SetLabelText(wxString::FromUTF8(supportedGameVersionLongNamesStream.str()));
 
 			const std::string & modWebsite = mod->getWebsite();
 
@@ -943,7 +944,7 @@ void ModBrowserPanel::updatePreferredGameVersion() {
 }
 
 void ModBrowserPanel::updatePreferredGameVersionList() {
-	m_preferredGameVersionComboBox->Set(WXUtilities::createItemWXArrayString(m_modManager->getGameVersions()->getGameVersionDisplayNames(false)));
+	m_preferredGameVersionComboBox->Set(WXUtilities::createItemWXArrayString(m_modManager->getGameVersions()->getGameVersionShortNames(false)));
 
 	updatePreferredGameVersion();
 }
@@ -1362,9 +1363,9 @@ void ModBrowserPanel::onLaunchButtonPressed(wxCommandEvent & event) {
 						"{}\n"
 						"Launching mod using '{}' instead!",
 						selectedGameVersion != nullptr
-							? fmt::format("'{}' is not supported on '{}'.", fullModName, selectedGameVersion->getName())
+							? fmt::format("'{}' is not supported on '{}'.", fullModName, selectedGameVersion->getLongName())
 							: "No game version selected.",
-						alternateGameVersion->getName()
+						alternateGameVersion->getLongName()
 					),
 					"Unsupported Game Version",
 					wxOK | wxCANCEL | wxICON_INFORMATION,
@@ -1379,13 +1380,13 @@ void ModBrowserPanel::onLaunchButtonPressed(wxCommandEvent & event) {
 				std::vector<std::string> compatibleGameVersionNames;
 
 				for(std::vector<std::pair<std::shared_ptr<GameVersion>, std::vector<std::shared_ptr<ModGameVersion>>>>::const_iterator i = compatibleGameVersions.begin(); i != compatibleGameVersions.end(); ++i) {
-					compatibleGameVersionNames.push_back((*i).first->getName());
+					compatibleGameVersionNames.push_back((*i).first->getShortName());
 				}
 
 				int selectedCompatibleGameVersionIndex = wxGetSingleChoiceIndex(
 					fmt::format("{}\nPlease choose an alternative compatible game version to run:",
 						selectedGameVersion != nullptr
-							? fmt::format("'{}' is not supported on '{}'.", fullModName, selectedGameVersion->getName())
+							? fmt::format("'{}' is not supported on '{}'.", fullModName, selectedGameVersion->getLongName())
 							: "No game version selected."
 					),
 					"Choose Game Version",
@@ -1436,10 +1437,10 @@ void ModBrowserPanel::onLaunchButtonPressed(wxCommandEvent & event) {
 			}
 
 			if(selectedGameVersion != nullptr) {
-				spdlog::info("Using game version '{}' since '{}' is not supported on '{}'.", alternateGameVersion->getName(), fullModName, selectedGameVersion->getName());
+				spdlog::info("Using game version '{}' since '{}' is not supported on '{}'.", alternateGameVersion->getLongName(), fullModName, selectedGameVersion->getLongName());
 			}
 			else {
-				spdlog::info("Using game version '{}' since no game version was selected.", alternateGameVersion->getName());
+				spdlog::info("Using game version '{}' since no game version was selected.", alternateGameVersion->getLongName());
 			}
 		}
 	}
@@ -1451,7 +1452,7 @@ void ModBrowserPanel::onLaunchButtonPressed(wxCommandEvent & event) {
 			fmt::format(
 				"Failed to launch, game version '{}' is not configured/installed.",
 				!fullModName.empty() ? fmt::format(" '{}'", fullModName) : "",
-				m_activeGameVersion->getName()
+				m_activeGameVersion->getLongName()
 			),
 			"Launch Failed",
 			wxOK | wxICON_ERROR,
@@ -1490,7 +1491,7 @@ void ModBrowserPanel::onLaunchError(std::string errorMessage) {
 			"{}\n"
 			"\n"
 			"See console for more details.",
-			m_activeGameVersion->getName(),
+			m_activeGameVersion->getLongName(),
 			!fullModName.empty() ? fmt::format(" with mod '{}'", fullModName) : "",
 			errorMessage
 		),

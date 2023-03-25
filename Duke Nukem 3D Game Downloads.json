@@ -2,7 +2,8 @@
 	"fileFormatVersion": "1.0.0",
 	"gameDownloads": [
 		{
-			"name": "LameDuke",
+			"id": "lameduke",
+			"name": "Duke Nukem 3D Beta 1.3.95 (LameDuke)",
 			"versions": [
 				{
 					"version": "1.0",
@@ -21,7 +22,8 @@
 			]
 		},
 		{
-			"name": "Regular Version 1.3",
+			"id": "regular",
+			"name": "Duke Nukem 3D 1.3D",
 			"versions": [
 				{
 					"version": "1.3D",
@@ -48,7 +50,8 @@
 			]
 		},
 		{
-			"name": "Atomic Edition 1.4/1.5",
+			"id": "atomic",
+			"name": "Duke Nukem 3D: Atomic Edition",
 			"versions": [
 				{
 					"version": "1.5",
@@ -75,6 +78,7 @@
 			]
 		},
 		{
+			"id": "jfduke3d",
 			"name": "JFDuke3D",
 			"versions": [
 				{
@@ -109,6 +113,7 @@
 			]
 		},
 		{
+			"id": "eduke32",
 			"name": "eDuke32",
 			"versions": [
 				{
@@ -136,6 +141,7 @@
 			]
 		},
 		{
+			"id": "netduke32",
 			"name": "NetDuke32",
 			"versions": [
 				{
@@ -169,6 +175,7 @@
 			]
 		},
 		{
+			"id": "raze",
 			"name": "Raze",
 			"versions": [
 				{
@@ -201,6 +208,7 @@
 			]
 		},
 		{
+			"id": "rednukem",
 			"name": "RedNukem",
 			"versions": [
 				{
@@ -228,7 +236,8 @@
 			]
 		},
 		{
-			"name": "Belgian Chocolate Duke3D",
+			"id": "belgian",
+			"name": "Belgian Chocolate Duke Nukem 3D",
 			"versions": [
 				{
 					"version": "2022.07.27",
@@ -255,6 +264,7 @@
 			]
 		},
 		{
+			"id": "duke3dw",
 			"name": "Duke3dw",
 			"versions": [
 				{
@@ -274,6 +284,7 @@
 			]
 		},
 		{
+			"id": "pkduke3d",
 			"name": "pkDuke3D",
 			"versions": [
 				{
@@ -335,6 +346,7 @@
 			]
 		},
 		{
+			"id": "xduke",
 			"name": "xDuke",
 			"versions": [
 				{
@@ -368,6 +380,7 @@
 			]
 		},
 		{
+			"id": "rduke",
 			"name": "rDuke",
 			"versions": [
 				{
@@ -387,6 +400,7 @@
 			]
 		},
 		{
+			"id": "duke3d_w32",
 			"name": "Duke3d_w32",
 			"versions": [
 				{

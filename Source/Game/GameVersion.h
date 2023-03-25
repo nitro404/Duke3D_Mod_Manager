@@ -23,7 +23,7 @@ public:
 	};
 
 	GameVersion();
-	GameVersion(const std::string & name, bool removable, bool renamable, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, bool supportsSubdirectories, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag = {}, const std::optional<std::string> & weaponSwitchOrderArgumentFlag = {}, const std::optional<std::string> & disableMonstersArgumentFlag = {}, const std::optional<std::string> & disableSoundArgumentFlag = {}, const std::optional<std::string> & disableMusicArgumentFlag = {}, const std::optional<std::string> & setupExecutableName = {}, const std::optional<std::string> & groupFileInstallPath = {}, const std::optional<std::string> & defFileArgumentFlag = {}, const std::optional<std::string> & extraDefFileArgumentFlag = {}, const std::optional<bool> & requiresCombinedGroup = {}, const std::optional<bool> & requiresGroupFileExtraction = {}, const std::optional<bool> & requiresDOSBox = {}, const std::string & website = std::string(), const std::string & sourceCodeURL = std::string(), const std::vector<OperatingSystem> & supportedOperatingSystems = std::vector<OperatingSystem>(), const std::vector<std::string> & compatibleGameVersions = std::vector<std::string>());
+	GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool removable, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, bool supportsSubdirectories, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag = {}, const std::optional<std::string> & weaponSwitchOrderArgumentFlag = {}, const std::optional<std::string> & disableMonstersArgumentFlag = {}, const std::optional<std::string> & disableSoundArgumentFlag = {}, const std::optional<std::string> & disableMusicArgumentFlag = {}, const std::optional<std::string> & setupExecutableName = {}, const std::optional<std::string> & groupFileInstallPath = {}, const std::optional<std::string> & defFileArgumentFlag = {}, const std::optional<std::string> & extraDefFileArgumentFlag = {}, const std::optional<bool> & requiresCombinedGroup = {}, const std::optional<bool> & requiresGroupFileExtraction = {}, const std::optional<bool> & requiresDOSBox = {}, const std::string & website = std::string(), const std::string & sourceCodeURL = std::string(), const std::vector<OperatingSystem> & supportedOperatingSystems = std::vector<OperatingSystem>(), const std::vector<std::string> & compatibleGameVersions = std::vector<std::string>());
 	GameVersion(GameVersion && gameVersion) noexcept;
 	GameVersion(const GameVersion & gameVersion);
 	GameVersion & operator = (GameVersion && gameVersion) noexcept;
@@ -31,11 +31,16 @@ public:
 	~GameVersion();
 
 	bool isModified() const;
-	bool hasName() const;
-	const std::string & getName() const;
-	bool setName(const std::string & name);
+	bool hasID() const;
+	const std::string & getID() const;
+	bool setID(const std::string & id);
+	bool hasLongName() const;
+	const std::string & getLongName() const;
+	bool setLongName(const std::string & shortName);
+	bool hasShortName() const;
+	const std::string & getShortName() const;
+	bool setShortName(const std::string & longName);
 	bool isRemovable() const;
-	bool isRenamable() const;
 	bool hasGamePath() const;
 	const std::string & getGamePath() const;
 	void setGamePath(const std::string & gamePath);
@@ -151,19 +156,19 @@ public:
 
 	size_t numberOfCompatibleGameVersions() const;
 	bool hasCompatibleGameVersion(const GameVersion & gameVersion) const;
-	bool hasCompatibleGameVersionWithName(const std::string & name) const;
+	bool hasCompatibleGameVersionWithID(const std::string & gameVersionID) const;
 	size_t indexOfCompatibleGameVersion(const GameVersion & gameVersion) const;
-	size_t indexOfCompatibleGameVersionWithName(const std::string & name) const;
-	std::optional<std::string> getCompatibleGameVersion(size_t index) const;
-	const std::vector<std::string> & getCompatibleGameVersions() const;
+	size_t indexOfCompatibleGameVersionWithID(const std::string & gameVersionID) const;
+	std::optional<std::string> getCompatibleGameVersionID(size_t index) const;
+	const std::vector<std::string> & getCompatibleGameVersionIdentifiers() const;
 	std::shared_ptr<ModGameVersion> getMostCompatibleModGameVersion(const std::vector<std::shared_ptr<ModGameVersion>> & modGameVersions) const;
 	std::vector<std::shared_ptr<ModGameVersion>> getCompatibleModGameVersions(const std::vector<std::shared_ptr<ModGameVersion>> & modGameVersions) const;
 	bool addCompatibleGameVersion(const GameVersion & gameVersion);
-	bool addCompatibleGameVersionWithName(const std::string & name);
-	size_t addCompatibleGameVersionNames(const std::vector<std::string> & gameVersions);
+	bool addCompatibleGameVersionWithID(const std::string & gameVersionID);
+	size_t addCompatibleGameVersionIdentifiers(const std::vector<std::string> & gameVersionIdentifiers);
 	bool removeCompatibleGameVersion(size_t index);
 	bool removeCompatibleGameVersion(const GameVersion & gameVersion);
-	bool removeCompatibleGameVersionWithName(const std::string & name);
+	bool removeCompatibleGameVersionWithID(const std::string & gameVersionID);
 	void clearCompatibleGameVersions();
 
 	size_t checkForMissingExecutables() const;
@@ -225,9 +230,10 @@ public:
 private:
 	void setModified(bool modified);
 
-	std::string m_name;
+	std::string m_id;
+	std::string m_longName;
+	std::string m_shortName;
 	bool m_removable;
-	bool m_renamable;
 	std::string m_gamePath;
 	std::string m_gameExecutableName;
 	std::optional<std::string> m_setupExecutableName;
@@ -259,7 +265,7 @@ private:
 	std::optional<std::string> m_disableSoundArgumentFlag;
 	std::optional<std::string> m_disableMusicArgumentFlag;
 	std::vector<OperatingSystem> m_supportedOperatingSystems;
-	std::vector<std::string> m_compatibleGameVersions;
+	std::vector<std::string> m_compatibleGameVersionIdentifiers;
 	mutable bool m_modified;
 };
 

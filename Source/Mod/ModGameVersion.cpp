@@ -35,13 +35,13 @@ static const std::array<std::string_view, 3> JSON_MOD_GAME_VERSION_PROPERTY_NAME
 	JSON_MOD_GAME_VERSION_FILES_PROPERTY_NAME
 };
 
-ModGameVersion::ModGameVersion(const std::string & gameVersion, bool converted)
-	: m_gameVersion(Utilities::trimString(gameVersion))
+ModGameVersion::ModGameVersion(const std::string & gameVersionID, bool converted)
+	: m_gameVersionID(Utilities::trimString(gameVersionID))
 	, m_converted(converted)
 	, m_parentModVersionType(nullptr) { }
 
 ModGameVersion::ModGameVersion(ModGameVersion && m) noexcept
-	: m_gameVersion(std::move(m.m_gameVersion))
+	: m_gameVersionID(std::move(m.m_gameVersionID))
 	, m_converted(m.m_converted)
 	, m_files(std::move(m.m_files))
 	, m_parentModVersionType(nullptr) {
@@ -49,7 +49,7 @@ ModGameVersion::ModGameVersion(ModGameVersion && m) noexcept
 }
 
 ModGameVersion::ModGameVersion(const ModGameVersion & m)
-	: m_gameVersion(m.m_gameVersion)
+	: m_gameVersionID(m.m_gameVersionID)
 	, m_converted(m.m_converted)
 	, m_parentModVersionType(nullptr) {
 	for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = m.m_files.begin(); i != m.m_files.end(); ++i) {
@@ -61,7 +61,7 @@ ModGameVersion::ModGameVersion(const ModGameVersion & m)
 
 ModGameVersion & ModGameVersion::operator = (ModGameVersion && m) noexcept {
 	if(this != &m) {
-		m_gameVersion = std::move(m.m_gameVersion);
+		m_gameVersionID = std::move(m.m_gameVersionID);
 		m_converted = m.m_converted;
 		m_files = std::move(m.m_files);
 
@@ -74,7 +74,7 @@ ModGameVersion & ModGameVersion::operator = (ModGameVersion && m) noexcept {
 ModGameVersion & ModGameVersion::operator = (const ModGameVersion & m) {
 	m_files.clear();
 
-	m_gameVersion = m.m_gameVersion;
+	m_gameVersionID = m.m_gameVersionID;
 	m_converted = m.m_converted;
 
 	for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = m.m_files.begin(); i != m.m_files.end(); ++i) {
@@ -90,8 +90,8 @@ ModGameVersion::~ModGameVersion() {
 	m_parentModVersionType = nullptr;
 }
 
-const std::string & ModGameVersion::getGameVersion() const {
-	return m_gameVersion;
+const std::string & ModGameVersion::getGameVersionID() const {
+	return m_gameVersionID;
 }
 
 std::string ModGameVersion::getFullName() const {
@@ -113,13 +113,13 @@ std::string ModGameVersion::getFullName() const {
 		fullModName << " " + m_parentModVersionType->getType();
 	}
 
-	fullModName << " (" << m_gameVersion << ")";
+	fullModName << " (" << m_gameVersionID << ")";
 
 	return fullModName.str();
 }
 
 bool ModGameVersion::isEDuke32() const {
-	return Utilities::areStringsEqualIgnoreCase(m_gameVersion, GameVersion::EDUKE32.getName());
+	return Utilities::areStringsEqualIgnoreCase(m_gameVersionID, GameVersion::EDUKE32.getID());
 }
 
 bool ModGameVersion::isConverted() const {
@@ -148,8 +148,8 @@ const ModVersionType * ModGameVersion::getParentModVersionType() const {
 	return m_parentModVersionType;
 }
 
-void ModGameVersion::setGameVersion(const std::string & gameVersion) {
-	m_gameVersion = Utilities::trimString(gameVersion);
+void ModGameVersion::setGameVersionID(const std::string & gameVersionID) {
+	m_gameVersionID = Utilities::trimString(gameVersionID);
 }
 
 void ModGameVersion::setConverted(bool converted) {
@@ -438,7 +438,7 @@ void ModGameVersion::updateParent() {
 rapidjson::Value ModGameVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const {
 	rapidjson::Value modGameVersionValue(rapidjson::kObjectType);
 
-	rapidjson::Value gameVersionValue(m_gameVersion.c_str(), allocator);
+	rapidjson::Value gameVersionValue(m_gameVersionID.c_str(), allocator);
 	modGameVersionValue.AddMember(rapidjson::StringRef(JSON_MOD_GAME_VERSION_GAME_VERSION_PROPERTY_NAME), gameVersionValue, allocator);
 
 	modGameVersionValue.AddMember(rapidjson::StringRef(JSON_MOD_GAME_VERSION_CONVERTED_PROPERTY_NAME), rapidjson::Value(m_converted), allocator);
@@ -461,7 +461,7 @@ tinyxml2::XMLElement * ModGameVersion::toXML(tinyxml2::XMLDocument * document) c
 
 	tinyxml2::XMLElement * modGameVersionElement = document->NewElement(XML_MOD_GAME_VERSION_ELEMENT_NAME.c_str());
 
-	modGameVersionElement->SetAttribute(XML_MOD_GAME_VERSION_GAME_VERSION_ATTRIBUTE_NAME.c_str(), m_gameVersion.c_str());
+	modGameVersionElement->SetAttribute(XML_MOD_GAME_VERSION_GAME_VERSION_ATTRIBUTE_NAME.c_str(), m_gameVersionID.c_str());
 	modGameVersionElement->SetAttribute(XML_MOD_GAME_VERSION_CONVERTED_ATTRIBUTE_NAME.c_str(), m_converted ? "Converted" : "Native");
 
 	for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
@@ -670,17 +670,17 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const tinyxml2::XMLEle
 
 bool ModGameVersion::isGameVersionSupported(const GameVersion & gameVersion) const {
 	return gameVersion.isValid() &&
-		   Utilities::areStringsEqualIgnoreCase(m_gameVersion, gameVersion.getName());
+		   Utilities::areStringsEqualIgnoreCase(m_gameVersionID, gameVersion.getID());
 }
 
 bool ModGameVersion::isGameVersionCompatible(const GameVersion & gameVersion) const {
 	return gameVersion.isValid() &&
 		   isGameVersionSupported(gameVersion) ||
-		   gameVersion.hasCompatibleGameVersionWithName(m_gameVersion);
+		   gameVersion.hasCompatibleGameVersionWithID(m_gameVersionID);
 }
 
 bool ModGameVersion::isValid(bool skipFileInfoValidation) const {
-	if(m_gameVersion.empty() ||
+	if(m_gameVersionID.empty() ||
 	   m_files.empty()) {
 		return false;
 	}
@@ -721,7 +721,7 @@ bool ModGameVersion::isValid(const ModGameVersion * m, bool skipFileInfoValidati
 
 bool ModGameVersion::operator == (const ModGameVersion & m) const {
 	if(m_files.size() != m.m_files.size() ||
-	   !Utilities::areStringsEqualIgnoreCase(m_gameVersion, m.m_gameVersion) ||
+	   !Utilities::areStringsEqualIgnoreCase(m_gameVersionID, m.m_gameVersionID) ||
 	   m_converted != m.m_converted) {
 		return false;
 	}

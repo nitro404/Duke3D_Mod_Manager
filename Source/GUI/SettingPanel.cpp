@@ -225,7 +225,7 @@ StringChoiceSettingPanel * SettingPanel::createStringChoiceSettingPanel(std::str
 }
 
 StringChoiceSettingPanel * SettingPanel::createStringChoiceSettingPanel(std::function<std::string()> getSettingValueFunction, std::function<bool(const std::string &)> setSettingValueFunction, std::string defaultSetting, const std::string & name, const std::vector<std::string> & choices, wxWindow * parent, wxSizer * parentSizer, const std::vector<std::string> & values) {
-	if(parent == nullptr) {
+	if(parent == nullptr || (!values.empty() && choices.size() != values.size())) {
 		return nullptr;
 	}
 
@@ -306,7 +306,7 @@ StringChoiceSettingPanel * SettingPanel::createStringChoiceSettingPanel(std::fun
 	return settingPanel;
 }
 
-SettingPanel * SettingPanel::createStringMultiChoiceSettingPanel(std::vector<std::string> & setting, const std::string & name, bool caseSensitive, const std::vector<std::string> & choices, wxWindow * parent, size_t minimumNumberOfSelectedItems, wxSizer * parentSizer) {
+SettingPanel * SettingPanel::createStringMultiChoiceSettingPanel(std::vector<std::string> & setting, const std::string & name, bool caseSensitive, const std::vector<std::string> & choices, wxWindow * parent, size_t minimumNumberOfSelectedItems, wxSizer * parentSizer, const std::vector<std::string> & values) {
 	return createStringMultiChoiceSettingPanel(
 		[&setting]() -> const std::vector<std::string> & {
 			return setting;
@@ -345,14 +345,17 @@ SettingPanel * SettingPanel::createStringMultiChoiceSettingPanel(std::vector<std
 		choices,
 		parent,
 		minimumNumberOfSelectedItems,
-		parentSizer
+		parentSizer,
+		values
 	);
 }
 
-SettingPanel * SettingPanel::createStringMultiChoiceSettingPanel(std::function<const std::vector<std::string> &()> getSettingValueFunction, std::function<bool(const std::string &)> hasSettingEntryFunction, std::function<bool(const std::string &)> addSettingEntryFunction, std::function<bool(const std::string &)> removeSettingEntryFunction, const std::string & name, bool caseSensitive, const std::vector<std::string> & choices, wxWindow * parent, size_t minimumNumberOfSelectedItems, wxSizer * parentSizer) {
-	if(parent == nullptr) {
+SettingPanel * SettingPanel::createStringMultiChoiceSettingPanel(std::function<const std::vector<std::string> &()> getSettingValueFunction, std::function<bool(const std::string &)> hasSettingEntryFunction, std::function<bool(const std::string &)> addSettingEntryFunction, std::function<bool(const std::string &)> removeSettingEntryFunction, const std::string & name, bool caseSensitive, const std::vector<std::string> & choices, wxWindow * parent, size_t minimumNumberOfSelectedItems, wxSizer * parentSizer, const std::vector<std::string> & values) {
+	if(parent == nullptr || (!values.empty() && choices.size() != values.size())) {
 		return nullptr;
 	}
+
+	const std::vector<std::string> & actualValues = values.empty() ? choices : values;
 
 	SettingPanel * settingPanel = new SettingPanel(name, parent);
 
@@ -368,10 +371,10 @@ SettingPanel * SettingPanel::createStringMultiChoiceSettingPanel(std::function<c
 
 	wxWrapSizer * settingSizer = new wxWrapSizer(wxHORIZONTAL);
 
-	for(const std::string & choice : choices) {
-		checkBox = new wxCheckBox(settingPanel, wxID_ANY, wxString::FromUTF8(choice), wxDefaultPosition, wxDefaultSize, wxCHK_2STATE, wxDefaultValidator, choice);
+	for(size_t i = 0; i < choices.size(); i++) {
+		checkBox = new wxCheckBox(settingPanel, wxID_ANY, wxString::FromUTF8(choices[i]), wxDefaultPosition, wxDefaultSize, wxCHK_2STATE, wxDefaultValidator, choices[i]);
 		checkBox->SetFont(checkBox->GetFont().MakeBold());
-		checkBox->SetValue(hasSettingEntryFunction(choice));
+		checkBox->SetValue(hasSettingEntryFunction(actualValues[i]));
 		checkBox->Bind(wxEVT_CHECKBOX, settingPanel->m_changedFunction, wxID_ANY, wxID_ANY);
 
 		checkBoxes.push_back(checkBox);
@@ -379,10 +382,10 @@ SettingPanel * SettingPanel::createStringMultiChoiceSettingPanel(std::function<c
 		settingSizer->Add(checkBox, 1, wxEXPAND | wxHORIZONTAL, border);
 	}
 
-	settingPanel->m_getValueFunction = [checkBoxes, choices]() {
+	settingPanel->m_getValueFunction = [checkBoxes, actualValues]() {
 		std::stringstream valueStream;
 
-		for(size_t i = 0; i < choices.size(); i++) {
+		for(size_t i = 0; i < checkBoxes.size(); i++) {
 			if(!checkBoxes[i]->GetValue()) {
 				continue;
 			}
@@ -391,7 +394,7 @@ SettingPanel * SettingPanel::createStringMultiChoiceSettingPanel(std::function<c
 				valueStream << ", ";
 			}
 
-			valueStream << choices[i];
+			valueStream << actualValues[i];
 		}
 
 		return valueStream.str();
@@ -417,37 +420,37 @@ SettingPanel * SettingPanel::createStringMultiChoiceSettingPanel(std::function<c
 		return false;
 	};
 
-	settingPanel->m_saveFunction = [checkBoxes, choices, hasSettingEntryFunction, addSettingEntryFunction, removeSettingEntryFunction]() {
-		for(size_t i = 0; i < choices.size(); i++) {
-			bool hasEntry = hasSettingEntryFunction(choices[i]);
+	settingPanel->m_saveFunction = [checkBoxes, actualValues, hasSettingEntryFunction, addSettingEntryFunction, removeSettingEntryFunction]() {
+		for(size_t i = 0; i < checkBoxes.size(); i++) {
+			bool hasEntry = hasSettingEntryFunction(actualValues[i]);
 
 			if(checkBoxes[i]->GetValue()) {
 				if(!hasEntry) {
-					addSettingEntryFunction(choices[i]);
+					addSettingEntryFunction(actualValues[i]);
 				}
 			}
 			else {
 				if(hasEntry) {
-					removeSettingEntryFunction(choices[i]);
+					removeSettingEntryFunction(actualValues[i]);
 				}
 			}
 		}
 	};
 
-	settingPanel->m_discardFunction = [checkBoxes, choices, hasSettingEntryFunction]() {
-		for(size_t i = 0; i < choices.size(); i++) {
-			checkBoxes[i]->SetValue(hasSettingEntryFunction(choices[i]));
+	settingPanel->m_discardFunction = [checkBoxes, actualValues, hasSettingEntryFunction]() {
+		for(size_t i = 0; i < checkBoxes.size(); i++) {
+			checkBoxes[i]->SetValue(hasSettingEntryFunction(actualValues[i]));
 		}
 	};
 
-	settingPanel->m_resetFunction = [checkBoxes, choices]() {
-		for(size_t i = 0; i < choices.size(); i++) {
+	settingPanel->m_resetFunction = [checkBoxes]() {
+		for(size_t i = 0; i < checkBoxes.size(); i++) {
 			checkBoxes[i]->SetValue(false);
 		}
 	};
 
-	settingPanel->m_setEditableFunction = [checkBoxes, choices](bool editable) {
-		for(size_t i = 0; i < choices.size(); i++) {
+	settingPanel->m_setEditableFunction = [checkBoxes](bool editable) {
+		for(size_t i = 0; i < checkBoxes.size(); i++) {
 			if(editable) {
 				checkBoxes[i]->Enable();
 			}
