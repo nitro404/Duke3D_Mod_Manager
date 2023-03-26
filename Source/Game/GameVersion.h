@@ -23,7 +23,7 @@ public:
 	};
 
 	GameVersion();
-	GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool removable, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, bool supportsSubdirectories, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag = {}, const std::optional<std::string> & weaponSwitchOrderArgumentFlag = {}, const std::optional<std::string> & disableMonstersArgumentFlag = {}, const std::optional<std::string> & disableSoundArgumentFlag = {}, const std::optional<std::string> & disableMusicArgumentFlag = {}, const std::optional<std::string> & setupExecutableName = {}, const std::optional<std::string> & groupFileInstallPath = {}, const std::optional<std::string> & defFileArgumentFlag = {}, const std::optional<std::string> & extraDefFileArgumentFlag = {}, const std::optional<bool> & requiresCombinedGroup = {}, const std::optional<bool> & requiresGroupFileExtraction = {}, const std::optional<bool> & requiresDOSBox = {}, const std::string & website = std::string(), const std::string & sourceCodeURL = std::string(), const std::vector<OperatingSystem> & supportedOperatingSystems = std::vector<OperatingSystem>(), const std::vector<std::string> & compatibleGameVersions = std::vector<std::string>());
+	GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool removable, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, bool supportsSubdirectories, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag = {}, const std::optional<std::string> & weaponSwitchOrderArgumentFlag = {}, const std::optional<std::string> & disableMonstersArgumentFlag = {}, const std::optional<std::string> & disableSoundArgumentFlag = {}, const std::optional<std::string> & disableMusicArgumentFlag = {}, const std::optional<std::string> & setupExecutableName = {}, const std::optional<std::string> & groupFileInstallPath = {}, const std::optional<std::string> & defFileArgumentFlag = {}, const std::optional<std::string> & extraDefFileArgumentFlag = {}, const std::optional<bool> & requiresCombinedGroup = {}, const std::optional<bool> & requiresGroupFileExtraction = {}, const std::string & website = std::string(), const std::string & sourceCodeURL = std::string(), const std::vector<OperatingSystem> & supportedOperatingSystems = std::vector<OperatingSystem>(), const std::vector<std::string> & compatibleGameVersions = std::vector<std::string>());
 	GameVersion(GameVersion && gameVersion) noexcept;
 	GameVersion(const GameVersion & gameVersion);
 	GameVersion & operator = (GameVersion && gameVersion) noexcept;
@@ -63,9 +63,6 @@ public:
 	void setRequiresGroupFileExtraction(bool requiresGroupFileExtraction);
 	void clearRequiresGroupFileExtraction();
 	bool doesRequireDOSBox() const;
-	const std::optional<bool> & getRequiresDOSBox() const;
-	void setRequiresDOSBox(bool requiresDOSBox);
-	void clearRequiresDOSBox();
 	bool hasLocalWorkingDirectory() const;
 	void setLocalWorkingDirectory(bool localWorkingDirectory);
 	const std::string & getModDirectoryName() const;
@@ -145,6 +142,7 @@ public:
 	size_t indexOfSupportedOperatingSystemType(DeviceInformationBridge::OperatingSystemType operatingSystemType) const;
 	size_t indexOfSupportedOperatingSystemWithName(const std::string & operatingSystemName) const;
 	std::optional<OperatingSystem> getSupportedOperatingSystem(size_t index) const;
+	std::string getSupportedOperatingSystemName(size_t index) const;
 	const std::vector<OperatingSystem> & getSupportedOperatingSystems() const;
 	bool addSupportedOperatingSystem(OperatingSystem operatingSystem);
 	bool addSupportedOperatingSystemWithName(const std::string & operatingSystemName);
@@ -240,7 +238,6 @@ private:
 	std::optional<std::string> m_groupFileInstallPath;
 	std::optional<bool> m_requiresCombinedGroup;
 	std::optional<bool> m_requiresGroupFileExtraction;
-	std::optional<bool> m_requiresDOSBox;
 	std::string m_modDirectoryName;
 	std::string m_website;
 	std::string m_sourceCodeURL;
