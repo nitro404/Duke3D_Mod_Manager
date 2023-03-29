@@ -1705,6 +1705,8 @@ bool ModManager::runSelectedModAndWait(std::shared_ptr<GameVersion> alternateGam
 bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersion, std::shared_ptr<ModGameVersion> alternateModGameVersion) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
+	std::chrono::time_point<std::chrono::steady_clock> runStartTimePoint(std::chrono::steady_clock::now());
+
 	if(!m_initialized || m_gameProcess != nullptr) {
 		notifyLaunchError("Mod manager not initialized or game process already running.");
 		return false;
@@ -2067,6 +2069,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		customMapMessage = fmt::format(" with custom map '{}'", customMap);
 	}
 
+	std::chrono::milliseconds runDelayDuration(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - runStartTimePoint));
+
 	std::map<std::string, std::any> properties;
 	properties["gameVersion"] = selectedGameVersion->getID();
 	properties["command"] = command;
@@ -2082,6 +2086,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	if(m_arguments != nullptr && m_arguments->hasPassthroughArguments()) {
 		properties["arguments"] = m_arguments->getPassthroughArguments().value();
 	}
+
+	properties["runDelayDuration"] = runDelayDuration.count();
 
 	std::string gameTypeName(Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)));
 
