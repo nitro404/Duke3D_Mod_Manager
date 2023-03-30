@@ -11143,4 +11143,24 @@
 			<download filename="Epic_1.00000000000000000000000000000001-ModMgrE.zip" filesize="2076955" version="1.00000000000000000000000000000001" game="Atomic" type="Mod Manager Files" state="Native" sha1="91631fcb07eedb6fcb6d369783ff37c9cfad8535"/>
 		</downloads>
 	</mod>
+	<mod name="Retro Deathmatch" id="retro_deathmatch" type="Dukematch" version="0.053" version_type="Beta" website="https://www.moddb.com/mods/retro-deathmatch">
+		<team>
+			<member name="Graphics" website="https://www.moddb.com/mods/retro-deathmatch"/>
+		</team>
+		<versions>
+			<version id="0.053" release_date="March 18, 2023">
+				<type id="Beta">
+					<game type="eDuke32" state="Native">
+						<file name="RETRO_DM.CON" size="152212" type="con" sha1="16587f0f64d4f29514c6e7acb7b4c4b5dd4b96af"/>
+						<file name="RETRO_DM.def" size="382010" type="def" sha1="ef3fa44a435dce9e0c98606217f9fae3987dcd0a"/>
+						<file name="Retro_Deathmatch_0.053.zip" size="23713547" type="zip" sha1="ac0f2de278f99aa61d6254c66e5e1f4de5b4cad3"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Retro_Deathmatch_v0.053.zip" filesize="24248126" version="0.053" game="eDuke32" type="Original Files" sha1="ad28933a64861738ea01ff29fab35661126960f9"/>
+			<download filename="Retro_Deathmatch_0.053-ModMgrE.zip" filesize="21775459" version="0.053" game="eDuke32" type="Mod Manager Files" state="Native" sha1="13814091d6e68e701cfe79d874458469f98e3b1b"/>
+		</downloads>
+	</mod>
 </mods>
