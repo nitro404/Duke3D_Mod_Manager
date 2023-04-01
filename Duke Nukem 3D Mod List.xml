@@ -10482,7 +10482,7 @@
 			<download filename="WG_The_Abyss_Episode-ModMgrE.zip" filesize="389935" game="eDuke32" type="Mod Manager Files" state="Native" sha1="6881b228a4bdfc42bb749a251be15bef263314a7"/>
 		</downloads>
 	</mod>
-	<mod name="Blast Radius" id="blast_radius" type="Episode" version="1.0.11" website="https://www.moddb.com/mods/duke-nukem-3d-blast-radius">
+	<mod name="Blast Radius" id="blast_radius" type="Episode" version="1.0.12" website="https://www.moddb.com/mods/duke-nukem-3d-blast-radius">
 		<team country="France">
 			<member name="Aymeric Nocus" alias="ck3D" email="aymeric-nocus@tele2.fr" website="https://www.ko-fi.com/blastradius" youtube="MisterCK"/>
 			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld"/>
@@ -10504,12 +10504,22 @@
 					</game>
 				</type>
 			</version>
+			<version id="1.0.12" release_date="March 31, 2023">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DN3DBR.CON" size="203757" type="con" sha1="9b7705a9e06cd215e761f7c1d6e52190ff4b5c08"/>
+						<file name="Blast_Radius_1.0.12.zip" size="35150243" type="zip" sha1="f2b718053426c6ec046fe623cec610dc22961772"/>
+					</game>
+				</type>
+			</version>
 		</versions>
 		<downloads>
 			<download filename="DN3DBR.rar" filesize="38345231" version="1.0.0" game="eDuke32" type="Original Files" sha1="9bda873436277cdcf1d8fa59e66e5065ea043850"/>
 			<download filename="DN3DBR.11.rar" filesize="38340793" version="1.0.11" game="eDuke32" type="Original Files" sha1="505368dad143200e4383dfb8f74a0f332d66e838"/>
+			<download filename="DN3DBR.12.rar" filesize="38341115" version="1.0.12" game="eDuke32" type="Original Files" sha1="ce062515c0a2c74acfbc6651032e9d0e6fc684e4"/>
 			<download filename="Blast_Radius_1.0.0-ModMgrE.zip" filesize="35072253" version="1.0.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="086cc55ffdaf19501a528c183aa0311bfcf17443"/>
 			<download filename="Blast_Radius_1.0.11-ModMgrE.zip" filesize="35075115" version="1.0.11" game="eDuke32" type="Mod Manager Files" state="Native" sha1="dfd7df06fd09d8e6f52f47ce0b4803d72e7cd8b0"/>
+			<download filename="Blast_Radius_1.0.12-ModMgrE.zip" filesize="35075187" version="1.0.12" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c95673f992daa4c897d565bed25ec01b75a98736"/>
 		</downloads>
 	</mod>
 	<mod name="Countdown to Christmas" id="countdown_to_christmas" type="Total Conversion">
