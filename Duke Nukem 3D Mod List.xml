@@ -675,7 +675,7 @@
 		<team>
 			<member name="Geoffrey van Dijk" alias="Fakir Baba" email="fakirnogwat@hotmail.com"/>
 			<member name="The Commander" email="codynz3000@hotmail.com"/>
-			<member name="Andrew Childs" alias="Hudson"/>
+			<member name="Andrew Childs" alias="Hudson" twitter="aschilds"/>
 		</team>
 		<versions>
 			<version id="Demo" release_date="September 2, 2005">
@@ -1742,9 +1742,9 @@
 			<member name="Gareth Croson"/>
 			<member name="Shawn Hawkins"/>
 			<member name="Shoma"/>
-			<member name="Raziel"/>
+			<member name="Sean Bellwether" alias="Raziel" email="RTRPRaziel@aol.com"/>
 			<member name="Mel Havok"/>
-			<member name="Mblackwell" email="Mblackwell50@hotmail.com"/>
+			<member name="Jonathan Strander" alias="Mblackwell" email="Mblackwell50@hotmail.com"/>
 			<member name="Rusty Nails" email="R_nails20@hotmail.com"/>
 			<member name="Anthony"/>
 			<member name="Chris Phyffer"/>
@@ -8282,8 +8282,8 @@
 	</mod>
 	<mod name="Decay" id="decay" type="Total Conversion" version="1.0">
 		<team name="Thought Process">
-			<member name="Andrew Childs" alias="Hudson"/>
-			<member name="Mblackwell" email="Mblackwell50@hotmail.com"/>
+			<member name="Andrew Childs" alias="Hudson" twitter="aschilds"/>
+			<member name="Jonathan Strander" alias="Mblackwell" email="Mblackwell50@hotmail.com"/>
 			<member name="Mark"/>
 			<member name="chicken"/>
 			<member name="Daedolon"/>
@@ -9621,7 +9621,7 @@
 			<member name="Fox"/>
 			<member name="Hendricks266"/>
 			<member name="Nukey"/>
-			<member name="oasiz"/>
+			<member name="Max Ylitalo" alias="Oasiz"/>
 			<member name="TerminX" email="terminx@theoffspring.net"/>
 		</team>
 		<versions>
@@ -9729,9 +9729,9 @@
 	</mod>
 	<mod name="Fallout Freeze" id="fallout_freeze" type="Total Conversion" version="1.1" website="https://brullov.itch.io/fallout-freeze">
 		<team name="Brullov Studios" website="https://brullov-studios.itch.io">
-			<member name="Artem Brullov" twitter="brullov_art" website="https://itch.io/profile/brullov"/>
-			<member name="Oasiz"/>
-			<member name="RichardStorm"/>
+			<member name="Artem Brullov" twitter="brullov_art" website="https://itch.io/profile/brullov" youtube="brullov_labs" reddit="brullov"/>
+			<member name="Max Ylitalo" alias="Oasiz"/>
+			<member name="Riccardo Capogna" alias="RichardStorm" email="riccardo.capogna@yahoo.it"/>
 			<member name="Cage"/>
 		</team>
 		<versions>
@@ -10391,7 +10391,7 @@
 	</mod>
 	<mod name="The Christmas Project" id="the_christmas_project" type="Total Conversion" version="1.01">
 		<team>
-			<member name="Mblackwell" email="Mblackwell50@hotmail.com"/>
+			<member name="Jonathan Strander" alias="Mblackwell" email="Mblackwell50@hotmail.com"/>
 			<member name="Rusty Nails" email="R_nails20@hotmail.com"/>
 		</team>
 		<versions>
