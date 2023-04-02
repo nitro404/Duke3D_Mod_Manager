@@ -45,6 +45,7 @@ static const std::array<std::string_view, 5> JSON_MOD_FILE_PROPERTY_NAMES = {
 ModFile::ModFile(const std::string & fileName, uint64_t fileSize, const std::string & type, const std::string & sha1)
 	: m_fileName(Utilities::trimString(fileName))
 	, m_fileSize(fileSize)
+	, m_hadFileSizeAttribute(true)
 	, m_type(Utilities::trimString(type))
 	, m_sha1(Utilities::trimString(sha1))
 	, m_parentModGameVersion(nullptr) { }
@@ -52,6 +53,7 @@ ModFile::ModFile(const std::string & fileName, uint64_t fileSize, const std::str
 ModFile::ModFile(ModFile && f) noexcept
 	: m_fileName(std::move(f.m_fileName))
 	, m_fileSize(f.m_fileSize)
+	, m_hadFileSizeAttribute(f.m_hadFileSizeAttribute)
 	, m_type(std::move(f.m_type))
 	, m_sha1(std::move(f.m_sha1))
 	, m_shared(f.m_shared)
@@ -60,6 +62,7 @@ ModFile::ModFile(ModFile && f) noexcept
 ModFile::ModFile(const ModFile & f)
 	: m_fileName(f.m_fileName)
 	, m_fileSize(f.m_fileSize)
+	, m_hadFileSizeAttribute(f.m_hadFileSizeAttribute)
 	, m_type(f.m_type)
 	, m_sha1(f.m_sha1)
 	, m_shared(f.m_shared)
@@ -69,6 +72,7 @@ ModFile & ModFile::operator = (ModFile && f) noexcept {
 	if(this != &f) {
 		m_fileName = std::move(f.m_fileName);
 		m_fileSize = f.m_fileSize;
+		m_hadFileSizeAttribute = f.m_hadFileSizeAttribute;
 		m_type = std::move(f.m_type);
 		m_sha1 = std::move(f.m_sha1);
 		m_shared = f.m_shared;
@@ -80,6 +84,7 @@ ModFile & ModFile::operator = (ModFile && f) noexcept {
 ModFile & ModFile::operator = (const ModFile & f) {
 	m_fileName = f.m_fileName;
 	m_fileSize = f.m_fileSize;
+	m_hadFileSizeAttribute = f.m_hadFileSizeAttribute;
 	m_type = f.m_type;
 	m_sha1 = f.m_sha1;
 	m_shared = f.m_shared;
@@ -211,7 +216,7 @@ tinyxml2::XMLElement * ModFile::toXML(tinyxml2::XMLDocument * document) const {
 
 	modFileElement->SetAttribute(XML_MOD_FILE_FILE_NAME_ATTRIBUTE_NAME.c_str(), m_fileName.c_str());
 
-	if(m_fileSize != 0) {
+	if(m_fileSize != 0 || m_hadFileSizeAttribute) {
 		modFileElement->SetAttribute(XML_MOD_FILE_FILE_SIZE_ATTRIBUTE_NAME.c_str(), m_fileSize);
 	}
 
@@ -284,11 +289,6 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const rapidjson::Value & modFileValu
 		}
 
 		modFileSize = modFileSizeValue.GetUint64();
-
-		if(modFileSize == 0) {
-			spdlog::error("Mod file has an invalid '{}' property value, expected positive integer value.", JSON_MOD_FILE_FILE_SIZE_PROPERTY_NAME);
-			return nullptr;
-		}
 	}
 	else {
 		if(!skipFileInfoValidation) {
@@ -427,14 +427,17 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const tinyxml2::XMLElement * modFile
 
 	bool error = false;
 	uint64_t modFileSize = 0;
+	bool hadFileSizeAttribute = false;
 
 	if(Utilities::stringLength(modFileSizeData) != 0) {
 		modFileSize = Utilities::parseUnsignedLong(modFileSizeData, &error);
 
-		if(error || modFileSize == 0) {
-			spdlog::error("Attribute '{}' in element '{}' has an invalid value: '{}', expected positive integer number.", XML_MOD_FILE_FILE_SIZE_ATTRIBUTE_NAME, XML_MOD_FILE_ELEMENT_NAME, modFileSizeData);
+		if(error) {
+			spdlog::error("Attribute '{}' in element '{}' has an invalid value: '{}', expected non-negative integer number.", XML_MOD_FILE_FILE_SIZE_ATTRIBUTE_NAME, XML_MOD_FILE_ELEMENT_NAME, modFileSizeData);
 			return nullptr;
 		}
+
+		hadFileSizeAttribute = true;
 	}
 	else {
 		if(!skipFileInfoValidation) {
@@ -445,6 +448,7 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const tinyxml2::XMLElement * modFile
 
 	// initialize the mod file
 	std::unique_ptr<ModFile> newModFile = std::make_unique<ModFile>(modFileName, modFileSize, modFileType, modFileSHA1 == nullptr ? "" : modFileSHA1);
+	newModFile->m_hadFileSizeAttribute = hadFileSizeAttribute;
 
 	if(modFileSharedData != nullptr) {
 		bool shared = Utilities::parseBoolean(modFileSharedData, &error);

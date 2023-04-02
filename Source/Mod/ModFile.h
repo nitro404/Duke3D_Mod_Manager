@@ -64,6 +64,7 @@ protected:
 private:
 	std::string m_fileName;
 	uint64_t m_fileSize;
+	bool m_hadFileSizeAttribute;
 	std::string m_type;
 	std::string m_sha1;
 	std::optional<bool> m_shared;
