@@ -25,8 +25,9 @@ static const std::string XML_MOD_TEAM_MEMBER_DISCORD_ATTRIBUTE_NAME("discord");
 static const std::string XML_MOD_TEAM_MEMBER_STEAM_ID_ATTRIBUTE_NAME("steam");
 static const std::string XML_MOD_TEAM_MEMBER_AIM_ATTRIBUTE_NAME("aim");
 static const std::string XML_MOD_TEAM_MEMBER_ICQ_ATTRIBUTE_NAME("icq");
+static const std::string XML_MOD_TEAM_MEMBER_YAHOO_ATTRIBUTE_NAME("yahoo");
 static const std::string XML_MOD_TEAM_MEMBER_PHONE_NUMBER_ATTRIBUTE_NAME("phone_number");
-static const std::array<std::string_view, 13> XML_MOD_TEAM_MEMBER_ATTRIBUTE_NAMES = {
+static const std::array<std::string_view, 14> XML_MOD_TEAM_MEMBER_ATTRIBUTE_NAMES = {
 	XML_MOD_TEAM_MEMBER_NAME_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_MEMBER_ALIAS_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_MEMBER_EMAIL_ATTRIBUTE_NAME,
@@ -39,6 +40,7 @@ static const std::array<std::string_view, 13> XML_MOD_TEAM_MEMBER_ATTRIBUTE_NAME
 	XML_MOD_TEAM_MEMBER_STEAM_ID_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_MEMBER_AIM_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_MEMBER_ICQ_ATTRIBUTE_NAME,
+	XML_MOD_TEAM_MEMBER_YAHOO_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_MEMBER_PHONE_NUMBER_ATTRIBUTE_NAME
 };
 
@@ -54,8 +56,9 @@ static constexpr const char * JSON_MOD_TEAM_MEMBER_DISCORD_PROPERTY_NAME = "disc
 static constexpr const char * JSON_MOD_TEAM_MEMBER_STEAM_ID_PROPERTY_NAME = "steamID";
 static constexpr const char * JSON_MOD_TEAM_MEMBER_AIM_PROPERTY_NAME = "aim";
 static constexpr const char * JSON_MOD_TEAM_MEMBER_ICQ_PROPERTY_NAME = "icq";
+static constexpr const char * JSON_MOD_TEAM_MEMBER_YAHOO_PROPERTY_NAME = "yahoo";
 static constexpr const char * JSON_MOD_TEAM_MEMBER_PHONE_NUMBER_PROPERTY_NAME = "phoneNumber";
-static const std::array<std::string_view, 13> JSON_MOD_TEAM_MEMBER_PROPERTY_NAMES = {
+static const std::array<std::string_view, 14> JSON_MOD_TEAM_MEMBER_PROPERTY_NAMES = {
 	JSON_MOD_TEAM_MEMBER_NAME_PROPERTY_NAME,
 	JSON_MOD_TEAM_MEMBER_ALIAS_PROPERTY_NAME,
 	JSON_MOD_TEAM_MEMBER_EMAIL_PROPERTY_NAME,
@@ -68,7 +71,8 @@ static const std::array<std::string_view, 13> JSON_MOD_TEAM_MEMBER_PROPERTY_NAME
 	JSON_MOD_TEAM_MEMBER_STEAM_ID_PROPERTY_NAME,
 	JSON_MOD_TEAM_MEMBER_AIM_PROPERTY_NAME,
 	JSON_MOD_TEAM_MEMBER_ICQ_PROPERTY_NAME,
-	JSON_MOD_TEAM_MEMBER_PHONE_NUMBER_PROPERTY_NAME,
+	JSON_MOD_TEAM_MEMBER_YAHOO_PROPERTY_NAME,
+	JSON_MOD_TEAM_MEMBER_PHONE_NUMBER_PROPERTY_NAME
 };
 
 ModTeamMember::ModTeamMember(const std::string & name, const std::string & alias, const std::string & email, const std::string & website)
@@ -91,6 +95,7 @@ ModTeamMember::ModTeamMember(ModTeamMember && m) noexcept
 	, m_steamID(std::move(m.m_steamID))
 	, m_aim(std::move(m.m_aim))
 	, m_icq(std::move(m.m_icq))
+	, m_yahoo(std::move(m.m_yahoo))
 	, m_phoneNumber(std::move(m.m_phoneNumber))
 	, m_parentModTeam(nullptr) { }
 
@@ -107,6 +112,7 @@ ModTeamMember::ModTeamMember(const ModTeamMember & m)
 	, m_steamID(m.m_steamID)
 	, m_aim(m.m_aim)
 	, m_icq(m.m_icq)
+	, m_yahoo(m.m_yahoo)
 	, m_phoneNumber(m.m_phoneNumber)
 	, m_parentModTeam(nullptr) { }
 
@@ -124,6 +130,7 @@ ModTeamMember & ModTeamMember::operator = (ModTeamMember && m) noexcept {
 		m_steamID = std::move(m.m_steamID);
 		m_aim = std::move(m.m_aim);
 		m_icq = std::move(m.m_icq);
+		m_yahoo = std::move(m.m_yahoo);
 		m_phoneNumber = std::move(m.m_phoneNumber);
 	}
 
@@ -143,6 +150,7 @@ ModTeamMember & ModTeamMember::operator = (const ModTeamMember & m) {
 	m_steamID = m.m_steamID;
 	m_aim = m.m_aim;
 	m_icq = m.m_icq;
+	m_yahoo = m.m_yahoo;
 	m_phoneNumber = m.m_phoneNumber;
 
 	return *this;
@@ -198,6 +206,10 @@ const std::string & ModTeamMember::getAIM() const {
 
 const std::string & ModTeamMember::getICQ() const {
 	return m_icq;
+}
+
+const std::string & ModTeamMember::getYahoo() const {
+	return m_yahoo;
 }
 
 const std::string & ModTeamMember::getPhoneNumber() const {
@@ -262,6 +274,10 @@ void ModTeamMember::setAIM(const std::string & aim) {
 
 void ModTeamMember::setICQ(const std::string & icq) {
 	m_icq = Utilities::trimString(icq);
+}
+
+void ModTeamMember::setYahoo(const std::string & yahoo) {
+	m_yahoo = Utilities::trimString(yahoo);
 }
 
 void ModTeamMember::setPhoneNumber(const std::string & phoneNumber) {
@@ -333,6 +349,11 @@ rapidjson::Value ModTeamMember::toJSON(rapidjson::MemoryPoolAllocator<rapidjson:
 		modTeamMemberValue.AddMember(rapidjson::StringRef(JSON_MOD_TEAM_MEMBER_ICQ_PROPERTY_NAME), icqValue, allocator);
 	}
 
+	if(!m_yahoo.empty()) {
+		rapidjson::Value yahooValue(m_yahoo.c_str(), allocator);
+		modTeamMemberValue.AddMember(rapidjson::StringRef(JSON_MOD_TEAM_MEMBER_YAHOO_PROPERTY_NAME), yahooValue, allocator);
+	}
+
 	if(!m_phoneNumber.empty()) {
 		rapidjson::Value phoneNumberValue(m_phoneNumber.c_str(), allocator);
 		modTeamMemberValue.AddMember(rapidjson::StringRef(JSON_MOD_TEAM_MEMBER_PHONE_NUMBER_PROPERTY_NAME), phoneNumberValue, allocator);
@@ -392,6 +413,10 @@ tinyxml2::XMLElement * ModTeamMember::toXML(tinyxml2::XMLDocument * document) co
 
 	if(!m_icq.empty()) {
 		modTeamMemberElement->SetAttribute(XML_MOD_TEAM_MEMBER_ICQ_ATTRIBUTE_NAME.c_str(), m_icq.c_str());
+	}
+
+	if(!m_yahoo.empty()) {
+		modTeamMemberElement->SetAttribute(XML_MOD_TEAM_MEMBER_YAHOO_ATTRIBUTE_NAME.c_str(), m_yahoo.c_str());
 	}
 
 	if(!m_phoneNumber.empty()) {
@@ -580,6 +605,18 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const rapidjson::Value &
 		newModTeamMember->setICQ(modTeamMemberICQValue.GetString());
 	}
 
+	// parse the mod team member Yahoo property
+	if(modTeamMemberValue.HasMember(JSON_MOD_TEAM_MEMBER_YAHOO_PROPERTY_NAME)) {
+		const rapidjson::Value & modTeamMemberYahooValue = modTeamMemberValue[JSON_MOD_TEAM_MEMBER_YAHOO_PROPERTY_NAME];
+
+		if(!modTeamMemberYahooValue.IsString()) {
+			spdlog::error("Mod team member '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_TEAM_MEMBER_YAHOO_PROPERTY_NAME, Utilities::typeToString(modTeamMemberYahooValue.GetType()));
+			return nullptr;
+		}
+
+		newModTeamMember->setYahoo(modTeamMemberYahooValue.GetString());
+	}
+
 	// parse the mod team member phone number property
 	if(modTeamMemberValue.HasMember(JSON_MOD_TEAM_MEMBER_PHONE_NUMBER_PROPERTY_NAME)) {
 		const rapidjson::Value & modTeamMemberPhoneNumberValue = modTeamMemberValue[JSON_MOD_TEAM_MEMBER_PHONE_NUMBER_PROPERTY_NAME];
@@ -649,6 +686,7 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const tinyxml2::XMLEleme
 	const char * teamMemberSteamID = modTeamMemberElement->Attribute(XML_MOD_TEAM_MEMBER_STEAM_ID_ATTRIBUTE_NAME.c_str());
 	const char * teamMemberAIM = modTeamMemberElement->Attribute(XML_MOD_TEAM_MEMBER_AIM_ATTRIBUTE_NAME.c_str());
 	const char * teamMemberICQ = modTeamMemberElement->Attribute(XML_MOD_TEAM_MEMBER_ICQ_ATTRIBUTE_NAME.c_str());
+	const char * teamMemberYahoo = modTeamMemberElement->Attribute(XML_MOD_TEAM_MEMBER_YAHOO_ATTRIBUTE_NAME.c_str());
 	const char * teamMemberPhoneNumber = modTeamMemberElement->Attribute(XML_MOD_TEAM_MEMBER_PHONE_NUMBER_ATTRIBUTE_NAME.c_str());
 
 	if(teamMemberName == nullptr || Utilities::stringLength(teamMemberName) == 0) {
@@ -691,6 +729,10 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const tinyxml2::XMLEleme
 		newModTeamMember->setICQ(teamMemberICQ);
 	}
 
+	if(teamMemberYahoo != nullptr) {
+		newModTeamMember->setYahoo(teamMemberYahoo);
+	}
+
 	if(teamMemberPhoneNumber != nullptr) {
 		newModTeamMember->setPhoneNumber(teamMemberPhoneNumber);
 	}
@@ -718,8 +760,9 @@ bool ModTeamMember::operator == (const ModTeamMember & m) const {
 		   Utilities::areStringsEqualIgnoreCase(m_discord, m.m_discord) &&
 		   Utilities::areStringsEqualIgnoreCase(m_steamID, m.m_steamID) &&
 		   Utilities::areStringsEqualIgnoreCase(m_aim, m.m_aim) &&
-		   m_icq == m.m_icq &&
-		   m_phoneNumber == m.m_phoneNumber;
+		   Utilities::areStringsEqual(m_icq, m.m_icq) &&
+		   Utilities::areStringsEqualIgnoreCase(m_yahoo, m.m_yahoo) &&
+		   Utilities::areStringsEqual(m_phoneNumber, m.m_phoneNumber);
 }
 
 bool ModTeamMember::operator != (const ModTeamMember & m) const {

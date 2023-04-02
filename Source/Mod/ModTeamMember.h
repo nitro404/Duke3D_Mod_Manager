@@ -37,6 +37,7 @@ public:
 	const std::string & getSteamID() const;
 	const std::string & getAIM() const;
 	const std::string & getICQ() const;
+	const std::string & getYahoo() const;
 	const std::string & getPhoneNumber() const;
 	const Mod * getParentMod() const;
 	const ModTeam * getParentModTeam() const;
@@ -53,6 +54,7 @@ public:
 	void setSteamID(const std::string & steamID);
 	void setAIM(const std::string & aim);
 	void setICQ(const std::string & icq);
+	void setYahoo(const std::string & yahoo);
 	void setPhoneNumber(const std::string & phoneNumber);
 
 	rapidjson::Value toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const;
@@ -82,6 +84,7 @@ private:
 	std::string m_steamID;
 	std::string m_aim;
 	std::string m_icq;
+	std::string m_yahoo;
 	std::string m_phoneNumber;
 	const ModTeam * m_parentModTeam;
 };
