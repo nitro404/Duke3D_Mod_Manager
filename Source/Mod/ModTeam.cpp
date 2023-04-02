@@ -15,37 +15,45 @@
 
 static const std::string XML_MOD_TEAM_ELEMENT_NAME("team");
 static const std::string XML_MOD_TEAM_NAME_ATTRIBUTE_NAME("name");
+static const std::string XML_MOD_TEAM_WEBSITE_ATTRIBUTE_NAME("website");
+static const std::string XML_MOD_TEAM_EMAIL_ATTRIBUTE_NAME("email");
+static const std::string XML_MOD_TEAM_TWITTER_ATTRIBUTE_NAME("twitter");
+static const std::string XML_MOD_TEAM_DISCORD_ATTRIBUTE_NAME("discord");
 static const std::string XML_MOD_TEAM_COUNTY_ATTRIBUTE_NAME("county");
 static const std::string XML_MOD_TEAM_CITY_ATTRIBUTE_NAME("city");
 static const std::string XML_MOD_TEAM_PROVINCE_ATTRIBUTE_NAME("province");
 static const std::string XML_MOD_TEAM_STATE_ATTRIBUTE_NAME("state");
 static const std::string XML_MOD_TEAM_COUNTRY_ATTRIBUTE_NAME("country");
-static const std::string XML_MOD_TEAM_EMAIL_ATTRIBUTE_NAME("email");
-static const std::string XML_MOD_TEAM_WEBSITE_ATTRIBUTE_NAME("website");
-static const std::array<std::string_view, 8> XML_MOD_TEAM_ATTRIBUTE_NAMES = {
+static const std::array<std::string_view, 10> XML_MOD_TEAM_ATTRIBUTE_NAMES = {
 	XML_MOD_TEAM_NAME_ATTRIBUTE_NAME,
+	XML_MOD_TEAM_WEBSITE_ATTRIBUTE_NAME,
+	XML_MOD_TEAM_EMAIL_ATTRIBUTE_NAME,
+	XML_MOD_TEAM_TWITTER_ATTRIBUTE_NAME,
+	XML_MOD_TEAM_DISCORD_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_COUNTY_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_CITY_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_PROVINCE_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_STATE_ATTRIBUTE_NAME,
-	XML_MOD_TEAM_COUNTRY_ATTRIBUTE_NAME,
-	XML_MOD_TEAM_EMAIL_ATTRIBUTE_NAME,
-	XML_MOD_TEAM_WEBSITE_ATTRIBUTE_NAME
+	XML_MOD_TEAM_COUNTRY_ATTRIBUTE_NAME
 };
 
 static constexpr const char * JSON_MOD_TEAM_NAME_PROPERTY_NAME = "name";
 static constexpr const char * JSON_MOD_TEAM_WEBSITE_PROPERTY_NAME = "website";
 static constexpr const char * JSON_MOD_TEAM_EMAIL_PROPERTY_NAME = "email";
+static constexpr const char * JSON_MOD_TEAM_TWITTER_PROPERTY_NAME = "twitter";
+static constexpr const char * JSON_MOD_TEAM_DISCORD_PROPERTY_NAME = "discord";
 static constexpr const char * JSON_MOD_TEAM_COUNTY_PROPERTY_NAME = "county";
 static constexpr const char * JSON_MOD_TEAM_CITY_PROPERTY_NAME = "city";
 static constexpr const char * JSON_MOD_TEAM_PROVINCE_PROPERTY_NAME = "province";
 static constexpr const char * JSON_MOD_TEAM_STATE_PROPERTY_NAME = "state";
 static constexpr const char * JSON_MOD_TEAM_COUNTRY_PROPERTY_NAME = "country";
 static constexpr const char * JSON_MOD_TEAM_MEMBERS_PROPERTY_NAME = "members";
-static const std::array<std::string_view, 9> JSON_MOD_TEAM_PROPERTY_NAMES = {
+static const std::array<std::string_view, 11> JSON_MOD_TEAM_PROPERTY_NAMES = {
 	JSON_MOD_TEAM_NAME_PROPERTY_NAME,
 	JSON_MOD_TEAM_WEBSITE_PROPERTY_NAME,
 	JSON_MOD_TEAM_EMAIL_PROPERTY_NAME,
+	JSON_MOD_TEAM_TWITTER_PROPERTY_NAME,
+	JSON_MOD_TEAM_DISCORD_PROPERTY_NAME,
 	JSON_MOD_TEAM_COUNTY_PROPERTY_NAME,
 	JSON_MOD_TEAM_CITY_PROPERTY_NAME,
 	JSON_MOD_TEAM_PROVINCE_PROPERTY_NAME,
@@ -64,6 +72,8 @@ ModTeam::ModTeam(ModTeam && m) noexcept
 	: m_name(std::move(m.m_name))
 	, m_website(std::move(m.m_website))
 	, m_email(std::move(m.m_email))
+	, m_twitter(std::move(m.m_twitter))
+	, m_discord(std::move(m.m_discord))
 	, m_county(std::move(m.m_county))
 	, m_city(std::move(m.m_city))
 	, m_state(std::move(m.m_state))
@@ -77,6 +87,8 @@ ModTeam::ModTeam(const ModTeam & m)
 	: m_name(m.m_name)
 	, m_website(m.m_website)
 	, m_email(m.m_email)
+	, m_twitter(m.m_twitter)
+	, m_discord(m.m_discord)
 	, m_county(m.m_county)
 	, m_city(m.m_city)
 	, m_state(m.m_state)
@@ -94,6 +106,8 @@ ModTeam & ModTeam::operator = (ModTeam && m) noexcept {
 		m_name = std::move(m.m_name);
 		m_website = std::move(m.m_website);
 		m_email = std::move(m.m_email);
+		m_twitter = std::move(m.m_twitter);
+		m_discord = std::move(m.m_discord);
 		m_county = std::move(m.m_county);
 		m_city = std::move(m.m_city);
 		m_state = std::move(m.m_state);
@@ -112,6 +126,8 @@ ModTeam & ModTeam::operator = (const ModTeam & m) {
 	m_name = m.m_name;
 	m_website = m.m_website;
 	m_email = m.m_email;
+	m_twitter = m.m_twitter;
+	m_discord = m.m_discord;
 	m_county = m.m_county;
 	m_city = m.m_city;
 	m_state = m.m_state;
@@ -144,6 +160,14 @@ const std::string & ModTeam::getWebsite() const {
 
 const std::string & ModTeam::getEmail() const {
 	return m_email;
+}
+
+const std::string & ModTeam::getTwitter() const {
+	return m_twitter;
+}
+
+const std::string & ModTeam::getDiscord() const {
+	return m_discord;
 }
 
 const std::string & ModTeam::getCounty() const {
@@ -228,6 +252,14 @@ void ModTeam::setWebsite(const std::string & website) {
 
 void ModTeam::setEmail(const std::string & email) {
 	m_email = Utilities::trimString(email);
+}
+
+void ModTeam::setTwitter(const std::string & twitter) {
+	m_twitter = Utilities::trimString(twitter);
+}
+
+void ModTeam::setDiscord(const std::string & discord) {
+	m_discord = Utilities::trimString(discord);
 }
 
 void ModTeam::setCounty(const std::string & county) {
@@ -414,6 +446,16 @@ rapidjson::Value ModTeam::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAl
 		modTeamValue.AddMember(rapidjson::StringRef(JSON_MOD_TEAM_EMAIL_PROPERTY_NAME), emailValue, allocator);
 	}
 
+	if(!m_twitter.empty()) {
+		rapidjson::Value twitterValue(m_twitter.c_str(), allocator);
+		modTeamValue.AddMember(rapidjson::StringRef(JSON_MOD_TEAM_TWITTER_PROPERTY_NAME), twitterValue, allocator);
+	}
+
+	if(!m_discord.empty()) {
+		rapidjson::Value discordValue(m_discord.c_str(), allocator);
+		modTeamValue.AddMember(rapidjson::StringRef(JSON_MOD_TEAM_DISCORD_PROPERTY_NAME), discordValue, allocator);
+	}
+
 	if(!m_county.empty()) {
 		rapidjson::Value countyValue(m_county.c_str(), allocator);
 		modTeamValue.AddMember(rapidjson::StringRef(JSON_MOD_TEAM_COUNTY_PROPERTY_NAME), countyValue, allocator);
@@ -469,6 +511,14 @@ tinyxml2::XMLElement * ModTeam::toXML(tinyxml2::XMLDocument * document) const {
 
 	if(!m_email.empty()) {
 		modTeamElement->SetAttribute(XML_MOD_TEAM_EMAIL_ATTRIBUTE_NAME.c_str(), m_email.c_str());
+	}
+
+	if(!m_twitter.empty()) {
+		modTeamElement->SetAttribute(XML_MOD_TEAM_TWITTER_ATTRIBUTE_NAME.c_str(), m_twitter.c_str());
+	}
+
+	if(!m_discord.empty()) {
+		modTeamElement->SetAttribute(XML_MOD_TEAM_DISCORD_ATTRIBUTE_NAME.c_str(), m_discord.c_str());
 	}
 
 	if(!m_county.empty()) {
@@ -604,6 +654,30 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const rapidjson::Value & modTeamValu
 		newModTeam->setEmail(modTeamEmailValue.GetString());
 	}
 
+	// parse the mod team twitter property
+	if(modTeamValue.HasMember(JSON_MOD_TEAM_TWITTER_PROPERTY_NAME)) {
+		const rapidjson::Value & modTeamTwitterValue = modTeamValue[JSON_MOD_TEAM_TWITTER_PROPERTY_NAME];
+
+		if(!modTeamTwitterValue.IsString()) {
+			spdlog::error("Mod team '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_TEAM_TWITTER_PROPERTY_NAME, Utilities::typeToString(modTeamTwitterValue.GetType()));
+			return nullptr;
+		}
+
+		newModTeam->setTwitter(modTeamTwitterValue.GetString());
+	}
+
+	// parse the mod team discord property
+	if(modTeamValue.HasMember(JSON_MOD_TEAM_DISCORD_PROPERTY_NAME)) {
+		const rapidjson::Value & modTeamDiscordValue = modTeamValue[JSON_MOD_TEAM_DISCORD_PROPERTY_NAME];
+
+		if(!modTeamDiscordValue.IsString()) {
+			spdlog::error("Mod team '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_TEAM_DISCORD_PROPERTY_NAME, Utilities::typeToString(modTeamDiscordValue.GetType()));
+			return nullptr;
+		}
+
+		newModTeam->setDiscord(modTeamDiscordValue.GetString());
+	}
+
 	// parse the mod team county property
 	if(modTeamValue.HasMember(JSON_MOD_TEAM_COUNTY_PROPERTY_NAME)) {
 		const rapidjson::Value & modTeamCountyValue = modTeamValue[JSON_MOD_TEAM_COUNTY_PROPERTY_NAME];
@@ -711,13 +785,15 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const tinyxml2::XMLElement * modTeam
 
 	// read the mod team attributes
 	const char * teamName = modTeamElement->Attribute(XML_MOD_TEAM_NAME_ATTRIBUTE_NAME.c_str());
+	const char * teamWebsite = modTeamElement->Attribute(XML_MOD_TEAM_WEBSITE_ATTRIBUTE_NAME.c_str());
+	const char * teamEmail = modTeamElement->Attribute(XML_MOD_TEAM_EMAIL_ATTRIBUTE_NAME.c_str());
+	const char * teamTwitter = modTeamElement->Attribute(XML_MOD_TEAM_TWITTER_ATTRIBUTE_NAME.c_str());
+	const char * teamDiscord = modTeamElement->Attribute(XML_MOD_TEAM_DISCORD_ATTRIBUTE_NAME.c_str());
 	const char * teamCounty = modTeamElement->Attribute(XML_MOD_TEAM_COUNTY_ATTRIBUTE_NAME.c_str());
 	const char * teamCity = modTeamElement->Attribute(XML_MOD_TEAM_CITY_ATTRIBUTE_NAME.c_str());
 	const char * teamProvince = modTeamElement->Attribute(XML_MOD_TEAM_PROVINCE_ATTRIBUTE_NAME.c_str());
 	const char * teamState = modTeamElement->Attribute(XML_MOD_TEAM_STATE_ATTRIBUTE_NAME.c_str());
 	const char * teamCountry = modTeamElement->Attribute(XML_MOD_TEAM_COUNTRY_ATTRIBUTE_NAME.c_str());
-	const char * teamEmail = modTeamElement->Attribute(XML_MOD_TEAM_EMAIL_ATTRIBUTE_NAME.c_str());
-	const char * teamWebsite = modTeamElement->Attribute(XML_MOD_TEAM_WEBSITE_ATTRIBUTE_NAME.c_str());
 
 	if(Utilities::stringLength(teamProvince) != 0 && Utilities::stringLength(teamState) != 0) {
 		spdlog::error("Element '{}' has both '{}' and '{}' attributes set to '{}' and '{}'' respectively, expected one or the other.", XML_MOD_TEAM_ELEMENT_NAME, XML_MOD_TEAM_PROVINCE_ATTRIBUTE_NAME, XML_MOD_TEAM_STATE_ATTRIBUTE_NAME, teamProvince, teamState);
@@ -726,6 +802,14 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const tinyxml2::XMLElement * modTeam
 
 	// initialize the mod team
 	std::unique_ptr<ModTeam> newModTeam = std::make_unique<ModTeam>(teamName == nullptr ? "" : teamName, teamWebsite == nullptr ? "" : teamWebsite, teamEmail == nullptr ? "" : teamEmail);
+
+	if(teamTwitter != nullptr) {
+		newModTeam->setTwitter(teamTwitter);
+	}
+
+	if(teamDiscord != nullptr) {
+		newModTeam->setDiscord(teamDiscord);
+	}
 
 	if(teamCounty != nullptr) {
 		newModTeam->setCounty(teamCounty);
@@ -809,6 +893,8 @@ bool ModTeam::operator == (const ModTeam & m) const {
 	if(!Utilities::areStringsEqualIgnoreCase(m_name, m.m_name) ||
 	   !Utilities::areStringsEqualIgnoreCase(m_website, m.m_website) ||
 	   !Utilities::areStringsEqualIgnoreCase(m_email, m.m_email) ||
+	   !Utilities::areStringsEqualIgnoreCase(m_twitter, m.m_twitter) ||
+	   !Utilities::areStringsEqualIgnoreCase(m_discord, m.m_discord) ||
 	   !Utilities::areStringsEqualIgnoreCase(m_county, m.m_county) ||
 	   !Utilities::areStringsEqualIgnoreCase(m_city, m.m_city) ||
 	   !Utilities::areStringsEqualIgnoreCase(m_province, m.m_province) ||

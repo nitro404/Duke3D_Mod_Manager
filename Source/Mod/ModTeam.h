@@ -31,6 +31,8 @@ public:
 	const std::string & getName() const;
 	const std::string & getWebsite() const;
 	const std::string & getEmail() const;
+	const std::string & getTwitter() const;
+	const std::string & getDiscord() const;
 	const std::string & getCounty() const;
 	const std::string & getCity() const;
 	const std::string & getProvince() const;
@@ -43,8 +45,10 @@ public:
 
 	void setName(const std::string & name);
 	void setWebsite(const std::string & website);
-	void setCounty(const std::string & county);
 	void setEmail(const std::string & email);
+	void setTwitter(const std::string & twitter);
+	void setDiscord(const std::string & discord);
+	void setCounty(const std::string & county);
 	void setCity(const std::string & city);
 	void setProvince(const std::string & province);
 	void setState(const std::string & state);
@@ -83,6 +87,8 @@ private:
 	std::string m_name;
 	std::string m_website;
 	std::string m_email;
+	std::string m_twitter;
+	std::string m_discord;
 	std::string m_county;
 	std::string m_city;
 	std::string m_province;
