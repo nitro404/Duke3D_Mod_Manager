@@ -40,6 +40,8 @@ public:
 	const std::string & getID() const;
 	const std::string & getName() const;
 	std::string getFullName(size_t versionIndex = std::numeric_limits<size_t>::max(), size_t versionTypeIndex = std::numeric_limits<size_t>::max()) const;
+	bool hasAlias() const;
+	const std::string & getAlias() const;
 	const std::string & getType() const;
 	const std::string & getPreferredVersionName() const;
 	size_t indexOfPreferredVersion() const;
@@ -57,6 +59,7 @@ public:
 
 	void setID(const std::string & id);
 	void setName(const std::string & name);
+	void setAlias(const std::string & alias);
 	void setType(const std::string & type);
 	void setPreferredVersionName(const std::string & preferredVersionName);
 	void setDefaultVersionType(const std::string & versionType);
@@ -205,6 +208,7 @@ private:
 
 	std::string m_id;
 	std::string m_name;
+	std::string m_alias;
 	std::string m_type;
 	std::string m_preferredVersion;
 	std::string m_defaultVersionType;

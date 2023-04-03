@@ -994,10 +994,10 @@ size_t ModManager::getSelectedModGameVersionIndex() const {
 	return m_selectedModGameVersionIndex;
 }
 
-bool ModManager::setSelectedModByName(const std::string & name) {
+bool ModManager::setSelectedModByID(const std::string & id) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
-	return setSelectedMod(m_mods->getMod(name));
+	return setSelectedMod(m_mods->getModWithID(id));
 }
 
 bool ModManager::setSelectedMod(std::shared_ptr<Mod> mod) {
@@ -3268,14 +3268,14 @@ size_t ModManager::checkForUnlinkedModFilesForGameVersion(const GameVersion & ga
 	return numberOfUnlinkedModFiles;
 }
 
-size_t ModManager::checkModForMissingFiles(const std::string & modName, std::optional<size_t> versionIndex, std::optional<size_t> versionTypeIndex) const {
+size_t ModManager::checkModForMissingFiles(const std::string & modID, std::optional<size_t> versionIndex, std::optional<size_t> versionTypeIndex) const {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	if(!m_initialized) {
 		return 0;
 	}
 
-	std::shared_ptr<Mod> mod = m_mods->getMod(modName);
+	std::shared_ptr<Mod> mod = m_mods->getModWithID(modID);
 
 	if(mod == nullptr) {
 		return 0;

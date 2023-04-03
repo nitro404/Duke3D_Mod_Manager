@@ -90,32 +90,12 @@ bool ModCollection::hasMod(const Mod & mod) const {
 	return false;
 }
 
-bool ModCollection::hasMod(const std::string & id) const {
-	if(id.empty()) {
-		return false;
-	}
-
-	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_mods.begin(); i != m_mods.end(); ++i) {
-		if(Utilities::areStringsEqualIgnoreCase((*i)->getID(), id)) {
-			return true;
-		}
-	}
-
-	return false;
+bool ModCollection::hasModWithID(const std::string & id) const {
+	return indexOfModWithID(id) != std::numeric_limits<size_t>::max();
 }
 
 bool ModCollection::hasModWithName(const std::string & name) const {
-	if(name.empty()) {
-		return false;
-	}
-
-	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_mods.begin(); i != m_mods.end(); ++i) {
-		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
-			return true;
-		}
-	}
-
-	return false;
+	return indexOfModWithName(name) != std::numeric_limits<size_t>::max();
 }
 
 size_t ModCollection::indexOfMod(const Mod & mod) const {
@@ -128,7 +108,7 @@ size_t ModCollection::indexOfMod(const Mod & mod) const {
 	return std::numeric_limits<size_t>::max();
 }
 
-size_t ModCollection::indexOfMod(const std::string & id) const {
+size_t ModCollection::indexOfModWithID(const std::string & id) const {
 	if(id.empty()) {
 		return std::numeric_limits<size_t>::max();
 	}
@@ -162,7 +142,7 @@ std::shared_ptr<Mod> ModCollection::getMod(size_t index) const {
 	return m_mods[index];
 }
 
-std::shared_ptr<Mod> ModCollection::getMod(const std::string & id) const {
+std::shared_ptr<Mod> ModCollection::getModWithID(const std::string & id) const {
 	if(id.empty()) {
 		return nullptr;
 	}
@@ -232,7 +212,7 @@ bool ModCollection::removeMod(const Mod & mod) {
 	return false;
 }
 
-bool ModCollection::removeMod(const std::string & id) {
+bool ModCollection::removeModWithID(const std::string & id) {
 	if(id.empty()) {
 		return false;
 	}
@@ -649,6 +629,14 @@ bool ModCollection::checkGameVersions(const GameVersionCollection & gameVersions
 					}
 				}
 			}
+		}
+
+		if(mod->hasAlias() && !hasModWithID(mod->getAlias())) {
+			if(verbose) {
+				spdlog::warn("Mod '{}' alias with ID '{}' does not exist in the current collection.", mod->getName(), mod->getAlias());
+			}
+
+			return false;
 		}
 
 		for(size_t j = 0; j < mod->numberOfDownloads(); j++) {

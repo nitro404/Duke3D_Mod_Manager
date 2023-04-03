@@ -26,6 +26,7 @@
 
 static constexpr const char * JSON_MOD_ID_PROPERTY_NAME = "id";
 static constexpr const char * JSON_MOD_NAME_PROPERTY_NAME = "name";
+static constexpr const char * JSON_MOD_ALIAS_PROPERTY_NAME = "alias";
 static constexpr const char * JSON_MOD_TYPE_PROPERTY_NAME = "type";
 static constexpr const char * JSON_MOD_PREFERRED_VERSION_NAME_PROPERTY_NAME = "preferredVersion";
 static constexpr const char * JSON_MOD_DEFAULT_VERSION_TYPE_PROPERTY_NAME = "defaultVersionType";
@@ -39,9 +40,10 @@ static constexpr const char * JSON_MOD_IMAGES_PROPERTY_NAME = "images";
 static constexpr const char * JSON_MOD_VIDEOS_PROPERTY_NAME = "videos";
 static constexpr const char * JSON_MOD_NOTES_PROPERTY_NAME = "notes";
 static constexpr const char * JSON_MOD_RELATED_MODS_PROPERTY_NAME = "relatedMods";
-static const std::array<std::string_view, 15> JSON_MOD_PROPERTY_NAMES = {
+static const std::array<std::string_view, 16> JSON_MOD_PROPERTY_NAMES = {
 	JSON_MOD_ID_PROPERTY_NAME,
 	JSON_MOD_NAME_PROPERTY_NAME,
+	JSON_MOD_ALIAS_PROPERTY_NAME,
 	JSON_MOD_TYPE_PROPERTY_NAME,
 	JSON_MOD_PREFERRED_VERSION_NAME_PROPERTY_NAME,
 	JSON_MOD_DEFAULT_VERSION_TYPE_PROPERTY_NAME,
@@ -81,14 +83,16 @@ static const std::array<std::string_view, 8> XML_MOD_CHILD_ELEMENT_NAMES = {
 
 static const std::string XML_MOD_ID_ATTRIBUTE_NAME("id");
 static const std::string XML_MOD_NAME_ATTRIBUTE_NAME("name");
+static const std::string XML_MOD_ALIAS_ATTRIBUTE_NAME("alias");
 static const std::string XML_MOD_TYPE_ATTRIBUTE_NAME("type");
 static const std::string XML_MOD_VERSION_ATTRIBUTE_NAME("version");
 static const std::string XML_MOD_VERSION_TYPE_ATTRIBUTE_NAME("version_type");
 static const std::string XML_MOD_WEBSITE_ATTRIBUTE_NAME("website");
 static const std::string XML_MOD_REPOSITORY_ATTRIBUTE_NAME("repository");
-static const std::array<std::string_view, 7> XML_MOD_ATTRIBUTE_NAMES = {
+static const std::array<std::string_view, 8> XML_MOD_ATTRIBUTE_NAMES = {
 	XML_MOD_ID_ATTRIBUTE_NAME,
 	XML_MOD_NAME_ATTRIBUTE_NAME,
+	XML_MOD_ALIAS_ATTRIBUTE_NAME,
 	XML_MOD_TYPE_ATTRIBUTE_NAME,
 	XML_MOD_VERSION_ATTRIBUTE_NAME,
 	XML_MOD_VERSION_TYPE_ATTRIBUTE_NAME,
@@ -105,6 +109,7 @@ Mod::Mod(const std::string & id, const std::string & name, const std::string & t
 Mod::Mod(Mod && m) noexcept
 	: m_id(std::move(m.m_id))
 	, m_name(std::move(m.m_name))
+	, m_alias(std::move(m.m_alias))
 	, m_type(std::move(m.m_type))
 	, m_preferredVersion(std::move(m.m_preferredVersion))
 	, m_defaultVersionType(std::move(m.m_defaultVersionType))
@@ -124,6 +129,7 @@ Mod::Mod(Mod && m) noexcept
 Mod::Mod(const Mod & m)
 	: m_id(m.m_id)
 	, m_name(m.m_name)
+	, m_alias(m.m_alias)
 	, m_type(m.m_type)
 	, m_preferredVersion(m.m_preferredVersion)
 	, m_defaultVersionType(m.m_defaultVersionType)
@@ -168,6 +174,7 @@ Mod & Mod::operator = (Mod && m) noexcept {
 	if(this != &m) {
 		m_id = std::move(m.m_id);
 		m_name = std::move(m.m_name);
+		m_alias = std::move(m.m_alias);
 		m_type = std::move(m.m_type);
 		m_preferredVersion = std::move(m.m_preferredVersion);
 		m_defaultVersionType = std::move(m.m_defaultVersionType);
@@ -197,6 +204,7 @@ Mod & Mod::operator = (const Mod & m) {
 
 	m_id = m.m_id;
 	m_name = m.m_name;
+	m_alias = m.m_alias;
 	m_type = m.m_type;
 	m_preferredVersion = m.m_preferredVersion;
 	m_defaultVersionType = m.m_defaultVersionType;
@@ -272,6 +280,14 @@ std::string Mod::getFullName(size_t versionIndex, size_t versionTypeIndex) const
 	}
 
 	return fullModName.str();
+}
+
+bool Mod::hasAlias() const {
+	return !m_alias.empty();
+}
+
+const std::string & Mod::getAlias() const {
+	return m_alias;
 }
 
 const std::string & Mod::getType() const {
@@ -356,6 +372,10 @@ void Mod::setName(const std::string & name) {
 
 void Mod::setType(const std::string & type) {
 	m_type = Utilities::trimString(type);
+}
+
+void Mod::setAlias(const std::string & alias) {
+	m_alias = Utilities::trimString(alias);
 }
 
 void Mod::setPreferredVersionName(const std::string & preferredVersionName) {
@@ -1397,6 +1417,11 @@ rapidjson::Value Mod::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAlloca
 	rapidjson::Value nameValue(m_name.c_str(), allocator);
 	modValue.AddMember(rapidjson::StringRef(JSON_MOD_NAME_PROPERTY_NAME), nameValue, allocator);
 
+	if(!m_alias.empty()) {
+		rapidjson::Value aliasValue(m_alias.c_str(), allocator);
+		modValue.AddMember(rapidjson::StringRef(JSON_MOD_ALIAS_PROPERTY_NAME), aliasValue, allocator);
+	}
+
 	rapidjson::Value typeValue(m_type.c_str(), allocator);
 	modValue.AddMember(rapidjson::StringRef(JSON_MOD_TYPE_PROPERTY_NAME), typeValue, allocator);
 
@@ -1505,6 +1530,11 @@ tinyxml2::XMLElement * Mod::toXML(tinyxml2::XMLDocument * document) const {
 
 	modElement->SetAttribute(XML_MOD_NAME_ATTRIBUTE_NAME.c_str(), m_name.c_str());
 	modElement->SetAttribute(XML_MOD_ID_ATTRIBUTE_NAME.c_str(), m_id.c_str());
+
+	if(!m_alias.empty()) {
+		modElement->SetAttribute(XML_MOD_ALIAS_ATTRIBUTE_NAME.c_str(), m_alias.c_str());
+	}
+
 	modElement->SetAttribute(XML_MOD_TYPE_ATTRIBUTE_NAME.c_str(), m_type.c_str());
 
 	if(!m_preferredVersion.empty()) {
@@ -1688,6 +1718,18 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue, bool skip
 
 	// initialize the mod
 	std::unique_ptr<Mod> newMod = std::make_unique<Mod>(modID, modName, modType);
+
+	// parse the mod alias property
+	if(modValue.HasMember(JSON_MOD_ALIAS_PROPERTY_NAME)) {
+		const rapidjson::Value & modAliasValue = modValue[JSON_MOD_ALIAS_PROPERTY_NAME];
+
+		if(!modAliasValue.IsString()) {
+			spdlog::error("Mod '{}' '{}' property has invalid type: '{}', expected 'string'.", modID, JSON_MOD_ALIAS_PROPERTY_NAME, Utilities::typeToString(modAliasValue.GetType()));
+			return nullptr;
+		}
+
+		newMod->setAlias(modAliasValue.GetString());
+	}
 
 	// parse the mod preferred version name property
 	if(modValue.HasMember(JSON_MOD_PREFERRED_VERSION_NAME_PROPERTY_NAME)) {
@@ -2063,6 +2105,9 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement, boo
 		return nullptr;
 	}
 
+	// read the mod alias attribute value
+	const char * modAlias = modElement->Attribute(XML_MOD_ALIAS_ATTRIBUTE_NAME.c_str());
+
 	// read the mod version attribute value
 	const char * modVersion = modElement->Attribute(XML_MOD_VERSION_ATTRIBUTE_NAME.c_str());
 
@@ -2077,6 +2122,10 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement, boo
 
 	// initialize the mod
 	std::unique_ptr<Mod> mod = std::make_unique<Mod>(modID, modName, modType);
+
+	if(modAlias != nullptr) {
+		mod->setAlias(modAlias);
+	}
 
 	if(modVersion != nullptr) {
 		mod->setPreferredVersionName(modVersion);
@@ -2702,6 +2751,7 @@ bool Mod::isValid(bool skipFileInfoValidation) const {
 	   m_type.empty() ||
 	   m_versions.empty() ||
 	   m_downloads.empty() ||
+	   Utilities::areStringsEqualIgnoreCase(m_id, m_alias) ||
 	   (m_team != nullptr && !m_team->isValid()) ||
 	   !checkVersions() ||
 	   !checkVersionTypes() ||
@@ -2827,6 +2877,7 @@ void Mod::updateParent() {
 bool Mod::operator == (const Mod & m) const {
 	if(!Utilities::areStringsEqualIgnoreCase(m_id, m.m_id) ||
 	   !Utilities::areStringsEqualIgnoreCase(m_name, m.m_name) ||
+	   !Utilities::areStringsEqualIgnoreCase(m_alias, m.m_alias)||
 	   !Utilities::areStringsEqualIgnoreCase(m_type, m.m_type) ||
 	   !Utilities::areStringsEqualIgnoreCase(m_preferredVersion, m.m_preferredVersion) ||
 	   !Utilities::areStringsEqualIgnoreCase(m_defaultVersionType, m.m_defaultVersionType) ||

@@ -103,7 +103,7 @@ public:
 	size_t getSelectedModVersionIndex() const;
 	size_t getSelectedModVersionTypeIndex() const;
 	size_t getSelectedModGameVersionIndex() const;
-	bool setSelectedModByName(const std::string & name);
+	bool setSelectedModByID(const std::string & id);
 	bool setSelectedMod(std::shared_ptr<Mod> mod);
 	bool setSelectedModFromMatch(const ModMatch & modMatch);
 	bool setSelectedMod(const ModIdentifier & modIdentifier);
@@ -157,7 +157,7 @@ private:
 	std::string generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const DOSBoxVersion & dosboxVersion, const  std::string & dosboxArguments) const;
 	size_t checkForUnlinkedModFiles() const;
 	size_t checkForUnlinkedModFilesForGameVersion(const GameVersion & gameVersion) const;
-	size_t checkModForMissingFiles(const std::string & modName, std::optional<size_t> versionIndex = {}, std::optional<size_t> versionTypeIndex = {}) const;
+	size_t checkModForMissingFiles(const std::string & modID, std::optional<size_t> versionIndex = {}, std::optional<size_t> versionTypeIndex = {}) const;
 	size_t checkModForMissingFiles(const Mod & mod, std::optional<size_t> versionIndex = {}, std::optional<size_t> versionTypeIndex = {}) const;
 	size_t checkAllModsForMissingFiles() const;
 	size_t checkForMissingExecutables() const;

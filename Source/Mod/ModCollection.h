@@ -28,19 +28,19 @@ public:
 
 	size_t numberOfMods() const;
 	bool hasMod(const Mod & mod) const;
-	bool hasMod(const std::string & id) const;
+	bool hasModWithID(const std::string & id) const;
 	bool hasModWithName(const std::string & name) const;
 	size_t indexOfMod(const Mod & mod) const;
-	size_t indexOfMod(const std::string & id) const;
+	size_t indexOfModWithID(const std::string & id) const;
 	size_t indexOfModWithName(const std::string & name) const;
 	std::shared_ptr<Mod> getMod(size_t index) const;
-	std::shared_ptr<Mod> getMod(const std::string & id) const;
+	std::shared_ptr<Mod> getModWithID(const std::string & id) const;
 	std::shared_ptr<Mod> getModWithName(const std::string & name) const;
 	const std::vector<std::shared_ptr<Mod>> & getMods() const;
 	bool addMod(const Mod & mod);
 	bool removeMod(size_t index);
 	bool removeMod(const Mod & mod);
-	bool removeMod(const std::string & id);
+	bool removeModWithID(const std::string & id);
 	bool removeModWithName(const std::string & name);
 	void clearMods();
 
