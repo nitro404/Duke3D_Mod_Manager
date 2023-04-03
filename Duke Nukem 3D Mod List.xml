@@ -11173,4 +11173,123 @@
 			<download filename="Retro_Deathmatch_0.053-ModMgrE.zip" filesize="21775459" version="0.053" game="eDuke32" type="Mod Manager Files" state="Native" sha1="13814091d6e68e701cfe79d874458469f98e3b1b"/>
 		</downloads>
 	</mod>
+	<mod name="WGRealms 2: Siege Breaker" id="wgrealms_2_-_siege_breaker" alias="wg_realms_-_demon_throne" type="Total Conversion" version="1.201" website="https://www.moddb.com/games/wgrealms-2">
+		<team discord="https://discord.gg/jNrKdk5">
+			<member name="William Gee" email="geewillywizz@live.com" website="http://wgrealms.williamgeegallery.com" country="New Zealand"/>
+			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld"/>
+			<member name="Cage" email="cageds@tlen.pl"/>
+		</team>
+		<versions>
+			<version id="1.0 RC2" release_date="November 9, 2009">
+				<game type="eDuke32" state="Native">
+					<file name="WGR2GAME.CON" size="650220" type="con" sha1="fbfbd9514fcd5ddf929d74c25ea039ca20a50763"/>
+					<file name="wgr2.def" size="20152" type="def" sha1="36871f578f7562a2a5491a286d0d170176b36f13"/>
+					<file name="WGRealms_2_-_Siege_Breaker_1.0_RC2.zip" size="36565063" type="zip" sha1="f552f2a342e282ab329a5f99f927dbf31712b897"/>
+				</game>
+			</version>
+			<version id="1.0 RC3" release_date="November 12, 2009">
+				<game type="eDuke32" state="Native">
+					<file name="WGR2GAME.CON" size="654333" type="con" sha1="e7e587132d07ab76684d549fc80a2b248b1f85e9"/>
+					<file name="wgr2.def" size="20152" type="def" sha1="36871f578f7562a2a5491a286d0d170176b36f13"/>
+					<file name="WGRealms_2_-_Siege_Breaker_1.0_RC3.zip" size="36567300" type="zip" sha1="4177db54f24379645519159e04bca7ac93c2cbf2"/>
+				</game>
+			</version>
+			<version id="1.0 RC3 Fixed" release_date="November 12, 2009">
+				<game type="eDuke32" state="Native">
+					<file name="WGR2GAME.CON" size="654333" type="con" sha1="e7e587132d07ab76684d549fc80a2b248b1f85e9"/>
+					<file name="wgr2.def" size="20152" type="def" sha1="36871f578f7562a2a5491a286d0d170176b36f13"/>
+					<file name="WGRealms_2_-_Siege_Breaker_1.0_RC3_Fixed.zip" size="36567300" type="zip" sha1="0ea2ed436c3968681c46f87cfe44c75457d97b4e"/>
+				</game>
+			</version>
+			<version id="1.1" release_date="July 6, 2010">
+				<game type="eDuke32" state="Native">
+					<file name="WGR2GAME.CON" size="780321" type="con" sha1="ba7754799e8f46c9c2a3c2127cc54742f546ce55"/>
+					<file name="wgr2.def" size="20516" type="def" sha1="63e8a0fd3a14a49557950422cc57e4e575ab4107"/>
+					<file name="WGRealms_2_-_Siege_Breaker_1.1.zip" size="45923959" type="zip" sha1="a1f19f6f0793fdbe5e3d0fb64c772816bed1d554"/>
+				</game>
+			</version>
+			<version id="1.1b" release_date="July 16, 2010">
+				<game type="eDuke32" state="Native">
+					<file name="WGR2GAME.CON" size="782818" type="con" sha1="127c455f162af5186cc06f96ad50d722380aed08"/>
+					<file name="wgr2.def" size="20516" type="def" sha1="63e8a0fd3a14a49557950422cc57e4e575ab4107"/>
+					<file name="WGRealms_2_-_Siege_Breaker_1.1b.zip" size="45924951" type="zip" sha1="023c84caf37a695d29b2ed14e4f160f3d420a020"/>
+				</game>
+			</version>
+			<version id="1.2" release_date="March 5, 2011">
+				<game type="eDuke32" state="Native">
+					<file name="WGR2GAME.CON" size="860327" type="con" sha1="0daa9959ba9ab587611c892e4c738d62cf8a02ff"/>
+					<file name="wgr2.def" size="31948" type="def" sha1="3cb78388a3ac069cd6f7b4155cba2f5ab0483c31"/>
+					<file name="WGRealms_2_-_Siege_Breaker_1.2.zip" size="56222866" type="zip" sha1="484ca6e519045573f1410f90832b905f894cdcda"/>
+				</game>
+			</version>
+			<version id="1.201" release_date="March 10, 2011">
+				<game type="eDuke32" state="Native">
+					<file name="WGR2GAME.CON" size="860486" type="con" sha1="ca3c26b6f52450d2292be4d8e43f2d44d9d2eb21"/>
+					<file name="wgr2.def" size="31948" type="def" sha1="3cb78388a3ac069cd6f7b4155cba2f5ab0483c31"/>
+					<file name="WGRealms_2_-_Siege_Breaker_1.201.zip" size="56222891" type="zip" sha1="dc893a9c2afb408624e7e877029c1cab68710974"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="WGR2v1.0RC2.zip" filesize="36604672" version="1.0 RC2" game="eDuke32" type="Original Files" sha1="b9fbdd97807f5d0fdcbae7af0ebcace0d28d9759"/>
+			<download filename="WGR2v1.0RC3.zip" filesize="36487351" version="1.0 RC3" game="eDuke32" type="Original Files" sha1="ded5b000dd40ddc0afa94ecbafaba66b18438dad"/>
+			<download filename="WGR2v1.0RC3fixed.zip" filesize="36494068" version="1.0 RC3 Fixed" game="eDuke32" type="Original Files" sha1="d174d42f8b99e662f31e5aec7496bf9bab348742"/>
+			<download filename="2010_07_09_WGR2v11.zip" filesize="45952686" version="1.1" game="eDuke32" type="Original Files" sha1="e064174fb0c654d5fed4549e5709d0cfce2cfe7b"/>
+			<download filename="2010_06_29_WGR2v1.1b.zip" filesize="47843980" version="1.1b" game="eDuke32" type="Original Files" sha1="b205c3a2056e4433446ec56467be9f28490dff34"/>
+			<download filename="WGR2_SIEGEBREAKER.zip" filesize="59218738" version="1.2" game="eDuke32" type="Original Files" sha1="222a5cbbfe7bf9dbb997f90cd0a627e59c870026"/>
+			<download filename="WGR2GAME.1.zip" filesize="169949" version="1.201" game="eDuke32" type="Original Files" sha1="688da7ccd3aaa773cd3c745efcdd7d1271904d53"/>
+			<download filename="WGRealms_2_-_Siege_Breaker_1.0_RC2-ModMgrE.zip" filesize="36371657" version="1.0 RC2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="5f1f121088fce97dc8ca60763f4873896e9c875b"/>
+			<download filename="WGRealms_2_-_Siege_Breaker_1.0_RC3-ModMgrE.zip" filesize="36352621" version="1.0 RC3" game="eDuke32" type="Mod Manager Files" state="Native" sha1="f7160452f4c95fcef7669ffe425ec071f2eea4f4"/>
+			<download filename="WGRealms_2_-_Siege_Breaker_1.0_RC3_Fixed-ModMgrE.zip" filesize="36352841" version="1.0 RC3 Fixed" game="eDuke32" type="Mod Manager Files" state="Native" sha1="d4fd52940e8876a9c51a7d0fcd0f99beb6d65c53"/>
+			<download filename="WGRealms_2_-_Siege_Breaker_1.1-ModMgrE.zip" filesize="45618261" version="1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="67d5dc8d43c7735219c13f18d9ede4389de2fb7b"/>
+			<download filename="WGRealms_2_-_Siege_Breaker_1.1b-ModMgrE.zip" filesize="45618808" version="1.1b" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b7c1b97c59b4ee032d4c473c0586bb5a2c9ea2d6"/>
+			<download filename="WGRealms_2_-_Siege_Breaker_1.2-ModMgrE.zip" filesize="55492806" version="1.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="6bb3d6ca7d8ac280365c02ea6c06b7ece5957a32"/>
+			<download filename="WGRealms_2_-_Siege_Breaker_1.201-ModMgrE.zip" filesize="55495863" version="1.201" game="eDuke32" type="Mod Manager Files" state="Native" sha1="bbea023a5ef6aebfa79bccc9239c2700a3c9c571"/>
+		</downloads>
+	</mod>
+	<mod name="WG Realms: Demon Throne" id="wg_realms_-_demon_throne" alias="wgrealms_2_-_siege_breaker" type="Total Conversion" version="3.01" website="https://www.moddb.com/games/wgrealms-2">
+		<team discord="https://discord.gg/jNrKdk5">
+			<member name="William Gee" email="geewillywizz@live.com" website="http://wgrealms.williamgeegallery.com" country="New Zealand"/>
+			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld"/>
+			<member name="sebabdukeboss20" discord="sebabdukeboss20#5996"/>
+			<member name="Cage" email="cageds@tlen.pl"/>
+			<member name="Forge"/>
+			<member name="Doom64hunter"/>
+			<member name="Geedra"/>
+			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com"/>
+			<member name="Maarten van Oostrum"/>
+			<member name="AliCatGamer"/>
+			<member name="Eddie Teach"/>
+			<member name="Anton Z"/>
+			<member name="Dr Shotgun"/>
+			<member name="Mike Norvac"/>
+		</team>
+		<versions>
+			<version id="2.1b" release_date="December 18, 2020">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="WGR2GAME.CON" size="564322" type="con" sha1="8653d4bf1c323110ff0a2b11ffecf534e20ccf3d"/>
+						<file name="wgr2.def" size="44806" type="def" sha1="d60169fd6868cb6e060d3ba04e5727effd2415a3"/>
+						<file name="WG_Realms_-_Demon_Throne_2.1b.zip" size="202301673" type="zip" sha1="df0daefadeed5dab632dfddf1d24c1ee6f582806"/>
+					</game>
+				</type>
+			</version>
+			<version id="3.01" release_date="July 8, 2022">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="WGR2GAME.CON" size="587390" type="con" sha1="4cb9236cdbdd5c455d7c5defb4d379a523feca2e"/>
+						<file name="wgr2.def" size="47034" type="def" sha1="ce6f6c5fee0ef576a2daf1b3ad7bda9b22675caa"/>
+						<file name="WG_Realms_-_Demon_Throne_3.01.zip" size="232267811" type="zip" sha1="f9319b5e93be792e96a43961af2ddfc84e85d24f"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Demon_Throne_v2.1b.zip" filesize="214094983" version="2.1b" game="eDuke32" type="Original Files" sha1="f8faa8f72a4969b5cbc2bb6eb7b0b781d460027d"/>
+			<download filename="DEMONTHRONE301.zip" filesize="232948844" version="3.01" game="eDuke32" type="Original Files" sha1="d8444841784a2a5b917cdbf799319347e10e634d"/>
+			<download filename="301PATCH.zip" filesize="695578" version="3.01" special="Patch" game="eDuke32" type="Original Files" sha1="81ec10a856b2b3f50f937c885078222f7ed4cc69"/>
+			<download filename="WG_Realms_-_Demon_Throne_2.1b-ModMgrE.zip" filesize="201811283" version="2.1b" game="eDuke32" type="Mod Manager Files" state="Native" sha1="102b855c728c0c0691d3ef8f2d7267bd42bf0a2e"/>
+			<download filename="WG_Realms_-_Demon_Throne_3.01-ModMgrE.zip" filesize="231759139" version="3.01" game="eDuke32" type="Mod Manager Files" state="Native" sha1="8d51e1772632ace8836dc8bb9eac2e7e79fa14e1"/>
+		</downloads>
+	</mod>
 </mods>
