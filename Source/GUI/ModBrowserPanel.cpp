@@ -160,19 +160,19 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 
 	wxStaticText * modListFilterTypeLabel = new wxStaticText(modListOptionsPanel, wxID_ANY, "Filter Type:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	modListFilterTypeLabel->SetFont(modListFilterTypeLabel->GetFont().MakeBold());
-	m_modListFilterTypeComboBox = new wxComboBox(modListOptionsPanel, wxID_ANY, std::string(magic_enum::enum_name(OrganizedModCollection::DEFAULT_FILTER_TYPE)), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<OrganizedModCollection::FilterType>(), 0, wxDefaultValidator, "Mod List Filter Type");
+	m_modListFilterTypeComboBox = new wxComboBox(modListOptionsPanel, wxID_ANY, Utilities::toCapitalCase(magic_enum::enum_name(OrganizedModCollection::DEFAULT_FILTER_TYPE)), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<OrganizedModCollection::FilterType>(), 0, wxDefaultValidator, "Mod List Filter Type");
 	m_modListFilterTypeComboBox->SetEditable(false);
 	m_modListFilterTypeComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onModListFilterTypeSelected, this);
 
 	wxStaticText * modListSortTypeLabel = new wxStaticText(modListOptionsPanel, wxID_ANY, "Sort Type:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	modListSortTypeLabel->SetFont(modListSortTypeLabel->GetFont().MakeBold());
-	m_modListSortTypeComboBox = new wxComboBox(modListOptionsPanel, wxID_ANY, std::string(magic_enum::enum_name(OrganizedModCollection::DEFAULT_SORT_TYPE)), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<OrganizedModCollection::SortType>(), 0, wxDefaultValidator, "Mod List Sort Type");
+	m_modListSortTypeComboBox = new wxComboBox(modListOptionsPanel, wxID_ANY, Utilities::toCapitalCase(magic_enum::enum_name(OrganizedModCollection::DEFAULT_SORT_TYPE)), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<OrganizedModCollection::SortType>(), 0, wxDefaultValidator, "Mod List Sort Type");
 	m_modListSortTypeComboBox->SetEditable(false);
 	m_modListSortTypeComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onModListSortTypeSelected, this);
 
 	wxStaticText * modListSortDirectionLabel = new wxStaticText(modListOptionsPanel, wxID_ANY, "Direction:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	modListSortDirectionLabel->SetFont(modListSortDirectionLabel->GetFont().MakeBold());
-	m_modListSortDirectionComboBox = new wxComboBox(modListOptionsPanel, wxID_ANY, std::string(magic_enum::enum_name(OrganizedModCollection::DEFAULT_SORT_DIRECTION)), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<OrganizedModCollection::SortDirection>(), 0, wxDefaultValidator, "Mod List Sort Direction");
+	m_modListSortDirectionComboBox = new wxComboBox(modListOptionsPanel, wxID_ANY, Utilities::toCapitalCase(magic_enum::enum_name(OrganizedModCollection::DEFAULT_SORT_DIRECTION)), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<OrganizedModCollection::SortDirection>(), 0, wxDefaultValidator, "Mod List Sort Direction");
 	m_modListSortDirectionComboBox->SetEditable(false);
 	m_modListSortDirectionComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onModListSortDirectionSelected, this);
 
@@ -340,7 +340,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 
 	wxStaticText * modGameTypeLabel = new wxStaticText(m_gameOptionsPanel, wxID_ANY, "Game Type:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	modGameTypeLabel->SetFont(modGameTypeLabel->GetFont().MakeBold());
-	m_modGameTypeComboBox = new wxComboBox(m_gameOptionsPanel, wxID_ANY, std::string(magic_enum::enum_name(m_modManager->getGameType())), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<GameType>(), 0, wxDefaultValidator, "Game Type");
+	m_modGameTypeComboBox = new wxComboBox(m_gameOptionsPanel, wxID_ANY, Utilities::toCapitalCase(magic_enum::enum_name(m_modManager->getGameType())), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<GameType>(), 0, wxDefaultValidator, "Game Type");
 	m_modGameTypeComboBox->SetEditable(false);
 	m_modGameTypeComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onModGameTypeSelected, this);
 
