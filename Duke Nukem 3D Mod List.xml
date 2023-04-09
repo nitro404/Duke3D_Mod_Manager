@@ -11464,4 +11464,55 @@
 			<download filename="WG_Realms_-_Demon_Throne_3.01-ModMgrE.zip" filesize="231759139" version="3.01" game="eDuke32" type="Mod Manager Files" state="Native" sha1="8d51e1772632ace8836dc8bb9eac2e7e79fa14e1"/>
 		</downloads>
 	</mod>
+	<mod name="Silver Wolf" id="silver_wolf" type="Total Conversion" version="1.0" website="https://www.moddb.com/mods/silver-wolf">
+		<team>
+			<member name="Fox"/>
+		</team>
+		<versions>
+			<version id="1.0" release_date="March 29, 2023">
+				<type>
+					<game type="Stand-Alone" state="Native">
+						<properties base="eDuke32" game_exe_name="eduke32.exe" skill_start_value="1" local_working_directory="false" relative_con_file_path="true" supports_subdirectories="true"/>
+						<arguments>
+							<argument name="con-file" flag="-x "/>
+							<argument name="extra-con-file" flag="-mx "/>
+							<argument name="group-file" flag="-g "/>
+							<argument name="def-file" flag="-h "/>
+							<argument name="extra-def-file" flag="-mh "/>
+							<argument name="map-file" flag="-map "/>
+							<argument name="episode" flag="-v"/>
+							<argument name="level" flag="-l"/>
+							<argument name="skill" flag="-s"/>
+							<argument name="record-demo" flag="-r"/>
+							<argument name="play-demo" flag="-d "/>
+							<argument name="respawn-mode" flag="-t"/>
+							<argument name="weapon-switch-order" flag="-u"/>
+							<argument name="disable-monsters" flag="-m"/>
+							<argument name="disable-sound" flag="-ns"/>
+							<argument name="disable-music" flag="-nm"/>
+						</arguments>
+						<operatingsystems>
+							<operatingsystem name="Windows"/>
+						</operatingsystems>
+						<files>
+							<file name="blank.grp" size="16" type="grp" sha1="3121a752b7623b6f78757a32ac7b10e3179abcd0"/>
+							<file name="blank.grpinfo" size="154" type="grpinfo" sha1="75a9e6cd68c3cf8fbe05c40c49f7f6dd11103359"/>
+							<file name="duke3d.def" size="21" type="def" sha1="e6c9240e6ae3cd3e6d77ed1f71be93cd8402fe7c"/>
+							<file name="EDUKE.CON" size="21" type="con" sha1="95b117a57d01dabc77430688299576b59f35c9d8"/>
+							<file name="eduke32.exe" size="6846464" type="exe" sha1="95007c526b28d8927a2a34693a7a13c79fbaf3a5"/>
+							<file name="LOOKUP.DAT" size="10266" type="palette" sha1="17d6b6b0104415c0b1b31a86505cd9290dab71ba"/>
+							<file name="mapster32.exe" size="5022208" type="exe" sha1="17b1b31e4416e26a29bb495b8a4f85c26d5e7898"/>
+							<file name="PALETTE.DAT" size="82690" type="palette" sha1="9092a4216a605399a11cd8aec3dedccae39be221"/>
+							<file name="TABLES.DAT" size="8448" type="palette" sha1="533d9d5e5ae7657d822a10ecb07adb2b61d02851"/>
+							<file name="autoload/Silver_Wolf_1.0.zip" size="113175593" type="zip" sha1="dfd5b776791f7c40ec4bdfd99d01c3ec8eaa1408"/>
+						</files>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Silver_Wolf_v1.0.zip" filesize="119023609" version="1.0" game="Stand-Alone" type="Original Files" sha1="d3ef7250724d0a4549705615c6161bda6e848ee2"/>
+			<download filename="Silver_Wolf_1.0-ModMgrSA.zip" filesize="116046146" version="1.0" game="Stand-Alone" type="Mod Manager Files" state="Native" sha1="b55f0c3681543951ec4679640079376f0ef438ee"/>
+		</downloads>
+	</mod>
 </mods>
