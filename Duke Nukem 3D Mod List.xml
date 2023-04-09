@@ -2719,6 +2719,63 @@
 			<download filename="New_World_III_1.6-ModMgrSA.zip" version="1.6" game="Stand-Alone" type="Mod Manager Files" state="Native"/>
 		</downloads>
 	</mod>
+	<mod name="New World IV" id="new_world_iv" type="Total Conversion" version="Alpha 0.01" website="http://www.dukeworld.com/nw3/nwiv">
+		<team city="Sydney" state="New South Wales" country="Australia">
+			<member name="James Ferry" email="James_Ferry@classic.msn.com"/>
+		</team>
+		<versions>
+			<version id="Alpha 0.01" release_date="January 12, 2000">
+				<game type="Stand-Alone" state="Native">
+					<properties base="Atomic" game_exe_name="NWIV.COM" skill_start_value="1" local_working_directory="true" relative_con_file_path="false" supports_subdirectories="true"/>
+					<arguments>
+						<argument name="con-file" flag="/x"/>
+						<argument name="group-file" flag="/g"/>
+						<argument name="map-file" flag="-map "/>
+						<argument name="episode" flag="/v"/>
+						<argument name="level" flag="/l"/>
+						<argument name="skill" flag="/s"/>
+						<argument name="record-demo" flag="/r"/>
+						<argument name="play-demo" flag="/d"/>
+						<argument name="respawn-mode" flag="/t"/>
+						<argument name="weapon-switch-order" flag="/u"/>
+						<argument name="disable-monsters" flag="/m"/>
+						<argument name="disable-sound" flag="/ns"/>
+						<argument name="disable-music" flag="/nm"/>
+					</arguments>
+					<operatingsystems>
+						<operatingsystem name="DOS"/>
+					</operatingsystems>
+					<files>
+						<file name="E1L1TEST.MAP" size="231158" type="map" sha1="d8bcaa5fea558d88e8d9fbb5cbec662fd730c74c"/>
+						<file name="FASTGUN.WAV" size="3217" type="wav" sha1="f22769421fe9c9acaadfc50ee496343c0ba45b4c"/>
+						<file name="FLAMER.VOC" size="8297" type="voc" sha1="c0249bb4ef5a5549cf27f2d2f9cf19a5cd70c09c"/>
+						<file name="LG762R.WAV" size="6668" type="wav" sha1="2cd27296eef28f5e3308051b13b78b51e9197484"/>
+						<file name="LGAKR.WAV" size="5884" type="wav" sha1="2c40e0a8b5104e79a9bea9b2721237b451d8ccdc"/>
+						<file name="LOOKUP.DAT" size="10266" type="palette" sha1="7d9c99a0962d07143ad55994ff4aac6f504192bf"/>
+						<file name="NWIV.COM" size="25184" type="exe" sha1="5153795d0a328f29bd6e4ed53cbdfafbee272586"/>
+						<file name="NWIV.ENC" size="86870" type="con" sha1="9dffdcca4bbed2beadfec06b006e58370a1bc400"/>
+						<file name="NWIV.TXT" size="6537" type="txt" sha1="eaed1e7a3a5b6513a24ea2c870fc7d1a4d0ccdd9"/>
+						<file name="NWIV_VER.TXT" size="34" type="txt" sha1="647dc3a6fbe0776f9fe56507d60f85a70c3c9950"/>
+						<file name="PALETTE.DAT" size="82690" type="palette" sha1="d00e67eb7c80fb03fdc225301c4a4ffccbbba757"/>
+						<file name="TILES000.ART" size="1853026" type="art" sha1="7426b12373367e4d39b98bd03c6fcdf4ec08494e"/>
+						<file name="TILES006.ART" size="637416" type="art" sha1="d9d66ef98d0e6b571bbd91c8768e87fd3efee217"/>
+						<file name="TILES009.ART" size="1650606" type="art" sha1="ee74bf4a14561d038ce0bc6dd39208b5a58983a6"/>
+						<file name="TILES010.ART" size="798867" type="art" sha1="91c77885467412d85f5c3bab55803f3e14ea5491"/>
+						<file name="TILES011.ART" size="133150" type="art" sha1="fa03c057d2d8a26e99cb220cf70581ca14fc4131"/>
+						<file name="TILES012.ART" size="1060830" type="art" sha1="15aec3662490b0733981fef0b1ec1612a032f955"/>
+						<file name="TILES013.ART" size="1538468" type="art" sha1="53bdc879b158ababb9f06b769ddee68fe9879266"/>
+						<file name="TILES015.ART" size="502270" type="art" sha1="51964dead54881ee6ef310263111f6c9d9aee085"/>
+						<file name="TILES019.ART" size="1016603" type="art" sha1="ea84fe9ec16fa4d316307e993f050004fd855c9b"/>
+						<file name="WHIRL.WAV" size="4418" type="wav" sha1="3c55ddfda8a84bc0f6ad6a5d5077680ca3a69636"/>
+					</files>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="nwivalph.exe" filesize="2889127" version="Alpha 0.01" game="Stand-Alone" type="Original Files" sha1="f3d9a5be71897024f1effd6ccff33a0c56b09305"/>
+			<download filename="New_World_IV_Alpha_0.01-ModMgrSA.zip" version="Alpha 0.01" game="Stand-Alone" type="Mod Manager Files" state="Native"/>
+		</downloads>
+	</mod>
 	<mod name="New York Rebellion" id="new_york_rebellion" type="Episode">
 		<team>
 			<member name="Fernando Márquez" email="cristomarquez@udec.cl"/>
