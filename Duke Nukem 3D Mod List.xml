@@ -11515,4 +11515,77 @@
 			<download filename="Silver_Wolf_1.0-ModMgrSA.zip" filesize="116046146" version="1.0" game="Stand-Alone" type="Mod Manager Files" state="Native" sha1="b55f0c3681543951ec4679640079376f0ef438ee"/>
 		</downloads>
 	</mod>
+	<mod name="A.W.O.L." id="awol" type="Total Conversion" version="2.0.0.4" website="https://store.steampowered.com/app/1740150/AWOL">
+		<team name="Shotspark Studios" website="https://www.shotsparkstudios.com" twitter="shotsparkstudio" discord="https://discord.gg/EBX5MXjDp8">
+			<member name="Andrew Childs" alias="Hudson" twitter="aschilds"/>
+			<member name="Michelle Sleeper" twitter="msleeperdotcom"/>
+			<member name="Jay Desso" alias="Metalagent47" twitter="metalagent47"/>
+			<member name="Riccardo Capogna" alias="RichardStorm" email="riccardo.capogna@yahoo.it"/>
+			<member name="Yijian Fong" alias="Yij" twitter="YijArt"/>
+			<member name="Tommaso Pavignani" alias="Pavigna" twitter="tom_pavigna"/>
+			<member name="Michael LaBruyere" alias="dbzfanatic" twitter="dbzfanatic_1"/>
+			<member name="Max Raffa" alias="Jerry" twitter="JezzahKP"/>
+			<member name="Jonathan Strander" alias="Mblackwell" email="Mblackwell50@hotmail.com"/>
+			<member name="Sean Bellwether" alias="Raziel" email="RTRPRaziel@aol.com"/>
+			<member name="Mark"/>
+			<member name="Dave Tietz"/>
+			<member name="Max Ylitalo" alias="Oasiz"/>
+			<member name="Jarmo Kylmäaho"/>
+			<member name="Corentin Dallay" alias="MetHy"/>
+			<member name="Mikko Sandt" email="sirpa.sandt@pp.inet.fi" icq="71211982"/>
+			<member name="Aymeric Nocus" alias="ck3D" email="aymeric-nocus@tele2.fr" website="https://www.ko-fi.com/blastradius" youtube="MisterCK"/>
+			<member name="Vlad Borisenko" twitter="shtovladya"/>
+			<member name="Katherine Baskin" alias="The Baskinator" twitter="baskinator"/>
+			<member name="Jarkko Rotstén" alias="Roz" twitter="rotsten"/>
+			<member name="Nick Palsmeier" alias="Damien Azreal" twitter="AzrealNick"/>
+			<member name="Jordon Moss" alias="StrikerTheHedgeFox"/>
+		</team>
+		<versions>
+			<version id="2.0.0.4" release_date="September 15, 2022">
+				<type>
+					<game type="Stand-Alone" state="Native">
+						<properties base="eDuke32" game_exe_name="awol.exe" skill_start_value="1" local_working_directory="false" relative_con_file_path="true" supports_subdirectories="true"/>
+						<arguments>
+							<argument name="con-file" flag="-x "/>
+							<argument name="extra-con-file" flag="-mx "/>
+							<argument name="group-file" flag="-g "/>
+							<argument name="def-file" flag="-h "/>
+							<argument name="extra-def-file" flag="-mh "/>
+							<argument name="map-file" flag="-map "/>
+							<argument name="episode" flag="-v"/>
+							<argument name="level" flag="-l"/>
+							<argument name="skill" flag="-s"/>
+							<argument name="record-demo" flag="-r"/>
+							<argument name="play-demo" flag="-d "/>
+							<argument name="respawn-mode" flag="-t"/>
+							<argument name="weapon-switch-order" flag="-u"/>
+							<argument name="disable-monsters" flag="-m"/>
+							<argument name="disable-sound" flag="-ns"/>
+							<argument name="disable-music" flag="-nm"/>
+						</arguments>
+						<operatingsystems>
+							<operatingsystem name="Windows"/>
+						</operatingsystems>
+						<files>
+							<file name="awol.cfg" size="716" type="cfg" sha1="fb9ea4f92a47341a1e3aff3b95950fa7c0c478e6"/>
+							<file name="awol.exe" size="5514240" type="exe" sha1="bd682a20f696dd5af4737be15bd1d6d669555e2a"/>
+							<file name="awol.grp" size="244458025" type="grp" sha1="44393a5dc91bfc59533c679575a5ecd977b416c2"/>
+							<file name="awol.grpinfo" size="108" type="grpinfo" sha1="3bcb3a9bff656e7363d382c0ce674046e28a3e64"/>
+							<file name="awol_customize.con" size="7039" type="con" sha1="65ec141c5607cf6a5bc14b16b09e7aa81db33528"/>
+							<file name="awol_mods.con" size="1168" type="con" sha1="ef67e0a3092b010f7ece5f8333acd72f24f2647c"/>
+							<file name="buildlic.txt" size="3087" type="txt" sha1="849b42063a5155506c28b1e64f5f8bebd2209f77"/>
+							<file name="gpl-2.0.txt" size="18092" type="txt" sha1="4cc77b90af91e615a64ae04893fdffa7939db84c"/>
+							<file name="mapster32.cfg" size="67" type="cfg" sha1="63f7d6b29f70698cb933ad54f44325ee2d857882"/>
+							<file name="mapster32.exe" size="4838912" type="exe" sha1="be0d7c74c3a8d07a504f58551f69de12019d4112"/>
+							<file name="user_profiles_disabled" size="0" type="none" sha1="da39a3ee5e6b4b0d3255bfef95601890afd80709"/>
+						</files>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="A.W.O.L._2.0.0.4.zip" filesize="248805082" version="2.0.0.4" game="Stand-Alone" type="Original Files" sha1="da52801376acace609b86091b3c72eacca88e0b6"/>
+			<download filename="A.W.O.L._2.0.0.4-ModMgrSA.zip" filesize="248805082" version="2.0.0.4" game="Stand-Alone" type="Mod Manager Files" state="Native" sha1="da52801376acace609b86091b3c72eacca88e0b6"/>
+		</downloads>
+	</mod>
 </mods>
