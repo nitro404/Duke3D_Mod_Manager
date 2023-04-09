@@ -169,7 +169,7 @@ bool DownloadCache::updateCachedPackageFile(const ModDownload * modDownload, con
 	}
 
 	if(isNewCachedPackageFile) {
-		m_cachedPackageFiles[modFile->getFileName()] = cachedPackageFile;
+		m_cachedPackageFiles[modDownload->getFileName()] = cachedPackageFile;
 	}
 
 	return true;
