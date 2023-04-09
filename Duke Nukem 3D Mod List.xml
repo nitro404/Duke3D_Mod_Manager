@@ -11588,4 +11588,109 @@
 			<download filename="A.W.O.L._2.0.0.4-ModMgrSA.zip" filesize="248805082" version="2.0.0.4" game="Stand-Alone" type="Mod Manager Files" state="Native" sha1="da52801376acace609b86091b3c72eacca88e0b6"/>
 		</downloads>
 	</mod>
+	<mod name="Avatar" id="avatar" type="Total Conversion" version="1.3.98">
+		<team name="Sycon Technologies">
+			<member name="Geoff Halliday" alias="Link/Adereth" email="link_9000@hotmail.com" website="http://www.geocities.com/adereth_2000/lameduke/index.html" aim="Adereth2000" icq="65019858" yahoo="Adereth_2000"/>
+		</team>
+		<versions>
+			<version id="1.3.98" release_date="March 29, 2002">
+				<type>
+					<game type="Stand-Alone" state="Native">
+						<properties base="LameDuke" game_exe_name="Avatar.exe" setup_exe_name="SETUP.EXE" skill_start_value="0" local_working_directory="true" relative_con_file_path="false" supports_subdirectories="false" requires_group_file_extraction="true"/>
+						<arguments>
+							<argument name="episode" flag="/v"/>
+							<argument name="level" flag="/l"/>
+							<argument name="skill" flag="/s"/>
+							<argument name="record-demo" flag="/r"/>
+						</arguments>
+						<operatingsystems>
+							<operatingsystem name="DOS"/>
+						</operatingsystems>
+						<files>
+							<file name="ai.con" size="20216" type="con" sha1="f68cdc36920aa35fccd217fc14daddac3c96b57b"/>
+							<file name="altduke.txt" size="7449" type="txt" sha1="606a4a5b44f4b868f7c25c1c87d03d08662fab14"/>
+							<file name="Avatar.exe" size="685121" type="exe" sha1="f0f36609bb80a50b4ccec1fbb485131010c62d0e"/>
+							<file name="BROWNEYE.ldt" size="33022" type="mid" sha1="a99fdeb0997d3b4c99c96538fa19929949c56cfa"/>
+							<file name="D_DEAD2.ldt" size="19975" type="mid" sha1="7c77a72ed6e6a29ed6901941ca64119418aca611"/>
+							<file name="Defs.con" size="4470" type="con" sha1="ce1cf790eeb125cd3ed7825e0b7d16c2fd615f9d"/>
+							<file name="DUKE.RTS" size="188954" type="rts" sha1="738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07"/>
+							<file name="e1l1.ldt" size="22650" type="mid" sha1="78cae11098554c72192a44afc1cbf14ef40f7c2a"/>
+							<file name="E2M1.ldt" size="35632" type="mid" sha1="ff490de338a4ed78363fa4ac71596f2fc6a42cac"/>
+							<file name="ext.ldc" size="3032" type="con" sha1="099954572a8f38a05aa6971b5eb7d5c9ea9d1cf0"/>
+							<file name="FASTWAY.ldt" size="35632" type="mid" sha1="ff490de338a4ed78363fa4ac71596f2fc6a42cac"/>
+							<file name="FLOGHORN.ldt" size="4351" type="mid" sha1="792bd4ae8f45561a78cd8f5328222c3e806e8612"/>
+							<file name="Game.con" size="4706" type="con" sha1="a1617425019a3488694662f7bb1376ca180a0541"/>
+							<file name="GO.BAT" size="2475" type="bat" sha1="9816baf6ee6d2cef9a295f2a522c41175b131d5f"/>
+							<file name="grabbag.ldt" size="14652" type="mid" sha1="02f1d10e20d6db5389b5c2ed2b933c38102cbe9f"/>
+							<file name="grabbag_0.ldt" size="15373" type="mid" sha1="2984697d3b873c7a998d7ba8c0e4230d23b3c414"/>
+							<file name="intro.ldt" size="83621" type="mid" sha1="3759712208422535d887b5e36226d517d350cb92"/>
+							<file name="l1.map" size="39570" type="map" sha1="67b0c3dc3fe957e069a8d1fcf68d17235881d80c"/>
+							<file name="l2.map" size="15865" type="map" sha1="ae8ccacb0fce9a0560e33688c69cf44e481c0029"/>
+							<file name="l8.map" size="17589" type="map" sha1="1dd0a2d4397dda602a5f7a47710a91d45374bf48"/>
+							<file name="LDReply.TXT" size="5441" type="txt" sha1="d2b499f017fd0daa4a4d10a6e9fd55c4daf9d077"/>
+							<file name="m1.map" size="55096" type="map" sha1="2e1f4cb8f412c48b5cc66f32ac949480012b1c83"/>
+							<file name="m2.map" size="53321" type="map" sha1="f9b4218c2cd9c3a7d4f98ec6ad26f338d721e313"/>
+							<file name="m3.map" size="16918" type="map" sha1="7cf03ce69847a22b69fc68d08fcc529f72a76887"/>
+							<file name="m4.map" size="178290" type="map" sha1="7b31d0744533036b15c372929a9bf4fafc23c966"/>
+							<file name="m7.map" size="143778" type="map" sha1="f0b60cb469a6d22ff37b85e1028105bb22ec790b"/>
+							<file name="M9.map" size="3919" type="map" sha1="ff8531fcbe4fef2c3a7520b039787d245110c818"/>
+							<file name="MISTACHE.ldt" size="13973" type="mid" sha1="6e4bbbd8c19d8080158cfa4ef47c112e8bee58c9"/>
+							<file name="music.con" size="560" type="con" sha1="a853455a94e10c013e22ea1d14ab3995be8658cd"/>
+							<file name="mydemo_1.dmo" size="0" type="dmo" sha1="da39a3ee5e6b4b0d3255bfef95601890afd80709"/>
+							<file name="Mydemo_2.dmo" size="23679" type="dmo" sha1="ded58c20db6acc912ab28b59f1a19c104c3930e8"/>
+							<file name="Mydemo_3.dmo" size="1711" type="dmo" sha1="482bf0f6aa9949e9f3a5c686a96a0ba5e9a34031"/>
+							<file name="Mydemo_8.dmo" size="6199" type="dmo" sha1="0f52f5369cf660ba9deb200d0edc2e17ec88dd3b"/>
+							<file name="mydemo_9.dmo" size="16519" type="dmo" sha1="4e80185f5ad2ec3fd4cc1b599f37e70980f35246"/>
+							<file name="N0.map" size="6016" type="map" sha1="bba0c6823c3b09ad0fb3d16df6158b8cbe7c70f9"/>
+							<file name="n1.map" size="17551" type="map" sha1="6832598f8ba8633fdafe329779fb48f7c6a9ff13"/>
+							<file name="N11.MAP" size="6572" type="map" sha1="515cc7cb046c55c80dd861f1aab954cd48a29213"/>
+							<file name="N12.map" size="68006" type="map" sha1="368cb78ef802e85e4249d197b844d78c85697aee"/>
+							<file name="n2.map" size="12872" type="map" sha1="0df4459cd880a4c96dfa39a3b6c92e36c820366e"/>
+							<file name="N3.map" size="138629" type="map" sha1="b0227b0e849ff8a7098798488fd2c498118b196b"/>
+							<file name="n4.map" size="103028" type="map" sha1="2cd4123aa5f63ab7ddf3aa6fa5438f24668ac6f0"/>
+							<file name="N9.map" size="8889" type="map" sha1="9af2af5bf79c75d889de96b5c527374a090385f7"/>
+							<file name="NAMES.H" size="4739" type="header" sha1="9cbc2bdc69417d2f6e8b7c56d882893d431db988"/>
+							<file name="NEO.CON" size="16846" type="con" sha1="31ae674f1af884f22fd7ba9d3f8149be5b775ac3"/>
+							<file name="notice.diz" size="199" type="diz" sha1="807c0e0a42dc89daf53716a524398d3f82c8764f"/>
+							<file name="o@.map" size="15063" type="map" sha1="5fa7efb1884625deed06492356843f39189847e5"/>
+							<file name="O1.map" size="80996" type="map" sha1="fd7b536a93d8e85d09a26ad147ce0be107547616"/>
+							<file name="o2.map" size="10085" type="map" sha1="5321f4e37829faafc9770b94d5af59435f55789d"/>
+							<file name="o9.map" size="838" type="map" sha1="1d777d4d2ebdbbc01d11a07afe8f9d10d3755755"/>
+							<file name="OCTAAT1.VOC" size="26749" type="voc" sha1="ed65576b44b9d6be4e399fc3923a5238d12f9dc4"/>
+							<file name="perseus.txt" size="2135" type="txt" sha1="07d571eae5c1563e1b70b487d80081ae31eeed6f"/>
+							<file name="q4.map" size="40632" type="map" sha1="969d91185f66b0890de1eefc1b99a1c99fa4d450"/>
+							<file name="R1.map" size="1866" type="map" sha1="ced1269ccfaf5c368b1e673e8da7431be20ded5c"/>
+							<file name="reaper.ldt" size="15090" type="mid" sha1="069dea6d5965f0c9f7ca6adecef616e89a1aafef"/>
+							<file name="SETUP.DAT" size="23" type="dat" sha1="6786ae11144f08f6e251d1e8b4ce8604c73d151c"/>
+							<file name="SETUP.EXE" size="32032" type="exe" sha1="c6ce4a69044a270bfe735c848306b7fd3545a17b"/>
+							<file name="snake1.ldt" size="33414" type="mid" sha1="d57e8cd6dc96e28dd6903c967f3ab4c975a2dbb0"/>
+							<file name="stalker.ldt" size="43121" type="mid" sha1="b21f8bdb2c23f65be9ffc844510c47be81f01bea"/>
+							<file name="startup.ldt" size="7601" type="mid" sha1="4d6ae929a8270771611583747a4841553060fe9c"/>
+							<file name="streets.ldt" size="51032" type="mid" sha1="d0d8665e31e7cbc58822e915c9e94929f2d3ade2"/>
+							<file name="thecall.ldt" size="17453" type="mid" sha1="e9b963dd62ffca68a03440e2be090e6c88c84a10"/>
+							<file name="TILES000.ART" size="1737991" type="art" sha1="e1a559d9a6b42cd24ead05632b056dda62000954"/>
+							<file name="TILES001.ART" size="1720701" type="art" sha1="ad241e97e05da9b5895540a90c87695368840663"/>
+							<file name="TILES002.ART" size="1263630" type="art" sha1="ac03d2587a5fa9d8170cf4305918051edded18d4"/>
+							<file name="TILES003.ART" size="1599934" type="art" sha1="380f7e2ae91ec2c592ae71293a124c30b12e82cd"/>
+							<file name="TILES004.ART" size="940671" type="art" sha1="a0e7ad0027483929c1f3804895f6c8b4e990a29f"/>
+							<file name="tiles005.art" size="735412" type="art" sha1="503c77346eac97f0651ca01440989a4db5da38fc"/>
+							<file name="TILES006.ART" size="611444" type="art" sha1="56960a37c4558b71809a4843b41d2f388aa90be1"/>
+							<file name="TILES007.ART" size="1757004" type="art" sha1="15a36484f005c538365ab86c73208068d052ad71"/>
+							<file name="TILES008.ART" size="2922955" type="art" sha1="2eed1f6ae73c6508d9946ac5b6465135f8d792e2"/>
+							<file name="TILES009.ART" size="4964761" type="art" sha1="ab1f1ed4d5a59321b3f1ff33455117e24e39f5c8"/>
+							<file name="TILES010.ART" size="4492194" type="art" sha1="799522d1c19cf94953b612b7d8f3f9c04ef6d392"/>
+							<file name="tonight.ldt" size="45584" type="mid" sha1="e266f18197de4456b2f07e3f46c7211073fb2b44"/>
+							<file name="UNFORGIV.ldt" size="54905" type="mid" sha1="a246b97e70b6ebaa68893ca1b0656aa071bf781a"/>
+							<file name="USERDEFS.TMP" size="465" type="con" sha1="532139314c9d79b46e0c1319527f227ddaec5c5e"/>
+							<file name="vars.con" size="4789" type="con" sha1="e464d57751ff7c65fb52be3ea5ef3737dd6db4b5"/>
+						</files>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="avatar98.zip" filesize="8129341" version="1.3.98" game="Stand-Alone" type="Original Files" sha1="48e5710e16694638ea567ad742996331798c4893"/>
+			<download filename="Avatar_1.3.98-ModMgrSA.zip" filesize="7285674" version="1.3.98" game="Stand-Alone" type="Mod Manager Files" state="Native" sha1="508e4cc4e066a48951f757394b31ba9974c04b24"/>
+		</downloads>
+	</mod>
 </mods>
