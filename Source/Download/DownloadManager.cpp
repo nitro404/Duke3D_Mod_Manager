@@ -478,6 +478,11 @@ bool DownloadManager::downloadModGameVersion(ModGameVersion * modGameVersion, Ga
 				continue;
 			}
 
+			// zero size files don't really have a hash, so skip them or else checks will fail
+			if(modFile->getFileSize() == 0) {
+				continue;
+			}
+
 			modFileEntry = modDownloadZipArchive->getEntry(modFile->getFileName());
 
 			if(modFileEntry.expired()) {
