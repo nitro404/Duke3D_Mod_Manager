@@ -11883,6 +11883,93 @@
 			<download filename="A.W.O.L-ModMgrSA.zip" filesize="248805082" game="Stand-Alone" type="Mod Manager Files" state="Native" sha1="da52801376acace609b86091b3c72eacca88e0b6"/>
 		</downloads>
 	</mod>
+	<mod name="Epsilon" id="epsilon" type="Total Conversion" version="50 Plus">
+		<team name="Sycon Technologies">
+			<member name="Geoff Halliday" alias="Link/Adereth" email="icosa@softhome.net" website="http://www.geocities.com/adereth_2000/lameduke/index.html" aim="Adereth2000" icq="65019858" yahoo="Adereth_2000"/>
+		</team>
+		<versions>
+			<version id="50 Plus" release_date="June 14, 2003">
+				<type>
+					<game type="Stand-Alone" state="Native">
+						<properties base="LameDuke" game_exe_name="epsilon.exe" skill_start_value="0" local_working_directory="true" relative_con_file_path="false" supports_subdirectories="false" requires_group_file_extraction="true"/>
+						<arguments>
+							<argument name="episode" flag="/v"/>
+							<argument name="level" flag="/l"/>
+							<argument name="skill" flag="/s"/>
+							<argument name="record-demo" flag="/r"/>
+						</arguments>
+						<operatingsystems>
+							<operatingsystem name="DOS"/>
+						</operatingsystems>
+						<files>
+							<file name="AI.CON" size="21686" type="con" sha1="2f92c63b7f2d5e0ccc773f3a67304d119609336e"/>
+							<file name="bethtoll.ldt" size="61118" type="mid" sha1="19c083ccfeba44de496377e33bd9abe8ed49d728"/>
+							<file name="BROWNEYE.ldt" size="33022" type="mid" sha1="a99fdeb0997d3b4c99c96538fa19929949c56cfa"/>
+							<file name="cethtoll.ldt" size="9625" type="mid" sha1="ed9c4bc4c6ffc4c11630f0789e9f1d7d88214013"/>
+							<file name="D_DEAD2.ldt" size="19975" type="mid" sha1="7c77a72ed6e6a29ed6901941ca64119418aca611"/>
+							<file name="Defs.con" size="4470" type="con" sha1="ce1cf790eeb125cd3ed7825e0b7d16c2fd615f9d"/>
+							<file name="dethtoll.ldt" size="65574" type="mid" sha1="a1b9ca50b8c67f8a1184856b6082f9e70681ad4c"/>
+							<file name="DOS4GW.EXE" size="271476" type="exe" sha1="58bb654fc6d1b3a69abbb95d4dde9dbfe20fbfd0"/>
+							<file name="e1l1.ldt" size="22650" type="mid" sha1="78cae11098554c72192a44afc1cbf14ef40f7c2a"/>
+							<file name="E2M1.ldt" size="35997" type="mid" sha1="fed61d9f3647b19d7cdec8b03014bf66f25b2d9f"/>
+							<file name="epsilon.exe" size="685121" type="exe" sha1="9d9efb83c84e73078f8d4e6d7035076db5204447"/>
+							<file name="ext.ldc" size="3024" type="con" sha1="e64ad9033a99d95e73cdfea5cf92997cdf9c6468"/>
+							<file name="FASTWAY.ldt" size="35632" type="mid" sha1="ff490de338a4ed78363fa4ac71596f2fc6a42cac"/>
+							<file name="FLOGHORN.ldt" size="4351" type="mid" sha1="792bd4ae8f45561a78cd8f5328222c3e806e8612"/>
+							<file name="FTA_R.WAV" size="14142" type="wav" sha1="8bccdad5606341cf22475dbad7cd1c5ad284e881"/>
+							<file name="Game.con" size="4803" type="con" sha1="c989a5237e066a7695f90d03d6f7c9c927fefbcd"/>
+							<file name="GO.BAT" size="2476" type="bat" sha1="7813ae59aba4a885c7f1ef7623452d6fb4869df3"/>
+							<file name="grabbag.ldt" size="14652" type="mid" sha1="e87efd38ccd7cb9b11a2a50fa5f27f1bdad1f52f"/>
+							<file name="grabbag_0.ldt" size="15373" type="mid" sha1="2984697d3b873c7a998d7ba8c0e4230d23b3c414"/>
+							<file name="intro.ldt" size="83621" type="mid" sha1="3759712208422535d887b5e36226d517d350cb92"/>
+							<file name="listmaps.bat" size="22" type="bat" sha1="9084e833015210a45350786311e64c93d4fedf33"/>
+							<file name="map.bat" size="20" type="bat" sha1="79327aeacea31eb45549d2e5e0365512f5a158d0"/>
+							<file name="MISTACHE.ldt" size="13973" type="mid" sha1="6e4bbbd8c19d8080158cfa4ef47c112e8bee58c9"/>
+							<file name="music.con" size="558" type="con" sha1="dffae2833c93b35ee10d589cd1dfbbd0abb2c994"/>
+							<file name="mydemo_1.dmo" size="0" type="dmo" sha1="da39a3ee5e6b4b0d3255bfef95601890afd80709"/>
+							<file name="Mydemo_2.dmo" size="23679" type="dmo" sha1="ded58c20db6acc912ab28b59f1a19c104c3930e8"/>
+							<file name="Mydemo_3.dmo" size="1711" type="dmo" sha1="482bf0f6aa9949e9f3a5c686a96a0ba5e9a34031"/>
+							<file name="Mydemo_8.dmo" size="6199" type="dmo" sha1="0f52f5369cf660ba9deb200d0edc2e17ec88dd3b"/>
+							<file name="mydemo_9.dmo" size="16519" type="dmo" sha1="4e80185f5ad2ec3fd4cc1b599f37e70980f35246"/>
+							<file name="NAMES.H" size="4739" type="header" sha1="9cbc2bdc69417d2f6e8b7c56d882893d431db988"/>
+							<file name="NEO.CON" size="19889" type="con" sha1="5d801f3c8672343585e002585308296a29762d23"/>
+							<file name="notice.diz" size="199" type="diz" sha1="807c0e0a42dc89daf53716a524398d3f82c8764f"/>
+							<file name="OCTAAT1.VOC" size="26749" type="voc" sha1="ed65576b44b9d6be4e399fc3923a5238d12f9dc4"/>
+							<file name="opening1.ldt" size="12349" type="mid" sha1="27fab9e57a439e58691830d388acc5ff6241fead"/>
+							<file name="rave.LDT" size="48410" type="mid" sha1="de1a2c4381e77dd72061794f5096bfdae2e6f224"/>
+							<file name="reaper.ldt" size="15090" type="mid" sha1="069dea6d5965f0c9f7ca6adecef616e89a1aafef"/>
+							<file name="SETUP.DAT" size="23" type="dat" sha1="bd44663b51f31a7aa93fbe233f72b4d693395ae0"/>
+							<file name="snake1.ldt" size="33414" type="mid" sha1="d57e8cd6dc96e28dd6903c967f3ab4c975a2dbb0"/>
+							<file name="stalker.ldt" size="43121" type="mid" sha1="b21f8bdb2c23f65be9ffc844510c47be81f01bea"/>
+							<file name="startup.ldt" size="7601" type="mid" sha1="4d6ae929a8270771611583747a4841553060fe9c"/>
+							<file name="streets.ldt" size="51032" type="mid" sha1="d0d8665e31e7cbc58822e915c9e94929f2d3ade2"/>
+							<file name="thecall.ldt" size="17453" type="mid" sha1="e9b963dd62ffca68a03440e2be090e6c88c84a10"/>
+							<file name="TILES000.ART" size="1737991" type="art" sha1="2ffbce2be79c628d9797dfc7c62d6ad7fffc3e4a"/>
+							<file name="TILES001.ART" size="1717909" type="art" sha1="7375cfdce87ec7e8e2f66cf96daf9e8945086e38"/>
+							<file name="TILES002.ART" size="1263630" type="art" sha1="983672641e991d54a729eb41c0a07afb9347c0a0"/>
+							<file name="TILES003.ART" size="1577222" type="art" sha1="c028bc3a39bf845f64832c6e5c4839b96802996c"/>
+							<file name="TILES004.ART" size="941049" type="art" sha1="b1bbc7e5fcf3b993f1386507a5a9c93a6682dfb6"/>
+							<file name="tiles005.art" size="726780" type="art" sha1="77d545360cce4cae4077dbd8a63c1e808a751ce4"/>
+							<file name="TILES006.ART" size="611444" type="art" sha1="56960a37c4558b71809a4843b41d2f388aa90be1"/>
+							<file name="TILES007.ART" size="1757004" type="art" sha1="15a36484f005c538365ab86c73208068d052ad71"/>
+							<file name="TILES008.ART" size="2922955" type="art" sha1="2eed1f6ae73c6508d9946ac5b6465135f8d792e2"/>
+							<file name="TILES009.ART" size="4964761" type="art" sha1="ab1f1ed4d5a59321b3f1ff33455117e24e39f5c8"/>
+							<file name="TILES010.ART" size="4793982" type="art" sha1="7a2f3300f19e14bcd5024dc58fb8ac4730b41e62"/>
+							<file name="tonight.ldt" size="45584" type="mid" sha1="e266f18197de4456b2f07e3f46c7211073fb2b44"/>
+							<file name="UNFORGIV.ldt" size="54905" type="mid" sha1="a246b97e70b6ebaa68893ca1b0656aa071bf781a"/>
+							<file name="useMap.bat" size="452" type="bat" sha1="1f162daa27e8eba6454bde36e1254998c0ae2e6a"/>
+							<file name="vars.con" size="4248" type="con" sha1="436356ce216a294f76bde8aabf40b2bcd6274643"/>
+							<file name="zeldaund.ldt" size="8015" type="mid" sha1="690ff8a70f0b1df1053b64de75f6f705849dc889"/>
+						</files>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="epsilon50PLUS.zip" filesize="7421283" version="50 Plus" game="Stand-Alone" type="Original Files" sha1="db49898d226f491b5fb5dfe4f6be12e5eb0acb52"/>
+			<download filename="Epsilon_50_Plus-ModMgrSA.zip" filesize="7421283" version="50 Plus" game="Stand-Alone" type="Mod Manager Files" state="Native" sha1="db49898d226f491b5fb5dfe4f6be12e5eb0acb52"/>
+		</downloads>
+	</mod>
 	<mod name="Avatar" id="avatar" type="Total Conversion" version="1.3.98">
 		<team name="Sycon Technologies">
 			<member name="Geoff Halliday" alias="Link/Adereth" email="link_9000@hotmail.com" website="http://www.geocities.com/adereth_2000/lameduke/index.html" aim="Adereth2000" icq="65019858" yahoo="Adereth_2000"/>
