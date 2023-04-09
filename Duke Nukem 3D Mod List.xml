@@ -2646,6 +2646,79 @@
 			<download filename="New_World-ModMgrSA.zip" game="Stand-Alone" type="Mod Manager Files" state="Native"/>
 		</downloads>
 	</mod>
+	<mod name="New World III" id="new_world_iii" type="Total Conversion" version="1.6" website="http://members.zoom.com/HCAD">
+		<team city="Sydney" state="New South Wales" country="Australia">
+			<member name="James Ferry" email="James_Ferry@classic.msn.com"/>
+		</team>
+		<versions>
+			<version id="1.6" release_date="February 26, 1999">
+				<game type="Stand-Alone" state="Native">
+					<properties base="Regular" game_exe_name="nw3code.exe" skill_start_value="1" local_working_directory="true" relative_con_file_path="false" supports_subdirectories="true"/>
+					<arguments>
+						<argument name="con-file" flag="/x"/>
+						<argument name="group-file" flag="/g"/>
+						<argument name="map-file" flag="-map "/>
+						<argument name="episode" flag="/v"/>
+						<argument name="level" flag="/l"/>
+						<argument name="skill" flag="/s"/>
+						<argument name="record-demo" flag="/r"/>
+						<argument name="play-demo" flag="/d"/>
+						<argument name="respawn-mode" flag="/t"/>
+						<argument name="weapon-switch-order" flag="/u"/>
+						<argument name="disable-monsters" flag="/m"/>
+						<argument name="disable-sound" flag="/ns"/>
+						<argument name="disable-music" flag="/nm"/>
+					</arguments>
+					<operatingsystems>
+						<operatingsystem name="DOS"/>
+					</operatingsystems>
+					<files>
+						<file name="cineov2.anm" size="6520" type="anm" sha1="98890025df7e84237449a962ba93712225ab2465"/>
+						<file name="cineov3.anm" size="6520" type="anm" sha1="98890025df7e84237449a962ba93712225ab2465"/>
+						<file name="FLAMER.VOC" size="8297" type="voc" sha1="c0249bb4ef5a5549cf27f2d2f9cf19a5cd70c09c"/>
+						<file name="GAME.CON" size="117727" type="con" sha1="c3c09c98761c213a7fd6b3bc141f8bd9846f04c1"/>
+						<file name="HOLLY.CFG" size="5287" type="cfg" sha1="5bbd063455a012cbd22cb897277b72df062bb030"/>
+						<file name="logo.anm" size="132501" type="anm" sha1="276bad05a4eaa7a87d519020b049eaee69b81354"/>
+						<file name="NW_CTF1.MAP" size="24998" type="map" sha1="defdcf8c4c33afe54b3b14a78245062207e32700"/>
+						<file name="NW_E1L1.MAP" size="56226" type="map" sha1="8f77c5c15dbe6292f1545b733fb3d1ddbf5177ee"/>
+						<file name="NW_E1L2.MAP" size="44522" type="map" sha1="46d55f809f5fb2dba6309516d2b7371d19493ea8"/>
+						<file name="NW_E1L3.MAP" size="148838" type="map" sha1="d2b439d6db3a370693b7cdd3f804c9e38f3810e6"/>
+						<file name="NW_E1L4.MAP" size="47454" type="map" sha1="7e14966bb0b01d3458ce08587a4c9ad347d34445"/>
+						<file name="NW_E1L5.MAP" size="76890" type="map" sha1="0c0351d7c6ba35f84cdde65ee6ed43579c4e6d42"/>
+						<file name="NW_E1L6.MAP" size="21186" type="map" sha1="a3441ecbd32ac939f0db77cf287ad9f7cce5c35a"/>
+						<file name="NW_E1L7.MAP" size="76026" type="map" sha1="891a4e1089f7d75f30b6ebd7bacda0145fe278ce"/>
+						<file name="NW_E1L8.MAP" size="106038" type="map" sha1="77bdb6feab9f4b822db40226b354a8fd278f922f"/>
+						<file name="NW_E1L9.MAP" size="198806" type="map" sha1="a89997adb2989c1e5bae9a3e6e0c466b60b519c6"/>
+						<file name="NW_LARA.MAP" size="12974" type="map" sha1="07df3cb024ae2b23ddbf407622411fdf54f6dbd8"/>
+						<file name="NW_MTP1.MAP" size="72010" type="map" sha1="3bca7d77a18dd5640031e7f645a385d084833420"/>
+						<file name="NW3.TXT" size="10051" type="txt" sha1="8c49e367768c45dfe64cc356050ba8b5c1c3a991"/>
+						<file name="nw3code.exe" size="111255" type="exe" sha1="0b501081585ff62c1ceeff900318c341f79ca39c"/>
+						<file name="NW3PATCH.COM" size="13410" type="exe" sha1="f44f20cee72cb3cc135b80fc7bc53c401e1f68dd"/>
+						<file name="TILES000.ART" size="1445743" type="art" sha1="dbaf34da8d423d185e8dd29f10916c37ea343e64"/>
+						<file name="TILES001.ART" size="1512705" type="art" sha1="11e9febe11c8bb7469de4122f3911d7287df3870"/>
+						<file name="TILES002.ART" size="690418" type="art" sha1="b0dc1210183efc0a2bd3eb711d5027f07d946a52"/>
+						<file name="TILES003.ART" size="1122083" type="art" sha1="b27e52f35cb379dc733e50548f248dbd559577cd"/>
+						<file name="TILES004.ART" size="1100277" type="art" sha1="cd0d037f79d99faf49e4564f9d154144b72ca377"/>
+						<file name="TILES005.ART" size="513701" type="art" sha1="7f2356a646ca530f92a896be372a0486750a82e6"/>
+						<file name="TILES006.ART" size="418142" type="art" sha1="99a494a9e646d6f48c1a1426f7614d355d6b001f"/>
+						<file name="TILES007.ART" size="234883" type="art" sha1="22204f8420ce54f5c63afd31c096c9a4105aafc4"/>
+						<file name="TILES008.ART" size="202467" type="art" sha1="8607524c7c9c85e9952c7c17ceff9a3fdc378cdd"/>
+						<file name="TILES009.ART" size="881197" type="art" sha1="2ecdd5e3c0d96160af0052d0f49139523a45b36a"/>
+						<file name="TILES010.ART" size="972493" type="art" sha1="f7ff563acb6899e50ee562968705463b7596e681"/>
+						<file name="TILES011.ART" size="74854" type="art" sha1="a02d41506a2c5e59b95a47045d2b323688f70d5a"/>
+						<file name="TILES012.ART" size="676417" type="art" sha1="f7727b69b1d79f2a95399347b71285f9d689cd44"/>
+						<file name="TILES013.ART" size="944038" type="art" sha1="a908fd15fc650e92e92babd7b7455186d0b68de4"/>
+						<file name="TILES014.ART" size="287824" type="art" sha1="984046aeb76c3a06c88f69bd778df1bd763f7c2a"/>
+						<file name="TILES015.ART" size="22155" type="art" sha1="9f2c3173a98c4a40a3b7a640d34a430250cec1dd"/>
+					</files>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="nw3.zip" filesize="3695510" version="1.6" game="Stand-Alone" type="Original Files" sha1="6fe61f4edc97214c2d9049b18a42a26d0ae40fe0"/>
+			<download filename="New_World_III_1.6-ModMgrSA.zip" version="1.6" game="Stand-Alone" type="Mod Manager Files" state="Native"/>
+		</downloads>
+	</mod>
 	<mod name="New York Rebellion" id="new_york_rebellion" type="Episode">
 		<team>
 			<member name="Fernando Márquez" email="cristomarquez@udec.cl"/>
