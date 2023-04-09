@@ -10,6 +10,7 @@
 #include "ModTeamMember.h"
 #include "ModVersion.h"
 #include "ModVersionType.h"
+#include "StandAloneMod.h"
 
 #include <Utilities/FileUtilities.h>
 #include <Utilities/RapidJSONUtilities.h>
@@ -164,6 +165,20 @@ std::shared_ptr<Mod> ModCollection::getModWithName(const std::string & name) con
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_mods.begin(); i != m_mods.end(); ++i) {
 		if(Utilities::areStringsEqualIgnoreCase((*i)->getName(), name)) {
 			return *i;
+		}
+	}
+
+	return nullptr;
+}
+
+std::shared_ptr<ModVersion> ModCollection::getStandAloneModVersion(const StandAloneMod & standAloneMod) const {
+	if(!isValid(true) || !standAloneMod.isValid()) {
+		return nullptr;
+	}
+
+	for(const std::shared_ptr<Mod> & mod : m_mods) {
+		if(Utilities::areStringsEqualIgnoreCase(mod->getID(), standAloneMod.getID())) {
+			return mod->getVersion(standAloneMod.getVersion());
 		}
 	}
 
@@ -624,7 +639,7 @@ bool ModCollection::checkGameVersions(const GameVersionCollection & gameVersions
 				for(size_t l = 0; l < modVersionType->numberOfGameVersions(); l++) {
 					modGameVersion = modVersionType->getGameVersion(l);
 
-					if(!gameVersions.hasGameVersionWithID(modGameVersion->getGameVersionID())) {
+					if(!modGameVersion->isStandAlone() && !gameVersions.hasGameVersionWithID(modGameVersion->getGameVersionID())) {
 						if(verbose) {
 							spdlog::warn("Mod '{}' contains unknown game version ID: '{}'.", mod->getFullName(j, k), modGameVersion->getGameVersionID());
 						}
@@ -647,6 +662,7 @@ bool ModCollection::checkGameVersions(const GameVersionCollection & gameVersions
 			modDownload = mod->getDownload(j);
 
 			if(!modDownload->getGameVersionID().empty() &&
+			   !modDownload->isStandAlone() &&
 			   !Utilities::areStringsEqualIgnoreCase(modDownload->getGameVersionID(), GameVersion::ALL_VERSIONS) &&
 			   !gameVersions.hasGameVersionWithID(modDownload->getGameVersionID())) {
 				if(verbose) {

@@ -566,7 +566,7 @@ std::unique_ptr<GameVersionCollection> GameVersionCollection::parseFrom(const ra
 		return nullptr;
 	}
 
-	std::unique_ptr<GameVersionCollection> newGameVersionCollection = std::make_unique<GameVersionCollection>();
+	std::unique_ptr<GameVersionCollection> newGameVersionCollection(std::make_unique<GameVersionCollection>());
 
 	if(gameVersionsValue.Empty()) {
 		return newGameVersionCollection;
@@ -635,10 +635,10 @@ bool GameVersionCollection::loadFromJSON(const std::string & filePath, bool auto
 
 	fileStream.close();
 
-	std::unique_ptr<GameVersionCollection> gameVersionCollection = parseFrom(gameVersionsValue);
+	std::unique_ptr<GameVersionCollection> gameVersionCollection(parseFrom(gameVersionsValue));
 
 	if(!GameVersionCollection::isValid(gameVersionCollection.get())) {
-		spdlog::error("Failed to parse gameVersion collection from JSON file '{}'.", filePath);
+		spdlog::error("Failed to parse game version collection from JSON file '{}'.", filePath);
 		return false;
 	}
 

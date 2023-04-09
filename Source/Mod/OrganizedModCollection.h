@@ -43,6 +43,7 @@ public:
 		Downloaded,
 		SupportedGameVersions,
 		CompatibleGameVersions,
+		StandAlone,
 		Teams,
 		Authors
 	};

@@ -303,7 +303,7 @@ std::vector<std::string> OrganizedModCollection::getOrganizedItemDisplayNames(bo
 			   (m_filterType == OrganizedModCollection::FilterType::SupportedGameVersions && m_sortType != OrganizedModCollection::SortType::NumberOfCompatibleMods)) {
 				gameVersionTextStream << " (" << std::to_string(getSupportedModCountForGameVersionWithID(m_organizedGameVersions[i]->getID())) << ")";
 			}
-			else if(m_sortType == OrganizedModCollection::SortType::NumberOfCompatibleMods || m_filterType == OrganizedModCollection::FilterType::CompatibleGameVersions) {
+			else if(m_filterType == OrganizedModCollection::FilterType::CompatibleGameVersions || m_sortType == OrganizedModCollection::SortType::NumberOfCompatibleMods) {
 				gameVersionTextStream << " (" << std::to_string(getCompatibleModCountForGameVersionWithID(m_organizedGameVersions[i]->getID())) << ")";
 			}
 
@@ -525,7 +525,8 @@ bool OrganizedModCollection::setSortOptions(SortType sortType, SortDirection sor
 
 bool OrganizedModCollection::shouldDisplayMods() const {
 	return  m_filterType == FilterType::None ||
-		   m_filterType == FilterType::Downloaded ||
+		    m_filterType == FilterType::Downloaded ||
+		    m_filterType == FilterType::StandAlone ||
 		   (m_filterType == FilterType::Teams && m_selectedTeam != nullptr) ||
 		   (m_filterType == FilterType::Authors && m_selectedAuthor != nullptr) ||
 		   ((m_filterType == FilterType::SupportedGameVersions || m_filterType == FilterType::CompatibleGameVersions) && m_selectedGameVersion != nullptr);
@@ -1543,6 +1544,20 @@ void OrganizedModCollection::applyFilter() {
 			break;
 		}
 
+		case FilterType::StandAlone: {
+			std::shared_ptr<Mod> mod;
+
+			for(size_t i = 0; i < m_mods->numberOfMods(); i++) {
+				mod = m_mods->getMod(i);
+
+				if(mod->isStandAlone()) {
+					m_organizedMods.push_back(mod);
+				}
+			}
+
+			break;
+		}
+
 		case FilterType::Teams: {
 			if(m_selectedTeam != nullptr) {
 				std::shared_ptr<ModTeam> team;
@@ -1592,7 +1607,8 @@ void OrganizedModCollection::sort() {
 		case FilterType::None:
 		case FilterType::Downloaded:
 		case FilterType::SupportedGameVersions:
-		case FilterType::CompatibleGameVersions: {
+		case FilterType::CompatibleGameVersions:
+		case FilterType::StandAlone: {
 			m_organizedMods = mergeSortMods(m_organizedMods);
 			m_organizedGameVersions = mergeSortGameVersions(m_organizedGameVersions);
 
@@ -1756,6 +1772,7 @@ bool OrganizedModCollection::areSortOptionsValidInContext(SortType sortType, Fil
 	if(  filterType == FilterType::None ||
 		 filterType == FilterType::Downloaded ||
 	   ((filterType == FilterType::SupportedGameVersions || filterType == FilterType::CompatibleGameVersions) && hasSelectedGameVersion) ||
+	     filterType == FilterType::StandAlone ||
 	    (filterType == FilterType::Teams && hasSelectedTeam) ||
 	    (filterType == FilterType::Authors && hasSelectedAuthor)) {
 		return sortType == SortType::InitialReleaseDate ||

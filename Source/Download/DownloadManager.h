@@ -30,13 +30,15 @@ public:
 	bool isModVersionDownloaded(const ModVersion * modVersion) const;
 	bool isModVersionTypeDownloaded(const ModVersionType * modVersionType) const;
 	bool isModGameVersionDownloaded(const ModGameVersion * modGameVersion) const;
+	DownloadCache * getDownloadCache() const;
 	bool downloadModList(bool force = false);
-	bool downloadModGameVersion(ModGameVersion * modGameVersion, GameVersionCollection * gameVersions, bool force = false);
+	bool downloadModGameVersion(const ModGameVersion * modGameVersion, const GameVersionCollection * gameVersions, bool force = false);
+	bool uninstallModGameVersion(const ModGameVersion * modGameVersion, const GameVersionCollection * gameVersions);
+	bool saveDownloadCache() const;
 
 private:
 	bool createRequiredDirectories();
 	bool loadDownloadCache();
-	bool saveDownloadCache() const;
 
 	bool m_initialized;
 	std::unique_ptr<DownloadCache> m_downloadCache;

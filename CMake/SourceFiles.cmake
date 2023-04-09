@@ -48,6 +48,8 @@ set(MAIN_SOURCE_FILES
 	Mod/ModVersionType.cpp
 	Mod/ModVideo.cpp
 	Mod/OrganizedModCollection.cpp
+	Mod/StandAloneMod.cpp
+	Mod/StandAloneModCollection.cpp
 )
 
 set(MAIN_HEADER_FILES
@@ -98,6 +100,8 @@ set(MAIN_HEADER_FILES
 	Mod/ModVersionType.h
 	Mod/ModVideo.h
 	Mod/OrganizedModCollection.h
+	Mod/StandAloneMod.h
+	Mod/StandAloneModCollection.h
 )
 
 set(MAIN_SOURCE_FILES_WINDOWS

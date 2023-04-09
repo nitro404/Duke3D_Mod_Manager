@@ -101,6 +101,16 @@ bool ModVersion::isDefault() const {
 	return m_version.empty();
 }
 
+bool ModVersion::isStandAlone() const {
+	for(const std::shared_ptr<ModVersionType> & type : m_types) {
+		if(type->isStandAlone()) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 const std::string & ModVersion::getVersion() const {
 	return m_version;
 }
@@ -389,7 +399,7 @@ tinyxml2::XMLElement * ModVersion::toXML(tinyxml2::XMLDocument * document) const
 	return modVersionElement;
 }
 
-std::unique_ptr<ModVersion> ModVersion::parseFrom(const rapidjson::Value & modVersionValue, bool skipFileInfoValidation) {
+std::unique_ptr<ModVersion> ModVersion::parseFrom(const rapidjson::Value & modVersionValue, const rapidjson::Value & modValue, bool skipFileInfoValidation) {
 	if(!modVersionValue.IsObject()) {
 		spdlog::error("Invalid mod version type: '{}', expected 'object'.", Utilities::typeToString(modVersionValue.GetType()));
 		return nullptr;
@@ -476,7 +486,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const rapidjson::Value & modVe
 	std::shared_ptr<ModVersionType> newModVersionType;
 
 	for(rapidjson::Value::ConstValueIterator i = modVersionTypesValue.Begin(); i != modVersionTypesValue.End(); ++i) {
-		newModVersionType = std::shared_ptr<ModVersionType>(ModVersionType::parseFrom(*i, skipFileInfoValidation).release());
+		newModVersionType = std::shared_ptr<ModVersionType>(ModVersionType::parseFrom(*i, modValue, skipFileInfoValidation).release());
 
 		if(!ModVersionType::isValid(newModVersionType.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod version type #{}.", newModVersion->m_types.size() + 1);

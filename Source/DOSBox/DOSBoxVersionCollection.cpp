@@ -483,7 +483,7 @@ std::unique_ptr<DOSBoxVersionCollection> DOSBoxVersionCollection::parseFrom(cons
 		return nullptr;
 	}
 
-	std::unique_ptr<DOSBoxVersionCollection> newDOSBoxVersionCollection = std::make_unique<DOSBoxVersionCollection>();
+	std::unique_ptr<DOSBoxVersionCollection> newDOSBoxVersionCollection(std::make_unique<DOSBoxVersionCollection>());
 
 	if(dosboxVersionsValue.Empty()) {
 		return newDOSBoxVersionCollection;
@@ -552,10 +552,10 @@ bool DOSBoxVersionCollection::loadFromJSON(const std::string & filePath, bool au
 
 	fileStream.close();
 
-	std::unique_ptr<DOSBoxVersionCollection> dosboxVersionCollection = parseFrom(dosboxVersionsValue);
+	std::unique_ptr<DOSBoxVersionCollection> dosboxVersionCollection(parseFrom(dosboxVersionsValue));
 
 	if(!DOSBoxVersionCollection::isValid(dosboxVersionCollection.get())) {
-		spdlog::error("Failed to parse dosboxVersion collection from JSON file '{}'.", filePath);
+		spdlog::error("Failed to parse DOSBox version collection from JSON file '{}'.", filePath);
 		return false;
 	}
 

@@ -22,6 +22,7 @@ class ModTeamMember;
 class ModVersion;
 class ModVersionType;
 class ModVideo;
+class StandAloneMod;
 
 namespace tinyxml2 {
 	class XMLDocument;
@@ -54,6 +55,7 @@ public:
 	std::string getInitialReleaseDateAsString() const;
 	const std::string & getWebsite() const;
 	const std::string & getRepositoryURL() const;
+	bool isStandAlone() const;
 	bool hasTeam() const;
 	std::shared_ptr<ModTeam> getTeam() const;
 
@@ -74,12 +76,14 @@ public:
 	bool hasVersion(const std::string & version) const;
 	size_t indexOfVersion(const ModVersion & version) const;
 	size_t indexOfVersion(const std::string & version) const;
+	size_t indexOfStandAloneModVersion(const StandAloneMod & standAloneMod) const;
 	std::shared_ptr<ModVersion> getVersion(size_t index) const;
 	std::shared_ptr<ModVersion> getVersion(const std::string & version) const;
 	size_t indexOfInitialVersion() const;
 	std::shared_ptr<ModVersion> getInitialVersion() const;
 	size_t indexOfLatestVersion() const;
 	std::shared_ptr<ModVersion> getLatestVersion() const;
+	std::shared_ptr<ModVersion> getStandAloneModVersion(const StandAloneMod & standAloneMod) const;
 	const std::vector<std::shared_ptr<ModVersion>> & getVersions() const;
 	std::vector<std::string> getVersionDisplayNames(const std::string & emptySubstitution) const;
 	bool addVersion(const ModVersion & version);

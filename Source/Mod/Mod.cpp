@@ -11,6 +11,7 @@
 #include "ModVersion.h"
 #include "ModVersionType.h"
 #include "ModVideo.h"
+#include "StandAloneMod.h"
 
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
@@ -354,6 +355,28 @@ const std::string & Mod::getRepositoryURL() const {
 	return m_repositoryURL;
 }
 
+bool Mod::isStandAlone() const {
+	if(!isValid(true)) {
+		return false;
+	}
+
+	for(size_t i = 0; i < numberOfVersions(); i++) {
+		std::shared_ptr<ModVersion> modVersion(getVersion(i));
+
+		for(size_t j = 0; j < modVersion->numberOfTypes(); j++) {
+			std::shared_ptr<ModVersionType> modVersionType(modVersion->getType(j));
+
+			for(size_t k = 0; k < modVersionType->numberOfGameVersions(); k++) {
+				if(modVersionType->getGameVersion(k)->isStandAlone()) {
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
 bool Mod::hasTeam() const {
 	return m_team != nullptr;
 }
@@ -456,6 +479,14 @@ size_t Mod::indexOfVersion(const std::string & version) const {
 	return std::numeric_limits<size_t>::max();
 }
 
+size_t Mod::indexOfStandAloneModVersion(const StandAloneMod & standAloneMod) const {
+	if(!standAloneMod.isValid() || !Utilities::areStringsEqualIgnoreCase(m_id, standAloneMod.getID())) {
+		return std::numeric_limits<size_t>::max();
+	}
+
+	return indexOfVersion(standAloneMod.getVersion());
+}
+
 std::shared_ptr<ModVersion> Mod::getVersion(size_t index) const {
 	if(index >= m_versions.size()) {
 		return nullptr;
@@ -532,6 +563,16 @@ std::shared_ptr<ModVersion> Mod::getLatestVersion() const {
 
 const std::vector<std::shared_ptr<ModVersion>> & Mod::getVersions() const {
 	return m_versions;
+}
+
+std::shared_ptr<ModVersion> Mod::getStandAloneModVersion(const StandAloneMod & standAloneMod) const {
+	size_t standAloneModVersionIndex = indexOfStandAloneModVersion(standAloneMod);
+
+	if(standAloneModVersionIndex == std::numeric_limits<size_t>::max()) {
+		return nullptr;
+	}
+
+	return m_versions[standAloneModVersionIndex];
 }
 
 std::vector<std::string> Mod::getVersionDisplayNames(const std::string & emptySubstitution) const {
@@ -734,7 +775,7 @@ std::optional<std::string> Mod::getDownloadFileNameByType(const std::string & ty
 }
 
 std::shared_ptr<ModDownload> Mod::getDownloadForGameVersion(const ModGameVersion * modGameVersion) const {
-	if(!ModGameVersion::isValid(modGameVersion) || modGameVersion->getParentMod() != this) {
+	if(!ModGameVersion::isValid(modGameVersion, true) || modGameVersion->getParentMod() != this) {
 		return nullptr;
 	}
 
@@ -1820,7 +1861,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue, bool skip
 	std::shared_ptr<ModVersion> newModVersion;
 
 	for(rapidjson::Value::ConstValueIterator i = modVersionsValue.Begin(); i != modVersionsValue.End(); ++i) {
-		newModVersion = std::shared_ptr<ModVersion>(ModVersion::parseFrom(*i, skipFileInfoValidation).release());
+		newModVersion = std::shared_ptr<ModVersion>(ModVersion::parseFrom(*i, modValue, skipFileInfoValidation).release());
 
 		if(!ModVersion::isValid(newModVersion.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod version #{} for mod with ID '{}'.", newMod->m_versions.size() + 1, modID);
@@ -2084,15 +2125,15 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement, boo
 	// read the mod id attribute value
 	const char * modID = modElement->Attribute(XML_MOD_ID_ATTRIBUTE_NAME.c_str());
 
-	if(modID == nullptr || Utilities::stringLength(modID) == 0) {
+	if(Utilities::stringLength(modID) == 0) {
 		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_ID_ATTRIBUTE_NAME, XML_MOD_ELEMENT_NAME);
 		return nullptr;
 	}
 
-	// read the mod id attribute value
+	// read the mod name attribute value
 	const char * modName = modElement->Attribute(XML_MOD_NAME_ATTRIBUTE_NAME.c_str());
 
-	if(modName == nullptr || Utilities::stringLength(modName) == 0) {
+	if(Utilities::stringLength(modName) == 0) {
 		spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_NAME_ATTRIBUTE_NAME, XML_MOD_ELEMENT_NAME);
 		return nullptr;
 	}
@@ -2100,7 +2141,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement, boo
 	// read the mod type attribute value
 	const char * modType = modElement->Attribute(XML_MOD_TYPE_ATTRIBUTE_NAME.c_str());
 
-	if(modType == nullptr || Utilities::stringLength(modType) == 0) {
+	if(Utilities::stringLength(modType) == 0) {
 		spdlog::error("Attribute '{}' is missing from '{}' element with ID '{}'.", XML_MOD_TYPE_ATTRIBUTE_NAME, XML_MOD_ELEMENT_NAME, modID);
 		return nullptr;
 	}

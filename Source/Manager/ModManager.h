@@ -40,6 +40,8 @@ class OrganizedModCollection;
 class Process;
 class Script;
 class ScriptArguments;
+class StandAloneMod;
+class StandAloneModCollection;
 
 class ModManager final : public Application {
 public:
@@ -56,6 +58,7 @@ public:
 	bool uninitialize();
 
 	bool isUsingLocalMode() const;
+	std::shared_ptr<StandAloneModCollection> getStandAloneMods() const;
 	std::shared_ptr<FavouriteModCollection> getFavouriteMods() const;
 	std::shared_ptr<OrganizedModCollection> getOrganizedMods() const;
 	std::string getModsListFilePath() const;
@@ -121,6 +124,8 @@ public:
 	void clearSelectedMod();
 
 	bool isModSupportedOnSelectedGameVersion();
+	bool installStandAloneMod(const ModGameVersion & standAloneModGameVersion, const std::string & destinationDirectoryPath, bool removeArchivePackage = true);
+	bool uninstallModGameVersion(const ModGameVersion & modGameVersion);
 	std::future<bool> runSelectedModAsync(std::shared_ptr<GameVersion> alternateGameVersion = nullptr, std::shared_ptr<ModGameVersion> alternateModGameVersion = nullptr);
 	bool runSelectedModAndWait(std::shared_ptr<GameVersion> alternateGameVersion = nullptr, std::shared_ptr<ModGameVersion> alternateModGameVersion = nullptr);
 
@@ -130,6 +135,7 @@ public:
 	boost::signals2::signal<void ()> initializationCancelled;
 	boost::signals2::signal<void ()> initializationFailed;
 	boost::signals2::signal<bool (uint8_t /* initializationStep */, uint8_t /* initializationStepCount */, std::string /* description */)> initializationProgress;
+	boost::signals2::signal<void ()> launched;
 	boost::signals2::signal<void (std::string)> launchError;
 	boost::signals2::signal<void (uint64_t /* nativeExitCode */, bool /* forceTerminated */)> gameProcessTerminated;
 	boost::signals2::signal<void (std::shared_ptr<Mod> /* mod */, size_t /* modVersionIndex */, size_t /* modVersionTypeIndex */, size_t /* modGameVersionIndex */)> modSelectionChanged;
@@ -163,6 +169,7 @@ private:
 	size_t checkForMissingExecutables() const;
 	size_t updateFileInfoForAllMods(bool save = true, bool skipPopulatedFiles = true);
 	size_t updateModFileInfo(Mod & mod, bool skipPopulatedFiles = true, std::optional<size_t> versionIndex = {}, std::optional<size_t> versionTypeIndex = {});
+	static bool testParsing();
 	static bool areModFilesPresentInGameDirectory(const GameVersion & gameVersion);
 	static bool areModFilesPresentInGameDirectory(const std::string & gamePath);
 	bool extractModFilesToGameDirectory(const ModGameVersion & modGameVersion, const GameVersion & selectedGameVersion, const GameVersion & targetGameVersion, InstalledModInfo * installedModInfo = nullptr, const std::vector<std::string> & customGroupFileNames = {});
@@ -212,6 +219,7 @@ private:
 	boost::signals2::connection m_gameVersionCollectionSizeChangedConnection;
 	boost::signals2::connection m_gameVersionCollectionItemModifiedConnection;
 	std::shared_ptr<ModCollection> m_mods;
+	std::shared_ptr<StandAloneModCollection> m_standAloneMods;
 	std::shared_ptr<FavouriteModCollection> m_favouriteMods;
 	std::shared_ptr<OrganizedModCollection> m_organizedMods;
 	boost::signals2::connection m_selectedModChangedConnection;

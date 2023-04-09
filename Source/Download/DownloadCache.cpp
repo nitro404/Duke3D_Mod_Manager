@@ -403,6 +403,8 @@ bool DownloadCache::saveTo(const std::string & filePath) const {
 	downloadCache.Accept(fileStreamWriter);
 	fileStream.close();
 
+	spdlog::info("Saved download cache to file: '{}'.", filePath);
+
 	return true;
 }
 

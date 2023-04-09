@@ -221,6 +221,10 @@ const std::string & ModDownload::getSHA1() const {
 	return m_sha1;
 }
 
+bool ModDownload::isStandAlone() const {
+	return Utilities::areStringsEqualIgnoreCase(m_gameVersionID, GameVersion::STANDALONE);
+}
+
 bool ModDownload::isEDuke32() const {
 	return Utilities::areStringsEqualIgnoreCase(m_gameVersionID, GameVersion::EDUKE32.getID());
 }

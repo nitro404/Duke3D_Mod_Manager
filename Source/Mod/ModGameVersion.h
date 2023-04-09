@@ -33,7 +33,9 @@ public:
 	~ModGameVersion();
 
 	const std::string & getGameVersionID() const;
+	std::shared_ptr<GameVersion> getStandAloneGameVersion() const;
 	std::string getFullName() const;
+	bool isStandAlone() const;
 	bool isEDuke32() const;
 	bool isConverted() const;
 	const Mod * getParentMod() const;
@@ -67,7 +69,7 @@ public:
 
 	rapidjson::Value toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const;
 	tinyxml2::XMLElement * toXML(tinyxml2::XMLDocument * document) const;
-	static std::unique_ptr<ModGameVersion> parseFrom(const rapidjson::Value & modGameVersionValue, bool skipFileInfoValidation = false);
+	static std::unique_ptr<ModGameVersion> parseFrom(const rapidjson::Value & modGameVersionValue, const rapidjson::Value & modValue, bool skipFileInfoValidation = false);
 	static std::unique_ptr<ModGameVersion> parseFrom(const tinyxml2::XMLElement * modGameVersionElement, bool skipFileInfoValidation = false);
 
 	bool isGameVersionSupported(const GameVersion & gameVersion) const;
@@ -85,6 +87,7 @@ protected:
 
 private:
 	std::string m_gameVersionID;
+	std::shared_ptr<GameVersion> m_standAloneGameVersion;
 	bool m_converted;
 	std::vector<std::shared_ptr<ModFile>> m_files;
 	const ModVersionType * m_parentModVersionType;

@@ -2116,8 +2116,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 
 		return false;
 	}
-
-	if(response->isFailureStatusCode()) {
+	else if(response->isFailureStatusCode()) {
 		std::string statusCodeName(HTTPUtilities::getStatusCodeName(response->getStatusCode()));
 		spdlog::error("Failed to download '{}' game files package ({}{})!", gameVersion.getLongName(), response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
 

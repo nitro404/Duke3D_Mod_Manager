@@ -36,7 +36,6 @@ ModVersionType::ModVersionType(const std::string & type)
 	, m_hadXMLElement(false)
 	, m_parentModVersion(nullptr) { }
 
-
 ModVersionType::ModVersionType(ModVersionType && t) noexcept
 	: m_type(std::move(t.m_type))
 	, m_hadXMLElement(t.m_hadXMLElement)
@@ -89,6 +88,14 @@ ModVersionType::~ModVersionType() {
 
 bool ModVersionType::isDefault() const {
 	return m_type.empty();
+}
+
+bool ModVersionType::isStandAlone() const {
+	if(m_gameVersions.empty()) {
+		return false;
+	}
+
+	return m_gameVersions[0]->isStandAlone();
 }
 
 const std::string & ModVersionType::getType() const {
@@ -319,7 +326,7 @@ tinyxml2::XMLElement * ModVersionType::toXML(tinyxml2::XMLDocument * document) c
 	return modVersionTypeElement;
 }
 
-std::unique_ptr<ModVersionType> ModVersionType::parseFrom(const rapidjson::Value & modVersionTypeValue, bool skipFileInfoValidation) {
+std::unique_ptr<ModVersionType> ModVersionType::parseFrom(const rapidjson::Value & modVersionTypeValue, const rapidjson::Value & modValue, bool skipFileInfoValidation) {
 	if(!modVersionTypeValue.IsObject()) {
 		spdlog::error("Invalid mod version type: '{}', expected 'object'.", Utilities::typeToString(modVersionTypeValue.GetType()));
 		return nullptr;
@@ -374,7 +381,7 @@ std::unique_ptr<ModVersionType> ModVersionType::parseFrom(const rapidjson::Value
 	std::shared_ptr<ModGameVersion> newModGameVersion;
 
 	for(rapidjson::Value::ConstValueIterator i = modGameVersionsValue.Begin(); i != modGameVersionsValue.End(); ++i) {
-		newModGameVersion = std::shared_ptr<ModGameVersion>(ModGameVersion::parseFrom(*i, skipFileInfoValidation).release());
+		newModGameVersion = std::shared_ptr<ModGameVersion>(ModGameVersion::parseFrom(*i, modValue, skipFileInfoValidation).release());
 
 		if(!ModGameVersion::isValid(newModGameVersion.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod game version #{}.", newModVersionType->m_gameVersions.size() + 1);
@@ -533,6 +540,49 @@ std::vector<std::shared_ptr<ModGameVersion>> ModVersionType::getCompatibleModGam
 	return compatibleModGameVersions;
 }
 
+std::vector<std::string> ModVersionType::getModGameVersionIdentifiers() const {
+	std::vector<std::string> gameVersionIdentifiers;
+	gameVersionIdentifiers.reserve(m_gameVersions.size());
+
+	for(const std::shared_ptr<ModGameVersion> & modGameVersion : m_gameVersions) {
+		gameVersionIdentifiers.push_back(modGameVersion->getGameVersionID());
+	}
+
+	return gameVersionIdentifiers;
+}
+
+std::vector<std::string> ModVersionType::getModGameVersionLongNames(const GameVersionCollection & gameVersions) const {
+	std::vector<std::string> gameVersionLongNames;
+	gameVersionLongNames.reserve(m_gameVersions.size());
+
+	for(const std::shared_ptr<ModGameVersion> & modGameVersion : m_gameVersions) {
+		if(modGameVersion->isStandAlone()) {
+			gameVersionLongNames.push_back(modGameVersion->getGameVersionID());
+		}
+		else {
+			gameVersionLongNames.push_back(gameVersions.getLongNameOfGameVersionWithID(modGameVersion->getGameVersionID()));
+		}
+	}
+
+	return gameVersionLongNames;
+}
+
+std::vector<std::string> ModVersionType::getModGameVersionShortNames(const GameVersionCollection & gameVersions) const {
+	std::vector<std::string> gameVersionShortNames;
+	gameVersionShortNames.reserve(m_gameVersions.size());
+
+	for(const std::shared_ptr<ModGameVersion> & modGameVersion : m_gameVersions) {
+		if(modGameVersion->isStandAlone()) {
+			gameVersionShortNames.push_back(modGameVersion->getGameVersionID());
+		}
+		else {
+			gameVersionShortNames.push_back(gameVersions.getShortNameOfGameVersionWithID(modGameVersion->getGameVersionID()));
+		}
+	}
+
+	return gameVersionShortNames;
+}
+
 std::vector<std::string> ModVersionType::getCompatibleModGameVersionIdentifiers(const GameVersion & gameVersion) const {
 	std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(getCompatibleModGameVersions(gameVersion));
 	std::vector<std::string> compatibleModGameVersionIdentifiers;
@@ -588,6 +638,10 @@ bool ModVersionType::isValid(bool skipFileInfoValidation) const {
 				return false;
 			}
 		}
+	}
+
+	if(isStandAlone() && m_gameVersions.size() != 1) {
+		return false;
 	}
 
 	return true;

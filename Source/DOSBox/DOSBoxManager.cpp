@@ -137,8 +137,7 @@ bool DOSBoxManager::updateDOSBoxDownloadList(bool force) const {
 		spdlog::error("Failed to download DOSBox version download list with error: {}", response->getErrorMessage());
 		return false;
 	}
-
-	if(response->getStatusCode() == magic_enum::enum_integer(HTTPStatusCode::NotModified)) {
+	else if(response->getStatusCode() == magic_enum::enum_integer(HTTPStatusCode::NotModified)) {
 		spdlog::info("DOSBox version download list is already up to date!");
 
 		settings->dosboxDownloadListLastDownloadedTimestamp = std::chrono::system_clock::now();

@@ -31,6 +31,7 @@ public:
 	~ModVersionType();
 
 	bool isDefault() const;
+	bool isStandAlone() const;
 	const std::string & getType() const;
 	std::string getFullName() const;
 	const Mod * getParentMod() const;
@@ -53,12 +54,15 @@ public:
 
 	rapidjson::Value toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const;
 	tinyxml2::XMLElement * toXML(tinyxml2::XMLDocument * document) const;
-	static std::unique_ptr<ModVersionType> parseFrom(const rapidjson::Value & modVersionTypeValue, bool skipFileInfoValidation = false);
+	static std::unique_ptr<ModVersionType> parseFrom(const rapidjson::Value & modVersionTypeValue, const rapidjson::Value & modValue, bool skipFileInfoValidation = false);
 	static std::unique_ptr<ModVersionType> parseFrom(const tinyxml2::XMLElement * modVersionTypeElement, bool skipFileInfoValidation = false);
 
 	bool isGameVersionSupported(const GameVersion & gameVersion) const;
 	bool isGameVersionCompatible(const GameVersion & gameVersion) const;
 	std::vector<std::shared_ptr<ModGameVersion>> getCompatibleModGameVersions(const GameVersion & gameVersion) const;
+	std::vector<std::string> getModGameVersionIdentifiers() const;
+	std::vector<std::string> getModGameVersionLongNames(const GameVersionCollection & gameVersions) const;
+	std::vector<std::string> getModGameVersionShortNames(const GameVersionCollection & gameVersions) const;
 	std::vector<std::string> getCompatibleModGameVersionIdentifiers(const GameVersion & gameVersion) const;
 	std::vector<std::string> getCompatibleModGameVersionLongNames(const GameVersion & gameVersion, const GameVersionCollection & gameVersions) const;
 	std::vector<std::string> getCompatibleModGameVersionShortNames(const GameVersion & gameVersion, const GameVersionCollection & gameVersions) const;

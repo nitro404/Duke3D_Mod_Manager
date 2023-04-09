@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <map>
 #include <string>
+#include <vector>
 
 class CachedPackageFile final : public CachedFile {
 public:
@@ -18,12 +19,13 @@ public:
 	CachedPackageFile & operator = (CachedPackageFile && f) noexcept;
 	CachedPackageFile & operator = (CachedFile && f) noexcept;
 	CachedPackageFile & operator = (const CachedPackageFile & f);
-	~CachedPackageFile();
+	virtual ~CachedPackageFile();
 
 	size_t numberOfCachedFiles() const;
 	bool hasCachedFile(const CachedFile * cachedFile) const;
 	bool hasCachedFileWithName(const std::string & fileName) const;
 	std::shared_ptr<CachedFile> getCachedFileWithName(const std::string & fileName) const;
+	std::vector<std::shared_ptr<CachedFile>> getCachedFiles() const;
 	bool addCachedFile(std::unique_ptr<CachedFile> cachedFile);
 
 	rapidjson::Value toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const;

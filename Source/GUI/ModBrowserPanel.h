@@ -55,6 +55,7 @@ public:
 	void updateDOSBoxServerSettings();
 	void updateDOSBoxServerIPAddress();
 	void updateDOSBoxServerPort();
+	void updateUninstallButton();
 
 	void clear();
 	void clearSearch();
@@ -82,7 +83,9 @@ private:
 	void onPortTextChanged(wxCommandEvent & event);
 	void onModGameTypeSelected(wxCommandEvent & event);
 	void onClearButtonPressed(wxCommandEvent & event);
+	void onUninstallButtonPressed(wxCommandEvent & event);
 	void onLaunchButtonPressed(wxCommandEvent & event);
+	void onLaunched();
 	void onLaunchError(std::string errorMessage);
 	void onGameProcessTerminated(uint64_t nativeExitCode, bool forceTerminated);
 	void onLaunchFailed(LaunchFailedEvent & launchFailedEvent);
@@ -114,6 +117,7 @@ private:
 	std::shared_ptr<ModManager> m_modManager;
 	std::shared_ptr<GameVersion> m_activeGameVersion;
 	std::future<bool> m_runSelectedModFuture;
+	boost::signals2::connection m_launchedConnection;
 	boost::signals2::connection m_launchErrorConnection;
 	boost::signals2::connection m_gameProcessTerminatedConnection;
 	boost::signals2::connection m_modSelectionChangedConnection;
@@ -172,6 +176,7 @@ private:
 	wxStaticText * m_initialReleaseDateText;
 	wxStaticText * m_latestReleaseDateLabel;
 	wxStaticText * m_latestReleaseDateText;
+	wxStaticText * m_supportedGameVersionsLabel;
 	wxStaticText * m_supportedGameVersionsText;
 	wxStaticText * m_modWebsiteHyperlinkLabel;
 	wxHyperlinkCtrl * m_modWebsiteHyperlink;
@@ -192,6 +197,7 @@ private:
 	wxComboBox * m_preferredDOSBoxVersionComboBox;
 	wxComboBox * m_modGameTypeComboBox;
 	wxComboBox * m_preferredGameVersionComboBox;
+	wxButton * m_uninstallButton;
 	wxButton * m_launchButton;
 };
 

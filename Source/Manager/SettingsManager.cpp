@@ -44,6 +44,7 @@ static constexpr const char * PREFERRED_GAME_VERSION_PROPERTY_NAME = "preferred"
 
 static constexpr const char * MODS_CATEGORY_NAME = "mods";
 static constexpr const char * MODS_LIST_FILE_PATH_PROPERTY_NAME = LIST_FILE_PATH;
+static constexpr const char * STANDALONE_MODS_LIST_FILE_PATH_PROPERTY_NAME = "standAloneModsListFilePath";
 static constexpr const char * FAVOURITE_MODS_LIST_FILE_PATH_PROPERTY_NAME = "favouritesListFilePath";
 static constexpr const char * MODS_DIRECTORY_PATH_PROPERTY_NAME = DIRECTORY_PATH;
 static constexpr const char * MODS_SYMLINK_NAME_PROPERTY_NAME = SYMLINK_NAME;
@@ -129,6 +130,7 @@ static constexpr const char * WINDOW_SIZE_PROPERTY_NAME = "size";
 const std::string SettingsManager::FILE_FORMAT_VERSION("1.0.0");
 const std::string SettingsManager::DEFAULT_SETTINGS_FILE_PATH("Duke Nukem 3D Mod Manager Settings.json");
 const std::string SettingsManager::DEFAULT_MODS_LIST_FILE_PATH("Duke Nukem 3D Mod List.xml");
+const std::string SettingsManager::DEFAULT_STANDALONE_MODS_LIST_FILE_PATH("Duke Nukem 3D Stand-Alone Mods.json");
 const std::string SettingsManager::DEFAULT_FAVOURITE_MODS_LIST_FILE_PATH("Duke Nukem 3D Favourite Mods.json");
 const std::string SettingsManager::DEFAULT_GAME_VERSIONS_LIST_FILE_PATH("Duke Nukem 3D Game Versions.json");
 const std::string SettingsManager::DEFAULT_GAME_SYMLINK_NAME("Game");
@@ -291,6 +293,7 @@ static bool assignDimensionSetting(Dimension & setting, const rapidjson::Value &
 
 SettingsManager::SettingsManager()
 	: modsListFilePath(DEFAULT_MODS_LIST_FILE_PATH)
+	, standAloneModsListFilePath(DEFAULT_STANDALONE_MODS_LIST_FILE_PATH)
 	, favouriteModsListFilePath(DEFAULT_FAVOURITE_MODS_LIST_FILE_PATH)
 	, gameVersionsListFilePath(DEFAULT_GAME_VERSIONS_LIST_FILE_PATH)
 	, gameSymlinkName(DEFAULT_GAME_SYMLINK_NAME)
@@ -349,6 +352,7 @@ SettingsManager::~SettingsManager() = default;
 
 void SettingsManager::reset() {
 	modsListFilePath = DEFAULT_MODS_LIST_FILE_PATH;
+	standAloneModsListFilePath = DEFAULT_STANDALONE_MODS_LIST_FILE_PATH;
 	favouriteModsListFilePath = DEFAULT_FAVOURITE_MODS_LIST_FILE_PATH;
 	gameVersionsListFilePath = DEFAULT_GAME_VERSIONS_LIST_FILE_PATH;
 	gameSymlinkName = DEFAULT_GAME_SYMLINK_NAME;
@@ -449,6 +453,8 @@ rapidjson::Document SettingsManager::toJSON() const {
 
 	rapidjson::Value modsListFilePathValue(modsListFilePath.c_str(), allocator);
 	modsCategoryValue.AddMember(rapidjson::StringRef(MODS_LIST_FILE_PATH_PROPERTY_NAME), modsListFilePathValue, allocator);
+	rapidjson::Value standAloneModsListFilePathValue(standAloneModsListFilePath.c_str(), allocator);
+	modsCategoryValue.AddMember(rapidjson::StringRef(STANDALONE_MODS_LIST_FILE_PATH_PROPERTY_NAME), standAloneModsListFilePathValue, allocator);
 	rapidjson::Value favouriteModsListFilePathValue(favouriteModsListFilePath.c_str(), allocator);
 	modsCategoryValue.AddMember(rapidjson::StringRef(FAVOURITE_MODS_LIST_FILE_PATH_PROPERTY_NAME), favouriteModsListFilePathValue, allocator);
 	rapidjson::Value modsDirectoryPathValue(modsDirectoryPath.c_str(), allocator);
@@ -715,6 +721,7 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 		const rapidjson::Value & modsCategoryValue = settingsDocument[MODS_CATEGORY_NAME];
 
 		assignStringSetting(modsListFilePath, modsCategoryValue, MODS_LIST_FILE_PATH_PROPERTY_NAME);
+		assignStringSetting(standAloneModsListFilePath, modsCategoryValue, STANDALONE_MODS_LIST_FILE_PATH_PROPERTY_NAME);
 		assignStringSetting(favouriteModsListFilePath, modsCategoryValue, FAVOURITE_MODS_LIST_FILE_PATH_PROPERTY_NAME);
 		assignStringSetting(modsDirectoryPath, modsCategoryValue, MODS_DIRECTORY_PATH_PROPERTY_NAME);
 		assignStringSetting(modsSymlinkName, modsCategoryValue, MODS_SYMLINK_NAME_PROPERTY_NAME);

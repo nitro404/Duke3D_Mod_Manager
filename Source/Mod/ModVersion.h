@@ -32,6 +32,7 @@ public:
 	~ModVersion();
 
 	bool isDefault() const;
+	bool isStandAlone() const;
 	const std::string & getVersion() const;
 	std::string getFullName(size_t versionTypeIndex = std::numeric_limits<size_t>::max()) const;
 	const std::optional<Date> & getReleaseDate() const;
@@ -62,7 +63,7 @@ public:
 
 	rapidjson::Value toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const;
 	tinyxml2::XMLElement * toXML(tinyxml2::XMLDocument * document) const;
-	static std::unique_ptr<ModVersion> parseFrom(const rapidjson::Value & modVersionValue, bool skipFileInfoValidation = false);
+	static std::unique_ptr<ModVersion> parseFrom(const rapidjson::Value & modVersionValue, const rapidjson::Value & modValue, bool skipFileInfoValidation = false);
 	static std::unique_ptr<ModVersion> parseFrom(const tinyxml2::XMLElement * modVersionElement, bool skipFileInfoValidation = false);
 
 	bool isGameVersionSupported(const GameVersion & gameVersion) const;

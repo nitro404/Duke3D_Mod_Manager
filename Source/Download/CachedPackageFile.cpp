@@ -97,6 +97,16 @@ std::shared_ptr<CachedFile> CachedPackageFile::getCachedFileWithName(const std::
 	return cachedFile->second;
 }
 
+std::vector<std::shared_ptr<CachedFile>> CachedPackageFile::getCachedFiles() const {
+	std::vector<std::shared_ptr<CachedFile>> cachedFiles;
+
+	for(std::map<std::string, std::shared_ptr<CachedFile>>::const_iterator i = m_cachedFiles.begin(); i != m_cachedFiles.end(); ++i) {
+		cachedFiles.push_back(i->second);
+	}
+
+	return cachedFiles;
+}
+
 bool CachedPackageFile::addCachedFile(std::unique_ptr<CachedFile> cachedFile) {
 	if(!CachedFile::isValid(cachedFile.get()) || hasCachedFileWithName(cachedFile->getFileName())) {
 		return false;

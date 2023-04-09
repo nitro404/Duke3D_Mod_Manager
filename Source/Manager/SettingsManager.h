@@ -33,6 +33,7 @@ public:
 	static const std::string FILE_FORMAT_VERSION;
 	static const std::string DEFAULT_SETTINGS_FILE_PATH;
 	static const std::string DEFAULT_MODS_LIST_FILE_PATH;
+	static const std::string DEFAULT_STANDALONE_MODS_LIST_FILE_PATH;
 	static const std::string DEFAULT_FAVOURITE_MODS_LIST_FILE_PATH;
 	static const std::string DEFAULT_GAME_VERSIONS_LIST_FILE_PATH;
 	static const std::string DEFAULT_GAME_SYMLINK_NAME;
@@ -93,6 +94,7 @@ public:
 	static const Dimension MINIMUM_WINDOW_SIZE;
 
 	std::string modsListFilePath;
+	std::string standAloneModsListFilePath;
 	std::string favouriteModsListFilePath;
 	std::string gameVersionsListFilePath;
 	std::string gameSymlinkName;

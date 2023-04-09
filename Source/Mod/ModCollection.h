@@ -11,6 +11,8 @@
 
 class GameVersionCollection;
 class Mod;
+class ModVersion;
+class StandAloneMod;
 
 namespace tinyxml2 {
 	class XMLDocument;
@@ -36,6 +38,7 @@ public:
 	std::shared_ptr<Mod> getMod(size_t index) const;
 	std::shared_ptr<Mod> getModWithID(const std::string & id) const;
 	std::shared_ptr<Mod> getModWithName(const std::string & name) const;
+	std::shared_ptr<ModVersion> getStandAloneModVersion(const StandAloneMod & standAloneMod) const;
 	const std::vector<std::shared_ptr<Mod>> & getMods() const;
 	bool addMod(const Mod & mod);
 	bool removeMod(size_t index);

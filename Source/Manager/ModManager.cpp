@@ -2,6 +2,7 @@
 
 #include "DOSBox/DOSBoxManager.h"
 #include "DOSBox/DOSBoxVersion.h"
+#include "Download/DownloadCache.h"
 #include "Download/DownloadManager.h"
 #include "Environment.h"
 #include "Game/GameLocator.h"
@@ -25,6 +26,8 @@
 #include "Mod/ModVersionType.h"
 #include "Mod/FavouriteModCollection.h"
 #include "Mod/OrganizedModCollection.h"
+#include "Mod/StandAloneMod.h"
+#include "Mod/StandAloneModCollection.h"
 #include "SettingsManager.h"
 #include "Project.h"
 
@@ -42,12 +45,15 @@
 #include <Script/ScriptArguments.h>
 #include <Utilities/FileUtilities.h>
 #include <Utilities/NumberUtilities.h>
+#include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
+#include <Utilities/TinyXML2Utilities.h>
 #include <Utilities/Utilities.h>
 
 #include <fmt/core.h>
 #include <magic_enum.hpp>
 #include <spdlog/spdlog.h>
+#include <tinyxml2.h>
 
 #include <array>
 #include <conio.h>
@@ -61,7 +67,7 @@
 
 using namespace std::chrono_literals;
 
-static constexpr uint8_t NUMBER_OF_INITIALIZATION_STEPS = 15;
+static constexpr uint8_t NUMBER_OF_INITIALIZATION_STEPS = 16;
 
 const GameType ModManager::DEFAULT_GAME_TYPE = GameType::Game;
 const std::string ModManager::DEFAULT_PREFERRED_DOSBOX_VERSION_ID(DOSBoxVersion::DOSBOX.getID());
@@ -82,6 +88,7 @@ ModManager::ModManager()
 	, m_dosboxManager(std::make_shared<DOSBoxManager>())
 	, m_gameManager(std::make_shared<GameManager>())
 	, m_mods(std::make_shared<ModCollection>())
+	, m_standAloneMods(std::make_shared<StandAloneModCollection>())
 	, m_favouriteMods(std::make_shared<FavouriteModCollection>())
 	, m_organizedMods(std::make_shared<OrganizedModCollection>(m_mods, m_favouriteMods, m_gameManager->getGameVersions()))
 	, m_initializationStep(0) {
@@ -208,7 +215,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 
 	m_organizedMods->setLocalMode(m_localMode);
 
-	bool updateFileInfo = m_localMode && m_arguments != nullptr && (m_arguments->hasArgument("update-new") || m_arguments->hasArgument("update-all"));
+	bool skipFileInfoValidation = m_localMode && m_arguments != nullptr && (m_arguments->hasArgument("skip-file-info-validation") || m_arguments->hasArgument("update-new") || m_arguments->hasArgument("update-all"));
 
 	if(!notifyInitializationProgress("Initializing HTTP Service")) {
 		return false;
@@ -387,7 +394,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 		return false;
 	}
 
-	if(!m_mods->loadFrom(getModsListFilePath(), updateFileInfo)) {
+	if(!m_mods->loadFrom(getModsListFilePath(), skipFileInfoValidation)) {
 		spdlog::error("Failed to load mod list '{}'!", getModsListFilePath());
 		initializationFailed();
 		return false;
@@ -406,6 +413,16 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 	}
 
 	spdlog::info("Loaded {} mod{} from '{}'.", m_mods->numberOfMods(), m_mods->numberOfMods() == 1 ? "" : "s", getModsListFilePath());
+
+	if(!notifyInitializationProgress("Loading Installed Stand-Alone Mod List")) {
+		return false;
+	}
+
+	m_standAloneMods->loadFrom(settings->standAloneModsListFilePath);
+
+	if(m_standAloneMods->numberOfStandAloneMods() != 0) {
+		spdlog::info("Loaded {} installed stand-alone mod configuration{} from '{}'.", m_standAloneMods->numberOfStandAloneMods(), m_standAloneMods->numberOfStandAloneMods() == 1 ? "" : "s", settings->standAloneModsListFilePath);
+	}
 
 	if(!notifyInitializationProgress("Loading Favourite Mod List")) {
 		return false;
@@ -525,6 +542,13 @@ bool ModManager::uninitialize() {
 
 	settings->save(m_arguments.get());
 
+	if(m_standAloneMods->saveTo(settings->standAloneModsListFilePath)) {
+		spdlog::info("Installed stand-alone mod list saved to file: '{}'.", settings->standAloneModsListFilePath);
+	}
+	else {
+		spdlog::error("Failed to save Installed stand-alone mod list to file: '{}'.", settings->standAloneModsListFilePath);
+	}
+
 	if(m_favouriteMods->saveTo(settings->favouriteModsListFilePath)) {
 		spdlog::info("Favourite mods list saved to file: '{}'.", settings->favouriteModsListFilePath);
 	}
@@ -554,6 +578,7 @@ bool ModManager::uninitialize() {
 	m_organizedMods->setModCollection(nullptr);
 	m_organizedMods->setFavouriteModCollection(nullptr);
 	m_organizedMods->setGameVersionCollection(nullptr);
+	m_standAloneMods->clearStandAloneMods();
 	m_favouriteMods->clearFavourites();
 	m_mods->clearMods();
 
@@ -570,6 +595,12 @@ bool ModManager::isUsingLocalMode() const {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	return m_localMode;
+}
+
+std::shared_ptr<StandAloneModCollection> ModManager::getStandAloneMods() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	return m_standAloneMods;
 }
 
 std::shared_ptr<FavouriteModCollection> ModManager::getFavouriteMods() const {
@@ -744,6 +775,18 @@ std::shared_ptr<GameVersion> ModManager::getPreferredGameVersion() const {
 std::shared_ptr<GameVersion> ModManager::getSelectedGameVersion() const {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
+	std::shared_ptr<ModGameVersion> selectedModGameVersion(getSelectedModGameVersion());
+
+	if(selectedModGameVersion != nullptr && selectedModGameVersion->isStandAlone()) {
+		std::shared_ptr<StandAloneMod> installedStandAloneMod(m_standAloneMods->getStandAloneMod(*selectedModGameVersion));
+
+		if(installedStandAloneMod != nullptr) {
+			return installedStandAloneMod;
+		}
+
+		return selectedModGameVersion->getStandAloneGameVersion();
+	}
+
 	std::shared_ptr<GameVersion> selectedGameVersion;
 
 	if(m_arguments != nullptr && m_arguments->hasArgument("game") && !m_arguments->getFirstValue("game").empty()) {
@@ -798,13 +841,18 @@ bool ModManager::setPreferredGameVersion(std::shared_ptr<GameVersion> gameVersio
 		std::shared_ptr<ModVersionType> selectedModVersionType(getSelectedModVersionType());
 
 		if(selectedModVersionType != nullptr) {
-			std::shared_ptr<GameVersion> selectedGameVersion(getSelectedGameVersion());
+			if(selectedModVersionType->isStandAlone()) {
+				m_selectedModGameVersionIndex = 0;
+			}
+			else {
+				std::shared_ptr<GameVersion> selectedGameVersion(getSelectedGameVersion());
 
-			if(selectedGameVersion != nullptr) {
-				std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(selectedModVersionType->getCompatibleModGameVersions(*selectedGameVersion));
+				if(selectedGameVersion != nullptr) {
+					std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(selectedModVersionType->getCompatibleModGameVersions(*selectedGameVersion));
 
-				if(!compatibleModGameVersions.empty()) {
-					m_selectedModGameVersionIndex = selectedModVersionType->indexOfGameVersionWithID(compatibleModGameVersions.back()->getGameVersionID());
+					if(!compatibleModGameVersions.empty()) {
+						m_selectedModGameVersionIndex = selectedModVersionType->indexOfGameVersionWithID(compatibleModGameVersions.back()->getGameVersionID());
+					}
 				}
 			}
 		}
@@ -1040,13 +1088,19 @@ bool ModManager::setSelectedMod(std::shared_ptr<Mod> mod) {
 
 				if(m_selectedModVersionTypeIndex != std::numeric_limits<size_t>::max()) {
 					std::shared_ptr<ModVersionType> selectedModVersionType(selectedModVersion->getType(m_selectedModVersionTypeIndex));
-					std::shared_ptr<GameVersion> selectedGameVersion(getSelectedGameVersion());
 
-					if(selectedGameVersion != nullptr) {
-						std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(selectedModVersionType->getCompatibleModGameVersions(*selectedGameVersion));
+					if(selectedModVersionType->isStandAlone()) {
+						m_selectedModGameVersionIndex = 0;
+					}
+					else {
+						std::shared_ptr<GameVersion> selectedGameVersion(getSelectedGameVersion());
 
-						if(!compatibleModGameVersions.empty()) {
-							m_selectedModGameVersionIndex = selectedModVersionType->indexOfGameVersionWithID(compatibleModGameVersions.back()->getGameVersionID());
+						if(selectedGameVersion != nullptr) {
+							std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(selectedModVersionType->getCompatibleModGameVersions(*selectedGameVersion));
+
+							if(!compatibleModGameVersions.empty()) {
+								m_selectedModGameVersionIndex = selectedModVersionType->indexOfGameVersionWithID(compatibleModGameVersions.back()->getGameVersionID());
+							}
 						}
 					}
 				}
@@ -1092,13 +1146,19 @@ bool ModManager::setSelectedModFromMatch(const ModMatch & modMatch) {
 
 		if(m_selectedModVersionTypeIndex != std::numeric_limits<size_t>::max()) {
 			std::shared_ptr<ModVersionType> selectedModVersionType(selectedModVersion->getType(m_selectedModVersionTypeIndex));
-			std::shared_ptr<GameVersion> selectedGameVersion(getSelectedGameVersion());
 
-			if(selectedGameVersion != nullptr) {
-				std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(selectedModVersionType->getCompatibleModGameVersions(*selectedGameVersion));
+			if(selectedModVersionType->isStandAlone()) {
+				m_selectedModGameVersionIndex = 0;
+			}
+			else {
+				std::shared_ptr<GameVersion> selectedGameVersion(getSelectedGameVersion());
 
-				if(!compatibleModGameVersions.empty()) {
-					m_selectedModGameVersionIndex = selectedModVersionType->indexOfGameVersionWithID(compatibleModGameVersions.back()->getGameVersionID());
+				if(selectedGameVersion != nullptr) {
+					std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(selectedModVersionType->getCompatibleModGameVersions(*selectedGameVersion));
+
+					if(!compatibleModGameVersions.empty()) {
+						m_selectedModGameVersionIndex = selectedModVersionType->indexOfGameVersionWithID(compatibleModGameVersions.back()->getGameVersionID());
+					}
 				}
 			}
 		}
@@ -1155,13 +1215,18 @@ bool ModManager::setSelectedMod(const ModIdentifier & modIdentifier) {
 		if(m_selectedModVersionTypeIndex != std::numeric_limits<size_t>::max()) {
 			std::shared_ptr<ModVersionType> selectedModVersionType(selectedModVersion->getType(m_selectedModVersionTypeIndex));
 
-			std::shared_ptr<GameVersion> selectedGameVersion(getSelectedGameVersion());
+			if(selectedModVersionType->isStandAlone()) {
+				m_selectedModGameVersionIndex = 0;
+			}
+			else {
+				std::shared_ptr<GameVersion> selectedGameVersion(getSelectedGameVersion());
 
-			if(selectedGameVersion != nullptr) {
-				std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(selectedModVersionType->getCompatibleModGameVersions(*selectedGameVersion));
+				if(selectedGameVersion != nullptr) {
+					std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(selectedModVersionType->getCompatibleModGameVersions(*selectedGameVersion));
 
-				if(!compatibleModGameVersions.empty()) {
-					m_selectedModGameVersionIndex = selectedModVersionType->indexOfGameVersionWithID(compatibleModGameVersions.back()->getGameVersionID());
+					if(!compatibleModGameVersions.empty()) {
+						m_selectedModGameVersionIndex = selectedModVersionType->indexOfGameVersionWithID(compatibleModGameVersions.back()->getGameVersionID());
+					}
 				}
 			}
 		}
@@ -1216,13 +1281,19 @@ bool ModManager::setSelectedModVersionIndex(size_t modVersionIndex) {
 
 		if(m_selectedModVersionTypeIndex != std::numeric_limits<size_t>::max()) {
 			std::shared_ptr<ModVersionType> selectedModVersionType(selectedModVersion->getType(m_selectedModVersionTypeIndex));
-			std::shared_ptr<GameVersion> selectedGameVersion(getSelectedGameVersion());
 
-			if(selectedGameVersion != nullptr) {
-				std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(selectedModVersionType->getCompatibleModGameVersions(*selectedGameVersion));
+			if(selectedModVersionType->isStandAlone()) {
+				m_selectedModGameVersionIndex = 0;
+			}
+			else {
+				std::shared_ptr<GameVersion> selectedGameVersion(getSelectedGameVersion());
 
-				if(!compatibleModGameVersions.empty()) {
-					m_selectedModGameVersionIndex = selectedModVersionType->indexOfGameVersionWithID(compatibleModGameVersions.back()->getGameVersionID());
+				if(selectedGameVersion != nullptr) {
+					std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(selectedModVersionType->getCompatibleModGameVersions(*selectedGameVersion));
+
+					if(!compatibleModGameVersions.empty()) {
+						m_selectedModGameVersionIndex = selectedModVersionType->indexOfGameVersionWithID(compatibleModGameVersions.back()->getGameVersionID());
+					}
 				}
 			}
 		}
@@ -1267,13 +1338,19 @@ bool ModManager::setSelectedModVersionTypeIndex(size_t modVersionTypeIndex) {
 
 		if(m_selectedModVersionTypeIndex != std::numeric_limits<size_t>::max()) {
 			std::shared_ptr<ModVersionType> selectedModVersionType(selectedModVersion->getType(m_selectedModVersionTypeIndex));
-			std::shared_ptr<GameVersion> selectedGameVersion(getSelectedGameVersion());
 
-			if(selectedGameVersion != nullptr) {
-				std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(selectedModVersionType->getCompatibleModGameVersions(*selectedGameVersion));
+			if(selectedModVersionType->isStandAlone()) {
+				m_selectedModGameVersionIndex = 0;
+			}
+			else {
+				std::shared_ptr<GameVersion> selectedGameVersion(getSelectedGameVersion());
 
-				if(!compatibleModGameVersions.empty()) {
-					m_selectedModGameVersionIndex = selectedModVersionType->indexOfGameVersionWithID(compatibleModGameVersions.back()->getGameVersionID());
+				if(selectedGameVersion != nullptr) {
+					std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(selectedModVersionType->getCompatibleModGameVersions(*selectedGameVersion));
+
+					if(!compatibleModGameVersions.empty()) {
+						m_selectedModGameVersionIndex = selectedModVersionType->indexOfGameVersionWithID(compatibleModGameVersions.back()->getGameVersionID());
+					}
 				}
 			}
 		}
@@ -1681,9 +1758,159 @@ bool ModManager::isModSupportedOnSelectedGameVersion() {
 
 	std::shared_ptr<ModVersionType> selectedModVersionType(m_selectedMod->getVersion(m_selectedModVersionIndex)->getType(m_selectedModVersionTypeIndex));
 
+	if(selectedModVersionType->isStandAlone()) {
+		return false;
+	}
+
 	std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(selectedGameVersion->getCompatibleModGameVersions(selectedModVersionType->getGameVersions()));
 
 	return !compatibleModGameVersions.empty();
+}
+
+bool ModManager::installStandAloneMod(const ModGameVersion & standAloneModGameVersion, const std::string & destinationDirectoryPath, bool removeArchivePackage) {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	if(!standAloneModGameVersion.isValid(true) || !standAloneModGameVersion.isStandAlone()) {
+		spdlog::error("Cannot install invalid stand-alone mod game version.");
+		return false;
+	}
+
+	if(m_standAloneMods->hasStandAloneMod(standAloneModGameVersion)) {
+		spdlog::error("Stand-alone '{}' mod already installed.", standAloneModGameVersion.getParentModVersion()->getFullName());
+		return false;
+	}
+
+	std::shared_ptr<ModDownload> modDownload(standAloneModGameVersion.getDownload());
+
+	if(modDownload == nullptr) {
+		spdlog::error("Stand-alone '{}' mod has no corresponding download.", standAloneModGameVersion.getParentModVersion()->getFullName());
+		return false;
+	}
+
+	if(!m_localMode && !m_downloadManager->downloadModGameVersion(&standAloneModGameVersion, getGameVersions().get())) {
+		spdlog::error("Failed to download stand-alone '{}' mod!", standAloneModGameVersion.getParentModVersion()->getFullName());
+		return false;
+	}
+
+	SettingsManager * settings = SettingsManager::getInstance();
+	std::string standAloneModArchiveFilePath;
+
+	if(m_localMode) {
+		if(settings->modPackageDownloadsDirectoryPath.empty()) {
+			spdlog::error("Local mod package downloads directory path setting is not set.");
+			return false;
+		}
+
+		standAloneModArchiveFilePath = settings->modPackageDownloadsDirectoryPath;
+	}
+	else {
+		standAloneModArchiveFilePath = getModsDirectoryPath();
+	}
+
+	standAloneModArchiveFilePath = Utilities::joinPaths(standAloneModArchiveFilePath, GameVersion::STANDALONE_DIRECTORY_NAME, modDownload->getFileName());
+
+	if(!std::filesystem::is_regular_file(std::filesystem::path(standAloneModArchiveFilePath))) {
+		spdlog::error("Stand-alone '{}' mod download archive package file does not exist at path: '{}'.", standAloneModGameVersion.getParentModVersion()->getFullName(), standAloneModArchiveFilePath);
+		return false;
+	}
+
+	std::unique_ptr<Archive> standAloneModArchive(ArchiveFactoryRegistry::getInstance()->readArchiveFrom(standAloneModArchiveFilePath));
+
+	if(standAloneModArchive == nullptr) {
+		spdlog::error("Failed to load '{}' mod download archive package file: '{}'.", standAloneModGameVersion.getParentModVersion()->getFullName(), standAloneModArchiveFilePath);
+		return false;
+	}
+
+	if(!m_standAloneMods->addStandAloneMod(std::make_shared<StandAloneMod>(standAloneModGameVersion, destinationDirectoryPath))) {
+		spdlog::error("Failed to add installed stand-alone '{}' mod to collection.");
+		return false;
+	}
+
+	if(standAloneModArchive->extractAllEntries(destinationDirectoryPath, true) == 0) {
+		spdlog::error("Failed to extract stand-alone '{}' mod files archive package to '{}'.", standAloneModGameVersion.getParentModVersion()->getFullName(), destinationDirectoryPath);
+		m_standAloneMods->removeStandAloneMod(standAloneModGameVersion);
+		return false;
+	}
+
+	standAloneModArchive.reset();
+
+	if(m_standAloneMods->saveTo(settings->standAloneModsListFilePath)) {
+		spdlog::info("Installed stand-alone mod list saved to file: '{}'.", settings->standAloneModsListFilePath);
+	}
+	else {
+		spdlog::error("Failed to save Installed stand-alone mod list to file: '{}'.", settings->standAloneModsListFilePath);
+	}
+
+	if(removeArchivePackage && !m_localMode) {
+		spdlog::info("Deleting downloaded '{}' mod archive package file: '{}'...", standAloneModGameVersion.getParentModVersion()->getFullName(), standAloneModArchiveFilePath);
+
+		std::error_code errorCode;
+		std::filesystem::remove(std::filesystem::path(standAloneModArchiveFilePath), errorCode);
+
+		if(errorCode) {
+			spdlog::error("Failed to delete temporary stand-alone '{}' mod archive package file '{}' with error: {}", standAloneModGameVersion.getParentModVersion()->getFullName(), standAloneModArchiveFilePath, errorCode.message());
+		}
+		else {
+			spdlog::info("Removing stand-alone mod '{}' archive package entry from cached download list.", standAloneModGameVersion.getParentModVersion()->getFullName());
+
+			m_downloadManager->getDownloadCache()->removeCachedPackageFile(modDownload.get());
+			m_downloadManager->saveDownloadCache();
+		}
+	}
+
+	return true;
+}
+
+bool ModManager::uninstallModGameVersion(const ModGameVersion & modGameVersion) {
+	if(!modGameVersion.isValid(true)) {
+		return false;
+	}
+
+	if(!m_localMode) {
+		std::shared_ptr<ModGameVersion> selectedModGameVersion(getSelectedModGameVersion());
+		std::shared_ptr<DownloadManager> downloadManager(m_downloadManager);
+
+		if(selectedModGameVersion != nullptr && downloadManager->isModGameVersionDownloaded(selectedModGameVersion.get())) {
+			if(!downloadManager->uninstallModGameVersion(selectedModGameVersion.get(), getGameVersions().get())) {
+				spdlog::warn("Failed to uninstall '{}' mod files.", selectedModGameVersion->getFullName());
+			}
+		}
+	}
+
+	if(modGameVersion.isStandAlone()) {
+		std::shared_ptr<StandAloneMod> standAloneMod(m_standAloneMods->getStandAloneMod(modGameVersion));
+
+		if(standAloneMod != nullptr && standAloneMod->isConfigured()) {
+			SettingsManager * settings = SettingsManager::getInstance();
+
+			spdlog::info("Deleting stand-alone '{}' mod game directory: '{}'...", modGameVersion.getParentModVersion()->getFullName(), standAloneMod->getGamePath());
+
+			if(std::filesystem::is_directory(std::filesystem::path(standAloneMod->getGamePath()))) {
+				std::error_code errorCode;
+				std::filesystem::remove_all(std::filesystem::path(standAloneMod->getGamePath()), errorCode);
+
+				if(errorCode) {
+					spdlog::error("Failed to delete stand-alone '{}' mod game directory '{}' with error: {}", modGameVersion.getParentModVersion()->getFullName(), standAloneMod->getGamePath(), errorCode.message());
+				}
+			}
+			else {
+				spdlog::warn("Stand-alone '{}' mod game directory '{}' no longer exists.", modGameVersion.getParentModVersion()->getFullName(), standAloneMod->getGamePath());
+			}
+
+			if(m_standAloneMods->removeStandAloneMod(*standAloneMod)) {
+				spdlog::info("Removing installed stand-alone '{}' mod application configuration entry.", modGameVersion.getParentModVersion()->getFullName());
+			}
+
+			if(m_standAloneMods->saveTo(settings->standAloneModsListFilePath)) {
+				spdlog::info("Installed stand-alone mod list saved to file: '{}'.", settings->standAloneModsListFilePath);
+			}
+			else {
+				spdlog::error("Failed to save Installed stand-alone mod list to file: '{}'.", settings->standAloneModsListFilePath);
+			}
+		}
+	}
+
+	return true;
 }
 
 std::future<bool> ModManager::runSelectedModAsync(std::shared_ptr<GameVersion> alternateGameVersion, std::shared_ptr<ModGameVersion> alternateModGameVersion) {
@@ -1716,7 +1943,16 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
 
-	std::shared_ptr<GameVersion> selectedGameVersion(alternateGameVersion != nullptr ? alternateGameVersion : getSelectedGameVersion());
+	std::shared_ptr<GameVersion> selectedGameVersion(getSelectedGameVersion());
+
+	if(alternateGameVersion != nullptr) {
+		if(selectedGameVersion != nullptr && selectedGameVersion->isStandAlone()) {
+			spdlog::warn("Ignoring alternate game version provided to run selected mod command since selected game version is stand-alone.");
+		}
+		else {
+			selectedGameVersion = alternateGameVersion;
+		}
+	}
 
 	if(selectedGameVersion == nullptr) {
 		notifyLaunchError("No game version selected.");
@@ -1735,6 +1971,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		return false;
 	}
 
+	bool standAlone = selectedGameVersion->isStandAlone();
 	std::shared_ptr<ModVersion> selectedModVersion;
 	std::shared_ptr<ModVersionType> selectedModVersionType;
 	std::shared_ptr<ModGameVersion> selectedModGameVersion;
@@ -1763,29 +2000,45 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 		selectedModVersionType = selectedModVersion->getType(m_selectedModVersionTypeIndex);
 
-		std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(selectedGameVersion->getCompatibleModGameVersions(selectedModVersionType->getGameVersions()));
-
-		if(compatibleModGameVersions.empty()) {
-			notifyLaunchError(fmt::format("{} is not supported on {}.", m_selectedMod->getFullName(m_selectedModVersionIndex, m_selectedModVersionTypeIndex), selectedGameVersion->getLongName()));
-			return false;
+		if(m_selectedModGameVersionIndex != std::numeric_limits<size_t>::max()) {
+			selectedModGameVersion = selectedModVersionType->getGameVersion(m_selectedModGameVersionIndex);
 		}
 
-		if(alternateModGameVersion != nullptr) {
-			if(alternateModGameVersion->getParentModVersionType() != selectedModVersionType.get()) {
-				notifyLaunchError(fmt::format("Provided alternate game version does not belong to '{}'.", m_selectedMod->getFullName(m_selectedModVersionIndex, m_selectedModVersionTypeIndex)));
+		if(selectedModGameVersion != nullptr && selectedModGameVersion->isStandAlone()) {
+			if(!standAlone) {
+				notifyLaunchError("Selected game version is stand-alone, but selected mod game version is not.");
 				return false;
 			}
 
-			selectedModGameVersion = alternateModGameVersion;
+			if(alternateModGameVersion != nullptr) {
+				spdlog::warn("Ignoring alternate mod game version provided to run selected mod command since selected mod game version is stand-alone.");
+			}
 		}
 		else {
-			if(m_selectedModGameVersionIndex != std::numeric_limits<size_t>::max()) {
-				selectedModGameVersion = selectedModVersionType->getGameVersion(m_selectedModGameVersionIndex);
+			std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(selectedGameVersion->getCompatibleModGameVersions(selectedModVersionType->getGameVersions()));
+
+			if(compatibleModGameVersions.empty()) {
+				notifyLaunchError(fmt::format("{} is not supported on {}.", m_selectedMod->getFullName(m_selectedModVersionIndex, m_selectedModVersionTypeIndex), selectedGameVersion->getLongName()));
+				return false;
+			}
+
+			if(alternateModGameVersion != nullptr) {
+				if(alternateModGameVersion->getParentModVersionType() != selectedModVersionType.get()) {
+					notifyLaunchError(fmt::format("Provided alternate game version does not belong to '{}'.", m_selectedMod->getFullName(m_selectedModVersionIndex, m_selectedModVersionTypeIndex)));
+					return false;
+				}
+
+				selectedModGameVersion = alternateModGameVersion;
 			}
 			else {
-				spdlog::warn("No mod game version selected, auto-selecting default version.");
+				if(m_selectedModGameVersionIndex != std::numeric_limits<size_t>::max()) {
+					selectedModGameVersion = selectedModVersionType->getGameVersion(m_selectedModGameVersionIndex);
+				}
+				else {
+					spdlog::warn("No mod game version selected, auto-selecting default version.");
 
-				selectedModGameVersion = compatibleModGameVersions.back();
+					selectedModGameVersion = compatibleModGameVersions.back();
+				}
 			}
 		}
 	}
@@ -1802,11 +2055,9 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		temporaryDirectoryName = settings->tempSymlinkName;
 	}
 
-	if(!m_localMode && selectedModGameVersion != nullptr) {
-		if(!m_downloadManager->downloadModGameVersion(selectedModGameVersion.get(), getGameVersions().get())) {
-			notifyLaunchError(fmt::format("Failed to download '{}' game version of '{}' mod!", getGameVersions()->getLongNameOfGameVersionWithID(selectedModGameVersion->getGameVersionID()), selectedModGameVersion->getFullName()));
-			return false;
-		}
+	if(!m_localMode && !standAlone && selectedModGameVersion != nullptr && !m_downloadManager->downloadModGameVersion(selectedModGameVersion.get(), getGameVersions().get())) {
+		notifyLaunchError(fmt::format("Failed to download '{}' game version of '{}' mod!", getGameVersions()->getLongNameOfGameVersionWithID(selectedModGameVersion->getGameVersionID()), selectedModGameVersion->getFullName()));
+		return false;
 	}
 
 	std::string combinedGroupFileName;
@@ -1853,7 +2104,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		scriptArgs.addArgument("TEMPDIR", temporaryDirectoryName);
 	}
 
-	if(selectedModGameVersion != nullptr) {
+	if(selectedModGameVersion != nullptr && !standAlone) {
 		std::optional<std::string> conFileName(selectedModGameVersion->getFirstFileNameOfType("con"));
 
 		if(conFileName.has_value()) {
@@ -1978,37 +2229,39 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 			combinedGroup->setFilePath(absoluteCombinedGroupFilePath);
 		}
 
-		std::vector<std::shared_ptr<ModFile>> modFiles(selectedModGameVersion->getFilesOfType("grp"));
+		if(!standAlone) {
+			std::vector<std::shared_ptr<ModFile>> modFiles(selectedModGameVersion->getFilesOfType("grp"));
 
-		for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = modFiles.begin(); i != modFiles.end(); ++i) {
-			std::string modGroupPath(Utilities::joinPaths(getModsDirectoryPath(), getGameVersions()->getGameVersionWithID(selectedModGameVersion->getGameVersionID())->getModDirectoryName(), (*i)->getFileName()));
-			std::unique_ptr<Group> modGroup(Group::loadFrom(modGroupPath));
+			for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = modFiles.begin(); i != modFiles.end(); ++i) {
+				std::string modGroupPath(Utilities::joinPaths(getModsDirectoryPath(), getGameVersions()->getGameVersionWithID(selectedModGameVersion->getGameVersionID())->getModDirectoryName(), (*i)->getFileName()));
+				std::unique_ptr<Group> modGroup(Group::loadFrom(modGroupPath));
 
-			if(modGroup != nullptr) {
-				if(!m_demoRecordingEnabled) {
-					std::vector<std::shared_ptr<GroupFile>> extractedDemoGroupFiles(modGroup->extractAllFilesWithExtension("DMO", selectedGameVersion->getGamePath()));
+				if(modGroup != nullptr) {
+					if(!m_demoRecordingEnabled) {
+						std::vector<std::shared_ptr<GroupFile>> extractedDemoGroupFiles(modGroup->extractAllFilesWithExtension("DMO", selectedGameVersion->getGamePath()));
 
-					for(const std::shared_ptr<GroupFile> & extractedDemoGroupFile : extractedDemoGroupFiles) {
-						installedModInfo->addModFile(extractedDemoGroupFile->getFileName());
+						for(const std::shared_ptr<GroupFile> & extractedDemoGroupFile : extractedDemoGroupFiles) {
+							installedModInfo->addModFile(extractedDemoGroupFile->getFileName());
+						}
+
+						spdlog::info("Extracted {} demo{} from group file '{}' to game directory '{}'.", extractedDemoGroupFiles.size(), extractedDemoGroupFiles.size() == 1 ? "" : "s", modGroup->getFilePath(), selectedGameVersion->getGamePath());
 					}
 
-					spdlog::info("Extracted {} demo{} from group file '{}' to game directory '{}'.", extractedDemoGroupFiles.size(), extractedDemoGroupFiles.size() == 1 ? "" : "s", modGroup->getFilePath(), selectedGameVersion->getGamePath());
-				}
-
-				if(combinedGroup != nullptr) {
-					for(size_t j = 0; j < modGroup->numberOfFiles(); j++) {
-						combinedGroup->addFile(*modGroup->getFile(j), true);
+					if(combinedGroup != nullptr) {
+						for(size_t j = 0; j < modGroup->numberOfFiles(); j++) {
+							combinedGroup->addFile(*modGroup->getFile(j), true);
+						}
 					}
 				}
-			}
-			else if(selectedGameVersion->doesRequireCombinedGroup()) {
-				if(!removeModFilesFromGameDirectory(*selectedGameVersion, *installedModInfo)) {
-					spdlog::error("Failed to remove '{}' mod files from '{}' game directory.", selectedModVersionType->getFullName(), selectedGameVersion->getLongName());
+				else if(selectedGameVersion->doesRequireCombinedGroup()) {
+					if(!removeModFilesFromGameDirectory(*selectedGameVersion, *installedModInfo)) {
+						spdlog::error("Failed to remove '{}' mod files from '{}' game directory.", selectedModVersionType->getFullName(), selectedGameVersion->getLongName());
+					}
+
+					notifyLaunchError(fmt::format("Failed to load mod group from file path: '{}'.", modGroupPath));
+
+					return false;
 				}
-
-				notifyLaunchError(fmt::format("Failed to load mod group from file path: '{}'.", modGroupPath));
-
-				return false;
 			}
 		}
 	}
@@ -2099,7 +2352,12 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	else if(m_selectedMod != nullptr) {
 		std::string fullModName(m_selectedMod->getFullName(m_selectedModVersionIndex, m_selectedModVersionTypeIndex));
 
-		spdlog::info("Running '{}' version of mod '{}' in {} mode{}.", getGameVersions()->getLongNameOfGameVersionWithID(selectedModGameVersion->getGameVersionID()), fullModName, gameTypeName, customMapMessage);
+		if(standAlone) {
+			spdlog::info("Running '{}' stand-alone mod in {} mode{}.", fullModName, gameTypeName, customMapMessage);
+		}
+		else {
+			spdlog::info("Running '{}' version of mod '{}' in {} mode{}.", getGameVersions()->getLongNameOfGameVersionWithID(selectedModGameVersion->getGameVersionID()), fullModName, gameTypeName, customMapMessage);
+		}
 
 		properties["modName"] = fullModName;
 		properties["modGameVersion"] = selectedModGameVersion->getGameVersionID();
@@ -2135,6 +2393,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 		gameProcessTerminated(nativeExitCode, forceTerminated);
 	});
+
+	launched();
 
 	m_gameProcess->wait();
 
@@ -2491,6 +2751,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 		return {};
 	}
 
+	bool standAlone = false;
 	std::shared_ptr<GameVersion> targetGameVersion;
 
 	if(modGameVersion != nullptr) {
@@ -2499,16 +2760,27 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			return {};
 		}
 
-		if(!Utilities::areStringsEqualIgnoreCase(modGameVersion->getGameVersionID(), selectedGameVersion->getID()) && !selectedGameVersion->hasCompatibleGameVersionWithID(modGameVersion->getGameVersionID())) {
-			spdlog::error("Game version '{}' is not compatible with '{}'.", selectedGameVersion->getLongName(), getGameVersions()->getLongNameOfGameVersionWithID(modGameVersion->getGameVersionID()));
-			return {};
+		if(modGameVersion->isStandAlone()) {
+			standAlone = true;
+			targetGameVersion = selectedGameVersion;
+
+			if(!targetGameVersion->isStandAlone()) {
+				spdlog::error("Mod game version is stand-alone, but game version is not.");
+				return {};
+			}
 		}
+		else {
+			if(!Utilities::areStringsEqualIgnoreCase(modGameVersion->getGameVersionID(), selectedGameVersion->getID()) && !selectedGameVersion->hasCompatibleGameVersionWithID(modGameVersion->getGameVersionID())) {
+				spdlog::error("Game version '{}' is not compatible with '{}'.", selectedGameVersion->getLongName(), getGameVersions()->getLongNameOfGameVersionWithID(modGameVersion->getGameVersionID()));
+				return {};
+			}
 
-		targetGameVersion = getGameVersions()->getGameVersionWithID(modGameVersion->getGameVersionID());
+			targetGameVersion = getGameVersions()->getGameVersionWithID(modGameVersion->getGameVersionID());
 
-		if(targetGameVersion == nullptr) {
-			spdlog::error("Missing game configuration for '{}'.", getGameVersions()->getLongNameOfGameVersionWithID(modGameVersion->getGameVersionID()));
-			return {};
+			if(targetGameVersion == nullptr) {
+				spdlog::error("Missing game configuration for '{}'.", getGameVersions()->getLongNameOfGameVersionWithID(modGameVersion->getGameVersionID()));
+				return {};
+			}
 		}
 	}
 	else {
@@ -2600,7 +2872,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			if(!customGroupFiles.empty()) {
 				conFileNames = customConFiles;
 			}
-			else {
+			else if(!standAlone) {
 				std::vector<std::shared_ptr<ModFile>> conFiles(modGameVersion->getFilesOfType("con"));
 
 				for(const std::shared_ptr<ModFile> & conFile : conFiles) {
@@ -2661,7 +2933,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 
 				command << " " << selectedGameVersion->getGroupFileArgumentFlag().value() << Utilities::joinPaths(settings->tempSymlinkName, combinedGroupFileName);
 			}
-			else {
+			else if(!standAlone) {
 				std::vector<std::shared_ptr<ModFile>> groupFiles(modGameVersion->getFilesOfType("grp"));
 
 				for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = groupFiles.begin(); i != groupFiles.end(); ++i) {
@@ -2670,7 +2942,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			}
 
 			if(!customGroupFiles.empty() || modGameVersion->isEDuke32()) {
-				if(customGroupFiles.empty()) {
+				if(customGroupFiles.empty() && !standAlone) {
 					std::vector<std::shared_ptr<ModFile>> zipFiles(modGameVersion->getFilesOfType("zip"));
 
 					for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = zipFiles.begin(); i != zipFiles.end(); ++i) {
@@ -2683,7 +2955,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 				if(!customGroupFiles.empty()) {
 					defFileNames = customDefFiles;
 				}
-				else {
+				else if(!standAlone) {
 					std::vector<std::shared_ptr<ModFile>> defFiles(modGameVersion->getFilesOfType("def"));
 
 					for(const std::shared_ptr<ModFile> & defFile : defFiles) {
@@ -2986,6 +3258,10 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 		if(args->hasArgument("update-all")) {
 			updateFileInfoForAllMods(true, false);
 			return true;
+		}
+
+		if(args->hasArgument("test-parsing")) {
+			testParsing();
 		}
 
 		if(args->hasArgument("type")) {
@@ -3330,6 +3606,11 @@ size_t ModManager::checkModForMissingFiles(const Mod & mod, std::optional<size_t
 
 			for(size_t k = 0; k < modVersionType->numberOfGameVersions(); k++) {
 				modGameVersion = modVersionType->getGameVersion(k);
+
+				if(modGameVersion->isStandAlone()) {
+					continue;
+				}
+
 				gameVersion = getGameVersions()->getGameVersionWithID(modGameVersion->getGameVersionID());
 
 				if(!GameVersion::isValid(gameVersion.get())) {
@@ -3393,6 +3674,7 @@ size_t ModManager::checkForMissingExecutables() const {
 
 	numberOfMissingExecutables += getDOSBoxVersions()->checkForMissingExecutables();
 	numberOfMissingExecutables += getGameVersions()->checkForMissingExecutables();
+	numberOfMissingExecutables += m_standAloneMods->checkForMissingExecutables();
 
 	return numberOfMissingExecutables++;
 }
@@ -3912,6 +4194,116 @@ size_t ModManager::updateModFileInfo(Mod & mod, bool skipPopulatedFiles, std::op
 	}
 
 	return numberOfFilesUpdated;
+}
+
+bool ModManager::testParsing() {
+	std::string_view modListFilePath(SettingsManager::getInstance()->modsListFilePath);
+
+	if(!std::filesystem::is_regular_file(std::filesystem::path(modListFilePath))) {
+		spdlog::error("Local mod list file does not exist!");
+		return false;
+	}
+
+	std::ifstream fileStream(modListFilePath, std::ios::binary | std::ios::ate);
+
+	if(!fileStream.is_open()) {
+		spdlog::error("Failed to read local mod list file data!");
+		return false;
+	}
+
+	size_t size = fileStream.tellg();
+
+	std::string modCollectionXMLData(size, '\0');
+
+	fileStream.seekg(0, std::ios::beg);
+	fileStream.read(modCollectionXMLData.data(), size);
+	fileStream.close();
+
+	tinyxml2::XMLDocument modCollectionXMLDocument;
+
+	if(modCollectionXMLDocument.Parse(modCollectionXMLData.data(), modCollectionXMLData.size()) != tinyxml2::XML_SUCCESS) {
+		spdlog::error("Failed to parse XML mod list file data!");
+		return nullptr;
+	}
+
+	std::unique_ptr<ModCollection> xmlModCollection(ModCollection::parseFrom(modCollectionXMLDocument.RootElement()));
+
+	if(!ModCollection::isValid(xmlModCollection.get())) {
+		spdlog::error("Failed to parse mod collection from XML file: '{}'.", modListFilePath);
+		return false;
+	}
+
+	tinyxml2::XMLDocument xmlModsDocument;
+	xmlModsDocument.InsertFirstChild(xmlModsDocument.NewDeclaration());
+	xmlModsDocument.InsertEndChild(xmlModCollection->toXML(&xmlModsDocument));
+	std::string parsedXMLModCollectionString(Utilities::documentToString(&xmlModsDocument));
+
+	if(Utilities::areStringsEqual(modCollectionXMLData, parsedXMLModCollectionString, true, true)) {
+		spdlog::info("Original and parsed mod collection XML data match!");
+	}
+	else {
+		spdlog::warn("Original mod collection XML data & parsed XML data do not match! Writing data to temporary file for comparison.");
+
+		std::ofstream fileStream("Parsed Duke Nukem 3D Mod List.xml", std::ios::binary);
+
+		if(!fileStream.is_open()) {
+			return false;
+		}
+
+		fileStream.write(parsedXMLModCollectionString.data(), parsedXMLModCollectionString.size());
+
+		fileStream.close();
+	}
+
+	parsedXMLModCollectionString = "";
+
+	rapidjson::Document jsonModsDocument(xmlModCollection->toJSON());
+
+	std::unique_ptr<ModCollection> jsonModCollection(ModCollection::parseFrom(jsonModsDocument));
+
+	if(!ModCollection::isValid(jsonModCollection.get())) {
+		spdlog::error("Failed to parse mod collection from JSON data.", modListFilePath);
+		return false;
+	}
+
+	tinyxml2::XMLDocument xmlFromJSONModsDocument;
+	xmlFromJSONModsDocument.InsertFirstChild(xmlFromJSONModsDocument.NewDeclaration());
+	xmlFromJSONModsDocument.InsertEndChild(jsonModCollection->toXML(&xmlFromJSONModsDocument));
+	std::string parsedXMLFromJSONModCollectionString(Utilities::documentToString(&xmlFromJSONModsDocument));
+
+	if(Utilities::areStringsEqual(modCollectionXMLData, parsedXMLFromJSONModCollectionString, true, true)) {
+		spdlog::info("Original and parsed from JSON mod collection XML data match!");
+	}
+	else {
+		spdlog::warn("Original mod collection XML data & parsed from JSON XML data do not match! Writing data to temporary files for comparison.");
+
+		std::ofstream xmlFileStream("Parsed from JSON Duke Nukem 3D Mod List.xml", std::ios::binary);
+
+		if(!xmlFileStream.is_open()) {
+			return false;
+		}
+
+		xmlFileStream.write(parsedXMLFromJSONModCollectionString.data(), parsedXMLFromJSONModCollectionString.size());
+
+		xmlFileStream.close();
+
+		modCollectionXMLData = "";
+		parsedXMLFromJSONModCollectionString = "";
+
+		std::string jsonModsData(Utilities::valueToString(jsonModsDocument));
+
+		std::ofstream jsonFileStream("Converted Duke Nukem 3D Mod List.json", std::ios::binary);
+
+		if(!jsonFileStream.is_open()) {
+			return false;
+		}
+
+		jsonFileStream.write(jsonModsData.data(), jsonModsData.size());
+
+		jsonFileStream.close();
+	}
+
+	return true;
 }
 
 std::string ModManager::getArgumentHelpInfo() {

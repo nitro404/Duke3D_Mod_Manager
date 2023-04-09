@@ -13,7 +13,7 @@
 
 class ModGameVersion;
 
-class GameVersion final {
+class GameVersion {
 public:
 	enum class OperatingSystem {
 		Windows,
@@ -28,7 +28,7 @@ public:
 	GameVersion(const GameVersion & gameVersion);
 	GameVersion & operator = (GameVersion && gameVersion) noexcept;
 	GameVersion & operator = (const GameVersion & gameVersion);
-	~GameVersion();
+	virtual ~GameVersion();
 
 	bool isModified() const;
 	bool hasID() const;
@@ -40,6 +40,10 @@ public:
 	bool hasShortName() const;
 	const std::string & getShortName() const;
 	bool setShortName(const std::string & longName);
+	bool isStandAlone() const;
+	void setStandAlone(bool standAlone);
+	std::string getBase() const;
+	void setBase(const std::string & base);
 	bool isRemovable() const;
 	bool hasGamePath() const;
 	const std::string & getGamePath() const;
@@ -178,7 +182,7 @@ public:
 
 	bool isConfigured() const;
 	static bool isConfigured(const GameVersion * gameVersion);
-	bool isValid() const;
+	virtual bool isValid() const;
 	static bool isValid(const GameVersion * gameVersion);
 
 	bool operator == (const GameVersion & gameVersion) const;
@@ -187,6 +191,8 @@ public:
 	boost::signals2::signal<void (GameVersion & /* gameVersion */)> modified;
 
 	static const std::string ALL_VERSIONS;
+	static const std::string STANDALONE;
+	static const std::string STANDALONE_DIRECTORY_NAME;
 	static const GameVersion LAMEDUKE;
 	static const GameVersion ORIGINAL_REGULAR_VERSION;
 	static const GameVersion ORIGINAL_ATOMIC_EDITION;
@@ -231,6 +237,8 @@ private:
 	std::string m_id;
 	std::string m_longName;
 	std::string m_shortName;
+	bool m_standAlone;
+	std::string m_base;
 	bool m_removable;
 	std::string m_gamePath;
 	std::string m_gameExecutableName;
