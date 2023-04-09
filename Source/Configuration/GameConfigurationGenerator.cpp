@@ -389,9 +389,9 @@ bool GameConfiguration::updateWithBetterControls() {
 	}
 
 	if(!controlsSection->setEntryIntegerValue(MOUSE_AIMING_FLIPPED_ENTRY_NAME, 1, true)) { return false; }
-	if(!controlsSection->setEntryStringValue(MOUSE_BUTTON_1_ENTRY_NAME, "Open", true)) { return false; }
+	if(!controlsSection->setEntryStringValue(MOUSE_BUTTON_1_ENTRY_NAME, "Quick_Kick", true)) { return false; }
 	if(!controlsSection->setEntryStringValue(MOUSE_BUTTON_CLICKED_1_ENTRY_NAME, "", true)) { return false; }
-	if(!controlsSection->setEntryStringValue(MOUSE_BUTTON_2_ENTRY_NAME, "Jump", true)) { return false; }
+	if(!controlsSection->setEntryStringValue(MOUSE_BUTTON_2_ENTRY_NAME, "Open", true)) { return false; }
 
 	if(isAtomicEdition) {
 		if(!controlsSection->setEntryIntegerValue("GameMouseAiming", 1, true)) { return false; }
