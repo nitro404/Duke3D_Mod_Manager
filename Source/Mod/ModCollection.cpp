@@ -255,7 +255,7 @@ void ModCollection::clearMods() {
 }
 
 rapidjson::Document ModCollection::toJSON() const {
-	rapidjson::Document modsDocument(rapidjson::kArrayType);
+	rapidjson::Document modsDocument(rapidjson::kObjectType);
 	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator = modsDocument.GetAllocator();
 
 	rapidjson::Value gameIDValue(GAME_ID.c_str(), allocator);
@@ -264,9 +264,13 @@ rapidjson::Document ModCollection::toJSON() const {
 	rapidjson::Value fileFormatVersionValue(FILE_FORMAT_VERSION.c_str(), allocator);
 	modsDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
 
+	rapidjson::Value modsValue(rapidjson::kArrayType);
+
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_mods.begin(); i != m_mods.end(); ++i) {
-		modsDocument.PushBack((*i)->toJSON(allocator), allocator);
+		modsValue.PushBack((*i)->toJSON(allocator), allocator);
 	}
+
+	modsDocument.AddMember(rapidjson::StringRef(JSON_MODS_PROPERTY_NAME), modsValue, allocator);
 
 	return modsDocument;
 }
