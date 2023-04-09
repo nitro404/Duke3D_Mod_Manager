@@ -2120,6 +2120,16 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 	m_gameProcess = ProcessCreator::getInstance()->createProcess(command, workingDirectory);
 
+	if(m_gameProcess == nullptr) {
+		if(installedModInfo != nullptr && !installedModInfo->isEmpty() && !removeModFilesFromGameDirectory(*selectedGameVersion, *installedModInfo)) {
+			spdlog::error("Failed to remove '{}' mod files from '{}' game directory.", selectedModVersionType->getFullName(), selectedGameVersion->getLongName());
+		}
+
+		notifyLaunchError("Failed to create game process, check console for details.");
+
+		return false;
+	}
+
 	m_gameProcess->terminated.connect([this, gameTypeName](uint64_t nativeExitCode, bool forceTerminated) {
 		spdlog::info("{} process {} with code: '{}'.", gameTypeName, forceTerminated ? "force terminated" : "exited", nativeExitCode);
 
