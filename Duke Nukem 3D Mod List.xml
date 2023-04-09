@@ -9740,6 +9740,100 @@
 			<mod id="plug_n_pray"/>
 		</related>
 	</mod>
+	<mod name="Electric Highways" id="electric_highways" type="Total Conversion" version="1.1.0" website="https://gamejolt.com/games/electric-highways/89123">
+		<team>
+			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com"/>
+			<member name="Xitilon" website="http://r0.faisu.net"/>
+		</team>
+		<versions>
+			<version id="1.0.0" release_date="September 15, 2015">
+				<type>
+					<game type="Stand-Alone" state="Native">
+						<properties base="eDuke32" game_exe_name="Electric Highways.exe" skill_start_value="1" local_working_directory="false" relative_con_file_path="true" supports_subdirectories="true"/>
+						<arguments>
+							<argument name="con-file" flag="-x "/>
+							<argument name="extra-con-file" flag="-mx "/>
+							<argument name="group-file" flag="-g "/>
+							<argument name="def-file" flag="-h "/>
+							<argument name="extra-def-file" flag="-mh "/>
+							<argument name="map-file" flag="-map "/>
+							<argument name="episode" flag="-v"/>
+							<argument name="level" flag="-l"/>
+							<argument name="skill" flag="-s"/>
+							<argument name="record-demo" flag="-r"/>
+							<argument name="play-demo" flag="-d "/>
+							<argument name="respawn-mode" flag="-t"/>
+							<argument name="weapon-switch-order" flag="-u"/>
+							<argument name="disable-monsters" flag="-m"/>
+							<argument name="disable-sound" flag="-ns"/>
+							<argument name="disable-music" flag="-nm"/>
+						</arguments>
+						<operatingsystems>
+							<operatingsystem name="Windows"/>
+						</operatingsystems>
+						<files>
+							<file name="eduke32.cfg" size="7776" type="cfg" sha1="1b2b6ac044b7e4e22dad05b3ff6dd1c10edb02eb"/>
+							<file name="eduke32_binds.cfg" size="4409" type="cfg" sha1="b6791a501eaeb07848ba685bccbcd27bcf1edb89"/>
+							<file name="Electric Highways.exe" size="2209806" type="exe" sha1="fead610f40242426c9ae0ff078caa77cead1f125"/>
+							<file name="Electric Highways.txt" size="1563" type="txt" sha1="a1951c1fcf9820061b48d8c0affc2384ba7bc920"/>
+							<file name="Electric_Highways_1.0.0.zip" size="28752340" type="zip" sha1="8d4201f4de96fc9832dbdae654597c0e84b5a73f"/>
+							<file name="Ø½Ñ¬ÔÓ«¡¡ÙÑ ÿ«ßßÑ.txt" size="1539" type="txt" sha1="30dad173978f273ee442f2bd8779acd35d9c450f"/>
+							<file name="OpenGL.txt" size="994" type="txt" sha1="a3ba2a20b9541ce2465dfbda72d2331e57002d04"/>
+							<file name="settings.cfg" size="846" type="cfg" sha1="263818747b191d5c6a111bd6a0ae641868fa018b"/>
+							<file name="License/buildlic.txt" size="3087" type="txt" sha1="849b42063a5155506c28b1e64f5f8bebd2209f77"/>
+							<file name="License/GNU.TXT" size="14969" type="txt" sha1="eca40779be4085ae0357b25cbbbb97513e10a8a0"/>
+						</files>
+					</game>
+				</type>
+			</version>
+			<version id="1.1.0" release_date="October 30, 2015">
+				<type>
+					<game type="Stand-Alone" state="Native">
+						<properties base="eDuke32" game_exe_name="Electric Highways.exe" skill_start_value="1" local_working_directory="false" relative_con_file_path="true" supports_subdirectories="true"/>
+						<arguments>
+							<argument name="con-file" flag="-x "/>
+							<argument name="extra-con-file" flag="-mx "/>
+							<argument name="group-file" flag="-g "/>
+							<argument name="def-file" flag="-h "/>
+							<argument name="extra-def-file" flag="-mh "/>
+							<argument name="map-file" flag="-map "/>
+							<argument name="episode" flag="-v"/>
+							<argument name="level" flag="-l"/>
+							<argument name="skill" flag="-s"/>
+							<argument name="record-demo" flag="-r"/>
+							<argument name="play-demo" flag="-d "/>
+							<argument name="respawn-mode" flag="-t"/>
+							<argument name="weapon-switch-order" flag="-u"/>
+							<argument name="disable-monsters" flag="-m"/>
+							<argument name="disable-sound" flag="-ns"/>
+							<argument name="disable-music" flag="-nm"/>
+						</arguments>
+						<operatingsystems>
+							<operatingsystem name="Windows"/>
+						</operatingsystems>
+						<files>
+							<file name="eduke32.cfg" size="7776" type="cfg" sha1="24661ffc6ade267f66d600c2df5d2f334e732438"/>
+							<file name="eduke32_binds.cfg" size="4409" type="cfg" sha1="b6791a501eaeb07848ba685bccbcd27bcf1edb89"/>
+							<file name="Electric Highways.exe" size="2209806" type="exe" sha1="fead610f40242426c9ae0ff078caa77cead1f125"/>
+							<file name="Electric Highways.txt" size="1563" type="txt" sha1="a1951c1fcf9820061b48d8c0affc2384ba7bc920"/>
+							<file name="Electric_Highways_1.1.0.zip" size="28748379" type="zip" sha1="07a8d95cc69be4813018c8f64c0bee8dd7db944b"/>
+							<file name="Ø½Ñ¬ÔÓ«¡¡ÙÑ ÿ«ßßÑ.txt" size="1539" type="txt" sha1="30dad173978f273ee442f2bd8779acd35d9c450f"/>
+							<file name="OpenGL.txt" size="994" type="txt" sha1="a3ba2a20b9541ce2465dfbda72d2331e57002d04"/>
+							<file name="settings.cfg" size="846" type="cfg" sha1="263818747b191d5c6a111bd6a0ae641868fa018b"/>
+							<file name="License/buildlic.txt" size="3087" type="txt" sha1="849b42063a5155506c28b1e64f5f8bebd2209f77"/>
+							<file name="License/GNU.TXT" size="14969" type="txt" sha1="eca40779be4085ae0357b25cbbbb97513e10a8a0"/>
+						</files>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Electric-Highways.zip" filesize="30529091" version="1.0.0" game="Stand-Alone" type="Original Files" sha1="b698b02af47b8fd86f5fe131753c497dcf78953a"/>
+			<download filename="Electric_Highways.24.zip" filesize="30529091" version="1.1.0" game="Stand-Alone" type="Original Files" sha1="b698b02af47b8fd86f5fe131753c497dcf78953a"/>
+			<download filename="Electric_Highways_1.0.0-ModMgrSA.zip" filesize="29743137" version="1.0.0" game="Stand-Alone" type="Mod Manager Files" state="Native" sha1="e8e169808ed33164ddec90e27ebbc6221e0f6ec1"/>
+			<download filename="Electric_Highways_1.1.0-ModMgrSA.zip" filesize="29739785" version="1.1.0" game="Stand-Alone" type="Mod Manager Files" state="Native" sha1="9423e5c35d6b936bde08a4762808dacb73c32d39"/>
+		</downloads>
+	</mod>
 	<mod name="Duke Nukem: Taking Boise" id="duke_nukem_taking_boise" type="Episode" website="https://www.moddb.com/mods/duke-nukem-taking-boise">
 		<team name="YayFace Productions">
 			<member name="Alan A. Nick" alias="opusvideo" email="anickvideo@gmail.com" website="http://www.youtube.com/opusvideo2001"/>
