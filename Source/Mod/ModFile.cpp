@@ -320,7 +320,7 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const rapidjson::Value & modFileValu
 	// parse the mod file sha1 property
 	std::string modFileSHA1;
 
-	if(!modFileValue.HasMember(JSON_MOD_FILE_SHA1_PROPERTY_NAME)) {
+	if(modFileValue.HasMember(JSON_MOD_FILE_SHA1_PROPERTY_NAME)) {
 		const rapidjson::Value & modFileSHA1Value = modFileValue[JSON_MOD_FILE_SHA1_PROPERTY_NAME];
 
 		if(!modFileSHA1Value.IsString()) {
