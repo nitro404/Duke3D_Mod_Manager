@@ -999,7 +999,7 @@
 			<member name="Maarten van Oostrum"/>
 			<member name="Iggy"/>
 			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
-			<member name="William Gee" email="geewillywizz@live.com"/>
+			<member name="William Gee" email="geewillywizz@live.com" country="New Zealand"/>
 		</team>
 		<versions>
 			<version release_date="January 29, 2006">
@@ -4480,7 +4480,7 @@
 	</mod>
 	<mod name="WGRealms Episode" id="wgrealms_episode" type="Total Conversion" website="http://www.geocities.com/wgrealms">
 		<team country="New Zealand">
-			<member name="William Gee" email="geewillywizz@hotmail.com"/>
+			<member name="William Gee" email="geewillywizz@hotmail.com" country="New Zealand"/>
 		</team>
 		<versions>
 			<version release_date="July 30, 2004">
@@ -7358,7 +7358,7 @@
 	</mod>
 	<mod name="WGSpace Episode" id="wgspace_episode" type="Episode" website="http://wgrealms.williamgeegallery.com">
 		<team country="New Zealand">
-			<member name="William Gee" email="geewillywizz@live.com"/>
+			<member name="William Gee" email="geewillywizz@live.com" country="New Zealand"/>
 		</team>
 		<versions>
 			<version release_date="August 6, 2008">
@@ -8356,7 +8356,7 @@
 			<member name="chicken"/>
 			<member name="Daedolon"/>
 			<member name="Hellbound"/>
-			<member name="Cage"/>
+			<member name="Cage" email="cageds@tlen.pl"/>
 			<member name="Diehard"/>
 			<member name="Jimbob"/>
 			<member name="SalaciusCrumb" alias="SC" email="salaciuscrumb@gmx.net" icq="58098027"/>
@@ -8560,8 +8560,8 @@
 	</mod>
 	<mod name="Duke Hard" id="duke_hard" type="Episode" version="1.2.1" website="http://www.moddb.com/mods/duke-hard">
 		<team>
-			<member name="MetHy" alias="MetHunter"/>
-			<member name="Cage"/>
+			<member name="Corentin Dallay" alias="MetHy"/>
+			<member name="Cage" email="cageds@tlen.pl"/>
 			<member name="Daedolon"/>
 			<member name="Dukebot"/>
 			<member name="Forge"/>
@@ -8637,7 +8637,7 @@
 	<mod name="Alien Armageddon" id="alien_armageddon" type="Total Conversion" version="3.14b" website="https://www.moddb.com/mods/duke-nukem-alien-armageddon">
 		<team>
 			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com"/>
-			<member name="sebabdukeboss20"/>
+			<member name="sebabdukeboss20" discord="sebabdukeboss20#5996"/>
 			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com"/>
 			<member name="Maarten van Oostrum"/>
 			<member name="Forge"/>
@@ -8653,9 +8653,9 @@
 			<member name="Cernex"/>
 			<member name="Doom64hunter"/>
 			<member name="Geedra"/>
-			<member name="Cage"/>
+			<member name="Cage" email="cageds@tlen.pl"/>
 			<member name="Bullov"/>
-			<member name="William Gee" email="geewillywizz@live.com"/>
+			<member name="William Gee" email="geewillywizz@live.com" country="New Zealand"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="August 24, 2018">
@@ -9663,7 +9663,7 @@
 	</mod>
 	<mod name="Metropolitan Mayhem" id="metropolitan_mayhem" type="Episode" website="https://www.moddb.com/mods/metropolitan-mayhem">
 		<team>
-			<member name="MetHy" alias="MetHunter"/>
+			<member name="Corentin Dallay" alias="MetHy"/>
 			<member name="Aymeric Nocus" alias="MRCK" email="aymeric-nocus@tele2.fr" youtube="MisterCK"/>
 			<member name="Mikko Sandt" alias="Jackotrades" email="sirpa.sandt@pp.inet.fi"/>
 			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com"/>
@@ -9894,7 +9894,7 @@
 			<member name="Artem Brullov" twitter="brullov_art" website="https://itch.io/profile/brullov" youtube="brullov_labs" reddit="brullov"/>
 			<member name="Max Ylitalo" alias="Oasiz"/>
 			<member name="Riccardo Capogna" alias="RichardStorm" email="riccardo.capogna@yahoo.it"/>
-			<member name="Cage"/>
+			<member name="Cage" email="cageds@tlen.pl"/>
 		</team>
 		<versions>
 			<version id="1.1" release_date="January 2, 2021">
@@ -10447,7 +10447,7 @@
 	<mod name="Spooky" id="spooky" type="Partial Conversion" website="https://forums.duke4.net/topic/11447-spookymod">
 		<team>
 			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com"/>
-			<member name="sebabdukeboss20"/>
+			<member name="sebabdukeboss20" discord="sebabdukeboss20#5996"/>
 		</team>
 		<versions>
 			<version release_date="October 31, 2020">
@@ -10627,7 +10627,7 @@
 	</mod>
 	<mod name="WG The Abyss Episode" id="wg_the_abyss_episode" type="Episode">
 		<team country="New Zealand">
-			<member name="William Gee" email="geewillywizz@gmail.com" website="http://wg.duke4.net"/>
+			<member name="William Gee" email="geewillywizz@gmail.com" website="http://wg.duke4.net" country="New Zealand"/>
 		</team>
 		<versions>
 			<version release_date="May 20, 2021">
@@ -10966,7 +10966,7 @@
 	</mod>
 	<mod name="AltDuke96" id="altduke96" type="Total Conversion" version="1.3.96">
 		<team name="GTD Miscillanious Constructs, unInc.">
-			<member name="Link Halliday" alias="Adereth" website="http://www.geocities.com/adereth_2000/lameduke/index.html"/>
+			<member name="Geoff Halliday" alias="Link/Adereth" email="icosa@softhome.net" website="http://www.geocities.com/adereth_2000/lameduke/index.html" aim="Adereth2000" icq="65019858" yahoo="Adereth_2000"/>
 		</team>
 		<versions>
 			<version id="1.3.96" release_date="December 23, 2001">
@@ -10980,9 +10980,9 @@
 			<download filename="AltDuke96_1.3.96-ModMgrLD.zip" filesize="2804861" version="1.3.96" game="LameDuke" type="Mod Manager Files" state="Native" sha1="6377ce232000df300a07751e4d4a482c25f4910e"/>
 		</downloads>
 	</mod>
-	<mod name="AltDuke97" id="altduke97" type="Total Conversion" version="1.3.97" website="http://www.geocities.com/adereth_2000/lameduke/index.html">
+	<mod name="AltDuke97" id="altduke97" type="Total Conversion" version="1.3.97">
 		<team name="Sycon Technologies">
-			<member name="Link Halliday" alias="Adereth"/>
+			<member name="Geoff Halliday" alias="Link/Adereth" email="icosa@softhome.net" website="http://www.geocities.com/adereth_2000/lameduke/index.html" aim="Adereth2000" icq="65019858" yahoo="Adereth_2000"/>
 		</team>
 		<versions>
 			<version id="1.3.97" release_date="February 6, 2002">
@@ -11135,7 +11135,7 @@
 		</versions>
 		<downloads>
 			<download filename="Operation_Mallard.zip" filesize="347209932" version="1.0 Demo" game="eDuke32" type="Original Files" sha1="0b9af426ef76ff4ef1e6c677f9da713914047d3b"/>
-			<download filename="Operation_Mallard_1.0_Demo-ModMgrE.zip" filesize="345411266" version="1.0 Demo" game="eDuke32" type="Mod Manager Files" state="Native" sha1="d357a9bdb6eee8a4c4dc685d1d15cb5a9d4d05cd"/>
+			<download filename="Operation_Mallard_1.0_Demo-ModMgrE.zip" filesize="345411276" version="1.0 Demo" game="eDuke32" type="Mod Manager Files" state="Native" sha1="d357a9bdb6eee8a4c4dc685d1d15cb5a9d4d05cd"/>
 		</downloads>
 	</mod>
 	<mod name="Anarchy City" id="anarchy_city" type="Episode" version="1.1">
