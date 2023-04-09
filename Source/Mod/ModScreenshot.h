@@ -6,7 +6,6 @@
 class ModScreenshot final : public ModImage {
 public:
 	ModScreenshot(const std::string & fileName, uint64_t fileSize, uint16_t width, uint16_t height, const std::string & sha1);
-	ModScreenshot(ModImage && s) noexcept;
 	ModScreenshot(ModScreenshot && s) noexcept;
 	ModScreenshot(const ModScreenshot & s);
 	ModScreenshot & operator = (ModScreenshot && s) noexcept;
@@ -19,6 +18,9 @@ public:
 
 	virtual bool isValid(bool skipFileInfoValidation = false) const override;
 	static bool isValid(const ModScreenshot * s, bool skipFileInfoValidation = false);
+
+private:
+	ModScreenshot(ModImage && s) noexcept;
 };
 
 #endif // _MOD_SCREENSHOT_H_
