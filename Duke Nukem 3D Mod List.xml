@@ -515,6 +515,74 @@
 			<download filename="Black_Plaque_Foods-ModMgrA.zip" filesize="268170" game="Atomic" type="Mod Manager Files" state="Native" sha1="7c58a69ed3855d4622b00439ea5abd1a9fb40542"/>
 		</downloads>
 	</mod>
+	<mod name="Borg Nukem" id="borg_nukem" type="Total Conversion" website="http://borgn.totalconversions.com">
+		<team name="Cool Software" email="kevincools@hotmail.com">
+			<member name="Kevin Cools" alias="Kef_Nukem" email="kevincools@hotmail.com"/>
+			<member name="Wim Cools"/>
+			<member name="Geoffrey van Dijk" alias="Fakir Baba" email="fakirnogwat@hotmail.com"/>
+			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com"/>
+			<member name="Alejandro" email="Aglavic@uol.com.ar"/>
+			<member name="Rob Bomber" email="VvBoMBeRvV@aol.com"/>
+			<member name="Slawomir Lawrynowicz" alias="LAW" email="Law2@wp.pl"/>
+			<member name="John Henderson" alias="J.H" email="Johnhenderson16@lineone.net"/>
+			<member name="The Map Master" email="I.mecking@gelrevision.nl"/>
+			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com"/>
+			<member name="Jer van Oostrum" email="G.vanoostrum@worldonline.nl"/>
+			<member name="Mr. Sharp" email="Tototoo@oz.net"/>
+			<member name="Mark McPhail" alias="DukeStar" email="Theduke00@optusnet.com.au"/>
+			<member name="YoshiYount" email="Yoshiyount@aol.com"/>
+			<member name="SuperNerd"/>
+			<member name="The Bringer" email="Eyeofhorus16@yahoo.com"/>
+			<member name="Sean Bellwether" alias="Raziel" email="RTRPRaziel@aol.com"/>
+			<member name="Sith Ttprowler" email="Sith_ttprowler@hotmail.com"/>
+			<member name="4of10" email="4of10@www.com"/>
+			<member name="Jonathan Strander" alias="Mblackwell" email="Mblackwell50@hotmail.com"/>
+		</team>
+		<versions>
+			<version release_date="May 14, 2002">
+				<type>
+					<game type="Stand-Alone" state="Native">
+						<properties base="Atomic" game_exe_name="Borg3d.exe" setup_exe_name="SETUP.EXE" skill_start_value="1" local_working_directory="true" relative_con_file_path="false" supports_subdirectories="true"/>
+						<arguments>
+							<argument name="con-file" flag="/x"/>
+							<argument name="group-file" flag="/g"/>
+							<argument name="map-file" flag="-map "/>
+							<argument name="episode" flag="/v"/>
+							<argument name="level" flag="/l"/>
+							<argument name="skill" flag="/s"/>
+							<argument name="record-demo" flag="/r"/>
+							<argument name="play-demo" flag="/d"/>
+							<argument name="respawn-mode" flag="/t"/>
+							<argument name="weapon-switch-order" flag="/u"/>
+							<argument name="disable-monsters" flag="/m"/>
+							<argument name="disable-sound" flag="/ns"/>
+							<argument name="disable-music" flag="/nm"/>
+						</arguments>
+						<operatingsystems>
+							<operatingsystem name="DOS"/>
+						</operatingsystems>
+						<files>
+							<file name="BN4.ico" size="7358" type="ico" sha1="2a1318a27a6e5996e985642ab8fbf27b1a18c263"/>
+							<file name="BORG3D.CFG" size="5816" type="cfg" sha1="dd73fd00bb376b1c3e3d9b9cf230f7d6e99f4041"/>
+							<file name="Borg3d.exe" size="1246231" type="exe" sha1="7dc0bc38ce362e7daa8d2a2c2f999fb01551d970"/>
+							<file name="BORG3D.GRP" size="51607951" type="grp" sha1="8af1fbe1714944e745190689694d40c4e25acdb6"/>
+							<file name="DOS4GW.EXE" size="265396" type="exe" sha1="c489f83dc15a9ffc3c502707da40e581ec79bfe6"/>
+							<file name="GAME.CON" size="259501" type="con" sha1="8e90d0c06bc03342808d70fd32436a071dac2575"/>
+							<file name="MAPSTER.EXE" size="382803" type="exe" sha1="38ad18d759d514a8375b65869dd58d6191857cc4"/>
+							<file name="SETMAIN.EXE" size="793989" type="exe" sha1="913bc443bc35e5b1b2066e8b72683a256d3bb2d3"/>
+							<file name="SETUP.EXE" size="37853" type="exe" sha1="861db7aa6dfc868b6a0b333b4cb091e276a18832"/>
+							<file name="themanual.zip" size="177101" type="zip" sha1="62c2904e2e0801d4aa5464191282911930a2e79e"/>
+						</files>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="borgnukem.exe" filesize="20982411" game="Stand-Alone" type="Original Files" sha1="bafd437e1f8920ec32eb5f23aa3de3d202c4e810"/>
+			<download filename="bnlowq.zip" filesize="197121" special="Anti-Lag Patch" type="Patch" sha1="72869ee4d59dca2cc6eaa663906c6a68cd091d97"/>
+			<download filename="Borg_Nukem-ModMgrSA.zip" filesize="21010138" game="Stand-Alone" type="Mod Manager Files" state="Native" sha1="c4becc513742778ed06f93432985a00cdec5a171"/>
+		</downloads>
+	</mod>
 	<mod name="Bounty Killers" id="bounty_killers" type="Total Conversion" version="1.0 Demo">
 		<team>
 			<member name="Mongo" email="nmp@cancer.dk"/>
