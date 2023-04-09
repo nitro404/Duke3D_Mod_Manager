@@ -2590,6 +2590,62 @@
 			<mod id="priss_nukem_3d"/>
 		</related>
 	</mod>
+	<mod name="New World" id="new_world" type="Total Conversion" website="http://members.zoom.com/HCAD">
+		<team city="Sydney" state="New South Wales" country="Australia">
+			<member name="James Ferry" email="James_Ferry@classic.msn.com"/>
+		</team>
+		<versions>
+			<version release_date="March 21, 1998">
+				<game type="Stand-Alone" state="Native">
+					<properties base="Regular" game_exe_name="NWSTART.EXE" setup_exe_name="NWSETUP.EXE" skill_start_value="1" local_working_directory="true" relative_con_file_path="false" supports_subdirectories="true"/>
+					<arguments>
+						<argument name="con-file" flag="/x"/>
+						<argument name="group-file" flag="/g"/>
+						<argument name="map-file" flag="-map "/>
+						<argument name="episode" flag="/v"/>
+						<argument name="level" flag="/l"/>
+						<argument name="skill" flag="/s"/>
+						<argument name="record-demo" flag="/r"/>
+						<argument name="play-demo" flag="/d"/>
+						<argument name="respawn-mode" flag="/t"/>
+						<argument name="weapon-switch-order" flag="/u"/>
+						<argument name="disable-monsters" flag="/m"/>
+						<argument name="disable-sound" flag="/ns"/>
+						<argument name="disable-music" flag="/nm"/>
+					</arguments>
+					<operatingsystems>
+						<operatingsystem name="DOS"/>
+					</operatingsystems>
+					<files>
+						<file name="DEFS.NW" size="29494" type="con" sha1="2914260a05a1a057df2de10acd2c6a4cab257c3e"/>
+						<file name="DEMO1.DMO" size="625" type="dmo" sha1="53734c734c890d30b92847d892849ff5f97a754c"/>
+						<file name="EASY.NW" size="134" type="con" sha1="2aae808cf4cf8d8b9aa4e9963f53932ffa35f3cd"/>
+						<file name="FILE.ID" size="14346" type="txt" sha1="5f542de09952a40679bce43c7778e3ca71697c5a"/>
+						<file name="GAME.NW" size="110442" type="con" sha1="13a08df63b053d9a04e8ee4f7fb1859918e27f4c"/>
+						<file name="HARD.NW" size="131" type="con" sha1="cb9f6c58135c076ceec6114ea5a714c65c4630a8"/>
+						<file name="MEDIUM.NW" size="135" type="con" sha1="6e6629425ce02a6047bbf854b7ff26260f25c381"/>
+						<file name="NEWWORLD.MAP" size="86426" type="map" sha1="09b4c8aac00a11aa66c4a19cb3183c3bcd607d7d"/>
+						<file name="NEWWORLD.TXT" size="14708" type="txt" sha1="b39bb86e15b64229d90bd4d8ede9c99843b0ab50"/>
+						<file name="NWSETUP.EXE" size="16082" type="exe" sha1="6d37617e7410ca2303e7e85afeac9264efc0b7f6"/>
+						<file name="NWSTART.EXE" size="15876" type="exe" sha1="ef26da8bdaddf63401cf7287d74a99d3b5b6fde8"/>
+						<file name="READ.ME" size="14346" type="txt" sha1="5f542de09952a40679bce43c7778e3ca71697c5a"/>
+						<file name="README" size="14346" type="txt" sha1="5f542de09952a40679bce43c7778e3ca71697c5a"/>
+						<file name="README.TXT" size="14346" type="txt" sha1="5f542de09952a40679bce43c7778e3ca71697c5a"/>
+						<file name="TILES004.ART" size="183218" type="art" sha1="9f57f62ffbf084fd663b1102c3fbbfe4033233c8"/>
+						<file name="TILES005.ART" size="432925" type="art" sha1="64d190f2777bb9252c7eb1ef9070778edcf757b4"/>
+						<file name="TILES009.ART" size="645376" type="art" sha1="077f83ecd64a5df9e1ae36955fb88f206ed0487e"/>
+						<file name="TILES013.ART" size="346021" type="art" sha1="d1d719d796bdcd3446479af5d33811d53501eba5"/>
+						<file name="USER.NW" size="37739" type="con" sha1="d593085ef0e405d98dc6ba840b4481f01ab39fcd"/>
+						<file name="VERYHARD.NW" size="129" type="con" sha1="38b363e9c606788daad4d61851f3866d0e571b03"/>
+					</files>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="NewWorld.zip" filesize="597208" game="Stand-Alone" type="Original Files" sha1="b33e3433e7bd737e1006040da4c41c25d9aec878"/>
+			<download filename="New_World-ModMgrSA.zip" game="Stand-Alone" type="Mod Manager Files" state="Native"/>
+		</downloads>
+	</mod>
 	<mod name="New York Rebellion" id="new_york_rebellion" type="Episode">
 		<team>
 			<member name="Fernando Márquez" email="cristomarquez@udec.cl"/>
