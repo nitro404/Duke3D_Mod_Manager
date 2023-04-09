@@ -466,8 +466,7 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const tinyxml2::XMLElement * modFile
 
 bool ModFile::isValid(bool skipFileInfoValidation) const {
 	if(!skipFileInfoValidation) {
-		if(m_fileSize == 0 ||
-		   m_sha1.empty()) {
+		if(m_sha1.empty()) {
 			return false;
 		}
 	}
