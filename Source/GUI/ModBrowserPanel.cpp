@@ -862,8 +862,8 @@ void ModBrowserPanel::updateModInfo() {
 					m_teamEmailHyperlink->Hide();
 				}
 
-				if(team->hasLocation()) {
-					m_teamLocationText->SetLabelText(wxString::FromUTF8(team->getLocation()));
+				if(team->getLocation().hasValue()) {
+					m_teamLocationText->SetLabelText(wxString::FromUTF8(team->getLocation().getDetails()));
 
 					m_teamLocationLabel->Show();
 					m_teamLocationText->Show();

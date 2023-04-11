@@ -1,7 +1,6 @@
 #include "ModTeam.h"
 
 #include "Mod.h"
-#include "ModTeamMember.h"
 
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
@@ -74,10 +73,7 @@ ModTeam::ModTeam(ModTeam && m) noexcept
 	, m_email(std::move(m.m_email))
 	, m_twitter(std::move(m.m_twitter))
 	, m_discord(std::move(m.m_discord))
-	, m_county(std::move(m.m_county))
-	, m_city(std::move(m.m_city))
-	, m_state(std::move(m.m_state))
-	, m_country(std::move(m.m_country))
+	, m_location(std::move(m.m_location))
 	, m_members(std::move(m.m_members))
 	, m_parentMod(nullptr) {
 	updateParent();
@@ -89,10 +85,7 @@ ModTeam::ModTeam(const ModTeam & m)
 	, m_email(m.m_email)
 	, m_twitter(m.m_twitter)
 	, m_discord(m.m_discord)
-	, m_county(m.m_county)
-	, m_city(m.m_city)
-	, m_state(m.m_state)
-	, m_country(m.m_country)
+	, m_location(m.m_location)
 	, m_parentMod(nullptr) {
 	for(std::vector<std::shared_ptr<ModTeamMember>>::const_iterator i = m.m_members.begin(); i != m.m_members.end(); ++i) {
 		m_members.push_back(std::make_shared<ModTeamMember>(**i));
@@ -108,11 +101,8 @@ ModTeam & ModTeam::operator = (ModTeam && m) noexcept {
 		m_email = std::move(m.m_email);
 		m_twitter = std::move(m.m_twitter);
 		m_discord = std::move(m.m_discord);
-		m_county = std::move(m.m_county);
-		m_city = std::move(m.m_city);
-		m_state = std::move(m.m_state);
-		m_country = std::move(m.m_country);
 		m_members = std::move(m.m_members);
+		m_location = std::move(m.m_location);
 
 		updateParent();
 	}
@@ -128,10 +118,7 @@ ModTeam & ModTeam::operator = (const ModTeam & m) {
 	m_email = m.m_email;
 	m_twitter = m.m_twitter;
 	m_discord = m.m_discord;
-	m_county = m.m_county;
-	m_city = m.m_city;
-	m_state = m.m_state;
-	m_country = m.m_country;
+	m_location = m.m_location;
 
 	for(std::vector<std::shared_ptr<ModTeamMember>>::const_iterator i = m.m_members.begin(); i != m.m_members.end(); ++i) {
 		m_members.push_back(std::make_shared<ModTeamMember>(**i));
@@ -170,72 +157,8 @@ const std::string & ModTeam::getDiscord() const {
 	return m_discord;
 }
 
-const std::string & ModTeam::getCounty() const {
-	return m_county;
-}
-
-const std::string & ModTeam::getCity() const {
-	return m_city;
-}
-
-const std::string & ModTeam::getProvince() const {
-	return m_province;
-}
-
-const std::string & ModTeam::getState() const {
-	return m_state;
-}
-
-const std::string & ModTeam::getProvinceOrState() const {
-	return m_province.empty() ? m_state : m_province;
-}
-
-const std::string & ModTeam::getCountry() const {
-	return m_country;
-}
-
-bool ModTeam::hasLocation() const {
-	return !m_county.empty() ||
-		   !m_city.empty() ||
-		   !m_province.empty() ||
-		   !m_state.empty() ||
-		   !m_country.empty();
-}
-
-std::string ModTeam::getLocation() const {
-	std::stringstream locationStream;
-
-	if(!m_county.empty()) {
-		locationStream << m_county;
-	}
-
-	if(!m_city.empty()) {
-		if(locationStream.tellp() != 0) {
-			locationStream << ", ";
-		}
-
-		locationStream << m_city;
-	}
-
-	const std::string & provinceOrState = getProvinceOrState();
-
-	if(!provinceOrState.empty()) {
-		if(locationStream.tellp() != 0) {
-			locationStream << ", ";
-		}
-
-		locationStream << provinceOrState;
-	}
-
-	if(!m_country.empty()) {
-		if(locationStream.tellp() != 0) {
-			locationStream << ", ";
-		}
-
-		locationStream << m_country;
-	}
-
-	return locationStream.str();
+const Location & ModTeam::getLocation() const {
+	return m_location;
 }
 
 const Mod * ModTeam::getParentMod() const {
@@ -262,24 +185,8 @@ void ModTeam::setDiscord(const std::string & discord) {
 	m_discord = Utilities::trimString(discord);
 }
 
-void ModTeam::setCounty(const std::string & county) {
-	m_county = Utilities::trimString(county);
-}
-
-void ModTeam::setCity(const std::string & city) {
-	m_city = Utilities::trimString(city);
-}
-
-void ModTeam::setProvince(const std::string & province) {
-	m_province = Utilities::trimString(province);
-}
-
-void ModTeam::setState(const std::string & state) {
-	m_state = Utilities::trimString(state);
-}
-
-void ModTeam::setCountry(const std::string & country) {
-	m_country = Utilities::trimString(country);
+void ModTeam::setLocation(const Location & location) {
+	m_location = location;
 }
 
 void ModTeam::setParentMod(const Mod * mod) {
@@ -456,30 +363,7 @@ rapidjson::Value ModTeam::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAl
 		modTeamValue.AddMember(rapidjson::StringRef(JSON_MOD_TEAM_DISCORD_PROPERTY_NAME), discordValue, allocator);
 	}
 
-	if(!m_county.empty()) {
-		rapidjson::Value countyValue(m_county.c_str(), allocator);
-		modTeamValue.AddMember(rapidjson::StringRef(JSON_MOD_TEAM_COUNTY_PROPERTY_NAME), countyValue, allocator);
-	}
-
-	if(!m_city.empty()) {
-		rapidjson::Value stateValue(m_city.c_str(), allocator);
-		modTeamValue.AddMember(rapidjson::StringRef(JSON_MOD_TEAM_CITY_PROPERTY_NAME), stateValue, allocator);
-	}
-
-	if(!m_province.empty()) {
-		rapidjson::Value provinceValue(m_province.c_str(), allocator);
-		modTeamValue.AddMember(rapidjson::StringRef(JSON_MOD_TEAM_PROVINCE_PROPERTY_NAME), provinceValue, allocator);
-	}
-
-	if(!m_state.empty()) {
-		rapidjson::Value countryValue(m_state.c_str(), allocator);
-		modTeamValue.AddMember(rapidjson::StringRef(JSON_MOD_TEAM_STATE_PROPERTY_NAME), countryValue, allocator);
-	}
-
-	if(!m_country.empty()) {
-		rapidjson::Value countryValue(m_country.c_str(), allocator);
-		modTeamValue.AddMember(rapidjson::StringRef(JSON_MOD_TEAM_COUNTRY_PROPERTY_NAME), countryValue, allocator);
-	}
+	m_location.addToJSONObject(modTeamValue, allocator);
 
 	if(!m_members.empty()) {
 		rapidjson::Value membersValue(rapidjson::kArrayType);
@@ -521,25 +405,7 @@ tinyxml2::XMLElement * ModTeam::toXML(tinyxml2::XMLDocument * document) const {
 		modTeamElement->SetAttribute(XML_MOD_TEAM_DISCORD_ATTRIBUTE_NAME.c_str(), m_discord.c_str());
 	}
 
-	if(!m_county.empty()) {
-		modTeamElement->SetAttribute(XML_MOD_TEAM_COUNTY_ATTRIBUTE_NAME.c_str(), m_county.c_str());
-	}
-
-	if(!m_city.empty()) {
-		modTeamElement->SetAttribute(XML_MOD_TEAM_CITY_ATTRIBUTE_NAME.c_str(), m_city.c_str());
-	}
-
-	if(!m_province.empty()) {
-		modTeamElement->SetAttribute(XML_MOD_TEAM_PROVINCE_ATTRIBUTE_NAME.c_str(), m_province.c_str());
-	}
-
-	if(!m_state.empty()) {
-		modTeamElement->SetAttribute(XML_MOD_TEAM_STATE_ATTRIBUTE_NAME.c_str(), m_state.c_str());
-	}
-
-	if(!m_country.empty()) {
-		modTeamElement->SetAttribute(XML_MOD_TEAM_COUNTRY_ATTRIBUTE_NAME.c_str(), m_country.c_str());
-	}
+	m_location.addToXMLElement(modTeamElement);
 
 	if(!m_members.empty()) {
 		for(std::vector<std::shared_ptr<ModTeamMember>>::const_iterator i = m_members.begin(); i != m_members.end(); ++i) {
@@ -574,49 +440,8 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const rapidjson::Value & modTeamValu
 		}
 	}
 
-	// parse the mod team province property
-	std::string modTeamProvince;
-
-	if(modTeamValue.HasMember(JSON_MOD_TEAM_PROVINCE_PROPERTY_NAME)) {
-		const rapidjson::Value & modTeamProvinceValue = modTeamValue[JSON_MOD_TEAM_PROVINCE_PROPERTY_NAME];
-
-		if(!modTeamProvinceValue.IsString()) {
-			spdlog::error("Mod team '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_TEAM_PROVINCE_PROPERTY_NAME, Utilities::typeToString(modTeamProvinceValue.GetType()));
-			return nullptr;
-		}
-
-		modTeamProvince = modTeamProvinceValue.GetString();
-	}
-
-	// parse the mod team state property
-	std::string modTeamState;
-
-	if(modTeamValue.HasMember(JSON_MOD_TEAM_STATE_PROPERTY_NAME)) {
-		const rapidjson::Value & modTeamStateValue = modTeamValue[JSON_MOD_TEAM_STATE_PROPERTY_NAME];
-
-		if(!modTeamStateValue.IsString()) {
-			spdlog::error("Mod team '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_TEAM_STATE_PROPERTY_NAME, Utilities::typeToString(modTeamStateValue.GetType()));
-			return nullptr;
-		}
-
-		modTeamState = modTeamStateValue.GetString();
-	}
-
-	if(!modTeamProvince.empty() && !modTeamState.empty()) {
-		spdlog::error("Mod team has both '{}' and '{}' attributes set to '{}' and '{}'' respectively, expected one or the other.", JSON_MOD_TEAM_PROVINCE_PROPERTY_NAME, JSON_MOD_TEAM_STATE_PROPERTY_NAME, modTeamProvince, modTeamState);
-		return nullptr;
-	}
-
 	// initialize the mod team
-	std::unique_ptr<ModTeam> newModTeam = std::make_unique<ModTeam>();
-
-	if(!modTeamProvince.empty()) {
-		newModTeam->setProvince(modTeamProvince);
-	}
-
-	if(!modTeamState.empty()) {
-		newModTeam->setState(modTeamState);
-	}
+	std::unique_ptr<ModTeam> newModTeam(std::make_unique<ModTeam>());
 
 	// parse the mod team name property
 	if(modTeamValue.HasMember(JSON_MOD_TEAM_NAME_PROPERTY_NAME)) {
@@ -678,40 +503,9 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const rapidjson::Value & modTeamValu
 		newModTeam->setDiscord(modTeamDiscordValue.GetString());
 	}
 
-	// parse the mod team county property
-	if(modTeamValue.HasMember(JSON_MOD_TEAM_COUNTY_PROPERTY_NAME)) {
-		const rapidjson::Value & modTeamCountyValue = modTeamValue[JSON_MOD_TEAM_COUNTY_PROPERTY_NAME];
-
-		if(!modTeamCountyValue.IsString()) {
-			spdlog::error("Mod team '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_TEAM_COUNTY_PROPERTY_NAME, Utilities::typeToString(modTeamCountyValue.GetType()));
-			return nullptr;
-		}
-
-		newModTeam->setCounty(modTeamCountyValue.GetString());
-	}
-
-	// parse the mod team city property
-	if(modTeamValue.HasMember(JSON_MOD_TEAM_CITY_PROPERTY_NAME)) {
-		const rapidjson::Value & modTeamCityValue = modTeamValue[JSON_MOD_TEAM_CITY_PROPERTY_NAME];
-
-		if(!modTeamCityValue.IsString()) {
-			spdlog::error("Mod team '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_TEAM_CITY_PROPERTY_NAME, Utilities::typeToString(modTeamCityValue.GetType()));
-			return nullptr;
-		}
-
-		newModTeam->setCity(modTeamCityValue.GetString());
-	}
-
-	// parse the mod team country property
-	if(modTeamValue.HasMember(JSON_MOD_TEAM_COUNTRY_PROPERTY_NAME)) {
-		const rapidjson::Value & modTeamCountryValue = modTeamValue[JSON_MOD_TEAM_COUNTRY_PROPERTY_NAME];
-
-		if(!modTeamCountryValue.IsString()) {
-			spdlog::error("Mod team '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_TEAM_COUNTRY_PROPERTY_NAME, Utilities::typeToString(modTeamCountryValue.GetType()));
-			return nullptr;
-		}
-
-		newModTeam->setCountry(modTeamCountryValue.GetString());
+	if(!newModTeam->m_location.parseFrom(modTeamValue) || !newModTeam->m_location.isValid()) {
+		spdlog::error("Failed to parse valid mod team location.");
+		return nullptr;
 	}
 
 	// parse the mod team members property
@@ -789,16 +583,6 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const tinyxml2::XMLElement * modTeam
 	const char * teamEmail = modTeamElement->Attribute(XML_MOD_TEAM_EMAIL_ATTRIBUTE_NAME.c_str());
 	const char * teamTwitter = modTeamElement->Attribute(XML_MOD_TEAM_TWITTER_ATTRIBUTE_NAME.c_str());
 	const char * teamDiscord = modTeamElement->Attribute(XML_MOD_TEAM_DISCORD_ATTRIBUTE_NAME.c_str());
-	const char * teamCounty = modTeamElement->Attribute(XML_MOD_TEAM_COUNTY_ATTRIBUTE_NAME.c_str());
-	const char * teamCity = modTeamElement->Attribute(XML_MOD_TEAM_CITY_ATTRIBUTE_NAME.c_str());
-	const char * teamProvince = modTeamElement->Attribute(XML_MOD_TEAM_PROVINCE_ATTRIBUTE_NAME.c_str());
-	const char * teamState = modTeamElement->Attribute(XML_MOD_TEAM_STATE_ATTRIBUTE_NAME.c_str());
-	const char * teamCountry = modTeamElement->Attribute(XML_MOD_TEAM_COUNTRY_ATTRIBUTE_NAME.c_str());
-
-	if(Utilities::stringLength(teamProvince) != 0 && Utilities::stringLength(teamState) != 0) {
-		spdlog::error("Element '{}' has both '{}' and '{}' attributes set to '{}' and '{}'' respectively, expected one or the other.", XML_MOD_TEAM_ELEMENT_NAME, XML_MOD_TEAM_PROVINCE_ATTRIBUTE_NAME, XML_MOD_TEAM_STATE_ATTRIBUTE_NAME, teamProvince, teamState);
-		return nullptr;
-	}
 
 	// initialize the mod team
 	std::unique_ptr<ModTeam> newModTeam = std::make_unique<ModTeam>(teamName == nullptr ? "" : teamName, teamWebsite == nullptr ? "" : teamWebsite, teamEmail == nullptr ? "" : teamEmail);
@@ -811,24 +595,9 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const tinyxml2::XMLElement * modTeam
 		newModTeam->setDiscord(teamDiscord);
 	}
 
-	if(teamCounty != nullptr) {
-		newModTeam->setCounty(teamCounty);
-	}
-
-	if(teamCity != nullptr) {
-		newModTeam->setCity(teamCity);
-	}
-
-	if(teamProvince != nullptr) {
-		newModTeam->setProvince(teamProvince);
-	}
-
-	if(teamState != nullptr) {
-		newModTeam->setState(teamState);
-	}
-
-	if(teamCountry != nullptr) {
-		newModTeam->setCountry(teamCountry);
+	if(!newModTeam->m_location.parseFrom(modTeamElement) || !newModTeam->m_location.isValid()) {
+		spdlog::error("Failed to parse valid mod team location.");
+		return nullptr;
 	}
 
 	// iterate over all of the mod team member elements
@@ -866,6 +635,10 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const tinyxml2::XMLElement * modTeam
 }
 
 bool ModTeam::isValid() const {
+	if(!m_location.isValid()) {
+		return false;
+	}
+
 	for(std::vector<std::shared_ptr<ModTeamMember>>::const_iterator i = m_members.begin(); i != m_members.end(); i++) {
 		if(!(*i)->isValid()) {
 			return false;
@@ -890,17 +663,12 @@ bool ModTeam::isValid(const ModTeam * modTeam) {
 }
 
 bool ModTeam::operator == (const ModTeam & m) const {
-	if(!Utilities::areStringsEqualIgnoreCase(m_name, m.m_name) ||
-	   !Utilities::areStringsEqualIgnoreCase(m_website, m.m_website) ||
-	   !Utilities::areStringsEqualIgnoreCase(m_email, m.m_email) ||
-	   !Utilities::areStringsEqualIgnoreCase(m_twitter, m.m_twitter) ||
-	   !Utilities::areStringsEqualIgnoreCase(m_discord, m.m_discord) ||
-	   !Utilities::areStringsEqualIgnoreCase(m_county, m.m_county) ||
-	   !Utilities::areStringsEqualIgnoreCase(m_city, m.m_city) ||
-	   !Utilities::areStringsEqualIgnoreCase(m_province, m.m_province) ||
-	   !Utilities::areStringsEqualIgnoreCase(m_state, m.m_state) ||
-	   !Utilities::areStringsEqualIgnoreCase(m_country, m.m_country) ||
-	   (!m_province.empty() && !m_state.empty()) ||
+	if(!Utilities::areStringsEqual(m_name, m.m_name) ||
+	   !Utilities::areStringsEqual(m_website, m.m_website) ||
+	   !Utilities::areStringsEqual(m_email, m.m_email) ||
+	   !Utilities::areStringsEqual(m_twitter, m.m_twitter) ||
+	   !Utilities::areStringsEqual(m_discord, m.m_discord) ||
+	   m_location != m.m_location ||
 	   m_members.size() != m.m_members.size()) {
 		return false;
 	}

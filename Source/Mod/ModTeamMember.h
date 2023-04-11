@@ -1,6 +1,8 @@
 #ifndef _MOD_TEAM_MEMBER_H_
 #define _MOD_TEAM_MEMBER_H_
 
+#include "Location.h"
+
 #include <rapidjson/document.h>
 
 #include <memory>
@@ -23,7 +25,7 @@ public:
 	ModTeamMember(const ModTeamMember & m);
 	ModTeamMember & operator = (ModTeamMember && m) noexcept;
 	ModTeamMember & operator = (const ModTeamMember & m);
-	~ModTeamMember();
+	virtual ~ModTeamMember();
 
 	const std::string & getName() const;
 	const std::string & getAlias() const;
@@ -39,6 +41,7 @@ public:
 	const std::string & getICQ() const;
 	const std::string & getYahoo() const;
 	const std::string & getPhoneNumber() const;
+	const Location & getLocation() const;
 	const Mod * getParentMod() const;
 	const ModTeam * getParentModTeam() const;
 
@@ -56,6 +59,7 @@ public:
 	void setICQ(const std::string & icq);
 	void setYahoo(const std::string & yahoo);
 	void setPhoneNumber(const std::string & phoneNumber);
+	void setLocation(const Location & location);
 
 	rapidjson::Value toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const;
 	tinyxml2::XMLElement * toXML(tinyxml2::XMLDocument * document) const;
@@ -86,6 +90,7 @@ private:
 	std::string m_icq;
 	std::string m_yahoo;
 	std::string m_phoneNumber;
+	Location m_location;
 	const ModTeam * m_parentModTeam;
 };
 

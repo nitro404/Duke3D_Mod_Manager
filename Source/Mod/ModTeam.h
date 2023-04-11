@@ -1,6 +1,9 @@
 #ifndef _MOD_TEAM_H_
 #define _MOD_TEAM_H_
 
+#include "Location.h"
+#include "ModTeamMember.h"
+
 #include <rapidjson/document.h>
 
 #include <cstdint>
@@ -9,7 +12,6 @@
 #include <vector>
 
 class Mod;
-class ModTeamMember;
 
 namespace tinyxml2 {
 	class XMLDocument;
@@ -33,14 +35,7 @@ public:
 	const std::string & getEmail() const;
 	const std::string & getTwitter() const;
 	const std::string & getDiscord() const;
-	const std::string & getCounty() const;
-	const std::string & getCity() const;
-	const std::string & getProvince() const;
-	const std::string & getState() const;
-	const std::string & getProvinceOrState() const;
-	const std::string & getCountry() const;
-	bool hasLocation() const;
-	std::string getLocation() const;
+	const Location & getLocation() const;
 	const Mod * getParentMod() const;
 
 	void setName(const std::string & name);
@@ -48,11 +43,7 @@ public:
 	void setEmail(const std::string & email);
 	void setTwitter(const std::string & twitter);
 	void setDiscord(const std::string & discord);
-	void setCounty(const std::string & county);
-	void setCity(const std::string & city);
-	void setProvince(const std::string & province);
-	void setState(const std::string & state);
-	void setCountry(const std::string & country);
+	void setLocation(const Location & location);
 
 	size_t numberOfMembers() const;
 	bool hasMember(const ModTeamMember & member) const;
@@ -89,11 +80,7 @@ private:
 	std::string m_email;
 	std::string m_twitter;
 	std::string m_discord;
-	std::string m_county;
-	std::string m_city;
-	std::string m_province;
-	std::string m_state;
-	std::string m_country;
+	Location m_location;
 	std::vector<std::shared_ptr<ModTeamMember>> m_members;
 	const Mod * m_parentMod;
 };

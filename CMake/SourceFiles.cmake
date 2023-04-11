@@ -33,6 +33,7 @@ set(MAIN_SOURCE_FILES
 	Manager/SettingsManager.cpp
 	Manager/Windows/ModManagerWindows.cpp
 	Mod/FavouriteModCollection.cpp
+	Mod/Location.cpp
 	Mod/Mod.cpp
 	Mod/ModAuthorInformation.cpp
 	Mod/ModCollection.cpp
@@ -85,6 +86,7 @@ set(MAIN_HEADER_FILES
 	Manager/ModMatch.h
 	Manager/SettingsManager.h
 	Mod/FavouriteModCollection.h
+	Mod/Location.h
 	Mod/Mod.h
 	Mod/ModAuthorInformation.h
 	Mod/ModCollection.h

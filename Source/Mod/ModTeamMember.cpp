@@ -27,7 +27,12 @@ static const std::string XML_MOD_TEAM_MEMBER_AIM_ATTRIBUTE_NAME("aim");
 static const std::string XML_MOD_TEAM_MEMBER_ICQ_ATTRIBUTE_NAME("icq");
 static const std::string XML_MOD_TEAM_MEMBER_YAHOO_ATTRIBUTE_NAME("yahoo");
 static const std::string XML_MOD_TEAM_MEMBER_PHONE_NUMBER_ATTRIBUTE_NAME("phone_number");
-static const std::array<std::string_view, 14> XML_MOD_TEAM_MEMBER_ATTRIBUTE_NAMES = {
+static const std::string XML_MOD_TEAM_MEMBER_COUNTY_ATTRIBUTE_NAME("county");
+static const std::string XML_MOD_TEAM_MEMBER_CITY_ATTRIBUTE_NAME("city");
+static const std::string XML_MOD_TEAM_MEMBER_PROVINCE_ATTRIBUTE_NAME("province");
+static const std::string XML_MOD_TEAM_MEMBER_STATE_ATTRIBUTE_NAME("state");
+static const std::string XML_MOD_TEAM_MEMBER_COUNTRY_ATTRIBUTE_NAME("country");
+static const std::array<std::string_view, 19> XML_MOD_TEAM_MEMBER_ATTRIBUTE_NAMES = {
 	XML_MOD_TEAM_MEMBER_NAME_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_MEMBER_ALIAS_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_MEMBER_EMAIL_ATTRIBUTE_NAME,
@@ -41,7 +46,12 @@ static const std::array<std::string_view, 14> XML_MOD_TEAM_MEMBER_ATTRIBUTE_NAME
 	XML_MOD_TEAM_MEMBER_AIM_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_MEMBER_ICQ_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_MEMBER_YAHOO_ATTRIBUTE_NAME,
-	XML_MOD_TEAM_MEMBER_PHONE_NUMBER_ATTRIBUTE_NAME
+	XML_MOD_TEAM_MEMBER_PHONE_NUMBER_ATTRIBUTE_NAME,
+	XML_MOD_TEAM_MEMBER_COUNTY_ATTRIBUTE_NAME,
+	XML_MOD_TEAM_MEMBER_CITY_ATTRIBUTE_NAME,
+	XML_MOD_TEAM_MEMBER_PROVINCE_ATTRIBUTE_NAME,
+	XML_MOD_TEAM_MEMBER_STATE_ATTRIBUTE_NAME,
+	XML_MOD_TEAM_MEMBER_COUNTRY_ATTRIBUTE_NAME
 };
 
 static constexpr const char * JSON_MOD_TEAM_MEMBER_NAME_PROPERTY_NAME = "name";
@@ -58,7 +68,12 @@ static constexpr const char * JSON_MOD_TEAM_MEMBER_AIM_PROPERTY_NAME = "aim";
 static constexpr const char * JSON_MOD_TEAM_MEMBER_ICQ_PROPERTY_NAME = "icq";
 static constexpr const char * JSON_MOD_TEAM_MEMBER_YAHOO_PROPERTY_NAME = "yahoo";
 static constexpr const char * JSON_MOD_TEAM_MEMBER_PHONE_NUMBER_PROPERTY_NAME = "phoneNumber";
-static const std::array<std::string_view, 14> JSON_MOD_TEAM_MEMBER_PROPERTY_NAMES = {
+static constexpr const char * JSON_MOD_TEAM_MEMBER_COUNTY_PROPERTY_NAME = "county";
+static constexpr const char * JSON_MOD_TEAM_MEMBER_CITY_PROPERTY_NAME = "city";
+static constexpr const char * JSON_MOD_TEAM_MEMBER_PROVINCE_PROPERTY_NAME = "province";
+static constexpr const char * JSON_MOD_TEAM_MEMBER_STATE_PROPERTY_NAME = "state";
+static constexpr const char * JSON_MOD_TEAM_MEMBER_COUNTRY_PROPERTY_NAME = "country";
+static const std::array<std::string_view, 19> JSON_MOD_TEAM_MEMBER_PROPERTY_NAMES = {
 	JSON_MOD_TEAM_MEMBER_NAME_PROPERTY_NAME,
 	JSON_MOD_TEAM_MEMBER_ALIAS_PROPERTY_NAME,
 	JSON_MOD_TEAM_MEMBER_EMAIL_PROPERTY_NAME,
@@ -72,7 +87,12 @@ static const std::array<std::string_view, 14> JSON_MOD_TEAM_MEMBER_PROPERTY_NAME
 	JSON_MOD_TEAM_MEMBER_AIM_PROPERTY_NAME,
 	JSON_MOD_TEAM_MEMBER_ICQ_PROPERTY_NAME,
 	JSON_MOD_TEAM_MEMBER_YAHOO_PROPERTY_NAME,
-	JSON_MOD_TEAM_MEMBER_PHONE_NUMBER_PROPERTY_NAME
+	JSON_MOD_TEAM_MEMBER_PHONE_NUMBER_PROPERTY_NAME,
+	JSON_MOD_TEAM_MEMBER_COUNTY_PROPERTY_NAME,
+	JSON_MOD_TEAM_MEMBER_CITY_PROPERTY_NAME,
+	JSON_MOD_TEAM_MEMBER_PROVINCE_PROPERTY_NAME,
+	JSON_MOD_TEAM_MEMBER_STATE_PROPERTY_NAME,
+	JSON_MOD_TEAM_MEMBER_COUNTRY_PROPERTY_NAME
 };
 
 ModTeamMember::ModTeamMember(const std::string & name, const std::string & alias, const std::string & email, const std::string & website)
@@ -97,6 +117,7 @@ ModTeamMember::ModTeamMember(ModTeamMember && m) noexcept
 	, m_icq(std::move(m.m_icq))
 	, m_yahoo(std::move(m.m_yahoo))
 	, m_phoneNumber(std::move(m.m_phoneNumber))
+	, m_location(std::move(m.m_location))
 	, m_parentModTeam(nullptr) { }
 
 ModTeamMember::ModTeamMember(const ModTeamMember & m)
@@ -114,6 +135,7 @@ ModTeamMember::ModTeamMember(const ModTeamMember & m)
 	, m_icq(m.m_icq)
 	, m_yahoo(m.m_yahoo)
 	, m_phoneNumber(m.m_phoneNumber)
+	, m_location(m.m_location)
 	, m_parentModTeam(nullptr) { }
 
 ModTeamMember & ModTeamMember::operator = (ModTeamMember && m) noexcept {
@@ -132,6 +154,7 @@ ModTeamMember & ModTeamMember::operator = (ModTeamMember && m) noexcept {
 		m_icq = std::move(m.m_icq);
 		m_yahoo = std::move(m.m_yahoo);
 		m_phoneNumber = std::move(m.m_phoneNumber);
+		m_location = std::move(m.m_location);
 	}
 
 	return *this;
@@ -152,6 +175,7 @@ ModTeamMember & ModTeamMember::operator = (const ModTeamMember & m) {
 	m_icq = m.m_icq;
 	m_yahoo = m.m_yahoo;
 	m_phoneNumber = m.m_phoneNumber;
+	m_location = m.m_location;
 
 	return *this;
 }
@@ -214,6 +238,10 @@ const std::string & ModTeamMember::getYahoo() const {
 
 const std::string & ModTeamMember::getPhoneNumber() const {
 	return m_phoneNumber;
+}
+
+const Location & ModTeamMember::getLocation() const {
+	return m_location;
 }
 
 const Mod * ModTeamMember::getParentMod() const {
@@ -282,6 +310,10 @@ void ModTeamMember::setYahoo(const std::string & yahoo) {
 
 void ModTeamMember::setPhoneNumber(const std::string & phoneNumber) {
 	m_phoneNumber = Utilities::trimString(phoneNumber);
+}
+
+void ModTeamMember::setLocation(const Location & location) {
+	m_location = location;
 }
 
 void ModTeamMember::setParentModTeam(const ModTeam * modTeam) {
@@ -359,6 +391,8 @@ rapidjson::Value ModTeamMember::toJSON(rapidjson::MemoryPoolAllocator<rapidjson:
 		modTeamMemberValue.AddMember(rapidjson::StringRef(JSON_MOD_TEAM_MEMBER_PHONE_NUMBER_PROPERTY_NAME), phoneNumberValue, allocator);
 	}
 
+	m_location.addToJSONObject(modTeamMemberValue, allocator);
+
 	return modTeamMemberValue;
 }
 
@@ -422,6 +456,8 @@ tinyxml2::XMLElement * ModTeamMember::toXML(tinyxml2::XMLDocument * document) co
 	if(!m_phoneNumber.empty()) {
 		modTeamMemberElement->SetAttribute(XML_MOD_TEAM_MEMBER_PHONE_NUMBER_ATTRIBUTE_NAME.c_str(), m_phoneNumber.c_str());
 	}
+
+	m_location.addToXMLElement(modTeamMemberElement);
 
 	return modTeamMemberElement;
 }
@@ -629,6 +665,11 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const rapidjson::Value &
 		newModTeamMember->setPhoneNumber(modTeamMemberPhoneNumberValue.GetString());
 	}
 
+	if(!newModTeamMember->m_location.parseFrom(modTeamMemberValue) || !newModTeamMember->m_location.isValid()) {
+		spdlog::error("Failed to parse valid mod team member location.");
+		return nullptr;
+	}
+
 	return newModTeamMember;
 }
 
@@ -735,6 +776,11 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const tinyxml2::XMLEleme
 
 	if(teamMemberPhoneNumber != nullptr) {
 		newModTeamMember->setPhoneNumber(teamMemberPhoneNumber);
+	}
+
+	if(!newModTeamMember->m_location.parseFrom(modTeamMemberElement) || !newModTeamMember->m_location.isValid()) {
+		spdlog::error("Failed to parse valid mod team member location.");
+		return nullptr;
 	}
 
 	return newModTeamMember;
