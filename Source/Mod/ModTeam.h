@@ -36,6 +36,7 @@ public:
 	const std::string & getTwitter() const;
 	const std::string & getDiscord() const;
 	const Location & getLocation() const;
+	Location & getLocation();
 	const Mod * getParentMod() const;
 
 	void setName(const std::string & name);

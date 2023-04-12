@@ -248,8 +248,8 @@
 		</downloads>
 	</mod>
 	<mod name="Alien Versus Predator" id="alien_versus_predator" type="Total Conversion" website="http://www.geocities.com/avplaw">
-		<team country="Poland">
-			<member name="Slawomir Lawrynowicz" alias="LAW" email="law2@wp.pl"/>
+		<team>
+			<member name="Slawomir Lawrynowicz" alias="LAW" email="law2@wp.pl" country="Poland"/>
 		</team>
 		<versions>
 			<version id="Preview" release_date="August 30, 2001">
@@ -383,8 +383,8 @@
 		</downloads>
 	</mod>
 	<mod name="Arctic Wolf" id="arctic_wolf" type="Total Conversion">
-		<team country="Poland">
-			<member name="Slawomir Lawrynowicz" alias="LAW" email="law2@wp.pl"/>
+		<team>
+			<member name="Slawomir Lawrynowicz" alias="LAW" email="law2@wp.pl" country="Poland"/>
 		</team>
 		<versions>
 			<version release_date="January 11, 2006">
@@ -632,8 +632,8 @@
 		</downloads>
 	</mod>
 	<mod name="Burnt" id="burnt" type="Total Conversion">
-		<team country="New Zealand">
-			<member name="Steven Petrovics Griffiths" email="MUZZAG@xtra.co.nz"/>
+		<team>
+			<member name="Steven Petrovics Griffiths" email="MUZZAG@xtra.co.nz" country="New Zealand"/>
 		</team>
 		<versions>
 			<version release_date="April 7, 1999">
@@ -785,7 +785,7 @@
 	</mod>
 	<mod name="Coolio TC" id="coolio_tc" type="Total Conversion" version="Demo" website="http://www.angelfire.com/or2/cooliotc">
 		<team>
-			<member name="Tornado" email="nitro4000@email.com"/>
+			<member name="Tornado" email="nitro4000@email.com" city="Ottawa" province="Ontario" country="Canada"/>
 		</team>
 		<versions>
 			<version id="Demo" release_date="August 11, 2008">
@@ -1627,8 +1627,8 @@
 	</mod>
 	<mod name="Evil Incarnate" id="evil_incarnate" type="Total Conversion" version="Demo" website="http://www.nitro404.com/mods/evil_incarnate.php">
 		<team>
-			<member name="Kevin Scroggins" alias="nitro glycerine" email="nitro404@gmail.com" twitter="nitro404" website="http://www.nitro404.com" steam="nitro4004"/>
-			<member name="Tristan Graham" alias="Khorrus" email="tristan.l.graham@gmail.com"/>
+			<member name="Kevin Scroggins" alias="nitro glycerine" email="nitro404@gmail.com" twitter="nitro404" website="http://www.nitro404.com" steam="nitro4004" city="Ottawa" province="Ontario" country="Canada"/>
+			<member name="Tristan Graham" alias="Khorrus" email="tristan.l.graham@gmail.com" city="Ottawa" province="Ontario" country="Canada"/>
 		</team>
 		<versions>
 			<version id="Demo" release_date="August 12, 2008">
@@ -2487,8 +2487,8 @@
 		</downloads>
 	</mod>
 	<mod name="MSSP Episode" id="mssp_episode" type="Episode" version="3.0" website="http://www.dukeworld.com/mssp">
-		<team country="Finland">
-			<member name="Mikko Sandt" email="mikko.sandt@surfeu.fi"/>
+		<team>
+			<member name="Mikko Sandt" email="mikko.sandt@surfeu.fi" country="Finland"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="July 21, 2000">
@@ -3040,8 +3040,8 @@
 		</related>
 	</mod>
 	<mod name="Predator: Future War" id="predator_future_war" type="Total Conversion" website="http://www.dukeworld.com/predtc">
-		<team name="Skynet" website="http://www3.sympatico.ca/kurstak/skinet.htm" email="skynet2010@hotmail.com" country="Canada">
-			<member name="Daniel Kurstak" alias="Skynet" email="kurstak@sympatico.ca"/>
+		<team name="Skynet" website="http://www3.sympatico.ca/kurstak/skinet.htm" email="skynet2010@hotmail.com">
+			<member name="Daniel Kurstak" alias="Skynet" email="kurstak@sympatico.ca" country="Canada"/>
 		</team>
 		<versions>
 			<version release_date="July 4, 1998">
@@ -3069,8 +3069,8 @@
 		</related>
 	</mod>
 	<mod name="Predator: Lurking Darkness" id="predator_lurking_darkness" type="Total Conversion" version="Demo" website="http://www.dukeworld.com/predtc">
-		<team name="Skynet" website="http://www3.sympatico.ca/kurstak/skinet.htm" email="skynet2010@hotmail.com" country="Canada">
-			<member name="Daniel Kurstak" alias="Skynet" email="kurstak@sympatico.ca"/>
+		<team name="Skynet" website="http://www3.sympatico.ca/kurstak/skinet.htm" email="skynet2010@hotmail.com">
+			<member name="Daniel Kurstak" alias="Skynet" email="kurstak@sympatico.ca" country="Canada"/>
 		</team>
 		<versions>
 			<version id="Demo" release_date="July 18, 1999">
@@ -3477,8 +3477,8 @@
 		</downloads>
 	</mod>
 	<mod name="Softfucker 3D" id="softfucker_3d" type="Total Conversion" website="http://www.angelfire.com/ne/jcl">
-		<team email="sf3d@hotmail.com" country="Slovakia">
-			<member name="NEJC" email="nejcl@hotmail.com"/>
+		<team email="sf3d@hotmail.com">
+			<member name="NEJC" email="nejcl@hotmail.com" country="Slovakia"/>
 		</team>
 		<versions>
 			<version release_date="December 24, 1999">
@@ -3526,8 +3526,8 @@
 		</downloads>
 	</mod>
 	<mod name="Space Story" id="space_story" type="Episode">
-		<team country="Switzerland">
-			<member name="Yves Bresson" email="yves.bresson@span.ch"/>
+		<team>
+			<member name="Yves Bresson" email="yves.bresson@span.ch" country="Switzerland"/>
 		</team>
 		<versions>
 			<version>
@@ -3930,8 +3930,8 @@
 		</downloads>
 	</mod>
 	<mod name="The Lost Duke Episodes" id="the_lost_duke_episodes" type="Total Conversion" version="2.0">
-		<team state="Ohio" country="United States">
-			<member name="Mark Hadley" email="hadleyrf@tir.com"/>
+		<team>
+			<member name="Mark Hadley" email="hadleyrf@tir.com" state="Ohio" country="United States"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="January 24, 1997">
@@ -4096,7 +4096,7 @@
 	</mod>
 	<mod name="Toon Nukem" id="toon_nukem" type="Total Conversion" version="Demo" website="http://www.nitro404.com/mods/toon_nukem.php">
 		<team>
-			<member name="Kevin Scroggins" alias="nitro glycerine" email="nitro404@gmail.com" twitter="nitro404" website="http://www.nitro404.com" steam="nitro4004"/>
+			<member name="Kevin Scroggins" alias="nitro glycerine" email="nitro404@gmail.com" twitter="nitro404" website="http://www.nitro404.com" steam="nitro4004" city="Ottawa" province="Ontario" country="Canada"/>
 			<member name="Jacek Gordinier"/>
 		</team>
 		<versions>
@@ -4151,8 +4151,8 @@
 		</downloads>
 	</mod>
 	<mod name="Total Duke" id="total_duke" type="Total Conversion" version="2.0">
-		<team country="Finland">
-			<member name="Juha Laaksonen"/>
+		<team>
+			<member name="Juha Laaksonen" country="Finland"/>
 		</team>
 		<versions>
 			<version id="2.0" release_date="May 28, 1999">
@@ -4190,8 +4190,8 @@
 		</downloads>
 	</mod>
 	<mod name="Tour of Bases" id="tour_of_bases" type="Total Conversion">
-		<team city="Flanders" country="Belgium">
-			<member name="Patrik van Ostaeyen" email="RedX@mail.dma.be"/>
+		<team>
+			<member name="Patrik van Ostaeyen" email="RedX@mail.dma.be" city="Flanders" country="Belgium"/>
 		</team>
 		<versions>
 			<version release_date="May 25, 1999">
@@ -4238,7 +4238,7 @@
 	</mod>
 	<mod name="Ultima TC" id="ultima_tc" type="Total Conversion" version="Demo" website="http://www.angelfire.com/or/ultimatc">
 		<team>
-			<member name="Tornado" email="tc_maker@email.com"/>
+			<member name="Tornado" email="tc_maker@email.com" city="Ottawa" province="Ontario" country="Canada"/>
 		</team>
 		<versions>
 			<version id="Demo" release_date="January 18, 2000">
@@ -4479,7 +4479,7 @@
 		</downloads>
 	</mod>
 	<mod name="WGRealms Episode" id="wgrealms_episode" type="Total Conversion" website="http://www.geocities.com/wgrealms">
-		<team country="New Zealand">
+		<team>
 			<member name="William Gee" email="geewillywizz@hotmail.com" country="New Zealand"/>
 		</team>
 		<versions>
@@ -4629,7 +4629,7 @@
 	</mod>
 	<mod name="World War 2: No Return" id="world_war_2_no_return" type="Total Conversion" version="Demo" website="http://compaq.totalconversions.com/ww2">
 		<team name="Compaq Productions">
-			<member name="Tornado" email="nitro4000@email.com"/>
+			<member name="Tornado" email="nitro4000@email.com" city="Ottawa" province="Ontario" country="Canada"/>
 		</team>
 		<versions>
 			<version id="Demo" release_date="August 11, 2008">
@@ -4796,7 +4796,7 @@
 	</mod>
 	<mod name="First Gunz" id="first_gunz" type="Weapon Patch" website="http://compaq.totalconversions.com">
 		<team name="Compaq Productions">
-			<member name="Tornado" email="tc_maker@email.com"/>
+			<member name="Tornado" email="tc_maker@email.com" city="Ottawa" province="Ontario" country="Canada"/>
 		</team>
 		<versions>
 			<version release_date="October 1, 1999">
@@ -4868,8 +4868,8 @@
 		</screenshots>
 	</mod>
 	<mod name="Double Tops" id="double_tops" type="Weapon Patch">
-		<team country="Ireland">
-			<member name="Philip Andrews" email="anthrax@indigo.ie"/>
+		<team>
+			<member name="Philip Andrews" email="anthrax@indigo.ie" country="Ireland"/>
 		</team>
 		<versions>
 			<version release_date="February 2, 1997">
@@ -4893,8 +4893,8 @@
 		</screenshots>
 	</mod>
 	<mod name="Anti-Gravity Bomb Thrower" id="anti-gravity_bomb_thrower" type="Weapon Patch" version="1.0">
-		<team city="Vicenza" country="Italy">
-			<member name="Nicola Giuseppe Deganello" email="ngdegan@tin.it"/>
+		<team>
+			<member name="Nicola Giuseppe Deganello" email="ngdegan@tin.it" city="Vicenza" country="Italy"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="March 16, 1998">
@@ -4915,8 +4915,8 @@
 		</downloads>
 	</mod>
 	<mod name="Bum Blaster 2000" id="bum_blaster_2000" type="Weapon Patch" version="1.0" website="http://members.xoom.com/Ug_Bum">
-		<team country="New Zealand">
-			<member name="Sam Harris" email="samth@ihug.co.nz"/>
+		<team>
+			<member name="Sam Harris" email="samth@ihug.co.nz" country="New Zealand"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="October 2, 1998">
@@ -4944,8 +4944,8 @@
 		</related>
 	</mod>
 	<mod name="ULTRA Bum Blaster 2000" id="ultra_bum_blaster_2000" type="Weapon Patch" website="http://members.xoom.com/Ug_Bum">
-		<team country="New Zealand">
-			<member name="Sam Harris" email="samth@ihug.co.nz"/>
+		<team>
+			<member name="Sam Harris" email="samth@ihug.co.nz" country="New Zealand"/>
 		</team>
 		<versions>
 			<version release_date="February 7, 1999">
@@ -4996,7 +4996,7 @@
 	</mod>
 	<mod name="Cool Gunz" id="cool_gunz" type="Weapon Patch">
 		<team>
-			<member name="Tornado" email="tc_maker@email.com"/>
+			<member name="Tornado" email="tc_maker@email.com" city="Ottawa" province="Ontario" country="Canada"/>
 		</team>
 		<versions>
 			<version release_date="October 10, 1999">
@@ -5086,8 +5086,8 @@
 		</downloads>
 	</mod>
 	<mod name="Doom Chaingun" id="doom_chaingun" type="Weapon Patch">
-		<team country="Germany">
-			<member name="WolfHead" email="wolfhead@cu-muc.de"/>
+		<team>
+			<member name="WolfHead" email="wolfhead@cu-muc.de" country="Germany"/>
 		</team>
 		<versions>
 			<version release_date="December 1, 1998">
@@ -5119,8 +5119,8 @@
 		</downloads>
 	</mod>
 	<mod name="Double Barrel Shotgun" id="double_barrel_shotgun" type="Weapon Patch" website="http://www.geocities.com/siliconvalley/park/5436/maps.html">
-		<team country="Canada">
-			<member name="Tyler Borrowman" email="bbauto@eagle.wbm.ca"/>
+		<team>
+			<member name="Tyler Borrowman" email="bbauto@eagle.wbm.ca" country="Canada"/>
 		</team>
 		<versions>
 			<version release_date="March 5, 1997">
@@ -5144,8 +5144,8 @@
 		</screenshots>
 	</mod>
 	<mod name="Drone 2 Cheese" id="drone_2_cheese" type="Enemy Replacement" version="V1">
-		<team country="Sweden">
-			<member name="Mats Blixt" email="mats.blixt@mailbox.swipnet.se"/>
+		<team>
+			<member name="Mats Blixt" email="mats.blixt@mailbox.swipnet.se" country="Sweden"/>
 		</team>
 		<versions>
 			<version id="V1" release_date="September 22, 1996">
@@ -5351,8 +5351,8 @@
 		</screenshots>
 	</mod>
 	<mod name="Golden Gun" id="golden_gun" type="Weapon Patch">
-		<team city="Salisbury" country="England">
-			<member name="Richard Belk" email="rich_belk@yahoo.com"/>
+		<team>
+			<member name="Richard Belk" email="rich_belk@yahoo.com" city="Salisbury" country="England"/>
 		</team>
 		<versions>
 			<version release_date="August 9, 1999">
@@ -5393,8 +5393,8 @@
 		</screenshots>
 	</mod>
 	<mod name="HoloDuke Weapon" id="holoduke_weapon" type="Weapon Patch">
-		<team country="Netherlands">
-			<member name="Joris Weimar" email="antiwin@worldonline.nl"/>
+		<team>
+			<member name="Joris Weimar" email="antiwin@worldonline.nl" country="Netherlands"/>
 		</team>
 		<versions>
 			<version release_date="March 14, 1997">
@@ -5414,8 +5414,8 @@
 		</screenshots>
 	</mod>
 	<mod name="Ion Shrinker" id="ion_shrinker" type="Weapon Patch" version="1.0" website="http://home5.swipnet.se/~w-53165/TED">
-		<team country="Sweden">
-			<member name="Anders Johansson" alias="AirHawke" email="ante@mbox307.swipnet.se"/>
+		<team>
+			<member name="Anders Johansson" alias="AirHawke" email="ante@mbox307.swipnet.se" country="Sweden"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="April 25, 1999">
@@ -5527,8 +5527,8 @@
 		</screenshots>
 	</mod>
 	<mod name="Magnum 44" id="magnum_44" type="Weapon Patch">
-		<team country="Sweden">
-			<member name="Simon Mellergårdh" email="lemel@algonet.se"/>
+		<team>
+			<member name="Simon Mellergårdh" email="lemel@algonet.se" country="Sweden"/>
 		</team>
 		<versions>
 			<version release_date="August 27, 1997">
@@ -5848,8 +5848,8 @@
 		</screenshots>
 	</mod>
 	<mod name="Scorpion Tank" id="scorpion_tank" type="Enemy Replacement" website="http://members.xoom.com/Ug_Bum">
-		<team country="New Zealand">
-			<member name="Sam Harris" email="samth@ihug.co.nz"/>
+		<team>
+			<member name="Sam Harris" email="samth@ihug.co.nz" country="New Zealand"/>
 		</team>
 		<versions>
 			<version release_date="January 27, 1999">
@@ -5894,8 +5894,8 @@
 		</screenshots>
 	</mod>
 	<mod name="The Star Trek Weapons Patch" id="the_star_trek_weapons_patch" type="Weapon Patch" version="Beta 1.5" website="http://www.dukeworld.com/stwp">
-		<team country="Europe">
-			<member name="James Keen" email="STWP@marnhull.demon.co.uk" icq="24223025"/>
+		<team>
+			<member name="James Keen" email="STWP@marnhull.demon.co.uk" icq="24223025" country="Europe"/>
 		</team>
 		<versions>
 			<version id="Beta 1.3" release_date="January 3, 1999">
@@ -5926,8 +5926,8 @@
 		</screenshots>
 	</mod>
 	<mod name="Star Wars Enemies" id="star_wars_enemies" type="Enemy Replacement">
-		<team country="Chile">
-			<member name="Jose Herrera" alias="The mighty little dragon" email="festigal@cmet.net"/>
+		<team>
+			<member name="Jose Herrera" alias="The mighty little dragon" email="festigal@cmet.net" country="Chile"/>
 		</team>
 		<versions>
 			<version release_date="November 18, 1996">
@@ -5977,7 +5977,7 @@
 	</mod>
 	<mod name="The Silver Weapons Patch" id="the_silver_weapons_patch" type="Weapon Patch" version="Demo">
 		<team name="Nuclear Trilogy Co.">
-			<member name="Tornado" email="nitro4000@email.com"/>
+			<member name="Tornado" email="nitro4000@email.com" city="Ottawa" province="Ontario" country="Canada"/>
 		</team>
 		<versions>
 			<version id="Demo" release_date="August 12, 2008">
@@ -6000,8 +6000,8 @@
 		</screenshots>
 	</mod>
 	<mod name="The Taxicab Launcher" id="the_taxicab_launcher" type="Weapon Patch">
-		<team country="Australia">
-			<member name="Bill McGuire" email="mcgmed@gil.com.au"/>
+		<team>
+			<member name="Bill McGuire" email="mcgmed@gil.com.au" country="Australia"/>
 		</team>
 		<versions>
 			<version release_date="June 17, 1997">
@@ -6113,8 +6113,8 @@
 		</screenshots>
 	</mod>
 	<mod name="UZI (2)" id="uzi_2" type="Weapon Patch">
-		<team country="Australia">
-			<member name="Kathy" email="kathy@bluesky.net.au"/>
+		<team>
+			<member name="Kathy" email="kathy@bluesky.net.au" country="Australia"/>
 		</team>
 		<versions>
 			<version release_date="February 26, 1997">
@@ -6345,8 +6345,8 @@
 		</downloads>
 	</mod>
 	<mod name="Predator: Dark Hunt" id="predator_dark_hunt" type="Dukematch" website="http://www3.sympatico.ca/kurstak/skinet.htm">
-		<team name="Skynet" email="skynet2010@hotmail.com" country="Canada">
-			<member name="Daniel Kurstak" alias="Skynet" email="kurstak@sympatico.ca"/>
+		<team name="Skynet" email="skynet2010@hotmail.com">
+			<member name="Daniel Kurstak" alias="Skynet" email="kurstak@sympatico.ca" country="Canada"/>
 		</team>
 		<versions>
 			<version id="Demo" release_date="July 26, 1998">
@@ -6406,8 +6406,8 @@
 		</downloads>
 	</mod>
 	<mod name="Speedtrax Racing" id="speedtrax_racing" type="Dukematch" version="0.6">
-		<team country="Denmark">
-			<member name="Samir Mughrabi" alias="Megaton" email="Megaton@get2net.dk"/>
+		<team>
+			<member name="Samir Mughrabi" alias="Megaton" email="Megaton@get2net.dk" country="Denmark"/>
 		</team>
 		<versions>
 			<version id="0.6" release_date="September 12, 2000">
@@ -6428,7 +6428,7 @@
 	</mod>
 	<mod name="Dank Nukem 420: Blaze It" id="dank_nukem_420_blaze_it" type="Total Conversion" version="0.0.1" repository="https://github.com/nitro404/Dank_Nukem_420">
 		<team>
-			<member name="Kevin Scroggins" alias="nitro glycerine" email="nitro404@gmail.com" twitter="nitro404" website="http://www.nitro404.com" steam="nitro4004"/>
+			<member name="Kevin Scroggins" alias="nitro glycerine" email="nitro404@gmail.com" twitter="nitro404" website="http://www.nitro404.com" steam="nitro4004" city="Ottawa" province="Ontario" country="Canada"/>
 			<member name="Adam Ciccarino" alias="with_milk"/>
 		</team>
 		<versions>
@@ -6601,8 +6601,8 @@
 		</downloads>
 	</mod>
 	<mod name="Alien Versus Predator 2" id="alien_versus_predator_2" type="Total Conversion">
-		<team country="Poland">
-			<member name="Slawomir Lawrynowicz" alias="LAW" email="law2@wp.pl"/>
+		<team>
+			<member name="Slawomir Lawrynowicz" alias="LAW" email="law2@wp.pl" country="Poland"/>
 		</team>
 		<versions>
 			<version release_date="May 23, 2010">
@@ -6622,8 +6622,8 @@
 		</related>
 	</mod>
 	<mod name="Armageddon - Gang Wars" id="armageddon_gang_wars" type="Total Conversion" version="Demo" website="http://www.bullgames.totalconversions.com/arm1">
-		<team name="BullGames" website="http://www.bullgames.totalconversions.com" email="bullgames@portugalmail.pt" country="Portugal">
-			<member name="Bruno Silva"/>
+		<team name="BullGames" website="http://www.bullgames.totalconversions.com" email="bullgames@portugalmail.pt">
+			<member name="Bruno Silva" country="Portugal"/>
 		</team>
 		<versions>
 			<version id="Demo" release_date="March 28, 2003">
@@ -6642,8 +6642,8 @@
 		</related>
 	</mod>
 	<mod name="Armageddon 2: Strength Beyond Strength" id="armageddon_2_strength_beyond_strength" type="Dukematch" version="Beta 0.02" website="http://www.bullgames.no.sapo.pt">
-		<team name="BullGames" email="bullgames@portugalmail.pt" country="Portugal">
-			<member name="Bruno Silva"/>
+		<team name="BullGames" email="bullgames@portugalmail.pt">
+			<member name="Bruno Silva" country="Portugal"/>
 		</team>
 		<versions>
 			<version id="Beta 0.02" release_date="December 27, 2002">
@@ -6687,8 +6687,8 @@
 		</downloads>
 	</mod>
 	<mod name="Crazy Dookie Fun" id="crazy_dookie_fun" type="Partial Conversion" version="1.0" website="http://eddyprojects.blogspot.ru">
-		<team country="Russia">
-			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com"/>
+		<team>
+			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com" country="Russia"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="November 18, 2014">
@@ -6736,8 +6736,8 @@
 		</downloads>
 	</mod>
 	<mod name="Capture the Flag !EXTREME!" id="capture_the_flag_extreme" type="Dukematch" version="0.9" website="http://www.dukeworld.com/ctfextreme">
-		<team country="Finland">
-			<member name="Teemu Polvi" email="ctf.extreme@jippii.fi"/>
+		<team>
+			<member name="Teemu Polvi" email="ctf.extreme@jippii.fi" country="Finland"/>
 		</team>
 		<versions>
 			<version id="0.9" release_date="February 20, 2000">
@@ -6771,8 +6771,8 @@
 		</downloads>
 	</mod>
 	<mod name="DOOM 2" id="doom_2" type="Episode" website="http://www.jsp.umontreal.ca/~leonard">
-		<team city="Montreal" province="Quebec" country="Canada">
-			<member name="Daniel Léonard" email="leonard@jsp.umontreal.ca"/>
+		<team>
+			<member name="Daniel Léonard" email="leonard@jsp.umontreal.ca" city="Montreal" province="Quebec" country="Canada"/>
 		</team>
 		<versions>
 			<version release_date="June 28, 1998">
@@ -6788,8 +6788,8 @@
 		</downloads>
 	</mod>
 	<mod name="Duke in Denmark" id="duke_in_denmark" type="Total Conversion" version_type="Danish">
-		<team country="Denmark">
-			<member name="Dennis Mikkelsen" email="dogr@email.dk"/>
+		<team>
+			<member name="Dennis Mikkelsen" email="dogr@email.dk" country="Denmark"/>
 		</team>
 		<versions>
 			<version release_date="August 16, 2000">
@@ -6973,8 +6973,8 @@
 		</downloads>
 	</mod>
 	<mod name="Industrial Complex Episode" id="industrial_complex" type="Episode">
-		<team country="Brazil">
-			<member name="Stephano Lessa" email="kingnukem@zipmail.com.br"/>
+		<team>
+			<member name="Stephano Lessa" email="kingnukem@zipmail.com.br" country="Brazil"/>
 		</team>
 		<versions>
 			<version release_date="January 28, 2004">
@@ -7085,8 +7085,8 @@
 		</downloads>
 	</mod>
 	<mod name="Predator II" id="predator_ii" type="Map">
-		<team country="Poland">
-			<member name="Slawomir Lawrynowicz" alias="LAW" email="law2@wp.pl"/>
+		<team>
+			<member name="Slawomir Lawrynowicz" alias="LAW" email="law2@wp.pl" country="Poland"/>
 		</team>
 		<versions>
 			<version release_date="September 18, 2006">
@@ -7287,8 +7287,8 @@
 		</downloads>
 	</mod>
 	<mod name="The Mission" id="the_mission" type="Map Pack" version="Demo" website="http://www.dukesivut.cjb.net">
-		<team country="Finland">
-			<member name="Juha Laaksonen" email="jss.laaksonen@pp.inet.fi"/>
+		<team>
+			<member name="Juha Laaksonen" email="jss.laaksonen@pp.inet.fi" country="Finland"/>
 		</team>
 		<versions>
 			<version id="Demo" release_date="October 14, 1999">
@@ -7357,7 +7357,7 @@
 		</downloads>
 	</mod>
 	<mod name="WGSpace Episode" id="wgspace_episode" type="Episode" website="http://wgrealms.williamgeegallery.com">
-		<team country="New Zealand">
+		<team>
 			<member name="William Gee" email="geewillywizz@live.com" country="New Zealand"/>
 		</team>
 		<versions>
@@ -7416,8 +7416,8 @@
 		</downloads>
 	</mod>
 	<mod name="Blastoff" id="blastoff" type="Episode" website="http://www.xs4all.nl/~jaapm">
-		<team country="Netherlands">
-			<member name="Jaap Menist" email="jaapm@xs4all.nl"/>
+		<team>
+			<member name="Jaap Menist" email="jaapm@xs4all.nl" country="Netherlands"/>
 		</team>
 		<versions>
 			<version release_date="January 19, 1997">
@@ -7439,8 +7439,8 @@
 		</downloads>
 	</mod>
 	<mod name="Cinema Walker" id="cinema_walker" type="Total Conversion" website="http://www.dukenukemrus.narod.ru/Cinema.htm">
-		<team country="Russia">
-			<member name="Nikita Shuvanov"/>
+		<team>
+			<member name="Nikita Shuvanov" country="Russia"/>
 		</team>
 		<versions>
 			<version release_date="June 27, 2004">
@@ -7462,8 +7462,8 @@
 		</downloads>
 	</mod>
 	<mod name="Save EBN" id="save_ebn" type="Total Conversion" version_type="Russian" website="http://duke3d.nm.ru">
-		<team name="GML Software" country="Russia">
-			<member name="Goryn" email="goryn@newmail.ru"/>
+		<team name="GML Software">
+			<member name="Goryn" email="goryn@newmail.ru" country="Russia"/>
 		</team>
 		<versions>
 			<version release_date="November 20, 2000">
@@ -7700,8 +7700,8 @@
 		</downloads>
 	</mod>
 	<mod name="From the Wing of a Plane" id="from_the_wing_of_a_plane" type="Episode">
-		<team city="Worcester" country="England">
-			<member name="Matt Harris" alias="MattCake" email="101502.1440@compuserve.com"/>
+		<team>
+			<member name="Matt Harris" alias="MattCake" email="101502.1440@compuserve.com" city="Worcester" country="England"/>
 		</team>
 		<versions>
 			<version release_date="August 8, 1996">
@@ -7722,8 +7722,8 @@
 		</downloads>
 	</mod>
 	<mod name="Grunge" id="grunge" type="Episode" version="1.2" website="http://www.angelfire.com/pages0/STELTH/duke3d.html">
-		<team city="Bowmanville" province="Ontario" country="Canada">
-			<member name="Cam Guest" alias="STELTH" email="xoc785@durhamnews.net" phone_number="(905) 623-3516"/>
+		<team>
+			<member name="Cam Guest" alias="STELTH" email="xoc785@durhamnews.net" phone_number="(905) 623-3516" city="Bowmanville" province="Ontario" country="Canada"/>
 		</team>
 		<versions>
 			<version id="1.2" release_date="August 23, 1996">
@@ -7766,8 +7766,8 @@
 		</downloads>
 	</mod>
 	<mod name="Indy Tour" id="indy_tour" type="Episode" version="V1">
-		<team city="Thesee" country="France">
-			<member name="Laurent Juillard"/>
+		<team>
+			<member name="Laurent Juillard" city="Thesee" country="France"/>
 		</team>
 		<versions>
 			<version id="V1" release_date="June 24, 1996">
@@ -7913,8 +7913,8 @@
 		</downloads>
 	</mod>
 	<mod name="SlayDuke" id="slayduke" type="Total Conversion" website="http://www.slayweb.com">
-		<team name="Slayer Software" email="slayersoft@aol.com" city="Chester" country="United Kingdom">
-			<member name="Brendan Ellis" email="brendan@slayweb.com" website="http://members.aol.com/slayersoft"/>
+		<team name="Slayer Software" email="slayersoft@aol.com">
+			<member name="Brendan Ellis" email="brendan@slayweb.com" website="http://members.aol.com/slayersoft" city="Chester" country="United Kingdom"/>
 		</team>
 		<versions>
 			<version release_date="August 17, 2006">
@@ -8006,8 +8006,8 @@
 		</downloads>
 	</mod>
 	<mod name="The Asteroid" id="the_asteroid" type="Episode" website="http://www.multimania.com/duke3d">
-		<team country="France">
-			<member name="Olivier Delatour" alias="Ray Tracer" email="ray.tracer@wanadoo.fr"/>
+		<team>
+			<member name="Olivier Delatour" alias="Ray Tracer" email="ray.tracer@wanadoo.fr" country="France"/>
 		</team>
 		<versions>
 			<version release_date="August 7, 1999">
@@ -8151,8 +8151,8 @@
 		</downloads>
 	</mod>
 	<mod name="Aliens vs Duke" id="aliens_vs_duke" type="Total Conversion" website="http://avd.planetduke.gamespy.com">
-		<team country="Czech Republic">
-			<member name="Marek Kubáèek" alias="Fallout" email="MKubacek@seznam.cz"/>
+		<team>
+			<member name="Marek Kubáèek" alias="Fallout" email="MKubacek@seznam.cz" country="Czech Republic"/>
 		</team>
 		<versions>
 			<version release_date="March 4, 2008">
@@ -8168,8 +8168,8 @@
 		</downloads>
 	</mod>
 	<mod name="Zykov Eddy&apos;s Aliens" id="zykov_eddys_aliens" type="Total Conversion" version="Demo">
-		<team country="Russia">
-			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com"/>
+		<team>
+			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com" country="Russia"/>
 		</team>
 		<versions>
 			<version id="Demo" release_date="November 27, 2008">
@@ -8212,8 +8212,8 @@
 		</related>
 	</mod>
 	<mod name="A.Dream Trilogy" id="a_dream_trilogy" type="Total Conversion">
-		<team country="Russia">
-			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com"/>
+		<team>
+			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com" country="Russia"/>
 		</team>
 		<versions>
 			<version release_date="February 6, 2011">
@@ -8229,8 +8229,8 @@
 		</downloads>
 	</mod>
 	<mod name="Arctic Alert!" id="arctic_alert" type="Total Conversion" website="http://mydukemods.ucoz.ru">
-		<team country="Russia">
-			<member name="Zykov Eddy" email="edik.zykov@mail.ru" website="http://www.eddyprojects.blogspot.com"/>
+		<team>
+			<member name="Zykov Eddy" email="edik.zykov@mail.ru" website="http://www.eddyprojects.blogspot.com" country="Russia"/>
 		</team>
 		<versions>
 			<version release_date="November 3, 2008">
@@ -8263,8 +8263,8 @@
 		</downloads>
 	</mod>
 	<mod name="Beta" id="beta" type="Total Conversion">
-		<team country="Poland">
-			<member name="Cage" email="cageds@tlen.pl"/>
+		<team>
+			<member name="Cage" email="cageds@tlen.pl" country="Poland"/>
 		</team>
 		<versions>
 			<version release_date="April 16, 2010">
@@ -9143,8 +9143,8 @@
 		</downloads>
 	</mod>
 	<mod name="Lameduke 95 Redux" id="lameduke_95_redux" type="Total Conversion" website="https://www.moddb.com/mods/lameduke-redux">
-		<team country="Italy">
-			<member name="Mark Kaminari" alias="MarkKaminari00" website="https://www.youtube.com/@markkaminari007"/>
+		<team>
+			<member name="Mark Kaminari" alias="MarkKaminari00" website="https://www.youtube.com/@markkaminari007" country="Italy"/>
 		</team>
 		<versions>
 			<version release_date="November 30, 2022">
@@ -9165,8 +9165,8 @@
 		</related>
 	</mod>
 	<mod name="Phoenix Holocaust" id="phoenix_holocaust" type="Total Conversion" website="https://www.moddb.com/mods/phoenix-holocaust">
-		<team country="Italy">
-			<member name="Mark Kaminari" alias="MarkKaminari00" website="https://www.youtube.com/@markkaminari007"/>
+		<team>
+			<member name="Mark Kaminari" alias="MarkKaminari00" website="https://www.youtube.com/@markkaminari007" country="Italy"/>
 		</team>
 		<versions>
 			<version release_date="April 3, 2022">
@@ -9203,8 +9203,8 @@
 		</downloads>
 	</mod>
 	<mod name="Fatal Mode (Atomic)" id="fatal_mode_atomic" type="Total Conversion" version="1.0" website="https://www.moddb.com/mods/duke3d-fatal-mode-atomic">
-		<team country="Hungary">
-			<member name="Oszkár Winkler" alias="oscarincage" email="oscarincage@gmail.com" website="https://www.moddb.com/members/oscarincage"/>
+		<team>
+			<member name="Oszkár Winkler" alias="oscarincage" email="oscarincage@gmail.com" website="https://www.moddb.com/members/oscarincage" country="Hungary"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="March 12, 2020">
@@ -9242,8 +9242,8 @@
 		</downloads>
 	</mod>
 	<mod name="Plug and Pray Remake" id="plug_and_pray_remake" type="Total Conversion" website="http://forums.duke4.net/topic/6770-plug-and-pray-remake">
-		<team country="Germany">
-			<member name="ozelot47"/>
+		<team>
+			<member name="ozelot47" country="Germany"/>
 		</team>
 		<versions>
 			<version release_date="September 24, 2013">
@@ -9266,8 +9266,8 @@
 		</related>
 	</mod>
 	<mod name="Aliens (3)" id="aliens_3" type="Partial Conversion" version="1.0">
-		<team country="United States">
-			<member name="Jonathan Cacy" alias="LizardKing" email="x84913a4@cadet2.usma.edu"/>
+		<team>
+			<member name="Jonathan Cacy" alias="LizardKing" email="x84913a4@cadet2.usma.edu" country="United States"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="September 15, 1996">
@@ -9504,8 +9504,8 @@
 		</downloads>
 	</mod>
 	<mod name="Back in Business" id="back_in_business" type="Episode" version="1.0">
-		<team country="Poland">
-			<member name="Alex Pistol" email="aleks4duke@gmail.com" discord="ShrinkDuke" steam="Ledsbourne"/>
+		<team>
+			<member name="Alex Pistol" email="aleks4duke@gmail.com" discord="ShrinkDuke" steam="Ledsbourne" country="Poland"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="December 14, 2020">
@@ -9524,8 +9524,8 @@
 		</downloads>
 	</mod>
 	<mod name="Downtown Journey" id="downtown_journey" type="Episode" version="1.1" website="https://www.moddb.com/mods/pretomurara">
-		<team country="Brazil">
-			<member name="Preto Murara" email="pretomurara@gmail.com"/>
+		<team>
+			<member name="Preto Murara" email="pretomurara@gmail.com" country="Brazil"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="October 17, 2020">
@@ -9600,8 +9600,8 @@
 		</downloads>
 	</mod>
 	<mod name="The Seventh Son" id="the_seventh_son" type="Episode" website="http://es.geocities.com/pescapantanos">
-		<team city="Málaga" country="Spain">
-			<member name="Daniel González Alcobre" alias="Papamonos" email="papamonos2@hotmail.com"/>
+		<team>
+			<member name="Daniel González Alcobre" alias="Papamonos" email="papamonos2@hotmail.com" city="Málaga" country="Spain"/>
 		</team>
 		<versions>
 			<version release_date="February 13, 2009">
@@ -9642,8 +9642,8 @@
 		</downloads>
 	</mod>
 	<mod name="Outpost X" id="outpost_x" type="Episode">
-		<team country="Belgium">
-			<member name="Sangluss" email="sangmahn@hotmail.com"/>
+		<team>
+			<member name="Sangluss" email="sangmahn@hotmail.com" country="Belgium"/>
 		</team>
 		<versions>
 			<version release_date="April 15, 2009">
@@ -9972,8 +9972,8 @@
 		</downloads>
 	</mod>
 	<mod name="Halls of Doom" id="halls_of_doom" type="Episode">
-		<team country="Russia">
-			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com"/>
+		<team>
+			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com" country="Russia"/>
 		</team>
 		<versions>
 			<version release_date="September 8, 2014">
@@ -10053,8 +10053,8 @@
 		</downloads>
 	</mod>
 	<mod name="KickAss Duke" id="kickass_duke" type="Total Conversion" version="1.13" website="https://www.moddb.com/mods/kickass-duke">
-		<team country="Italy">
-			<member name="Riccardo Capogna" alias="RichardStorm" email="riccardo.capogna@yahoo.it"/>
+		<team>
+			<member name="Riccardo Capogna" alias="RichardStorm" email="riccardo.capogna@yahoo.it" country="Italy"/>
 		</team>
 		<versions>
 			<version id="1.13" release_date="November 28, 2022">
@@ -10160,8 +10160,8 @@
 		</downloads>
 	</mod>
 	<mod name="Infestation in Time" id="infestation_in_time" type="Total Conversion" version="0.0" website="http://www.mydukemods.ucoz.ru">
-		<team name="Zykov Eddy Software" email="edik.zykov@mail.ru" country="Russia">
-			<member name="Zykov Eddy" alias="E.Z" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com"/>
+		<team name="Zykov Eddy Software" email="edik.zykov@mail.ru">
+			<member name="Zykov Eddy" alias="E.Z" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com" country="Russia"/>
 		</team>
 		<versions>
 			<version id="0.0" release_date="December 11, 2008">
@@ -10180,8 +10180,8 @@
 		</downloads>
 	</mod>
 	<mod name="KaiseR Land" id="kaiser_land" type="Episode" website="http://www.bur.st/~duke3d">
-		<team country="France">
-			<member name="KaiseR" email="ksr@cegetel.net"/>
+		<team>
+			<member name="KaiseR" email="ksr@cegetel.net" country="France"/>
 		</team>
 		<versions>
 			<version release_date="March 8, 2009">
@@ -10216,8 +10216,8 @@
 		</downloads>
 	</mod>
 	<mod name="Moonbase Accident" id="moonbase_accident" type="Episode" version="1.2.2" website="http://members.lycos.co.uk/piterplus">
-		<team email="zykov@bk.ru" country="Russia">
-			<member name="Zykov Eddy" alias="Piterplus" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com"/>
+		<team email="zykov@bk.ru">
+			<member name="Zykov Eddy" alias="Piterplus" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com" country="Russia"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="January 17, 2008">
@@ -10607,8 +10607,8 @@
 		</videos>
 	</mod>
 	<mod name="The Chronic" id="the_chronic" type="Episode">
-		<team country="Russia">
-			<member name="Sanek" email="bechtin7@mail.ru"/>
+		<team>
+			<member name="Sanek" email="bechtin7@mail.ru" country="Russia"/>
 		</team>
 		<versions>
 			<version release_date="June 27, 2009">
@@ -10626,7 +10626,7 @@
 		</downloads>
 	</mod>
 	<mod name="WG The Abyss Episode" id="wg_the_abyss_episode" type="Episode">
-		<team country="New Zealand">
+		<team>
 			<member name="William Gee" email="geewillywizz@gmail.com" website="http://wg.duke4.net" country="New Zealand"/>
 		</team>
 		<versions>
@@ -10695,8 +10695,8 @@
 		</downloads>
 	</mod>
 	<mod name="Countdown to Christmas" id="countdown_to_christmas" type="Total Conversion">
-		<team country="Russia">
-			<member name="Sanek" email="bechtin7@mail.ru"/>
+		<team>
+			<member name="Sanek" email="bechtin7@mail.ru" country="Russia"/>
 		</team>
 		<versions>
 			<version release_date="December 24, 2009">
@@ -10722,8 +10722,8 @@
 		</related>
 	</mod>
 	<mod name="Duke Nukem in Russia (New Year)" id="duke_nukem_in_russia" type="Total Conversion" website="http://www.coolduke.narod.ru/maps.htm">
-		<team country="Russia">
-			<member name="Igor" email="igor99911@yandex.ru"/>
+		<team>
+			<member name="Igor" email="igor99911@yandex.ru" country="Russia"/>
 		</team>
 		<versions>
 			<version release_date="May 30, 2008">
@@ -10761,8 +10761,8 @@
 		</downloads>
 	</mod>
 	<mod name="On Vacation" id="on_vacation" type="Episode">
-		<team country="Russia">
-			<member name="Sanek" email="bechtin7@mail.ru"/>
+		<team>
+			<member name="Sanek" email="bechtin7@mail.ru" country="Russia"/>
 		</team>
 		<versions>
 			<version release_date="June 1, 2010">
@@ -11069,8 +11069,8 @@
 		</downloads>
 	</mod>
 	<mod name="The Way of All Flesh" id="the_way_of_all_flesh" type="Episode" version="1.2" website="https://www.moddb.com/mods/duke-nukem-3d-the-way-of-all-flesh">
-		<team country="Czech Republic">
-			<member name="MissingNO57" email="missingno@seznam.cz" website="https://www.moddb.com/members/missingno57/downloads"/>
+		<team>
+			<member name="MissingNO57" email="missingno@seznam.cz" website="https://www.moddb.com/members/missingno57/downloads" country="Czech Republic"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="January 19, 2022">
@@ -11139,8 +11139,8 @@
 		</downloads>
 	</mod>
 	<mod name="Anarchy City" id="anarchy_city" type="Episode" version="1.1">
-		<team country="France">
-			<member name="Aymeric Nocus" alias="ck3D" email="aymeric-nocus@tele2.fr" website="https://www.ko-fi.com/blastradius" youtube="MisterCK"/>
+		<team>
+			<member name="Aymeric Nocus" alias="ck3D" email="aymeric-nocus@tele2.fr" website="https://www.ko-fi.com/blastradius" youtube="MisterCK" country="France"/>
 		</team>
 		<versions>
 			<version id="1.1" release_date="May 25, 2004">
@@ -11199,8 +11199,8 @@
 		</downloads>
 	</mod>
 	<mod name="The Michael Dormuth Saga" id="the_michael_dormuth_saga" type="Map" version="Alpha Build 147">
-		<team email="m.latoski@sasktel.net" city="Regina" province="Sakatchewan" country="Canada">
-			<member name="Mike Latoski" email="m.d.lat@cableregina.com" website="http://www.geocities.com/timessquare/6081"/>
+		<team email="m.latoski@sasktel.net">
+			<member name="Mike Latoski" email="m.d.lat@cableregina.com" website="http://www.geocities.com/timessquare/6081" city="Regina" province="Sakatchewan" country="Canada"/>
 		</team>
 		<versions>
 			<version id="Alpha Build 147" release_date="July 11, 1999">
@@ -11218,8 +11218,8 @@
 		</downloads>
 	</mod>
 	<mod name="The Conundrum" id="the_conundrum" type="Episode" version="1.0" website="https://www.moddb.com/mods/the-conundrum">
-		<team country="Poland">
-			<member name="Alex Pistol" email="aleks4duke@gmail.com" discord="Ledsbourne" steam="Ledsbourne"/>
+		<team>
+			<member name="Alex Pistol" email="aleks4duke@gmail.com" discord="Ledsbourne" steam="Ledsbourne" country="Poland"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="January 16, 2022">
@@ -11284,8 +11284,8 @@
 		</downloads>
 	</mod>
 	<mod name="Dark Place" id="dark_place" type="Episode">
-		<team country="Estonia">
-			<member name="Taivo Maripuu" email="taivo.maripuu.001@mail.ee"/>
+		<team>
+			<member name="Taivo Maripuu" email="taivo.maripuu.001@mail.ee" country="Estonia"/>
 		</team>
 		<versions>
 			<version release_date="April 18, 2005">

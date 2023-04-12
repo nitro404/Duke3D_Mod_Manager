@@ -32,6 +32,7 @@ public:
 	void setCountry(const std::string & country);
 	bool hasValue() const;
 	std::string getDetails() const;
+	void clear();
 
 	void addToJSONObject(rapidjson::Value & locationValue, rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const;
 	void addToXMLElement(tinyxml2::XMLElement * locationElement) const;

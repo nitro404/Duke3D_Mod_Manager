@@ -42,6 +42,7 @@ public:
 	const std::string & getYahoo() const;
 	const std::string & getPhoneNumber() const;
 	const Location & getLocation() const;
+	Location & getLocation();
 	const Mod * getParentMod() const;
 	const ModTeam * getParentModTeam() const;
 

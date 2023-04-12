@@ -161,6 +161,10 @@ const Location & ModTeam::getLocation() const {
 	return m_location;
 }
 
+Location & ModTeam::getLocation() {
+	return m_location;
+}
+
 const Mod * ModTeam::getParentMod() const {
 	return m_parentMod;
 }

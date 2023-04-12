@@ -148,6 +148,14 @@ std::string Location::getDetails() const {
 	return locationStream.str();
 }
 
+void Location::clear() {
+	m_town.clear();
+	m_city.clear();
+	m_province.clear();
+	m_state.clear();
+	m_country.clear();
+}
+
 void Location::addToJSONObject(rapidjson::Value & locationValue, rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const {
 	if(!locationValue.IsObject()) {
 		return;

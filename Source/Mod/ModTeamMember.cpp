@@ -244,6 +244,10 @@ const Location & ModTeamMember::getLocation() const {
 	return m_location;
 }
 
+Location & ModTeamMember::getLocation() {
+	return m_location;
+}
+
 const Mod * ModTeamMember::getParentMod() const {
 	if(m_parentModTeam == nullptr) {
 		return nullptr;
