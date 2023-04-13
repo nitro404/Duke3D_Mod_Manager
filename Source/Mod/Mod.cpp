@@ -2815,6 +2815,10 @@ bool Mod::isValid(bool skipFileInfoValidation) const {
 		return false;
 	}
 
+	if(!m_alias.empty() && Utilities::areStringsEqualIgnoreCase(m_id, m_alias)) {
+		return false;
+	}
+
 	for(std::vector<std::shared_ptr<ModVersion>>::const_iterator i = m_versions.begin(); i != m_versions.end(); ++i) {
 		if(!(*i)->isValid(skipFileInfoValidation)) {
 			return false;
