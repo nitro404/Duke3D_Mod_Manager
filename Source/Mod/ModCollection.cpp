@@ -696,6 +696,12 @@ bool ModCollection::isValid(bool skipFileInfoValidation) const {
 		if(mod->hasAlias() && !hasModWithID(mod->getAlias())) {
 			return false;
 		}
+
+		for(size_t j = 0; j < mod->numberOfRelatedMods(); j++) {
+			if(!hasModWithID(mod->getRelatedMod(j))) {
+				return false;
+			}
+		}
 	}
 
 	return true;
