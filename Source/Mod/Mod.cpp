@@ -429,7 +429,7 @@ void Mod::removeTeam() {
 
 bool Mod::addTeamMember(const ModTeamMember & teamMember) {
 	if(m_team == nullptr) {
-		return false;
+		m_team = std::make_shared<ModTeam>();
 	}
 
 	return m_team->addMember(teamMember);
