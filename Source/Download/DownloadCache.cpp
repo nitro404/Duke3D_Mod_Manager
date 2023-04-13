@@ -160,10 +160,11 @@ bool DownloadCache::updateCachedPackageFile(const ModDownload * modDownload, con
 		}
 
 		if(cachedFile == nullptr) {
-			cachedPackageFile->addCachedFile(createCachedFile(modFile->getFileName(), 0, modFile->getSHA1(), Utilities::emptyString));
+			cachedPackageFile->addCachedFile(createCachedFile(modFile->getFileName(), modFile->getFileSize(), modFile->getSHA1(), Utilities::emptyString));
 		}
 		else {
 			cachedFile->setFileName(modFile->getFileName());
+			cachedFile->setFileSize(modFile->getFileSize());
 			cachedFile->setSHA1(modFile->getSHA1());
 		}
 	}
