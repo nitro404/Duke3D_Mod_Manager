@@ -37,6 +37,7 @@ public:
 	const Mod * getParentMod() const;
 	const ModVersion * getParentModVersion() const;
 	void setType(const std::string & type);
+	bool copyHiddenPropertiesFrom(const ModVersionType & modVersionType);
 
 	size_t numberOfGameVersions() const;
 	bool hasGameVersionWithID(const std::string & gameVersionID) const;

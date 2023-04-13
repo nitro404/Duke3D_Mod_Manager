@@ -4266,6 +4266,12 @@ bool ModManager::testParsing() {
 		return false;
 	}
 
+	if(!jsonModCollection->copyHiddenPropertiesFrom(*xmlModCollection)) {
+		spdlog::warn("Failed to copy hidden properties from original XML mod collection to converted JSON mod collection.");
+	}
+
+	xmlModCollection.reset();
+
 	tinyxml2::XMLDocument xmlFromJSONModsDocument;
 	xmlFromJSONModsDocument.InsertFirstChild(xmlFromJSONModsDocument.NewDeclaration());
 	xmlFromJSONModsDocument.InsertEndChild(jsonModCollection->toXML(&xmlFromJSONModsDocument));

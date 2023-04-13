@@ -45,6 +45,7 @@ public:
 	void clearReleaseDate();
 	void setRepaired(bool repaired);
 	void clearRepaired();
+	bool copyHiddenPropertiesFrom(const ModVersion & modVersion);
 
 	size_t numberOfTypes() const;
 	bool hasType(const std::string & type) const;

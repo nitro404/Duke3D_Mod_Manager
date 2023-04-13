@@ -269,6 +269,20 @@ void ModCollection::clearMods() {
 	updated(*this);
 }
 
+bool ModCollection::copyHiddenPropertiesFrom(const ModCollection & modCollection) {
+	if(!isValid(true) || !modCollection.isValid(true) || m_mods.size() != modCollection.m_mods.size()) {
+		return false;
+	}
+
+	for(size_t i = 0; i < m_mods.size(); i++) {
+		if(!m_mods[i]->copyHiddenPropertiesFrom(*modCollection.m_mods[i])) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 rapidjson::Document ModCollection::toJSON() const {
 	rapidjson::Document modsDocument(rapidjson::kObjectType);
 	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator = modsDocument.GetAllocator();

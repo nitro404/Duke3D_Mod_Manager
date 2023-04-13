@@ -190,6 +190,20 @@ void ModVersion::setParentMod(const Mod * mod) {
 	m_parentMod = mod;
 }
 
+bool ModVersion::copyHiddenPropertiesFrom(const ModVersion & modVersion) {
+	if(!isValid(true) || !modVersion.isValid(true) || !Utilities::areStringsEqualIgnoreCase(m_version, modVersion.m_version) || m_types.size() != modVersion.m_types.size()) {
+		return false;
+	}
+
+	for(size_t i = 0; i < m_types.size(); i++) {
+		if(!m_types[i]->copyHiddenPropertiesFrom(*modVersion.m_types[i])) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 size_t ModVersion::numberOfTypes() const {
 	return m_types.size();
 }

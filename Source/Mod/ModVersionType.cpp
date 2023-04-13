@@ -139,6 +139,16 @@ void ModVersionType::setType(const std::string & type) {
 	m_type = Utilities::trimString(type);
 }
 
+bool ModVersionType::copyHiddenPropertiesFrom(const ModVersionType & modVersionType) {
+	if(!isValid(true) || !modVersionType.isValid(true) || !Utilities::areStringsEqualIgnoreCase(m_type, modVersionType.m_type) || m_gameVersions.size() != modVersionType.m_gameVersions.size()) {
+		return false;
+	}
+
+	m_hadXMLElement = modVersionType.m_hadXMLElement;
+
+	return true;
+}
+
 bool ModVersionType::hadXMLElement() const {
 	return m_hadXMLElement;
 }

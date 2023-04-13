@@ -435,6 +435,20 @@ bool Mod::addTeamMember(const ModTeamMember & teamMember) {
 	return m_team->addMember(teamMember);
 }
 
+bool Mod::copyHiddenPropertiesFrom(const Mod & mod) {
+	if(!isValid(true) || !mod.isValid(true) || !Utilities::areStringsEqualIgnoreCase(m_id, mod.m_id) || m_versions.size() != mod.m_versions.size()) {
+		return false;
+	}
+
+	for(size_t i = 0; i < m_versions.size(); i++) {
+		if(!m_versions[i]->copyHiddenPropertiesFrom(*mod.m_versions[i])) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 size_t Mod::numberOfVersions() const {
 	return m_versions.size();
 }

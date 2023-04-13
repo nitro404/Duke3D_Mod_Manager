@@ -70,6 +70,7 @@ public:
 	void setTeam(const ModTeam & team);
 	void removeTeam();
 	bool addTeamMember(const ModTeamMember & teamMember);
+	bool copyHiddenPropertiesFrom(const Mod & mod);
 
 	size_t numberOfVersions() const;
 	bool hasVersion(const ModVersion & version) const;

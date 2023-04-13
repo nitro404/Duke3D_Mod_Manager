@@ -46,6 +46,7 @@ public:
 	bool removeModWithID(const std::string & id);
 	bool removeModWithName(const std::string & name);
 	void clearMods();
+	bool copyHiddenPropertiesFrom(const ModCollection & modCollection);
 
 	rapidjson::Document toJSON() const;
 	tinyxml2::XMLElement * toXML(tinyxml2::XMLDocument* document) const;
