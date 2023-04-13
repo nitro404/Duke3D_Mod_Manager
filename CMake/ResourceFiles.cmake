@@ -1,7 +1,7 @@
 include_guard()
 
 set(RESOURCE_FILES_WINDOWS
-	Icon/Windows/Icon.rc
+	Windows/Resource.rc
 )
 
 list(APPEND RESOURCE_FILES ${RESOURCE_FILES_${PLATFORM_UPPER}})

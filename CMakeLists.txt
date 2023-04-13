@@ -18,7 +18,7 @@ list(APPEND CMAKE_MODULE_PATH "${CORE_DIRECTORY}/CMake")
 include(Modules/GetGitCommitHash)
 include(Hunter/HunterInit)
 
-project(${_PROJECT_NAME} VERSION 0.0.1 LANGUAGES C CXX)
+project(${_PROJECT_NAME} VERSION 0.0.1.0 LANGUAGES C CXX)
 
 include(Environment)
 include(ThirdPartyLibraries)
@@ -28,6 +28,14 @@ get_git_commit_hash()
 set(APPLICATION_GIT_COMMIT_HASH ${GIT_COMMIT_HASH})
 
 configure_file("${_PROJECT_FILE_PATH}.in" "${_PROJECT_FILE_PATH}" @ONLY)
+
+if(WIN32)
+	set(_RESOURCE_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Resources/Windows/Resource.rc")
+	set(AUTHOR_NAME "Kevin Scroggins")
+	string(TIMESTAMP CURRENT_YEAR "%Y")
+	string(TIMESTAMP BUILD_TIMESTAMP "%Y-%m-%d %H:%M:%S")
+	configure_file("${_RESOURCE_FILE_PATH}.in" "${_RESOURCE_FILE_PATH}" @ONLY)
+endif()
 
 include(SourceFiles)
 include(ResourceFiles)

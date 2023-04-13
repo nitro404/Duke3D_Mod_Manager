@@ -7,6 +7,7 @@ Time Zone/
 .vs
 Project.h
 Environment.h
+Resource.rc
 CDROM.INI
 DUKE3D.CFG
 stderr.txt
@@ -18,6 +19,7 @@ Duke Nukem 3D Favourite Mods.json
 Segment Analytics Cache.json
 *.conf.in
 *.ncb
+*.aps
 *.sdf
 *.suo
 *.vcproj.*
