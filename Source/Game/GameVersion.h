@@ -204,7 +204,7 @@ public:
 	//static const GameVersion BUILDGDX;
 	static const GameVersion RAZE;
 	static const GameVersion RED_NUKEM;
-	static const GameVersion CHOCOLATE_DUKE3D;
+	//static const GameVersion CHOCOLATE_DUKE3D;
 	static const GameVersion BELGIAN_CHOCOLATE_DUKE3D;
 	static const GameVersion DUKE3DW;
 	static const GameVersion PKDUKE3D;
