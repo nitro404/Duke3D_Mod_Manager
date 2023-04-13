@@ -2899,6 +2899,12 @@ bool Mod::isValid(bool skipFileInfoValidation) const {
 		}
 	}
 
+	for(const std::string & relatedMod : m_relatedMods) {
+		if(Utilities::areStringsEqualIgnoreCase(m_id, relatedMod)) {
+			return false;
+		}
+	}
+
 	return true;
 }
 
