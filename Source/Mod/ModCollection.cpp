@@ -664,14 +664,6 @@ bool ModCollection::checkGameVersions(const GameVersionCollection & gameVersions
 			}
 		}
 
-		if(mod->hasAlias() && !hasModWithID(mod->getAlias())) {
-			if(verbose) {
-				spdlog::warn("Mod '{}' alias with ID '{}' does not exist in the current collection.", mod->getName(), mod->getAlias());
-			}
-
-			return false;
-		}
-
 		for(size_t j = 0; j < mod->numberOfDownloads(); j++) {
 			modDownload = mod->getDownload(j);
 
@@ -692,8 +684,16 @@ bool ModCollection::checkGameVersions(const GameVersionCollection & gameVersions
 }
 
 bool ModCollection::isValid(bool skipFileInfoValidation) const {
+	std::shared_ptr<Mod> mod;
+
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_mods.begin(); i != m_mods.end(); ++i) {
-		if(!(*i)->isValid(skipFileInfoValidation)) {
+		mod = *i;
+
+		if(!mod->isValid(skipFileInfoValidation)) {
+			return false;
+		}
+
+		if(mod->hasAlias() && !hasModWithID(mod->getAlias())) {
 			return false;
 		}
 	}
