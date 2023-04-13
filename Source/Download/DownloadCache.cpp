@@ -163,8 +163,8 @@ bool DownloadCache::updateCachedPackageFile(const ModDownload * modDownload, con
 			cachedPackageFile->addCachedFile(createCachedFile(modFile->getFileName(), 0, modFile->getSHA1(), Utilities::emptyString));
 		}
 		else {
-			m_cachedModListFile->setFileName(modFile->getFileName());
-			m_cachedModListFile->setSHA1(modFile->getSHA1());
+			cachedFile->setFileName(modFile->getFileName());
+			cachedFile->setSHA1(modFile->getSHA1());
 		}
 	}
 
