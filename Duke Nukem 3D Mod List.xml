@@ -11693,4 +11693,26 @@
 			<download filename="Avatar_1.3.98-ModMgrSA.zip" filesize="7285674" version="1.3.98" game="Stand-Alone" type="Mod Manager Files" state="Native" sha1="508e4cc4e066a48951f757394b31ba9974c04b24"/>
 		</downloads>
 	</mod>
+	<mod name="Diarrhea TC" id="diarrhea_tc" type="Partial Conversion" website="https://forums.duke4.net/topic/11605-the-worst-duke-3d-mod-youll-ever-play">
+		<team>
+			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com" country="Russia"/>
+		</team>
+		<versions>
+			<version release_date="April 1, 2021">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DIARRHEA.CON" size="223171" type="con" sha1="e65c54b2756dd78b5351335803d0ebd799fe6d28"/>
+						<file name="DIARRHEA.GRP" size="16401483" type="grp" sha1="12a6bc94d8312bdee2fb3bc0381717c1c9aa458b"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Diarrhea.zip" filesize="10288035" game="eDuke32" type="Original Files" sha1="e4cca49df2a8a55ba9081527998378a1ebdc1fe4"/>
+			<download filename="Diarrhea_TC-ModMgrE.zip" filesize="9564880" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b4dfc3b06f1c525019e7ef73e39d4858a6a0f009"/>
+		</downloads>
+		<images>
+			<image filename="SVy3Egv.png" filesize="152742" type="logo" width="1337" height="400" caption="Diarrhea TC" sha1="911872ede7036f12b3ed2ae64e2cecb96e3f2fad"/>
+		</images>
+	</mod>
 </mods>
