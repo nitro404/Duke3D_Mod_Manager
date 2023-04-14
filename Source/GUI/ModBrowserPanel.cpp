@@ -209,7 +209,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_modVersionTypeListBox->Bind(wxEVT_LISTBOX, &ModBrowserPanel::onModVersionTypeSelected, this);
 	m_modVersionTypeListBox->Bind(wxEVT_RIGHT_UP, &ModBrowserPanel::onModVersionTypeListRightClicked, this);
 
-	m_modGameVersionListLabel = new wxStaticText(modSelectionPanel, wxID_ANY, "Mod Game Versions", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_modGameVersionListLabel = new wxStaticText(modSelectionPanel, wxID_ANY, "Compatible Mod Game Versions", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 	m_modGameVersionListLabel->SetFont(m_modGameVersionListLabel->GetFont().MakeBold());
 	m_modGameVersionListBox = new wxListBox(modSelectionPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, {}, wxLB_SINGLE | wxLB_ALWAYS_SB);
 	m_modGameVersionListBox->Bind(wxEVT_LISTBOX, &ModBrowserPanel::onModGameVersionSelected, this);
@@ -709,6 +709,8 @@ void ModBrowserPanel::updateModGameVersionList() {
 						if(modGameVersionIndex != std::numeric_limits<size_t>::max()) {
 							m_modGameVersionListBox->SetSelection(modGameVersionIndex);
 
+							m_modGameVersionListLabel->SetLabelText("Mod Game Versions");
+
 							updateUninstallButton();
 						}
 						else {
@@ -726,6 +728,8 @@ void ModBrowserPanel::updateModGameVersionList() {
 
 							if(compatibleModGameVersionShortNameIterator != compatibleModGameVersionShortNames.cend()) {
 								m_modGameVersionListBox->SetSelection(compatibleModGameVersionShortNameIterator - compatibleModGameVersionShortNames.cbegin());
+
+								m_modGameVersionListLabel->SetLabelText("Compatible Mod Game Versions");
 
 								updateUninstallButton();
 							}
@@ -1204,6 +1208,15 @@ void ModBrowserPanel::onModGameVersionSelected(wxCommandEvent & event) {
 	}
 
 	updateUninstallButton();
+
+	std::shared_ptr<ModGameVersion> selectedModGameVersion(m_modManager->getSelectedModGameVersion());
+
+	if(selectedModGameVersion != nullptr && selectedModGameVersion->isStandAlone()) {
+		m_modGameVersionListLabel->SetLabelText("Mod Game Versions");
+	}
+	else {
+		m_modGameVersionListLabel->SetLabelText("Compatible Mod Game Versions");
+	}
 
 	m_launchButton->SetLabel("Launch Mod");
 	m_launchButton->Enable();
