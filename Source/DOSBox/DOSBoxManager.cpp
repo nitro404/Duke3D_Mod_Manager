@@ -64,6 +64,16 @@ std::shared_ptr<DOSBoxVersionCollection> DOSBoxManager::getDOSBoxVersions() cons
 std::string DOSBoxManager::getLocalDOSBoxDownloadsListFilePath() const {
 	SettingsManager * settings = SettingsManager::getInstance();
 
+	if(settings->downloadsDirectoryPath.empty()) {
+		spdlog::error("Missing downloads directory path setting.");
+		return {};
+	}
+
+	if(settings->dosboxDownloadsDirectoryName.empty()) {
+		spdlog::error("Missing DOSBox downloads directory name setting.");
+		return {};
+	}
+
 	if(settings->remoteDOSBoxVersionsListFileName.empty()) {
 		spdlog::error("Missing remote DOSBox list file name setting.");
 		return {};
@@ -81,6 +91,11 @@ bool DOSBoxManager::shouldUpdateDOSBoxDownloadList() const {
 
 	std::string localDOSBoxDownloadsListFilePath(getLocalDOSBoxDownloadsListFilePath());
 
+	if(localDOSBoxDownloadsListFilePath.empty()) {
+		spdlog::error("Failed to determine local DOSBox downloads list file path. Are your settings configured correctly?");
+		return false;
+	}
+
 	if(!std::filesystem::is_regular_file(std::filesystem::path(localDOSBoxDownloadsListFilePath))) {
 		return true;
 	}
@@ -90,6 +105,11 @@ bool DOSBoxManager::shouldUpdateDOSBoxDownloadList() const {
 
 bool DOSBoxManager::loadOrUpdateDOSBoxDownloadList(bool forceUpdate) const {
 	std::string localDOSBoxDownloadsListFilePath(getLocalDOSBoxDownloadsListFilePath());
+
+	if(localDOSBoxDownloadsListFilePath.empty()) {
+		spdlog::error("Failed to determine local DOSBox downloads list file path. Are your settings configured correctly?");
+		return false;
+	}
 
 	if(!forceUpdate && std::filesystem::is_regular_file(std::filesystem::path(localDOSBoxDownloadsListFilePath))) {
 		std::unique_ptr<DOSBoxDownloadCollection> dosboxDownloads(std::make_unique<DOSBoxDownloadCollection>());
@@ -118,6 +138,20 @@ bool DOSBoxManager::updateDOSBoxDownloadList(bool force) const {
 
 	SettingsManager * settings = SettingsManager::getInstance();
 
+	if(settings->remoteDownloadsDirectoryName.empty()) {
+		spdlog::error("Missing remote downloads directory name setting.");
+		return {};
+	}
+
+	if(settings->remoteDOSBoxDownloadsDirectoryName.empty()) {
+		spdlog::error("Missing remote DOSBox downloads directory name setting.");
+		return {};
+	}
+
+	if(settings->remoteDOSBoxVersionsListFileName.empty()) {
+		spdlog::error("Missing remote DOSBox versions list file name setting.");
+		return {};
+	}
 	std::string dosboxListRemoteFilePath(Utilities::joinPaths(settings->remoteDownloadsDirectoryName, settings->remoteDOSBoxDownloadsDirectoryName, settings->remoteDOSBoxVersionsListFileName));
 	std::string dosboxListURL(Utilities::joinPaths(httpService->getBaseURL(), dosboxListRemoteFilePath));
 
@@ -167,6 +201,11 @@ bool DOSBoxManager::updateDOSBoxDownloadList(bool force) const {
 	}
 
 	std::string localDOSBoxDownloadsListFilePath(getLocalDOSBoxDownloadsListFilePath());
+
+	if(localDOSBoxDownloadsListFilePath.empty()) {
+		spdlog::error("Failed to determine local DOSBox downloads list file path. Are your settings configured correctly?");
+		return false;
+	}
 
 	if(!response->getBody()->writeTo(localDOSBoxDownloadsListFilePath, true)) {
 		spdlog::error("Failed to write DOSBox version download collection JSON data to file: '{}'.", localDOSBoxDownloadsListFilePath);
