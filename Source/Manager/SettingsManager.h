@@ -51,6 +51,7 @@ public:
 	static const std::string DEFAULT_MAP_DOWNLOADS_DIRECTORY_NAME;
 	static const std::string DEFAULT_DOSBOX_DOWNLOADS_DIRECTORY_NAME;
 	static const std::string DEFAULT_GAME_DOWNLOADS_DIRECTORY_NAME;
+	static const std::string DEFAULT_GROUP_DOWNLOADS_DIRECTORY_NAME;
 	static const std::string DEFAULT_DATA_DIRECTORY_PATH;
 	static const std::string DEFAULT_APP_TEMP_DIRECTORY_PATH;
 	static const std::string DEFAULT_GAME_TEMP_DIRECTORY_NAME;
@@ -112,6 +113,7 @@ public:
 	std::string mapDownloadsDirectoryName;
 	std::string dosboxDownloadsDirectoryName;
 	std::string gameDownloadsDirectoryName;
+	std::string groupDownloadsDirectoryName;
 	std::string dataDirectoryPath;
 	std::string appTempDirectoryPath;
 	std::string gameTempDirectoryName;

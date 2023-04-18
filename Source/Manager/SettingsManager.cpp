@@ -63,6 +63,7 @@ static constexpr const char * MOD_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "mods
 static constexpr const char * MAP_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "maps";
 static constexpr const char * DOSBOX_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "dosbox";
 static constexpr const char * GAME_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "games";
+static constexpr const char * GROUP_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME = "groups";
 
 static constexpr const char * CACHE_CATEGORY_NAME = "cache";
 static constexpr const char * CACHE_DIRECTORY_PATH_PROPERTY_NAME = DIRECTORY_PATH;
@@ -148,6 +149,7 @@ const std::string SettingsManager::DEFAULT_MOD_DOWNLOADS_DIRECTORY_NAME("Mods");
 const std::string SettingsManager::DEFAULT_MAP_DOWNLOADS_DIRECTORY_NAME("Maps");
 const std::string SettingsManager::DEFAULT_DOSBOX_DOWNLOADS_DIRECTORY_NAME(ModManager::DEFAULT_PREFERRED_DOSBOX_VERSION_ID);
 const std::string SettingsManager::DEFAULT_GAME_DOWNLOADS_DIRECTORY_NAME("Games");
+const std::string SettingsManager::DEFAULT_GROUP_DOWNLOADS_DIRECTORY_NAME("Groups");
 const std::string SettingsManager::DEFAULT_DATA_DIRECTORY_PATH("Data");
 const std::string SettingsManager::DEFAULT_APP_TEMP_DIRECTORY_PATH("Temp");
 const std::string SettingsManager::DEFAULT_GAME_TEMP_DIRECTORY_NAME("Temp");
@@ -310,6 +312,7 @@ SettingsManager::SettingsManager()
 	, modDownloadsDirectoryName(DEFAULT_MOD_DOWNLOADS_DIRECTORY_NAME)
 	, mapDownloadsDirectoryName(DEFAULT_MAP_DOWNLOADS_DIRECTORY_NAME)
 	, gameDownloadsDirectoryName(DEFAULT_GAME_DOWNLOADS_DIRECTORY_NAME)
+	, groupDownloadsDirectoryName(DEFAULT_GROUP_DOWNLOADS_DIRECTORY_NAME)
 	, dataDirectoryPath(DEFAULT_DATA_DIRECTORY_PATH)
 	, appTempDirectoryPath(DEFAULT_APP_TEMP_DIRECTORY_PATH)
 	, gameTempDirectoryName(DEFAULT_GAME_TEMP_DIRECTORY_NAME)
@@ -373,6 +376,7 @@ void SettingsManager::reset() {
 	mapDownloadsDirectoryName = DEFAULT_MAP_DOWNLOADS_DIRECTORY_NAME;
 	dosboxDownloadsDirectoryName = DEFAULT_DOSBOX_DOWNLOADS_DIRECTORY_NAME;
 	gameDownloadsDirectoryName = DEFAULT_GAME_DOWNLOADS_DIRECTORY_NAME;
+	groupDownloadsDirectoryName = DEFAULT_GROUP_DOWNLOADS_DIRECTORY_NAME;
 	dataDirectoryPath = DEFAULT_DATA_DIRECTORY_PATH;
 	appTempDirectoryPath = DEFAULT_APP_TEMP_DIRECTORY_PATH;
 	gameTempDirectoryName = DEFAULT_GAME_TEMP_DIRECTORY_NAME;
@@ -505,6 +509,8 @@ rapidjson::Document SettingsManager::toJSON() const {
 	downloadsCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME), dosboxDownloadsDirectoryNameValue, allocator);
 	rapidjson::Value gameDownloadsDirectoryNameValue(gameDownloadsDirectoryName.c_str(), allocator);
 	downloadsCategoryValue.AddMember(rapidjson::StringRef(GAME_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME), gameDownloadsDirectoryNameValue, allocator);
+	rapidjson::Value groupDownloadsDirectoryNameValue(groupDownloadsDirectoryName.c_str(), allocator);
+	downloadsCategoryValue.AddMember(rapidjson::StringRef(GROUP_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME), groupDownloadsDirectoryNameValue, allocator);
 
 	settingsDocument.AddMember(rapidjson::StringRef(DOWNLOADS_CATEGORY_NAME), downloadsCategoryValue, allocator);
 
@@ -749,6 +755,7 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 		assignStringSetting(mapDownloadsDirectoryName, downloadsCategoryValue, MAP_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
 		assignStringSetting(dosboxDownloadsDirectoryName, downloadsCategoryValue, DOSBOX_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
 		assignStringSetting(gameDownloadsDirectoryName, downloadsCategoryValue, GAME_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
+		assignStringSetting(groupDownloadsDirectoryName, downloadsCategoryValue, GROUP_DOWNLOADS_DIRECTORY_NAME_PROPERTY_NAME);
 	}
 
 	if(settingsDocument.HasMember(CACHE_CATEGORY_NAME) && settingsDocument[CACHE_CATEGORY_NAME].IsObject()) {

@@ -387,6 +387,8 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 		settings->preferredGameVersionID = m_preferredGameVersion->getID();
 	}
 
+	m_gameManager->updateGroupFileSymlinks();
+
 	m_gameVersionCollectionSizeChangedConnection = gameVersions->sizeChanged.connect(std::bind(&ModManager::onGameVersionCollectionSizeChanged, this, std::placeholders::_1));
 	m_gameVersionCollectionItemModifiedConnection = gameVersions->itemModified.connect(std::bind(&ModManager::onGameVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
 
@@ -2043,8 +2045,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		}
 	}
 
-	bool shouldConfigureApplicationTemporaryDirectory = selectedGameVersion->doesRequireCombinedGroup() && areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories();
-	bool shouldConfigureGameTemporaryDirectory = !areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories();
+	bool shouldConfigureApplicationTemporaryDirectory = selectedGameVersion->doesRequireCombinedGroup() && Utilities::areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories();
+	bool shouldConfigureGameTemporaryDirectory = !Utilities::areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories();
 
 	std::string temporaryDirectoryName;
 
@@ -2860,7 +2862,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 		if(!selectedGameVersion->doesRequireGroupFileExtraction()) {
 			std::string modPath;
 
-			if(areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories()) {
+			if(Utilities::areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories()) {
 				modPath = Utilities::joinPaths(settings->modsSymlinkName, targetGameVersion->getModDirectoryName());
 			}
 			else if(selectedGameVersion->doesSupportSubdirectories()) {
@@ -2921,7 +2923,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			else if(!combinedGroupFileName.empty()) {
 				std::string combinedGroupFilePath;
 
-				if(areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories()) {
+				if(Utilities::areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories()) {
 					combinedGroupFilePath = Utilities::joinPaths(settings->tempSymlinkName, combinedGroupFileName);
 				}
 				else if(selectedGameVersion->doesSupportSubdirectories()) {
@@ -3023,7 +3025,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 						}
 
 						if(std::filesystem::is_regular_file(std::filesystem::path(Utilities::joinPaths(mapsDirectoryPath, userMap)))) {
-							if(areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories()) {
+							if(Utilities::areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories()) {
 								command << Utilities::joinPaths(settings->mapsSymlinkName, userMap);
 							}
 							else if(selectedGameVersion->doesSupportSubdirectories()) {
@@ -4473,27 +4475,7 @@ bool ModManager::areSymlinkSettingsValid() const {
 		   !settings->mapsSymlinkName.empty();
 }
 
-bool ModManager::areSymlinksSupported() const {
-	std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
-	static const std::string TEST_SYMLINK_NAME("TestSymlink");
-
-	static std::optional<bool> s_symlinksSupported;
-
-	if(!s_symlinksSupported.has_value()) {
-		s_symlinksSupported = createSymlink(std::filesystem::current_path().string(), TEST_SYMLINK_NAME, "");
-
-		removeSymlink(TEST_SYMLINK_NAME, "");
-
-		spdlog::debug("Symbolic link creation is {}.", s_symlinksSupported.value() ? "supported" : "unsupported");
-	}
-
-	return s_symlinksSupported.value();
-}
-
-bool ModManager::createSymlink(const std::string & symlinkTarget, const std::string & symlinkName, const std::string & symlinkDestinationDirectory) const {
-	std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
+bool ModManager::createSymlink(const std::string & symlinkTarget, const std::string & symlinkName, const std::string & symlinkDestinationDirectory) {
 	if(symlinkName.empty() ||
 	   symlinkTarget.empty()) {
 		spdlog::error("Failed to create symlink, invalid arguments provided.");
@@ -4540,9 +4522,7 @@ bool ModManager::createSymlink(const std::string & symlinkTarget, const std::str
 	return true;
 }
 
-bool ModManager::removeSymlink(const std::string & symlinkName, const std::string & symlinkDestinationDirectory) const {
-	std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
+bool ModManager::removeSymlink(const std::string & symlinkName, const std::string & symlinkDestinationDirectory) {
 	if(symlinkName.empty()) {
 		spdlog::error("Failed to remove symlink, invalid arguments provided.");
 		return false;
@@ -4582,7 +4562,7 @@ bool ModManager::createSymlinksOrCopyTemporaryFiles(const GameVersionCollection 
 
 	std::string mapsDirectoryPath(getMapsDirectoryPath());
 
-	if(areSymlinksSupported() && gameVersion.doesSupportSubdirectories()) {
+	if(Utilities::areSymlinksSupported() && gameVersion.doesSupportSubdirectories()) {
 		bool result = true;
 
 		result &= createSymlink(gameVersion.getGamePath(), settings->gameSymlinkName, std::filesystem::current_path().string());
@@ -4715,7 +4695,7 @@ bool ModManager::removeSymlinks(const GameVersion & gameVersion) {
 		return false;
 	}
 
-	if(areSymlinksSupported() && gameVersion.doesSupportSubdirectories()) {
+	if(Utilities::areSymlinksSupported() && gameVersion.doesSupportSubdirectories()) {
 		bool result = true;
 
 		result &= removeSymlink(settings->gameSymlinkName, std::filesystem::current_path().string());

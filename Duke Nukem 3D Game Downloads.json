@@ -42,8 +42,7 @@
 							"fileSize": 11332812,
 							"type": "Group",
 							"sha1": "dd7590a5c530cde323f1d04d303148a110c618b0",
-							"operatingSystem": "DOS",
-							"processorArchitecture": "x86"
+							"operatingSystem": "DOS"
 						}
 					]
 				}
@@ -70,8 +69,7 @@
 							"fileSize": 19514321,
 							"type": "Group",
 							"sha1": "b7c777cf8f90a521f03bc24bb9f23d0ee9325b85",
-							"operatingSystem": "DOS",
-							"processorArchitecture": "x86"
+							"operatingSystem": "DOS"
 						}
 					]
 				}

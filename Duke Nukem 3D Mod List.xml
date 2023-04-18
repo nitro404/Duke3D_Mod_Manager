@@ -7936,7 +7936,7 @@
 		</downloads>
 	</mod>
 	<mod name="SWAT" id="swat" type="Total Conversion" website="http://nippersite.50megs.com/contact.html">
-		<team>
+		<team name="Nipper Productions">
 			<member name="Nathaniel Miller" alias="NIPPER"/>
 		</team>
 		<versions>
@@ -9891,7 +9891,7 @@
 	</mod>
 	<mod name="Fallout Freeze" id="fallout_freeze" type="Total Conversion" version="1.1" website="https://brullov.itch.io/fallout-freeze">
 		<team name="Brullov Studios" website="https://brullov-studios.itch.io">
-			<member name="Artem Brullov" twitter="brullov_art" website="https://itch.io/profile/brullov" youtube="brullov_labs" reddit="brullov"/>
+			<member name="Artem Brullov" twitter="brullov_art" website="https://itch.io/profile/brullov" youtube="brullov_labs" reddit="brullov" discord="brullov#4495" country="Ukraine"/>
 			<member name="Max Ylitalo" alias="Oasiz"/>
 			<member name="Riccardo Capogna" alias="RichardStorm" email="riccardo.capogna@yahoo.it"/>
 			<member name="Cage" email="cageds@tlen.pl"/>
@@ -11327,7 +11327,7 @@
 	</mod>
 	<mod name="Retro Deathmatch" id="retro_deathmatch" type="Dukematch" version="0.053" version_type="Beta" website="https://www.moddb.com/mods/retro-deathmatch">
 		<team>
-			<member name="Graphics" website="https://www.moddb.com/mods/retro-deathmatch"/>
+			<member name="Graphics" website="https://www.moddb.com/mods/retro-deathmatch" discord="Graphics#8685"/>
 		</team>
 		<versions>
 			<version id="0.053" release_date="March 18, 2023">

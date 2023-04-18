@@ -179,9 +179,8 @@ private:
 	bool createGameTemporaryDirectory(const GameVersion & gameVersion);
 	bool removeGameTemporaryDirectory(const GameVersion & gameVersion);
 	bool areSymlinkSettingsValid() const;
-	bool areSymlinksSupported() const;
-	bool createSymlink(const std::string & symlinkName, const std::string & symlinkTarget, const std::string & symlinkDestinationDirectory) const;
-	bool removeSymlink(const std::string & symlinkName, const std::string & symlinkDestinationDirectory) const;
+	static bool createSymlink(const std::string & symlinkName, const std::string & symlinkTarget, const std::string & symlinkDestinationDirectory);
+	static bool removeSymlink(const std::string & symlinkName, const std::string & symlinkDestinationDirectory);
 	bool createSymlinksOrCopyTemporaryFiles(const GameVersionCollection & gameVersions, const GameVersion & gameVersion, const ModGameVersion * selectedModGameVersion, const std::string & customMap, bool createTempSymlink = true, InstalledModInfo * installedModInfo = nullptr);
 	bool removeSymlinks(const GameVersion & gameVersion);
 	std::vector<std::string> deleteFilesWithSuffix(const std::string & suffix, const std::string & path = "");
