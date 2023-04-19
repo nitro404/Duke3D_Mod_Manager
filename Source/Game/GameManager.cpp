@@ -2530,17 +2530,18 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		}
 	}
 	else if(isRegularVersion || isAtomicEdition) {
-		std::function<bool(const GameFileInformation &)> gameFileSHA1VerificationFunction([&gameVersion, &destinationDirectoryPath](const GameFileInformation & gameFileInfo) {
+		std::function<bool(const GameFileInformation &)> gameFileSHA1VerificationFunction([&gameVersion, &destinationDirectoryPath, useFallback](const GameFileInformation & gameFileInfo) {
 			bool gameFileSHA1Verified = false;
 			std::string calculatedGameFileSHA1(Utilities::getFileSHA1Hash(Utilities::joinPaths(destinationDirectoryPath, gameFileInfo.fileName)));
 
 			if(calculatedGameFileSHA1.empty()) {
 				// skip missing files that aren't required
-				if(!gameFileInfo.required) {
+				if(!gameFileInfo.required || (!useFallback && Utilities::areStringsEqualIgnoreCase(gameFileInfo.fileName, Group::DUKE_NUKEM_3D_GROUP_FILE_NAME))) {
 					return true;
 				}
 
 				spdlog::error("Failed to calculate '{}' '{}' game file SHA1.", gameVersion.getLongName(), gameFileInfo.fileName);
+
 				return false;
 			}
 
