@@ -526,7 +526,7 @@
 			<member name="Slawomir Lawrynowicz" alias="LAW" email="Law2@wp.pl"/>
 			<member name="John Henderson" alias="J.H" email="Johnhenderson16@lineone.net"/>
 			<member name="The Map Master" email="I.mecking@gelrevision.nl"/>
-			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com"/>
+			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com" discord="Mrlijn#8650"/>
 			<member name="Jer van Oostrum" email="G.vanoostrum@worldonline.nl"/>
 			<member name="Mr. Sharp" email="Tototoo@oz.net"/>
 			<member name="Mark McPhail" alias="DukeStar" email="Theduke00@optusnet.com.au"/>
@@ -999,7 +999,7 @@
 			<member name="Maarten van Oostrum"/>
 			<member name="Iggy"/>
 			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
-			<member name="William Gee" email="geewillywizz@live.com" country="New Zealand"/>
+			<member name="William Gee" email="geewillywizz@live.com" discord="William Gee#2015" country="New Zealand"/>
 		</team>
 		<versions>
 			<version release_date="January 29, 2006">
@@ -2635,7 +2635,7 @@
 			<member name="Carl Smith"/>
 			<member name="Kris Maes"/>
 			<member name="B. Krash"/>
-			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com"/>
+			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com" discord="Mrlijn#8650"/>
 			<member name="Monster Radio Man"/>
 			<member name="Robbie Langton"/>
 			<member name="Andrew Irvine"/>
@@ -3146,7 +3146,7 @@
 	</mod>
 	<mod name="Project X" id="project_x" type="Total Conversion" version="Demo" website="http://www.dukeworld.com/projectx">
 		<team>
-			<member name="TerminX" email="terminx@theoffspring.net"/>
+			<member name="TerminX" email="terminx@theoffspring.net" discord="terminx#9428"/>
 		</team>
 		<versions>
 			<version id="Demo" release_date="November 27, 1998">
@@ -4480,7 +4480,7 @@
 	</mod>
 	<mod name="WGRealms Episode" id="wgrealms_episode" type="Total Conversion" website="http://www.geocities.com/wgrealms">
 		<team>
-			<member name="William Gee" email="geewillywizz@hotmail.com" country="New Zealand"/>
+			<member name="William Gee" email="geewillywizz@hotmail.com" discord="William Gee#2015" country="New Zealand"/>
 		</team>
 		<versions>
 			<version release_date="July 30, 2004">
@@ -7358,7 +7358,7 @@
 	</mod>
 	<mod name="WGSpace Episode" id="wgspace_episode" type="Episode" website="http://wgrealms.williamgeegallery.com">
 		<team>
-			<member name="William Gee" email="geewillywizz@live.com" country="New Zealand"/>
+			<member name="William Gee" email="geewillywizz@live.com" discord="William Gee#2015" country="New Zealand"/>
 		</team>
 		<versions>
 			<version release_date="August 6, 2008">
@@ -7897,7 +7897,7 @@
 	</mod>
 	<mod name="Red Series" id="red_series" type="Episode">
 		<team email="jersomer@popmail.com">
-			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com"/>
+			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com" discord="Mrlijn#8650"/>
 		</team>
 		<versions>
 			<version release_date="January 1, 2009">
@@ -8360,7 +8360,7 @@
 			<member name="Diehard"/>
 			<member name="Jimbob"/>
 			<member name="SalaciusCrumb" alias="SC" email="salaciuscrumb@gmx.net" icq="58098027"/>
-			<member name="Soy Leonardo Pellegrini" alias="DavoX"/>
+			<member name="Soy Leonardo Pellegrini" alias="DavoX" discord="Leo &quot;DavoX&quot; Pellegrini#3287"/>
 			<member name="Parkar"/>
 			<member name="Reaper_Man" email="lrdmecha@yahoo.com" aim="lrdmecha1015" icq="60008413"/>
 			<member name="TerminX" email="terminx@theoffspring.net"/>
@@ -8460,7 +8460,7 @@
 		<team>
 			<member name="Fox"/>
 			<member name="Nukey"/>
-			<member name="Hendricks266"/>
+			<member name="Hendricks266" discord="Hendricks266#8920"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="June 15, 2008">
@@ -8570,13 +8570,13 @@
 			<member name="Michael Crisp" alias="Micky C"/>
 			<member name="Mikko Sandt" email="sirpa.sandt@pp.inet.fi"/>
 			<member name="Mister Sinister"/>
-			<member name="Aymeric Nocus" alias="MRCK" email="aymeric-nocus@tele2.fr" youtube="MisterCK"/>
+			<member name="Aymeric Nocus" alias="MRCK" email="aymeric-nocus@tele2.fr" youtube="MisterCK" discord="ck3d#2928" country="France"/>
 			<member name="Paul B"/>
 			<member name="Steambull"/>
 			<member name="Stumpy"/>
 			<member name="Taivo"/>
 			<member name="Drek"/>
-			<member name="Hendricks266"/>
+			<member name="Hendricks266" discord="Hendricks266#8920"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="June 23, 2014">
@@ -8638,7 +8638,7 @@
 		<team>
 			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com"/>
 			<member name="sebabdukeboss20" discord="sebabdukeboss20#5996"/>
-			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com"/>
+			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com" discord="Mrlijn#8650"/>
 			<member name="Maarten van Oostrum"/>
 			<member name="Forge"/>
 			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
@@ -8655,7 +8655,7 @@
 			<member name="Geedra"/>
 			<member name="Cage" email="cageds@tlen.pl"/>
 			<member name="Bullov"/>
-			<member name="William Gee" email="geewillywizz@live.com" country="New Zealand"/>
+			<member name="William Gee" email="geewillywizz@live.com" discord="William Gee#2015" country="New Zealand"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="August 24, 2018">
@@ -9185,7 +9185,7 @@
 	</mod>
 	<mod name="Shaky Grounds" id="shaky_grounds" type="Episode" website="https://www.moddb.com/mods/shaky-grounds">
 		<team>
-			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com"/>
+			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com" discord="Mrlijn#8650"/>
 		</team>
 		<versions>
 			<version release_date="November 12, 2021">
@@ -9485,7 +9485,7 @@
 	</mod>
 	<mod name="Turok Nukem (Vanilla)" id="turok_nukem_vanilla" type="Episode">
 		<team>
-			<member name="Duke64Nukem" alias="Kamikaze Nukem" email="duke64nukem@gmail.com"/>
+			<member name="Duke64Nukem" alias="Kamikaze Nukem" email="duke64nukem@gmail.com" discord="Sixty Four#1072"/>
 		</team>
 		<versions>
 			<version release_date="July 28, 2017">
@@ -9664,9 +9664,9 @@
 	<mod name="Metropolitan Mayhem" id="metropolitan_mayhem" type="Episode" website="https://www.moddb.com/mods/metropolitan-mayhem">
 		<team>
 			<member name="Corentin Dallay" alias="MetHy"/>
-			<member name="Aymeric Nocus" alias="MRCK" email="aymeric-nocus@tele2.fr" youtube="MisterCK"/>
+			<member name="Aymeric Nocus" alias="MRCK" email="aymeric-nocus@tele2.fr" youtube="MisterCK" discord="ck3d#2928" country="France"/>
 			<member name="Mikko Sandt" alias="Jackotrades" email="sirpa.sandt@pp.inet.fi"/>
-			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com"/>
+			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com" discord="Mrlijn#8650"/>
 		</team>
 		<versions>
 			<version release_date="March 2, 2012">
@@ -9687,7 +9687,7 @@
 		<team>
 			<member name="Daedolon"/>
 			<member name="Fox"/>
-			<member name="Hendricks266"/>
+			<member name="Hendricks266" discord="Hendricks266#8920"/>
 			<member name="Nukey"/>
 			<member name="Max Ylitalo" alias="Oasiz"/>
 			<member name="TerminX" email="terminx@theoffspring.net"/>
@@ -9922,7 +9922,7 @@
 	</mod>
 	<mod name="Haunted Nukem" id="haunted_nukem" type="Total Conversion" version="2.1" website="https://www.moddb.com/mods/haunted-nukem">
 		<team>
-			<member name="Duke64Nukem" alias="Kamikaze Nukem" email="duke64nukem@gmail.com"/>
+			<member name="Duke64Nukem" alias="Kamikaze Nukem" email="duke64nukem@gmail.com" discord="Sixty Four#1072"/>
 			<member name="bullerbuller7"/>
 		</team>
 		<versions>
@@ -10608,7 +10608,7 @@
 	</mod>
 	<mod name="The Chronic" id="the_chronic" type="Episode">
 		<team>
-			<member name="Sanek" email="bechtin7@mail.ru" country="Russia"/>
+			<member name="Sanek" email="bechtin7@mail.ru" discord="Sanek#6142" country="Russia"/>
 		</team>
 		<versions>
 			<version release_date="June 27, 2009">
@@ -10627,7 +10627,7 @@
 	</mod>
 	<mod name="WG The Abyss Episode" id="wg_the_abyss_episode" type="Episode">
 		<team>
-			<member name="William Gee" email="geewillywizz@gmail.com" website="http://wg.duke4.net" country="New Zealand"/>
+			<member name="William Gee" email="geewillywizz@gmail.com" website="http://wg.duke4.net" discord="William Gee#2015" country="New Zealand"/>
 		</team>
 		<versions>
 			<version release_date="May 20, 2021">
@@ -10646,7 +10646,7 @@
 	</mod>
 	<mod name="Blast Radius" id="blast_radius" type="Episode" version="1.0.13" website="https://www.moddb.com/mods/duke-nukem-3d-blast-radius">
 		<team country="France">
-			<member name="Aymeric Nocus" alias="ck3D" email="aymeric-nocus@tele2.fr" website="https://www.ko-fi.com/blastradius" youtube="MisterCK"/>
+			<member name="Aymeric Nocus" alias="ck3D" email="aymeric-nocus@tele2.fr" website="https://www.ko-fi.com/blastradius" youtube="MisterCK" discord="ck3d#2928" country="France"/>
 			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld"/>
 		</team>
 		<versions>
@@ -10696,7 +10696,7 @@
 	</mod>
 	<mod name="Countdown to Christmas" id="countdown_to_christmas" type="Total Conversion">
 		<team>
-			<member name="Sanek" email="bechtin7@mail.ru" country="Russia"/>
+			<member name="Sanek" email="bechtin7@mail.ru" discord="Sanek#6142" country="Russia"/>
 		</team>
 		<versions>
 			<version release_date="December 24, 2009">
@@ -10762,7 +10762,7 @@
 	</mod>
 	<mod name="On Vacation" id="on_vacation" type="Episode">
 		<team>
-			<member name="Sanek" email="bechtin7@mail.ru" country="Russia"/>
+			<member name="Sanek" email="bechtin7@mail.ru" discord="Sanek#6142" country="Russia"/>
 		</team>
 		<versions>
 			<version release_date="June 1, 2010">
@@ -11140,7 +11140,7 @@
 	</mod>
 	<mod name="Anarchy City" id="anarchy_city" type="Episode" version="1.1">
 		<team>
-			<member name="Aymeric Nocus" alias="ck3D" email="aymeric-nocus@tele2.fr" website="https://www.ko-fi.com/blastradius" youtube="MisterCK" country="France"/>
+			<member name="Aymeric Nocus" alias="ck3D" email="aymeric-nocus@tele2.fr" website="https://www.ko-fi.com/blastradius" youtube="MisterCK" discord="ck3d#2928" country="France"/>
 		</team>
 		<versions>
 			<version id="1.1" release_date="May 25, 2004">
@@ -11347,7 +11347,7 @@
 	</mod>
 	<mod name="WGRealms 2: Siege Breaker" id="wgrealms_2_-_siege_breaker" alias="wg_realms_-_demon_throne" type="Total Conversion" version="1.201" website="https://www.moddb.com/games/wgrealms-2">
 		<team discord="https://discord.gg/jNrKdk5">
-			<member name="William Gee" email="geewillywizz@live.com" website="http://wgrealms.williamgeegallery.com" country="New Zealand"/>
+			<member name="William Gee" email="geewillywizz@live.com" website="http://wgrealms.williamgeegallery.com" discord="William Gee#2015" country="New Zealand"/>
 			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld"/>
 			<member name="Cage" email="cageds@tlen.pl"/>
 		</team>
@@ -11421,14 +11421,14 @@
 	</mod>
 	<mod name="WG Realms: Demon Throne" id="wg_realms_-_demon_throne" alias="wgrealms_2_-_siege_breaker" type="Total Conversion" version="3.01" website="https://www.moddb.com/games/wgrealms-2">
 		<team discord="https://discord.gg/jNrKdk5">
-			<member name="William Gee" email="geewillywizz@live.com" website="http://wgrealms.williamgeegallery.com" country="New Zealand"/>
+			<member name="William Gee" email="geewillywizz@live.com" website="http://wgrealms.williamgeegallery.com" discord="William Gee#2015" country="New Zealand"/>
 			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld"/>
 			<member name="sebabdukeboss20" discord="sebabdukeboss20#5996"/>
 			<member name="Cage" email="cageds@tlen.pl"/>
 			<member name="Forge"/>
 			<member name="Doom64hunter"/>
 			<member name="Geedra"/>
-			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com"/>
+			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com" discord="Mrlijn#8650"/>
 			<member name="Maarten van Oostrum"/>
 			<member name="AliCatGamer"/>
 			<member name="Eddie Teach"/>
@@ -11533,7 +11533,7 @@
 			<member name="Jarmo Kylmäaho"/>
 			<member name="Corentin Dallay" alias="MetHy"/>
 			<member name="Mikko Sandt" email="sirpa.sandt@pp.inet.fi" icq="71211982"/>
-			<member name="Aymeric Nocus" alias="ck3D" email="aymeric-nocus@tele2.fr" website="https://www.ko-fi.com/blastradius" youtube="MisterCK"/>
+			<member name="Aymeric Nocus" alias="ck3D" email="aymeric-nocus@tele2.fr" website="https://www.ko-fi.com/blastradius" youtube="MisterCK" discord="ck3d#2928" country="France"/>
 			<member name="Vlad Borisenko" twitter="shtovladya"/>
 			<member name="Katherine Baskin" alias="The Baskinator" twitter="baskinator"/>
 			<member name="Jarkko Rotstén" alias="Roz" twitter="rotsten"/>
