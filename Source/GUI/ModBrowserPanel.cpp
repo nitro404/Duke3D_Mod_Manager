@@ -781,7 +781,7 @@ void ModBrowserPanel::updateModInfo() {
 	if(m_searchQuery.empty()) {
 		std::shared_ptr<Mod> mod(m_modManager->getSelectedMod());
 
-		if(mod != nullptr && m_modManager->getOrganizedMods()->shouldDisplayMods()) {
+		if(mod != nullptr && (m_modManager->getOrganizedMods()->shouldDisplayMods() || m_modManager->getOrganizedMods()->shouldDisplayFavouriteMods())) {
 			m_modInfoPanel->Show();
 			m_modNameText->SetLabelText(wxString::FromUTF8(mod->getName()));
 			m_modTypeText->SetLabelText(mod->getType());
