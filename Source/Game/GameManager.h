@@ -40,11 +40,11 @@ public:
 	std::string getXDukeDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const;
 	std::string getRDukeDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const;
 	std::string getDuke3d_w32DownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const;
-	bool installGame(const GameVersion & gameVersion, const std::string & destinationDirectoryPath, bool useFallback = false, bool overwrite = false);
+	bool installGame(const GameVersion & gameVersion, const std::string & destinationDirectoryPath, bool useFallback = false, bool overwrite = true);
 	static bool isGameDownloadable(const std::string & gameVersionID);
 	static bool isGroupFileDownloaded(const std::string & gameVersionID);
 	bool downloadGroupFile(const std::string & gameVersionID);
-	bool installGroupFile(const std::string & gameVersionID, const std::string & directoryPath, bool overwrite = false);
+	bool installGroupFile(const std::string & gameVersionID, const std::string & directoryPath, bool overwrite = true);
 	void updateGroupFileSymlinks();
 
 private:

@@ -34,7 +34,7 @@ public:
 	std::string getLatestDOSBoxXDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
 	std::unique_ptr<Archive> downloadLatestDOSBoxVersion(const DOSBoxVersion & dosboxVersion, std::string * latestVersion = nullptr) const;
 	std::unique_ptr<Archive> downloadLatestDOSBoxVersion(const DOSBoxVersion & dosboxVersion, DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, bool useFallback = false, std::string * latestVersion = nullptr) const;
-	bool installLatestDOSBoxVersion(const DOSBoxVersion & dosboxVersion, const std::string & destinationDirectoryPath, bool overwrite = false) const;
+	bool installLatestDOSBoxVersion(const DOSBoxVersion & dosboxVersion, const std::string & destinationDirectoryPath, bool overwrite = true) const;
 
 	static bool isDOSBoxVersionDownloadable(const DOSBoxVersion & dosboxVersion);
 	static bool isDOSBoxVersionDownloadable(const std::string & dosboxVersionID);
