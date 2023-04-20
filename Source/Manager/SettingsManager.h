@@ -26,7 +26,7 @@ public:
 	bool parseFrom(const rapidjson::Value & settingsDocument);
 
 	bool load(const ArgumentParser * arguments = nullptr, bool autoCreate = true);
-	bool save(const ArgumentParser * arguments = nullptr, bool overwrite = true) const;
+	bool save(bool overwrite = true) const;
 	bool loadFrom(const std::string & filePath, bool autoCreate = true);
 	bool saveTo(const std::string & filePath, bool overwrite = true) const;
 
@@ -167,6 +167,8 @@ private:
 	SettingsManager(SettingsManager &&) noexcept = delete;
 	const SettingsManager & operator = (const SettingsManager &) = delete;
 	const SettingsManager & operator = (SettingsManager &&) noexcept = delete;
+
+	std::string m_filePath;
 };
 
 #endif // _SETTINGS_MANAGER_H_

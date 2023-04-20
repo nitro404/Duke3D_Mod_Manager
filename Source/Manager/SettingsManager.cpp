@@ -352,7 +352,8 @@ SettingsManager::SettingsManager()
 	, cacertUpdateFrequency(DEFAULT_CACERT_UPDATE_FREQUENCY)
 	, timeZoneDataUpdateFrequency(DEFAULT_TIME_ZONE_DATA_UPDATE_FREQUENCY)
 	, windowPosition(DEFAULT_WINDOW_POSITION)
-	, windowSize(DEFAULT_WINDOW_SIZE) { }
+	, windowSize(DEFAULT_WINDOW_SIZE)
+	, m_filePath(DEFAULT_SETTINGS_FILE_PATH) { }
 
 SettingsManager::~SettingsManager() = default;
 
@@ -895,50 +896,28 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 
 bool SettingsManager::load(const ArgumentParser * arguments, bool autoCreate) {
 	if(arguments != nullptr) {
-		std::string alternateSettingsFileName(arguments->getFirstValue("f"));
+		std::string alternateSettingsFilePath(arguments->getFirstValue("f"));
 
-		if(alternateSettingsFileName.empty()) {
-			alternateSettingsFileName = arguments->getFirstValue("file");
+		if(alternateSettingsFilePath.empty()) {
+			alternateSettingsFilePath = arguments->getFirstValue("file");
 		}
 
-		if(!alternateSettingsFileName.empty()) {
-			spdlog::debug("Loading settings from alternate file: '{}'...", alternateSettingsFileName);
+		if(!alternateSettingsFilePath.empty()) {
+			spdlog::debug("Loading settings from alternate file: '{}'...", alternateSettingsFilePath);
 
-			bool loadedSettings = loadFrom(alternateSettingsFileName, autoCreate);
-
-			if(!loadedSettings) {
-				spdlog::error("Failed to load settings from alt settings file: '{}'.", alternateSettingsFileName);
-			}
-
-			return loadedSettings;
+			m_filePath = alternateSettingsFilePath;
 		}
 	}
 
-	return loadFrom(DEFAULT_SETTINGS_FILE_PATH, autoCreate);
+	return loadFrom(m_filePath, autoCreate);
 }
 
-bool SettingsManager::save(const ArgumentParser * arguments, bool overwrite) const {
-	if(arguments != nullptr) {
-		std::string alternateSettingsFileName(arguments->getFirstValue("f"));
-
-		if(alternateSettingsFileName.empty()) {
-			alternateSettingsFileName = arguments->getFirstValue("file");
-		}
-
-		if(!alternateSettingsFileName.empty()) {
-			spdlog::debug("Saving settings to alternate file: '{}'...", alternateSettingsFileName);
-
-			bool savedSettings = saveTo(alternateSettingsFileName, overwrite);
-
-			if(!savedSettings) {
-				spdlog::info("Failed to save settings to alternate file: '{}'.", alternateSettingsFileName);
-			}
-
-			return savedSettings;
-		}
+bool SettingsManager::save(bool overwrite) const {
+	if(!Utilities::areStringsEqual(m_filePath, DEFAULT_SETTINGS_FILE_PATH)) {
+		spdlog::debug("Saving settings to alternate file: '{}'...", m_filePath);
 	}
 
-	return saveTo(DEFAULT_SETTINGS_FILE_PATH, overwrite);
+	return saveTo(m_filePath, overwrite);
 }
 
 bool SettingsManager::loadFrom(const std::string & filePath, bool autoCreate) {

@@ -216,6 +216,7 @@ bool DOSBoxManager::updateDOSBoxDownloadList(bool force) const {
 
 	settings->fileETags.emplace(settings->remoteDOSBoxVersionsListFileName, response->getETag());
 	settings->dosboxDownloadListLastDownloadedTimestamp = std::chrono::system_clock::now();
+	settings->save();
 
 	return true;
 }

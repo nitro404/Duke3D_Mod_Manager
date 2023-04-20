@@ -261,6 +261,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 
 	if(timeZoneDataUpdated) {
 		settings->timeZoneDataLastDownloadedTimestamp = std::chrono::system_clock::now();
+		settings->save();
 	}
 
 	if(!notifyInitializationProgress("Initializing Geo Location Service")) {

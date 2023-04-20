@@ -410,6 +410,7 @@ bool GameManager::updateGameDownloadList(bool force) const {
 
 	settings->fileETags.emplace(settings->remoteGamesListFileName, response->getETag());
 	settings->gameDownloadListLastDownloadedTimestamp = std::chrono::system_clock::now();
+	settings->save();
 
 	return true;
 }
