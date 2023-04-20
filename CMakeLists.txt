@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.19 FATAL_ERROR)
 
-option(GUI_ENABLED "Enables the grapical user interface." ON)
-
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 set(_SOURCE_DIRECTORY "Source")
@@ -40,18 +38,13 @@ endif()
 include(SourceFiles)
 include(ResourceFiles)
 
-if(GUI_ENABLED)
-	set(_EXECUTABLE_TYPE WIN32)
-	set(_GUI_LIBRARIES ${wxWidgets_LIBRARIES})
-endif()
-
 if(MSVC)
 	add_compile_options(/bigobj)
 else()
 	add_compile_options(-Wa,-mbig-obj)
 endif()
 
-add_executable(${PROJECT_NAME} ${_EXECUTABLE_TYPE} ${ALL_FILES})
+add_executable(${PROJECT_NAME} WIN32 ${ALL_FILES})
 
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
 
@@ -63,5 +56,5 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
 	PRIVATE
 		Core
-		${_GUI_LIBRARIES}
+		${wxWidgets_LIBRARIES}
 )
