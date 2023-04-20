@@ -1411,13 +1411,13 @@
 			<version release_date="September 25, 1999">
 				<game type="Atomic" state="Native">
 					<file name="FOREVER.CON" size="151194" type="con" sha1="840e71a1cd82e565f1b979b234b1c024729b5929"/>
-					<file name="FOREVER.GRP" size="1236189" type="grp" sha1="d96eac2405295b23fee72f8f601bce49eb193391"/>
+					<file name="FOREVER.GRP" size="1236191" type="grp" sha1="24636cbb5110d693b95fa55671686a0e678a8297"/>
 				</game>
 			</version>
 		</versions>
 		<downloads>
 			<download filename="forever.zip" filesize="317697" game="Atomic" type="Original Files" sha1="50bd79833ce8ab2820d8619625e097dbab81b0f4"/>
-			<download filename="Duke_3D_Forever-ModMgrA.zip" filesize="361784" game="Atomic" type="Mod Manager Files" state="Native" sha1="2a412f4d571069db7cfda5d2a4bd85f9fc4897a3"/>
+			<download filename="Duke_3D_Forever-ModMgrA.zip" filesize="361411" game="Atomic" type="Mod Manager Files" state="Native" sha1="65dfb08725fdc358320b1290f6dbfa95c0023700"/>
 		</downloads>
 	</mod>
 	<mod name="DukeCop" id="dukecop" type="Total Conversion" version="2.5c">
@@ -9144,7 +9144,7 @@
 	</mod>
 	<mod name="Lameduke 95 Redux" id="lameduke_95_redux" type="Total Conversion" website="https://www.moddb.com/mods/lameduke-redux">
 		<team>
-			<member name="Mark Kaminari" alias="MarkKaminari00" website="https://www.youtube.com/@markkaminari007" country="Italy"/>
+			<member name="Mark Kaminari" alias="MarkKaminari00" website="https://www.youtube.com/@markkaminari007" discord="Mark Kaminari00#8643" country="Italy"/>
 		</team>
 		<versions>
 			<version release_date="November 30, 2022">
@@ -9166,7 +9166,7 @@
 	</mod>
 	<mod name="Phoenix Holocaust" id="phoenix_holocaust" type="Total Conversion" website="https://www.moddb.com/mods/phoenix-holocaust">
 		<team>
-			<member name="Mark Kaminari" alias="MarkKaminari00" website="https://www.youtube.com/@markkaminari007" country="Italy"/>
+			<member name="Mark Kaminari" alias="MarkKaminari00" website="https://www.youtube.com/@markkaminari007" discord="Mark Kaminari00#8643" country="Italy"/>
 		</team>
 		<versions>
 			<version release_date="April 3, 2022">
