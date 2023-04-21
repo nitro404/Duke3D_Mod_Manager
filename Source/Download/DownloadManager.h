@@ -25,6 +25,7 @@ public:
 	std::string getCachedModListFilePath() const;
 	std::string getDownloadedModsDirectoryPath() const;
 	std::string getDownloadedMapsDirectoryPath() const;
+	bool isModListDownloaded() const;
 	bool shouldUpdateModList() const;
 	bool isModDownloaded(const Mod * mod) const;
 	bool isModVersionDownloaded(const ModVersion * modVersion) const;

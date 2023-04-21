@@ -16,6 +16,7 @@
 #include <Analytics/Segment/SegmentAnalytics.h>
 #include <Archive/Zip/ZipArchive.h>
 #include <Network/HTTPService.h>
+#include <Platform/DeviceInformationBridge.h>
 #include <Utilities/FileUtilities.h>
 #include <Utilities/StringUtilities.h>
 
@@ -203,16 +204,16 @@ bool DownloadManager::saveDownloadCache() const {
 	return m_downloadCache->saveTo(getDownloadCacheFilePath());
 }
 
+bool DownloadManager::isModListDownloaded() const {
+	SettingsManager * settings = SettingsManager::getInstance();
+
+	return std::filesystem::is_regular_file(std::filesystem::path(Utilities::joinPaths(getDownloadedModsDirectoryPath(), settings->remoteModsListFileName)));
+}
+
 bool DownloadManager::shouldUpdateModList() const {
 	SettingsManager * settings = SettingsManager::getInstance();
 
-	if(!settings->downloadThrottlingEnabled || !settings->modListLastDownloadedTimestamp.has_value()) {
-		return true;
-	}
-
-	std::string modListLocalFilePath(Utilities::joinPaths(getDownloadedModsDirectoryPath(), settings->remoteModsListFileName));
-
-	if(!std::filesystem::is_regular_file(std::filesystem::path(modListLocalFilePath))) {
+	if(!settings->downloadThrottlingEnabled || !settings->modListLastDownloadedTimestamp.has_value() || !isModListDownloaded()) {
 		return true;
 	}
 
@@ -281,6 +282,10 @@ DownloadCache * DownloadManager::getDownloadCache() const {
 }
 
 bool DownloadManager::downloadModList(bool force) {
+	if(!DeviceInformationBridge::getInstance()->isConnectedToInternet()) {
+		return isModListDownloaded();
+	}
+
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	HTTPService * httpService = HTTPService::getInstance();
@@ -395,6 +400,10 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion * modGameVersi
 	}
 
 	std::shared_ptr<CachedPackageFile> cachedModPackageFile(m_downloadCache->getCachedPackageFile(modDownload.get()));
+
+	if(!DeviceInformationBridge::getInstance()->isConnectedToInternet()) {
+		return cachedModPackageFile != nullptr;
+	}
 
 	std::string modDownloadLocalBasePath(Utilities::joinPaths(settings->downloadsDirectoryPath, settings->modDownloadsDirectoryName, gameVersion->getModDirectoryName()));
 	std::string modPackageDownloadLocalFilePath(Utilities::joinPaths(modDownloadLocalBasePath, modDownload->getFileName()));

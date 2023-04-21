@@ -243,6 +243,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 	if(!settings->downloadThrottlingEnabled || !settings->cacertLastDownloadedTimestamp.has_value() || std::chrono::system_clock::now() - settings->cacertLastDownloadedTimestamp.value() > settings->cacertUpdateFrequency) {
 		if(httpService->updateCertificateAuthorityCertificateAndWait()) {
 			settings->cacertLastDownloadedTimestamp = std::chrono::system_clock::now();
+			settings->save();
 		}
 	}
 
