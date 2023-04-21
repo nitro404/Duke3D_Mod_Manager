@@ -194,6 +194,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_modListLabel = new wxStaticText(modSelectionPanel, wxID_ANY, "Mods", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 	m_modListLabel->SetFont(m_modListLabel->GetFont().MakeBold());
 	m_modListBox = new wxListBox(modSelectionPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, WXUtilities::createItemWXArrayString(organizedMods->getOrganizedItemDisplayNames()), wxLB_SINGLE | wxLB_ALWAYS_SB);
+	m_modListBox->SetMinClientSize(wxSize(280, m_modListBox->GetMinClientSize().GetHeight()));
 	m_modListBox->Bind(wxEVT_LISTBOX, &ModBrowserPanel::onModSelected, this);
 	m_modListBox->Bind(wxEVT_RIGHT_UP, &ModBrowserPanel::onModListRightClicked, this);
 
