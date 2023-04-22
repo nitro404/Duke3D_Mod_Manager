@@ -14,13 +14,15 @@ public:
 		Exists = 1,
 		Invalid = 1 << 1,
 		RegularVersion = 1 << 2,
-		AtomicEdition = 1 << 3,
-		Cracked = 1 << 4
+		PlutoniumPak = 1 << 3,
+		AtomicEdition = 1 << 4,
+		Cracked = 1 << 5
 	};
 
 	static GameExecutableStatus getGameExecutableStatus(const std::string & gameExecutablePath);
 	static GameExecutableStatus getGameExecutableStatus(const ByteBuffer * gameExecutableBuffer);
 	static bool isRegularVersionGameExecutable(const std::string & gameExecutablePath);
+	static bool isPlutoniumPakGameExecutable(const std::string & gameExecutablePath);
 	static bool isAtomicEditionGameExecutable(const std::string & gameExecutablePath);
 	static bool isGameExecutableCrackable(const std::string & gameExecutablePath);
 	static bool isGameExecutableCracked(const std::string & gameExecutablePath);
