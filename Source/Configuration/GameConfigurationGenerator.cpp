@@ -9,7 +9,7 @@
 
 #include <sstream>
 
-bool GameConfiguration::determineGameVersion(bool & isRegularVersion, bool & isAtomicEdition) {
+bool GameConfiguration::determineGameVersion(bool & isBeta, bool & isRegularVersion, bool & isAtomicEdition) {
 	std::shared_ptr<Section> setupSection(getSectionWithName(SETUP_SECTION_NAME));
 
 	if(setupSection == nullptr) {
@@ -19,7 +19,9 @@ bool GameConfiguration::determineGameVersion(bool & isRegularVersion, bool & isA
 	std::shared_ptr<Entry> setupVersionEntry(setupSection->getEntryWithName(SETUP_VERSION_ENTRY_NAME));
 
 	if(setupVersionEntry == nullptr || !setupVersionEntry->isString()) {
-		return false;
+		isBeta = true;
+
+		return true;
 	}
 
 	if(Utilities::areStringsEqual(setupVersionEntry->getStringValue(), REGULAR_VERSION_SETUP_VERSION)) {
@@ -280,10 +282,11 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 }
 
 bool GameConfiguration::updateForDOSBox() {
+	bool isBeta = false;
 	bool isRegularVersion = false;
 	bool isAtomicEdition = false;
 
-	if(!determineGameVersion(isRegularVersion, isAtomicEdition)) {
+	if(!determineGameVersion(isBeta, isRegularVersion, isAtomicEdition)) {
 		return false;
 	}
 
@@ -315,6 +318,9 @@ bool GameConfiguration::updateForDOSBox() {
 	if(!screenSetupSection->setEntryIntegerValue("Tilt", 1, true)) { return false; }
 	if(!screenSetupSection->setEntryIntegerValue("Messages", 1, true)) { return false; }
 	if(!screenSetupSection->setEntryIntegerValue("Out", 0, true)) { return false; }
+	if(isBeta) {
+		if(!screenSetupSection->setEntryIntegerValue("LastIOSlot", 0, true)) { return false; }
+	}
 	if(!screenSetupSection->setEntryIntegerValue("ScreenSize", 4, true)) { return false; }
 	if(!screenSetupSection->setEntryIntegerValue("ScreenGamma", 0, true)) { return false; }
 
@@ -331,10 +337,11 @@ bool GameConfiguration::updateForDOSBox() {
 }
 
 bool GameConfiguration::updateWithBetterControls() {
+	bool isBeta = false;
 	bool isRegularVersion = false;
 	bool isAtomicEdition = false;
 
-	if(!determineGameVersion(isRegularVersion, isAtomicEdition)) {
+	if(!determineGameVersion(isBeta, isRegularVersion, isAtomicEdition)) {
 		return false;
 	}
 
@@ -389,8 +396,17 @@ bool GameConfiguration::updateWithBetterControls() {
 		if(!keyDefinitionsSection->setEntryMultiStringValue(MAP_FOLLOW_MODE_ENTRY_NAME, "", 0, true, true)) { return false; }
 	}
 
-	if(!controlsSection->setEntryIntegerValue(MOUSE_AIMING_FLIPPED_ENTRY_NAME, 1, true)) { return false; }
-	if(!controlsSection->setEntryStringValue(MOUSE_BUTTON_1_ENTRY_NAME, "Quick_Kick", true)) { return false; }
+	if(isAtomicEdition) {
+		if(!controlsSection->setEntryIntegerValue(MOUSE_AIMING_FLIPPED_ENTRY_NAME, 1, true)) { return false; }
+	}
+
+	if(isAtomicEdition) {
+		if(!controlsSection->setEntryStringValue(MOUSE_BUTTON_1_ENTRY_NAME, "Quick_Kick", true)) { return false; }
+	}
+	else {
+		if(!controlsSection->setEntryStringValue(MOUSE_BUTTON_1_ENTRY_NAME, "Jetpack", true)) { return false; }
+	}
+
 	if(!controlsSection->setEntryStringValue(MOUSE_BUTTON_CLICKED_1_ENTRY_NAME, "", true)) { return false; }
 	if(!controlsSection->setEntryStringValue(MOUSE_BUTTON_2_ENTRY_NAME, "Open", true)) { return false; }
 
@@ -406,8 +422,10 @@ bool GameConfiguration::updateWithBetterControls() {
 		addSection(miscSection);
 	}
 
-	if(!miscSection->setEntryIntegerValue("RunMode", 1, true)) { return false; }
-	if(!miscSection->setEntryIntegerValue("Crosshairs", 1, true)) { return false; }
+	if(!isBeta) {
+		if(!miscSection->setEntryIntegerValue("RunMode", 1, true)) { return false; }
+		if(!miscSection->setEntryIntegerValue("Crosshairs", 1, true)) { return false; }
+	}
 
 	return true;
 }

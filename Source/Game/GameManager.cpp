@@ -36,10 +36,12 @@
 using namespace std::chrono_literals;
 
 static const std::string LAMEDUKE_FALLBACK_DOWNLOAD_URL("https://archive.org/download/lameduke/lameduke.zip"); // https://archive.org/details/lameduke
+static const std::string BETA_VERSION_FALLBACK_DOWNLOAD_URL("http://hendricks266.duke4.net/d3dbeta/d3d_beta.7z"); // http://hendricks266.duke4.net/d3dbeta.php
 static const std::string REGULAR_VERSION_FALLBACK_DOWNLOAD_URL("https://archive.org/download/DUKE3D_DOS/DUKE3D.zip"); // https://archive.org/details/DUKE3D_DOS
 static const std::string ATOMIC_EDITION_FALLBACK_DOWNLOAD_URL("https://archive.org/download/duke-3d-atomic3datomictweak/Duke3d_ATOMIC.rar"); // https://archive.org/details/duke-3d-atomic3datomictweak
 
 static const std::string LAMEDUKE_DOWNLOAD_SHA1("41ae6fe00aa57aef38d5744cb18ca9e25bc73bbb");
+static const std::string BETA_VERSION_FALLBACK_DOWNLOAD_SHA1("c24ea12ab57955b96b93db6eeeb4231d4c137a6d");
 static const std::string REGULAR_VERSION_FALLBACK_DOWNLOAD_SHA1("9bc975193ccc4738a31fe2dc6958f0b34135b9ae");
 static const std::string ATOMIC_EDITION_FALLBACK_DOWNLOAD_SHA1("ac2df3fb75f84584cadc82db00ef46ab21ef6a95");
 
@@ -52,6 +54,24 @@ struct GameFileInformation {
 	std::string fileName;
 	std::vector<std::string> hashes;
 	bool required = true;
+};
+
+static const std::array<GameFileInformation, 15> BETA_VERSION_GAME_FILE_INFO_LIST = {
+	GameFileInformation{ "COMMIT.DAT",   { "ee7ea8d9578e7ef80dafe5c8629ef3d579d92603" } },
+	GameFileInformation{ "COMMIT.EXE",   { "7caa1d3665bfee9e5997942f1353bbd95854408d" } },
+	GameFileInformation{ "DOS4GW.EXE",   { "a897c7eb79145a308c4e60b43413bb2daa360506" } },
+	GameFileInformation{ "DUKE.RTS",     { "a9356036aea01583c85b71410f066285afe3af2b" } },
+	GameFileInformation{ "DUKE3D.EXE",   { GameVersion::BETA_VERSION_GAME_EXECUTABLE_SHA1 } },
+	GameFileInformation{ "DUKE3D.GRP",   { Group::DUKE_NUKEM_3D_BETA_VERSION_GROUP_SHA1_FILE_HASH } },
+	GameFileInformation{ "MODEM.PCK",    { "4314bc9bd2c953fe3cd3a51258e483056560ddd6" } },
+	GameFileInformation{ "README.TXT",   { "b73b8ac76be08ba0079c0219c7797981ce18357b" } },
+	GameFileInformation{ "SETMAIN.EXE",  { "f2892c2d765bd4abca2bd41f0e7a1142c3214c81" } },
+	GameFileInformation{ "SETUP.EXE",    { "7110b4b66e5823527750dcda2a8df5939a978c9b" } },
+	GameFileInformation{ "ULTRAMID.INI", { "874de9ded41bd7df054e0d5f56afc4ebadcbd3ab" } },
+	GameFileInformation{ "UNIVBE.DRV",   { "b2b8f3da67385cf2b486430c846f49007646bc14" } },
+	GameFileInformation{ "UNIVBE.EXE",   { "9cbf105f55eb6d442b6e0e6ebf1f97c821f2927e" } },
+	GameFileInformation{ "UVCONFIG.EXE", { "50bdb9f8f9885daa32cb08b666c886acb32ad0ec" } },
+	GameFileInformation{ "VBETEST.EXE",  { "7aeed202c608a98057b8a605ca82c2e902670754" } }
 };
 
 static const std::array<GameFileInformation, 12> REGULAR_VERSION_GAME_FILE_INFO_LIST = {
@@ -80,7 +100,7 @@ static const std::array<GameFileInformation, 11> PLUTONIUM_PAK_GAME_FILE_INFO_LI
 	GameFileInformation{ "SETMAIN.EXE",  { "40bd08600df2cd6328e69889b5325b72a123614e" } },
 	GameFileInformation{ "SETUP.EXE",    { "861db7aa6dfc868b6a0b333b4cb091e276a18832" } },
 	GameFileInformation{ "TENGAME.INI",  { "01a0f0e66fb05f5b2de72a8dd3ad19cdfa4ae323" }, false },
-	GameFileInformation{ "ULTRAMID.INI", { "54a404652aecfddf73aea0c11326f9f95fdd1e25" } },
+	GameFileInformation{ "ULTRAMID.INI", { "54a404652aecfddf73aea0c11326f9f95fdd1e25" } }
 };
 
 static const std::array<GameFileInformation, 11> ATOMIC_EDITION_GAME_FILE_INFO_LIST = {
@@ -204,7 +224,10 @@ static const std::array<GameFileInformation, 103> LAMEDUKE_GAME_FILE_INFO_LIST =
 };
 
 static const GameVersion * getGroupGameVersion(const std::string & gameVersionID) {
-	if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_REGULAR_VERSION.getID())) {
+	if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_BETA_VERSION.getID())) {
+		return &GameVersion::ORIGINAL_BETA_VERSION;
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_REGULAR_VERSION.getID())) {
 		return &GameVersion::ORIGINAL_REGULAR_VERSION;
 	}
 	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_PLUTONIUM_PAK.getID())) {
@@ -235,7 +258,10 @@ static std::string getGroupFilePath(const std::string & gameVersionID) {
 static std::string getFallbackGroupDownloadURL(const std::string & gameVersionID) {
 	const GameVersion * groupGameVersion(getGroupGameVersion(gameVersionID));
 
-	if(groupGameVersion == &GameVersion::ORIGINAL_REGULAR_VERSION) {
+	if(groupGameVersion == &GameVersion::ORIGINAL_BETA_VERSION) {
+		return BETA_VERSION_FALLBACK_DOWNLOAD_URL;
+	}
+	else if(groupGameVersion == &GameVersion::ORIGINAL_REGULAR_VERSION) {
 		return REGULAR_VERSION_FALLBACK_DOWNLOAD_URL;
 	}
 	else if(groupGameVersion == &GameVersion::ORIGINAL_ATOMIC_EDITION) {
@@ -252,7 +278,10 @@ static std::string getFallbackGroupDownloadURL(const std::string & gameVersionID
 static std::string getFallbackGroupDownloadSHA1(const std::string & gameVersionID) {
 	const GameVersion * groupGameVersion(getGroupGameVersion(gameVersionID));
 
-	if(groupGameVersion == &GameVersion::ORIGINAL_REGULAR_VERSION) {
+	if(groupGameVersion == &GameVersion::ORIGINAL_BETA_VERSION) {
+		return BETA_VERSION_FALLBACK_DOWNLOAD_SHA1;
+	}
+	else if(groupGameVersion == &GameVersion::ORIGINAL_REGULAR_VERSION) {
 		return REGULAR_VERSION_FALLBACK_DOWNLOAD_SHA1;
 	}
 	else if(groupGameVersion == &GameVersion::ORIGINAL_ATOMIC_EDITION) {
@@ -522,6 +551,7 @@ bool GameManager::updateGameDownloadList(bool force) const {
 
 bool GameManager::isGameDownloadable(const std::string & gameVersionID) {
 	return Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::LAMEDUKE.getID()) ||
+		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_BETA_VERSION.getID()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_REGULAR_VERSION.getID()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_PLUTONIUM_PAK.getID()) ||
 		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_ATOMIC_EDITION.getID()) ||
@@ -544,6 +574,7 @@ std::string GameManager::getGameDownloadURL(const std::string & gameVersionID) {
 	}
 
 	if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::LAMEDUKE.getID()) ||
+	   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_BETA_VERSION.getID()) ||
 	   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_REGULAR_VERSION.getID()) ||
 	   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_PLUTONIUM_PAK.getID()) ||
 	   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_ATOMIC_EDITION.getID())) {
@@ -617,6 +648,7 @@ std::string GameManager::getGameDownloadSHA1(const std::string & gameVersionID) 
 	}
 
 	if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::LAMEDUKE.getID()) ||
+	   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_BETA_VERSION.getID()) ||
 	   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_REGULAR_VERSION.getID()) ||
 	   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_PLUTONIUM_PAK.getID()) ||
 	   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_ATOMIC_EDITION.getID())) {
@@ -641,19 +673,7 @@ std::string GameManager::getGroupDownloadURL(const std::string & gameVersionID) 
 
 	const GameVersion * groupGameVersion(getGroupGameVersion(gameVersionID));
 
-	std::string groupGameVersionID;
-
-	if(groupGameVersion == &GameVersion::ORIGINAL_REGULAR_VERSION) {
-		groupGameVersionID = GameVersion::ORIGINAL_REGULAR_VERSION.getID();
-	}
-	else if(groupGameVersion == &GameVersion::ORIGINAL_PLUTONIUM_PAK) {
-		groupGameVersionID = GameVersion::ORIGINAL_PLUTONIUM_PAK.getID();
-	}
-	else {
-		groupGameVersionID = GameVersion::ORIGINAL_ATOMIC_EDITION.getID();
-	}
-
-	std::shared_ptr<GameDownloadFile> groupDownloadFile(m_gameDownloads->getLatestGameDownloadFile(groupGameVersionID, GameDownloadFile::Type::Group, GameVersion::OperatingSystem::DOS));
+	std::shared_ptr<GameDownloadFile> groupDownloadFile(m_gameDownloads->getLatestGameDownloadFile(groupGameVersion->getID(), GameDownloadFile::Type::Group, GameVersion::OperatingSystem::DOS));
 
 	if(groupDownloadFile == nullptr) {
 		spdlog::error("'{}' group download entry not found in game download collection.", gameVersionID);
@@ -666,6 +686,9 @@ std::string GameManager::getGroupDownloadURL(const std::string & gameVersionID) 
 std::string GameManager::getFallbackGameDownloadURL(const std::string & gameVersionID) const {
 	if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::LAMEDUKE.getID())) {
 		return LAMEDUKE_FALLBACK_DOWNLOAD_URL;
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_BETA_VERSION.getID())) {
+		return BETA_VERSION_FALLBACK_DOWNLOAD_URL;
 	}
 	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_REGULAR_VERSION.getID())) {
 		return REGULAR_VERSION_FALLBACK_DOWNLOAD_URL;
@@ -725,6 +748,9 @@ std::string GameManager::getFallbackGameDownloadURL(const std::string & gameVers
 std::string GameManager::getFallbackGameDownloadSHA1(const std::string & gameVersionID) const {
 	if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::LAMEDUKE.getID())) {
 		return LAMEDUKE_DOWNLOAD_SHA1;
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_BETA_VERSION.getID())) {
+		return BETA_VERSION_FALLBACK_DOWNLOAD_SHA1;
 	}
 	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_REGULAR_VERSION.getID())) {
 		return REGULAR_VERSION_FALLBACK_DOWNLOAD_SHA1;
@@ -2413,11 +2439,13 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 	const GameVersion * groupGameVersion(getGroupGameVersion(gameVersion.getID()));
 
 	bool isLameDuke = Utilities::areStringsEqualIgnoreCase(gameVersion.getID(), GameVersion::LAMEDUKE.getID());
+	bool isBetaVersion = Utilities::areStringsEqualIgnoreCase(gameVersion.getID(), GameVersion::ORIGINAL_BETA_VERSION.getID());
 	bool isRegularVersion = Utilities::areStringsEqualIgnoreCase(gameVersion.getID(), GameVersion::ORIGINAL_REGULAR_VERSION.getID());
 	bool isPlutoniumPak = Utilities::areStringsEqualIgnoreCase(gameVersion.getID(), GameVersion::ORIGINAL_PLUTONIUM_PAK.getID());
 	bool isAtomicEdition = Utilities::areStringsEqualIgnoreCase(gameVersion.getID(), GameVersion::ORIGINAL_ATOMIC_EDITION.getID());
 	bool isPlutoniumPakOrAtomicEdition = isPlutoniumPak || isAtomicEdition;
-	bool isOriginalGameFallback = useFallback && (isLameDuke || isRegularVersion || isPlutoniumPakOrAtomicEdition);
+	bool isOriginalGame = isLameDuke || isBetaVersion || isRegularVersion || isPlutoniumPakOrAtomicEdition;
+	bool isOriginalGameFallback = useFallback && isOriginalGame;
 
 	std::function<bool(std::shared_ptr<ArchiveEntry>, const GameFileInformation &)> extractGameFileFunction([&gameVersion, &groupGameVersion, &gameDownloadURL, &destinationDirectoryPath, overwrite](std::shared_ptr<ArchiveEntry> gameFileEntry, const GameFileInformation & gameFileInfo) {
 		if(gameFileEntry == nullptr) {
@@ -2536,6 +2564,17 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		// only extract required files from fallback downloads for original game files since there are other files we don't want or need in these archives
 		if(isLameDuke) {
 			for(const GameFileInformation & gameFileInfo : LAMEDUKE_GAME_FILE_INFO_LIST) {
+				if(!extractGameFileFunction(std::shared_ptr<ArchiveEntry>(gameFilesArchive->getFirstEntryWithName(gameFileInfo.fileName, true)), gameFileInfo)) {
+					if(!useFallback) {
+						return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
+					}
+
+					return false;
+				}
+			}
+		}
+		else if(isBetaVersion) {
+			for(const GameFileInformation & gameFileInfo : BETA_VERSION_GAME_FILE_INFO_LIST) {
 				if(!extractGameFileFunction(std::shared_ptr<ArchiveEntry>(gameFilesArchive->getFirstEntryWithName(gameFileInfo.fileName, true)), gameFileInfo)) {
 					if(!useFallback) {
 						return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
@@ -2673,7 +2712,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 			}
 		}
 	}
-	else if(isRegularVersion || isPlutoniumPakOrAtomicEdition) {
+	else if(isRegularVersion || isBetaVersion || isPlutoniumPakOrAtomicEdition) {
 		std::function<bool(const GameFileInformation &)> gameFileSHA1VerificationFunction([&gameVersion, &destinationDirectoryPath, useFallback](const GameFileInformation & gameFileInfo) {
 			bool gameFileSHA1Verified = false;
 			std::string calculatedGameFileSHA1(Utilities::getFileSHA1Hash(Utilities::joinPaths(destinationDirectoryPath, gameFileInfo.fileName)));
@@ -2721,7 +2760,18 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		});
 
 		if(!useFallback) {
-			if(isRegularVersion) {
+			if(isBetaVersion) {
+				for(const GameFileInformation & gameFileInfo : BETA_VERSION_GAME_FILE_INFO_LIST) {
+					if(!gameFileSHA1VerificationFunction(gameFileInfo)) {
+						if(!useFallback) {
+							return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
+						}
+
+						return false;
+					}
+				}
+			}
+			else if(isRegularVersion) {
 				for(const GameFileInformation & gameFileInfo : REGULAR_VERSION_GAME_FILE_INFO_LIST) {
 					if(!gameFileSHA1VerificationFunction(gameFileInfo)) {
 						if(!useFallback) {
@@ -2785,7 +2835,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 			}
 		}
 
-		if(isRegularVersion || isPlutoniumPakOrAtomicEdition) {
+		if(isBetaVersion || isRegularVersion || isPlutoniumPakOrAtomicEdition) {
 			std::unique_ptr<GameConfiguration> gameConfiguration(GameConfiguration::generateDefaultGameConfiguration(gameVersion.getID()));
 
 			if(gameConfiguration == nullptr) {
@@ -2855,6 +2905,7 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 	}
 
 	const GameVersion * groupGameVersion(getGroupGameVersion(gameVersionID));
+	bool isBetaVersion = groupGameVersion == &GameVersion::ORIGINAL_BETA_VERSION;
 	bool isRegularVersion = groupGameVersion == &GameVersion::ORIGINAL_REGULAR_VERSION;
 	bool isPlutoniumPak = groupGameVersion == &GameVersion::ORIGINAL_PLUTONIUM_PAK;
 	bool isAtomicEdition = groupGameVersion == &GameVersion::ORIGINAL_ATOMIC_EDITION;
@@ -3047,7 +3098,10 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 	std::string calculatedGroupSHA1(groupFileData->getSHA1());
 	std::string_view expectedGroupSHA1;
 
-	if(isRegularVersion) {
+	if(isBetaVersion) {
+		expectedGroupSHA1 = Group::DUKE_NUKEM_3D_BETA_VERSION_GROUP_SHA1_FILE_HASH;
+	}
+	else if(isRegularVersion) {
 		expectedGroupSHA1 = Group::DUKE_NUKEM_3D_REGULAR_VERSION_GROUP_SHA1_FILE_HASH;
 	}
 	else if(isPlutoniumPak) {

@@ -2574,7 +2574,15 @@ bool ModManager::extractModFilesToGameDirectory(const ModGameVersion & modGameVe
 
 	size_t fileNumber = 1;
 
+	bool isRunningNonBetaModOnBetaGameVersion = Utilities::areStringsEqualIgnoreCase(selectedGameVersion.getID(), GameVersion::ORIGINAL_BETA_VERSION.getID()) &&
+												!Utilities::areStringsEqualIgnoreCase(modGameVersion.getGameVersionID(), GameVersion::ORIGINAL_BETA_VERSION.getID());
+
 	for(auto modFilesIterator = modFiles.cbegin(); modFilesIterator != modFiles.cend(); ++modFilesIterator, fileNumber++) {
+		if(isRunningNonBetaModOnBetaGameVersion && Utilities::hasFileExtension(modFilesIterator->first, "DMO")) {
+			spdlog::info("Skipping extraction of '{}' demo file '{}' into '{}' game directory.", modGameVersion.getFullName(), modFilesIterator->first, selectedGameVersion.getLongName());
+			continue;
+		}
+
 		std::string fullModFilePath(Utilities::joinPaths(selectedGameVersion.getGamePath(), modFilesIterator->first));
 
 		if(!modFilesIterator->second->writeTo(fullModFilePath)) {

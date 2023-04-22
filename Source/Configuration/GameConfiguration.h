@@ -284,7 +284,7 @@ public:
 	static const std::array<std::string, 10> DEFAULT_COMBAT_MACROS;
 
 private:
-	bool determineGameVersion(bool & isRegularVersion, bool & isAtomicEdition);
+	bool determineGameVersion(bool & isBeta, bool & isRegularVersion, bool & isAtomicEdition);
 	void updateParent();
 
 	std::string m_filePath;

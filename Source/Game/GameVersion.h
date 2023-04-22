@@ -194,6 +194,7 @@ public:
 	static const std::string STANDALONE;
 	static const std::string STANDALONE_DIRECTORY_NAME;
 	static const GameVersion LAMEDUKE;
+	static const GameVersion ORIGINAL_BETA_VERSION;
 	static const GameVersion ORIGINAL_REGULAR_VERSION;
 	static const GameVersion ORIGINAL_PLUTONIUM_PAK;
 	static const GameVersion ORIGINAL_ATOMIC_EDITION;
@@ -214,6 +215,8 @@ public:
 	static const GameVersion DUKE3D_W32;
 	static const std::vector<const GameVersion *> DEFAULT_GAME_VERSIONS;
 
+	// Note: These SHA1 hashes are defined inline in the header file so that they are available at compile time in other classes
+	static inline const std::string BETA_VERSION_GAME_EXECUTABLE_SHA1 = "69b0efe8963d2039240a257662dd1cac0748bc77";
 	static inline const std::string REGULAR_VERSION_GAME_EXECUTABLE_SHA1 = "a64cc5b61cba728427cfcc537aa2f74438ea4c65";
 	static inline const std::string PLUTONIUM_PAK_GAME_EXECTUABLE_UNCRACKED_SHA1 = "772d922b16f7b0b11305f1aa7a3fcbb534f884d1";
 	static inline const std::string PLUTONIUM_PAK_GAME_EXECTUABLE_CRACKED_SHA1 = "b440dd343df1ce318a03991a056db95a43d5d30c";
