@@ -48,13 +48,14 @@ bool DownloadCache::updateCachedModListFile(const std::string & fileName, uint64
 	}
 
 	if(m_cachedModListFile == nullptr) {
-		m_cachedModListFile = createCachedFile(fileName, fileSize, sha1, eTag);
+		m_cachedModListFile = createCachedFile(fileName, fileSize, sha1, eTag, std::chrono::system_clock::now());
 	}
 	else {
 		m_cachedModListFile->setFileName(fileName);
 		m_cachedModListFile->setFileSize(fileSize);
 		m_cachedModListFile->setSHA1(sha1);
 		m_cachedModListFile->setETag(eTag);
+		m_cachedModListFile->setDownloadedTimePoint(std::chrono::system_clock::now());
 	}
 
 	return true;
@@ -130,7 +131,7 @@ bool DownloadCache::updateCachedPackageFile(const ModDownload * modDownload, con
 	std::shared_ptr<CachedPackageFile> cachedPackageFile(getCachedPackageFile(modDownload));
 
 	if(cachedPackageFile == nullptr) {
-		cachedPackageFile = createCachedPackageFile(modDownload->getFileName(), fileSize, modDownload->getSHA1(), eTag);
+		cachedPackageFile = createCachedPackageFile(modDownload->getFileName(), fileSize, modDownload->getSHA1(), eTag, std::chrono::system_clock::now());
 		isNewCachedPackageFile = true;
 	}
 	else {
@@ -138,6 +139,7 @@ bool DownloadCache::updateCachedPackageFile(const ModDownload * modDownload, con
 		cachedPackageFile->setFileSize(fileSize);
 		cachedPackageFile->setSHA1(modDownload->getSHA1());
 		cachedPackageFile->setETag(eTag);
+		cachedPackageFile->setDownloadedTimePoint(std::chrono::system_clock::now());
 	}
 
 	if(modGameVersion == nullptr) {
@@ -204,12 +206,12 @@ void DownloadCache::clearCachedPackageFiles() {
 	m_cachedPackageFiles.clear();
 }
 
-std::unique_ptr<CachedFile> DownloadCache::createCachedFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag) {
-	return std::make_unique<CachedFile>(fileName, fileSize, sha1, eTag);
+std::unique_ptr<CachedFile> DownloadCache::createCachedFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag, std::optional<std::chrono::time_point<std::chrono::system_clock>> downloadedTimePoint) {
+	return std::make_unique<CachedFile>(fileName, fileSize, sha1, eTag, downloadedTimePoint);
 }
 
-std::unique_ptr<CachedPackageFile> DownloadCache::createCachedPackageFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag) {
-	return std::make_unique<CachedPackageFile>(fileName, fileSize, sha1, eTag);
+std::unique_ptr<CachedPackageFile> DownloadCache::createCachedPackageFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag, std::optional<std::chrono::time_point<std::chrono::system_clock>> downloadedTimePoint) {
+	return std::make_unique<CachedPackageFile>(fileName, fileSize, sha1, eTag, downloadedTimePoint);
 }
 
 rapidjson::Document DownloadCache::toJSON() const {

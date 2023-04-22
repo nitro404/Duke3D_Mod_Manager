@@ -3,9 +3,11 @@
 
 #include <rapidjson/document.h>
 
+#include <chrono>
 #include <cstdint>
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 
 class CachedFile;
@@ -44,8 +46,8 @@ public:
 	static const std::string FILE_FORMAT_VERSION;
 
 private:
-	std::unique_ptr<CachedFile> createCachedFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag);
-	std::unique_ptr<CachedPackageFile> createCachedPackageFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag);
+	std::unique_ptr<CachedFile> createCachedFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag, std::optional<std::chrono::time_point<std::chrono::system_clock>> downloadedTimePoint = {});
+	std::unique_ptr<CachedPackageFile> createCachedPackageFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag, std::optional<std::chrono::time_point<std::chrono::system_clock>> downloadedTimePoint = {});
 
 	rapidjson::Document toJSON() const;
 	static std::unique_ptr<DownloadCache> parseFrom(const rapidjson::Value & downloadCacheValue);

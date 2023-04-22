@@ -12,7 +12,7 @@
 
 class CachedPackageFile final : public CachedFile {
 public:
-	CachedPackageFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag);
+	CachedPackageFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag, std::optional<std::chrono::time_point<std::chrono::system_clock>> downloadedTimePoint = {});
 	CachedPackageFile(CachedPackageFile && f) noexcept;
 	CachedPackageFile(CachedFile && f) noexcept;
 	CachedPackageFile(const CachedPackageFile & f);

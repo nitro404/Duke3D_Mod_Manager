@@ -11,17 +11,19 @@ static constexpr const char * JSON_CACHED_FILE_FILE_NAME_PROPERTY_NAME = "fileNa
 static constexpr const char * JSON_CACHED_FILE_FILE_SIZE_PROPERTY_NAME = "fileSize";
 static constexpr const char * JSON_CACHED_FILE_SHA1_PROPERTY_NAME = "sha1";
 static constexpr const char * JSON_CACHED_FILE_ETAG_PROPERTY_NAME = "eTag";
+static constexpr const char * JSON_CACHED_FILE_DOWNLOADED_PROPERTY_NAME = "downloaded";
 static constexpr const char * JSON_CACHED_PACKAGE_FILE_CONTENTS_PROPERTY_NAME = "contents";
-static const std::array<std::string_view, 5> JSON_CACHED_PACKAGE_FILE_PROPERTY_NAMES = {
+static const std::array<std::string_view, 6> JSON_CACHED_PACKAGE_FILE_PROPERTY_NAMES = {
 	JSON_CACHED_FILE_FILE_NAME_PROPERTY_NAME,
 	JSON_CACHED_FILE_FILE_SIZE_PROPERTY_NAME,
 	JSON_CACHED_FILE_SHA1_PROPERTY_NAME,
 	JSON_CACHED_FILE_ETAG_PROPERTY_NAME,
+	JSON_CACHED_FILE_DOWNLOADED_PROPERTY_NAME,
 	JSON_CACHED_PACKAGE_FILE_CONTENTS_PROPERTY_NAME
 };
 
-CachedPackageFile::CachedPackageFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag)
-	: CachedFile(fileName, fileSize, sha1, eTag) { }
+CachedPackageFile::CachedPackageFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag, std::optional<std::chrono::time_point<std::chrono::system_clock>> downloadedTimePoint)
+	: CachedFile(fileName, fileSize, sha1, eTag, downloadedTimePoint) { }
 
 CachedPackageFile::CachedPackageFile(CachedPackageFile && f) noexcept
 	: CachedFile(f)

@@ -4,6 +4,7 @@
 #include <Utilities/FileUtilities.h>
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
+#include <Utilities/TimeUtilities.h>
 
 #include <spdlog/spdlog.h>
 
@@ -14,24 +15,28 @@ static constexpr const char * JSON_CACHED_FILE_FILE_NAME_PROPERTY_NAME = "fileNa
 static constexpr const char * JSON_CACHED_FILE_FILE_SIZE_PROPERTY_NAME = "fileSize";
 static constexpr const char * JSON_CACHED_FILE_SHA1_PROPERTY_NAME = "sha1";
 static constexpr const char * JSON_CACHED_FILE_ETAG_PROPERTY_NAME = "eTag";
+static constexpr const char * JSON_CACHED_FILE_DOWNLOADED_PROPERTY_NAME = "downloaded";
 
-CachedFile::CachedFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag)
+CachedFile::CachedFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag, std::optional<std::chrono::time_point<std::chrono::system_clock>> downloadedTimePoint)
 	: m_fileName(fileName)
 	, m_fileSize(fileSize)
 	, m_sha1(sha1)
-	, m_eTag(eTag) { }
+	, m_eTag(eTag)
+	, m_downloadedTimePoint(downloadedTimePoint) { }
 
 CachedFile::CachedFile(CachedFile && f) noexcept
 	: m_fileName(std::move(f.m_fileName))
 	, m_fileSize(f.m_fileSize)
 	, m_sha1(std::move(f.m_sha1))
-	, m_eTag(std::move(f.m_eTag)) { }
+	, m_eTag(std::move(f.m_eTag))
+	, m_downloadedTimePoint(std::move(f.m_downloadedTimePoint)) { }
 
 CachedFile::CachedFile(const CachedFile & f)
 	: m_fileName(f.m_fileName)
 	, m_fileSize(f.m_fileSize)
 	, m_sha1(f.m_sha1)
-	, m_eTag(f.m_eTag) { }
+	, m_eTag(f.m_eTag)
+	, m_downloadedTimePoint(f.m_downloadedTimePoint) { }
 
 CachedFile & CachedFile::operator = (CachedFile && f) noexcept {
 	if(this != &f) {
@@ -39,6 +44,7 @@ CachedFile & CachedFile::operator = (CachedFile && f) noexcept {
 		m_fileSize = f.m_fileSize;
 		m_sha1 = std::move(f.m_sha1);
 		m_eTag = std::move(f.m_eTag);
+		m_downloadedTimePoint = std::move(f.m_downloadedTimePoint);
 	}
 
 	return *this;
@@ -49,6 +55,7 @@ CachedFile & CachedFile::operator = (const CachedFile & f) {
 	m_fileSize = f.m_fileSize;
 	m_sha1 = f.m_sha1;
 	m_eTag = f.m_eTag;
+	m_downloadedTimePoint = f.m_downloadedTimePoint;
 
 	return *this;
 }
@@ -109,6 +116,22 @@ bool CachedFile::setETag(const std::string & eTag) {
 	return true;
 }
 
+bool CachedFile::hasDownloadedTimePoint() const {
+	return m_downloadedTimePoint.has_value();
+}
+
+const std::optional<std::chrono::time_point<std::chrono::system_clock>> & CachedFile::getDownloadedTimePoint() const {
+	return m_downloadedTimePoint;
+}
+
+void CachedFile::setDownloadedTimePoint(std::chrono::time_point<std::chrono::system_clock> downloadedTimePoint) {
+	m_downloadedTimePoint = downloadedTimePoint;
+}
+
+void CachedFile::clearDownloadedTimePoint() {
+	m_downloadedTimePoint.reset();
+}
+
 rapidjson::Value CachedFile::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const {
 	rapidjson::Value cachedFileValue(rapidjson::kObjectType);
 
@@ -123,6 +146,11 @@ rapidjson::Value CachedFile::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::Cr
 	if(!m_eTag.empty()) {
 		rapidjson::Value eTagValue(m_eTag.c_str(), allocator);
 		cachedFileValue.AddMember(rapidjson::StringRef(JSON_CACHED_FILE_ETAG_PROPERTY_NAME), eTagValue, allocator);
+	}
+
+	if(m_downloadedTimePoint.has_value()) {
+		rapidjson::Value downloadedTimestampValue(Utilities::timePointToString(m_downloadedTimePoint.value(), Utilities::TimeFormat::ISO8601).c_str(), allocator);
+		cachedFileValue.AddMember(rapidjson::StringRef(JSON_CACHED_FILE_DOWNLOADED_PROPERTY_NAME), downloadedTimestampValue, allocator);
 	}
 
 	return cachedFileValue;
@@ -190,7 +218,6 @@ std::unique_ptr<CachedFile> CachedFile::parseFrom(const rapidjson::Value & cache
 	}
 
 	// parse cached file ETag
-
 	std::string eTag;
 
 	if(cachedFileValue.HasMember(JSON_CACHED_FILE_ETAG_PROPERTY_NAME)) {
@@ -204,7 +231,26 @@ std::unique_ptr<CachedFile> CachedFile::parseFrom(const rapidjson::Value & cache
 		eTag = Utilities::trimString(cachedFileETagValue.GetString());
 	}
 
-	return std::make_unique<CachedFile>(fileName, fileSize, sha1, eTag);
+	// parse cached file downloaded timestamp
+	std::optional<std::chrono::time_point<std::chrono::system_clock>> downloadedTimePoint;
+
+	if(cachedFileValue.HasMember(JSON_CACHED_FILE_DOWNLOADED_PROPERTY_NAME)) {
+		const rapidjson::Value & cachedFileDownloadedTimestampValue = cachedFileValue[JSON_CACHED_FILE_DOWNLOADED_PROPERTY_NAME];
+
+		if(!cachedFileDownloadedTimestampValue.IsString()) {
+			spdlog::error("Cached file has an invalid '{}' property type: '{}', expected 'string'.", JSON_CACHED_FILE_DOWNLOADED_PROPERTY_NAME, Utilities::typeToString(cachedFileDownloadedTimestampValue.GetType()));
+			return nullptr;
+		}
+
+		downloadedTimePoint = Utilities::parseTimePointFromString(cachedFileDownloadedTimestampValue.GetString());
+
+		if(!downloadedTimePoint.has_value()) {
+			spdlog::error("Cached file has an invalid '{}' timestamp value: '{}'.", JSON_CACHED_FILE_DOWNLOADED_PROPERTY_NAME, cachedFileDownloadedTimestampValue.GetString());
+			return nullptr;
+		}
+	}
+
+	return std::make_unique<CachedFile>(fileName, fileSize, sha1, eTag, downloadedTimePoint);
 }
 
 bool CachedFile::isValid() const {
