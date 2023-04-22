@@ -59,7 +59,12 @@ bool DownloadManager::initialize() {
 	loadDownloadCache();
 
 	if(shouldUpdateModList() && !downloadModList()) {
-		return false;
+		if(isModListDownloaded()) {
+			spdlog::info("Failed to download latest mod list, using last downloaded mod list instead.");
+		}
+		else {
+			return false;
+		}
 	}
 
 	m_initialized = true;
