@@ -17,8 +17,10 @@ public:
 
 	bool isInitialized() const;
 	bool initialize();
+	bool isUsingLocalMode() const;
+	void setLocalMode(bool localMode);
 	std::shared_ptr<DOSBoxVersionCollection> getDOSBoxVersions() const;
-	std::string getLocalDOSBoxDownloadsListFilePath() const;
+	std::string getDOSBoxDownloadsListFilePath() const;
 	bool shouldUpdateDOSBoxDownloadList() const;
 	bool loadOrUpdateDOSBoxDownloadList(bool forceUpdate = false) const;
 	bool updateDOSBoxDownloadList(bool force = false) const;
@@ -41,6 +43,7 @@ public:
 
 private:
 	bool m_initialized;
+	bool m_localMode;
 	std::shared_ptr<DOSBoxVersionCollection> m_dosboxVersions;
 	mutable std::unique_ptr<DOSBoxDownloadCollection> m_dosboxDownloads;
 };

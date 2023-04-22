@@ -36,6 +36,7 @@ public:
 	static const std::string DEFAULT_STANDALONE_MODS_LIST_FILE_PATH;
 	static const std::string DEFAULT_FAVOURITE_MODS_LIST_FILE_PATH;
 	static const std::string DEFAULT_GAME_VERSIONS_LIST_FILE_PATH;
+	static const std::string DEFAULT_GAME_DOWNLOADS_LIST_FILE_PATH;
 	static const std::string DEFAULT_GAME_SYMLINK_NAME;
 	static const bool DEFAULT_LOCAL_MODE;
 	static const std::string DEFAULT_MODS_DIRECTORY_PATH;
@@ -63,6 +64,7 @@ public:
 	static const GameType DEFAULT_GAME_TYPE;
 	static const std::string DEFAULT_PREFERRED_GAME_VERSION_ID;
 	static const std::string DEFAULT_DOSBOX_VERSIONS_LIST_FILE_PATH;
+	static const std::string DEFAULT_DOSBOX_DOWNLOADS_LIST_FILE_PATH;
 	static const std::string DEFAULT_PREFERRED_DOSBOX_VERSION_ID;
 	static const std::string DEFAULT_DOSBOX_SERVER_IP_ADDRESS;
 	static const uint16_t DEFAULT_DOSBOX_LOCAL_SERVER_PORT;
@@ -98,6 +100,7 @@ public:
 	std::string standAloneModsListFilePath;
 	std::string favouriteModsListFilePath;
 	std::string gameVersionsListFilePath;
+	std::string gameDownloadsListFilePath;
 	std::string gameSymlinkName;
 	bool localMode;
 	std::string modsDirectoryPath;
@@ -125,6 +128,7 @@ public:
 	GameType gameType;
 	std::string preferredGameVersionID;
 	std::string dosboxVersionsListFilePath;
+	std::string dosboxDownloadsListFilePath;
 	std::string preferredDOSBoxVersionID;
 	std::string dosboxServerIPAddress;
 	uint16_t dosboxLocalServerPort;

@@ -189,28 +189,7 @@ static const std::array<GameFileInformation, 103> LAMEDUKE_GAME_FILE_INFO_LIST =
 	GameFileInformation{ "WATERFAL.VOC", { "db78e7f4390b724c34796e061b8a3232f085d3c1" } }
 };
 
-static std::string getLocalGameDownloadsListFilePath() {
-	SettingsManager * settings = SettingsManager::getInstance();
-
-	if(settings->downloadsDirectoryPath.empty()) {
-		spdlog::error("Missing downloads directory path setting.");
-		return {};
-	}
-
-	if(settings->gameDownloadsDirectoryName.empty()) {
-		spdlog::error("Missing game downloads directory name setting.");
-		return {};
-	}
-
-	if(settings->remoteGamesListFileName.empty()) {
-		spdlog::error("Missing remote games list file name setting.");
-		return {};
-	}
-
-	return Utilities::joinPaths(settings->downloadsDirectoryPath, settings->gameDownloadsDirectoryName, settings->remoteGamesListFileName);
-}
-
-static std::string getLocalGroupFilePath(const std::string & gameVersionID) {
+static std::string getGroupFilePath(const std::string & gameVersionID) {
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	if(settings->downloadsDirectoryPath.empty()) {
@@ -236,6 +215,7 @@ static std::string getFallbackGroupDownloadSHA1(const std::string & gameVersionI
 
 GameManager::GameManager()
 	: m_initialized(false)
+	, m_localMode(false)
 	, m_gameVersions(std::make_shared<GameVersionCollection>()) { }
 
 GameManager::~GameManager() { }
@@ -267,6 +247,10 @@ bool GameManager::initialize() {
 
 	m_gameVersions->addMissingDefaultGameVersions();
 
+	if(m_localMode && !loadOrUpdateGameDownloadList()) {
+		return false;
+	}
+
 	m_initialized = true;
 
 	return true;
@@ -276,20 +260,68 @@ std::shared_ptr<GameVersionCollection> GameManager::getGameVersions() const {
 	return m_gameVersions;
 }
 
+bool GameManager::isUsingLocalMode() const {
+	return m_localMode;
+}
+
+void GameManager::setLocalMode(bool localMode) {
+	if(m_initialized) {
+		spdlog::error("Cannot change local mode after initialization.");
+		return;
+	}
+
+	m_localMode = localMode;
+}
+
+std::string GameManager::getGameDownloadsListFilePath() const {
+	SettingsManager * settings = SettingsManager::getInstance();
+
+	if(m_localMode) {
+		if(settings->gameDownloadsListFilePath.empty()) {
+			spdlog::error("Missing local game downloads file path setting.");
+			return {};
+		}
+
+		return settings->gameDownloadsListFilePath;
+	}
+
+	if(settings->downloadsDirectoryPath.empty()) {
+		spdlog::error("Missing downloads directory path setting.");
+		return {};
+	}
+
+	if(settings->gameDownloadsDirectoryName.empty()) {
+		spdlog::error("Missing game downloads directory name setting.");
+		return {};
+	}
+
+	if(settings->remoteGamesListFileName.empty()) {
+		spdlog::error("Missing remote games list file name setting.");
+		return {};
+	}
+
+	return Utilities::joinPaths(settings->downloadsDirectoryPath, settings->gameDownloadsDirectoryName, settings->remoteGamesListFileName);
+}
+
 bool GameManager::shouldUpdateGameDownloadList() const {
+	if(m_localMode) {
+		return false;
+	}
+
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	if(!settings->downloadThrottlingEnabled || !settings->gameDownloadListLastDownloadedTimestamp.has_value()) {
 		return true;
 	}
 
-	std::string localGameDownloadsListFilePath(getLocalGameDownloadsListFilePath());
+	std::string gameDownloadsListFilePath(getGameDownloadsListFilePath());
 
-	if(!localGameDownloadsListFilePath.empty()) {
+	if(!gameDownloadsListFilePath.empty()) {
+		spdlog::error("Failed to determine game downloads file list path. Are your settings configured correctly?");
 		return false;
 	}
 
-	if(!std::filesystem::is_regular_file(std::filesystem::path(localGameDownloadsListFilePath))) {
+	if(!std::filesystem::is_regular_file(std::filesystem::path(gameDownloadsListFilePath))) {
 		return true;
 	}
 
@@ -297,16 +329,32 @@ bool GameManager::shouldUpdateGameDownloadList() const {
 }
 
 bool GameManager::loadOrUpdateGameDownloadList(bool forceUpdate) const {
-	std::string localGameDownloadsListFilePath(getLocalGameDownloadsListFilePath());
+	std::string gameDownloadsListFilePath(getGameDownloadsListFilePath());
 
-	if(localGameDownloadsListFilePath.empty()) {
+	if(gameDownloadsListFilePath.empty()) {
+		spdlog::error("Failed to determine game downloads file list path. Are your settings configured correctly?");
 		return false;
 	}
 
-	if(!forceUpdate && std::filesystem::is_regular_file(std::filesystem::path(localGameDownloadsListFilePath))) {
+	if(m_localMode) {
 		std::unique_ptr<GameDownloadCollection> gameDownloads(std::make_unique<GameDownloadCollection>());
 
-		if(gameDownloads->loadFrom(localGameDownloadsListFilePath) && GameDownloadCollection::isValid(gameDownloads.get())) {
+		spdlog::info("Loading local game downloads list file...");
+
+		if(gameDownloads->loadFrom(gameDownloadsListFilePath) && GameDownloadCollection::isValid(gameDownloads.get())) {
+			m_gameDownloads = std::move(gameDownloads);
+			return true;
+		}
+
+		spdlog::error("Failed to load local game downloads list file.");
+
+		return false;
+	}
+
+	if(!forceUpdate && std::filesystem::is_regular_file(std::filesystem::path(gameDownloadsListFilePath))) {
+		std::unique_ptr<GameDownloadCollection> gameDownloads(std::make_unique<GameDownloadCollection>());
+
+		if(gameDownloads->loadFrom(gameDownloadsListFilePath) && GameDownloadCollection::isValid(gameDownloads.get())) {
 			m_gameDownloads = std::move(gameDownloads);
 
 			if(!shouldUpdateGameDownloadList()) {
@@ -322,6 +370,10 @@ bool GameManager::loadOrUpdateGameDownloadList(bool forceUpdate) const {
 }
 
 bool GameManager::updateGameDownloadList(bool force) const {
+	if(m_localMode) {
+		return false;
+	}
+
 	HTTPService * httpService = HTTPService::getInstance();
 
 	if(!httpService->isInitialized()) {
@@ -394,15 +446,15 @@ bool GameManager::updateGameDownloadList(bool force) const {
 		return false;
 	}
 
-	std::string localGameDownloadsListFilePath(getLocalGameDownloadsListFilePath());
+	std::string gameDownloadsListFilePath(getGameDownloadsListFilePath());
 
-	if(localGameDownloadsListFilePath.empty()) {
-		spdlog::error("Failed to determine local game downloads file list path. Are your settings configured correctly?");
+	if(gameDownloadsListFilePath.empty()) {
+		spdlog::error("Failed to determine game downloads file list path. Are your settings configured correctly?");
 		return false;
 	}
 
-	if(!response->getBody()->writeTo(localGameDownloadsListFilePath, true)) {
-		spdlog::error("Failed to write game download collection JSON data to file: '{}'.", localGameDownloadsListFilePath);
+	if(!response->getBody()->writeTo(gameDownloadsListFilePath, true)) {
+		spdlog::error("Failed to write game download collection JSON data to file: '{}'.", gameDownloadsListFilePath);
 		return false;
 	}
 
@@ -2336,32 +2388,32 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		}
 
 		if(Utilities::areStringsEqualIgnoreCase(fileName, Group::DUKE_NUKEM_3D_GROUP_FILE_NAME)) {
-			std::string localGroupFilePath(getLocalGroupFilePath(gameVersion.getID()));
+			std::string groupFilePath(getGroupFilePath(gameVersion.getID()));
 
-			if(localGroupFilePath.empty()) {
-				spdlog::error("Failed to determine local group file path. Are your settings configured correctly?");
+			if(groupFilePath.empty()) {
+				spdlog::error("Failed to determine group file path. Are your settings configured correctly?");
 				return false;
 			}
 
 			std::string groupGameVersionLongName(Utilities::areStringsEqualIgnoreCase(gameVersion.getID(), GameVersion::ORIGINAL_REGULAR_VERSION.getID()) ? GameVersion::ORIGINAL_REGULAR_VERSION.getLongName() : GameVersion::ORIGINAL_ATOMIC_EDITION.getLongName());
 
-			if(!std::filesystem::is_regular_file(std::filesystem::path(localGroupFilePath))) {
+			if(!std::filesystem::is_regular_file(std::filesystem::path(groupFilePath))) {
 				std::error_code errorCode;
-				std::filesystem::path localGroupFileBasePath(Utilities::getBasePath(localGroupFilePath));
+				std::filesystem::path groupFileBasePath(Utilities::getBasePath(groupFilePath));
 
-				if(!std::filesystem::is_directory(localGroupFileBasePath)) {
-					std::filesystem::create_directories(localGroupFileBasePath, errorCode);
+				if(!std::filesystem::is_directory(groupFileBasePath)) {
+					std::filesystem::create_directories(groupFileBasePath, errorCode);
 
 					if(errorCode) {
-						spdlog::error("Failed to create local group file path base directory '{}': {}", localGroupFileBasePath.string(), errorCode.message());
+						spdlog::error("Failed to create group file path base directory '{}': {}", groupFileBasePath.string(), errorCode.message());
 						return false;
 					}
 
-					spdlog::debug("Created local group file base directory path: '{}'.", localGroupFileBasePath.string());
+					spdlog::debug("Created group file base directory path: '{}'.", groupFileBasePath.string());
 				}
 
-				if(!gameFileData->writeTo(localGroupFilePath, overwrite)) {
-					spdlog::error("Failed to write '{}' group filefrom game files package file '{}' to '{}'.", groupGameVersionLongName, Utilities::getFileName(gameDownloadURL), localGroupFilePath);
+				if(!gameFileData->writeTo(groupFilePath, overwrite)) {
+					spdlog::error("Failed to write '{}' group filefrom game files package file '{}' to '{}'.", groupGameVersionLongName, Utilities::getFileName(gameDownloadURL), groupFilePath);
 					return false;
 				}
 			}
@@ -2370,7 +2422,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 
 			if(Utilities::areSymlinksSupported()) {
 				std::error_code errorCode;
-				std::filesystem::create_symlink(std::filesystem::path(localGroupFilePath), groupFileDestinationPath, errorCode);
+				std::filesystem::create_symlink(std::filesystem::path(groupFilePath), groupFileDestinationPath, errorCode);
 
 				if(errorCode) {
 					spdlog::error("Failed to create '{}' group file symbolic link target with error: {}", groupGameVersionLongName, errorCode.message());
@@ -2379,10 +2431,10 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 			}
 			else {
 				std::error_code errorCode;
-				std::filesystem::copy_file(localGroupFilePath, groupFileDestinationPath, errorCode);
+				std::filesystem::copy_file(groupFilePath, groupFileDestinationPath, errorCode);
 
 				if(errorCode) {
-					spdlog::error("Failed to copy '{}' group file from '{}' to '{}' with error: '{}'.", groupGameVersionLongName, localGroupFilePath, groupFileDestinationPath, errorCode.message());
+					spdlog::error("Failed to copy '{}' group file from '{}' to '{}' with error: '{}'.", groupGameVersionLongName, groupFilePath, groupFileDestinationPath, errorCode.message());
 					return false;
 				}
 			}
@@ -2671,13 +2723,13 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 }
 
 bool GameManager::isGroupFileDownloaded(const std::string & gameVersionID) {
-	std::string localGroupFilePath(getLocalGroupFilePath(gameVersionID));
+	std::string groupFilePath(getGroupFilePath(gameVersionID));
 
-	if(localGroupFilePath.empty()) {
+	if(groupFilePath.empty()) {
 		return false;
 	}
 
-	return std::filesystem::is_regular_file(std::filesystem::path(localGroupFilePath));
+	return std::filesystem::is_regular_file(std::filesystem::path(groupFilePath));
 }
 
 bool GameManager::downloadGroupFile(const std::string & gameVersionID) {
@@ -2690,14 +2742,14 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 		return {};
 	}
 
-	std::string localGroupFilePath(getLocalGroupFilePath(gameVersionID));
+	std::string groupFilePath(getGroupFilePath(gameVersionID));
 
-	if(localGroupFilePath.empty()) {
-		spdlog::error("Failed to determine local group file path. Are your settings configured correctly?");
+	if(groupFilePath.empty()) {
+		spdlog::error("Failed to determine group file path. Are your settings configured correctly?");
 		return false;
 	}
 
-	if(std::filesystem::is_regular_file(std::filesystem::path(localGroupFilePath))) {
+	if(std::filesystem::is_regular_file(std::filesystem::path(groupFilePath))) {
 		spdlog::info("Duke Nukem 3D '{}' group file already downloaded.", gameVersionID);
 		return true;
 	}
@@ -2731,26 +2783,26 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 				spdlog::warn("Unexpected SHA1 hash calculated for Duke Nukem 3D group file '{}'! Game data may be modified, and may cause gameplay issues.", sourceGroupFilePath);
 			}
 
-			spdlog::debug("Copying Duke Nukem 3D group file from '{}' to: '{}'...", sourceGroupFilePath, localGroupFilePath);
+			spdlog::debug("Copying Duke Nukem 3D group file from '{}' to: '{}'...", sourceGroupFilePath, groupFilePath);
 
 			std::error_code errorCode;
-			std::filesystem::path localGroupFileBasePath(Utilities::getBasePath(localGroupFilePath));
+			std::filesystem::path groupFileBasePath(Utilities::getBasePath(groupFilePath));
 
-			if(!std::filesystem::is_directory(localGroupFileBasePath)) {
-				std::filesystem::create_directories(localGroupFileBasePath, errorCode);
+			if(!std::filesystem::is_directory(groupFileBasePath)) {
+				std::filesystem::create_directories(groupFileBasePath, errorCode);
 
 				if(errorCode) {
-					spdlog::error("Failed to create local group file path base directory '{}': {}", localGroupFileBasePath.string(), errorCode.message());
+					spdlog::error("Failed to create group file path base directory '{}': {}", groupFileBasePath.string(), errorCode.message());
 					return false;
 				}
 
-				spdlog::debug("Created local group file base directory path: '{}'.", localGroupFileBasePath.string());
+				spdlog::debug("Created group file base directory path: '{}'.", groupFileBasePath.string());
 			}
 
-			std::filesystem::copy_file(std::filesystem::path(sourceGroupFilePath), localGroupFilePath, errorCode);
+			std::filesystem::copy_file(std::filesystem::path(sourceGroupFilePath), groupFilePath, errorCode);
 
 			if(errorCode) {
-				spdlog::error("Failed to copy Duke Nukem 3D group file from '{}' to '{}' with error: '{}'.", sourceGroupFilePath, localGroupFilePath, errorCode.message());
+				spdlog::error("Failed to copy Duke Nukem 3D group file from '{}' to '{}' with error: '{}'.", sourceGroupFilePath, groupFilePath, errorCode.message());
 			}
 
 			return true;
@@ -2843,7 +2895,7 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 		}
 	}
 
-	spdlog::info("{} group file downloaded successfully after {} ms, extracting to '{}'...", gameVersionLongName, response->getRequestDuration().value().count(), localGroupFilePath);
+	spdlog::info("{} group file downloaded successfully after {} ms, extracting to '{}'...", gameVersionLongName, response->getRequestDuration().value().count(), groupFilePath);
 
 	std::unique_ptr<Archive> groupArchive(ArchiveFactoryRegistry::getInstance()->createArchiveFrom(response->transferBody(), std::string(Utilities::getFileExtension(groupDownloadURL))));
 
@@ -2895,8 +2947,8 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 		return false;
 	}
 
-	if(!groupFileData->writeTo(localGroupFilePath, true)) {
-		spdlog::error("Failed to write '{}' group file data from package file to '{}'.", gameVersionLongName, localGroupFilePath);
+	if(!groupFileData->writeTo(groupFilePath, true)) {
+		spdlog::error("Failed to write '{}' group file data from package file to '{}'.", gameVersionLongName, groupFilePath);
 		return false;
 	}
 
@@ -2915,10 +2967,10 @@ bool GameManager::installGroupFile(const std::string & gameVersionID, const std:
 		return false;
 	}
 
-	std::string localGroupFilePath(getLocalGroupFilePath(gameVersionID));
+	std::string groupFilePath(getGroupFilePath(gameVersionID));
 
-	if(localGroupFilePath.empty()) {
-		spdlog::error("Failed to determine local group file path. Are your settings configured correctly?");
+	if(groupFilePath.empty()) {
+		spdlog::error("Failed to determine group file path. Are your settings configured correctly?");
 		return false;
 	}
 
@@ -2926,23 +2978,23 @@ bool GameManager::installGroupFile(const std::string & gameVersionID, const std:
 
 	if(!Utilities::areSymlinksSupported()) {
 		std::error_code errorCode;
-		std::filesystem::copy_file(std::filesystem::path(localGroupFilePath), std::filesystem::path(destinationGroupFilePath), errorCode);
+		std::filesystem::copy_file(std::filesystem::path(groupFilePath), std::filesystem::path(destinationGroupFilePath), errorCode);
 
 		if(errorCode) {
-			spdlog::error("Failed to copy '{}' group file from '{}' to '{}' with error: '{}'.", gameVersionLongName, localGroupFilePath, destinationGroupFilePath, errorCode.message());
+			spdlog::error("Failed to copy '{}' group file from '{}' to '{}' with error: '{}'.", gameVersionLongName, groupFilePath, destinationGroupFilePath, errorCode.message());
 			return false;
 		}
 
 		return true;
 	}
 
-	spdlog::info("Creating '{}' group file symlink '{}' to target '{}'.", gameVersionLongName, Group::DUKE_NUKEM_3D_GROUP_FILE_NAME, localGroupFilePath);
+	spdlog::info("Creating '{}' group file symlink '{}' to target '{}'.", gameVersionLongName, Group::DUKE_NUKEM_3D_GROUP_FILE_NAME, groupFilePath);
 
 	std::error_code errorCode;
-	std::filesystem::create_symlink(std::filesystem::path(localGroupFilePath), std::filesystem::path(destinationGroupFilePath), errorCode);
+	std::filesystem::create_symlink(std::filesystem::path(groupFilePath), std::filesystem::path(destinationGroupFilePath), errorCode);
 
 	if(errorCode) {
-		spdlog::error("Failed to create '{}' group file symlink '{}' to target '{}': {}", gameVersionLongName, Group::DUKE_NUKEM_3D_GROUP_FILE_NAME, localGroupFilePath, errorCode.message());
+		spdlog::error("Failed to create '{}' group file symlink '{}' to target '{}': {}", gameVersionLongName, Group::DUKE_NUKEM_3D_GROUP_FILE_NAME, groupFilePath, errorCode.message());
 		return false;
 	}
 
@@ -2965,17 +3017,17 @@ void GameManager::updateGroupFileSymlinks() {
 			continue;
 		}
 
-		std::string localGroupFilePath(getLocalGroupFilePath(gameVersion->getID()));
+		std::string groupFilePath(getGroupFilePath(gameVersion->getID()));
 
-		if(localGroupFilePath.empty()) {
-			spdlog::error("Failed to determine local group file path. Are your settings configured correctly?");
+		if(groupFilePath.empty()) {
+			spdlog::error("Failed to determine group file path. Are your settings configured correctly?");
 			return;
 		}
 
 		std::string gameVersionLongName(Utilities::areStringsEqualIgnoreCase(gameVersion->getID(), GameVersion::ORIGINAL_REGULAR_VERSION.getID()) ? GameVersion::ORIGINAL_REGULAR_VERSION.getLongName() : GameVersion::ORIGINAL_ATOMIC_EDITION.getLongName());
 
-		if(!std::filesystem::is_regular_file(std::filesystem::path(localGroupFilePath))) {
-			spdlog::error("Local '{}' group file does not exist at path: '{}'.", gameVersionLongName, localGroupFilePath);
+		if(!std::filesystem::is_regular_file(std::filesystem::path(groupFilePath))) {
+			spdlog::error("'{}' group file does not exist at path: '{}'.", gameVersionLongName, groupFilePath);
 			return;
 		}
 
@@ -2994,10 +3046,10 @@ void GameManager::updateGroupFileSymlinks() {
 				continue;
 			}
 
-			bool groupFileSymbolicLinkTargetMatches = std::filesystem::equivalent(std::filesystem::path(localGroupFilePath), currentGroupFileSymlinkTargetFilePath, errorCode);
+			bool groupFileSymbolicLinkTargetMatches = std::filesystem::equivalent(std::filesystem::path(groupFilePath), currentGroupFileSymlinkTargetFilePath, errorCode);
 
 			if(errorCode) {
-				spdlog::warn("Failed compare '{}' game version group file symbolic link target to local group file path with error: {}", gameVersion->getLongName(), errorCode.message());
+				spdlog::warn("Failed compare '{}' game version group file symbolic link target to group file path with error: {}", gameVersion->getLongName(), errorCode.message());
 				continue;
 			}
 
@@ -3005,7 +3057,7 @@ void GameManager::updateGroupFileSymlinks() {
 				continue;
 			}
 
-			spdlog::info("Updating '{}' game version group file symbolic link target from '{}' to '{}'.", gameVersion->getLongName(), currentGroupFileSymlinkTargetFilePath.string(), localGroupFilePath);
+			spdlog::info("Updating '{}' game version group file symbolic link target from '{}' to '{}'.", gameVersion->getLongName(), currentGroupFileSymlinkTargetFilePath.string(), groupFilePath);
 
 			std::filesystem::remove(gameGroupFilePath, errorCode);
 
@@ -3021,11 +3073,11 @@ void GameManager::updateGroupFileSymlinks() {
 				continue;
 			}
 
-			spdlog::info("Creating '{}' game version group file symbolic link with target: '{}'.", gameVersion->getLongName(), localGroupFilePath);
+			spdlog::info("Creating '{}' game version group file symbolic link with target: '{}'.", gameVersion->getLongName(), groupFilePath);
 		}
 
 		std::error_code errorCode;
-		std::filesystem::create_symlink(std::filesystem::path(localGroupFilePath), gameGroupFilePath, errorCode);
+		std::filesystem::create_symlink(std::filesystem::path(groupFilePath), gameGroupFilePath, errorCode);
 
 		if(errorCode) {
 			spdlog::error("Failed to create '{}' group file symbolic link target with error: {}", gameVersion->getLongName(), errorCode.message());

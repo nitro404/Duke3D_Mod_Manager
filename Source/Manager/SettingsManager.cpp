@@ -24,6 +24,7 @@ using namespace std::chrono_literals;
 
 static constexpr const char * SYMLINK_NAME = "symlinkName";
 static constexpr const char * LIST_FILE_PATH = "listFilePath";
+static constexpr const char * DOWNLOADS_LIST_FILE_PATH = "downloadsListFilePath";
 static constexpr const char * DIRECTORY_PATH = "directoryPath";
 static constexpr const char * DATA_DIRECTORY_NAME = "dataDirectoryName";
 static constexpr const char * EXECUTABLE_FILE_NAME = "executableFileName";
@@ -40,6 +41,7 @@ static constexpr const char * LOCAL_MODE_PROPERTY_NAME = "localMode";
 
 static constexpr const char * GAME_VERSIONS_CATEGORY_NAME = "gameVersions";
 static constexpr const char * GAME_VERSIONS_LIST_FILE_PATH_PROPERTY_NAME = LIST_FILE_PATH;
+static constexpr const char * GAME_DOWNLOADS_LIST_FILE_PATH_PROPERTY_NAME = DOWNLOADS_LIST_FILE_PATH;
 static constexpr const char * PREFERRED_GAME_VERSION_PROPERTY_NAME = "preferred";
 
 static constexpr const char * MODS_CATEGORY_NAME = "mods";
@@ -70,6 +72,7 @@ static constexpr const char * CACHE_DIRECTORY_PATH_PROPERTY_NAME = DIRECTORY_PAT
 
 static constexpr const char * DOSBOX_CATEGORY_NAME = "dosbox";
 static constexpr const char * DOSBOX_VERSIONS_LIST_FILE_PATH_PROPERTY_NAME = LIST_FILE_PATH;
+static constexpr const char * DOSBOX_DOWNLOADS_LIST_FILE_PATH_PROPERTY_NAME = DOWNLOADS_LIST_FILE_PATH;
 static constexpr const char * PREFERRED_DOSBOX_VERSION_PROPERTY_NAME = "preferred";
 static constexpr const char * DOSBOX_ARGUMENTS_PROPERTY_NAME = "arguments";
 static constexpr const char * DOSBOX_AUTO_EXIT_PROPERTY_NAME = "autoExit";
@@ -134,6 +137,7 @@ const std::string SettingsManager::DEFAULT_MODS_LIST_FILE_PATH("Duke Nukem 3D Mo
 const std::string SettingsManager::DEFAULT_STANDALONE_MODS_LIST_FILE_PATH("Duke Nukem 3D Stand-Alone Mods.json");
 const std::string SettingsManager::DEFAULT_FAVOURITE_MODS_LIST_FILE_PATH("Duke Nukem 3D Favourite Mods.json");
 const std::string SettingsManager::DEFAULT_GAME_VERSIONS_LIST_FILE_PATH("Duke Nukem 3D Game Versions.json");
+const std::string SettingsManager::DEFAULT_GAME_DOWNLOADS_LIST_FILE_PATH("Duke Nukem 3D Game Downloads.json");
 const std::string SettingsManager::DEFAULT_GAME_SYMLINK_NAME("Game");
 const bool SettingsManager::DEFAULT_LOCAL_MODE = false;
 const std::string SettingsManager::DEFAULT_MODS_DIRECTORY_PATH("Mods");
@@ -161,6 +165,7 @@ const std::string SettingsManager::DEFAULT_DOSBOX_DATA_DIRECTORY_NAME("DOSBox");
 const GameType SettingsManager::DEFAULT_GAME_TYPE = ModManager::DEFAULT_GAME_TYPE;
 const std::string SettingsManager::DEFAULT_PREFERRED_GAME_VERSION_ID(ModManager::DEFAULT_PREFERRED_GAME_VERSION_ID);
 const std::string SettingsManager::DEFAULT_DOSBOX_VERSIONS_LIST_FILE_PATH("DOSBox Versions.json");
+const std::string SettingsManager::DEFAULT_DOSBOX_DOWNLOADS_LIST_FILE_PATH("DOSBox Downloads.json");
 const std::string SettingsManager::DEFAULT_PREFERRED_DOSBOX_VERSION_ID(ModManager::DEFAULT_PREFERRED_DOSBOX_VERSION_ID);
 const std::string SettingsManager::DEFAULT_DOSBOX_SERVER_IP_ADDRESS("127.0.0.1");
 const uint16_t SettingsManager::DEFAULT_DOSBOX_LOCAL_SERVER_PORT = 31337;
@@ -298,6 +303,7 @@ SettingsManager::SettingsManager()
 	, standAloneModsListFilePath(DEFAULT_STANDALONE_MODS_LIST_FILE_PATH)
 	, favouriteModsListFilePath(DEFAULT_FAVOURITE_MODS_LIST_FILE_PATH)
 	, gameVersionsListFilePath(DEFAULT_GAME_VERSIONS_LIST_FILE_PATH)
+	, gameDownloadsListFilePath(DEFAULT_GAME_DOWNLOADS_LIST_FILE_PATH)
 	, gameSymlinkName(DEFAULT_GAME_SYMLINK_NAME)
 	, localMode(DEFAULT_LOCAL_MODE)
 	, modsDirectoryPath(DEFAULT_MODS_DIRECTORY_PATH)
@@ -325,6 +331,7 @@ SettingsManager::SettingsManager()
 	, gameType(DEFAULT_GAME_TYPE)
 	, preferredGameVersionID(DEFAULT_PREFERRED_GAME_VERSION_ID)
 	, dosboxVersionsListFilePath(DEFAULT_DOSBOX_VERSIONS_LIST_FILE_PATH)
+	, dosboxDownloadsListFilePath(DEFAULT_DOSBOX_DOWNLOADS_LIST_FILE_PATH)
 	, preferredDOSBoxVersionID(DEFAULT_PREFERRED_DOSBOX_VERSION_ID)
 	, dosboxLocalServerPort(DEFAULT_DOSBOX_LOCAL_SERVER_PORT)
 	, dosboxRemoteServerPort(DEFAULT_DOSBOX_REMOTE_SERVER_PORT)
@@ -362,6 +369,7 @@ void SettingsManager::reset() {
 	standAloneModsListFilePath = DEFAULT_STANDALONE_MODS_LIST_FILE_PATH;
 	favouriteModsListFilePath = DEFAULT_FAVOURITE_MODS_LIST_FILE_PATH;
 	gameVersionsListFilePath = DEFAULT_GAME_VERSIONS_LIST_FILE_PATH;
+	gameDownloadsListFilePath = DEFAULT_GAME_DOWNLOADS_LIST_FILE_PATH;
 	gameSymlinkName = DEFAULT_GAME_SYMLINK_NAME;
 	localMode = DEFAULT_LOCAL_MODE;
 	modsDirectoryPath = DEFAULT_MODS_DIRECTORY_PATH;
@@ -390,6 +398,7 @@ void SettingsManager::reset() {
 	gameType = DEFAULT_GAME_TYPE;
 	preferredGameVersionID = DEFAULT_PREFERRED_GAME_VERSION_ID;
 	dosboxVersionsListFilePath = DEFAULT_DOSBOX_VERSIONS_LIST_FILE_PATH;
+	dosboxDownloadsListFilePath = DEFAULT_DOSBOX_DOWNLOADS_LIST_FILE_PATH;
 	preferredDOSBoxVersionID = DEFAULT_PREFERRED_DOSBOX_VERSION_ID;
 	dosboxLocalServerPort = DEFAULT_DOSBOX_LOCAL_SERVER_PORT;
 	dosboxRemoteServerPort = DEFAULT_DOSBOX_REMOTE_SERVER_PORT;
@@ -452,6 +461,8 @@ rapidjson::Document SettingsManager::toJSON() const {
 
 	rapidjson::Value gameVersionsListFilePathValue(gameVersionsListFilePath.c_str(), allocator);
 	gameVersionsCategoryValue.AddMember(rapidjson::StringRef(GAME_VERSIONS_LIST_FILE_PATH_PROPERTY_NAME), gameVersionsListFilePathValue, allocator);
+	rapidjson::Value gameDownloadsListFilePathValue(gameDownloadsListFilePath.c_str(), allocator);
+	gameVersionsCategoryValue.AddMember(rapidjson::StringRef(GAME_DOWNLOADS_LIST_FILE_PATH_PROPERTY_NAME), gameDownloadsListFilePathValue, allocator);
 	rapidjson::Value preferredGameVersionValue(preferredGameVersionID.c_str(), allocator);
 	gameVersionsCategoryValue.AddMember(rapidjson::StringRef(PREFERRED_GAME_VERSION_PROPERTY_NAME), preferredGameVersionValue, allocator);
 
@@ -526,6 +537,8 @@ rapidjson::Document SettingsManager::toJSON() const {
 
 	rapidjson::Value dosboxVersionsListFilePathValue(dosboxVersionsListFilePath.c_str(), allocator);
 	dosboxCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_VERSIONS_LIST_FILE_PATH_PROPERTY_NAME), dosboxVersionsListFilePathValue, allocator);
+	rapidjson::Value dosboxDownloadsListFilePathValue(dosboxDownloadsListFilePath.c_str(), allocator);
+	dosboxCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_DOWNLOADS_LIST_FILE_PATH_PROPERTY_NAME), dosboxDownloadsListFilePathValue, allocator);
 	rapidjson::Value preferredDOSBoxVersionValue(preferredDOSBoxVersionID.c_str(), allocator);
 	dosboxCategoryValue.AddMember(rapidjson::StringRef(PREFERRED_DOSBOX_VERSION_PROPERTY_NAME), preferredDOSBoxVersionValue, allocator);
 	rapidjson::Value dosboxArgumentsValue(dosboxArguments.c_str(), allocator);
@@ -724,6 +737,7 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 		const rapidjson::Value & gameVersionsCategoryValue = settingsDocument[GAME_VERSIONS_CATEGORY_NAME];
 
 		assignStringSetting(gameVersionsListFilePath, gameVersionsCategoryValue, GAME_VERSIONS_LIST_FILE_PATH_PROPERTY_NAME);
+		assignStringSetting(gameDownloadsListFilePath, gameVersionsCategoryValue, GAME_DOWNLOADS_LIST_FILE_PATH_PROPERTY_NAME);
 		assignStringSetting(preferredGameVersionID, gameVersionsCategoryValue, PREFERRED_GAME_VERSION_PROPERTY_NAME);
 	}
 
@@ -769,6 +783,7 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 		const rapidjson::Value & dosboxCategoryValue = settingsDocument[DOSBOX_CATEGORY_NAME];
 
 		assignStringSetting(dosboxVersionsListFilePath, dosboxCategoryValue, DOSBOX_VERSIONS_LIST_FILE_PATH_PROPERTY_NAME);
+		assignStringSetting(dosboxDownloadsListFilePath, dosboxCategoryValue, DOSBOX_DOWNLOADS_LIST_FILE_PATH_PROPERTY_NAME);
 		assignStringSetting(preferredDOSBoxVersionID, dosboxCategoryValue, PREFERRED_DOSBOX_VERSION_PROPERTY_NAME);
 		assignStringSetting(dosboxArguments, dosboxCategoryValue, DOSBOX_ARGUMENTS_PROPERTY_NAME);
 		assignBooleanSetting(dosboxAutoExit, dosboxCategoryValue, DOSBOX_AUTO_EXIT_PROPERTY_NAME);

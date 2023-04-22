@@ -20,6 +20,7 @@ using namespace std::chrono_literals;
 
 DOSBoxManager::DOSBoxManager()
 	: m_initialized(false)
+	, m_localMode(false)
 	, m_dosboxVersions(std::make_shared<DOSBoxVersionCollection>()) { }
 
 DOSBoxManager::~DOSBoxManager() = default;
@@ -52,17 +53,43 @@ bool DOSBoxManager::initialize() {
 
 	m_dosboxVersions->addMissingDefaultDOSBoxVersions();
 
+	if(m_localMode && !loadOrUpdateDOSBoxDownloadList()) {
+		return false;
+	}
+
 	m_initialized = true;
 
 	return true;
+}
+
+bool DOSBoxManager::isUsingLocalMode() const {
+	return m_localMode;
+}
+
+void DOSBoxManager::setLocalMode(bool localMode) {
+	if(m_initialized) {
+		spdlog::error("Cannot change local mode after initialization.");
+		return;
+	}
+
+	m_localMode = localMode;
 }
 
 std::shared_ptr<DOSBoxVersionCollection> DOSBoxManager::getDOSBoxVersions() const {
 	return m_dosboxVersions;
 }
 
-std::string DOSBoxManager::getLocalDOSBoxDownloadsListFilePath() const {
+std::string DOSBoxManager::getDOSBoxDownloadsListFilePath() const {
 	SettingsManager * settings = SettingsManager::getInstance();
+
+	if(m_localMode) {
+		if(settings->dosboxDownloadsListFilePath.empty()) {
+			spdlog::error("Missing local DOSBox downloads file path setting.");
+			return {};
+		}
+
+		return settings->dosboxDownloadsListFilePath;
+	}
 
 	if(settings->downloadsDirectoryPath.empty()) {
 		spdlog::error("Missing downloads directory path setting.");
@@ -83,20 +110,24 @@ std::string DOSBoxManager::getLocalDOSBoxDownloadsListFilePath() const {
 }
 
 bool DOSBoxManager::shouldUpdateDOSBoxDownloadList() const {
+	if(m_localMode) {
+		return false;
+	}
+
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	if(!settings->downloadThrottlingEnabled || !settings->dosboxDownloadListLastDownloadedTimestamp.has_value()) {
 		return true;
 	}
 
-	std::string localDOSBoxDownloadsListFilePath(getLocalDOSBoxDownloadsListFilePath());
+	std::string dosboxDownloadsListFilePath(getDOSBoxDownloadsListFilePath());
 
-	if(localDOSBoxDownloadsListFilePath.empty()) {
-		spdlog::error("Failed to determine local DOSBox downloads list file path. Are your settings configured correctly?");
+	if(dosboxDownloadsListFilePath.empty()) {
+		spdlog::error("Failed to determine DOSBox downloads list file path. Are your settings configured correctly?");
 		return false;
 	}
 
-	if(!std::filesystem::is_regular_file(std::filesystem::path(localDOSBoxDownloadsListFilePath))) {
+	if(!std::filesystem::is_regular_file(std::filesystem::path(dosboxDownloadsListFilePath))) {
 		return true;
 	}
 
@@ -104,17 +135,32 @@ bool DOSBoxManager::shouldUpdateDOSBoxDownloadList() const {
 }
 
 bool DOSBoxManager::loadOrUpdateDOSBoxDownloadList(bool forceUpdate) const {
-	std::string localDOSBoxDownloadsListFilePath(getLocalDOSBoxDownloadsListFilePath());
+	std::string dosboxDownloadsListFilePath(getDOSBoxDownloadsListFilePath());
 
-	if(localDOSBoxDownloadsListFilePath.empty()) {
-		spdlog::error("Failed to determine local DOSBox downloads list file path. Are your settings configured correctly?");
+	if(dosboxDownloadsListFilePath.empty()) {
+		spdlog::error("Failed to determine DOSBox downloads list file path. Are your settings configured correctly?");
 		return false;
 	}
 
-	if(!forceUpdate && std::filesystem::is_regular_file(std::filesystem::path(localDOSBoxDownloadsListFilePath))) {
+	if(m_localMode) {
 		std::unique_ptr<DOSBoxDownloadCollection> dosboxDownloads(std::make_unique<DOSBoxDownloadCollection>());
 
-		if(dosboxDownloads->loadFrom(localDOSBoxDownloadsListFilePath) && DOSBoxDownloadCollection::isValid(dosboxDownloads.get())) {
+		spdlog::info("Loading local DOSBox downloads list file...");
+
+		if(dosboxDownloads->loadFrom(dosboxDownloadsListFilePath) && DOSBoxDownloadCollection::isValid(dosboxDownloads.get())) {
+			m_dosboxDownloads = std::move(dosboxDownloads);
+			return true;
+		}
+
+		spdlog::error("Failed to load local DOSBox downloads list file.");
+
+		return false;
+	}
+
+	if(!forceUpdate && std::filesystem::is_regular_file(std::filesystem::path(dosboxDownloadsListFilePath))) {
+		std::unique_ptr<DOSBoxDownloadCollection> dosboxDownloads(std::make_unique<DOSBoxDownloadCollection>());
+
+		if(dosboxDownloads->loadFrom(dosboxDownloadsListFilePath) && DOSBoxDownloadCollection::isValid(dosboxDownloads.get())) {
 			m_dosboxDownloads = std::move(dosboxDownloads);
 
 			if(!shouldUpdateDOSBoxDownloadList()) {
@@ -130,6 +176,10 @@ bool DOSBoxManager::loadOrUpdateDOSBoxDownloadList(bool forceUpdate) const {
 }
 
 bool DOSBoxManager::updateDOSBoxDownloadList(bool force) const {
+	if(m_localMode) {
+		return false;
+	}
+
 	HTTPService * httpService = HTTPService::getInstance();
 
 	if(!httpService->isInitialized()) {
@@ -200,15 +250,15 @@ bool DOSBoxManager::updateDOSBoxDownloadList(bool force) const {
 		return false;
 	}
 
-	std::string localDOSBoxDownloadsListFilePath(getLocalDOSBoxDownloadsListFilePath());
+	std::string dosboxDownloadsListFilePath(getDOSBoxDownloadsListFilePath());
 
-	if(localDOSBoxDownloadsListFilePath.empty()) {
-		spdlog::error("Failed to determine local DOSBox downloads list file path. Are your settings configured correctly?");
+	if(dosboxDownloadsListFilePath.empty()) {
+		spdlog::error("Failed to determine DOSBox downloads list file path. Are your settings configured correctly?");
 		return false;
 	}
 
-	if(!response->getBody()->writeTo(localDOSBoxDownloadsListFilePath, true)) {
-		spdlog::error("Failed to write DOSBox version download collection JSON data to file: '{}'.", localDOSBoxDownloadsListFilePath);
+	if(!response->getBody()->writeTo(dosboxDownloadsListFilePath, true)) {
+		spdlog::error("Failed to write DOSBox version download collection JSON data to file: '{}'.", dosboxDownloadsListFilePath);
 		return false;
 	}
 

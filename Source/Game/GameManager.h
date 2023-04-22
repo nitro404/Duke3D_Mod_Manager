@@ -18,7 +18,10 @@ public:
 
 	bool isInitialized() const;
 	bool initialize();
+	bool isUsingLocalMode() const;
+	void setLocalMode(bool localMode);
 	std::shared_ptr<GameVersionCollection> getGameVersions() const;
+	std::string getGameDownloadsListFilePath() const;
 	bool shouldUpdateGameDownloadList() const;
 	bool loadOrUpdateGameDownloadList(bool forceUpdate = false) const;
 	bool updateGameDownloadList(bool force = false) const;
@@ -51,6 +54,7 @@ private:
 	bool downloadGroupFile(const std::string & gameVersionID, bool useFallback);
 
 	bool m_initialized;
+	bool m_localMode;
 	std::shared_ptr<GameVersionCollection> m_gameVersions;
 	mutable std::unique_ptr<GameDownloadCollection> m_gameDownloads;
 };

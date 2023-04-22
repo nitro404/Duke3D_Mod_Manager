@@ -214,6 +214,8 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 	}
 
 	m_organizedMods->setLocalMode(m_localMode);
+	m_dosboxManager->setLocalMode(m_localMode);
+	m_gameManager->setLocalMode(m_localMode);
 
 	bool skipFileInfoValidation = m_localMode && m_arguments != nullptr && (m_arguments->hasArgument("skip-file-info-validation") || m_arguments->hasArgument("update-new") || m_arguments->hasArgument("update-all"));
 
