@@ -1101,7 +1101,7 @@
 			<member name="Zagor"/>
 			<member name="T-Bone"/>
 			<member name="Krad-Amrak"/>
-			<member name="Fox"/>
+			<member name="Fox" discord="Fox#2395"/>
 			<member name="Fallout"/>
 			<member name="Lord Scorpion"/>
 		</team>
@@ -3367,7 +3367,7 @@
 	<mod name="Saving Private Ryan" id="saving_private_ryan" type="Total Conversion" website="http://www.dukeworld.com/spr">
 		<team name="Edge Designs" website="http://www.edgedes.com" email="gecko620@juno.com">
 			<member name="eXtreme-Rush"/>
-			<member name="foX"/>
+			<member name="foX" discord="Fox#2395"/>
 			<member name="Adam O&apos;Hern"/>
 			<member name="Conan"/>
 		</team>
@@ -8458,7 +8458,7 @@
 	</mod>
 	<mod name="Duke Nukem 64" id="duke_nukem_64" type="Total Conversion" version="0.9.3" website="https://www.moddb.com/mods/dn64">
 		<team>
-			<member name="Fox"/>
+			<member name="Fox" discord="Fox#2395"/>
 			<member name="Nukey"/>
 			<member name="Hendricks266" discord="Hendricks266#8920"/>
 		</team>
@@ -8526,7 +8526,7 @@
 	</mod>
 	<mod name="Duke Forces" id="Duke_Forces" type="Total Conversion" version="2.10c" website="https://www.moddb.com/mods/duke-forces">
 		<team>
-			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com"/>
+			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" discord="Danarama#9209"/>
 		</team>
 		<versions>
 			<version id="1.1" release_date="May 21, 2016">
@@ -8618,7 +8618,7 @@
 	</mod>
 	<mod name="Duke Nukem: Weapon of Mass Destruction" id="duke_nukem_weapon_of_mass_destruction" type="Total Conversion" version="1.20" website="https://www.moddb.com/mods/duke-nukem-weapon-of-mass-destruction">
 		<team>
-			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld"/>
+			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld" discord="Danarama#9209"/>
 		</team>
 		<versions>
 			<version id="1.20" release_date="October 12, 2007">
@@ -8636,7 +8636,7 @@
 	</mod>
 	<mod name="Alien Armageddon" id="alien_armageddon" type="Total Conversion" version="3.14b" website="https://www.moddb.com/mods/duke-nukem-alien-armageddon">
 		<team>
-			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com"/>
+			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" discord="Danarama#9209"/>
 			<member name="sebabdukeboss20" discord="sebabdukeboss20#5996"/>
 			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com" discord="Mrlijn#8650"/>
 			<member name="Maarten van Oostrum"/>
@@ -8843,7 +8843,7 @@
 	</mod>
 	<mod name="Duke Nukem Arena" id="duke_nukem_arena" type="Dukematch">
 		<team>
-			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com"/>
+			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" discord="Danarama#9209"/>
 		</team>
 		<versions>
 			<version release_date="January 28, 2007">
@@ -8912,7 +8912,7 @@
 	</mod>
 	<mod name="Attrition" id="attrition" type="Total Conversion" version="2.0" website="https://www.moddb.com/mods/duke-nukem-attrition">
 		<team>
-			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com"/>
+			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" discord="Danarama#9209"/>
 		</team>
 		<versions>
 			<version id="1.01" release_date="April 17, 2010">
@@ -9686,7 +9686,7 @@
 	<mod name="Duke Nukem: Total Meltdown" id="duke_nukem_total_meltdown" type="Total Conversion" version="1.0.3" website="https://www.moddb.com/mods/dntm">
 		<team>
 			<member name="Daedolon"/>
-			<member name="Fox"/>
+			<member name="Fox" discord="Fox#2395"/>
 			<member name="Hendricks266" discord="Hendricks266#8920"/>
 			<member name="Nukey"/>
 			<member name="Max Ylitalo" alias="Oasiz"/>
@@ -10446,7 +10446,7 @@
 	</mod>
 	<mod name="Spooky" id="spooky" type="Partial Conversion" website="https://forums.duke4.net/topic/11447-spookymod">
 		<team>
-			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com"/>
+			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" discord="Danarama#9209"/>
 			<member name="sebabdukeboss20" discord="sebabdukeboss20#5996"/>
 		</team>
 		<versions>
@@ -10647,7 +10647,7 @@
 	<mod name="Blast Radius" id="blast_radius" type="Episode" version="1.0.13" website="https://www.moddb.com/mods/duke-nukem-3d-blast-radius">
 		<team country="France">
 			<member name="Aymeric Nocus" alias="ck3D" email="aymeric-nocus@tele2.fr" website="https://www.ko-fi.com/blastradius" youtube="MisterCK" discord="ck3d#2928" country="France"/>
-			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld"/>
+			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld" discord="Danarama#9209"/>
 		</team>
 		<versions>
 			<version id="1.0.0" release_date="February 13, 2023">
@@ -11111,7 +11111,7 @@
 	</mod>
 	<mod name="Operation Mallard" id="operation_mallard" type="Total Conversion" version="1.0 Demo" website="https://www.moddb.com/mods/operation-mallard">
 		<team name="J and M">
-			<member name="Jimmy de Visser"/>
+			<member name="Jimmy de Visser" discord="Flamin_Weenie#8054"/>
 			<member name="Mark"/>
 		</team>
 		<versions>
@@ -11348,7 +11348,7 @@
 	<mod name="WGRealms 2: Siege Breaker" id="wgrealms_2_-_siege_breaker" alias="wg_realms_-_demon_throne" type="Total Conversion" version="1.201" website="https://www.moddb.com/games/wgrealms-2">
 		<team discord="https://discord.gg/jNrKdk5">
 			<member name="William Gee" email="geewillywizz@live.com" website="http://wgrealms.williamgeegallery.com" discord="William Gee#2015" country="New Zealand"/>
-			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld"/>
+			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld" discord="Danarama#9209"/>
 			<member name="Cage" email="cageds@tlen.pl"/>
 		</team>
 		<versions>
@@ -11422,7 +11422,7 @@
 	<mod name="WG Realms: Demon Throne" id="wg_realms_-_demon_throne" alias="wgrealms_2_-_siege_breaker" type="Total Conversion" version="3.01" website="https://www.moddb.com/games/wgrealms-2">
 		<team discord="https://discord.gg/jNrKdk5">
 			<member name="William Gee" email="geewillywizz@live.com" website="http://wgrealms.williamgeegallery.com" discord="William Gee#2015" country="New Zealand"/>
-			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld"/>
+			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld" discord="Danarama#9209"/>
 			<member name="sebabdukeboss20" discord="sebabdukeboss20#5996"/>
 			<member name="Cage" email="cageds@tlen.pl"/>
 			<member name="Forge"/>
@@ -11466,7 +11466,7 @@
 	</mod>
 	<mod name="Silver Wolf" id="silver_wolf" type="Total Conversion" version="1.0" website="https://www.moddb.com/mods/silver-wolf">
 		<team>
-			<member name="Fox"/>
+			<member name="Fox" discord="Fox#2395"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="March 29, 2023">
