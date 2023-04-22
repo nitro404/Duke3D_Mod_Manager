@@ -31,9 +31,9 @@
 					"files": [
 						{
 							"fileName": "Duke_Nukem_3D_-_Regular_Version_Game_Files.zip",
-							"fileSize": 1230209,
+							"fileSize": 1228246,
 							"type": "Game",
-							"sha1": "624ae880db24da7d06ebdd9debc8ba1e33a86e8d",
+							"sha1": "33d0f411356917801271baaca8b2a719aee2e235",
 							"operatingSystem": "DOS",
 							"processorArchitecture": "x86"
 						},
@@ -49,8 +49,35 @@
 			]
 		},
 		{
+			"id": "plutonium",
+			"name": "Duke Nukem 3D: Plutonium Pak 1.4",
+			"versions": [
+				{
+					"version": "1.4",
+					"releaseDate": "November 27, 1996",
+					"files": [
+						{
+							"fileName": "Duke_Nukem_3D_-_Plutonium_Pak_Game_Files.zip",
+							"fileSize": 1356469,
+							"type": "Game",
+							"sha1": "b939179d08ce9692b977329faef31334283aaafb",
+							"operatingSystem": "DOS",
+							"processorArchitecture": "x86"
+						},
+						{
+							"fileName": "Duke_Nukem_3D_-_Plutonium_Pak_Group.zip",
+							"fileSize": 19506081,
+							"type": "Group",
+							"sha1": "c5f81d6e76d5944662c5a557b31efa6cf6d29732",
+							"operatingSystem": "DOS"
+						}
+					]
+				}
+			]
+		},
+		{
 			"id": "atomic",
-			"name": "Duke Nukem 3D: Atomic Edition",
+			"name": "Duke Nukem 3D: Atomic Edition 1.5",
 			"versions": [
 				{
 					"version": "1.5",
@@ -58,9 +85,9 @@
 					"files": [
 						{
 							"fileName": "Duke_Nukem_3D_-_Atomic_Edition_Game_Files.zip",
-							"fileSize": 1362258,
+							"fileSize": 1360254,
 							"type": "Game",
-							"sha1": "e05b9253ddd69a1fc6c24b8a968a405905c61a87",
+							"sha1": "600d01c68190b650f886d82857d32dc8099e29e2",
 							"operatingSystem": "DOS",
 							"processorArchitecture": "x86"
 						},

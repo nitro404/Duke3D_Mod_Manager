@@ -1,16 +1,13 @@
 #include "NoCDCracker.h"
 
+#include "Game/GameVersion.h"
+
 #include <Utilities/StringUtilities.h>
 
 #include <fmt/core.h>
 
 #include <filesystem>
 
-static const std::string REGULAR_VERSION_GAME_EXECUTABLE_SHA1("a64cc5b61cba728427cfcc537aa2f74438ea4c65");
-static const std::string PLUTONIUM_PAK_GAME_EXECTUABLE_UNCRACKED_SHA1("772d922b16f7b0b11305f1aa7a3fcbb534f884d1");
-static const std::string PLUTONIUM_PAK_GAME_EXECTUABLE_CRACKED_SHA1("b440dd343df1ce318a03991a056db95a43d5d30c");
-static const std::string ATOMIC_EDITION_GAME_EXECTUABLE_UNCRACKED_SHA1("f0dc7f1ca810aa517fcad544a3bf5af623a3e44e");
-static const std::string ATOMIC_EDITION_GAME_EXECTUABLE_CRACKED_SHA1("a849e1e00ac58c0271498dd302d5c5f2819ab2e9");
 static constexpr uint32_t PLUTONIUM_PAK_EXECUTABLE_SIZE = 1240151;
 static constexpr uint32_t PLUTONIUM_PAK_NO_CD_CRACK_BYTE_INDEX = 553795;
 static constexpr uint32_t ATOMIC_EDITION_EXECUTABLE_SIZE = 1246231;
@@ -38,19 +35,19 @@ NoCDCracker::GameExecutableStatus NoCDCracker::getGameExecutableStatus(const Byt
 
 	std::string gameExecutableSHA1(gameExecutableBuffer->getSHA1());
 
-	if(Utilities::areStringsEqual(gameExecutableSHA1, PLUTONIUM_PAK_GAME_EXECTUABLE_UNCRACKED_SHA1)) {
+	if(Utilities::areStringsEqual(gameExecutableSHA1, GameVersion::PLUTONIUM_PAK_GAME_EXECTUABLE_UNCRACKED_SHA1)) {
 		gameExecutableStatus |= GameExecutableStatus::PlutoniumPak;
 	}
-	else if(Utilities::areStringsEqual(gameExecutableSHA1, PLUTONIUM_PAK_GAME_EXECTUABLE_CRACKED_SHA1)) {
+	else if(Utilities::areStringsEqual(gameExecutableSHA1, GameVersion::PLUTONIUM_PAK_GAME_EXECTUABLE_CRACKED_SHA1)) {
 		gameExecutableStatus |= GameExecutableStatus::PlutoniumPak | GameExecutableStatus::Cracked;
 	}
-	else if(Utilities::areStringsEqual(gameExecutableSHA1, ATOMIC_EDITION_GAME_EXECTUABLE_UNCRACKED_SHA1)) {
+	else if(Utilities::areStringsEqual(gameExecutableSHA1, GameVersion::ATOMIC_EDITION_GAME_EXECTUABLE_UNCRACKED_SHA1)) {
 		gameExecutableStatus |= GameExecutableStatus::AtomicEdition;
 	}
-	else if(Utilities::areStringsEqual(gameExecutableSHA1, ATOMIC_EDITION_GAME_EXECTUABLE_CRACKED_SHA1)) {
+	else if(Utilities::areStringsEqual(gameExecutableSHA1, GameVersion::ATOMIC_EDITION_GAME_EXECTUABLE_CRACKED_SHA1)) {
 		gameExecutableStatus |= GameExecutableStatus::AtomicEdition | GameExecutableStatus::Cracked;
 	}
-	else if(Utilities::areStringsEqual(gameExecutableSHA1, REGULAR_VERSION_GAME_EXECUTABLE_SHA1)) {
+	else if(Utilities::areStringsEqual(gameExecutableSHA1, GameVersion::REGULAR_VERSION_GAME_EXECUTABLE_SHA1)) {
 		gameExecutableStatus |= GameExecutableStatus::RegularVersion;
 	}
 	else {

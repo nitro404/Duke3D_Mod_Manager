@@ -195,6 +195,7 @@ public:
 	static const std::string STANDALONE_DIRECTORY_NAME;
 	static const GameVersion LAMEDUKE;
 	static const GameVersion ORIGINAL_REGULAR_VERSION;
+	static const GameVersion ORIGINAL_PLUTONIUM_PAK;
 	static const GameVersion ORIGINAL_ATOMIC_EDITION;
 	static const GameVersion JFDUKE3D;
 	static const GameVersion EDUKE32;
@@ -212,6 +213,12 @@ public:
 	static const GameVersion RDUKE;
 	static const GameVersion DUKE3D_W32;
 	static const std::vector<const GameVersion *> DEFAULT_GAME_VERSIONS;
+
+	static inline const std::string REGULAR_VERSION_GAME_EXECUTABLE_SHA1 = "a64cc5b61cba728427cfcc537aa2f74438ea4c65";
+	static inline const std::string PLUTONIUM_PAK_GAME_EXECTUABLE_UNCRACKED_SHA1 = "772d922b16f7b0b11305f1aa7a3fcbb534f884d1";
+	static inline const std::string PLUTONIUM_PAK_GAME_EXECTUABLE_CRACKED_SHA1 = "b440dd343df1ce318a03991a056db95a43d5d30c";
+	static inline const std::string ATOMIC_EDITION_GAME_EXECTUABLE_UNCRACKED_SHA1 = "f0dc7f1ca810aa517fcad544a3bf5af623a3e44e";
+	static inline const std::string ATOMIC_EDITION_GAME_EXECTUABLE_CRACKED_SHA1 = "a849e1e00ac58c0271498dd302d5c5f2819ab2e9";
 
 	static const bool DEFAULT_LOCAL_WORKING_DIRECTORY;
 	static const bool DEFAULT_RELATIVE_CON_FILE_PATH;

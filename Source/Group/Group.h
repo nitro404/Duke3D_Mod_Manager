@@ -105,6 +105,7 @@ public:
 
 	// Note: These SHA1 hashes are defined inline in the header file so that they are available at compile time in other classes
 	static inline const std::string DUKE_NUKEM_3D_REGULAR_VERSION_GROUP_SHA1_FILE_HASH = "3d508eaf3360605b0204301c259bd898717cf468";
+	static inline const std::string DUKE_NUKEM_3D_PLUTONIUM_PAK_GROUP_SHA1_FILE_HASH = "61e70f883df9552395406bf3d64f887f3c709438";
 	static inline const std::string DUKE_NUKEM_3D_ATOMIC_EDITION_GROUP_SHA1_FILE_HASH = "4fdef8559e2d35b1727fe92f021df9c148cf696c";
 	static inline const std::string DUKE_NUKEM_3D_WORLD_TOUR_GROUP_SHA1_FILE_HASH = "d745396afc3e734029ec2b9bd8b20bdb3a11b3a2";
 
