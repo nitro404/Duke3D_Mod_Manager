@@ -43,6 +43,7 @@ const std::string GameConfiguration::TURN_RIGHT_ENTRY_NAME("Turn_Right");
 const std::string GameConfiguration::FIRE_ENTRY_NAME("Fire");
 const std::string GameConfiguration::OPEN_ENTRY_NAME("Open");
 const std::string GameConfiguration::JUMP_ENTRY_NAME("Jump");
+const std::string GameConfiguration::CROUCH_ENTRY_NAME("Crouch");
 const std::string GameConfiguration::STRAFE_LEFT_ENTRY_NAME("Strafe_Left");
 const std::string GameConfiguration::STRAFE_RIGHT_ENTRY_NAME("Strafe_Right");
 const std::string GameConfiguration::SHOW_OPPONENTS_WEAPON_ENTRY_NAME("Show_Opponents_Weapon");

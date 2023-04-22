@@ -266,6 +266,7 @@ public:
 	static const std::string FIRE_ENTRY_NAME;
 	static const std::string OPEN_ENTRY_NAME;
 	static const std::string JUMP_ENTRY_NAME;
+	static const std::string CROUCH_ENTRY_NAME;
 	static const std::string STRAFE_LEFT_ENTRY_NAME;
 	static const std::string STRAFE_RIGHT_ENTRY_NAME;
 	static const std::string SHOW_OPPONENTS_WEAPON_ENTRY_NAME;

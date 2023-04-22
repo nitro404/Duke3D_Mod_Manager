@@ -117,7 +117,7 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 	keyDefinitionsSection->addMultiStringEntry("Run", "LShift", "RShift");
 	keyDefinitionsSection->addMultiStringEntry("AutoRun", "CapLck", "");
 	keyDefinitionsSection->addMultiStringEntry(JUMP_ENTRY_NAME, "A", "/");
-	keyDefinitionsSection->addMultiStringEntry("Crouch", "Z", "");
+	keyDefinitionsSection->addMultiStringEntry(CROUCH_ENTRY_NAME, "Z", "");
 	keyDefinitionsSection->addMultiStringEntry("Look_Up", "PgUp", "Kpad9");
 	keyDefinitionsSection->addMultiStringEntry("Look_Down", "PgDn", "Kpad3");
 	keyDefinitionsSection->addMultiStringEntry("Look_Left", "Insert", "Kpad0");
@@ -357,6 +357,7 @@ bool GameConfiguration::updateWithBetterControls() {
 	if(!keyDefinitionsSection->setEntryMultiStringValue(FIRE_ENTRY_NAME, "", 0, true, true)) { return false; }
 	if(!keyDefinitionsSection->setEntryMultiStringValue(OPEN_ENTRY_NAME, "E", "F", true)) { return false; }
 	if(!keyDefinitionsSection->setEntryMultiStringValue(JUMP_ENTRY_NAME, "Space", 0, true, true)) { return false; }
+	if(!keyDefinitionsSection->setEntryMultiStringValue(CROUCH_ENTRY_NAME, "LCtrl", 1, true, true)) { return false; }
 	if(!keyDefinitionsSection->setEntryMultiStringValue(STRAFE_LEFT_ENTRY_NAME, "A", 1, true, true)) { return false; }
 	if(!keyDefinitionsSection->setEntryMultiStringValue(STRAFE_RIGHT_ENTRY_NAME, "D", 1, true, true)) { return false; }
 
