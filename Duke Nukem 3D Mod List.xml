@@ -11800,4 +11800,23 @@
 			<download filename="The_Wall_1.01-ModMgrE.zip" filesize="30266179" version="1.01" game="eDuke32" type="Mod Manager Files" state="Native" sha1="668c8858f79597598da33a001169bdd723139907"/>
 		</downloads>
 	</mod>
+	<mod name="It Lives" id="it_lives" type="Map" version="1.05" website="https://www.moddb.com/members/gambini/addons/it-lives-v-105">
+		<team>
+			<member name="Luciano Gallo" alias="Gambini" email="gallo.luciano1@gmail.com" website="http://gambinidesign.blogspot.com" country="Argentina"/>
+		</team>
+		<versions>
+			<version id="1.05" release_date="March 26, 2011">
+				<type>
+					<game type="JFDuke3D" state="Native">
+						<file name="IT_LIVES.CON" size="151194" type="con" sha1="1129fd9c60d0c0fbf402bc887865596133367269"/>
+						<file name="IT_LIVES.GRP" size="1436059" type="grp" sha1="5d5cb17feaa5f8202b1067ced6a4827e8a2bcc15"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="It_Lives_1.05.rar" filesize="282849" version="1.05" game="JFDuke3D" type="Original Files" sha1="14997ffc8cdb3d9afd2bd54ad754a8609f6699b1"/>
+			<download filename="It_Lives_1.05-ModMgrJF.zip" filesize="399428" version="1.05" game="JFDuke3D" type="Mod Manager Files" state="Native" sha1="8ce05fdd353e13706f9e0e31ad554fe4844a7ef7"/>
+		</downloads>
+	</mod>
 </mods>
