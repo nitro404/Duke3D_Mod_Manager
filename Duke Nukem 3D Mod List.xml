@@ -11715,4 +11715,60 @@
 			<image filename="SVy3Egv.png" filesize="152742" type="logo" width="1337" height="400" caption="Diarrhea TC" sha1="911872ede7036f12b3ed2ae64e2cecb96e3f2fad"/>
 		</images>
 	</mod>
+	<mod name="The Thing" id="the_thing" alias="outpost_31" type="Map" website="https://www.moddb.com/games/duke-nukem-3d/addons/the-thing1">
+		<team>
+			<member name="Thobias Fast" alias="Forsete" email="thibiasfast@hotmail.com" youtube="Forsete" discord="Loke#4857"/>
+			<member name="Walter Fox"/>
+			<member name="Forge"/>
+		</team>
+		<versions>
+			<version release_date="April 15, 2013">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="THETHING.CON" size="151194" type="con" sha1="a0dd023fa9e0f8f52ecf894101afcbfe5905af43"/>
+						<file name="THE_THING.GRP" size="10790660" type="grp" sha1="a7bae47fb109404f27d17f9e03422d5f8b7f3248"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="thething.zip" filesize="9418340" game="eDuke32" type="Original Files" sha1="b7659b0789afcdbd6763dc487394aa5ef447e3df"/>
+			<download filename="The_Thing-ModMgrE.zip" filesize="9436349" game="eDuke32" type="Mod Manager Files" state="Native" sha1="1924192030618ba5fcf2744dbf1f58c371c3c46e"/>
+		</downloads>
+		<videos>
+			<video url="https://www.youtube.com/watch?v=E4gUHitQfoc" title="Duke Nukem 3D - The Thing [Outpost 31] reimagination [User Map]"/>
+		</videos>
+		<notes>
+			<note>Does not contain any enemies. Play 'Outpost 31' for a version with enemies, and an alternate ending.</note>
+			<note>Requires polymost rendering to avoid visual artifacts.</note>
+		</notes>
+	</mod>
+	<mod name="Outpost 31" id="outpost_31" alias="the_thing" type="Map" website="https://www.moddb.com/games/duke-nukem-3d/addons/the-thing1">
+		<team>
+			<member name="Thobias Fast" alias="Forsete" email="thobias.fast@gmail.com" youtube="Forsete" discord="Loke#4857"/>
+			<member name="Walter Fox"/>
+			<member name="Forge"/>
+		</team>
+		<versions>
+			<version release_date="March 31, 2017">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="OUTPOST.CON" size="151193" type="con" sha1="d65f4c1c8cc55b89a990aa61fb0a4833eb77b8a5"/>
+						<file name="OUTPOST31.GRP" size="10160988" type="grp" sha1="44f4aef9b80b0a09ebbc02a132d1bc926e8dbc1e"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="outpost31.zip" filesize="8808571" game="eDuke32" type="Original Files" sha1="691780ee83b09eb85c405cf9fe4637e9fb59ace6"/>
+			<download filename="Outpost_31-ModMgrE.zip" filesize="8825477" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b4ca93e3561dd4be1ffe079cea10dd8c8863b10e"/>
+		</downloads>
+		<videos>
+			<video url="https://www.youtube.com/watch?v=E4gUHitQfoc" title="Duke Nukem 3D - The Thing [Outpost 31] reimagination [User Map]"/>
+		</videos>
+		<notes>
+			<note>A remake of 'The Thing' with monsters added, and a different ending.</note>
+			<note>Requires polymost rendering to avoid visual artifacts.</note>
+		</notes>
+	</mod>
 </mods>
