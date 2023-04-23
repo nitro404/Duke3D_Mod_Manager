@@ -11771,4 +11771,23 @@
 			<note>Requires polymost rendering to avoid visual artifacts.</note>
 		</notes>
 	</mod>
+	<mod name="The Wall" id="the_wall" type="Total Conversion" version="1.01" website="https://forums.duke4.net/topic/4468-the-wall/">
+		<team>
+			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com" country="Russia"/>
+		</team>
+		<versions>
+			<version id="1.01" release_date="June 26, 2011">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="THEGAME.CON" size="149155" type="con" sha1="986bc11cacfa0f7b80a530936f6a1afbea6b43d3"/>
+						<file name="THE_WALL_1.01.GRP" size="46313235" type="grp" sha1="964bd26dca44f1148d08948880bd1d8c0850c1e7"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="thewall(1.01).zip" filesize="31139887" version="1.01" game="eDuke32" type="Original Files" sha1="e4dc2dbfcc9e8050a17a86d9fde5d0ef722afeb6"/>
+			<download filename="The_Wall_1.01-ModMgrE.zip" filesize="30266179" version="1.01" game="eDuke32" type="Mod Manager Files" state="Native" sha1="668c8858f79597598da33a001169bdd723139907"/>
+		</downloads>
+	</mod>
 </mods>
