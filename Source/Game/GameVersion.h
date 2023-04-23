@@ -235,20 +235,7 @@ public:
 	static const bool DEFAULT_LOCAL_WORKING_DIRECTORY;
 	static const bool DEFAULT_RELATIVE_CON_FILE_PATH;
 	static const bool DEFAULT_SUPPORTS_SUBDIRECTORIES;
-	static const std::string DEFAULT_CON_FILE_ARGUMENT_FLAG;
-	static const std::string DEFAULT_GROUP_FILE_ARGUMENT_FLAG;
-	static const std::string DEFAULT_MAP_FILE_ARGUMENT_FLAG;
-	static const std::string DEFAULT_EPISODE_ARGUMENT_FLAG;
-	static const std::string DEFAULT_LEVEL_ARGUMENT_FLAG;
-	static const std::string DEFAULT_SKILL_ARGUMENT_FLAG;
 	static const uint8_t DEFAULT_SKILL_START_VALUE;
-	static const std::string DEFAULT_RECORD_DEMO_ARGUMENT_FLAG;
-	static const std::string DEFAULT_PLAY_DEMO_ARGUMENT_FLAG;
-	static const std::string DEFAULT_RESPAWN_MODE_ARGUMENT_FLAG;
-	static const std::string DEFAULT_WEAPON_SWITCH_ORDER_ARGUMENT_FLAG;
-	static const std::string DEFAULT_DISABLE_MONSTERS_ARGUMENT_FLAG;
-	static const std::string DEFAULT_DISABLE_SOUND_ARGUMENT_FLAG;
-	static const std::string DEFAULT_DISABLE_MUSIC_ARGUMENT_FLAG;
 
 private:
 	void setModified(bool modified);

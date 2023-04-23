@@ -152,20 +152,7 @@ const std::vector<const GameVersion *> GameVersion::DEFAULT_GAME_VERSIONS = {
 const bool GameVersion::DEFAULT_LOCAL_WORKING_DIRECTORY = true;
 const bool GameVersion::DEFAULT_RELATIVE_CON_FILE_PATH = false;
 const bool GameVersion::DEFAULT_SUPPORTS_SUBDIRECTORIES = true;
-const std::string GameVersion::DEFAULT_CON_FILE_ARGUMENT_FLAG("/x");
-const std::string GameVersion::DEFAULT_GROUP_FILE_ARGUMENT_FLAG("/g");
-const std::string GameVersion::DEFAULT_MAP_FILE_ARGUMENT_FLAG("-map ");
-const std::string GameVersion::DEFAULT_EPISODE_ARGUMENT_FLAG("/v");
-const std::string GameVersion::DEFAULT_LEVEL_ARGUMENT_FLAG("/l");
-const std::string GameVersion::DEFAULT_SKILL_ARGUMENT_FLAG("/s");
 const uint8_t GameVersion::DEFAULT_SKILL_START_VALUE = 1;
-const std::string GameVersion::DEFAULT_RECORD_DEMO_ARGUMENT_FLAG("/r");
-const std::string GameVersion::DEFAULT_PLAY_DEMO_ARGUMENT_FLAG("/d");
-const std::string GameVersion::DEFAULT_RESPAWN_MODE_ARGUMENT_FLAG("/t");
-const std::string GameVersion::DEFAULT_WEAPON_SWITCH_ORDER_ARGUMENT_FLAG("/u");
-const std::string GameVersion::DEFAULT_DISABLE_MONSTERS_ARGUMENT_FLAG("/m");
-const std::string GameVersion::DEFAULT_DISABLE_SOUND_ARGUMENT_FLAG("/ns");
-const std::string GameVersion::DEFAULT_DISABLE_MUSIC_ARGUMENT_FLAG("/nm");
 
 GameVersion::GameVersion()
 	: m_standAlone(false)
