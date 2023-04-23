@@ -34,7 +34,7 @@ public:
 
 	const std::string & getGameVersionID() const;
 	std::shared_ptr<GameVersion> getStandAloneGameVersion() const;
-	std::string getFullName() const;
+	std::string getFullName(bool includeGameVersionID) const;
 	bool isStandAlone() const;
 	bool isEDuke32() const;
 	bool isConverted() const;

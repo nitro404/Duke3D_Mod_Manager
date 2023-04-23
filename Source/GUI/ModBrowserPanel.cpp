@@ -1575,7 +1575,7 @@ void ModBrowserPanel::onLaunchButtonPressed(wxCommandEvent & event) {
 					std::vector<std::string> modGameVersionNames;
 
 					for(std::vector<std::shared_ptr<ModGameVersion>>::const_iterator i = modGameVersions->begin(); i != modGameVersions->end(); ++i) {
-						modGameVersionNames.push_back((*i)->getFullName());
+						modGameVersionNames.push_back((*i)->getFullName(true));
 					}
 
 					int selectedModGameVersionIndex = wxGetSingleChoiceIndex(

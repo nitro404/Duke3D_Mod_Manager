@@ -1878,7 +1878,7 @@ bool ModManager::uninstallModGameVersion(const ModGameVersion & modGameVersion) 
 
 		if(selectedModGameVersion != nullptr && downloadManager->isModGameVersionDownloaded(selectedModGameVersion.get())) {
 			if(!downloadManager->uninstallModGameVersion(selectedModGameVersion.get(), getGameVersions().get())) {
-				spdlog::warn("Failed to uninstall '{}' mod files.", selectedModGameVersion->getFullName());
+				spdlog::warn("Failed to uninstall '{}' mod files.", selectedModGameVersion->getFullName(true));
 			}
 		}
 	}
@@ -2062,7 +2062,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	}
 
 	if(!m_localMode && !standAlone && selectedModGameVersion != nullptr && !m_downloadManager->downloadModGameVersion(selectedModGameVersion.get(), getGameVersions().get())) {
-		notifyLaunchError(fmt::format("Failed to download '{}' game version of '{}' mod!", getGameVersions()->getLongNameOfGameVersionWithID(selectedModGameVersion->getGameVersionID()), selectedModGameVersion->getFullName()));
+		notifyLaunchError(fmt::format("Failed to download '{}' game version of '{}' mod!", getGameVersions()->getLongNameOfGameVersionWithID(selectedModGameVersion->getGameVersionID()), selectedModGameVersion->getFullName(false)));
 		return false;
 	}
 
@@ -2581,7 +2581,7 @@ bool ModManager::extractModFilesToGameDirectory(const ModGameVersion & modGameVe
 
 	for(auto modFilesIterator = modFiles.cbegin(); modFilesIterator != modFiles.cend(); ++modFilesIterator, fileNumber++) {
 		if(isRunningNonBetaModOnBetaGameVersion && Utilities::hasFileExtension(modFilesIterator->first, "DMO")) {
-			spdlog::info("Skipping extraction of '{}' demo file '{}' into '{}' game directory.", modGameVersion.getFullName(), modFilesIterator->first, selectedGameVersion.getLongName());
+			spdlog::info("Skipping extraction of '{}' demo file '{}' into '{}' game directory.", modGameVersion.getFullName(true), modFilesIterator->first, selectedGameVersion.getLongName());
 			continue;
 		}
 
@@ -4644,7 +4644,7 @@ bool ModManager::createSymlinksOrCopyTemporaryFiles(const GameVersionCollection 
 			std::filesystem::copy_file(std::filesystem::path(modFileSourceFilePath), std::filesystem::path(absoluteModFileDestionationFilePath), errorCode);
 
 			if(errorCode) {
-				spdlog::error("Failed to copy '{}' mod file '{}' from '{}' to directory '{}': {}", selectedModGameVersion->getFullName(), modFileFileName, Utilities::getFilePath(modFileSourceFilePath), absoluteFileDestinationDirectoryPath, errorCode.message());
+				spdlog::error("Failed to copy '{}' mod file '{}' from '{}' to directory '{}': {}", selectedModGameVersion->getFullName(true), modFileFileName, Utilities::getFilePath(modFileSourceFilePath), absoluteFileDestinationDirectoryPath, errorCode.message());
 				return false;
 			}
 
@@ -4652,7 +4652,7 @@ bool ModManager::createSymlinksOrCopyTemporaryFiles(const GameVersionCollection 
 				installedModInfo->addModFile(relativeModFileDestinationFilePath);
 			}
 
-			spdlog::debug("Copied '{}' mod file '{}' to directory '{}'.", selectedModGameVersion->getFullName(), modFileFileName, absoluteFileDestinationDirectoryPath);
+			spdlog::debug("Copied '{}' mod file '{}' to directory '{}'.", selectedModGameVersion->getFullName(true), modFileFileName, absoluteFileDestinationDirectoryPath);
 		}
 	}
 

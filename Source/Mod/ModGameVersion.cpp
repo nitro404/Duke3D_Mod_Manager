@@ -231,7 +231,7 @@ std::shared_ptr<GameVersion> ModGameVersion::getStandAloneGameVersion() const {
 	return m_standAloneGameVersion;
 }
 
-std::string ModGameVersion::getFullName() const {
+std::string ModGameVersion::getFullName(bool includeGameVersionID = true) const {
 	const Mod * parentMod = getParentMod();
 	const ModVersion * parentModVersion = getParentModVersion();
 
@@ -250,7 +250,9 @@ std::string ModGameVersion::getFullName() const {
 		fullModName << " " + m_parentModVersionType->getType();
 	}
 
-	fullModName << " (" << m_gameVersionID << ")";
+	if(includeGameVersionID && m_standAloneGameVersion == nullptr) {
+		fullModName << " (" << m_gameVersionID << ")";
+	}
 
 	return fullModName.str();
 }
