@@ -19,9 +19,11 @@
 #include <filesystem>
 #include <fstream>
 
+static constexpr const char * JSON_FILE_TYPE_PROPERTY_NAME = "fileType";
 static constexpr const char * JSON_FILE_FORMAT_VERSION_PROPERTY_NAME = "fileFormatVersion";
 static constexpr const char * JSON_GAME_DOWNLOADS_PROPERTY_NAME = "gameDownloads";
 
+const std::string GameDownloadCollection::FILE_TYPE = "Game Downloads";
 const std::string GameDownloadCollection::FILE_FORMAT_VERSION = "1.0.0";
 
 GameDownloadCollection::GameDownloadCollection() { }
@@ -237,6 +239,9 @@ rapidjson::Document GameDownloadCollection::toJSON() const {
 	rapidjson::Document gameDownloadCollectionValue(rapidjson::kObjectType);
 	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator = gameDownloadCollectionValue.GetAllocator();
 
+	rapidjson::Value fileTypeValue(FILE_TYPE.c_str(), allocator);
+	gameDownloadCollectionValue.AddMember(rapidjson::StringRef(JSON_FILE_TYPE_PROPERTY_NAME), fileTypeValue, allocator);
+
 	rapidjson::Value fileFormatVersionValue(FILE_FORMAT_VERSION.c_str(), allocator);
 	gameDownloadCollectionValue.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
 
@@ -251,14 +256,31 @@ rapidjson::Document GameDownloadCollection::toJSON() const {
 	return gameDownloadCollectionValue;
 }
 
-std::unique_ptr<GameDownloadCollection> GameDownloadCollection::parseFrom(const rapidjson::Value & modCollectionValue) {
-	if(!modCollectionValue.IsObject()) {
-		spdlog::error("Invalid game download collection type: '{}', expected 'object'.", Utilities::typeToString(modCollectionValue.GetType()));
+std::unique_ptr<GameDownloadCollection> GameDownloadCollection::parseFrom(const rapidjson::Value & gameDownloadCollectionValue) {
+	if(!gameDownloadCollectionValue.IsObject()) {
+		spdlog::error("Invalid game download collection type: '{}', expected 'object'.", Utilities::typeToString(gameDownloadCollectionValue.GetType()));
 		return nullptr;
 	}
 
-	if(modCollectionValue.HasMember(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME)) {
-		const rapidjson::Value & fileFormatVersionValue = modCollectionValue[JSON_FILE_FORMAT_VERSION_PROPERTY_NAME];
+	if(gameDownloadCollectionValue.HasMember(JSON_FILE_TYPE_PROPERTY_NAME)) {
+		const rapidjson::Value & fileTypeValue = gameDownloadCollectionValue[JSON_FILE_TYPE_PROPERTY_NAME];
+
+		if(!fileTypeValue.IsString()) {
+			spdlog::error("Invalid game download collection file type type: '{}', expected: 'string'.", Utilities::typeToString(fileTypeValue.GetType()));
+			return false;
+		}
+
+		if(!Utilities::areStringsEqualIgnoreCase(fileTypeValue.GetString(), FILE_TYPE)) {
+			spdlog::error("Incorrect game download collection file type: '{}', expected: '{}'.", fileTypeValue.GetString(), FILE_TYPE);
+			return false;
+		}
+	}
+	else {
+		spdlog::warn("Game download collection JSON data is missing file type, and may fail to load correctly!");
+	}
+
+	if(gameDownloadCollectionValue.HasMember(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME)) {
+		const rapidjson::Value & fileFormatVersionValue = gameDownloadCollectionValue[JSON_FILE_FORMAT_VERSION_PROPERTY_NAME];
 
 		if(!fileFormatVersionValue.IsString()) {
 			spdlog::error("Invalid game download collection file format version type: '{}', expected: 'string'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
@@ -281,12 +303,12 @@ std::unique_ptr<GameDownloadCollection> GameDownloadCollection::parseFrom(const 
 		spdlog::warn("Game download collection JSON data is missing file format version, and may fail to load correctly!");
 	}
 
-	if(!modCollectionValue.HasMember(JSON_GAME_DOWNLOADS_PROPERTY_NAME)) {
+	if(!gameDownloadCollectionValue.HasMember(JSON_GAME_DOWNLOADS_PROPERTY_NAME)) {
 		spdlog::error("Game download collection is missing '{}' property'.", JSON_GAME_DOWNLOADS_PROPERTY_NAME);
 		return nullptr;
 	}
 
-	const rapidjson::Value & gameDownloadsValue = modCollectionValue[JSON_GAME_DOWNLOADS_PROPERTY_NAME];
+	const rapidjson::Value & gameDownloadsValue = gameDownloadCollectionValue[JSON_GAME_DOWNLOADS_PROPERTY_NAME];
 
 	if(!gameDownloadsValue.IsArray()) {
 		spdlog::error("Invalid game download collection games list type: '{}', expected 'array'.", Utilities::typeToString(gameDownloadsValue.GetType()));

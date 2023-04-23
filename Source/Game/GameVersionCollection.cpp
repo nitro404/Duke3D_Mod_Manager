@@ -18,9 +18,11 @@
 #include <filesystem>
 #include <fstream>
 
+static constexpr const char * JSON_FILE_TYPE_PROPERTY_NAME = "fileType";
 static constexpr const char * JSON_FILE_FORMAT_VERSION_PROPERTY_NAME = "fileFormatVersion";
 static constexpr const char * JSON_GAME_VERSIONS_PROPERTY_NAME = "gameVersions";
 
+const std::string GameVersionCollection::FILE_TYPE = "Game Versions";
 const std::string GameVersionCollection::FILE_FORMAT_VERSION = "1.0.0";
 
 GameVersionCollection::GameVersionCollection() = default;
@@ -510,6 +512,9 @@ rapidjson::Document GameVersionCollection::toJSON() const {
 	rapidjson::Document gameVersionsDocument(rapidjson::kObjectType);
 	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator = gameVersionsDocument.GetAllocator();
 
+	rapidjson::Value fileTypeValue(FILE_TYPE.c_str(), allocator);
+	gameVersionsDocument.AddMember(rapidjson::StringRef(JSON_FILE_TYPE_PROPERTY_NAME), fileTypeValue, allocator);
+
 	rapidjson::Value fileFormatVersionValue(FILE_FORMAT_VERSION.c_str(), allocator);
 	gameVersionsDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
 
@@ -528,6 +533,23 @@ std::unique_ptr<GameVersionCollection> GameVersionCollection::parseFrom(const ra
 	if(!gameVersionCollectionValue.IsObject()) {
 		spdlog::error("Invalid game version collection type: '{}', expected 'object'.", Utilities::typeToString(gameVersionCollectionValue.GetType()));
 		return nullptr;
+	}
+
+	if(gameVersionCollectionValue.HasMember(JSON_FILE_TYPE_PROPERTY_NAME)) {
+		const rapidjson::Value & fileTypeValue = gameVersionCollectionValue[JSON_FILE_TYPE_PROPERTY_NAME];
+
+		if(!fileTypeValue.IsString()) {
+			spdlog::error("Invalid game version collection file type type: '{}', expected: 'string'.", Utilities::typeToString(fileTypeValue.GetType()));
+			return false;
+		}
+
+		if(!Utilities::areStringsEqualIgnoreCase(fileTypeValue.GetString(), FILE_TYPE)) {
+			spdlog::error("Incorrect game version collection file type: '{}', expected: '{}'.", fileTypeValue.GetString(), FILE_TYPE);
+			return false;
+		}
+	}
+	else {
+		spdlog::warn("Game version collection JSON data is missing file type, and may fail to load correctly!");
 	}
 
 	if(gameVersionCollectionValue.HasMember(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME)) {

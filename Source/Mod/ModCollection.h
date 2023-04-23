@@ -71,6 +71,7 @@ public:
 	boost::signals2::signal<void (ModCollection & /* mods */)> updated;
 
 	static const std::string GAME_ID;
+	static const std::string FILE_TYPE;
 	static const std::string FILE_FORMAT_VERSION;
 
 private:

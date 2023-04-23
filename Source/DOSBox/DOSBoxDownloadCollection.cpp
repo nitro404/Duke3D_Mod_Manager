@@ -19,9 +19,11 @@
 #include <filesystem>
 #include <fstream>
 
+static constexpr const char * JSON_FILE_TYPE_PROPERTY_NAME = "fileType";
 static constexpr const char * JSON_FILE_FORMAT_VERSION_PROPERTY_NAME = "fileFormatVersion";
 static constexpr const char * JSON_DOSBOX_DOWNLOADS_PROPERTY_NAME = "dosboxDownloads";
 
+const std::string DOSBoxDownloadCollection::FILE_TYPE = "DOSBox Downloads";
 const std::string DOSBoxDownloadCollection::FILE_FORMAT_VERSION = "1.0.0";
 
 DOSBoxDownloadCollection::DOSBoxDownloadCollection() { }
@@ -213,6 +215,9 @@ rapidjson::Document DOSBoxDownloadCollection::toJSON() const {
 	rapidjson::Document dosboxDownloadCollectionValue(rapidjson::kObjectType);
 	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator = dosboxDownloadCollectionValue.GetAllocator();
 
+	rapidjson::Value fileTypeValue(FILE_TYPE.c_str(), allocator);
+	dosboxDownloadCollectionValue.AddMember(rapidjson::StringRef(JSON_FILE_TYPE_PROPERTY_NAME), fileTypeValue, allocator);
+
 	rapidjson::Value fileFormatVersionValue(FILE_FORMAT_VERSION.c_str(), allocator);
 	dosboxDownloadCollectionValue.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
 
@@ -227,14 +232,31 @@ rapidjson::Document DOSBoxDownloadCollection::toJSON() const {
 	return dosboxDownloadCollectionValue;
 }
 
-std::unique_ptr<DOSBoxDownloadCollection> DOSBoxDownloadCollection::parseFrom(const rapidjson::Value & modCollectionValue) {
-	if(!modCollectionValue.IsObject()) {
-		spdlog::error("Invalid DOSBox download collection type: '{}', expected 'object'.", Utilities::typeToString(modCollectionValue.GetType()));
+std::unique_ptr<DOSBoxDownloadCollection> DOSBoxDownloadCollection::parseFrom(const rapidjson::Value & dosboxDownloadCollectionValue) {
+	if(!dosboxDownloadCollectionValue.IsObject()) {
+		spdlog::error("Invalid DOSBox download collection type: '{}', expected 'object'.", Utilities::typeToString(dosboxDownloadCollectionValue.GetType()));
 		return nullptr;
 	}
 
-	if(modCollectionValue.HasMember(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME)) {
-		const rapidjson::Value & fileFormatVersionValue = modCollectionValue[JSON_FILE_FORMAT_VERSION_PROPERTY_NAME];
+	if(dosboxDownloadCollectionValue.HasMember(JSON_FILE_TYPE_PROPERTY_NAME)) {
+		const rapidjson::Value & fileTypeValue = dosboxDownloadCollectionValue[JSON_FILE_TYPE_PROPERTY_NAME];
+
+		if(!fileTypeValue.IsString()) {
+			spdlog::error("Invalid DOSBox download collection file type type: '{}', expected: 'string'.", Utilities::typeToString(fileTypeValue.GetType()));
+			return false;
+		}
+
+		if(!Utilities::areStringsEqualIgnoreCase(fileTypeValue.GetString(), FILE_TYPE)) {
+			spdlog::error("Incorrect DOSBox download collection file type: '{}', expected: '{}'.", fileTypeValue.GetString(), FILE_TYPE);
+			return false;
+		}
+	}
+	else {
+		spdlog::warn("DOSBox download collection JSON data is missing file type, and may fail to load correctly!");
+	}
+
+	if(dosboxDownloadCollectionValue.HasMember(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME)) {
+		const rapidjson::Value & fileFormatVersionValue = dosboxDownloadCollectionValue[JSON_FILE_FORMAT_VERSION_PROPERTY_NAME];
 
 		if(!fileFormatVersionValue.IsString()) {
 			spdlog::error("Invalid DOSBox download collection file format version type: '{}', expected: 'string'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
@@ -257,12 +279,12 @@ std::unique_ptr<DOSBoxDownloadCollection> DOSBoxDownloadCollection::parseFrom(co
 		spdlog::warn("DOSBox download collection JSON data is missing file format version, and may fail to load correctly!");
 	}
 
-	if(!modCollectionValue.HasMember(JSON_DOSBOX_DOWNLOADS_PROPERTY_NAME)) {
+	if(!dosboxDownloadCollectionValue.HasMember(JSON_DOSBOX_DOWNLOADS_PROPERTY_NAME)) {
 		spdlog::error("DOSBox download collection is missing '{}' property'.", JSON_DOSBOX_DOWNLOADS_PROPERTY_NAME);
 		return nullptr;
 	}
 
-	const rapidjson::Value & dosboxDownloadsValue = modCollectionValue[JSON_DOSBOX_DOWNLOADS_PROPERTY_NAME];
+	const rapidjson::Value & dosboxDownloadsValue = dosboxDownloadCollectionValue[JSON_DOSBOX_DOWNLOADS_PROPERTY_NAME];
 
 	if(!dosboxDownloadsValue.IsArray()) {
 		spdlog::error("Invalid DOSBox download collection entry list type: '{}', expected 'array'.", Utilities::typeToString(dosboxDownloadsValue.GetType()));

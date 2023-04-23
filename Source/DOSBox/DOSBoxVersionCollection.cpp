@@ -17,9 +17,11 @@
 #include <filesystem>
 #include <fstream>
 
+static constexpr const char * JSON_FILE_TYPE_PROPERTY_NAME = "fileType";
 static constexpr const char * JSON_FILE_FORMAT_VERSION_PROPERTY_NAME = "fileFormatVersion";
 static constexpr const char * JSON_DOSBOX_VERSIONS_PROPERTY_NAME = "dosboxVersions";
 
+const std::string DOSBoxVersionCollection::FILE_TYPE = "DOSBox Versions";
 const std::string DOSBoxVersionCollection::FILE_FORMAT_VERSION = "1.0.0";
 
 DOSBoxVersionCollection::DOSBoxVersionCollection() = default;
@@ -427,6 +429,9 @@ rapidjson::Document DOSBoxVersionCollection::toJSON() const {
 	rapidjson::Document dosboxVersionsDocument(rapidjson::kObjectType);
 	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator = dosboxVersionsDocument.GetAllocator();
 
+	rapidjson::Value fileTypeValue(FILE_TYPE.c_str(), allocator);
+	dosboxVersionsDocument.AddMember(rapidjson::StringRef(JSON_FILE_TYPE_PROPERTY_NAME), fileTypeValue, allocator);
+
 	rapidjson::Value fileFormatVersionValue(FILE_FORMAT_VERSION.c_str(), allocator);
 	dosboxVersionsDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
 
@@ -445,6 +450,23 @@ std::unique_ptr<DOSBoxVersionCollection> DOSBoxVersionCollection::parseFrom(cons
 	if(!dosboxVersionCollectionValue.IsObject()) {
 		spdlog::error("Invalid DOSBox version collection type: '{}', expected 'object'.", Utilities::typeToString(dosboxVersionCollectionValue.GetType()));
 		return nullptr;
+	}
+
+	if(dosboxVersionCollectionValue.HasMember(JSON_FILE_TYPE_PROPERTY_NAME)) {
+		const rapidjson::Value & fileTypeValue = dosboxVersionCollectionValue[JSON_FILE_TYPE_PROPERTY_NAME];
+
+		if(!fileTypeValue.IsString()) {
+			spdlog::error("Invalid DOSBox version collection file type type: '{}', expected: 'string'.", Utilities::typeToString(fileTypeValue.GetType()));
+			return false;
+		}
+
+		if(!Utilities::areStringsEqualIgnoreCase(fileTypeValue.GetString(), FILE_TYPE)) {
+			spdlog::error("Incorrect DOSBox version collection file type: '{}', expected: '{}'.", fileTypeValue.GetString(), FILE_TYPE);
+			return false;
+		}
+	}
+	else {
+		spdlog::warn("DOSBox version collection JSON data is missing file type, and may fail to load correctly!");
 	}
 
 	if(dosboxVersionCollectionValue.HasMember(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME)) {

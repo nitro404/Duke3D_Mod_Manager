@@ -58,6 +58,7 @@ public:
 
 	boost::signals2::signal<void (GameDownloadCollection & /* gameDownloads */)> updated;
 
+	static const std::string FILE_TYPE;
 	static const std::string FILE_FORMAT_VERSION;
 
 private:

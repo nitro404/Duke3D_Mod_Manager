@@ -43,6 +43,7 @@ public:
 	bool isValid() const;
 	static bool isValid(const DownloadCache * d);
 
+	static const std::string FILE_TYPE;
 	static const std::string FILE_FORMAT_VERSION;
 
 private:

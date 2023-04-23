@@ -19,15 +19,18 @@
 #include <filesystem>
 #include <fstream>
 
+static constexpr const char * JSON_DOWNLOAD_CACHE_FILE_TYPE_PROPERTY_NAME = "fileType";
 static constexpr const char * JSON_DOWNLOAD_CACHE_FILE_FORMAT_VERSION_PROPERTY_NAME = "fileFormatVersion";
 static constexpr const char * JSON_DOWNLOAD_CACHE_MOD_LIST_PROPERTY_NAME = "modList";
 static constexpr const char * JSON_DOWNLOAD_CACHE_PACKAGES_PROPERTY_NAME = "packages";
-static const std::array<std::string_view, 3> JSON_DOWNLOAD_CACHE_PROPERTY_NAMES = {
+static const std::array<std::string_view, 4> JSON_DOWNLOAD_CACHE_PROPERTY_NAMES = {
+	JSON_DOWNLOAD_CACHE_FILE_TYPE_PROPERTY_NAME,
 	JSON_DOWNLOAD_CACHE_FILE_FORMAT_VERSION_PROPERTY_NAME,
 	JSON_DOWNLOAD_CACHE_MOD_LIST_PROPERTY_NAME,
 	JSON_DOWNLOAD_CACHE_PACKAGES_PROPERTY_NAME
 };
 
+const std::string DownloadCache::FILE_TYPE = "Download Cache";
 const std::string DownloadCache::FILE_FORMAT_VERSION = "1.0.0";
 
 DownloadCache::DownloadCache() = default;
@@ -218,6 +221,9 @@ rapidjson::Document DownloadCache::toJSON() const {
 	rapidjson::Document downloadCacheDocument(rapidjson::kObjectType);
 	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator = downloadCacheDocument.GetAllocator();
 
+	rapidjson::Value fileTypeValue(FILE_TYPE.c_str(), allocator);
+	downloadCacheDocument.AddMember(rapidjson::StringRef(JSON_DOWNLOAD_CACHE_FILE_TYPE_PROPERTY_NAME), fileTypeValue, allocator);
+
 	rapidjson::Value fileFormatVersionValue(FILE_FORMAT_VERSION.c_str(), allocator);
 	downloadCacheDocument.AddMember(rapidjson::StringRef(JSON_DOWNLOAD_CACHE_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
 
@@ -259,6 +265,23 @@ std::unique_ptr<DownloadCache> DownloadCache::parseFrom(const rapidjson::Value &
 		if(!propertyHandled) {
 			spdlog::warn("Download cache has unexpected property '{}'.", i->name.GetString());
 		}
+	}
+
+	if(downloadCacheValue.HasMember(JSON_DOWNLOAD_CACHE_FILE_TYPE_PROPERTY_NAME)) {
+		const rapidjson::Value & fileTypeValue = downloadCacheValue[JSON_DOWNLOAD_CACHE_FILE_TYPE_PROPERTY_NAME];
+
+		if(!fileTypeValue.IsString()) {
+			spdlog::error("Invalid download cache file type type: '{}', expected: 'string'.", Utilities::typeToString(fileTypeValue.GetType()));
+			return false;
+		}
+
+		if(!Utilities::areStringsEqualIgnoreCase(fileTypeValue.GetString(), FILE_TYPE)) {
+			spdlog::error("Incorrect download cache file type: '{}', expected: '{}'.", fileTypeValue.GetString(), FILE_TYPE);
+			return false;
+		}
+	}
+	else {
+		spdlog::warn("Download cache JSON data is missing file type, and may fail to load correctly!");
 	}
 
 	if(downloadCacheValue.HasMember(JSON_DOWNLOAD_CACHE_FILE_FORMAT_VERSION_PROPERTY_NAME)) {

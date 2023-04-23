@@ -29,6 +29,7 @@ static constexpr const char * DIRECTORY_PATH = "directoryPath";
 static constexpr const char * DATA_DIRECTORY_NAME = "dataDirectoryName";
 static constexpr const char * EXECUTABLE_FILE_NAME = "executableFileName";
 
+static constexpr const char * FILE_TYPE_PROPERTY_NAME = "fileType";
 static constexpr const char * FILE_FORMAT_VERSION_PROPERTY_NAME = "fileFormatVersion";
 static constexpr const char * LOG_LEVEL_PROPERTY_NAME = "logLevel";
 static constexpr const char * GAME_TYPE_PROPERTY_NAME = "gameType";
@@ -131,6 +132,7 @@ static constexpr const char * WINDOW_CATEGORY_NAME = "window";
 static constexpr const char * WINDOW_POSITION_PROPERTY_NAME = "position";
 static constexpr const char * WINDOW_SIZE_PROPERTY_NAME = "size";
 
+const std::string SettingsManager::FILE_TYPE("Mod Manager Settings");
 const std::string SettingsManager::FILE_FORMAT_VERSION("1.0.0");
 const std::string SettingsManager::DEFAULT_SETTINGS_FILE_PATH("Duke Nukem 3D Mod Manager Settings.json");
 const std::string SettingsManager::DEFAULT_MODS_LIST_FILE_PATH("Duke Nukem 3D Mod List.xml");
@@ -439,6 +441,8 @@ rapidjson::Document SettingsManager::toJSON() const {
 	rapidjson::Document settingsDocument(rapidjson::kObjectType);
 	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator = settingsDocument.GetAllocator();
 
+	rapidjson::Value fileTypeValue(FILE_TYPE.c_str(), allocator);
+	settingsDocument.AddMember(rapidjson::StringRef(FILE_TYPE_PROPERTY_NAME), fileTypeValue, allocator);
 	rapidjson::Value fileFormatVersionValue(FILE_FORMAT_VERSION.c_str(), allocator);
 	settingsDocument.AddMember(rapidjson::StringRef(FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
 	rapidjson::Value logLevelValue(std::string(magic_enum::enum_name(LogSystem::getInstance()->getLevel())).c_str(), allocator);
@@ -684,6 +688,23 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 	if(!settingsDocument.IsObject()) {
 		spdlog::error("Invalid settings value, expected object.");
 		return false;
+	}
+
+	if(settingsDocument.HasMember(FILE_TYPE_PROPERTY_NAME)) {
+		const rapidjson::Value & fileTypeValue = settingsDocument[FILE_TYPE_PROPERTY_NAME];
+
+		if(!fileTypeValue.IsString()) {
+			spdlog::error("Invalid settings file type type: '{}', expected: 'string'.", Utilities::typeToString(fileTypeValue.GetType()));
+			return false;
+		}
+
+		if(!Utilities::areStringsEqualIgnoreCase(fileTypeValue.GetString(), FILE_TYPE)) {
+			spdlog::error("Incorrect settings file type: '{}', expected: '{}'.", fileTypeValue.GetString(), FILE_TYPE);
+			return false;
+		}
+	}
+	else {
+		spdlog::warn("Settings JSON data is missing file type, and may fail to load correctly!");
 	}
 
 	if(settingsDocument.HasMember(FILE_FORMAT_VERSION_PROPERTY_NAME)) {

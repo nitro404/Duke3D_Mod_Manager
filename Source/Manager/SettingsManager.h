@@ -30,6 +30,7 @@ public:
 	bool loadFrom(const std::string & filePath, bool autoCreate = true);
 	bool saveTo(const std::string & filePath, bool overwrite = true) const;
 
+	static const std::string FILE_TYPE;
 	static const std::string FILE_FORMAT_VERSION;
 	static const std::string DEFAULT_SETTINGS_FILE_PATH;
 	static const std::string DEFAULT_MODS_LIST_FILE_PATH;

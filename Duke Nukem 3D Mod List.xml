@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mods game_id="duke_nukem_3d" file_format_version="1.0.0">
+<mods game_id="duke_nukem_3d" file_type="Mod List" file_format_version="1.0.0">
 	<mod name="00 Duke" id="00_duke" type="Total Conversion" version="Demo" website="http://www.geocities.com/TimesSquare/Cavern/1667/00DUKE.html">
 		<team>
 			<member name="The Codemasta" email="00DUKE@hotmail.com"/>

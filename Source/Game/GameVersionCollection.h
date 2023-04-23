@@ -84,6 +84,7 @@ public:
 	boost::signals2::signal<void (GameVersionCollection & /* gameVersions */, GameVersion & /* gameVersion */)> itemModified;
 	boost::signals2::signal<void (GameVersionCollection & /* gameVersions */)> sizeChanged;
 
+	static const std::string FILE_TYPE;
 	static const std::string FILE_FORMAT_VERSION;
 
 private:

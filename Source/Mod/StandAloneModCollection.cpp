@@ -17,9 +17,11 @@
 #include <filesystem>
 #include <fstream>
 
+static constexpr const char * JSON_FILE_TYPE_PROPERTY_NAME = "fileType";
 static constexpr const char * JSON_FILE_FORMAT_VERSION_PROPERTY_NAME = "fileFormatVersion";
 static constexpr const char * JSON_STANDALONE_MODS_PROPERTY_NAME = "standAloneMods";
 
+const std::string StandAloneModCollection::FILE_TYPE = "Stand-Alone Mods";
 const std::string StandAloneModCollection::FILE_FORMAT_VERSION = "1.0.0";
 
 StandAloneModCollection::StandAloneModCollection() { }
@@ -249,6 +251,9 @@ rapidjson::Document StandAloneModCollection::toJSON() const {
 	rapidjson::Document standAloneModsDocument(rapidjson::kObjectType);
 	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator = standAloneModsDocument.GetAllocator();
 
+	rapidjson::Value fileTypeValue(FILE_TYPE.c_str(), allocator);
+	standAloneModsDocument.AddMember(rapidjson::StringRef(JSON_FILE_TYPE_PROPERTY_NAME), fileTypeValue, allocator);
+
 	rapidjson::Value fileFormatVersionValue(FILE_FORMAT_VERSION.c_str(), allocator);
 	standAloneModsDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
 
@@ -267,6 +272,23 @@ std::unique_ptr<StandAloneModCollection> StandAloneModCollection::parseFrom(cons
 	if(!standAloneModCollectionValue.IsObject()) {
 		spdlog::error("Invalid stand-alone mod collection type: '{}', expected 'object'.", Utilities::typeToString(standAloneModCollectionValue.GetType()));
 		return nullptr;
+	}
+
+	if(standAloneModCollectionValue.HasMember(JSON_FILE_TYPE_PROPERTY_NAME)) {
+		const rapidjson::Value & fileTypeValue = standAloneModCollectionValue[JSON_FILE_TYPE_PROPERTY_NAME];
+
+		if(!fileTypeValue.IsString()) {
+			spdlog::error("Invalid stand-alone mod collection file type type: '{}', expected: 'string'.", Utilities::typeToString(fileTypeValue.GetType()));
+			return false;
+		}
+
+		if(!Utilities::areStringsEqualIgnoreCase(fileTypeValue.GetString(), FILE_TYPE)) {
+			spdlog::error("Incorrect stand-alone mod collection file type: '{}', expected: '{}'.", fileTypeValue.GetString(), FILE_TYPE);
+			return false;
+		}
+	}
+	else {
+		spdlog::warn("Stand-alone mod collection JSON data is missing file type, and may fail to load correctly!");
 	}
 
 	if(standAloneModCollectionValue.HasMember(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME)) {

@@ -21,9 +21,11 @@
 #include <filesystem>
 #include <fstream>
 
+static constexpr const char * JSON_FILE_TYPE_PROPERTY_NAME = "fileType";
 static constexpr const char * JSON_FILE_FORMAT_VERSION_PROPERTY_NAME = "fileFormatVersion";
 static constexpr const char * JSON_FAVOURITE_MODS_PROPERTY_NAME = "favouriteMods";
 
+const std::string FavouriteModCollection::FILE_TYPE = "Favourite Mods";
 const std::string FavouriteModCollection::FILE_FORMAT_VERSION = "1.0.0";
 
 FavouriteModCollection::FavouriteModCollection() { }
@@ -175,6 +177,9 @@ rapidjson::Document FavouriteModCollection::toJSON() const {
 	rapidjson::Document favouriteModsDocument(rapidjson::kObjectType);
 	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator = favouriteModsDocument.GetAllocator();
 
+	rapidjson::Value fileTypeValue(FILE_TYPE.c_str(), allocator);
+	favouriteModsDocument.AddMember(rapidjson::StringRef(JSON_FILE_TYPE_PROPERTY_NAME), fileTypeValue, allocator);
+
 	rapidjson::Value fileFormatVersionValue(FILE_FORMAT_VERSION.c_str(), allocator);
 	favouriteModsDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
 
@@ -193,6 +198,23 @@ bool FavouriteModCollection::parseFrom(const rapidjson::Value & favouriteModsCol
 	if(!favouriteModsCollectionValue.IsObject()) {
 		spdlog::error("Invalid favourite mods collection type: '{}', expected 'object'.", Utilities::typeToString(favouriteModsCollectionValue.GetType()));
 		return nullptr;
+	}
+
+	if(favouriteModsCollectionValue.HasMember(JSON_FILE_TYPE_PROPERTY_NAME)) {
+		const rapidjson::Value & fileTypeValue = favouriteModsCollectionValue[JSON_FILE_TYPE_PROPERTY_NAME];
+
+		if(!fileTypeValue.IsString()) {
+			spdlog::error("Invalid favourite mods collection file type type: '{}', expected: 'string'.", Utilities::typeToString(fileTypeValue.GetType()));
+			return false;
+		}
+
+		if(!Utilities::areStringsEqualIgnoreCase(fileTypeValue.GetString(), FILE_TYPE)) {
+			spdlog::error("Incorrect favourite mods collection file type: '{}', expected: '{}'.", fileTypeValue.GetString(), FILE_TYPE);
+			return false;
+		}
+	}
+	else {
+		spdlog::warn("Favourite mods collection JSON data is missing file type, and may fail to load correctly!");
 	}
 
 	if(favouriteModsCollectionValue.HasMember(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME)) {

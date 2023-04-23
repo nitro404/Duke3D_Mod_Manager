@@ -64,6 +64,7 @@ public:
 	bool operator == (const StandAloneModCollection & standAloneMods) const;
 	bool operator != (const StandAloneModCollection & standAloneMods) const;
 
+	static const std::string FILE_TYPE;
 	static const std::string FILE_FORMAT_VERSION;
 
 private:
