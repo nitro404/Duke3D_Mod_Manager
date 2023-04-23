@@ -2400,6 +2400,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		gameProcessTerminated(nativeExitCode, forceTerminated);
 	});
 
+	selectedGameVersion->updateLastPlayedTimePoint();
+
 	launched();
 
 	m_gameProcess->wait();

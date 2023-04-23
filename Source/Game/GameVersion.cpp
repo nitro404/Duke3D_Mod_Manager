@@ -22,6 +22,7 @@ static constexpr const char * JSON_LONG_NAME_PROPERTY_NAME = "longName";
 static constexpr const char * JSON_SHORT_NAME_PROPERTY_NAME = "shortName";
 static constexpr const char * JSON_VERSION_PROPERTY_NAME = "version";
 static constexpr const char * JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME = "installed";
+static constexpr const char * JSON_LAST_PLAYED_TIMESTAMP_PROPERTY_NAME = "lastPlayed";
 static constexpr const char * JSON_BASE_PROPERTY_NAME = "base";
 static constexpr const char * JSON_REMOVABLE_PROPERTY_NAME = "removable";
 static constexpr const char * JSON_GAME_PATH_PROPERTY_NAME = "gamePath";
@@ -55,12 +56,13 @@ static constexpr const char * JSON_WEBSITE_PROPERTY_NAME = "website";
 static constexpr const char * JSON_SOURCE_CODE_URL_PROPERTY_NAME = "sourceCodeURL";
 static constexpr const char * JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME = "supportedOperatingSystems";
 static constexpr const char * JSON_COMPATIBLE_GAME_VERSIONS_PROPERTY_NAME = "compatibleGameVersions";
-static const std::array<std::string_view, 38> JSON_PROPERTY_NAMES = {
+static const std::array<std::string_view, 39> JSON_PROPERTY_NAMES = {
 	JSON_ID_PROPERTY_NAME,
 	JSON_LONG_NAME_PROPERTY_NAME,
 	JSON_SHORT_NAME_PROPERTY_NAME,
 	JSON_VERSION_PROPERTY_NAME,
 	JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME,
+	JSON_LAST_PLAYED_TIMESTAMP_PROPERTY_NAME,
 	JSON_BASE_PROPERTY_NAME,
 	JSON_REMOVABLE_PROPERTY_NAME,
 	JSON_GAME_PATH_PROPERTY_NAME,
@@ -231,6 +233,7 @@ GameVersion::GameVersion(GameVersion && gameVersion) noexcept
 	, m_longName(std::move(gameVersion.m_longName))
 	, m_shortName(std::move(gameVersion.m_shortName))
 	, m_installedTimePoint(std::move(gameVersion.m_installedTimePoint))
+	, m_lastPlayedTimePoint(std::move(gameVersion.m_lastPlayedTimePoint))
 	, m_standAlone(gameVersion.m_standAlone)
 	, m_base(std::move(gameVersion.m_base))
 	, m_removable(gameVersion.m_removable)
@@ -272,6 +275,7 @@ GameVersion::GameVersion(const GameVersion & gameVersion)
 	, m_longName(gameVersion.m_longName)
 	, m_shortName(gameVersion.m_shortName)
 	, m_installedTimePoint(gameVersion.m_installedTimePoint)
+	, m_lastPlayedTimePoint(gameVersion.m_lastPlayedTimePoint)
 	, m_standAlone(gameVersion.m_standAlone)
 	, m_base(gameVersion.m_base)
 	, m_removable(gameVersion.m_removable)
@@ -314,6 +318,7 @@ GameVersion & GameVersion::operator = (GameVersion && gameVersion) noexcept {
 		m_longName = std::move(gameVersion.m_longName);
 		m_shortName = std::move(gameVersion.m_shortName);
 		m_installedTimePoint = std::move(gameVersion.m_installedTimePoint);
+		m_lastPlayedTimePoint = std::move(gameVersion.m_lastPlayedTimePoint);
 		m_standAlone = gameVersion.m_standAlone;
 		m_base = std::move(gameVersion.m_base);
 		m_removable = gameVersion.m_removable;
@@ -359,6 +364,7 @@ GameVersion & GameVersion::operator = (const GameVersion & gameVersion) {
 	m_longName = gameVersion.m_longName;
 	m_shortName = gameVersion.m_shortName;
 	m_installedTimePoint = gameVersion.m_installedTimePoint;
+	m_lastPlayedTimePoint = gameVersion.m_lastPlayedTimePoint;
 	m_standAlone = gameVersion.m_standAlone;
 	m_base = gameVersion.m_base;
 	m_removable = gameVersion.m_removable;
@@ -496,6 +502,32 @@ void GameVersion::setInstalledTimePoint(std::chrono::time_point<std::chrono::sys
 
 void GameVersion::clearInstalledTimePoint() {
 	m_installedTimePoint.reset();
+}
+
+bool GameVersion::hasLastPlayedTimePoint() const {
+	return m_lastPlayedTimePoint.has_value();
+}
+
+const std::optional<std::chrono::time_point<std::chrono::system_clock>> & GameVersion::getLastPlayedTimePoint() const {
+	return m_lastPlayedTimePoint;
+}
+
+void GameVersion::setLastPlayedTimePoint(std::chrono::time_point<std::chrono::system_clock> lastPlayedTimePoint) {
+	if(m_lastPlayedTimePoint == lastPlayedTimePoint) {
+		return;
+	}
+
+	m_lastPlayedTimePoint = lastPlayedTimePoint;
+
+	setModified(true);
+}
+
+void GameVersion::updateLastPlayedTimePoint() {
+	setLastPlayedTimePoint(std::chrono::system_clock::now());
+}
+
+void GameVersion::clearLastPlayedTimePoint() {
+	m_lastPlayedTimePoint.reset();
 }
 
 bool GameVersion::isStandAlone() const {
@@ -1587,6 +1619,11 @@ rapidjson::Value GameVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::C
 		gameVersionValue.AddMember(rapidjson::StringRef(JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME), installedTimestampValue, allocator);
 	}
 
+	if(m_lastPlayedTimePoint.has_value()) {
+		rapidjson::Value lastPlayedTimestampValue(Utilities::timePointToString(m_lastPlayedTimePoint.value(), Utilities::TimeFormat::ISO8601).c_str(), allocator);
+		gameVersionValue.AddMember(rapidjson::StringRef(JSON_LAST_PLAYED_TIMESTAMP_PROPERTY_NAME), lastPlayedTimestampValue, allocator);
+	}
+
 	if(!m_base.empty()) {
 		rapidjson::Value baseValue(m_base.c_str(), allocator);
 		gameVersionValue.AddMember(rapidjson::StringRef(JSON_BASE_PROPERTY_NAME), baseValue, allocator);
@@ -2284,6 +2321,27 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		newGameVersion->setInstalledTimePoint(optionalInstalledTimePoint.value());
 	}
 
+	// parse stand-alone mod last played timestamp
+	std::optional<std::chrono::time_point<std::chrono::system_clock>> optionalLastPlayedTimePoint;
+
+	if(gameVersionValue.HasMember(JSON_LAST_PLAYED_TIMESTAMP_PROPERTY_NAME)) {
+		const rapidjson::Value & lastPlayedTimestampValue = gameVersionValue[JSON_LAST_PLAYED_TIMESTAMP_PROPERTY_NAME];
+
+		if(!lastPlayedTimestampValue.IsString()) {
+			spdlog::error("Stand-alone mod has an invalid '{}' property type: '{}', expected 'string'.", JSON_LAST_PLAYED_TIMESTAMP_PROPERTY_NAME, Utilities::typeToString(lastPlayedTimestampValue.GetType()));
+			return nullptr;
+		}
+
+		optionalLastPlayedTimePoint = Utilities::parseTimePointFromString(lastPlayedTimestampValue.GetString());
+
+		if(!optionalLastPlayedTimePoint.has_value()) {
+			spdlog::error("Stand-alone mod has an invalid '{}' timestamp value: '{}'.", JSON_LAST_PLAYED_TIMESTAMP_PROPERTY_NAME, lastPlayedTimestampValue.GetString());
+			return nullptr;
+		}
+
+		newGameVersion->setLastPlayedTimePoint(optionalLastPlayedTimePoint.value());
+	}
+
 	// parse game version basse
 	if(gameVersionValue.HasMember(JSON_BASE_PROPERTY_NAME)) {
 		const rapidjson::Value & baseValue = gameVersionValue[JSON_BASE_PROPERTY_NAME];
@@ -2508,6 +2566,7 @@ bool GameVersion::operator == (const GameVersion & gameVersion) const {
 	   m_relativeConFilePath != gameVersion.m_relativeConFilePath ||
 	   m_supportsSubdirectories != gameVersion.m_supportsSubdirectories ||
 	   m_installedTimePoint != gameVersion.m_installedTimePoint ||
+	   m_lastPlayedTimePoint != gameVersion.m_lastPlayedTimePoint ||
 	   !Utilities::areStringsEqual(m_id, gameVersion.m_id) ||
 	   !Utilities::areStringsEqual(m_longName, gameVersion.m_longName) ||
 	   !Utilities::areStringsEqual(m_shortName, gameVersion.m_shortName) ||
