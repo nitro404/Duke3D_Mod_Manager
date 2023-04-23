@@ -1182,14 +1182,14 @@ bool ModManager::setSelectedMod(const ModIdentifier & modIdentifier) {
 
 	std::shared_ptr<Mod> selectedMod(m_mods->getModWithName(modIdentifier.getName()));
 
-	if(selectedMod == nullptr) {
-		return false;
-	}
-
 	m_selectedMod = selectedMod;
 	m_selectedModVersionIndex = std::numeric_limits<size_t>::max();
 	m_selectedModVersionTypeIndex = std::numeric_limits<size_t>::max();
 	m_selectedModGameVersionIndex = std::numeric_limits<size_t>::max();
+
+	if(selectedMod == nullptr) {
+		return false;
+	}
 
 	if(modIdentifier.hasVersion()) {
 		m_selectedModVersionIndex = m_selectedMod->indexOfVersion(modIdentifier.getVersion().value());
