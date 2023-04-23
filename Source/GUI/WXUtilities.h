@@ -37,7 +37,7 @@ namespace WXUtilities {
 	template <typename E>
 	wxArrayString createEnumWXArrayString(const std::vector<E> & disabledEnumValues) {
 		wxArrayString enumArrayString;
-		constexpr auto enumValues = magic_enum::enum_values<E>();
+		constexpr auto & enumValues = magic_enum::enum_values<E>();
 
 		for(const E enumValue : enumValues) {
 			if(std::find(disabledEnumValues.cbegin(), disabledEnumValues.cend(), enumValue) != disabledEnumValues.cend()) {

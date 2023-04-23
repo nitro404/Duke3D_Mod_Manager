@@ -4,6 +4,7 @@
 
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
+#include <Utilities/TimeUtilities.h>
 
 #include <fmt/core.h>
 #include <spdlog/spdlog.h>
@@ -15,37 +16,50 @@
 static constexpr const char * JSON_NAME_PROPERTY_NAME = "name";
 static constexpr const char * JSON_VERSION_PROPERTY_NAME = "version";
 static constexpr const char * JSON_VERSION_TYPE_PROPERTY_NAME = "versionType";
-static const std::array<std::string_view, 3> JSON_PROPERTY_NAMES = {
+static constexpr const char * JSON_CREATED_TIMESTAMP_PROPERTY_NAME = "created";
+static const std::array<std::string_view, 4> JSON_PROPERTY_NAMES = {
 	JSON_NAME_PROPERTY_NAME,
 	JSON_VERSION_PROPERTY_NAME,
-	JSON_VERSION_TYPE_PROPERTY_NAME
+	JSON_VERSION_TYPE_PROPERTY_NAME,
+	JSON_CREATED_TIMESTAMP_PROPERTY_NAME
 };
 
 ModIdentifier::ModIdentifier(const std::string & name, const std::optional<std::string> & version, const std::optional<std::string> & versionType)
 	: m_name(Utilities::trimString(name))
 	, m_version(version.has_value() ? Utilities::trimString(version.value()) : std::optional<std::string>())
-	, m_versionType(versionType.has_value() ? Utilities::trimString(versionType.value()) : std::optional<std::string>()) { }
+	, m_versionType(versionType.has_value() ? Utilities::trimString(versionType.value()) : std::optional<std::string>())
+	, m_createdTimePoint(std::chrono::system_clock::now()) { }
+
+ModIdentifier::ModIdentifier(const std::string & name, const std::optional<std::string> & version, const std::optional<std::string> & versionType, std::chrono::time_point<std::chrono::system_clock> createdTimePoint)
+	: m_name(Utilities::trimString(name))
+	, m_version(version.has_value() ? Utilities::trimString(version.value()) : std::optional<std::string>())
+	, m_versionType(versionType.has_value() ? Utilities::trimString(versionType.value()) : std::optional<std::string>())
+	, m_createdTimePoint(createdTimePoint) { }
 
 ModIdentifier::ModIdentifier(const ModMatch & modMatch)
 	: m_name(modMatch.getModName())
 	, m_version(modMatch.getModVersionName())
-	, m_versionType(modMatch.getModVersionTypeName()) { }
+	, m_versionType(modMatch.getModVersionTypeName())
+	, m_createdTimePoint(std::chrono::system_clock::now()) { }
 
 ModIdentifier::ModIdentifier(ModIdentifier && m) noexcept
 	: m_name(std::move(m.m_name))
 	, m_version(std::move(m.m_version))
-	, m_versionType(std::move(m.m_versionType)) { }
+	, m_versionType(std::move(m.m_versionType))
+	, m_createdTimePoint(m.m_createdTimePoint) { }
 
 ModIdentifier::ModIdentifier(const ModIdentifier & m)
 	: m_name(m.m_name)
 	, m_version(m.m_version)
-	, m_versionType(m.m_versionType) { }
+	, m_versionType(m.m_versionType)
+	, m_createdTimePoint(m.m_createdTimePoint) { }
 
 ModIdentifier & ModIdentifier::operator = (ModIdentifier && m) noexcept {
 	if(this != &m) {
 		m_name = std::move(m.m_name);
 		m_version = std::move(m.m_version);
 		m_versionType = std::move(m.m_versionType);
+		m_createdTimePoint = m.m_createdTimePoint;
 	}
 
 	return *this;
@@ -55,6 +69,7 @@ ModIdentifier & ModIdentifier::operator = (const ModIdentifier & m) {
 	m_name = m.m_name;
 	m_version = m.m_version;
 	m_versionType = m.m_versionType;
+	m_createdTimePoint = m.m_createdTimePoint;
 
 	return *this;
 }
@@ -83,6 +98,10 @@ const std::optional<std::string> & ModIdentifier::getVersionType() const {
 
 std::string ModIdentifier::getFullName() const {
 	return fmt::format("{}{}{}", m_name, !m_version.has_value() || m_version.value().empty() ? "" : " " + m_version.value(), !m_versionType.has_value() || m_versionType.value().empty() ? "" : " " + m_versionType.value());
+}
+
+std::chrono::time_point<std::chrono::system_clock> ModIdentifier::getCreatedTimePoint() const {
+	return m_createdTimePoint;
 }
 
 void ModIdentifier::setName(const std::string & name) {
@@ -120,6 +139,9 @@ rapidjson::Value ModIdentifier::toJSON(rapidjson::MemoryPoolAllocator<rapidjson:
 		rapidjson::Value versionTypeValue(m_versionType.value().c_str(), allocator);
 		modIdentifierValue.AddMember(rapidjson::StringRef(JSON_VERSION_TYPE_PROPERTY_NAME), versionTypeValue, allocator);
 	}
+
+	rapidjson::Value createdTimestampValue(Utilities::timePointToString(m_createdTimePoint, Utilities::TimeFormat::ISO8601).c_str(), allocator);
+	modIdentifierValue.AddMember(rapidjson::StringRef(JSON_CREATED_TIMESTAMP_PROPERTY_NAME), createdTimestampValue, allocator);
 
 	return modIdentifierValue;
 }
@@ -196,7 +218,27 @@ std::unique_ptr<ModIdentifier> ModIdentifier::parseFrom(const rapidjson::Value &
 		optionalVersionType = modIdentifierVersionTypeValue.GetString();
 	}
 
-	return std::make_unique<ModIdentifier>(name, optionalVersion, optionalVersionType);
+	// parse mod identifier created timestamp
+	if(!modIdentifierValue.HasMember(JSON_CREATED_TIMESTAMP_PROPERTY_NAME)) {
+		spdlog::error("Mod identifier is missing '{}' property.", JSON_CREATED_TIMESTAMP_PROPERTY_NAME);
+		return nullptr;
+	}
+
+	const rapidjson::Value & modIdentifierCreatedTimestampValue = modIdentifierValue[JSON_CREATED_TIMESTAMP_PROPERTY_NAME];
+
+	if(!modIdentifierCreatedTimestampValue.IsString()) {
+		spdlog::error("Mod identifier has an invalid '{}' property type: '{}', expected 'string'.", JSON_CREATED_TIMESTAMP_PROPERTY_NAME, Utilities::typeToString(modIdentifierCreatedTimestampValue.GetType()));
+		return nullptr;
+	}
+
+	std::optional<std::chrono::time_point<std::chrono::system_clock>> downloadedTimePoint(Utilities::parseTimePointFromString(modIdentifierCreatedTimestampValue.GetString()));
+
+	if(!downloadedTimePoint.has_value()) {
+		spdlog::error("Mod identifier has an invalid '{}' timestamp value: '{}'.", JSON_CREATED_TIMESTAMP_PROPERTY_NAME, modIdentifierCreatedTimestampValue.GetString());
+		return nullptr;
+	}
+
+	return std::unique_ptr<ModIdentifier>(new ModIdentifier(name, optionalVersion, optionalVersionType, downloadedTimePoint.value()));
 }
 
 bool ModIdentifier::isValid() const {
@@ -218,7 +260,8 @@ bool ModIdentifier::isValid(const ModIdentifier * m) {
 bool ModIdentifier::operator == (const ModIdentifier & m) const {
 	if(!Utilities::areStringsEqualIgnoreCase(m_name, m.m_name) ||
 	   m_version.has_value() != m.m_version.has_value() ||
-	   m_versionType.has_value() != m.m_versionType.has_value()) {
+	   m_versionType.has_value() != m.m_versionType.has_value() ||
+	   m_createdTimePoint != m.m_createdTimePoint) {
 		return false;
 	}
 

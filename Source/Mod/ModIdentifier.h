@@ -3,6 +3,7 @@
 
 #include <rapidjson/document.h>
 
+#include <chrono>
 #include <memory>
 #include <optional>
 #include <string>
@@ -29,6 +30,7 @@ public:
 	bool hasVersionType() const;
 	const std::optional<std::string> & getVersionType() const;
 	std::string getFullName() const;
+	std::chrono::time_point<std::chrono::system_clock> getCreatedTimePoint() const;
 
 	void setName(const std::string & name);
 	void setVersion(const std::string & version);
@@ -46,9 +48,12 @@ public:
 	bool operator != (const ModIdentifier & m) const;
 
 private:
+	ModIdentifier(const std::string & name, const std::optional<std::string> & version, const std::optional<std::string> & versionType, std::chrono::time_point<std::chrono::system_clock> createdTimePoint);
+
 	std::string m_name;
 	std::optional<std::string> m_version;
 	std::optional<std::string> m_versionType;
+	std::chrono::time_point<std::chrono::system_clock> m_createdTimePoint;
 };
 
 #endif // _MOD_IDENTIFIER_H_
