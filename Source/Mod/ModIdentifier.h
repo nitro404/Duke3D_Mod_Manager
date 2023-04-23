@@ -8,10 +8,12 @@
 #include <string>
 
 class ModIdentifier;
+class ModMatch;
 
 class ModIdentifier final {
 public:
 	ModIdentifier(const std::string & name, const std::optional<std::string> & version = {}, const std::optional<std::string> & versionType = {});
+	ModIdentifier(const ModMatch & modMatch);
 	ModIdentifier(ModIdentifier && m) noexcept;
 	ModIdentifier(const ModIdentifier & m);
 	ModIdentifier & operator = (ModIdentifier && m) noexcept;

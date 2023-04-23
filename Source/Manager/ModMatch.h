@@ -2,6 +2,7 @@
 #define _MOD_MATCH_H_
 
 #include <memory>
+#include <optional>
 #include <string>
 #include <variant>
 #include <vector>
@@ -37,6 +38,9 @@ public:
 	std::shared_ptr<Mod> getMod() const;
 	std::shared_ptr<ModVersion> getModVersion() const;
 	std::shared_ptr<ModVersionType> getModVersionType() const;
+	std::string getModName() const;
+	std::optional<std::string> getModVersionName() const;
+	std::optional<std::string> getModVersionTypeName() const;
 
 	std::string toString() const;
 

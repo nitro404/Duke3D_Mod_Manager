@@ -1,5 +1,6 @@
 #include "FavouriteModCollection.h"
 
+#include "Manager/ModMatch.h"
 #include "ModIdentifier.h"
 #include "Mod.h"
 #include "ModCollection.h"
@@ -68,7 +69,11 @@ bool FavouriteModCollection::hasFavourite(const ModIdentifier & favourite) const
 	return indexOfFavourite(favourite) != std::numeric_limits<size_t>::max();
 }
 
-bool FavouriteModCollection::hasFavourite(const std::string & name, const std::string & version, const std::string & versionType) const {
+bool FavouriteModCollection::hasFavourite(const ModMatch & favourite) const {
+	return indexOfFavourite(favourite) != std::numeric_limits<size_t>::max();
+}
+
+bool FavouriteModCollection::hasFavourite(const std::string & name, const std::optional<std::string> & version, const std::optional<std::string> & versionType) const {
 	return indexOfFavourite(name, version, versionType) != std::numeric_limits<size_t>::max();
 }
 
@@ -88,7 +93,11 @@ size_t FavouriteModCollection::indexOfFavourite(const ModIdentifier & favourite)
 	return favouriteModIterator - m_favourites.cbegin();
 }
 
-size_t FavouriteModCollection::indexOfFavourite(const std::string & name, const std::string & version, const std::string & versionType) const {
+size_t FavouriteModCollection::indexOfFavourite(const ModMatch & favourite) const {
+	return indexOfFavourite(favourite.getModName(), favourite.getModVersionName(), favourite.getModVersionTypeName());
+}
+
+size_t FavouriteModCollection::indexOfFavourite(const std::string & name, const std::optional<std::string> & version, const std::optional<std::string> & versionType) const {
 	return indexOfFavourite(ModIdentifier(name, version, versionType));
 }
 
@@ -100,7 +109,11 @@ std::shared_ptr<ModIdentifier> FavouriteModCollection::getFavourite(size_t index
 	return m_favourites[index];
 }
 
-std::shared_ptr<ModIdentifier> FavouriteModCollection::getFavourite(const std::string & name, const std::string & version, const std::string & versionType) const {
+std::shared_ptr<ModIdentifier> FavouriteModCollection::getFavourite(const ModMatch & favourite) const {
+	return getFavourite(indexOfFavourite(favourite));
+}
+
+std::shared_ptr<ModIdentifier> FavouriteModCollection::getFavourite(const std::string & name, const std::optional<std::string> & version, const std::optional<std::string> & versionType) const {
 	return getFavourite(indexOfFavourite(name, version, versionType));
 }
 
@@ -110,6 +123,18 @@ bool FavouriteModCollection::addFavourite(const ModIdentifier & favourite) {
 	}
 
 	m_favourites.push_back(std::make_shared<ModIdentifier>(favourite));
+
+	updated(*this);
+
+	return true;
+}
+
+bool FavouriteModCollection::addFavourite(const ModMatch & modMatch) {
+	if(!modMatch.isValid() || hasFavourite(modMatch)) {
+		return false;
+	}
+
+	m_favourites.push_back(std::make_shared<ModIdentifier>(modMatch));
 
 	updated(*this);
 
@@ -132,7 +157,11 @@ bool FavouriteModCollection::removeFavourite(const ModIdentifier & favourite) {
 	return removeFavourite(indexOfFavourite(favourite));
 }
 
-bool FavouriteModCollection::removeFavourite(const std::string & name, const std::string & version, const std::string & versionType) {
+bool FavouriteModCollection::removeFavourite(const ModMatch & favourite) {
+	return removeFavourite(indexOfFavourite(favourite));
+}
+
+bool FavouriteModCollection::removeFavourite(const std::string & name, const std::optional<std::string> & version, const std::optional<std::string> & versionType) {
 	return removeFavourite(indexOfFavourite(name, version, versionType));
 }
 

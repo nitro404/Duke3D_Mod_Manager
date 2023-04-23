@@ -114,6 +114,18 @@ std::shared_ptr<ModVersionType> ModMatch::getModVersionType() const {
 	return m_modVersionType;
 }
 
+std::string ModMatch::getModName() const {
+	return m_mod != nullptr ? m_mod->getName() : "";
+}
+
+std::optional<std::string> ModMatch::getModVersionName() const {
+	return m_modVersion != nullptr ? m_modVersion->getVersion() : std::optional<std::string>();
+}
+
+std::optional<std::string> ModMatch::getModVersionTypeName() const {
+	return m_modVersionType != nullptr ? m_modVersionType->getType() : std::optional<std::string>();
+}
+
 std::string ModMatch::toString() const {
 	if(isModMatch()) {
 		if(m_mod != nullptr) {

@@ -1156,7 +1156,7 @@ void ModBrowserPanel::onModSelected(wxCommandEvent & event) {
 		}
 	}
 	else {
-		ModMatch modMatch(m_modMatches[selectedModIndex]);
+		const ModMatch & modMatch = m_modMatches[selectedModIndex];
 		m_modMatches.clear();
 		m_searchQuery.clear();
 		m_modSearchTextField->Clear();
@@ -1255,11 +1255,16 @@ void ModBrowserPanel::onModPopupMenuItemPressed(wxCommandEvent & event) {
 	}
 
 	if(event.GetId() == m_modListAddFavouriteMenuItem->GetId()) {
-		if(m_modPopupMenuItemIndex >= organizedMods->numberOfMods()) {
-			return;
+		if(m_searchQuery.empty()) {
+			if(m_modPopupMenuItemIndex < organizedMods->numberOfMods()) {
+				m_modManager->getFavouriteMods()->addFavourite(ModIdentifier(organizedMods->getMod(m_modPopupMenuItemIndex)->getName()));
+			}
 		}
-
-		m_modManager->getFavouriteMods()->addFavourite(ModIdentifier(organizedMods->getMod(m_modPopupMenuItemIndex)->getName()));
+		else {
+			if(m_modPopupMenuItemIndex < m_modMatches.size()) {
+				m_modManager->getFavouriteMods()->addFavourite(m_modMatches[m_modPopupMenuItemIndex]);
+			}
+		}
 	}
 	else if(event.GetId() == m_modListRemoveFavouriteMenuItem->GetId()) {
 		if(m_modPopupMenuItemIndex >= organizedMods->numberOfFavouriteMods()) {

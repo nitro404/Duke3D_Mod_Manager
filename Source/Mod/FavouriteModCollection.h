@@ -6,11 +6,13 @@
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
 class ModIdentifier;
 class ModCollection;
+class ModMatch;
 
 class FavouriteModCollection final {
 public:
@@ -23,15 +25,20 @@ public:
 
 	size_t numberOfFavourites();
 	bool hasFavourite(const ModIdentifier & favourite) const;
-	bool hasFavourite(const std::string & name, const std::string & version = {}, const std::string & versionType = {}) const;
+	bool hasFavourite(const ModMatch & favourite) const;
+	bool hasFavourite(const std::string & name, const std::optional<std::string> & version = {}, const std::optional<std::string> & versionType = {}) const;
 	size_t indexOfFavourite(const ModIdentifier & favourite) const;
-	size_t indexOfFavourite(const std::string & name, const std::string & version = {}, const std::string & versionType = {}) const;
+	size_t indexOfFavourite(const ModMatch & favourite) const;
+	size_t indexOfFavourite(const std::string & name, const std::optional<std::string> & version = {}, const std::optional<std::string> & versionType = {}) const;
 	std::shared_ptr<ModIdentifier> getFavourite(size_t index) const;
-	std::shared_ptr<ModIdentifier> getFavourite(const std::string & name, const std::string & version = {}, const std::string & versionType = {}) const;
+	std::shared_ptr<ModIdentifier> getFavourite(const ModMatch & favourite) const;
+	std::shared_ptr<ModIdentifier> getFavourite(const std::string & name, const std::optional<std::string> & version = {}, const std::optional<std::string> & versionType = {}) const;
 	bool addFavourite(const ModIdentifier & favourite);
+	bool addFavourite(const ModMatch & favourite);
 	bool removeFavourite(size_t index);
 	bool removeFavourite(const ModIdentifier & favourite);
-	bool removeFavourite(const std::string & name, const std::string & version = {}, const std::string & versionType = {});
+	bool removeFavourite(const ModMatch & favourite);
+	bool removeFavourite(const std::string & name, const std::optional<std::string> & version = {}, const std::optional<std::string> & versionType = {});
 	void clearFavourites();
 
 	rapidjson::Document toJSON() const;

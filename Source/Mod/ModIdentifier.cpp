@@ -1,5 +1,7 @@
 #include "ModIdentifier.h"
 
+#include "Manager/ModMatch.h"
+
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
 
@@ -23,6 +25,11 @@ ModIdentifier::ModIdentifier(const std::string & name, const std::optional<std::
 	: m_name(Utilities::trimString(name))
 	, m_version(version.has_value() ? Utilities::trimString(version.value()) : std::optional<std::string>())
 	, m_versionType(versionType.has_value() ? Utilities::trimString(versionType.value()) : std::optional<std::string>()) { }
+
+ModIdentifier::ModIdentifier(const ModMatch & modMatch)
+	: m_name(modMatch.getModName())
+	, m_version(modMatch.getModVersionName())
+	, m_versionType(modMatch.getModVersionTypeName()) { }
 
 ModIdentifier::ModIdentifier(ModIdentifier && m) noexcept
 	: m_name(std::move(m.m_name))
