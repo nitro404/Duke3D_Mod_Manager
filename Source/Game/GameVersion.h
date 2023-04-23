@@ -40,6 +40,10 @@ public:
 	bool hasShortName() const;
 	const std::string & getShortName() const;
 	bool setShortName(const std::string & longName);
+	bool hasInstalledTimePoint() const;
+	const std::optional<std::chrono::time_point<std::chrono::system_clock>> & getInstalledTimePoint() const;
+	void setInstalledTimePoint(const std::chrono::time_point<std::chrono::system_clock> & installedTimePoint);
+	void clearInstalledTimePoint();
 	bool isStandAlone() const;
 	void setStandAlone(bool standAlone);
 	std::string getBase() const;
@@ -247,6 +251,7 @@ private:
 	std::string m_id;
 	std::string m_longName;
 	std::string m_shortName;
+	std::optional<std::chrono::time_point<std::chrono::system_clock>> m_installedTimePoint;
 	bool m_standAlone;
 	std::string m_base;
 	bool m_removable;
