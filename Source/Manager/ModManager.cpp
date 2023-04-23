@@ -3754,7 +3754,7 @@ size_t ModManager::updateModFileInfo(Mod & mod, bool skipPopulatedFiles, std::op
 	}
 
 	if(skipPopulatedFiles && mod.isValid()) {
-		spdlog::info("'{}' mod file info already populated!", mod.getName());
+		spdlog::info("Mod #{}/{} ('{}') file info already populated!", m_mods->indexOfMod(mod) + 1, m_mods->numberOfMods(), mod.getName());
 		return 0;
 	}
 
@@ -3772,7 +3772,7 @@ size_t ModManager::updateModFileInfo(Mod & mod, bool skipPopulatedFiles, std::op
 	std::string zipArchiveFilePath;
 	std::unique_ptr<ZipArchive> zipArchive;
 
-	spdlog::info("Updating '{}' mod file info...", mod.getName());
+	spdlog::info("Updating mod #{}/{} ('{}') file info...", m_mods->indexOfMod(mod) + 1, m_mods->numberOfMods(), mod.getName());
 
 	// update mod downloads file info
 	for(size_t i = 0; i < mod.numberOfDownloads(); i++) {
