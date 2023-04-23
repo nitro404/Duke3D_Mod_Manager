@@ -9505,7 +9505,7 @@
 	</mod>
 	<mod name="Back in Business" id="back_in_business" type="Episode" version="1.0">
 		<team>
-			<member name="Alex Pistol" email="aleks4duke@gmail.com" discord="ShrinkDuke" steam="Ledsbourne" country="Poland"/>
+			<member name="Alex Pistol" email="aleks4duke@gmail.com" discord="Ledsbourne#2631" steam="Ledsbourne" country="Poland"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="December 14, 2020">
@@ -11229,7 +11229,7 @@
 	</mod>
 	<mod name="The Conundrum" id="the_conundrum" type="Episode" version="1.0" website="https://www.moddb.com/mods/the-conundrum">
 		<team>
-			<member name="Alex Pistol" email="aleks4duke@gmail.com" discord="Ledsbourne" steam="Ledsbourne" country="Poland"/>
+			<member name="Alex Pistol" email="aleks4duke@gmail.com" discord="Ledsbourne#2631" steam="Ledsbourne" country="Poland"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="January 16, 2022">
