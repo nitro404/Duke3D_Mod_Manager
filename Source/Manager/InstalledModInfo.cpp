@@ -18,9 +18,11 @@
 #include <filesystem>
 #include <fstream>
 
+const std::string InstalledModInfo::FILE_TYPE("Installed Mod Information");
 const std::string InstalledModInfo::FILE_FORMAT_VERSION("1.0.0");
 const std::string InstalledModInfo::DEFAULT_FILE_NAME(".duke3d_mod.json");
 
+static const std::string JSON_FILE_TYPE_PROPERTY_NAME("fileType");
 static const std::string JSON_FILE_FORMAT_VERSION_PROPERTY_NAME("fileFormatVersion");
 static const std::string JSON_MOD_INFO_CATEGORY_PROPERTY_NAME("mod");
 static const std::string JSON_MOD_ID_PROPERTY_NAME("id");
@@ -30,7 +32,8 @@ static const std::string JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME("installedTimest
 static const std::string JSON_ORIGINAL_FILES_LIST_PROPERTY_NAME("originalFiles");
 static const std::string JSON_MOD_FILES_LIST_PROPERTY_NAME("modFiles");
 
-static const std::array<std::string, 5> JSON_INSTALLED_MOD_INFO_PROPERTY_NAMES = {
+static const std::array<std::string, 6> JSON_INSTALLED_MOD_INFO_PROPERTY_NAMES = {
+	JSON_FILE_TYPE_PROPERTY_NAME,
 	JSON_FILE_FORMAT_VERSION_PROPERTY_NAME,
 	JSON_MOD_INFO_CATEGORY_PROPERTY_NAME,
 	JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME,
@@ -244,6 +247,8 @@ rapidjson::Document InstalledModInfo::toJSON() const {
 	rapidjson::Document installedModInfoDocument(rapidjson::kObjectType);
 	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator = installedModInfoDocument.GetAllocator();
 
+	installedModInfoDocument.AddMember(rapidjson::StringRef(JSON_FILE_TYPE_PROPERTY_NAME.c_str()), rapidjson::StringRef(FILE_TYPE.c_str()), allocator);
+
 	installedModInfoDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME.c_str()), rapidjson::StringRef(FILE_FORMAT_VERSION.c_str()), allocator);
 
 	rapidjson::Value modInfoValue(rapidjson::kObjectType);
@@ -287,6 +292,24 @@ std::unique_ptr<InstalledModInfo> InstalledModInfo::parseFrom(const rapidjson::V
 	if(!installedModInfoValue.IsObject()) {
 		spdlog::error("Invalid installed mod info type: '{}', expected 'object'.", Utilities::typeToString(installedModInfoValue.GetType()));
 		return nullptr;
+	}
+
+	// verify the file type
+	if(installedModInfoValue.HasMember(JSON_FILE_TYPE_PROPERTY_NAME.c_str())) {
+		const rapidjson::Value & fileTypeValue = installedModInfoValue[JSON_FILE_TYPE_PROPERTY_NAME.c_str()];
+
+		if(!fileTypeValue.IsString()) {
+			spdlog::error("Invalid installed mod info file type type: '{}', expected: 'string'.", Utilities::typeToString(fileTypeValue.GetType()));
+			return false;
+		}
+
+		if(!Utilities::areStringsEqualIgnoreCase(fileTypeValue.GetString(), FILE_TYPE)) {
+			spdlog::error("Incorrect installed mod info file type: '{}', expected: '{}'.", fileTypeValue.GetString(), FILE_TYPE);
+			return false;
+		}
+	}
+	else {
+		spdlog::warn("Installed mod info JSON data is missing file type, and may fail to load correctly!");
 	}
 
 	// verify file format version

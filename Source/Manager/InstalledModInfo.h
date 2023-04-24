@@ -63,6 +63,7 @@ public:
 	bool operator == (const InstalledModInfo & i) const;
 	bool operator != (const InstalledModInfo & i) const;
 
+	static const std::string FILE_TYPE;
 	static const std::string FILE_FORMAT_VERSION;
 	static const std::string DEFAULT_FILE_NAME;
 
