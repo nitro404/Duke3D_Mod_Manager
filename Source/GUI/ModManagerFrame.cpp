@@ -175,6 +175,10 @@ void ModManagerFrame::onNotebookPageChanged(wxBookCtrlEvent & event) {
 	if(dynamic_cast<SettingsManagerPanel *>(currentPage) != nullptr) {
 		static_cast<SettingsManagerPanel *>(currentPage)->discard();
 	}
+	else if(dynamic_cast<ReleaseNotesPanel *>(currentPage) != nullptr) {
+		static_cast<ReleaseNotesPanel *>(currentPage)->load();
+	}
+	
 }
 
 void ModManagerFrame::onQuit(wxCommandEvent& WXUNUSED(event)) {

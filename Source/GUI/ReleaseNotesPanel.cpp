@@ -76,17 +76,21 @@ ReleaseNotesPanel::ReleaseNotesPanel(wxWindow * parent, wxWindowID windowID, con
 	SetSizer(releaseNotesSizer);
 
 	Bind(EVENT_RELEASES_LOADED, &ReleaseNotesPanel::onReleasesLoaded, this);
-
-	m_releasesFuture = std::async(std::launch::async, [this]() {
-		std::lock_guard<std::recursive_mutex> lock(m_releasesMutex);
-
-		m_releases = GitHubService::getInstance()->getReleases(APPLICATION_REPOSITORY_URL);
-
-		QueueEvent(new ReleasesLoadedEvent());
-	});
 }
 
 ReleaseNotesPanel::~ReleaseNotesPanel() { }
+
+void ReleaseNotesPanel::load() {
+	std::call_once(m_loadFlag, [this]() {
+		m_releasesFuture = std::async(std::launch::async, [this]() {
+			std::lock_guard<std::recursive_mutex> lock(m_releasesMutex);
+
+			m_releases = GitHubService::getInstance()->getReleases(APPLICATION_REPOSITORY_URL);
+
+			QueueEvent(new ReleasesLoadedEvent());
+		});
+	});
+}
 
 void ReleaseNotesPanel::setSelectedRelease(std::shared_ptr<GitHubRelease> release) {
 	std::lock_guard<std::recursive_mutex> lock(m_releasesMutex);
@@ -110,18 +114,18 @@ void ReleaseNotesPanel::setSelectedRelease(std::shared_ptr<GitHubRelease> releas
 void ReleaseNotesPanel::onReleasesLoaded(ReleasesLoadedEvent & event) {
 	std::lock_guard<std::recursive_mutex> lock(m_releasesMutex);
 
-	std::shared_ptr<GitHubRelease> currentRelease(m_releases->getReleaseWithTagVersion(APPLICATION_VERSION));
+	size_t currentReleaseIndex = m_releases->indexOfReleaseWithTagVersion(APPLICATION_VERSION);
 
-	if(currentRelease == nullptr) {
-		currentRelease = m_releases->getLatestRelease();
+	if(currentReleaseIndex == std::numeric_limits<size_t>::max()) {
+		currentReleaseIndex = m_releases->indexOfLatestRelease();
 	}
 
 	m_releaseComboBox->Set(WXUtilities::createItemWXArrayString(m_releases->getReleaseTagNames()));
 
-	if(currentRelease != nullptr) {
-		m_releaseComboBox->SetValue(currentRelease->getTagName());
+	if(currentReleaseIndex != std::numeric_limits<size_t>::max()) {
+		m_releaseComboBox->SetSelection(currentReleaseIndex);
 
-		setSelectedRelease(currentRelease);
+		setSelectedRelease(m_releases->getRelease(currentReleaseIndex));
 	}
 }
 

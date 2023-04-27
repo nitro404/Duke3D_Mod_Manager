@@ -23,6 +23,8 @@ public:
 	ReleaseNotesPanel(wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
 	virtual ~ReleaseNotesPanel();
 
+	void load();
+
 private:
 	void setSelectedRelease(std::shared_ptr<GitHubRelease> release);
 	void onReleasesLoaded(ReleasesLoadedEvent & event);
@@ -32,6 +34,7 @@ private:
 	std::shared_ptr<GitHubRelease> m_selectedRelease;
 	std::future<void> m_releasesFuture;
 	mutable std::recursive_mutex m_releasesMutex;
+	std::once_flag m_loadFlag;
 
 	wxComboBox * m_releaseComboBox;
 	wxStaticText * m_releaseNameText;
