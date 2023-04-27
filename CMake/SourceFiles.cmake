@@ -125,6 +125,7 @@ set(GUI_SOURCE_FILES
 	GUI/ModBrowserPanel.cpp
 	GUI/ModManagerApplication.cpp
 	GUI/ModManagerFrame.cpp
+	GUI/ReleaseNotesPanel.cpp
 	GUI/SettingPanel.cpp
 	GUI/SettingsManagerPanel.cpp
 	GUI/WXUtilities.cpp
@@ -145,6 +146,7 @@ set(GUI_HEADER_FILES
 	GUI/ModBrowserPanel.h
 	GUI/ModManagerApplication.h
 	GUI/ModManagerFrame.h
+	GUI/ReleaseNotesPanel.h
 	GUI/SettingPanel.h
 	GUI/SettingsManagerPanel.h
 	GUI/WXUtilities.h

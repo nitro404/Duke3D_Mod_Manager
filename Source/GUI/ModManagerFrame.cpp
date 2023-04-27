@@ -7,6 +7,7 @@
 #include "Manager/SettingsManager.h"
 #include "ModBrowserPanel.h"
 #include "Project.h"
+#include "ReleaseNotesPanel.h"
 #include "SettingsManagerPanel.h"
 #include "WXUtilities.h"
 
@@ -99,6 +100,9 @@ bool ModManagerFrame::initialize(std::shared_ptr<ModManager> modManager) {
 		m_settingsManagerPanel->settingsReset.connect(std::bind(&ModManagerFrame::onSettingsReset, this)),
 		m_settingsManagerPanel->settingsSaved.connect(std::bind(&ModManagerFrame::onSettingsSaved, this))
 	);
+
+	ReleaseNotesPanel * releaseNotesPanel = new ReleaseNotesPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+	m_notebook->AddPage(releaseNotesPanel, "Release Notes");
 
 	ConsolePanel * consolePanel = new ConsolePanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 	m_notebook->AddPage(consolePanel, "Console");

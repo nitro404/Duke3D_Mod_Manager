@@ -8,6 +8,7 @@ set(_LIBRARY_DIRECTORY "Libraries")
 set(_PROJECT_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${_SOURCE_DIRECTORY}/Project.h")
 set(APPLICATION_NAME "Duke Nukem 3D Mod Manager")
 string(REPLACE " " "" _PROJECT_NAME ${APPLICATION_NAME})
+set(APPLICATION_REPOSITORY_URL "https://github.com/nitro404/Duke3D_Mod_Manager")
 
 add_subdirectory(${_LIBRARY_DIRECTORY}/Core)
 
