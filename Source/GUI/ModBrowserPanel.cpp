@@ -101,6 +101,8 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	, m_supportedGameVersionsText(nullptr)
 	, m_modWebsiteHyperlinkLabel(nullptr)
 	, m_modWebsiteHyperlink(nullptr)
+	, m_modRepositoryHyperlinkLabel(nullptr)
+	, m_modRepositoryHyperlink(nullptr)
 	, m_teamWebsiteHyperlinkLabel(nullptr)
 	, m_teamWebsiteHyperlink(nullptr)
 	, m_teamEmailHyperlinkLabel(nullptr)
@@ -270,6 +272,10 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_modWebsiteHyperlinkLabel->SetFont(m_modWebsiteHyperlinkLabel->GetFont().MakeBold());
 	m_modWebsiteHyperlink = new wxHyperlinkCtrl(m_modInfoPanel, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Mod Website");
 
+	m_modRepositoryHyperlinkLabel = new wxStaticText(m_modInfoPanel, wxID_ANY, "Mod Repository:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_modRepositoryHyperlinkLabel->SetFont(m_modRepositoryHyperlinkLabel->GetFont().MakeBold());
+	m_modRepositoryHyperlink = new wxHyperlinkCtrl(m_modInfoPanel, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Mod Repository");
+
 	m_notesLabel = new wxStaticText(m_modInfoPanel, wxID_ANY, "Notes:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_notesLabel->SetFont(m_notesLabel->GetFont().MakeBold());
 	m_notesText = new wxStaticText(m_modInfoPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
@@ -429,6 +435,8 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	modInfoPanelSizer->Add(m_supportedGameVersionsText, 1, wxEXPAND | wxHORIZONTAL);
 	modInfoPanelSizer->Add(m_modWebsiteHyperlinkLabel, 1, wxEXPAND | wxHORIZONTAL);
 	modInfoPanelSizer->Add(m_modWebsiteHyperlink, 1, wxEXPAND | wxHORIZONTAL);
+	modInfoPanelSizer->Add(m_modRepositoryHyperlinkLabel, 1, wxEXPAND | wxHORIZONTAL);
+	modInfoPanelSizer->Add(m_modRepositoryHyperlink, 1, wxEXPAND | wxHORIZONTAL);
 	modInfoPanelSizer->Add(m_notesLabel, 1, wxEXPAND | wxHORIZONTAL);
 	modInfoPanelSizer->Add(m_notesText, 1, wxEXPAND | wxALL);
 	modInfoPanelSizer->Add(m_teamWebsiteHyperlinkLabel, 1, wxEXPAND | wxHORIZONTAL);
@@ -835,6 +843,19 @@ void ModBrowserPanel::updateModInfo() {
 			else {
 				m_modWebsiteHyperlinkLabel->Hide();
 				m_modWebsiteHyperlink->Hide();
+			}
+
+			const std::string & modRepositoryURL = mod->getRepositoryURL();
+
+			if(!modRepositoryURL.empty()) {
+				m_modRepositoryHyperlinkLabel->Show();
+				m_modRepositoryHyperlink->SetLabelText(modRepositoryURL);
+				m_modRepositoryHyperlink->SetURL(modRepositoryURL);
+				m_modRepositoryHyperlink->Show();
+			}
+			else {
+				m_modRepositoryHyperlinkLabel->Hide();
+				m_modRepositoryHyperlink->Hide();
 			}
 
 			if(mod->hasTeam()) {

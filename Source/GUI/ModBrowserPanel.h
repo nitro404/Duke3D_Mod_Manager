@@ -180,6 +180,8 @@ private:
 	wxStaticText * m_supportedGameVersionsText;
 	wxStaticText * m_modWebsiteHyperlinkLabel;
 	wxHyperlinkCtrl * m_modWebsiteHyperlink;
+	wxStaticText * m_modRepositoryHyperlinkLabel;
+	wxHyperlinkCtrl * m_modRepositoryHyperlink;
 	wxStaticText * m_notesLabel;
 	wxStaticText * m_notesText;
 	wxStaticText * m_teamWebsiteHyperlinkLabel;
