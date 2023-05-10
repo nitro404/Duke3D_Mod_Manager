@@ -201,6 +201,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_modVersionListLabel = new wxStaticText(modSelectionPanel, wxID_ANY, "Mod Versions", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 	m_modVersionListLabel->SetFont(m_modVersionListLabel->GetFont().MakeBold());
 	m_modVersionListBox = new wxListBox(modSelectionPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, {}, wxLB_SINGLE | wxLB_ALWAYS_SB);
+	m_modVersionListBox->SetMinClientSize(wxSize(160, m_modVersionListBox->GetMinClientSize().GetHeight()));
 	m_modVersionListBox->Bind(wxEVT_LISTBOX, &ModBrowserPanel::onModVersionSelected, this);
 	m_modVersionListBox->Bind(wxEVT_RIGHT_UP, &ModBrowserPanel::onModVersionListRightClicked, this);
 
@@ -406,7 +407,6 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	modSelectionSizer->AddGrowableRow(1, 5);
 	modSelectionSizer->AddGrowableRow(3, 5);
 	modSelectionSizer->AddGrowableRow(5, 1);
-	modSelectionSizer->AddGrowableCol(1, 1);
 	modSelectionSizer->AddGrowableCol(2, 5);
 	modSelectionPanel->SetSizerAndFit(modSelectionSizer);
 
