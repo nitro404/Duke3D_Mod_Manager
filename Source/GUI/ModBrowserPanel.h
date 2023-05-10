@@ -172,6 +172,8 @@ private:
 	wxStaticBox * m_modInfoBox;
 	wxScrolledWindow * m_modInfoPanel;
 	wxStaticText * m_modNameText;
+	wxStaticText * m_modAliasLabel;
+	wxStaticText * m_modAliasText;
 	wxStaticText * m_modTypeText;
 	wxStaticText * m_initialReleaseDateText;
 	wxStaticText * m_latestReleaseDateLabel;

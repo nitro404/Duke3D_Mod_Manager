@@ -8,6 +8,7 @@
 #include "Mod/FavouriteModCollection.h"
 #include "Mod/Mod.h"
 #include "Mod/ModAuthorInformation.h"
+#include "Mod/ModCollection.h"
 #include "Mod/ModGameVersion.h"
 #include "Mod/ModIdentifier.h"
 #include "Mod/ModTeam.h"
@@ -93,6 +94,8 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	, m_modInfoBox(nullptr)
 	, m_modInfoPanel(nullptr)
 	, m_modNameText(nullptr)
+	, m_modAliasLabel(nullptr)
+	, m_modAliasText(nullptr)
 	, m_modTypeText(nullptr)
 	, m_initialReleaseDateText(nullptr)
 	, m_latestReleaseDateLabel(nullptr)
@@ -251,6 +254,10 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	wxStaticText * modNameLabel = new wxStaticText(m_modInfoPanel, wxID_ANY, "Mod Name:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	modNameLabel->SetFont(modNameLabel->GetFont().MakeBold());
 	m_modNameText = new wxStaticText(m_modInfoPanel, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+
+	m_modAliasLabel = new wxStaticText(m_modInfoPanel, wxID_ANY, "Mod Alias:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_modAliasLabel->SetFont(m_modAliasLabel->GetFont().MakeBold());
+	m_modAliasText = new wxStaticText(m_modInfoPanel, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
 	wxStaticText * modTypeLabel = new wxStaticText(m_modInfoPanel, wxID_ANY, "Mod Type:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	modTypeLabel->SetFont(modTypeLabel->GetFont().MakeBold());
@@ -425,6 +432,8 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	modInfoPanelSizer->AddGrowableCol(1, 1);
 	modInfoPanelSizer->Add(modNameLabel, 1, wxEXPAND | wxHORIZONTAL);
 	modInfoPanelSizer->Add(m_modNameText, 1, wxEXPAND | wxHORIZONTAL);
+	modInfoPanelSizer->Add(m_modAliasLabel, 1, wxEXPAND | wxHORIZONTAL);
+	modInfoPanelSizer->Add(m_modAliasText, 1, wxEXPAND | wxHORIZONTAL);
 	modInfoPanelSizer->Add(modTypeLabel, 1, wxEXPAND | wxHORIZONTAL);
 	modInfoPanelSizer->Add(m_modTypeText, 1, wxEXPAND | wxHORIZONTAL);
 	modInfoPanelSizer->Add(initialReleaseDateLabel, 1, wxEXPAND | wxHORIZONTAL);
@@ -793,6 +802,27 @@ void ModBrowserPanel::updateModInfo() {
 		if(mod != nullptr && (m_modManager->getOrganizedMods()->shouldDisplayMods() || m_modManager->getOrganizedMods()->shouldDisplayFavouriteMods())) {
 			m_modInfoPanel->Show();
 			m_modNameText->SetLabelText(wxString::FromUTF8(mod->getName()));
+
+			const std::string & modAlias = mod->getAlias();
+
+			if(!modAlias.empty()) {
+				std::shared_ptr<Mod> aliasMod(m_modManager->getMods()->getModWithID(modAlias));
+
+				if(aliasMod != nullptr) {
+					m_modAliasText->SetLabelText(aliasMod->getName());
+					m_modAliasLabel->Show();
+					m_modAliasText->Show();
+				}
+				else {
+					m_modAliasLabel->Hide();
+					m_modAliasText->Hide();
+				}
+			}
+			else {
+				m_modAliasLabel->Hide();
+				m_modAliasText->Hide();
+			}
+
 			m_modTypeText->SetLabelText(mod->getType());
 
 			std::optional<Date> optionalInitialReleaseDate(mod->getInitialReleaseDate());

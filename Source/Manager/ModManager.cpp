@@ -603,6 +603,12 @@ bool ModManager::isUsingLocalMode() const {
 	return m_localMode;
 }
 
+std::shared_ptr<ModCollection> ModManager::getMods() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	return m_mods;
+}
+
 std::shared_ptr<StandAloneModCollection> ModManager::getStandAloneMods() const {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 

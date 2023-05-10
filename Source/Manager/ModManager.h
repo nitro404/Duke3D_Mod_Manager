@@ -58,6 +58,7 @@ public:
 	bool uninitialize();
 
 	bool isUsingLocalMode() const;
+	std::shared_ptr<ModCollection> getMods() const;
 	std::shared_ptr<StandAloneModCollection> getStandAloneMods() const;
 	std::shared_ptr<FavouriteModCollection> getFavouriteMods() const;
 	std::shared_ptr<OrganizedModCollection> getOrganizedMods() const;
