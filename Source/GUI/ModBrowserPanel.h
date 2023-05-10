@@ -186,6 +186,8 @@ private:
 	wxHyperlinkCtrl * m_modRepositoryHyperlink;
 	wxStaticText * m_notesLabel;
 	wxStaticText * m_notesText;
+	wxStaticText * m_teamNameLabel;
+	wxStaticText * m_teamNameText;
 	wxStaticText * m_teamWebsiteHyperlinkLabel;
 	wxHyperlinkCtrl * m_teamWebsiteHyperlink;
 	wxStaticText * m_teamEmailHyperlinkLabel;

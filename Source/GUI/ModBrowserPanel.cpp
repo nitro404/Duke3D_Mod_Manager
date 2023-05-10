@@ -106,6 +106,8 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	, m_modWebsiteHyperlink(nullptr)
 	, m_modRepositoryHyperlinkLabel(nullptr)
 	, m_modRepositoryHyperlink(nullptr)
+	, m_teamNameLabel(nullptr)
+	, m_teamNameText(nullptr)
 	, m_teamWebsiteHyperlinkLabel(nullptr)
 	, m_teamWebsiteHyperlink(nullptr)
 	, m_teamEmailHyperlinkLabel(nullptr)
@@ -287,6 +289,10 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_notesLabel->SetFont(m_notesLabel->GetFont().MakeBold());
 	m_notesText = new wxStaticText(m_modInfoPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
+	m_teamNameLabel = new wxStaticText(m_modInfoPanel, wxID_ANY, "Team Name:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_teamNameLabel->SetFont(m_teamNameLabel->GetFont().MakeBold());
+	m_teamNameText = new wxStaticText(m_modInfoPanel, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+
 	m_teamWebsiteHyperlinkLabel = new wxStaticText(m_modInfoPanel, wxID_ANY, "Team Website:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamWebsiteHyperlinkLabel->SetFont(m_teamWebsiteHyperlinkLabel->GetFont().MakeBold());
 	m_teamWebsiteHyperlink = new wxHyperlinkCtrl(m_modInfoPanel, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Website");
@@ -448,6 +454,8 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	modInfoPanelSizer->Add(m_modRepositoryHyperlink, 1, wxEXPAND | wxHORIZONTAL);
 	modInfoPanelSizer->Add(m_notesLabel, 1, wxEXPAND | wxHORIZONTAL);
 	modInfoPanelSizer->Add(m_notesText, 1, wxEXPAND | wxALL);
+	modInfoPanelSizer->Add(m_teamNameLabel, 1, wxEXPAND | wxHORIZONTAL);
+	modInfoPanelSizer->Add(m_teamNameText, 1, wxEXPAND | wxHORIZONTAL);
 	modInfoPanelSizer->Add(m_teamWebsiteHyperlinkLabel, 1, wxEXPAND | wxHORIZONTAL);
 	modInfoPanelSizer->Add(m_teamWebsiteHyperlink, 1, wxEXPAND | wxHORIZONTAL);
 	modInfoPanelSizer->Add(m_teamEmailHyperlinkLabel, 1, wxEXPAND | wxHORIZONTAL);
@@ -890,6 +898,19 @@ void ModBrowserPanel::updateModInfo() {
 
 			if(mod->hasTeam()) {
 				std::shared_ptr<ModTeam> team(mod->getTeam());
+
+				const std::string & teamName = team->getName();
+
+				if(!teamName.empty()) {
+					m_teamNameText->SetLabelText(teamName);
+					m_teamNameLabel->Show();
+					m_teamNameText->Show();
+				}
+				else {
+					m_teamNameLabel->Hide();
+					m_teamNameText->Hide();
+				}
+
 				const std::string & teamWebsite = team->getWebsite();
 
 				if(!teamWebsite.empty()) {
