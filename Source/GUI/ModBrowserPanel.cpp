@@ -114,6 +114,8 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	, m_teamEmailHyperlink(nullptr)
 	, m_teamTwitterLabel(nullptr)
 	, m_teamTwitterHyperlink(nullptr)
+	, m_teamDiscordLabel(nullptr)
+	, m_teamDiscordHyperlink(nullptr)
 	, m_teamLocationLabel(nullptr)
 	, m_teamLocationText(nullptr)
 	, m_notesLabel(nullptr)
@@ -307,6 +309,10 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_teamTwitterLabel->SetFont(m_teamTwitterLabel->GetFont().MakeBold());
 	m_teamTwitterHyperlink = new wxHyperlinkCtrl(m_modInfoPanel, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Twitter");
 
+	m_teamDiscordLabel = new wxStaticText(m_modInfoPanel, wxID_ANY, "Team Discord:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_teamDiscordLabel->SetFont(m_teamDiscordLabel->GetFont().MakeBold());
+	m_teamDiscordHyperlink = new wxHyperlinkCtrl(m_modInfoPanel, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Discord");
+
 	m_teamLocationLabel = new wxStaticText(m_modInfoPanel, wxID_ANY, "Team Location:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamLocationLabel->SetFont(m_teamLocationLabel->GetFont().MakeBold());
 	m_teamLocationText = new wxStaticText(m_modInfoPanel, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
@@ -468,6 +474,8 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	modInfoPanelSizer->Add(m_teamEmailHyperlink, 1, wxEXPAND | wxHORIZONTAL);
 	modInfoPanelSizer->Add(m_teamTwitterLabel, 1, wxEXPAND | wxHORIZONTAL);
 	modInfoPanelSizer->Add(m_teamTwitterHyperlink, 1, wxEXPAND | wxHORIZONTAL);
+	modInfoPanelSizer->Add(m_teamDiscordLabel, 1, wxEXPAND | wxHORIZONTAL);
+	modInfoPanelSizer->Add(m_teamDiscordHyperlink, 1, wxEXPAND | wxHORIZONTAL);
 	modInfoPanelSizer->Add(m_teamLocationLabel, 1, wxEXPAND | wxHORIZONTAL);
 	modInfoPanelSizer->Add(m_teamLocationText, 1, wxEXPAND | wxHORIZONTAL);
 	modInfoPanelSizer->Add(m_teamMembersLabel, 1, wxEXPAND | wxALL);
@@ -955,6 +963,20 @@ void ModBrowserPanel::updateModInfo() {
 
 					m_teamTwitterLabel->Show();
 					m_teamTwitterHyperlink->Show();
+				}
+				else {
+					m_teamTwitterLabel->Hide();
+					m_teamTwitterHyperlink->Hide();
+				}
+
+				const std::string & teamDiscord = team->getDiscord();
+
+				if(!teamDiscord.empty()) {
+					m_teamDiscordHyperlink->SetLabelText(teamDiscord);
+					m_teamDiscordHyperlink->SetURL(teamDiscord);
+
+					m_teamDiscordLabel->Show();
+					m_teamDiscordHyperlink->Show();
 				}
 				else {
 					m_teamTwitterLabel->Hide();

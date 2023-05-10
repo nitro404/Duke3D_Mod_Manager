@@ -194,6 +194,8 @@ private:
 	wxHyperlinkCtrl * m_teamEmailHyperlink;
 	wxStaticText * m_teamTwitterLabel;
 	wxHyperlinkCtrl * m_teamTwitterHyperlink;
+	wxStaticText * m_teamDiscordLabel;
+	wxHyperlinkCtrl * m_teamDiscordHyperlink;
 	wxStaticText * m_teamLocationLabel;
 	wxStaticText * m_teamLocationText;
 	wxStaticText * m_teamMembersLabel;
