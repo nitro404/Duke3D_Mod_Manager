@@ -123,6 +123,7 @@ set(GUI_SOURCE_FILES
 	GUI/Logging/LogSinkWX.cpp
 	GUI/Logging/PreformattedLogFormatter.cpp
 	GUI/ModBrowserPanel.cpp
+	GUI/ModInfoPanel.cpp
 	GUI/ModManagerApplication.cpp
 	GUI/ModManagerFrame.cpp
 	GUI/ReleaseNotesPanel.cpp
@@ -144,6 +145,7 @@ set(GUI_HEADER_FILES
 	GUI/Logging/LogSinkWX.h
 	GUI/Logging/PreformattedLogFormatter.h
 	GUI/ModBrowserPanel.h
+	GUI/ModInfoPanel.h
 	GUI/ModManagerApplication.h
 	GUI/ModManagerFrame.h
 	GUI/ReleaseNotesPanel.h
