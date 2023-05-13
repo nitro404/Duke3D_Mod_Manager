@@ -31,7 +31,6 @@ private:
 	std::shared_ptr<ModCollection> m_mods;
 	std::shared_ptr<GameVersionCollection> m_gameVersions;
 
-	wxPanel * m_modPanel;
 	wxStaticText * m_modNameLabel;
 	wxStaticText * m_modNameText;
 	wxStaticText * m_modAliasLabel;
@@ -60,8 +59,11 @@ private:
 	wxHyperlinkCtrl * m_teamDiscordHyperlink;
 	wxStaticText * m_teamLocationLabel;
 	wxStaticText * m_teamLocationText;
+	wxStaticText * m_teamMembersLabel;
+	wxWindow * m_teamMembersSpacers[2];
 	ModTeamMembersPanel * m_teamMembersPanel;
 	wxStaticText * m_downloadsLabel;
+	wxWindow * m_downloadsSpacers[2];
 	ModDownloadsPanel * m_downloadsPanel;
 };
 

@@ -15,7 +15,6 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	: wxScrolledWindow(parent, windowID, position, size, style, "Mod Information")
 	, m_mods(mods)
 	, m_gameVersions(gameVersions)
-	, m_modPanel(nullptr)
 	, m_modNameLabel(nullptr)
 	, m_modNameText(nullptr)
 	, m_modAliasLabel(nullptr)
@@ -44,78 +43,79 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	, m_teamDiscordHyperlink(nullptr)
 	, m_teamLocationLabel(nullptr)
 	, m_teamLocationText(nullptr)
+	, m_teamMembersLabel(nullptr)
 	, m_teamMembersPanel(nullptr)
 	, m_downloadsLabel(nullptr)
 	, m_downloadsPanel(nullptr) {
 	SetScrollRate(5, 5);
 
-	m_modPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, "Mod");
-
-	m_modNameLabel = new wxStaticText(m_modPanel, wxID_ANY, "Mod Name:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_modNameLabel = new wxStaticText(this, wxID_ANY, "Mod Name:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_modNameLabel->SetFont(m_modNameLabel->GetFont().MakeBold());
-	m_modNameText = new wxStaticText(m_modPanel, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_modNameText = new wxStaticText(this, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
-	m_modAliasLabel = new wxStaticText(m_modPanel, wxID_ANY, "Mod Alias:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_modAliasLabel = new wxStaticText(this, wxID_ANY, "Mod Alias:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_modAliasLabel->SetFont(m_modAliasLabel->GetFont().MakeBold());
-	m_modAliasText = new wxStaticText(m_modPanel, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_modAliasText = new wxStaticText(this, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
-	wxStaticText * modTypeLabel = new wxStaticText(m_modPanel, wxID_ANY, "Mod Type:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	wxStaticText * modTypeLabel = new wxStaticText(this, wxID_ANY, "Mod Type:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	modTypeLabel->SetFont(modTypeLabel->GetFont().MakeBold());
-	m_modTypeText = new wxStaticText(m_modPanel, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_modTypeText = new wxStaticText(this, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
-	wxStaticText * initialReleaseDateLabel = new wxStaticText(m_modPanel, wxID_ANY, "Initial Release Date:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	wxStaticText * initialReleaseDateLabel = new wxStaticText(this, wxID_ANY, "Initial Release Date:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	initialReleaseDateLabel->SetFont(initialReleaseDateLabel->GetFont().MakeBold());
-	m_initialReleaseDateText = new wxStaticText(m_modPanel, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_initialReleaseDateText = new wxStaticText(this, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
-	m_latestReleaseDateLabel = new wxStaticText(m_modPanel, wxID_ANY, "Latest Release Date:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_latestReleaseDateLabel = new wxStaticText(this, wxID_ANY, "Latest Release Date:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_latestReleaseDateLabel->SetFont(m_latestReleaseDateLabel->GetFont().MakeBold());
-	m_latestReleaseDateText = new wxStaticText(m_modPanel, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_latestReleaseDateText = new wxStaticText(this, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
-	m_supportedGameVersionsLabel = new wxStaticText(m_modPanel, wxID_ANY, "Supported Game Versions:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_supportedGameVersionsLabel = new wxStaticText(this, wxID_ANY, "Supported Game Versions:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_supportedGameVersionsLabel->SetFont(m_supportedGameVersionsLabel->GetFont().MakeBold());
-	m_supportedGameVersionsText = new wxStaticText(m_modPanel, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_supportedGameVersionsText = new wxStaticText(this, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
-	m_modWebsiteHyperlinkLabel = new wxStaticText(m_modPanel, wxID_ANY, "Mod Website:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_modWebsiteHyperlinkLabel = new wxStaticText(this, wxID_ANY, "Mod Website:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_modWebsiteHyperlinkLabel->SetFont(m_modWebsiteHyperlinkLabel->GetFont().MakeBold());
-	m_modWebsiteHyperlink = new wxHyperlinkCtrl(m_modPanel, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Mod Website");
+	m_modWebsiteHyperlink = new wxHyperlinkCtrl(this, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Mod Website");
 
-	m_modRepositoryHyperlinkLabel = new wxStaticText(m_modPanel, wxID_ANY, "Mod Repository:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_modRepositoryHyperlinkLabel = new wxStaticText(this, wxID_ANY, "Mod Repository:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_modRepositoryHyperlinkLabel->SetFont(m_modRepositoryHyperlinkLabel->GetFont().MakeBold());
-	m_modRepositoryHyperlink = new wxHyperlinkCtrl(m_modPanel, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Mod Repository");
+	m_modRepositoryHyperlink = new wxHyperlinkCtrl(this, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Mod Repository");
 
-	m_notesLabel = new wxStaticText(m_modPanel, wxID_ANY, "Notes:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_notesLabel = new wxStaticText(this, wxID_ANY, "Notes:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_notesLabel->SetFont(m_notesLabel->GetFont().MakeBold());
-	m_notesText = new wxStaticText(m_modPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_notesText = new wxStaticText(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
-	m_teamNameLabel = new wxStaticText(m_modPanel, wxID_ANY, "Team Name:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_teamNameLabel = new wxStaticText(this, wxID_ANY, "Team Name:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamNameLabel->SetFont(m_teamNameLabel->GetFont().MakeBold());
-	m_teamNameText = new wxStaticText(m_modPanel, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_teamNameText = new wxStaticText(this, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
-	m_teamWebsiteHyperlinkLabel = new wxStaticText(m_modPanel, wxID_ANY, "Team Website:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_teamWebsiteHyperlinkLabel = new wxStaticText(this, wxID_ANY, "Team Website:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamWebsiteHyperlinkLabel->SetFont(m_teamWebsiteHyperlinkLabel->GetFont().MakeBold());
-	m_teamWebsiteHyperlink = new wxHyperlinkCtrl(m_modPanel, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Website");
+	m_teamWebsiteHyperlink = new wxHyperlinkCtrl(this, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Website");
 
-	m_teamEmailHyperlinkLabel = new wxStaticText(m_modPanel, wxID_ANY, "Team E-Mail:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_teamEmailHyperlinkLabel = new wxStaticText(this, wxID_ANY, "Team E-Mail:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamEmailHyperlinkLabel->SetFont(m_teamEmailHyperlinkLabel->GetFont().MakeBold());
-	m_teamEmailHyperlink = new wxHyperlinkCtrl(m_modPanel, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team E-Mail");
+	m_teamEmailHyperlink = new wxHyperlinkCtrl(this, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team E-Mail");
 
-	m_teamTwitterLabel = new wxStaticText(m_modPanel, wxID_ANY, "Team Twitter:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_teamTwitterLabel = new wxStaticText(this, wxID_ANY, "Team Twitter:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamTwitterLabel->SetFont(m_teamTwitterLabel->GetFont().MakeBold());
-	m_teamTwitterHyperlink = new wxHyperlinkCtrl(m_modPanel, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Twitter");
+	m_teamTwitterHyperlink = new wxHyperlinkCtrl(this, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Twitter");
 
-	m_teamDiscordLabel = new wxStaticText(m_modPanel, wxID_ANY, "Team Discord:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_teamDiscordLabel = new wxStaticText(this, wxID_ANY, "Team Discord:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamDiscordLabel->SetFont(m_teamDiscordLabel->GetFont().MakeBold());
-	m_teamDiscordHyperlink = new wxHyperlinkCtrl(m_modPanel, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Discord");
+	m_teamDiscordHyperlink = new wxHyperlinkCtrl(this, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Discord");
 
-	m_teamLocationLabel = new wxStaticText(m_modPanel, wxID_ANY, "Team Location:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_teamLocationLabel = new wxStaticText(this, wxID_ANY, "Team Location:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamLocationLabel->SetFont(m_teamLocationLabel->GetFont().MakeBold());
-	m_teamLocationText = new wxStaticText(m_modPanel, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_teamLocationText = new wxStaticText(this, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
+	m_teamMembersLabel = new wxStaticText(this, wxID_ANY, "Team Members:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_teamMembersLabel->SetFont(m_teamMembersLabel->GetFont().MakeBold());
 	m_teamMembersPanel = new ModTeamMembersPanel(this);
 
-	m_downloadsLabel = new wxStaticText(m_modPanel, wxID_ANY, "Original Downloads:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_downloadsLabel = new wxStaticText(this, wxID_ANY, "Original Downloads:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_downloadsLabel->SetFont(m_downloadsLabel->GetFont().MakeBold());
-	m_downloadsPanel = new ModDownloadsPanel(m_modPanel);
+	m_downloadsPanel = new ModDownloadsPanel(this);
 
 	int border = 5;
 
@@ -152,16 +152,21 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	modPanelSizer->Add(m_teamDiscordHyperlink, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_teamLocationLabel, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_teamLocationText, 1, wxEXPAND | wxHORIZONTAL);
-	modPanelSizer->Add(m_downloadsLabel, 1, wxEXPAND | wxHORIZONTAL);
-	modPanelSizer->AddSpacer(1);
-	modPanelSizer->AddSpacer(1);
-	modPanelSizer->Add(m_downloadsPanel, 1, wxEXPAND | wxHORIZONTAL);
-	m_modPanel->SetSizer(modPanelSizer);
+	modPanelSizer->Add(m_teamMembersLabel, 1, wxEXPAND | wxHORIZONTAL);
 
-	wxFlexGridSizer * modInfoPanelSizer = new wxFlexGridSizer(1, border, border);
-	modInfoPanelSizer->Add(m_modPanel, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_teamMembersPanel, 1, wxEXPAND | wxHORIZONTAL);
-	SetSizer(modInfoPanelSizer);
+	for(int i = 0; i < 2; i++) {
+		m_teamMembersSpacers[i] = modPanelSizer->Add(new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER), 1, wxEXPAND | wxHORIZONTAL)->GetWindow();
+	}
+
+	modPanelSizer->Add(m_teamMembersPanel, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_downloadsLabel, 1, wxEXPAND | wxHORIZONTAL);
+
+	for(int i = 0; i < 2; i++) {
+		m_downloadsSpacers[i] = modPanelSizer->Add(new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER), 1, wxEXPAND | wxHORIZONTAL)->GetWindow();
+	}
+
+	modPanelSizer->Add(m_downloadsPanel, 1, wxEXPAND | wxHORIZONTAL);
+	SetSizer(modPanelSizer);
 }
 
 ModInfoPanel::~ModInfoPanel() { }
@@ -354,14 +359,37 @@ void ModInfoPanel::setMod(std::shared_ptr<Mod> mod) {
 
 		if(team->numberOfMembers() != 0) {
 			m_teamMembersPanel->setTeam(team);
+			m_teamMembersLabel->Show();
 			m_teamMembersPanel->Show();
 		}
 		else {
+			m_teamMembersLabel->Hide();
 			m_teamMembersPanel->Hide();
+		}
+
+		for(int i = 0; i < 2; i++) {
+			m_teamMembersSpacers[i]->Show();
 		}
 	}
 	else {
+		m_teamNameLabel->Hide();
+		m_teamNameText->Hide();
+		m_teamWebsiteHyperlinkLabel->Hide();
+		m_teamWebsiteHyperlink->Hide();
+		m_teamEmailHyperlinkLabel->Hide();
+		m_teamEmailHyperlink->Hide();
+		m_teamTwitterLabel->Hide();
+		m_teamTwitterHyperlink->Hide();
+		m_teamDiscordLabel->Hide();
+		m_teamDiscordHyperlink->Hide();
+		m_teamLocationLabel->Hide();
+		m_teamLocationText->Hide();
+		m_teamMembersLabel->Hide();
 		m_teamMembersPanel->Hide();
+
+		for(int i = 0; i < 2; i++) {
+			m_teamMembersSpacers[i]->Hide();
+		}
 	}
 
 	if(m_mod->numberOfNotes() != 0) {
@@ -390,13 +418,21 @@ void ModInfoPanel::setMod(std::shared_ptr<Mod> mod) {
 
 	if(m_mod->numberOfDownloads() != 0) {
 		m_downloadsPanel->setMod(m_mod);
+		m_downloadsLabel->Show();
 		m_downloadsPanel->Show();
+
+		for(int i = 0; i < 2; i++) {
+			m_downloadsSpacers[i]->Show();
+		}
 	}
 	else {
+		m_downloadsLabel->Hide();
 		m_downloadsPanel->Hide();
+
+		for(int i = 0; i < 2; i++) {
+			m_downloadsSpacers[i]->Hide();
+		}
 	}
 
 	Layout();
-
-	m_teamMembersPanel->setMinimumLeftColoumnWidth(dynamic_cast<wxFlexGridSizer *>(m_modPanel->GetSizer())->GetColWidths()[0]);
 }

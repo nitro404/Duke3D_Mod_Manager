@@ -23,16 +23,12 @@ public:
 	ModTeamMembersPanel(wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
 	virtual ~ModTeamMembersPanel();
 
-	void setMinimumLeftColoumnWidth(int columnWidth);
 	void setTeam(std::shared_ptr<ModTeam> team);
 
 private:
 	std::shared_ptr<ModTeam> m_team;
 
-	wxFlexGridSizer * m_modTeamPanelSizer;
-	wxStaticText * m_teamMembersLabel;
-	wxFlexGridSizer * m_modTeamMembersPanelSizer;
-	wxPanel * m_teamMembersPanel;
+	wxFlexGridSizer * m_teamMembersPanelSizer;
 	std::vector<ModTeamMemberPanel *> m_teamMemberPanels;
 };
 
