@@ -15,6 +15,7 @@
 
 class Mod;
 class ModCollection;
+class ModDownloadsPanel;
 class ModTeamMembersPanel;
 class GameVersionCollection;
 
@@ -60,6 +61,8 @@ private:
 	wxStaticText * m_teamLocationLabel;
 	wxStaticText * m_teamLocationText;
 	ModTeamMembersPanel * m_teamMembersPanel;
+	wxStaticText * m_downloadsLabel;
+	ModDownloadsPanel * m_downloadsPanel;
 };
 
 #endif // _MOD_INFO_PANEL_H_

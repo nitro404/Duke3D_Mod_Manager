@@ -1,10 +1,11 @@
 #include "ModInfoPanel.h"
 
+#include "ModDownloadsPanel.h"
+#include "ModTeamMembersPanel.h"
 #include "Mod/Mod.h"
 #include "Mod/ModCollection.h"
 #include "Mod/ModTeam.h"
 #include "Mod/ModTeamMember.h"
-#include "ModTeamMembersPanel.h"
 #include "Game/GameVersionCollection.h"
 
 #include <sstream>
@@ -43,7 +44,9 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	, m_teamDiscordHyperlink(nullptr)
 	, m_teamLocationLabel(nullptr)
 	, m_teamLocationText(nullptr)
-	, m_teamMembersPanel(nullptr) {
+	, m_teamMembersPanel(nullptr)
+	, m_downloadsLabel(nullptr)
+	, m_downloadsPanel(nullptr) {
 	SetScrollRate(5, 5);
 
 	m_modPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, "Mod");
@@ -110,6 +113,10 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 
 	m_teamMembersPanel = new ModTeamMembersPanel(this);
 
+	m_downloadsLabel = new wxStaticText(m_modPanel, wxID_ANY, "Original Downloads:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_downloadsLabel->SetFont(m_downloadsLabel->GetFont().MakeBold());
+	m_downloadsPanel = new ModDownloadsPanel(m_modPanel);
+
 	int border = 5;
 
 	wxFlexGridSizer * modPanelSizer = new wxFlexGridSizer(2, border, border);
@@ -145,6 +152,10 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	modPanelSizer->Add(m_teamDiscordHyperlink, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_teamLocationLabel, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_teamLocationText, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_downloadsLabel, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->AddSpacer(1);
+	modPanelSizer->AddSpacer(1);
+	modPanelSizer->Add(m_downloadsPanel, 1, wxEXPAND | wxHORIZONTAL);
 	m_modPanel->SetSizer(modPanelSizer);
 
 	wxFlexGridSizer * modInfoPanelSizer = new wxFlexGridSizer(1, border, border);
@@ -375,6 +386,14 @@ void ModInfoPanel::setMod(std::shared_ptr<Mod> mod) {
 	else {
 		m_notesLabel->Hide();
 		m_notesText->Hide();
+	}
+
+	if(m_mod->numberOfDownloads() != 0) {
+		m_downloadsPanel->setMod(m_mod);
+		m_downloadsPanel->Show();
+	}
+	else {
+		m_downloadsPanel->Hide();
 	}
 
 	Layout();
