@@ -184,6 +184,66 @@ ModTeamMember::~ModTeamMember() {
 	m_parentModTeam = nullptr;
 }
 
+bool ModTeamMember::hasName() const {
+	return !m_name.empty();
+}
+
+bool ModTeamMember::hasAlias() const {
+	return !m_alias.empty();
+}
+
+bool ModTeamMember::hasEmail() const {
+	return !m_email.empty();
+}
+
+bool ModTeamMember::hasTwitter() const {
+	return !m_twitter.empty();
+}
+
+bool ModTeamMember::hasWebsite() const {
+	return !m_website.empty();
+}
+
+bool ModTeamMember::hasYouTube() const {
+	return !m_youTube.empty();
+}
+
+bool ModTeamMember::hasReddit() const {
+	return !m_reddit.empty();
+}
+
+bool ModTeamMember::hasGitHub() const {
+	return !m_gitHub.empty();
+}
+
+bool ModTeamMember::hasDiscord() const {
+	return !m_discord.empty();
+}
+
+bool ModTeamMember::hasSteamID() const {
+	return !m_steamID.empty();
+}
+
+bool ModTeamMember::hasAIM() const {
+	return !m_aim.empty();
+}
+
+bool ModTeamMember::hasICQ() const {
+	return !m_icq.empty();
+}
+
+bool ModTeamMember::hasYahoo() const {
+	return !m_yahoo.empty();
+}
+
+bool ModTeamMember::hasPhoneNumber() const {
+	return !m_phoneNumber.empty();
+}
+
+bool ModTeamMember::hasLocation() const {
+	return m_location.hasValue();
+}
+
 const std::string & ModTeamMember::getName() const {
 	return m_name;
 }

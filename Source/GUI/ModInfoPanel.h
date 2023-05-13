@@ -15,6 +15,7 @@
 
 class Mod;
 class ModCollection;
+class ModTeamMembersPanel;
 class GameVersionCollection;
 
 class ModInfoPanel final : public wxScrolledWindow {
@@ -29,6 +30,8 @@ private:
 	std::shared_ptr<ModCollection> m_mods;
 	std::shared_ptr<GameVersionCollection> m_gameVersions;
 
+	wxPanel * m_modPanel;
+	wxStaticText * m_modNameLabel;
 	wxStaticText * m_modNameText;
 	wxStaticText * m_modAliasLabel;
 	wxStaticText * m_modAliasText;
@@ -56,8 +59,7 @@ private:
 	wxHyperlinkCtrl * m_teamDiscordHyperlink;
 	wxStaticText * m_teamLocationLabel;
 	wxStaticText * m_teamLocationText;
-	wxStaticText * m_teamMembersLabel;
-	wxStaticText * m_teamMembersText;
+	ModTeamMembersPanel * m_teamMembersPanel;
 };
 
 #endif // _MOD_INFO_PANEL_H_

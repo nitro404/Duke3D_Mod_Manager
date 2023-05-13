@@ -4,6 +4,7 @@
 #include "Mod/ModCollection.h"
 #include "Mod/ModTeam.h"
 #include "Mod/ModTeamMember.h"
+#include "ModTeamMembersPanel.h"
 #include "Game/GameVersionCollection.h"
 
 #include <sstream>
@@ -13,6 +14,8 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	: wxScrolledWindow(parent, windowID, position, size, style, "Mod Information")
 	, m_mods(mods)
 	, m_gameVersions(gameVersions)
+	, m_modPanel(nullptr)
+	, m_modNameLabel(nullptr)
 	, m_modNameText(nullptr)
 	, m_modAliasLabel(nullptr)
 	, m_modAliasText(nullptr)
@@ -26,6 +29,8 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	, m_modWebsiteHyperlink(nullptr)
 	, m_modRepositoryHyperlinkLabel(nullptr)
 	, m_modRepositoryHyperlink(nullptr)
+	, m_notesLabel(nullptr)
+	, m_notesText(nullptr)
 	, m_teamNameLabel(nullptr)
 	, m_teamNameText(nullptr)
 	, m_teamWebsiteHyperlinkLabel(nullptr)
@@ -38,120 +43,123 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	, m_teamDiscordHyperlink(nullptr)
 	, m_teamLocationLabel(nullptr)
 	, m_teamLocationText(nullptr)
-	, m_notesLabel(nullptr)
-	, m_notesText(nullptr)
-	, m_teamMembersLabel(nullptr)
-	, m_teamMembersText(nullptr) {
+	, m_teamMembersPanel(nullptr) {
 	SetScrollRate(5, 5);
 
-	wxStaticText * modNameLabel = new wxStaticText(this, wxID_ANY, "Mod Name:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
-	modNameLabel->SetFont(modNameLabel->GetFont().MakeBold());
-	m_modNameText = new wxStaticText(this, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_modPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, "Mod");
 
-	m_modAliasLabel = new wxStaticText(this, wxID_ANY, "Mod Alias:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_modNameLabel = new wxStaticText(m_modPanel, wxID_ANY, "Mod Name:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_modNameLabel->SetFont(m_modNameLabel->GetFont().MakeBold());
+	m_modNameText = new wxStaticText(m_modPanel, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+
+	m_modAliasLabel = new wxStaticText(m_modPanel, wxID_ANY, "Mod Alias:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_modAliasLabel->SetFont(m_modAliasLabel->GetFont().MakeBold());
-	m_modAliasText = new wxStaticText(this, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_modAliasText = new wxStaticText(m_modPanel, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
-	wxStaticText * modTypeLabel = new wxStaticText(this, wxID_ANY, "Mod Type:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	wxStaticText * modTypeLabel = new wxStaticText(m_modPanel, wxID_ANY, "Mod Type:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	modTypeLabel->SetFont(modTypeLabel->GetFont().MakeBold());
-	m_modTypeText = new wxStaticText(this, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_modTypeText = new wxStaticText(m_modPanel, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
-	wxStaticText * initialReleaseDateLabel = new wxStaticText(this, wxID_ANY, "Initial Release Date:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	wxStaticText * initialReleaseDateLabel = new wxStaticText(m_modPanel, wxID_ANY, "Initial Release Date:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	initialReleaseDateLabel->SetFont(initialReleaseDateLabel->GetFont().MakeBold());
-	m_initialReleaseDateText = new wxStaticText(this, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_initialReleaseDateText = new wxStaticText(m_modPanel, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
-	m_latestReleaseDateLabel = new wxStaticText(this, wxID_ANY, "Latest Release Date:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_latestReleaseDateLabel = new wxStaticText(m_modPanel, wxID_ANY, "Latest Release Date:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_latestReleaseDateLabel->SetFont(m_latestReleaseDateLabel->GetFont().MakeBold());
-	m_latestReleaseDateText = new wxStaticText(this, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_latestReleaseDateText = new wxStaticText(m_modPanel, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
-	m_supportedGameVersionsLabel = new wxStaticText(this, wxID_ANY, "Supported Game Versions:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_supportedGameVersionsLabel = new wxStaticText(m_modPanel, wxID_ANY, "Supported Game Versions:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_supportedGameVersionsLabel->SetFont(m_supportedGameVersionsLabel->GetFont().MakeBold());
-	m_supportedGameVersionsText = new wxStaticText(this, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_supportedGameVersionsText = new wxStaticText(m_modPanel, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
-	m_modWebsiteHyperlinkLabel = new wxStaticText(this, wxID_ANY, "Mod Website:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_modWebsiteHyperlinkLabel = new wxStaticText(m_modPanel, wxID_ANY, "Mod Website:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_modWebsiteHyperlinkLabel->SetFont(m_modWebsiteHyperlinkLabel->GetFont().MakeBold());
-	m_modWebsiteHyperlink = new wxHyperlinkCtrl(this, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Mod Website");
+	m_modWebsiteHyperlink = new wxHyperlinkCtrl(m_modPanel, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Mod Website");
 
-	m_modRepositoryHyperlinkLabel = new wxStaticText(this, wxID_ANY, "Mod Repository:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_modRepositoryHyperlinkLabel = new wxStaticText(m_modPanel, wxID_ANY, "Mod Repository:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_modRepositoryHyperlinkLabel->SetFont(m_modRepositoryHyperlinkLabel->GetFont().MakeBold());
-	m_modRepositoryHyperlink = new wxHyperlinkCtrl(this, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Mod Repository");
+	m_modRepositoryHyperlink = new wxHyperlinkCtrl(m_modPanel, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Mod Repository");
 
-	m_notesLabel = new wxStaticText(this, wxID_ANY, "Notes:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_notesLabel = new wxStaticText(m_modPanel, wxID_ANY, "Notes:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_notesLabel->SetFont(m_notesLabel->GetFont().MakeBold());
-	m_notesText = new wxStaticText(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_notesText = new wxStaticText(m_modPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
-	m_teamNameLabel = new wxStaticText(this, wxID_ANY, "Team Name:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_teamNameLabel = new wxStaticText(m_modPanel, wxID_ANY, "Team Name:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamNameLabel->SetFont(m_teamNameLabel->GetFont().MakeBold());
-	m_teamNameText = new wxStaticText(this, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_teamNameText = new wxStaticText(m_modPanel, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
-	m_teamWebsiteHyperlinkLabel = new wxStaticText(this, wxID_ANY, "Team Website:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_teamWebsiteHyperlinkLabel = new wxStaticText(m_modPanel, wxID_ANY, "Team Website:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamWebsiteHyperlinkLabel->SetFont(m_teamWebsiteHyperlinkLabel->GetFont().MakeBold());
-	m_teamWebsiteHyperlink = new wxHyperlinkCtrl(this, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Website");
+	m_teamWebsiteHyperlink = new wxHyperlinkCtrl(m_modPanel, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Website");
 
-	m_teamEmailHyperlinkLabel = new wxStaticText(this, wxID_ANY, "Team E-Mail:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_teamEmailHyperlinkLabel = new wxStaticText(m_modPanel, wxID_ANY, "Team E-Mail:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamEmailHyperlinkLabel->SetFont(m_teamEmailHyperlinkLabel->GetFont().MakeBold());
-	m_teamEmailHyperlink = new wxHyperlinkCtrl(this, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team E-Mail");
+	m_teamEmailHyperlink = new wxHyperlinkCtrl(m_modPanel, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team E-Mail");
 
-	m_teamTwitterLabel = new wxStaticText(this, wxID_ANY, "Team Twitter:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_teamTwitterLabel = new wxStaticText(m_modPanel, wxID_ANY, "Team Twitter:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamTwitterLabel->SetFont(m_teamTwitterLabel->GetFont().MakeBold());
-	m_teamTwitterHyperlink = new wxHyperlinkCtrl(this, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Twitter");
+	m_teamTwitterHyperlink = new wxHyperlinkCtrl(m_modPanel, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Twitter");
 
-	m_teamDiscordLabel = new wxStaticText(this, wxID_ANY, "Team Discord:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_teamDiscordLabel = new wxStaticText(m_modPanel, wxID_ANY, "Team Discord:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamDiscordLabel->SetFont(m_teamDiscordLabel->GetFont().MakeBold());
-	m_teamDiscordHyperlink = new wxHyperlinkCtrl(this, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Discord");
+	m_teamDiscordHyperlink = new wxHyperlinkCtrl(m_modPanel, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Discord");
 
-	m_teamLocationLabel = new wxStaticText(this, wxID_ANY, "Team Location:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_teamLocationLabel = new wxStaticText(m_modPanel, wxID_ANY, "Team Location:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamLocationLabel->SetFont(m_teamLocationLabel->GetFont().MakeBold());
-	m_teamLocationText = new wxStaticText(this, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_teamLocationText = new wxStaticText(m_modPanel, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
-	m_teamMembersLabel = new wxStaticText(this, wxID_ANY, "Team Members:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
-	m_teamMembersLabel->SetFont(m_teamMembersLabel->GetFont().MakeBold());
-
-	m_teamMembersText = new wxStaticText(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_teamMembersPanel = new ModTeamMembersPanel(this);
 
 	int border = 5;
 
-	wxFlexGridSizer * modInfoPanelSizer = new wxFlexGridSizer(2, border, border);
-	modInfoPanelSizer->AddGrowableCol(0, 0);
-	modInfoPanelSizer->AddGrowableCol(1, 1);
-	modInfoPanelSizer->Add(modNameLabel, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_modNameText, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_modAliasLabel, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_modAliasText, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(modTypeLabel, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_modTypeText, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(initialReleaseDateLabel, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_initialReleaseDateText, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_latestReleaseDateLabel, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_latestReleaseDateText, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_supportedGameVersionsLabel, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_supportedGameVersionsText, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_modWebsiteHyperlinkLabel, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_modWebsiteHyperlink, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_modRepositoryHyperlinkLabel, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_modRepositoryHyperlink, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_notesLabel, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_notesText, 1, wxEXPAND | wxALL);
-	modInfoPanelSizer->Add(m_teamNameLabel, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_teamNameText, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_teamWebsiteHyperlinkLabel, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_teamWebsiteHyperlink, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_teamEmailHyperlinkLabel, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_teamEmailHyperlink, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_teamTwitterLabel, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_teamTwitterHyperlink, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_teamDiscordLabel, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_teamDiscordHyperlink, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_teamLocationLabel, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_teamLocationText, 1, wxEXPAND | wxHORIZONTAL);
-	modInfoPanelSizer->Add(m_teamMembersLabel, 1, wxEXPAND | wxALL);
-	modInfoPanelSizer->Add(m_teamMembersText, 1, wxEXPAND | wxALL);
+	wxFlexGridSizer * modPanelSizer = new wxFlexGridSizer(2, border, border);
+	modPanelSizer->AddGrowableCol(0, 0);
+	modPanelSizer->AddGrowableCol(1, 1);
+	modPanelSizer->Add(m_modNameLabel, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_modNameText, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_modAliasLabel, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_modAliasText, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(modTypeLabel, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_modTypeText, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(initialReleaseDateLabel, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_initialReleaseDateText, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_latestReleaseDateLabel, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_latestReleaseDateText, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_supportedGameVersionsLabel, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_supportedGameVersionsText, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_modWebsiteHyperlinkLabel, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_modWebsiteHyperlink, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_modRepositoryHyperlinkLabel, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_modRepositoryHyperlink, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_notesLabel, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_notesText, 1, wxEXPAND | wxALL);
+	modPanelSizer->Add(m_teamNameLabel, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_teamNameText, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_teamWebsiteHyperlinkLabel, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_teamWebsiteHyperlink, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_teamEmailHyperlinkLabel, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_teamEmailHyperlink, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_teamTwitterLabel, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_teamTwitterHyperlink, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_teamDiscordLabel, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_teamDiscordHyperlink, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_teamLocationLabel, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_teamLocationText, 1, wxEXPAND | wxHORIZONTAL);
+	m_modPanel->SetSizer(modPanelSizer);
+
+	wxFlexGridSizer * modInfoPanelSizer = new wxFlexGridSizer(1, border, border);
+	modInfoPanelSizer->Add(m_modPanel, 1, wxEXPAND | wxHORIZONTAL);
+	modInfoPanelSizer->Add(m_teamMembersPanel, 1, wxEXPAND | wxHORIZONTAL);
 	SetSizer(modInfoPanelSizer);
 }
 
 ModInfoPanel::~ModInfoPanel() { }
 
 void ModInfoPanel::setMod(std::shared_ptr<Mod> mod) {
+	if(m_mod == mod) {
+		return;
+	}
+
 	m_mod = mod;
 
 	if(m_mod == nullptr) {
@@ -334,35 +342,15 @@ void ModInfoPanel::setMod(std::shared_ptr<Mod> mod) {
 		}
 
 		if(team->numberOfMembers() != 0) {
-			std::stringstream teamMemberNameStream;
-
-			for(size_t i = 0; i < team->numberOfMembers(); i++) {
-				if(teamMemberNameStream.tellp() != 0) {
-					teamMemberNameStream << "\n";
-				}
-
-				teamMemberNameStream << team->getMember(i)->getName();
-			}
-
-			m_teamMembersText->SetLabelText(wxString::FromUTF8(teamMemberNameStream.str()));
-
-			m_teamMembersLabel->Show();
-			m_teamMembersText->Show();
+			m_teamMembersPanel->setTeam(team);
+			m_teamMembersPanel->Show();
 		}
 		else {
-			m_teamMembersLabel->Hide();
-			m_teamMembersText->Hide();
+			m_teamMembersPanel->Hide();
 		}
 	}
 	else {
-		m_teamWebsiteHyperlinkLabel->Hide();
-		m_teamWebsiteHyperlink->Hide();
-		m_teamEmailHyperlinkLabel->Hide();
-		m_teamEmailHyperlink->Hide();
-		m_teamLocationLabel->Hide();
-		m_teamLocationText->Hide();
-		m_teamMembersLabel->Hide();
-		m_teamMembersText->Hide();
+		m_teamMembersPanel->Hide();
 	}
 
 	if(m_mod->numberOfNotes() != 0) {
@@ -390,4 +378,6 @@ void ModInfoPanel::setMod(std::shared_ptr<Mod> mod) {
 	}
 
 	Layout();
+
+	m_teamMembersPanel->setMinimumLeftColoumnWidth(dynamic_cast<wxFlexGridSizer *>(m_modPanel->GetSizer())->GetColWidths()[0]);
 }

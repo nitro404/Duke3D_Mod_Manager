@@ -27,6 +27,22 @@ public:
 	ModTeamMember & operator = (const ModTeamMember & m);
 	virtual ~ModTeamMember();
 
+	bool hasName() const;
+	bool hasAlias() const;
+	bool hasEmail() const;
+	bool hasTwitter() const;
+	bool hasWebsite() const;
+	bool hasYouTube() const;
+	bool hasReddit() const;
+	bool hasGitHub() const;
+	bool hasDiscord() const;
+	bool hasSteamID() const;
+	bool hasAIM() const;
+	bool hasICQ() const;
+	bool hasYahoo() const;
+	bool hasPhoneNumber() const;
+	bool hasLocation() const;
+
 	const std::string & getName() const;
 	const std::string & getAlias() const;
 	const std::string & getEmail() const;
