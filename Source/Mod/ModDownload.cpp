@@ -167,6 +167,10 @@ uint64_t ModDownload::getFileSize() const {
 	return m_fileSize;
 }
 
+bool ModDownload::hasMultipleParts() const {
+	return m_partNumber != 0 && m_partCount > 1;
+}
+
 uint8_t ModDownload::getPartNumber() const {
 	return m_partNumber;
 }
@@ -183,8 +187,16 @@ const std::string & ModDownload::getVersionType() const {
 	return m_versionType;
 }
 
+bool ModDownload::hasSpecial() const {
+	return !m_special.empty();
+}
+
 const std::string & ModDownload::getSpecial() const {
 	return m_special;
+}
+
+bool ModDownload::hasGameVersionID() const {
+	return !m_gameVersionID.empty();
 }
 
 const std::string & ModDownload::getGameVersionID() const {

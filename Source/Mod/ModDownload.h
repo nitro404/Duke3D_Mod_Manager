@@ -30,11 +30,14 @@ public:
 
 	const std::string & getFileName() const;
 	uint64_t getFileSize() const;
+	bool hasMultipleParts() const;
 	uint8_t getPartNumber() const;
 	uint8_t getPartCount() const;
 	const std::string & getVersion() const;
 	const std::string & getVersionType() const;
+	bool hasSpecial() const;
 	const std::string & getSpecial() const;
+	bool hasGameVersionID() const;
 	const std::string & getGameVersionID() const;
 	const std::string & getType() const;
 	bool isOriginalFiles() const;
