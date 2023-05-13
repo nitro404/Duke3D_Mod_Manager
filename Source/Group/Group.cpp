@@ -801,7 +801,7 @@ std::unique_ptr<Group> Group::loadFrom(const std::string & filePath) {
 		}
 
 		file->m_parentGroup = group.get();
-		group->m_fileConnections.push_back(file->modified.connect(std::bind(&Group::onGroupFileModified, *group, std::placeholders::_1)));
+		group->m_fileConnections.push_back(file->modified.connect(std::bind(&Group::onGroupFileModified, group.get(), std::placeholders::_1)));
 		group->m_files.push_back(file);
 	}
 
