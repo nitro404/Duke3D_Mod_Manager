@@ -129,6 +129,9 @@ public:
 	bool uninstallModGameVersion(const ModGameVersion & modGameVersion);
 	std::future<bool> runSelectedModAsync(std::shared_ptr<GameVersion> alternateGameVersion = nullptr, std::shared_ptr<ModGameVersion> alternateModGameVersion = nullptr);
 	bool runSelectedModAndWait(std::shared_ptr<GameVersion> alternateGameVersion = nullptr, std::shared_ptr<ModGameVersion> alternateModGameVersion = nullptr);
+	bool isGameProcessRunning() const;
+	std::shared_ptr<Process> getGameProcess() const;
+	bool terminateGameProcess();
 
 	static std::string getArgumentHelpInfo();
 
@@ -224,7 +227,7 @@ private:
 	std::shared_ptr<OrganizedModCollection> m_organizedMods;
 	boost::signals2::connection m_selectedModChangedConnection;
 	boost::signals2::connection m_selectedFavouriteModChangedConnection;
-	std::unique_ptr<Process> m_gameProcess;
+	std::shared_ptr<Process> m_gameProcess;
 	uint8_t m_initializationStep;
 	mutable std::recursive_mutex m_mutex;
 

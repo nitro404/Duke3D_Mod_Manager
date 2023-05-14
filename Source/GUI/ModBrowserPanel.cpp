@@ -17,6 +17,7 @@
 #include "Mod/ModVersionType.h"
 #include "Mod/StandAloneModCollection.h"
 #include "ModInfoPanel.h"
+#include "ProcessRunningDialog.h"
 #include "WXUtilities.h"
 
 #include <Utilities/FileUtilities.h>
@@ -102,7 +103,8 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	, m_modGameTypeComboBox(nullptr)
 	, m_preferredGameVersionComboBox(nullptr)
 	, m_uninstallButton(nullptr)
-	, m_launchButton(nullptr) {
+	, m_launchButton(nullptr)
+	, m_gameRunningDialog(nullptr) {
 	std::shared_ptr<OrganizedModCollection> organizedMods(m_modManager->getOrganizedMods());
 	std::shared_ptr<DOSBoxVersionCollection> dosboxVersions(m_modManager->getDOSBoxVersions());
 	std::shared_ptr<GameVersionCollection> gameVersions(m_modManager->getGameVersions());
@@ -1405,11 +1407,38 @@ void ModBrowserPanel::onLaunchButtonPressed(wxCommandEvent & event) {
 		return;
 	}
 
+	std::stringstream dialogMessageStringStream;
+
+	if(!fullModName.empty()) {
+		dialogMessageStringStream << '\'' << fullModName << "' mod is currently running in ";
+	}
+
+	dialogMessageStringStream << '\'' << m_activeGameVersion->getLongName() << '\'';
+
+	if(fullModName.empty()) {
+		dialogMessageStringStream << " is currently running";
+	}
+
+	if(m_activeGameVersion->doesRequireDOSBox()) {
+		dialogMessageStringStream << " using '" << selectedDOSBoxVersion->getLongName() << '\'';
+	}
+
+	if(fullModName.empty()) {
+		dialogMessageStringStream << " without any mods";
+	}
+
+	dialogMessageStringStream << '.';
+
+	m_gameRunningDialog = new ProcessRunningDialog(this, "Game Running", dialogMessageStringStream.str(), "Close Game");
 	m_runSelectedModFuture = m_modManager->runSelectedModAsync(alternateGameVersion, alternateModGameVersion);
+	int processExitCode = m_gameRunningDialog->ShowModal();
+	m_gameRunningDialog = nullptr;
 }
 
 void ModBrowserPanel::onLaunched() {
 	updateUninstallButton();
+
+	m_gameRunningDialog->setProcess(m_modManager->getGameProcess());
 }
 
 void ModBrowserPanel::onLaunchError(std::string errorMessage) {
@@ -1444,7 +1473,10 @@ void ModBrowserPanel::onGameProcessTerminated(uint64_t nativeExitCode, bool forc
 	QueueEvent(new GameProcessTerminatedEvent());
 }
 
-void ModBrowserPanel::onLaunchFailed(LaunchFailedEvent & launchFailedEvent) { }
+void ModBrowserPanel::onLaunchFailed(LaunchFailedEvent & launchFailedEvent) {
+	m_gameRunningDialog->Destroy();
+	m_gameRunningDialog = nullptr;
+}
 
 void ModBrowserPanel::onGameProcessEnded(GameProcessTerminatedEvent & gameProcessTerminatedEvent) { }
 

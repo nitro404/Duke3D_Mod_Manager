@@ -130,6 +130,7 @@ set(GUI_SOURCE_FILES
 	GUI/ModManagerFrame.cpp
 	GUI/ModTeamMemberPanel.cpp
 	GUI/ModTeamMembersPanel.cpp
+	GUI/ProcessRunningDialog.cpp
 	GUI/ReleaseNotesPanel.cpp
 	GUI/SettingPanel.cpp
 	GUI/SettingsManagerPanel.cpp
@@ -156,6 +157,7 @@ set(GUI_HEADER_FILES
 	GUI/ModManagerFrame.h
 	GUI/ModTeamMemberPanel.h
 	GUI/ModTeamMembersPanel.h
+	GUI/ProcessRunningDialog.h
 	GUI/ReleaseNotesPanel.h
 	GUI/SettingPanel.h
 	GUI/SettingsManagerPanel.h

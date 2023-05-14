@@ -23,6 +23,7 @@
 class DOSBoxVersion;
 class DOSBoxVersionCollection;
 class GameProcessTerminatedEvent;
+class ProcessRunningDialog;
 class GameVersion;
 class GameVersionCollection;
 class LaunchFailedEvent;
@@ -181,6 +182,7 @@ private:
 	wxComboBox * m_preferredGameVersionComboBox;
 	wxButton * m_uninstallButton;
 	wxButton * m_launchButton;
+	ProcessRunningDialog * m_gameRunningDialog;
 };
 
 #endif // _MOD_BROWSER_PANEL_H_

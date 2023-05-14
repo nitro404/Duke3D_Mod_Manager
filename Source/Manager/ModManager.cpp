@@ -2388,7 +2388,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	spdlog::info("Using working directory: '{}'.", workingDirectory);
 	spdlog::info("Executing command: {}", command);
 
-	m_gameProcess = ProcessCreator::getInstance()->createProcess(command, workingDirectory);
+	m_gameProcess = std::shared_ptr<Process>(ProcessCreator::getInstance()->createProcess(command, workingDirectory).release());
 
 	if(m_gameProcess == nullptr) {
 		if(installedModInfo != nullptr && !installedModInfo->isEmpty() && !removeModFilesFromGameDirectory(*selectedGameVersion, *installedModInfo)) {
@@ -2435,6 +2435,31 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 	removeSymlinks(*selectedGameVersion);
 
+	m_gameProcess.reset();
+
+	return true;
+}
+
+bool ModManager::isGameProcessRunning() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	return m_gameProcess != nullptr && m_gameProcess->isRunning();
+}
+
+std::shared_ptr<Process> ModManager::getGameProcess() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	return m_gameProcess;
+}
+
+bool ModManager::terminateGameProcess() {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	if(m_gameProcess == nullptr || !m_gameProcess->isRunning()) {
+		return false;
+	}
+
+	m_gameProcess->terminate();
 	m_gameProcess.reset();
 
 	return true;
