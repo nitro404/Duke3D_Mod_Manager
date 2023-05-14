@@ -4,7 +4,7 @@
 
 ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "Mod Team Member") {
-	wxStaticText * nameText = new wxStaticText(this, wxID_ANY, teamMember != nullptr ? wxString::FromUTF8(teamMember->getName()) : wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Team Member Name");
+	wxStaticText * nameText = new wxStaticText(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Team Member Name");
 
 	int border = 5;
 
@@ -19,10 +19,15 @@ ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember
 	detailsPanel->SetSizer(detailsPanelSizer);
 
 	if(teamMember != nullptr) {
+		// Note: For some reason ampersands are not rendered if you assign the text contents upon creation rather than through the set label text function
+		nameText->SetLabelText(wxString::FromUTF8(teamMember->getName()));
+
 		if(teamMember->hasAlias()) {
 			wxStaticText * aliasLabel = new wxStaticText(detailsPanel, wxID_ANY, "Alias:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 			aliasLabel->SetFont(aliasLabel->GetFont().MakeBold());
-			wxStaticText * aliasText = new wxStaticText(detailsPanel, wxID_ANY, wxString::FromUTF8(teamMember->getAlias()), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Team Member Alias");
+			wxStaticText * aliasText = new wxStaticText(detailsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Team Member Alias");
+			// Note: For some reason ampersands are not rendered if you assign the text contents upon creation rather than through the set label text function
+			aliasText->SetLabelText(wxString::FromUTF8(teamMember->getAlias()));
 
 			detailsPanelSizer->Add(aliasLabel, 1, wxEXPAND | wxALL);
 			detailsPanelSizer->Add(aliasText, 1, wxEXPAND | wxALL);
@@ -31,7 +36,9 @@ ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember
 		if(teamMember->hasLocation()) {
 			wxStaticText * locationLabel = new wxStaticText(detailsPanel, wxID_ANY, "Location:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 			locationLabel->SetFont(locationLabel->GetFont().MakeBold());
-			wxStaticText * locationText = new wxStaticText(detailsPanel, wxID_ANY, wxString::FromUTF8(teamMember->getLocation().getDetails()), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Team Member Location");
+			wxStaticText * locationText = new wxStaticText(detailsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Team Member Location");
+			// Note: For some reason ampersands are not rendered if you assign the text contents upon creation rather than through the set label text function
+			locationText->SetLabelText(wxString::FromUTF8(teamMember->getLocation().getDetails()));
 
 			detailsPanelSizer->Add(locationLabel, 1, wxEXPAND | wxALL);
 			detailsPanelSizer->Add(locationText, 1, wxEXPAND | wxALL);
