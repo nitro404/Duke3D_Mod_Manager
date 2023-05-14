@@ -184,10 +184,6 @@ ModTeamMember::~ModTeamMember() {
 	m_parentModTeam = nullptr;
 }
 
-bool ModTeamMember::hasName() const {
-	return !m_name.empty();
-}
-
 bool ModTeamMember::hasAlias() const {
 	return !m_alias.empty();
 }

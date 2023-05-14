@@ -27,7 +27,6 @@ public:
 	ModTeamMember & operator = (const ModTeamMember & m);
 	virtual ~ModTeamMember();
 
-	bool hasName() const;
 	bool hasAlias() const;
 	bool hasEmail() const;
 	bool hasTwitter() const;
