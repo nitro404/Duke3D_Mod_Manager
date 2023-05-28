@@ -2,12 +2,12 @@
 
 namespace WXUtilities {
 
-	wxPoint createWXPoint(const Point & point) {
+	wxPoint createWXPoint(const Point2D & point) {
 		return wxPoint(point.x, point.y);
 	}
 
-	Point createPoint(const wxPoint & point) {
-		return Point(point.x, point.y);
+	Point2D createPoint(const wxPoint & point) {
+		return Point2D(point.x, point.y);
 	}
 
 	wxSize createWXSize(const Dimension & dimension) {

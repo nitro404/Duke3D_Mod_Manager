@@ -3,7 +3,7 @@
 
 #include <Colour.h>
 #include <Dimension.h>
-#include <Point.h>
+#include <Point2D.h>
 #include <Utilities/StringUtilities.h>
 
 #include <magic_enum.hpp>
@@ -22,8 +22,8 @@
 
 namespace WXUtilities {
 
-	wxPoint createWXPoint(const Point & point);
-	Point createPoint(const wxPoint & point);
+	wxPoint createWXPoint(const Point2D & point);
+	Point2D createPoint(const wxPoint & point);
 	wxSize createWXSize(const Dimension & dimension);
 	Dimension createDimension(const wxSize & size);
 	wxColour createWXColour(const Colour & colour);

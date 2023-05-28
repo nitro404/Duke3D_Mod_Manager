@@ -195,7 +195,7 @@ const std::chrono::minutes SettingsManager::DEFAULT_DOSBOX_DOWNLOAD_LIST_UPDATE_
 const std::chrono::minutes SettingsManager::DEFAULT_GAME_DOWNLOAD_LIST_UPDATE_FREQUENCY = std::chrono::minutes(60);
 const std::chrono::minutes SettingsManager::DEFAULT_CACERT_UPDATE_FREQUENCY = std::chrono::hours(2 * 24 * 7); // 2 weeks
 const std::chrono::minutes SettingsManager::DEFAULT_TIME_ZONE_DATA_UPDATE_FREQUENCY = std::chrono::hours(1 * 24 * 7); // 1 week
-const Point SettingsManager::DEFAULT_WINDOW_POSITION(-1, -1);
+const Point2D SettingsManager::DEFAULT_WINDOW_POSITION(-1, -1);
 const Dimension SettingsManager::DEFAULT_WINDOW_SIZE(1280, 1024);
 const Dimension SettingsManager::MINIMUM_WINDOW_SIZE(800, 600);
 
@@ -264,14 +264,14 @@ static bool assignChronoSetting(T & setting, const rapidjson::Value & categoryVa
 	return true;
 }
 
-static bool assignPointSetting(Point & setting, const rapidjson::Value & categoryValue, const std::string & propertyName) {
+static bool assignPointSetting(Point2D & setting, const rapidjson::Value & categoryValue, const std::string & propertyName) {
 	if(propertyName.empty() || !categoryValue.IsObject() || !categoryValue.HasMember(propertyName.c_str())) {
 		return false;
 	}
 
 	const rapidjson::Value & settingValue = categoryValue[propertyName.c_str()];
 
-	std::optional<Point> optionalPoint(Point::parseFrom(settingValue));
+	std::optional<Point2D> optionalPoint(Point2D::parseFrom(settingValue));
 
 	if(!optionalPoint.has_value()) {
 		return false;
