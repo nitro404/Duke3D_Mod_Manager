@@ -32,6 +32,16 @@ set(MAIN_SOURCE_FILES
 	Manager/ModMatch.cpp
 	Manager/SettingsManager.cpp
 	Manager/Windows/ModManagerWindows.cpp
+	Map/Map.cpp
+	Map/Partition.cpp
+	Map/PlayerSpawn.cpp
+	Map/SectorItem.cpp
+	Map/Sector.cpp
+	Map/Sprite.cpp
+	Map/TaggedItem.cpp
+	Map/TexturedItem.cpp
+	Map/Velocity3D.cpp
+	Map/Wall.cpp
 	Mod/FavouriteModCollection.cpp
 	Mod/Location.cpp
 	Mod/Mod.cpp
@@ -85,6 +95,17 @@ set(MAIN_HEADER_FILES
 	Manager/ModManager.h
 	Manager/ModMatch.h
 	Manager/SettingsManager.h
+	Map/BuildConstants.h
+	Map/Map.h
+	Map/Partition.h
+	Map/PlayerSpawn.h
+	Map/SectorItem.h
+	Map/Sector.h
+	Map/Sprite.h
+	Map/TaggedItem.h
+	Map/TexturedItem.h
+	Map/Velocity3D.h
+	Map/Wall.h
 	Mod/FavouriteModCollection.h
 	Mod/Location.h
 	Mod/Mod.h
