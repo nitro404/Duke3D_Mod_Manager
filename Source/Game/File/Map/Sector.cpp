@@ -440,6 +440,30 @@ void Sector::clearTrailingData() {
 	m_trailingData.clear();
 }
 
+/*
+// TODO: convert from java:
+public boolean hasOneTimeSound() {
+	return getLowTag() > ONE_TIME_SOUND_LOW_TAG &&
+		   getLowTag() < ONE_TIME_SOUND_LOW_TAG + BuildConstants.MAX_NUMBER_OF_SOUNDS;
+}
+
+public short getOneTimeSoundNumber() {
+	if(!hasOneTimeSound()) {
+		return -1;
+	}
+
+	return (short) (getLowTag() - ONE_TIME_SOUND_LOW_TAG);
+}
+
+public void setOneTimeSoundNumber(short soundNumber) throws IllegalArgumentException {
+	if(soundNumber < 0 || soundNumber > BuildConstants.MAX_NUMBER_OF_SOUNDS) {
+		throw new IllegalArgumentException("Invalid sound number, expected value inclusively between 0 and " + (BuildConstants.MAX_NUMBER_OF_SOUNDS - 1) + ".");
+	}
+
+	setLowTag((short) (ONE_TIME_SOUND_LOW_TAG + soundNumber));
+}
+*/
+
 std::unique_ptr<Sector> Sector::getFrom(const ByteBuffer & byteBuffer, size_t offset, uint32_t mapVersion) {
 	int16_t ceilingTileNumber = 0;
 	int16_t ceilingSlope = 0;
