@@ -605,6 +605,186 @@ void Sprite::setVelocity(Velocity3D velocity) {
 	m_velocity = velocity;
 }
 
+// TODO: convert from java:
+/*
+bool Sprite::isSpecialSprite() const {
+	return SpecialSprite.getSpecialSpriteByTileNumber(m_tileNumber).isValid();
+}
+
+bool Sprite::hasPrimarySound() const {
+	if(getSpecialSprite() == SpecialSprite.MusicAndSFX) {
+		return getLowTag() > 0 && getLowTag() < ECHO_EFFECT_OFFSET;
+	}
+	else if(isSwitchWithSoundOverride()) {
+		return getHighTag() > 0 && getHighTag() < BuildConstants.MAX_NUMBER_OF_SOUNDS;
+	}
+
+	return false;
+}
+
+bool Sprite::hasSecondarySound() const {
+	if(getSpecialSprite() != SpecialSprite.MusicAndSFX) {
+		return false;
+	}
+
+	Sector sector = getSector();
+	
+	if(sector == null || !sector.hasLowTag()) {
+		return false;
+	}
+
+	SpecialSectorTag specialSectorTag = SpecialSectorTag.getSpecialSectorTagByTagNumber(sector.getLowTag());
+
+	if(!specialSectorTag.isValid() || !specialSectorTag.hasMultipleSounds()) {
+		return false;
+	}
+
+	return true;
+}
+
+bool Sprite::isActivationSoundSprite() const {
+	if(getSpecialSprite() != SpecialSprite.MusicAndSFX) {
+		return false;
+	}
+
+	Sector sector = getSector();
+	
+	if(sector == null || !sector.hasLowTag()) {
+		return false;
+	}
+
+	return true;
+}
+
+bool Sprite::isAmbientSoundSprite() {
+	if(getSpecialSprite() != SpecialSprite.MusicAndSFX) {
+		return false;
+	}
+
+	Sector sector = getSector();
+
+	if(sector == null || sector.hasLowTag()) {
+		return false;
+	}
+
+	return getLowTag() < ECHO_EFFECT_OFFSET;
+}
+
+bool Sprite::isEchoEffectSoundSprite() {
+	if(getSpecialSprite() != SpecialSprite.MusicAndSFX) {
+		return false;
+	}
+
+	Sector sector = getSector();
+
+	if(sector == null || sector.hasLowTag()) {
+		return false;
+	}
+
+	return getLowTag() >= ECHO_EFFECT_OFFSET &&
+		   getLowTag() <= ECHO_EFFECT_OFFSET + MAX_ECHO_EFFECT;
+}
+
+bool Sprite::isSwitch() {
+	return SwitchSprite.getSwitchSpriteByTileNumber(m_tileNumber).isValid();
+}
+
+bool Sprite::isSwitchWithSoundOverride() {
+	return SwitchSprite.getSwitchSpriteByTileNumber(m_tileNumber).hasSoundOverride();
+}
+
+bool Sprite::isSwitchWithCustomSound() {
+	return SwitchSprite.getSwitchSpriteByTileNumber(m_tileNumber).hasSoundOverride() &&
+		   getHighTag() > 0 && getHighTag() <= BuildConstants.MAX_NUMBER_OF_SOUNDS;
+}
+
+SpecialSpriteType Sprite::getSpecialSprite() {
+	return SpecialSprite.getSpecialSpriteByTileNumber(m_tileNumber);
+}
+
+int16_t Sprite::getPrimarySoundNumber() const {
+	if(getSpecialSprite() == SpecialSprite.MusicAndSFX) {
+		Sector sector = getSector();
+		
+		if(sector == null || getLowTag() >= ECHO_EFFECT_OFFSET) {
+			return -1;
+		}
+
+		return (short) getLowTag();
+	}
+	else if(isSwitchWithSoundOverride()) {
+		return (short) getHighTag();
+	}
+
+	return -1;
+}
+
+bool Sprite::setPrimarySoundNumber(short soundNumber) {
+	if(soundNumber < 0 || soundNumber >= BuildConstants.MAX_NUMBER_OF_SOUNDS) {
+		throw new IllegalArgumentException("Sound number value of " + soundNumber + " exceeds maximum number of sounds.");
+	}
+
+	if(getSpecialSprite() == SpecialSprite.MusicAndSFX) {
+		setLowTag(soundNumber);
+
+		return true;
+	}
+	else if(isSwitchWithSoundOverride()) {
+		setHighTag(soundNumber);
+
+		return true;
+	}
+
+	return false;
+}
+
+short Sprite::getSecondarySoundNumber() const {
+	if(getSpecialSprite() != SpecialSprite.MusicAndSFX) {
+		return -1;
+	}
+
+	Sector sector = getSector();
+	
+	if(sector == null || !sector.hasLowTag()) {
+		return -1;
+	}
+
+	SpecialSectorTag specialSectorTag = SpecialSectorTag.getSpecialSectorTagByTagNumber(sector.getLowTag());
+
+	if(!specialSectorTag.isValid() || !specialSectorTag.hasMultipleSounds()) {
+		return -1;
+	}
+
+	return (short) getHighTag();
+}
+
+bool Sprite::setSecondarySoundNumber(short soundNumber) {
+	if(soundNumber < 0 || soundNumber >= BuildConstants.MAX_NUMBER_OF_SOUNDS) {
+		throw new IllegalArgumentException("Sound number value of " + soundNumber + " exceeds maximum number of sounds.");
+	}
+
+	if(getSpecialSprite() != SpecialSprite.MusicAndSFX) {
+		return false;
+	}
+
+	Sector sector = getSector();
+
+	if(sector == null || !sector.hasLowTag()) {
+		return false;
+	}
+
+	SpecialSectorTag specialSectorTag = SpecialSectorTag.getSpecialSectorTagByTagNumber(sector.getLowTag());
+
+	if(!specialSectorTag.isValid() || !specialSectorTag.hasMultipleSounds()) {
+		return false;
+	}
+
+	setHighTag(soundNumber);
+
+	return true;
+}
+*/
+
 std::unique_ptr<Sprite> Sprite::getFrom(const ByteBuffer & byteBuffer, size_t offset, uint32_t mapVersion) {
 	uint16_t tileNumber = 0;
 	uint16_t sectorIndex = 0;
