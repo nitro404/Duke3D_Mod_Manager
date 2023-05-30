@@ -1,6 +1,9 @@
 include_guard()
 
 set(MAIN_SOURCE_FILES
+	Art/Art.cpp
+	Art/Tile.cpp
+	Art/TileNames.cpp
 	Configuration/GameConfiguration.cpp
 	Configuration/GameConfigurationEntry.cpp
 	Configuration/GameConfigurationGenerator.cpp
@@ -64,6 +67,8 @@ set(MAIN_SOURCE_FILES
 )
 
 set(MAIN_HEADER_FILES
+	Art/Art.h
+	Art/Tile.h
 	Configuration/GameConfiguration.h
 	DOSBox/DOSBoxDownload.h
 	DOSBox/DOSBoxDownloadCollection.h
