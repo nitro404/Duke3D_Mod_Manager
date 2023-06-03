@@ -851,6 +851,10 @@ void Group::addMetadata(std::vector<std::pair<std::string, std::string>> & metad
 	if(!m_files.empty()) {
 		metadata.push_back({ "File Extensions", getFileExtensionsAsString() });
 	}
+
+	for(std::vector<std::shared_ptr<GroupFile>>::const_iterator i = m_files.cbegin(); i != m_files.cend(); ++i) {
+		metadata.push_back({ fmt::format("Entry #{}", i - m_files.cbegin() + 1), fmt::format("'{}' Size: {}", (*i)->getFileName(), (*i)->getSize()) });
+	}
 }
 
 Endianness Group::getEndianness() const {
