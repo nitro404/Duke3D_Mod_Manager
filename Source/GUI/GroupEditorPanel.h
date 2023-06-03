@@ -4,8 +4,8 @@
 #include <wx/wxprec.h>
 
 #include "GroupPanel.h"
-#include "Group/Group.h"
-#include "Group/GroupFile.h"
+#include "Game/File/Group/Group.h"
+#include "Game/File/Group/GroupFile.h"
 
 #ifdef __BORLANDC__
 	#pragma hdrstop
