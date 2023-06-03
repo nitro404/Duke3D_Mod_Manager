@@ -1,11 +1,6 @@
 include_guard()
 
 set(MAIN_SOURCE_FILES
-	Art/Art.h
-	Art/Art.cpp
-	Art/Tile.h
-	Art/Tile.cpp
-	Art/TileNames.cpp
 	Configuration/GameConfiguration.h
 	Configuration/GameConfiguration.cpp
 	Configuration/GameConfigurationEntry.cpp
@@ -34,10 +29,6 @@ set(MAIN_SOURCE_FILES
 	Download/DownloadManager.h
 	Download/DownloadManager.cpp
 	Environment.h
-	File/GameFile.h
-	File/GameFile.cpp
-	File/GameFileFactoryRegistry.h
-	File/GameFileFactoryRegistry.cpp
 	Game/GameDownload.h
 	Game/GameDownload.cpp
 	Game/GameDownloadCollection.h
@@ -57,11 +48,41 @@ set(MAIN_SOURCE_FILES
 	Game/GameVersionCollection.cpp
 	Game/NoCDCracker.h
 	Game/NoCDCracker.cpp
-	Group/Group.h
-	Group/Group.cpp
-	Group/GroupFile.h
-	Group/GroupFile.cpp
-	Group/GroupUtilities.h
+	Game/File/GameFile.h
+	Game/File/GameFile.cpp
+	Game/File/GameFileFactoryRegistry.h
+	Game/File/GameFileFactoryRegistry.cpp
+	Game/File/Art/Art.h
+	Game/File/Art/Art.cpp
+	Game/File/Art/Tile.h
+	Game/File/Art/Tile.cpp
+	Game/File/Art/TileNames.cpp
+	Game/File/Group/Group.h
+	Game/File/Group/Group.cpp
+	Game/File/Group/GroupFile.h
+	Game/File/Group/GroupFile.cpp
+	Game/File/Group/GroupUtilities.h
+	Game/File/Map/BuildConstants.h
+	Game/File/Map/Map.h
+	Game/File/Map/Map.cpp
+	Game/File/Map/Partition.h
+	Game/File/Map/Partition.cpp
+	Game/File/Map/PlayerSpawn.h
+	Game/File/Map/PlayerSpawn.cpp
+	Game/File/Map/SectorItem.h
+	Game/File/Map/SectorItem.cpp
+	Game/File/Map/Sector.h
+	Game/File/Map/Sector.cpp
+	Game/File/Map/Sprite.h
+	Game/File/Map/Sprite.cpp
+	Game/File/Map/TaggedItem.h
+	Game/File/Map/TaggedItem.cpp
+	Game/File/Map/TexturedItem.h
+	Game/File/Map/TexturedItem.cpp
+	Game/File/Map/Velocity3D.h
+	Game/File/Map/Velocity3D.cpp
+	Game/File/Map/Wall.h
+	Game/File/Map/Wall.cpp
 	Manager/InstalledModInfo.h
 	Manager/InstalledModInfo.cpp
 	Manager/ModManager.h
@@ -70,27 +91,6 @@ set(MAIN_SOURCE_FILES
 	Manager/ModMatch.cpp
 	Manager/SettingsManager.h
 	Manager/SettingsManager.cpp
-	Map/BuildConstants.h
-	Map/Map.h
-	Map/Map.cpp
-	Map/Partition.h
-	Map/Partition.cpp
-	Map/PlayerSpawn.h
-	Map/PlayerSpawn.cpp
-	Map/SectorItem.h
-	Map/SectorItem.cpp
-	Map/Sector.h
-	Map/Sector.cpp
-	Map/Sprite.h
-	Map/Sprite.cpp
-	Map/TaggedItem.h
-	Map/TaggedItem.cpp
-	Map/TexturedItem.h
-	Map/TexturedItem.cpp
-	Map/Velocity3D.h
-	Map/Velocity3D.cpp
-	Map/Wall.h
-	Map/Wall.cpp
 	Mod/FavouriteModCollection.h
 	Mod/FavouriteModCollection.cpp
 	Mod/Location.h

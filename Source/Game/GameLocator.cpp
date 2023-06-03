@@ -1,6 +1,6 @@
 #include "GameLocator.h"
 
-#include "Group/Group.h"
+#include "Game/File/Group/Group.h"
 
 #include <Utilities/FileUtilities.h>
 #include <Utilities/StringUtilities.h>

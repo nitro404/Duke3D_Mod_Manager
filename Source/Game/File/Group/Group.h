@@ -1,7 +1,7 @@
 #ifndef _GROUP_H_
 #define _GROUP_H_
 
-#include "File/GameFile.h"
+#include "../GameFile.h"
 #include "GroupFile.h"
 
 #include <ByteBuffer.h>

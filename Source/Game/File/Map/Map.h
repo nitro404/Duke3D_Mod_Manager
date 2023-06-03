@@ -1,7 +1,7 @@
 #ifndef _MAP_H_
 #define _MAP_H_
 
-#include "File/GameFile.h"
+#include "../GameFile.h"
 #include "PlayerSpawn.h"
 #include "Sector.h"
 #include "Sprite.h"

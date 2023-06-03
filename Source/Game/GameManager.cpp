@@ -8,7 +8,7 @@
 #include "GameLocator.h"
 #include "Game/GameVersion.h"
 #include "Game/NoCDCracker.h"
-#include "Group/Group.h"
+#include "Game/File/Group/Group.h"
 #include "Manager/SettingsManager.h"
 
 #include <Archive/ArchiveFactoryRegistry.h>

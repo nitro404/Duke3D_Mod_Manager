@@ -1,7 +1,7 @@
 #ifndef _ART_H_
 #define _ART_H_
 
-#include "File/GameFile.h"
+#include "../GameFile.h"
 #include "Tile.h"
 
 #include <Endianness.h>
