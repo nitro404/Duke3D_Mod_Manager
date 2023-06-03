@@ -3,6 +3,7 @@
 #include "Art/Art.h"
 #include "Group/Group.h"
 #include "Map/Map.h"
+#include "Zip/Zip.h"
 
 #include <Utilities/FileUtilities.h>
 #include <Utilities/StringUtilities.h>
@@ -117,6 +118,14 @@ void GameFileFactoryRegistry::assignDefaultFactories() {
 		return Map::readFrom(data);
 	}, [](const std::string & filePath) {
 		return Map::loadFrom(filePath);
+	});
+
+	setFactory("zip", []() {
+		return std::make_unique<Zip>();
+	}, [](const ByteBuffer & data) {
+		return Zip::readFrom(data);
+	}, [](const std::string & filePath) {
+		return Zip::loadFrom(filePath);
 	});
 }
 
