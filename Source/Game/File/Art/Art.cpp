@@ -431,6 +431,15 @@ std::unique_ptr<Art> Art::readFrom(const ByteBuffer & byteBuffer) {
 
 	uint32_t version = byteBuffer.readUnsignedInteger(&error);
 
+	// some converted art files have a bad header structure and require additional processing
+	if(version == 0x4c495542 && !error) {
+		version = byteBuffer.readUnsignedInteger(&error);
+
+		if(version == 0x54524144 && !error) {
+			version = byteBuffer.readUnsignedInteger(&error);
+		}
+	}
+
 	if(error) {
 		spdlog::error("Failed to read art version.");
 		return nullptr;
