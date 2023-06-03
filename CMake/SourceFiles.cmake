@@ -1,210 +1,199 @@
 include_guard()
 
 set(MAIN_SOURCE_FILES
+	Art/Art.h
 	Art/Art.cpp
+	Art/Tile.h
 	Art/Tile.cpp
 	Art/TileNames.cpp
+	Configuration/GameConfiguration.h
 	Configuration/GameConfiguration.cpp
 	Configuration/GameConfigurationEntry.cpp
 	Configuration/GameConfigurationGenerator.cpp
 	Configuration/GameConfigurationSection.cpp
-	DOSBox/DOSBoxDownload.cpp
-	DOSBox/DOSBoxDownloadCollection.cpp
-	DOSBox/DOSBoxDownloadFile.cpp
-	DOSBox/DOSBoxDownloadVersion.cpp
-	DOSBox/DOSBoxManager.cpp
-	DOSBox/DOSBoxVersion.cpp
-	DOSBox/DOSBoxVersionCollection.cpp
-	Download/CachedFile.cpp
-	Download/CachedPackageFile.cpp
-	Download/DownloadCache.cpp
-	Download/DownloadManager.cpp
-	File/GameFile.cpp
-	File/GameFileFactoryRegistry.cpp
-	Game/GameDownload.cpp
-	Game/GameDownloadCollection.cpp
-	Game/GameDownloadFile.cpp
-	Game/GameDownloadVersion.cpp
-	Game/GameLocator.cpp
-	Game/GameManager.cpp
-	Game/GameVersion.cpp
-	Game/GameVersionCollection.cpp
-	Game/NoCDCracker.cpp
-	Group/Group.cpp
-	Group/GroupFile.cpp
-	Manager/InstalledModInfo.cpp
-	Manager/ModManager.cpp
-	Manager/ModMatch.cpp
-	Manager/SettingsManager.cpp
-	Manager/Windows/ModManagerWindows.cpp
-	Map/Map.cpp
-	Map/Partition.cpp
-	Map/PlayerSpawn.cpp
-	Map/SectorItem.cpp
-	Map/Sector.cpp
-	Map/Sprite.cpp
-	Map/TaggedItem.cpp
-	Map/TexturedItem.cpp
-	Map/Velocity3D.cpp
-	Map/Wall.cpp
-	Mod/FavouriteModCollection.cpp
-	Mod/Location.cpp
-	Mod/Mod.cpp
-	Mod/ModAuthorInformation.cpp
-	Mod/ModCollection.cpp
-	Mod/ModDownload.cpp
-	Mod/ModFile.cpp
-	Mod/ModGameVersion.cpp
-	Mod/ModIdentifier.cpp
-	Mod/ModImage.cpp
-	Mod/ModScreenshot.cpp
-	Mod/ModTeam.cpp
-	Mod/ModTeamMember.cpp
-	Mod/ModVersion.cpp
-	Mod/ModVersionType.cpp
-	Mod/ModVideo.cpp
-	Mod/OrganizedModCollection.cpp
-	Mod/StandAloneMod.cpp
-	Mod/StandAloneModCollection.cpp
-)
-
-set(MAIN_HEADER_FILES
-	Art/Art.h
-	Art/Tile.h
-	Configuration/GameConfiguration.h
 	DOSBox/DOSBoxDownload.h
+	DOSBox/DOSBoxDownload.cpp
 	DOSBox/DOSBoxDownloadCollection.h
+	DOSBox/DOSBoxDownloadCollection.cpp
 	DOSBox/DOSBoxDownloadFile.h
+	DOSBox/DOSBoxDownloadFile.cpp
 	DOSBox/DOSBoxDownloadVersion.h
+	DOSBox/DOSBoxDownloadVersion.cpp
 	DOSBox/DOSBoxManager.h
+	DOSBox/DOSBoxManager.cpp
 	DOSBox/DOSBoxVersion.h
+	DOSBox/DOSBoxVersion.cpp
 	DOSBox/DOSBoxVersionCollection.h
+	DOSBox/DOSBoxVersionCollection.cpp
 	Download/CachedFile.h
+	Download/CachedFile.cpp
 	Download/CachedPackageFile.h
+	Download/CachedPackageFile.cpp
 	Download/DownloadCache.h
+	Download/DownloadCache.cpp
 	Download/DownloadManager.h
+	Download/DownloadManager.cpp
 	Environment.h
 	File/GameFile.h
+	File/GameFile.cpp
 	File/GameFileFactoryRegistry.h
-	Project.h
+	File/GameFileFactoryRegistry.cpp
 	Game/GameDownload.h
+	Game/GameDownload.cpp
 	Game/GameDownloadCollection.h
+	Game/GameDownloadCollection.cpp
 	Game/GameDownloadFile.h
+	Game/GameDownloadFile.cpp
 	Game/GameDownloadVersion.h
+	Game/GameDownloadVersion.cpp
 	Game/GameLocator.h
+	Game/GameLocator.cpp
 	Game/GameManager.h
+	Game/GameManager.cpp
 	Game/GameType.h
 	Game/GameVersion.h
+	Game/GameVersion.cpp
 	Game/GameVersionCollection.h
+	Game/GameVersionCollection.cpp
 	Game/NoCDCracker.h
+	Game/NoCDCracker.cpp
 	Group/Group.h
+	Group/Group.cpp
 	Group/GroupFile.h
+	Group/GroupFile.cpp
 	Group/GroupUtilities.h
 	Manager/InstalledModInfo.h
+	Manager/InstalledModInfo.cpp
 	Manager/ModManager.h
+	Manager/ModManager.cpp
 	Manager/ModMatch.h
+	Manager/ModMatch.cpp
 	Manager/SettingsManager.h
+	Manager/SettingsManager.cpp
 	Map/BuildConstants.h
 	Map/Map.h
+	Map/Map.cpp
 	Map/Partition.h
+	Map/Partition.cpp
 	Map/PlayerSpawn.h
+	Map/PlayerSpawn.cpp
 	Map/SectorItem.h
+	Map/SectorItem.cpp
 	Map/Sector.h
+	Map/Sector.cpp
 	Map/Sprite.h
+	Map/Sprite.cpp
 	Map/TaggedItem.h
+	Map/TaggedItem.cpp
 	Map/TexturedItem.h
+	Map/TexturedItem.cpp
 	Map/Velocity3D.h
+	Map/Velocity3D.cpp
 	Map/Wall.h
+	Map/Wall.cpp
 	Mod/FavouriteModCollection.h
+	Mod/FavouriteModCollection.cpp
 	Mod/Location.h
+	Mod/Location.cpp
 	Mod/Mod.h
+	Mod/Mod.cpp
 	Mod/ModAuthorInformation.h
+	Mod/ModAuthorInformation.cpp
 	Mod/ModCollection.h
+	Mod/ModCollection.cpp
 	Mod/ModDownload.h
+	Mod/ModDownload.cpp
 	Mod/ModFile.h
+	Mod/ModFile.cpp
 	Mod/ModGameVersion.h
+	Mod/ModGameVersion.cpp
 	Mod/ModIdentifier.h
+	Mod/ModIdentifier.cpp
 	Mod/ModImage.h
+	Mod/ModImage.cpp
 	Mod/ModScreenshot.h
+	Mod/ModScreenshot.cpp
 	Mod/ModTeam.h
+	Mod/ModTeam.cpp
 	Mod/ModTeamMember.h
+	Mod/ModTeamMember.cpp
 	Mod/ModVersion.h
+	Mod/ModVersion.cpp
 	Mod/ModVersionType.h
+	Mod/ModVersionType.cpp
 	Mod/ModVideo.h
+	Mod/ModVideo.cpp
 	Mod/OrganizedModCollection.h
+	Mod/OrganizedModCollection.cpp
 	Mod/StandAloneMod.h
+	Mod/StandAloneMod.cpp
 	Mod/StandAloneModCollection.h
+	Mod/StandAloneModCollection.cpp
+	Project.h
 )
 
 set(MAIN_SOURCE_FILES_WINDOWS
 	Game/Windows/GameLocatorWindows.cpp
+	Manager/Windows/ModManagerWindows.cpp
 )
 
 set(GUI_SOURCE_FILES
+	GUI/ConsolePanel.h
 	GUI/ConsolePanel.cpp
+	GUI/DOSBoxManagerPanel.h
 	GUI/DOSBoxManagerPanel.cpp
+	GUI/DOSBoxSettingsPanel.h
 	GUI/DOSBoxSettingsPanel.cpp
+	GUI/DOSBoxVersionPanel.h
 	GUI/DOSBoxVersionPanel.cpp
+	GUI/GameManagerPanel.h
 	GUI/GameManagerPanel.cpp
+	GUI/GameVersionPanel.h
 	GUI/GameVersionPanel.cpp
+	GUI/GroupEditorPanel.h
 	GUI/GroupEditorPanel.cpp
+	GUI/GroupPanel.h
 	GUI/GroupPanel.cpp
+	GUI/Logging/CustomLogTextControl.h
 	GUI/Logging/CustomLogTextControl.cpp
+	GUI/Logging/LogSinkWX.h
 	GUI/Logging/LogSinkWX.cpp
+	GUI/Logging/PreformattedLogFormatter.h
 	GUI/Logging/PreformattedLogFormatter.cpp
+	GUI/MetadataPanel.h
 	GUI/MetadataPanel.cpp
+	GUI/ModBrowserPanel.h
 	GUI/ModBrowserPanel.cpp
+	GUI/ModDownloadPanel.h
 	GUI/ModDownloadPanel.cpp
+	GUI/ModDownloadsPanel.h
 	GUI/ModDownloadsPanel.cpp
+	GUI/ModInfoPanel.h
 	GUI/ModInfoPanel.cpp
+	GUI/ModManagerApplication.h
 	GUI/ModManagerApplication.cpp
+	GUI/ModManagerFrame.h
 	GUI/ModManagerFrame.cpp
+	GUI/ModTeamMemberPanel.h
 	GUI/ModTeamMemberPanel.cpp
+	GUI/ModTeamMembersPanel.h
 	GUI/ModTeamMembersPanel.cpp
+	GUI/ProcessRunningDialog.h
 	GUI/ProcessRunningDialog.cpp
+	GUI/ReleaseNotesPanel.h
 	GUI/ReleaseNotesPanel.cpp
+	GUI/SettingPanel.h
 	GUI/SettingPanel.cpp
+	GUI/SettingsManagerPanel.h
 	GUI/SettingsManagerPanel.cpp
+	GUI/WXUtilities.h
 	GUI/WXUtilities.cpp
 )
 
-set(GUI_HEADER_FILES
-	GUI/ConsolePanel.h
-	GUI/DOSBoxManagerPanel.h
-	GUI/DOSBoxSettingsPanel.h
-	GUI/DOSBoxVersionPanel.h
-	GUI/GameManagerPanel.h
-	GUI/GameVersionPanel.h
-	GUI/GroupEditorPanel.h
-	GUI/GroupPanel.h
-	GUI/Logging/CustomLogTextControl.h
-	GUI/Logging/LogSinkWX.h
-	GUI/Logging/PreformattedLogFormatter.h
-	GUI/MetadataPanel.h
-	GUI/ModBrowserPanel.h
-	GUI/ModDownloadPanel.h
-	GUI/ModDownloadsPanel.h
-	GUI/ModInfoPanel.h
-	GUI/ModManagerApplication.h
-	GUI/ModManagerFrame.h
-	GUI/ModTeamMemberPanel.h
-	GUI/ModTeamMembersPanel.h
-	GUI/ProcessRunningDialog.h
-	GUI/ReleaseNotesPanel.h
-	GUI/SettingPanel.h
-	GUI/SettingsManagerPanel.h
-	GUI/WXUtilities.h
-)
-
 list(APPEND SOURCE_FILES ${MAIN_SOURCE_FILES} ${MAIN_SOURCE_FILES_${PLATFORM_UPPER}})
-list(APPEND HEADER_FILES ${MAIN_HEADER_FILES} ${MAIN_HEADER_FILES_${PLATFORM_UPPER}})
 
 list(APPEND SOURCE_FILES ${GUI_SOURCE_FILES})
-list(APPEND HEADER_FILES ${GUI_HEADER_FILES})
 
 list(TRANSFORM SOURCE_FILES PREPEND "${_SOURCE_DIRECTORY}/")
-list(TRANSFORM HEADER_FILES PREPEND "${_SOURCE_DIRECTORY}/")
 
-list(APPEND ALL_FILES ${HEADER_FILES} ${SOURCE_FILES})
-
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${ALL_FILES})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCE_FILES})
