@@ -3,6 +3,7 @@
 #include "Art/Art.h"
 #include "Group/Group.h"
 #include "Map/Map.h"
+#include "Palette/ACT/PaletteACT.h"
 #include "Zip/Zip.h"
 
 #include <Utilities/FileUtilities.h>
@@ -95,6 +96,14 @@ bool GameFileFactoryRegistry::areDefaultFactoriesAssigned() const {
 
 void GameFileFactoryRegistry::assignDefaultFactories() {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	setFactory("act", []() {
+		return std::make_unique<PaletteACT>();
+	}, [](const ByteBuffer & data) {
+		return PaletteACT::readFrom(data);
+	}, [](const std::string & filePath) {
+		return PaletteACT::loadFrom(filePath);
+	});
 
 	setFactory("art", []() {
 		return std::make_unique<Art>();
