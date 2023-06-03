@@ -83,6 +83,8 @@ set(MAIN_SOURCE_FILES
 	Game/File/Map/Velocity3D.cpp
 	Game/File/Map/Wall.h
 	Game/File/Map/Wall.cpp
+	Game/File/Palette/Palette.h
+	Game/File/Palette/Palette.cpp
 	Game/File/Zip/Zip.h
 	Game/File/Zip/Zip.cpp
 	Manager/InstalledModInfo.h
