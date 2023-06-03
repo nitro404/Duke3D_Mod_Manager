@@ -659,6 +659,8 @@ bool Group::isValid(const Group * g, bool verifyParent) {
 }
 
 std::unique_ptr<Group> Group::readFrom(const ByteBuffer & byteBuffer) {
+	byteBuffer.setEndianness(ENDIANNESS);
+
 	bool error = false;
 
 	// verify that the data is long enough to contain header information
