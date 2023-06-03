@@ -116,6 +116,7 @@ std::string GroupFile::getSizeAsString() const {
 }
 
 const ByteBuffer & GroupFile::getData() const {
+	m_data->setReadOffset(0);
 	return *m_data;
 }
 

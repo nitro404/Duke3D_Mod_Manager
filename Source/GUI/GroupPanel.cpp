@@ -1,8 +1,13 @@
 #include "GroupPanel.h"
 
+#include "File/GameFile.h"
+#include "File/GameFileFactoryRegistry.h"
 #include "Group/Group.h"
 #include "Group/GroupFile.h"
+#include "MetadataPanel.h"
 #include "WXUtilities.h"
+
+#include <Utilities/FileUtilities.h>
 
 #include <fmt/core.h>
 #include <spdlog/spdlog.h>
@@ -18,12 +23,6 @@ GroupPanel::GroupPanel(std::unique_ptr<Group> group, wxWindow * parent, wxWindow
 	, m_fileListBox(nullptr)
 	, m_fileInfoBox(nullptr)
 	, m_fileInfoPanel(nullptr)
-	, m_fileNameLabel(nullptr)
-	, m_fileNameText(nullptr)
-	, m_numberOfFilesSelectedLabel(nullptr)
-	, m_numberOfFilesSelectedText(nullptr)
-	, m_fileSizeLabel(nullptr)
-	, m_fileSizeText(nullptr)
 	, m_fileInfoBoxSizer(nullptr)
 	, m_groupPropertiesSizer(nullptr) {
 	wxPanel * groupPropertiesPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
@@ -53,22 +52,8 @@ GroupPanel::GroupPanel(std::unique_ptr<Group> group, wxWindow * parent, wxWindow
 	m_fileInfoBox = new wxStaticBox(this, wxID_ANY, "File Information", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 	m_fileInfoBox->SetOwnFont(m_fileInfoBox->GetFont().MakeBold());
 
-	m_fileInfoPanel = new wxPanel(m_fileInfoBox, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, "Group File Information");
+	m_fileInfoPanel = new MetadataPanel(m_fileInfoBox, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxNO_BORDER, "File Info");
 	m_fileInfoPanel->Hide();
-
-	m_fileNameLabel = new wxStaticText(m_fileInfoPanel, wxID_ANY, "File Name:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
-	m_fileNameLabel->SetFont(m_fileNameLabel->GetFont().MakeBold());
-	m_fileNameText = new wxStaticText(m_fileInfoPanel, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "File Name");
-
-	m_numberOfFilesSelectedLabel = new wxStaticText(m_fileInfoPanel, wxID_ANY, "Number of Files Selected:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
-	m_numberOfFilesSelectedLabel->SetFont(m_numberOfFilesSelectedLabel->GetFont().MakeBold());
-	m_numberOfFilesSelectedLabel->Hide();
-	m_numberOfFilesSelectedText = new wxStaticText(m_fileInfoPanel, wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Number of Files Selected");
-	m_numberOfFilesSelectedText->Hide();
-
-	m_fileSizeLabel = new wxStaticText(m_fileInfoPanel, wxID_ANY, "File Size:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
-	m_fileSizeLabel->SetFont(m_fileSizeLabel->GetFont().MakeBold());
-	m_fileSizeText = new wxStaticText(m_fileInfoPanel, wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "File Size");
 
 	int border = 5;
 
@@ -90,17 +75,6 @@ GroupPanel::GroupPanel(std::unique_ptr<Group> group, wxWindow * parent, wxWindow
 	m_fileInfoBoxSizer = new wxBoxSizer(wxHORIZONTAL);
 	m_fileInfoBoxSizer->Add(m_fileInfoPanel, 1, wxEXPAND | wxALL, 20);
 	m_fileInfoBox->SetSizer(m_fileInfoBoxSizer);
-
-	wxFlexGridSizer * fileInfoPanelSizer = new wxFlexGridSizer(2, border, border);
-	fileInfoPanelSizer->AddGrowableCol(0, 0);
-	fileInfoPanelSizer->AddGrowableCol(1, 1);
-	fileInfoPanelSizer->Add(m_fileNameLabel, 1, wxEXPAND | wxHORIZONTAL);
-	fileInfoPanelSizer->Add(m_fileNameText, 1, wxEXPAND | wxHORIZONTAL);
-	fileInfoPanelSizer->Add(m_numberOfFilesSelectedLabel, 1, wxEXPAND | wxHORIZONTAL);
-	fileInfoPanelSizer->Add(m_numberOfFilesSelectedText, 1, wxEXPAND | wxHORIZONTAL);
-	fileInfoPanelSizer->Add(m_fileSizeLabel, 1, wxEXPAND | wxHORIZONTAL);
-	fileInfoPanelSizer->Add(m_fileSizeText, 1, wxEXPAND | wxHORIZONTAL);
-	m_fileInfoPanel->SetSizer(fileInfoPanelSizer);
 
 	m_groupPropertiesSizer = new wxFlexGridSizer(4, border * 2, border * 2);
 	m_groupPropertiesSizer->Add(numberOfFilesPropertyPanel, 0, 0, border);
@@ -172,20 +146,6 @@ size_t GroupPanel::getTotalSizeOfSelectedFiles() const {
 	return totalSize;
 }
 
-std::string GroupPanel::getTotalSizeOfSelectedFilesAsString() const {
-	size_t totalSize = getTotalSizeOfSelectedFiles();
-
-	if(totalSize < 1000) {
-		return fmt::format("{} B", totalSize);
-	}
-	else if(totalSize < 1000000) {
-		return fmt::format("{:.2f} KB", totalSize / 1000.0);
-	}
-	else {
-		return fmt::format("{:.2f} MB", totalSize / 1000000.0);
-	}
-}
-
 size_t GroupPanel::extractSelectedFiles(const std::string & directoryPath) const {
 	size_t extractedFileCount = 0;
 	std::vector<std::shared_ptr<GroupFile>> selectedFiles(getSelectedFiles());
@@ -201,7 +161,7 @@ size_t GroupPanel::extractSelectedFiles(const std::string & directoryPath) const
 
 void GroupPanel::update() {
 	m_numberOfFilesText->SetLabel(std::to_string(m_group->numberOfFiles()));
-	m_groupSizeText->SetLabel(m_group->getGroupSizeAsString());
+	m_groupSizeText->SetLabel(Utilities::fileSizeToString(m_group->getSizeInBytes()));
 
 	std::string fileExtensions(m_group->getFileExtensionsAsString());
 
@@ -236,24 +196,26 @@ void GroupPanel::updateFileInfo() {
 
 		std::shared_ptr<GroupFile> selectedFile(m_group->getFile(selectedFileIndex));
 
-		m_fileNameText->SetLabel(selectedFile->getFileName());
-		m_fileSizeLabel->SetLabel("File Size:");
-		m_fileSizeText->SetLabel(selectedFile->getSizeAsString());
+		std::unique_ptr<GameFile> gameFile(GameFileFactoryRegistry::getInstance()->readGameFileFrom(selectedFile->getData(), selectedFile->getFileName()));
 
-		m_fileNameLabel->Show();
-		m_fileNameText->Show();
-		m_numberOfFilesSelectedLabel->Hide();
-		m_numberOfFilesSelectedText->Hide();
+		if(gameFile != nullptr) {
+			gameFile->setFilePath(selectedFile->getFileName());
+			m_fileInfoPanel->setMetadata(gameFile->getMetadata());
+		}
+		else {
+			std::vector<std::pair<std::string, std::string>> metadata;
+			metadata.push_back({ "File Name", selectedFile->getFileName() });
+			metadata.push_back({ "File Size", Utilities::fileSizeToString(selectedFile->getSize()) });
+
+			m_fileInfoPanel->setMetadata(metadata);
+		}
 	}
 	else {
-		m_fileSizeLabel->SetLabel("Total Size of Selected Files:");
-		m_fileSizeText->SetLabel(getTotalSizeOfSelectedFilesAsString());
-		m_numberOfFilesSelectedText->SetLabel(std::to_string(selections.GetCount()));
+		std::vector<std::pair<std::string, std::string>> metadata;
+		metadata.push_back({ "Number of Files Selected", std::to_string(selections.GetCount()) });
+		metadata.push_back({ "Total Size of Selected Files", Utilities::fileSizeToString(getTotalSizeOfSelectedFiles()) });
 
-		m_fileNameLabel->Hide();
-		m_fileNameText->Hide();
-		m_numberOfFilesSelectedLabel->Show();
-		m_numberOfFilesSelectedText->Show();
+		m_fileInfoPanel->setMetadata(metadata);
 	}
 
 	m_fileInfoPanel->Show();
@@ -266,7 +228,7 @@ void GroupPanel::onFileSelected(wxCommandEvent & event) {
 	groupFileSelectionChanged(*this);
 }
 
-void GroupPanel::onGroupModified(const Group & group) {
+void GroupPanel::onGroupModified(const GameFile & group) {
 	update();
 
 	groupModified(*this);

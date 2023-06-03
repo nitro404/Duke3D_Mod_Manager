@@ -1,5 +1,7 @@
 #include "Map.h"
 
+#include "BuildConstants.h"
+
 #include <ByteBuffer.h>
 #include <Utilities/FileUtilities.h>
 #include <Utilities/RapidJSONUtilities.h>
@@ -452,17 +454,6 @@ bool Map::writeTo(ByteBuffer & byteBuffer) const {
 	return true;
 }
 
-std::unique_ptr<ByteBuffer> Map::getData() const {
-	std::unique_ptr<ByteBuffer> mapData(std::make_unique<ByteBuffer>());
-	mapData->reserve(getSizeInBytes());
-
-	if(!writeTo(*mapData)) {
-		return nullptr;
-	}
-
-	return mapData;
-}
-
 rapidjson::Document Map::toJSON() const {
 	rapidjson::Document mapDocument(rapidjson::kObjectType);
 
@@ -758,8 +749,37 @@ bool Map::saveToJSON(const std::string & filePath, bool overwrite) const {
 	return Utilities::saveJSONValueTo(toJSON(), filePath, overwrite);
 }
 
+void Map::addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const {
+	metadata.push_back({ "Version", std::to_string(m_version) });
+	metadata.push_back({ "Player Spawn Position", m_playerSpawn.getPosition().toString() });
+	metadata.push_back({ "Player Spawn Angle", fmt::format("{:.2f} Degrees", m_playerSpawn.getAngleDegrees()) });
+
+	if(m_version <= 7) {
+		metadata.push_back({ "Number of Sectors", fmt::format("{} / {}", m_sectors.size(), BuildConstants::MAX_NUMBER_OF_SECTORS) });
+		metadata.push_back({ "Number of Walls", fmt::format("{} / {}", m_walls.size(), BuildConstants::MAX_NUMBER_OF_WALLS) });
+		metadata.push_back({ "Number of Sprites", fmt::format("{} / {}", m_sprites.size(), BuildConstants::MAX_NUMBER_OF_SPRITES) });
+	}
+	else {
+		metadata.push_back({ "Number of Sectors", std::to_string(m_sectors.size()) });
+		metadata.push_back({ "Number of Walls", std::to_string(m_walls.size()) });
+		metadata.push_back({ "Number of Sprites", std::to_string(m_sprites.size()) });
+	}
+}
+
+Endianness Map::getEndianness() const {
+	return ENDIANNESS;
+}
+
 size_t Map::getSizeInBytes() const {
 	return PlayerSpawn::SIZE_BYTES + (Sector::getSizeInBytes(m_version) * m_sectors.size()) + (Wall::SIZE_BYTES * m_walls.size()) + (Sprite::SIZE_BYTES * m_sprites.size()) + sizeof(int32_t) + (sizeof(uint16_t) * 3) + m_trailingData->getSize();
+}
+
+bool Map::isValid(bool verifyParent) const {
+	return true;
+}
+
+bool Map::isValid(const Map * map, bool verifyParent) {
+	return map != nullptr && map->isValid();
 }
 
 bool Map::operator == (const Map & map) const {

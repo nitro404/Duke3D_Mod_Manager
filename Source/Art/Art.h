@@ -1,6 +1,7 @@
 #ifndef _ART_H_
 #define _ART_H_
 
+#include "File/GameFile.h"
 #include "Tile.h"
 
 #include <Endianness.h>
@@ -14,7 +15,7 @@
 
 class ByteBuffer;
 
-class Art final {
+class Art final : public GameFile {
 public:
 	Art();
 	Art(uint16_t artNumber, uint32_t tileCount);
@@ -26,7 +27,7 @@ public:
 	Art(const Art & art);
 	Art & operator = (Art && art) noexcept;
 	Art & operator = (const Art & art);
-	~Art();
+	virtual ~Art();
 
 	uint32_t getVersion() const;
 	void setVersion(uint32_t version);
@@ -64,8 +65,7 @@ public:
 	std::vector<std::shared_ptr<Tile>> getEmptyTiles() const;
 
 	static std::unique_ptr<Art> readFrom(const ByteBuffer & byteBuffer);
-	bool writeTo(ByteBuffer & byteBuffer) const;
-	std::unique_ptr<ByteBuffer> getData() const;
+	virtual bool writeTo(ByteBuffer & byteBuffer) const override;
 
 	rapidjson::Document toJSON() const;
 	rapidjson::Value toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const;
@@ -75,11 +75,16 @@ public:
 	static std::unique_ptr<Art> loadFrom(const std::string & filePath);
 	static std::unique_ptr<Art> loadFromArt(const std::string & filePath);
 	static std::unique_ptr<Art> loadFromJSON(const std::string & filePath);
-	bool saveTo(const std::string & filePath, bool overwrite = true) const;
+	virtual bool saveTo(const std::string & filePath, bool overwrite = true) const override;
 	bool saveToArt(const std::string & filePath, bool overwrite = true) const;
 	bool saveToJSON(const std::string & filePath, bool overwrite = true) const;
 
-	uint64_t getSizeInBytes() const;
+	virtual void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
+	virtual Endianness getEndianness() const override;
+	virtual uint64_t getSizeInBytes() const override;
+
+	virtual bool isValid(bool verifyParent = true) const override;
+	static bool isValid(const Art * art, bool verifyParent = true);
 
 	bool operator == (const Art & art) const;
 	bool operator != (const Art & art) const;

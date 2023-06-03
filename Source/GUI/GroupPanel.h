@@ -12,8 +12,10 @@
 	#include <wx/wx.h>
 #endif
 
+class GameFile;
 class Group;
 class GroupFile;
+class MetadataPanel;
 
 class GroupPanel final : public wxPanel {
 public:
@@ -26,7 +28,6 @@ public:
 	size_t numberOfFilesSelected() const;
 	std::vector<std::shared_ptr<GroupFile>> getSelectedFiles() const;
 	size_t getTotalSizeOfSelectedFiles() const;
-	std::string getTotalSizeOfSelectedFilesAsString() const;
 	size_t extractSelectedFiles(const std::string & directoryPath) const;
 
 	void update();
@@ -37,8 +38,7 @@ public:
 
 private:
 	void onFileSelected(wxCommandEvent & event);
-	void onGroupModified(const Group & group);
-	void notifyGroupFileSelectionChanged();
+	void onGroupModified(const GameFile & group);
 
 	std::unique_ptr<Group> m_group;
 	boost::signals2::connection m_groupModifiedConnection;
@@ -47,13 +47,7 @@ private:
 	wxStaticText * m_fileExtensionsText;
 	wxListBox * m_fileListBox;
 	wxStaticBox * m_fileInfoBox;
-	wxPanel * m_fileInfoPanel;
-	wxStaticText * m_fileNameLabel;
-	wxStaticText * m_fileNameText;
-	wxStaticText * m_numberOfFilesSelectedLabel;
-	wxStaticText * m_numberOfFilesSelectedText;
-	wxStaticText * m_fileSizeLabel;
-	wxStaticText * m_fileSizeText;
+	MetadataPanel * m_fileInfoPanel;
 	wxBoxSizer * m_fileInfoBoxSizer;
 	wxFlexGridSizer * m_groupPropertiesSizer;
 };

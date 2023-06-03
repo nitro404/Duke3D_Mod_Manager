@@ -12,21 +12,24 @@
 #include <memory>
 #include <sstream>
 
-const bool Group::DEFAULT_REPLACE_FILES = true;
+Group::Group(const std::string & filePath)
+	: GameFile(filePath) { }
 
-const Endianness Group::FILE_ENDIANNESS = Endianness::LittleEndian;
+Group::Group(std::vector<std::unique_ptr<GroupFile>> files, const std::string & filePath)
+	: GameFile(filePath) {
+	m_files.reserve(files.size());
 
-const std::string Group::HEADER_TEXT("KenSilverman");
+	for(std::unique_ptr<GroupFile> & file : files) {
+		m_files.push_back(std::shared_ptr<GroupFile>(file.release()));
+	}
 
-Group::Group(std::string_view filePath)
-	: m_filePath(filePath)
-	, m_modified(false) { }
+	updateParent();
+}
 
 Group::Group(Group && g) noexcept
-	: m_filePath(std::move(g.m_filePath))
-	, m_files(std::move(g.m_files))
-	, m_modified(false) {
-	updateParentGroup();
+	: GameFile(g)
+	, m_files(std::move(g.m_files)) {
+	updateParent();
 
 	for(std::shared_ptr<GroupFile> & file : m_files) {
 		m_fileConnections.push_back(file->modified.connect(std::bind(&Group::onGroupFileModified, this, std::placeholders::_1)));
@@ -34,13 +37,12 @@ Group::Group(Group && g) noexcept
 }
 
 Group::Group(const Group & g)
-	: m_filePath(g.m_filePath)
-	, m_modified(false) {
+	: GameFile(g) {
 	for(std::vector<std::shared_ptr<GroupFile>>::const_iterator i = g.m_files.cbegin(); i != g.m_files.cend(); ++i) {
 		m_files.push_back(std::make_shared<GroupFile>(**i));
 	}
 
-	updateParentGroup();
+	updateParent();
 
 	for(std::shared_ptr<GroupFile> & file : m_files) {
 		m_fileConnections.push_back(file->modified.connect(std::bind(&Group::onGroupFileModified, this, std::placeholders::_1)));
@@ -49,7 +51,8 @@ Group::Group(const Group & g)
 
 Group & Group::operator = (Group && g) noexcept {
 	if(this != &g) {
-		m_filePath = std::move(g.m_filePath);
+		GameFile::operator = (g);
+
 		m_files = std::move(g.m_files);
 
 		for(boost::signals2::connection & fileConnections : m_fileConnections) {
@@ -58,8 +61,7 @@ Group & Group::operator = (Group && g) noexcept {
 
 		m_fileConnections.clear();
 
-		updateParentGroup();
-		setModified(true);
+		updateParent();
 
 		for(std::shared_ptr<GroupFile> & file : m_files) {
 			m_fileConnections.push_back(file->modified.connect(std::bind(&Group::onGroupFileModified, this, std::placeholders::_1)));
@@ -72,7 +74,7 @@ Group & Group::operator = (Group && g) noexcept {
 Group & Group::operator = (const Group & g) {
 	m_files.clear();
 
-	m_filePath = g.m_filePath;
+	GameFile::operator = (g);
 
 	for(boost::signals2::connection & fileConnections : m_fileConnections) {
 		fileConnections.disconnect();
@@ -84,8 +86,7 @@ Group & Group::operator = (const Group & g) {
 		m_files.push_back(std::make_shared<GroupFile>(**i));
 	}
 
-	updateParentGroup();
-	setModified(true);
+	updateParent();
 
 	for(std::shared_ptr<GroupFile> & file : m_files) {
 		m_fileConnections.push_back(file->modified.connect(std::bind(&Group::onGroupFileModified, this, std::placeholders::_1)));
@@ -104,36 +105,14 @@ Group::~Group() {
 	}
 }
 
-bool Group::isModified() const {
-	return m_modified;
-}
-
-void Group::setModified(bool value) {
-	m_modified = value;
-
-	if(!m_modified) {
+void Group::setModified(bool modified) const {
+	if(!modified) {
 		for(const std::shared_ptr<GroupFile> & file : m_files) {
 			file->m_modified = false;
 		}
 	}
 
-	modified(*this);
-}
-
-const std::string & Group::getFilePath() const {
-	return m_filePath;
-}
-
-std::string_view Group::getFileName() const {
-	return Utilities::getFileName(m_filePath);
-}
-
-std::string_view Group::getFileExtension() const {
-	return Utilities::getFileExtension(m_filePath);
-}
-
-void Group::setFilePath(const std::string & filePath) {
-	m_filePath = filePath;
+	GameFile::setModified(modified);
 }
 
 size_t Group::numberOfFiles() const {
@@ -679,6 +658,129 @@ bool Group::isValid(const Group * g, bool verifyParent) {
 	return g != nullptr && g->isValid();
 }
 
+std::unique_ptr<Group> Group::readFrom(const ByteBuffer & byteBuffer) {
+	bool error = false;
+
+	// verify that the data is long enough to contain header information
+	std::string headerText(byteBuffer.readString(Group::HEADER_TEXT.length(), &error));
+
+	if(error) {
+		spdlog::error("Group is incomplete or corrupted: missing header text.");
+		return false;
+	}
+
+	// verify that the header text is specified in the header
+	if(!Utilities::areStringsEqual(headerText, HEADER_TEXT)) {
+		spdlog::error("Group is not a valid format, missing '{}' header text.", HEADER_TEXT);
+		return false;
+	}
+
+	spdlog::trace("Verified group file header text.");
+
+	// read and verify the number of files value
+	uint32_t numberOfFiles = byteBuffer.readUnsignedInteger(&error);
+
+	if(error) {
+		spdlog::error("Group is incomplete or corrupted: missing number of files value.");
+		return false;
+	}
+
+	spdlog::trace("Detected {} files in group.", numberOfFiles);
+
+	std::vector<std::string> fileNames;
+	std::vector<uint32_t> fileSizes;
+	std::vector<std::shared_ptr<GroupFile>> files;
+
+	for(uint32_t i = 0; i < numberOfFiles; i++) {
+		// read the file name
+		fileNames.emplace_back(byteBuffer.readString(GroupFile::MAX_FILE_NAME_LENGTH, &error));
+
+		if(error) {
+			spdlog::error("Group is incomplete or corrupted: missing file #{} name.", i + 1);
+			return false;
+		}
+
+		// read and verify the file size
+		fileSizes.push_back(byteBuffer.readUnsignedInteger(&error));
+
+		if(error) {
+			spdlog::error("Group is incomplete or corrupted: missing file #{} size value.", i + 1);
+			return false;
+		}
+	}
+
+	spdlog::trace("All group file information parsed.");
+
+	std::vector<std::unique_ptr<GroupFile>> groupFiles;
+
+	for(uint32_t i = 0; i < numberOfFiles; i++) {
+		if(byteBuffer.getSize() < byteBuffer.getReadOffset() + fileSizes[i]) {
+			size_t numberOfMissingBytes = fileSizes[i] - (byteBuffer.getSize() - byteBuffer.getReadOffset());
+			uint32_t numberOfAdditionalFiles = groupFiles.size() - i - 1;
+
+			spdlog::error("Group is corrupted: missing {} of {} byte{} for file #{} ('{}') data.{}", numberOfMissingBytes, fileSizes[i], fileSizes[i] == 1 ? "" : "s", i + 1, fileNames[i], numberOfAdditionalFiles > 0 ? fmt::format(" There is also an additional {} files that are missing data.", numberOfAdditionalFiles) : "");
+
+			return false;
+		}
+
+		std::unique_ptr<GroupFile> file(std::make_unique<GroupFile>(fileNames[i], byteBuffer.readBytes(fileSizes[i], &error)));
+
+		if(error) {
+			spdlog::error("Group failed to read data bytes for file #{} ('{}').", i + 1, fileNames[i]);
+		}
+
+		groupFiles.push_back(std::move(file));
+	}
+
+	spdlog::trace("Group parsed successfully, {} files loaded into memory.", groupFiles.size());
+
+	return std::make_unique<Group>(std::move(groupFiles));
+}
+
+bool Group::writeTo(ByteBuffer & byteBuffer) const {
+	byteBuffer.setEndianness(ENDIANNESS);
+
+	if(!byteBuffer.writeString(HEADER_TEXT)) {
+		return false;
+	}
+
+	if(!byteBuffer.writeUnsignedInteger(m_files.size())) {
+		return false;
+	}
+
+	size_t currentFileNameLength = 0;
+
+	for(size_t i = 0; i < m_files.size(); i++) {
+		const std::shared_ptr<GroupFile> file(m_files.at(i));
+
+		if(!byteBuffer.writeString(file->getFileName())) {
+			return false;
+		}
+
+		currentFileNameLength = file->getFileName().length();
+
+		if(currentFileNameLength < GroupFile::MAX_FILE_NAME_LENGTH) {
+			if(!byteBuffer.skipWriteBytes(GroupFile::MAX_FILE_NAME_LENGTH - currentFileNameLength)) {
+				return false;
+			}
+		}
+
+		if(!byteBuffer.writeUnsignedInteger(file->getSize())) {
+			return false;
+		}
+	}
+
+	for(size_t i = 0; i < m_files.size(); i++) {
+		const std::shared_ptr<GroupFile> file(m_files.at(i));
+
+		if(!byteBuffer.writeBytes(file->getData())) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 std::unique_ptr<Group> Group::createFrom(const std::string & directoryPath) {
 	if(directoryPath.empty()) {
 		return nullptr;
@@ -721,158 +823,39 @@ std::unique_ptr<Group> Group::loadFrom(const std::string & filePath) {
 	}
 
 	// open the file and read it into memory
-	std::unique_ptr<ByteBuffer> buffer(ByteBuffer::readFrom(filePath, Group::FILE_ENDIANNESS));
+	std::unique_ptr<ByteBuffer> byteBuffer(ByteBuffer::readFrom(filePath, ENDIANNESS));
 
-	if(buffer == nullptr) {
+	if(byteBuffer == nullptr) {
 		spdlog::error("Failed to open group file: '{}'.", filePath);
 		return false;
 	}
 
-	spdlog::debug("Opened group file: '{}', loaded {} bytes into memory.", filePath, buffer->getSize());
+	spdlog::trace("Opened group file: '{}', loaded {} bytes into memory.", filePath, byteBuffer->getSize());
 
-	bool error = false;
+	std::unique_ptr<Group> group(readFrom(*byteBuffer));
 
-	// verify that the data is long enough to contain header information
-	std::string headerText(buffer->readString(Group::HEADER_TEXT.length(), &error));
-
-	if(error) {
-		spdlog::error("Group file '{}' is incomplete or corrupted: missing header text.", filePath);
-		return false;
+	if(group == nullptr) {
+		return nullptr;
 	}
 
-	// verify that the header text is specified in the header
-	if(headerText != HEADER_TEXT) {
-		spdlog::error("Group file '{}' is not a valid format, missing '{}' header text.", filePath, HEADER_TEXT);
-		return false;
-	}
-
-	spdlog::debug("Verified group file header text.");
-
-	// read and verify the number of files value
-	uint32_t numberOfFiles = buffer->readUnsignedInteger(&error);
-
-	if(error) {
-		spdlog::error("Group file '{}' is incomplete or corrupted: missing number of files value.", filePath);
-		return false;
-	}
-
-	spdlog::debug("Detected {} files in group '{}'.", numberOfFiles, filePath);
-
-	std::vector<std::string> fileNames;
-	std::vector<uint32_t> fileSizes;
-	std::vector<std::shared_ptr<GroupFile>> files;
-
-	for(uint32_t i = 0; i < numberOfFiles; i++) {
-		// read the file name
-		fileNames.emplace_back(buffer->readString(GroupFile::MAX_FILE_NAME_LENGTH, &error));
-
-		if(error) {
-			spdlog::error("Group file '{}' is incomplete or corrupted: missing file #{} name.", filePath, i + 1);
-			return false;
-		}
-
-		// read and verify the file size
-		fileSizes.push_back(buffer->readUnsignedInteger(&error));
-
-		if(error) {
-			spdlog::error("Group file '{}' is incomplete or corrupted: missing file #{} size value.", filePath, i + 1);
-			return false;
-		}
-	}
-
-	spdlog::debug("All group file information parsed.");
-
-	std::unique_ptr<Group> group(std::make_unique<Group>(filePath));
-
-	for(uint32_t i = 0; i < numberOfFiles; i++) {
-		if(buffer->getSize() < buffer->getReadOffset() + fileSizes[i]) {
-			size_t numberOfMissingBytes = fileSizes[i] - (buffer->getSize() - buffer->getReadOffset());
-			uint32_t numberOfAdditionalFiles = group->m_files.size() - i - 1;
-
-			spdlog::error("Group file '{}' is corrupted: missing {} of {} byte{} for file #{} ('{}') data.{}", filePath, numberOfMissingBytes, fileSizes[i], fileSizes[i] == 1 ? "" : "s", i + 1, fileNames[i], numberOfAdditionalFiles > 0 ? fmt::format(" There is also an additional {} files that are missing data.", numberOfAdditionalFiles) : "");
-
-			return false;
-		}
-
-		std::shared_ptr<GroupFile> file(std::make_shared<GroupFile>(fileNames[i], buffer->readBytes(fileSizes[i], &error)));
-
-		if(error) {
-			spdlog::error("Group file '{}' failed to read data bytes for file #{} ('{}').", filePath, i + 1, fileNames[i]);
-		}
-
-		file->m_parentGroup = group.get();
-		group->m_fileConnections.push_back(file->modified.connect(std::bind(&Group::onGroupFileModified, group.get(), std::placeholders::_1)));
-		group->m_files.push_back(file);
-	}
-
-	spdlog::debug("Group file parsed successfully, {} files loaded into memory.", group->m_files.size());
+	group->setFilePath(filePath);
 
 	return group;
 }
 
-bool Group::save(bool overwrite) {
-	// verify that the file has a path
-	if(m_filePath.empty()) {
-		spdlog::error("Group has no file name.");
-		return false;
+void Group::addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const {
+	metadata.push_back({ "Number of Files", std::to_string(m_files.size()) });
+
+	if(!m_files.empty()) {
+		metadata.push_back({ "File Extensions", getFileExtensionsAsString() });
 	}
-
-	// check if the file already exists and verify that overwrite is specified to continue
-	if(!overwrite && std::filesystem::is_regular_file(std::filesystem::path(m_filePath))) {
-		spdlog::warn("Group file already exists, must specify overwrite flag to save.", m_filePath);
-		return false;
-	}
-
-	ByteBuffer buffer(getGroupSize(), Group::FILE_ENDIANNESS);
-
-	if(!buffer.writeString(HEADER_TEXT)) {
-		return false;
-	}
-
-	if(!buffer.writeUnsignedInteger(m_files.size())) {
-		return false;
-	}
-
-	size_t currentFileNameLength = 0;
-
-	for(size_t i = 0; i < m_files.size(); i++) {
-		const std::shared_ptr<GroupFile> file(m_files.at(i));
-
-		if(!buffer.writeString(file->getFileName())) {
-			return false;
-		}
-
-		currentFileNameLength = file->getFileName().length();
-
-		if(currentFileNameLength < GroupFile::MAX_FILE_NAME_LENGTH) {
-			if(!buffer.skipWriteBytes(GroupFile::MAX_FILE_NAME_LENGTH - currentFileNameLength)) {
-				return false;
-			}
-		}
-
-		if(!buffer.writeUnsignedInteger(file->getSize())) {
-			return false;
-		}
-	}
-
-	for(size_t i = 0; i < m_files.size(); i++) {
-		const std::shared_ptr<GroupFile> file(m_files.at(i));
-
-		if(!buffer.writeBytes(file->getData())) {
-			return false;
-		}
-	}
-
-	if(!buffer.writeTo(m_filePath, overwrite)) {
-		return false;
-	}
-
-	setModified(false);
-
-	return true;
 }
 
-size_t Group::getGroupSize() const {
+Endianness Group::getEndianness() const {
+	return ENDIANNESS;
+}
+
+size_t Group::getSizeInBytes() const {
 	static constexpr size_t NUMBER_OF_FILES_LENGTH = sizeof(uint32_t);
 	static constexpr size_t GROUP_FILE_SIZE_LENGTH = sizeof(uint32_t);
 	static const size_t HEADER_LENGTH = HEADER_TEXT.length() + NUMBER_OF_FILES_LENGTH;
@@ -887,21 +870,7 @@ size_t Group::getGroupSize() const {
 	return size;
 }
 
-std::string Group::getGroupSizeAsString() const {
-	size_t size = getGroupSize();
-
-	if(size < 1000) {
-		return fmt::format("{} B", size);
-	}
-	else if(size < 1000000) {
-		return fmt::format("{:.2f} KB", size / 1000.0);
-	}
-	else {
-		return fmt::format("{:.2f} MB", size / 1000000.0);
-	}
-}
-
-void Group::updateParentGroup() {
+void Group::updateParent() {
 	for(std::shared_ptr<GroupFile> & file : m_files) {
 		file->m_parentGroup = this;
 	}

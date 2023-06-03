@@ -577,17 +577,6 @@ bool Art::writeTo(ByteBuffer & byteBuffer) const {
 	return true;
 }
 
-std::unique_ptr<ByteBuffer> Art::getData() const {
-	std::unique_ptr<ByteBuffer> artData(std::make_unique<ByteBuffer>());
-	artData->reserve(getSizeInBytes());
-
-	if(!writeTo(*artData)) {
-		return nullptr;
-	}
-
-	return artData;
-}
-
 rapidjson::Document Art::toJSON() const {
 	rapidjson::Document artDocument(rapidjson::kObjectType);
 
@@ -866,6 +855,21 @@ bool Art::saveToJSON(const std::string & filePath, bool overwrite) const {
 	return Utilities::saveJSONValueTo(toJSON(), filePath, overwrite);
 }
 
+void Art::addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const {
+	metadata.push_back({ "Version", std::to_string(m_version) });
+	metadata.push_back({ "Art Number", std::to_string(getNumber()) });
+	metadata.push_back({ "Number of Tiles", std::to_string(m_tiles.size()) });
+	metadata.push_back({ "Number of Non-Empty Tiles", std::to_string(numberOfNonEmptyTiles()) });
+	metadata.push_back({ "Number of Empty Tiles", std::to_string(numberOfEmptyTiles()) });
+	metadata.push_back({ "Local Tile Start", std::to_string(m_localTileStart) });
+	metadata.push_back({ "Local Tile End", std::to_string(m_localTileEnd) });
+	metadata.push_back({ "Legacy Tile Count", std::to_string(m_legacyTileCount) });
+}
+
+Endianness Art::getEndianness() const {
+	return ENDIANNESS;
+}
+
 uint64_t Art::getSizeInBytes() const {
 	size_t numberOfBytes = (sizeof(uint32_t) * 4) + (m_tiles.size() * ((sizeof(uint16_t) * 2) + sizeof(uint32_t))) + (m_trailingData != nullptr ? m_trailingData->getSize() : 0);
 
@@ -903,6 +907,14 @@ void Art::updateParent() {
 	for(std::shared_ptr<Tile> & tile : m_tiles) {
 		tile->setParent(this);
 	}
+}
+
+bool Art::isValid(bool verifyParent) const {
+	return true;
+}
+
+bool Art::isValid(const Art * art, bool verifyParent) {
+	return art != nullptr && art->isValid();
 }
 
 bool Art::operator == (const Art & art) const {

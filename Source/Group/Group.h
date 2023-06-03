@@ -1,6 +1,7 @@
 #ifndef _GROUP_H_
 #define _GROUP_H_
 
+#include "File/GameFile.h"
 #include "GroupFile.h"
 
 #include <ByteBuffer.h>
@@ -12,20 +13,15 @@
 #include <string>
 #include <vector>
 
-class Group final {
+class Group final : public GameFile {
 public:
-	Group(std::string_view filePath = {});
+	Group(const std::string & filePath = {});
+	Group(std::vector<std::unique_ptr<GroupFile>> groupFiles, const std::string & filePath = {});
 	Group(Group && g) noexcept;
 	Group(const Group & g);
 	Group & operator = (Group && g) noexcept;
 	Group & operator = (const Group & g);
-	~Group();
-
-	bool isModified() const;
-	const std::string & getFilePath() const;
-	std::string_view getFileName() const;
-	std::string_view getFileExtension() const;
-	void setFilePath(const std::string & filePath);
+	virtual ~Group();
 
 	size_t numberOfFiles() const;
 	bool hasFile(const GroupFile & file) const;
@@ -81,47 +77,39 @@ public:
 
 	std::string toString() const;
 
-	bool isValid(bool verifyParent = true) const;
-	static bool isValid(const Group * g, bool verifyParent = true);
+	static std::unique_ptr<Group> readFrom(const ByteBuffer & byteBuffer);
+	virtual bool writeTo(ByteBuffer & byteBuffer) const override;
 
 	static std::unique_ptr<Group> createFrom(const std::string & directoryPath);
 	static std::unique_ptr<Group> loadFrom(const std::string & filePath);
-	bool save(bool overwrite = true);
 
-	size_t getGroupSize() const;
-	std::string getGroupSizeAsString() const;
+	virtual void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
+	virtual Endianness getEndianness() const override;
+	virtual size_t getSizeInBytes() const override;
+
+	virtual bool isValid(bool verifyParent = true) const override;
+	static bool isValid(const Group * g, bool verifyParent = true);
 
 	bool operator == (const Group & g) const;
 	bool operator != (const Group & g) const;
 
-	boost::signals2::signal<void (Group & /* group */)> modified;
-
-	static const bool DEFAULT_REPLACE_FILES;
-
-	static const Endianness FILE_ENDIANNESS;
-
-	// Note: This file name is defined inline in the header file so that it is available at compile time in other classes
+	static const bool DEFAULT_REPLACE_FILES = true;
+	static const Endianness ENDIANNESS = Endianness::LittleEndian;
+	static inline const std::string HEADER_TEXT = "KenSilverman";
 	static inline const std::string DUKE_NUKEM_3D_GROUP_FILE_NAME = "DUKE3D.GRP";
-
-	// Note: These SHA1 hashes are defined inline in the header file so that they are available at compile time in other classes
 	static inline const std::string DUKE_NUKEM_3D_BETA_VERSION_GROUP_SHA1_FILE_HASH = "a6341c16bc1170b43be7f28b5a91c080f9ce3409";
 	static inline const std::string DUKE_NUKEM_3D_REGULAR_VERSION_GROUP_SHA1_FILE_HASH = "3d508eaf3360605b0204301c259bd898717cf468";
 	static inline const std::string DUKE_NUKEM_3D_PLUTONIUM_PAK_GROUP_SHA1_FILE_HASH = "61e70f883df9552395406bf3d64f887f3c709438";
 	static inline const std::string DUKE_NUKEM_3D_ATOMIC_EDITION_GROUP_SHA1_FILE_HASH = "4fdef8559e2d35b1727fe92f021df9c148cf696c";
 	static inline const std::string DUKE_NUKEM_3D_WORLD_TOUR_GROUP_SHA1_FILE_HASH = "d745396afc3e734029ec2b9bd8b20bdb3a11b3a2";
 
-	static const std::string HEADER_TEXT;
-
 private:
-	void setModified(bool modified);
+	virtual void setModified(bool modified) const override;
 	void onGroupFileModified(GroupFile & groupFile);
-	void notifyGroupModified() const;
-	void updateParentGroup();
+	void updateParent();
 
-	std::string m_filePath;
 	std::vector<std::shared_ptr<GroupFile>> m_files;
 	std::vector<boost::signals2::connection> m_fileConnections;
-	bool m_modified;
 };
 
 #endif // _GROUP_H_

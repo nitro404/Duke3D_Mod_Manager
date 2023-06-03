@@ -1,10 +1,12 @@
 #include "ModManager.h"
 
+#include "Art/Art.h"
 #include "DOSBox/DOSBoxManager.h"
 #include "DOSBox/DOSBoxVersion.h"
 #include "Download/DownloadCache.h"
 #include "Download/DownloadManager.h"
 #include "Environment.h"
+#include "File/GameFileFactoryRegistry.h"
 #include "Game/GameLocator.h"
 #include "Game/GameManager.h"
 #include "Game/GameVersion.h"
@@ -13,6 +15,7 @@
 #include "Group/GroupUtilities.h"
 #include "InstalledModInfo.h"
 #include "Manager/ModMatch.h"
+#include "Map/Map.h"
 #include "Mod/Mod.h"
 #include "Mod/ModAuthorInformation.h"
 #include "Mod/ModCollection.h"
@@ -94,8 +97,14 @@ ModManager::ModManager()
 	, m_initializationStep(0) {
 	assignPlatformFactories();
 
-	FactoryRegistry::getInstance().setFactory<SettingsManager>([]() {
+	FactoryRegistry & factoryRegistry = FactoryRegistry::getInstance();
+
+	factoryRegistry.setFactory<SettingsManager>([]() {
 		return std::make_unique<SettingsManager>();
+	});
+
+	factoryRegistry.setFactory<GameFileFactoryRegistry>([]() {
+		return std::make_unique<GameFileFactoryRegistry>();
 	});
 
 	m_selectedModChangedConnection = m_organizedMods->selectedModChanged.connect(std::bind(&ModManager::onSelectedModChanged, this, std::placeholders::_1));

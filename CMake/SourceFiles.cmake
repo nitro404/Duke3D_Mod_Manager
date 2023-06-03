@@ -19,6 +19,8 @@ set(MAIN_SOURCE_FILES
 	Download/CachedPackageFile.cpp
 	Download/DownloadCache.cpp
 	Download/DownloadManager.cpp
+	File/GameFile.cpp
+	File/GameFileFactoryRegistry.cpp
 	Game/GameDownload.cpp
 	Game/GameDownloadCollection.cpp
 	Game/GameDownloadFile.cpp
@@ -82,6 +84,8 @@ set(MAIN_HEADER_FILES
 	Download/DownloadCache.h
 	Download/DownloadManager.h
 	Environment.h
+	File/GameFile.h
+	File/GameFileFactoryRegistry.h
 	Project.h
 	Game/GameDownload.h
 	Game/GameDownloadCollection.h
@@ -148,6 +152,7 @@ set(GUI_SOURCE_FILES
 	GUI/Logging/CustomLogTextControl.cpp
 	GUI/Logging/LogSinkWX.cpp
 	GUI/Logging/PreformattedLogFormatter.cpp
+	GUI/MetadataPanel.cpp
 	GUI/ModBrowserPanel.cpp
 	GUI/ModDownloadPanel.cpp
 	GUI/ModDownloadsPanel.cpp
@@ -175,6 +180,7 @@ set(GUI_HEADER_FILES
 	GUI/Logging/CustomLogTextControl.h
 	GUI/Logging/LogSinkWX.h
 	GUI/Logging/PreformattedLogFormatter.h
+	GUI/MetadataPanel.h
 	GUI/ModBrowserPanel.h
 	GUI/ModDownloadPanel.h
 	GUI/ModDownloadsPanel.h

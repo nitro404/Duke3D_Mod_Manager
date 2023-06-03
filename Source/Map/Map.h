@@ -1,6 +1,7 @@
 #ifndef _MAP_H_
 #define _MAP_H_
 
+#include "File/GameFile.h"
 #include "PlayerSpawn.h"
 #include "Sector.h"
 #include "Sprite.h"
@@ -13,7 +14,7 @@
 #include <cstdint>
 #include <vector>
 
-class Map final {
+class Map final : public GameFile {
 public:
 	Map();
 	Map(uint32_t version, const PlayerSpawn & playerSpawn, std::vector<std::unique_ptr<Sector>> sectors, std::vector<std::unique_ptr<Wall>> walls, std::vector<std::unique_ptr<Sprite>> sprites, std::unique_ptr<ByteBuffer> trailingData = nullptr);
@@ -21,7 +22,7 @@ public:
 	Map(const Map & map);
 	Map & operator = (Map && map) noexcept;
 	Map & operator = (const Map & map);
-	~Map();
+	virtual ~Map();
 
 	uint32_t getVersion() const;
 	PlayerSpawn & getPlayerSpawn();
@@ -69,8 +70,7 @@ public:
 	void clearTrailingData();
 
 	static std::unique_ptr<Map> readFrom(const ByteBuffer & byteBuffer);
-	bool writeTo(ByteBuffer & byteBuffer) const;
-	std::unique_ptr<ByteBuffer> getData() const;
+	virtual bool writeTo(ByteBuffer & byteBuffer) const override;
 
 	rapidjson::Document toJSON() const;
 	rapidjson::Value toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const;
@@ -80,11 +80,16 @@ public:
 	static std::unique_ptr<Map> loadFrom(const std::string & filePath);
 	static std::unique_ptr<Map> loadFromMap(const std::string & filePath);
 	static std::unique_ptr<Map> loadFromJSON(const std::string & filePath);
-	bool saveTo(const std::string & filePath, bool overwrite = true) const;
+	virtual bool saveTo(const std::string & filePath, bool overwrite = true) const override;
 	bool saveToMap(const std::string & filePath, bool overwrite = true) const;
 	bool saveToJSON(const std::string & filePath, bool overwrite = true) const;
 
-	size_t getSizeInBytes() const;
+	virtual void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
+	virtual Endianness getEndianness() const override;
+	virtual size_t getSizeInBytes() const override;
+
+	virtual bool isValid(bool verifyParent = true) const override;
+	static bool isValid(const Map * map, bool verifyParent = true);
 
 	bool operator == (const Map & map) const;
 	bool operator != (const Map & map) const;
