@@ -2,7 +2,9 @@
 
 #include <ByteBuffer.h>
 #include <Utilities/FileUtilities.h>
+#include <Utilities/StringUtilities.h>
 
+#include <magic_enum.hpp>
 #include <spdlog/spdlog.h>
 
 #include <filesystem>
@@ -113,6 +115,7 @@ std::vector<std::pair<std::string, std::string>> GameFile::getMetadata() const {
 	}
 
 	metadata.push_back({ "File Size", Utilities::fileSizeToString(getSizeInBytes()) });
+	metadata.push_back({ "Endianness", Utilities::toCapitalCase(magic_enum::enum_name(getEndianness())) });
 
 	addMetadata(metadata);
 
