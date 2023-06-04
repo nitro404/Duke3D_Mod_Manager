@@ -4,14 +4,6 @@
 
 #include <spdlog/spdlog.h>
 
-static size_t getColourIndex(uint8_t x, uint8_t y) {
-	if(x >= Palette::PALETTE_WIDTH || y >= Palette::PALETTE_HEIGHT) {
-		return std::numeric_limits<size_t>::max();
-	}
-
-	return (static_cast<size_t>(x)) + (static_cast<size_t>(y) * Palette::PALETTE_HEIGHT);
-}
-
 PaletteACT::PaletteACT(const std::string & filePath)
 	: Palette(BYTES_PER_COLOUR, filePath) { }
 
@@ -68,28 +60,16 @@ std::optional<uint16_t> PaletteACT::getTransparentColourIndex(uint8_t colourTabl
 	return m_transparentColourIndex;
 }
 
-const Colour & PaletteACT::getColour(uint8_t x, uint8_t y, uint8_t colourTableIndex, bool * error) const {
-	if(colourTableIndex != 0) {
-		return Colour::INVISIBLE;
-	}
-
-	size_t colourIndex = getColourIndex(x, y);
-
-	if(colourIndex >= m_colours.size()) {
+const Colour & PaletteACT::lookupColour(uint8_t colourIndex, uint8_t colourTableIndex, bool * error) const {
+	if(colourTableIndex != 0 || colourIndex >= m_colours.size()) {
 		return Colour::INVISIBLE;
 	}
 
 	return m_colours[colourIndex];
 }
 
-bool PaletteACT::updateColour(uint8_t x, uint8_t y, const Colour & colour, uint8_t colourTableIndex) {
-	if(colourTableIndex != 0) {
-		return false;
-	}
-
-	size_t colourIndex = getColourIndex(x, y);
-
-	if(colourIndex >= m_colours.size()) {
+bool PaletteACT::updateColour(uint8_t colourIndex, const Colour & colour, uint8_t colourTableIndex) {
+	if(colourTableIndex != 0 || colourIndex >= m_colours.size()) {
 		return false;
 	}
 

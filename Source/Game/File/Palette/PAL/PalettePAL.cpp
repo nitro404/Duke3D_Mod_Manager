@@ -6,14 +6,6 @@
 #include <magic_enum.hpp>
 #include <spdlog/spdlog.h>
 
-static size_t getColourIndex(uint8_t x, uint8_t y) {
-	if(x >= Palette::PALETTE_WIDTH || y >= Palette::PALETTE_HEIGHT) {
-		return std::numeric_limits<size_t>::max();
-	}
-
-	return (static_cast<size_t>(x)) + (static_cast<size_t>(y) * Palette::PALETTE_HEIGHT);
-}
-
 PalettePAL::PalettePAL(const std::string & filePath)
 	: Palette(BYTES_PER_COLOUR, filePath)
 	, m_version(PAL_VERSION) { }
@@ -90,28 +82,16 @@ std::optional<uint16_t> PalettePAL::getTransparentColourIndex(uint8_t colourTabl
 	return {};
 }
 
-const Colour & PalettePAL::getColour(uint8_t x, uint8_t y, uint8_t colourTableIndex, bool * error) const {
-	if(colourTableIndex != 0) {
-		return Colour::INVISIBLE;
-	}
-
-	size_t colourIndex = getColourIndex(x, y);
-
-	if(colourIndex >= m_colours.size()) {
+const Colour & PalettePAL::lookupColour(uint8_t colourIndex, uint8_t colourTableIndex, bool * error) const {
+	if(colourTableIndex != 0 || colourIndex >= m_colours.size()) {
 		return Colour::INVISIBLE;
 	}
 
 	return m_colours[colourIndex];
 }
 
-bool PalettePAL::updateColour(uint8_t x, uint8_t y, const Colour & colour, uint8_t colourTableIndex) {
-	if(colourTableIndex != 0) {
-		return false;
-	}
-
-	size_t colourIndex = getColourIndex(x, y);
-
-	if(colourIndex >= m_colours.size()) {
+bool PalettePAL::updateColour(uint8_t colourIndex, const Colour & colour, uint8_t colourTableIndex) {
+	if(colourTableIndex != 0 || colourIndex >= m_colours.size()) {
 		return false;
 	}
 

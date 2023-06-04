@@ -31,8 +31,8 @@ public:
 	size_t getPaletteChunkSizeInBytes() const;
 	virtual std::optional<uint16_t> numberOfColours(uint8_t colourTableIndex = 0) const override;
 	virtual std::optional<uint16_t> getTransparentColourIndex(uint8_t colourTableIndex = 0) const override;
-	virtual const Colour & getColour(uint8_t x, uint8_t y, uint8_t colourTableIndex, bool * error = nullptr) const override;
-	virtual bool updateColour(uint8_t x, uint8_t y, const Colour & colour, uint8_t colourTableIndex = 0) override;
+	virtual const Colour & lookupColour(uint8_t colourIndex, uint8_t colourTableIndex, bool * error = nullptr) const override;
+	virtual bool updateColour(uint8_t colourIndex, const Colour & colour, uint8_t colourTableIndex = 0) override;
 	static std::unique_ptr<PalettePAL> readFrom(const ByteBuffer & byteBuffer);
 	static std::unique_ptr<PalettePAL> loadFrom(const std::string & filePath);
 	virtual bool writeTo(ByteBuffer & byteBuffer) const override;

@@ -2,6 +2,14 @@
 
 #include <fmt/core.h>
 
+static size_t getColourIndex(uint8_t x, uint8_t y) {
+	if(x >= Palette::PALETTE_WIDTH || y >= Palette::PALETTE_HEIGHT) {
+		return std::numeric_limits<size_t>::max();
+	}
+
+	return (static_cast<size_t>(x)) + (static_cast<size_t>(y) * Palette::PALETTE_HEIGHT);
+}
+
 Palette::Palette(uint8_t bytesPerColour, const std::string & filePath)
 	: GameFile(filePath)
 	, m_bytesPerColour(bytesPerColour) { }
@@ -38,6 +46,20 @@ uint8_t Palette::numberOfBytesPerColour() const {
 	return m_bytesPerColour;
 }
 
+const Colour & Palette::getColour(uint8_t x, uint8_t y, uint8_t colourTableIndex, bool * error) const {
+	uint8_t colourIndex = getColourIndex(x, y);
+
+	if(colourIndex >= NUMBER_OF_COLOURS) {
+		if(error != nullptr) {
+			*error = true;
+		}
+
+		return Colour::INVISIBLE;
+	}
+
+	return lookupColour(colourIndex, colourTableIndex, error);
+}
+
 std::optional<Colour> Palette::getColour(uint8_t x, uint8_t y, uint8_t colourTableIndex) const {
 	bool error = false;
 
@@ -48,10 +70,6 @@ std::optional<Colour> Palette::getColour(uint8_t x, uint8_t y, uint8_t colourTab
 	}
 
 	return colour;
-}
-
-const Colour & Palette::lookupColour(uint8_t colourIndex, uint8_t colourTableIndex, bool * error) const {
-	return getColour(colourIndex % Palette::PALETTE_WIDTH, static_cast<uint8_t>(floor(colourIndex / Palette::PALETTE_HEIGHT)), colourTableIndex, error);
 }
 
 std::optional<Colour> Palette::lookupColour(uint8_t colourIndex, uint8_t colourTableIndex) const {
@@ -66,8 +84,14 @@ std::optional<Colour> Palette::lookupColour(uint8_t colourIndex, uint8_t colourT
 	return colour;
 }
 
-bool Palette::updateColour(uint8_t colourIndex, const Colour & colour, uint8_t colourTableIndex) {
-	return updateColour(colourIndex % Palette::PALETTE_WIDTH, static_cast<uint8_t>(floor(colourIndex / Palette::PALETTE_HEIGHT)), colour, colourTableIndex);
+bool Palette::updateColour(uint8_t x, uint8_t y, const Colour & colour, uint8_t colourTableIndex) {
+	uint8_t colourIndex = getColourIndex(x, y);
+
+	if(colourIndex >= NUMBER_OF_COLOURS) {
+		return false;
+	}
+
+	return updateColour(colourIndex, colour, colourTableIndex);
 }
 
 std::vector<Colour> Palette::getColourTableData(uint8_t colourTableIndex) const {

@@ -21,12 +21,12 @@ public:
 	uint8_t numberOfBytesPerColour() const;
 	virtual std::optional<uint16_t> numberOfColours(uint8_t colourTableIndex = 0) const = 0;
 	virtual std::optional<uint16_t> getTransparentColourIndex(uint8_t colourTableIndex = 0) const = 0;
-	virtual const Colour & getColour(uint8_t x, uint8_t y, uint8_t colourTableIndex = 0, bool * error = nullptr) const = 0;
+	const Colour & getColour(uint8_t x, uint8_t y, uint8_t colourTableIndex = 0, bool * error = nullptr) const;
 	std::optional<Colour> getColour(uint8_t x, uint8_t y, uint8_t colourTableIndex = 0) const;
-	const Colour & lookupColour(uint8_t colourIndex, uint8_t colourTableIndex = 0, bool * error = nullptr) const;
+	virtual const Colour & lookupColour(uint8_t colourIndex, uint8_t colourTableIndex = 0, bool * error = nullptr) const = 0;
 	std::optional<Colour> lookupColour(uint8_t colourIndex, uint8_t colourTableIndex = 0) const;
-	virtual bool updateColour(uint8_t x, uint8_t y, const Colour & colour, uint8_t colourTableIndex = 0) = 0;
-	bool updateColour(uint8_t colourIndex, const Colour & colour, uint8_t colourTableIndex = 0);
+	bool updateColour(uint8_t x, uint8_t y, const Colour & colour, uint8_t colourTableIndex = 0);
+	virtual bool updateColour(uint8_t colourIndex, const Colour & colour, uint8_t colourTableIndex = 0) = 0;
 	std::vector<Colour> getColourTableData(uint8_t colourTableIndex = 0) const;
 	std::vector<Colour> getAllColourTableData(uint8_t colourTableIndex = 0) const;
 	bool updateColourTableData(uint8_t colourTableIndex, const std::vector<Colour> & colourData, uint64_t colourDataOffset = 0);
