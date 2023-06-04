@@ -87,6 +87,8 @@ set(MAIN_SOURCE_FILES
 	Game/File/Palette/Palette.cpp
 	Game/File/Palette/ACT/PaletteACT.h
 	Game/File/Palette/ACT/PaletteACT.cpp
+	Game/File/Palette/PAL/PalettePAL.h
+	Game/File/Palette/PAL/PalettePAL.cpp
 	Game/File/Zip/Zip.h
 	Game/File/Zip/Zip.cpp
 	Manager/InstalledModInfo.h

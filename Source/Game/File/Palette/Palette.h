@@ -36,6 +36,7 @@ public:
 	virtual uint8_t numberOfColourTables() const;
 	virtual std::string getColourTableDescription(uint8_t colourTableIndex) const;
 	virtual void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
+	virtual bool isValid(bool verifyParent = false) const override;
 
 	static constexpr uint8_t PALETTE_WIDTH = 16;
 	static constexpr uint8_t PALETTE_HEIGHT = 16;

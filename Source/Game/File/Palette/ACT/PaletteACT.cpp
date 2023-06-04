@@ -75,7 +75,7 @@ const Colour & PaletteACT::getColour(uint8_t x, uint8_t y, uint8_t colourTableIn
 
 	size_t colourIndex = getColourIndex(x, y);
 
-	if(colourIndex == std::numeric_limits<size_t>::max()) {
+	if(colourIndex >= m_colours.size()) {
 		return Colour::INVISIBLE;
 	}
 
@@ -89,7 +89,7 @@ bool PaletteACT::updateColour(uint8_t x, uint8_t y, const Colour & colour, uint8
 
 	size_t colourIndex = getColourIndex(x, y);
 
-	if(colourIndex == std::numeric_limits<size_t>::max()) {
+	if(colourIndex >= m_colours.size()) {
 		return false;
 	}
 
@@ -224,5 +224,9 @@ size_t PaletteACT::getSizeInBytes() const {
 }
 
 bool PaletteACT::isValid(bool verifyParent) const {
+	if(!Palette::isValid(verifyParent)) {
+		return false;
+	}
+
 	return true;
 }

@@ -198,3 +198,21 @@ void Palette::addMetadata(std::vector<std::pair<std::string, std::string>> & met
 		}
 	}
 }
+
+bool Palette::isValid(bool verifyParent) const {
+	uint8_t colourTableCount = numberOfColourTables();
+
+	if(colourTableCount == 0) {
+		return false;
+	}
+
+	for(uint8_t i = 0; i < colourTableCount; i++) {
+		std::optional<uint16_t> optionalTransparentColourIndex(getTransparentColourIndex());
+
+		if(optionalTransparentColourIndex.has_value() && optionalTransparentColourIndex.value() > numberOfColours()) {
+			return false;
+		}
+	}
+
+	return true;
+}

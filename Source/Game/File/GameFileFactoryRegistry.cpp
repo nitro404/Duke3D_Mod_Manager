@@ -4,6 +4,7 @@
 #include "Group/Group.h"
 #include "Map/Map.h"
 #include "Palette/ACT/PaletteACT.h"
+#include "Palette/PAL/PalettePAL.h"
 #include "Zip/Zip.h"
 
 #include <Utilities/FileUtilities.h>
@@ -127,6 +128,14 @@ void GameFileFactoryRegistry::assignDefaultFactories() {
 		return Map::readFrom(data);
 	}, [](const std::string & filePath) {
 		return Map::loadFrom(filePath);
+	});
+
+	setFactory("pal", []() {
+		return std::make_unique<PalettePAL>();
+	}, [](const ByteBuffer & data) {
+		return PalettePAL::readFrom(data);
+	}, [](const std::string & filePath) {
+		return PalettePAL::loadFrom(filePath);
 	});
 
 	setFactory("zip", []() {
