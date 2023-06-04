@@ -3,19 +3,19 @@
 
 #include "../Palette.h"
 
-#include <array>
-
 class PaletteACT final : public Palette {
 public:
 	PaletteACT(const std::string & filePath = {});
-	PaletteACT(std::array<Colour, NUMBER_OF_COLOURS> colours, const std::string & filePath = {});
+	PaletteACT(std::vector<Colour> colours, std::optional<uint16_t> transparentColourIndex = {}, const std::string & filePath = {});
 	PaletteACT(PaletteACT && palette) noexcept;
 	PaletteACT(const PaletteACT & palette);
 	PaletteACT & operator = (PaletteACT && palette) noexcept;
 	PaletteACT & operator = (const PaletteACT & palette);
 	virtual ~PaletteACT();
 
-	virtual Colour getColour(uint8_t x, uint8_t y, uint8_t colourTableIndex, bool * error = nullptr) const override;
+	virtual std::optional<uint16_t> numberOfColours(uint8_t colourTableIndex = 0) const override;
+	virtual std::optional<uint16_t> getTransparentColourIndex(uint8_t colourTableIndex = 0) const override;
+	virtual const Colour & getColour(uint8_t x, uint8_t y, uint8_t colourTableIndex, bool * error = nullptr) const override;
 	virtual bool updateColour(uint8_t x, uint8_t y, const Colour & colour, uint8_t colourTableIndex = 0) override;
 	static std::unique_ptr<PaletteACT> readFrom(const ByteBuffer & byteBuffer);
 	static std::unique_ptr<PaletteACT> loadFrom(const std::string & filePath);
@@ -24,11 +24,12 @@ public:
 	virtual size_t getSizeInBytes() const override;
 	virtual bool isValid(bool verifyParent = false) const override;
 
+	static constexpr Endianness ENDIANNESS = Endianness::BigEndian;
 	static constexpr uint8_t BYTES_PER_COLOUR = 3;
-	static constexpr uint64_t SIZE_BYTES = NUMBER_OF_COLOURS * BYTES_PER_COLOUR;
 
 private:
-	std::array<Colour, NUMBER_OF_COLOURS> m_colours;
+	std::vector<Colour> m_colours;
+	std::optional<uint16_t> m_transparentColourIndex;
 };
 
 #endif // _PALETTE_ACT_H_
