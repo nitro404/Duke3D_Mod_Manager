@@ -5,29 +5,36 @@
 #include <spdlog/spdlog.h>
 
 PaletteACT::PaletteACT(const std::string & filePath)
-	: Palette(BYTES_PER_COLOUR, filePath) { }
+	: Palette(filePath)
+	, m_colourTable(std::make_shared<ColourTable>()) {
+	updateParent();
+}
 
-PaletteACT::PaletteACT(std::vector<Colour> colours, std::optional<uint16_t> transparentColourIndex, const std::string & filePath)
-	: Palette(BYTES_PER_COLOUR, filePath)
-	, m_colours(std::move(colours))
-	, m_transparentColourIndex(transparentColourIndex) { }
+PaletteACT::PaletteACT(std::unique_ptr<ColourTable> colourTable, const std::string & filePath)
+	: Palette(filePath)
+	, m_colourTable(colourTable != nullptr ? std::shared_ptr<ColourTable>(colourTable.release()) : std::make_shared<ColourTable>()) {
+	updateParent();
+}
 
 PaletteACT::PaletteACT(PaletteACT && palette) noexcept
 	: Palette(palette)
-	, m_colours(std::move(palette.m_colours))
-	, m_transparentColourIndex(palette.m_transparentColourIndex) { }
+	, m_colourTable(std::move(palette.m_colourTable)) {
+	updateParent();
+}
 
 PaletteACT::PaletteACT(const PaletteACT & palette)
 	: Palette(palette)
-	, m_colours(palette.m_colours)
-	, m_transparentColourIndex(palette.m_transparentColourIndex) { }
+	, m_colourTable(palette.m_colourTable) {
+	updateParent();
+}
 
 PaletteACT & PaletteACT::operator = (PaletteACT && palette) noexcept {
 	if(this != &palette) {
 		Palette::operator = (palette);
 
-		m_colours = std::move(palette.m_colours);
-		m_transparentColourIndex = palette.m_transparentColourIndex;
+		m_colourTable = std::move(palette.m_colourTable);
+
+		updateParent();
 	}
 
 	return *this;
@@ -36,46 +43,21 @@ PaletteACT & PaletteACT::operator = (PaletteACT && palette) noexcept {
 PaletteACT & PaletteACT::operator = (const PaletteACT & palette) {
 	Palette::operator = (palette);
 
-	m_colours = palette.m_colours;
-	m_transparentColourIndex = palette.m_transparentColourIndex;
+	m_colourTable = palette.m_colourTable;
+
+	updateParent();
 
 	return *this;
 }
 
 PaletteACT::~PaletteACT() { }
 
-std::optional<uint16_t> PaletteACT::numberOfColours(uint8_t colourTableIndex) const {
+std::shared_ptr<Palette::ColourTable> PaletteACT::getColourTable(uint8_t colourTableIndex) const {
 	if(colourTableIndex != 0) {
-		return {};
+		return nullptr;
 	}
 
-	return static_cast<uint16_t>(m_colours.size());
-}
-
-std::optional<uint16_t> PaletteACT::getTransparentColourIndex(uint8_t colourTableIndex) const {
-	if(colourTableIndex != 0) {
-		return {};
-	}
-
-	return m_transparentColourIndex;
-}
-
-const Colour & PaletteACT::lookupColour(uint8_t colourIndex, uint8_t colourTableIndex, bool * error) const {
-	if(colourTableIndex != 0 || colourIndex >= m_colours.size()) {
-		return Colour::INVISIBLE;
-	}
-
-	return m_colours[colourIndex];
-}
-
-bool PaletteACT::updateColour(uint8_t colourIndex, const Colour & colour, uint8_t colourTableIndex) {
-	if(colourTableIndex != 0 || colourIndex >= m_colours.size()) {
-		return false;
-	}
-
-	m_colours[colourIndex] = colour;
-
-	return true;
+	return m_colourTable;
 }
 
 std::unique_ptr<PaletteACT> PaletteACT::readFrom(const ByteBuffer & byteBuffer) {
@@ -113,7 +95,7 @@ std::unique_ptr<PaletteACT> PaletteACT::readFrom(const ByteBuffer & byteBuffer) 
 		}
 	}
 
-	std::optional<uint16_t> optionalTransparentColourIndex;
+	std::optional<uint8_t> optionalTransparentColourIndex;
 	size_t bytesRemaining = byteBuffer.numberOfBytesRemaining();
 
 	if(bytesRemaining == 4) {
@@ -125,20 +107,24 @@ std::unique_ptr<PaletteACT> PaletteACT::readFrom(const ByteBuffer & byteBuffer) 
 		}
 
 		if(colours.size() != numberOfColours) {
-			spdlog::info("Resizing Adobe Photoshop ACT palette colour list from {} to {} colours .", colours.size(), numberOfColours);
+			spdlog::debug("Resizing Adobe Photoshop ACT palette colour list from {} to {} colours.", colours.size(), numberOfColours);
 
 			colours.resize(numberOfColours);
 		}
 
-		optionalTransparentColourIndex = byteBuffer.readUnsignedShort(&error);
+		std::optional<uint16_t> optionalFullTransparentColourIndex(byteBuffer.readUnsignedShort(&error));
 
 		if(error) {
 			spdlog::error("Missing Adobe Photoshop ACT palette transparent colour index.");
 			return nullptr;
 		}
 
-		if(optionalTransparentColourIndex.value() >= numberOfColours) {
-			spdlog::error("Adobe Photoshop ACT palette transparent colour index of {} must be less than the number of colours ({}).", optionalTransparentColourIndex.value(), numberOfColours);
+		if(optionalFullTransparentColourIndex.value() < numberOfColours) {
+			optionalTransparentColourIndex = static_cast<uint8_t>(optionalFullTransparentColourIndex.value());
+		}
+		else if(optionalFullTransparentColourIndex.value() != std::numeric_limits<uint16_t>::max()) {
+			// no transparent colour index is denoted using a value of 65535, so any other value is considered as invalid
+			spdlog::error("Adobe Photoshop ACT palette transparent colour index of {} must be less than the number of colours ({}).", optionalFullTransparentColourIndex.value(), numberOfColours);
 			return nullptr;
 		}
 
@@ -152,7 +138,7 @@ std::unique_ptr<PaletteACT> PaletteACT::readFrom(const ByteBuffer & byteBuffer) 
 		spdlog::warn("Adobe Photoshop ACT palette contains an unexpected additional {} byte{} after the colour data, they will be discarded.", bytesRemaining == 1 ? "" : "s");
 	}
 
-	return std::make_unique<PaletteACT>(colours, optionalTransparentColourIndex);
+	return std::make_unique<PaletteACT>(std::make_unique<ColourTable>(std::move(colours), optionalTransparentColourIndex));
 }
 
 std::unique_ptr<PaletteACT> PaletteACT::loadFrom(const std::string & filePath) {
@@ -176,19 +162,24 @@ std::unique_ptr<PaletteACT> PaletteACT::loadFrom(const std::string & filePath) {
 bool PaletteACT::writeTo(ByteBuffer & byteBuffer) const {
 	byteBuffer.setEndianness(ENDIANNESS);
 
-	for(uint16_t i = 0; i < m_colours.size(); i++) {
-		if(!m_colours[i].writeTo(byteBuffer, false)) {
-			return false;
-		}
+	if(!m_colourTable->writeTo(byteBuffer, false, Colour::BLACK)) {
+		return false;
 	}
 
-	if(m_transparentColourIndex.has_value()) {
-		if(!byteBuffer.writeUnsignedShort(static_cast<uint16_t>(m_colours.size()))) {
+	if(m_colourTable->hasTransparentColourIndex() || m_colourTable->numberOfColours() != NUMBER_OF_COLOURS) {
+		if(!byteBuffer.writeUnsignedShort(m_colourTable->numberOfColours())) {
 			return false;
 		}
 
-		if(!byteBuffer.writeUnsignedShort(m_transparentColourIndex.value())) {
-			return false;
+		if(m_colourTable->hasTransparentColourIndex()) {
+			if(!byteBuffer.writeUnsignedShort(m_colourTable->getTransparentColourIndex().value())) {
+				return false;
+			}
+		}
+		else {
+			if(!byteBuffer.writeUnsignedShort(std::numeric_limits<uint16_t>::max())) {
+				return false;
+			}
 		}
 	}
 
@@ -200,13 +191,17 @@ Endianness PaletteACT::getEndianness() const {
 }
 
 size_t PaletteACT::getSizeInBytes() const {
-	return NUMBER_OF_COLOURS * BYTES_PER_COLOUR + (m_transparentColourIndex.has_value() ? (sizeof(uint16_t) * 2) : 0);
+	return NUMBER_OF_COLOURS * BYTES_PER_COLOUR + (m_colourTable->hasTransparentColourIndex() || m_colourTable->numberOfColours() != NUMBER_OF_COLOURS ? (sizeof(uint16_t) * 2) : 0);
 }
 
-bool PaletteACT::isValid(bool verifyParent) const {
-	if(!Palette::isValid(verifyParent)) {
-		return false;
-	}
+void PaletteACT::updateParent() {
+	m_colourTable->setParent(this);
+}
 
-	return true;
+bool PaletteACT::operator == (const PaletteACT & palette) const {
+	return *m_colourTable == *palette.m_colourTable;
+}
+
+bool PaletteACT::operator != (const PaletteACT & palette) const {
+	return !operator == (palette);
 }

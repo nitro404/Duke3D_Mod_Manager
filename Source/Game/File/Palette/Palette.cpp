@@ -1,5 +1,7 @@
 #include "Palette.h"
 
+#include <Utilities/StringUtilities.h>
+
 #include <fmt/core.h>
 
 static size_t getColourIndex(uint8_t x, uint8_t y) {
@@ -10,23 +12,18 @@ static size_t getColourIndex(uint8_t x, uint8_t y) {
 	return (static_cast<size_t>(x)) + (static_cast<size_t>(y) * Palette::PALETTE_HEIGHT);
 }
 
-Palette::Palette(uint8_t bytesPerColour, const std::string & filePath)
-	: GameFile(filePath)
-	, m_bytesPerColour(bytesPerColour) { }
+Palette::Palette(const std::string & filePath)
+	: GameFile(filePath) { }
 
 Palette::Palette(Palette && palette) noexcept
-	: GameFile(palette)
-	, m_bytesPerColour(palette.m_bytesPerColour) { }
+	: GameFile(palette) { }
 
 Palette::Palette(const Palette & palette)
-	: GameFile(palette)
-	, m_bytesPerColour(palette.m_bytesPerColour) { }
+	: GameFile(palette) { }
 
 Palette & Palette::operator = (Palette && palette) noexcept {
 	if(this != &palette) {
 		GameFile::operator = (palette);
-
-		m_bytesPerColour = palette.m_bytesPerColour;
 	}
 
 	return *this;
@@ -35,15 +32,99 @@ Palette & Palette::operator = (Palette && palette) noexcept {
 Palette & Palette::operator = (const Palette & palette) {
 	GameFile::operator = (palette);
 
-	m_bytesPerColour = palette.m_bytesPerColour;
-
 	return *this;
 }
 
 Palette::~Palette() { }
 
-uint8_t Palette::numberOfBytesPerColour() const {
-	return m_bytesPerColour;
+bool Palette::hasTransparentColourIndex(uint8_t colourTableIndex) const {
+	std::shared_ptr<ColourTable> colourTable(getColourTable(colourTableIndex));
+
+	if(colourTable == nullptr) {
+		return {};
+	}
+
+	return colourTable->hasTransparentColourIndex();
+}
+
+std::optional<uint8_t> Palette::getTransparentColourIndex(uint8_t colourTableIndex) const {
+	std::shared_ptr<ColourTable> colourTable(getColourTable(colourTableIndex));
+
+	if(colourTable == nullptr) {
+		return {};
+	}
+
+	return colourTable->getTransparentColourIndex();
+}
+
+bool Palette::setTransparentColourIndex(uint8_t transparentColourIndex, uint8_t colourTableIndex) const {
+	std::shared_ptr<ColourTable> colourTable(getColourTable(colourTableIndex));
+
+	if(colourTable == nullptr) {
+		return false;
+	}
+
+	colourTable->setTransparentColourIndex(transparentColourIndex);
+
+	return true;
+}
+
+bool Palette::clearTransparentColourIndex(uint8_t colourTableIndex) const {
+	std::shared_ptr<ColourTable> colourTable(getColourTable(colourTableIndex));
+
+	if(colourTable == nullptr) {
+		return false;
+	}
+
+	colourTable->clearTransparentColourIndex();
+
+	return true;
+}
+
+std::optional<uint16_t> Palette::numberOfColours(uint8_t colourTableIndex) const {
+	std::shared_ptr<ColourTable> colourTable(getColourTable(colourTableIndex));
+
+	if(colourTable == nullptr) {
+		return {};
+	}
+
+	return colourTable->numberOfColours();
+}
+
+bool Palette::setNumberOfColours(uint16_t colourCount, uint8_t colourTableIndex) const {
+	std::shared_ptr<ColourTable> colourTable(getColourTable(colourTableIndex));
+
+	if(colourTable == nullptr) {
+		return {};
+	}
+
+	return colourTable->setNumberOfColours(colourCount);
+}
+
+const Colour & Palette::getColour(uint8_t colourIndex, uint8_t colourTableIndex, bool * error) const {
+	std::shared_ptr<ColourTable> colourTable(getColourTable(colourTableIndex));
+
+	if(colourTable == nullptr) {
+		if(error != nullptr) {
+			*error = true;
+		}
+
+		return Colour::INVISIBLE;
+	}
+
+	return (*colourTable)[colourIndex];
+}
+
+std::optional<Colour> Palette::getColour(uint8_t colourIndex, uint8_t colourTableIndex) const {
+	bool error = false;
+
+	Colour colour(getColour(colourIndex, colourTableIndex, &error));
+
+	if(error) {
+		return {};
+	}
+
+	return colour;
 }
 
 const Colour & Palette::getColour(uint8_t x, uint8_t y, uint8_t colourTableIndex, bool * error) const {
@@ -57,7 +138,7 @@ const Colour & Palette::getColour(uint8_t x, uint8_t y, uint8_t colourTableIndex
 		return Colour::INVISIBLE;
 	}
 
-	return lookupColour(colourIndex, colourTableIndex, error);
+	return getColour(colourIndex, colourTableIndex, error);
 }
 
 std::optional<Colour> Palette::getColour(uint8_t x, uint8_t y, uint8_t colourTableIndex) const {
@@ -72,90 +153,64 @@ std::optional<Colour> Palette::getColour(uint8_t x, uint8_t y, uint8_t colourTab
 	return colour;
 }
 
-std::optional<Colour> Palette::lookupColour(uint8_t colourIndex, uint8_t colourTableIndex) const {
-	bool error = false;
+bool Palette::setColour(uint8_t colourIndex, const Colour & colour, uint8_t colourTableIndex) {
+	std::shared_ptr<ColourTable> colourTable(getColourTable(colourTableIndex));
 
-	Colour colour(lookupColour(colourIndex, colourTableIndex, &error));
-
-	if(error) {
-		return {};
+	if(colourTable == nullptr) {
+		return false;
 	}
 
-	return colour;
+	return colourTable->setColour(colourIndex, colour);
 }
 
-bool Palette::updateColour(uint8_t x, uint8_t y, const Colour & colour, uint8_t colourTableIndex) {
+bool Palette::setColour(uint8_t x, uint8_t y, const Colour & colour, uint8_t colourTableIndex) {
 	uint8_t colourIndex = getColourIndex(x, y);
 
 	if(colourIndex >= NUMBER_OF_COLOURS) {
 		return false;
 	}
 
-	return updateColour(colourIndex, colour, colourTableIndex);
+	return setColour(colourIndex, colour, colourTableIndex);
 }
 
-std::vector<Colour> Palette::getColourTableData(uint8_t colourTableIndex) const {
-	std::vector<Colour> colours;
-	colours.reserve(NUMBER_OF_COLOURS);
-
+std::vector<std::shared_ptr<Palette::ColourTable>> Palette::getAllColourTables() const {
 	bool error = false;
+	uint8_t colourTableCount = numberOfColourTables();
+	std::shared_ptr<ColourTable> colourTable;
+	std::vector<std::shared_ptr<ColourTable>> colourTables;
 
-	for(uint16_t i = 0; i < NUMBER_OF_COLOURS; i++) {
-		colours.emplace_back(lookupColour(i, colourTableIndex, &error));
+	for(uint8_t i = 0; i < colourTableCount; i++) {
+		colourTable = getColourTable(i);
 
-		if(error) {
+		if(colourTable == nullptr) {
 			return {};
 		}
+
+		colourTables.emplace_back(colourTable);
 	}
 
-	return colours;
+	return colourTables;
 }
 
-std::vector<Colour> Palette::getAllColourTableData(uint8_t colourTableIndex) const {
-	uint8_t colourTableCount = numberOfColourTables();
-	std::vector<Colour> colours;
-	colours.reserve(NUMBER_OF_COLOURS * colourTableCount);
+bool Palette::updateColourTable(uint8_t colourTableIndex, const ColourTable & colourTable) {
+	std::shared_ptr<ColourTable> destinationColourTable(getColourTable(colourTableIndex));
 
-	bool error = false;
-
-	for(uint8_t i = 0; i < colourTableCount; i++) {
-		for(uint16_t j = 0; j < NUMBER_OF_COLOURS; j++) {
-			colours.emplace_back(lookupColour(j, i, &error));
-
-			if(error) {
-				return {};
-			}
-		}
-	}
-
-	return colours;
-}
-
-bool Palette::updateColourTableData(uint8_t colourTableIndex, const std::vector<Colour> & colourData, uint64_t colourDataOffset) {
-	if(colourTableIndex >= numberOfColourTables() || colourData.size() - colourDataOffset < NUMBER_OF_COLOURS) {
+	if(destinationColourTable == nullptr) {
 		return false;
 	}
 
-	for(int j = 0; j < PALETTE_HEIGHT; j++) {
-		for(int i = 0; i < PALETTE_WIDTH; i++) {
-			if(!updateColour(i, j, colourData[colourDataOffset + i + (j * Palette::PALETTE_HEIGHT)], colourTableIndex)) {
-				return false;
-			}
-		}
-	}
-
-	return true;
+	return destinationColourTable->setColours(colourTable);
 }
 
-bool Palette::updateAllColourTablesData(const std::vector<Colour> & colourData) {
+bool Palette::updateAllColourTables(const std::vector<std::shared_ptr<const ColourTable>> & colourTables) {
 	uint8_t colourTableCount = numberOfColourTables();
 
-	if(colourData.size() != colourTableCount * NUMBER_OF_COLOURS) {
+	if(colourTables.size() != colourTableCount) {
 		return false;
 	}
 
 	for(uint8_t i = 0; i < colourTableCount; i++) {
-		if(!updateColourTableData(i, colourData, i * NUMBER_OF_COLOURS)) {
+		if(!updateColourTable(i, *colourTables[i])) {
 			return false;
 		}
 	}
@@ -164,13 +219,13 @@ bool Palette::updateAllColourTablesData(const std::vector<Colour> & colourData) 
 }
 
 bool Palette::fillColourTableWithColour(const Colour & colour, uint8_t colourTableIndex) {
-	for(int j = 0; j < PALETTE_HEIGHT; j++) {
-		for(int i = 0; i < PALETTE_WIDTH; i++) {
-			if(!updateColour(i, j, colour, colourTableIndex)) {
-				return false;
-			}
-		}
+	std::shared_ptr<ColourTable> colourTable(getColourTable(colourTableIndex));
+
+	if(colourTable == nullptr) {
+		return false;
 	}
+
+	colourTable->fillWithColour(colour);
 
 	return true;
 }
@@ -191,23 +246,24 @@ uint8_t Palette::numberOfColourTables() const {
 	return 1;
 }
 
-std::string Palette::getColourTableDescription(uint8_t colourTableIndex) const {
-	if(colourTableIndex != 0) {
-		return {};
+const std::string & Palette::getColourTableDescription(uint8_t colourTableIndex) const {
+	std::shared_ptr<ColourTable> colourTable(getColourTable(colourTableIndex));
+
+	if(colourTable == nullptr) {
+		return Utilities::emptyString;
 	}
 
-	return "Default";
+	return colourTable->getDescription();
 }
 
 void Palette::addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const {
 	uint8_t colourTableCount = numberOfColourTables();
 
-	metadata.push_back({ "Bytes Per Colour", std::to_string(numberOfBytesPerColour()) });
 	metadata.push_back({ "Number of Colour Tables", std::to_string(colourTableCount) });
 
 	if(colourTableCount == 1) {
 		std::optional<uint16_t> optionalNumberOfColours(numberOfColours());
-		std::optional<uint16_t> optionalTransparentColourIndex(getTransparentColourIndex());
+		std::optional<uint8_t> optionalTransparentColourIndex(getTransparentColourIndex());
 
 		metadata.push_back({ "Number of Colours", optionalNumberOfColours.has_value() ? std::to_string(optionalNumberOfColours.value()) : "N/A" });
 		metadata.push_back({ "Transparent Colour Index", optionalTransparentColourIndex.has_value() ? std::to_string(optionalTransparentColourIndex.value()) : "N/A" });
@@ -216,7 +272,7 @@ void Palette::addMetadata(std::vector<std::pair<std::string, std::string>> & met
 		for(uint8_t i = 0; i < colourTableCount; i++) {
 			std::string colourTableDescription(getColourTableDescription(i));
 			std::optional<uint16_t> optionalNumberOfColours(numberOfColours(i));
-			std::optional<uint16_t> optionalTransparentColourIndex(getTransparentColourIndex(i));
+			std::optional<uint8_t> optionalTransparentColourIndex(getTransparentColourIndex(i));
 
 			metadata.push_back({ fmt::format("Colour Table #{}", i + 1), fmt::format("'{}' Number of Colours: {} Transparent Colour Index: {}", colourTableDescription.empty() ? "Untitled" : colourTableDescription, optionalNumberOfColours.has_value() ? std::to_string(optionalNumberOfColours.value()) : "N/A", optionalTransparentColourIndex.has_value() ? std::to_string(optionalTransparentColourIndex.value()) : "N/A") });
 		}
@@ -231,10 +287,16 @@ bool Palette::isValid(bool verifyParent) const {
 	}
 
 	for(uint8_t i = 0; i < colourTableCount; i++) {
-		std::optional<uint16_t> optionalTransparentColourIndex(getTransparentColourIndex());
+		std::shared_ptr<ColourTable> colourTable(getColourTable(i));
 
-		if(optionalTransparentColourIndex.has_value() && optionalTransparentColourIndex.value() > numberOfColours()) {
+		if(!ColourTable::isValid(colourTable.get())) {
 			return false;
+		}
+
+		if(verifyParent) {
+			if(colourTable->getParent() != this) {
+				return false;
+			}
 		}
 	}
 

@@ -18,7 +18,8 @@ public:
 	};
 
 	PalettePAL(const std::string & filePath = {});
-	PalettePAL(std::vector<Colour> colours, std::vector<ColourFlag> colourFlags = {}, uint16_t version = PAL_VERSION, const std::string & filePath = {});
+	PalettePAL(std::unique_ptr<ColourTable> colourTable, std::vector<ColourFlag> colourFlags = {}, uint16_t version = PAL_VERSION, const std::string & filePath = {});
+	PalettePAL(const ColourTable & colourTable, std::vector<ColourFlag> colourFlags = {}, uint16_t version = PAL_VERSION, const std::string & filePath = {});
 	PalettePAL(PalettePAL && palette) noexcept;
 	PalettePAL(const PalettePAL & palette);
 	PalettePAL & operator = (PalettePAL && palette) noexcept;
@@ -29,17 +30,17 @@ public:
 	const std::vector<ColourFlag> & getColourFlags() const;
 	size_t getDocumentSizeInBytes() const;
 	size_t getPaletteChunkSizeInBytes() const;
-	virtual std::optional<uint16_t> numberOfColours(uint8_t colourTableIndex = 0) const override;
-	virtual std::optional<uint16_t> getTransparentColourIndex(uint8_t colourTableIndex = 0) const override;
-	virtual const Colour & lookupColour(uint8_t colourIndex, uint8_t colourTableIndex, bool * error = nullptr) const override;
-	virtual bool updateColour(uint8_t colourIndex, const Colour & colour, uint8_t colourTableIndex = 0) override;
+	virtual std::shared_ptr<ColourTable> getColourTable(uint8_t colourTableIndex = 0) const override;
 	static std::unique_ptr<PalettePAL> readFrom(const ByteBuffer & byteBuffer);
 	static std::unique_ptr<PalettePAL> loadFrom(const std::string & filePath);
 	virtual bool writeTo(ByteBuffer & byteBuffer) const override;
 	virtual void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
 	virtual Endianness getEndianness() const override;
 	virtual size_t getSizeInBytes() const override;
-	virtual bool isValid(bool verifyParent = false) const override;
+	virtual bool isValid(bool verifyParent = true) const override;
+
+	bool operator == (const PalettePAL & palette) const;
+	bool operator != (const PalettePAL & palette) const;
 
 	static constexpr Endianness ENDIANNESS = Endianness::LittleEndian;
 	static inline const std::string RIFF_SIGNATURE = "RIFF";
@@ -52,8 +53,10 @@ public:
 	static constexpr uint8_t CHUNK_TYPE_SIZE_BYTES = 4;
 
 private:
+	void updateParent();
+
 	uint16_t m_version;
-	std::vector<Colour> m_colours;
+	std::shared_ptr<ColourTable> m_colourTable;
 	std::vector<ColourFlag> m_colourFlags;
 };
 
