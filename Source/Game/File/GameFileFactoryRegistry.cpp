@@ -4,6 +4,7 @@
 #include "Group/Group.h"
 #include "Map/Map.h"
 #include "Palette/ACT/PaletteACT.h"
+#include "Palette/JASC/PaletteJASC.h"
 #include "Palette/PAL/PalettePAL.h"
 #include "Zip/Zip.h"
 
@@ -120,6 +121,14 @@ void GameFileFactoryRegistry::assignDefaultFactories() {
 		return Group::readFrom(data);
 	}, [](const std::string & filePath) {
 		return Group::loadFrom(filePath);
+	});
+
+	setFactory("jasc", []() {
+		return std::make_unique<PaletteJASC>();
+	}, [](const ByteBuffer & data) {
+		return PaletteJASC::readFrom(data);
+	}, [](const std::string & filePath) {
+		return PaletteJASC::loadFrom(filePath);
 	});
 
 	setFactory("map", []() {
