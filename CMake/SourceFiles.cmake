@@ -88,6 +88,8 @@ set(MAIN_SOURCE_FILES
 	Game/File/Palette/Palette.cpp
 	Game/File/Palette/ACT/PaletteACT.h
 	Game/File/Palette/ACT/PaletteACT.cpp
+	Game/File/Palette/GPL/PaletteGPL.h
+	Game/File/Palette/GPL/PaletteGPL.cpp
 	Game/File/Palette/JASC/PaletteJASC.h
 	Game/File/Palette/JASC/PaletteJASC.cpp
 	Game/File/Palette/PAL/PalettePAL.h

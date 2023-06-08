@@ -4,6 +4,7 @@
 #include "Group/Group.h"
 #include "Map/Map.h"
 #include "Palette/ACT/PaletteACT.h"
+#include "Palette/GPL/PaletteGPL.h"
 #include "Palette/JASC/PaletteJASC.h"
 #include "Palette/PAL/PalettePAL.h"
 #include "Zip/Zip.h"
@@ -113,6 +114,14 @@ void GameFileFactoryRegistry::assignDefaultFactories() {
 		return Art::readFrom(data);
 	}, [](const std::string & filePath) {
 		return Art::loadFrom(filePath);
+	});
+
+	setFactory("gpl", []() {
+		return std::make_unique<PaletteGPL>();
+	}, [](const ByteBuffer & data) {
+		return PaletteGPL::readFrom(data);
+	}, [](const std::string & filePath) {
+		return PaletteGPL::loadFrom(filePath);
 	});
 
 	setFactory("grp", []() {
