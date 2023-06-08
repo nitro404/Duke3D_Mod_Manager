@@ -725,7 +725,7 @@ std::unique_ptr<Group> Group::readFrom(const ByteBuffer & byteBuffer) {
 			return false;
 		}
 
-		std::unique_ptr<GroupFile> file(std::make_unique<GroupFile>(fileNames[i], byteBuffer.readBytes(fileSizes[i], &error)));
+		std::unique_ptr<GroupFile> file(std::make_unique<GroupFile>(fileNames[i], byteBuffer.readBytes(fileSizes[i])));
 
 		if(error) {
 			spdlog::error("Group failed to read data bytes for file #{} ('{}').", i + 1, fileNames[i]);

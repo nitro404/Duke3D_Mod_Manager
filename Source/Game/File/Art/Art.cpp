@@ -515,16 +515,16 @@ std::unique_ptr<Art> Art::readFrom(const ByteBuffer & byteBuffer) {
 	std::vector<std::unique_ptr<Tile>> tiles;
 
 	for(uint32_t i = 0; i < tileCount; i++) {
-		uint64_t pixelCount = tileWidths[i] * tileHeights[i];
+		uint64_t pixelCount = static_cast<uint64_t>(tileWidths[i]) * tileHeights[i];
 
-		std::vector<uint8_t> tileBytes(byteBuffer.readBytes(pixelCount, &error));
+		std::unique_ptr<std::vector<uint8_t>> tileBytes(byteBuffer.readBytes(pixelCount));
 
-		if(error) {
+		if(tileBytes == nullptr) {
 			spdlog::error("Failed to read art tile #{} pixel data.", tiles.size() + 1);
 			return nullptr;
 		}
 
-		tiles.emplace_back(std::make_unique<Tile>(localTileStart + i, tileWidths[i], tileHeights[i], tileAttributes[i], std::make_unique<ByteBuffer>(tileBytes)));
+		tiles.emplace_back(std::make_unique<Tile>(localTileStart + i, tileWidths[i], tileHeights[i], tileAttributes[i], std::make_unique<ByteBuffer>(std::move(tileBytes))));
 	}
 
 	std::unique_ptr<ByteBuffer> trailingData(byteBuffer.getRemainingBytes());

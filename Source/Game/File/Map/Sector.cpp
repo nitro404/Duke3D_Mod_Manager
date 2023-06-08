@@ -456,7 +456,7 @@ std::unique_ptr<Sector> Sector::getFrom(const ByteBuffer & byteBuffer, size_t of
 	uint16_t rawFloorAttributes = 0;
 	uint8_t floorPaletteLookupTableNumber = 0;
 	uint8_t filler = 0;
-	std::vector<uint8_t> trailingData;
+	std::unique_ptr<std::vector<uint8_t>> trailingData;
 	bool error = false;
 	size_t newOffset = offset;
 
@@ -752,9 +752,9 @@ std::unique_ptr<Sector> Sector::getFrom(const ByteBuffer & byteBuffer, size_t of
 	newOffset += TaggedItem::SIZE_BYTES;
 
 	if(mapVersion == 6) {
-		trailingData = byteBuffer.getBytes(3, newOffset, &error);
+		trailingData = byteBuffer.getBytes(3, newOffset);
 
-		if(error) {
+		if(trailingData == nullptr) {
 			return nullptr;
 		}
 	}
@@ -765,7 +765,7 @@ std::unique_ptr<Sector> Sector::getFrom(const ByteBuffer & byteBuffer, size_t of
 	Partition::Attributes floorAttributes;
 	floorAttributes.rawValue = rawFloorAttributes;
 
-	return std::make_unique<Sector>(firstWallIndex, numberOfWalls, ceilingHeight, ceilingAttributes, ceilingTileNumber, ceilingSlope, ceilingShade, ceilingPaletteLookupTableNumber, ceilingXPanning, ceilingYPanning, floorHeight, floorAttributes, floorTileNumber, floorSlope, floorShade, floorPaletteLookupTableNumber, floorXPanning, floorYPanning, visibility, taggedItem, filler, trailingData);
+	return std::make_unique<Sector>(firstWallIndex, numberOfWalls, ceilingHeight, ceilingAttributes, ceilingTileNumber, ceilingSlope, ceilingShade, ceilingPaletteLookupTableNumber, ceilingXPanning, ceilingYPanning, floorHeight, floorAttributes, floorTileNumber, floorSlope, floorShade, floorPaletteLookupTableNumber, floorXPanning, floorYPanning, visibility, taggedItem, filler, *trailingData);
 }
 
 std::unique_ptr<Sector> Sector::readFrom(const ByteBuffer & byteBuffer, uint32_t mapVersion) {
