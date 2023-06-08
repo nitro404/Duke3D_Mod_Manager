@@ -16,7 +16,7 @@ public:
 	friend class Palette;
 
 	public:
-		ColourTable(uint16_t numberOfColours = NUMBER_OF_COLOURS, std::optional<uint8_t> transparentColourIndex = {}, bool alpha = false, Palette * parent = nullptr);
+		ColourTable(uint16_t numberOfColours = 0, std::optional<uint8_t> transparentColourIndex = {}, bool alpha = false, Palette * parent = nullptr);
 		ColourTable(const Colour & fillColour, uint16_t numberOfColours = NUMBER_OF_COLOURS, std::optional<uint8_t> transparentColourIndex = {}, bool alpha = false, Palette * parent = nullptr);
 		ColourTable(std::vector<Colour> && colours, std::optional<uint8_t> transparentColourIndex = {}, bool alpha = false, Palette * parent = nullptr);
 		ColourTable(const std::vector<Colour> & colours, std::optional<uint8_t> transparentColourIndex = {}, bool alpha = false, Palette * parent = nullptr);
@@ -39,9 +39,9 @@ public:
 		void clearTransparentColourIndex();
 		bool hasAlphaChannel() const;
 		void setHasAlphaChannel(bool alpha);
-		const std::string & getDescription() const;
-		void setDescription(const std::string & description);
-		void clearDescription();
+		const std::string & getName() const;
+		void setName(const std::string & name);
+		void clearName();
 		bool isParentValid() const;
 		Palette * getParent() const;
 		void setParent(Palette * palette);
@@ -70,7 +70,7 @@ public:
 		std::vector<Colour> m_colours;
 		std::optional<uint8_t> m_transparentColourIndex;
 		bool m_alpha;
-		std::string m_description;
+		std::string m_name;
 		Palette * m_parent;
 	};
 
@@ -99,7 +99,7 @@ public:
 	bool fillColourTableWithColour(const Colour & colour, uint8_t colourTableIndex = 0);
 	bool fillAllColourTablesWithColour(const Colour & colour);
 	virtual uint8_t numberOfColourTables() const;
-	const std::string & getColourTableDescription(uint8_t colourTableIndex) const;
+	const std::string & getColourTableName(uint8_t colourTableIndex = 0) const;
 	virtual void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
 	virtual bool isValid(bool verifyParent = true) const override;
 

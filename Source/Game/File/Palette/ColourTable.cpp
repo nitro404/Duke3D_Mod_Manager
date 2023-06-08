@@ -36,14 +36,14 @@ Palette::ColourTable::ColourTable(ColourTable && colourTable) noexcept
 	: m_colours(std::move(colourTable.m_colours))
 	, m_transparentColourIndex(std::move(colourTable.m_transparentColourIndex))
 	, m_alpha(colourTable.m_alpha)
-	, m_description(std::move(colourTable.m_description))
+	, m_name(std::move(colourTable.m_name))
 	, m_parent(nullptr) { }
 
 Palette::ColourTable::ColourTable(const ColourTable & colourTable)
 	: m_colours(colourTable.m_colours)
 	, m_transparentColourIndex(colourTable.m_transparentColourIndex)
 	, m_alpha(colourTable.m_alpha)
-	, m_description(colourTable.m_description)
+	, m_name(colourTable.m_name)
 	, m_parent(nullptr) { }
 
 Palette::ColourTable & Palette::ColourTable::operator = (ColourTable && colourTable) noexcept {
@@ -51,7 +51,7 @@ Palette::ColourTable & Palette::ColourTable::operator = (ColourTable && colourTa
 		m_colours = std::move(colourTable.m_colours);
 		m_transparentColourIndex = std::move(colourTable.m_transparentColourIndex);
 		m_alpha = colourTable.m_alpha;
-		m_description = std::move(colourTable.m_description);
+		m_name = std::move(colourTable.m_name);
 	}
 
 	return *this;
@@ -61,7 +61,7 @@ Palette::ColourTable & Palette::ColourTable::operator = (const ColourTable & col
 	m_colours = std::move(colourTable.m_colours);
 	m_transparentColourIndex = std::move(colourTable.m_transparentColourIndex);
 	m_alpha = colourTable.m_alpha;
-	m_description = std::move(colourTable.m_description);
+	m_name = std::move(colourTable.m_name);
 
 	return *this;
 }
@@ -153,16 +153,16 @@ void Palette::ColourTable::setHasAlphaChannel(bool alpha) {
 	m_alpha = alpha;
 }
 
-const std::string & Palette::ColourTable::getDescription() const {
-	return m_description;
+const std::string & Palette::ColourTable::getName() const {
+	return m_name;
 }
 
-void Palette::ColourTable::setDescription(const std::string & description) {
-	m_description = description;
+void Palette::ColourTable::setName(const std::string & name) {
+	m_name = name;
 }
 
-void Palette::ColourTable::clearDescription() {
-	m_description = "";
+void Palette::ColourTable::clearName() {
+	m_name = "";
 }
 
 std::unique_ptr<Palette::ColourTable> Palette::ColourTable::getFrom(const ByteBuffer & byteBuffer, size_t offset, uint16_t numberOfColours, bool alpha, Colour::ByteOrder byteOrder) {

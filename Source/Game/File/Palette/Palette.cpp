@@ -246,14 +246,14 @@ uint8_t Palette::numberOfColourTables() const {
 	return 1;
 }
 
-const std::string & Palette::getColourTableDescription(uint8_t colourTableIndex) const {
+const std::string & Palette::getColourTableName(uint8_t colourTableIndex) const {
 	std::shared_ptr<ColourTable> colourTable(getColourTable(colourTableIndex));
 
 	if(colourTable == nullptr) {
 		return Utilities::emptyString;
 	}
 
-	return colourTable->getDescription();
+	return colourTable->getName();
 }
 
 void Palette::addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const {
@@ -262,19 +262,24 @@ void Palette::addMetadata(std::vector<std::pair<std::string, std::string>> & met
 	metadata.push_back({ "Number of Colour Tables", std::to_string(colourTableCount) });
 
 	if(colourTableCount == 1) {
+		std::string colourTableName(getColourTableName());
 		std::optional<uint16_t> optionalNumberOfColours(numberOfColours());
 		std::optional<uint8_t> optionalTransparentColourIndex(getTransparentColourIndex());
+
+		if(!colourTableName.empty()) {
+			metadata.push_back({ "Palette Name", colourTableName });
+		}
 
 		metadata.push_back({ "Number of Colours", optionalNumberOfColours.has_value() ? std::to_string(optionalNumberOfColours.value()) : "N/A" });
 		metadata.push_back({ "Transparent Colour Index", optionalTransparentColourIndex.has_value() ? std::to_string(optionalTransparentColourIndex.value()) : "N/A" });
 	}
 	else {
 		for(uint8_t i = 0; i < colourTableCount; i++) {
-			std::string colourTableDescription(getColourTableDescription(i));
+			std::string colourTableName(getColourTableName(i));
 			std::optional<uint16_t> optionalNumberOfColours(numberOfColours(i));
 			std::optional<uint8_t> optionalTransparentColourIndex(getTransparentColourIndex(i));
 
-			metadata.push_back({ fmt::format("Colour Table #{}", i + 1), fmt::format("'{}' Number of Colours: {} Transparent Colour Index: {}", colourTableDescription.empty() ? "Untitled" : colourTableDescription, optionalNumberOfColours.has_value() ? std::to_string(optionalNumberOfColours.value()) : "N/A", optionalTransparentColourIndex.has_value() ? std::to_string(optionalTransparentColourIndex.value()) : "N/A") });
+			metadata.push_back({ fmt::format("Colour Table #{}", i + 1), fmt::format("'{}' Number of Colours: {} Transparent Colour Index: {}", colourTableName.empty() ? "Untitled" : colourTableName, optionalNumberOfColours.has_value() ? std::to_string(optionalNumberOfColours.value()) : "N/A", optionalTransparentColourIndex.has_value() ? std::to_string(optionalTransparentColourIndex.value()) : "N/A") });
 		}
 	}
 }
