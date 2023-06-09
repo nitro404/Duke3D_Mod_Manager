@@ -758,6 +758,9 @@ std::unique_ptr<Sector> Sector::getFrom(const ByteBuffer & byteBuffer, size_t of
 			return nullptr;
 		}
 	}
+	else {
+		trailingData = std::make_unique<std::vector<uint8_t>>();
+	}
 
 	Partition::Attributes ceilingAttributes;
 	ceilingAttributes.rawValue = rawCeilingAttributes;
