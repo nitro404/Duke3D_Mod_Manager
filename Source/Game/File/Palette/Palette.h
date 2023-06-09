@@ -30,6 +30,7 @@ public:
 		const Colour & getColour(uint8_t colourIndex, bool * error = nullptr) const;
 		const std::vector<Colour> & getColours() const;
 		bool setColour(uint8_t colourIndex, const Colour & colour);
+		bool setColour(uint8_t colourIndex, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255);
 		bool setColours(const ColourTable & colourTable);
 		void fillWithColour(const Colour & colour);
 		bool setNumberOfColours(uint16_t colourCount, const Colour & fillColour = Colour::INVISIBLE);

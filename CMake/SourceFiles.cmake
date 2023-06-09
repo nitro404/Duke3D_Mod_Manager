@@ -88,6 +88,11 @@ set(MAIN_SOURCE_FILES
 	Game/File/Palette/Palette.cpp
 	Game/File/Palette/ACT/PaletteACT.h
 	Game/File/Palette/ACT/PaletteACT.cpp
+	Game/File/Palette/DAT/PaletteDAT.h
+	Game/File/Palette/DAT/PaletteDAT.cpp
+	Game/File/Palette/DAT/ShadeTable.cpp
+	Game/File/Palette/DAT/SwapTable.cpp
+	Game/File/Palette/DAT/TranslucencyTable.cpp
 	Game/File/Palette/GPL/PaletteGPL.h
 	Game/File/Palette/GPL/PaletteGPL.cpp
 	Game/File/Palette/JASC/PaletteJASC.h

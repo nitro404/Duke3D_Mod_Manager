@@ -4,6 +4,7 @@
 #include "Group/Group.h"
 #include "Map/Map.h"
 #include "Palette/ACT/PaletteACT.h"
+#include "Palette/DAT/PaletteDAT.h"
 #include "Palette/GPL/PaletteGPL.h"
 #include "Palette/JASC/PaletteJASC.h"
 #include "Palette/PAL/PalettePAL.h"
@@ -114,6 +115,14 @@ void GameFileFactoryRegistry::assignDefaultFactories() {
 		return Art::readFrom(data);
 	}, [](const std::string & filePath) {
 		return Art::loadFrom(filePath);
+	});
+
+	setFactory("dat", []() {
+		return std::make_unique<PaletteDAT>(PaletteDAT::Type::Palette);
+	}, [](const ByteBuffer & data) {
+		return PaletteDAT::readFrom(data);
+	}, [](const std::string & filePath) {
+		return PaletteDAT::loadFrom(filePath);
 	});
 
 	setFactory("gpl", []() {

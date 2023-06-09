@@ -102,8 +102,18 @@ bool Palette::ColourTable::setColour(uint8_t colourIndex, const Colour & colour)
 	return true;
 }
 
+bool Palette::ColourTable::setColour(uint8_t colourIndex, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+	if(colourIndex >= m_colours.size()) {
+		return false;
+	}
+
+	m_colours[colourIndex].setColour(r, g, b, a);
+
+	return true;
+}
+
 bool Palette::ColourTable::setColours(const ColourTable & colourTable) {
-	if(!colourTable.isValid()) {
+	if(!colourTable.isValid(false)) {
 		return false;
 	}
 
@@ -291,7 +301,7 @@ bool Palette::ColourTable::writeTo(ByteBuffer & byteBuffer, bool alpha, const st
 
 bool Palette::ColourTable::isParentValid() const {
 	return m_parent != nullptr &&
-		   m_parent->isValid();
+		   m_parent->isValid(false);
 }
 
 Palette * Palette::ColourTable::getParent() const {
