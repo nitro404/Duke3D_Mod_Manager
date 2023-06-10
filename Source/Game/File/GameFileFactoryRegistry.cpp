@@ -2,6 +2,7 @@
 
 #include "Art/Art.h"
 #include "Group/GRP/GroupGRP.h"
+#include "Group/SSI/GroupSSI.h"
 #include "Map/Map.h"
 #include "Palette/ACT/PaletteACT.h"
 #include "Palette/DAT/PaletteDAT.h"
@@ -163,6 +164,14 @@ void GameFileFactoryRegistry::assignDefaultFactories() {
 		return PalettePAL::readFrom(data);
 	}, [](const std::string & filePath) {
 		return PalettePAL::loadFrom(filePath);
+	});
+
+	setFactory("ssi", []() {
+		return std::make_unique<GroupSSI>();
+	}, [](const ByteBuffer & data) {
+		return GroupSSI::readFrom(data);
+	}, [](const std::string & filePath) {
+		return GroupSSI::loadFrom(filePath);
 	});
 
 	setFactory("zip", []() {
