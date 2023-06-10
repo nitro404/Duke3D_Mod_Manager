@@ -1,6 +1,6 @@
 #include "GameLocator.h"
 
-#include "Game/File/Group/Group.h"
+#include "Game/File/Group/GRP/GroupGRP.h"
 
 #include <Utilities/FileUtilities.h>
 #include <Utilities/StringUtilities.h>
@@ -21,7 +21,7 @@ bool GameLocator::locateGames() {
 			continue;
 		}
 
-		std::string groupFilePath(Utilities::joinPaths(*i, Group::DUKE_NUKEM_3D_GROUP_FILE_NAME));
+		std::string groupFilePath(Utilities::joinPaths(*i, GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME));
 
 		if(!std::filesystem::is_regular_file(std::filesystem::path(groupFilePath))) {
 			continue;

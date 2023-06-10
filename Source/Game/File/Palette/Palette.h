@@ -103,6 +103,7 @@ public:
 	const std::string & getColourTableName(uint8_t colourTableIndex = 0) const;
 	virtual void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
 	virtual bool isValid(bool verifyParent = true) const override;
+	static bool isValid(const Palette * palette, bool verifyParent = true);
 
 	static constexpr uint8_t PALETTE_WIDTH = 16;
 	static constexpr uint8_t PALETTE_HEIGHT = 16;

@@ -8,7 +8,7 @@
 #include "GameLocator.h"
 #include "Game/GameVersion.h"
 #include "Game/NoCDCracker.h"
-#include "Game/File/Group/Group.h"
+#include "Game/File/Group/GRP/GroupGRP.h"
 #include "Manager/SettingsManager.h"
 
 #include <Archive/ArchiveFactoryRegistry.h>
@@ -62,7 +62,7 @@ static const std::array<GameFileInformation, 15> BETA_VERSION_GAME_FILE_INFO_LIS
 	GameFileInformation{ "DOS4GW.EXE",   { "a897c7eb79145a308c4e60b43413bb2daa360506" } },
 	GameFileInformation{ "DUKE.RTS",     { "a9356036aea01583c85b71410f066285afe3af2b" } },
 	GameFileInformation{ "DUKE3D.EXE",   { GameVersion::BETA_VERSION_GAME_EXECUTABLE_SHA1 } },
-	GameFileInformation{ "DUKE3D.GRP",   { Group::DUKE_NUKEM_3D_BETA_VERSION_GROUP_SHA1_FILE_HASH } },
+	GameFileInformation{ "DUKE3D.GRP",   { GroupGRP::DUKE_NUKEM_3D_BETA_VERSION_GROUP_SHA1_FILE_HASH } },
 	GameFileInformation{ "MODEM.PCK",    { "4314bc9bd2c953fe3cd3a51258e483056560ddd6" } },
 	GameFileInformation{ "README.TXT",   { "b73b8ac76be08ba0079c0219c7797981ce18357b" } },
 	GameFileInformation{ "SETMAIN.EXE",  { "f2892c2d765bd4abca2bd41f0e7a1142c3214c81" } },
@@ -81,7 +81,7 @@ static const std::array<GameFileInformation, 12> REGULAR_VERSION_GAME_FILE_INFO_
 	GameFileInformation{ "DN3DHELP.EXE", { "eceefd4f9fa868ced33fcdd68673f1fb9cd8bfc5" } },
 	GameFileInformation{ "DUKE.RTS",     { "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07" } },
 	GameFileInformation{ "DUKE3D.EXE",   { GameVersion::REGULAR_VERSION_GAME_EXECUTABLE_SHA1 } },
-	GameFileInformation{ "DUKE3D.GRP",   { Group::DUKE_NUKEM_3D_REGULAR_VERSION_GROUP_SHA1_FILE_HASH } },
+	GameFileInformation{ "DUKE3D.GRP",   { GroupGRP::DUKE_NUKEM_3D_REGULAR_VERSION_GROUP_SHA1_FILE_HASH } },
 	GameFileInformation{ "MODEM.PCK",    { "c0353741d28ded860d708f0915a27028fb47b9f3" } },
 	GameFileInformation{ "SETMAIN.EXE",  { "e43d96ea4429ab6dd5aab0509bd8705223ba5b21" } },
 	GameFileInformation{ "SETUP.EXE",    { "7110b4b66e5823527750dcda2a8df5939a978c9b" } },
@@ -94,7 +94,7 @@ static const std::array<GameFileInformation, 11> PLUTONIUM_PAK_GAME_FILE_INFO_LI
 	GameFileInformation{ "DN3DHELP.EXE", { "c25dce13ef39d1aa107612dc20ce9d05e8ac8d3f" } },
 	GameFileInformation{ "DUKE.RTS",     { "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07" } },
 	GameFileInformation{ "DUKE3D.EXE",   { GameVersion::PLUTONIUM_PAK_GAME_EXECTUABLE_UNCRACKED_SHA1, GameVersion::PLUTONIUM_PAK_GAME_EXECTUABLE_CRACKED_SHA1 } },
-	GameFileInformation{ "DUKE3D.GRP",   { Group::DUKE_NUKEM_3D_PLUTONIUM_PAK_GROUP_SHA1_FILE_HASH } },
+	GameFileInformation{ "DUKE3D.GRP",   { GroupGRP::DUKE_NUKEM_3D_PLUTONIUM_PAK_GROUP_SHA1_FILE_HASH } },
 	GameFileInformation{ "LICENSE.DOC",  { "ce1a1bb1afbd714bb96ec0c0d8e0b23a94f14c0b" } },
 	GameFileInformation{ "MODEM.PCK",    { "e860d0b4bef48f19cf36cb8406b2b1230ea7ef6a" } },
 	GameFileInformation{ "SETMAIN.EXE",  { "40bd08600df2cd6328e69889b5325b72a123614e" } },
@@ -108,7 +108,7 @@ static const std::array<GameFileInformation, 11> ATOMIC_EDITION_GAME_FILE_INFO_L
 	GameFileInformation{ "DN3DHELP.EXE", { "eeb5666d6e1b705e3684f8ed84ab5ac50b30a690" } },
 	GameFileInformation{ "DUKE.RTS",     { "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07" } },
 	GameFileInformation{ "DUKE3D.EXE",   { GameVersion::ATOMIC_EDITION_GAME_EXECTUABLE_UNCRACKED_SHA1, GameVersion::ATOMIC_EDITION_GAME_EXECTUABLE_CRACKED_SHA1 } },
-	GameFileInformation{ "DUKE3D.GRP",   { Group::DUKE_NUKEM_3D_ATOMIC_EDITION_GROUP_SHA1_FILE_HASH, Group::DUKE_NUKEM_3D_WORLD_TOUR_GROUP_SHA1_FILE_HASH } },
+	GameFileInformation{ "DUKE3D.GRP",   { GroupGRP::DUKE_NUKEM_3D_ATOMIC_EDITION_GROUP_SHA1_FILE_HASH, GroupGRP::DUKE_NUKEM_3D_WORLD_TOUR_GROUP_SHA1_FILE_HASH } },
 	GameFileInformation{ "LICENSE.DOC",  { "ce1a1bb1afbd714bb96ec0c0d8e0b23a94f14c0b" } },
 	GameFileInformation{ "MODEM.PCK",    { "7d88d2ae3a0fc21fcaaeb9cc5c1e72399c0fd0cb" } },
 	GameFileInformation{ "SETMAIN.EXE",  { "40bd08600df2cd6328e69889b5325b72a123614e" } },
@@ -252,7 +252,7 @@ static std::string getGroupFilePath(const std::string & gameVersionID) {
 
 	const GameVersion * groupGameVersion(getGroupGameVersion(gameVersionID));
 
-	return Utilities::joinPaths(settings->downloadsDirectoryPath, settings->groupDownloadsDirectoryName, groupGameVersion->getModDirectoryName(), Group::DUKE_NUKEM_3D_GROUP_FILE_NAME);
+	return Utilities::joinPaths(settings->downloadsDirectoryPath, settings->groupDownloadsDirectoryName, groupGameVersion->getModDirectoryName(), GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME);
 }
 
 static std::string getFallbackGroupDownloadURL(const std::string & gameVersionID) {
@@ -2497,7 +2497,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 			return false;
 		}
 
-		if(Utilities::areStringsEqualIgnoreCase(fileName, Group::DUKE_NUKEM_3D_GROUP_FILE_NAME)) {
+		if(Utilities::areStringsEqualIgnoreCase(fileName, GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME)) {
 			std::string groupFilePath(getGroupFilePath(gameVersion.getID()));
 
 			if(groupFilePath.empty()) {
@@ -2526,7 +2526,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 				}
 			}
 
-			std::string groupFileDestinationPath(Utilities::joinPaths(destinationDirectoryPath, Group::DUKE_NUKEM_3D_GROUP_FILE_NAME));
+			std::string groupFileDestinationPath(Utilities::joinPaths(destinationDirectoryPath, GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME));
 
 			if(Utilities::areSymlinksSupported()) {
 				std::error_code errorCode;
@@ -2719,7 +2719,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 
 			if(calculatedGameFileSHA1.empty()) {
 				// skip missing files that aren't required
-				if(!gameFileInfo.required || (!useFallback && Utilities::areStringsEqualIgnoreCase(gameFileInfo.fileName, Group::DUKE_NUKEM_3D_GROUP_FILE_NAME))) {
+				if(!gameFileInfo.required || (!useFallback && Utilities::areStringsEqualIgnoreCase(gameFileInfo.fileName, GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME))) {
 					return true;
 				}
 
@@ -2915,7 +2915,7 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 		GameLocator * gameLocator = GameLocator::getInstance();
 
 		for(size_t i = 0; i < gameLocator->numberOfGamePaths(); i++) {
-			std::string sourceGroupFilePath(Utilities::joinPaths(*gameLocator->getGamePath(i), Group::DUKE_NUKEM_3D_GROUP_FILE_NAME));
+			std::string sourceGroupFilePath(Utilities::joinPaths(*gameLocator->getGamePath(i), GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME));
 
 			if(!std::filesystem::is_regular_file(std::filesystem::path(sourceGroupFilePath))) {
 				spdlog::warn("Duke Nukem 3D group file is missing at: '{}'.", sourceGroupFilePath);
@@ -2927,16 +2927,16 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 			if(groupSHA1.empty()) {
 				spdlog::error("Failed to calculate SHA1 hash of Duke Nukem 3D group file: '{}'!", sourceGroupFilePath);
 			}
-			else if(Utilities::areStringsEqual(groupSHA1, Group::DUKE_NUKEM_3D_ATOMIC_EDITION_GROUP_SHA1_FILE_HASH)) {
+			else if(Utilities::areStringsEqual(groupSHA1, GroupGRP::DUKE_NUKEM_3D_ATOMIC_EDITION_GROUP_SHA1_FILE_HASH)) {
 				spdlog::debug("Verified '{}' group file SHA1 hash.", GameVersion::ORIGINAL_ATOMIC_EDITION.getLongName());
 			}
-			else if(Utilities::areStringsEqual(groupSHA1, Group::DUKE_NUKEM_3D_WORLD_TOUR_GROUP_SHA1_FILE_HASH)) {
+			else if(Utilities::areStringsEqual(groupSHA1, GroupGRP::DUKE_NUKEM_3D_WORLD_TOUR_GROUP_SHA1_FILE_HASH)) {
 				spdlog::debug("Verified '{}' group file SHA1 hash.", GameVersion::ORIGINAL_ATOMIC_EDITION.getLongName());
 			}
-			else if(Utilities::areStringsEqual(groupSHA1, Group::DUKE_NUKEM_3D_PLUTONIUM_PAK_GROUP_SHA1_FILE_HASH)) {
+			else if(Utilities::areStringsEqual(groupSHA1, GroupGRP::DUKE_NUKEM_3D_PLUTONIUM_PAK_GROUP_SHA1_FILE_HASH)) {
 				spdlog::error("Calculated '{}' SHA1 hash for Duke Nukem 3D group file '{}', when '{}' group file was expected! This may cause unexpected gameplay issues.", GameVersion::ORIGINAL_PLUTONIUM_PAK.getLongName(), sourceGroupFilePath, GameVersion::ORIGINAL_ATOMIC_EDITION.getLongName());
 			}
-			else if(Utilities::areStringsEqual(groupSHA1, Group::DUKE_NUKEM_3D_REGULAR_VERSION_GROUP_SHA1_FILE_HASH)) {
+			else if(Utilities::areStringsEqual(groupSHA1, GroupGRP::DUKE_NUKEM_3D_REGULAR_VERSION_GROUP_SHA1_FILE_HASH)) {
 				spdlog::error("Calculated '{}' SHA1 hash for Duke Nukem 3D group file '{}', when '{}' group file was expected! This may cause unexpected gameplay issues.", GameVersion::ORIGINAL_REGULAR_VERSION.getLongName(), sourceGroupFilePath, GameVersion::ORIGINAL_ATOMIC_EDITION.getLongName());
 			}
 			else {
@@ -3071,7 +3071,7 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 		return false;
 	}
 
-	std::shared_ptr<ArchiveEntry> groupFileEntry(groupArchive->getFirstEntryWithName(Group::DUKE_NUKEM_3D_GROUP_FILE_NAME, true));
+	std::shared_ptr<ArchiveEntry> groupFileEntry(groupArchive->getFirstEntryWithName(GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME, true));
 
 	if(groupFileEntry == nullptr) {
 		spdlog::error("{} group package file is missing group file entry!", groupGameVersion->getLongName());
@@ -3099,16 +3099,16 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 	std::string_view expectedGroupSHA1;
 
 	if(isBetaVersion) {
-		expectedGroupSHA1 = Group::DUKE_NUKEM_3D_BETA_VERSION_GROUP_SHA1_FILE_HASH;
+		expectedGroupSHA1 = GroupGRP::DUKE_NUKEM_3D_BETA_VERSION_GROUP_SHA1_FILE_HASH;
 	}
 	else if(isRegularVersion) {
-		expectedGroupSHA1 = Group::DUKE_NUKEM_3D_REGULAR_VERSION_GROUP_SHA1_FILE_HASH;
+		expectedGroupSHA1 = GroupGRP::DUKE_NUKEM_3D_REGULAR_VERSION_GROUP_SHA1_FILE_HASH;
 	}
 	else if(isPlutoniumPak) {
-		expectedGroupSHA1 = Group::DUKE_NUKEM_3D_PLUTONIUM_PAK_GROUP_SHA1_FILE_HASH;
+		expectedGroupSHA1 = GroupGRP::DUKE_NUKEM_3D_PLUTONIUM_PAK_GROUP_SHA1_FILE_HASH;
 	}
 	else {
-		expectedGroupSHA1 = Group::DUKE_NUKEM_3D_ATOMIC_EDITION_GROUP_SHA1_FILE_HASH;
+		expectedGroupSHA1 = GroupGRP::DUKE_NUKEM_3D_ATOMIC_EDITION_GROUP_SHA1_FILE_HASH;
 	}
 
 	if(calculatedGroupSHA1.empty()) {
@@ -3136,7 +3136,7 @@ bool GameManager::installGroupFile(const std::string & gameVersionID, const std:
 		return {};
 	}
 
-	std::string destinationGroupFilePath(Utilities::joinPaths(directoryPath, Group::DUKE_NUKEM_3D_GROUP_FILE_NAME));
+	std::string destinationGroupFilePath(Utilities::joinPaths(directoryPath, GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME));
 
 	if(!isGroupFileDownloaded(gameVersionID) && !downloadGroupFile(gameVersionID)) {
 		return false;
@@ -3163,13 +3163,13 @@ bool GameManager::installGroupFile(const std::string & gameVersionID, const std:
 		return true;
 	}
 
-	spdlog::info("Creating '{}' group file symlink '{}' to target '{}'.", groupGameVersion->getLongName(), Group::DUKE_NUKEM_3D_GROUP_FILE_NAME, groupFilePath);
+	spdlog::info("Creating '{}' group file symlink '{}' to target '{}'.", groupGameVersion->getLongName(), GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME, groupFilePath);
 
 	std::error_code errorCode;
 	std::filesystem::create_symlink(std::filesystem::path(groupFilePath), std::filesystem::path(destinationGroupFilePath), errorCode);
 
 	if(errorCode) {
-		spdlog::error("Failed to create '{}' group file symlink '{}' to target '{}': {}", groupGameVersion->getLongName(), Group::DUKE_NUKEM_3D_GROUP_FILE_NAME, groupFilePath, errorCode.message());
+		spdlog::error("Failed to create '{}' group file symlink '{}' to target '{}': {}", groupGameVersion->getLongName(), GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME, groupFilePath, errorCode.message());
 		return false;
 	}
 
@@ -3206,7 +3206,7 @@ void GameManager::updateGroupFileSymlinks() {
 			return;
 		}
 
-		std::filesystem::path gameGroupFilePath(Utilities::joinPaths(gameVersion->getGamePath(), Group::DUKE_NUKEM_3D_GROUP_FILE_NAME));
+		std::filesystem::path gameGroupFilePath(Utilities::joinPaths(gameVersion->getGamePath(), GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME));
 
 		if(std::filesystem::exists(gameGroupFilePath)) {
 			if(std::filesystem::is_regular_file(gameGroupFilePath) || !std::filesystem::is_symlink(gameGroupFilePath)) {

@@ -1,9 +1,10 @@
 #include "GroupEditorPanel.h"
 
+#include "Game/File/Group/GRP/GroupGRP.h"
+#include "WXUtilities.h"
+
 #include <Signal/SignalConnectionGroup.h>
 #include <Utilities/FileUtilities.h>
-
-#include "WXUtilities.h"
 
 #include <spdlog/spdlog.h>
 #include <wx/dirdlg.h>
@@ -319,7 +320,7 @@ bool GroupEditorPanel::openGroup(const std::string & filePath) {
 		return false;
 	}
 
-	std::unique_ptr<Group> group(Group::loadFrom(filePath));
+	std::unique_ptr<Group> group(GroupGRP::loadFrom(filePath));
 
 	if(!Group::isValid(group.get())) {
 		wxMessageBox(fmt::format("Failed to open group file: '{}'.", filePath), "Group Loading Failed", wxOK | wxICON_ERROR, this);
@@ -351,7 +352,7 @@ size_t GroupEditorPanel::openGroups() {
 }
 
 bool GroupEditorPanel::createGroupFromDirectory(const std::string & directoryPath) {
-	std::unique_ptr<Group> group(Group::createFrom(directoryPath));
+	std::unique_ptr<Group> group(GroupGRP::createFrom(directoryPath));
 
 	if(!Group::isValid(group.get())) {
 		wxMessageBox(fmt::format("Failed to create group from directory: '{}'.", directoryPath), "Group Creation Failed", wxOK | wxICON_ERROR, this);

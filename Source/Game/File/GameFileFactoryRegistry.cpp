@@ -1,7 +1,7 @@
 #include "GameFileFactoryRegistry.h"
 
 #include "Art/Art.h"
-#include "Group/Group.h"
+#include "Group/GRP/GroupGRP.h"
 #include "Map/Map.h"
 #include "Palette/ACT/PaletteACT.h"
 #include "Palette/DAT/PaletteDAT.h"
@@ -134,11 +134,11 @@ void GameFileFactoryRegistry::assignDefaultFactories() {
 	});
 
 	setFactory("grp", []() {
-		return std::make_unique<Group>();
+		return std::make_unique<GroupGRP>();
 	}, [](const ByteBuffer & data) {
-		return Group::readFrom(data);
+		return GroupGRP::readFrom(data);
 	}, [](const std::string & filePath) {
-		return Group::loadFrom(filePath);
+		return GroupGRP::loadFrom(filePath);
 	});
 
 	setFactory("jasc", []() {

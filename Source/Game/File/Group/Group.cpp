@@ -654,195 +654,36 @@ bool Group::isValid(bool verifyParent) const {
 	return true;
 }
 
-bool Group::isValid(const Group * g, bool verifyParent) {
-	return g != nullptr && g->isValid();
+bool Group::isValid(const Group * group, bool verifyParent) {
+	return group != nullptr &&
+		   group->isValid(verifyParent);
 }
 
-std::unique_ptr<Group> Group::readFrom(const ByteBuffer & byteBuffer) {
-	byteBuffer.setEndianness(ENDIANNESS);
-
-	bool error = false;
-
-	// verify that the data is long enough to contain header information
-	std::string headerText(byteBuffer.readString(Group::HEADER_TEXT.length(), &error));
-
-	if(error) {
-		spdlog::error("Group is incomplete or corrupted: missing header text.");
-		return false;
+std::vector<std::unique_ptr<GroupFile>> Group::createGroupFilesFromDirectory(const std::string & directoryPath) {
+	if(directoryPath.empty() || !std::filesystem::is_directory(std::filesystem::path(directoryPath))) {
+		spdlog::error("Cannot create group files from invalid or missing directory path: '{}'.", directoryPath);
+		return {};
 	}
-
-	// verify that the header text is specified in the header
-	if(!Utilities::areStringsEqual(headerText, HEADER_TEXT)) {
-		spdlog::error("Group is not a valid format, missing '{}' header text.", HEADER_TEXT);
-		return false;
-	}
-
-	spdlog::trace("Verified group file header text.");
-
-	// read and verify the number of files value
-	uint32_t numberOfFiles = byteBuffer.readUnsignedInteger(&error);
-
-	if(error) {
-		spdlog::error("Group is incomplete or corrupted: missing number of files value.");
-		return false;
-	}
-
-	spdlog::trace("Detected {} files in group.", numberOfFiles);
-
-	std::vector<std::string> fileNames;
-	std::vector<uint32_t> fileSizes;
-	std::vector<std::shared_ptr<GroupFile>> files;
-
-	for(uint32_t i = 0; i < numberOfFiles; i++) {
-		// read the file name
-		fileNames.emplace_back(byteBuffer.readString(GroupFile::MAX_FILE_NAME_LENGTH, &error));
-
-		if(error) {
-			spdlog::error("Group is incomplete or corrupted: missing file #{} name.", i + 1);
-			return false;
-		}
-
-		// read and verify the file size
-		fileSizes.push_back(byteBuffer.readUnsignedInteger(&error));
-
-		if(error) {
-			spdlog::error("Group is incomplete or corrupted: missing file #{} size value.", i + 1);
-			return false;
-		}
-	}
-
-	spdlog::trace("All group file information parsed.");
 
 	std::vector<std::unique_ptr<GroupFile>> groupFiles;
 
-	for(uint32_t i = 0; i < numberOfFiles; i++) {
-		if(byteBuffer.getSize() < byteBuffer.getReadOffset() + fileSizes[i]) {
-			size_t numberOfMissingBytes = fileSizes[i] - (byteBuffer.getSize() - byteBuffer.getReadOffset());
-			uint32_t numberOfAdditionalFiles = groupFiles.size() - i - 1;
-
-			spdlog::error("Group is corrupted: missing {} of {} byte{} for file #{} ('{}') data.{}", numberOfMissingBytes, fileSizes[i], fileSizes[i] == 1 ? "" : "s", i + 1, fileNames[i], numberOfAdditionalFiles > 0 ? fmt::format(" There is also an additional {} files that are missing data.", numberOfAdditionalFiles) : "");
-
-			return false;
-		}
-
-		std::unique_ptr<GroupFile> file(std::make_unique<GroupFile>(fileNames[i], byteBuffer.readBytes(fileSizes[i])));
-
-		if(error) {
-			spdlog::error("Group failed to read data bytes for file #{} ('{}').", i + 1, fileNames[i]);
-		}
-
-		groupFiles.push_back(std::move(file));
-	}
-
-	spdlog::trace("Group parsed successfully, {} files loaded into memory.", groupFiles.size());
-
-	return std::make_unique<Group>(std::move(groupFiles));
-}
-
-bool Group::writeTo(ByteBuffer & byteBuffer) const {
-	byteBuffer.setEndianness(ENDIANNESS);
-
-	if(!byteBuffer.writeString(HEADER_TEXT)) {
-		return false;
-	}
-
-	if(!byteBuffer.writeUnsignedInteger(m_files.size())) {
-		return false;
-	}
-
-	size_t currentFileNameLength = 0;
-
-	for(size_t i = 0; i < m_files.size(); i++) {
-		const std::shared_ptr<GroupFile> file(m_files.at(i));
-
-		if(!byteBuffer.writeString(file->getFileName())) {
-			return false;
-		}
-
-		currentFileNameLength = file->getFileName().length();
-
-		if(currentFileNameLength < GroupFile::MAX_FILE_NAME_LENGTH) {
-			if(!byteBuffer.skipWriteBytes(GroupFile::MAX_FILE_NAME_LENGTH - currentFileNameLength)) {
-				return false;
-			}
-		}
-
-		if(!byteBuffer.writeUnsignedInteger(file->getSize())) {
-			return false;
-		}
-	}
-
-	for(size_t i = 0; i < m_files.size(); i++) {
-		const std::shared_ptr<GroupFile> file(m_files.at(i));
-
-		if(!byteBuffer.writeBytes(file->getData())) {
-			return false;
-		}
-	}
-
-	return true;
-}
-
-std::unique_ptr<Group> Group::createFrom(const std::string & directoryPath) {
-	if(directoryPath.empty()) {
-		return nullptr;
-	}
-
-	std::filesystem::path directory(directoryPath);
-
-	if(!std::filesystem::is_directory(directory)) {
-		return nullptr;
-	}
-
-	std::unique_ptr<Group> group(std::make_unique<Group>());
-
-	for(const std::filesystem::directory_entry & entry : std::filesystem::directory_iterator(directory)) {
+	for(const std::filesystem::directory_entry & entry : std::filesystem::directory_iterator(std::filesystem::path(directoryPath))) {
 		if(!entry.is_regular_file()) {
 			continue;
 		}
 
-		if(!group->addFile(entry.path().string())) {
-			spdlog::warn("Failed to read and add file '{}' to group file from directory: '{}'.", Utilities::getFileName(entry.path().string()), directoryPath);
+		std::string filePath(entry.path().string());
+		std::unique_ptr<ByteBuffer> fileData(ByteBuffer::readFrom(filePath));
+
+		if(fileData == nullptr) {
+			spdlog::warn("Failed to read file data from: '{}'.", filePath);
+			continue;
 		}
+
+		groupFiles.emplace_back(std::make_unique<GroupFile>(Utilities::toUpperCase(Utilities::truncateFileName(Utilities::getFileName(filePath), GroupFile::MAX_FILE_NAME_LENGTH)), std::move(fileData)));
 	}
 
-	group->setModified(false);
-
-	return group;
-}
-
-std::unique_ptr<Group> Group::loadFrom(const std::string & filePath) {
-	// verify that the file has a path
-	if(filePath.empty()) {
-		spdlog::error("Group has no file name.");
-		return false;
-	}
-
-	// verify that the file exists and is a file
-	if(!std::filesystem::is_regular_file(std::filesystem::path(filePath))) {
-		spdlog::error("Group file does not exist or is not a file: '{}'.", filePath);
-		return false;
-	}
-
-	// open the file and read it into memory
-	std::unique_ptr<ByteBuffer> byteBuffer(ByteBuffer::readFrom(filePath, ENDIANNESS));
-
-	if(byteBuffer == nullptr) {
-		spdlog::error("Failed to open group file: '{}'.", filePath);
-		return false;
-	}
-
-	spdlog::trace("Opened group file: '{}', loaded {} bytes into memory.", filePath, byteBuffer->getSize());
-
-	std::unique_ptr<Group> group(readFrom(*byteBuffer));
-
-	if(group == nullptr) {
-		return nullptr;
-	}
-
-	group->setFilePath(filePath);
-
-	return group;
+	return groupFiles;
 }
 
 void Group::addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const {
@@ -857,25 +698,6 @@ void Group::addMetadata(std::vector<std::pair<std::string, std::string>> & metad
 	}
 }
 
-Endianness Group::getEndianness() const {
-	return ENDIANNESS;
-}
-
-size_t Group::getSizeInBytes() const {
-	static constexpr size_t NUMBER_OF_FILES_LENGTH = sizeof(uint32_t);
-	static constexpr size_t GROUP_FILE_SIZE_LENGTH = sizeof(uint32_t);
-	static const size_t HEADER_LENGTH = HEADER_TEXT.length() + NUMBER_OF_FILES_LENGTH;
-	static const size_t GROUP_FILE_HEADER_LENGTH = GroupFile::MAX_FILE_NAME_LENGTH + GROUP_FILE_SIZE_LENGTH;
-
-	size_t size = HEADER_LENGTH;
-
-	for(std::vector<std::shared_ptr<GroupFile>>::const_iterator i = m_files.cbegin(); i != m_files.cend(); ++i) {
-		size += GROUP_FILE_HEADER_LENGTH + (*i)->getSize();
-	}
-
-	return size;
-}
-
 void Group::updateParent() {
 	for(std::shared_ptr<GroupFile> & file : m_files) {
 		file->m_parentGroup = this;
@@ -888,13 +710,13 @@ void Group::onGroupFileModified(GroupFile & groupFile) {
 	}
 }
 
-bool Group::operator == (const Group & g) const {
-	if(m_files.size() != g.m_files.size()) {
+bool Group::operator == (const Group & group) const {
+	if(m_files.size() != group.m_files.size()) {
 		return false;
 	}
 
-	for(std::vector<std::shared_ptr<GroupFile>>::const_iterator i = m_files.cbegin(); i != m_files.cend(); ++i) {
-		if(!g.hasFile(**i)) {
+	for(size_t i = 0; i < m_files.size(); i++) {
+		if(*m_files[i] != *group.m_files[i]) {
 			return false;
 		}
 	}
@@ -902,6 +724,6 @@ bool Group::operator == (const Group & g) const {
 	return true;
 }
 
-bool Group::operator != (const Group & g) const {
-	return !operator == (g);
+bool Group::operator != (const Group & group) const {
+	return !operator == (group);
 }

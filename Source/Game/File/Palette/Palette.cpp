@@ -307,3 +307,8 @@ bool Palette::isValid(bool verifyParent) const {
 
 	return true;
 }
+
+bool Palette::isValid(const Palette * palette, bool verifyParent) {
+	return palette != nullptr &&
+		   palette->isValid();
+}

@@ -62,6 +62,8 @@ set(MAIN_SOURCE_FILES
 	Game/File/Group/GroupFile.h
 	Game/File/Group/GroupFile.cpp
 	Game/File/Group/GroupUtilities.h
+	Game/File/Group/GRP/GroupGRP.h
+	Game/File/Group/GRP/GroupGRP.cpp
 	Game/File/Map/BuildConstants.h
 	Game/File/Map/Map.h
 	Game/File/Map/Map.cpp

@@ -11,8 +11,8 @@
 #include "Game/GameVersionCollection.h"
 #include "Game/File/GameFileFactoryRegistry.h"
 #include "Game/File/Art/Art.h"
-#include "Game/File/Group/Group.h"
 #include "Game/File/Group/GroupUtilities.h"
+#include "Game/File/Group/GRP/GroupGRP.h"
 #include "Game/File/Map/Map.h"
 #include "InstalledModInfo.h"
 #include "Manager/ModMatch.h"
@@ -2224,8 +2224,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		}
 
 		if(selectedGameVersion->doesRequireCombinedGroup()) {
-			std::string dukeNukemGroupPath(Utilities::joinPaths(selectedGameVersion->getGamePath(), Group::DUKE_NUKEM_3D_GROUP_FILE_NAME));
-			combinedGroup = Group::loadFrom(dukeNukemGroupPath);
+			std::string dukeNukemGroupPath(Utilities::joinPaths(selectedGameVersion->getGamePath(), GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME));
+			combinedGroup = GroupGRP::loadFrom(dukeNukemGroupPath);
 
 			if(combinedGroup == nullptr) {
 				if(!removeModFilesFromGameDirectory(*selectedGameVersion, *installedModInfo)) {
@@ -2255,7 +2255,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 			for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = modFiles.begin(); i != modFiles.end(); ++i) {
 				std::string modGroupPath(Utilities::joinPaths(getModsDirectoryPath(), getGameVersions()->getGameVersionWithID(selectedModGameVersion->getGameVersionID())->getModDirectoryName(), (*i)->getFileName()));
-				std::unique_ptr<Group> modGroup(Group::loadFrom(modGroupPath));
+				std::unique_ptr<Group> modGroup(GroupGRP::loadFrom(modGroupPath));
 
 				if(modGroup != nullptr) {
 					if(!m_demoRecordingEnabled) {
@@ -2515,7 +2515,7 @@ bool ModManager::extractModFilesToGameDirectory(const ModGameVersion & modGameVe
 
 	if(!customGroupFileNames.empty()) {
 		for(const std::string & customGroupFileName : customGroupFileNames) {
-			std::unique_ptr<Group> customGroup(Group::loadFrom(customGroupFileName));
+			std::unique_ptr<Group> customGroup(GroupGRP::loadFrom(customGroupFileName));
 
 			if(!Group::isValid(customGroup.get())) {
 				spdlog::error("Failed to open custom group file: '{}'.", customGroupFileName);
@@ -2540,7 +2540,7 @@ bool ModManager::extractModFilesToGameDirectory(const ModGameVersion & modGameVe
 			currentModFilePath = Utilities::joinPaths(modPath, currentModFile->getFileName());
 
 			if(Utilities::areStringsEqualIgnoreCase(currentModFile->getType(), "grp")) {
-				std::unique_ptr<Group> modGroup(Group::loadFrom(currentModFilePath));
+				std::unique_ptr<Group> modGroup(GroupGRP::loadFrom(currentModFilePath));
 
 				if(!Group::isValid(modGroup.get())) {
 					spdlog::error("Failed to open mod group file: '{}'.", currentModFilePath);
@@ -4098,7 +4098,7 @@ size_t ModManager::updateModFileInfo(Mod & mod, bool skipPopulatedFiles, std::op
 						if(modGroupFile != nullptr) {
 							groupFilePath = Utilities::joinPaths(gameModsPath, modGroupFile->getFileName());
 
-							group = Group::loadFrom(groupFilePath);
+							group = GroupGRP::loadFrom(groupFilePath);
 
 							if(group == nullptr) {
 								spdlog::error("Failed to open mod group file '{}'.", groupFilePath);

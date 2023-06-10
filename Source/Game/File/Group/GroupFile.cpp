@@ -19,46 +19,53 @@ GroupFile::GroupFile(const std::string & fileName)
 	, m_modified(false)
 	, m_parentGroup(nullptr) { }
 
-GroupFile::GroupFile(const std::string & fileName, const uint8_t * data, size_t size)
+GroupFile::GroupFile(const std::string & fileName, const uint8_t * data, size_t dataSize, const uint8_t * trailingData, size_t trailingDataSize)
 	: m_fileName(formatFileName(fileName))
-	, m_data(std::make_unique<ByteBuffer>(data, data == nullptr ? 0 : size))
+	, m_data(std::make_unique<ByteBuffer>(data, data == nullptr ? 0 : dataSize))
+	, m_trailingData(trailingData == nullptr || trailingDataSize == 0 ? nullptr : std::make_unique<ByteBuffer>(trailingData, trailingDataSize))
 	, m_modified(false)
 	, m_parentGroup(nullptr) { }
 
-GroupFile::GroupFile(const std::string & fileName, const std::vector<uint8_t> & data)
-	: m_fileName(formatFileName(fileName))
-	, m_data(std::make_unique<ByteBuffer>(data))
-	, m_modified(false)
-	, m_parentGroup(nullptr) { }
-
-GroupFile::GroupFile(const std::string & fileName, const ByteBuffer & data)
+GroupFile::GroupFile(const std::string & fileName, const std::vector<uint8_t> & data, const std::vector<uint8_t> & trailingData)
 	: m_fileName(formatFileName(fileName))
 	, m_data(std::make_unique<ByteBuffer>(data))
+	, m_trailingData(trailingData.empty() ? nullptr : std::make_unique<ByteBuffer>(trailingData))
 	, m_modified(false)
 	, m_parentGroup(nullptr) { }
 
-GroupFile::GroupFile(const std::string & fileName, std::unique_ptr<ByteBuffer> data)
+GroupFile::GroupFile(const std::string & fileName, const ByteBuffer & data, const ByteBuffer & trailingData)
+	: m_fileName(formatFileName(fileName))
+	, m_data(std::make_unique<ByteBuffer>(data))
+	, m_trailingData(trailingData.isEmpty() ? nullptr : std::make_unique<ByteBuffer>(trailingData))
+	, m_modified(false)
+	, m_parentGroup(nullptr) { }
+
+GroupFile::GroupFile(const std::string & fileName, std::unique_ptr<ByteBuffer> data, std::unique_ptr<ByteBuffer> trailingData)
 	: m_fileName(formatFileName(fileName))
 	, m_data(std::move(data))
+	, m_trailingData(trailingData != nullptr ? std::move(trailingData) : std::make_unique<ByteBuffer>())
 	, m_modified(false)
 	, m_parentGroup(nullptr) { }
 
-GroupFile::GroupFile(GroupFile && f) noexcept
-	: m_fileName(std::move(f.m_fileName))
-	, m_data(std::move(f.m_data))
+GroupFile::GroupFile(GroupFile && file) noexcept
+	: m_fileName(std::move(file.m_fileName))
+	, m_data(std::move(file.m_data))
+	, m_trailingData(std::move(file.m_trailingData))
 	, m_modified(false)
 	, m_parentGroup(nullptr) { }
 
-GroupFile::GroupFile(const GroupFile & f)
-	: m_fileName(f.m_fileName)
-	, m_data(std::make_unique<ByteBuffer>(f.m_data->getData()))
+GroupFile::GroupFile(const GroupFile & file)
+	: m_fileName(file.m_fileName)
+	, m_data(std::make_unique<ByteBuffer>(file.m_data->getData()))
+	, m_trailingData(file.m_trailingData != nullptr ? std::make_unique<ByteBuffer>(*file.m_trailingData) : nullptr)
 	, m_modified(false)
 	, m_parentGroup(nullptr) { }
 
-GroupFile & GroupFile::operator = (GroupFile && f) noexcept {
-	if(this != &f) {
-		m_fileName = std::move(f.m_fileName);
-		m_data = std::move(f.m_data);
+GroupFile & GroupFile::operator = (GroupFile && file) noexcept {
+	if(this != &file) {
+		m_fileName = std::move(file.m_fileName);
+		m_data = std::move(file.m_data);
+		m_trailingData = std::move(file.m_trailingData);
 
 		setModified(true);
 	}
@@ -66,9 +73,10 @@ GroupFile & GroupFile::operator = (GroupFile && f) noexcept {
 	return *this;
 }
 
-GroupFile & GroupFile::operator = (const GroupFile & f) {
-	m_fileName = f.m_fileName;
-	m_data->setData(f.m_data->getData());
+GroupFile & GroupFile::operator = (const GroupFile & file) {
+	m_fileName = file.m_fileName;
+	m_data->setData(file.m_data->getData());
+	m_trailingData = file.m_trailingData != nullptr ? std::make_unique<ByteBuffer>(*file.m_trailingData) : nullptr;
 
 	setModified(true);
 
@@ -101,6 +109,19 @@ size_t GroupFile::getSize() const {
 	return m_data->getSize();
 }
 
+bool GroupFile::hasTrailingData() const {
+	return m_trailingData != nullptr &&
+		   m_trailingData->isNotEmpty();
+}
+
+size_t GroupFile::getTrailingDataSize() const {
+	if(m_trailingData == nullptr) {
+		return 0;
+	}
+
+	return m_trailingData->getSize();
+}
+
 std::string GroupFile::getSizeAsString() const {
 	size_t size = getSize();
 
@@ -115,6 +136,10 @@ std::string GroupFile::getSizeAsString() const {
 	}
 }
 
+bool GroupFile::hasData() const {
+	return m_data->isNotEmpty();
+}
+
 const ByteBuffer & GroupFile::getData() const {
 	m_data->setReadOffset(0);
 	return *m_data;
@@ -126,6 +151,19 @@ std::unique_ptr<ByteBuffer> GroupFile::transferData() {
 	m_data = std::make_unique<ByteBuffer>();
 
 	return std::move(data);
+}
+
+const ByteBuffer & GroupFile::getTrailingData() const {
+	if(m_trailingData == nullptr) {
+		return ByteBuffer::EMPTY_BYTE_BUFFER;
+	}
+
+	m_trailingData->setReadOffset(0);
+	return *m_trailingData;
+}
+
+std::unique_ptr<ByteBuffer> GroupFile::transferTrailingData() {
+	return std::move(m_trailingData);
 }
 
 bool GroupFile::setFileName(const std::string & newFileName) {
@@ -178,6 +216,36 @@ void GroupFile::clearData() {
 	setModified(true);
 }
 
+void GroupFile::setTrailingData(const uint8_t * trailingData, size_t size) {
+	m_trailingData->setData(trailingData, size);
+
+	setModified(true);
+}
+
+void GroupFile::setTrailingData(const std::vector<uint8_t> & trailingData) {
+	m_trailingData->setData(trailingData);
+
+	setModified(true);
+}
+
+void GroupFile::setTrailingData(const ByteBuffer & trailingData) {
+	m_trailingData->setData(trailingData);
+
+	setModified(true);
+}
+
+void GroupFile::setTrailingData(std::unique_ptr<ByteBuffer> trailingData) {
+	m_trailingData = std::move(trailingData);
+
+	setModified(true);
+}
+
+void GroupFile::clearTrailingData() {
+	m_trailingData->clear();
+
+	setModified(true);
+}
+
 Group * GroupFile::getParentGroup() const {
 	return m_parentGroup;
 }
@@ -188,9 +256,9 @@ bool GroupFile::isValid() const {
 		   m_data != nullptr;
 }
 
-bool GroupFile::isValid(const GroupFile * f) {
-	return f != nullptr &&
-		   f->isValid();
+bool GroupFile::isValid(const GroupFile * file) {
+	return file != nullptr &&
+		   file->isValid();
 }
 
 bool GroupFile::writeTo(const std::string & basePath, bool overwrite, const std::string & alternateFileName, bool createParentDirectories) const {
@@ -218,11 +286,12 @@ std::string GroupFile::formatFileName(std::string_view fileName) {
 	return Utilities::toUpperCase(Utilities::truncateFileName(fileName, MAX_FILE_NAME_LENGTH));
 }
 
-bool GroupFile::operator == (const GroupFile & f) const {
-	return Utilities::areStringsEqualIgnoreCase(m_fileName, f.m_fileName) &&
-		   *m_data == *f.m_data;
+bool GroupFile::operator == (const GroupFile & file) const {
+	return Utilities::areStringsEqualIgnoreCase(m_fileName, file.m_fileName) &&
+		   *m_data == *file.m_data &&
+		   ((m_trailingData == nullptr && file.m_trailingData == nullptr) || (m_trailingData != nullptr && file.m_trailingData != nullptr && *m_trailingData == *file.m_trailingData) );
 }
 
-bool GroupFile::operator != (const GroupFile & f) const {
-	return !operator == (f);
+bool GroupFile::operator != (const GroupFile & file) const {
+	return !operator == (file);
 }

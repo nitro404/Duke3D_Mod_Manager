@@ -16,7 +16,7 @@
 
 GroupPanel::GroupPanel(std::unique_ptr<Group> group, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "Group Information")
-	, m_group(group != nullptr ? std::move(group) : std::make_unique<Group>())
+	, m_group(std::move(group))
 	, m_numberOfFilesText(nullptr)
 	, m_groupSizeText(nullptr)
 	, m_fileExtensionsText(nullptr)
