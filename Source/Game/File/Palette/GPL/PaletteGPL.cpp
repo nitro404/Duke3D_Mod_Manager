@@ -84,7 +84,7 @@ PaletteGPL & PaletteGPL::operator = (const PaletteGPL & palette) {
 
 PaletteGPL::~PaletteGPL() { }
 
-std::shared_ptr<Palette::ColourTable> PaletteGPL::getColourTable(uint8_t colourTableIndex) const {
+std::shared_ptr<ColourTable> PaletteGPL::getColourTable(uint8_t colourTableIndex) const {
 	if(colourTableIndex != 0) {
 		return nullptr;
 	}
@@ -375,17 +375,17 @@ std::unique_ptr<PaletteGPL> PaletteGPL::readFrom(const ByteBuffer & byteBuffer) 
 	size_t colourChannelEndOffset = std::numeric_limits<size_t>::max();
 	Colour colour;
 	std::vector<Colour> colours;
-	colours.reserve(NUMBER_OF_COLOURS);
+	colours.reserve(ColourTable::NUMBER_OF_COLOURS);
 	std::vector<std::string> colourNames;
-	colourNames.reserve(NUMBER_OF_COLOURS);
+	colourNames.reserve(ColourTable::NUMBER_OF_COLOURS);
 
 	while(true) {
 		if(!byteBuffer.hasMoreLines()) {
 			break;
 		}
 
-		if(colours.size() >= NUMBER_OF_COLOURS) {
-			spdlog::error("GIMP GPL palettes with more than {} colours are not supported, additional colours will be discarded.", NUMBER_OF_COLOURS);
+		if(colours.size() >= ColourTable::NUMBER_OF_COLOURS) {
+			spdlog::error("GIMP GPL palettes with more than {} colours are not supported, additional colours will be discarded.", ColourTable::NUMBER_OF_COLOURS);
 			break;
 		}
 

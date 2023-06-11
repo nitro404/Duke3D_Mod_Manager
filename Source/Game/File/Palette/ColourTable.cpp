@@ -1,52 +1,54 @@
-#include "Palette.h"
+#include "ColourTable.h"
+
+#include "../GameFile.h"
 
 #include <ByteBuffer.h>
 
 #include <spdlog/spdlog.h>
 
-const Palette::ColourTable Palette::ColourTable::EMPTY_COLOUR_TABLE;
+const ColourTable ColourTable::EMPTY_COLOUR_TABLE;
 
-Palette::ColourTable::ColourTable(uint16_t numberOfColours, std::optional<uint8_t> transparentColourIndex, bool alpha, Palette * parent)
+ColourTable::ColourTable(uint16_t numberOfColours, std::optional<uint8_t> transparentColourIndex, bool alpha, GameFile * parent)
 	: m_transparentColourIndex(transparentColourIndex)
 	, m_alpha(alpha)
 	, m_parent(parent) {
 	m_colours.resize(numberOfColours, Colour::INVISIBLE);
 }
 
-Palette::ColourTable::ColourTable(const Colour & fillColour, uint16_t numberOfColours, std::optional<uint8_t> transparentColourIndex, bool alpha, Palette * parent)
+ColourTable::ColourTable(const Colour & fillColour, uint16_t numberOfColours, std::optional<uint8_t> transparentColourIndex, bool alpha, GameFile * parent)
 	: m_transparentColourIndex(transparentColourIndex)
 	, m_alpha(alpha)
 	, m_parent(parent) {
 	m_colours.resize(numberOfColours, fillColour);
 }
 
-Palette::ColourTable::ColourTable(std::vector<Colour> && colours, std::optional<uint8_t> transparentColourIndex, bool alpha, Palette * parent)
+ColourTable::ColourTable(std::vector<Colour> && colours, std::optional<uint8_t> transparentColourIndex, bool alpha, GameFile * parent)
 	: m_colours(std::move(colours))
 	, m_transparentColourIndex(transparentColourIndex)
 	, m_alpha(alpha)
 	, m_parent(parent) { }
 
-Palette::ColourTable::ColourTable(const std::vector<Colour> & colours, std::optional<uint8_t> transparentColourIndex, bool alpha, Palette * parent)
+ColourTable::ColourTable(const std::vector<Colour> & colours, std::optional<uint8_t> transparentColourIndex, bool alpha, GameFile * parent)
 	: m_colours(colours)
 	, m_transparentColourIndex(transparentColourIndex)
 	, m_alpha(alpha)
 	, m_parent(parent) { }
 
-Palette::ColourTable::ColourTable(ColourTable && colourTable) noexcept
+ColourTable::ColourTable(ColourTable && colourTable) noexcept
 	: m_colours(std::move(colourTable.m_colours))
 	, m_transparentColourIndex(std::move(colourTable.m_transparentColourIndex))
 	, m_alpha(colourTable.m_alpha)
 	, m_name(std::move(colourTable.m_name))
 	, m_parent(nullptr) { }
 
-Palette::ColourTable::ColourTable(const ColourTable & colourTable)
+ColourTable::ColourTable(const ColourTable & colourTable)
 	: m_colours(colourTable.m_colours)
 	, m_transparentColourIndex(colourTable.m_transparentColourIndex)
 	, m_alpha(colourTable.m_alpha)
 	, m_name(colourTable.m_name)
 	, m_parent(nullptr) { }
 
-Palette::ColourTable & Palette::ColourTable::operator = (ColourTable && colourTable) noexcept {
+ColourTable & ColourTable::operator = (ColourTable && colourTable) noexcept {
 	if(this != &colourTable) {
 		m_colours = std::move(colourTable.m_colours);
 		m_transparentColourIndex = std::move(colourTable.m_transparentColourIndex);
@@ -57,7 +59,7 @@ Palette::ColourTable & Palette::ColourTable::operator = (ColourTable && colourTa
 	return *this;
 }
 
-Palette::ColourTable & Palette::ColourTable::operator = (const ColourTable & colourTable) {
+ColourTable & ColourTable::operator = (const ColourTable & colourTable) {
 	m_colours = std::move(colourTable.m_colours);
 	m_transparentColourIndex = std::move(colourTable.m_transparentColourIndex);
 	m_alpha = colourTable.m_alpha;
@@ -66,17 +68,17 @@ Palette::ColourTable & Palette::ColourTable::operator = (const ColourTable & col
 	return *this;
 }
 
-Palette::ColourTable::~ColourTable() = default;
+ColourTable::~ColourTable() = default;
 
-bool Palette::ColourTable::hasTransparentColourIndex() const {
+bool ColourTable::hasTransparentColourIndex() const {
 	return m_transparentColourIndex.has_value();
 }
 
-uint16_t Palette::ColourTable::numberOfColours() const {
+uint16_t ColourTable::numberOfColours() const {
 	return static_cast<uint16_t>(m_colours.size());
 }
 
-const Colour & Palette::ColourTable::getColour(uint8_t colourIndex, bool * error) const {
+const Colour & ColourTable::getColour(uint8_t colourIndex, bool * error) const {
 	if(colourIndex >= m_colours.size()) {
 		if(error != nullptr) {
 			*error = true;
@@ -88,11 +90,11 @@ const Colour & Palette::ColourTable::getColour(uint8_t colourIndex, bool * error
 	return m_colours[colourIndex];
 }
 
-const std::vector<Colour> & Palette::ColourTable::getColours() const {
+const std::vector<Colour> & ColourTable::getColours() const {
 	return m_colours;
 }
 
-bool Palette::ColourTable::setColour(uint8_t colourIndex, const Colour & colour) {
+bool ColourTable::setColour(uint8_t colourIndex, const Colour & colour) {
 	if(colourIndex >= m_colours.size()) {
 		return false;
 	}
@@ -102,7 +104,7 @@ bool Palette::ColourTable::setColour(uint8_t colourIndex, const Colour & colour)
 	return true;
 }
 
-bool Palette::ColourTable::setColour(uint8_t colourIndex, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+bool ColourTable::setColour(uint8_t colourIndex, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 	if(colourIndex >= m_colours.size()) {
 		return false;
 	}
@@ -112,7 +114,7 @@ bool Palette::ColourTable::setColour(uint8_t colourIndex, uint8_t r, uint8_t g, 
 	return true;
 }
 
-bool Palette::ColourTable::setColours(const ColourTable & colourTable) {
+bool ColourTable::setColours(const ColourTable & colourTable) {
 	if(!colourTable.isValid(false)) {
 		return false;
 	}
@@ -123,13 +125,13 @@ bool Palette::ColourTable::setColours(const ColourTable & colourTable) {
 	return true;
 }
 
-void Palette::ColourTable::fillWithColour(const Colour & colour) {
+void ColourTable::fillWithColour(const Colour & colour) {
 	for(Colour & colour : m_colours) {
 		colour.setColour(colour);
 	}
 }
 
-bool Palette::ColourTable::setNumberOfColours(uint16_t colourCount, const Colour & fillColour) {
+bool ColourTable::setNumberOfColours(uint16_t colourCount, const Colour & fillColour) {
 	if(colourCount > NUMBER_OF_COLOURS) {
 		return false;
 	}
@@ -143,39 +145,39 @@ bool Palette::ColourTable::setNumberOfColours(uint16_t colourCount, const Colour
 	return true;
 }
 
-const std::optional<uint8_t> & Palette::ColourTable::getTransparentColourIndex() const {
+const std::optional<uint8_t> & ColourTable::getTransparentColourIndex() const {
 	return m_transparentColourIndex;
 }
 
-void Palette::ColourTable::setTransparentColourIndex(uint8_t transparentColourIndex) {
+void ColourTable::setTransparentColourIndex(uint8_t transparentColourIndex) {
 	m_transparentColourIndex = transparentColourIndex;
 }
 
-void Palette::ColourTable::clearTransparentColourIndex() {
+void ColourTable::clearTransparentColourIndex() {
 	m_transparentColourIndex.reset();
 }
 
-bool Palette::ColourTable::hasAlphaChannel() const {
+bool ColourTable::hasAlphaChannel() const {
 	return m_alpha;
 }
 
-void Palette::ColourTable::setHasAlphaChannel(bool alpha) {
+void ColourTable::setHasAlphaChannel(bool alpha) {
 	m_alpha = alpha;
 }
 
-const std::string & Palette::ColourTable::getName() const {
+const std::string & ColourTable::getName() const {
 	return m_name;
 }
 
-void Palette::ColourTable::setName(const std::string & name) {
+void ColourTable::setName(const std::string & name) {
 	m_name = name;
 }
 
-void Palette::ColourTable::clearName() {
+void ColourTable::clearName() {
 	m_name = "";
 }
 
-std::unique_ptr<Palette::ColourTable> Palette::ColourTable::getFrom(const ByteBuffer & byteBuffer, size_t offset, uint16_t numberOfColours, bool alpha, Colour::ByteOrder byteOrder) {
+std::unique_ptr<ColourTable> ColourTable::getFrom(const ByteBuffer & byteBuffer, size_t offset, uint16_t numberOfColours, bool alpha, Colour::ByteOrder byteOrder) {
 	bool error = false;
 	size_t newOffset = offset;
 	size_t bytesPerPixel = alpha ? 4 : 3;
@@ -203,7 +205,7 @@ std::unique_ptr<Palette::ColourTable> Palette::ColourTable::getFrom(const ByteBu
 	return std::make_unique<ColourTable>(std::move(colours));
 }
 
-std::unique_ptr<Palette::ColourTable> Palette::ColourTable::readFrom(const ByteBuffer & byteBuffer, uint16_t numberOfColours, bool alpha, Colour::ByteOrder byteOrder) {
+std::unique_ptr<ColourTable> ColourTable::readFrom(const ByteBuffer & byteBuffer, uint16_t numberOfColours, bool alpha, Colour::ByteOrder byteOrder) {
 	std::unique_ptr<ColourTable> colourTable(getFrom(byteBuffer, byteBuffer.getReadOffset(), numberOfColours, alpha, byteOrder));
 
 	if(colourTable != nullptr) {
@@ -213,11 +215,11 @@ std::unique_ptr<Palette::ColourTable> Palette::ColourTable::readFrom(const ByteB
 	return colourTable;
 }
 
-bool Palette::ColourTable::putIn(ByteBuffer & byteBuffer, size_t offset, const std::optional<Colour> & paddingColour, Colour::ByteOrder byteOrder) const {
+bool ColourTable::putIn(ByteBuffer & byteBuffer, size_t offset, const std::optional<Colour> & paddingColour, Colour::ByteOrder byteOrder) const {
 	return putIn(byteBuffer, offset, m_alpha, paddingColour, byteOrder);
 }
 
-bool Palette::ColourTable::putIn(ByteBuffer & byteBuffer, size_t offset, bool alpha, const std::optional<Colour> & paddingColour, Colour::ByteOrder byteOrder) const {
+bool ColourTable::putIn(ByteBuffer & byteBuffer, size_t offset, bool alpha, const std::optional<Colour> & paddingColour, Colour::ByteOrder byteOrder) const {
 	size_t newOffset = offset;
 	size_t bytesPerPixel = m_alpha ? 4 : 3;
 
@@ -244,11 +246,11 @@ bool Palette::ColourTable::putIn(ByteBuffer & byteBuffer, size_t offset, bool al
 	return true;
 }
 
-bool Palette::ColourTable::insertIn(ByteBuffer & byteBuffer, size_t offset, const std::optional<Colour> & paddingColour, Colour::ByteOrder byteOrder) const {
+bool ColourTable::insertIn(ByteBuffer & byteBuffer, size_t offset, const std::optional<Colour> & paddingColour, Colour::ByteOrder byteOrder) const {
 	return insertIn(byteBuffer, offset, m_alpha, paddingColour, byteOrder);
 }
 
-bool Palette::ColourTable::insertIn(ByteBuffer & byteBuffer, size_t offset, bool alpha, const std::optional<Colour> & paddingColour, Colour::ByteOrder byteOrder) const {
+bool ColourTable::insertIn(ByteBuffer & byteBuffer, size_t offset, bool alpha, const std::optional<Colour> & paddingColour, Colour::ByteOrder byteOrder) const {
 	size_t newOffset = offset;
 	size_t bytesPerPixel = m_alpha ? 4 : 3;
 
@@ -275,11 +277,11 @@ bool Palette::ColourTable::insertIn(ByteBuffer & byteBuffer, size_t offset, bool
 	return true;
 }
 
-bool Palette::ColourTable::writeTo(ByteBuffer & byteBuffer, const std::optional<Colour> & paddingColour, Colour::ByteOrder byteOrder) const {
+bool ColourTable::writeTo(ByteBuffer & byteBuffer, const std::optional<Colour> & paddingColour, Colour::ByteOrder byteOrder) const {
 	return writeTo(byteBuffer, m_alpha, paddingColour, byteOrder);
 }
 
-bool Palette::ColourTable::writeTo(ByteBuffer & byteBuffer, bool alpha, const std::optional<Colour> & paddingColour, Colour::ByteOrder byteOrder) const {
+bool ColourTable::writeTo(ByteBuffer & byteBuffer, bool alpha, const std::optional<Colour> & paddingColour, Colour::ByteOrder byteOrder) const {
 	for(const Colour & colour : m_colours) {
 		if(!colour.writeTo(byteBuffer, alpha, byteOrder)) {
 			return false;
@@ -299,33 +301,33 @@ bool Palette::ColourTable::writeTo(ByteBuffer & byteBuffer, bool alpha, const st
 	return true;
 }
 
-bool Palette::ColourTable::isParentValid() const {
+bool ColourTable::isParentValid() const {
 	return m_parent != nullptr &&
 		   m_parent->isValid(false);
 }
 
-Palette * Palette::ColourTable::getParent() const {
+GameFile * ColourTable::getParent() const {
 	return m_parent;
 }
 
-void Palette::ColourTable::setParent(Palette * palette) {
-	m_parent = palette;
+void ColourTable::setParent(GameFile * parent) {
+	m_parent = parent;
 }
 
-void Palette::ColourTable::clearParent() {
+void ColourTable::clearParent() {
 	m_parent = nullptr;
 }
 
-bool Palette::ColourTable::isValid() const {
+bool ColourTable::isValid() const {
 	return m_colours.size() <= NUMBER_OF_COLOURS;
 }
 
-bool Palette::ColourTable::isValid(const ColourTable * colourTable) {
+bool ColourTable::isValid(const ColourTable * colourTable) {
 	return colourTable != nullptr &&
 		   colourTable->isValid();
 }
 
-const Colour & Palette::ColourTable::operator[] (size_t colourIndex) const {
+const Colour & ColourTable::operator[] (size_t colourIndex) const {
 	if(colourIndex >= m_colours.size()) {
 		return Colour::INVISIBLE;
 	}
@@ -333,10 +335,10 @@ const Colour & Palette::ColourTable::operator[] (size_t colourIndex) const {
 	return m_colours[colourIndex];
 }
 
-bool Palette::ColourTable::operator == (const ColourTable & colourTable) const {
+bool ColourTable::operator == (const ColourTable & colourTable) const {
 	return m_colours == colourTable.m_colours;
 }
 
-bool Palette::ColourTable::operator != (const ColourTable & colourTable) const {
+bool ColourTable::operator != (const ColourTable & colourTable) const {
 	return !operator == (colourTable);
 }

@@ -68,11 +68,11 @@ void PaletteDAT::SwapTable::setData(const SwapData & swapData) {
 }
 
 bool PaletteDAT::SwapTable::setData(const std::vector<uint8_t> & swapData) {
-	if(swapData.size() != NUMBER_OF_COLOURS) {
+	if(swapData.size() != ColourTable::NUMBER_OF_COLOURS) {
 		return false;
 	}
 
-	std::copy_n(std::make_move_iterator(swapData.begin()), NUMBER_OF_COLOURS, m_swapData->begin());
+	std::copy_n(std::make_move_iterator(swapData.begin()), ColourTable::NUMBER_OF_COLOURS, m_swapData->begin());
 
 	return true;
 }
@@ -84,7 +84,7 @@ std::unique_ptr<PaletteDAT::SwapTable> PaletteDAT::SwapTable::getFrom(const Byte
 		return nullptr;
 	}
 
-	std::unique_ptr<SwapData> swapData(byteBuffer.getBytes<NUMBER_OF_COLOURS>(offset + 1));
+	std::unique_ptr<SwapData> swapData(byteBuffer.getBytes<ColourTable::NUMBER_OF_COLOURS>(offset + 1));
 
 	if(swapData == nullptr) {
 		return nullptr;
@@ -100,7 +100,7 @@ std::unique_ptr<PaletteDAT::SwapTable> PaletteDAT::SwapTable::readFrom(const Byt
 		return nullptr;
 	}
 
-	std::unique_ptr<SwapData> swapData(byteBuffer.readBytes<NUMBER_OF_COLOURS>());
+	std::unique_ptr<SwapData> swapData(byteBuffer.readBytes<ColourTable::NUMBER_OF_COLOURS>());
 
 	if(swapData == nullptr) {
 		return nullptr;

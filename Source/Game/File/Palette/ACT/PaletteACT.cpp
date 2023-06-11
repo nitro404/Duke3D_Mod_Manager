@@ -52,7 +52,7 @@ PaletteACT & PaletteACT::operator = (const PaletteACT & palette) {
 
 PaletteACT::~PaletteACT() { }
 
-std::shared_ptr<Palette::ColourTable> PaletteACT::getColourTable(uint8_t colourTableIndex) const {
+std::shared_ptr<ColourTable> PaletteACT::getColourTable(uint8_t colourTableIndex) const {
 	if(colourTableIndex != 0) {
 		return nullptr;
 	}
@@ -74,7 +74,7 @@ std::unique_ptr<PaletteACT> PaletteACT::readFrom(const ByteBuffer & byteBuffer) 
 
 	byteBuffer.setEndianness(ENDIANNESS);
 
-	size_t minimumSizeBytes = NUMBER_OF_COLOURS * BYTES_PER_COLOUR;
+	size_t minimumSizeBytes = ColourTable::NUMBER_OF_COLOURS * BYTES_PER_COLOUR;
 
 	if(!byteBuffer.canReadBytes(minimumSizeBytes)) {
 		spdlog::error("Adobe Photoshop ACT palette binary data is truncated, expected at least {} bytes but only found {}.", minimumSizeBytes, byteBuffer.numberOfBytesRemaining());
@@ -82,11 +82,11 @@ std::unique_ptr<PaletteACT> PaletteACT::readFrom(const ByteBuffer & byteBuffer) 
 	}
 
 	std::vector<Colour> colours;
-	colours.reserve(NUMBER_OF_COLOURS);
+	colours.reserve(ColourTable::NUMBER_OF_COLOURS);
 
 	bool error = false;
 
-	for(uint16_t i = 0; i < NUMBER_OF_COLOURS; i++) {
+	for(uint16_t i = 0; i < ColourTable::NUMBER_OF_COLOURS; i++) {
 		colours.emplace_back(Colour::readFrom(byteBuffer, false, &error));
 
 		if(error) {
@@ -166,7 +166,7 @@ bool PaletteACT::writeTo(ByteBuffer & byteBuffer) const {
 		return false;
 	}
 
-	if(m_colourTable->hasTransparentColourIndex() || m_colourTable->numberOfColours() != NUMBER_OF_COLOURS) {
+	if(m_colourTable->hasTransparentColourIndex() || m_colourTable->numberOfColours() != ColourTable::NUMBER_OF_COLOURS) {
 		if(!byteBuffer.writeUnsignedShort(m_colourTable->numberOfColours())) {
 			return false;
 		}
@@ -191,7 +191,7 @@ Endianness PaletteACT::getEndianness() const {
 }
 
 size_t PaletteACT::getSizeInBytes() const {
-	return NUMBER_OF_COLOURS * BYTES_PER_COLOUR + (m_colourTable->hasTransparentColourIndex() || m_colourTable->numberOfColours() != NUMBER_OF_COLOURS ? (sizeof(uint16_t) * 2) : 0);
+	return ColourTable::NUMBER_OF_COLOURS * BYTES_PER_COLOUR + (m_colourTable->hasTransparentColourIndex() || m_colourTable->numberOfColours() != ColourTable::NUMBER_OF_COLOURS ? (sizeof(uint16_t) * 2) : 0);
 }
 
 void PaletteACT::updateParent() {

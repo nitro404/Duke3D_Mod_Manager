@@ -130,7 +130,7 @@ std::optional<Colour> Palette::getColour(uint8_t colourIndex, uint8_t colourTabl
 const Colour & Palette::getColour(uint8_t x, uint8_t y, uint8_t colourTableIndex, bool * error) const {
 	uint8_t colourIndex = getColourIndex(x, y);
 
-	if(colourIndex >= NUMBER_OF_COLOURS) {
+	if(colourIndex >= ColourTable::NUMBER_OF_COLOURS) {
 		if(error != nullptr) {
 			*error = true;
 		}
@@ -166,14 +166,14 @@ bool Palette::setColour(uint8_t colourIndex, const Colour & colour, uint8_t colo
 bool Palette::setColour(uint8_t x, uint8_t y, const Colour & colour, uint8_t colourTableIndex) {
 	uint8_t colourIndex = getColourIndex(x, y);
 
-	if(colourIndex >= NUMBER_OF_COLOURS) {
+	if(colourIndex >= ColourTable::NUMBER_OF_COLOURS) {
 		return false;
 	}
 
 	return setColour(colourIndex, colour, colourTableIndex);
 }
 
-std::vector<std::shared_ptr<Palette::ColourTable>> Palette::getAllColourTables() const {
+std::vector<std::shared_ptr<ColourTable>> Palette::getAllColourTables() const {
 	bool error = false;
 	uint8_t colourTableCount = numberOfColourTables();
 	std::shared_ptr<ColourTable> colourTable;

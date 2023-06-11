@@ -91,7 +91,7 @@ size_t PalettePAL::getPaletteChunkSizeInBytes() const {
 	return (sizeof(uint16_t) * 2) + (m_colourTable->numberOfColours() * BYTES_PER_COLOUR);
 }
 
-std::shared_ptr<Palette::ColourTable> PalettePAL::getColourTable(uint8_t colourTableIndex) const {
+std::shared_ptr<ColourTable> PalettePAL::getColourTable(uint8_t colourTableIndex) const {
 	if(colourTableIndex != 0) {
 		return nullptr;
 	}

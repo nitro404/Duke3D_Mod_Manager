@@ -87,6 +87,7 @@ set(MAIN_SOURCE_FILES
 	Game/File/Map/Velocity3D.cpp
 	Game/File/Map/Wall.h
 	Game/File/Map/Wall.cpp
+	Game/File/Palette/ColourTable.h
 	Game/File/Palette/ColourTable.cpp
 	Game/File/Palette/Palette.h
 	Game/File/Palette/Palette.cpp

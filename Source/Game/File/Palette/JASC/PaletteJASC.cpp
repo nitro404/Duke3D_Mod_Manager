@@ -65,7 +65,7 @@ const std::string & PaletteJASC::getVersion() const {
 	return m_version;
 }
 
-std::shared_ptr<Palette::ColourTable> PaletteJASC::getColourTable(uint8_t colourTableIndex) const {
+std::shared_ptr<ColourTable> PaletteJASC::getColourTable(uint8_t colourTableIndex) const {
 	if(colourTableIndex != 0) {
 		return nullptr;
 	}
@@ -119,8 +119,8 @@ std::unique_ptr<PaletteJASC> PaletteJASC::readFrom(const ByteBuffer & byteBuffer
 		return nullptr;
 	}
 
-	if(colourCount > NUMBER_OF_COLOURS) {
-		spdlog::error("Invalid Paint Shop Pro JASC palette number of colours: {}, expected unsigned integer less than or equal to {}.", colourCount, NUMBER_OF_COLOURS);
+	if(colourCount > ColourTable::NUMBER_OF_COLOURS) {
+		spdlog::error("Invalid Paint Shop Pro JASC palette number of colours: {}, expected unsigned integer less than or equal to {}.", colourCount, ColourTable::NUMBER_OF_COLOURS);
 		return nullptr;
 	}
 
@@ -231,7 +231,7 @@ bool PaletteJASC::writeTo(ByteBuffer & byteBuffer) const {
 		}
 	}
 
-	uint16_t paddingAmount = NUMBER_OF_COLOURS - m_colourTable->numberOfColours();
+	uint16_t paddingAmount = ColourTable::NUMBER_OF_COLOURS - m_colourTable->numberOfColours();
 
 	for(uint16_t i = 0; i < paddingAmount; i++) {
 		if(!byteBuffer.writeLine("0 0 0")) {
@@ -261,7 +261,7 @@ size_t PaletteJASC::getSizeInBytes() const {
 		}
 	}
 
-	return sizeBytes + ((NUMBER_OF_COLOURS - m_colourTable->numberOfColours()) * (sizeof(uint8_t) * 6));
+	return sizeBytes + ((ColourTable::NUMBER_OF_COLOURS - m_colourTable->numberOfColours()) * (sizeof(uint8_t) * 6));
 }
 
 void PaletteJASC::updateParent() {

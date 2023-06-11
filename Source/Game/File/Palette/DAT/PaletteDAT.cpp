@@ -26,10 +26,10 @@ std::optional<PaletteDAT::Type> PaletteDAT::determineType(const ByteBuffer & byt
 	byteBuffer.setEndianness(ENDIANNESS);
 
 	// Test for PALETTE.DAT file structure
-	if(byteBuffer.numberOfBytesRemaining() >= (NUMBER_OF_COLOURS * BYTES_PER_COLOUR) + (sizeof(uint16_t))) {
-		std::optional<uint16_t> optionalNumberOfShadeTables(byteBuffer.getUnsignedShort(byteBuffer.getReadOffset() + (NUMBER_OF_COLOURS * BYTES_PER_COLOUR)));
+	if(byteBuffer.numberOfBytesRemaining() >= (ColourTable::NUMBER_OF_COLOURS * BYTES_PER_COLOUR) + (sizeof(uint16_t))) {
+		std::optional<uint16_t> optionalNumberOfShadeTables(byteBuffer.getUnsignedShort(byteBuffer.getReadOffset() + (ColourTable::NUMBER_OF_COLOURS * BYTES_PER_COLOUR)));
 
-		size_t expectedNumberOfBytes = (NUMBER_OF_COLOURS * BYTES_PER_COLOUR) + sizeof(uint16_t) + (static_cast<size_t>(optionalNumberOfShadeTables.value()) * NUMBER_OF_COLOURS) + (NUMBER_OF_COLOURS * NUMBER_OF_COLOURS);
+		size_t expectedNumberOfBytes = (ColourTable::NUMBER_OF_COLOURS * BYTES_PER_COLOUR) + sizeof(uint16_t) + (static_cast<size_t>(optionalNumberOfShadeTables.value()) * ColourTable::NUMBER_OF_COLOURS) + (ColourTable::NUMBER_OF_COLOURS * ColourTable::NUMBER_OF_COLOURS);
 
 		if(optionalNumberOfShadeTables.has_value() && (byteBuffer.numberOfBytesRemaining() == expectedNumberOfBytes || byteBuffer.numberOfBytesRemaining() == expectedNumberOfBytes + NUMBER_OF_LEGACY_TRAILING_PALETTE_BYTES)) {
 			return Type::Palette;
@@ -40,14 +40,14 @@ std::optional<PaletteDAT::Type> PaletteDAT::determineType(const ByteBuffer & byt
 	std::optional<uint8_t> optionalNumberOfSwapTables(byteBuffer.getUnsignedByte(byteBuffer.getReadOffset()));
 
 	if(optionalNumberOfSwapTables.has_value()) {
-		size_t expectedNumberOfBytes = (sizeof(uint8_t) + static_cast<size_t>(optionalNumberOfSwapTables.value()) * (sizeof(uint8_t) + (NUMBER_OF_COLOURS * sizeof(uint8_t))));
+		size_t expectedNumberOfBytes = (sizeof(uint8_t) + static_cast<size_t>(optionalNumberOfSwapTables.value()) * (sizeof(uint8_t) + (ColourTable::NUMBER_OF_COLOURS * sizeof(uint8_t))));
 
 		// Since there is no indicator of how many global palettes are at the end of the file,
 		// we must calculate how many bytes are left over and see if this is divisible by the
 		// number of colours (256) multiplied by the number of bytes per colour (3).
 		size_t leftoverBytes = byteBuffer.numberOfBytesRemaining() - expectedNumberOfBytes;
 
-		if(leftoverBytes % (NUMBER_OF_COLOURS * BYTES_PER_COLOUR) == 0) {
+		if(leftoverBytes % (ColourTable::NUMBER_OF_COLOURS * BYTES_PER_COLOUR) == 0) {
 			return Type::Lookup;
 		}
 	}
@@ -427,7 +427,7 @@ void PaletteDAT::clearSwapTables() {
 	m_swapTables.clear();
 }
 
-std::shared_ptr<Palette::ColourTable> PaletteDAT::getColourTable(uint8_t colourTableIndex) const {
+std::shared_ptr<ColourTable> PaletteDAT::getColourTable(uint8_t colourTableIndex) const {
 	if(colourTableIndex >= m_colourTables.size()) {
 		return nullptr;
 	}
@@ -514,7 +514,7 @@ std::unique_ptr<PaletteDAT> PaletteDAT::readPaletteFrom(const ByteBuffer & byteB
 		return nullptr;
 	}
 
-	if(!byteBuffer.canReadBytes(static_cast<size_t>(shadeTableCount) * NUMBER_OF_COLOURS)) {
+	if(!byteBuffer.canReadBytes(static_cast<size_t>(shadeTableCount) * ColourTable::NUMBER_OF_COLOURS)) {
 		spdlog::error("Build Engine DAT regular palette shade tables data is truncated.");
 		return nullptr;
 	}
@@ -559,7 +559,7 @@ std::unique_ptr<PaletteDAT> PaletteDAT::readLookupFrom(const ByteBuffer & byteBu
 		return nullptr;
 	}
 
-	if(!byteBuffer.canReadBytes(static_cast<size_t>(swapTableCount) * NUMBER_OF_COLOURS)) {
+	if(!byteBuffer.canReadBytes(static_cast<size_t>(swapTableCount) * ColourTable::NUMBER_OF_COLOURS)) {
 		spdlog::error("Build Engine DAT lookup palette swap tables data is truncated.");
 		return nullptr;
 	}
@@ -578,7 +578,7 @@ std::unique_ptr<PaletteDAT> PaletteDAT::readLookupFrom(const ByteBuffer & byteBu
 	}
 
 	size_t bytesRemaining = byteBuffer.numberOfBytesRemaining();
-	uint8_t alternateColourTableCount = static_cast<uint8_t>(floor(bytesRemaining / (NUMBER_OF_COLOURS * BYTES_PER_COLOUR)));
+	uint8_t alternateColourTableCount = static_cast<uint8_t>(floor(bytesRemaining / (ColourTable::NUMBER_OF_COLOURS * BYTES_PER_COLOUR)));
 	std::vector<std::unique_ptr<ColourTable>> alternateColourTables;
 	alternateColourTables.reserve(alternateColourTableCount);
 
@@ -741,11 +741,11 @@ Endianness PaletteDAT::getEndianness() const {
 size_t PaletteDAT::getSizeInBytes() const {
 	switch(m_type) {
 		case Type::Palette: {
-			return (NUMBER_OF_COLOURS * BYTES_PER_COLOUR) + sizeof(uint16_t) + (m_shadeTables.size() * NUMBER_OF_COLOURS) + TRANSLUCENCY_TABLE_SIZE_BYTES + m_trailingData->getSize();
+			return (ColourTable::NUMBER_OF_COLOURS * BYTES_PER_COLOUR) + sizeof(uint16_t) + (m_shadeTables.size() * ColourTable::NUMBER_OF_COLOURS) + TRANSLUCENCY_TABLE_SIZE_BYTES + m_trailingData->getSize();
 		}
 
 		case Type::Lookup: {
-			return sizeof(uint8_t) + (m_swapTables.size() * (sizeof(uint8_t) + NUMBER_OF_COLOURS)) + (m_colourTables.size() * NUMBER_OF_COLOURS * BYTES_PER_COLOUR) + m_trailingData->getSize();
+			return sizeof(uint8_t) + (m_swapTables.size() * (sizeof(uint8_t) + ColourTable::NUMBER_OF_COLOURS)) + (m_colourTables.size() * ColourTable::NUMBER_OF_COLOURS * BYTES_PER_COLOUR) + m_trailingData->getSize();
 		}
 	}
 

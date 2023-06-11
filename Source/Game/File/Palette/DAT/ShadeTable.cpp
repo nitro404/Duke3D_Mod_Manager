@@ -53,17 +53,17 @@ void PaletteDAT::ShadeTable::setData(const ShadeData & shadeData) {
 }
 
 bool PaletteDAT::ShadeTable::setData(const std::vector<uint8_t> & shadeData) {
-	if(shadeData.size() != NUMBER_OF_COLOURS) {
+	if(shadeData.size() != ColourTable::NUMBER_OF_COLOURS) {
 		return false;
 	}
 
-	std::copy_n(std::make_move_iterator(shadeData.begin()), NUMBER_OF_COLOURS, m_shadeData->begin());
+	std::copy_n(std::make_move_iterator(shadeData.begin()), ColourTable::NUMBER_OF_COLOURS, m_shadeData->begin());
 
 	return true;
 }
 
 std::unique_ptr<PaletteDAT::ShadeTable> PaletteDAT::ShadeTable::getFrom(const ByteBuffer & byteBuffer, size_t offset) {
-	std::unique_ptr<ShadeData> shadeData(byteBuffer.getBytes<NUMBER_OF_COLOURS>(offset));
+	std::unique_ptr<ShadeData> shadeData(byteBuffer.getBytes<ColourTable::NUMBER_OF_COLOURS>(offset));
 
 	if(shadeData == nullptr) {
 		return nullptr;
@@ -73,7 +73,7 @@ std::unique_ptr<PaletteDAT::ShadeTable> PaletteDAT::ShadeTable::getFrom(const By
 }
 
 std::unique_ptr<PaletteDAT::ShadeTable> PaletteDAT::ShadeTable::readFrom(const ByteBuffer & byteBuffer) {
-	std::unique_ptr<ShadeData> shadeData(byteBuffer.readBytes<NUMBER_OF_COLOURS>());
+	std::unique_ptr<ShadeData> shadeData(byteBuffer.readBytes<ColourTable::NUMBER_OF_COLOURS>());
 
 	if(shadeData == nullptr) {
 		return nullptr;

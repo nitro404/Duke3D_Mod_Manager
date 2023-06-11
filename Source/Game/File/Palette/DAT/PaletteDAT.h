@@ -7,7 +7,7 @@
 
 class PaletteDAT final : public Palette {
 public:
-	static constexpr uint32_t TRANSLUCENCY_TABLE_SIZE_BYTES = NUMBER_OF_COLOURS * NUMBER_OF_COLOURS;
+	static constexpr uint32_t TRANSLUCENCY_TABLE_SIZE_BYTES = ColourTable::NUMBER_OF_COLOURS * ColourTable::NUMBER_OF_COLOURS;
 
 	enum class Type {
 		Palette,
@@ -18,7 +18,7 @@ public:
 		friend class PaletteDAT;
 
 	public:
-		using ShadeData = std::array<uint8_t, NUMBER_OF_COLOURS>;
+		using ShadeData = std::array<uint8_t, ColourTable::NUMBER_OF_COLOURS>;
 
 		ShadeTable(Palette * parent = nullptr);
 		ShadeTable(std::unique_ptr<ShadeData> shadeData, Palette * parent = nullptr);
@@ -102,7 +102,7 @@ public:
 		friend class PaletteDAT;
 
 	public:
-		using SwapData = std::array<uint8_t, NUMBER_OF_COLOURS>;
+		using SwapData = std::array<uint8_t, ColourTable::NUMBER_OF_COLOURS>;
 
 		SwapTable(Palette * parent = nullptr);
 		SwapTable(std::unique_ptr<SwapData> swapData, uint8_t swapIndex, Palette * parent = nullptr);
