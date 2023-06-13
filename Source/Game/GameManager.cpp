@@ -1,6 +1,5 @@
 #include "GameManager.h"
 
-#include "Configuration/GameConfiguration.h"
 #include "GameDownload.h"
 #include "GameDownloadCollection.h"
 #include "GameDownloadFile.h"
@@ -8,6 +7,7 @@
 #include "GameLocator.h"
 #include "Game/GameVersion.h"
 #include "Game/NoCDCracker.h"
+#include "Game/Configuration/GameConfiguration.h"
 #include "Game/File/Group/GRP/GroupGRP.h"
 #include "Manager/SettingsManager.h"
 

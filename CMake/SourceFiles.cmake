@@ -1,11 +1,6 @@
 include_guard()
 
 set(MAIN_SOURCE_FILES
-	Configuration/GameConfiguration.h
-	Configuration/GameConfiguration.cpp
-	Configuration/GameConfigurationEntry.cpp
-	Configuration/GameConfigurationGenerator.cpp
-	Configuration/GameConfigurationSection.cpp
 	DOSBox/DOSBoxDownload.h
 	DOSBox/DOSBoxDownload.cpp
 	DOSBox/DOSBoxDownloadCollection.h
@@ -48,6 +43,11 @@ set(MAIN_SOURCE_FILES
 	Game/GameVersionCollection.cpp
 	Game/NoCDCracker.h
 	Game/NoCDCracker.cpp
+	Game/Configuration/GameConfiguration.h
+	Game/Configuration/GameConfiguration.cpp
+	Game/Configuration/GameConfigurationEntry.cpp
+	Game/Configuration/GameConfigurationGenerator.cpp
+	Game/Configuration/GameConfigurationSection.cpp
 	Game/File/GameFile.h
 	Game/File/GameFile.cpp
 	Game/File/GameFileFactoryRegistry.h
