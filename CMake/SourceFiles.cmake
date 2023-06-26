@@ -54,6 +54,10 @@ set(MAIN_SOURCE_FILES
 	Game/File/GameFileFactoryRegistry.cpp
 	Game/File/Animation/Animation.h
 	Game/File/Animation/Animation.cpp
+	Game/File/Animation/ANM/AnimationANM.h
+	Game/File/Animation/ANM/AnimationANM.cpp
+	Game/File/Animation/ANM/ColourCycleInfo.cpp
+	Game/File/Animation/ANM/LargePageDescriptor.cpp
 	Game/File/Art/Art.h
 	Game/File/Art/Art.cpp
 	Game/File/Art/Tile.h

@@ -1,5 +1,6 @@
 #include "GameFileFactoryRegistry.h"
 
+#include "Animation/ANM/AnimationANM.h"
 #include "Art/Art.h"
 #include "Group/GRP/GroupGRP.h"
 #include "Group/SSI/GroupSSI.h"
@@ -108,6 +109,14 @@ void GameFileFactoryRegistry::assignDefaultFactories() {
 		return PaletteACT::readFrom(data);
 	}, [](const std::string & filePath) {
 		return PaletteACT::loadFrom(filePath);
+	});
+
+	setFactory("anm", []() {
+		return std::make_unique<AnimationANM>();
+	}, [](const ByteBuffer & data) {
+		return AnimationANM::readFrom(data);
+	}, [](const std::string & filePath) {
+		return AnimationANM::loadFrom(filePath);
 	});
 
 	setFactory("art", []() {
