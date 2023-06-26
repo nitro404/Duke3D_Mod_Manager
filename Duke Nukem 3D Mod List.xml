@@ -11602,7 +11602,7 @@
 			<download filename="Silver_Wolf_1.0-ModMgrSA.zip" filesize="116046146" version="1.0" game="Stand-Alone" type="Mod Manager Files" state="Native" sha1="b55f0c3681543951ec4679640079376f0ef438ee"/>
 		</downloads>
 	</mod>
-	<mod name="A.W.O.L." id="awol" type="Total Conversion" version="2.0.0.4" website="https://store.steampowered.com/app/1740150/AWOL">
+	<mod name="A.W.O.L." id="awol" type="Total Conversion" website="https://store.steampowered.com/app/1740150/AWOL">
 		<team name="Shotspark Studios" website="https://www.shotsparkstudios.com" twitter="shotsparkstudio" discord="https://discord.gg/EBX5MXjDp8">
 			<member name="Andrew Childs" alias="Hudson" twitter="aschilds"/>
 			<member name="Michelle Sleeper" twitter="msleeperdotcom"/>
@@ -11628,7 +11628,7 @@
 			<member name="Jordon Moss" alias="StrikerTheHedgeFox"/>
 		</team>
 		<versions>
-			<version id="2.0.0.4" release_date="September 15, 2022">
+			<version release_date="September 15, 2022">
 				<type>
 					<game type="Stand-Alone" state="Native">
 						<properties base="eDuke32" game_exe_name="awol.exe" skill_start_value="1" local_working_directory="false" relative_con_file_path="true" supports_subdirectories="true"/>
@@ -11671,8 +11671,8 @@
 			</version>
 		</versions>
 		<downloads>
-			<download filename="A.W.O.L._2.0.0.4.zip" filesize="248805082" version="2.0.0.4" game="Stand-Alone" type="Original Files" sha1="da52801376acace609b86091b3c72eacca88e0b6"/>
-			<download filename="A.W.O.L._2.0.0.4-ModMgrSA.zip" filesize="248805082" version="2.0.0.4" game="Stand-Alone" type="Mod Manager Files" state="Native" sha1="da52801376acace609b86091b3c72eacca88e0b6"/>
+			<download filename="A.W.O.L.zip" filesize="248805082" game="Stand-Alone" type="Original Files" sha1="da52801376acace609b86091b3c72eacca88e0b6"/>
+			<download filename="A.W.O.L-ModMgrSA.zip" filesize="248805082" game="Stand-Alone" type="Mod Manager Files" state="Native" sha1="da52801376acace609b86091b3c72eacca88e0b6"/>
 		</downloads>
 	</mod>
 	<mod name="Avatar" id="avatar" type="Total Conversion" version="1.3.98">
