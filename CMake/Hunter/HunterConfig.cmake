@@ -46,6 +46,12 @@ hunter_config(png
 )
 
 # Application Dependencies
+hunter_config(JDKSMIDI
+	URL "https://github.com/Telefrag-Software/jdksmidi/archive/refs/heads/hunter-2014.08.11.zip"
+	VERSION "2014.08.11"
+	SHA1 "5c7724b326c7f9aa74991ac95e19b3ac1b7f8d94"
+)
+
 hunter_config(wxWidgets
 	URL "https://github.com/Telefrag-Software/wxWidgets/archive/refs/heads/hunter-3.2.1.0.zip"
 	VERSION "3.2.1.0"

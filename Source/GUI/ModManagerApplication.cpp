@@ -10,6 +10,7 @@
 #include <Logging/LogSystem.h>
 
 #include <fmt/core.h>
+#include <jdksmidi/version.h>
 #include <magic_enum.hpp>
 #include <png.h>
 #include <spdlog/spdlog.h>
@@ -92,6 +93,7 @@ void ModManagerApplication::initialize() {
 	m_logSinkWX = std::make_shared<LogSinkWX>();
 
 	LibraryInformation * libraryInformation = LibraryInformation::getInstance();
+	libraryInformation->addLibrary("JDKSMIDI", jdksmidi::LibraryVersion);
 	libraryInformation->addLibrary("LibPNG", PNG_LIBPNG_VER_STRING);
 	libraryInformation->addLibrary("wxWidgets", fmt::format("{}.{}.{}.{}", wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER, wxSUBRELEASE_NUMBER));
 
