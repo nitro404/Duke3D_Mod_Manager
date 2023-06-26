@@ -62,7 +62,7 @@ public:
 	bool operator == (const ColourTable & colourTable) const;
 	bool operator != (const ColourTable & colourTable) const;
 
-	static constexpr uint16_t NUMBER_OF_COLOURS = 256;
+	static constexpr uint16_t NUMBER_OF_COLOURS = std::numeric_limits<uint8_t>::max() + 1;
 	static const ColourTable EMPTY_COLOUR_TABLE;
 
 private:

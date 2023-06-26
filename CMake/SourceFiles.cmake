@@ -52,6 +52,8 @@ set(MAIN_SOURCE_FILES
 	Game/File/GameFile.cpp
 	Game/File/GameFileFactoryRegistry.h
 	Game/File/GameFileFactoryRegistry.cpp
+	Game/File/Animation/Animation.h
+	Game/File/Animation/Animation.cpp
 	Game/File/Art/Art.h
 	Game/File/Art/Art.cpp
 	Game/File/Art/Tile.h
