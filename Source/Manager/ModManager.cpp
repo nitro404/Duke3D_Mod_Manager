@@ -38,6 +38,7 @@
 #include <Archive/ArchiveFactoryRegistry.h>
 #include <Archive/Zip/ZipArchive.h>
 #include <Arguments/ArgumentParser.h>
+#include <LibraryInformation.h>
 #include <Location/GeoLocationService.h>
 #include <Network/HTTPRequest.h>
 #include <Network/HTTPResponse.h>
@@ -54,6 +55,7 @@
 #include <Utilities/Utilities.h>
 
 #include <fmt/core.h>
+#include <jdksmidi/version.h>
 #include <magic_enum.hpp>
 #include <spdlog/spdlog.h>
 #include <tinyxml2.h>
@@ -109,6 +111,9 @@ ModManager::ModManager()
 
 	m_selectedModChangedConnection = m_organizedMods->selectedModChanged.connect(std::bind(&ModManager::onSelectedModChanged, this, std::placeholders::_1));
 	m_selectedFavouriteModChangedConnection = m_organizedMods->selectedFavouriteModChanged.connect(std::bind(&ModManager::onSelectedFavouriteModChanged, this, std::placeholders::_1));
+
+	LibraryInformation * libraryInformation = LibraryInformation::getInstance();
+	libraryInformation->addLibrary("JDKSMIDI", jdksmidi::LibraryVersion);
 }
 
 ModManager::~ModManager() {
