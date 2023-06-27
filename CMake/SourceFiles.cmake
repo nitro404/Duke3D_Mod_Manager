@@ -93,6 +93,12 @@ set(MAIN_SOURCE_FILES
 	Game/File/Map/Velocity3D.cpp
 	Game/File/Map/Wall.h
 	Game/File/Map/Wall.cpp
+	Game/File/MIDI/MIDI.h
+	Game/File/MIDI/MIDI.cpp
+	Game/File/MIDI/MIDIByteBufferReadStream.h
+	Game/File/MIDI/MIDIByteBufferReadStream.cpp
+	Game/File/MIDI/MIDIByteBufferWriteStream.h
+	Game/File/MIDI/MIDIByteBufferWriteStream.cpp
 	Game/File/Palette/ColourTable.h
 	Game/File/Palette/ColourTable.cpp
 	Game/File/Palette/Palette.h

@@ -5,6 +5,7 @@
 #include "Group/GRP/GroupGRP.h"
 #include "Group/SSI/GroupSSI.h"
 #include "Map/Map.h"
+#include "MIDI/MIDI.h"
 #include "Palette/ACT/PaletteACT.h"
 #include "Palette/DAT/PaletteDAT.h"
 #include "Palette/GPL/PaletteGPL.h"
@@ -165,6 +166,14 @@ void GameFileFactoryRegistry::assignDefaultFactories() {
 		return Map::readFrom(data);
 	}, [](const std::string & filePath) {
 		return Map::loadFrom(filePath);
+	});
+
+	setFactory(std::vector<std::string>({ "mid", "midi" }), []() {
+		return std::make_unique<MIDI>();
+	}, [](const ByteBuffer & data) {
+		return MIDI::readFrom(data);
+	}, [](const std::string & filePath) {
+		return MIDI::loadFrom(filePath);
 	});
 
 	setFactory("pal", []() {
