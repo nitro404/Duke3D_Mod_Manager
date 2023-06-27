@@ -57,6 +57,7 @@
 #include <fmt/core.h>
 #include <jdksmidi/version.h>
 #include <magic_enum.hpp>
+#include <sndfile.h>
 #include <spdlog/spdlog.h>
 #include <tinyxml2.h>
 
@@ -114,6 +115,13 @@ ModManager::ModManager()
 
 	LibraryInformation * libraryInformation = LibraryInformation::getInstance();
 	libraryInformation->addLibrary("JDKSMIDI", jdksmidi::LibraryVersion);
+
+	std::string_view libSndFileVersion(sf_version_string());
+	size_t versionStartIndex = libSndFileVersion.find_first_of("0123456789");
+	if(versionStartIndex == std::string::npos) {
+		versionStartIndex = 0;
+	}
+	libraryInformation->addLibrary("libsndfile", std::string(libSndFileVersion.substr(versionStartIndex, libSndFileVersion.length() - versionStartIndex)));
 }
 
 ModManager::~ModManager() {

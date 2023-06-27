@@ -16,7 +16,9 @@ find_package(OpenGL)
 
 # Application Dependencies
 hunter_add_package(JDKSMIDI)
+hunter_add_package(SndFile)
 hunter_add_package(wxWidgets)
 
 find_package(JDKSMIDI CONFIG REQUIRED)
+find_package(SndFile CONFIG REQUIRED)
 find_package(wxWidgets CONFIG REQUIRED)

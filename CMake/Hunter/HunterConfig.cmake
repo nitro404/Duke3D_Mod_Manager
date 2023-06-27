@@ -52,6 +52,16 @@ hunter_config(JDKSMIDI
 	SHA1 "5c7724b326c7f9aa74991ac95e19b3ac1b7f8d94"
 )
 
+hunter_config(SndFile
+	URL "https://codeload.github.com/libsndfile/libsndfile/zip/tags/1.2.0"
+	VERSION "1.2.0"
+	SHA1 "8b7905e43f6a8bab3118454c154f23bd14f6301b"
+	CMAKE_ARGS
+		BUILD_TESTING=OFF
+		INSTALL_MANPAGES=OFF
+		ENABLE_CPACK=OFF
+)
+
 hunter_config(wxWidgets
 	URL "https://github.com/Telefrag-Software/wxWidgets/archive/refs/heads/hunter-3.2.1.0.zip"
 	VERSION "3.2.1.0"
