@@ -151,6 +151,8 @@ bool ModManagerFrame::initialize(std::shared_ptr<ModManager> modManager) {
 		modBrowserPanel->launchGame();
 	}
 
+m_notebook->ChangeSelection(3);
+
 	return true;
 }
 
