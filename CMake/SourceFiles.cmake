@@ -69,6 +69,8 @@ set(MAIN_SOURCE_FILES
 	Game/File/Art/Tile.h
 	Game/File/Art/Tile.cpp
 	Game/File/Art/TileNames.cpp
+	Game/File/Demo/Demo.h
+	Game/File/Demo/Demo.cpp
 	Game/File/Group/Group.h
 	Game/File/Group/Group.cpp
 	Game/File/Group/GroupFile.h
