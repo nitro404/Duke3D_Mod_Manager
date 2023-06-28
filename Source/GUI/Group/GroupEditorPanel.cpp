@@ -133,6 +133,8 @@ GroupEditorPanel::GroupEditorPanel(wxWindow * parent, wxWindowID windowID, const
 	Thaw();
 
 	update();
+
+openGroup("../TESTDATA.GRP");
 }
 
 GroupEditorPanel::~GroupEditorPanel() { }
