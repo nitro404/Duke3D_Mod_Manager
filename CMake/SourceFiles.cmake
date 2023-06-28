@@ -120,6 +120,8 @@ set(MAIN_SOURCE_FILES
 	Game/File/Sound/Sound.cpp
 	Game/File/Sound/VOC/SoundVOC.h
 	Game/File/Sound/VOC/SoundVOC.cpp
+	Game/File/Sound/WAV/SoundWAV.h
+	Game/File/Sound/WAV/SoundWAV.cpp
 	Game/File/Zip/Zip.h
 	Game/File/Zip/Zip.cpp
 	Manager/InstalledModInfo.h
