@@ -128,6 +128,8 @@ GroupEditorPanel::GroupEditorPanel(wxWindow * parent, wxWindowID windowID, const
 	SetSizerAndFit(groupEditorPanelSizer);
 
 	update();
+
+openGroup("../TESTDATA.GRP");
 }
 
 GroupEditorPanel::~GroupEditorPanel() { }
