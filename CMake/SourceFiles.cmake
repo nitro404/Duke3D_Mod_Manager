@@ -116,6 +116,8 @@ set(MAIN_SOURCE_FILES
 	Game/File/Palette/JASC/PaletteJASC.cpp
 	Game/File/Palette/PAL/PalettePAL.h
 	Game/File/Palette/PAL/PalettePAL.cpp
+	Game/File/Sound/Sound.h
+	Game/File/Sound/Sound.cpp
 	Game/File/Zip/Zip.h
 	Game/File/Zip/Zip.cpp
 	Manager/InstalledModInfo.h

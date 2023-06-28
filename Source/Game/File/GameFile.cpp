@@ -70,7 +70,6 @@ void GameFile::setModified(bool value) const {
 
 std::unique_ptr<ByteBuffer> GameFile::getData() const {
 	std::unique_ptr<ByteBuffer> data(std::make_unique<ByteBuffer>(getEndianness()));
-	data->reserve(getSizeInBytes());
 
 	if(!writeTo(*data)) {
 		return nullptr;
@@ -94,7 +93,7 @@ bool GameFile::saveTo(const std::string & filePath, bool overwrite) const {
 		return false;
 	}
 
-	ByteBuffer byteBuffer(getSizeInBytes(), getEndianness());
+	ByteBuffer byteBuffer(getEndianness());
 
 	if(!writeTo(byteBuffer) || !byteBuffer.writeTo(filePath, overwrite)) {
 		return false;
