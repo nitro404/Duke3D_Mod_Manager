@@ -2,6 +2,7 @@
 
 #include "Animation/ANM/AnimationANM.h"
 #include "Art/Art.h"
+#include "Demo/Demo.h"
 #include "Group/GRP/GroupGRP.h"
 #include "Group/SSI/GroupSSI.h"
 #include "Map/Map.h"
@@ -136,6 +137,14 @@ void GameFileFactoryRegistry::assignDefaultFactories() {
 		return PaletteDAT::readFrom(data);
 	}, [](const std::string & filePath) {
 		return PaletteDAT::loadFrom(filePath);
+	});
+
+	setFactory("dmo", []() {
+		return std::make_unique<Demo>();
+	}, [](const ByteBuffer & data) {
+		return Demo::readFrom(data);
+	}, [](const std::string & filePath) {
+		return Demo::loadFrom(filePath);
 	});
 
 	setFactory("gpl", []() {
