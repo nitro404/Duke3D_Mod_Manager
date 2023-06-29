@@ -118,7 +118,8 @@ static SF_VIRTUAL_IO BYTE_BUFFER_VIRTUAL_SOUND_OUTPUT_CALLBACKS({
 });
 
 Sound::Sound(int format, uint32_t sampleRate, uint16_t numberOfChannels, const std::string & filePath)
-	: m_data(std::make_unique<ByteBuffer>())
+	: GameFile(filePath)
+	, m_data(std::make_unique<ByteBuffer>())
 	, m_info({
 		0,
 		static_cast<int>(sampleRate),
@@ -134,17 +135,21 @@ Sound::Sound(int format, uint32_t sampleRate, uint16_t numberOfChannels, const s
 }
 
 Sound::Sound(FileHandle fileHandle, SF_INFO && info, std::unique_ptr<ByteBuffer> data)
-	: m_data(std::move(data))
+	: GameFile()
+	, m_data(std::move(data))
 	, m_info(std::move(info))
 	, m_fileHandle(std::move(fileHandle)) { }
 
 Sound::Sound(Sound && sound) noexcept
-	: m_data(std::move(sound.m_data))
+	: GameFile(std::move(sound))
+	, m_data(std::move(sound.m_data))
 	, m_info(std::move(sound.m_info))
 	, m_fileHandle(std::move(sound.m_fileHandle)) { }
 
 Sound & Sound::operator = (Sound && sound) noexcept {
 	if(this != &sound) {
+		GameFile::operator = (std::move(sound));
+
 		m_data = std::move(sound.m_data);
 		m_info = std::move(sound.m_info);
 		m_fileHandle = std::move(sound.m_fileHandle);

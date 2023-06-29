@@ -44,7 +44,9 @@ public:
 	Partition(Type type);
 	Partition(Type type, int32_t height, Attributes attributes, TexturedItem texturedItem, int16_t slope, uint8_t xPanning, uint8_t yPanning);
 	Partition(Type type, int32_t height, Attributes attributes, uint16_t tileNumber, int16_t slope, int8_t shade, uint8_t paletteLookupTableNumber, uint8_t xPanning, uint8_t yPanning);
+	Partition(Partition && partition) noexcept;
 	Partition(const Partition & partition);
+	Partition & operator = (Partition && partition) noexcept;
 	Partition & operator = (const Partition & partition);
 	virtual ~Partition();
 

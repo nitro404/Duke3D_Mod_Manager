@@ -20,6 +20,9 @@ public:
 	virtual ~CustomLogTextControl();
 
 	virtual void DoLogTextAtLevel(wxLogLevel level, const wxString & message) override;
+
+	CustomLogTextControl(const CustomLogTextControl &) = delete;
+	const CustomLogTextControl & operator = (const CustomLogTextControl &) = delete;
 };
 
 #endif // _CUSTOM_LOG_TEXT_CONTROL_H_

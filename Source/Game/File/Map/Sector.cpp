@@ -89,7 +89,7 @@ Sector::Sector(uint16_t firstWallIndex, uint16_t numberOfWalls, std::unique_ptr<
 }
 
 Sector::Sector(Sector && sector) noexcept
-	: TaggedItem(sector)
+	: TaggedItem(std::move(sector))
 	, m_firstWallIndex(sector.m_firstWallIndex)
 	, m_numberOfWalls(sector.m_numberOfWalls)
 	, m_ceiling(std::move(sector.m_ceiling))
@@ -110,7 +110,7 @@ Sector::Sector(const Sector & sector)
 
 Sector & Sector::operator = (Sector && sector) noexcept {
 	if(this != &sector) {
-		TaggedItem::operator = (sector);
+		TaggedItem::operator = (std::move(sector));
 
 		m_firstWallIndex = sector.m_firstWallIndex;
 		m_numberOfWalls = sector.m_numberOfWalls;

@@ -16,14 +16,14 @@ Palette::Palette(const std::string & filePath)
 	: GameFile(filePath) { }
 
 Palette::Palette(Palette && palette) noexcept
-	: GameFile(palette) { }
+	: GameFile(std::move(palette)) { }
 
 Palette::Palette(const Palette & palette)
 	: GameFile(palette) { }
 
 Palette & Palette::operator = (Palette && palette) noexcept {
 	if(this != &palette) {
-		GameFile::operator = (palette);
+		GameFile::operator = (std::move(palette));
 	}
 
 	return *this;

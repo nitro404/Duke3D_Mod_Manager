@@ -19,6 +19,9 @@ class ModDownloadPanel final : public wxPanel {
 public:
 	ModDownloadPanel(std::shared_ptr<ModDownload> modDownload, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
 	virtual ~ModDownloadPanel();
+
+	ModDownloadPanel(const ModDownloadPanel &) = delete;
+	const ModDownloadPanel & operator = (const ModDownloadPanel &) = delete;
 };
 
 #endif // _MOD_DOWNLOAD_PANEL_H_

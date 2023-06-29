@@ -22,7 +22,7 @@ PaletteJASC::PaletteJASC(std::unique_ptr<ColourTable> colourTable, const std::st
 }
 
 PaletteJASC::PaletteJASC(PaletteJASC && palette) noexcept
-	: Palette(palette)
+	: Palette(std::move(palette))
 	, m_colourTable(std::move(palette.m_colourTable))
 	, m_version(std::move(palette.m_version)) {
 	updateParent();
@@ -37,7 +37,7 @@ PaletteJASC::PaletteJASC(const PaletteJASC & palette)
 
 PaletteJASC & PaletteJASC::operator = (PaletteJASC && palette) noexcept {
 	if(this != &palette) {
-		Palette::operator = (palette);
+		Palette::operator = (std::move(palette));
 
 		m_colourTable = std::move(palette.m_colourTable);
 		m_version = std::move(palette.m_version);

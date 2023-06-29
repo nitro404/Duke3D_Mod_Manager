@@ -25,6 +25,9 @@ public:
 private:
 	std::vector<std::pair<wxStaticText *, wxStaticText *>> m_metadataText;
 	wxFlexGridSizer * m_metadataPanelSizer;
+
+	MetadataPanel(const MetadataPanel &) = delete;
+	const MetadataPanel & operator = (const MetadataPanel &) = delete;
 };
 
 #endif // _FILE_INFO_PANEL_H_

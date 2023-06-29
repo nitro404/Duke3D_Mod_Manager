@@ -22,6 +22,9 @@ private:
 	bool m_initialized;
 	std::vector<std::pair<wxLogLevel, std::string>> m_logMessageCache;
 	spdlog::memory_buf_t m_formatBuffer;
+
+	LogSinkWX(const LogSinkWX &) = delete;
+	const LogSinkWX & operator = (const LogSinkWX &) = delete;
 };
 
 #endif // _LOG_SINK_WINDOWS_H_

@@ -160,6 +160,20 @@ Wall::Wall(int32_t xPosition, int32_t yPosition, uint16_t nextWallIndex, uint16_
 	, m_xPanning(xPanning)
 	, m_yPanning(yPanning) { }
 
+Wall::Wall(Wall && wall) noexcept
+	: TaggedItem(std::move(wall))
+	, TexturedItem(std::move(wall))
+	, m_position(std::move(wall.m_position))
+	, m_nextWallIndex(wall.m_nextWallIndex)
+	, m_adjacentWallIndex(wall.m_adjacentWallIndex)
+	, m_nextSectorIndex(wall.m_nextSectorIndex)
+	, m_attributes(std::move(wall.m_attributes))
+	, m_maskedTileNumber(wall.m_maskedTileNumber)
+	, m_xRepeat(wall.m_xRepeat)
+	, m_yRepeat(wall.m_yRepeat)
+	, m_xPanning(wall.m_xPanning)
+	, m_yPanning(wall.m_yPanning) { }
+
 Wall::Wall(const Wall & wall)
 	: TaggedItem(wall)
 	, TexturedItem(wall)
@@ -173,6 +187,26 @@ Wall::Wall(const Wall & wall)
 	, m_yRepeat(wall.m_yRepeat)
 	, m_xPanning(wall.m_xPanning)
 	, m_yPanning(wall.m_yPanning) { }
+
+Wall & Wall::operator = (Wall && wall) noexcept {
+	if(this != &wall) {
+		TaggedItem::operator = (std::move(wall));
+		TexturedItem::operator = (std::move(wall));
+
+		m_position = std::move(wall.m_position);
+		m_nextWallIndex = wall.m_nextWallIndex;
+		m_adjacentWallIndex = wall.m_adjacentWallIndex;
+		m_nextSectorIndex = wall.m_nextSectorIndex;
+		m_attributes = std::move(wall.m_attributes);
+		m_maskedTileNumber = wall.m_maskedTileNumber;
+		m_xRepeat = wall.m_xRepeat;
+		m_yRepeat = wall.m_yRepeat;
+		m_xPanning = wall.m_xPanning;
+		m_yPanning = wall.m_yPanning;
+	}
+
+	return *this;
+}
 
 Wall & Wall::operator = (const Wall & wall) {
 	TaggedItem::operator = (wall);

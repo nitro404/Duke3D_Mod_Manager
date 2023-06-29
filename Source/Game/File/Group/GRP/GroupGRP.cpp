@@ -14,14 +14,14 @@ GroupGRP::GroupGRP(std::vector<std::unique_ptr<GroupFile>> files, const std::str
 	: Group(std::move(files), filePath) { }
 
 GroupGRP::GroupGRP(GroupGRP && group) noexcept
-	: Group(group) { }
+	: Group(std::move(group)) { }
 
 GroupGRP::GroupGRP(const GroupGRP & group)
 	: Group(group) { }
 
 GroupGRP & GroupGRP::operator = (GroupGRP && group) noexcept {
 	if(this != &group) {
-		Group::operator = (group);
+		Group::operator = (std::move(group));
 	}
 
 	return *this;

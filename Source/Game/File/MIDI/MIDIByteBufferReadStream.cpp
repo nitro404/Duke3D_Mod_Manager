@@ -1,22 +1,29 @@
 #include "MIDIByteBufferReadStream.h"
 
 MIDIByteBufferReadStream::MIDIByteBufferReadStream(const ByteBuffer & data)
-	: m_data(std::make_shared<ByteBuffer>(data)) { }
+	: jdksmidi::MIDIFileReadStream()
+	, m_data(std::make_shared<ByteBuffer>(data)) { }
 
 MIDIByteBufferReadStream::MIDIByteBufferReadStream(std::unique_ptr<ByteBuffer> data)
-	: m_data(std::shared_ptr<ByteBuffer>(data.release())) { }
+	: jdksmidi::MIDIFileReadStream()
+	, m_data(std::shared_ptr<ByteBuffer>(data.release())) { }
 
 MIDIByteBufferReadStream::MIDIByteBufferReadStream(std::shared_ptr<ByteBuffer> data)
-	: m_data(data) { }
+	: jdksmidi::MIDIFileReadStream()
+	, m_data(data) { }
 
 MIDIByteBufferReadStream::MIDIByteBufferReadStream(MIDIByteBufferReadStream && readStream) noexcept
-	: m_data(std::move(readStream.m_data)) { }
+	: jdksmidi::MIDIFileReadStream(std::move(readStream))
+	, m_data(std::move(readStream.m_data)) { }
 
 MIDIByteBufferReadStream::MIDIByteBufferReadStream(const MIDIByteBufferReadStream & readStream)
-	: m_data(readStream.m_data) { }
+	: jdksmidi::MIDIFileReadStream(readStream)
+	, m_data(readStream.m_data) { }
 
 MIDIByteBufferReadStream & MIDIByteBufferReadStream::operator = (MIDIByteBufferReadStream && readStream) noexcept {
 	if(this != &readStream) {
+		jdksmidi::MIDIFileReadStream::operator = (std::move(readStream));
+
 		m_data = std::move(readStream.m_data);
 	}
 
@@ -24,6 +31,8 @@ MIDIByteBufferReadStream & MIDIByteBufferReadStream::operator = (MIDIByteBufferR
 }
 
 MIDIByteBufferReadStream & MIDIByteBufferReadStream::operator = (const MIDIByteBufferReadStream & readStream) {
+	jdksmidi::MIDIFileReadStream::operator = (readStream);
+
 	m_data = readStream.m_data;
 
 	return *this;

@@ -27,7 +27,7 @@ Group::Group(std::vector<std::unique_ptr<GroupFile>> files, const std::string & 
 }
 
 Group::Group(Group && g) noexcept
-	: GameFile(g)
+	: GameFile(std::move(g))
 	, m_files(std::move(g.m_files)) {
 	updateParent();
 
@@ -51,7 +51,7 @@ Group::Group(const Group & g)
 
 Group & Group::operator = (Group && g) noexcept {
 	if(this != &g) {
-		GameFile::operator = (g);
+		GameFile::operator = (std::move(g));
 
 		m_files = std::move(g.m_files);
 
@@ -72,9 +72,9 @@ Group & Group::operator = (Group && g) noexcept {
 }
 
 Group & Group::operator = (const Group & g) {
-	m_files.clear();
-
 	GameFile::operator = (g);
+
+	m_files.clear();
 
 	for(boost::signals2::connection & fileConnections : m_fileConnections) {
 		fileConnections.disconnect();

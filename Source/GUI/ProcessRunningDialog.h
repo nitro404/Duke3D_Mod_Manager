@@ -35,6 +35,9 @@ private:
 	std::shared_ptr<Process> m_process;
 	boost::signals2::connection m_processTermintedConnection;
 
+	ProcessRunningDialog(const ProcessRunningDialog &) = delete;
+	const ProcessRunningDialog & operator = (const ProcessRunningDialog &) = delete;
+
 	wxDECLARE_EVENT_TABLE();
 };
 

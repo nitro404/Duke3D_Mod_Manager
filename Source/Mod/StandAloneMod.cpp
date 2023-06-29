@@ -19,20 +19,20 @@ StandAloneMod::StandAloneMod(const ModGameVersion & standAloneModGameVersion, co
 }
 
 StandAloneMod::StandAloneMod(GameVersion && gameVersion, const std::string & version) noexcept
-	: GameVersion(gameVersion)
+	: GameVersion(std::move(gameVersion))
 	, m_version(version) {
 	setStandAlone(true);
 }
 
 StandAloneMod::StandAloneMod(StandAloneMod && standAloneMod) noexcept
-	: GameVersion(standAloneMod) { }
+	: GameVersion(std::move(standAloneMod)) { }
 
 StandAloneMod::StandAloneMod(const StandAloneMod & standAloneMod)
 	: GameVersion(standAloneMod) { }
 
 StandAloneMod & StandAloneMod::operator = (StandAloneMod && standAloneMod) noexcept {
 	if(this != &standAloneMod) {
-		GameVersion::operator = (standAloneMod);
+		GameVersion::operator = (std::move(standAloneMod));
 	}
 
 	return *this;

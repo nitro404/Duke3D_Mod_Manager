@@ -55,7 +55,9 @@ public:
 	Wall(const Point2D & position, uint16_t nextWallIndex, uint16_t adjacentWallIndex, uint16_t nextSectorIndex, Attributes attributes, uint16_t tileNumber, uint16_t maskedTileNumber, int8_t shade, uint8_t paletteLookupTableNumber, uint8_t xRepeat, uint8_t yRepeat, uint8_t xPanning, uint8_t yPanning, uint16_t lowTag, uint16_t highTag, uint16_t extra);
 	Wall(int32_t xPosition, int32_t yPosition, uint16_t nextWallIndex, uint16_t adjacentWallIndex, uint16_t nextSectorIndex, Attributes attributes, uint16_t tileNumber, uint16_t maskedTileNumber, int8_t shade, uint8_t paletteLookupTableNumber, uint8_t xRepeat, uint8_t yRepeat, uint8_t xPanning, uint8_t yPanning, TaggedItem taggedItem);
 	Wall(int32_t xPosition, int32_t yPosition, uint16_t nextWallIndex, uint16_t adjacentWallIndex, uint16_t nextSectorIndex, Attributes attributes, uint16_t tileNumber, uint16_t maskedTileNumber, int8_t shade, uint8_t paletteLookupTableNumber, uint8_t xRepeat, uint8_t yRepeat, uint8_t xPanning, uint8_t yPanning, uint16_t lowTag, uint16_t highTag, uint16_t extra);
+	Wall(Wall && sector) noexcept;
 	Wall(const Wall & wall);
+	Wall & operator = (Wall && wall) noexcept;
 	Wall & operator = (const Wall & wall);
 	virtual ~Wall();
 

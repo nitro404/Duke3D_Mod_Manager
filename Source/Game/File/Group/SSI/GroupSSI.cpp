@@ -27,7 +27,7 @@ GroupSSI::GroupSSI(std::vector<std::unique_ptr<GroupFile>> files, const std::str
 	, m_trailingData(std::move(trailingData)) { }
 
 GroupSSI::GroupSSI(GroupSSI && group) noexcept
-	: Group(group)
+	: Group(std::move(group))
 	, m_version(group.m_version)
 	, m_title(std::move(group.m_title))
 	, m_descriptions(std::move(group.m_descriptions))
@@ -42,7 +42,7 @@ GroupSSI::GroupSSI(const GroupSSI & group)
 
 GroupSSI & GroupSSI::operator = (GroupSSI && group) noexcept {
 	if(this != &group) {
-		Group::operator = (group);
+		Group::operator = (std::move(group));
 
 		m_version = group.m_version;
 		m_title = std::move(group.m_title);
@@ -615,7 +615,7 @@ bool GroupSSI::isValidVersion(uint32_t version) {
 }
 
 bool GroupSSI::operator == (const GroupSSI & group) const {
-	if(!Group::operator == (group) ||
+	if(Group::operator != (group) ||
 	   m_version != group.m_version ||
 	   !Utilities::areStringsEqual(m_title, group.m_title) ||
 	   versionSupportsRunFile() && !Utilities::areStringsEqual(m_runFile, group.m_runFile) ||

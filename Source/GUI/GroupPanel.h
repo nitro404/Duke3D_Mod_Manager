@@ -50,6 +50,9 @@ private:
 	MetadataPanel * m_fileInfoPanel;
 	wxBoxSizer * m_fileInfoBoxSizer;
 	wxFlexGridSizer * m_groupPropertiesSizer;
+
+	GroupPanel(const GroupPanel &) = delete;
+	const GroupPanel & operator = (const GroupPanel &) = delete;
 };
 
 #endif // _GROUP_INFO_PANEL_H_

@@ -37,7 +37,7 @@ PaletteGPL::PaletteGPL(const ColourTable & colourTable, const std::vector<std::s
 }
 
 PaletteGPL::PaletteGPL(PaletteGPL && palette) noexcept
-	: Palette(palette)
+	: Palette(std::move(palette))
 	, m_colourTable(std::move(palette.m_colourTable))
 	, m_colourNames(std::move(palette.m_colourNames))
 	, m_numberOfColumns(palette.m_numberOfColumns)
@@ -56,7 +56,7 @@ PaletteGPL::PaletteGPL(const PaletteGPL & palette)
 
 PaletteGPL & PaletteGPL::operator = (PaletteGPL && palette) noexcept {
 	if(this != &palette) {
-		Palette::operator = (palette);
+		Palette::operator = (std::move(palette));
 
 		m_colourTable = std::move(palette.m_colourTable);
 		m_colourNames = std::move(palette.m_colourNames);

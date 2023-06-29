@@ -47,6 +47,9 @@ private:
 	SettingPanel * m_gamePathSettingPanel;
 	std::vector<boost::signals2::connection> m_settingModifiedConnections;
 	mutable bool m_modified;
+
+	GameVersionPanel(const GameVersionPanel &) = delete;
+	const GameVersionPanel & operator = (const GameVersionPanel &) = delete;
 };
 
 #endif // _GAME_VERSION_PANEL_H_

@@ -17,7 +17,7 @@ PaletteACT::PaletteACT(std::unique_ptr<ColourTable> colourTable, const std::stri
 }
 
 PaletteACT::PaletteACT(PaletteACT && palette) noexcept
-	: Palette(palette)
+	: Palette(std::move(palette))
 	, m_colourTable(std::move(palette.m_colourTable)) {
 	updateParent();
 }
@@ -30,7 +30,7 @@ PaletteACT::PaletteACT(const PaletteACT & palette)
 
 PaletteACT & PaletteACT::operator = (PaletteACT && palette) noexcept {
 	if(this != &palette) {
-		Palette::operator = (palette);
+		Palette::operator = (std::move(palette));
 
 		m_colourTable = std::move(palette.m_colourTable);
 

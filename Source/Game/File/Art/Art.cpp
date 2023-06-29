@@ -18,14 +18,16 @@ static const std::string JSON_TRAILING_DATA_PROPERTY_NAME("trailingData");
 
 static constexpr bool BASE_64_ENCODE_DATA = false;
 
-Art::Art()
-	: m_version(DEFAULT_VERSION)
+Art::Art(const std::string & filePath)
+	: GameFile(filePath)
+	, m_version(DEFAULT_VERSION)
 	, m_localTileStart(0)
 	, m_localTileEnd(DEFAULT_NUMBER_OF_TILES - 1)
 	, m_legacyTileCount(0) { }
 
 Art::Art(uint16_t artNumber, uint32_t tileCount)
-	: m_version(DEFAULT_VERSION)
+	: GameFile()
+	, m_version(DEFAULT_VERSION)
 	, m_localTileStart(artNumber * tileCount)
 	, m_localTileEnd(m_localTileStart + tileCount - 1)
 	, m_legacyTileCount(0) {
@@ -35,7 +37,8 @@ Art::Art(uint16_t artNumber, uint32_t tileCount)
 }
 
 Art::Art(uint16_t artNumber, uint32_t tileCount, std::unique_ptr<ByteBuffer> trailingData)
-	: m_version(DEFAULT_VERSION)
+	: GameFile()
+	, m_version(DEFAULT_VERSION)
 	, m_localTileStart(artNumber * tileCount)
 	, m_localTileEnd(m_localTileStart + tileCount - 1)
 	, m_legacyTileCount(0)
@@ -46,7 +49,8 @@ Art::Art(uint16_t artNumber, uint32_t tileCount, std::unique_ptr<ByteBuffer> tra
 }
 
 Art::Art(uint16_t artNumber, uint32_t tileCount, ByteBuffer && trailingData)
-	: m_version(DEFAULT_VERSION)
+	: GameFile()
+	, m_version(DEFAULT_VERSION)
 	, m_localTileStart(artNumber * tileCount)
 	, m_localTileEnd(m_localTileStart + tileCount - 1)
 	, m_legacyTileCount(0)
@@ -57,7 +61,8 @@ Art::Art(uint16_t artNumber, uint32_t tileCount, ByteBuffer && trailingData)
 }
 
 Art::Art(uint32_t localTileStart, uint32_t localTileEnd, uint32_t legacyTileCount, std::vector<std::unique_ptr<Tile>> tiles, std::unique_ptr<ByteBuffer> trailingData)
-	: m_version(DEFAULT_VERSION)
+	: GameFile()
+	, m_version(DEFAULT_VERSION)
 	, m_localTileStart(localTileStart)
 	, m_localTileEnd(localTileEnd)
 	, m_legacyTileCount(legacyTileCount)
@@ -73,7 +78,8 @@ Art::Art(uint32_t localTileStart, uint32_t localTileEnd, uint32_t legacyTileCoun
 }
 
 Art::Art(uint32_t localTileStart, uint32_t localTileEnd, uint32_t legacyTileCount, std::vector<std::unique_ptr<Tile>> tiles, ByteBuffer && trailingData)
-	: m_version(DEFAULT_VERSION)
+	: GameFile()
+	, m_version(DEFAULT_VERSION)
 	, m_localTileStart(localTileStart)
 	, m_localTileEnd(localTileEnd)
 	, m_legacyTileCount(legacyTileCount)
@@ -89,7 +95,8 @@ Art::Art(uint32_t localTileStart, uint32_t localTileEnd, uint32_t legacyTileCoun
 }
 
 Art::Art(Art && art) noexcept
-	: m_version(art.m_version)
+	: GameFile(std::move(art))
+	, m_version(art.m_version)
 	, m_localTileStart(art.m_localTileEnd)
 	, m_localTileEnd(art.m_localTileStart)
 	, m_legacyTileCount(art.m_legacyTileCount)
@@ -100,7 +107,8 @@ Art::Art(Art && art) noexcept
 }
 
 Art::Art(const Art & art)
-	: m_version(art.m_version)
+	: GameFile(art)
+	, m_version(art.m_version)
 	, m_localTileStart(art.m_localTileEnd)
 	, m_localTileEnd(art.m_localTileStart)
 	, m_legacyTileCount(art.m_legacyTileCount)
@@ -118,6 +126,8 @@ Art::Art(const Art & art)
 
 Art & Art::operator = (Art && art) noexcept {
 	if(this != &art) {
+		GameFile::operator = (std::move(art));
+
 		m_version = art.m_version;
 		m_localTileStart = art.m_localTileEnd;
 		m_localTileEnd = art.m_localTileStart;
@@ -139,6 +149,8 @@ Art & Art::operator = (Art && art) noexcept {
 }
 
 Art & Art::operator = (const Art & art) {
+	GameFile::operator = (art);
+
 	m_tiles.clear();
 	m_tiles.reserve(art.m_tiles.size());
 

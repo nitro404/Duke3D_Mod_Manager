@@ -32,7 +32,7 @@ PalettePAL::PalettePAL(const ColourTable & colourTable, std::vector<ColourFlag> 
 }
 
 PalettePAL::PalettePAL(PalettePAL && palette) noexcept
-	: Palette(palette)
+	: Palette(std::move(palette))
 	, m_colourTable(std::move(palette.m_colourTable))
 	, m_colourFlags(std::move(palette.m_colourFlags))
 	, m_version(palette.m_version) {
@@ -49,7 +49,7 @@ PalettePAL::PalettePAL(const PalettePAL & palette)
 
 PalettePAL & PalettePAL::operator = (PalettePAL && palette) noexcept {
 	if(this != &palette) {
-		Palette::operator = (palette);
+		Palette::operator = (std::move(palette));
 
 		m_version = palette.m_version;
 		m_colourTable = std::move(palette.m_colourTable);

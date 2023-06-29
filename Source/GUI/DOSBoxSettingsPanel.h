@@ -56,6 +56,9 @@ private:
 	std::vector<boost::signals2::connection> m_settingModifiedConnections;
 	StringChoiceSettingPanel * m_preferredDOSBoxVersionSettingPanel;
 	bool m_modified;
+
+	DOSBoxSettingsPanel(const DOSBoxSettingsPanel &) = delete;
+	const DOSBoxSettingsPanel & operator = (const DOSBoxSettingsPanel &) = delete;
 };
 
 #endif // _DOSBOX_SETTINGS_PANEL_H_

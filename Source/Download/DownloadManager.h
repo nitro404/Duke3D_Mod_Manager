@@ -14,6 +14,8 @@ class ModVersionType;
 class DownloadManager final {
 public:
 	DownloadManager();
+	DownloadManager(DownloadManager && downloadManager) noexcept;
+	const DownloadManager & operator = (DownloadManager && downloadManager) noexcept;
 	~DownloadManager();
 
 	bool isInitialized() const;
@@ -45,9 +47,7 @@ private:
 	std::unique_ptr<DownloadCache> m_downloadCache;
 
 	DownloadManager(const DownloadManager &) = delete;
-	DownloadManager(DownloadManager &&) noexcept = delete;
 	const DownloadManager & operator = (const DownloadManager &) = delete;
-	const DownloadManager & operator = (DownloadManager &&) noexcept = delete;
 };
 
 #endif // _DOWNLOAD_MANAGER_H_

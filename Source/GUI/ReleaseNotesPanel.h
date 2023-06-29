@@ -41,6 +41,9 @@ private:
 	wxStaticText * m_releaseDateText;
 	wxScrolledWindow * m_scrollableDescriptionWindow;
 	wxStaticText * m_releaseDescriptionText;
+
+	ReleaseNotesPanel(const ReleaseNotesPanel &) = delete;
+	const ReleaseNotesPanel & operator = (const ReleaseNotesPanel &) = delete;
 };
 
 #endif // _RELEASE_NOTES_PANEL_H_

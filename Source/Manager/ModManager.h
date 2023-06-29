@@ -232,9 +232,7 @@ private:
 	mutable std::recursive_mutex m_mutex;
 
 	ModManager(const ModManager &) = delete;
-	ModManager(ModManager &&) noexcept = delete;
 	const ModManager & operator = (const ModManager &) = delete;
-	const ModManager & operator = (ModManager &&) noexcept = delete;
 };
 
 #endif // _MOD_MANAGER_H_

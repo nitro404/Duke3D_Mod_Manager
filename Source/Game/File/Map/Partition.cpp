@@ -50,6 +50,15 @@ Partition::Partition(Type type, int32_t height, Attributes attributes, uint16_t 
 	, m_xPanning(xPanning)
 	, m_yPanning(yPanning) { }
 
+Partition::Partition(Partition && partition) noexcept
+	: TexturedItem(partition)
+	, m_type(partition.m_type)
+	, m_height(partition.m_height)
+	, m_attributes(std::move(partition.m_attributes))
+	, m_slope(partition.m_slope)
+	, m_xPanning(partition.m_xPanning)
+	, m_yPanning(partition.m_yPanning) { }
+
 Partition::Partition(const Partition & partition)
 	: TexturedItem(partition)
 	, m_type(partition.m_type)
@@ -58,6 +67,21 @@ Partition::Partition(const Partition & partition)
 	, m_slope(partition.m_slope)
 	, m_xPanning(partition.m_xPanning)
 	, m_yPanning(partition.m_yPanning) { }
+
+Partition & Partition::operator = (Partition && partition) noexcept {
+	if(this != &partition) {
+		TexturedItem::operator = (std::move(partition));
+
+		m_type = partition.m_type;
+		m_height = partition.m_height;
+		m_attributes = std::move(partition.m_attributes);
+		m_slope = partition.m_slope;
+		m_xPanning = partition.m_xPanning;
+		m_yPanning = partition.m_yPanning;
+	}
+
+	return *this;
+}
 
 Partition & Partition::operator = (const Partition & partition) {
 	TexturedItem::operator = (partition);

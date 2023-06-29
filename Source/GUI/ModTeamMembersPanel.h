@@ -30,6 +30,9 @@ private:
 
 	wxFlexGridSizer * m_teamMembersPanelSizer;
 	std::vector<ModTeamMemberPanel *> m_teamMemberPanels;
+
+	ModTeamMembersPanel(const ModTeamMembersPanel &) = delete;
+	const ModTeamMembersPanel & operator = (const ModTeamMembersPanel &) = delete;
 };
 
 #endif // _MOD_TEAM_MEMBERS_PANEL_H_

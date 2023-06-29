@@ -49,6 +49,9 @@ private:
 	SettingPanel * m_dosboxPathSettingPanel;
 	std::vector<boost::signals2::connection> m_settingModifiedConnections;
 	mutable bool m_modified;
+
+	DOSBoxVersionPanel(const DOSBoxVersionPanel &) = delete;
+	const DOSBoxVersionPanel & operator = (const DOSBoxVersionPanel &) = delete;
 };
 
 #endif // _DOSBOX_VERSION_PANEL_H_

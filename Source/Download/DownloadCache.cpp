@@ -35,6 +35,19 @@ const std::string DownloadCache::FILE_FORMAT_VERSION = "1.0.0";
 
 DownloadCache::DownloadCache() = default;
 
+DownloadCache::DownloadCache(DownloadCache && downloadCache) noexcept
+	: m_cachedModListFile(std::move(downloadCache.m_cachedModListFile))
+	, m_cachedPackageFiles(std::move(downloadCache.m_cachedPackageFiles)) { }
+
+const DownloadCache & DownloadCache::operator = (DownloadCache && downloadCache) noexcept {
+	if(this != &downloadCache) {
+		m_cachedModListFile = std::move(downloadCache.m_cachedModListFile);
+		m_cachedPackageFiles = std::move(downloadCache.m_cachedPackageFiles);
+	}
+
+	return *this;
+}
+
 DownloadCache::~DownloadCache() = default;
 
 bool DownloadCache::hasCachedModListFile() const {

@@ -183,6 +183,9 @@ private:
 	wxButton * m_uninstallButton;
 	wxButton * m_launchButton;
 	ProcessRunningDialog * m_gameRunningDialog;
+
+	ModBrowserPanel(const ModBrowserPanel &) = delete;
+	const ModBrowserPanel & operator = (const ModBrowserPanel &) = delete;
 };
 
 #endif // _MOD_BROWSER_PANEL_H_

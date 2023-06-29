@@ -104,6 +104,9 @@ private:
 	wxButton * m_extractAllFilesButton;
 	wxButton * m_closeButton;
 	wxButton * m_closeAllButton;
+
+	GroupEditorPanel(const GroupEditorPanel &) = delete;
+	const GroupEditorPanel & operator = (const GroupEditorPanel &) = delete;
 };
 
 #endif // _GROUP_EDITOR_PANEL_H_

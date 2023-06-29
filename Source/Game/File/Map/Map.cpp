@@ -20,11 +20,13 @@ static const std::string JSON_WALLS_PROPERTY_NAME("walls");
 static const std::string JSON_SPRITES_PROPERTY_NAME("sprites");
 static const std::string JSON_TRAILING_DATA_PROPERTY_NAME("trailingData");
 
-Map::Map()
-	: m_version(DEFAULT_VERSION) { }
+Map::Map(const std::string & filePath)
+	: GameFile(filePath)
+	, m_version(DEFAULT_VERSION) { }
 
 Map::Map(uint32_t version, const PlayerSpawn & playerSpawn, std::vector<std::unique_ptr<Sector>> sectors, std::vector<std::unique_ptr<Wall>> walls, std::vector<std::unique_ptr<Sprite>> sprites, std::unique_ptr<ByteBuffer> trailingData)
-	: m_version(version)
+	: GameFile()
+	, m_version(version)
 	, m_playerSpawn(playerSpawn)
 	, m_trailingData(trailingData != nullptr ? std::move(trailingData) : std::make_unique<ByteBuffer>()) {
 	m_sectors.reserve(sectors.size());
@@ -47,7 +49,8 @@ Map::Map(uint32_t version, const PlayerSpawn & playerSpawn, std::vector<std::uni
 }
 
 Map::Map(Map && map) noexcept
-	: m_version(map.m_version)
+	: GameFile(std::move(map))
+	, m_version(map.m_version)
 	, m_playerSpawn(std::move(map.m_playerSpawn))
 	, m_trailingData(std::move(map.m_trailingData))
 	, m_sectors(std::move(map.m_sectors))
@@ -55,7 +58,8 @@ Map::Map(Map && map) noexcept
 	, m_sprites(std::move(map.m_sprites)) { }
 
 Map::Map(const Map & map)
-	: m_version(map.m_version)
+	: GameFile(map)
+	, m_version(map.m_version)
 	, m_playerSpawn(map.m_playerSpawn)
 	, m_trailingData(map.m_trailingData) {
 	m_sectors.reserve(map.m_sectors.size());
@@ -77,6 +81,8 @@ Map::Map(const Map & map)
 
 Map & Map::operator = (Map && map) noexcept {
 	if(this != &map) {
+		GameFile::operator = (std::move(map));
+
 		m_version = map.m_version;
 		m_playerSpawn = std::move(map.m_playerSpawn);
 		m_trailingData = std::move(map.m_trailingData);
@@ -89,6 +95,8 @@ Map & Map::operator = (Map && map) noexcept {
 }
 
 Map & Map::operator = (const Map & map) {
+	GameFile::operator = (map);
+
 	m_sectors.clear();
 	m_walls.clear();
 	m_sprites.clear();

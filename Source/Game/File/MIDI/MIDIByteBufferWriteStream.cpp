@@ -1,16 +1,21 @@
 #include "MIDIByteBufferWriteStream.h"
 
 MIDIByteBufferWriteStream::MIDIByteBufferWriteStream(ByteBuffer & byteBuffer)
-	: m_byteBuffer(byteBuffer) { }
+	: jdksmidi::MIDIFileWriteStream()
+	, m_byteBuffer(byteBuffer) { }
 
 MIDIByteBufferWriteStream::MIDIByteBufferWriteStream(MIDIByteBufferWriteStream && writeStream) noexcept
-	: m_byteBuffer(writeStream.m_byteBuffer) { }
+	: jdksmidi::MIDIFileWriteStream(std::move(writeStream))
+	, m_byteBuffer(writeStream.m_byteBuffer) { }
 
 MIDIByteBufferWriteStream::MIDIByteBufferWriteStream(const MIDIByteBufferWriteStream & writeStream)
-	: m_byteBuffer(writeStream.m_byteBuffer) { }
+	: jdksmidi::MIDIFileWriteStream(writeStream)
+	, m_byteBuffer(writeStream.m_byteBuffer) { }
 
 MIDIByteBufferWriteStream & MIDIByteBufferWriteStream::operator = (MIDIByteBufferWriteStream && writeStream) noexcept {
 	if(this != &writeStream) {
+		jdksmidi::MIDIFileWriteStream::operator = (std::move(writeStream));
+
 		m_byteBuffer = std::move(writeStream.m_byteBuffer);
 	}
 
@@ -18,6 +23,8 @@ MIDIByteBufferWriteStream & MIDIByteBufferWriteStream::operator = (MIDIByteBuffe
 }
 
 MIDIByteBufferWriteStream & MIDIByteBufferWriteStream::operator = (const MIDIByteBufferWriteStream & writeStream) {
+	jdksmidi::MIDIFileWriteStream::operator = (writeStream);
+
 	m_byteBuffer = writeStream.m_byteBuffer;
 
 	return *this;

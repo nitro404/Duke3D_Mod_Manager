@@ -65,6 +65,9 @@ private:
 	wxStaticText * m_downloadsLabel;
 	wxWindow * m_downloadsSpacers[2];
 	ModDownloadsPanel * m_downloadsPanel;
+
+	ModInfoPanel(const ModInfoPanel &) = delete;
+	const ModInfoPanel & operator = (const ModInfoPanel &) = delete;
 };
 
 #endif // _MOD_INFO_PANEL_H_

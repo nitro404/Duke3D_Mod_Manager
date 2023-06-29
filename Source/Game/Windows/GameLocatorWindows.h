@@ -13,9 +13,7 @@ public:
 
 private:
 	GameLocatorWindows(const GameLocatorWindows &) = delete;
-	GameLocatorWindows(GameLocatorWindows &&) noexcept = delete;
 	const GameLocatorWindows & operator = (const GameLocatorWindows &) = delete;
-	const GameLocatorWindows & operator = (GameLocatorWindows &&) noexcept = delete;
 };
 
 #endif // _GAME_LOCATOR_WINDOWS_H_

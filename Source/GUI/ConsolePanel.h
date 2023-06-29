@@ -23,6 +23,9 @@ private:
 	CustomLogTextControl * m_logger;
 	PreformattedLogFormatter * m_logFormatter;
 	wxTextCtrl * m_logTextArea;
+
+	ConsolePanel(const ConsolePanel &) = delete;
+	const ConsolePanel & operator = (const ConsolePanel &) = delete;
 };
 
 #endif // _CONSOLE_PANEL_H_

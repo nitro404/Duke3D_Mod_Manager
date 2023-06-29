@@ -19,6 +19,8 @@ class ModGameVersion;
 class DownloadCache final {
 public:
 	DownloadCache();
+	DownloadCache(DownloadCache && downloadCache) noexcept;
+	const DownloadCache & operator = (DownloadCache && downloadcache) noexcept;
 	~DownloadCache();
 
 	bool hasCachedModListFile() const;
@@ -57,9 +59,7 @@ private:
 	std::map<std::string, std::shared_ptr<CachedPackageFile>> m_cachedPackageFiles;
 
 	DownloadCache(const DownloadCache &) = delete;
-	DownloadCache(DownloadCache &&) noexcept = delete;
 	const DownloadCache & operator = (const DownloadCache &) = delete;
-	const DownloadCache & operator = (DownloadCache &&) noexcept = delete;
 };
 
 #endif // _DOWNLOAD_CACHE_H_

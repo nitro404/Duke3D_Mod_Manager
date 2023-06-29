@@ -27,6 +27,9 @@ private:
 
 	std::vector<ModDownloadPanel *> m_downloadPanels;
 	wxFlexGridSizer * m_downloadsPanelSizer;
+
+	ModDownloadsPanel(const ModDownloadsPanel &) = delete;
+	const ModDownloadsPanel & operator = (const ModDownloadsPanel &) = delete;
 };
 
 #endif // _MOD_DOWNLOADS_PANEL_H_

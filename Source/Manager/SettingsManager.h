@@ -169,9 +169,7 @@ public:
 
 private:
 	SettingsManager(const SettingsManager &) = delete;
-	SettingsManager(SettingsManager &&) noexcept = delete;
 	const SettingsManager & operator = (const SettingsManager &) = delete;
-	const SettingsManager & operator = (SettingsManager &&) noexcept = delete;
 
 	std::string m_filePath;
 };

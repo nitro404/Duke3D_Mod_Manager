@@ -17,7 +17,7 @@ class ByteBuffer;
 
 class Art final : public GameFile {
 public:
-	Art();
+	Art(const std::string & filePath = {});
 	Art(uint16_t artNumber, uint32_t tileCount);
 	Art(uint16_t artNumber, uint32_t tileCount = DEFAULT_NUMBER_OF_TILES, std::unique_ptr<ByteBuffer> trailingData = nullptr);
 	Art(uint16_t artNumber, uint32_t tileCount, ByteBuffer && trailingData);

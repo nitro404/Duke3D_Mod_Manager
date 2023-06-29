@@ -111,6 +111,9 @@ private:
 	DOSBoxSettingsPanel * m_dosboxSettingsPanel;
 	boost::signals2::connection m_dosboxSettingModifiedConnection;
 	bool m_modified;
+
+	DOSBoxManagerPanel(const DOSBoxManagerPanel &) = delete;
+	const DOSBoxManagerPanel & operator = (const DOSBoxManagerPanel &) = delete;
 };
 
 #endif // _DOSBOX_MANAGER_PANEL_H_

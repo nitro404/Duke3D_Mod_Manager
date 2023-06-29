@@ -58,6 +58,9 @@ private:
 	boost::signals2::connection m_modManagerInitializedConnection;
 	boost::signals2::connection m_modManagerInitializationCancelledConnection;
 	boost::signals2::connection m_modManagerInitializationFailedConnection;
+
+	ModManagerApplication(const ModManagerApplication &) = delete;
+	const ModManagerApplication & operator = (const ModManagerApplication &) = delete;
 };
 
 #endif // _MOD_MANAGER_APPLICATION_H_

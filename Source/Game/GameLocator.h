@@ -31,9 +31,7 @@ private:
 	std::vector<std::string> m_gamePaths;
 
 	GameLocator(const GameLocator &) = delete;
-	GameLocator(GameLocator &&) noexcept = delete;
 	const GameLocator & operator = (const GameLocator &) = delete;
-	const GameLocator & operator = (GameLocator &&) noexcept = delete;
 };
 
 #endif // _GAME_LOCATOR_H_

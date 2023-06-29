@@ -26,7 +26,7 @@ CachedPackageFile::CachedPackageFile(const std::string & fileName, uint64_t file
 	: CachedFile(fileName, fileSize, sha1, eTag, downloadedTimePoint) { }
 
 CachedPackageFile::CachedPackageFile(CachedPackageFile && f) noexcept
-	: CachedFile(f)
+	: CachedFile(std::move(f))
 	, m_cachedFiles(std::move(f.m_cachedFiles)) { }
 
 CachedPackageFile::CachedPackageFile(CachedFile && f) noexcept
@@ -41,7 +41,7 @@ CachedPackageFile::CachedPackageFile(const CachedPackageFile & f)
 
 CachedPackageFile & CachedPackageFile::operator = (CachedPackageFile && f) noexcept {
 	if(this != &f) {
-		CachedFile::operator = (f);
+		CachedFile::operator = (std::move(f));
 
 		m_cachedFiles = std::move(f.m_cachedFiles);
 	}

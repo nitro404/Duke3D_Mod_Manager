@@ -54,6 +54,9 @@ private:
 	SettingsManagerPanel * m_settingsManagerPanel;
 	SignalConnectionGroup m_settingsManagerPanelSignalConnectionGroup;
 
+	ModManagerFrame(const ModManagerFrame &) = delete;
+	const ModManagerFrame & operator = (const ModManagerFrame &) = delete;
+
 	wxDECLARE_EVENT_TABLE();
 };
 

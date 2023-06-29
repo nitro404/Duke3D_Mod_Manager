@@ -63,7 +63,7 @@ AnimationANM::AnimationANM(uint16_t maximumNumberOfLargePages, uint32_t numberOf
 }
 
 AnimationANM::AnimationANM(AnimationANM && animation) noexcept
-	: Animation(animation)
+	: Animation(std::move(animation))
 	, m_maximumNumberOfLargePages(animation.m_maximumNumberOfLargePages)
 	, m_numberOfRecords(animation.m_numberOfRecords)
 	, m_numberOfRecordsPermittedInLargePage(animation.m_numberOfRecordsPermittedInLargePage)
@@ -120,7 +120,7 @@ AnimationANM::AnimationANM(const AnimationANM & animation)
 
 AnimationANM & AnimationANM::operator = (AnimationANM && animation) noexcept {
 	if(this != &animation) {
-		Animation::operator = (animation);
+		Animation::operator = (std::move(animation));
 
 		m_maximumNumberOfLargePages = animation.m_maximumNumberOfLargePages;
 		m_numberOfRecords = animation.m_numberOfRecords;

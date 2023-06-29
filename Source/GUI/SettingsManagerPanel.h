@@ -64,6 +64,9 @@ private:
 	bool m_modified;
 	wxButton * m_discardChangesButton;
 	wxButton * m_saveSettingsButton;
+
+	SettingsManagerPanel(const SettingsManagerPanel &) = delete;
+	const SettingsManagerPanel & operator = (const SettingsManagerPanel &) = delete;
 };
 
 #endif // _SETTINGS_MANAGER_PANEL_H_

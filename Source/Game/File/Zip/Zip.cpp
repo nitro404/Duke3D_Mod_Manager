@@ -12,7 +12,7 @@ Zip::Zip(const std::string & filePath)
 	, m_zipArchive(ZipArchive::createNew(filePath)) { }
 
 Zip::Zip(std::unique_ptr<ZipArchive> zipArchive)
-	: GameFile() 
+	: GameFile()
 	, m_zipArchive(std::move(zipArchive)) {
 	if(m_zipArchive != nullptr) {
 		setFilePath(m_zipArchive->getFilePath());
@@ -24,7 +24,7 @@ Zip::Zip(Zip && zip) noexcept
 	, m_zipArchive(std::move(zip.m_zipArchive)) { }
 
 Zip::Zip(const Zip & zip)
-	: GameFile(zip) {
+	: GameFile(std::move(zip)) {
 	if(zip.m_zipArchive != nullptr) {
 		const ByteBuffer * zipArchiveData = zip.m_zipArchive->getData();
 
@@ -37,7 +37,7 @@ Zip::Zip(const Zip & zip)
 
 Zip & Zip::operator = (Zip && zip) noexcept {
 	if(this != &zip) {
-		GameFile::operator = (zip);
+		GameFile::operator = (std::move(zip));
 
 		m_zipArchive = std::move(m_zipArchive);
 	}

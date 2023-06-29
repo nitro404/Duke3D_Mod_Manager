@@ -15,7 +15,7 @@ ModScreenshot::ModScreenshot(const ModScreenshot & s)
 	: ModImage(s) { }
 
 ModScreenshot & ModScreenshot::operator = (ModScreenshot && s) noexcept {
-	ModImage::operator = (s);
+	ModImage::operator = (std::move(s));
 
 	return *this;
 }

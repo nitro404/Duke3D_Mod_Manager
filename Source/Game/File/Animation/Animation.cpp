@@ -6,14 +6,14 @@ Animation::Animation(const std::string & filePath)
 	: GameFile(filePath) { }
 
 Animation::Animation(Animation && animation) noexcept
-	: GameFile(animation) { }
+	: GameFile(std::move(animation)) { }
 
 Animation::Animation(const Animation & animation)
 	: GameFile(animation) { }
 
 Animation & Animation::operator = (Animation && animation) noexcept {
 	if(this != &animation) {
-		GameFile::operator = (animation);
+		GameFile::operator = (std::move(animation));
 	}
 
 	return *this;

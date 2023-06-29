@@ -92,6 +92,9 @@ private:
 	wxButton * m_discardChangesButton;
 	wxButton * m_resetButton;
 	wxButton * m_removeButton;
+
+	GameManagerPanel(const GameManagerPanel &) = delete;
+	const GameManagerPanel & operator = (const GameManagerPanel &) = delete;
 };
 
 #endif // _GAME_MANAGER_PANEL_H_

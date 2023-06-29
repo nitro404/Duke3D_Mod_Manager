@@ -22,7 +22,7 @@ PlayerSpawn::PlayerSpawn(const Point3D & position, int16_t angle, uint16_t secto
 	: SectorItem(position, angle, sectorIndex) { }
 
 PlayerSpawn::PlayerSpawn(PlayerSpawn && playerSpawn) noexcept
-	: SectorItem(playerSpawn) { }
+	: SectorItem(std::move(playerSpawn)) { }
 
 PlayerSpawn::PlayerSpawn(const PlayerSpawn & playerSpawn)
 	: SectorItem(playerSpawn) { }
@@ -32,7 +32,7 @@ PlayerSpawn::PlayerSpawn(const SectorItem & sectorItem)
 
 PlayerSpawn & PlayerSpawn::operator = (PlayerSpawn && playerSpawn) noexcept {
 	if(this != &playerSpawn) {
-		SectorItem::operator = (playerSpawn);
+		SectorItem::operator = (std::move(playerSpawn));
 	}
 
 	return *this;

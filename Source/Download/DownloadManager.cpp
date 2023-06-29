@@ -35,6 +35,19 @@ DownloadManager::DownloadManager()
 	: m_initialized(false)
 	, m_downloadCache(std::make_unique<DownloadCache>()) { }
 
+DownloadManager::DownloadManager(DownloadManager && downloadManager) noexcept
+	: m_initialized(downloadManager.m_initialized)
+	, m_downloadCache(std::move(downloadManager.m_downloadCache)) { }
+
+const DownloadManager & DownloadManager::operator = (DownloadManager && downloadManager) noexcept {
+	if(this != &downloadManager) {
+		m_initialized = downloadManager.m_initialized;
+		m_downloadCache = std::move(downloadManager.m_downloadCache);
+	}
+
+	return *this;
+}
+
 DownloadManager::~DownloadManager() = default;
 
 bool DownloadManager::isInitialized() const {

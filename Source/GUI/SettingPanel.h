@@ -87,6 +87,9 @@ private:
 	std::function<void()> m_discardFunction;
 	std::function<void()> m_resetFunction;
 	std::function<void(bool)> m_setEditableFunction;
+
+	SettingPanel(const SettingPanel &) = delete;
+	const SettingPanel & operator = (const SettingPanel &) = delete;
 };
 
 class StringChoiceSettingPanel final : public SettingPanel {
@@ -103,6 +106,9 @@ protected:
 private:
 	std::vector<std::string> m_values;
 	std::function<void(const std::vector<std::string> & choices, const std::vector<std::string> & values)> m_setChoicesFunction;
+
+	StringChoiceSettingPanel(const StringChoiceSettingPanel &) = delete;
+	const StringChoiceSettingPanel & operator = (const StringChoiceSettingPanel &) = delete;
 };
 
 template <typename T>

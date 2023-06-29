@@ -352,9 +352,9 @@ Sprite::Sprite(SectorItem sectorItem, Attributes attributes, TexturedItem textur
 	, m_velocity(velocity) { }
 
 Sprite::Sprite(Sprite && sprite) noexcept
-	: SectorItem(sprite)
-	, TaggedItem(sprite)
-	, TexturedItem(sprite)
+	: SectorItem(std::move(sprite))
+	, TaggedItem(std::move(sprite))
+	, TexturedItem(std::move(sprite))
 	, m_attributes(std::move(sprite.m_attributes))
 	, m_clippingDistance(sprite.m_clippingDistance)
 	, m_filler(sprite.m_filler)
@@ -383,9 +383,9 @@ Sprite::Sprite(const Sprite & sprite)
 
 Sprite & Sprite::operator = (Sprite && sprite) noexcept {
 	if(this != &sprite) {
-		SectorItem::operator = (sprite);
-		TaggedItem::operator = (sprite);
-		TexturedItem::operator = (sprite);
+		SectorItem::operator = (std::move(sprite));
+		TaggedItem::operator = (std::move(sprite));
+		TexturedItem::operator = (std::move(sprite));
 
 		m_attributes = std::move(sprite.m_attributes);
 		m_clippingDistance = sprite.m_clippingDistance;

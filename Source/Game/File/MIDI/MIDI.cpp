@@ -21,11 +21,12 @@ MIDI::MIDI(const std::string & filePath)
 	, m_division(0) { }
 
 MIDI::MIDI(std::unique_ptr<jdksmidi::MIDIMultiTrack> tracks, int division)
-	: m_tracks(std::move(tracks))
+	: GameFile()
+	, m_tracks(std::move(tracks))
 	, m_division(division) { }
 
 MIDI::MIDI(MIDI && midi) noexcept
-	: GameFile(midi)
+	: GameFile(std::move(midi))
 	, m_tracks(std::move(midi.m_tracks))
 	, m_division(midi.m_division) { }
 
@@ -36,7 +37,7 @@ MIDI::MIDI(const MIDI & midi)
 
 MIDI & MIDI::operator = (MIDI && midi) noexcept {
 	if(this != &midi) {
-		GameFile::operator = (midi);
+		GameFile::operator = (std::move(midi));
 
 		m_tracks = std::move(midi.m_tracks);
 		m_division = midi.m_division;

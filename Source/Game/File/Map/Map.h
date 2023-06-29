@@ -16,7 +16,7 @@
 
 class Map final : public GameFile {
 public:
-	Map();
+	Map(const std::string & filePath = {});
 	Map(uint32_t version, const PlayerSpawn & playerSpawn, std::vector<std::unique_ptr<Sector>> sectors, std::vector<std::unique_ptr<Wall>> walls, std::vector<std::unique_ptr<Sprite>> sprites, std::unique_ptr<ByteBuffer> trailingData = nullptr);
 	Map(Map && map) noexcept;
 	Map(const Map & map);

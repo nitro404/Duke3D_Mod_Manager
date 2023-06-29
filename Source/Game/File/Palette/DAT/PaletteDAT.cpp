@@ -104,7 +104,7 @@ PaletteDAT::PaletteDAT(std::vector<std::unique_ptr<ColourTable>> colourTables, s
 }
 
 PaletteDAT::PaletteDAT(PaletteDAT && palette) noexcept
-	: Palette(palette)
+	: Palette(std::move(palette))
 	, m_type(palette.m_type)
 	, m_trailingData(std::move(palette.m_trailingData)) {
 	updateParent();
@@ -119,7 +119,7 @@ PaletteDAT::PaletteDAT(const PaletteDAT & palette)
 
 PaletteDAT & PaletteDAT::operator = (PaletteDAT && palette) noexcept {
 	if(this != &palette) {
-		Palette::operator = (palette);
+		Palette::operator = (std::move(palette));
 
 		m_type = palette.m_type;
 		m_trailingData = std::move(palette.m_trailingData);
