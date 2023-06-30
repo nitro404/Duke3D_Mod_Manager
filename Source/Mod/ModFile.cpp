@@ -259,7 +259,7 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const rapidjson::Value & modFileValu
 
 	// parse mod file name
 	if(!modFileValue.HasMember(JSON_MOD_FILE_FILE_NAME_PROPERTY_NAME)) {
-		spdlog::error("Mod file is missing '{}' property'.", JSON_MOD_FILE_FILE_NAME_PROPERTY_NAME);
+		spdlog::error("Mod file is missing '{}' property.", JSON_MOD_FILE_FILE_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -292,14 +292,14 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const rapidjson::Value & modFileValu
 	}
 	else {
 		if(!skipFileInfoValidation) {
-			spdlog::error("Mod file is missing '{}' property'.", JSON_MOD_FILE_FILE_SIZE_PROPERTY_NAME);
+			spdlog::error("Mod file is missing '{}' property.", JSON_MOD_FILE_FILE_SIZE_PROPERTY_NAME);
 			return nullptr;
 		}
 	}
 
 	// parse mod file type
 	if(!modFileValue.HasMember(JSON_MOD_FILE_TYPE_PROPERTY_NAME)) {
-		spdlog::error("Mod file is missing '{}' property'.", JSON_MOD_FILE_TYPE_PROPERTY_NAME);
+		spdlog::error("Mod file is missing '{}' property.", JSON_MOD_FILE_TYPE_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -337,7 +337,7 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const rapidjson::Value & modFileValu
 	}
 	else {
 		if(!skipFileInfoValidation) {
-			spdlog::error("Mod file is missing '{}' property'.", JSON_MOD_FILE_SHA1_PROPERTY_NAME);
+			spdlog::error("Mod file is missing '{}' property.", JSON_MOD_FILE_SHA1_PROPERTY_NAME);
 			return nullptr;
 		}
 	}

@@ -186,7 +186,7 @@ std::unique_ptr<ModVideo> ModVideo::parseFrom(const rapidjson::Value & modVideoV
 
 	// parse mod video url
 	if(!modVideoValue.HasMember(JSON_MOD_VIDEO_URL_PROPERTY_NAME)) {
-		spdlog::error("Mod video is missing '{}' property'.", JSON_MOD_VIDEO_URL_PROPERTY_NAME);
+		spdlog::error("Mod video is missing '{}' property.", JSON_MOD_VIDEO_URL_PROPERTY_NAME);
 		return nullptr;
 	}
 

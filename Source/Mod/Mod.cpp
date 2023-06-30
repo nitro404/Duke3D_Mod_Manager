@@ -1713,7 +1713,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue, bool skip
 
 	// parse mod id
 	if(!modValue.HasMember(JSON_MOD_ID_PROPERTY_NAME)) {
-		spdlog::error("Mod is missing '{}' property'.", JSON_MOD_ID_PROPERTY_NAME);
+		spdlog::error("Mod is missing '{}' property.", JSON_MOD_ID_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -1733,7 +1733,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue, bool skip
 
 	// parse mod name
 	if(!modValue.HasMember(JSON_MOD_NAME_PROPERTY_NAME)) {
-		spdlog::error("Mod '{}' is missing '{}' property'.", modID, JSON_MOD_NAME_PROPERTY_NAME);
+		spdlog::error("Mod '{}' is missing '{}' property.", modID, JSON_MOD_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -1753,7 +1753,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue, bool skip
 
 	// parse mod type
 	if(!modValue.HasMember(JSON_MOD_TYPE_PROPERTY_NAME)) {
-		spdlog::error("Mod '{}' is missing '{}' property'.", modID, JSON_MOD_TYPE_PROPERTY_NAME);
+		spdlog::error("Mod '{}' is missing '{}' property.", modID, JSON_MOD_TYPE_PROPERTY_NAME);
 		return nullptr;
 	}
 

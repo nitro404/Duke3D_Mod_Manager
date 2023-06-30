@@ -316,7 +316,7 @@ std::unique_ptr<StandAloneModCollection> StandAloneModCollection::parseFrom(cons
 	}
 
 	if(!standAloneModCollectionValue.HasMember(JSON_STANDALONE_MODS_PROPERTY_NAME)) {
-		spdlog::error("Stand-alone mod collection is missing '{}' property'.", JSON_STANDALONE_MODS_PROPERTY_NAME);
+		spdlog::error("Stand-alone mod collection is missing '{}' property.", JSON_STANDALONE_MODS_PROPERTY_NAME);
 		return nullptr;
 	}
 

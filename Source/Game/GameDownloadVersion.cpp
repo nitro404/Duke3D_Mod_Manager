@@ -410,7 +410,7 @@ std::unique_ptr<GameDownloadVersion> GameDownloadVersion::parseFrom(const rapidj
 
 	// parse the version property
 	if(!gameDownloadVersionValue.HasMember(JSON_GAME_DOWNLOAD_VERSION_VERSION_PROPERTY_NAME)) {
-		spdlog::error("Game download version is missing '{}' property'.", JSON_GAME_DOWNLOAD_VERSION_VERSION_PROPERTY_NAME);
+		spdlog::error("Game download version is missing '{}' property.", JSON_GAME_DOWNLOAD_VERSION_VERSION_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -447,7 +447,7 @@ std::unique_ptr<GameDownloadVersion> GameDownloadVersion::parseFrom(const rapidj
 
 	// parse the files property
 	if(!gameDownloadVersionValue.HasMember(JSON_GAME_DOWNLOAD_VERSION_FILES_PROPERTY_NAME)) {
-		spdlog::error("Game download version is missing '{}' property'.", JSON_GAME_DOWNLOAD_VERSION_FILES_PROPERTY_NAME);
+		spdlog::error("Game download version is missing '{}' property.", JSON_GAME_DOWNLOAD_VERSION_FILES_PROPERTY_NAME);
 		return nullptr;
 	}
 

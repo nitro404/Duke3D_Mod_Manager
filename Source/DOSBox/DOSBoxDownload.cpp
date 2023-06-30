@@ -284,7 +284,7 @@ std::unique_ptr<DOSBoxDownload> DOSBoxDownload::parseFrom(const rapidjson::Value
 
 	// parse the id property
 	if(!dosboxDownloadVersionValue.HasMember(JSON_DOSBOX_DOWNLOAD_ID_PROPERTY_NAME)) {
-		spdlog::error("DOSBox download is missing '{}' property'.", JSON_DOSBOX_DOWNLOAD_ID_PROPERTY_NAME);
+		spdlog::error("DOSBox download is missing '{}' property.", JSON_DOSBOX_DOWNLOAD_ID_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -304,7 +304,7 @@ std::unique_ptr<DOSBoxDownload> DOSBoxDownload::parseFrom(const rapidjson::Value
 
 	// parse the name property
 	if(!dosboxDownloadVersionValue.HasMember(JSON_DOSBOX_DOWNLOAD_NAME_PROPERTY_NAME)) {
-		spdlog::error("DOSBox download is missing '{}' property'.", JSON_DOSBOX_DOWNLOAD_NAME_PROPERTY_NAME);
+		spdlog::error("DOSBox download is missing '{}' property.", JSON_DOSBOX_DOWNLOAD_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -327,7 +327,7 @@ std::unique_ptr<DOSBoxDownload> DOSBoxDownload::parseFrom(const rapidjson::Value
 
 	// parse the versions property
 	if(!dosboxDownloadVersionValue.HasMember(JSON_DOSBOX_DOWNLOAD_VERSIONS_PROPERTY_NAME)) {
-		spdlog::error("DOSBox download is missing '{}' property'.", JSON_DOSBOX_DOWNLOAD_VERSIONS_PROPERTY_NAME);
+		spdlog::error("DOSBox download is missing '{}' property.", JSON_DOSBOX_DOWNLOAD_VERSIONS_PROPERTY_NAME);
 		return nullptr;
 	}
 

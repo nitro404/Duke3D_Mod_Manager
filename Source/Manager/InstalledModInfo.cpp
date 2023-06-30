@@ -357,7 +357,7 @@ std::unique_ptr<InstalledModInfo> InstalledModInfo::parseFrom(const rapidjson::V
 
 	// retrieve mod info category
 	if(!installedModInfoValue.HasMember(JSON_MOD_INFO_CATEGORY_PROPERTY_NAME.c_str())) {
-		spdlog::error("Installed mod info is missing '{}' property'.", JSON_MOD_INFO_CATEGORY_PROPERTY_NAME);
+		spdlog::error("Installed mod info is missing '{}' property.", JSON_MOD_INFO_CATEGORY_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -370,7 +370,7 @@ std::unique_ptr<InstalledModInfo> InstalledModInfo::parseFrom(const rapidjson::V
 
 	// parse mod identifier
 	if(!modInfoValue.HasMember(JSON_MOD_ID_PROPERTY_NAME.c_str())) {
-		spdlog::error("Installed mod info '{}' category is missing '{}' property'.", JSON_MOD_INFO_CATEGORY_PROPERTY_NAME, JSON_MOD_ID_PROPERTY_NAME);
+		spdlog::error("Installed mod info '{}' category is missing '{}' property.", JSON_MOD_INFO_CATEGORY_PROPERTY_NAME, JSON_MOD_ID_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -390,7 +390,7 @@ std::unique_ptr<InstalledModInfo> InstalledModInfo::parseFrom(const rapidjson::V
 
 	// parse mod name
 	if(!modInfoValue.HasMember(JSON_MOD_NAME_PROPERTY_NAME.c_str())) {
-		spdlog::error("Installed mod info '{}' category is missing '{}' property'.", JSON_MOD_INFO_CATEGORY_PROPERTY_NAME, JSON_MOD_NAME_PROPERTY_NAME);
+		spdlog::error("Installed mod info '{}' category is missing '{}' property.", JSON_MOD_INFO_CATEGORY_PROPERTY_NAME, JSON_MOD_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -410,7 +410,7 @@ std::unique_ptr<InstalledModInfo> InstalledModInfo::parseFrom(const rapidjson::V
 
 	// parse mod version
 	if(!modInfoValue.HasMember(JSON_MOD_VERSION_PROPERTY_NAME.c_str())) {
-		spdlog::error("Installed mod info '{}' category is missing '{}' property'.", JSON_MOD_INFO_CATEGORY_PROPERTY_NAME, JSON_MOD_VERSION_PROPERTY_NAME);
+		spdlog::error("Installed mod info '{}' category is missing '{}' property.", JSON_MOD_INFO_CATEGORY_PROPERTY_NAME, JSON_MOD_VERSION_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -425,7 +425,7 @@ std::unique_ptr<InstalledModInfo> InstalledModInfo::parseFrom(const rapidjson::V
 
 	// parse mod installed timestamp
 	if(!installedModInfoValue.HasMember(JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME.c_str())) {
-		spdlog::error("Installed mod info is missing '{}' property'.", JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME);
+		spdlog::error("Installed mod info is missing '{}' property.", JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -445,7 +445,7 @@ std::unique_ptr<InstalledModInfo> InstalledModInfo::parseFrom(const rapidjson::V
 
 	// retrieve original files list
 	if(!installedModInfoValue.HasMember(JSON_ORIGINAL_FILES_LIST_PROPERTY_NAME.c_str())) {
-		spdlog::error("Installed mod info is missing '{}' property'.", JSON_ORIGINAL_FILES_LIST_PROPERTY_NAME);
+		spdlog::error("Installed mod info is missing '{}' property.", JSON_ORIGINAL_FILES_LIST_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -458,7 +458,7 @@ std::unique_ptr<InstalledModInfo> InstalledModInfo::parseFrom(const rapidjson::V
 
 	// retrieve mod files list
 	if(!installedModInfoValue.HasMember(JSON_MOD_FILES_LIST_PROPERTY_NAME.c_str())) {
-		spdlog::error("Installed mod info is missing '{}' property'.", JSON_MOD_FILES_LIST_PROPERTY_NAME);
+		spdlog::error("Installed mod info is missing '{}' property.", JSON_MOD_FILES_LIST_PROPERTY_NAME);
 		return nullptr;
 	}
 

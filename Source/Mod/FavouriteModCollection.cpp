@@ -242,7 +242,7 @@ bool FavouriteModCollection::parseFrom(const rapidjson::Value & favouriteModsCol
 	}
 
 	if(!favouriteModsCollectionValue.HasMember(JSON_FAVOURITE_MODS_PROPERTY_NAME)) {
-		spdlog::error("Favourite mods collection is missing '{}' property'.", JSON_FAVOURITE_MODS_PROPERTY_NAME);
+		spdlog::error("Favourite mods collection is missing '{}' property.", JSON_FAVOURITE_MODS_PROPERTY_NAME);
 		return nullptr;
 	}
 

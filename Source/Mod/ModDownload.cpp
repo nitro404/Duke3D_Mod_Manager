@@ -491,7 +491,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const rapidjson::Value & mod
 
 	// parse mod download file name
 	if(!modDownloadValue.HasMember(JSON_MOD_DOWNLOAD_FILE_NAME_PROPERTY_NAME)) {
-		spdlog::error("Mod download is missing '{}' property'.", JSON_MOD_DOWNLOAD_FILE_NAME_PROPERTY_NAME);
+		spdlog::error("Mod download is missing '{}' property.", JSON_MOD_DOWNLOAD_FILE_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -511,7 +511,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const rapidjson::Value & mod
 
 	// parse mod download type
 	if(!modDownloadValue.HasMember(JSON_MOD_DOWNLOAD_TYPE_PROPERTY_NAME)) {
-		spdlog::error("Mod download is missing '{}' property'.", JSON_MOD_DOWNLOAD_TYPE_PROPERTY_NAME);
+		spdlog::error("Mod download is missing '{}' property.", JSON_MOD_DOWNLOAD_TYPE_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -549,7 +549,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const rapidjson::Value & mod
 	}
 	else {
 		if(!skipFileInfoValidation) {
-			spdlog::error("Mod download is missing '{}' property'.", JSON_MOD_DOWNLOAD_SHA1_PROPERTY_NAME);
+			spdlog::error("Mod download is missing '{}' property.", JSON_MOD_DOWNLOAD_SHA1_PROPERTY_NAME);
 			return nullptr;
 		}
 	}
@@ -574,7 +574,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const rapidjson::Value & mod
 	}
 	else {
 		if(!skipFileInfoValidation) {
-			spdlog::error("Mod download is missing '{}' property'.", JSON_MOD_DOWNLOAD_FILE_SIZE_PROPERTY_NAME);
+			spdlog::error("Mod download is missing '{}' property.", JSON_MOD_DOWNLOAD_FILE_SIZE_PROPERTY_NAME);
 			return nullptr;
 		}
 	}

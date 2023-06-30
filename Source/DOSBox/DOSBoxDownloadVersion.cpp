@@ -355,7 +355,7 @@ std::unique_ptr<DOSBoxDownloadVersion> DOSBoxDownloadVersion::parseFrom(const ra
 
 	// parse the version property
 	if(!dosboxDownloadVersionValue.HasMember(JSON_DOSBOX_DOWNLOAD_VERSION_VERSION_PROPERTY_NAME)) {
-		spdlog::error("DOSBox download version is missing '{}' property'.", JSON_DOSBOX_DOWNLOAD_VERSION_VERSION_PROPERTY_NAME);
+		spdlog::error("DOSBox download version is missing '{}' property.", JSON_DOSBOX_DOWNLOAD_VERSION_VERSION_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -392,7 +392,7 @@ std::unique_ptr<DOSBoxDownloadVersion> DOSBoxDownloadVersion::parseFrom(const ra
 
 	// parse the files property
 	if(!dosboxDownloadVersionValue.HasMember(JSON_DOSBOX_DOWNLOAD_VERSION_FILES_PROPERTY_NAME)) {
-		spdlog::error("DOSBox download version is missing '{}' property'.", JSON_DOSBOX_DOWNLOAD_VERSION_FILES_PROPERTY_NAME);
+		spdlog::error("DOSBox download version is missing '{}' property.", JSON_DOSBOX_DOWNLOAD_VERSION_FILES_PROPERTY_NAME);
 		return nullptr;
 	}
 

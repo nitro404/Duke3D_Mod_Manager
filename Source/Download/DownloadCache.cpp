@@ -342,7 +342,7 @@ std::unique_ptr<DownloadCache> DownloadCache::parseFrom(const rapidjson::Value &
 
 	// parse download cache packages cache information property
 	if(!downloadCacheValue.HasMember(JSON_DOWNLOAD_CACHE_PACKAGES_PROPERTY_NAME)) {
-		spdlog::error("Download cache is missing '{}' property'.", JSON_DOWNLOAD_CACHE_PACKAGES_PROPERTY_NAME);
+		spdlog::error("Download cache is missing '{}' property.", JSON_DOWNLOAD_CACHE_PACKAGES_PROPERTY_NAME);
 		return nullptr;
 	}
 

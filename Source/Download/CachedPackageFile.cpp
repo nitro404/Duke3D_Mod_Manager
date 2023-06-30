@@ -169,7 +169,7 @@ std::unique_ptr<CachedPackageFile> CachedPackageFile::parseFrom(const rapidjson:
 
 	// parse the cached package file contents property
 	if(!cachedPackageFileValue.HasMember(JSON_CACHED_PACKAGE_FILE_CONTENTS_PROPERTY_NAME)) {
-		spdlog::error("Cached package file is missing '{}' property'.", JSON_CACHED_PACKAGE_FILE_CONTENTS_PROPERTY_NAME);
+		spdlog::error("Cached package file is missing '{}' property.", JSON_CACHED_PACKAGE_FILE_CONTENTS_PROPERTY_NAME);
 		return nullptr;
 	}
 

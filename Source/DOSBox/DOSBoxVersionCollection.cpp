@@ -494,7 +494,7 @@ std::unique_ptr<DOSBoxVersionCollection> DOSBoxVersionCollection::parseFrom(cons
 	}
 
 	if(!dosboxVersionCollectionValue.HasMember(JSON_DOSBOX_VERSIONS_PROPERTY_NAME)) {
-		spdlog::error("DOSBox version collection is missing '{}' property'.", JSON_DOSBOX_VERSIONS_PROPERTY_NAME);
+		spdlog::error("DOSBox version collection is missing '{}' property.", JSON_DOSBOX_VERSIONS_PROPERTY_NAME);
 		return nullptr;
 	}
 

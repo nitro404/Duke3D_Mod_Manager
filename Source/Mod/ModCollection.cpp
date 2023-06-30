@@ -379,7 +379,7 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const rapidjson::Value &
 
 	// verify game identifier
 	if(!modCollectionValue.HasMember(JSON_GAME_ID_PROPERTY_NAME)) {
-		spdlog::error("Mod collection is missing '{}' property'.", JSON_GAME_ID_PROPERTY_NAME);
+		spdlog::error("Mod collection is missing '{}' property.", JSON_GAME_ID_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -399,7 +399,7 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const rapidjson::Value &
 
 	// parse mods list
 	if(!modCollectionValue.HasMember(JSON_MODS_PROPERTY_NAME)) {
-		spdlog::error("Mod collection is missing '{}' property'.", JSON_MODS_PROPERTY_NAME);
+		spdlog::error("Mod collection is missing '{}' property.", JSON_MODS_PROPERTY_NAME);
 		return nullptr;
 	}
 

@@ -280,7 +280,7 @@ std::unique_ptr<DOSBoxDownloadCollection> DOSBoxDownloadCollection::parseFrom(co
 	}
 
 	if(!dosboxDownloadCollectionValue.HasMember(JSON_DOSBOX_DOWNLOADS_PROPERTY_NAME)) {
-		spdlog::error("DOSBox download collection is missing '{}' property'.", JSON_DOSBOX_DOWNLOADS_PROPERTY_NAME);
+		spdlog::error("DOSBox download collection is missing '{}' property.", JSON_DOSBOX_DOWNLOADS_PROPERTY_NAME);
 		return nullptr;
 	}
 

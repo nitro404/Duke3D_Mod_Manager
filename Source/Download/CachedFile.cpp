@@ -164,7 +164,7 @@ std::unique_ptr<CachedFile> CachedFile::parseFrom(const rapidjson::Value & cache
 
 	// parse cached file name
 	if(!cachedFileValue.HasMember(JSON_CACHED_FILE_FILE_NAME_PROPERTY_NAME)) {
-		spdlog::error("Cached file is missing '{}' property'.", JSON_CACHED_FILE_FILE_NAME_PROPERTY_NAME);
+		spdlog::error("Cached file is missing '{}' property.", JSON_CACHED_FILE_FILE_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -184,7 +184,7 @@ std::unique_ptr<CachedFile> CachedFile::parseFrom(const rapidjson::Value & cache
 
 	// parse cached file size
 	if(!cachedFileValue.HasMember(JSON_CACHED_FILE_FILE_SIZE_PROPERTY_NAME)) {
-		spdlog::error("Cached file is missing '{}' property'.", JSON_CACHED_FILE_FILE_SIZE_PROPERTY_NAME);
+		spdlog::error("Cached file is missing '{}' property.", JSON_CACHED_FILE_FILE_SIZE_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -199,7 +199,7 @@ std::unique_ptr<CachedFile> CachedFile::parseFrom(const rapidjson::Value & cache
 
 	// parse cached file SHA1
 	if(!cachedFileValue.HasMember(JSON_CACHED_FILE_SHA1_PROPERTY_NAME)) {
-		spdlog::error("Cached file is missing '{}' property'.", JSON_CACHED_FILE_SHA1_PROPERTY_NAME);
+		spdlog::error("Cached file is missing '{}' property.", JSON_CACHED_FILE_SHA1_PROPERTY_NAME);
 		return nullptr;
 	}
 

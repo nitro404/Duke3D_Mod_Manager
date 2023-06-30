@@ -577,7 +577,7 @@ std::unique_ptr<GameVersionCollection> GameVersionCollection::parseFrom(const ra
 	}
 
 	if(!gameVersionCollectionValue.HasMember(JSON_GAME_VERSIONS_PROPERTY_NAME)) {
-		spdlog::error("Game version collection is missing '{}' property'.", JSON_GAME_VERSIONS_PROPERTY_NAME);
+		spdlog::error("Game version collection is missing '{}' property.", JSON_GAME_VERSIONS_PROPERTY_NAME);
 		return nullptr;
 	}
 

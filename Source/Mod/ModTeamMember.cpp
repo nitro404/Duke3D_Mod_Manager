@@ -548,7 +548,7 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const rapidjson::Value &
 
 	// parse mod team member name
 	if(!modTeamMemberValue.HasMember(JSON_MOD_TEAM_MEMBER_NAME_PROPERTY_NAME)) {
-		spdlog::error("Mod team member is missing '{}' property'.", JSON_MOD_TEAM_MEMBER_NAME_PROPERTY_NAME);
+		spdlog::error("Mod team member is missing '{}' property.", JSON_MOD_TEAM_MEMBER_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 

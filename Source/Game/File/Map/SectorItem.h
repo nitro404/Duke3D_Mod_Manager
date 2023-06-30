@@ -62,4 +62,4 @@ protected:
 	uint16_t m_sectorIndex;
 };
 
-#endif // _ROTATABLE_H_
+#endif // _SECTOR_ITEM_H_

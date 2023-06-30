@@ -486,7 +486,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const rapidjson::Value & modVe
 
 	// parse the mod version types property
 	if(!modVersionValue.HasMember(JSON_MOD_VERSIONS_VERSION_TYPES_PROPERTY_NAME)) {
-		spdlog::error("Mod version is missing '{}' property'.", JSON_MOD_VERSIONS_VERSION_TYPES_PROPERTY_NAME);
+		spdlog::error("Mod version is missing '{}' property.", JSON_MOD_VERSIONS_VERSION_TYPES_PROPERTY_NAME);
 		return nullptr;
 	}
 

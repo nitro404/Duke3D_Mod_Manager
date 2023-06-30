@@ -284,7 +284,7 @@ std::unique_ptr<ModImage> ModImage::parseFrom(const rapidjson::Value & modImageV
 
 	// parse mod image file name
 	if(!modImageValue.HasMember(JSON_MOD_IMAGE_FILE_NAME_PROPERTY_NAME)) {
-		spdlog::error("Mod image is missing '{}' property'.", JSON_MOD_IMAGE_FILE_NAME_PROPERTY_NAME);
+		spdlog::error("Mod image is missing '{}' property.", JSON_MOD_IMAGE_FILE_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -322,14 +322,14 @@ std::unique_ptr<ModImage> ModImage::parseFrom(const rapidjson::Value & modImageV
 	}
 	else {
 		if(!skipFileInfoValidation) {
-			spdlog::error("Mod image is missing '{}' property'.", JSON_MOD_IMAGE_FILE_SIZE_PROPERTY_NAME);
+			spdlog::error("Mod image is missing '{}' property.", JSON_MOD_IMAGE_FILE_SIZE_PROPERTY_NAME);
 			return nullptr;
 		}
 	}
 
 	// parse mod image width
 	if(!modImageValue.HasMember(JSON_MOD_IMAGE_WIDTH_PROPERTY_NAME)) {
-		spdlog::error("Mod image is missing '{}' property'.", JSON_MOD_IMAGE_WIDTH_PROPERTY_NAME);
+		spdlog::error("Mod image is missing '{}' property.", JSON_MOD_IMAGE_WIDTH_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -349,7 +349,7 @@ std::unique_ptr<ModImage> ModImage::parseFrom(const rapidjson::Value & modImageV
 
 	// parse mod image height
 	if(!modImageValue.HasMember(JSON_MOD_IMAGE_HEIGHT_PROPERTY_NAME)) {
-		spdlog::error("Mod image is missing '{}' property'.", JSON_MOD_IMAGE_HEIGHT_PROPERTY_NAME);
+		spdlog::error("Mod image is missing '{}' property.", JSON_MOD_IMAGE_HEIGHT_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -387,7 +387,7 @@ std::unique_ptr<ModImage> ModImage::parseFrom(const rapidjson::Value & modImageV
 	}
 	else {
 		if(!skipFileInfoValidation) {
-			spdlog::error("Mod image is missing '{}' property'.", JSON_MOD_IMAGE_SHA1_PROPERTY_NAME);
+			spdlog::error("Mod image is missing '{}' property.", JSON_MOD_IMAGE_SHA1_PROPERTY_NAME);
 			return nullptr;
 		}
 	}

@@ -304,7 +304,7 @@ std::unique_ptr<GameDownloadCollection> GameDownloadCollection::parseFrom(const 
 	}
 
 	if(!gameDownloadCollectionValue.HasMember(JSON_GAME_DOWNLOADS_PROPERTY_NAME)) {
-		spdlog::error("Game download collection is missing '{}' property'.", JSON_GAME_DOWNLOADS_PROPERTY_NAME);
+		spdlog::error("Game download collection is missing '{}' property.", JSON_GAME_DOWNLOADS_PROPERTY_NAME);
 		return nullptr;
 	}
 

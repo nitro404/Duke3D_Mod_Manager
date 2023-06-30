@@ -814,7 +814,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value
 
 	// parse the mod game version game version property
 	if(!modGameVersionValue.HasMember(JSON_MOD_GAME_VERSION_GAME_VERSION_PROPERTY_NAME.c_str())) {
-		spdlog::error("Mod game version is missing '{}' property'.", JSON_MOD_GAME_VERSION_GAME_VERSION_PROPERTY_NAME);
+		spdlog::error("Mod game version is missing '{}' property.", JSON_MOD_GAME_VERSION_GAME_VERSION_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -831,7 +831,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value
 
 	// parse the mod game version converted property
 	if(!modGameVersionValue.HasMember(JSON_MOD_GAME_VERSION_CONVERTED_PROPERTY_NAME.c_str())) {
-		spdlog::error("Mod game version is missing '{}' property'.", JSON_MOD_GAME_VERSION_CONVERTED_PROPERTY_NAME);
+		spdlog::error("Mod game version is missing '{}' property.", JSON_MOD_GAME_VERSION_CONVERTED_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -854,7 +854,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value
 		std::map<std::string, std::string> arguments;
 
 		if(!modGameVersionValue.HasMember(JSON_MOD_GAME_VERSION_PROPERTIES_PROPERTY_NAME.c_str())) {
-			spdlog::error("Stand-alone mod game version is missing '{}' property'.", JSON_MOD_GAME_VERSION_PROPERTIES_PROPERTY_NAME);
+			spdlog::error("Stand-alone mod game version is missing '{}' property.", JSON_MOD_GAME_VERSION_PROPERTIES_PROPERTY_NAME);
 			return nullptr;
 		}
 
@@ -875,7 +875,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value
 
 		// read base property
 		if(!propertiesValue.HasMember(JSON_MOD_GAME_VERSION_PROPERTY_BASE_PROPERTY_NAME.c_str())) {
-			spdlog::error("Stand-alone mod game version '{}' is missing '{}' property'.", JSON_MOD_GAME_VERSION_PROPERTIES_PROPERTY_NAME, JSON_MOD_GAME_VERSION_PROPERTY_BASE_PROPERTY_NAME);
+			spdlog::error("Stand-alone mod game version '{}' is missing '{}' property.", JSON_MOD_GAME_VERSION_PROPERTIES_PROPERTY_NAME, JSON_MOD_GAME_VERSION_PROPERTY_BASE_PROPERTY_NAME);
 			return nullptr;
 		}
 
@@ -897,7 +897,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value
 
 		// read game executable name property
 		if(!propertiesValue.HasMember(JSON_MOD_GAME_VERSION_PROPERTY_GAME_EXECUTABLE_NAME_PROPERTY_NAME.c_str())) {
-			spdlog::error("Stand-alone mod game version '{}' is missing '{}' property'.", JSON_MOD_GAME_VERSION_PROPERTIES_PROPERTY_NAME, JSON_MOD_GAME_VERSION_PROPERTY_GAME_EXECUTABLE_NAME_PROPERTY_NAME);
+			spdlog::error("Stand-alone mod game version '{}' is missing '{}' property.", JSON_MOD_GAME_VERSION_PROPERTIES_PROPERTY_NAME, JSON_MOD_GAME_VERSION_PROPERTY_GAME_EXECUTABLE_NAME_PROPERTY_NAME);
 			return nullptr;
 		}
 
@@ -1030,7 +1030,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value
 
 		// read operating systems
 		if(!modGameVersionValue.HasMember(JSON_MOD_GAME_VERSION_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME.c_str())) {
-			spdlog::error("Stand-alone mod game version is missing '{}' property'.", JSON_MOD_GAME_VERSION_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME);
+			spdlog::error("Stand-alone mod game version is missing '{}' property.", JSON_MOD_GAME_VERSION_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME);
 			return nullptr;
 		}
 
@@ -1061,7 +1061,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value
 
 		// parse mod id
 		if(!modValue.HasMember(JSON_MOD_ID_PROPERTY_NAME.c_str())) {
-			spdlog::error("Mod is missing '{}' property'.", JSON_MOD_ID_PROPERTY_NAME);
+			spdlog::error("Mod is missing '{}' property.", JSON_MOD_ID_PROPERTY_NAME);
 			return nullptr;
 		}
 
@@ -1081,7 +1081,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value
 
 		// parse mod name
 		if(!modValue.HasMember(JSON_MOD_NAME_PROPERTY_NAME.c_str())) {
-			spdlog::error("Mod '{}' is missing '{}' property'.", modID, JSON_MOD_NAME_PROPERTY_NAME);
+			spdlog::error("Mod '{}' is missing '{}' property.", modID, JSON_MOD_NAME_PROPERTY_NAME);
 			return nullptr;
 		}
 
@@ -1177,7 +1177,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value
 
 	// parse the mod game version files property
 	if(!modGameVersionValue.HasMember(JSON_MOD_GAME_VERSION_FILES_PROPERTY_NAME.c_str())) {
-		spdlog::error("Mod game version is missing '{}' property'.", JSON_MOD_GAME_VERSION_FILES_PROPERTY_NAME);
+		spdlog::error("Mod game version is missing '{}' property.", JSON_MOD_GAME_VERSION_FILES_PROPERTY_NAME);
 		return nullptr;
 	}
 

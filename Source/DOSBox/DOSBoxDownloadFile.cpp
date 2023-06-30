@@ -168,7 +168,7 @@ std::unique_ptr<DOSBoxDownloadFile> DOSBoxDownloadFile::parseFrom(const rapidjso
 
 	// parse dosbox download file name
 	if(!dosboxDownloadFileValue.HasMember(JSON_DOSBOX_DOWNLOAD_FILE_FILE_NAME_PROPERTY_NAME)) {
-		spdlog::error("DOSBox download file is missing '{}' property'.", JSON_DOSBOX_DOWNLOAD_FILE_FILE_NAME_PROPERTY_NAME);
+		spdlog::error("DOSBox download file is missing '{}' property.", JSON_DOSBOX_DOWNLOAD_FILE_FILE_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -188,7 +188,7 @@ std::unique_ptr<DOSBoxDownloadFile> DOSBoxDownloadFile::parseFrom(const rapidjso
 
 	// parse dosbox download file size
 	if(!dosboxDownloadFileValue.HasMember(JSON_DOSBOX_DOWNLOAD_FILE_FILE_SIZE_PROPERTY_NAME)) {
-		spdlog::error("DOSBox download file is missing '{}' property'.", JSON_DOSBOX_DOWNLOAD_FILE_FILE_SIZE_PROPERTY_NAME);
+		spdlog::error("DOSBox download file is missing '{}' property.", JSON_DOSBOX_DOWNLOAD_FILE_FILE_SIZE_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -203,7 +203,7 @@ std::unique_ptr<DOSBoxDownloadFile> DOSBoxDownloadFile::parseFrom(const rapidjso
 
 	// parse the dosbox download file sha1 property
 	if(!dosboxDownloadFileValue.HasMember(JSON_DOSBOX_DOWNLOAD_FILE_SHA1_PROPERTY_NAME)) {
-		spdlog::error("DOSBox download file is missing '{}' property'.", JSON_DOSBOX_DOWNLOAD_FILE_SHA1_PROPERTY_NAME);
+		spdlog::error("DOSBox download file is missing '{}' property.", JSON_DOSBOX_DOWNLOAD_FILE_SHA1_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -223,7 +223,7 @@ std::unique_ptr<DOSBoxDownloadFile> DOSBoxDownloadFile::parseFrom(const rapidjso
 
 	// parse the dosbox download file operating system
 	if(!dosboxDownloadFileValue.HasMember(JSON_DOSBOX_DOWNLOAD_FILE_OPERATING_SYSTEM_PROPERTY_NAME)) {
-		spdlog::error("DOSBox download file is missing '{}' property'.", JSON_DOSBOX_DOWNLOAD_FILE_OPERATING_SYSTEM_PROPERTY_NAME);
+		spdlog::error("DOSBox download file is missing '{}' property.", JSON_DOSBOX_DOWNLOAD_FILE_OPERATING_SYSTEM_PROPERTY_NAME);
 		return nullptr;
 	}
 

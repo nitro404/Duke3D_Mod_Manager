@@ -182,7 +182,7 @@ std::unique_ptr<GameDownloadFile> GameDownloadFile::parseFrom(const rapidjson::V
 
 	// parse game download file name
 	if(!gameDownloadFileValue.HasMember(JSON_GAME_DOWNLOAD_FILE_FILE_NAME_PROPERTY_NAME)) {
-		spdlog::error("Game download file is missing '{}' property'.", JSON_GAME_DOWNLOAD_FILE_FILE_NAME_PROPERTY_NAME);
+		spdlog::error("Game download file is missing '{}' property.", JSON_GAME_DOWNLOAD_FILE_FILE_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -202,7 +202,7 @@ std::unique_ptr<GameDownloadFile> GameDownloadFile::parseFrom(const rapidjson::V
 
 	// parse game download file size
 	if(!gameDownloadFileValue.HasMember(JSON_GAME_DOWNLOAD_FILE_FILE_SIZE_PROPERTY_NAME)) {
-		spdlog::error("Game download file is missing '{}' property'.", JSON_GAME_DOWNLOAD_FILE_FILE_SIZE_PROPERTY_NAME);
+		spdlog::error("Game download file is missing '{}' property.", JSON_GAME_DOWNLOAD_FILE_FILE_SIZE_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -217,7 +217,7 @@ std::unique_ptr<GameDownloadFile> GameDownloadFile::parseFrom(const rapidjson::V
 
 	// parse the game download file type
 	if(!gameDownloadFileValue.HasMember(JSON_GAME_DOWNLOAD_FILE_TYPE_PROPERTY_NAME)) {
-		spdlog::error("Game download file is missing '{}' property'.", JSON_GAME_DOWNLOAD_FILE_TYPE_PROPERTY_NAME);
+		spdlog::error("Game download file is missing '{}' property.", JSON_GAME_DOWNLOAD_FILE_TYPE_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -238,7 +238,7 @@ std::unique_ptr<GameDownloadFile> GameDownloadFile::parseFrom(const rapidjson::V
 
 	// parse the game download file sha1 property
 	if(!gameDownloadFileValue.HasMember(JSON_GAME_DOWNLOAD_FILE_SHA1_PROPERTY_NAME)) {
-		spdlog::error("Game download file is missing '{}' property'.", JSON_GAME_DOWNLOAD_FILE_SHA1_PROPERTY_NAME);
+		spdlog::error("Game download file is missing '{}' property.", JSON_GAME_DOWNLOAD_FILE_SHA1_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -258,7 +258,7 @@ std::unique_ptr<GameDownloadFile> GameDownloadFile::parseFrom(const rapidjson::V
 
 	// parse the game download file operating system
 	if(!gameDownloadFileValue.HasMember(JSON_GAME_DOWNLOAD_FILE_OPERATING_SYSTEM_PROPERTY_NAME)) {
-		spdlog::error("Game download file is missing '{}' property'.", JSON_GAME_DOWNLOAD_FILE_OPERATING_SYSTEM_PROPERTY_NAME);
+		spdlog::error("Game download file is missing '{}' property.", JSON_GAME_DOWNLOAD_FILE_OPERATING_SYSTEM_PROPERTY_NAME);
 		return nullptr;
 	}
 
