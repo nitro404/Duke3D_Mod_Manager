@@ -423,11 +423,6 @@ std::unique_ptr<InstalledModInfo> InstalledModInfo::parseFrom(const rapidjson::V
 
 	std::string modVersion(Utilities::trimString(modVersionValue.GetString()));
 
-	if(modVersion.empty()) {
-		spdlog::error("Installed mod info '{}' category '{}' property cannot be empty.", JSON_MOD_INFO_CATEGORY_PROPERTY_NAME, JSON_MOD_VERSION_PROPERTY_NAME);
-		return nullptr;
-	}
-
 	// parse mod installed timestamp
 	if(!installedModInfoValue.HasMember(JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME.c_str())) {
 		spdlog::error("Installed mod info is missing '{}' property'.", JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME);
