@@ -8178,13 +8178,13 @@
 			<version id="Demo" release_date="November 27, 2008">
 				<game type="JFDuke3D" state="Native">
 					<file name="ZEALIENS.CON" size="183385" type="con" sha1="0385cdd59ee85ff91fb1d7c46ebfee3d475c0046"/>
-					<file name="ZEALIENS.GRP" size="16320620" type="grp" sha1="5f9a613312e156f957aebf0f97b84fd0df587524"/>
+					<file name="ZEALIENS.GRP" size="16320895" type="grp" sha1="cd193c2177cc1e14e6afcaafc94efbcf3fb4a91f"/>
 				</game>
 			</version>
 		</versions>
 		<downloads>
 			<download filename="aliens.zip" filesize="5501591" version="Demo" game="JFDuke3D" type="Original Files" sha1="4f4d5064011ed4a42e5976d397a1c9f745de694b"/>
-			<download filename="Zykov_Eddy&apos;s_Aliens_Demo-ModMgrJF.zip" filesize="5409530" version="Demo" game="JFDuke3D" type="Mod Manager Files" state="Native" sha1="b7bc71dcb14a9031a210e115cf2c3ec71df4cf9e"/>
+			<download filename="Zykov_Eddy&apos;s_Aliens_Demo-ModMgrJF.zip" filesize="5410027" version="Demo" game="JFDuke3D" type="Mod Manager Files" state="Native" sha1="de02bf9710531e530d3623e8a3389d4487898e43"/>
 		</downloads>
 		<related>
 			<mod id="aliens"/>
