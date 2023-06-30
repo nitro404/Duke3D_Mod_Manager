@@ -2440,13 +2440,13 @@
 			<version id="Demo" release_date="September 30, 1997">
 				<game type="Atomic" state="Native">
 					<file name="MITCDEMO.CON" size="151190" type="con" sha1="1b377150df5ca1b982060772f288b6de7e9048b2"/>
-					<file name="MITCDEMO.GRP" size="3045270" type="grp" sha1="33efb108702c8114407e17a4ca15df45082608c6"/>
+					<file name="MITCDEMO.GRP" size="3045270" type="grp" sha1="8cb55bb5ddf2fd96f41dc529c9348bedb116698a"/>
 				</game>
 			</version>
 		</versions>
 		<downloads>
 			<download filename="MitcDemo.zip" filesize="810325" version="Demo" game="Atomic" type="Original Files" sha1="bc3d848f0146d2edea586e5b07cd6c1a9d8b21c5"/>
-			<download filename="Mission_Impossible_Demo-ModMgrA.zip" filesize="844727" version="Demo" game="Atomic" type="Mod Manager Files" state="Native" sha1="29ceed5647ff8f00dd62211ef2450696232ccc99"/>
+			<download filename="Mission_Impossible_Demo-ModMgrA.zip" filesize="868954" version="Demo" game="Atomic" type="Mod Manager Files" state="Native" sha1="685b2420e29b4d58074deb8739e6b6fc65cd92e2"/>
 		</downloads>
 	</mod>
 	<mod name="Monkey Shines" id="monkey_shines" type="MAP">
