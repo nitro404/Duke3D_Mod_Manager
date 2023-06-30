@@ -246,6 +246,7 @@ rapidjson::Document DownloadCache::toJSON() const {
 	}
 
 	rapidjson::Value packagesValue(rapidjson::kArrayType);
+	packagesValue.Reserve(m_cachedPackageFiles.size(), allocator);
 
 	for(std::map<std::string, std::shared_ptr<CachedPackageFile>>::const_iterator i = m_cachedPackageFiles.begin(); i != m_cachedPackageFiles.end(); ++i) {
 		packagesValue.PushBack(i->second->toJSON(allocator), allocator);

@@ -1739,6 +1739,7 @@ rapidjson::Value GameVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::C
 
 	if(!m_supportedOperatingSystems.empty()) {
 		rapidjson::Value supportedOperatingSystemsValue(rapidjson::kArrayType);
+		supportedOperatingSystemsValue.Reserve(m_supportedOperatingSystems.size(), allocator);
 
 		for(std::vector<OperatingSystem>::const_iterator i = m_supportedOperatingSystems.begin(); i != m_supportedOperatingSystems.end(); ++i) {
 			rapidjson::Value supportedOperatingSystemValue(std::string(magic_enum::enum_name(*i)).c_str(), allocator);
@@ -1750,6 +1751,7 @@ rapidjson::Value GameVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::C
 
 	if(!m_compatibleGameVersionIdentifiers.empty()) {
 		rapidjson::Value compatibleGameVersionsValue(rapidjson::kArrayType);
+		compatibleGameVersionsValue.Reserve(m_compatibleGameVersionIdentifiers.size(), allocator);
 
 		for(std::vector<std::string>::const_iterator i = m_compatibleGameVersionIdentifiers.begin(); i != m_compatibleGameVersionIdentifiers.end(); ++i) {
 			rapidjson::Value compatibleGameVersionValue((*i).c_str(), allocator);

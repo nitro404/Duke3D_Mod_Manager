@@ -417,6 +417,7 @@ rapidjson::Value DOSBoxVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson:
 
 	if(!m_supportedOperatingSystems.empty()) {
 		rapidjson::Value supportedOperatingSystemsValue(rapidjson::kArrayType);
+		supportedOperatingSystemsValue.Reserve(m_supportedOperatingSystems.size(), allocator);
 
 		for(std::vector<DeviceInformationBridge::OperatingSystemType>::const_iterator i = m_supportedOperatingSystems.cbegin(); i != m_supportedOperatingSystems.cend(); ++i) {
 			rapidjson::Value supportedOperatingSystemValue(std::string(magic_enum::enum_name(*i)).c_str(), allocator);

@@ -246,9 +246,10 @@ rapidjson::Document GameDownloadCollection::toJSON() const {
 	gameDownloadCollectionValue.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
 
 	rapidjson::Value gameDownloadsValue(rapidjson::kArrayType);
+	gameDownloadsValue.Reserve(m_downloads.size(), allocator);
 
-	for(std::vector<std::shared_ptr<GameDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		gameDownloadsValue.PushBack((*i)->toJSON(allocator), allocator);
+	for(const std::shared_ptr<GameDownload> & download : m_downloads) {
+		gameDownloadsValue.PushBack(download->toJSON(allocator), allocator);
 	}
 
 	gameDownloadCollectionValue.AddMember(rapidjson::StringRef(JSON_GAME_DOWNLOADS_PROPERTY_NAME), gameDownloadsValue, allocator);

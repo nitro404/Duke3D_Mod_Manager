@@ -519,9 +519,10 @@ rapidjson::Document GameVersionCollection::toJSON() const {
 	gameVersionsDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
 
 	rapidjson::Value gamesVersionsValue(rapidjson::kArrayType);
+	gamesVersionsValue.Reserve(m_gameVersions.size(), allocator);
 
-	for(std::vector<std::shared_ptr<GameVersion>>::const_iterator i = m_gameVersions.begin(); i != m_gameVersions.end(); ++i) {
-		gamesVersionsValue.PushBack((*i)->toJSON(allocator), allocator);
+	for(const std::shared_ptr<GameVersion> & gameVersion : m_gameVersions) {
+		gamesVersionsValue.PushBack(gameVersion->toJSON(allocator), allocator);
 	}
 
 	gameVersionsDocument.AddMember(rapidjson::StringRef(JSON_GAME_VERSIONS_PROPERTY_NAME), gamesVersionsValue, allocator);

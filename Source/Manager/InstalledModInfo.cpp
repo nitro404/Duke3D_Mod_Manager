@@ -268,6 +268,7 @@ rapidjson::Document InstalledModInfo::toJSON() const {
 	installedModInfoDocument.AddMember(rapidjson::StringRef(JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME.c_str()), installedTimestampValue, allocator);
 
 	rapidjson::Value originalFilesValue(rapidjson::kArrayType);
+	originalFilesValue.Reserve(m_originalFiles.size(), allocator);
 
 	for(const std::string & originalFile : m_originalFiles) {
 		rapidjson::Value originalFileValue(originalFile.c_str(), allocator);
@@ -277,6 +278,7 @@ rapidjson::Document InstalledModInfo::toJSON() const {
 	installedModInfoDocument.AddMember(rapidjson::StringRef(JSON_ORIGINAL_FILES_LIST_PROPERTY_NAME.c_str()), originalFilesValue, allocator);
 
 	rapidjson::Value modFilesValue(rapidjson::kArrayType);
+	modFilesValue.Reserve(m_modFiles.size(), allocator);
 
 	for(const std::string & modFile : m_modFiles) {
 		rapidjson::Value modFileValue(modFile.c_str(), allocator);

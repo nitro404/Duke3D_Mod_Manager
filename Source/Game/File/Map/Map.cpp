@@ -489,6 +489,7 @@ bool Map::addToJSONObject(rapidjson::Value & value, rapidjson::MemoryPoolAllocat
 	value.AddMember(rapidjson::StringRef(JSON_PLAYER_SPAWN_PROPERTY_NAME.c_str()), playerSpawnValue, allocator);
 
 	rapidjson::Value sectorsValue(rapidjson::kArrayType);
+	sectorsValue.Reserve(m_sectors.size(), allocator);
 
 	for(const std::shared_ptr<Sector> & sector : m_sectors) {
 		rapidjson::Value sectorValue(sector->toJSON(allocator));
@@ -498,6 +499,7 @@ bool Map::addToJSONObject(rapidjson::Value & value, rapidjson::MemoryPoolAllocat
 	value.AddMember(rapidjson::StringRef(JSON_SECTORS_PROPERTY_NAME.c_str()), sectorsValue, allocator);
 
 	rapidjson::Value wallsValue(rapidjson::kArrayType);
+	wallsValue.Reserve(m_walls.size(), allocator);
 
 	for(const std::shared_ptr<Wall> & wall : m_walls) {
 		rapidjson::Value wallValue(wall->toJSON(allocator));
@@ -507,6 +509,7 @@ bool Map::addToJSONObject(rapidjson::Value & value, rapidjson::MemoryPoolAllocat
 	value.AddMember(rapidjson::StringRef(JSON_WALLS_PROPERTY_NAME.c_str()), wallsValue, allocator);
 
 	rapidjson::Value spritesValue(rapidjson::kArrayType);
+	spritesValue.Reserve(m_sprites.size(), allocator);
 
 	for(const std::shared_ptr<Sprite> & sprite : m_sprites) {
 		rapidjson::Value spriteValue(sprite->toJSON(allocator));
@@ -517,6 +520,7 @@ bool Map::addToJSONObject(rapidjson::Value & value, rapidjson::MemoryPoolAllocat
 
 	if(!m_trailingData->isEmpty()) {
 		rapidjson::Value trailingDataValue(rapidjson::kArrayType);
+		trailingDataValue.Reserve(m_trailingData->getSize(), allocator);
 
 		for(size_t i = 0; i < m_trailingData->getSize(); i++) {
 			trailingDataValue.PushBack(rapidjson::Value((*m_trailingData)[i]), allocator);

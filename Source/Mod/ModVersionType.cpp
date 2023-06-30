@@ -308,9 +308,10 @@ rapidjson::Value ModVersionType::toJSON(rapidjson::MemoryPoolAllocator<rapidjson
 	}
 
 	rapidjson::Value gameVersionsValue(rapidjson::kArrayType);
+	gameVersionsValue.Reserve(m_gameVersions.size(), allocator);
 
-	for(std::vector<std::shared_ptr<ModGameVersion>>::const_iterator i = m_gameVersions.begin(); i != m_gameVersions.end(); ++i) {
-		gameVersionsValue.PushBack((*i)->toJSON(allocator), allocator);
+	for(const std::shared_ptr<ModGameVersion> & gameversion : m_gameVersions) {
+		gameVersionsValue.PushBack(gameversion->toJSON(allocator), allocator);
 	}
 
 	modVersionTypeValue.AddMember(rapidjson::StringRef(JSON_MOD_VERSION_TYPE_GAME_VERSIONS_PROPERTY_NAME), gameVersionsValue, allocator);

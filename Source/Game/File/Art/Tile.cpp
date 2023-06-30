@@ -323,6 +323,7 @@ rapidjson::Value Tile::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAlloc
 		}
 		else {
 			rapidjson::Value dataValue(rapidjson::kArrayType);
+			dataValue.Reserve(m_data->getSize(), allocator);
 
 			for(size_t i = 0; i < m_data->getSize(); i++) {
 				dataValue.PushBack(rapidjson::Value((*m_data)[i]), allocator);

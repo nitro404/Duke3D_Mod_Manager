@@ -363,9 +363,10 @@ rapidjson::Value ModVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::Cr
 	}
 
 	rapidjson::Value versionsTypesValue(rapidjson::kArrayType);
+	versionsTypesValue.Reserve(m_types.size(), allocator);
 
-	for(std::vector<std::shared_ptr<ModVersionType>>::const_iterator i = m_types.begin(); i != m_types.end(); ++i) {
-		versionsTypesValue.PushBack((*i)->toJSON(allocator), allocator);
+	for(const std::shared_ptr<ModVersionType> & type : m_types) {
+		versionsTypesValue.PushBack(type->toJSON(allocator), allocator);
 	}
 
 	modVersionValue.AddMember(rapidjson::StringRef(JSON_MOD_VERSIONS_VERSION_TYPES_PROPERTY_NAME), versionsTypesValue, allocator);

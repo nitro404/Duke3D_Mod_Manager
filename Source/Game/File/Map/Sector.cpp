@@ -1445,6 +1445,7 @@ rapidjson::Value Sector::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAll
 
 	if(!m_trailingData.empty()) {
 		rapidjson::Value trailingDataValue(rapidjson::kArrayType);
+		trailingDataValue.Reserve(m_trailingData.size(), allocator);
 
 		for(uint8_t b : m_trailingData) {
 			trailingDataValue.PushBack(rapidjson::Value(b), allocator);

@@ -269,9 +269,10 @@ rapidjson::Value GameDownload::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::
 	gameDownloadVersionValue.AddMember(rapidjson::StringRef(JSON_GAME_DOWNLOAD_NAME_PROPERTY_NAME), nameValue, allocator);
 
 	rapidjson::Value versionsValue(rapidjson::kArrayType);
+	versionsValue.Reserve(m_versions.size(), allocator);
 
-	for(std::vector<std::shared_ptr<GameDownloadVersion>>::const_iterator i = m_versions.begin(); i != m_versions.end(); ++i) {
-		versionsValue.PushBack((*i)->toJSON(allocator), allocator);
+	for(const std::shared_ptr<GameDownloadVersion> & version : m_versions) {
+		versionsValue.PushBack(version->toJSON(allocator), allocator);
 	}
 
 	gameDownloadVersionValue.AddMember(rapidjson::StringRef(JSON_GAME_DOWNLOAD_VERSIONS_PROPERTY_NAME), versionsValue, allocator);

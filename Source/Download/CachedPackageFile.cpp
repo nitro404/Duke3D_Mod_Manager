@@ -125,6 +125,7 @@ rapidjson::Value CachedPackageFile::toJSON(rapidjson::MemoryPoolAllocator<rapidj
 	rapidjson::Value cachedPackageFileValue(CachedFile::toJSON(allocator));
 
 	rapidjson::Value contentsValue(rapidjson::kArrayType);
+	contentsValue.Reserve(m_cachedFiles.size(), allocator);
 
 	for(std::map<std::string, std::shared_ptr<CachedFile>>::const_iterator i = m_cachedFiles.begin(); i != m_cachedFiles.end(); ++i) {
 		contentsValue.PushBack(i->second->toJSON(allocator), allocator);

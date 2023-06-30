@@ -300,9 +300,10 @@ rapidjson::Document ModCollection::toJSON() const {
 	modsDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
 
 	rapidjson::Value modsValue(rapidjson::kArrayType);
+	modsValue.Reserve(m_mods.size(), allocator);
 
-	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_mods.begin(); i != m_mods.end(); ++i) {
-		modsValue.PushBack((*i)->toJSON(allocator), allocator);
+	for(const std::shared_ptr<Mod> & mod : m_mods) {
+		modsValue.PushBack(mod->toJSON(allocator), allocator);
 	}
 
 	modsDocument.AddMember(rapidjson::StringRef(JSON_MODS_PROPERTY_NAME), modsValue, allocator);

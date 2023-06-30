@@ -628,6 +628,7 @@ bool Art::addToJSONObject(rapidjson::Value & value, rapidjson::MemoryPoolAllocat
 	value.AddMember(rapidjson::StringRef(JSON_LEGACY_TILE_COUNT_PROPERTY_NAME.c_str()), rapidjson::Value(m_legacyTileCount), allocator);
 
 	rapidjson::Value tilesValue(rapidjson::kArrayType);
+	tilesValue.Reserve(m_tiles.size(), allocator);
 
 	for(const std::shared_ptr<Tile> & tile : m_tiles) {
 		rapidjson::Value tileValue(tile->toJSON(allocator));
@@ -644,6 +645,7 @@ bool Art::addToJSONObject(rapidjson::Value & value, rapidjson::MemoryPoolAllocat
 		}
 		else {
 			rapidjson::Value trailingDataValue(rapidjson::kArrayType);
+			trailingDataValue.Reserve(m_trailingData->getSize(), allocator);
 
 			for(size_t i = 0; i < m_trailingData->getSize(); i++) {
 				trailingDataValue.PushBack(rapidjson::Value((*m_trailingData)[i]), allocator);

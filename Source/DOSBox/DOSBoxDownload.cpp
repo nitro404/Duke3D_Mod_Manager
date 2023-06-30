@@ -248,9 +248,10 @@ rapidjson::Value DOSBoxDownload::toJSON(rapidjson::MemoryPoolAllocator<rapidjson
 	dosboxDownloadVersionValue.AddMember(rapidjson::StringRef(JSON_DOSBOX_DOWNLOAD_NAME_PROPERTY_NAME), nameValue, allocator);
 
 	rapidjson::Value versionsValue(rapidjson::kArrayType);
+	versionsValue.Reserve(m_versions.size(), allocator);
 
-	for(std::vector<std::shared_ptr<DOSBoxDownloadVersion>>::const_iterator i = m_versions.begin(); i != m_versions.end(); ++i) {
-		versionsValue.PushBack((*i)->toJSON(allocator), allocator);
+	for(const std::shared_ptr<DOSBoxDownloadVersion> & version : m_versions) {
+		versionsValue.PushBack(version->toJSON(allocator), allocator);
 	}
 
 	dosboxDownloadVersionValue.AddMember(rapidjson::StringRef(JSON_DOSBOX_DOWNLOAD_VERSIONS_PROPERTY_NAME), versionsValue, allocator);

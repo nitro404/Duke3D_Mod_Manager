@@ -184,9 +184,10 @@ rapidjson::Document FavouriteModCollection::toJSON() const {
 	favouriteModsDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
 
 	rapidjson::Value favouriteModsListValue(rapidjson::kArrayType);
+	favouriteModsListValue.Reserve(m_favourites.size(), allocator);
 
-	for(std::vector<std::shared_ptr<ModIdentifier>>::const_iterator i = m_favourites.begin(); i != m_favourites.end(); ++i) {
-		favouriteModsListValue.PushBack((*i)->toJSON(allocator), allocator);
+	for(const std::shared_ptr<ModIdentifier> & favourite : m_favourites) {
+		favouriteModsListValue.PushBack(favourite->toJSON(allocator), allocator);
 	}
 
 	favouriteModsDocument.AddMember(rapidjson::StringRef(JSON_FAVOURITE_MODS_PROPERTY_NAME), favouriteModsListValue, allocator);

@@ -659,6 +659,7 @@ rapidjson::Value ModGameVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson
 		modGameVersionValue.AddMember(rapidjson::StringRef(JSON_MOD_GAME_VERSION_ARGUMENTS_PROPERTY_NAME.c_str()), argumentsValue, allocator);
 
 		rapidjson::Value operatingSystemsValue(rapidjson::kArrayType);
+		operatingSystemsValue.Reserve(m_standAloneGameVersion->numberOfSupportedOperatingSystems(), allocator);
 
 		for(size_t i = 0; i < m_standAloneGameVersion->numberOfSupportedOperatingSystems(); i++) {
 			rapidjson::Value operatingSystemNameValue(m_standAloneGameVersion->getSupportedOperatingSystemName(i).c_str(), allocator);
@@ -669,9 +670,10 @@ rapidjson::Value ModGameVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson
 	}
 
 	rapidjson::Value filesValue(rapidjson::kArrayType);
+	filesValue.Reserve(m_files.size(), allocator);
 
-	for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
-		filesValue.PushBack((*i)->toJSON(allocator), allocator);
+	for(const std::shared_ptr<ModFile> & file : m_files) {
+		filesValue.PushBack(file->toJSON(allocator), allocator);
 	}
 
 	modGameVersionValue.AddMember(rapidjson::StringRef(JSON_MOD_GAME_VERSION_FILES_PROPERTY_NAME.c_str()), filesValue, allocator);

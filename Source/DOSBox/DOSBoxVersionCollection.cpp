@@ -436,9 +436,10 @@ rapidjson::Document DOSBoxVersionCollection::toJSON() const {
 	dosboxVersionsDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
 
 	rapidjson::Value dosboxVersionsValue(rapidjson::kArrayType);
+	dosboxVersionsValue.Reserve(m_dosboxVersions.size(), allocator);
 
-	for(std::vector<std::shared_ptr<DOSBoxVersion>>::const_iterator i = m_dosboxVersions.begin(); i != m_dosboxVersions.end(); ++i) {
-		dosboxVersionsValue.PushBack((*i)->toJSON(allocator), allocator);
+	for(const std::shared_ptr<DOSBoxVersion> & dosboxVersion : m_dosboxVersions) {
+		dosboxVersionsValue.PushBack(dosboxVersion->toJSON(allocator), allocator);
 	}
 
 	dosboxVersionsDocument.AddMember(rapidjson::StringRef(JSON_DOSBOX_VERSIONS_PROPERTY_NAME), dosboxVersionsValue, allocator);

@@ -222,9 +222,10 @@ rapidjson::Document DOSBoxDownloadCollection::toJSON() const {
 	dosboxDownloadCollectionValue.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
 
 	rapidjson::Value dosboxDownloadsValue(rapidjson::kArrayType);
+	dosboxDownloadsValue.Reserve(m_downloads.size(), allocator);
 
-	for(std::vector<std::shared_ptr<DOSBoxDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		dosboxDownloadsValue.PushBack((*i)->toJSON(allocator), allocator);
+	for(const std::shared_ptr<DOSBoxDownload> & download : m_downloads) {
+		dosboxDownloadsValue.PushBack(download->toJSON(allocator), allocator);
 	}
 
 	dosboxDownloadCollectionValue.AddMember(rapidjson::StringRef(JSON_DOSBOX_DOWNLOADS_PROPERTY_NAME), dosboxDownloadsValue, allocator);

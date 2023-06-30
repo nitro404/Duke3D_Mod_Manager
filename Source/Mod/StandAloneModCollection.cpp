@@ -258,6 +258,7 @@ rapidjson::Document StandAloneModCollection::toJSON() const {
 	standAloneModsDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
 
 	rapidjson::Value standAloneModsValue(rapidjson::kArrayType);
+	standAloneModsValue.Reserve(m_standAloneMods.size(), allocator);
 
 	for(const std::shared_ptr<StandAloneMod> & standAloneMod : m_standAloneMods) {
 		standAloneModsValue.PushBack(standAloneMod->toJSON(allocator), allocator);

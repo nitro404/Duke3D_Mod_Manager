@@ -371,9 +371,10 @@ rapidjson::Value ModTeam::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAl
 
 	if(!m_members.empty()) {
 		rapidjson::Value membersValue(rapidjson::kArrayType);
+		membersValue.Reserve(m_members.size(), allocator);
 
-		for(std::vector<std::shared_ptr<ModTeamMember>>::const_iterator i = m_members.begin(); i != m_members.end(); ++i) {
-			membersValue.PushBack((*i)->toJSON(allocator), allocator);
+		for(const std::shared_ptr<ModTeamMember> & member : m_members) {
+			membersValue.PushBack(member->toJSON(allocator), allocator);
 		}
 
 		modTeamValue.AddMember(rapidjson::StringRef(JSON_MOD_TEAM_MEMBERS_PROPERTY_NAME), membersValue, allocator);

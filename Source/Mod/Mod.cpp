@@ -1506,26 +1506,29 @@ rapidjson::Value Mod::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAlloca
 	}
 
 	rapidjson::Value versionsValue(rapidjson::kArrayType);
+	versionsValue.Reserve(m_versions.size(), allocator);
 
-	for(std::vector<std::shared_ptr<ModVersion>>::const_iterator i = m_versions.begin(); i != m_versions.end(); ++i) {
-		versionsValue.PushBack((*i)->toJSON(allocator), allocator);
+	for(const std::shared_ptr<ModVersion> & modVersion : m_versions) {
+		versionsValue.PushBack(modVersion->toJSON(allocator), allocator);
 	}
 
 	modValue.AddMember(rapidjson::StringRef(JSON_MOD_VERSIONS_PROPERTY_NAME), versionsValue, allocator);
 
 	rapidjson::Value downloadsValue(rapidjson::kArrayType);
+	downloadsValue.Reserve(m_downloads.size(), allocator);
 
-	for(std::vector<std::shared_ptr<ModDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		downloadsValue.PushBack((*i)->toJSON(allocator), allocator);
+	for(const std::shared_ptr<ModDownload> & modDownload : m_downloads) {
+		downloadsValue.PushBack(modDownload->toJSON(allocator), allocator);
 	}
 
 	modValue.AddMember(rapidjson::StringRef(JSON_MOD_DOWNLOADS_PROPERTY_NAME), downloadsValue, allocator);
 
 	if(!m_screenshots.empty()) {
 		rapidjson::Value screenshotsValue(rapidjson::kArrayType);
+		screenshotsValue.Reserve(m_screenshots.size(), allocator);
 
-		for(std::vector<std::shared_ptr<ModScreenshot>>::const_iterator i = m_screenshots.begin(); i != m_screenshots.end(); ++i) {
-			screenshotsValue.PushBack((*i)->toJSON(allocator), allocator);
+		for(const std::shared_ptr<ModScreenshot> & screenshot : m_screenshots) {
+			screenshotsValue.PushBack(screenshot->toJSON(allocator), allocator);
 		}
 
 		modValue.AddMember(rapidjson::StringRef(JSON_MOD_SCREENSHOTS_PROPERTY_NAME), screenshotsValue, allocator);
@@ -1533,9 +1536,10 @@ rapidjson::Value Mod::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAlloca
 
 	if(!m_images.empty()) {
 		rapidjson::Value imagesValue(rapidjson::kArrayType);
+		imagesValue.Reserve(m_images.size(), allocator);
 
-		for(std::vector<std::shared_ptr<ModImage>>::const_iterator i = m_images.begin(); i != m_images.end(); ++i) {
-			imagesValue.PushBack((*i)->toJSON(allocator), allocator);
+		for(const std::shared_ptr<ModImage> & image : m_images) {
+			imagesValue.PushBack(image->toJSON(allocator), allocator);
 		}
 
 		modValue.AddMember(rapidjson::StringRef(JSON_MOD_IMAGES_PROPERTY_NAME), imagesValue, allocator);
@@ -1543,9 +1547,10 @@ rapidjson::Value Mod::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAlloca
 
 	if(!m_videos.empty()) {
 		rapidjson::Value videosValue(rapidjson::kArrayType);
+		videosValue.Reserve(m_videos.size(), allocator);
 
-		for(std::vector<std::shared_ptr<ModVideo>>::const_iterator i = m_videos.begin(); i != m_videos.end(); ++i) {
-			videosValue.PushBack((*i)->toJSON(allocator), allocator);
+		for(const std::shared_ptr<ModVideo> & video : m_videos) {
+			videosValue.PushBack(video->toJSON(allocator), allocator);
 		}
 
 		modValue.AddMember(rapidjson::StringRef(JSON_MOD_VIDEOS_PROPERTY_NAME), videosValue, allocator);
@@ -1553,9 +1558,10 @@ rapidjson::Value Mod::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAlloca
 
 	if(!m_notes.empty()) {
 		rapidjson::Value notesValue(rapidjson::kArrayType);
+		notesValue.Reserve(m_notes.size(), allocator);
 
-		for(std::vector<std::string>::const_iterator i = m_notes.begin(); i != m_notes.end(); ++i) {
-			rapidjson::Value noteValue((*i).c_str(), allocator);
+		for(const std::string & note : m_notes) {
+			rapidjson::Value noteValue(note.c_str(), allocator);
 			notesValue.PushBack(noteValue, allocator);
 		}
 
@@ -1564,9 +1570,10 @@ rapidjson::Value Mod::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAlloca
 
 	if(!m_relatedMods.empty()) {
 		rapidjson::Value relatedModsValue(rapidjson::kArrayType);
+		relatedModsValue.Reserve(m_relatedMods.size(), allocator);
 
-		for(std::vector<std::string>::const_iterator i = m_relatedMods.begin(); i != m_relatedMods.end(); ++i) {
-			rapidjson::Value relatedModValue((*i).c_str(), allocator);
+		for(const std::string & relatedMod : m_relatedMods) {
+			rapidjson::Value relatedModValue(relatedMod.c_str(), allocator);
 			relatedModsValue.PushBack(relatedModValue, allocator);
 		}
 
