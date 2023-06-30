@@ -815,7 +815,7 @@ std::shared_ptr<ModDownload> Mod::getDownloadForGameVersion(const ModGameVersion
 }
 
 std::shared_ptr<ModVersion> Mod::getModVersionForDownload(const ModDownload * modDownload) const {
-	if(!ModDownload::isValid(modDownload) || modDownload->getParentMod() != this) {
+	if(!ModDownload::isValid(modDownload, true) || modDownload->getParentMod() != this) {
 		return nullptr;
 	}
 
@@ -823,7 +823,7 @@ std::shared_ptr<ModVersion> Mod::getModVersionForDownload(const ModDownload * mo
 }
 
 std::shared_ptr<ModVersionType> Mod::getModVersionTypeForDownload(const ModDownload * modDownload) const {
-	if(!ModDownload::isValid(modDownload) || modDownload->getParentMod() != this) {
+	if(!ModDownload::isValid(modDownload, true) || modDownload->getParentMod() != this) {
 		return nullptr;
 	}
 
