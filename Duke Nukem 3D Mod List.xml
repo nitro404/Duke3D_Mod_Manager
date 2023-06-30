@@ -5126,18 +5126,18 @@
 			<version release_date="March 5, 1997">
 				<game type="Regular" state="Native">
 					<file name="2SHOTGUN.CON" size="99643" type="con" sha1="9595e9e9e79e778613ca8dd1e0c6ec1e14fc7904"/>
-					<file name="2SHOTGUN.GRP" size="2479636" type="grp" sha1="b53c36e5d33878b835fa0ca8bb1a619794e3b441"/>
+					<file name="2SHOTGUN.GRP" size="2479636" type="grp" sha1="6c8325e079834528cdfc91697f8bf663785fa58d"/>
 				</game>
 				<game type="Atomic" state="Converted">
 					<file name="2SHOTGUN.CON" size="151194" type="con" sha1="2ebc8b8b23cf117ab267a1c2a4e35ce429268f67"/>
-					<file name="2SHOTGUN.GRP" size="2539738" type="grp" sha1="08c2a69ac92ac7c859ea33cadaca61c2a20e142c"/>
+					<file name="2SHOTGUN.GRP" size="2539738" type="grp" sha1="749d24ddfda3d22e570f305c4a91f0f5fde162d7"/>
 				</game>
 			</version>
 		</versions>
 		<downloads>
 			<download filename="doublebarrel.zip" filesize="847870" game="Regular" type="Original Files" sha1="2212fbff5abaa998f29b788ae63f9dbb748a1115"/>
-			<download filename="Double_Barrel_Shotgun-ModMgrR.zip" filesize="882762" game="Regular" type="Mod Manager Files" state="Native" sha1="205d3b3ea39cfcdc0a6346a49d9e545b8af2cc64"/>
-			<download filename="Double_Barrel_Shotgun-ModMgrA.zip" filesize="899952" game="Atomic" type="Mod Manager Files" state="Converted" sha1="89c6c284582076f51d73365cd81d3e1c6619ea1c"/>
+			<download filename="Double_Barrel_Shotgun-ModMgrR.zip" filesize="882124" game="Regular" type="Mod Manager Files" state="Native" sha1="e271d615f0793f93f48577e91f830bb45e36d4ed"/>
+			<download filename="Double_Barrel_Shotgun-ModMgrA.zip" filesize="899413" game="Atomic" type="Mod Manager Files" state="Converted" sha1="fa205d0edda5cdd3ed6b93a3590329ca70f393d0"/>
 		</downloads>
 		<screenshots>
 			<screenshot filename="DUKE0003.png" filesize="352900" width="480" height="360" sha1="22989496ac87b1e56280ec1960baa9f8bb1a0951"/>
