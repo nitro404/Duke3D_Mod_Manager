@@ -1444,6 +1444,9 @@
 			<download filename="DukeCop_2.5c-ModMgrR.zip" filesize="452579" version="2.5c" game="Regular" type="Mod Manager Files" state="Native" sha1="cc7575d32a0a759136f443670894c30e104e0b8d"/>
 			<download filename="DukeCop_2.5c-ModMgrA.zip" filesize="471532" version="2.5c" game="Atomic" type="Mod Manager Files" state="Converted" sha1="346cc03d6ff46c005af46eb0c0ab6e41bbbea9ab"/>
 		</downloads>
+		<notes>
+			<note>Replaces E1L2.</note>
+		</notes>
 	</mod>
 	<mod name="DukeDependence Day" id="dukedependence_day" type="Total Conversion" website="http://www.greatbasi.net/~roland">
 		<team>
