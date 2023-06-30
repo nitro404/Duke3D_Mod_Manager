@@ -4244,13 +4244,13 @@
 			<version id="Demo" release_date="January 18, 2000">
 				<game type="Atomic" state="Native">
 					<file name="ULTIMA.CON" size="149551" type="con" sha1="249a9353847f64f871dae607b8da790f80ab24cb"/>
-					<file name="ULTIMA.GRP" size="11558472" type="grp" sha1="5abea8ef95a38c293bffa689a898755bac3fef32"/>
+					<file name="ULTIMA.GRP" size="11558472" type="grp" sha1="f1e39fd2f6be58d796dc1fe161e8b6a52956a5f7"/>
 				</game>
 			</version>
 		</versions>
 		<downloads>
 			<download filename="ultimademo.zip" filesize="4022043" version="Demo" game="Atomic" type="Original Files" sha1="523e67b89b7e8f6ba5f2e51d53899a8b821d40d4"/>
-			<download filename="Ultima_TC_Demo-ModMgrA.zip" filesize="4090462" version="Demo" game="Atomic" type="Mod Manager Files" state="Native" sha1="30580022520c6af3a66eb5f6dbb2e192b1c698b7"/>
+			<download filename="Ultima_TC_Demo-ModMgrA.zip" filesize="4089812" version="Demo" game="Atomic" type="Mod Manager Files" state="Native" sha1="35511bdef86f7f0b7074a6c2c54e91fd0a5a219e"/>
 		</downloads>
 		<related>
 			<mod id="coolio_tc"/>
