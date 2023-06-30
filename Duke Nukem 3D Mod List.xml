@@ -76,19 +76,19 @@
 			<version id="1.0" release_date="October 20, 1997">
 				<game type="Regular" state="Native">
 					<file name="25CDUKE.CON" size="99638" type="con" sha1="037d36125a304137cd0a3f6e1ee528ea56683e5e"/>
-					<file name="25CDUKE.GRP" size="5419611" type="grp" sha1="766051d7962ab2b1a7fa8555cf4e6ffe2172ce2d"/>
+					<file name="25CDUKE.GRP" size="5419611" type="grp" sha1="5d9c81ec12888bdac2d1363f9b36298f3ab29963"/>
 				</game>
 				<game type="Atomic" state="Converted">
 					<file name="25CDUKE.CON" size="151189" type="con" sha1="f0f5cdefb3e1b2243290ff55704d49ec5ca87012"/>
-					<file name="25CDUKE.GRP" size="5791047" type="grp" sha1="2aebc8bc034473374fa8f255889ddb3e6d8f95f1"/>
+					<file name="25CDUKE.GRP" size="5791047" type="grp" sha1="c16b9c06546b9354aaff6d99183edd205628e57e"/>
 				</game>
 			</version>
 		</versions>
 		<downloads>
 			<download filename="25thcd.exe" filesize="1540231" version="1.0" game="Regular" type="Original Files" sha1="8a163c50c3264a45b6b00119cf96953e8a47a46f"/>
 			<download filename="mac25thcd.sit.bin" filesize="1589888" version="1.0" game="Regular" type="Mac Version" sha1="55509d183675a6feebce00ee90a3454f1046e6f1"/>
-			<download filename="25th_Century_Duke_1.0-ModMgrR.zip" filesize="1539897" version="1.0" game="Regular" type="Mod Manager Files" state="Native" sha1="df649e7830a244fcad1a942d0de9b033c53fbfdb"/>
-			<download filename="25th_Century_Duke_1.0-ModMgrA.zip" filesize="1713634" version="1.0" game="Atomic" type="Mod Manager Files" state="Converted" sha1="86aff5523e35e6daf59a628fada74433500792c7"/>
+			<download filename="25th_Century_Duke_1.0-ModMgrR.zip" filesize="1513599" version="1.0" game="Regular" type="Mod Manager Files" state="Native" sha1="e8f8132eb45ef4325d5278ec0046e5b35f507200"/>
+			<download filename="25th_Century_Duke_1.0-ModMgrA.zip" filesize="1684926" version="1.0" game="Atomic" type="Mod Manager Files" state="Converted" sha1="e19943277c250942dc1241d181eb9a0eb4f7a18f"/>
 		</downloads>
 	</mod>
 	<mod name="666" id="666" type="Total Conversion" version="1.8">
