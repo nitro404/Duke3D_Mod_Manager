@@ -6714,13 +6714,13 @@
 			<version release_date="January 10, 2003">
 				<game type="Atomic" state="Native">
 					<file name="DNCM.CON" size="160433" type="con" sha1="b78cd8660f5adf3cdbc0d2a1cf376cf642fade13"/>
-					<file name="DNCM.GRP" size="5979223" type="grp" sha1="9b1e4ce572a15c7d115b636e7d932b28502fdc8a"/>
+					<file name="DNCM.GRP" size="5979191" type="grp" sha1="b41b6067d49b53f06d61151707e75d8da8d16b8d"/>
 				</game>
 			</version>
 		</versions>
 		<downloads>
 			<download filename="dncm.zip" filesize="2086342" game="Atomic" type="Original Files" sha1="2f9211f307e362ec744be816f4dfa9b71acd2dcb"/>
-			<download filename="Critical_Mass-ModMgrA.zip" filesize="2059732" game="Atomic" type="Mod Manager Files" state="Native" sha1="0072908655fc594d9b4c3b4fa04fe864a144877b"/>
+			<download filename="Critical_Mass-ModMgrA.zip" filesize="2061431" game="Atomic" type="Mod Manager Files" state="Native" sha1="36014046aff784e2583d2caaf7ca73d52cde43d5"/>
 		</downloads>
 	</mod>
 	<mod name="Cursed Lands" id="cursed_lands" type="Total Conversion" version="1.1">
