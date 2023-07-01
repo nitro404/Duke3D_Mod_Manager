@@ -74,6 +74,10 @@ ModDownloadPanel::ModDownloadPanel(std::shared_ptr<ModDownload> modDownload, wxW
 			descriptionStringStream << " (Repaired)";
 		}
 
+		descriptionStringStream << " - ";
+
+		descriptionStringStream << Utilities::fileSizeToString(modDownload->getFileSize());
+
 		wxStaticText * downloadDescription = new wxStaticText(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 		// Note: For some reason ampersands are not rendered if you assign the text contents upon creation rather than through the set label text function
 		downloadDescription->SetLabelText(wxString::FromUTF8(descriptionStringStream.str()));
