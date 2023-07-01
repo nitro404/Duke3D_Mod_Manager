@@ -182,6 +182,7 @@ public:
 	bool removeCompatibleGameVersionWithID(const std::string & gameVersionID);
 	void clearCompatibleGameVersions();
 
+	std::unique_ptr<GameVersion> createTemplateFrom() const;
 	size_t checkForMissingExecutables() const;
 
 	rapidjson::Value toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const;

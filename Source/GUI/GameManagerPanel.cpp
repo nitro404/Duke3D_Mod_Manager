@@ -329,7 +329,31 @@ bool GameManagerPanel::addGameVersionPanel(GameVersionPanel * gameVersionPanel) 
 }
 
 bool GameManagerPanel::newGameVersion() {
-	return addGameVersionPanel(new GameVersionPanel(nullptr, m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL));
+	std::vector<std::string> gameVersionTemplates({ "Blank" });
+
+	for(const GameVersion * gameVersion : GameVersion::DEFAULT_GAME_VERSIONS) {
+		gameVersionTemplates.push_back(gameVersion->getLongName());
+	}
+
+	int selectedGameVersionTemplateIndex = wxGetSingleChoiceIndex(
+		"Please choose a game version to inherit settings from:",
+		"Choose Game Version Template",
+		WXUtilities::createItemWXArrayString(gameVersionTemplates),
+		0,
+		this
+	);
+
+	if(selectedGameVersionTemplateIndex == wxNOT_FOUND || selectedGameVersionTemplateIndex > gameVersionTemplates.size()) {
+		return false;
+	}
+
+	std::shared_ptr<GameVersion> gameVersionTemplate;
+
+	if(selectedGameVersionTemplateIndex != 0) {
+		gameVersionTemplate = std::shared_ptr<GameVersion>(GameVersion::DEFAULT_GAME_VERSIONS[selectedGameVersionTemplateIndex - 1]->createTemplateFrom().release());
+	}
+
+	return addGameVersionPanel(new GameVersionPanel(gameVersionTemplate, m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL));
 }
 
 bool GameManagerPanel::installGameVersion(size_t index) {

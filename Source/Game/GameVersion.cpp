@@ -1561,6 +1561,42 @@ void GameVersion::clearCompatibleGameVersions() {
 	setModified(true);
 }
 
+std::unique_ptr<GameVersion> GameVersion::createTemplateFrom() const {
+	return std::make_unique<GameVersion>(
+		Utilities::emptyString,
+		Utilities::emptyString,
+		Utilities::emptyString,
+		true,
+		Utilities::emptyString,
+		m_gameExecutableName,
+		m_localWorkingDirectory,
+		m_relativeConFilePath,
+		m_supportsSubdirectories,
+		Utilities::emptyString,
+		m_conFileArgumentFlag,
+		m_extraConFileArgumentFlag,
+		m_groupFileArgumentFlag,
+		m_mapFileArgumentFlag,
+		m_episodeArgumentFlag,
+		m_levelArgumentFlag,
+		m_skillArgumentFlag,
+		m_skillStartValue,
+		m_recordDemoArgumentFlag,
+		m_playDemoArgumentFlag,
+		m_respawnModeArgumentFlag,
+		m_weaponSwitchOrderArgumentFlag,
+		m_disableMonstersArgumentFlag,
+		m_disableSoundArgumentFlag,
+		m_disableMusicArgumentFlag,
+		m_setupExecutableName,
+		m_groupFileInstallPath,
+		m_defFileArgumentFlag,
+		m_extraDefFileArgumentFlag,
+		m_requiresCombinedGroup,
+		m_requiresGroupFileExtraction
+	);
+}
+
 size_t GameVersion::checkForMissingExecutables() const {
 	if(!isConfigured()) {
 		return 0;
