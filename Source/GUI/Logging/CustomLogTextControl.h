@@ -23,6 +23,9 @@ public:
 
 	CustomLogTextControl(const CustomLogTextControl &) = delete;
 	const CustomLogTextControl & operator = (const CustomLogTextControl &) = delete;
+
+private:
+	wxTextCtrl * m_textControl;
 };
 
 #endif // _CUSTOM_LOG_TEXT_CONTROL_H_
