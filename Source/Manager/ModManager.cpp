@@ -1477,7 +1477,7 @@ bool ModManager::selectRandomAuthor() {
 	return m_organizedMods->selectRandomAuthor();
 }
 
-std::vector<ModMatch> ModManager::searchForMod(const std::vector<std::shared_ptr<Mod>> & mods, const std::string & query) {
+std::vector<ModMatch> ModManager::searchForMod(const std::vector<std::shared_ptr<Mod>> & mods, const std::string & query, bool autoPopulateVersion, bool autoPopulateVersionType) {
 	std::string formattedQuery(Utilities::toLowerCase(Utilities::trimString(query)));
 
 	if(formattedQuery.empty()) {
@@ -1517,7 +1517,18 @@ std::vector<ModMatch> ModManager::searchForMod(const std::vector<std::shared_ptr
 
 		if(modNameMatches && mod->numberOfVersions() == 1 && mod->getVersion(0)->numberOfTypes() == 1) {
 			matches.clear();
-			matches.emplace_back(mod, mod->getVersion(0), mod->getVersion(0)->getType(0), i, 0, 0);
+
+			if(autoPopulateVersion) {
+				if(autoPopulateVersionType) {
+					matches.emplace_back(mod, mod->getVersion(0), mod->getVersion(0)->getType(0), i, 0, 0);
+				}
+				else {
+					matches.emplace_back(mod, mod->getVersion(0), i, 0);
+				}
+			}
+			else {
+				matches.emplace_back(mod, i);
+			}
 
 			return matches;
 		}
@@ -1532,7 +1543,13 @@ std::vector<ModMatch> ModManager::searchForMod(const std::vector<std::shared_ptr
 			if((modVersionMatches && modVersion->numberOfTypes() == 1) ||
 			   (modNameMatches && modVersion->getVersion().empty() && modVersion->numberOfTypes() == 1)) {
 				matches.clear();
-				matches.emplace_back(mod, modVersion, modVersion->getType(0), i, j, 0);
+
+				if(autoPopulateVersionType) {
+					matches.emplace_back(mod, modVersion, modVersion->getType(0), i, j, 0);
+				}
+				else {
+					matches.emplace_back(mod, modVersion, i, j);
+				}
 
 				return matches;
 			}
@@ -1559,7 +1576,7 @@ std::vector<ModMatch> ModManager::searchForMod(const std::vector<std::shared_ptr
 			}
 
 			if(modVersionPartiallyMatches && !modNamePartiallyMatches) {
-				if(modVersion->numberOfTypes() == 1) {
+				if(modVersion->numberOfTypes() == 1 && autoPopulateVersionType) {
 					matches.emplace_back(mod, modVersion, modVersion->getType(0), i, j, 0);
 				}
 				else {
@@ -1569,8 +1586,8 @@ std::vector<ModMatch> ModManager::searchForMod(const std::vector<std::shared_ptr
 		}
 
 		if(modNamePartiallyMatches) {
-			if(mod->numberOfVersions() == 1) {
-				if(mod->getVersion(0)->numberOfTypes() == 1) {
+			if(mod->numberOfVersions() == 1 && autoPopulateVersion) {
+				if(mod->getVersion(0)->numberOfTypes() == 1 && autoPopulateVersionType) {
 					matches.emplace_back(mod, mod->getVersion(0), mod->getVersion(0)->getType(0), i, 0, 0);
 				}
 				else {
@@ -3414,7 +3431,7 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 				return false;
 			}
 
-			std::vector<ModMatch> modMatches(searchForMod(m_mods->getMods(), args->getFirstValue("search")));
+			std::vector<ModMatch> modMatches(searchForMod(m_mods->getMods(), args->getFirstValue("search"), true, true));
 
 			if(modMatches.empty()) {
 				spdlog::error("No matches found for specified search query.");
