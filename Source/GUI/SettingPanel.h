@@ -64,9 +64,9 @@ public:
 	static SettingPanel * createStringMultiChoiceSettingPanel(std::vector<std::string> & setting, const std::string & name, bool caseSensitive, const std::vector<std::string> & choices, wxWindow * parent, size_t minimumNumberOfSelectedItems = 0, wxSizer * parentSizer = nullptr, const std::vector<std::string> & values = {}, const std::vector<std::string> & defaultValues = {});
 	static SettingPanel * createStringMultiChoiceSettingPanel(std::function<const std::vector<std::string> &()> getSettingValueFunction, std::function<bool(const std::string &)> hasSettingEntryFunction, std::function<bool(const std::string &)> addSettingEntryFunction, std::function<bool(const std::string &)> removeSettingEntryFunction, const std::string & name, bool caseSensitive, const std::vector<std::string> & choices, wxWindow * parent, size_t minimumNumberOfSelectedItems = 0, wxSizer * parentSizer = nullptr, const std::vector<std::string> & values = {}, const std::vector<std::string> & defaultValues = {});
 	template <typename E>
-	static SettingPanel * createEnumMultiChoiceSettingPanel(std::vector<E> & setting, const std::string & name, wxWindow * parent, size_t minimumNumberOfSelectedItems = 0, wxSizer * parentSizer = nullptr);
+	static SettingPanel * createEnumMultiChoiceSettingPanel(std::vector<E> & setting, const std::string & name, wxWindow * parent, size_t minimumNumberOfSelectedItems = 0, wxSizer * parentSizer = nullptr, const std::vector<E> & defaultValues = {});
 	template <typename E>
-	static SettingPanel * createEnumMultiChoiceSettingPanel(std::function<const std::vector<E> &()> getSettingValueFunction, std::function<bool(E)> hasSettingEntryFunction, std::function<bool(E)> addSettingEntryFunction, std::function<bool(E)> removeSettingEntryFunction, const std::string & name, wxWindow * parent, size_t minimumNumberOfSelectedItems = 0, wxSizer * parentSizer = nullptr);
+	static SettingPanel * createEnumMultiChoiceSettingPanel(std::function<const std::vector<E> &()> getSettingValueFunction, std::function<bool(E)> hasSettingEntryFunction, std::function<bool(E)> addSettingEntryFunction, std::function<bool(E)> removeSettingEntryFunction, const std::string & name, wxWindow * parent, size_t minimumNumberOfSelectedItems = 0, wxSizer * parentSizer = nullptr, const std::vector<E> & defaultValues = {});
 
 	boost::signals2::signal<void (SettingPanel & /* settingPanel */)> settingModified;
 
@@ -486,7 +486,7 @@ SettingPanel * SettingPanel::createEnumSettingPanel(std::function<E()> getSettin
 }
 
 template <typename E>
-SettingPanel * SettingPanel::createEnumMultiChoiceSettingPanel(std::vector<E> & setting, const std::string & name, wxWindow * parent, size_t minimumNumberOfSelectedItems, wxSizer * parentSizer) {
+SettingPanel * SettingPanel::createEnumMultiChoiceSettingPanel(std::vector<E> & setting, const std::string & name, wxWindow * parent, size_t minimumNumberOfSelectedItems, wxSizer * parentSizer, const std::vector<E> & defaultValues) {
 	return createStringMultiChoiceSettingPanel(
 		[&setting]() -> const std::vector<E> & {
 			return setting;
@@ -523,12 +523,13 @@ SettingPanel * SettingPanel::createEnumMultiChoiceSettingPanel(std::vector<E> & 
 		name,
 		parent,
 		minimumNumberOfSelectedItems,
-		parentSizer
+		parentSizer,
+		defaultValues
 	);
 }
 
 template <typename E>
-SettingPanel * SettingPanel::createEnumMultiChoiceSettingPanel(std::function<const std::vector<E> &()> getSettingValueFunction, std::function<bool(E)> hasSettingEntryFunction, std::function<bool(E)> addSettingEntryFunction, std::function<bool(E)> removeSettingEntryFunction, const std::string & name, wxWindow * parent, size_t minimumNumberOfSelectedItems, wxSizer * parentSizer) {
+SettingPanel * SettingPanel::createEnumMultiChoiceSettingPanel(std::function<const std::vector<E> &()> getSettingValueFunction, std::function<bool(E)> hasSettingEntryFunction, std::function<bool(E)> addSettingEntryFunction, std::function<bool(E)> removeSettingEntryFunction, const std::string & name, wxWindow * parent, size_t minimumNumberOfSelectedItems, wxSizer * parentSizer, const std::vector<E> & defaultValues) {
 	if(parent == nullptr) {
 		return nullptr;
 	}
@@ -621,9 +622,9 @@ SettingPanel * SettingPanel::createEnumMultiChoiceSettingPanel(std::function<con
 		}
 	};
 
-	settingPanel->m_resetFunction = [checkBoxes]() {
+	settingPanel->m_resetFunction = [checkBoxes, defaultValues]() {
 		for(size_t i = 0; i < magic_enum::enum_count<E>(); i++) {
-			checkBoxes[i]->SetValue(false);
+			checkBoxes[i]->SetValue(std::find(defaultValues.cbegin(), defaultValues.cend(), magic_enum::enum_value<E>(i)) != defaultValues.cend());
 		}
 	};
 
