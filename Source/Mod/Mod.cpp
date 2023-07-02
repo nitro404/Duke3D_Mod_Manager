@@ -787,19 +787,25 @@ std::shared_ptr<ModDownload> Mod::getDownloadForGameVersion(const ModGameVersion
 		return nullptr;
 	}
 
-	std::shared_ptr<ModDownload> modDownload;
+	std::shared_ptr<ModDownload> partiallyMatchingModDownload;
 
-	for(std::vector<std::shared_ptr<ModDownload>>::const_iterator i = m_downloads.begin(); i != m_downloads.end(); ++i) {
-		modDownload = *i;
-
+	for(const std::shared_ptr<ModDownload> & modDownload : m_downloads) {
 		if(modDownload->isModManagerFiles() &&
 		   Utilities::areStringsEqualIgnoreCase(modDownload->getVersion(), modVersion->getVersion()) &&
 		   Utilities::areStringsEqualIgnoreCase(modDownload->getGameVersionID(), modGameVersion->getGameVersionID())) {
-			return modDownload;
+			if(modVersion->numberOfTypes() == 1) {
+				return modDownload;
+			}
+			else if(Utilities::areStringsEqualIgnoreCase(modDownload->getVersionType(), modGameVersion->getParentModVersionType()->getType())) {
+				return modDownload;
+			}
+			else {
+				partiallyMatchingModDownload = modDownload;
+			}
 		}
 	}
 
-	return nullptr;
+	return partiallyMatchingModDownload;
 }
 
 std::shared_ptr<ModVersion> Mod::getModVersionForDownload(const ModDownload * modDownload) const {
