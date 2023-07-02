@@ -306,7 +306,7 @@ StringChoiceSettingPanel * SettingPanel::createStringChoiceSettingPanel(std::fun
 	return settingPanel;
 }
 
-SettingPanel * SettingPanel::createStringMultiChoiceSettingPanel(std::vector<std::string> & setting, const std::string & name, bool caseSensitive, const std::vector<std::string> & choices, wxWindow * parent, size_t minimumNumberOfSelectedItems, wxSizer * parentSizer, const std::vector<std::string> & values) {
+SettingPanel * SettingPanel::createStringMultiChoiceSettingPanel(std::vector<std::string> & setting, const std::string & name, bool caseSensitive, const std::vector<std::string> & choices, wxWindow * parent, size_t minimumNumberOfSelectedItems, wxSizer * parentSizer, const std::vector<std::string> & values, const std::vector<std::string> & defaultValues) {
 	return createStringMultiChoiceSettingPanel(
 		[&setting]() -> const std::vector<std::string> & {
 			return setting;
@@ -346,11 +346,12 @@ SettingPanel * SettingPanel::createStringMultiChoiceSettingPanel(std::vector<std
 		parent,
 		minimumNumberOfSelectedItems,
 		parentSizer,
-		values
+		values,
+		defaultValues
 	);
 }
 
-SettingPanel * SettingPanel::createStringMultiChoiceSettingPanel(std::function<const std::vector<std::string> &()> getSettingValueFunction, std::function<bool(const std::string &)> hasSettingEntryFunction, std::function<bool(const std::string &)> addSettingEntryFunction, std::function<bool(const std::string &)> removeSettingEntryFunction, const std::string & name, bool caseSensitive, const std::vector<std::string> & choices, wxWindow * parent, size_t minimumNumberOfSelectedItems, wxSizer * parentSizer, const std::vector<std::string> & values) {
+SettingPanel * SettingPanel::createStringMultiChoiceSettingPanel(std::function<const std::vector<std::string> &()> getSettingValueFunction, std::function<bool(const std::string &)> hasSettingEntryFunction, std::function<bool(const std::string &)> addSettingEntryFunction, std::function<bool(const std::string &)> removeSettingEntryFunction, const std::string & name, bool caseSensitive, const std::vector<std::string> & choices, wxWindow * parent, size_t minimumNumberOfSelectedItems, wxSizer * parentSizer, const std::vector<std::string> & values, const std::vector<std::string> & defaultValues) {
 	if(parent == nullptr || (!values.empty() && choices.size() != values.size())) {
 		return nullptr;
 	}
@@ -443,9 +444,9 @@ SettingPanel * SettingPanel::createStringMultiChoiceSettingPanel(std::function<c
 		}
 	};
 
-	settingPanel->m_resetFunction = [checkBoxes]() {
+	settingPanel->m_resetFunction = [checkBoxes, actualValues, defaultValues]() {
 		for(size_t i = 0; i < checkBoxes.size(); i++) {
-			checkBoxes[i]->SetValue(false);
+			checkBoxes[i]->SetValue(std::find(defaultValues.cbegin(), defaultValues.cend(), actualValues[i]) != defaultValues.cend());
 		}
 	};
 
