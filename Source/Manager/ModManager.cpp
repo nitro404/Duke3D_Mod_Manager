@@ -498,6 +498,8 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 		checkForUnlinkedModFiles();
 	}
 
+	clearApplicationTemporaryDirectory();
+
 	std::chrono::milliseconds initializationDuration(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - initializeSteadyStartTimePoint));
 
 	spdlog::info("{} initialized successfully after {} milliseconds.", APPLICATION_NAME, initializationDuration.count());
@@ -4478,6 +4480,33 @@ bool ModManager::createApplicationTemporaryDirectory() {
 	}
 
 	return true;
+}
+
+void ModManager::clearApplicationTemporaryDirectory() {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	SettingsManager * settings = SettingsManager::getInstance();
+
+	if(settings->appTempDirectoryPath.empty()) {
+		return;
+	}
+
+	std::filesystem::path tempDirectoryPath(settings->appTempDirectoryPath);
+
+	if(!std::filesystem::is_directory(tempDirectoryPath)) {
+		return;
+	}
+
+	for(const std::filesystem::directory_entry & entry : std::filesystem::directory_iterator(tempDirectoryPath)) {
+		spdlog::info("Deleting leftover temporary {}: '{}'.", entry.is_directory() ? "directory" : "file", entry.path().string());
+
+		std::error_code errorCode;
+		std::filesystem::remove(entry.path(), errorCode);
+
+		if(errorCode) {
+			spdlog::error("Failed to delete leftover temporary {} '{}': {}", entry.is_directory() ? "directory" : "file", entry.path().string(), errorCode.message());
+		}
+	}
 }
 
 bool ModManager::createGameTemporaryDirectory(const GameVersion & gameVersion) {

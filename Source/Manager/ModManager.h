@@ -180,6 +180,7 @@ private:
 	bool removeModFilesFromGameDirectory(const GameVersion & gameVersion);
 	bool removeModFilesFromGameDirectory(const GameVersion & gameVersion, const InstalledModInfo & installedModInfo);
 	bool createApplicationTemporaryDirectory();
+	void clearApplicationTemporaryDirectory();
 	bool createGameTemporaryDirectory(const GameVersion & gameVersion);
 	bool removeGameTemporaryDirectory(const GameVersion & gameVersion);
 	bool areSymlinkSettingsValid() const;
