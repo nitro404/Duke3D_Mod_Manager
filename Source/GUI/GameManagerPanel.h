@@ -78,6 +78,7 @@ private:
 	void onResetButtonPressed(wxCommandEvent & event);
 	void onRemoveButtonPressed(wxCommandEvent & event);
 	void onGameVersionSettingChanged(GameVersionPanel & gameVersionPanel, SettingPanel & settingPanel);
+	void onGameVersionNotesChanged(GameVersionPanel & gameVersionPanel);
 	void onGameVersionChangesDiscarded(GameVersionPanel & gameVersionPanel);
 	void onGameVersionReset(GameVersionPanel & gameVersionPanel);
 	void onGameVersionSaved(GameVersionPanel & gameVersionPanel);

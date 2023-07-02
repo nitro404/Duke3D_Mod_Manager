@@ -56,7 +56,8 @@ static constexpr const char * JSON_WEBSITE_PROPERTY_NAME = "website";
 static constexpr const char * JSON_SOURCE_CODE_URL_PROPERTY_NAME = "sourceCodeURL";
 static constexpr const char * JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME = "supportedOperatingSystems";
 static constexpr const char * JSON_COMPATIBLE_GAME_VERSIONS_PROPERTY_NAME = "compatibleGameVersions";
-static const std::array<std::string_view, 39> JSON_PROPERTY_NAMES = {
+static constexpr const char * JSON_NOTES_PROPERTY_NAME = "notes";
+static const std::array<std::string_view, 40> JSON_PROPERTY_NAMES = {
 	JSON_ID_PROPERTY_NAME,
 	JSON_LONG_NAME_PROPERTY_NAME,
 	JSON_SHORT_NAME_PROPERTY_NAME,
@@ -95,7 +96,8 @@ static const std::array<std::string_view, 39> JSON_PROPERTY_NAMES = {
 	JSON_WEBSITE_PROPERTY_NAME,
 	JSON_SOURCE_CODE_URL_PROPERTY_NAME,
 	JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME,
-	JSON_COMPATIBLE_GAME_VERSIONS_PROPERTY_NAME
+	JSON_COMPATIBLE_GAME_VERSIONS_PROPERTY_NAME,
+	JSON_NOTES_PROPERTY_NAME
 };
 
 const std::string GameVersion::ALL_VERSIONS("all");
@@ -163,7 +165,7 @@ GameVersion::GameVersion()
 	, m_skillStartValue(DEFAULT_SKILL_START_VALUE)
 	, m_modified(false) { }
 
-GameVersion::GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool removable, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, bool supportsSubdirectories, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag, const std::optional<std::string> & weaponSwitchOrderArgumentFlag, const std::optional<std::string> & disableMonstersArgumentFlag, const std::optional<std::string> & disableSoundArgumentFlag, const std::optional<std::string> & disableMusicArgumentFlag, const std::optional<std::string> & setupExecutableName, const std::optional<std::string> & groupFileInstallPath, const std::optional<std::string> & defFileArgumentFlag, const std::optional<std::string> & extraDefFileArgumentFlag,const std::optional<bool> & requiresCombinedGroup, const std::optional<bool> & requiresGroupFileExtraction, const std::string & website, const std::string & sourceCodeURL, const std::vector<OperatingSystem> & supportedOperatingSystems, const std::vector<std::string> & compatibleGameVersionIdentifiers)
+GameVersion::GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool removable, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, bool supportsSubdirectories, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag, const std::optional<std::string> & weaponSwitchOrderArgumentFlag, const std::optional<std::string> & disableMonstersArgumentFlag, const std::optional<std::string> & disableSoundArgumentFlag, const std::optional<std::string> & disableMusicArgumentFlag, const std::optional<std::string> & setupExecutableName, const std::optional<std::string> & groupFileInstallPath, const std::optional<std::string> & defFileArgumentFlag, const std::optional<std::string> & extraDefFileArgumentFlag,const std::optional<bool> & requiresCombinedGroup, const std::optional<bool> & requiresGroupFileExtraction, const std::string & website, const std::string & sourceCodeURL, const std::vector<OperatingSystem> & supportedOperatingSystems, const std::vector<std::string> & compatibleGameVersionIdentifiers, const std::vector<std::string> & notes)
 	: m_id(Utilities::trimString(id))
 	, m_longName(Utilities::trimString(longName))
 	, m_shortName(Utilities::trimString(shortName))
@@ -196,6 +198,7 @@ GameVersion::GameVersion(const std::string & id, const std::string & longName, c
 	, m_disableMonstersArgumentFlag(disableMonstersArgumentFlag)
 	, m_disableSoundArgumentFlag(disableSoundArgumentFlag)
 	, m_disableMusicArgumentFlag(disableMusicArgumentFlag)
+	, m_notes(notes)
 	, m_modified(false) {
 	if(!gamePath.empty()) {
 		m_installedTimePoint = std::chrono::system_clock::now();
@@ -255,6 +258,7 @@ GameVersion::GameVersion(GameVersion && gameVersion) noexcept
 	, m_disableMusicArgumentFlag(std::move(gameVersion.m_disableMusicArgumentFlag))
 	, m_supportedOperatingSystems(std::move(gameVersion.m_supportedOperatingSystems))
 	, m_compatibleGameVersionIdentifiers(std::move(gameVersion.m_compatibleGameVersionIdentifiers))
+	, m_notes(std::move(gameVersion.m_notes))
 	, m_modified(false) { }
 
 GameVersion::GameVersion(const GameVersion & gameVersion)
@@ -297,6 +301,7 @@ GameVersion::GameVersion(const GameVersion & gameVersion)
 	, m_disableMusicArgumentFlag(gameVersion.m_disableMusicArgumentFlag)
 	, m_supportedOperatingSystems(gameVersion.m_supportedOperatingSystems)
 	, m_compatibleGameVersionIdentifiers(gameVersion.m_compatibleGameVersionIdentifiers)
+	, m_notes(gameVersion.m_notes)
 	, m_modified(false)  { }
 
 GameVersion & GameVersion::operator = (GameVersion && gameVersion) noexcept {
@@ -340,6 +345,7 @@ GameVersion & GameVersion::operator = (GameVersion && gameVersion) noexcept {
 		m_disableMusicArgumentFlag = std::move(gameVersion.m_disableMusicArgumentFlag);
 		m_supportedOperatingSystems = std::move(gameVersion.m_supportedOperatingSystems);
 		m_compatibleGameVersionIdentifiers = std::move(gameVersion.m_compatibleGameVersionIdentifiers);
+		m_notes = std::move(gameVersion.m_notes);
 		setModified(true);
 	}
 
@@ -386,6 +392,8 @@ GameVersion & GameVersion::operator = (const GameVersion & gameVersion) {
 	m_disableMusicArgumentFlag = gameVersion.m_disableMusicArgumentFlag;
 	m_supportedOperatingSystems = gameVersion.m_supportedOperatingSystems;
 	m_compatibleGameVersionIdentifiers = gameVersion.m_compatibleGameVersionIdentifiers;
+	m_notes = gameVersion.m_notes;
+
 	setModified(true);
 
 	return *this;
@@ -1561,6 +1569,107 @@ void GameVersion::clearCompatibleGameVersions() {
 	setModified(true);
 }
 
+size_t GameVersion::numberOfNotes() const {
+	return m_notes.size();
+}
+
+bool GameVersion::hasNote(const std::string & note) const {
+	for(std::vector<std::string>::const_iterator i = m_notes.begin(); i != m_notes.end(); ++i) {
+		if(*i == note) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+size_t GameVersion::indexOfNote(const std::string & note) const {
+	for(size_t i = 0; i < m_notes.size(); i++) {
+		if(m_notes[i] == note) {
+			return i;
+		}
+	}
+
+	return std::numeric_limits<size_t>::max();
+}
+
+std::string GameVersion::getNote(size_t index) const {
+	if(index >= m_notes.size()) {
+		return {};
+	}
+
+	return m_notes[index];
+}
+
+const std::vector<std::string> & GameVersion::getNotes() const {
+	return m_notes;
+}
+
+std::string GameVersion::getNotesAsString() const {
+	std::stringstream notesStream;
+
+	for(const std::string & note : m_notes) {
+		if(notesStream.tellp() != 0) {
+			notesStream << '\n';
+		}
+
+		notesStream << note;
+	}
+
+	return notesStream.str();
+}
+
+bool GameVersion::addNote(const std::string & note) {
+	if(note.empty() || hasNote(note)) {
+		return false;
+	}
+
+	m_notes.emplace_back(note);
+
+	return true;
+}
+
+void GameVersion::setNotes(const std::string & notes) {
+	m_notes.clear();
+
+	std::string formattedNote;
+	std::vector<std::string> notesData(Utilities::regularExpressionStringSplit(notes, "\r?\n"));
+
+	for(const std::string & note : notesData) {
+		formattedNote = Utilities::trimString(note);
+
+		if(note.empty()) {
+			continue;
+		}
+
+		m_notes.emplace_back(std::move(formattedNote));
+	}
+}
+
+bool GameVersion::removeNote(size_t index) {
+	if(index >= m_notes.size()) {
+		return false;
+	}
+
+	m_notes.erase(m_notes.begin() + index);
+
+	return true;
+}
+
+bool GameVersion::removeNote(const std::string & note) {
+	for(std::vector<std::string>::const_iterator i = m_notes.begin(); i != m_notes.end(); ++i) {
+		if(*i == note) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void GameVersion::clearNotes() {
+	m_notes.clear();
+}
+
 std::unique_ptr<GameVersion> GameVersion::createTemplateFrom() const {
 	return std::make_unique<GameVersion>(
 		Utilities::emptyString,
@@ -1795,6 +1904,18 @@ rapidjson::Value GameVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::C
 		}
 
 		gameVersionValue.AddMember(rapidjson::StringRef(JSON_COMPATIBLE_GAME_VERSIONS_PROPERTY_NAME), compatibleGameVersionsValue, allocator);
+	}
+
+	if(!m_notes.empty()) {
+		rapidjson::Value notesValue(rapidjson::kArrayType);
+		notesValue.Reserve(m_notes.size(), allocator);
+
+		for(const std::string & note : m_notes) {
+			rapidjson::Value noteValue(note.c_str(), allocator);
+			notesValue.PushBack(noteValue, allocator);
+		}
+
+		gameVersionValue.AddMember(rapidjson::StringRef(JSON_NOTES_PROPERTY_NAME), notesValue, allocator);
 	}
 
 	return gameVersionValue;
@@ -2520,6 +2641,32 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		}
 	}
 
+	// parse the notes property
+	if(gameVersionValue.HasMember(JSON_NOTES_PROPERTY_NAME)) {
+		const rapidjson::Value & notesValue = gameVersionValue[JSON_NOTES_PROPERTY_NAME];
+
+		if(!notesValue.IsArray()) {
+			spdlog::error("Game version '{}' property has invalid type: '{}', expected 'array'.", JSON_NOTES_PROPERTY_NAME, Utilities::typeToString(notesValue.GetType()));
+			return nullptr;
+		}
+
+		for(rapidjson::Value::ConstValueIterator i = notesValue.Begin(); i != notesValue.End(); ++i) {
+			std::string note(Utilities::trimString((*i).GetString()));
+
+			if(note.empty()) {
+				spdlog::error("Encountered empty note #{} for game version with ID '{}'.", newGameVersion->m_notes.size() + 1, id);
+				return nullptr;
+			}
+
+			if(newGameVersion->hasNote(note)) {
+				spdlog::error("Encountered duplicate note #{} for game version with ID '{}'.", newGameVersion->m_notes.size() + 1, id);
+				return nullptr;
+			}
+
+			newGameVersion->m_notes.emplace_back(note);
+		}
+	}
+
 	return newGameVersion;
 }
 
@@ -2621,7 +2768,8 @@ bool GameVersion::operator == (const GameVersion & gameVersion) const {
 	   m_disableSoundArgumentFlag != gameVersion.m_disableSoundArgumentFlag ||
 	   m_disableMusicArgumentFlag != gameVersion.m_disableMusicArgumentFlag ||
 	   m_compatibleGameVersionIdentifiers.size() != gameVersion.m_compatibleGameVersionIdentifiers.size() ||
-	   m_supportedOperatingSystems != gameVersion.m_supportedOperatingSystems) {
+	   m_supportedOperatingSystems != gameVersion.m_supportedOperatingSystems ||
+	   m_notes != gameVersion.m_notes) {
 		return false;
 	}
 

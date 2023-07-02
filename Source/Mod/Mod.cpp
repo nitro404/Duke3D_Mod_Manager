@@ -135,7 +135,9 @@ Mod::Mod(const Mod & m)
 	, m_preferredVersion(m.m_preferredVersion)
 	, m_defaultVersionType(m.m_defaultVersionType)
 	, m_website(m.m_website)
-	, m_repositoryURL(m.m_repositoryURL) {
+	, m_repositoryURL(m.m_repositoryURL)
+	, m_notes(m.m_notes)
+	, m_relatedMods(m.m_relatedMods) {
 	if(m.m_team != nullptr) {
 		m_team = std::make_shared<ModTeam>(*m.m_team);
 	}
@@ -158,14 +160,6 @@ Mod::Mod(const Mod & m)
 
 	for(std::vector<std::shared_ptr<ModVideo>>::const_iterator i = m.m_videos.begin(); i != m.m_videos.end(); ++i) {
 		m_videos.push_back(std::make_shared<ModVideo>(**i));
-	}
-
-	for(std::vector<std::string>::const_iterator i = m.m_notes.begin(); i != m.m_notes.end(); ++i) {
-		m_notes.emplace_back(*i);
-	}
-
-	for(std::vector<std::string>::const_iterator i = m.m_relatedMods.begin(); i != m.m_relatedMods.end(); ++i) {
-		m_relatedMods.emplace_back(*i);
 	}
 
 	updateParent();
@@ -212,6 +206,8 @@ Mod & Mod::operator = (const Mod & m) {
 	m_website = m.m_website;
 	m_repositoryURL = m.m_repositoryURL;
 	m_team = m.m_team == nullptr ? nullptr : std::make_shared<ModTeam>(*m.m_team);
+	m_notes = m.m_notes;
+	m_relatedMods = m.m_relatedMods;
 
 	for(std::vector<std::shared_ptr<ModVersion>>::const_iterator i = m.m_versions.begin(); i != m.m_versions.end(); ++i) {
 		m_versions.push_back(std::make_shared<ModVersion>(**i));
@@ -231,14 +227,6 @@ Mod & Mod::operator = (const Mod & m) {
 
 	for(std::vector<std::shared_ptr<ModVideo>>::const_iterator i = m.m_videos.begin(); i != m.m_videos.end(); ++i) {
 		m_videos.push_back(std::make_shared<ModVideo>(**i));
-	}
-
-	for(std::vector<std::string>::const_iterator i = m.m_notes.begin(); i != m.m_notes.end(); ++i) {
-		m_notes.emplace_back(*i);
-	}
-
-	for(std::vector<std::string>::const_iterator i = m.m_relatedMods.begin(); i != m.m_relatedMods.end(); ++i) {
-		m_relatedMods.emplace_back(*i);
 	}
 
 	updateParent();

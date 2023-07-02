@@ -20,6 +20,7 @@ GameVersionPanel::GameVersionPanel(std::shared_ptr<GameVersion> gameVersion, wxW
 	, m_gameVersion(gameVersion != nullptr ? gameVersion : std::make_shared<GameVersion>())
 	, m_gameVersionIDSettingPanel(nullptr)
 	, m_gamePathSettingPanel(nullptr)
+	, m_notesTextField(nullptr)
 	, m_modified(false) {
 	const GameVersion * defaultGameVersion = nullptr;
 
@@ -115,6 +116,20 @@ GameVersionPanel::GameVersionPanel(std::shared_ptr<GameVersion> gameVersion, wxW
 	m_settingsPanels.push_back(SettingPanel::createOptionalStringSettingPanel<bool>(std::bind(&GameVersion::getDisableSoundArgumentFlag, m_gameVersion.get()), std::bind(&GameVersion::setDisableSoundArgumentFlag, m_gameVersion.get(), std::placeholders::_1), std::bind(&GameVersion::clearDisableSoundArgumentFlag, m_gameVersion.get()), defaultGameVersion != nullptr ? defaultGameVersion->getDisableSoundArgumentFlag() : std::optional<std::string>(), "Disable Sound", argumentsPanel, argumentsSizer, 1));
 	m_settingsPanels.push_back(SettingPanel::createOptionalStringSettingPanel<bool>(std::bind(&GameVersion::getDisableMusicArgumentFlag, m_gameVersion.get()), std::bind(&GameVersion::setDisableMusicArgumentFlag, m_gameVersion.get(), std::placeholders::_1), std::bind(&GameVersion::clearDisableMusicArgumentFlag, m_gameVersion.get()), defaultGameVersion != nullptr ? defaultGameVersion->getDisableMusicArgumentFlag() : std::optional<std::string>(), "Disable Music", argumentsPanel, argumentsSizer, 1));
 
+	wxStaticBox * notesBox = new wxStaticBox(this, wxID_ANY, "Notes", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Notes");
+	notesBox->SetOwnFont(notesBox->GetFont().MakeBold());
+
+	wxPanel * notesPanel = new wxPanel(notesBox, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+
+	m_notesTextField = new wxTextCtrl(notesPanel, wxID_ANY, m_gameVersion->getNotesAsString(), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
+	m_notesTextField->Bind(wxEVT_TEXT, std::bind(&GameVersionPanel::onNotesModified, this, std::placeholders::_1), wxID_ANY, wxID_ANY);
+
+	wxFlexGridSizer * notesSizer = new wxFlexGridSizer(1, border, border);
+	notesSizer->AddGrowableRow(0, 1);
+	notesSizer->AddGrowableCol(0, 1);
+	notesSizer->Add(m_notesTextField, 1, wxEXPAND | wxHORIZONTAL);
+	notesPanel->SetSizer(notesSizer);
+
 	gameInformationPanel->SetSizerAndFit(gameInformationSizer);
 	gameConfigurationPanel->SetSizerAndFit(gameConfigurationSizer);
 	argumentsPanel->SetSizerAndFit(argumentsSizer);
@@ -139,15 +154,21 @@ GameVersionPanel::GameVersionPanel(std::shared_ptr<GameVersion> gameVersion, wxW
 	argumentsBoxSizer->Add(argumentsPanel, 1, wxEXPAND | wxALL, 20);
 	argumentsBox->SetSizer(argumentsBoxSizer);
 
+	wxBoxSizer * notesBoxSizer = new wxBoxSizer(wxHORIZONTAL);
+	notesBoxSizer->Add(notesPanel, 1, wxEXPAND | wxALL, 18);
+	notesBox->SetSizer(notesBoxSizer);
+
 	gameVersionConfigurationSizer->Add(gameInformationBox, wxGBPosition(0, 0), wxGBSpan(1, 2), wxEXPAND | wxALL, border);
 	gameVersionConfigurationSizer->Add(gameConfigurationBox, wxGBPosition(1, 0), wxGBSpan(1, 2), wxEXPAND | wxALL, border);
 	gameVersionConfigurationSizer->Add(compatibleGameVersionsBox, wxGBPosition(2, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
 	gameVersionConfigurationSizer->Add(supportedOperatingSystemsBox, wxGBPosition(2, 1), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
 	gameVersionConfigurationSizer->Add(argumentsBox, wxGBPosition(3, 0), wxGBSpan(1, 2), wxEXPAND | wxALL, border);
+	gameVersionConfigurationSizer->Add(notesBox, wxGBPosition(4, 0), wxGBSpan(1, 2), wxEXPAND | wxALL, border);
 	gameVersionConfigurationSizer->AddGrowableRow(0, 1);
 	gameVersionConfigurationSizer->AddGrowableRow(1, 14);
 	gameVersionConfigurationSizer->AddGrowableRow(2, 1);
 	gameVersionConfigurationSizer->AddGrowableRow(3, 20);
+	gameVersionConfigurationSizer->AddGrowableRow(4, 1);
 	gameVersionConfigurationSizer->AddGrowableCol(0, 6);
 	gameVersionConfigurationSizer->AddGrowableCol(1, 1);
 	SetSizer(gameVersionConfigurationSizer);
@@ -231,6 +252,8 @@ bool GameVersionPanel::save() {
 		}
 	}
 
+	m_gameVersion->setNotes(m_notesTextField->GetValue());
+
 	m_modified = false;
 
 	m_gameVersionIDSettingPanel->setEditable(false);
@@ -245,6 +268,8 @@ void GameVersionPanel::discard() {
 		settingPanel->discard();
 	}
 
+	m_notesTextField->SetValue(m_gameVersion->getNotesAsString());
+
 	m_modified = false;
 
 	gameVersionChangesDiscarded(*this);
@@ -253,6 +278,14 @@ void GameVersionPanel::discard() {
 void GameVersionPanel::reset() {
 	for(SettingPanel * settingPanel : m_settingsPanels) {
 		settingPanel->reset();
+	}
+
+	std::vector<const GameVersion *>::const_iterator gameVersionIterator(std::find_if(GameVersion::DEFAULT_GAME_VERSIONS.cbegin(), GameVersion::DEFAULT_GAME_VERSIONS.cend(), [this](const GameVersion * currentGameVersion) {
+		return Utilities::areStringsEqual(m_gameVersion->getID(), currentGameVersion->getID());
+	}));
+
+	if(gameVersionIterator != GameVersion::DEFAULT_GAME_VERSIONS.cend()) {
+		m_notesTextField->SetValue((*gameVersionIterator)->getNotesAsString());
 	}
 
 	m_modified = true;
@@ -268,6 +301,8 @@ void GameVersionPanel::update() {
 	for(SettingPanel * settingPanel : m_settingsPanels) {
 		settingPanel->update();
 	}
+
+	m_notesTextField->SetValue(m_gameVersion->getNotesAsString());
 }
 
 void GameVersionPanel::onGameVersionModified(GameVersion & gameVersion) {
@@ -280,4 +315,10 @@ void GameVersionPanel::onSettingModified(SettingPanel & settingPanel) {
 
 		gameVersionSettingChanged(*this, settingPanel);
 	}
+}
+
+void GameVersionPanel::onNotesModified(wxCommandEvent & event) {
+	m_modified = true;
+
+	gameVersionNotesChanged(*this);
 }
