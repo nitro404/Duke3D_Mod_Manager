@@ -92,6 +92,7 @@ public:
 protected:
 	virtual void setModified(bool modified) const override;
 	void onGroupFileModified(GroupFile & groupFile);
+	void connectSignals();
 	void updateParent();
 
 	std::vector<std::shared_ptr<GroupFile>> m_files;

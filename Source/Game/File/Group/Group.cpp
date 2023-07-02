@@ -24,16 +24,14 @@ Group::Group(std::vector<std::unique_ptr<GroupFile>> files, const std::string & 
 	}
 
 	updateParent();
+	connectSignals();
 }
 
 Group::Group(Group && g) noexcept
 	: GameFile(std::move(g))
 	, m_files(std::move(g.m_files)) {
 	updateParent();
-
-	for(std::shared_ptr<GroupFile> & file : m_files) {
-		m_fileConnections.push_back(file->modified.connect(std::bind(&Group::onGroupFileModified, this, std::placeholders::_1)));
-	}
+	connectSignals();
 }
 
 Group::Group(const Group & g)
@@ -43,10 +41,7 @@ Group::Group(const Group & g)
 	}
 
 	updateParent();
-
-	for(std::shared_ptr<GroupFile> & file : m_files) {
-		m_fileConnections.push_back(file->modified.connect(std::bind(&Group::onGroupFileModified, this, std::placeholders::_1)));
-	}
+	connectSignals();
 }
 
 Group & Group::operator = (Group && g) noexcept {
@@ -62,10 +57,7 @@ Group & Group::operator = (Group && g) noexcept {
 		m_fileConnections.clear();
 
 		updateParent();
-
-		for(std::shared_ptr<GroupFile> & file : m_files) {
-			m_fileConnections.push_back(file->modified.connect(std::bind(&Group::onGroupFileModified, this, std::placeholders::_1)));
-		}
+		connectSignals();
 	}
 
 	return *this;
@@ -87,10 +79,7 @@ Group & Group::operator = (const Group & g) {
 	}
 
 	updateParent();
-
-	for(std::shared_ptr<GroupFile> & file : m_files) {
-		m_fileConnections.push_back(file->modified.connect(std::bind(&Group::onGroupFileModified, this, std::placeholders::_1)));
-	}
+	connectSignals();
 
 	return *this;
 }
@@ -695,6 +684,12 @@ void Group::addMetadata(std::vector<std::pair<std::string, std::string>> & metad
 
 	for(std::vector<std::shared_ptr<GroupFile>>::const_iterator i = m_files.cbegin(); i != m_files.cend(); ++i) {
 		metadata.push_back({ fmt::format("Entry #{}", i - m_files.cbegin() + 1), fmt::format("'{}' Size: {}", (*i)->getFileName(), (*i)->getSize()) });
+	}
+}
+
+void Group::connectSignals() {
+	for(std::shared_ptr<GroupFile> & file : m_files) {
+		m_fileConnections.push_back(file->modified.connect(std::bind(&Group::onGroupFileModified, this, std::placeholders::_1)));
 	}
 }
 
