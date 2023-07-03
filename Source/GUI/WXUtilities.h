@@ -7,6 +7,7 @@
 #include <Utilities/StringUtilities.h>
 
 #include <magic_enum.hpp>
+#include <spdlog/spdlog.h>
 #include <wx/wxprec.h>
 
 #ifdef __BORLANDC__
@@ -33,6 +34,9 @@ namespace WXUtilities {
 	wxArrayString createEnumWXArrayString(const std::vector<E> & disabledEnumValues = {});
 	void setButtonEnabled(wxButton * button, bool enabled);
 	void setTextControlEnabled(wxTextCtrl * textControl, bool enabled);
+	wxLogLevel spdLogLevelToWXLogLevel(spdlog::level::level_enum logLevel);
+	spdlog::level::level_enum wxLogLevelToSPDLogLevel(wxLogLevel logLevel);
+	std::string logLevelToString(wxLogLevel logLevel);
 
 	template <typename E>
 	wxArrayString createEnumWXArrayString(const std::vector<E> & disabledEnumValues) {

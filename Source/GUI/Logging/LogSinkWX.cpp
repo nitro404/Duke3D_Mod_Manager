@@ -1,5 +1,7 @@
 #include "LogSinkWX.h"
 
+#include "../WXUtilities.h"
+
 #include <Logging/LogSystem.h>
 
 #include <iostream>
@@ -11,12 +13,20 @@ LogSinkWX::LogSinkWX()
 	set_pattern("%^%T.%e [%t] %L: %v%$");
 }
 
-LogSinkWX::~LogSinkWX() { }
+LogSinkWX::~LogSinkWX() {
+	m_logLevelChangedConnection.disconnect();
+}
 
 void LogSinkWX::initialize() {
 	if(m_initialized) {
 		return;
 	}
+
+	LogSystem * logSystem = LogSystem::getInstance();
+	m_logLevelChangedConnection = logSystem->logLevelChanged.connect(std::bind(&LogSinkWX::onLogLevelChanged, this, std::placeholders::_1));
+
+	wxLog::SetVerbose(true);
+	wxLog::SetLogLevel(WXUtilities::spdLogLevelToWXLogLevel(logSystem->getLevel()));
 
 	for(const std::pair<wxLogLevel, std::string> & logMessage : m_logMessageCache) {
 		wxLogGeneric(logMessage.first, "%s", logMessage.second.data());
@@ -32,45 +42,7 @@ void LogSinkWX::sink_it_(const spdlog::details::log_msg & logMessage) {
 	formatter_->format(logMessage, m_formatBuffer);
 	m_formatBuffer.push_back('\0');
 
-	wxLogLevel logLevel = wxLOG_Message;
-
-	switch(logMessage.level) {
-		case spdlog::level::level_enum::trace: {
-			logLevel = wxLOG_Trace;
-			break;
-		}
-
-		case spdlog::level::level_enum::debug: {
-			logLevel = wxLOG_Debug;
-			break;
-		}
-
-		case spdlog::level::level_enum::info: {
-			logLevel = wxLOG_Info;
-			break;
-		}
-
-		case spdlog::level::level_enum::warn: {
-			logLevel = wxLOG_Warning;
-			break;
-		}
-
-		case spdlog::level::level_enum::err: {
-			logLevel = wxLOG_Error;
-			break;
-		}
-
-		case spdlog::level::level_enum::critical: {
-			logLevel = wxLOG_FatalError;
-			break;
-		}
-
-		case spdlog::level::level_enum::off:
-		case spdlog::level::level_enum::n_levels: {
-			break;
-		}
-	}
-
+	wxLogLevel logLevel = WXUtilities::spdLogLevelToWXLogLevel(logMessage.level);
 	std::string_view formattedLogMessageWithNewlines(m_formatBuffer.data(), m_formatBuffer.size());
 	std::string formattedLogMessageWithoutNewlines(formattedLogMessageWithNewlines.data(), formattedLogMessageWithNewlines.find_first_of("\r\n"));
 
@@ -83,3 +55,11 @@ void LogSinkWX::sink_it_(const spdlog::details::log_msg & logMessage) {
 }
 
 void LogSinkWX::flush_() { }
+
+void LogSinkWX::onLogLevelChanged(spdlog::level::level_enum logLevel) {
+	wxLogLevel newLogLevel = WXUtilities::spdLogLevelToWXLogLevel(logLevel);
+
+	spdlog::debug("Updating wxWidgets log level from '{}' to '{}'.", WXUtilities::logLevelToString(wxLog::GetLogLevel()), WXUtilities::logLevelToString(newLogLevel));
+
+	wxLog::SetLogLevel(newLogLevel);
+}
