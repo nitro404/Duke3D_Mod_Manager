@@ -2441,17 +2441,18 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		return false;
 	}
 
-	m_gameProcess->terminated.connect([this, gameTypeName](uint64_t nativeExitCode, bool forceTerminated) {
+	boost::signals2::connection terminatedConnection(m_gameProcess->terminated.connect([this, gameTypeName](uint64_t nativeExitCode, bool forceTerminated) {
 		spdlog::info("{} process {} with code: '{}'.", gameTypeName, forceTerminated ? "force terminated" : "exited", nativeExitCode);
 
 		gameProcessTerminated(nativeExitCode, forceTerminated);
-	});
+	}));
 
 	selectedGameVersion->updateLastPlayedTimePoint();
 
 	launched();
 
 	m_gameProcess->wait();
+	terminatedConnection.disconnect();
 
 	if(installedModInfo != nullptr && !installedModInfo->isEmpty()) {
 		if(!removeModFilesFromGameDirectory(*selectedGameVersion, *installedModInfo)) {
