@@ -3321,7 +3321,7 @@ void GameManager::updateGroupFileSymlinks() {
 			}
 		}
 
-		spdlog::trace("Analyzing '{}' game installation group file symblic link target.", gameVersion->getLongName());
+		spdlog::trace("Analyzing '{}' game installation group file symbolic link target.", gameVersion->getLongName());
 
 		std::filesystem::path gameGroupFilePath(Utilities::joinPaths(gameVersion->getGamePath(), GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME));
 
