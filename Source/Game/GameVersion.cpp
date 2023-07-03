@@ -31,6 +31,7 @@ static constexpr const char * JSON_SETUP_EXECUTABLE_NAME_PROPERTY_NAME = "setupE
 static constexpr const char * JSON_GROUP_FILE_INSTALL_PATH_PROPERTY_NAME = "groupFileInstallPath";
 static constexpr const char * JSON_RELATIVE_CON_FILE_PATH_PROPERTY_NAME = "relativeConFilePath";
 static constexpr const char * JSON_SUPPORTS_SUBDIRECTORIES_PROPERTY_NAME = "supportsSubdirectories";
+static constexpr const char * JSON_SUPPORTS_WORLD_TOUR_GROUP_PROPERTY_NAME = "worldTourGroupSupported";
 static constexpr const char * JSON_CON_FILE_ARGUMENT_FLAG_PROPERTY_NAME = "conFileArgumentFlag";
 static constexpr const char * JSON_EXTRA_CON_FILE_ARGUMENT_FLAG_PROPERTY_NAME = "extraConFileArgumentFlag";
 static constexpr const char * JSON_GROUP_FILE_ARGUMENT_FLAG_PROPERTY_NAME = "groupFileArgumentFlag";
@@ -57,7 +58,7 @@ static constexpr const char * JSON_SOURCE_CODE_URL_PROPERTY_NAME = "sourceCodeUR
 static constexpr const char * JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME = "supportedOperatingSystems";
 static constexpr const char * JSON_COMPATIBLE_GAME_VERSIONS_PROPERTY_NAME = "compatibleGameVersions";
 static constexpr const char * JSON_NOTES_PROPERTY_NAME = "notes";
-static const std::array<std::string_view, 40> JSON_PROPERTY_NAMES = {
+static const std::array<std::string_view, 41> JSON_PROPERTY_NAMES = {
 	JSON_ID_PROPERTY_NAME,
 	JSON_LONG_NAME_PROPERTY_NAME,
 	JSON_SHORT_NAME_PROPERTY_NAME,
@@ -72,6 +73,7 @@ static const std::array<std::string_view, 40> JSON_PROPERTY_NAMES = {
 	JSON_GROUP_FILE_INSTALL_PATH_PROPERTY_NAME,
 	JSON_RELATIVE_CON_FILE_PATH_PROPERTY_NAME,
 	JSON_SUPPORTS_SUBDIRECTORIES_PROPERTY_NAME,
+	JSON_SUPPORTS_WORLD_TOUR_GROUP_PROPERTY_NAME,
 	JSON_CON_FILE_ARGUMENT_FLAG_PROPERTY_NAME,
 	JSON_EXTRA_CON_FILE_ARGUMENT_FLAG_PROPERTY_NAME,
 	JSON_GROUP_FILE_ARGUMENT_FLAG_PROPERTY_NAME,
@@ -107,26 +109,26 @@ const std::string GameVersion::STANDALONE_DIRECTORY_NAME("stand-alone");
 // Note: Duke Nukem 3D: 1.3D & Atomic Edition 1.5 game version identifiers are pre-defined separately in order to avoid a circular dependency:
 static const std::string REGULAR_ID("regular");
 static const std::string ATOMIC_ID("atomic");
-const GameVersion GameVersion::LAMEDUKE                ("lameduke",   "Duke Nukem 3D Beta 1.3.95 (LameDuke)",       "LameDuke",                 false, "", "D3D.EXE",            true,  false, false, "LameDuke",  {},    {},     {},    {},      "/v", "/l", "/s", 0, "/r", {},    {},   {},   {},   {},    {},    "SETUP.EXE", {}, {},    {},     {},    true, "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS });
-const GameVersion GameVersion::ORIGINAL_BETA_VERSION   ("beta",       "Duke Nukem 3D Beta 0.99",                    "Duke 3D Beta 0.99",        false, "", "DUKE3D.EXE",         true,  false, false, "Beta",      {},    {},     {},    {},      "/v", "/l", "/s", 0, "/r", {},    "/t", {},   "/m", {},    {},    "SETUP.EXE", "", {},    {},     {},    true, "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS },                                                     { REGULAR_ID },                                                                                                                           { "Has extremely poor support for mods.", "Does not function properly out of the box." });
-const GameVersion GameVersion::ORIGINAL_REGULAR_VERSION(REGULAR_ID,   "Duke Nukem 3D 1.3D",                         "Duke 3D 1.3D",             false, "", "DUKE3D.EXE",         true,  false, true,  "Regular",   "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", {},    "/t", "/u", "/m", "/ns", "/nm", "SETUP.EXE", "", {},    {},     true,  {},   "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS },                                                     { ORIGINAL_BETA_VERSION.getID() });
-const GameVersion GameVersion::ORIGINAL_PLUTONIUM_PAK  ("plutonium",  "Duke Nukem 3D: Plutonium Pak 1.4",           "Plutonium Pak",            false, "", "DUKE3D.EXE",         true,  false, true,  "PlutPak",   "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", "SETUP.EXE", "", {},    {},     {},    {},   "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS },                                                     { ATOMIC_ID },                                                                                                                            { "Virtually identical to Duke Nukem 3D Atomic Edition." });
-const GameVersion GameVersion::ORIGINAL_ATOMIC_EDITION (ATOMIC_ID,    "Duke Nukem 3D: Atomic Edition 1.5",          "Atomic Edition",           false, "", "DUKE3D.EXE",         true,  false, true,  "Atomic",    "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", "SETUP.EXE", "", {},    {},     {},    {},   "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS },                                                     { ORIGINAL_PLUTONIUM_PAK.getID() });
-const GameVersion GameVersion::JFDUKE3D                ("jfduke3d",   "JFDuke3D",                                   "JFDuke3D",                 false, "", "duke3d.exe",         true,  false, true,  "JFDuke3D",  "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          {}, {},    {},     {},    {},   "http://www.jonof.id.au/jfduke3d",                               "https://github.com/jonof/jfduke3d",                                        { OperatingSystem::Windows, OperatingSystem::MacOS },                         { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
-const GameVersion GameVersion::EDUKE32                 ("eduke32",    "eDuke32",                                    "eDuke32",                  false, "", "eduke32.exe",        false, true,  true,  "eDuke32",   "-x ", "-mx ", "-g ", "-map ", "-v", "-l", "-s", 1, "-r", "-d ", "-t", "-u", "-m", "-ns", "-nm", {},          {}, "-h ", "-mh ", {},    {},   "https://www.eduke32.com",                                       "https://voidpoint.io/terminx/eduke32",                                     { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(), JFDUKE3D.getID() });
-const GameVersion GameVersion::NETDUKE32               ("netduke32",  "NetDuke32",                                  "NetDuke32",                true,  "", "netduke32.exe",      false, true,  true,  "NetDuke",   "-x ", "-mx ", "-g ", "-map ", "-v", "-l", "-s", 1, "-r", "-d ", "-t", "-u", "-m", "-ns", "-nm", {},          {}, "-h ", "-mh ", {},    {},   "https://wiki.eduke32.com/wiki/NetDuke32",                       "https://voidpoint.io/StrikerTheHedgefox/eduke32-csrefactor/-/tree/master", { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(), JFDUKE3D.getID(), EDUKE32.getID() });
-//const GameVersion GameVersion::MEGATON_EDITION         ("megaton",    "Duke Nukem 3D: Megaton Edition",             "Megaton Edition",          true,  "", "duke3d.exe",         true,  false, true,  "Megaton",   "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          {}, {},    {},     {},    {},   "https://store.steampowered.com/app/225140",                     "https://github.com/TermiT/duke3d-megaton",                                 { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(), JFDUKE3D.getID() });
-//const GameVersion GameVersion::WORLD_TOUR              ("world_tour", "Duke Nukem 3D: 20th Anniversary World Tour", "World Tour",               true,  "", "duke3d.exe",         true,  false, true,  "WorldTour", "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          {}, {},    {},     {},    {},   "https://www.gearboxsoftware.com/game/duke-3d-20th",             "",                                                                         { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
-//const GameVersion GameVersion::BUILDGDX                ("buildgdx",   "BuildGDX",                                   "BuildGDX".                 true,  "", "BuildGDX.jar",       true,  true,  true,  "BuildGDX",  "",    {},     "",    "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          {}, {},    {},     {},    {},   "https://m210.duke4.net/index.php/downloads/category/8-java",    "https://gitlab.com/m210/BuildGDX",                                         { OperatingSystem::Windows, OperatingSystem::Linux, OperatingSystem::MacOS }, { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
-const GameVersion GameVersion::RAZE                    ("raze",       "Raze",                                       "Raze",                     true,  "", "raze.exe",           true,  true,  true,  "Raze",      "-x ", {},     "-g ", "-map ", "-v", "-l", "-s", 1, "-r", "-d ", "-t", "-u", "-m", "-ns", "-nm", {},          {}, {},    {},     {},    {},   "https://raze.zdoom.org/about",                                  "https://github.com/coelckers/Raze",                                        { OperatingSystem::Windows, OperatingSystem::Linux, OperatingSystem::MacOS }, { ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(),  JFDUKE3D.getID() });
-const GameVersion GameVersion::RED_NUKEM               ("rednukem",   "RedNukem",                                   "RedNukem",                 true,  "", "rednukem.exe",       false, true,  true,  "RedNukem",  "-x ", "-mx ", "-g ", "-map ", "-v", "-l", "-s", 1, "-r", "-d ", "-t", "-u", "-m", "-ns", "-nm", {},          {}, "-h ", "-mh ", {},    {},   "https://lerppu.net/wannabethesis",                              "https://github.com/nukeykt/NRedneck",                                      { OperatingSystem::Windows },                                                 { ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(),  JFDUKE3D.getID() });
-//const GameVersion GameVersion::CHOCOLATE_DUKE3D        ("chocolate",  "Chocolate Duke Nukem 3D",                    "Chocolate Duke3D",         true,  "", "Game.exe",           true,  false, false, "Chocolate", "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          {}, {},    {},     {},    {},   "https://fabiensanglard.net/duke3d/chocolate_duke_nukem_3D.php", "https://github.com/fabiensanglard/chocolate_duke3D",                       { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
-const GameVersion GameVersion::BELGIAN_CHOCOLATE_DUKE3D("belgian",    "Belgian Chocolate Duke Nukem 3D",            "Belgian Chocolate Duke3D", true,  "", "ChocoDuke3D.64.exe", true,  false, false, "Belgian",   "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", {},    {},     {},    {},   "",                                                              "https://github.com/GPSnoopy/BelgianChocolateDuke3D",                       { OperatingSystem::Windows, OperatingSystem::Linux, OperatingSystem::MacOS }, { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
-const GameVersion GameVersion::DUKE3DW                 ("duke3dw",    "Duke3dw",                                    "Duke3dw",                  true,  "", "Duke3dw.exe",        true,  false, true,  "Duke3dw",   "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", "/h",  {},     {},    {},   "http://www.proasm.com/duke/Duke3dw.html",                       "",                                                                         { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(), JFDUKE3D.getID() });
-const GameVersion GameVersion::PKDUKE3D                ("pkduke3d",   "pkDuke3D",                                   "pkDuke3D",                 true,  "", "pkDuke3d.exe",       true,  false, true,  "pkDuke3D",  "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", {},    {},     {},    {},   "https://bitbucket.org/pogokeen/pkduke3d/downloads",             "https://bitbucket.org/pogokeen/pkduke3d",                                  { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(), JFDUKE3D.getID() },                  { "Has some issues running mods, such as missing episode names." });
-const GameVersion GameVersion::XDUKE                   ("xduke",      "xDuke",                                      "xDuke",                    true,  "", "duke3d_w32.exe",     true,  false, false, "xDuke",     "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", {},    {},     {},    {},   "http://vision.gel.ulaval.ca/~klein/duke3d",                     "",                                                                         { OperatingSystem::Windows },                                                 { ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
-const GameVersion GameVersion::RDUKE                   ("rduke",      "rDuke",                                      "rDuke",                    true,  "", "rduke_r10.exe",      true,  false, false, "rDuke",     "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", {},    {},     {},    {},   "",                                                              "https://github.com/radar-duker/radars-xduke-fork",                         { OperatingSystem::Windows },                                                 { ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
-const GameVersion GameVersion::DUKE3D_W32              ("duke3d_w32", "Duke3d_w32",                                 "Duke3d_w32",               true,  "", "duke3d_w32.exe",     true,  false, false, "Duke_w32",  "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", {},    {},     {},    {},   "http://www.rancidmeat.com/project.php3?id=1",                   "",                                                                         { OperatingSystem::Windows },                                                 { ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
+const GameVersion GameVersion::LAMEDUKE                ("lameduke",   "Duke Nukem 3D Beta 1.3.95 (LameDuke)",       "LameDuke",                 false, "", "D3D.EXE",            true,  false, false, false, "LameDuke",  {},    {},     {},    {},      "/v", "/l", "/s", 0, "/r", {},    {},   {},   {},   {},    {},    "SETUP.EXE", {}, {},    {},     {},    true, "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS });
+const GameVersion GameVersion::ORIGINAL_BETA_VERSION   ("beta",       "Duke Nukem 3D Beta 0.99",                    "Duke 3D Beta 0.99",        false, "", "DUKE3D.EXE",         true,  false, false, false, "Beta",      {},    {},     {},    {},      "/v", "/l", "/s", 0, "/r", {},    "/t", {},   "/m", {},    {},    "SETUP.EXE", "", {},    {},     {},    true, "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS },                                                     { REGULAR_ID },                                                                                                                           { "Has extremely poor support for mods.", "Does not function properly out of the box." });
+const GameVersion GameVersion::ORIGINAL_REGULAR_VERSION(REGULAR_ID,   "Duke Nukem 3D 1.3D",                         "Duke 3D 1.3D",             false, "", "DUKE3D.EXE",         true,  false, true,  false, "Regular",   "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", {},    "/t", "/u", "/m", "/ns", "/nm", "SETUP.EXE", "", {},    {},     true,  {},   "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS },                                                     { ORIGINAL_BETA_VERSION.getID() });
+const GameVersion GameVersion::ORIGINAL_PLUTONIUM_PAK  ("plutonium",  "Duke Nukem 3D: Plutonium Pak 1.4",           "Plutonium Pak",            false, "", "DUKE3D.EXE",         true,  false, true,  false, "PlutPak",   "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", "SETUP.EXE", "", {},    {},     {},    {},   "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS },                                                     { ATOMIC_ID },                                                                                                                            { "Virtually identical to Duke Nukem 3D Atomic Edition." });
+const GameVersion GameVersion::ORIGINAL_ATOMIC_EDITION (ATOMIC_ID,    "Duke Nukem 3D: Atomic Edition 1.5",          "Atomic Edition",           false, "", "DUKE3D.EXE",         true,  false, true,  true,  "Atomic",    "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", "SETUP.EXE", "", {},    {},     {},    {},   "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS },                                                     { ORIGINAL_PLUTONIUM_PAK.getID() });
+const GameVersion GameVersion::JFDUKE3D                ("jfduke3d",   "JFDuke3D",                                   "JFDuke3D",                 false, "", "duke3d.exe",         true,  false, true,  true,  "JFDuke3D",  "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          {}, {},    {},     {},    {},   "http://www.jonof.id.au/jfduke3d",                               "https://github.com/jonof/jfduke3d",                                        { OperatingSystem::Windows, OperatingSystem::MacOS },                         { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
+const GameVersion GameVersion::EDUKE32                 ("eduke32",    "eDuke32",                                    "eDuke32",                  false, "", "eduke32.exe",        false, true,  true,  true,  "eDuke32",   "-x ", "-mx ", "-g ", "-map ", "-v", "-l", "-s", 1, "-r", "-d ", "-t", "-u", "-m", "-ns", "-nm", {},          {}, "-h ", "-mh ", {},    {},   "https://www.eduke32.com",                                       "https://voidpoint.io/terminx/eduke32",                                     { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(), JFDUKE3D.getID() });
+const GameVersion GameVersion::NETDUKE32               ("netduke32",  "NetDuke32",                                  "NetDuke32",                true,  "", "netduke32.exe",      false, true,  true,  true,  "NetDuke",   "-x ", "-mx ", "-g ", "-map ", "-v", "-l", "-s", 1, "-r", "-d ", "-t", "-u", "-m", "-ns", "-nm", {},          {}, "-h ", "-mh ", {},    {},   "https://wiki.eduke32.com/wiki/NetDuke32",                       "https://voidpoint.io/StrikerTheHedgefox/eduke32-csrefactor/-/tree/master", { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(), JFDUKE3D.getID(), EDUKE32.getID() });
+//const GameVersion GameVersion::MEGATON_EDITION         ("megaton",    "Duke Nukem 3D: Megaton Edition",             "Megaton Edition",          true,  "", "duke3d.exe",         true,  false, true,  true,  "Megaton",   "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          {}, {},    {},     {},    {},   "https://store.steampowered.com/app/225140",                     "https://github.com/TermiT/duke3d-megaton",                                 { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(), JFDUKE3D.getID() });
+//const GameVersion GameVersion::WORLD_TOUR              ("world_tour", "Duke Nukem 3D: 20th Anniversary World Tour", "World Tour",               true,  "", "duke3d.exe",         true,  false, true,  true,  "WorldTour", "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          {}, {},    {},     {},    {},   "https://www.gearboxsoftware.com/game/duke-3d-20th",             "",                                                                         { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
+//const GameVersion GameVersion::BUILDGDX                ("buildgdx",   "BuildGDX",                                   "BuildGDX".                 true,  "", "BuildGDX.jar",       true,  true,  true,  true,  "BuildGDX",  "",    {},     "",    "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          {}, {},    {},     {},    {},   "https://m210.duke4.net/index.php/downloads/category/8-java",    "https://gitlab.com/m210/BuildGDX",                                         { OperatingSystem::Windows, OperatingSystem::Linux, OperatingSystem::MacOS }, { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
+const GameVersion GameVersion::RAZE                    ("raze",       "Raze",                                       "Raze",                     true,  "", "raze.exe",           true,  true,  true,  true,  "Raze",      "-x ", {},     "-g ", "-map ", "-v", "-l", "-s", 1, "-r", "-d ", "-t", "-u", "-m", "-ns", "-nm", {},          {}, {},    {},     {},    {},   "https://raze.zdoom.org/about",                                  "https://github.com/coelckers/Raze",                                        { OperatingSystem::Windows, OperatingSystem::Linux, OperatingSystem::MacOS }, { ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(),  JFDUKE3D.getID() });
+const GameVersion GameVersion::RED_NUKEM               ("rednukem",   "RedNukem",                                   "RedNukem",                 true,  "", "rednukem.exe",       false, true,  true,  true,  "RedNukem",  "-x ", "-mx ", "-g ", "-map ", "-v", "-l", "-s", 1, "-r", "-d ", "-t", "-u", "-m", "-ns", "-nm", {},          {}, "-h ", "-mh ", {},    {},   "https://lerppu.net/wannabethesis",                              "https://github.com/nukeykt/NRedneck",                                      { OperatingSystem::Windows },                                                 { ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(),  JFDUKE3D.getID() });
+//const GameVersion GameVersion::CHOCOLATE_DUKE3D        ("chocolate",  "Chocolate Duke Nukem 3D",                    "Chocolate Duke3D",         true,  "", "Game.exe",           true,  false, false, true,  "Chocolate", "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          {}, {},    {},     {},    {},   "https://fabiensanglard.net/duke3d/chocolate_duke_nukem_3D.php", "https://github.com/fabiensanglard/chocolate_duke3D",                       { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
+const GameVersion GameVersion::BELGIAN_CHOCOLATE_DUKE3D("belgian",    "Belgian Chocolate Duke Nukem 3D",            "Belgian Chocolate Duke3D", true,  "", "ChocoDuke3D.64.exe", true,  false, false, true,  "Belgian",   "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", {},    {},     {},    {},   "",                                                              "https://github.com/GPSnoopy/BelgianChocolateDuke3D",                       { OperatingSystem::Windows, OperatingSystem::Linux, OperatingSystem::MacOS }, { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
+const GameVersion GameVersion::DUKE3DW                 ("duke3dw",    "Duke3dw",                                    "Duke3dw",                  true,  "", "Duke3dw.exe",        true,  false, true,  true,  "Duke3dw",   "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", "/h",  {},     {},    {},   "http://www.proasm.com/duke/Duke3dw.html",                       "",                                                                         { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(), JFDUKE3D.getID() });
+const GameVersion GameVersion::PKDUKE3D                ("pkduke3d",   "pkDuke3D",                                   "pkDuke3D",                 true,  "", "pkDuke3d.exe",       true,  false, true,  true,  "pkDuke3D",  "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", {},    {},     {},    {},   "https://bitbucket.org/pogokeen/pkduke3d/downloads",             "https://bitbucket.org/pogokeen/pkduke3d",                                  { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(), JFDUKE3D.getID() },                  { "Has some issues running mods, such as missing episode names." });
+const GameVersion GameVersion::XDUKE                   ("xduke",      "xDuke",                                      "xDuke",                    true,  "", "duke3d_w32.exe",     true,  false, false, false, "xDuke",     "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", {},    {},     {},    {},   "http://vision.gel.ulaval.ca/~klein/duke3d",                     "",                                                                         { OperatingSystem::Windows },                                                 { ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
+const GameVersion GameVersion::RDUKE                   ("rduke",      "rDuke",                                      "rDuke",                    true,  "", "rduke_r10.exe",      true,  false, false, true,  "rDuke",     "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", {},    {},     {},    {},   "",                                                              "https://github.com/radar-duker/radars-xduke-fork",                         { OperatingSystem::Windows },                                                 { ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
+const GameVersion GameVersion::DUKE3D_W32              ("duke3d_w32", "Duke3d_w32",                                 "Duke3d_w32",               true,  "", "duke3d_w32.exe",     true,  false, false, true,  "Duke_w32",  "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", {},    {},     {},    {},   "http://www.rancidmeat.com/project.php3?id=1",                   "",                                                                         { OperatingSystem::Windows },                                                 { ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
 
 const std::vector<const GameVersion *> GameVersion::DEFAULT_GAME_VERSIONS = {
 	&LAMEDUKE,
@@ -154,6 +156,7 @@ const std::vector<const GameVersion *> GameVersion::DEFAULT_GAME_VERSIONS = {
 const bool GameVersion::DEFAULT_LOCAL_WORKING_DIRECTORY = true;
 const bool GameVersion::DEFAULT_RELATIVE_CON_FILE_PATH = false;
 const bool GameVersion::DEFAULT_SUPPORTS_SUBDIRECTORIES = true;
+const bool GameVersion::DEFAULT_WORLD_TOUR_GROUP_SUPPORTED = true;
 const uint8_t GameVersion::DEFAULT_SKILL_START_VALUE = 1;
 
 GameVersion::GameVersion()
@@ -162,10 +165,11 @@ GameVersion::GameVersion()
 	, m_localWorkingDirectory(DEFAULT_LOCAL_WORKING_DIRECTORY)
 	, m_relativeConFilePath(DEFAULT_RELATIVE_CON_FILE_PATH)
 	, m_supportsSubdirectories(DEFAULT_SUPPORTS_SUBDIRECTORIES)
+	, m_worldTourGroupSupported(DEFAULT_WORLD_TOUR_GROUP_SUPPORTED)
 	, m_skillStartValue(DEFAULT_SKILL_START_VALUE)
 	, m_modified(false) { }
 
-GameVersion::GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool removable, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, bool supportsSubdirectories, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag, const std::optional<std::string> & weaponSwitchOrderArgumentFlag, const std::optional<std::string> & disableMonstersArgumentFlag, const std::optional<std::string> & disableSoundArgumentFlag, const std::optional<std::string> & disableMusicArgumentFlag, const std::optional<std::string> & setupExecutableName, const std::optional<std::string> & groupFileInstallPath, const std::optional<std::string> & defFileArgumentFlag, const std::optional<std::string> & extraDefFileArgumentFlag,const std::optional<bool> & requiresCombinedGroup, const std::optional<bool> & requiresGroupFileExtraction, const std::string & website, const std::string & sourceCodeURL, const std::vector<OperatingSystem> & supportedOperatingSystems, const std::vector<std::string> & compatibleGameVersionIdentifiers, const std::vector<std::string> & notes)
+GameVersion::GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool removable, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, bool supportsSubdirectories, std::optional<bool> worldTourGroupSupported, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag, const std::optional<std::string> & weaponSwitchOrderArgumentFlag, const std::optional<std::string> & disableMonstersArgumentFlag, const std::optional<std::string> & disableSoundArgumentFlag, const std::optional<std::string> & disableMusicArgumentFlag, const std::optional<std::string> & setupExecutableName, const std::optional<std::string> & groupFileInstallPath, const std::optional<std::string> & defFileArgumentFlag, const std::optional<std::string> & extraDefFileArgumentFlag,const std::optional<bool> & requiresCombinedGroup, const std::optional<bool> & requiresGroupFileExtraction, const std::string & website, const std::string & sourceCodeURL, const std::vector<OperatingSystem> & supportedOperatingSystems, const std::vector<std::string> & compatibleGameVersionIdentifiers, const std::vector<std::string> & notes)
 	: m_id(Utilities::trimString(id))
 	, m_longName(Utilities::trimString(longName))
 	, m_shortName(Utilities::trimString(shortName))
@@ -181,6 +185,7 @@ GameVersion::GameVersion(const std::string & id, const std::string & longName, c
 	, m_localWorkingDirectory(localWorkingDirectory)
 	, m_relativeConFilePath(relativeConFilePath)
 	, m_supportsSubdirectories(supportsSubdirectories)
+	, m_worldTourGroupSupported(worldTourGroupSupported)
 	, m_conFileArgumentFlag(conFileArgumentFlag)
 	, m_extraConFileArgumentFlag(extraConFileArgumentFlag)
 	, m_groupFileArgumentFlag(groupFileArgumentFlag)
@@ -239,6 +244,7 @@ GameVersion::GameVersion(GameVersion && gameVersion) noexcept
 	, m_sourceCodeURL(std::move(gameVersion.m_sourceCodeURL))
 	, m_relativeConFilePath(gameVersion.m_relativeConFilePath)
 	, m_supportsSubdirectories(gameVersion.m_supportsSubdirectories)
+	, m_worldTourGroupSupported(gameVersion.m_worldTourGroupSupported)
 	, m_conFileArgumentFlag(std::move(gameVersion.m_conFileArgumentFlag))
 	, m_extraConFileArgumentFlag(std::move(gameVersion.m_extraConFileArgumentFlag))
 	, m_groupFileArgumentFlag(std::move(gameVersion.m_groupFileArgumentFlag))
@@ -282,6 +288,7 @@ GameVersion::GameVersion(const GameVersion & gameVersion)
 	, m_sourceCodeURL(gameVersion.m_sourceCodeURL)
 	, m_relativeConFilePath(gameVersion.m_relativeConFilePath)
 	, m_supportsSubdirectories(gameVersion.m_supportsSubdirectories)
+	, m_worldTourGroupSupported(gameVersion.m_worldTourGroupSupported)
 	, m_conFileArgumentFlag(gameVersion.m_conFileArgumentFlag)
 	, m_extraConFileArgumentFlag(gameVersion.m_extraConFileArgumentFlag)
 	, m_groupFileArgumentFlag(gameVersion.m_groupFileArgumentFlag)
@@ -326,6 +333,7 @@ GameVersion & GameVersion::operator = (GameVersion && gameVersion) noexcept {
 		m_sourceCodeURL = std::move(gameVersion.m_sourceCodeURL);
 		m_relativeConFilePath = gameVersion.m_relativeConFilePath;
 		m_supportsSubdirectories = gameVersion.m_supportsSubdirectories;
+		m_worldTourGroupSupported = gameVersion.m_worldTourGroupSupported;
 		m_conFileArgumentFlag = std::move(gameVersion.m_conFileArgumentFlag);
 		m_extraConFileArgumentFlag = std::move(gameVersion.m_extraConFileArgumentFlag);
 		m_groupFileArgumentFlag = std::move(gameVersion.m_groupFileArgumentFlag);
@@ -373,6 +381,7 @@ GameVersion & GameVersion::operator = (const GameVersion & gameVersion) {
 	m_sourceCodeURL = gameVersion.m_sourceCodeURL;
 	m_relativeConFilePath = gameVersion.m_relativeConFilePath;
 	m_supportsSubdirectories = gameVersion.m_supportsSubdirectories;
+	m_worldTourGroupSupported = gameVersion.m_worldTourGroupSupported;
 	m_conFileArgumentFlag = gameVersion.m_conFileArgumentFlag;
 	m_extraConFileArgumentFlag = gameVersion.m_extraConFileArgumentFlag;
 	m_groupFileArgumentFlag = gameVersion.m_groupFileArgumentFlag;
@@ -543,6 +552,10 @@ void GameVersion::setBase(const std::string & base) {
 
 bool GameVersion::isRemovable() const {
 	return m_removable;
+}
+
+bool GameVersion::hasGroupFile() const {
+	return !Utilities::areStringsEqualIgnoreCase(m_id, LAMEDUKE.getID());
 }
 
 bool GameVersion::hasGamePath() const {
@@ -764,6 +777,42 @@ void GameVersion::setSupportsSubdirectories(bool supportsSubdirectories) {
 	}
 
 	m_supportsSubdirectories = supportsSubdirectories;
+
+	setModified(true);
+}
+
+bool GameVersion::isWorldTourGroupSupported() const {
+	if(isStandAlone()) {
+		return false;
+	}
+
+	return m_worldTourGroupSupported.value_or(false);
+}
+
+void GameVersion::setWorldTourGroupSupported(bool worldTourGroupSupported) {
+	if(m_worldTourGroupSupported == worldTourGroupSupported) {
+		return;
+	}
+
+	m_worldTourGroupSupported = worldTourGroupSupported;
+
+	setModified(true);
+}
+
+std::optional<bool> GameVersion::getWorldTourGroupSupported() const {
+	if(isStandAlone()) {
+		return {};
+	}
+
+	return m_worldTourGroupSupported;
+}
+
+void GameVersion::clearWorldTourGroupSupported() {
+	if(!m_worldTourGroupSupported.has_value()) {
+		return;
+	}
+
+	m_worldTourGroupSupported.reset();
 
 	setModified(true);
 }
@@ -1681,6 +1730,7 @@ std::unique_ptr<GameVersion> GameVersion::createTemplateFrom() const {
 		m_localWorkingDirectory,
 		m_relativeConFilePath,
 		m_supportsSubdirectories,
+		m_worldTourGroupSupported,
 		Utilities::emptyString,
 		m_conFileArgumentFlag,
 		m_extraConFileArgumentFlag,
@@ -1774,6 +1824,10 @@ rapidjson::Value GameVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::C
 	gameVersionValue.AddMember(rapidjson::StringRef(JSON_RELATIVE_CON_FILE_PATH_PROPERTY_NAME), rapidjson::Value(m_relativeConFilePath), allocator);
 
 	gameVersionValue.AddMember(rapidjson::StringRef(JSON_SUPPORTS_SUBDIRECTORIES_PROPERTY_NAME), rapidjson::Value(m_supportsSubdirectories), allocator);
+
+	if(m_worldTourGroupSupported.has_value()) {
+		gameVersionValue.AddMember(rapidjson::StringRef(JSON_SUPPORTS_WORLD_TOUR_GROUP_PROPERTY_NAME), rapidjson::Value(m_worldTourGroupSupported.value()), allocator);
+	}
 
 	if(m_conFileArgumentFlag.has_value()) {
 		rapidjson::Value conFileArgumentFlagValue(m_conFileArgumentFlag.value().c_str(), allocator);
@@ -1967,41 +2021,41 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 
 	// parse game version long name
 	if(!gameVersionValue.HasMember(JSON_LONG_NAME_PROPERTY_NAME)) {
-		spdlog::error("Game version is missing '{}' property.", JSON_LONG_NAME_PROPERTY_NAME);
+		spdlog::error("Game version with ID '{}' is missing '{}' property.", id, JSON_LONG_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & longNameValue = gameVersionValue[JSON_LONG_NAME_PROPERTY_NAME];
 
 	if(!longNameValue.IsString()) {
-		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_LONG_NAME_PROPERTY_NAME, Utilities::typeToString(longNameValue.GetType()));
+		spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_LONG_NAME_PROPERTY_NAME, Utilities::typeToString(longNameValue.GetType()));
 		return nullptr;
 	}
 
 	std::string longName(Utilities::trimString(longNameValue.GetString()));
 
 	if(longName.empty()) {
-		spdlog::error("Game version '{}' property cannot be empty.", JSON_LONG_NAME_PROPERTY_NAME);
+		spdlog::error("Game version with ID '{}' '{}' property cannot be empty.", id, JSON_LONG_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse game version short name
 	if(!gameVersionValue.HasMember(JSON_SHORT_NAME_PROPERTY_NAME)) {
-		spdlog::error("Game version is missing '{}' property.", JSON_SHORT_NAME_PROPERTY_NAME);
+		spdlog::error("Game version with ID '{}' is missing '{}' property.", id, JSON_SHORT_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & shortNameValue = gameVersionValue[JSON_SHORT_NAME_PROPERTY_NAME];
 
 	if(!shortNameValue.IsString()) {
-		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_SHORT_NAME_PROPERTY_NAME, Utilities::typeToString(shortNameValue.GetType()));
+		spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_SHORT_NAME_PROPERTY_NAME, Utilities::typeToString(shortNameValue.GetType()));
 		return nullptr;
 	}
 
 	std::string shortName(Utilities::trimString(shortNameValue.GetString()));
 
 	if(shortName.empty()) {
-		spdlog::error("Game version '{}' property cannot be empty.", JSON_SHORT_NAME_PROPERTY_NAME);
+		spdlog::error("Game version with ID '{}' '{}' property cannot be empty.", id, JSON_SHORT_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -2012,26 +2066,26 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & removableValue = gameVersionValue[JSON_REMOVABLE_PROPERTY_NAME];
 
 		if(!removableValue.IsBool()) {
-			spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'boolean'.", JSON_REMOVABLE_PROPERTY_NAME, Utilities::typeToString(removableValue.GetType()));
+			spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'boolean'.", id, JSON_REMOVABLE_PROPERTY_NAME, Utilities::typeToString(removableValue.GetType()));
 			return nullptr;
 		}
 
 		removable = removableValue.GetBool();
 	}
 	else {
-		spdlog::warn("Game version is missing '{}' property.", JSON_REMOVABLE_PROPERTY_NAME);
+		spdlog::warn("Game version with ID '{}' is missing '{}' property.", id, JSON_REMOVABLE_PROPERTY_NAME);
 	}
 
 	// parse game version game path
 	if(!gameVersionValue.HasMember(JSON_GAME_PATH_PROPERTY_NAME)) {
-		spdlog::error("Game version is missing '{}' property.", JSON_GAME_PATH_PROPERTY_NAME);
+		spdlog::error("Game version with ID '{}' is missing '{}' property.", id, JSON_GAME_PATH_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & gamePathValue = gameVersionValue[JSON_GAME_PATH_PROPERTY_NAME];
 
 	if(!gamePathValue.IsString()) {
-		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_GAME_PATH_PROPERTY_NAME, Utilities::typeToString(gamePathValue.GetType()));
+		spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_GAME_PATH_PROPERTY_NAME, Utilities::typeToString(gamePathValue.GetType()));
 		return nullptr;
 	}
 
@@ -2039,21 +2093,21 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 
 	// parse game version game executable name
 	if(!gameVersionValue.HasMember(JSON_GAME_EXECUTABLE_NAME_PROPERTY_NAME)) {
-		spdlog::error("Game version is missing '{}' property.", JSON_GAME_EXECUTABLE_NAME_PROPERTY_NAME);
+		spdlog::error("Game version with ID '{}' is missing '{}' property.", id, JSON_GAME_EXECUTABLE_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & gameExecutableNameValue = gameVersionValue[JSON_GAME_EXECUTABLE_NAME_PROPERTY_NAME];
 
 	if(!gameExecutableNameValue.IsString()) {
-		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_GAME_EXECUTABLE_NAME_PROPERTY_NAME, Utilities::typeToString(gameExecutableNameValue.GetType()));
+		spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_GAME_EXECUTABLE_NAME_PROPERTY_NAME, Utilities::typeToString(gameExecutableNameValue.GetType()));
 		return nullptr;
 	}
 
 	std::string gameExecutableName(Utilities::trimString(gameExecutableNameValue.GetString()));
 
 	if(gameExecutableName.empty()) {
-		spdlog::error("Game version '{}' property cannot be empty.", JSON_GAME_EXECUTABLE_NAME_PROPERTY_NAME);
+		spdlog::error("Game version with ID '{}' '{}' property cannot be empty.", id, JSON_GAME_EXECUTABLE_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -2064,14 +2118,14 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & setupExecutableNameValue = gameVersionValue[JSON_SETUP_EXECUTABLE_NAME_PROPERTY_NAME];
 
 		if(!setupExecutableNameValue.IsString()) {
-			spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_SETUP_EXECUTABLE_NAME_PROPERTY_NAME, Utilities::typeToString(setupExecutableNameValue.GetType()));
+			spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_SETUP_EXECUTABLE_NAME_PROPERTY_NAME, Utilities::typeToString(setupExecutableNameValue.GetType()));
 			return nullptr;
 		}
 
 		setupExecutableNameOptional = Utilities::trimString(setupExecutableNameValue.GetString());
 
 		if(setupExecutableNameOptional.value().empty()) {
-			spdlog::error("Game version '{}' property cannot be empty.", JSON_SETUP_EXECUTABLE_NAME_PROPERTY_NAME);
+			spdlog::error("Game version with ID '{}' '{}' property cannot be empty.", id, JSON_SETUP_EXECUTABLE_NAME_PROPERTY_NAME);
 			return nullptr;
 		}
 	}
@@ -2083,7 +2137,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & groupFileInstallPathValue = gameVersionValue[JSON_GROUP_FILE_INSTALL_PATH_PROPERTY_NAME];
 
 		if(!groupFileInstallPathValue.IsString()) {
-			spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_GROUP_FILE_INSTALL_PATH_PROPERTY_NAME, Utilities::typeToString(groupFileInstallPathValue.GetType()));
+			spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_GROUP_FILE_INSTALL_PATH_PROPERTY_NAME, Utilities::typeToString(groupFileInstallPathValue.GetType()));
 			return nullptr;
 		}
 
@@ -2092,14 +2146,14 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 
 	// parse local working directory option
 	if(!gameVersionValue.HasMember(JSON_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME)) {
-		spdlog::error("Game version is missing '{}' property.", JSON_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME);
+		spdlog::error("Game version with ID '{}' is missing '{}' property.", id, JSON_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & localWorkingDirectoryValue = gameVersionValue[JSON_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME];
 
 	if(!localWorkingDirectoryValue.IsBool()) {
-		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'boolean'.", JSON_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME, Utilities::typeToString(localWorkingDirectoryValue.GetType()));
+		spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'boolean'.", id, JSON_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME, Utilities::typeToString(localWorkingDirectoryValue.GetType()));
 		return nullptr;
 	}
 
@@ -2107,33 +2161,47 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 
 	// parse relative con file path option
 	if(!gameVersionValue.HasMember(JSON_RELATIVE_CON_FILE_PATH_PROPERTY_NAME)) {
-		spdlog::error("Game version is missing '{}' property.", JSON_RELATIVE_CON_FILE_PATH_PROPERTY_NAME);
+		spdlog::error("Game version with ID '{}' is missing '{}' property.", id, JSON_RELATIVE_CON_FILE_PATH_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & relativeConFilePathValue = gameVersionValue[JSON_RELATIVE_CON_FILE_PATH_PROPERTY_NAME];
 
 	if(!relativeConFilePathValue.IsBool()) {
-		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'boolean'.", JSON_RELATIVE_CON_FILE_PATH_PROPERTY_NAME, Utilities::typeToString(relativeConFilePathValue.GetType()));
+		spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'boolean'.", id, JSON_RELATIVE_CON_FILE_PATH_PROPERTY_NAME, Utilities::typeToString(relativeConFilePathValue.GetType()));
 		return nullptr;
 	}
 
 	bool relativeConFilePath = relativeConFilePathValue.GetBool();
 
-	// parse supports subdirectories links option
+	// parse supports subdirectories option
 	if(!gameVersionValue.HasMember(JSON_SUPPORTS_SUBDIRECTORIES_PROPERTY_NAME)) {
-		spdlog::error("Game version is missing '{}' property.", JSON_SUPPORTS_SUBDIRECTORIES_PROPERTY_NAME);
+		spdlog::error("Game version with ID '{}' is missing '{}' property.", id, JSON_SUPPORTS_SUBDIRECTORIES_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & supportsSubdirectoriesValue = gameVersionValue[JSON_SUPPORTS_SUBDIRECTORIES_PROPERTY_NAME];
 
 	if(!supportsSubdirectoriesValue.IsBool()) {
-		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'boolean'.", JSON_SUPPORTS_SUBDIRECTORIES_PROPERTY_NAME, Utilities::typeToString(supportsSubdirectoriesValue.GetType()));
+		spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'boolean'.", id, JSON_SUPPORTS_SUBDIRECTORIES_PROPERTY_NAME, Utilities::typeToString(supportsSubdirectoriesValue.GetType()));
 		return nullptr;
 	}
 
 	bool supportsSubdirectories = supportsSubdirectoriesValue.GetBool();
+
+	// parse supports world tour group option
+	std::optional<bool> worldTourGroupSupported;
+
+	if(gameVersionValue.HasMember(JSON_SUPPORTS_WORLD_TOUR_GROUP_PROPERTY_NAME)) {
+		const rapidjson::Value & worldTourGroupSupportedValue = gameVersionValue[JSON_SUPPORTS_WORLD_TOUR_GROUP_PROPERTY_NAME];
+
+		if(!worldTourGroupSupportedValue.IsBool()) {
+			spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'boolean'.", id, JSON_SUPPORTS_WORLD_TOUR_GROUP_PROPERTY_NAME, Utilities::typeToString(worldTourGroupSupportedValue.GetType()));
+			return nullptr;
+		}
+
+		worldTourGroupSupported = worldTourGroupSupportedValue.GetBool();
+	}
 
 	// parse game version con file argument flag
 	std::optional<std::string> optionalConFileArgumentFlag;
@@ -2142,14 +2210,14 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & conFileArgumentFlagValue = gameVersionValue[JSON_CON_FILE_ARGUMENT_FLAG_PROPERTY_NAME];
 
 		if(!conFileArgumentFlagValue.IsString()) {
-			spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_CON_FILE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(conFileArgumentFlagValue.GetType()));
+			spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_CON_FILE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(conFileArgumentFlagValue.GetType()));
 			return nullptr;
 		}
 
 		optionalConFileArgumentFlag = conFileArgumentFlagValue.GetString();
 
 		if(optionalConFileArgumentFlag.value().empty()) {
-			spdlog::error("Game version '{}' property cannot be empty.", JSON_CON_FILE_ARGUMENT_FLAG_PROPERTY_NAME);
+			spdlog::error("Game version with ID '{}' '{}' property cannot be empty.", id, JSON_CON_FILE_ARGUMENT_FLAG_PROPERTY_NAME);
 			return nullptr;
 		}
 	}
@@ -2161,14 +2229,14 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & extraConFileArgumentFlagValue = gameVersionValue[JSON_EXTRA_CON_FILE_ARGUMENT_FLAG_PROPERTY_NAME];
 
 		if(!extraConFileArgumentFlagValue.IsString()) {
-			spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_EXTRA_CON_FILE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(extraConFileArgumentFlagValue.GetType()));
+			spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_EXTRA_CON_FILE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(extraConFileArgumentFlagValue.GetType()));
 			return nullptr;
 		}
 
 		optionalExtraConFileArgumentFlag = extraConFileArgumentFlagValue.GetString();
 
 		if(optionalExtraConFileArgumentFlag.value().empty()) {
-			spdlog::error("Game version '{}' property cannot be empty.", JSON_EXTRA_CON_FILE_ARGUMENT_FLAG_PROPERTY_NAME);
+			spdlog::error("Game version with ID '{}' '{}' property cannot be empty.", id, JSON_EXTRA_CON_FILE_ARGUMENT_FLAG_PROPERTY_NAME);
 			return nullptr;
 		}
 	}
@@ -2180,14 +2248,14 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & groupFileArgumentFlagValue = gameVersionValue[JSON_GROUP_FILE_ARGUMENT_FLAG_PROPERTY_NAME];
 
 		if(!groupFileArgumentFlagValue.IsString()) {
-			spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_GROUP_FILE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(groupFileArgumentFlagValue.GetType()));
+			spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_GROUP_FILE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(groupFileArgumentFlagValue.GetType()));
 			return nullptr;
 		}
 
 		optionalGroupFileArgumentFlag = groupFileArgumentFlagValue.GetString();
 
 		if(optionalGroupFileArgumentFlag.value().empty()) {
-			spdlog::error("Game version '{}' property cannot be empty.", JSON_GROUP_FILE_ARGUMENT_FLAG_PROPERTY_NAME);
+			spdlog::error("Game version with ID '{}' '{}' property cannot be empty.", id, JSON_GROUP_FILE_ARGUMENT_FLAG_PROPERTY_NAME);
 			return nullptr;
 		}
 	}
@@ -2213,61 +2281,61 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 
 	// parse game version episode argument flag
 	if(!gameVersionValue.HasMember(JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME)) {
-		spdlog::error("Game version is missing '{}' property.", JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version with ID '{}' is missing '{}' property.", id, JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & episodeArgumentFlagValue = gameVersionValue[JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME];
 
 	if(!episodeArgumentFlagValue.IsString()) {
-		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(episodeArgumentFlagValue.GetType()));
+		spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(episodeArgumentFlagValue.GetType()));
 		return nullptr;
 	}
 
 	std::string episodeArgumentFlag(episodeArgumentFlagValue.GetString());
 
 	if(episodeArgumentFlag.empty()) {
-		spdlog::error("Game version '{}' property cannot be empty.", JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version with ID '{}' '{}' property cannot be empty.", id, JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse game version level argument flag
 	if(!gameVersionValue.HasMember(JSON_LEVEL_ARGUMENT_FLAG_PROPERTY_NAME)) {
-		spdlog::error("Game version is missing '{}' property.", JSON_LEVEL_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version with ID '{}' is missing '{}' property.", id, JSON_LEVEL_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & levelArgumentFlagValue = gameVersionValue[JSON_LEVEL_ARGUMENT_FLAG_PROPERTY_NAME];
 
 	if(!levelArgumentFlagValue.IsString()) {
-		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_LEVEL_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(levelArgumentFlagValue.GetType()));
+		spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_LEVEL_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(levelArgumentFlagValue.GetType()));
 		return nullptr;
 	}
 
 	std::string levelArgumentFlag(levelArgumentFlagValue.GetString());
 
 	if(levelArgumentFlag.empty()) {
-		spdlog::error("Game version '{}' property cannot be empty.", JSON_LEVEL_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version with ID '{}' '{}' property cannot be empty.", id, JSON_LEVEL_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse game version skill argument flag
 	if(!gameVersionValue.HasMember(JSON_SKILL_ARGUMENT_FLAG_PROPERTY_NAME)) {
-		spdlog::error("Game version is missing '{}' property.", JSON_SKILL_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version with ID '{}' is missing '{}' property.", id, JSON_SKILL_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & skillArgumentFlagValue = gameVersionValue[JSON_SKILL_ARGUMENT_FLAG_PROPERTY_NAME];
 
 	if(!skillArgumentFlagValue.IsString()) {
-		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_SKILL_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(skillArgumentFlagValue.GetType()));
+		spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_SKILL_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(skillArgumentFlagValue.GetType()));
 		return nullptr;
 	}
 
 	std::string skillArgumentFlag(skillArgumentFlagValue.GetString());
 
 	if(skillArgumentFlag.empty()) {
-		spdlog::error("Game version '{}' property cannot be empty.", JSON_SKILL_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version with ID '{}' '{}' property cannot be empty.", id, JSON_SKILL_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -2278,40 +2346,40 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & skillStartValueValue = gameVersionValue[JSON_SKILL_START_VALUE_PROPERTY_NAME];
 
 		if(!skillStartValueValue.IsUint()) {
-			spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'boolean'.", JSON_SKILL_START_VALUE_PROPERTY_NAME, Utilities::typeToString(skillStartValueValue.GetType()));
+			spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'boolean'.", id, JSON_SKILL_START_VALUE_PROPERTY_NAME, Utilities::typeToString(skillStartValueValue.GetType()));
 			return nullptr;
 		}
 
 		unsigned int tempSkillStartValue = skillStartValueValue.GetUint();
 
 		if(tempSkillStartValue > std::numeric_limits<uint8_t>::max()) {
-			spdlog::error("Game version '{}' property value of {} exceeds the maximum value of {}.", JSON_SKILL_START_VALUE_PROPERTY_NAME, tempSkillStartValue, std::numeric_limits<uint8_t>::max());
+			spdlog::error("Game version with ID '{}' '{}' property value of {} exceeds the maximum value of {}.", id, JSON_SKILL_START_VALUE_PROPERTY_NAME, tempSkillStartValue, std::numeric_limits<uint8_t>::max());
 			return nullptr;
 		}
 
 		skillStartValue = static_cast<uint8_t>(tempSkillStartValue);
 	}
 	else {
-		spdlog::warn("Game version is missing '{}' property.", JSON_SKILL_START_VALUE_PROPERTY_NAME);
+		spdlog::warn("Game version with ID '{}' is missing '{}' property.", id, JSON_SKILL_START_VALUE_PROPERTY_NAME);
 	}
 
 	// parse game version record demo argument flag
 	if(!gameVersionValue.HasMember(JSON_RECORD_DEMO_ARGUMENT_FLAG_PROPERTY_NAME)) {
-		spdlog::error("Game version is missing '{}' property.", JSON_RECORD_DEMO_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version with ID '{}' is missing '{}' property.", id, JSON_RECORD_DEMO_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & recordDemoArgumentFlagValue = gameVersionValue[JSON_RECORD_DEMO_ARGUMENT_FLAG_PROPERTY_NAME];
 
 	if(!recordDemoArgumentFlagValue.IsString()) {
-		spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_RECORD_DEMO_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(recordDemoArgumentFlagValue.GetType()));
+		spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_RECORD_DEMO_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(recordDemoArgumentFlagValue.GetType()));
 		return nullptr;
 	}
 
 	std::string recordDemoArgumentFlag(recordDemoArgumentFlagValue.GetString());
 
 	if(recordDemoArgumentFlag.empty()) {
-		spdlog::error("Game version '{}' property cannot be empty.", JSON_RECORD_DEMO_ARGUMENT_FLAG_PROPERTY_NAME);
+		spdlog::error("Game version with ID '{}' '{}' property cannot be empty.", id, JSON_RECORD_DEMO_ARGUMENT_FLAG_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -2322,7 +2390,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & playDemoArgumentFlagValue = gameVersionValue[JSON_PLAY_DEMO_ARGUMENT_FLAG_PROPERTY_NAME];
 
 		if(!playDemoArgumentFlagValue.IsString()) {
-			spdlog::error("Game version '{}' property has invalid type: '{}', expected 'string'.", JSON_PLAY_DEMO_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(playDemoArgumentFlagValue.GetType()));
+			spdlog::error("Game version with ID '{}' '{}' property has invalid type: '{}', expected 'string'.", id, JSON_PLAY_DEMO_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(playDemoArgumentFlagValue.GetType()));
 			return nullptr;
 		}
 
@@ -2336,14 +2404,14 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & respawnModeArgumentFlagValue = gameVersionValue[JSON_RESPAWN_MODE_ARGUMENT_FLAG_PROPERTY_NAME];
 
 		if(!respawnModeArgumentFlagValue.IsString()) {
-			spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_RESPAWN_MODE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(respawnModeArgumentFlagValue.GetType()));
+			spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_RESPAWN_MODE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(respawnModeArgumentFlagValue.GetType()));
 			return nullptr;
 		}
 
 		optionalRespawnModeArgumentFlag = respawnModeArgumentFlagValue.GetString();
 
 		if(optionalRespawnModeArgumentFlag.value().empty()) {
-			spdlog::error("Game version '{}' property cannot be empty.", JSON_RESPAWN_MODE_ARGUMENT_FLAG_PROPERTY_NAME);
+			spdlog::error("Game version with ID '{}' '{}' property cannot be empty.", id, JSON_RESPAWN_MODE_ARGUMENT_FLAG_PROPERTY_NAME);
 			return nullptr;
 		}
 	}
@@ -2355,14 +2423,14 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & weaponSwitchOrderArgumentFlagValue = gameVersionValue[JSON_WEAPON_SWITCH_ORDER_ARGUMENT_FLAG_PROPERTY_NAME];
 
 		if(!weaponSwitchOrderArgumentFlagValue.IsString()) {
-			spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_WEAPON_SWITCH_ORDER_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(weaponSwitchOrderArgumentFlagValue.GetType()));
+			spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_WEAPON_SWITCH_ORDER_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(weaponSwitchOrderArgumentFlagValue.GetType()));
 			return nullptr;
 		}
 
 		optionalWeaponSwitchOrderArgumentFlag = weaponSwitchOrderArgumentFlagValue.GetString();
 
 		if(optionalWeaponSwitchOrderArgumentFlag.value().empty()) {
-			spdlog::error("Game version '{}' property cannot be empty.", JSON_WEAPON_SWITCH_ORDER_ARGUMENT_FLAG_PROPERTY_NAME);
+			spdlog::error("Game version with ID '{}' '{}' property cannot be empty.", id, JSON_WEAPON_SWITCH_ORDER_ARGUMENT_FLAG_PROPERTY_NAME);
 			return nullptr;
 		}
 	}
@@ -2374,14 +2442,14 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & disableMonstersArgumentFlagValue = gameVersionValue[JSON_DISABLE_MONSTERS_ARGUMENT_FLAG_PROPERTY_NAME];
 
 		if(!disableMonstersArgumentFlagValue.IsString()) {
-			spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_DISABLE_MONSTERS_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(disableMonstersArgumentFlagValue.GetType()));
+			spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_DISABLE_MONSTERS_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(disableMonstersArgumentFlagValue.GetType()));
 			return nullptr;
 		}
 
 		optionalDisableMonstersArgumentFlag = disableMonstersArgumentFlagValue.GetString();
 
 		if(optionalDisableMonstersArgumentFlag.value().empty()) {
-			spdlog::error("Game version '{}' property cannot be empty.", JSON_DISABLE_MONSTERS_ARGUMENT_FLAG_PROPERTY_NAME);
+			spdlog::error("Game version with ID '{}' '{}' property cannot be empty.", id, JSON_DISABLE_MONSTERS_ARGUMENT_FLAG_PROPERTY_NAME);
 			return nullptr;
 		}
 	}
@@ -2393,14 +2461,14 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & disableSoundArgumentFlagValue = gameVersionValue[JSON_DISABLE_SOUND_ARGUMENT_FLAG_PROPERTY_NAME];
 
 		if(!disableSoundArgumentFlagValue.IsString()) {
-			spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_DISABLE_SOUND_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(disableSoundArgumentFlagValue.GetType()));
+			spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_DISABLE_SOUND_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(disableSoundArgumentFlagValue.GetType()));
 			return nullptr;
 		}
 
 		optionalDisableSoundArgumentFlag = disableSoundArgumentFlagValue.GetString();
 
 		if(optionalDisableSoundArgumentFlag.value().empty()) {
-			spdlog::error("Game version '{}' property cannot be empty.", JSON_DISABLE_SOUND_ARGUMENT_FLAG_PROPERTY_NAME);
+			spdlog::error("Game version with ID '{}' '{}' property cannot be empty.", id, JSON_DISABLE_SOUND_ARGUMENT_FLAG_PROPERTY_NAME);
 			return nullptr;
 		}
 	}
@@ -2412,14 +2480,14 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & disableMusicArgumentFlagValue = gameVersionValue[JSON_DISABLE_MUSIC_ARGUMENT_FLAG_PROPERTY_NAME];
 
 		if(!disableMusicArgumentFlagValue.IsString()) {
-			spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_DISABLE_MUSIC_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(disableMusicArgumentFlagValue.GetType()));
+			spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_DISABLE_MUSIC_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(disableMusicArgumentFlagValue.GetType()));
 			return nullptr;
 		}
 
 		optionalDisableMusicArgumentFlag = disableMusicArgumentFlagValue.GetString();
 
 		if(optionalDisableMusicArgumentFlag.value().empty()) {
-			spdlog::error("Game version '{}' property cannot be empty.", JSON_DISABLE_MUSIC_ARGUMENT_FLAG_PROPERTY_NAME);
+			spdlog::error("Game version with ID '{}' '{}' property cannot be empty.", id, JSON_DISABLE_MUSIC_ARGUMENT_FLAG_PROPERTY_NAME);
 			return nullptr;
 		}
 	}
@@ -2431,20 +2499,20 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & modDirectoryNameValue = gameVersionValue[JSON_MOD_DIRECTORY_NAME_PROPERTY_NAME];
 
 		if(!modDirectoryNameValue.IsString()) {
-			spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_MOD_DIRECTORY_NAME_PROPERTY_NAME, Utilities::typeToString(modDirectoryNameValue.GetType()));
+			spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_MOD_DIRECTORY_NAME_PROPERTY_NAME, Utilities::typeToString(modDirectoryNameValue.GetType()));
 			return nullptr;
 		}
 
 		modDirectoryName = Utilities::trimString(modDirectoryNameValue.GetString());
 
 		if(modDirectoryName.empty()) {
-			spdlog::error("Game version '{}' property cannot be empty.", JSON_MOD_DIRECTORY_NAME_PROPERTY_NAME);
+			spdlog::error("Game version with ID '{}' '{}' property cannot be empty.", id, JSON_MOD_DIRECTORY_NAME_PROPERTY_NAME);
 			return nullptr;
 		}
 	}
 
 	// initialize the game version
-	std::unique_ptr<GameVersion> newGameVersion(std::make_unique<GameVersion>(id, longName, shortName, removable, gamePath, gameExecutableName, localWorkingDirectory, relativeConFilePath, supportsSubdirectories, modDirectoryName, optionalConFileArgumentFlag, optionalExtraConFileArgumentFlag,optionalGroupFileArgumentFlag, optionalMapFileArgumentFlag, episodeArgumentFlag, levelArgumentFlag, skillArgumentFlag, skillStartValue, recordDemoArgumentFlag, optionalPlayDemoArgumentFlag, optionalRespawnModeArgumentFlag, optionalWeaponSwitchOrderArgumentFlag, optionalDisableMonstersArgumentFlag, optionalDisableSoundArgumentFlag, optionalDisableMusicArgumentFlag, setupExecutableNameOptional, groupFileInstallPathOptional));
+	std::unique_ptr<GameVersion> newGameVersion(std::make_unique<GameVersion>(id, longName, shortName, removable, gamePath, gameExecutableName, localWorkingDirectory, relativeConFilePath, supportsSubdirectories, worldTourGroupSupported, modDirectoryName, optionalConFileArgumentFlag, optionalExtraConFileArgumentFlag,optionalGroupFileArgumentFlag, optionalMapFileArgumentFlag, episodeArgumentFlag, levelArgumentFlag, skillArgumentFlag, skillStartValue, recordDemoArgumentFlag, optionalPlayDemoArgumentFlag, optionalRespawnModeArgumentFlag, optionalWeaponSwitchOrderArgumentFlag, optionalDisableMonstersArgumentFlag, optionalDisableSoundArgumentFlag, optionalDisableMusicArgumentFlag, setupExecutableNameOptional, groupFileInstallPathOptional));
 
 	// parse stand-alone mod installed timestamp
 	std::optional<std::chrono::time_point<std::chrono::system_clock>> optionalInstalledTimePoint;
@@ -2453,14 +2521,14 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & installedTimestampValue = gameVersionValue[JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME];
 
 		if(!installedTimestampValue.IsString()) {
-			spdlog::error("Stand-alone mod has an invalid '{}' property type: '{}', expected 'string'.", JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME, Utilities::typeToString(installedTimestampValue.GetType()));
+			spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME, Utilities::typeToString(installedTimestampValue.GetType()));
 			return nullptr;
 		}
 
 		optionalInstalledTimePoint = Utilities::parseTimePointFromString(installedTimestampValue.GetString());
 
 		if(!optionalInstalledTimePoint.has_value()) {
-			spdlog::error("Stand-alone mod has an invalid '{}' timestamp value: '{}'.", JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME, installedTimestampValue.GetString());
+			spdlog::error("Game version with ID '{}' has an invalid '{}' timestamp value: '{}'.", id, JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME, installedTimestampValue.GetString());
 			return nullptr;
 		}
 
@@ -2474,14 +2542,14 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & lastPlayedTimestampValue = gameVersionValue[JSON_LAST_PLAYED_TIMESTAMP_PROPERTY_NAME];
 
 		if(!lastPlayedTimestampValue.IsString()) {
-			spdlog::error("Stand-alone mod has an invalid '{}' property type: '{}', expected 'string'.", JSON_LAST_PLAYED_TIMESTAMP_PROPERTY_NAME, Utilities::typeToString(lastPlayedTimestampValue.GetType()));
+			spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_LAST_PLAYED_TIMESTAMP_PROPERTY_NAME, Utilities::typeToString(lastPlayedTimestampValue.GetType()));
 			return nullptr;
 		}
 
 		optionalLastPlayedTimePoint = Utilities::parseTimePointFromString(lastPlayedTimestampValue.GetString());
 
 		if(!optionalLastPlayedTimePoint.has_value()) {
-			spdlog::error("Stand-alone mod has an invalid '{}' timestamp value: '{}'.", JSON_LAST_PLAYED_TIMESTAMP_PROPERTY_NAME, lastPlayedTimestampValue.GetString());
+			spdlog::error("Game version with ID '{}' has an invalid '{}' timestamp value: '{}'.", id, JSON_LAST_PLAYED_TIMESTAMP_PROPERTY_NAME, lastPlayedTimestampValue.GetString());
 			return nullptr;
 		}
 
@@ -2493,7 +2561,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & baseValue = gameVersionValue[JSON_BASE_PROPERTY_NAME];
 
 		if(!baseValue.IsString()) {
-			spdlog::error("Game version has an invalid '{}' property type: '{}', expected 'string'.", JSON_BASE_PROPERTY_NAME, Utilities::typeToString(baseValue.GetType()));
+			spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_BASE_PROPERTY_NAME, Utilities::typeToString(baseValue.GetType()));
 			return nullptr;
 		}
 
@@ -2505,7 +2573,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & defFileArgumentFlagValue = gameVersionValue[JSON_DEF_FILE_ARGUMENT_FLAG_PROPERTY_NAME];
 
 		if(!defFileArgumentFlagValue.IsString()) {
-			spdlog::error("Game version '{}' property has invalid type: '{}', expected 'string'.", JSON_DEF_FILE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(defFileArgumentFlagValue.GetType()));
+			spdlog::error("Game version with ID '{}' '{}' property has invalid type: '{}', expected 'string'.", id, JSON_DEF_FILE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(defFileArgumentFlagValue.GetType()));
 			return nullptr;
 		}
 
@@ -2517,7 +2585,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & extraDefFileArgumentFlagValue = gameVersionValue[JSON_EXTRA_DEF_FILE_ARGUMENT_FLAG_PROPERTY_NAME];
 
 		if(!extraDefFileArgumentFlagValue.IsString()) {
-			spdlog::error("Game version '{}' property has invalid type: '{}', expected 'string'.", JSON_EXTRA_DEF_FILE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(extraDefFileArgumentFlagValue.GetType()));
+			spdlog::error("Game version with ID '{}' '{}' property has invalid type: '{}', expected 'string'.", id, JSON_EXTRA_DEF_FILE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(extraDefFileArgumentFlagValue.GetType()));
 			return nullptr;
 		}
 
@@ -2529,7 +2597,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & requiresCombinedGroupValue = gameVersionValue[JSON_REQUIRES_COMBINED_GROUP_PROPERTY_NAME];
 
 		if(!requiresCombinedGroupValue.IsBool()) {
-			spdlog::error("Game version '{}' property has invalid type: '{}', expected 'boolean'.", JSON_REQUIRES_COMBINED_GROUP_PROPERTY_NAME, Utilities::typeToString(requiresCombinedGroupValue.GetType()));
+			spdlog::error("Game version with ID '{}' '{}' property has invalid type: '{}', expected 'boolean'.", id, JSON_REQUIRES_COMBINED_GROUP_PROPERTY_NAME, Utilities::typeToString(requiresCombinedGroupValue.GetType()));
 			return nullptr;
 		}
 
@@ -2541,7 +2609,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & requiresGroupFileExtractionValue = gameVersionValue[JSON_REQUIRES_GROUP_FILE_EXTRACTION_PROPERTY_NAME];
 
 		if(!requiresGroupFileExtractionValue.IsBool()) {
-			spdlog::error("Game version '{}' property has invalid type: '{}', expected 'boolean'.", JSON_REQUIRES_GROUP_FILE_EXTRACTION_PROPERTY_NAME, Utilities::typeToString(requiresGroupFileExtractionValue.GetType()));
+			spdlog::error("Game version with ID '{}' '{}' property has invalid type: '{}', expected 'boolean'.", id, JSON_REQUIRES_GROUP_FILE_EXTRACTION_PROPERTY_NAME, Utilities::typeToString(requiresGroupFileExtractionValue.GetType()));
 			return nullptr;
 		}
 
@@ -2553,7 +2621,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & websiteValue = gameVersionValue[JSON_WEBSITE_PROPERTY_NAME];
 
 		if(!websiteValue.IsString()) {
-			spdlog::error("Game version '{}' property has invalid type: '{}', expected 'string'.", JSON_WEBSITE_PROPERTY_NAME, Utilities::typeToString(websiteValue.GetType()));
+			spdlog::error("Game version with ID '{}' '{}' property has invalid type: '{}', expected 'string'.", id, JSON_WEBSITE_PROPERTY_NAME, Utilities::typeToString(websiteValue.GetType()));
 			return nullptr;
 		}
 
@@ -2565,7 +2633,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & sourceCodeURLValue = gameVersionValue[JSON_SOURCE_CODE_URL_PROPERTY_NAME];
 
 		if(!sourceCodeURLValue.IsString()) {
-			spdlog::error("Game version '{}' property has invalid type: '{}', expected 'string'.", JSON_SOURCE_CODE_URL_PROPERTY_NAME, Utilities::typeToString(sourceCodeURLValue.GetType()));
+			spdlog::error("Game version with ID '{}' '{}' property has invalid type: '{}', expected 'string'.", id, JSON_SOURCE_CODE_URL_PROPERTY_NAME, Utilities::typeToString(sourceCodeURLValue.GetType()));
 			return nullptr;
 		}
 
@@ -2577,13 +2645,13 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & supportedOperatingSystemsValue = gameVersionValue[JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME];
 
 		if(!supportedOperatingSystemsValue.IsArray()) {
-			spdlog::error("Game version '{}' property has invalid type: '{}', expected 'array'.", JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME, Utilities::typeToString(supportedOperatingSystemsValue.GetType()));
+			spdlog::error("Game version with ID '{}' '{}' property has invalid type: '{}', expected 'array'.", id, JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME, Utilities::typeToString(supportedOperatingSystemsValue.GetType()));
 			return nullptr;
 		}
 
 		for(rapidjson::Value::ConstValueIterator i = supportedOperatingSystemsValue.Begin(); i != supportedOperatingSystemsValue.End(); ++i) {
 			if(!i->IsString()) {
-				spdlog::error("Game version '{}' property contains invalid supported operating system type: '{}', expected 'string'.", JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME, Utilities::typeToString(i->GetType()));
+				spdlog::error("Game version with ID '{}' '{}' property contains invalid supported operating system type: '{}', expected 'string'.", id, JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME, Utilities::typeToString(i->GetType()));
 				return nullptr;
 			}
 
@@ -2602,12 +2670,12 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 					validOperatingSystems << "'" << operatingSystem << "'";
 				}
 
-				spdlog::error("Game version '{}' property contains invalid supported operating system value: '{}', expected one of: {}.", JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME, supportedOperatingSystemName, validOperatingSystems.str());
+				spdlog::error("Game version with ID '{}' '{}' property contains invalid supported operating system value: '{}', expected one of: {}.", id, JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME, supportedOperatingSystemName, validOperatingSystems.str());
 				return nullptr;
 			}
 
 			if(newGameVersion->hasSupportedOperatingSystem(optionalSupportedOperatingSystem.value())) {
-				spdlog::warn("Game version '{}' property contains duplicate supported operating system: '{}'.", JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME, supportedOperatingSystemName);
+				spdlog::warn("Game version with ID '{}' '{}' property contains duplicate supported operating system: '{}'.", id, JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME, supportedOperatingSystemName);
 				continue;
 			}
 
@@ -2620,20 +2688,20 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & compatibleGameVersionsValue = gameVersionValue[JSON_COMPATIBLE_GAME_VERSIONS_PROPERTY_NAME];
 
 		if(!compatibleGameVersionsValue.IsArray()) {
-			spdlog::error("Game version '{}' property has invalid type: '{}', expected 'array'.", JSON_COMPATIBLE_GAME_VERSIONS_PROPERTY_NAME, Utilities::typeToString(compatibleGameVersionsValue.GetType()));
+			spdlog::error("Game version with ID '{}' '{}' property has invalid type: '{}', expected 'array'.", id, JSON_COMPATIBLE_GAME_VERSIONS_PROPERTY_NAME, Utilities::typeToString(compatibleGameVersionsValue.GetType()));
 			return nullptr;
 		}
 
 		for(rapidjson::Value::ConstValueIterator i = compatibleGameVersionsValue.Begin(); i != compatibleGameVersionsValue.End(); ++i) {
 			if(!i->IsString()) {
-				spdlog::error("Game version '{}' property contains invalid compatible game version type: '{}', expected 'string'.", JSON_COMPATIBLE_GAME_VERSIONS_PROPERTY_NAME, Utilities::typeToString(i->GetType()));
+				spdlog::error("Game version with ID '{}' '{}' property contains invalid compatible game version type: '{}', expected 'string'.", id, JSON_COMPATIBLE_GAME_VERSIONS_PROPERTY_NAME, Utilities::typeToString(i->GetType()));
 				return nullptr;
 			}
 
 			std::string compatibleGameVersionID(Utilities::trimString(i->GetString()));
 
 			if(newGameVersion->hasCompatibleGameVersionWithID(compatibleGameVersionID)) {
-				spdlog::warn("Game version '{}' property contains duplicate compatible game version with ID: '{}'.", JSON_COMPATIBLE_GAME_VERSIONS_PROPERTY_NAME, compatibleGameVersionID);
+				spdlog::warn("Game version with ID '{}' '{}' property contains duplicate compatible game version with ID: '{}'.", id, JSON_COMPATIBLE_GAME_VERSIONS_PROPERTY_NAME, compatibleGameVersionID);
 				continue;
 			}
 
@@ -2646,7 +2714,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		const rapidjson::Value & notesValue = gameVersionValue[JSON_NOTES_PROPERTY_NAME];
 
 		if(!notesValue.IsArray()) {
-			spdlog::error("Game version '{}' property has invalid type: '{}', expected 'array'.", JSON_NOTES_PROPERTY_NAME, Utilities::typeToString(notesValue.GetType()));
+			spdlog::error("Game version with ID '{}' '{}' property has invalid type: '{}', expected 'array'.", id, JSON_NOTES_PROPERTY_NAME, Utilities::typeToString(notesValue.GetType()));
 			return nullptr;
 		}
 
@@ -2737,6 +2805,7 @@ bool GameVersion::operator == (const GameVersion & gameVersion) const {
 	   m_localWorkingDirectory != gameVersion.m_localWorkingDirectory ||
 	   m_relativeConFilePath != gameVersion.m_relativeConFilePath ||
 	   m_supportsSubdirectories != gameVersion.m_supportsSubdirectories ||
+	   m_worldTourGroupSupported != gameVersion.m_worldTourGroupSupported ||
 	   m_installedTimePoint != gameVersion.m_installedTimePoint ||
 	   m_lastPlayedTimePoint != gameVersion.m_lastPlayedTimePoint ||
 	   !Utilities::areStringsEqual(m_id, gameVersion.m_id) ||

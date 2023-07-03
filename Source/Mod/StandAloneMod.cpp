@@ -15,6 +15,7 @@ StandAloneMod::StandAloneMod(const ModGameVersion & standAloneModGameVersion, co
 	: GameVersion(standAloneModGameVersion.isStandAlone() ? *standAloneModGameVersion.getStandAloneGameVersion() : GameVersion())
 	, m_version(standAloneModGameVersion.isValid(true) ? standAloneModGameVersion.getParentModVersion()->getVersion() : "") {
 	setStandAlone(true);
+	clearWorldTourGroupSupported();
 	setGamePath(standAloneModDirectoryPath);
 }
 
@@ -22,6 +23,7 @@ StandAloneMod::StandAloneMod(GameVersion && gameVersion, const std::string & ver
 	: GameVersion(std::move(gameVersion))
 	, m_version(version) {
 	setStandAlone(true);
+	clearWorldTourGroupSupported();
 }
 
 StandAloneMod::StandAloneMod(StandAloneMod && standAloneMod) noexcept

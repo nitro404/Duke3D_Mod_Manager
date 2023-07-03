@@ -23,7 +23,7 @@ public:
 	};
 
 	GameVersion();
-	GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool removable, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, bool supportsSubdirectories, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag = {}, const std::optional<std::string> & weaponSwitchOrderArgumentFlag = {}, const std::optional<std::string> & disableMonstersArgumentFlag = {}, const std::optional<std::string> & disableSoundArgumentFlag = {}, const std::optional<std::string> & disableMusicArgumentFlag = {}, const std::optional<std::string> & setupExecutableName = {}, const std::optional<std::string> & groupFileInstallPath = {}, const std::optional<std::string> & defFileArgumentFlag = {}, const std::optional<std::string> & extraDefFileArgumentFlag = {}, const std::optional<bool> & requiresCombinedGroup = {}, const std::optional<bool> & requiresGroupFileExtraction = {}, const std::string & website = {}, const std::string & sourceCodeURL = {}, const std::vector<OperatingSystem> & supportedOperatingSystems = {}, const std::vector<std::string> & compatibleGameVersions = {}, const std::vector<std::string> & notes = {});
+	GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool removable, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, bool supportsSubdirectories, std::optional<bool> worldTourGroupSupported, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag = {}, const std::optional<std::string> & weaponSwitchOrderArgumentFlag = {}, const std::optional<std::string> & disableMonstersArgumentFlag = {}, const std::optional<std::string> & disableSoundArgumentFlag = {}, const std::optional<std::string> & disableMusicArgumentFlag = {}, const std::optional<std::string> & setupExecutableName = {}, const std::optional<std::string> & groupFileInstallPath = {}, const std::optional<std::string> & defFileArgumentFlag = {}, const std::optional<std::string> & extraDefFileArgumentFlag = {}, const std::optional<bool> & requiresCombinedGroup = {}, const std::optional<bool> & requiresGroupFileExtraction = {}, const std::string & website = {}, const std::string & sourceCodeURL = {}, const std::vector<OperatingSystem> & supportedOperatingSystems = {}, const std::vector<std::string> & compatibleGameVersions = {}, const std::vector<std::string> & notes = {});
 	GameVersion(GameVersion && gameVersion) noexcept;
 	GameVersion(const GameVersion & gameVersion);
 	GameVersion & operator = (GameVersion && gameVersion) noexcept;
@@ -54,6 +54,7 @@ public:
 	std::string getBase() const;
 	void setBase(const std::string & base);
 	bool isRemovable() const;
+	bool hasGroupFile() const;
 	bool hasGamePath() const;
 	const std::string & getGamePath() const;
 	void setGamePath(const std::string & gamePath);
@@ -84,6 +85,10 @@ public:
 	void setRelativeConFilePath(bool relativeConFilePath);
 	bool doesSupportSubdirectories() const;
 	void setSupportsSubdirectories(bool supportsSubdirectories);
+	bool isWorldTourGroupSupported() const;
+	std::optional<bool> getWorldTourGroupSupported() const;
+	void setWorldTourGroupSupported(bool worldTourGroupSupported);
+	void clearWorldTourGroupSupported();
 	bool hasConFileArgumentFlag() const;
 	const std::optional<std::string> & getConFileArgumentFlag() const;
 	bool setConFileArgumentFlag(const std::string & flag);
@@ -248,6 +253,7 @@ public:
 	static const bool DEFAULT_LOCAL_WORKING_DIRECTORY;
 	static const bool DEFAULT_RELATIVE_CON_FILE_PATH;
 	static const bool DEFAULT_SUPPORTS_SUBDIRECTORIES;
+	static const bool DEFAULT_WORLD_TOUR_GROUP_SUPPORTED;
 	static const uint8_t DEFAULT_SKILL_START_VALUE;
 
 private:
@@ -273,6 +279,7 @@ private:
 	bool m_localWorkingDirectory;
 	bool m_relativeConFilePath;
 	bool m_supportsSubdirectories;
+	std::optional<bool> m_worldTourGroupSupported;
 	std::optional<std::string> m_conFileArgumentFlag;
 	std::optional<std::string> m_extraConFileArgumentFlag;
 	std::optional<std::string> m_groupFileArgumentFlag;

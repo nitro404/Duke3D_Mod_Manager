@@ -483,34 +483,34 @@ std::unique_ptr<DOSBoxVersion> DOSBoxVersion::parseFrom(const rapidjson::Value &
 	const rapidjson::Value & longNameValue = dosboxVersionValue[JSON_LONG_NAME_PROPERTY_NAME];
 
 	if(!longNameValue.IsString()) {
-		spdlog::error("DOSBox version has an invalid '{}' property type: '{}', expected 'string'.", JSON_LONG_NAME_PROPERTY_NAME, Utilities::typeToString(longNameValue.GetType()));
+		spdlog::error("DOSBox version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_LONG_NAME_PROPERTY_NAME, Utilities::typeToString(longNameValue.GetType()));
 		return nullptr;
 	}
 
 	std::string longName(Utilities::trimString(longNameValue.GetString()));
 
 	if(longName.empty()) {
-		spdlog::error("DOSBox version '{}' property cannot be empty.", JSON_LONG_NAME_PROPERTY_NAME);
+		spdlog::error("DOSBox version with ID '{}' '{}' property cannot be empty.", id, JSON_LONG_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse DOSBox version short name
 	if(!dosboxVersionValue.HasMember(JSON_SHORT_NAME_PROPERTY_NAME)) {
-		spdlog::error("DOSBox version is missing '{}' property.", JSON_SHORT_NAME_PROPERTY_NAME);
+		spdlog::error("DOSBox version with ID '{}' is missing '{}' property.", id, JSON_SHORT_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & shortNameValue = dosboxVersionValue[JSON_SHORT_NAME_PROPERTY_NAME];
 
 	if(!shortNameValue.IsString()) {
-		spdlog::error("DOSBox version has an invalid '{}' property type: '{}', expected 'string'.", JSON_SHORT_NAME_PROPERTY_NAME, Utilities::typeToString(shortNameValue.GetType()));
+		spdlog::error("DOSBox version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_SHORT_NAME_PROPERTY_NAME, Utilities::typeToString(shortNameValue.GetType()));
 		return nullptr;
 	}
 
 	std::string shortName(Utilities::trimString(shortNameValue.GetString()));
 
 	if(shortName.empty()) {
-		spdlog::error("DOSBox version '{}' property cannot be empty.", JSON_SHORT_NAME_PROPERTY_NAME);
+		spdlog::error("DOSBox version with ID '{}' '{}' property cannot be empty.", id, JSON_SHORT_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
@@ -521,46 +521,46 @@ std::unique_ptr<DOSBoxVersion> DOSBoxVersion::parseFrom(const rapidjson::Value &
 		const rapidjson::Value & removableValue = dosboxVersionValue[JSON_REMOVABLE_PROPERTY_NAME];
 
 		if(!removableValue.IsBool()) {
-			spdlog::error("DOSBox version has an invalid '{}' property type: '{}', expected 'boolean'.", JSON_REMOVABLE_PROPERTY_NAME, Utilities::typeToString(removableValue.GetType()));
+			spdlog::error("DOSBox version with ID '{}' has an invalid '{}' property type: '{}', expected 'boolean'.", id, JSON_REMOVABLE_PROPERTY_NAME, Utilities::typeToString(removableValue.GetType()));
 			return nullptr;
 		}
 
 		removable = removableValue.GetBool();
 	}
 	else {
-		spdlog::warn("DOSBox version is missing '{}' property.", JSON_REMOVABLE_PROPERTY_NAME);
+		spdlog::warn("DOSBox version with ID '{}' is missing '{}' property.", id, JSON_REMOVABLE_PROPERTY_NAME);
 	}
 
 	// parse DOSBox version executable name
 	if(!dosboxVersionValue.HasMember(JSON_EXECUTABLE_NAME_PROPERTY_NAME)) {
-		spdlog::error("DOSBox version is missing '{}' property.", JSON_EXECUTABLE_NAME_PROPERTY_NAME);
+		spdlog::error("DOSBox version with ID '{}' is missing '{}' property.", id, JSON_EXECUTABLE_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & executableNameValue = dosboxVersionValue[JSON_EXECUTABLE_NAME_PROPERTY_NAME];
 
 	if(!executableNameValue.IsString()) {
-		spdlog::error("DOSBox version has an invalid '{}' property type: '{}', expected 'string'.", JSON_EXECUTABLE_NAME_PROPERTY_NAME, Utilities::typeToString(executableNameValue.GetType()));
+		spdlog::error("DOSBox version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_EXECUTABLE_NAME_PROPERTY_NAME, Utilities::typeToString(executableNameValue.GetType()));
 		return nullptr;
 	}
 
 	std::string executableName(Utilities::trimString(executableNameValue.GetString()));
 
 	if(executableName.empty()) {
-		spdlog::error("DOSBox version '{}' property cannot be empty.", JSON_EXECUTABLE_NAME_PROPERTY_NAME);
+		spdlog::error("DOSBox version with ID '{}' '{}' property cannot be empty.", id, JSON_EXECUTABLE_NAME_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	// parse DOSBox version directory path
 	if(!dosboxVersionValue.HasMember(JSON_DIRECTORY_PATH_PROPERTY_NAME)) {
-		spdlog::error("DOSBox version is missing '{}' property.", JSON_DIRECTORY_PATH_PROPERTY_NAME);
+		spdlog::error("DOSBox version with ID '{}' is missing '{}' property.", id, JSON_DIRECTORY_PATH_PROPERTY_NAME);
 		return nullptr;
 	}
 
 	const rapidjson::Value & directoryPathValue = dosboxVersionValue[JSON_DIRECTORY_PATH_PROPERTY_NAME];
 
 	if(!directoryPathValue.IsString()) {
-		spdlog::error("DOSBox version has an invalid '{}' property type: '{}', expected 'string'.", JSON_DIRECTORY_PATH_PROPERTY_NAME, Utilities::typeToString(directoryPathValue.GetType()));
+		spdlog::error("DOSBox version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_DIRECTORY_PATH_PROPERTY_NAME, Utilities::typeToString(directoryPathValue.GetType()));
 		return nullptr;
 	}
 
@@ -573,7 +573,7 @@ std::unique_ptr<DOSBoxVersion> DOSBoxVersion::parseFrom(const rapidjson::Value &
 		const rapidjson::Value & websiteValue = dosboxVersionValue[JSON_WEBSITE_PROPERTY_NAME];
 
 		if(!websiteValue.IsString()) {
-			spdlog::error("DOSBox version '{}' property has invalid type: '{}', expected 'string'.", JSON_WEBSITE_PROPERTY_NAME, Utilities::typeToString(websiteValue.GetType()));
+			spdlog::error("DOSBox version with ID '{}' '{}' property has invalid type: '{}', expected 'string'.", id, JSON_WEBSITE_PROPERTY_NAME, Utilities::typeToString(websiteValue.GetType()));
 			return nullptr;
 		}
 
@@ -587,7 +587,7 @@ std::unique_ptr<DOSBoxVersion> DOSBoxVersion::parseFrom(const rapidjson::Value &
 		const rapidjson::Value & sourceCodeURLValue = dosboxVersionValue[JSON_SOURCE_CODE_URL_PROPERTY_NAME];
 
 		if(!sourceCodeURLValue.IsString()) {
-			spdlog::error("DOSBox version '{}' property has invalid type: '{}', expected 'string'.", JSON_SOURCE_CODE_URL_PROPERTY_NAME, Utilities::typeToString(sourceCodeURLValue.GetType()));
+			spdlog::error("DOSBox version with ID '{}' '{}' property has invalid type: '{}', expected 'string'.", id, JSON_SOURCE_CODE_URL_PROPERTY_NAME, Utilities::typeToString(sourceCodeURLValue.GetType()));
 			return nullptr;
 		}
 
@@ -602,13 +602,13 @@ std::unique_ptr<DOSBoxVersion> DOSBoxVersion::parseFrom(const rapidjson::Value &
 		const rapidjson::Value & supportedOperatingSystemsValue = dosboxVersionValue[JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME];
 
 		if(!supportedOperatingSystemsValue.IsArray()) {
-			spdlog::error("DOSBox version '{}' property has invalid type: '{}', expected 'array'.", JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME, Utilities::typeToString(supportedOperatingSystemsValue.GetType()));
+			spdlog::error("DOSBox version with ID '{}' '{}' property has invalid type: '{}', expected 'array'.", id, JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME, Utilities::typeToString(supportedOperatingSystemsValue.GetType()));
 			return nullptr;
 		}
 
 		for(rapidjson::Value::ConstValueIterator i = supportedOperatingSystemsValue.Begin(); i != supportedOperatingSystemsValue.End(); ++i) {
 			if(!i->IsString()) {
-				spdlog::error("DOSBox version '{}' property contains invalid supported operating system type: '{}', expected 'string'.", JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME, Utilities::typeToString(i->GetType()));
+				spdlog::error("DOSBox version with ID '{}' '{}' property contains invalid supported operating system type: '{}', expected 'string'.", id, JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME, Utilities::typeToString(i->GetType()));
 				return nullptr;
 			}
 
@@ -627,12 +627,12 @@ std::unique_ptr<DOSBoxVersion> DOSBoxVersion::parseFrom(const rapidjson::Value &
 					validOperatingSystems << "'" << operatingSystem << "'";
 				}
 
-				spdlog::error("DOSBox version '{}' property contains invalid supported operating system value: '{}', expected one of: {}.", JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME, supportedOperatingSystemName, validOperatingSystems.str());
+				spdlog::error("DOSBox version with ID '{}' '{}' property contains invalid supported operating system value: '{}', expected one of: {}.", id, JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME, supportedOperatingSystemName, validOperatingSystems.str());
 				return nullptr;
 			}
 
 			if(newDOSBoxVersion->hasSupportedOperatingSystem(optionalSupportedOperatingSystem.value())) {
-				spdlog::warn("DOSBox version '{}' property contains duplicate supported operating system: '{}'.", JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME, supportedOperatingSystemName);
+				spdlog::warn("DOSBox version with ID '{}' '{}' property contains duplicate supported operating system: '{}'.", id, JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME, supportedOperatingSystemName);
 				continue;
 			}
 

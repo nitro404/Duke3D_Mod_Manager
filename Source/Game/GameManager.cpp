@@ -50,6 +50,9 @@ static const std::string EDUKE32_DOWNLOAD_PAGE_URL("https://dukeworld.com/eduke3
 static const std::string NETDUKE32_DOWNLOAD_API_URL("https://voidpoint.io/api/graphql");
 static const std::string RED_NUKEM_DOWNLOAD_PAGE_URL("https://lerppu.net/wannabethesis");
 
+static const std::string WORLD_TOUR_GAME_LONG_NAME("Duke Nukem 3D: 20th Anniversary World Tour");
+static const std::string WORLD_TOUR_SUBDIRECTORY_NAME("WorldTour");
+
 struct GameFileInformation {
 	std::string fileName;
 	std::vector<std::string> hashes;
@@ -223,21 +226,12 @@ static const std::array<GameFileInformation, 103> LAMEDUKE_GAME_FILE_INFO_LIST =
 	GameFileInformation{ "WATERFAL.VOC", { "db78e7f4390b724c34796e061b8a3232f085d3c1" } }
 };
 
-static const GameVersion * getGroupGameVersion(const std::string & gameVersionID) {
-	if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_BETA_VERSION.getID())) {
-		return &GameVersion::ORIGINAL_BETA_VERSION;
-	}
-	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_REGULAR_VERSION.getID())) {
-		return &GameVersion::ORIGINAL_REGULAR_VERSION;
-	}
-	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_PLUTONIUM_PAK.getID())) {
-		return &GameVersion::ORIGINAL_PLUTONIUM_PAK;
+static std::string getGroupFilePathWithSubdirectory(const std::string & subdirectoryName) {
+	if(subdirectoryName.empty()) {
+		spdlog::error("Group file subdirectory name cannot be empty.");
+		return {};
 	}
 
-	return &GameVersion::ORIGINAL_ATOMIC_EDITION;
-}
-
-static std::string getGroupFilePath(const std::string & gameVersionID) {
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	if(settings->downloadsDirectoryPath.empty()) {
@@ -250,49 +244,11 @@ static std::string getGroupFilePath(const std::string & gameVersionID) {
 		return {};
 	}
 
-	const GameVersion * groupGameVersion(getGroupGameVersion(gameVersionID));
-
-	return Utilities::joinPaths(settings->downloadsDirectoryPath, settings->groupDownloadsDirectoryName, groupGameVersion->getModDirectoryName(), GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME);
+	return Utilities::joinPaths(settings->downloadsDirectoryPath, settings->groupDownloadsDirectoryName, subdirectoryName, GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME);
 }
 
-static std::string getFallbackGroupDownloadURL(const std::string & gameVersionID) {
-	const GameVersion * groupGameVersion(getGroupGameVersion(gameVersionID));
-
-	if(groupGameVersion == &GameVersion::ORIGINAL_BETA_VERSION) {
-		return BETA_VERSION_FALLBACK_DOWNLOAD_URL;
-	}
-	else if(groupGameVersion == &GameVersion::ORIGINAL_REGULAR_VERSION) {
-		return REGULAR_VERSION_FALLBACK_DOWNLOAD_URL;
-	}
-	else if(groupGameVersion == &GameVersion::ORIGINAL_ATOMIC_EDITION) {
-		spdlog::warn("No fallback download URL for Plutonium Pak.");
-		return {};
-	}
-	else if(groupGameVersion == &GameVersion::ORIGINAL_ATOMIC_EDITION) {
-		return ATOMIC_EDITION_FALLBACK_DOWNLOAD_URL;
-	}
-
-	return {};
-}
-
-static std::string getFallbackGroupDownloadSHA1(const std::string & gameVersionID) {
-	const GameVersion * groupGameVersion(getGroupGameVersion(gameVersionID));
-
-	if(groupGameVersion == &GameVersion::ORIGINAL_BETA_VERSION) {
-		return BETA_VERSION_FALLBACK_DOWNLOAD_SHA1;
-	}
-	else if(groupGameVersion == &GameVersion::ORIGINAL_REGULAR_VERSION) {
-		return REGULAR_VERSION_FALLBACK_DOWNLOAD_SHA1;
-	}
-	else if(groupGameVersion == &GameVersion::ORIGINAL_ATOMIC_EDITION) {
-		spdlog::warn("No fallback download for Plutonium Pak.");
-		return {};
-	}
-	else if(groupGameVersion == &GameVersion::ORIGINAL_ATOMIC_EDITION) {
-		return ATOMIC_EDITION_FALLBACK_DOWNLOAD_SHA1;
-	}
-
-	return {};
+static std::string getWorldTourGroupFilePath() {
+	return getGroupFilePathWithSubdirectory(WORLD_TOUR_SUBDIRECTORY_NAME);
 }
 
 GameManager::GameManager()
@@ -671,7 +627,7 @@ std::string GameManager::getGroupDownloadURL(const std::string & gameVersionID) 
 		return {};
 	}
 
-	const GameVersion * groupGameVersion(getGroupGameVersion(gameVersionID));
+	std::shared_ptr<GameVersion> groupGameVersion(getGroupGameVersion(gameVersionID));
 
 	std::shared_ptr<GameDownloadFile> groupDownloadFile(m_gameDownloads->getLatestGameDownloadFile(groupGameVersion->getID(), GameDownloadFile::Type::Group, GameVersion::OperatingSystem::DOS));
 
@@ -2437,7 +2393,8 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		return false;
 	}
 
-	const GameVersion * groupGameVersion(getGroupGameVersion(gameVersion.getID()));
+	std::shared_ptr<GameVersion> groupGameVersion(getGroupGameVersion(gameVersion.getID()));
+	std::string groupFilePath(getGroupFilePath(gameVersion.getID()));
 
 	bool isLameDuke = Utilities::areStringsEqualIgnoreCase(gameVersion.getID(), GameVersion::LAMEDUKE.getID());
 	bool isBetaVersion = Utilities::areStringsEqualIgnoreCase(gameVersion.getID(), GameVersion::ORIGINAL_BETA_VERSION.getID());
@@ -2448,7 +2405,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 	bool isOriginalGame = isLameDuke || isBetaVersion || isRegularVersion || isPlutoniumPakOrAtomicEdition;
 	bool isOriginalGameFallback = useFallback && isOriginalGame;
 
-	std::function<bool(std::shared_ptr<ArchiveEntry>, const GameFileInformation &)> extractGameFileFunction([&gameVersion, &groupGameVersion, &gameDownloadURL, &destinationDirectoryPath, overwrite](std::shared_ptr<ArchiveEntry> gameFileEntry, const GameFileInformation & gameFileInfo) {
+	std::function<bool(std::shared_ptr<ArchiveEntry>, const GameFileInformation &)> extractGameFileFunction([&gameVersion, &groupGameVersion, &groupFilePath, &gameDownloadURL, &destinationDirectoryPath, overwrite](std::shared_ptr<ArchiveEntry> gameFileEntry, const GameFileInformation & gameFileInfo) {
 		if(gameFileEntry == nullptr) {
 			// skip missing game files that aren't required
 			if(!gameFileInfo.required) {
@@ -2499,8 +2456,6 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		}
 
 		if(Utilities::areStringsEqualIgnoreCase(fileName, GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME)) {
-			std::string groupFilePath(getGroupFilePath(gameVersion.getID()));
-
 			if(groupFilePath.empty()) {
 				spdlog::error("Failed to determine group file path. Are your settings configured correctly?");
 				return false;
@@ -2865,7 +2820,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 
 	// don't need to install the group file or verify it separately when using a fallback download for either of the original game versions, since it's already installed & verified
 	if (!isOriginalGameFallback && gameVersion.hasGroupFileInstallPath()) {
-		if(!installGroupFile(groupGameVersion->getID(), Utilities::joinPaths(destinationDirectoryPath, gameVersion.getGroupFileInstallPath().value()), overwrite)) {
+		if(!installGroupFile(gameVersion.getID(), Utilities::joinPaths(destinationDirectoryPath, gameVersion.getGroupFileInstallPath().value()), overwrite)) {
 			return false;
 		}
 	}
@@ -2873,14 +2828,90 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 	return true;
 }
 
-bool GameManager::isGroupFileDownloaded(const std::string & gameVersionID) {
+bool GameManager::isGroupFileDownloaded(const std::string & gameVersionID) const {
 	std::string groupFilePath(getGroupFilePath(gameVersionID));
 
 	if(groupFilePath.empty()) {
 		return false;
 	}
 
-	return std::filesystem::is_regular_file(std::filesystem::path(groupFilePath));
+	if(std::filesystem::is_regular_file(std::filesystem::path(groupFilePath))) {
+		return true;
+	}
+
+	std::shared_ptr<GameVersion> gameVersion(m_gameVersions->getGameVersionWithID(gameVersionID));
+
+	if(gameVersion == nullptr || !gameVersion->isWorldTourGroupSupported()) {
+		return false;
+	}
+
+	std::string worldTourGroupFilePath(getWorldTourGroupFilePath());
+
+	if(worldTourGroupFilePath.empty()) {
+		return false;
+	}
+
+	return std::filesystem::is_regular_file(std::filesystem::path(worldTourGroupFilePath));
+}
+
+std::shared_ptr<GameVersion> GameManager::getGroupGameVersion(const std::string & gameVersionID) const {
+	if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_BETA_VERSION.getID()) ||
+	   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_REGULAR_VERSION.getID()) ||
+	   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_PLUTONIUM_PAK.getID())) {
+		return m_gameVersions->getGameVersionWithID(gameVersionID);
+	}
+
+	return m_gameVersions->getGameVersionWithID(GameVersion::ORIGINAL_ATOMIC_EDITION.getID());
+}
+
+std::string GameManager::getGroupFilePath(const std::string & gameVersionID) const {
+	std::shared_ptr<GameVersion> groupGameVersion(getGroupGameVersion(gameVersionID));
+
+	if(groupGameVersion == nullptr) {
+		return {};
+	}
+
+	return getGroupFilePathWithSubdirectory(groupGameVersion->getModDirectoryName());
+}
+
+std::string GameManager::getFallbackGroupDownloadURL(const std::string & gameVersionID) const {
+	std::shared_ptr<GameVersion> groupGameVersion(getGroupGameVersion(gameVersionID));
+
+	if(Utilities::areStringsEqualIgnoreCase(groupGameVersion->getID(), GameVersion::ORIGINAL_BETA_VERSION.getID())) {
+		return BETA_VERSION_FALLBACK_DOWNLOAD_URL;
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(groupGameVersion->getID(), GameVersion::ORIGINAL_REGULAR_VERSION.getID())) {
+		return REGULAR_VERSION_FALLBACK_DOWNLOAD_URL;
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(groupGameVersion->getID(), GameVersion::ORIGINAL_ATOMIC_EDITION.getID())) {
+		spdlog::warn("No fallback download URL for Plutonium Pak.");
+		return {};
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(groupGameVersion->getID(), GameVersion::ORIGINAL_ATOMIC_EDITION.getID())) {
+		return ATOMIC_EDITION_FALLBACK_DOWNLOAD_URL;
+	}
+
+	return {};
+}
+
+std::string GameManager::getFallbackGroupDownloadSHA1(const std::string & gameVersionID) const {
+	std::shared_ptr<GameVersion> groupGameVersion(getGroupGameVersion(gameVersionID));
+
+	if(Utilities::areStringsEqualIgnoreCase(groupGameVersion->getID(), GameVersion::ORIGINAL_BETA_VERSION.getID())) {
+		return BETA_VERSION_FALLBACK_DOWNLOAD_SHA1;
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(groupGameVersion->getID(), GameVersion::ORIGINAL_REGULAR_VERSION.getID())) {
+		return REGULAR_VERSION_FALLBACK_DOWNLOAD_SHA1;
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(groupGameVersion->getID(), GameVersion::ORIGINAL_ATOMIC_EDITION.getID())) {
+		spdlog::warn("No fallback download for Plutonium Pak.");
+		return {};
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(groupGameVersion->getID(), GameVersion::ORIGINAL_ATOMIC_EDITION.getID())) {
+		return ATOMIC_EDITION_FALLBACK_DOWNLOAD_SHA1;
+	}
+
+	return {};
 }
 
 bool GameManager::downloadGroupFile(const std::string & gameVersionID) {
@@ -2893,24 +2924,32 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 		return {};
 	}
 
-	std::string groupFilePath(getGroupFilePath(gameVersionID));
+	std::string destinationGroupFilePath(getGroupFilePath(gameVersionID));
 
-	if(groupFilePath.empty()) {
+	if(destinationGroupFilePath.empty()) {
 		spdlog::error("Failed to determine group file path. Are your settings configured correctly?");
 		return false;
 	}
 
-	if(std::filesystem::is_regular_file(std::filesystem::path(groupFilePath))) {
+	if(std::filesystem::is_regular_file(std::filesystem::path(destinationGroupFilePath))) {
 		spdlog::info("Duke Nukem 3D '{}' group file already downloaded.", gameVersionID);
 		return true;
 	}
 
-	const GameVersion * groupGameVersion(getGroupGameVersion(gameVersionID));
-	bool isBetaVersion = groupGameVersion == &GameVersion::ORIGINAL_BETA_VERSION;
-	bool isRegularVersion = groupGameVersion == &GameVersion::ORIGINAL_REGULAR_VERSION;
-	bool isPlutoniumPak = groupGameVersion == &GameVersion::ORIGINAL_PLUTONIUM_PAK;
-	bool isAtomicEdition = groupGameVersion == &GameVersion::ORIGINAL_ATOMIC_EDITION;
+	std::shared_ptr<GameVersion> gameVersion(m_gameVersions->getGameVersionWithID(gameVersionID));
+
+	if(gameVersion == nullptr) {
+		spdlog::error("Cannot download group file for missing or invalid game version with ID: '{}'.", gameVersionID);
+		return false;
+	}
+
+	std::shared_ptr<GameVersion> groupGameVersion(getGroupGameVersion(gameVersionID));
+	bool isBetaVersion = Utilities::areStringsEqualIgnoreCase(groupGameVersion->getID(), GameVersion::ORIGINAL_BETA_VERSION.getID());
+	bool isRegularVersion = Utilities::areStringsEqualIgnoreCase(groupGameVersion->getID(), GameVersion::ORIGINAL_REGULAR_VERSION.getID());
+	bool isPlutoniumPak = Utilities::areStringsEqualIgnoreCase(groupGameVersion->getID(), GameVersion::ORIGINAL_PLUTONIUM_PAK.getID());
+	bool isAtomicEdition = Utilities::areStringsEqualIgnoreCase(groupGameVersion->getID(), GameVersion::ORIGINAL_ATOMIC_EDITION.getID());
 	bool isPlutoniumPakOrAtomicEdition = isPlutoniumPak || isAtomicEdition;
+	bool isWorldTourGroup = false;
 
 	if(!useFallback && isAtomicEdition) {
 		GameLocator * gameLocator = GameLocator::getInstance();
@@ -2923,6 +2962,8 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 				continue;
 			}
 
+			spdlog::debug("Calculating SHA1 hash of Duke Nukem 3D group file: '{}'...", sourceGroupFilePath);
+
 			std::string groupSHA1(Utilities::getFileSHA1Hash(sourceGroupFilePath));
 
 			if(groupSHA1.empty()) {
@@ -2932,7 +2973,16 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 				spdlog::debug("Verified '{}' group file SHA1 hash.", GameVersion::ORIGINAL_ATOMIC_EDITION.getLongName());
 			}
 			else if(Utilities::areStringsEqual(groupSHA1, GroupGRP::DUKE_NUKEM_3D_WORLD_TOUR_GROUP_SHA1_FILE_HASH)) {
-				spdlog::debug("Verified '{}' group file SHA1 hash.", GameVersion::ORIGINAL_ATOMIC_EDITION.getLongName());
+				spdlog::debug("Verified '{}' group file SHA1 hash.", WORLD_TOUR_GAME_LONG_NAME);
+
+				isWorldTourGroup = true;
+
+				if(!gameVersion->isWorldTourGroupSupported()) {
+					spdlog::debug("'{}' group is not supported by '{}', skipping.", WORLD_TOUR_GAME_LONG_NAME, gameVersion->getLongName());
+					continue;
+				}
+
+				destinationGroupFilePath = getWorldTourGroupFilePath();
 			}
 			else if(Utilities::areStringsEqual(groupSHA1, GroupGRP::DUKE_NUKEM_3D_PLUTONIUM_PAK_GROUP_SHA1_FILE_HASH)) {
 				spdlog::error("Calculated '{}' SHA1 hash for Duke Nukem 3D group file '{}', when '{}' group file was expected! This may cause unexpected gameplay issues.", GameVersion::ORIGINAL_PLUTONIUM_PAK.getLongName(), sourceGroupFilePath, GameVersion::ORIGINAL_ATOMIC_EDITION.getLongName());
@@ -2944,10 +2994,14 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 				spdlog::warn("Unexpected SHA1 hash calculated for Duke Nukem 3D group file '{}'! Game data may be modified, and may cause gameplay issues.", sourceGroupFilePath);
 			}
 
-			spdlog::debug("Copying Duke Nukem 3D group file from '{}' to: '{}'...", sourceGroupFilePath, groupFilePath);
+			if(std::filesystem::is_regular_file(destinationGroupFilePath)) {
+				return true;
+			}
+
+			spdlog::debug("Copying Duke Nukem 3D group file from '{}' to: '{}'...", sourceGroupFilePath, destinationGroupFilePath);
 
 			std::error_code errorCode;
-			std::filesystem::path groupFileBasePath(Utilities::getBasePath(groupFilePath));
+			std::filesystem::path groupFileBasePath(Utilities::getBasePath(destinationGroupFilePath));
 
 			if(!std::filesystem::is_directory(groupFileBasePath)) {
 				std::filesystem::create_directories(groupFileBasePath, errorCode);
@@ -2960,10 +3014,10 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 				spdlog::debug("Created group file base directory path: '{}'.", groupFileBasePath.string());
 			}
 
-			std::filesystem::copy_file(std::filesystem::path(sourceGroupFilePath), groupFilePath, errorCode);
+			std::filesystem::copy_file(std::filesystem::path(sourceGroupFilePath), destinationGroupFilePath, errorCode);
 
 			if(errorCode) {
-				spdlog::error("Failed to copy Duke Nukem 3D group file from '{}' to '{}' with error: '{}'.", sourceGroupFilePath, groupFilePath, errorCode.message());
+				spdlog::error("Failed to copy Duke Nukem 3D group file from '{}' to '{}' with error: '{}'.", sourceGroupFilePath, destinationGroupFilePath, errorCode.message());
 			}
 
 			return true;
@@ -3058,7 +3112,7 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 		}
 	}
 
-	spdlog::info("{} group file downloaded successfully after {} ms, extracting to '{}'...", groupGameVersion->getLongName(), response->getRequestDuration().value().count(), groupFilePath);
+	spdlog::info("{} group file downloaded successfully after {} ms, extracting to '{}'...", groupGameVersion->getLongName(), response->getRequestDuration().value().count(), destinationGroupFilePath);
 
 	std::unique_ptr<Archive> groupArchive(ArchiveFactoryRegistry::getInstance()->createArchiveFrom(response->transferBody(), std::string(Utilities::getFileExtension(groupDownloadURL))));
 
@@ -3123,8 +3177,8 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 		return false;
 	}
 
-	if(!groupFileData->writeTo(groupFilePath, true)) {
-		spdlog::error("Failed to write '{}' group file data from package file to '{}'.", groupGameVersion->getLongName(), groupFilePath);
+	if(!groupFileData->writeTo(destinationGroupFilePath, true)) {
+		spdlog::error("Failed to write '{}' group file data from package file to '{}'.", groupGameVersion->getLongName(), destinationGroupFilePath);
 		return false;
 	}
 
@@ -3137,9 +3191,19 @@ bool GameManager::installGroupFile(const std::string & gameVersionID, const std:
 		return {};
 	}
 
-	std::string destinationGroupFilePath(Utilities::joinPaths(directoryPath, GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME));
+	bool isWorldTourGroup = false;
+	std::shared_ptr<GameVersion> groupGameVersion(getGroupGameVersion(gameVersionID));
+	std::shared_ptr<GameVersion> gameVersion(m_gameVersions->getGameVersionWithID(gameVersionID));
+
+	if(gameVersion == nullptr) {
+		spdlog::error("Failed to install group file to missing or invalid game version with ID: '{}'.", gameVersionID);
+		return false;
+	}
+
+	std::filesystem::path destinationGroupFilePath(Utilities::joinPaths(directoryPath, GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME));
 
 	if(!isGroupFileDownloaded(gameVersionID) && !downloadGroupFile(gameVersionID)) {
+		spdlog::error("Failed to install '{}' group file to destination: '{}'.", groupGameVersion->getLongName(), destinationGroupFilePath.string());
 		return false;
 	}
 
@@ -3150,27 +3214,57 @@ bool GameManager::installGroupFile(const std::string & gameVersionID, const std:
 		return false;
 	}
 
-	const GameVersion * groupGameVersion(getGroupGameVersion(gameVersionID));
+	if(!std::filesystem::is_regular_file(std::filesystem::path(groupFilePath))) {
+		if(!gameVersion->isWorldTourGroupSupported()) {
+			spdlog::error("Failed to install group file to '{}', since it does not support the '{}' group file, and the '{}' group file is missing.", gameVersion->getLongName(), WORLD_TOUR_GAME_LONG_NAME, groupGameVersion->getLongName());
+			return false;
+		}
 
-	if(!Utilities::areSymlinksSupported()) {
+		groupFilePath = getWorldTourGroupFilePath();
+		isWorldTourGroup = true;
+
+		if(!std::filesystem::is_regular_file(std::filesystem::path(groupFilePath))) {
+			spdlog::error("Failed to install group file to '{}', since both the '{}' and '{}' group files are missing.", gameVersion->getLongName(), WORLD_TOUR_GAME_LONG_NAME, groupGameVersion->getLongName());
+			return false;
+		}
+	}
+
+	if(std::filesystem::is_regular_file(destinationGroupFilePath) || std::filesystem::is_symlink(destinationGroupFilePath)) {
+		if(!overwrite) {
+			spdlog::error("'{}' group already exists at destination '{}', specify overwrite to replace.", groupGameVersion->getLongName(), destinationGroupFilePath.string());
+			return false;
+		}
+
 		std::error_code errorCode;
-		std::filesystem::copy_file(std::filesystem::path(groupFilePath), std::filesystem::path(destinationGroupFilePath), errorCode);
+		std::filesystem::remove(destinationGroupFilePath, errorCode);
 
 		if(errorCode) {
-			spdlog::error("Failed to copy '{}' group file from '{}' to '{}' with error: '{}'.", groupGameVersion->getLongName(), groupFilePath, destinationGroupFilePath, errorCode.message());
+			spdlog::error("Failed to remove existing '{}' group from destination '{}' with error: {}", groupGameVersion->getLongName(), destinationGroupFilePath.string(), errorCode.message());
+			return false;
+		}
+	}
+
+	if(!Utilities::areSymlinksSupported()) {
+		spdlog::info("Copying '{}' group file from '{}' to '{}'.", isWorldTourGroup ? WORLD_TOUR_GAME_LONG_NAME : groupGameVersion->getLongName(), groupFilePath, destinationGroupFilePath.string());
+
+		std::error_code errorCode;
+		std::filesystem::copy_file(std::filesystem::path(groupFilePath), destinationGroupFilePath, errorCode);
+
+		if(errorCode) {
+			spdlog::error("Failed to copy '{}' group file from '{}' to '{}' with error: '{}'.", isWorldTourGroup ? WORLD_TOUR_GAME_LONG_NAME : groupGameVersion->getLongName(), groupFilePath, destinationGroupFilePath.string(), errorCode.message());
 			return false;
 		}
 
 		return true;
 	}
 
-	spdlog::info("Creating '{}' group file symlink '{}' to target '{}'.", groupGameVersion->getLongName(), GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME, groupFilePath);
+	spdlog::info("Creating '{}' group file symlink '{}' to target '{}' at destination '{}'.", isWorldTourGroup ? WORLD_TOUR_GAME_LONG_NAME : groupGameVersion->getLongName(), GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME, groupFilePath, destinationGroupFilePath.string());
 
 	std::error_code errorCode;
-	std::filesystem::create_symlink(std::filesystem::path(groupFilePath), std::filesystem::path(destinationGroupFilePath), errorCode);
+	std::filesystem::create_symlink(std::filesystem::path(groupFilePath), destinationGroupFilePath, errorCode);
 
 	if(errorCode) {
-		spdlog::error("Failed to create '{}' group file symlink '{}' to target '{}': {}", groupGameVersion->getLongName(), GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME, groupFilePath, errorCode.message());
+		spdlog::error("Failed to create '{}' group file symlink '{}' to target '{}' at destination '{}' with error: {}", isWorldTourGroup ? WORLD_TOUR_GAME_LONG_NAME : groupGameVersion->getLongName(), GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME, groupFilePath, destinationGroupFilePath.string(), errorCode.message());
 		return false;
 	}
 
@@ -3188,32 +3282,55 @@ void GameManager::updateGroupFileSymlinks() {
 		return;
 	}
 
+	spdlog::debug("Updating game installation group file symbolic link targets.");
+
 	for(const std::shared_ptr<GameVersion> & gameVersion : m_gameVersions->getGameVersions()) {
+		if(!gameVersion->hasGroupFile()) {
+			continue;
+		}
+
 		if(!gameVersion->isConfigured()) {
+			spdlog::trace("Skipping unconfigured '{}' game version group file symbolic link target update.", gameVersion->getLongName());
 			continue;
 		}
 
 		std::string groupFilePath(getGroupFilePath(gameVersion->getID()));
 
 		if(groupFilePath.empty()) {
-			spdlog::error("Failed to determine group file path. Are your settings configured correctly?");
-			return;
+			spdlog::error("Failed to determine '{}' group file path. Are your settings configured correctly?", gameVersion->getLongName());
+			continue;
 		}
 
-		const GameVersion * groupGameVersion(getGroupGameVersion(gameVersion->getID()));
+		bool isWorldTourGroup = false;
+		std::shared_ptr<GameVersion> groupGameVersion(getGroupGameVersion(gameVersion->getID()));
 
 		if(!std::filesystem::is_regular_file(std::filesystem::path(groupFilePath))) {
-			spdlog::error("'{}' group file does not exist at path: '{}'.", groupGameVersion->getLongName(), groupFilePath);
-			return;
-		}
-
-		std::filesystem::path gameGroupFilePath(Utilities::joinPaths(gameVersion->getGamePath(), GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME));
-
-		if(std::filesystem::exists(gameGroupFilePath)) {
-			if(std::filesystem::is_regular_file(gameGroupFilePath) || !std::filesystem::is_symlink(gameGroupFilePath)) {
+			if(!gameVersion->isWorldTourGroupSupported()) {
+				spdlog::error("'{}' group file does not exist at path: '{}' and '{}' group is not supported, skipping '{}' game installation symbolic link target update.", groupGameVersion->getLongName(), groupFilePath, WORLD_TOUR_GAME_LONG_NAME, gameVersion->getLongName());
 				continue;
 			}
 
+			spdlog::trace("'{}' group file does not exist at path: '{}', checking for '{}' group file.", groupGameVersion->getLongName(), groupFilePath, WORLD_TOUR_GAME_LONG_NAME);
+
+			groupFilePath = getWorldTourGroupFilePath();
+			isWorldTourGroup = true;
+
+			if(!std::filesystem::is_regular_file(std::filesystem::path(groupFilePath))) {
+				spdlog::error("'{}' group file does not exist at path: '{}', skipping '{}' game installation symbolic link target update.", WORLD_TOUR_GAME_LONG_NAME, groupFilePath, gameVersion->getLongName());
+				continue;
+			}
+		}
+
+		spdlog::trace("Analyzing '{}' game installation group file symblic link target.", gameVersion->getLongName());
+
+		std::filesystem::path gameGroupFilePath(Utilities::joinPaths(gameVersion->getGamePath(), GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME));
+
+		if(std::filesystem::is_regular_file(gameGroupFilePath) && !std::filesystem::is_symlink(gameGroupFilePath)) {
+			spdlog::trace("'{}' has local group file, no symbolic link target update required.", gameVersion->getLongName());
+			continue;
+		}
+
+		if(std::filesystem::is_symlink(gameGroupFilePath)) {
 			std::error_code errorCode;
 			std::filesystem::path currentGroupFileSymlinkTargetFilePath(std::filesystem::read_symlink(gameGroupFilePath, errorCode));
 
@@ -3222,15 +3339,35 @@ void GameManager::updateGroupFileSymlinks() {
 				continue;
 			}
 
-			bool groupFileSymbolicLinkTargetMatches = std::filesystem::equivalent(std::filesystem::path(groupFilePath), currentGroupFileSymlinkTargetFilePath, errorCode);
+			if(std::filesystem::exists(gameGroupFilePath)) {
+				bool groupFileSymbolicLinkTargetMatches = std::filesystem::equivalent(std::filesystem::path(groupFilePath), currentGroupFileSymlinkTargetFilePath, errorCode);
 
-			if(errorCode) {
-				spdlog::warn("Failed compare '{}' game version group file symbolic link target to group file path with error: {}", gameVersion->getLongName(), errorCode.message());
-				continue;
+				if(!errorCode) {
+					if(groupFileSymbolicLinkTargetMatches) {
+						spdlog::trace("'{}' game version group file symbolic link target already already set to '{}' group.", gameVersion->getLongName(), isWorldTourGroup ? WORLD_TOUR_GAME_LONG_NAME : groupGameVersion->getLongName());
+						continue;
+					}
+
+					if(gameVersion->isWorldTourGroupSupported() && Utilities::areStringsEqualIgnoreCase(groupGameVersion->getID(), GameVersion::ORIGINAL_ATOMIC_EDITION.getID())) {
+						bool worldTourGroupFileSymbolicLinkTargetMatches = std::filesystem::equivalent(std::filesystem::path(getWorldTourGroupFilePath()), currentGroupFileSymlinkTargetFilePath, errorCode);
+
+						if(!errorCode) {
+							if(worldTourGroupFileSymbolicLinkTargetMatches) {
+								spdlog::trace("'{}' game version group file symbolic link target alternatively already already set to '{}' group.", gameVersion->getLongName(), WORLD_TOUR_GAME_LONG_NAME);
+								continue;
+							}
+						}
+						else {
+							spdlog::warn("Failed to compare '{}' game version group file symbolic link target to group file path with error: {}", gameVersion->getLongName(), errorCode.message());
+						}
+					}
+				}
+				else {
+					spdlog::warn("Failed to compare '{}' game version group file symbolic link target to group file path with error: {}", gameVersion->getLongName(), errorCode.message());
+				}
 			}
-
-			if(groupFileSymbolicLinkTargetMatches) {
-				continue;
+			else {
+				spdlog::trace("'{}' game installation group file symbolic link target '{}' does not exist.", gameVersion->getLongName(), currentGroupFileSymlinkTargetFilePath.string());
 			}
 
 			spdlog::info("Updating '{}' game version group file symbolic link target from '{}' to '{}'.", gameVersion->getLongName(), currentGroupFileSymlinkTargetFilePath.string(), groupFilePath);
