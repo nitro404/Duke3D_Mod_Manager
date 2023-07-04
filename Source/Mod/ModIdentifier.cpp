@@ -10,6 +10,7 @@
 #include <spdlog/spdlog.h>
 
 #include <array>
+#include <sstream>
 #include <string_view>
 #include <vector>
 
@@ -75,6 +76,24 @@ ModIdentifier & ModIdentifier::operator = (const ModIdentifier & m) {
 }
 
 ModIdentifier::~ModIdentifier() = default;
+
+bool ModIdentifier::isModIdentifier() const {
+	return !m_name.empty() &&
+		   !m_version.has_value() &&
+		   !m_versionType.has_value();
+}
+
+bool ModIdentifier::isModVersionIdentifier() const {
+	return !m_name.empty() &&
+		   m_version.has_value() &&
+		   !m_versionType.has_value();
+}
+
+bool ModIdentifier::isModVersionTypeIdentifier() const {
+	return !m_name.empty() &&
+		   m_version.has_value() &&
+		   m_versionType.has_value();
+}
 
 const std::string & ModIdentifier::getName() const {
 	return m_name;
@@ -241,6 +260,26 @@ std::unique_ptr<ModIdentifier> ModIdentifier::parseFrom(const rapidjson::Value &
 	return std::unique_ptr<ModIdentifier>(new ModIdentifier(name, optionalVersion, optionalVersionType, downloadedTimePoint.value()));
 }
 
+std::string ModIdentifier::toString() const {
+	std::stringstream modIdentifierStream;
+
+	modIdentifierStream << m_name;
+
+	if(m_version.has_value()) {
+		if(!m_version.value().empty()) {
+			modIdentifierStream << " " << m_version.value();
+		}
+
+		if(m_versionType.has_value()) {
+			if(!m_versionType.value().empty()) {
+				modIdentifierStream << " " << m_versionType.value();
+			}
+		}
+	}
+
+	return modIdentifierStream.str();
+}
+
 bool ModIdentifier::isValid() const {
 	if(m_name.empty()) {
 		return false;
@@ -260,8 +299,7 @@ bool ModIdentifier::isValid(const ModIdentifier * m) {
 bool ModIdentifier::operator == (const ModIdentifier & m) const {
 	if(!Utilities::areStringsEqualIgnoreCase(m_name, m.m_name) ||
 	   m_version.has_value() != m.m_version.has_value() ||
-	   m_versionType.has_value() != m.m_versionType.has_value() ||
-	   m_createdTimePoint != m.m_createdTimePoint) {
+	   m_versionType.has_value() != m.m_versionType.has_value()) {
 		return false;
 	}
 

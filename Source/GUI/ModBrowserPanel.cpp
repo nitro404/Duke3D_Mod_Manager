@@ -988,10 +988,45 @@ void ModBrowserPanel::onModGameVersionSelected(wxCommandEvent & event) {
 
 void ModBrowserPanel::onModListRightClicked(wxMouseEvent & event) {
 	std::shared_ptr<OrganizedModCollection> organizedMods(m_modManager->getOrganizedMods());
+	std::shared_ptr<FavouriteModCollection> favouriteMods(m_modManager->getFavouriteMods());
 
 	m_modPopupMenuItemIndex = m_modListBox->HitTest(event.GetPosition());
-	m_modListAddFavouriteMenuItem->Enable(m_modPopupMenuItemIndex != wxNOT_FOUND && organizedMods->shouldDisplayMods());
-	m_modListRemoveFavouriteMenuItem->Enable(m_modPopupMenuItemIndex != wxNOT_FOUND && organizedMods->shouldDisplayFavouriteMods());
+
+	if(m_modPopupMenuItemIndex != wxNOT_FOUND) {
+		if(m_searchQuery.empty()) {
+			if(organizedMods->shouldDisplayMods()) {
+				std::shared_ptr<Mod> mod(organizedMods->getMod(m_modPopupMenuItemIndex));
+				bool hasModFavourited = favouriteMods->hasFavourite(mod->getName());
+
+				m_modListAddFavouriteMenuItem->Enable(!hasModFavourited);
+				m_modListRemoveFavouriteMenuItem->Enable(hasModFavourited);
+			}
+			else if(organizedMods->shouldDisplayFavouriteMods()) {
+				m_modListAddFavouriteMenuItem->Enable(false);
+				m_modListRemoveFavouriteMenuItem->Enable(true);
+			}
+			else {
+				m_modListAddFavouriteMenuItem->Enable(false);
+				m_modListRemoveFavouriteMenuItem->Enable(false);
+			}
+		}
+		else {
+			if(m_modPopupMenuItemIndex < m_modMatches.size()) {
+				bool hasSearchResultFavourited = favouriteMods->hasFavourite(m_modMatches[m_modPopupMenuItemIndex]);
+
+				m_modListAddFavouriteMenuItem->Enable(!hasSearchResultFavourited);
+				m_modListRemoveFavouriteMenuItem->Enable(hasSearchResultFavourited);
+			}
+			else {
+				m_modListAddFavouriteMenuItem->Enable(false);
+				m_modListRemoveFavouriteMenuItem->Enable(false);
+			}
+		}
+	}
+	else {
+		m_modListAddFavouriteMenuItem->Enable(false);
+		m_modListRemoveFavouriteMenuItem->Enable(false);
+	}
 
 	m_modListBox->PopupMenu(m_modListPopupMenu.get());
 }
@@ -1012,6 +1047,7 @@ void ModBrowserPanel::onModVersionTypeListRightClicked(wxMouseEvent & event) {
 
 void ModBrowserPanel::onModPopupMenuItemPressed(wxCommandEvent & event) {
 	std::shared_ptr<OrganizedModCollection> organizedMods(m_modManager->getOrganizedMods());
+	std::shared_ptr<FavouriteModCollection> favouriteMods(m_modManager->getFavouriteMods());
 
 	if(m_modPopupMenuItemIndex == wxNOT_FOUND) {
 		return;
@@ -1019,22 +1055,52 @@ void ModBrowserPanel::onModPopupMenuItemPressed(wxCommandEvent & event) {
 
 	if(event.GetId() == m_modListAddFavouriteMenuItem->GetId()) {
 		if(m_searchQuery.empty()) {
-			if(m_modPopupMenuItemIndex < organizedMods->numberOfMods()) {
-				m_modManager->getFavouriteMods()->addFavourite(ModIdentifier(organizedMods->getMod(m_modPopupMenuItemIndex)->getName()));
+			if(organizedMods->shouldDisplayMods()) {
+				if(m_modPopupMenuItemIndex < organizedMods->numberOfMods()) {
+					if(favouriteMods->addFavourite(organizedMods->getMod(m_modPopupMenuItemIndex)->getName())) {
+						spdlog::info("Added '{}' to favoruite mods list.", organizedMods->getMod(m_modPopupMenuItemIndex)->getName());
+					}
+				}
 			}
 		}
 		else {
 			if(m_modPopupMenuItemIndex < m_modMatches.size()) {
-				m_modManager->getFavouriteMods()->addFavourite(m_modMatches[m_modPopupMenuItemIndex]);
+				std::string modMatchString(m_modMatches[m_modPopupMenuItemIndex].toString());
+
+				if(favouriteMods->addFavourite(m_modMatches[m_modPopupMenuItemIndex])) {
+					spdlog::info("Added '{}' to favourite mods list.", modMatchString);
+				}
 			}
 		}
 	}
 	else if(event.GetId() == m_modListRemoveFavouriteMenuItem->GetId()) {
-		if(m_modPopupMenuItemIndex >= organizedMods->numberOfFavouriteMods()) {
-			return;
-		}
+		if(m_searchQuery.empty()) {
+			if(organizedMods->shouldDisplayMods()) {
+				if(m_modPopupMenuItemIndex < organizedMods->numberOfMods()) {
+					if(favouriteMods->removeFavourite(organizedMods->getMod(m_modPopupMenuItemIndex)->getName())) {
+						spdlog::info("Removed '{}' from favourite mods list.", organizedMods->getMod(m_modPopupMenuItemIndex)->getName());
+					}
+				}
+			}
+			else if(organizedMods->shouldDisplayFavouriteMods()) {
+				if(m_modPopupMenuItemIndex < organizedMods->numberOfFavouriteMods()) {
+					std::shared_ptr<ModIdentifier> favouriteMod(organizedMods->getFavouriteMod(m_modPopupMenuItemIndex));
 
-		m_modManager->getFavouriteMods()->removeFavourite(m_modPopupMenuItemIndex);
+					if(favouriteMods->removeFavourite(*favouriteMod)) {
+						spdlog::info("Removed '{}' from favourite mods list.", favouriteMod->toString());
+					}
+				}
+			}
+		}
+		else {
+			if(m_modPopupMenuItemIndex < m_modMatches.size()) {
+				std::string modMatchString(m_modMatches[m_modPopupMenuItemIndex].toString());
+
+				if(favouriteMods->removeFavourite(m_modMatches[m_modPopupMenuItemIndex])) {
+					spdlog::info("Removed '{}' from favourite mods list.", modMatchString);
+				}
+			}
+		}
 	}
 }
 

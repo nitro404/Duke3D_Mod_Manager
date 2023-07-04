@@ -41,6 +41,8 @@ public:
 	rapidjson::Value toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const;
 	static std::unique_ptr<ModIdentifier> parseFrom(const rapidjson::Value & modIdentifierValue);
 
+	std::string toString() const;
+
 	bool isValid() const;
 	static bool isValid(const ModIdentifier * m);
 
