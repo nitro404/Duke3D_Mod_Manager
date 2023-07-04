@@ -2277,7 +2277,7 @@ std::string GameManager::getDuke3d_w32DownloadURL(DeviceInformationBridge::Opera
 	return latestFullDownloadIterator->downloadURL;
 }
 
-bool GameManager::installGame(const GameVersion & gameVersion, const std::string & destinationDirectoryPath, bool useFallback, bool overwrite) {
+bool GameManager::installGame(const std::string & gameVersionID, const std::string & destinationDirectoryPath, bool useFallback, bool overwrite) {
 	if(!m_initialized) {
 		spdlog::error("Game manager not initialized!");
 		return false;
@@ -2286,6 +2286,13 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 	HTTPService * httpService = HTTPService::getInstance();
 
 	if(!httpService->isInitialized()) {
+		return false;
+	}
+
+	std::shared_ptr<GameVersion> gameVersion(m_gameVersions->getGameVersionWithID(gameVersionID));
+
+	if(gameVersion == nullptr) {
+		spdlog::error("Cannot install game version with missing or invalid ID: '{}'.", gameVersionID);
 		return false;
 	}
 
@@ -2304,8 +2311,8 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		return false;
 	}
 
-	if(!isGameDownloadable(gameVersion.getID())) {
-		spdlog::error("'{}' is not downloadable.", gameVersion.getLongName());
+	if(!isGameDownloadable(gameVersion->getID())) {
+		spdlog::error("'{}' is not downloadable.", gameVersion->getLongName());
 		return false;
 	}
 
@@ -2315,48 +2322,48 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 	if(useFallback) {
 		spdlog::info("Using fallback Duke Nukem 3D game files download URL.");
 
-		gameDownloadURL = getFallbackGameDownloadURL(gameVersion.getID());
-		expectedGameDownloadSHA1 = getFallbackGameDownloadSHA1(gameVersion.getID());
+		gameDownloadURL = getFallbackGameDownloadURL(gameVersion->getID());
+		expectedGameDownloadSHA1 = getFallbackGameDownloadSHA1(gameVersion->getID());
 
-		installStatusChanged(fmt::format("Re-trying '{}' game files download using fallback URL.", gameVersion.getLongName()));
+		installStatusChanged(fmt::format("Re-trying '{}' game files download using fallback URL.", gameVersion->getLongName()));
 	}
 	else {
-		gameDownloadURL = getGameDownloadURL(gameVersion.getID());
-		expectedGameDownloadSHA1 = getGameDownloadSHA1(gameVersion.getID());
+		gameDownloadURL = getGameDownloadURL(gameVersion->getID());
+		expectedGameDownloadSHA1 = getGameDownloadSHA1(gameVersion->getID());
 
-		installStatusChanged(fmt::format("Downloading '{}' game files.", gameVersion.getLongName()));
+		installStatusChanged(fmt::format("Downloading '{}' game files.", gameVersion->getLongName()));
 	}
 
 	if(gameDownloadURL.empty()) {
-		spdlog::error("Failed to determine download URL for '{}'.", gameVersion.getLongName());
+		spdlog::error("Failed to determine download URL for '{}'.", gameVersion->getLongName());
 		return false;
 	}
 
-	spdlog::info("Downloading '{}' game files package from: '{}'...", gameVersion.getLongName(), gameDownloadURL);
+	spdlog::info("Downloading '{}' game files package from: '{}'...", gameVersion->getLongName(), gameDownloadURL);
 
 	std::shared_ptr<HTTPRequest> request(httpService->createRequest(HTTPRequest::Method::Get, gameDownloadURL));
 
-	boost::signals2::connection progressConnection(request->progress.connect(std::bind(&GameManager::onGameDownloadProgress, this, gameVersion, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
+	boost::signals2::connection progressConnection(request->progress.connect(std::bind(&GameManager::onGameDownloadProgress, this, *gameVersion, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
 
 	std::shared_ptr<HTTPResponse> response(httpService->sendRequestAndWait(request));
 
 	progressConnection.disconnect();
 
 	if(response->isFailure()) {
-		spdlog::error("Failed to download '{}' game files package with error: {}", gameVersion.getLongName(), response->getErrorMessage());
+		spdlog::error("Failed to download '{}' game files package with error: {}", gameVersion->getLongName(), response->getErrorMessage());
 
 		if(!useFallback) {
-			return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
+			return installGame(gameVersion->getID(), destinationDirectoryPath, true, overwrite);
 		}
 
 		return false;
 	}
 	else if(response->isFailureStatusCode()) {
 		std::string statusCodeName(HTTPUtilities::getStatusCodeName(response->getStatusCode()));
-		spdlog::error("Failed to download '{}' game files package ({}{})!", gameVersion.getLongName(), response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
+		spdlog::error("Failed to download '{}' game files package ({}{})!", gameVersion->getLongName(), response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
 
 		if(!useFallback) {
-			return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
+			return installGame(gameVersion->getID(), destinationDirectoryPath, true, overwrite);
 		}
 
 		return false;
@@ -2365,18 +2372,18 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 	std::string expectedArchiveMD5Hash(response->getHeaderValue("Content-MD5"));
 
 	if(!expectedArchiveMD5Hash.empty()) {
-		installStatusChanged(fmt::format("Verifying '{}' game files MD5 hash.", gameVersion.getLongName()));
+		installStatusChanged(fmt::format("Verifying '{}' game files MD5 hash.", gameVersion->getLongName()));
 
 		std::string actualArchiveMD5Hash(response->getBodyMD5(ByteBuffer::HashFormat::Base64));
 
 		if(Utilities::areStringsEqual(actualArchiveMD5Hash, expectedArchiveMD5Hash)) {
-			spdlog::debug("Validated MD5 hash of '{}' game files package.", gameVersion.getLongName());
+			spdlog::debug("Validated MD5 hash of '{}' game files package.", gameVersion->getLongName());
 		}
 		else {
-			spdlog::error("Failed to validate MD5 hash of '{}' game files package! Expected base 64 MD5 hash: '{}', actual: '{}'.", gameVersion.getLongName(), expectedArchiveMD5Hash, actualArchiveMD5Hash);
+			spdlog::error("Failed to validate MD5 hash of '{}' game files package! Expected base 64 MD5 hash: '{}', actual: '{}'.", gameVersion->getLongName(), expectedArchiveMD5Hash, actualArchiveMD5Hash);
 
 			if(!useFallback) {
-				return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
+				return installGame(gameVersion->getID(), destinationDirectoryPath, true, overwrite);
 			}
 
 			return false;
@@ -2384,44 +2391,44 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 	}
 
 	if(!expectedGameDownloadSHA1.empty()) {
-		installStatusChanged(fmt::format("Verifying '{}' game files SHA1 hash.", gameVersion.getLongName()));
+		installStatusChanged(fmt::format("Verifying '{}' game files SHA1 hash.", gameVersion->getLongName()));
 
 		std::string actualGameDownloadSHA1(response->getBodySHA1());
 
 		if(Utilities::areStringsEqual(expectedGameDownloadSHA1, actualGameDownloadSHA1)) {
-			spdlog::debug("Validated SHA1 hash of '{}' game files package.", gameVersion.getLongName());
+			spdlog::debug("Validated SHA1 hash of '{}' game files package.", gameVersion->getLongName());
 		}
 		else {
-			spdlog::error("Failed to validate SHA1 hash of '{}' game files package! Expected SHA1 hash: '{}', actual: '{}'.", gameVersion.getLongName(), expectedGameDownloadSHA1, actualGameDownloadSHA1);
+			spdlog::error("Failed to validate SHA1 hash of '{}' game files package! Expected SHA1 hash: '{}', actual: '{}'.", gameVersion->getLongName(), expectedGameDownloadSHA1, actualGameDownloadSHA1);
 
 			return false;
 		}
 	}
 
-	spdlog::info("'{}' game files downloaded successfully after {} ms, extracting to '{}'...", gameVersion.getLongName(), response->getRequestDuration().value().count(), destinationDirectoryPath);
+	spdlog::info("'{}' game files downloaded successfully after {} ms, extracting to '{}'...", gameVersion->getLongName(), response->getRequestDuration().value().count(), destinationDirectoryPath);
 
-	installStatusChanged(fmt::format("Extracting '{}' game files to destination directory.", gameVersion.getLongName()));
+	installStatusChanged(fmt::format("Extracting '{}' game files to destination directory.", gameVersion->getLongName()));
 
 	std::unique_ptr<Archive> gameFilesArchive(ArchiveFactoryRegistry::getInstance()->createArchiveFrom(response->transferBody(), std::string(Utilities::getFileExtension(gameDownloadURL))));
 
 	if(gameFilesArchive == nullptr) {
-		spdlog::error("Failed to create archive handle from '{}' game files archive package!", gameVersion.getLongName());
+		spdlog::error("Failed to create archive handle from '{}' game files archive package!", gameVersion->getLongName());
 
 		if(!useFallback) {
-			return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
+			return installGame(gameVersion->getID(), destinationDirectoryPath, true, overwrite);
 		}
 
 		return false;
 	}
 
-	std::shared_ptr<GameVersion> groupGameVersion(getGroupGameVersion(gameVersion.getID()));
-	std::string groupFilePath(getGroupFilePath(gameVersion.getID()));
+	std::shared_ptr<GameVersion> groupGameVersion(getGroupGameVersion(gameVersion->getID()));
+	std::string groupFilePath(getGroupFilePath(gameVersion->getID()));
 
-	bool isLameDuke = Utilities::areStringsEqualIgnoreCase(gameVersion.getID(), GameVersion::LAMEDUKE.getID());
-	bool isBetaVersion = Utilities::areStringsEqualIgnoreCase(gameVersion.getID(), GameVersion::ORIGINAL_BETA_VERSION.getID());
-	bool isRegularVersion = Utilities::areStringsEqualIgnoreCase(gameVersion.getID(), GameVersion::ORIGINAL_REGULAR_VERSION.getID());
-	bool isPlutoniumPak = Utilities::areStringsEqualIgnoreCase(gameVersion.getID(), GameVersion::ORIGINAL_PLUTONIUM_PAK.getID());
-	bool isAtomicEdition = Utilities::areStringsEqualIgnoreCase(gameVersion.getID(), GameVersion::ORIGINAL_ATOMIC_EDITION.getID());
+	bool isLameDuke = Utilities::areStringsEqualIgnoreCase(gameVersion->getID(), GameVersion::LAMEDUKE.getID());
+	bool isBetaVersion = Utilities::areStringsEqualIgnoreCase(gameVersion->getID(), GameVersion::ORIGINAL_BETA_VERSION.getID());
+	bool isRegularVersion = Utilities::areStringsEqualIgnoreCase(gameVersion->getID(), GameVersion::ORIGINAL_REGULAR_VERSION.getID());
+	bool isPlutoniumPak = Utilities::areStringsEqualIgnoreCase(gameVersion->getID(), GameVersion::ORIGINAL_PLUTONIUM_PAK.getID());
+	bool isAtomicEdition = Utilities::areStringsEqualIgnoreCase(gameVersion->getID(), GameVersion::ORIGINAL_ATOMIC_EDITION.getID());
 	bool isPlutoniumPakOrAtomicEdition = isPlutoniumPak || isAtomicEdition;
 	bool isOriginalGame = isLameDuke || isBetaVersion || isRegularVersion || isPlutoniumPakOrAtomicEdition;
 	bool isOriginalGameFallback = useFallback && isOriginalGame;
@@ -2433,7 +2440,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 				return true;
 			}
 
-			spdlog::error("'{}' fallback game files package file '{}' is missing required '{}' file entry!", gameVersion.getLongName(), Utilities::getFileName(gameDownloadURL), gameFileInfo.fileName);
+			spdlog::error("'{}' fallback game files package file '{}' is missing required '{}' file entry!", gameVersion->getLongName(), Utilities::getFileName(gameDownloadURL), gameFileInfo.fileName);
 			return false;
 		}
 
@@ -2441,7 +2448,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		std::unique_ptr<ByteBuffer> gameFileData(gameFileEntry->getData());
 
 		if(gameFileData == nullptr) {
-			spdlog::error("Failed to obtain '{}' fallback '{}' game file data from game files package file '{}'.", gameVersion.getLongName(), gameFileInfo.fileName, Utilities::getFileName(gameDownloadURL));
+			spdlog::error("Failed to obtain '{}' fallback '{}' game file data from game files package file '{}'.", gameVersion->getLongName(), gameFileInfo.fileName, Utilities::getFileName(gameDownloadURL));
 			return false;
 		}
 
@@ -2457,7 +2464,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 
 		if(!gameFileSHA1Verified) {
 			if(gameFileInfo.hashes.size() == 1) {
-				spdlog::error("'{}' '{}' game file SHA1 hash verification failed. Calculated '{}', but expected: '{}'.", gameVersion.getLongName(), gameFileInfo.fileName, calculatedGameFileSHA1, gameFileInfo.hashes.front());
+				spdlog::error("'{}' '{}' game file SHA1 hash verification failed. Calculated '{}', but expected: '{}'.", gameVersion->getLongName(), gameFileInfo.fileName, calculatedGameFileSHA1, gameFileInfo.hashes.front());
 			}
 			else {
 				std::stringstream gameFileHashesStream;
@@ -2470,7 +2477,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 					gameFileHashesStream << "'" << gameFileSHA1 << "'";
 				}
 
-				spdlog::error("'{}' '{}' game file SHA1 hash verification failed. Calculated '{}', but expected one of: {}.", gameVersion.getLongName(), gameFileInfo.fileName, calculatedGameFileSHA1, gameFileHashesStream.str());
+				spdlog::error("'{}' '{}' game file SHA1 hash verification failed. Calculated '{}', but expected one of: {}.", gameVersion->getLongName(), gameFileInfo.fileName, calculatedGameFileSHA1, gameFileHashesStream.str());
 			}
 
 			return false;
@@ -2530,7 +2537,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		std::string gameFileDestinationPath(Utilities::joinPaths(destinationDirectoryPath, gameFileInfo.fileName));
 
 		if(!gameFileData->writeTo(gameFileDestinationPath, overwrite)) {
-			spdlog::error("Failed to write '{}' '{}' game file data from game files package file '{}' to '{}'.", gameVersion.getLongName(), gameFileInfo.fileName, Utilities::getFileName(gameDownloadURL), gameFileDestinationPath);
+			spdlog::error("Failed to write '{}' '{}' game file data from game files package file '{}' to '{}'.", gameVersion->getLongName(), gameFileInfo.fileName, Utilities::getFileName(gameDownloadURL), gameFileDestinationPath);
 			return false;
 		}
 
@@ -2543,7 +2550,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 			for(const GameFileInformation & gameFileInfo : LAMEDUKE_GAME_FILE_INFO_LIST) {
 				if(!extractGameFileFunction(std::shared_ptr<ArchiveEntry>(gameFilesArchive->getFirstEntryWithName(gameFileInfo.fileName, true)), gameFileInfo)) {
 					if(!useFallback) {
-						return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
+						return installGame(gameVersion->getID(), destinationDirectoryPath, true, overwrite);
 					}
 
 					return false;
@@ -2554,7 +2561,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 			for(const GameFileInformation & gameFileInfo : BETA_VERSION_GAME_FILE_INFO_LIST) {
 				if(!extractGameFileFunction(std::shared_ptr<ArchiveEntry>(gameFilesArchive->getFirstEntryWithName(gameFileInfo.fileName, true)), gameFileInfo)) {
 					if(!useFallback) {
-						return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
+						return installGame(gameVersion->getID(), destinationDirectoryPath, true, overwrite);
 					}
 
 					return false;
@@ -2565,7 +2572,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 			for(const GameFileInformation & gameFileInfo : REGULAR_VERSION_GAME_FILE_INFO_LIST) {
 				if(!extractGameFileFunction(std::shared_ptr<ArchiveEntry>(gameFilesArchive->getFirstEntryWithName(gameFileInfo.fileName, true)), gameFileInfo)) {
 					if(!useFallback) {
-						return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
+						return installGame(gameVersion->getID(), destinationDirectoryPath, true, overwrite);
 					}
 
 					return false;
@@ -2576,7 +2583,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 			for(const GameFileInformation & gameFileInfo : PLUTONIUM_PAK_GAME_FILE_INFO_LIST) {
 				if(!extractGameFileFunction(std::shared_ptr<ArchiveEntry>(gameFilesArchive->getFirstEntryWithName(gameFileInfo.fileName, true)), gameFileInfo)) {
 					if(!useFallback) {
-						return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
+						return installGame(gameVersion->getID(), destinationDirectoryPath, true, overwrite);
 					}
 
 					return false;
@@ -2587,7 +2594,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 			for(const GameFileInformation & gameFileInfo : ATOMIC_EDITION_GAME_FILE_INFO_LIST) {
 				if(!extractGameFileFunction(std::shared_ptr<ArchiveEntry>(gameFilesArchive->getFirstEntryWithName(gameFileInfo.fileName, true)), gameFileInfo)) {
 					if(!useFallback) {
-						return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
+						return installGame(gameVersion->getID(), destinationDirectoryPath, true, overwrite);
 					}
 
 					return false;
@@ -2596,14 +2603,14 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		}
 	}
 	else {
-		if(Utilities::areStringsEqualIgnoreCase(gameVersion.getID(), GameVersion::DUKE3D_W32.getID())) {
+		if(Utilities::areStringsEqualIgnoreCase(gameVersion->getID(), GameVersion::DUKE3D_W32.getID())) {
 			std::shared_ptr<ArchiveEntry> gameExecutableArchiveEntry(gameFilesArchive->getFirstEntryWithName("duke3d_w32.exe", true));
 
 			if(gameExecutableArchiveEntry == nullptr || !gameExecutableArchiveEntry->isFile()) {
-				spdlog::error("Failed to locate '{}' game executable in game files archive package.", gameVersion.getLongName());
+				spdlog::error("Failed to locate '{}' game executable in game files archive package.", gameVersion->getLongName());
 
 				if(!useFallback) {
-					return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
+					return installGame(gameVersion->getID(), destinationDirectoryPath, true, overwrite);
 				}
 
 				return false;
@@ -2612,10 +2619,10 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 			std::string gameFilesBasePath(Utilities::getBasePath(gameExecutableArchiveEntry->getPath()));
 
 			if(gameFilesArchive->extractAllEntriesInSubdirectory(destinationDirectoryPath, gameFilesBasePath, true, true, overwrite) == 0) {
-				spdlog::error("Failed to extract '{}' game files from subdirectory '{}' in archive package to '{}'.", gameVersion.getLongName(), gameFilesBasePath, destinationDirectoryPath);
+				spdlog::error("Failed to extract '{}' game files from subdirectory '{}' in archive package to '{}'.", gameVersion->getLongName(), gameFilesBasePath, destinationDirectoryPath);
 
 				if(!useFallback) {
-					return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
+					return installGame(gameVersion->getID(), destinationDirectoryPath, true, overwrite);
 				}
 
 				return false;
@@ -2642,10 +2649,10 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		}
 		else {
 			if(gameFilesArchive->extractAllEntries(destinationDirectoryPath, true) == 0) {
-				spdlog::error("Failed to extract '{}' game files archive package to '{}'.", gameVersion.getLongName(), destinationDirectoryPath);
+				spdlog::error("Failed to extract '{}' game files archive package to '{}'.", gameVersion->getLongName(), destinationDirectoryPath);
 
 				if(!useFallback) {
-					return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
+					return installGame(gameVersion->getID(), destinationDirectoryPath, true, overwrite);
 				}
 
 				return false;
@@ -2653,7 +2660,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		}
 	}
 
-	if(Utilities::areStringsEqualIgnoreCase(gameVersion.getID(), GameVersion::JFDUKE3D.getID())) {
+	if(Utilities::areStringsEqualIgnoreCase(gameVersion->getID(), GameVersion::JFDUKE3D.getID())) {
 		std::filesystem::directory_entry jfDuke3DSubdirectory;
 
 		for(const std::filesystem::directory_entry & entry : std::filesystem::directory_iterator(std::filesystem::path(destinationDirectoryPath))) {
@@ -2671,7 +2678,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 				std::string currentEntryPath(entry.path().string());
 				std::string newEntryPath(Utilities::joinPaths(destinationDirectoryPath, currentEntryPath.substr(currentEntryPath.find(jfDuke3DSubdirectoryPath) + jfDuke3DSubdirectoryPath.length())));
 
-				spdlog::debug("Moving '{}' file '{}' to parent directory...", gameVersion.getLongName(), Utilities::getFileName(currentEntryPath));
+				spdlog::debug("Moving '{}' file '{}' to parent directory...", gameVersion->getLongName(), Utilities::getFileName(currentEntryPath));
 
 				std::filesystem::rename(std::filesystem::path(currentEntryPath), std::filesystem::path(newEntryPath), errorCode);
 
@@ -2680,12 +2687,12 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 				}
 			}
 
-			spdlog::debug("Removing empty '{}' subdirectory: '{}'...", gameVersion.getLongName(), Utilities::getFileName(jfDuke3DSubdirectoryPath));
+			spdlog::debug("Removing empty '{}' subdirectory: '{}'...", gameVersion->getLongName(), Utilities::getFileName(jfDuke3DSubdirectoryPath));
 
 			std::filesystem::remove(std::filesystem::path(jfDuke3DSubdirectoryPath), errorCode);
 
 			if(errorCode) {
-				spdlog::error("Failed to remove '{}' subdirectory '{}' with error: {}", gameVersion.getLongName(), jfDuke3DSubdirectoryPath, errorCode.message());
+				spdlog::error("Failed to remove '{}' subdirectory '{}' with error: {}", gameVersion->getLongName(), jfDuke3DSubdirectoryPath, errorCode.message());
 			}
 		}
 	}
@@ -2700,7 +2707,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 					return true;
 				}
 
-				spdlog::error("Failed to calculate '{}' '{}' game file SHA1.", gameVersion.getLongName(), gameFileInfo.fileName);
+				spdlog::error("Failed to calculate '{}' '{}' game file SHA1.", gameVersion->getLongName(), gameFileInfo.fileName);
 
 				return false;
 			}
@@ -2714,7 +2721,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 
 			if(!gameFileSHA1Verified) {
 				if(gameFileInfo.hashes.size() == 1) {
-					spdlog::error("'{}' '{}' game file SHA1 hash verification failed. Calculated '{}', but expected: '{}'.", gameVersion.getLongName(), gameFileInfo.fileName, calculatedGameFileSHA1, gameFileInfo.hashes.front());
+					spdlog::error("'{}' '{}' game file SHA1 hash verification failed. Calculated '{}', but expected: '{}'.", gameVersion->getLongName(), gameFileInfo.fileName, calculatedGameFileSHA1, gameFileInfo.hashes.front());
 				}
 				else {
 					std::stringstream gameFileHashesStream;
@@ -2727,7 +2734,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 						gameFileHashesStream << "'" << gameFileSHA1 << "'";
 					}
 
-					spdlog::error("'{}' '{}' game file SHA1 hash verification failed. Calculated '{}', but expected one of: {}.", gameVersion.getLongName(), gameFileInfo.fileName, calculatedGameFileSHA1, gameFileHashesStream.str());
+					spdlog::error("'{}' '{}' game file SHA1 hash verification failed. Calculated '{}', but expected one of: {}.", gameVersion->getLongName(), gameFileInfo.fileName, calculatedGameFileSHA1, gameFileHashesStream.str());
 				}
 
 				return false;
@@ -2736,14 +2743,14 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 			return true;
 		});
 
-		installStatusChanged(fmt::format("Verifying '{}' game files SHA1 hashes.", gameVersion.getLongName()));
+		installStatusChanged(fmt::format("Verifying '{}' game files SHA1 hashes.", gameVersion->getLongName()));
 
 		if(!useFallback) {
 			if(isBetaVersion) {
 				for(const GameFileInformation & gameFileInfo : BETA_VERSION_GAME_FILE_INFO_LIST) {
 					if(!gameFileSHA1VerificationFunction(gameFileInfo)) {
 						if(!useFallback) {
-							return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
+							return installGame(gameVersion->getID(), destinationDirectoryPath, true, overwrite);
 						}
 
 						return false;
@@ -2754,7 +2761,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 				for(const GameFileInformation & gameFileInfo : REGULAR_VERSION_GAME_FILE_INFO_LIST) {
 					if(!gameFileSHA1VerificationFunction(gameFileInfo)) {
 						if(!useFallback) {
-							return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
+							return installGame(gameVersion->getID(), destinationDirectoryPath, true, overwrite);
 						}
 
 						return false;
@@ -2765,7 +2772,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 				for(const GameFileInformation & gameFileInfo : PLUTONIUM_PAK_GAME_FILE_INFO_LIST) {
 					if(!gameFileSHA1VerificationFunction(gameFileInfo)) {
 						if(!useFallback) {
-							return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
+							return installGame(gameVersion->getID(), destinationDirectoryPath, true, overwrite);
 						}
 
 						return false;
@@ -2776,7 +2783,7 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 				for(const GameFileInformation & gameFileInfo : ATOMIC_EDITION_GAME_FILE_INFO_LIST) {
 					if(!gameFileSHA1VerificationFunction(gameFileInfo)) {
 						if(!useFallback) {
-							return installGame(gameVersion, destinationDirectoryPath, true, overwrite);
+							return installGame(gameVersion->getID(), destinationDirectoryPath, true, overwrite);
 						}
 
 						return false;
@@ -2786,40 +2793,40 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		}
 
 		if(isPlutoniumPakOrAtomicEdition) {
-			installStatusChanged(fmt::format("Cracking '{}' game executable.", gameVersion.getLongName()));
+			installStatusChanged(fmt::format("Cracking '{}' game executable.", gameVersion->getLongName()));
 
-			std::string gameExecutablePath(Utilities::joinPaths(destinationDirectoryPath, gameVersion.getGameExecutableName()));
+			std::string gameExecutablePath(Utilities::joinPaths(destinationDirectoryPath, gameVersion->getGameExecutableName()));
 
-			spdlog::info("Checking '{}' game executable status...", gameVersion.getLongName(), gameExecutablePath);
+			spdlog::info("Checking '{}' game executable status...", gameVersion->getLongName(), gameExecutablePath);
 
 			NoCDCracker::GameExecutableStatus gameExecutableStatus = NoCDCracker::getGameExecutableStatus(gameExecutablePath);
 
 			if(None(gameExecutableStatus & NoCDCracker::GameExecutableStatus::Exists)) {
-				spdlog::error("'{}' game executable does not exist at path: '{}'!", gameVersion.getLongName(), gameExecutablePath);
+				spdlog::error("'{}' game executable does not exist at path: '{}'!", gameVersion->getLongName(), gameExecutablePath);
 			}
 			else if(Any(gameExecutableStatus & NoCDCracker::GameExecutableStatus::Invalid)) {
-				spdlog::error("Invalid '{}' game executable at path: '{}'!", gameVersion.getLongName(), gameExecutablePath);
+				spdlog::error("Invalid '{}' game executable at path: '{}'!", gameVersion->getLongName(), gameExecutablePath);
 			}
 			else if(Any(gameExecutableStatus & NoCDCracker::GameExecutableStatus::RegularVersion)) {
-				spdlog::error("Found '{}' game executable instead of '{}' at path: '{}'!", GameVersion::ORIGINAL_REGULAR_VERSION.getLongName(), gameVersion.getLongName(), gameExecutablePath);
+				spdlog::error("Found '{}' game executable instead of '{}' at path: '{}'!", GameVersion::ORIGINAL_REGULAR_VERSION.getLongName(), gameVersion->getLongName(), gameExecutablePath);
 			}
 			else if(Any(gameExecutableStatus & (NoCDCracker::GameExecutableStatus::PlutoniumPak | NoCDCracker::GameExecutableStatus::AtomicEdition))) {
 				if(Any(gameExecutableStatus & NoCDCracker::GameExecutableStatus::Cracked)) {
-					spdlog::info("'{}' game executable already cracked!", gameVersion.getLongName());
+					spdlog::info("'{}' game executable already cracked!", gameVersion->getLongName());
 				}
 				else if(NoCDCracker::crackGameExecutable(gameExecutablePath)) {
-					spdlog::info("'{}' game executable cracked successfully! CD no longer required.", gameVersion.getLongName());
+					spdlog::info("'{}' game executable cracked successfully! CD no longer required.", gameVersion->getLongName());
 				}
 				else {
-					spdlog::error("Failed to crack '{}' game executable at path: '{}'.", gameVersion.getLongName(), gameExecutablePath);
+					spdlog::error("Failed to crack '{}' game executable at path: '{}'.", gameVersion->getLongName(), gameExecutablePath);
 				}
 			}
 		}
 
 		if(isBetaVersion || isRegularVersion || isPlutoniumPakOrAtomicEdition) {
-			installStatusChanged(fmt::format("Generating default '{}' game configuration file.", gameVersion.getLongName()));
+			installStatusChanged(fmt::format("Generating default '{}' game configuration file.", gameVersion->getLongName()));
 
-			std::unique_ptr<GameConfiguration> gameConfiguration(GameConfiguration::generateDefaultGameConfiguration(gameVersion.getID()));
+			std::unique_ptr<GameConfiguration> gameConfiguration(GameConfiguration::generateDefaultGameConfiguration(gameVersion->getID()));
 
 			if(gameConfiguration == nullptr) {
 				spdlog::warn("Failed to generate default game configuration.");
@@ -2846,8 +2853,8 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 	}
 
 	// don't need to install the group file or verify it separately when using a fallback download for either of the original game versions, since it's already installed & verified
-	if (!isOriginalGameFallback && gameVersion.hasGroupFileInstallPath()) {
-		if(!installGroupFile(gameVersion.getID(), Utilities::joinPaths(destinationDirectoryPath, gameVersion.getGroupFileInstallPath().value()), overwrite)) {
+	if (!isOriginalGameFallback && gameVersion->hasGroupFileInstallPath()) {
+		if(!installGroupFile(gameVersion->getID(), Utilities::joinPaths(destinationDirectoryPath, gameVersion->getGroupFileInstallPath().value()), overwrite)) {
 			return false;
 		}
 	}

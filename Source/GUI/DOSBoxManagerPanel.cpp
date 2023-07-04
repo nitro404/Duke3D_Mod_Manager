@@ -5,6 +5,7 @@
 #include "SettingPanel.h"
 #include "WXUtilities.h"
 
+#include <Network/HTTPRequest.h>
 #include <Utilities/FileUtilities.h>
 #include <Utilities/StringUtilities.h>
 
@@ -20,6 +21,48 @@
 #include <filesystem>
 #include <sstream>
 
+wxDECLARE_EVENT(EVENT_DOSBOX_INSTALL_PROGRESS, DOSBoxInstallProgressEvent);
+
+class DOSBoxInstallProgressEvent final : public wxEvent {
+public:
+	DOSBoxInstallProgressEvent(int value = 0, const std::string & message = {})
+		: wxEvent(0, EVENT_DOSBOX_INSTALL_PROGRESS)
+		, m_value(value)
+		, m_message(message) { }
+
+	virtual ~DOSBoxInstallProgressEvent() { }
+
+	int getValue() const {
+		return m_value;
+	}
+
+	void setValue(int value) {
+		m_value = value;
+	}
+
+	const std::string & getMessage() const {
+		return m_message;
+	}
+
+	void setMessage(const std::string & message) {
+		m_message = message;
+	}
+
+	virtual wxEvent * Clone() const override {
+		return new DOSBoxInstallProgressEvent(*this);
+	}
+
+	DECLARE_DYNAMIC_CLASS(DOSBoxInstallProgressEvent);
+
+private:
+	int m_value;
+	std::string m_message;
+};
+
+IMPLEMENT_DYNAMIC_CLASS(DOSBoxInstallProgressEvent, wxEvent);
+
+wxDEFINE_EVENT(EVENT_DOSBOX_INSTALL_PROGRESS, DOSBoxInstallProgressEvent);
+
 DOSBoxManagerPanel::DOSBoxManagerPanel(std::shared_ptr<ModManager> modManager, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "DOSBox Manager")
 	, m_modManager(modManager)
@@ -34,6 +77,7 @@ DOSBoxManagerPanel::DOSBoxManagerPanel(std::shared_ptr<ModManager> modManager, w
 	, m_saveDOSBoxSettingsButton(nullptr)
 	, m_discardDOSBoxSettingsChangesButton(nullptr)
 	, m_dosboxSettingsPanel(nullptr)
+	, m_installProgressDialog(nullptr)
 	, m_modified(false) {
 	m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_TOP | wxNB_MULTILINE, "DOSBox Versions");
 	m_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &DOSBoxManagerPanel::onNotebookPageChanged, this);
@@ -129,6 +173,8 @@ DOSBoxManagerPanel::DOSBoxManagerPanel(std::shared_ptr<ModManager> modManager, w
 	}
 
 	update();
+
+	Bind(EVENT_DOSBOX_INSTALL_PROGRESS, &DOSBoxManagerPanel::onInstallProgress, this);
 }
 
 DOSBoxManagerPanel::~DOSBoxManagerPanel() {
@@ -448,28 +494,48 @@ bool DOSBoxManagerPanel::installDOSBoxVersion(size_t index) {
 		break;
 	}
 
-	wxProgressDialog * installingProgressDialog = new wxProgressDialog("Installing", fmt::format("Installing '{}', please wait...", dosboxVersion->getLongName()), 1, this, wxPD_AUTO_HIDE);
-	installingProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
+	m_installProgressDialog = new wxProgressDialog("Installing", fmt::format("Installing '{}', please wait...", dosboxVersion->getLongName()), 100, this, wxPD_REMAINING_TIME);
+	m_installProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
 
-	if(!dosboxManager->installLatestDOSBoxVersion(*dosboxVersion, destinationDirectoryPath)) {
-		installingProgressDialog->Destroy();
+	boost::signals2::connection installStatusChangedConnection(dosboxManager->installStatusChanged.connect([this](const std::string & statusMessage) {
+		QueueEvent(new DOSBoxInstallProgressEvent(m_installProgressDialog->GetValue(), statusMessage));
+	}));
 
-		wxMessageBox(fmt::format("Failed to install '{}' to '{}'!\n\nCheck console for details.", dosboxVersion->getLongName(), destinationDirectoryPath), "Installation Failed", wxOK | wxICON_ERROR, this);
+	boost::signals2::connection dosboxDownloadProgressConnection(dosboxManager->dosboxDownloadProgress.connect([this](DOSBoxVersion & dosboxVersion, HTTPRequest & request, size_t numberOfBytesDownloaded, size_t totalNumberOfBytes) {
+		uint8_t downloadProgressPercentage = static_cast<uint8_t>(static_cast<double>(numberOfBytesDownloaded) / static_cast<double>(totalNumberOfBytes) * 100.0);
 
-		return false;
-	}
+		QueueEvent(new DOSBoxInstallProgressEvent(downloadProgressPercentage, fmt::format("Downloaded {} / {} of '{}' application files from: '{}'.", Utilities::fileSizeToString(numberOfBytesDownloaded), Utilities::fileSizeToString(totalNumberOfBytes), dosboxVersion.getLongName(), request.getUrl())));
+	}));
 
-	dosboxVersionPanel->discardDOSBoxPathChanges();
-	dosboxVersion->setDirectoryPath(destinationDirectoryPath);
+	m_installDOSBoxFuture = std::async(std::launch::async, [this, dosboxManager, dosboxVersion, dosboxVersionPanel, destinationDirectoryPath, installStatusChangedConnection, dosboxDownloadProgressConnection]() {
+		bool dosboxInstalled = dosboxManager->installLatestDOSBoxVersion(dosboxVersion->getID(), destinationDirectoryPath);
 
-	saveDOSBoxVersions();
+		installStatusChangedConnection.disconnect();
+		dosboxDownloadProgressConnection.disconnect();
 
-	updateButtons();
+		if(!dosboxInstalled) {
+			m_installProgressDialog->Destroy();
+			m_installProgressDialog = nullptr;
 
-	installingProgressDialog->Update(1);
-	installingProgressDialog->Destroy();
+			wxMessageBox(fmt::format("Failed to install '{}' to '{}'!\n\nCheck console for details.", dosboxVersion->getLongName(), destinationDirectoryPath), "Installation Failed", wxOK | wxICON_ERROR, this);
 
-	wxMessageBox(fmt::format("'{}' was successfully installed to: '{}'!", dosboxVersion->getLongName(), destinationDirectoryPath), "DOSBox Installed", wxOK | wxICON_INFORMATION, this);
+			return false;
+		}
+
+		dosboxVersionPanel->discardDOSBoxPathChanges();
+		dosboxVersion->setDirectoryPath(destinationDirectoryPath);
+
+		saveDOSBoxVersions();
+
+		updateButtons();
+
+		m_installProgressDialog->Destroy();
+		m_installProgressDialog = nullptr;
+
+		wxMessageBox(fmt::format("'{}' was successfully installed to: '{}'!", dosboxVersion->getLongName(), destinationDirectoryPath), "DOSBox Installed", wxOK | wxICON_INFORMATION, this);
+
+		return true;
+	});
 
 	return true;
 }
@@ -675,6 +741,15 @@ void DOSBoxManagerPanel::onResetDOSBoxVersionButtonPressed(wxCommandEvent & even
 
 void DOSBoxManagerPanel::onRemoveDOSBoxVersionButtonPressed(wxCommandEvent & event) {
 	removeCurrentDOSBoxVersion();
+}
+
+void DOSBoxManagerPanel::onInstallProgress(DOSBoxInstallProgressEvent & event) {
+	if(m_installProgressDialog == nullptr) {
+		return;
+	}
+
+	m_installProgressDialog->Update(event.getValue(), event.getMessage());
+	m_installProgressDialog->Fit();
 }
 
 void DOSBoxManagerPanel::onDOSBoxVersionChangesDiscarded(DOSBoxVersionPanel & dosboxVersionPanel) {

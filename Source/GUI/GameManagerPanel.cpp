@@ -417,6 +417,7 @@ bool GameManagerPanel::installGameVersion(size_t index) {
 
 		if(installingProgressDialog->GetValue() != downloadProgressPercentage) {
 			installingProgressDialog->Update(downloadProgressPercentage, fmt::format("Downloaded {} / {} of '{}' game files from: '{}'.", Utilities::fileSizeToString(numberOfBytesDownloaded), Utilities::fileSizeToString(totalNumberOfBytes), gameVersion.getLongName(), request.getUrl()));
+			installingProgressDialog->Fit();
 		}
 	}));
 
@@ -433,7 +434,7 @@ bool GameManagerPanel::installGameVersion(size_t index) {
 	}
 
 	m_installGameFuture = std::async(std::launch::async, [this, gameVersion, gameVersionPanel, destinationDirectoryPath, installingProgressDialog, installStatusChangedConnection, gameDownloadProgressConnection, groupDownloadProgressConnection]() {
-		bool gameInstalled = m_gameManager->installGame(*gameVersion, destinationDirectoryPath);
+		bool gameInstalled = m_gameManager->installGame(gameVersion->getID(), destinationDirectoryPath);
 
 		installStatusChangedConnection.disconnect();
 		gameDownloadProgressConnection.disconnect();

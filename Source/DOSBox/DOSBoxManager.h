@@ -5,10 +5,14 @@
 #include "DOSBoxVersion.h"
 #include "DOSBoxVersionCollection.h"
 
+#include <boost/signals2.hpp>
+
+#include <future>
 #include <memory>
 #include <string>
 
 class Archive;
+class HTTPRequest;
 
 class DOSBoxManager final {
 public:
@@ -24,24 +28,29 @@ public:
 	bool shouldUpdateDOSBoxDownloadList() const;
 	bool loadOrUpdateDOSBoxDownloadList(bool forceUpdate = false) const;
 	bool updateDOSBoxDownloadList(bool force = false) const;
-	std::string getLatestDOSBoxDownloadURL(const DOSBoxVersion & dosboxVersion, std::string * latestVersion = nullptr) const;
-	std::string getLatestDOSBoxDownloadURL(const DOSBoxVersion & dosboxVersion, DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
+	std::string getLatestDOSBoxDownloadURL(const std::string & dosboxVersionID, std::string * latestVersion = nullptr) const;
+	std::string getLatestDOSBoxDownloadURL(const std::string & dosboxVersionID, DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
 	std::string getRemoteDOSBoxDownloadsBaseURL() const;
-	std::string getLatestDOSBoxDownloadFallbackURL(const DOSBoxVersion & dosboxVersion, DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
+	std::string getLatestDOSBoxDownloadFallbackURL(const std::string & dosboxVersionID, DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
 	std::string getLatestOriginalDOSBoxVersion() const;
 	static std::string getOriginalDOSBoxDownloadURL(const std::string & version);
 	std::string getLatestOriginalDOSBoxDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
 	std::string getLatestDOSBoxStagingDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
 	std::string getLatestDOSBoxEnhancedCommunityEditionDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
 	std::string getLatestDOSBoxXDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
-	std::unique_ptr<Archive> downloadLatestDOSBoxVersion(const DOSBoxVersion & dosboxVersion, std::string * latestVersion = nullptr) const;
-	std::unique_ptr<Archive> downloadLatestDOSBoxVersion(const DOSBoxVersion & dosboxVersion, DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, bool useFallback = false, std::string * latestVersion = nullptr) const;
-	bool installLatestDOSBoxVersion(const DOSBoxVersion & dosboxVersion, const std::string & destinationDirectoryPath, bool overwrite = true) const;
+	std::unique_ptr<Archive> downloadLatestDOSBoxVersion(const std::string & dosboxVersionID, std::string * latestVersion = nullptr);
+	std::unique_ptr<Archive> downloadLatestDOSBoxVersion(const std::string & dosboxVersionID, DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, bool useFallback = false, std::string * latestVersion = nullptr);
+	bool installLatestDOSBoxVersion(const std::string & dosboxVersionID, const std::string & destinationDirectoryPath, bool overwrite = true);
 
 	static bool isDOSBoxVersionDownloadable(const DOSBoxVersion & dosboxVersion);
 	static bool isDOSBoxVersionDownloadable(const std::string & dosboxVersionID);
 
+	boost::signals2::signal<void (std::string /* statusMessage */)> installStatusChanged;
+	boost::signals2::signal<void (DOSBoxVersion & /* dosboxVersion */, HTTPRequest & /* request */, size_t /* numberOfBytesDownloaded */, size_t /* totalNumberOfBytes */)> dosboxDownloadProgress;
+
 private:
+	void onDOSBoxDownloadProgress(DOSBoxVersion & dosboxVersion, HTTPRequest & request, size_t numberOfBytesDownloaded, size_t totalNumberOfBytes);
+
 	bool m_initialized;
 	bool m_localMode;
 	std::shared_ptr<DOSBoxVersionCollection> m_dosboxVersions;

@@ -20,10 +20,14 @@
 
 #include <wx/bookctrl.h>
 
+#include <future>
 #include <vector>
 
-class DOSBoxManagerPanel final
-	: public wxPanel {
+class DOSBoxInstallProgressEvent;
+
+class wxProgressDialog;
+
+class DOSBoxManagerPanel final : public wxPanel {
 public:
 	DOSBoxManagerPanel(std::shared_ptr<ModManager> modManager, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
 	virtual ~DOSBoxManagerPanel();
@@ -90,6 +94,7 @@ private:
 	void onSaveDOSBoxSettingsButtonPressed(wxCommandEvent & event);
 	void onDiscardDOSBoxSettingsChangesButtonPressed(wxCommandEvent & event);
 	void onResetDefaultDOSBoxSettingsButtonPressed(wxCommandEvent & event);
+	void onInstallProgress(DOSBoxInstallProgressEvent & event);
 	void onDOSBoxSettingModified(SettingPanel & settingPanel);
 	void onDOSBoxVersionSettingChanged(DOSBoxVersionPanel & dosboxVersionPanel, SettingPanel & settingPanel);
 	void onDOSBoxVersionChangesDiscarded(DOSBoxVersionPanel & dosboxVersionPanel);
@@ -97,6 +102,7 @@ private:
 	void onDOSBoxVersionSaved(DOSBoxVersionPanel & dosboxVersionPanel);
 
 	std::shared_ptr<ModManager> m_modManager;
+	std::future<bool> m_installDOSBoxFuture;
 	std::vector<SignalConnectionGroup> m_dosboxVersionPanelSignalConnectionGroups;
 	wxNotebook * m_notebook;
 	wxButton * m_newDOSBoxVersionButton;
@@ -109,6 +115,7 @@ private:
 	wxButton * m_saveDOSBoxSettingsButton;
 	wxButton * m_discardDOSBoxSettingsChangesButton;
 	DOSBoxSettingsPanel * m_dosboxSettingsPanel;
+	wxProgressDialog * m_installProgressDialog;
 	boost::signals2::connection m_dosboxSettingModifiedConnection;
 	bool m_modified;
 
