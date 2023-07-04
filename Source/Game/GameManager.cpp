@@ -354,7 +354,7 @@ bool GameManager::shouldUpdateGameDownloadList() const {
 
 	std::string gameDownloadsListFilePath(getGameDownloadsListFilePath());
 
-	if(!gameDownloadsListFilePath.empty()) {
+	if(gameDownloadsListFilePath.empty()) {
 		spdlog::error("Failed to determine game downloads file list path. Are your settings configured correctly?");
 		return false;
 	}
