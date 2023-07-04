@@ -19,11 +19,14 @@
 #include <memory>
 #include <vector>
 
+class GameInstallProgressEvent;
 class GameManager;
 class GameVersion;
 class GameVersionCollection;
 class GameVersionPanel;
 class SettingPanel;
+
+class wxProgressDialog;
 
 class GameManagerPanel final : public wxPanel {
 public:
@@ -78,6 +81,7 @@ private:
 	void onDiscardChangesButtonPressed(wxCommandEvent & event);
 	void onResetButtonPressed(wxCommandEvent & event);
 	void onRemoveButtonPressed(wxCommandEvent & event);
+	void onInstallProgress(GameInstallProgressEvent & event);
 	void onGameVersionSettingChanged(GameVersionPanel & gameVersionPanel, SettingPanel & settingPanel);
 	void onGameVersionNotesChanged(GameVersionPanel & gameVersionPanel);
 	void onGameVersionChangesDiscarded(GameVersionPanel & gameVersionPanel);
@@ -95,6 +99,7 @@ private:
 	wxButton * m_discardChangesButton;
 	wxButton * m_resetButton;
 	wxButton * m_removeButton;
+	wxProgressDialog * m_installProgressDialog;
 
 	GameManagerPanel(const GameManagerPanel &) = delete;
 	const GameManagerPanel & operator = (const GameManagerPanel &) = delete;

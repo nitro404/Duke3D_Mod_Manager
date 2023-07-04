@@ -23,6 +23,48 @@
 #include <filesystem>
 #include <sstream>
 
+wxDECLARE_EVENT(EVENT_GAME_INSTALL_PROGRESS, GameInstallProgressEvent);
+
+class GameInstallProgressEvent final : public wxEvent {
+public:
+	GameInstallProgressEvent(int value = 0, const std::string & message = {})
+		: wxEvent(0, EVENT_GAME_INSTALL_PROGRESS)
+		, m_value(value)
+		, m_message(message) { }
+
+	virtual ~GameInstallProgressEvent() { }
+
+	int getValue() const {
+		return m_value;
+	}
+
+	void setValue(int value) {
+		m_value = value;
+	}
+
+	const std::string & getMessage() const {
+		return m_message;
+	}
+
+	void setMessage(const std::string & message) {
+		m_message = message;
+	}
+
+	virtual wxEvent * Clone() const override {
+		return new GameInstallProgressEvent(*this);
+	}
+
+	DECLARE_DYNAMIC_CLASS(GameInstallProgressEvent);
+
+private:
+	int m_value;
+	std::string m_message;
+};
+
+IMPLEMENT_DYNAMIC_CLASS(GameInstallProgressEvent, wxEvent);
+
+wxDEFINE_EVENT(EVENT_GAME_INSTALL_PROGRESS, GameInstallProgressEvent);
+
 GameManagerPanel::GameManagerPanel(std::shared_ptr<GameManager> gameManager, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "Game Manager")
 	, m_gameManager(gameManager)
@@ -33,7 +75,8 @@ GameManagerPanel::GameManagerPanel(std::shared_ptr<GameManager> gameManager, wxW
 	, m_saveButton(nullptr)
 	, m_discardChangesButton(nullptr)
 	, m_resetButton(nullptr)
-	, m_removeButton(nullptr) {
+	, m_removeButton(nullptr)
+	, m_installProgressDialog(nullptr) {
 	m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_TOP | wxNB_MULTILINE, "Game Versions");
 	m_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &GameManagerPanel::onNotebookPageChanged, this);
 
@@ -404,36 +447,32 @@ bool GameManagerPanel::installGameVersion(size_t index) {
 
 	bool groupFileDownloaded = m_gameManager->isGroupFileDownloaded(gameVersion->getID());
 
-	wxProgressDialog * installingProgressDialog = new wxProgressDialog("Installing", fmt::format("Installing '{}', please wait...", gameVersion->getLongName()), 100, this, wxPD_REMAINING_TIME);
-	installingProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
+	m_installProgressDialog = new wxProgressDialog("Installing", fmt::format("Installing '{}', please wait...", gameVersion->getLongName()), 100, this, wxPD_REMAINING_TIME);
+	m_installProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
 
-	boost::signals2::connection installStatusChangedConnection(m_gameManager->installStatusChanged.connect([installingProgressDialog](const std::string & statusMessage) {
-		installingProgressDialog->Update(installingProgressDialog->GetValue(), statusMessage);
-		installingProgressDialog->Fit();
+	boost::signals2::connection installStatusChangedConnection(m_gameManager->installStatusChanged.connect([this](const std::string & statusMessage) {
+		QueueEvent(new GameInstallProgressEvent(m_installProgressDialog->GetValue(), statusMessage));
 	}));
 
-	boost::signals2::connection gameDownloadProgressConnection(m_gameManager->gameDownloadProgress.connect([installingProgressDialog, groupFileDownloaded](GameVersion & gameVersion, HTTPRequest & request, size_t numberOfBytesDownloaded, size_t totalNumberOfBytes) {
-		uint8_t downloadProgressPercentage = static_cast<uint8_t>(static_cast<double>(numberOfBytesDownloaded) / static_cast<double>(totalNumberOfBytes) * (groupFileDownloaded ? 100.0 : 50.0));
-
-		if(installingProgressDialog->GetValue() != downloadProgressPercentage) {
-			installingProgressDialog->Update(downloadProgressPercentage, fmt::format("Downloaded {} / {} of '{}' game files from: '{}'.", Utilities::fileSizeToString(numberOfBytesDownloaded), Utilities::fileSizeToString(totalNumberOfBytes), gameVersion.getLongName(), request.getUrl()));
-			installingProgressDialog->Fit();
-		}
+	boost::signals2::connection gameDownloadProgressConnection(m_gameManager->gameDownloadProgress.connect([this, groupFileDownloaded](GameVersion & gameVersion, HTTPRequest & request, size_t numberOfBytesDownloaded, size_t totalNumberOfBytes) {
+		QueueEvent(new GameInstallProgressEvent(
+			static_cast<uint8_t>(static_cast<double>(numberOfBytesDownloaded) / static_cast<double>(totalNumberOfBytes) * (groupFileDownloaded ? 100.0 : 50.0)),
+			fmt::format("Downloaded {} / {} of '{}' game files from: '{}'.", Utilities::fileSizeToString(numberOfBytesDownloaded), Utilities::fileSizeToString(totalNumberOfBytes), gameVersion.getLongName(), request.getUrl())
+		));
 	}));
 
 	boost::signals2::connection groupDownloadProgressConnection;
 
 	if(!groupFileDownloaded) {
-		groupDownloadProgressConnection = m_gameManager->groupDownloadProgress.connect([this, installingProgressDialog](GameVersion & gameVersion, HTTPRequest & request, size_t numberOfBytesDownloaded, size_t totalNumberOfBytes) {
-			uint8_t downloadProgressPercentage = static_cast<uint8_t>(static_cast<double>(numberOfBytesDownloaded) / static_cast<double>(totalNumberOfBytes) * 50.0) + 50;
-
-			if(installingProgressDialog->GetValue() != downloadProgressPercentage) {
-				installingProgressDialog->Update(downloadProgressPercentage, fmt::format("Downloaded {} / {} of '{}' group file from: '{}'.", Utilities::fileSizeToString(numberOfBytesDownloaded), Utilities::fileSizeToString(totalNumberOfBytes), m_gameManager->getGroupGameVersion(gameVersion.getID())->getLongName(), request.getUrl()));
-			}
+		groupDownloadProgressConnection = m_gameManager->groupDownloadProgress.connect([this](GameVersion & gameVersion, HTTPRequest & request, size_t numberOfBytesDownloaded, size_t totalNumberOfBytes) {
+			QueueEvent(new GameInstallProgressEvent(
+				static_cast<uint8_t>(static_cast<double>(numberOfBytesDownloaded) / static_cast<double>(totalNumberOfBytes) * 50.0) + 50,
+				fmt::format("Downloaded {} / {} of '{}' group file from: '{}'.", Utilities::fileSizeToString(numberOfBytesDownloaded), Utilities::fileSizeToString(totalNumberOfBytes), m_gameManager->getGroupGameVersion(gameVersion.getID())->getLongName(), request.getUrl())
+			));
 		});
 	}
 
-	m_installGameFuture = std::async(std::launch::async, [this, gameVersion, gameVersionPanel, destinationDirectoryPath, installingProgressDialog, installStatusChangedConnection, gameDownloadProgressConnection, groupDownloadProgressConnection]() {
+	m_installGameFuture = std::async(std::launch::async, [this, gameVersion, gameVersionPanel, destinationDirectoryPath, installStatusChangedConnection, gameDownloadProgressConnection, groupDownloadProgressConnection]() {
 		bool gameInstalled = m_gameManager->installGame(gameVersion->getID(), destinationDirectoryPath);
 
 		installStatusChangedConnection.disconnect();
@@ -441,7 +480,8 @@ bool GameManagerPanel::installGameVersion(size_t index) {
 		groupDownloadProgressConnection.disconnect();
 
 		if(!gameInstalled) {
-			installingProgressDialog->Destroy();
+			m_installProgressDialog->Destroy();
+			m_installProgressDialog = nullptr;
 
 			wxMessageBox(fmt::format("Failed to install '{}' to '{}'!\n\nCheck console for details.", gameVersion->getLongName(), destinationDirectoryPath), "Installation Failed", wxOK | wxICON_ERROR, this);
 
@@ -455,7 +495,8 @@ bool GameManagerPanel::installGameVersion(size_t index) {
 
 		updateButtons();
 
-		installingProgressDialog->Destroy();
+		m_installProgressDialog->Destroy();
+		m_installProgressDialog = nullptr;
 
 		wxMessageBox(fmt::format("'{}' was successfully installed to: '{}'!", gameVersion->getLongName(), destinationDirectoryPath), "Game Installed", wxOK | wxICON_INFORMATION, this);
 
@@ -657,6 +698,15 @@ void GameManagerPanel::onResetButtonPressed(wxCommandEvent & event) {
 
 void GameManagerPanel::onRemoveButtonPressed(wxCommandEvent & event) {
 	removeCurrentGameVersion();
+}
+
+void GameManagerPanel::onInstallProgress(GameInstallProgressEvent & event) {
+	if(m_installProgressDialog == nullptr) {
+		return;
+	}
+
+	m_installProgressDialog->Update(event.getValue(), event.getMessage());
+	m_installProgressDialog->Fit();
 }
 
 void GameManagerPanel::onGameVersionChangesDiscarded(GameVersionPanel & gameVersionPanel) {

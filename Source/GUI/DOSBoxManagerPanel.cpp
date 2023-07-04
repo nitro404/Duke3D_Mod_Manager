@@ -502,9 +502,10 @@ bool DOSBoxManagerPanel::installDOSBoxVersion(size_t index) {
 	}));
 
 	boost::signals2::connection dosboxDownloadProgressConnection(dosboxManager->dosboxDownloadProgress.connect([this](DOSBoxVersion & dosboxVersion, HTTPRequest & request, size_t numberOfBytesDownloaded, size_t totalNumberOfBytes) {
-		uint8_t downloadProgressPercentage = static_cast<uint8_t>(static_cast<double>(numberOfBytesDownloaded) / static_cast<double>(totalNumberOfBytes) * 100.0);
-
-		QueueEvent(new DOSBoxInstallProgressEvent(downloadProgressPercentage, fmt::format("Downloaded {} / {} of '{}' application files from: '{}'.", Utilities::fileSizeToString(numberOfBytesDownloaded), Utilities::fileSizeToString(totalNumberOfBytes), dosboxVersion.getLongName(), request.getUrl())));
+		QueueEvent(new DOSBoxInstallProgressEvent(
+			static_cast<uint8_t>(static_cast<double>(numberOfBytesDownloaded) / static_cast<double>(totalNumberOfBytes) * 100.0),
+			fmt::format("Downloaded {} / {} of '{}' application files from: '{}'.", Utilities::fileSizeToString(numberOfBytesDownloaded), Utilities::fileSizeToString(totalNumberOfBytes), dosboxVersion.getLongName(), request.getUrl())
+		));
 	}));
 
 	m_installDOSBoxFuture = std::async(std::launch::async, [this, dosboxManager, dosboxVersion, dosboxVersionPanel, destinationDirectoryPath, installStatusChangedConnection, dosboxDownloadProgressConnection]() {
