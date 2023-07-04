@@ -63,7 +63,26 @@ private:
 
 IMPLEMENT_DYNAMIC_CLASS(GameInstallProgressEvent, wxEvent);
 
+wxDECLARE_EVENT(EVENT_GAME_INSTALL_DONE, GameInstallDoneEvent);
+
+class GameInstallDoneEvent final : public wxEvent {
+public:
+	GameInstallDoneEvent()
+		: wxEvent(0, EVENT_GAME_INSTALL_DONE) { }
+
+	virtual ~GameInstallDoneEvent() { }
+
+	virtual wxEvent * Clone() const override {
+		return new GameInstallDoneEvent(*this);
+	}
+
+	DECLARE_DYNAMIC_CLASS(GameInstallDoneEvent);
+};
+
+IMPLEMENT_DYNAMIC_CLASS(GameInstallDoneEvent, wxEvent);
+
 wxDEFINE_EVENT(EVENT_GAME_INSTALL_PROGRESS, GameInstallProgressEvent);
+wxDEFINE_EVENT(EVENT_GAME_INSTALL_DONE, GameInstallDoneEvent);
 
 GameManagerPanel::GameManagerPanel(std::shared_ptr<GameManager> gameManager, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "Game Manager")
@@ -146,6 +165,9 @@ GameManagerPanel::GameManagerPanel(std::shared_ptr<GameManager> gameManager, wxW
 	}
 
 	update();
+
+	Bind(EVENT_GAME_INSTALL_PROGRESS, &GameManagerPanel::onInstallProgress, this);
+	Bind(EVENT_GAME_INSTALL_DONE, &GameManagerPanel::onInstallDone, this);
 }
 
 GameManagerPanel::~GameManagerPanel() {
@@ -480,8 +502,7 @@ bool GameManagerPanel::installGameVersion(size_t index) {
 		groupDownloadProgressConnection.disconnect();
 
 		if(!gameInstalled) {
-			m_installProgressDialog->Destroy();
-			m_installProgressDialog = nullptr;
+			QueueEvent(new GameInstallDoneEvent());
 
 			wxMessageBox(fmt::format("Failed to install '{}' to '{}'!\n\nCheck console for details.", gameVersion->getLongName(), destinationDirectoryPath), "Installation Failed", wxOK | wxICON_ERROR, this);
 
@@ -495,8 +516,7 @@ bool GameManagerPanel::installGameVersion(size_t index) {
 
 		updateButtons();
 
-		m_installProgressDialog->Destroy();
-		m_installProgressDialog = nullptr;
+		QueueEvent(new GameInstallDoneEvent());
 
 		wxMessageBox(fmt::format("'{}' was successfully installed to: '{}'!", gameVersion->getLongName(), destinationDirectoryPath), "Game Installed", wxOK | wxICON_INFORMATION, this);
 
@@ -707,6 +727,15 @@ void GameManagerPanel::onInstallProgress(GameInstallProgressEvent & event) {
 
 	m_installProgressDialog->Update(event.getValue(), event.getMessage());
 	m_installProgressDialog->Fit();
+}
+
+void GameManagerPanel::onInstallDone(GameInstallDoneEvent & event) {
+	if(m_installProgressDialog == nullptr) {
+		return;
+	}
+
+	m_installProgressDialog->Destroy();
+	m_installProgressDialog = nullptr;
 }
 
 void GameManagerPanel::onGameVersionChangesDiscarded(GameVersionPanel & gameVersionPanel) {

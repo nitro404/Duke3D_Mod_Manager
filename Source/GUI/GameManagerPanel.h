@@ -19,6 +19,7 @@
 #include <memory>
 #include <vector>
 
+class GameInstallDoneEvent;
 class GameInstallProgressEvent;
 class GameManager;
 class GameVersion;
@@ -82,6 +83,7 @@ private:
 	void onResetButtonPressed(wxCommandEvent & event);
 	void onRemoveButtonPressed(wxCommandEvent & event);
 	void onInstallProgress(GameInstallProgressEvent & event);
+	void onInstallDone(GameInstallDoneEvent & event);
 	void onGameVersionSettingChanged(GameVersionPanel & gameVersionPanel, SettingPanel & settingPanel);
 	void onGameVersionNotesChanged(GameVersionPanel & gameVersionPanel);
 	void onGameVersionChangesDiscarded(GameVersionPanel & gameVersionPanel);
