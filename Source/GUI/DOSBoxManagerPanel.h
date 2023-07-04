@@ -24,6 +24,7 @@
 #include <vector>
 
 class DOSBoxInstallProgressEvent;
+class DOSBoxInstallDoneEvent;
 
 class wxProgressDialog;
 
@@ -95,6 +96,7 @@ private:
 	void onDiscardDOSBoxSettingsChangesButtonPressed(wxCommandEvent & event);
 	void onResetDefaultDOSBoxSettingsButtonPressed(wxCommandEvent & event);
 	void onInstallProgress(DOSBoxInstallProgressEvent & event);
+	void onInstallDone(DOSBoxInstallDoneEvent & event);
 	void onDOSBoxSettingModified(SettingPanel & settingPanel);
 	void onDOSBoxVersionSettingChanged(DOSBoxVersionPanel & dosboxVersionPanel, SettingPanel & settingPanel);
 	void onDOSBoxVersionChangesDiscarded(DOSBoxVersionPanel & dosboxVersionPanel);

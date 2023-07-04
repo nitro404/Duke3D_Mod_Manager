@@ -61,7 +61,26 @@ private:
 
 IMPLEMENT_DYNAMIC_CLASS(DOSBoxInstallProgressEvent, wxEvent);
 
+wxDECLARE_EVENT(EVENT_DOSBOX_INSTALL_DONE, DOSBoxInstallDoneEvent);
+
+class DOSBoxInstallDoneEvent final : public wxEvent {
+public:
+	DOSBoxInstallDoneEvent()
+		: wxEvent(0, EVENT_DOSBOX_INSTALL_DONE) { }
+
+	virtual ~DOSBoxInstallDoneEvent() { }
+
+	virtual wxEvent * Clone() const override {
+		return new DOSBoxInstallDoneEvent(*this);
+	}
+
+	DECLARE_DYNAMIC_CLASS(DOSBoxInstallDoneEvent);
+};
+
+IMPLEMENT_DYNAMIC_CLASS(DOSBoxInstallDoneEvent, wxEvent);
+
 wxDEFINE_EVENT(EVENT_DOSBOX_INSTALL_PROGRESS, DOSBoxInstallProgressEvent);
+wxDEFINE_EVENT(EVENT_DOSBOX_INSTALL_DONE, DOSBoxInstallDoneEvent);
 
 DOSBoxManagerPanel::DOSBoxManagerPanel(std::shared_ptr<ModManager> modManager, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "DOSBox Manager")
@@ -175,6 +194,7 @@ DOSBoxManagerPanel::DOSBoxManagerPanel(std::shared_ptr<ModManager> modManager, w
 	update();
 
 	Bind(EVENT_DOSBOX_INSTALL_PROGRESS, &DOSBoxManagerPanel::onInstallProgress, this);
+	Bind(EVENT_DOSBOX_INSTALL_DONE, &DOSBoxManagerPanel::onInstallDone, this);
 }
 
 DOSBoxManagerPanel::~DOSBoxManagerPanel() {
@@ -515,8 +535,7 @@ bool DOSBoxManagerPanel::installDOSBoxVersion(size_t index) {
 		dosboxDownloadProgressConnection.disconnect();
 
 		if(!dosboxInstalled) {
-			m_installProgressDialog->Destroy();
-			m_installProgressDialog = nullptr;
+			QueueEvent(new DOSBoxInstallDoneEvent());
 
 			wxMessageBox(fmt::format("Failed to install '{}' to '{}'!\n\nCheck console for details.", dosboxVersion->getLongName(), destinationDirectoryPath), "Installation Failed", wxOK | wxICON_ERROR, this);
 
@@ -530,8 +549,7 @@ bool DOSBoxManagerPanel::installDOSBoxVersion(size_t index) {
 
 		updateButtons();
 
-		m_installProgressDialog->Destroy();
-		m_installProgressDialog = nullptr;
+		QueueEvent(new DOSBoxInstallDoneEvent());
 
 		wxMessageBox(fmt::format("'{}' was successfully installed to: '{}'!", dosboxVersion->getLongName(), destinationDirectoryPath), "DOSBox Installed", wxOK | wxICON_INFORMATION, this);
 
@@ -751,6 +769,15 @@ void DOSBoxManagerPanel::onInstallProgress(DOSBoxInstallProgressEvent & event) {
 
 	m_installProgressDialog->Update(event.getValue(), event.getMessage());
 	m_installProgressDialog->Fit();
+}
+
+void DOSBoxManagerPanel::onInstallDone(DOSBoxInstallDoneEvent & event) {
+	if(m_installProgressDialog == nullptr) {
+		return;
+	}
+
+	m_installProgressDialog->Destroy();
+	m_installProgressDialog = nullptr;
 }
 
 void DOSBoxManagerPanel::onDOSBoxVersionChangesDiscarded(DOSBoxVersionPanel & dosboxVersionPanel) {
