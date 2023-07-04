@@ -14,6 +14,7 @@
 #include <Archive/ArchiveFactoryRegistry.h>
 #include <Bitbucket/BitbucketService.h>
 #include <GitHub/GitHubService.h>
+#include <Network/HTTPRequest.h>
 #include <Network/HTTPService.h>
 #include <Utilities/FileUtilities.h>
 #include <Utilities/RapidJSONUtilities.h>
@@ -375,6 +376,8 @@ bool GameManager::loadOrUpdateGameDownloadList(bool forceUpdate) const {
 	}
 
 	if(m_localMode) {
+		installStatusChanged("Loading game downloads list.");
+
 		std::unique_ptr<GameDownloadCollection> gameDownloads(std::make_unique<GameDownloadCollection>());
 
 		spdlog::info("Loading local game downloads list file...");
@@ -390,6 +393,8 @@ bool GameManager::loadOrUpdateGameDownloadList(bool forceUpdate) const {
 	}
 
 	if(!forceUpdate && std::filesystem::is_regular_file(std::filesystem::path(gameDownloadsListFilePath))) {
+		installStatusChanged("Loading game downloads list.");
+
 		std::unique_ptr<GameDownloadCollection> gameDownloads(std::make_unique<GameDownloadCollection>());
 
 		if(gameDownloads->loadFrom(gameDownloadsListFilePath) && GameDownloadCollection::isValid(gameDownloads.get())) {
@@ -437,6 +442,8 @@ bool GameManager::updateGameDownloadList(bool force) const {
 
 	std::string gameListRemoteFilePath(Utilities::joinPaths(settings->remoteDownloadsDirectoryName, settings->remoteGameDownloadsDirectoryName, settings->remoteGamesListFileName));
 	std::string gameListURL(Utilities::joinPaths(httpService->getBaseURL(), gameListRemoteFilePath));
+
+	installStatusChanged("Downloading game downloads list.");
 
 	spdlog::info("Downloading Duke Nukem 3D game download list from: '{}'...", gameListURL);
 
@@ -2310,10 +2317,14 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 
 		gameDownloadURL = getFallbackGameDownloadURL(gameVersion.getID());
 		expectedGameDownloadSHA1 = getFallbackGameDownloadSHA1(gameVersion.getID());
+
+		installStatusChanged(fmt::format("Re-trying '{}' game files download using fallback URL.", gameVersion.getLongName()));
 	}
 	else {
 		gameDownloadURL = getGameDownloadURL(gameVersion.getID());
 		expectedGameDownloadSHA1 = getGameDownloadSHA1(gameVersion.getID());
+
+		installStatusChanged(fmt::format("Downloading '{}' game files.", gameVersion.getLongName()));
 	}
 
 	if(gameDownloadURL.empty()) {
@@ -2325,7 +2336,11 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 
 	std::shared_ptr<HTTPRequest> request(httpService->createRequest(HTTPRequest::Method::Get, gameDownloadURL));
 
+	boost::signals2::connection progressConnection(request->progress.connect(std::bind(&GameManager::onGameDownloadProgress, this, gameVersion, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
+
 	std::shared_ptr<HTTPResponse> response(httpService->sendRequestAndWait(request));
+
+	progressConnection.disconnect();
 
 	if(response->isFailure()) {
 		spdlog::error("Failed to download '{}' game files package with error: {}", gameVersion.getLongName(), response->getErrorMessage());
@@ -2350,6 +2365,8 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 	std::string expectedArchiveMD5Hash(response->getHeaderValue("Content-MD5"));
 
 	if(!expectedArchiveMD5Hash.empty()) {
+		installStatusChanged(fmt::format("Verifying '{}' game files MD5 hash.", gameVersion.getLongName()));
+
 		std::string actualArchiveMD5Hash(response->getBodyMD5(ByteBuffer::HashFormat::Base64));
 
 		if(Utilities::areStringsEqual(actualArchiveMD5Hash, expectedArchiveMD5Hash)) {
@@ -2367,6 +2384,8 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 	}
 
 	if(!expectedGameDownloadSHA1.empty()) {
+		installStatusChanged(fmt::format("Verifying '{}' game files SHA1 hash.", gameVersion.getLongName()));
+
 		std::string actualGameDownloadSHA1(response->getBodySHA1());
 
 		if(Utilities::areStringsEqual(expectedGameDownloadSHA1, actualGameDownloadSHA1)) {
@@ -2380,6 +2399,8 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 	}
 
 	spdlog::info("'{}' game files downloaded successfully after {} ms, extracting to '{}'...", gameVersion.getLongName(), response->getRequestDuration().value().count(), destinationDirectoryPath);
+
+	installStatusChanged(fmt::format("Extracting '{}' game files to destination directory.", gameVersion.getLongName()));
 
 	std::unique_ptr<Archive> gameFilesArchive(ArchiveFactoryRegistry::getInstance()->createArchiveFrom(response->transferBody(), std::string(Utilities::getFileExtension(gameDownloadURL))));
 
@@ -2715,6 +2736,8 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 			return true;
 		});
 
+		installStatusChanged(fmt::format("Verifying '{}' game files SHA1 hashes.", gameVersion.getLongName()));
+
 		if(!useFallback) {
 			if(isBetaVersion) {
 				for(const GameFileInformation & gameFileInfo : BETA_VERSION_GAME_FILE_INFO_LIST) {
@@ -2763,6 +2786,8 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		}
 
 		if(isPlutoniumPakOrAtomicEdition) {
+			installStatusChanged(fmt::format("Cracking '{}' game executable.", gameVersion.getLongName()));
+
 			std::string gameExecutablePath(Utilities::joinPaths(destinationDirectoryPath, gameVersion.getGameExecutableName()));
 
 			spdlog::info("Checking '{}' game executable status...", gameVersion.getLongName(), gameExecutablePath);
@@ -2792,6 +2817,8 @@ bool GameManager::installGame(const GameVersion & gameVersion, const std::string
 		}
 
 		if(isBetaVersion || isRegularVersion || isPlutoniumPakOrAtomicEdition) {
+			installStatusChanged(fmt::format("Generating default '{}' game configuration file.", gameVersion.getLongName()));
+
 			std::unique_ptr<GameConfiguration> gameConfiguration(GameConfiguration::generateDefaultGameConfiguration(gameVersion.getID()));
 
 			if(gameConfiguration == nullptr) {
@@ -2952,6 +2979,8 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 	bool isWorldTourGroup = false;
 
 	if(!useFallback && isAtomicEdition) {
+		installStatusChanged(fmt::format("Locating existing '{}' group file.", groupGameVersion->getLongName()));
+
 		GameLocator * gameLocator = GameLocator::getInstance();
 
 		for(size_t i = 0; i < gameLocator->numberOfGamePaths(); i++) {
@@ -3037,9 +3066,13 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 		groupDownloadURL = getFallbackGroupDownloadURL(gameVersionID);
 
 		spdlog::info("Using fallback {} group file download URL.", groupGameVersion->getLongName());
+
+		installStatusChanged(fmt::format("Re-trying '{}' group file download using fallback URL.", groupGameVersion->getLongName()));
 	}
 	else {
 		groupDownloadURL = getGroupDownloadURL(gameVersionID);
+
+		installStatusChanged(fmt::format("Downloading '{}' group file.", groupGameVersion->getLongName()));
 	}
 
 	if(groupDownloadURL.empty()) {
@@ -3051,7 +3084,11 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 
 	std::shared_ptr<HTTPRequest> request(httpService->createRequest(HTTPRequest::Method::Get, groupDownloadURL));
 
+	boost::signals2::connection progressConnection(request->progress.connect(std::bind(&GameManager::onGroupDownloadProgress, this, *groupGameVersion, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
+
 	std::shared_ptr<HTTPResponse> response(httpService->sendRequestAndWait(request));
+
+	progressConnection.disconnect();
 
 	if(response->isFailure()) {
 		spdlog::error("Failed to download {} group file with error: {}", groupGameVersion->getLongName(), response->getErrorMessage());
@@ -3069,6 +3106,8 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 	}
 
 	if(useFallback) {
+		installStatusChanged(fmt::format("Verifying '{}' group file SHA1 hash.", groupGameVersion->getLongName()));
+
 		std::string responseSHA1(response->getBodySHA1());
 		std::string fallbackGroupDownloadSHA1(getFallbackGroupDownloadSHA1(gameVersionID));
 
@@ -3097,6 +3136,8 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 				std::shared_ptr<GameDownloadFile> groupFileDownload(gameDownloadVersion->getFileWithName(groupFileDownloadFileName));
 
 				if(groupFileDownload != nullptr) {
+					installStatusChanged(fmt::format("Verifying '{}' group file SHA1 hash.", groupGameVersion->getLongName()));
+
 					std::string responseSHA1(response->getBodySHA1());
 
 					if(Utilities::areStringsEqual(responseSHA1, groupFileDownload->getSHA1())) {
@@ -3113,6 +3154,8 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 	}
 
 	spdlog::info("{} group file downloaded successfully after {} ms, extracting to '{}'...", groupGameVersion->getLongName(), response->getRequestDuration().value().count(), destinationGroupFilePath);
+
+	installStatusChanged(fmt::format("Extracting '{}' group file to destination directory.", groupGameVersion->getLongName()));
 
 	std::unique_ptr<Archive> groupArchive(ArchiveFactoryRegistry::getInstance()->createArchiveFrom(response->transferBody(), std::string(Utilities::getFileExtension(groupDownloadURL))));
 
@@ -3149,6 +3192,8 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 
 		return false;
 	}
+
+	installStatusChanged(fmt::format("Verifying extracted '{}' group file SHA1 hash.", groupGameVersion->getLongName()));
 
 	std::string calculatedGroupSHA1(groupFileData->getSHA1());
 	std::string_view expectedGroupSHA1;
@@ -3321,8 +3366,6 @@ void GameManager::updateGroupFileSymlinks() {
 			}
 		}
 
-		spdlog::trace("Analyzing '{}' game installation group file symbolic link target.", gameVersion->getLongName());
-
 		std::filesystem::path gameGroupFilePath(Utilities::joinPaths(gameVersion->getGamePath(), GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME));
 
 		if(std::filesystem::is_regular_file(gameGroupFilePath) && !std::filesystem::is_symlink(gameGroupFilePath)) {
@@ -3331,6 +3374,8 @@ void GameManager::updateGroupFileSymlinks() {
 		}
 
 		if(std::filesystem::is_symlink(gameGroupFilePath)) {
+			spdlog::trace("Analyzing existing '{}' game installation group file symbolic link target.", gameVersion->getLongName());
+
 			std::error_code errorCode;
 			std::filesystem::path currentGroupFileSymlinkTargetFilePath(std::filesystem::read_symlink(gameGroupFilePath, errorCode));
 
@@ -3344,7 +3389,7 @@ void GameManager::updateGroupFileSymlinks() {
 
 				if(!errorCode) {
 					if(groupFileSymbolicLinkTargetMatches) {
-						spdlog::trace("'{}' game version group file symbolic link target already already set to '{}' group.", gameVersion->getLongName(), isWorldTourGroup ? WORLD_TOUR_GAME_LONG_NAME : groupGameVersion->getLongName());
+						spdlog::trace("'{}' game version group file symbolic link target already set to '{}' group.", gameVersion->getLongName(), isWorldTourGroup ? WORLD_TOUR_GAME_LONG_NAME : groupGameVersion->getLongName());
 						continue;
 					}
 
@@ -3353,7 +3398,7 @@ void GameManager::updateGroupFileSymlinks() {
 
 						if(!errorCode) {
 							if(worldTourGroupFileSymbolicLinkTargetMatches) {
-								spdlog::trace("'{}' game version group file symbolic link target alternatively already already set to '{}' group.", gameVersion->getLongName(), WORLD_TOUR_GAME_LONG_NAME);
+								spdlog::trace("'{}' game version group file symbolic link target alternatively already set to '{}' group.", gameVersion->getLongName(), WORLD_TOUR_GAME_LONG_NAME);
 								continue;
 							}
 						}
@@ -3397,4 +3442,12 @@ void GameManager::updateGroupFileSymlinks() {
 			continue;
 		}
 	}
+}
+
+void GameManager::onGameDownloadProgress(GameVersion & gameVersion, HTTPRequest & request, size_t numberOfBytesDownloaded, size_t totalNumberOfBytes) {
+	gameDownloadProgress(gameVersion, request, numberOfBytesDownloaded, totalNumberOfBytes);
+}
+
+void GameManager::onGroupDownloadProgress(GameVersion & groupGameVersion, HTTPRequest & request, size_t numberOfBytesDownloaded, size_t totalNumberOfBytes) {
+	groupDownloadProgress(groupGameVersion, request, numberOfBytesDownloaded, totalNumberOfBytes);
 }

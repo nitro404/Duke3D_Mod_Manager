@@ -537,30 +537,6 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 	return true;
 }
 
-bool ModManager::initializeAndWait(int argc, char * argv[]) {
-	std::future<bool> initializeFuture(initializeAsync(argc, argv));
-
-	if(!initializeFuture.valid()) {
-		return false;
-	}
-
-	initializeFuture.wait();
-
-	return initializeFuture.get();
-}
-
-bool ModManager::initializeAndWait(std::shared_ptr<ArgumentParser> arguments) {
-	std::future<bool> initializeFuture(initializeAsync(arguments));
-
-	if(!initializeFuture.valid()) {
-		return false;
-	}
-
-	initializeFuture.wait();
-
-	return initializeFuture.get();
-}
-
 bool ModManager::uninitialize() {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
@@ -1968,18 +1944,6 @@ bool ModManager::uninstallModGameVersion(const ModGameVersion & modGameVersion) 
 
 std::future<bool> ModManager::runSelectedModAsync(std::shared_ptr<GameVersion> alternateGameVersion, std::shared_ptr<ModGameVersion> alternateModGameVersion) {
 	return std::async(std::launch::async, &ModManager::runSelectedMod, std::ref(*this), alternateGameVersion, alternateModGameVersion);
-}
-
-bool ModManager::runSelectedModAndWait(std::shared_ptr<GameVersion> alternateGameVersion, std::shared_ptr<ModGameVersion> alternateModGameVersion) {
-	std::future<bool> runSelectedModFuture(runSelectedModAsync(alternateGameVersion, alternateModGameVersion));
-
-	if(!runSelectedModFuture.valid()) {
-		return false;
-	}
-
-	runSelectedModFuture.wait();
-
-	return runSelectedModFuture.get();
 }
 
 bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersion, std::shared_ptr<ModGameVersion> alternateModGameVersion) {
@@ -3449,7 +3413,7 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 				setSelectedModVersionIndex(modMatch.getModVersionIndex());
 				setSelectedModVersionTypeIndex(modMatch.getModVersionTypeIndex());
 
-				runSelectedModAndWait();
+				runSelectedMod();
 
 				return true;
 			}
@@ -3488,7 +3452,7 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 			spdlog::info("Selected random mod: '{}'\n", m_selectedMod->getFullName(m_selectedModVersionIndex, m_selectedModVersionTypeIndex));
 			fmt::print("\n");
 
-			runSelectedModAndWait();
+			runSelectedMod();
 
 			return true;
 		}
@@ -3499,12 +3463,12 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 			}
 
 			clearSelectedMod();
-			runSelectedModAndWait();
+			runSelectedMod();
 
 			return true;
 		}
 		else if((args->hasArgument("g") || args->hasArgument("group")) || (args->hasArgument("x") || args->hasArgument("con"))) {
-			runSelectedModAndWait();
+			runSelectedMod();
 
 			return true;
 		}

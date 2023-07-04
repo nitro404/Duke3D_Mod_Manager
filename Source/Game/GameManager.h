@@ -5,11 +5,15 @@
 
 #include <Platform/DeviceInformationBridge.h>
 
+#include <boost/signals2.hpp>
+
+#include <future>
 #include <memory>
 #include <string>
 
 class GameDownloadCollection;
 class GameVersion;
+class HTTPRequest;
 
 class GameManager final {
 public:
@@ -28,7 +32,6 @@ public:
 	std::string getGameDownloadURL(const std::string & gameVersionID);
 	std::string getGameDownloadSHA1(const std::string & gameVersionID);
 	std::string getGroupDownloadURL(const std::string & gameVersionID);
-	static std::string getGroupDownloadSHA1(const std::string & gameVersionID);
 	std::string getRemoteGameDownloadsBaseURL() const;
 	std::string getFallbackGameDownloadURL(const std::string & gameVersionID) const;
 	std::string getFallbackGameDownloadSHA1(const std::string & gameVersionID) const;
@@ -54,8 +57,14 @@ public:
 	bool installGroupFile(const std::string & gameVersionID, const std::string & directoryPath, bool overwrite = true);
 	void updateGroupFileSymlinks();
 
+	boost::signals2::signal<void (std::string /* statusMessage */)> installStatusChanged;
+	boost::signals2::signal<void (GameVersion & /* gameVersion */, HTTPRequest & /* request */, size_t /* numberOfBytesDownloaded */, size_t /* totalNumberOfBytes */)> gameDownloadProgress;
+	boost::signals2::signal<void (GameVersion & /* groupGameVersion */, HTTPRequest & /* request */, size_t /* numberOfBytesDownloaded */, size_t /* totalNumberOfBytes */)> groupDownloadProgress;
+
 private:
 	bool downloadGroupFile(const std::string & gameVersionID, bool useFallback);
+	void onGameDownloadProgress(GameVersion & gameVersion, HTTPRequest & request, size_t numberOfBytesDownloaded, size_t totalNumberOfBytes);
+	void onGroupDownloadProgress(GameVersion & groupGameVersion, HTTPRequest & request, size_t numberOfBytesDownloaded, size_t totalNumberOfBytes);
 
 	bool m_initialized;
 	bool m_localMode;

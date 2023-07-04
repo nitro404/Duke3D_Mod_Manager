@@ -53,8 +53,6 @@ public:
 	uint8_t numberOfInitializationSteps() const;
 	std::future<bool> initializeAsync(int argc = 0, char * argv[] = nullptr);
 	std::future<bool> initializeAsync(std::shared_ptr<ArgumentParser> arguments);
-	bool initializeAndWait(int argc = 0, char * argv[] = nullptr);
-	bool initializeAndWait(std::shared_ptr<ArgumentParser> arguments);
 	bool uninitialize();
 
 	bool isUsingLocalMode() const;
@@ -128,7 +126,6 @@ public:
 	bool installStandAloneMod(const ModGameVersion & standAloneModGameVersion, const std::string & destinationDirectoryPath, bool removeArchivePackage = true);
 	bool uninstallModGameVersion(const ModGameVersion & modGameVersion);
 	std::future<bool> runSelectedModAsync(std::shared_ptr<GameVersion> alternateGameVersion = nullptr, std::shared_ptr<ModGameVersion> alternateModGameVersion = nullptr);
-	bool runSelectedModAndWait(std::shared_ptr<GameVersion> alternateGameVersion = nullptr, std::shared_ptr<ModGameVersion> alternateModGameVersion = nullptr);
 	bool isGameProcessRunning() const;
 	std::shared_ptr<Process> getGameProcess() const;
 	bool terminateGameProcess();

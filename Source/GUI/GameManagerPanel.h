@@ -15,6 +15,7 @@
 
 #include <wx/bookctrl.h>
 
+#include <future>
 #include <memory>
 #include <vector>
 
@@ -84,6 +85,7 @@ private:
 	void onGameVersionSaved(GameVersionPanel & gameVersionPanel);
 
 	std::shared_ptr<GameManager> m_gameManager;
+	std::future<bool> m_installGameFuture;
 	std::vector<SignalConnectionGroup> m_gameVersionPanelSignalConnectionGroups;
 	wxNotebook * m_notebook;
 	wxButton * m_newButton;
