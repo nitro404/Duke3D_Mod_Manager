@@ -2173,13 +2173,18 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	std::string customMap;
 	std::shared_ptr<GameVersion> customTargetGameVersion;
 	std::vector<std::string> customGroupFileNames;
+	std::chrono::time_point<std::chrono::steady_clock> commandGenerationStartTimePoint(std::chrono::steady_clock::now());
 
 	std::string command(generateCommand(selectedModGameVersion, selectedGameVersion, scriptArgs, combinedGroupFileName, &customMod, &customMap, &customTargetGameVersion, &customGroupFileNames));
+
+	std::chrono::microseconds commandGenerationDuration(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - commandGenerationStartTimePoint));
 
 	if(command.empty()) {
 		notifyLaunchError("Failed to generate launch command.");
 		return false;
 	}
+
+	spdlog::trace("Generated command string after {} us.", commandGenerationDuration.count());
 
 	if(!removeModFilesFromGameDirectory(*selectedGameVersion)) {
 		notifyLaunchError(fmt::format("Failed to remove existing mod files from '{}' game directory.", selectedGameVersion->getLongName()));
@@ -2344,6 +2349,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	std::map<std::string, std::any> properties;
 	properties["gameVersion"] = selectedGameVersion->getID();
 	properties["command"] = command;
+	properties["commandGenerationDurationUs"] = commandGenerationDuration.count();
 
 	if(selectedGameVersion->doesRequireDOSBox()) {
 		properties["dosboxVersion"] = selectedDOSBoxVersion->getID();
@@ -2357,7 +2363,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		properties["arguments"] = m_arguments->getPassthroughArguments().value();
 	}
 
-	properties["runDelayDuration"] = runDelayDuration.count();
+	properties["runDelayDurationMs"] = runDelayDuration.count();
 
 	std::string gameTypeName(Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)));
 
