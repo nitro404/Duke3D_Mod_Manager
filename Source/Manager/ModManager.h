@@ -161,7 +161,7 @@ private:
 	void assignPlatformFactories();
 	bool handleArguments(const ArgumentParser * args);
 	std::string generateCommand(std::shared_ptr<ModGameVersion> modGameVersion, std::shared_ptr<GameVersion> selectedGameVersion, ScriptArguments & scriptArgs, std::string_view combinedGroupFileName = "", bool * customMod = nullptr, std::string * customMap = nullptr, std::shared_ptr<GameVersion> * customTargetGameVersion = nullptr, std::vector<std::string> * customGroupFileNames = nullptr) const;
-	std::string generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const DOSBoxVersion & dosboxVersion, const  std::string & dosboxArguments) const;
+	std::string generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const DOSBoxVersion & dosboxVersion, const  std::string & dosboxArguments, bool showConsole) const;
 	size_t checkForUnlinkedModFiles() const;
 	size_t checkForUnlinkedModFilesForGameVersion(const GameVersion & gameVersion) const;
 	size_t checkModForMissingFiles(const std::string & modID, std::optional<size_t> versionIndex = {}, std::optional<size_t> versionTypeIndex = {}) const;

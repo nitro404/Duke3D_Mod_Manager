@@ -3258,13 +3258,13 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			return {};
 		}
 
-		return generateDOSBoxCommand(dosboxScript, scriptArgs, *selectedDOSBoxVersion, settings->dosboxArguments);
+		return generateDOSBoxCommand(dosboxScript, scriptArgs, *selectedDOSBoxVersion, settings->dosboxArguments, settings->dosboxShowConsole);
 	}
 
 	return "\"" +  Utilities::joinPaths(selectedGameVersion->getGamePath(), executableName) + "\"" + command.str();
 }
 
-std::string ModManager::generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const DOSBoxVersion & dosboxVersion, const std::string & dosboxArguments) const {
+std::string ModManager::generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const DOSBoxVersion & dosboxVersion, const std::string & dosboxArguments, bool showConsole) const {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	static const std::regex unescapedQuotesRegExp("(?:^\"|([^\\\\])\")");
@@ -3275,7 +3275,15 @@ std::string ModManager::generateDOSBoxCommand(const Script & script, const Scrip
 
 	std::stringstream command;
 
-	command << fmt::format("\"{}\" {} ", Utilities::joinPaths(dosboxVersion.getDirectoryPath(), dosboxVersion.getExecutableName()), dosboxArguments);
+	command << fmt::format("\"{}\"", Utilities::joinPaths(dosboxVersion.getDirectoryPath(), dosboxVersion.getExecutableName()));
+
+	if(!showConsole) {
+		command << " -noconsole";
+	}
+
+	if(!dosboxArguments.empty()) {
+		command << " " << dosboxArguments;
+	}
 
 	std::string line;
 	std::string formattedLine;
@@ -3287,11 +3295,7 @@ std::string ModManager::generateDOSBoxCommand(const Script & script, const Scrip
 		std::regex_replace(std::back_inserter(formattedLine), line.begin(), line.end(), unescapedQuotesRegExp, "$1\\\"");
 
 		if(!formattedLine.empty()) {
-			if(command.tellp() != 0) {
-				command << " ";
-			}
-
-			command << fmt::format("-c \"{}\"", formattedLine);
+			command << fmt::format(" -c \"{}\"", formattedLine);
 		}
 	}
 
