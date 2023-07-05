@@ -319,7 +319,5 @@ void GameVersionPanel::onSettingModified(SettingPanel & settingPanel) {
 }
 
 void GameVersionPanel::onNotesModified(wxCommandEvent & event) {
-	m_modified = true;
-
 	gameVersionNotesChanged(*this);
 }
