@@ -229,6 +229,9 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 
 	m_modInfoPanel = new ModInfoPanel(m_modManager->getMods(), m_modManager->getGameVersions(), m_modInfoBox);
 	m_modInfoPanel->Hide();
+	m_modInfoPanelSignalConnectionGroup = SignalConnectionGroup(
+		m_modInfoPanel->modSelectionRequested.connect(std::bind(&ModBrowserPanel::onModSelectionRequested, this, std::placeholders::_1))
+	);
 
 	m_gameOptionsPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, "Game Options");
 
@@ -419,6 +422,7 @@ ModBrowserPanel::~ModBrowserPanel() {
 	m_dosboxVersionCollectionItemModifiedConnection.disconnect();
 	m_gameVersionCollectionSizeChangedConnection.disconnect();
 	m_gameVersionCollectionItemModifiedConnection.disconnect();
+	m_modInfoPanelSignalConnectionGroup.disconnect();
 }
 
 void ModBrowserPanel::update() {
@@ -1647,4 +1651,16 @@ void ModBrowserPanel::onGameVersionCollectionSizeChanged(GameVersionCollection &
 
 void ModBrowserPanel::onGameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) {
 	updatePreferredGameVersionList();
+}
+
+void ModBrowserPanel::onModSelectionRequested(const std::string & modID) {
+	clearSearch();
+
+	std::shared_ptr<OrganizedModCollection> organizedMods(m_modManager->getOrganizedMods());
+	organizedMods->clearSelectedItems();
+	organizedMods->setFilterType(OrganizedModCollection::FilterType::None);
+
+	if(!organizedMods->setSelectedModByID(modID)) {
+		spdlog::error("Failed to select mod with ID: '{}'.", modID);
+	}
 }

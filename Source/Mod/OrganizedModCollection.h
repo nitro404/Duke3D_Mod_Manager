@@ -82,6 +82,7 @@ public:
 	bool shouldDisplayGameVersions() const;
 	bool shouldDisplayTeams() const;
 	bool shouldDisplayAuthors() const;
+	size_t numberOfItems() const;
 	size_t indexOfSelectedItem() const;
 	bool selectItem(size_t index);
 	bool selectRandomItem();
@@ -89,17 +90,18 @@ public:
 
 	size_t numberOfMods() const;
 	bool hasMod(const Mod & mod) const;
-	bool hasMod(const std::string & id) const;
+	bool hasModWithID(const std::string & id) const;
 	bool hasModWithName(const std::string & name) const;
 	size_t indexOfMod(const Mod & mod) const;
-	size_t indexOfMod(const std::string & id) const;
+	size_t indexOfModWithID(const std::string & id) const;
 	size_t indexOfModWithName(const std::string & name) const;
 	std::shared_ptr<Mod> getMod(size_t index) const;
-	std::shared_ptr<Mod> getMod(const std::string & id) const;
+	std::shared_ptr<Mod> getModWithID(const std::string & id) const;
 	std::shared_ptr<Mod> getModWithName(const std::string & name) const;
 	std::shared_ptr<Mod> getSelectedMod() const;
 	bool setSelectedMod(size_t index);
-	bool setSelectedMod(const std::string & name);
+	bool setSelectedModByID(const std::string & id);
+	bool setSelectedModByName(const std::string & name);
 	bool setSelectedMod(const Mod * mod);
 	bool selectRandomMod();
 	void clearSelectedMod();

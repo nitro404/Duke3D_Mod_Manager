@@ -1,6 +1,8 @@
 #ifndef _MOD_INFO_PANEL_H_
 #define _MOD_INFO_PANEL_H_
 
+#include <boost/signals2.hpp>
+
 #ifdef __BORLANDC__
 	#pragma hdrstop
 #endif
@@ -26,7 +28,11 @@ public:
 
 	void setMod(std::shared_ptr<Mod> mod);
 
+	boost::signals2::signal<void (std::string /* modID */)> modSelectionRequested;
+
 private:
+	void onModAliasHyperlinkClicked(wxHyperlinkEvent & event);
+
 	std::shared_ptr<Mod> m_mod;
 	std::shared_ptr<ModCollection> m_mods;
 	std::shared_ptr<GameVersionCollection> m_gameVersions;
@@ -34,7 +40,7 @@ private:
 	wxStaticText * m_modNameLabel;
 	wxStaticText * m_modNameText;
 	wxStaticText * m_modAliasLabel;
-	wxStaticText * m_modAliasText;
+	wxHyperlinkCtrl * m_modAliasHyperlink;
 	wxStaticText * m_modTypeText;
 	wxStaticText * m_initialReleaseDateText;
 	wxStaticText * m_latestReleaseDateLabel;

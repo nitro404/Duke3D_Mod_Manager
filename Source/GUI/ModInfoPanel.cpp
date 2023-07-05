@@ -8,6 +8,8 @@
 #include "Mod/ModTeamMember.h"
 #include "Game/GameVersionCollection.h"
 
+#include <spdlog/spdlog.h>
+
 #include <sstream>
 #include <string>
 
@@ -18,7 +20,7 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	, m_modNameLabel(nullptr)
 	, m_modNameText(nullptr)
 	, m_modAliasLabel(nullptr)
-	, m_modAliasText(nullptr)
+	, m_modAliasHyperlink(nullptr)
 	, m_modTypeText(nullptr)
 	, m_initialReleaseDateText(nullptr)
 	, m_latestReleaseDateLabel(nullptr)
@@ -51,27 +53,28 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 
 	m_modNameLabel = new wxStaticText(this, wxID_ANY, "Mod Name:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_modNameLabel->SetFont(m_modNameLabel->GetFont().MakeBold());
-	m_modNameText = new wxStaticText(this, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_modNameText = new wxStaticText(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
 	m_modAliasLabel = new wxStaticText(this, wxID_ANY, "Mod Alias:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_modAliasLabel->SetFont(m_modAliasLabel->GetFont().MakeBold());
-	m_modAliasText = new wxStaticText(this, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_modAliasHyperlink = new wxHyperlinkCtrl(this, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxALIGN_LEFT, "Mod Alias");
+	m_modAliasHyperlink->Bind(wxEVT_HYPERLINK, &ModInfoPanel::onModAliasHyperlinkClicked, this);
 
 	wxStaticText * modTypeLabel = new wxStaticText(this, wxID_ANY, "Mod Type:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	modTypeLabel->SetFont(modTypeLabel->GetFont().MakeBold());
-	m_modTypeText = new wxStaticText(this, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_modTypeText = new wxStaticText(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
 	wxStaticText * initialReleaseDateLabel = new wxStaticText(this, wxID_ANY, "Initial Release Date:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	initialReleaseDateLabel->SetFont(initialReleaseDateLabel->GetFont().MakeBold());
-	m_initialReleaseDateText = new wxStaticText(this, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_initialReleaseDateText = new wxStaticText(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
 	m_latestReleaseDateLabel = new wxStaticText(this, wxID_ANY, "Latest Release Date:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_latestReleaseDateLabel->SetFont(m_latestReleaseDateLabel->GetFont().MakeBold());
-	m_latestReleaseDateText = new wxStaticText(this, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_latestReleaseDateText = new wxStaticText(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
 	m_supportedGameVersionsLabel = new wxStaticText(this, wxID_ANY, "Supported Game Versions:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_supportedGameVersionsLabel->SetFont(m_supportedGameVersionsLabel->GetFont().MakeBold());
-	m_supportedGameVersionsText = new wxStaticText(this, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_supportedGameVersionsText = new wxStaticText(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
 	m_modWebsiteHyperlinkLabel = new wxStaticText(this, wxID_ANY, "Mod Website:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_modWebsiteHyperlinkLabel->SetFont(m_modWebsiteHyperlinkLabel->GetFont().MakeBold());
@@ -87,7 +90,7 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 
 	m_teamNameLabel = new wxStaticText(this, wxID_ANY, "Team Name:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamNameLabel->SetFont(m_teamNameLabel->GetFont().MakeBold());
-	m_teamNameText = new wxStaticText(this, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_teamNameText = new wxStaticText(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
 	m_teamWebsiteHyperlinkLabel = new wxStaticText(this, wxID_ANY, "Team Website:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamWebsiteHyperlinkLabel->SetFont(m_teamWebsiteHyperlinkLabel->GetFont().MakeBold());
@@ -107,7 +110,7 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 
 	m_teamLocationLabel = new wxStaticText(this, wxID_ANY, "Team Location:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamLocationLabel->SetFont(m_teamLocationLabel->GetFont().MakeBold());
-	m_teamLocationText = new wxStaticText(this, wxID_ANY, "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_teamLocationText = new wxStaticText(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 
 	m_teamMembersLabel = new wxStaticText(this, wxID_ANY, "Team Members:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamMembersLabel->SetFont(m_teamMembersLabel->GetFont().MakeBold());
@@ -125,7 +128,7 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	modPanelSizer->Add(m_modNameLabel, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_modNameText, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_modAliasLabel, 1, wxEXPAND | wxHORIZONTAL);
-	modPanelSizer->Add(m_modAliasText, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_modAliasHyperlink, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(modTypeLabel, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_modTypeText, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(initialReleaseDateLabel, 1, wxEXPAND | wxHORIZONTAL);
@@ -190,18 +193,19 @@ void ModInfoPanel::setMod(std::shared_ptr<Mod> mod) {
 		std::shared_ptr<Mod> aliasMod(m_mods->getModWithID(modAlias));
 
 		if(aliasMod != nullptr) {
-			m_modAliasText->SetLabelText(aliasMod->getName());
+			m_modAliasHyperlink->SetLabelText(aliasMod->getName());
+			m_modAliasHyperlink->SetURL(aliasMod->getID());
 			m_modAliasLabel->Show();
-			m_modAliasText->Show();
+			m_modAliasHyperlink->Show();
 		}
 		else {
 			m_modAliasLabel->Hide();
-			m_modAliasText->Hide();
+			m_modAliasHyperlink->Hide();
 		}
 	}
 	else {
 		m_modAliasLabel->Hide();
-		m_modAliasText->Hide();
+		m_modAliasHyperlink->Hide();
 	}
 
 	m_modTypeText->SetLabelText(m_mod->getType());
@@ -435,4 +439,10 @@ void ModInfoPanel::setMod(std::shared_ptr<Mod> mod) {
 	}
 
 	Layout();
+}
+
+void ModInfoPanel::onModAliasHyperlinkClicked(wxHyperlinkEvent & event) {
+	event.Skip(false);
+
+	modSelectionRequested(std::string(event.GetURL().mb_str()));
 }

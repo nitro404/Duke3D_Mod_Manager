@@ -4,6 +4,8 @@
 #include "Game/GameType.h"
 #include "Mod/OrganizedModCollection.h"
 
+#include <Signal/SignalConnectionGroup.h>
+
 #include <boost/signals2.hpp>
 #include <wx/wxprec.h>
 
@@ -115,6 +117,7 @@ private:
 	void onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion);
 	void onGameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection);
 	void onGameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion);
+	void onModSelectionRequested(const std::string & modID);
 
 	std::shared_ptr<ModManager> m_modManager;
 	std::shared_ptr<GameVersion> m_activeGameVersion;
@@ -145,6 +148,7 @@ private:
 	boost::signals2::connection m_dosboxVersionCollectionItemModifiedConnection;
 	boost::signals2::connection m_gameVersionCollectionSizeChangedConnection;
 	boost::signals2::connection m_gameVersionCollectionItemModifiedConnection;
+	SignalConnectionGroup m_modInfoPanelSignalConnectionGroup;
 	std::string m_searchQuery;
 	std::vector<ModMatch> m_modMatches;
 	wxSearchCtrl * m_modSearchTextField;
