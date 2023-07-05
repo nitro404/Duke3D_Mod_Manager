@@ -23,7 +23,7 @@ namespace WXUtilities {
 	}
 
 	Colour createColour(const wxColour & colour) {
-		return Colour(static_cast<uint8_t>(colour.GetRed()), static_cast<uint8_t>(colour.GetGreen()), static_cast<uint8_t>(colour.GetBlue()), static_cast<uint8_t>(colour.GetAlpha()));
+		return Colour(static_cast<uint8_t>(colour.Red()), static_cast<uint8_t>(colour.Green()), static_cast<uint8_t>(colour.Blue()), static_cast<uint8_t>(colour.Alpha()));
 	}
 
 	wxArrayString createItemWXArrayString(const std::vector<std::string> & items) {
@@ -34,6 +34,26 @@ namespace WXUtilities {
 		}
 
 		return itemsArrayString;
+	}
+
+	wxGenericHyperlinkCtrl * createHyperlink(wxWindow * parent, wxWindowID id, const wxString & label, const wxString & url, const wxPoint & position, const wxSize & size, long style , const wxString & name) {
+		// Note: Generic hyperlinks assert if both the label and URL are empty, so a non-empty label must be forced to avoid assertion failures.
+		wxGenericHyperlinkCtrl * hyperlink = new wxGenericHyperlinkCtrl(parent, id, label.empty() ? " " : label, url, position, size, style, name);
+		hyperlink->SetNormalColour(createWXColour(Colour::BLUE));
+		hyperlink->SetVisitedColour(createWXColour(Colour::BLUE));
+		hyperlink->SetHoverColour(createWXColour(Colour::ROYAL_BLUE));
+
+		return hyperlink;
+	}
+
+	wxGenericHyperlinkCtrl * createDeepLink(wxWindow * parent, wxWindowID id, const wxString & label, const wxString & url, const wxPoint & position, const wxSize & size, long style, const wxString & name) {
+		// Note: Generic hyperlinks assert if both the label and URL are empty, so a non-empty label must be forced to avoid assertion failures.
+		wxGenericHyperlinkCtrl * deepLink = new wxGenericHyperlinkCtrl(parent, id, label.empty() ? " " : label, url, position, size, style, name);
+		deepLink->SetNormalColour(createWXColour(Colour::DARK_GREEN));
+		deepLink->SetVisitedColour(createWXColour(Colour::DARK_GREEN));
+		deepLink->SetHoverColour(createWXColour(Colour::FOREST_GREEN));
+
+		return deepLink;
 	}
 
 	void setButtonEnabled(wxButton * button, bool enabled) {

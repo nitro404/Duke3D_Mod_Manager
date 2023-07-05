@@ -2,6 +2,7 @@
 
 #include "Mod/Mod.h"
 #include "Mod/ModCollection.h"
+#include "WXUtilities.h"
 
 #include <spdlog/spdlog.h>
 
@@ -54,7 +55,7 @@ bool RelatedModsPanel::setMod(std::shared_ptr<Mod> mod) {
 			continue;
 		}
 
-		wxHyperlinkCtrl * relatedModHyperlink = new wxHyperlinkCtrl(this, wxID_ANY, relatedMod->getName(), relatedModID, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxALIGN_LEFT, "Related Mod");
+		wxGenericHyperlinkCtrl * relatedModHyperlink = WXUtilities::createDeepLink(this, wxID_ANY, relatedMod->getName(), relatedModID, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT, "Related Mod");
 		relatedModHyperlink->Bind(wxEVT_HYPERLINK, &RelatedModsPanel::onRelatedModHyperlinkClicked, this);
 		m_relatedModsPanelSizer->Add(relatedModHyperlink, 1, wxEXPAND | wxALL);
 		m_relatedModHyperlinks.push_back(relatedModHyperlink);

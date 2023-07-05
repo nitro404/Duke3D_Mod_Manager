@@ -42,7 +42,7 @@ private:
 	wxStaticText * m_modNameLabel;
 	wxStaticText * m_modNameText;
 	wxStaticText * m_modAliasLabel;
-	wxHyperlinkCtrl * m_modAliasHyperlink;
+	wxGenericHyperlinkCtrl * m_modAliasHyperlink;
 	wxStaticText * m_modTypeText;
 	wxStaticText * m_initialReleaseDateText;
 	wxStaticText * m_latestReleaseDateLabel;
@@ -50,9 +50,9 @@ private:
 	wxStaticText * m_supportedGameVersionsLabel;
 	wxStaticText * m_supportedGameVersionsText;
 	wxStaticText * m_modWebsiteHyperlinkLabel;
-	wxHyperlinkCtrl * m_modWebsiteHyperlink;
+	wxGenericHyperlinkCtrl * m_modWebsiteHyperlink;
 	wxStaticText * m_modRepositoryHyperlinkLabel;
-	wxHyperlinkCtrl * m_modRepositoryHyperlink;
+	wxGenericHyperlinkCtrl * m_modRepositoryHyperlink;
 	wxStaticText * m_notesLabel;
 	wxStaticText * m_notesText;
 	wxStaticText * m_relatedModsLabel;
@@ -61,13 +61,13 @@ private:
 	wxStaticText * m_teamNameLabel;
 	wxStaticText * m_teamNameText;
 	wxStaticText * m_teamWebsiteHyperlinkLabel;
-	wxHyperlinkCtrl * m_teamWebsiteHyperlink;
+	wxGenericHyperlinkCtrl * m_teamWebsiteHyperlink;
 	wxStaticText * m_teamEmailHyperlinkLabel;
-	wxHyperlinkCtrl * m_teamEmailHyperlink;
+	wxGenericHyperlinkCtrl * m_teamEmailHyperlink;
 	wxStaticText * m_teamTwitterLabel;
-	wxHyperlinkCtrl * m_teamTwitterHyperlink;
+	wxGenericHyperlinkCtrl * m_teamTwitterHyperlink;
 	wxStaticText * m_teamDiscordLabel;
-	wxHyperlinkCtrl * m_teamDiscordHyperlink;
+	wxGenericHyperlinkCtrl * m_teamDiscordHyperlink;
 	wxStaticText * m_teamLocationLabel;
 	wxStaticText * m_teamLocationText;
 	wxStaticText * m_teamMembersLabel;

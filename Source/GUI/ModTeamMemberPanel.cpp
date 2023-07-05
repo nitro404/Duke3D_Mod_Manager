@@ -1,6 +1,7 @@
 #include "ModTeamMemberPanel.h"
 
 #include "Mod/ModTeamMember.h"
+#include "WXUtilities.h"
 
 ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "Mod Team Member") {
@@ -47,7 +48,7 @@ ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember
 		if(teamMember->hasEmail()) {
 			wxStaticText * emailLabel = new wxStaticText(detailsPanel, wxID_ANY, "Email:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 			emailLabel->SetFont(emailLabel->GetFont().MakeBold());
-			wxHyperlinkCtrl * emailHyperlink = new wxHyperlinkCtrl(detailsPanel, wxID_ANY, teamMember->getEmail(), "mailto:" + teamMember->getEmail(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member E-Mail");
+			wxGenericHyperlinkCtrl * emailHyperlink = WXUtilities::createHyperlink(detailsPanel, wxID_ANY, teamMember->getEmail(), "mailto:" + teamMember->getEmail(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member E-Mail");
 
 			detailsPanelSizer->Add(emailLabel, 1, wxEXPAND | wxALL);
 			detailsPanelSizer->Add(emailHyperlink, 1, wxEXPAND | wxALL);
@@ -56,7 +57,7 @@ ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember
 		if(teamMember->hasTwitter()) {
 			wxStaticText * twitterLabel = new wxStaticText(detailsPanel, wxID_ANY, "Twitter:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 			twitterLabel->SetFont(twitterLabel->GetFont().MakeBold());
-			wxHyperlinkCtrl * twitterHyperlink = new wxHyperlinkCtrl(detailsPanel, wxID_ANY, teamMember->getTwitter(), "https://twitter.com/" + teamMember->getTwitter(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member Twitter");
+			wxGenericHyperlinkCtrl * twitterHyperlink = WXUtilities::createHyperlink(detailsPanel, wxID_ANY, teamMember->getTwitter(), "https://twitter.com/" + teamMember->getTwitter(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member Twitter");
 
 			detailsPanelSizer->Add(twitterLabel, 1, wxEXPAND | wxALL);
 			detailsPanelSizer->Add(twitterHyperlink, 1, wxEXPAND | wxALL);
@@ -65,7 +66,7 @@ ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember
 		if(teamMember->hasWebsite()) {
 			wxStaticText * websiteLabel = new wxStaticText(detailsPanel, wxID_ANY, "Website:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 			websiteLabel->SetFont(websiteLabel->GetFont().MakeBold());
-			wxHyperlinkCtrl * websiteHyperlink = new wxHyperlinkCtrl(detailsPanel, wxID_ANY, teamMember->getWebsite(), teamMember->getWebsite(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member Website");
+			wxGenericHyperlinkCtrl * websiteHyperlink = WXUtilities::createHyperlink(detailsPanel, wxID_ANY, teamMember->getWebsite(), teamMember->getWebsite(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member Website");
 
 			detailsPanelSizer->Add(websiteLabel, 1, wxEXPAND | wxALL);
 			detailsPanelSizer->Add(websiteHyperlink, 1, wxEXPAND | wxALL);
@@ -74,7 +75,7 @@ ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember
 		if(teamMember->hasYouTube()) {
 			wxStaticText * youtubeLabel = new wxStaticText(detailsPanel, wxID_ANY, "YouTube:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 			youtubeLabel->SetFont(youtubeLabel->GetFont().MakeBold());
-			wxHyperlinkCtrl * youtubeHyperlink = new wxHyperlinkCtrl(detailsPanel, wxID_ANY, teamMember->getYouTube(), "https://youtube.com/" + teamMember->getYouTube(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member YouTube");
+			wxGenericHyperlinkCtrl * youtubeHyperlink = WXUtilities::createHyperlink(detailsPanel, wxID_ANY, teamMember->getYouTube(), "https://youtube.com/" + teamMember->getYouTube(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member YouTube");
 
 			detailsPanelSizer->Add(youtubeLabel, 1, wxEXPAND | wxALL);
 			detailsPanelSizer->Add(youtubeHyperlink, 1, wxEXPAND | wxALL);
@@ -83,7 +84,7 @@ ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember
 		if(teamMember->hasReddit()) {
 			wxStaticText * redditLabel = new wxStaticText(detailsPanel, wxID_ANY, "Reddit:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 			redditLabel->SetFont(redditLabel->GetFont().MakeBold());
-			wxHyperlinkCtrl * redditHyperlink = new wxHyperlinkCtrl(detailsPanel, wxID_ANY, teamMember->getReddit(), "https://www.reddit.com/user/" + teamMember->getReddit(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member Reddit");
+			wxGenericHyperlinkCtrl * redditHyperlink = WXUtilities::createHyperlink(detailsPanel, wxID_ANY, teamMember->getReddit(), "https://www.reddit.com/user/" + teamMember->getReddit(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member Reddit");
 
 			detailsPanelSizer->Add(redditLabel, 1, wxEXPAND | wxALL);
 			detailsPanelSizer->Add(redditHyperlink, 1, wxEXPAND | wxALL);
@@ -92,7 +93,7 @@ ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember
 		if(teamMember->hasGitHub()) {
 			wxStaticText * githubLabel = new wxStaticText(detailsPanel, wxID_ANY, "GitHub:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 			githubLabel->SetFont(githubLabel->GetFont().MakeBold());
-			wxHyperlinkCtrl * githubHyperlink = new wxHyperlinkCtrl(detailsPanel, wxID_ANY, teamMember->getGitHub(), "https://github.com/" + teamMember->getGitHub(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member GitHub");
+			wxGenericHyperlinkCtrl * githubHyperlink = WXUtilities::createHyperlink(detailsPanel, wxID_ANY, teamMember->getGitHub(), "https://github.com/" + teamMember->getGitHub(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member GitHub");
 
 			detailsPanelSizer->Add(githubLabel, 1, wxEXPAND | wxALL);
 			detailsPanelSizer->Add(githubHyperlink, 1, wxEXPAND | wxALL);
@@ -110,7 +111,7 @@ ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember
 		if(teamMember->hasSteamID()) {
 			wxStaticText * steamLabel = new wxStaticText(detailsPanel, wxID_ANY, "Steam ID:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 			steamLabel->SetFont(steamLabel->GetFont().MakeBold());
-			wxHyperlinkCtrl * steamHyperlink = new wxHyperlinkCtrl(detailsPanel, wxID_ANY, teamMember->getSteamID(), "https://steamcommunity.com/id/" + teamMember->getSteamID(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member Steam ID");
+			wxGenericHyperlinkCtrl * steamHyperlink = WXUtilities::createHyperlink(detailsPanel, wxID_ANY, teamMember->getSteamID(), "https://steamcommunity.com/id/" + teamMember->getSteamID(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member Steam ID");
 
 			detailsPanelSizer->Add(steamLabel, 1, wxEXPAND | wxALL);
 			detailsPanelSizer->Add(steamHyperlink, 1, wxEXPAND | wxALL);

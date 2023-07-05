@@ -19,6 +19,8 @@
 class Mod;
 class ModCollection;
 
+class wxGenericHyperlinkCtrl;
+
 class RelatedModsPanel final : public wxPanel {
 public:
 	RelatedModsPanel(std::shared_ptr<ModCollection> mods, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
@@ -35,7 +37,7 @@ private:
 	std::shared_ptr<ModCollection> m_mods;
 	std::shared_ptr<Mod> m_mod;
 
-	std::vector<wxHyperlinkCtrl *> m_relatedModHyperlinks;
+	std::vector<wxGenericHyperlinkCtrl *> m_relatedModHyperlinks;
 	wxFlexGridSizer * m_relatedModsPanelSizer;
 
 	RelatedModsPanel(const RelatedModsPanel &) = delete;

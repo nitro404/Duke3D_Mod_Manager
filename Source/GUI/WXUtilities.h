@@ -18,6 +18,9 @@
 	#include <wx/wx.h>
 #endif
 
+#include <wx/hyperlink.h>
+#include <wx/generic/hyperlink.h>
+
 #include <string>
 #include <vector>
 
@@ -32,6 +35,8 @@ namespace WXUtilities {
 	wxArrayString createItemWXArrayString(const std::vector<std::string> & items);
 	template <typename E>
 	wxArrayString createEnumWXArrayString(const std::vector<E> & disabledEnumValues = {});
+	wxGenericHyperlinkCtrl * createHyperlink(wxWindow * parent, wxWindowID id, const wxString & label, const wxString & url, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxHL_DEFAULT_STYLE, const wxString & name = wxASCII_STR(wxHyperlinkCtrlNameStr));
+	wxGenericHyperlinkCtrl * createDeepLink(wxWindow * parent, wxWindowID id, const wxString & label, const wxString & url, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxNO_BORDER | wxHL_ALIGN_CENTRE, const wxString & name = wxASCII_STR(wxHyperlinkCtrlNameStr));
 	void setButtonEnabled(wxButton * button, bool enabled);
 	void setTextControlEnabled(wxTextCtrl * textControl, bool enabled);
 	wxLogLevel spdLogLevelToWXLogLevel(spdlog::level::level_enum logLevel);

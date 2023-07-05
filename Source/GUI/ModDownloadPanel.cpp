@@ -6,6 +6,8 @@
 #include "Mod/ModDownload.h"
 #include "Mod/ModVersion.h"
 
+#include "WXUtilities.h"
+
 #include <Utilities/FileUtilities.h>
 #include <Utilities/StringUtilities.h>
 
@@ -28,7 +30,7 @@ ModDownloadPanel::ModDownloadPanel(std::shared_ptr<ModDownload> modDownload, wxW
 		wxFlexGridSizer * downloadInfoSizer = new wxFlexGridSizer(2, border, border);
 		SetSizer(downloadInfoSizer);
 
-		wxHyperlinkCtrl * downloadHyperlink = new wxHyperlinkCtrl(this, wxID_ANY, modDownload->getFileName(), Utilities::joinPaths(downloadBaseURL, modDownload->getFileName()), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Mod Download");
+		wxGenericHyperlinkCtrl * downloadHyperlink = WXUtilities::createHyperlink(this, wxID_ANY, modDownload->getFileName(), Utilities::joinPaths(downloadBaseURL, modDownload->getFileName()), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Mod Download");
 		downloadInfoSizer->Add(downloadHyperlink, 1, wxEXPAND | wxALL);
 
 		std::stringstream descriptionStringStream;
