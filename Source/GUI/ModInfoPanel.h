@@ -30,10 +30,12 @@ public:
 	void setMod(std::shared_ptr<Mod> mod);
 
 	boost::signals2::signal<void (std::string /* modID */)> modSelectionRequested;
+	boost::signals2::signal<void (std::string /* modTeamName */)> modTeamSelectionRequested;
 	boost::signals2::signal<void (std::string /* modTeamMemberName */)> modTeamMemberSelectionRequested;
 
 private:
 	void onModAliasHyperlinkClicked(wxHyperlinkEvent & event);
+	void onModTeamNameDeepLinkClicked(wxHyperlinkEvent & event);
 	void onRelatedModSelectionRequested(const std::string & relatedModID);
 	void onModTeamMemberSelectionRequested(const std::string & modTeamMemberName);
 
@@ -61,7 +63,7 @@ private:
 	wxWindow * m_relatedModsSpacers[2];
 	RelatedModsPanel * m_relatedModsPanel;
 	wxStaticText * m_teamNameLabel;
-	wxStaticText * m_teamNameText;
+	wxGenericHyperlinkCtrl * m_teamNameDeepLink;
 	wxStaticText * m_teamWebsiteHyperlinkLabel;
 	wxGenericHyperlinkCtrl * m_teamWebsiteHyperlink;
 	wxStaticText * m_teamEmailHyperlinkLabel;

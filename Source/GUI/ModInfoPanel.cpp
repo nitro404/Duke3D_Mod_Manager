@@ -38,7 +38,7 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	, m_relatedModsLabel(nullptr)
 	, m_relatedModsPanel(nullptr)
 	, m_teamNameLabel(nullptr)
-	, m_teamNameText(nullptr)
+	, m_teamNameDeepLink(nullptr)
 	, m_teamWebsiteHyperlinkLabel(nullptr)
 	, m_teamWebsiteHyperlink(nullptr)
 	, m_teamEmailHyperlinkLabel(nullptr)
@@ -99,7 +99,8 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 
 	m_teamNameLabel = new wxStaticText(this, wxID_ANY, "Team Name:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamNameLabel->SetFont(m_teamNameLabel->GetFont().MakeBold());
-	m_teamNameText = new wxStaticText(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_teamNameDeepLink = WXUtilities::createDeepLink(this, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxHL_ALIGN_LEFT);
+	m_teamNameDeepLink->Bind(wxEVT_HYPERLINK, &ModInfoPanel::onModTeamNameDeepLinkClicked, this);
 
 	m_teamWebsiteHyperlinkLabel = new wxStaticText(this, wxID_ANY, "Team Website:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamWebsiteHyperlinkLabel->SetFont(m_teamWebsiteHyperlinkLabel->GetFont().MakeBold());
@@ -163,7 +164,7 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	modPanelSizer->Add(m_relatedModsPanel, 1, wxEXPAND | wxHORIZONTAL);
 
 	modPanelSizer->Add(m_teamNameLabel, 1, wxEXPAND | wxHORIZONTAL);
-	modPanelSizer->Add(m_teamNameText, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_teamNameDeepLink, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_teamWebsiteHyperlinkLabel, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_teamWebsiteHyperlink, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_teamEmailHyperlinkLabel, 1, wxEXPAND | wxHORIZONTAL);
@@ -307,13 +308,14 @@ void ModInfoPanel::setMod(std::shared_ptr<Mod> mod) {
 		const std::string & teamName = team->getName();
 
 		if(!teamName.empty()) {
-			m_teamNameText->SetLabelText(teamName);
+			m_teamNameDeepLink->SetLabelText(teamName);
+			m_teamNameDeepLink->SetURL(teamName);
 			m_teamNameLabel->Show();
-			m_teamNameText->Show();
+			m_teamNameDeepLink->Show();
 		}
 		else {
 			m_teamNameLabel->Hide();
-			m_teamNameText->Hide();
+			m_teamNameDeepLink->Hide();
 		}
 
 		const std::string & teamWebsite = team->getWebsite();
@@ -399,7 +401,7 @@ void ModInfoPanel::setMod(std::shared_ptr<Mod> mod) {
 	}
 	else {
 		m_teamNameLabel->Hide();
-		m_teamNameText->Hide();
+		m_teamNameDeepLink->Hide();
 		m_teamWebsiteHyperlinkLabel->Hide();
 		m_teamWebsiteHyperlink->Hide();
 		m_teamEmailHyperlinkLabel->Hide();
@@ -485,6 +487,12 @@ void ModInfoPanel::onModAliasHyperlinkClicked(wxHyperlinkEvent & event) {
 	event.Skip(false);
 
 	modSelectionRequested(std::string(event.GetURL().mb_str()));
+}
+
+void ModInfoPanel::onModTeamNameDeepLinkClicked(wxHyperlinkEvent & event) {
+	event.Skip(false);
+
+	modTeamSelectionRequested(std::string(event.GetURL().mb_str()));
 }
 
 void ModInfoPanel::onRelatedModSelectionRequested(const std::string & relatedModID) {

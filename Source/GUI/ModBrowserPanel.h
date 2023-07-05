@@ -118,6 +118,7 @@ private:
 	void onGameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection);
 	void onGameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion);
 	void onModSelectionRequested(const std::string & modID);
+	void onModTeamSelectionRequested(const std::string & modTeamName);
 	void onModTeamMemberSelectionRequested(const std::string & modTeamMemberName);
 
 	std::shared_ptr<ModManager> m_modManager;

@@ -231,6 +231,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_modInfoPanel->Hide();
 	m_modInfoPanelSignalConnectionGroup = SignalConnectionGroup(
 		m_modInfoPanel->modSelectionRequested.connect(std::bind(&ModBrowserPanel::onModSelectionRequested, this, std::placeholders::_1)),
+		m_modInfoPanel->modTeamSelectionRequested.connect(std::bind(&ModBrowserPanel::onModTeamSelectionRequested, this, std::placeholders::_1)),
 		m_modInfoPanel->modTeamMemberSelectionRequested.connect(std::bind(&ModBrowserPanel::onModTeamMemberSelectionRequested, this, std::placeholders::_1))
 	);
 
@@ -1663,6 +1664,18 @@ void ModBrowserPanel::onModSelectionRequested(const std::string & modID) {
 
 	if(!organizedMods->setSelectedModByID(modID)) {
 		spdlog::error("Failed to select mod with ID: '{}'.", modID);
+	}
+}
+
+void ModBrowserPanel::onModTeamSelectionRequested(const std::string & modTeamName) {
+	clearSearch();
+
+	std::shared_ptr<OrganizedModCollection> organizedMods(m_modManager->getOrganizedMods());
+	organizedMods->clearSelectedItems();
+	organizedMods->setFilterType(OrganizedModCollection::FilterType::Teams);
+
+	if(!organizedMods->setSelectedTeam(modTeamName)) {
+		spdlog::error("Failed to select mod team with name: '{}'.", modTeamName);
 	}
 }
 
