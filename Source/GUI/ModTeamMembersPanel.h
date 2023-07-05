@@ -1,6 +1,10 @@
 #ifndef _MOD_TEAM_MEMBERS_PANEL_H_
 #define _MOD_TEAM_MEMBERS_PANEL_H_
 
+#include <Signal/SignalConnectionGroup.h>
+
+#include <boost/signals2.hpp>
+
 #ifdef __BORLANDC__
 	#pragma hdrstop
 #endif
@@ -12,6 +16,7 @@
 #include <wx/hyperlink.h>
 
 #include <memory>
+#include <string>
 #include <vector>
 
 class ModTeam;
@@ -25,11 +30,16 @@ public:
 
 	void setTeam(std::shared_ptr<ModTeam> team);
 
+	boost::signals2::signal<void (std::string /* modTeamMemberName */)> modTeamMemberSelectionRequested;
+
 private:
+	void onModTeamMemberSelectionRequested(const std::string & modTeamMemberName);
+
 	std::shared_ptr<ModTeam> m_team;
 
 	wxFlexGridSizer * m_teamMembersPanelSizer;
 	std::vector<ModTeamMemberPanel *> m_teamMemberPanels;
+	SignalConnectionGroup m_modTeamMemberPanelConnections;
 
 	ModTeamMembersPanel(const ModTeamMembersPanel &) = delete;
 	const ModTeamMembersPanel & operator = (const ModTeamMembersPanel &) = delete;

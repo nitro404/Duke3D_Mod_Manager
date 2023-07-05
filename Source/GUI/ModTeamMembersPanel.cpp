@@ -17,13 +17,16 @@ ModTeamMembersPanel::ModTeamMembersPanel(wxWindow * parent, wxWindowID windowID,
 	SetSizer(m_teamMembersPanelSizer);
 }
 
-ModTeamMembersPanel::~ModTeamMembersPanel() { }
+ModTeamMembersPanel::~ModTeamMembersPanel() {
+	m_modTeamMemberPanelConnections.disconnect();
+}
 
 void ModTeamMembersPanel::setTeam(std::shared_ptr<ModTeam> team) {
 	if(m_team == team) {
 		return;
 	}
 
+	m_modTeamMemberPanelConnections.disconnect();
 	m_team = team;
 
 	if(m_team == nullptr) {
@@ -35,9 +38,14 @@ void ModTeamMembersPanel::setTeam(std::shared_ptr<ModTeam> team) {
 
 	for(size_t i = 0; i < team->numberOfMembers(); i++) {
 		ModTeamMemberPanel * teamMemberPanel = new ModTeamMemberPanel(team->getMember(i), this);
+		m_modTeamMemberPanelConnections.addConnection(teamMemberPanel->modTeamMemberSelectionRequested.connect(std::bind(&ModTeamMembersPanel::onModTeamMemberSelectionRequested, this, std::placeholders::_1)));
 		m_teamMembersPanelSizer->Add(teamMemberPanel, 1, wxEXPAND | wxALL);
 		m_teamMemberPanels.push_back(teamMemberPanel);
 	}
 
 	Layout();
+}
+
+void ModTeamMembersPanel::onModTeamMemberSelectionRequested(const std::string & modTeamMemberName) {
+	modTeamMemberSelectionRequested(modTeamMemberName);
 }

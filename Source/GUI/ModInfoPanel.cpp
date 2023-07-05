@@ -124,6 +124,7 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	m_teamMembersLabel = new wxStaticText(this, wxID_ANY, "Team Members:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamMembersLabel->SetFont(m_teamMembersLabel->GetFont().MakeBold());
 	m_teamMembersPanel = new ModTeamMembersPanel(this);
+	m_modTeamMemberSelectionRequestedConnection = m_teamMembersPanel->modTeamMemberSelectionRequested.connect(std::bind(&ModInfoPanel::onModTeamMemberSelectionRequested, this, std::placeholders::_1));
 
 	m_downloadsLabel = new wxStaticText(this, wxID_ANY, "Original Downloads:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_downloadsLabel->SetFont(m_downloadsLabel->GetFont().MakeBold());
@@ -192,6 +193,7 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 
 ModInfoPanel::~ModInfoPanel() {
 	m_relatedModSelectionRequestedConnection.disconnect();
+	m_modTeamMemberSelectionRequestedConnection.disconnect();
 }
 
 void ModInfoPanel::setMod(std::shared_ptr<Mod> mod) {
@@ -487,4 +489,8 @@ void ModInfoPanel::onModAliasHyperlinkClicked(wxHyperlinkEvent & event) {
 
 void ModInfoPanel::onRelatedModSelectionRequested(const std::string & relatedModID) {
 	modSelectionRequested(relatedModID);
+}
+
+void ModInfoPanel::onModTeamMemberSelectionRequested(const std::string & modTeamMemberName) {
+	modTeamMemberSelectionRequested(modTeamMemberName);
 }

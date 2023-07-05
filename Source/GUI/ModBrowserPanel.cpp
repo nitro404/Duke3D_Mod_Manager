@@ -230,7 +230,8 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_modInfoPanel = new ModInfoPanel(m_modManager->getMods(), m_modManager->getGameVersions(), m_modInfoBox);
 	m_modInfoPanel->Hide();
 	m_modInfoPanelSignalConnectionGroup = SignalConnectionGroup(
-		m_modInfoPanel->modSelectionRequested.connect(std::bind(&ModBrowserPanel::onModSelectionRequested, this, std::placeholders::_1))
+		m_modInfoPanel->modSelectionRequested.connect(std::bind(&ModBrowserPanel::onModSelectionRequested, this, std::placeholders::_1)),
+		m_modInfoPanel->modTeamMemberSelectionRequested.connect(std::bind(&ModBrowserPanel::onModTeamMemberSelectionRequested, this, std::placeholders::_1))
 	);
 
 	m_gameOptionsPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, "Game Options");
@@ -1662,5 +1663,17 @@ void ModBrowserPanel::onModSelectionRequested(const std::string & modID) {
 
 	if(!organizedMods->setSelectedModByID(modID)) {
 		spdlog::error("Failed to select mod with ID: '{}'.", modID);
+	}
+}
+
+void ModBrowserPanel::onModTeamMemberSelectionRequested(const std::string & modTeamMemberName) {
+	clearSearch();
+
+	std::shared_ptr<OrganizedModCollection> organizedMods(m_modManager->getOrganizedMods());
+	organizedMods->clearSelectedItems();
+	organizedMods->setFilterType(OrganizedModCollection::FilterType::Authors);
+
+	if(!organizedMods->setSelectedAuthor(modTeamMemberName)) {
+		spdlog::error("Failed to select mod team member with name: '{}'.", modTeamMemberName);
 	}
 }

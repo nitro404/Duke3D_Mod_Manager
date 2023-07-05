@@ -5,7 +5,8 @@
 
 ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "Mod Team Member") {
-	wxStaticText * nameText = new wxStaticText(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Team Member Name");
+	wxGenericHyperlinkCtrl * nameDeepLink = WXUtilities::createDeepLink(this, wxID_ANY, wxString::FromUTF8(teamMember->getName()), teamMember->getName(), wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxHL_ALIGN_LEFT, "Team Member Name");
+	nameDeepLink->Bind(wxEVT_HYPERLINK, &ModTeamMemberPanel::onModTeamMemberNameDeepLinkClicked, this);
 
 	int border = 5;
 
@@ -20,9 +21,6 @@ ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember
 	detailsPanel->SetSizer(detailsPanelSizer);
 
 	if(teamMember != nullptr) {
-		// Note: For some reason ampersands are not rendered if you assign the text contents upon creation rather than through the set label text function
-		nameText->SetLabelText(wxString::FromUTF8(teamMember->getName()));
-
 		if(teamMember->hasAlias()) {
 			wxStaticText * aliasLabel = new wxStaticText(detailsPanel, wxID_ANY, "Alias:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 			aliasLabel->SetFont(aliasLabel->GetFont().MakeBold());
@@ -155,7 +153,7 @@ ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember
 	}
 
 	wxFlexGridSizer * modTeamMemberPanelSizer = new wxFlexGridSizer(2, 0, 0);
-	modTeamMemberPanelSizer->Add(nameText, 1, wxEXPAND | wxALL);
+	modTeamMemberPanelSizer->Add(nameDeepLink, 1, wxEXPAND | wxALL);
 	modTeamMemberPanelSizer->AddSpacer(1);
 	modTeamMemberPanelSizer->Add(detailsContainerPanel, 1, wxEXPAND | wxALL);
 	SetSizer(modTeamMemberPanelSizer);
@@ -167,3 +165,9 @@ ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember
 }
 
 ModTeamMemberPanel::~ModTeamMemberPanel() { }
+
+void ModTeamMemberPanel::onModTeamMemberNameDeepLinkClicked(wxHyperlinkEvent & event) {
+	event.Skip(false);
+
+	modTeamMemberSelectionRequested(std::string(event.GetURL().mb_str()));
+}

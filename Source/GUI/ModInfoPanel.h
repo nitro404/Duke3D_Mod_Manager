@@ -30,10 +30,12 @@ public:
 	void setMod(std::shared_ptr<Mod> mod);
 
 	boost::signals2::signal<void (std::string /* modID */)> modSelectionRequested;
+	boost::signals2::signal<void (std::string /* modTeamMemberName */)> modTeamMemberSelectionRequested;
 
 private:
 	void onModAliasHyperlinkClicked(wxHyperlinkEvent & event);
 	void onRelatedModSelectionRequested(const std::string & relatedModID);
+	void onModTeamMemberSelectionRequested(const std::string & modTeamMemberName);
 
 	std::shared_ptr<Mod> m_mod;
 	std::shared_ptr<ModCollection> m_mods;
@@ -77,6 +79,7 @@ private:
 	wxWindow * m_downloadsSpacers[2];
 	ModDownloadsPanel * m_downloadsPanel;
 	boost::signals2::connection m_relatedModSelectionRequestedConnection;
+	boost::signals2::connection m_modTeamMemberSelectionRequestedConnection;
 
 	ModInfoPanel(const ModInfoPanel &) = delete;
 	const ModInfoPanel & operator = (const ModInfoPanel &) = delete;
