@@ -1341,9 +1341,9 @@ size_t Mod::indexOfNote(const std::string & note) const {
 	return std::numeric_limits<size_t>::max();
 }
 
-std::string Mod::getNote(size_t index) const {
+const std::string & Mod::getNote(size_t index) const {
 	if(index >= m_notes.size()) {
-		return {};
+		return Utilities::emptyString;
 	}
 
 	return m_notes[index];
@@ -1411,9 +1411,9 @@ size_t Mod::indexOfRelatedMod(const std::string & relatedMod) const {
 	return std::numeric_limits<size_t>::max();
 }
 
-std::string Mod::getRelatedMod(size_t index) const {
+const std::string & Mod::getRelatedMod(size_t index) const {
 	if(index >= m_relatedMods.size()) {
-		return {};
+		return Utilities::emptyString;
 	}
 
 	return m_relatedMods[index];

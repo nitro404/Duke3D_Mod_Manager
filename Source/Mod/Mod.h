@@ -160,7 +160,7 @@ public:
 	size_t numberOfNotes() const;
 	bool hasNote(const std::string & note) const;
 	size_t indexOfNote(const std::string & note) const;
-	std::string getNote(size_t index) const;
+	const std::string & getNote(size_t index) const;
 	const std::vector<std::string> & getNotes() const;
 	bool addNote(const std::string & note);
 	bool removeNote(size_t index);
@@ -170,7 +170,7 @@ public:
 	size_t numberOfRelatedMods() const;
 	bool hasRelatedMod(const std::string & relatedModID) const;
 	size_t indexOfRelatedMod(const std::string & relatedModID) const;
-	std::string getRelatedMod(size_t index) const;
+	const std::string & getRelatedMod(size_t index) const;
 	const std::vector<std::string> & getRelatedMods() const;
 	bool addRelatedMod(const std::string & relatedModID);
 	bool removeRelatedMod(size_t index);

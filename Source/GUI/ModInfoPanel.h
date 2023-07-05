@@ -20,6 +20,7 @@ class ModCollection;
 class ModDownloadsPanel;
 class ModTeamMembersPanel;
 class GameVersionCollection;
+class RelatedModsPanel;
 
 class ModInfoPanel final : public wxScrolledWindow {
 public:
@@ -32,6 +33,7 @@ public:
 
 private:
 	void onModAliasHyperlinkClicked(wxHyperlinkEvent & event);
+	void onRelatedModSelectionRequested(const std::string & relatedModID);
 
 	std::shared_ptr<Mod> m_mod;
 	std::shared_ptr<ModCollection> m_mods;
@@ -53,6 +55,9 @@ private:
 	wxHyperlinkCtrl * m_modRepositoryHyperlink;
 	wxStaticText * m_notesLabel;
 	wxStaticText * m_notesText;
+	wxStaticText * m_relatedModsLabel;
+	wxWindow * m_relatedModsSpacers[2];
+	RelatedModsPanel * m_relatedModsPanel;
 	wxStaticText * m_teamNameLabel;
 	wxStaticText * m_teamNameText;
 	wxStaticText * m_teamWebsiteHyperlinkLabel;
@@ -71,6 +76,7 @@ private:
 	wxStaticText * m_downloadsLabel;
 	wxWindow * m_downloadsSpacers[2];
 	ModDownloadsPanel * m_downloadsPanel;
+	boost::signals2::connection m_relatedModSelectionRequestedConnection;
 
 	ModInfoPanel(const ModInfoPanel &) = delete;
 	const ModInfoPanel & operator = (const ModInfoPanel &) = delete;

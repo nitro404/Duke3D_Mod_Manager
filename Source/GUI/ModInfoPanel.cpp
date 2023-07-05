@@ -6,6 +6,7 @@
 #include "Mod/ModCollection.h"
 #include "Mod/ModTeam.h"
 #include "Mod/ModTeamMember.h"
+#include "RelatedModsPanel.h"
 #include "Game/GameVersionCollection.h"
 
 #include <spdlog/spdlog.h>
@@ -33,6 +34,8 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	, m_modRepositoryHyperlink(nullptr)
 	, m_notesLabel(nullptr)
 	, m_notesText(nullptr)
+	, m_relatedModsLabel(nullptr)
+	, m_relatedModsPanel(nullptr)
 	, m_teamNameLabel(nullptr)
 	, m_teamNameText(nullptr)
 	, m_teamWebsiteHyperlinkLabel(nullptr)
@@ -87,6 +90,11 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	m_notesLabel = new wxStaticText(this, wxID_ANY, "Notes:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_notesLabel->SetFont(m_notesLabel->GetFont().MakeBold());
 	m_notesText = new wxStaticText(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+
+	m_relatedModsLabel = new wxStaticText(this, wxID_ANY, "Related Mods:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_relatedModsLabel->SetFont(m_relatedModsLabel->GetFont().MakeBold());
+	m_relatedModsPanel = new RelatedModsPanel(mods, this);
+	m_relatedModSelectionRequestedConnection = m_relatedModsPanel->modSelectionRequested.connect(std::bind(&ModInfoPanel::onRelatedModSelectionRequested, this, std::placeholders::_1));
 
 	m_teamNameLabel = new wxStaticText(this, wxID_ANY, "Team Name:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamNameLabel->SetFont(m_teamNameLabel->GetFont().MakeBold());
@@ -143,6 +151,15 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	modPanelSizer->Add(m_modRepositoryHyperlink, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_notesLabel, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_notesText, 1, wxEXPAND | wxALL);
+
+	modPanelSizer->Add(m_relatedModsLabel, 1, wxEXPAND | wxHORIZONTAL);
+
+	for(int i = 0; i < 2; i++) {
+		m_relatedModsSpacers[i] = modPanelSizer->Add(new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER), 1, wxEXPAND | wxHORIZONTAL)->GetWindow();
+	}
+
+	modPanelSizer->Add(m_relatedModsPanel, 1, wxEXPAND | wxHORIZONTAL);
+
 	modPanelSizer->Add(m_teamNameLabel, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_teamNameText, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_teamWebsiteHyperlinkLabel, 1, wxEXPAND | wxHORIZONTAL);
@@ -172,7 +189,9 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	SetSizer(modPanelSizer);
 }
 
-ModInfoPanel::~ModInfoPanel() { }
+ModInfoPanel::~ModInfoPanel() {
+	m_relatedModSelectionRequestedConnection.disconnect();
+}
 
 void ModInfoPanel::setMod(std::shared_ptr<Mod> mod) {
 	if(m_mod == mod) {
@@ -420,6 +439,24 @@ void ModInfoPanel::setMod(std::shared_ptr<Mod> mod) {
 		m_notesText->Hide();
 	}
 
+	if(m_mod->numberOfRelatedMods() != 0) {
+		m_relatedModsPanel->setMod(m_mod);
+		m_relatedModsLabel->Show();
+		m_relatedModsPanel->Show();
+
+		for(int i = 0; i < 2; i++) {
+			m_relatedModsSpacers[i]->Show();
+		}
+	}
+	else {
+		m_relatedModsLabel->Hide();
+		m_relatedModsPanel->Hide();
+
+		for(int i = 0; i < 2; i++) {
+			m_relatedModsSpacers[i]->Hide();
+		}
+	}
+
 	if(m_mod->numberOfDownloads() != 0) {
 		m_downloadsPanel->setMod(m_mod);
 		m_downloadsLabel->Show();
@@ -445,4 +482,8 @@ void ModInfoPanel::onModAliasHyperlinkClicked(wxHyperlinkEvent & event) {
 	event.Skip(false);
 
 	modSelectionRequested(std::string(event.GetURL().mb_str()));
+}
+
+void ModInfoPanel::onRelatedModSelectionRequested(const std::string & relatedModID) {
+	modSelectionRequested(relatedModID);
 }
