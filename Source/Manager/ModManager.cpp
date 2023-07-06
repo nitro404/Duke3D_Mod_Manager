@@ -698,11 +698,21 @@ void ModManager::setGameType(GameType gameType) {
 		return;
 	}
 
+	GameType previousGameType = m_gameType;
+
 	m_gameType = gameType;
 
 	SettingsManager::getInstance()->gameType = m_gameType;
 
 	gameTypeChanged(m_gameType);
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["previousGameType"] = magic_enum::enum_name(previousGameType);
+		properties["newGameType"] = magic_enum::enum_name(m_gameType);
+
+		SegmentAnalytics::getInstance()->track("Game Type Changed", properties);
+	}
 }
 
 bool ModManager::hasPreferredDOSBoxVersion() const {
