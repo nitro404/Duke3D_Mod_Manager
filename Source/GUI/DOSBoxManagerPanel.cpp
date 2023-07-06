@@ -19,6 +19,8 @@
 #include <wx/textdlg.h>
 #include <wx/wrapsizer.h>
 
+#include <any>
+#include <map>
 #include <filesystem>
 #include <sstream>
 
@@ -368,6 +370,10 @@ void DOSBoxManagerPanel::resetDefaultDOSBoxSettings() {
 
 	updateButtons();
 	dosboxSettingsReset();
+
+	if(settings->segmentAnalyticsEnabled) {
+		SegmentAnalytics::getInstance()->track("DOSBox Settings Reset");
+	}
 }
 
 void DOSBoxManagerPanel::discardDOSBoxSettings() {
@@ -388,6 +394,10 @@ bool DOSBoxManagerPanel::saveDOSBoxSettings() {
 
 	updateButtons();
 	dosboxSettingsSaved();
+
+	if(settings->segmentAnalyticsEnabled) {
+		SegmentAnalytics::getInstance()->track("DOSBox Settings Saved");
+	}
 
 	return true;
 }

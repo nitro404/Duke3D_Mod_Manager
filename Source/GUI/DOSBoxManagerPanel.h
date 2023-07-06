@@ -21,6 +21,7 @@
 #include <wx/bookctrl.h>
 
 #include <future>
+#include <string>
 #include <vector>
 
 class DOSBoxInstallProgressEvent;
