@@ -54,7 +54,7 @@ public:
 	std::string getFallbackGroupDownloadURL(const std::string & gameVersionID) const;
 	std::string getFallbackGroupDownloadSHA1(const std::string & gameVersionID) const;
 	bool downloadGroupFile(const std::string & gameVersionID);
-	bool installGroupFile(const std::string & gameVersionID, const std::string & directoryPath, bool overwrite = true);
+	bool installGroupFile(const std::string & gameVersionID, const std::string & directoryPath, bool overwrite = true, bool * groupSymlinked = nullptr, bool * worldTourGroup = nullptr, std::string * groupGameVersionID = nullptr);
 	void updateGroupFileSymlinks();
 
 	boost::signals2::signal<void (std::string /* statusMessage */)> installStatusChanged;

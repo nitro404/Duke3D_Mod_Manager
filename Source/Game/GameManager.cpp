@@ -2296,6 +2296,10 @@ bool GameManager::installGame(const std::string & gameVersionID, const std::stri
 		return false;
 	}
 
+	SettingsManager * settings = SettingsManager::getInstance();
+
+	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
+
 	HTTPService * httpService = HTTPService::getInstance();
 
 	if(!httpService->isInitialized()) {
@@ -2383,11 +2387,12 @@ bool GameManager::installGame(const std::string & gameVersionID, const std::stri
 	}
 
 	std::string expectedArchiveMD5Hash(response->getHeaderValue("Content-MD5"));
+	std::string actualArchiveMD5Hash;
 
 	if(!expectedArchiveMD5Hash.empty()) {
 		installStatusChanged(fmt::format("Verifying '{}' game files MD5 hash.", gameVersion->getLongName()));
 
-		std::string actualArchiveMD5Hash(response->getBodyMD5(ByteBuffer::HashFormat::Base64));
+		actualArchiveMD5Hash = response->getBodyMD5(ByteBuffer::HashFormat::Base64);
 
 		if(Utilities::areStringsEqual(actualArchiveMD5Hash, expectedArchiveMD5Hash)) {
 			spdlog::debug("Validated MD5 hash of '{}' game files package.", gameVersion->getLongName());
@@ -2403,10 +2408,12 @@ bool GameManager::installGame(const std::string & gameVersionID, const std::stri
 		}
 	}
 
+	std::string actualGameDownloadSHA1;
+
 	if(!expectedGameDownloadSHA1.empty()) {
 		installStatusChanged(fmt::format("Verifying '{}' game files SHA1 hash.", gameVersion->getLongName()));
 
-		std::string actualGameDownloadSHA1(response->getBodySHA1());
+		actualGameDownloadSHA1 = response->getBodySHA1();
 
 		if(Utilities::areStringsEqual(expectedGameDownloadSHA1, actualGameDownloadSHA1)) {
 			spdlog::debug("Validated SHA1 hash of '{}' game files package.", gameVersion->getLongName());
@@ -2432,6 +2439,28 @@ bool GameManager::installGame(const std::string & gameVersionID, const std::stri
 		}
 
 		return false;
+	}
+
+	if(settings->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		gameVersion->addMetadata(properties);
+		properties["url"] = request->getUrl();
+		properties["fileSize"] = response->getBody()->getSize();
+
+		if(!actualArchiveMD5Hash.empty()) {
+			properties["md5"] = actualArchiveMD5Hash;
+		}
+
+		if(!actualGameDownloadSHA1.empty()) {
+			properties["sha1"] = actualGameDownloadSHA1;
+		}
+
+		properties["eTag"] = response->getETag();
+		properties["transferDurationMs"] = response->getRequestDuration().value().count();
+		properties["usedFallback"] = useFallback;
+		properties["numberOfFiles"] = gameFilesArchive->numberOfFiles();
+
+		segmentAnalytics->track("Game Files Downloaded", properties);
 	}
 
 	std::shared_ptr<GameVersion> groupGameVersion(getGroupGameVersion(gameVersion->getID()));
@@ -2829,6 +2858,13 @@ bool GameManager::installGame(const std::string & gameVersionID, const std::stri
 				}
 				else if(NoCDCracker::crackGameExecutable(gameExecutablePath)) {
 					spdlog::info("'{}' game executable cracked successfully! CD no longer required.", gameVersion->getLongName());
+
+					if(settings->segmentAnalyticsEnabled) {
+						std::map<std::string, std::any> properties;
+						gameVersion->addMetadata(properties);
+
+						segmentAnalytics->track("Game Executable Cracked", properties);
+					}
 				}
 				else {
 					spdlog::error("Failed to crack '{}' game executable at path: '{}'.", gameVersion->getLongName(), gameExecutablePath);
@@ -2861,15 +2897,38 @@ bool GameManager::installGame(const std::string & gameVersionID, const std::stri
 				else {
 					spdlog::warn("Failed to save default game configuration to file: '{}'.", gameConfigurationFilePath);
 				}
+
+				if(settings->segmentAnalyticsEnabled) {
+					std::map<std::string, std::any> properties;
+					gameVersion->addMetadata(properties);
+					properties["fileName"] = GameConfiguration::DEFAULT_GAME_CONFIGURATION_FILE_NAME;
+
+					segmentAnalytics->track("Game Configuration Generated", properties);
+				}
 			}
 		}
 	}
 
+	bool groupSymlinked = false;
+	bool worldTourGroup = false;
+	std::string groupGameVersionID;
+
 	// don't need to install the group file or verify it separately when using a fallback download for either of the original game versions, since it's already installed & verified
 	if (!isOriginalGameFallback && gameVersion->hasGroupFileInstallPath()) {
-		if(!installGroupFile(gameVersion->getID(), Utilities::joinPaths(destinationDirectoryPath, gameVersion->getGroupFileInstallPath().value()), overwrite)) {
+		if(!installGroupFile(gameVersion->getID(), Utilities::joinPaths(destinationDirectoryPath, gameVersion->getGroupFileInstallPath().value()), overwrite, &groupSymlinked, &worldTourGroup, &groupGameVersionID)) {
 			return false;
 		}
+	}
+
+	if(settings->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		gameVersion->addMetadata(properties);
+		properties["groupSymlinked"] = groupSymlinked;
+		properties["worldTourGroup"] = worldTourGroup;
+		properties["groupGameVersionID"] = groupGameVersionID;
+		properties["usedFallback"] = useFallback;
+
+		segmentAnalytics->track("Game Installed", properties);
 	}
 
 	return true;
@@ -3250,7 +3309,7 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 	return true;
 }
 
-bool GameManager::installGroupFile(const std::string & gameVersionID, const std::string & directoryPath, bool overwrite) {
+bool GameManager::installGroupFile(const std::string & gameVersionID, const std::string & directoryPath, bool overwrite, bool * groupSymlinked, bool * worldTourGroup, std::string * groupGameVersionID) {
 	if(!m_initialized) {
 		spdlog::error("Game manager not initialized!");
 		return {};
@@ -3320,6 +3379,18 @@ bool GameManager::installGroupFile(const std::string & gameVersionID, const std:
 			return false;
 		}
 
+		if(groupSymlinked != nullptr) {
+			*groupSymlinked = false;
+		}
+
+		if(worldTourGroup != nullptr) {
+			*worldTourGroup = isWorldTourGroup;
+		}
+
+		if(groupGameVersionID != nullptr) {
+			*groupGameVersionID = groupGameVersion->getID();
+		}
+
 		return true;
 	}
 
@@ -3331,6 +3402,18 @@ bool GameManager::installGroupFile(const std::string & gameVersionID, const std:
 	if(errorCode) {
 		spdlog::error("Failed to create '{}' group file symlink '{}' to target '{}' at destination '{}' with error: {}", isWorldTourGroup ? WORLD_TOUR_GAME_LONG_NAME : groupGameVersion->getLongName(), GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME, groupFilePath, destinationGroupFilePath.string(), errorCode.message());
 		return false;
+	}
+
+	if(groupSymlinked != nullptr) {
+		*groupSymlinked = true;
+	}
+
+	if(worldTourGroup != nullptr) {
+		*worldTourGroup = isWorldTourGroup;
+	}
+
+	if(groupGameVersionID != nullptr) {
+		*groupGameVersionID = groupGameVersion->getID();
 	}
 
 	return true;
