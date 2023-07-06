@@ -1,15 +1,18 @@
 #include "FavouriteModCollection.h"
 
 #include "Manager/ModMatch.h"
+#include "Manager/SettingsManager.h"
 #include "ModIdentifier.h"
 #include "Mod.h"
 #include "ModCollection.h"
 #include "ModVersion.h"
 #include "ModVersionType.h"
 
+#include <Analytics/Segment/SegmentAnalytics.h>
 #include <Utilities/FileUtilities.h>
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
+#include <Utilities/TimeUtilities.h>
 #include <Utilities/Utilities.h>
 
 #include <rapidjson/istreamwrapper.h>
@@ -128,19 +131,28 @@ bool FavouriteModCollection::addFavourite(const ModIdentifier & favourite) {
 
 	updated(*this);
 
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["favourite"] = favourite.getFullName();
+		properties["numberOfFavourites"] = m_favourites.size();
+		properties["modName"] = favourite.getName();
+
+		if(favourite.hasVersion()) {
+			properties["modVersion"] = favourite.getVersion().value();
+
+			if(favourite.hasVersionType()) {
+				properties["modVersionType"] = favourite.getVersionType().value();
+			}
+		}
+
+		SegmentAnalytics::getInstance()->track("Add Favourite", properties);
+	}
+
 	return true;
 }
 
 bool FavouriteModCollection::addFavourite(const ModMatch & modMatch) {
-	if(!modMatch.isValid() || hasFavourite(modMatch)) {
-		return false;
-	}
-
-	m_favourites.push_back(std::make_shared<ModIdentifier>(modMatch));
-
-	updated(*this);
-
-	return true;
+	return addFavourite(ModIdentifier(modMatch));
 }
 
 bool FavouriteModCollection::removeFavourite(size_t index) {
@@ -148,9 +160,29 @@ bool FavouriteModCollection::removeFavourite(size_t index) {
 		return false;
 	}
 
+	std::shared_ptr<ModIdentifier> favourite(m_favourites[index]);
+
 	m_favourites.erase(m_favourites.begin() + index);
 
 	updated(*this);
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["favourite"] = favourite->getFullName();
+		properties["favouritedAt"] = Utilities::timePointToString(favourite->getCreatedTimePoint(), Utilities::TimeFormat::ISO8601);
+		properties["numberOfFavourites"] = m_favourites.size();
+		properties["modName"] = favourite->getName();
+
+		if(favourite->hasVersion()) {
+			properties["modVersion"] = favourite->getVersion().value();
+
+			if(favourite->hasVersionType()) {
+				properties["modVersionType"] = favourite->getVersionType().value();
+			}
+		}
+
+		SegmentAnalytics::getInstance()->track("Remove Favourite", properties);
+	}
 
 	return true;
 }
