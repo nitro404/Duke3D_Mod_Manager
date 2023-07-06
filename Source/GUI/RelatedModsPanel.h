@@ -32,12 +32,12 @@ public:
 	boost::signals2::signal<void (std::string /* modID */)> modSelectionRequested;
 
 private:
-	void onRelatedModHyperlinkClicked(wxHyperlinkEvent & event);
+	void onRelatedModDeepLinkClicked(wxHyperlinkEvent & event);
 
 	std::shared_ptr<ModCollection> m_mods;
 	std::shared_ptr<Mod> m_mod;
 
-	std::vector<wxGenericHyperlinkCtrl *> m_relatedModHyperlinks;
+	std::vector<wxGenericHyperlinkCtrl *> m_relatedModDeepLinks;
 	wxFlexGridSizer * m_relatedModsPanelSizer;
 
 	RelatedModsPanel(const RelatedModsPanel &) = delete;

@@ -1,11 +1,16 @@
 #include "RelatedModsPanel.h"
 
+#include "Manager/SettingsManager.h"
 #include "Mod/Mod.h"
 #include "Mod/ModCollection.h"
 #include "WXUtilities.h"
 
+#include <Analytics/Segment/SegmentAnalytics.h>
+
 #include <spdlog/spdlog.h>
 
+#include <any>
+#include <map>
 #include <string>
 
 RelatedModsPanel::RelatedModsPanel(std::shared_ptr<ModCollection> mods, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
@@ -20,7 +25,6 @@ RelatedModsPanel::RelatedModsPanel(std::shared_ptr<ModCollection> mods, wxWindow
 }
 
 RelatedModsPanel::~RelatedModsPanel() { }
-
 
 bool RelatedModsPanel::setMods(std::shared_ptr<ModCollection> mods) {
 	if(!ModCollection::isValid(mods.get(), true)) {
@@ -44,7 +48,7 @@ bool RelatedModsPanel::setMod(std::shared_ptr<Mod> mod) {
 	}
 
 	DestroyChildren();
-	m_relatedModHyperlinks.clear();
+	m_relatedModDeepLinks.clear();
 
 	for(size_t i = 0; i < m_mod->numberOfRelatedMods(); i++) {
 		const std::string & relatedModID = m_mod->getRelatedMod(i);
@@ -55,10 +59,10 @@ bool RelatedModsPanel::setMod(std::shared_ptr<Mod> mod) {
 			continue;
 		}
 
-		wxGenericHyperlinkCtrl * relatedModHyperlink = WXUtilities::createDeepLink(this, wxID_ANY, relatedMod->getName(), relatedModID, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT, "Related Mod");
-		relatedModHyperlink->Bind(wxEVT_HYPERLINK, &RelatedModsPanel::onRelatedModHyperlinkClicked, this);
-		m_relatedModsPanelSizer->Add(relatedModHyperlink, 1, wxEXPAND | wxALL);
-		m_relatedModHyperlinks.push_back(relatedModHyperlink);
+		wxGenericHyperlinkCtrl * relatedModDeepLink = WXUtilities::createDeepLink(this, wxID_ANY, relatedMod->getName(), relatedModID, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT, "Related Mod");
+		relatedModDeepLink->Bind(wxEVT_HYPERLINK, &RelatedModsPanel::onRelatedModDeepLinkClicked, this);
+		m_relatedModsPanelSizer->Add(relatedModDeepLink, 1, wxEXPAND | wxALL);
+		m_relatedModDeepLinks.push_back(relatedModDeepLink);
 	}
 
 	Layout();
@@ -66,8 +70,17 @@ bool RelatedModsPanel::setMod(std::shared_ptr<Mod> mod) {
 	return true;
 }
 
-void RelatedModsPanel::onRelatedModHyperlinkClicked(wxHyperlinkEvent & event) {
+void RelatedModsPanel::onRelatedModDeepLinkClicked(wxHyperlinkEvent & event) {
 	event.Skip(false);
 
-	modSelectionRequested(std::string(event.GetURL().mb_str()));
+	std::string modID(event.GetURL().mb_str());
+
+	modSelectionRequested(modID);
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["modID"] = modID;
+
+		SegmentAnalytics::getInstance()->track("Related Mod Deep Link Clicked", properties);
+	}
 }
