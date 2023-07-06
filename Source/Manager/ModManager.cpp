@@ -878,6 +878,8 @@ bool ModManager::setPreferredGameVersion(std::shared_ptr<GameVersion> gameVersio
 		return true;
 	}
 
+	std::shared_ptr<GameVersion> previousPreferredGameVersion(m_preferredGameVersion);
+
 	m_preferredGameVersion = gameVersion;
 	SettingsManager::getInstance()->preferredGameVersionID = m_preferredGameVersion->getID();
 
@@ -903,6 +905,18 @@ bool ModManager::setPreferredGameVersion(std::shared_ptr<GameVersion> gameVersio
 
 	modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
 	preferredGameVersionChanged(m_preferredGameVersion);
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		if(previousPreferredGameVersion != nullptr) {
+			properties["previousGameVersionID"] = previousPreferredGameVersion->getID();
+		}
+
+		properties["newGameVersionID"] = m_preferredGameVersion->getID();
+
+		SegmentAnalytics::getInstance()->track("Preferred Game Version Changed", properties);
+	}
+
 	return true;
 }
 
