@@ -504,24 +504,26 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 
 	spdlog::info("{} initialized successfully after {} milliseconds.", APPLICATION_NAME, initializationDuration.count());
 
-	std::map<std::string, std::any> properties;
-	properties["sessionNumber"] = segmentAnalytics->getSessionNumber();
-	properties["initializationDuration"] = initializationDuration.count();
-	properties["environment"] = Utilities::toCapitalCase(APPLICATION_ENVIRONMENT);
-	properties["gameType"] = Utilities::toCapitalCase(magic_enum::enum_name(settings->gameType));
-	properties["preferredDOSBoxVersion"] = settings->preferredDOSBoxVersionID;
-	properties["preferredGameVersion"] = settings->preferredGameVersionID;
-	properties["numberOfDownloadedMods"] = m_downloadManager != nullptr ? m_downloadManager->numberOfDownloadedMods() : 0;
-	properties["dosboxArguments"] = settings->dosboxArguments;
-	properties["dosboxServerIPAddress"] = settings->dosboxServerIPAddress;
-	properties["dosboxServerLocalPort"] = settings->dosboxLocalServerPort;
-	properties["dosboxServerRemotePort"] = settings->dosboxRemoteServerPort;
-	properties["apiBaseURL"] = settings->apiBaseURL;
-	properties["connectionTimeout"] = settings->connectionTimeout.count();
-	properties["networkTimeout"] = settings->networkTimeout.count();
-	properties["transferTimeout"] = settings->transferTimeout.count();
+	if(settings->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["sessionNumber"] = segmentAnalytics->getSessionNumber();
+		properties["initializationDuration"] = initializationDuration.count();
+		properties["environment"] = Utilities::toCapitalCase(APPLICATION_ENVIRONMENT);
+		properties["gameType"] = Utilities::toCapitalCase(magic_enum::enum_name(settings->gameType));
+		properties["preferredDOSBoxVersion"] = settings->preferredDOSBoxVersionID;
+		properties["preferredGameVersion"] = settings->preferredGameVersionID;
+		properties["numberOfDownloadedMods"] = m_downloadManager != nullptr ? m_downloadManager->numberOfDownloadedMods() : 0;
+		properties["dosboxArguments"] = settings->dosboxArguments;
+		properties["dosboxServerIPAddress"] = settings->dosboxServerIPAddress;
+		properties["dosboxServerLocalPort"] = settings->dosboxLocalServerPort;
+		properties["dosboxServerRemotePort"] = settings->dosboxRemoteServerPort;
+		properties["apiBaseURL"] = settings->apiBaseURL;
+		properties["connectionTimeout"] = settings->connectionTimeout.count();
+		properties["networkTimeout"] = settings->networkTimeout.count();
+		properties["transferTimeout"] = settings->transferTimeout.count();
 
-	segmentAnalytics->track("Application Initialized", properties);
+		segmentAnalytics->track("Application Initialized", properties);
+	}
 
 	if(!handleArguments(m_arguments.get())) {
 		initializationFailed();
@@ -1462,12 +1464,12 @@ std::vector<ModMatch> ModManager::searchForMod(const std::vector<std::shared_ptr
 		return {};
 	}
 
-	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["query"] = formattedQuery;
 
-	std::map<std::string, std::any> properties;
-	properties["query"] = formattedQuery;
-
-	segmentAnalytics->track("Mod Search", properties);
+		SegmentAnalytics::getInstance()->track("Mod Search", properties);
+	}
 
 	std::vector<ModMatch> matches;
 	std::shared_ptr<Mod> mod;
@@ -1594,12 +1596,12 @@ size_t ModManager::searchForAndSelectGameVersion(const std::string & query, std:
 		return std::numeric_limits<size_t>::max();
 	}
 
-	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["query"] = formattedQuery;
 
-	std::map<std::string, std::any> properties;
-	properties["query"] = formattedQuery;
-
-	segmentAnalytics->track("Game Version Search", properties);
+		SegmentAnalytics::getInstance()->track("Game Version Search", properties);
+	}
 
 	std::string gameVersionName;
 	size_t matchingGameVersionIndex = std::numeric_limits<size_t>::max();
@@ -1653,12 +1655,12 @@ size_t ModManager::searchForAndSelectTeam(const std::string & query, std::vector
 		return std::numeric_limits<size_t>::max();
 	}
 
-	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["query"] = formattedQuery;
 
-	std::map<std::string, std::any> properties;
-	properties["query"] = formattedQuery;
-
-	segmentAnalytics->track("Team Search", properties);
+		SegmentAnalytics::getInstance()->track("Team Search", properties);
+	}
 
 	std::string teamName;
 	size_t matchingTeamIndex = std::numeric_limits<size_t>::max();
@@ -1712,12 +1714,12 @@ size_t ModManager::searchForAndSelectAuthor(const std::string & query, std::vect
 		return std::numeric_limits<size_t>::max();
 	}
 
-	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["query"] = formattedQuery;
 
-	std::map<std::string, std::any> properties;
-	properties["query"] = formattedQuery;
-
-	segmentAnalytics->track("Author Search", properties);
+		SegmentAnalytics::getInstance()->track("Author Search", properties);
+	}
 
 	std::string authorName;
 	size_t matchingAuthorIndex = std::numeric_limits<size_t>::max();
@@ -1957,8 +1959,6 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	}
 
 	SettingsManager * settings = SettingsManager::getInstance();
-
-	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
 
 	std::shared_ptr<GameVersion> selectedGameVersion(getSelectedGameVersion());
 
@@ -2347,30 +2347,37 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	std::chrono::milliseconds runDelayDuration(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - runStartTimePoint));
 
 	std::map<std::string, std::any> properties;
-	properties["gameVersion"] = selectedGameVersion->getID();
-	properties["command"] = command;
-	properties["commandGenerationDurationUs"] = commandGenerationDuration.count();
 
-	if(selectedGameVersion->doesRequireDOSBox()) {
-		properties["dosboxVersion"] = selectedDOSBoxVersion->getID();
+	if(settings->segmentAnalyticsEnabled) {
+		properties["gameVersion"] = selectedGameVersion->getID();
+		properties["command"] = command;
+		properties["commandGenerationDurationUs"] = commandGenerationDuration.count();
+
+		if(selectedGameVersion->doesRequireDOSBox()) {
+			properties["dosboxVersion"] = selectedDOSBoxVersion->getID();
+		}
+
+		if(!customMap.empty()) {
+			properties["customMap"] = customMap;
+		}
+
+		if(m_arguments != nullptr && m_arguments->hasPassthroughArguments()) {
+			properties["arguments"] = m_arguments->getPassthroughArguments().value();
+		}
+
+		properties["runDelayDurationMs"] = runDelayDuration.count();
 	}
-
-	if(!customMap.empty()) {
-		properties["customMap"] = customMap;
-	}
-
-	if(m_arguments != nullptr && m_arguments->hasPassthroughArguments()) {
-		properties["arguments"] = m_arguments->getPassthroughArguments().value();
-	}
-
-	properties["runDelayDurationMs"] = runDelayDuration.count();
 
 	std::string gameTypeName(Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)));
+
+	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
 
 	if(customMod) {
 		spdlog::info("Running custom mod in {} mode{}.", Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)), customMapMessage);
 
-		segmentAnalytics->track("Running Custom Mod", properties);
+		if(settings->segmentAnalyticsEnabled) {
+			segmentAnalytics->track("Running Custom Mod", properties);
+		}
 	}
 	else if(m_selectedMod != nullptr) {
 		std::string fullModName(m_selectedMod->getFullName(m_selectedModVersionIndex, m_selectedModVersionTypeIndex));
@@ -2382,14 +2389,18 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 			spdlog::info("Running '{}' version of mod '{}' in {} mode{}.", getGameVersions()->getLongNameOfGameVersionWithID(selectedModGameVersion->getGameVersionID()), fullModName, gameTypeName, customMapMessage);
 		}
 
-		properties["modName"] = fullModName;
-		properties["modGameVersion"] = selectedModGameVersion->getGameVersionID();
-		properties["gameType"] = gameTypeName;
+		if(settings->segmentAnalyticsEnabled) {
+			properties["modName"] = fullModName;
+			properties["modGameVersion"] = selectedModGameVersion->getGameVersionID();
+			properties["gameType"] = gameTypeName;
 
-		segmentAnalytics->track("Running Mod", properties);
+			segmentAnalytics->track("Running Mod", properties);
+		}
 	}
 	else {
-		segmentAnalytics->track("Running Game", properties);
+		if(settings->segmentAnalyticsEnabled) {
+			segmentAnalytics->track("Running Game", properties);
+		}
 	}
 
 	segmentAnalytics->flush();

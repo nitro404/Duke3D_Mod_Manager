@@ -363,16 +363,16 @@ bool DownloadManager::downloadModList(bool force) {
 
 	settings->modListLastDownloadedTimestamp = std::chrono::system_clock::now();
 
-	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
+	if(settings->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["fileName"] = modListFileName;
+		properties["fileSize"] = response->getBody()->getSize();
+		properties["sha1"] = modListSHA1;
+		properties["eTag"] = response->getETag();
+		properties["transferDuration"] = response->getRequestDuration().value().count();
 
-	std::map<std::string, std::any> properties;
-	properties["fileName"] = modListFileName;
-	properties["fileSize"] = response->getBody()->getSize();
-	properties["sha1"] = modListSHA1;
-	properties["eTag"] = response->getETag();
-	properties["transferDuration"] = response->getRequestDuration().value().count();
-
-	segmentAnalytics->track("Mod List Downloaded", properties);
+		SegmentAnalytics::getInstance()->track("Mod List Downloaded", properties);
+	}
 
 	return true;
 }
@@ -565,26 +565,26 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion * modGameVersi
 
 	saveDownloadCache();
 
-	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
+	if(settings->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["modID"] = modGameVersion->getParentMod()->getID();
+		properties["modName"] = modGameVersion->getParentMod()->getName();
+		properties["modVersion"] = modGameVersion->getParentModVersion()->getVersion();
+		properties["modVersionType"] = modGameVersion->getParentModVersionType()->getType();
+		properties["fullModName"] = modGameVersion->getFullName(false);
+		properties["fileName"] = modDownload->getFileName();
+		properties["fileSize"] = response->getBody()->getSize();
+		properties["numberOfFiles"] = numberOfFiles;
+		properties["sha1"] = modPackageFileSHA1;
+		properties["eTag"] = response->getETag();
+		properties["transferDuration"] = response->getRequestDuration().value().count();
 
-	std::map<std::string, std::any> properties;
-	properties["modID"] = modGameVersion->getParentMod()->getID();
-	properties["modName"] = modGameVersion->getParentMod()->getName();
-	properties["modVersion"] = modGameVersion->getParentModVersion()->getVersion();
-	properties["modVersionType"] = modGameVersion->getParentModVersionType()->getType();
-	properties["fullModName"] = modGameVersion->getFullName(false);
-	properties["fileName"] = modDownload->getFileName();
-	properties["fileSize"] = response->getBody()->getSize();
-	properties["numberOfFiles"] = numberOfFiles;
-	properties["sha1"] = modPackageFileSHA1;
-	properties["eTag"] = response->getETag();
-	properties["transferDuration"] = response->getRequestDuration().value().count();
+		if(!standAlone) {
+			properties["modGameVersion"] = modGameVersion->getGameVersionID();
+		}
 
-	if(!standAlone) {
-		properties["modGameVersion"] = modGameVersion->getGameVersionID();
+		SegmentAnalytics::getInstance()->track("Mod Downloaded", properties);
 	}
-
-	segmentAnalytics->track("Mod Downloaded", properties);
 
 	return true;
 }
@@ -684,25 +684,25 @@ bool DownloadManager::uninstallModGameVersion(const ModGameVersion * modGameVers
 
 	spdlog::info("Successfully uninstalled '{}' mod download '{}' files.", modGameVersion->getFullName(true), modDownload->getFileName());
 
-	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
+	if(settings->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["modID"] = modGameVersion->getParentMod()->getID();
+		properties["modName"] = modGameVersion->getParentMod()->getName();
+		properties["modVersion"] = modGameVersion->getParentModVersion()->getVersion();
+		properties["modVersionType"] = modGameVersion->getParentModVersionType()->getType();
+		properties["fullModName"] = modGameVersion->getFullName(false);
+		properties["fileName"] = modDownload->getFileName();
+		properties["fileSize"] = cachedModPackageDownload->getFileSize();
+		properties["numberOfFiles"] = cachedModPackageDownload->numberOfCachedFiles();
+		properties["sha1"] = cachedModPackageDownload->getSHA1();
+		properties["eTag"] = cachedModPackageDownload->getETag();
 
-	std::map<std::string, std::any> properties;
-	properties["modID"] = modGameVersion->getParentMod()->getID();
-	properties["modName"] = modGameVersion->getParentMod()->getName();
-	properties["modVersion"] = modGameVersion->getParentModVersion()->getVersion();
-	properties["modVersionType"] = modGameVersion->getParentModVersionType()->getType();
-	properties["fullModName"] = modGameVersion->getFullName(false);
-	properties["fileName"] = modDownload->getFileName();
-	properties["fileSize"] = cachedModPackageDownload->getFileSize();
-	properties["numberOfFiles"] = cachedModPackageDownload->numberOfCachedFiles();
-	properties["sha1"] = cachedModPackageDownload->getSHA1();
-	properties["eTag"] = cachedModPackageDownload->getETag();
+		if(!standAlone) {
+			properties["modGameVersion"] = modGameVersion->getGameVersionID();
+		}
 
-	if(!standAlone) {
-		properties["modGameVersion"] = modGameVersion->getGameVersionID();
+		SegmentAnalytics::getInstance()->track("Mod Uninstalled", properties);
 	}
-
-	segmentAnalytics->track("Mod Uninstalled", properties);
 
 	return true;
 }

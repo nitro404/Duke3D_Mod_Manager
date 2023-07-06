@@ -184,7 +184,9 @@ void ModManagerFrame::onNotebookPageChanged(wxBookCtrlEvent & event) {
 		static_cast<ReleaseNotesPanel *>(currentPage)->load();
 	}
 
-	SegmentAnalytics::getInstance()->screen(std::string(m_notebook->GetPageText(m_notebook->GetSelection()).mb_str()), "Main");
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		SegmentAnalytics::getInstance()->screen(std::string(m_notebook->GetPageText(m_notebook->GetSelection()).mb_str()), "Main");
+	}
 }
 
 void ModManagerFrame::onQuit(wxCommandEvent& WXUNUSED(event)) {
