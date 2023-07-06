@@ -34,7 +34,7 @@ public:
 	boost::signals2::signal<void (std::string /* modTeamMemberName */)> modTeamMemberSelectionRequested;
 
 private:
-	void onModAliasHyperlinkClicked(wxHyperlinkEvent & event);
+	void onModAliasDeepLinkClicked(wxHyperlinkEvent & event);
 	void onModTeamNameDeepLinkClicked(wxHyperlinkEvent & event);
 	void onRelatedModSelectionRequested(const std::string & relatedModID);
 	void onModTeamMemberSelectionRequested(const std::string & modTeamMemberName);
@@ -46,7 +46,7 @@ private:
 	wxStaticText * m_modNameLabel;
 	wxStaticText * m_modNameText;
 	wxStaticText * m_modAliasLabel;
-	wxGenericHyperlinkCtrl * m_modAliasHyperlink;
+	wxGenericHyperlinkCtrl * m_modAliasDeepLink;
 	wxStaticText * m_modTypeText;
 	wxStaticText * m_initialReleaseDateText;
 	wxStaticText * m_latestReleaseDateLabel;

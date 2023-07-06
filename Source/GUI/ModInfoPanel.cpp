@@ -1,5 +1,6 @@
 #include "ModInfoPanel.h"
 
+#include "Manager/SettingsManager.h"
 #include "ModDownloadsPanel.h"
 #include "ModTeamMembersPanel.h"
 #include "Mod/Mod.h"
@@ -10,8 +11,12 @@
 #include "Game/GameVersionCollection.h"
 #include "WXUtilities.h"
 
+#include <Analytics/Segment/SegmentAnalytics.h>
+
 #include <spdlog/spdlog.h>
 
+#include <any>
+#include <map>
 #include <sstream>
 #include <string>
 
@@ -22,7 +27,7 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	, m_modNameLabel(nullptr)
 	, m_modNameText(nullptr)
 	, m_modAliasLabel(nullptr)
-	, m_modAliasHyperlink(nullptr)
+	, m_modAliasDeepLink(nullptr)
 	, m_modTypeText(nullptr)
 	, m_initialReleaseDateText(nullptr)
 	, m_latestReleaseDateLabel(nullptr)
@@ -61,8 +66,8 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 
 	m_modAliasLabel = new wxStaticText(this, wxID_ANY, "Mod Alias:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_modAliasLabel->SetFont(m_modAliasLabel->GetFont().MakeBold());
-	m_modAliasHyperlink = WXUtilities::createDeepLink(this, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT, "Mod Alias");
-	m_modAliasHyperlink->Bind(wxEVT_HYPERLINK, &ModInfoPanel::onModAliasHyperlinkClicked, this);
+	m_modAliasDeepLink = WXUtilities::createDeepLink(this, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT, "Mod Alias");
+	m_modAliasDeepLink->Bind(wxEVT_HYPERLINK, &ModInfoPanel::onModAliasDeepLinkClicked, this);
 
 	wxStaticText * modTypeLabel = new wxStaticText(this, wxID_ANY, "Mod Type:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	modTypeLabel->SetFont(modTypeLabel->GetFont().MakeBold());
@@ -139,7 +144,7 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	modPanelSizer->Add(m_modNameLabel, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_modNameText, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_modAliasLabel, 1, wxEXPAND | wxHORIZONTAL);
-	modPanelSizer->Add(m_modAliasHyperlink, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_modAliasDeepLink, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(modTypeLabel, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_modTypeText, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(initialReleaseDateLabel, 1, wxEXPAND | wxHORIZONTAL);
@@ -216,19 +221,19 @@ void ModInfoPanel::setMod(std::shared_ptr<Mod> mod) {
 		std::shared_ptr<Mod> aliasMod(m_mods->getModWithID(modAlias));
 
 		if(aliasMod != nullptr) {
-			m_modAliasHyperlink->SetLabelText(aliasMod->getName());
-			m_modAliasHyperlink->SetURL(aliasMod->getID());
+			m_modAliasDeepLink->SetLabelText(aliasMod->getName());
+			m_modAliasDeepLink->SetURL(aliasMod->getID());
 			m_modAliasLabel->Show();
-			m_modAliasHyperlink->Show();
+			m_modAliasDeepLink->Show();
 		}
 		else {
 			m_modAliasLabel->Hide();
-			m_modAliasHyperlink->Hide();
+			m_modAliasDeepLink->Hide();
 		}
 	}
 	else {
 		m_modAliasLabel->Hide();
-		m_modAliasHyperlink->Hide();
+		m_modAliasDeepLink->Hide();
 	}
 
 	m_modTypeText->SetLabelText(m_mod->getType());
@@ -483,10 +488,19 @@ void ModInfoPanel::setMod(std::shared_ptr<Mod> mod) {
 	Layout();
 }
 
-void ModInfoPanel::onModAliasHyperlinkClicked(wxHyperlinkEvent & event) {
+void ModInfoPanel::onModAliasDeepLinkClicked(wxHyperlinkEvent & event) {
 	event.Skip(false);
 
-	modSelectionRequested(std::string(event.GetURL().mb_str()));
+	std::string modID(std::string(event.GetURL().mb_str()));
+
+	modSelectionRequested(modID);
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["modID"] = modID;
+
+		SegmentAnalytics::getInstance()->track("Mod Alias Deep Link Clicked", properties);
+	}
 }
 
 void ModInfoPanel::onModTeamNameDeepLinkClicked(wxHyperlinkEvent & event) {
