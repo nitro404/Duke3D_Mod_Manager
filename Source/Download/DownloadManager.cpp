@@ -369,7 +369,8 @@ bool DownloadManager::downloadModList(bool force) {
 		properties["fileSize"] = response->getBody()->getSize();
 		properties["sha1"] = modListSHA1;
 		properties["eTag"] = response->getETag();
-		properties["transferDuration"] = response->getRequestDuration().value().count();
+		properties["transferDurationMs"] = response->getRequestDuration().value().count();
+		properties["forced"] = force;
 
 		SegmentAnalytics::getInstance()->track("Mod List Downloaded", properties);
 	}
@@ -577,7 +578,8 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion * modGameVersi
 		properties["numberOfFiles"] = numberOfFiles;
 		properties["sha1"] = modPackageFileSHA1;
 		properties["eTag"] = response->getETag();
-		properties["transferDuration"] = response->getRequestDuration().value().count();
+		properties["transferDurationMs"] = response->getRequestDuration().value().count();
+		properties["standAlone"] = standAlone;
 
 		if(!standAlone) {
 			properties["modGameVersion"] = modGameVersion->getGameVersionID();
