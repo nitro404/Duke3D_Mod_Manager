@@ -506,7 +506,16 @@ void ModInfoPanel::onModAliasDeepLinkClicked(wxHyperlinkEvent & event) {
 void ModInfoPanel::onModTeamNameDeepLinkClicked(wxHyperlinkEvent & event) {
 	event.Skip(false);
 
-	modTeamSelectionRequested(std::string(event.GetURL().mb_str()));
+	std::string teamName(event.GetURL().mb_str());
+
+	modTeamSelectionRequested(teamName);
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["teamName"] = teamName;
+
+		SegmentAnalytics::getInstance()->track("Team Deep Link Clicked", properties);
+	}
 }
 
 void ModInfoPanel::onRelatedModSelectionRequested(const std::string & relatedModID) {
