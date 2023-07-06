@@ -1479,13 +1479,6 @@ std::vector<ModMatch> ModManager::searchForMod(const std::vector<std::shared_ptr
 		return {};
 	}
 
-	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
-		std::map<std::string, std::any> properties;
-		properties["query"] = formattedQuery;
-
-		SegmentAnalytics::getInstance()->track("Mod Search", properties);
-	}
-
 	std::vector<ModMatch> matches;
 	std::shared_ptr<Mod> mod;
 	std::shared_ptr<ModVersion> modVersion;
@@ -1499,6 +1492,7 @@ std::vector<ModMatch> ModManager::searchForMod(const std::vector<std::shared_ptr
 	bool modVersionPartiallyMatches = false;
 	bool modVersionTypeMatches = false;
 	bool modVersionTypePartiallyMatches = false;
+	bool exactMatchFound = false;
 
 	for(size_t i = 0; i < mods.size(); i++) {
 		mod = mods[i];
@@ -1525,7 +1519,8 @@ std::vector<ModMatch> ModManager::searchForMod(const std::vector<std::shared_ptr
 				matches.emplace_back(mod, i);
 			}
 
-			return matches;
+			exactMatchFound = true;
+			break;
 		}
 
 		modNamePartiallyMatches = formattedModName.find(formattedQuery) != std::string::npos;
@@ -1546,7 +1541,8 @@ std::vector<ModMatch> ModManager::searchForMod(const std::vector<std::shared_ptr
 					matches.emplace_back(mod, modVersion, i, j);
 				}
 
-				return matches;
+				exactMatchFound = true;
+				break;
 			}
 
 			modVersionPartiallyMatches = formattedModVersion.find(formattedQuery) != std::string::npos;
@@ -1560,7 +1556,8 @@ std::vector<ModMatch> ModManager::searchForMod(const std::vector<std::shared_ptr
 					matches.clear();
 					matches.emplace_back(mod, modVersion, modVersionType, i, j, k);
 
-					return matches;
+					exactMatchFound = true;
+					break;
 				}
 
 				modVersionTypePartiallyMatches = formattedModVersionType.find(formattedQuery) != std::string::npos;
@@ -1568,6 +1565,10 @@ std::vector<ModMatch> ModManager::searchForMod(const std::vector<std::shared_ptr
 				if(modVersionTypePartiallyMatches && !modNamePartiallyMatches && !modVersionPartiallyMatches) {
 					matches.emplace_back(mod, modVersion, modVersionType, i, j, k);
 				}
+			}
+
+			if(exactMatchFound) {
+				break;
 			}
 
 			if(modVersionPartiallyMatches && !modNamePartiallyMatches) {
@@ -1578,6 +1579,10 @@ std::vector<ModMatch> ModManager::searchForMod(const std::vector<std::shared_ptr
 					matches.emplace_back(mod, modVersion, i, j);
 				}
 			}
+		}
+
+		if(exactMatchFound) {
+			break;
 		}
 
 		if(modNamePartiallyMatches) {
@@ -1593,6 +1598,19 @@ std::vector<ModMatch> ModManager::searchForMod(const std::vector<std::shared_ptr
 				matches.emplace_back(mod, i);
 			}
 		}
+	}
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["query"] = formattedQuery;
+		properties["exactMatch"] = exactMatchFound;
+		properties["numberOfMatches"] = matches.size();
+
+		if(matches.size() == 1) {
+			properties["match"] = matches[0].toString();
+		}
+
+		SegmentAnalytics::getInstance()->track("Mod Search", properties);
 	}
 
 	return matches;
