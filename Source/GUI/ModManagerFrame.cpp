@@ -11,6 +11,7 @@
 #include "SettingsManagerPanel.h"
 #include "WXUtilities.h"
 
+#include <Analytics/Segment/SegmentAnalytics.h>
 #include <Core.h>
 #include <LibraryInformation.h>
 
@@ -182,7 +183,8 @@ void ModManagerFrame::onNotebookPageChanged(wxBookCtrlEvent & event) {
 	else if(dynamic_cast<ReleaseNotesPanel *>(currentPage) != nullptr) {
 		static_cast<ReleaseNotesPanel *>(currentPage)->load();
 	}
-	
+
+	SegmentAnalytics::getInstance()->screen(std::string(m_notebook->GetPageText(m_notebook->GetSelection()).mb_str()), "Main");
 }
 
 void ModManagerFrame::onQuit(wxCommandEvent& WXUNUSED(event)) {
