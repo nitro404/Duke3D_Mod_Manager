@@ -5,6 +5,7 @@
 #include "SettingPanel.h"
 #include "WXUtilities.h"
 
+#include <Analytics/Segment/SegmentAnalytics.h>
 #include <Network/HTTPRequest.h>
 #include <Utilities/FileUtilities.h>
 #include <Utilities/StringUtilities.h>
@@ -732,6 +733,22 @@ void DOSBoxManagerPanel::onDOSBoxSettingModified(SettingPanel & settingPanel) {
 
 void DOSBoxManagerPanel::onNotebookPageChanged(wxBookCtrlEvent & event) {
 	updateButtons();
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::shared_ptr<DOSBoxVersion> currentDOSBoxVersion(getCurrentDOSBoxVersion());
+
+		if(currentDOSBoxVersion != nullptr && currentDOSBoxVersion->hasID() && currentDOSBoxVersion->hasLongName()) {
+			std::map<std::string, std::any> properties;
+			properties["dosboxID"] = currentDOSBoxVersion->getID();
+			properties["shortName"] = currentDOSBoxVersion->getShortName();
+			properties["longName"] = currentDOSBoxVersion->getLongName();
+			properties["executableName"] = currentDOSBoxVersion->getExecutableName();
+			properties["hasDirectoryPath"] = currentDOSBoxVersion->hasDirectoryPath();
+			properties["numberOfSupportedOperatingSystems"] = currentDOSBoxVersion->numberOfSupportedOperatingSystems();
+
+			SegmentAnalytics::getInstance()->screen(currentDOSBoxVersion->getLongName(), "DOSBox Manager", properties);
+		}
+	}
 }
 
 void DOSBoxManagerPanel::onNewDOSBoxVersionButtonPressed(wxCommandEvent & event) {
