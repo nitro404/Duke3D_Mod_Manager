@@ -1,8 +1,10 @@
 #include "GroupEditorPanel.h"
 
 #include "Game/File/Group/GRP/GroupGRP.h"
+#include "Manager/SettingsManager.h"
 #include "WXUtilities.h"
 
+#include <Analytics/Segment/SegmentAnalytics.h>
 #include <Signal/SignalConnectionGroup.h>
 #include <Utilities/FileUtilities.h>
 
@@ -13,6 +15,8 @@
 #include <wx/textdlg.h>
 #include <wx/wrapsizer.h>
 
+#include <any>
+#include <map>
 #include <filesystem>
 #include <sstream>
 
@@ -268,7 +272,7 @@ void GroupEditorPanel::updateButtons() {
 	Group * group = groupPanel->getGroup();
 
 	bool isGroupModified = group->isModified();
-	bool groupHasFilePath = !group->getFilePath().empty();
+	bool groupHasFilePath = group->hasFilePath();
 	size_t groupFileCount = group->numberOfFiles();
 	size_t selectedGroupFileCount = groupPanel->numberOfFilesSelected();
 
@@ -306,7 +310,15 @@ bool GroupEditorPanel::addGroupPanel(GroupPanel * groupPanel) {
 }
 
 bool GroupEditorPanel::newGroup() {
-	return addGroupPanel(new GroupPanel(nullptr, m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL));
+	if(!addGroupPanel(new GroupPanel(nullptr, m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL))) {
+		return false;
+	}
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		SegmentAnalytics::getInstance()->track("New Group Created");
+	}
+
+	return true;
 }
 
 bool GroupEditorPanel::openGroup(const std::string & filePath) {
@@ -327,7 +339,24 @@ bool GroupEditorPanel::openGroup(const std::string & filePath) {
 		return false;
 	}
 
-	return addGroupPanel(new GroupPanel(std::move(group), m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL));
+	GroupPanel * groupPanel = new GroupPanel(std::move(group), m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+
+	if(!addGroupPanel(groupPanel)) {
+		return false;
+	}
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		const Group * group = groupPanel->getGroup();
+
+		std::map<std::string, std::any> properties;
+		properties["fileName"] = group->getFileName();
+		properties["fileSize"] = group->getSizeInBytes();
+		properties["numberOfFiles"] = group->numberOfFiles();
+
+		SegmentAnalytics::getInstance()->track("Group Opened", properties);
+	}
+
+	return true;
 }
 
 size_t GroupEditorPanel::openGroups() {
@@ -359,7 +388,24 @@ bool GroupEditorPanel::createGroupFromDirectory(const std::string & directoryPat
 		return false;
 	}
 
-	return addGroupPanel(new GroupPanel(std::move(group), m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL));
+	GroupPanel * groupPanel = new GroupPanel(std::move(group), m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+
+	if(!addGroupPanel(groupPanel)) {
+		return false;
+	}
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		const Group * group = groupPanel->getGroup();
+
+		std::map<std::string, std::any> properties;
+		properties["directoryName"] = Utilities::getFileName(directoryPath);
+		properties["fileSize"] = group->getSizeInBytes();
+		properties["numberOfFiles"] = group->numberOfFiles();
+
+		SegmentAnalytics::getInstance()->track("Group Created from Directory", properties);
+	}
+
+	return true;
 }
 
 bool GroupEditorPanel::createGroupFromDirectory() {
@@ -391,7 +437,20 @@ bool GroupEditorPanel::saveGroup(Group * group) {
 		updateGroupPanelName(indexOfPanelWithGroup(group));
 	}
 
-	return group->save();
+	if(!group->save()) {
+		return false;
+	}
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["fileName"] = group->getFileName();
+		properties["fileSize"] = group->getSizeInBytes();
+		properties["numberOfFiles"] = group->numberOfFiles();
+
+		SegmentAnalytics::getInstance()->track("Group Saved", properties);
+	}
+
+	return true;
 }
 
 bool GroupEditorPanel::saveCurrentGroup() {
@@ -409,6 +468,7 @@ bool GroupEditorPanel::saveGroupAs(Group * group) {
 		basePath = std::filesystem::current_path().string();
 	}
 
+	std::string previousFileName(group->getFileName());
 	std::string newFileName(!group->getFilePath().empty() ? group->getFileName() : DEFAULT_NEW_GROUP_FILE_NAME);
 
 	wxFileDialog saveFileAsDialog(this, "Save Group to New File", Utilities::getAbsoluteFilePath(basePath, std::filesystem::current_path().string()), newFileName, "Group Files (*.grp)|*.grp", wxFD_SAVE, wxDefaultPosition, wxDefaultSize, "Save Group As");
@@ -422,9 +482,22 @@ bool GroupEditorPanel::saveGroupAs(Group * group) {
 
 	updateGroupPanelName(indexOfPanelWithGroup(group));
 
-	return group->save();
-}
+	if(!group->save()) {
+		return false;
+	}
 
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["newFileName"] = group->getFileName();
+		properties["previousFileName"] = previousFileName;
+		properties["fileSize"] = group->getSizeInBytes();
+		properties["numberOfFiles"] = group->numberOfFiles();
+
+		SegmentAnalytics::getInstance()->track("Group Saved As", properties);
+	}
+
+	return true;
+}
 
 bool GroupEditorPanel::saveCurrentGroupAs() {
 	return saveGroupAs(getCurrentGroup());
@@ -507,7 +580,25 @@ size_t GroupEditorPanel::addFilesToGroup(Group * group) {
 		}
 	}
 
-	return group->addFiles(filePaths, replaceExistingFiles);
+	if(!group->addFiles(filePaths, replaceExistingFiles)) {
+		return false;
+	}
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+
+		if(group->hasFilePath()) {
+			properties["fileName"] = group->getFileName();
+		}
+
+		properties["fileSize"] = group->getSizeInBytes();
+		properties["numberOfFiles"] = group->numberOfFiles();
+		properties["numberOfFilesAdded"] = filePaths.size();
+
+		SegmentAnalytics::getInstance()->track("Files Added to Group", properties);
+	}
+
+	return true;
 }
 
 size_t GroupEditorPanel::addFilesToCurrentGroup() {
@@ -525,7 +616,27 @@ size_t GroupEditorPanel::removeSelectedFilesFromGroup(Group * group) {
 		return 0;
 	}
 
-	return group->removeFiles(groupPanel->getSelectedFiles());
+	std::vector<std::shared_ptr<GroupFile>> selectedFiles(groupPanel->getSelectedFiles());
+
+	if(!group->removeFiles(selectedFiles)) {
+		return false;
+	}
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+
+		if(group->hasFilePath()) {
+			properties["fileName"] = group->getFileName();
+		}
+
+		properties["fileSize"] = group->getSizeInBytes();
+		properties["numberOfFiles"] = group->numberOfFiles();
+		properties["numberOfFilesRemoved"] = selectedFiles.size();
+
+		SegmentAnalytics::getInstance()->track("Files Removed from Group", properties);
+	}
+
+	return true;
 }
 
 size_t GroupEditorPanel::removeSelectedFilesFromCurrentGroup() {
@@ -595,7 +706,34 @@ bool GroupEditorPanel::replaceSelectedFileInGroup(Group * group) {
 		}
 	}
 
-	return group->replaceFile(*selectedFile, newFilePath, !renameFile);
+	size_t existingGroupFileIndex = group->indexOfFile(*selectedFile);
+	std::string previousGroupFileName(selectedFile->getFileName());
+	size_t previousGroupFileSize = selectedFile->getSize();
+
+	if(!group->replaceFile(*selectedFile, newFilePath, !renameFile)) {
+		return false;
+	}
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::shared_ptr<GroupFile> newGroupFile(group->getFile(existingGroupFileIndex));
+
+		std::map<std::string, std::any> properties;
+
+		if(group->hasFilePath()) {
+			properties["fileName"] = group->getFileName();
+		}
+
+		properties["previousGroupFileName"] = previousGroupFileName;
+		properties["previousGroupFileSize"] = previousGroupFileSize;
+		properties["newGroupFileName"] = newGroupFile->getFileName();
+		properties["newGroupFileSize"] = newGroupFile->getSize();
+		properties["fileSize"] = group->getSizeInBytes();
+		properties["numberOfFiles"] = group->numberOfFiles();
+
+		SegmentAnalytics::getInstance()->track("Group File Replaced", properties);
+	}
+
+	return true;
 }
 
 bool GroupEditorPanel::replaceSelectedFileInCurrentGroup() {
@@ -649,7 +787,31 @@ bool GroupEditorPanel::renameSelectedFileInGroup(Group * group) {
 		}
 	}
 
-	return group->renameFile(*selectedFile, newFileName);
+	size_t fileIndex = group->indexOfFile(*selectedFile);
+	std::string previousGroupFileName(selectedFile->getFileName());
+
+	if(!group->renameFile(*selectedFile, newFileName)) {
+		return false;
+	}
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::shared_ptr<GroupFile> groupFile(group->getFile(fileIndex));
+
+		std::map<std::string, std::any> properties;
+
+		if(group->hasFilePath()) {
+			properties["fileName"] = group->getFileName();
+		}
+
+		properties["previousGroupFileName"] = previousGroupFileName;
+		properties["newGroupFileName"] = groupFile->getFileName();
+		properties["fileSize"] = group->getSizeInBytes();
+		properties["numberOfFiles"] = group->numberOfFiles();
+
+		SegmentAnalytics::getInstance()->track("Group File Renamed", properties);
+	}
+
+	return true;
 }
 
 bool GroupEditorPanel::renameSelectedFileInCurrentGroup() {
@@ -739,6 +901,20 @@ std::vector<std::shared_ptr<GroupFile>> GroupEditorPanel::extractFilesFromGroup(
 		}
 	}
 
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+
+		if(group->hasFilePath()) {
+			properties["fileName"] = group->getFileName();
+		}
+
+		properties["fileSize"] = group->getSizeInBytes();
+		properties["numberOfFiles"] = group->numberOfFiles();
+		properties["numberOfFilesExtracted"] = extractedFiles.size();
+
+		SegmentAnalytics::getInstance()->track("Group Files Extracted", properties);
+	}
+
 	wxMessageBox(fmt::format("Extracted {} file{} to directory: '{}'.", extractedFiles.size(), extractedFiles.size() == 1 ? "" : "s", destinationDirectoryPath), "Extraction Summary", wxOK | wxICON_INFORMATION, this);
 
 	return extractedFiles;
@@ -777,6 +953,10 @@ bool GroupEditorPanel::closeGroupPanel(size_t groupPanelIndex) {
 		return false;
 	}
 
+	std::string groupFileName(group->getFileName());
+	size_t groupFileSize = group->getSizeInBytes();
+	size_t numberOfFiles = group->numberOfFiles();
+
 	if(group->isModified()) {
 		int saveChangesResult = wxMessageBox("Group modifications have not been saved! Would you like to save your changes?", "Save Changes", wxICON_QUESTION | wxYES_NO | wxCANCEL, this);
 
@@ -800,6 +980,19 @@ bool GroupEditorPanel::closeGroupPanel(size_t groupPanelIndex) {
 	GroupPanel * groupPanel = getGroupPanel(groupPanelIndex);
 	m_notebook->RemovePage(groupPanelIndex);
 	delete groupPanel;
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+
+		if(!groupFileName.empty()) {
+			properties["fileName"] = groupFileName;
+		}
+
+		properties["fileSize"] = groupFileSize;
+		properties["numberOfFiles"] = numberOfFiles;
+
+		SegmentAnalytics::getInstance()->track("Group Closed", properties);
+	}
 
 	return true;
 }

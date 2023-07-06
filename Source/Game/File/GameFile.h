@@ -19,6 +19,7 @@ public:
 	GameFile & operator = (const GameFile & gameFile);
 	virtual ~GameFile();
 
+	bool hasFilePath() const;
 	const std::string & getFilePath() const;
 	std::string_view getFileName() const;
 	std::string_view getFileExtension() const;

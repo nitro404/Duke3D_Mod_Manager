@@ -42,6 +42,10 @@ GameFile & GameFile::operator = (const GameFile & gameFile) {
 
 GameFile::~GameFile() { }
 
+bool GameFile::hasFilePath() const {
+	return !m_filePath.empty();
+}
+
 const std::string & GameFile::getFilePath() const {
 	return m_filePath;
 }

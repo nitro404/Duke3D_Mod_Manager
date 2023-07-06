@@ -18,6 +18,7 @@
 #include <wx/bookctrl.h>
 
 #include <memory>
+#include <string>
 
 class SignalConnectionGroup;
 
