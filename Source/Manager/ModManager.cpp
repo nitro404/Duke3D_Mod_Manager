@@ -2024,7 +2024,10 @@ bool ModManager::installStandAloneMod(const ModGameVersion & standAloneModGameVe
 		return false;
 	}
 
-	if(!m_standAloneMods->addStandAloneMod(std::make_shared<StandAloneMod>(standAloneModGameVersion, destinationDirectoryPath))) {
+	size_t numberOfFiles = standAloneModArchive->numberOfFiles();
+	std::shared_ptr<StandAloneMod> standAloneMod(std::make_shared<StandAloneMod>(standAloneModGameVersion, destinationDirectoryPath));
+
+	if(!m_standAloneMods->addStandAloneMod(standAloneMod)) {
 		spdlog::error("Failed to add installed stand-alone '{}' mod to collection.");
 		return false;
 	}
@@ -2059,6 +2062,26 @@ bool ModManager::installStandAloneMod(const ModGameVersion & standAloneModGameVe
 			m_downloadManager->getDownloadCache()->removeCachedPackageFile(modDownload.get());
 			m_downloadManager->saveDownloadCache();
 		}
+	}
+
+	if(settings->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["modID"] = standAloneMod->getID();
+		properties["modName"] = standAloneMod->getLongName();
+		properties["modBaseGame"] = standAloneMod->getBase();
+		properties["version"] = standAloneMod->getVersion();
+		properties["gameExecutableName"] = standAloneMod->getGameExecutableName();
+
+		if(standAloneMod->hasSetupExecutableName()) {
+			properties["setupExecutableName"] = standAloneMod->getSetupExecutableName();
+		}
+
+		properties["archiveFileName"] = modDownload->getFileName();
+		properties["archiveFileSize"] = modDownload->getFileSize();
+		properties["sha1"] = modDownload->getSHA1();
+		properties["numberOfFiles"] = numberOfFiles;
+
+		SegmentAnalytics::getInstance()->track("Stand-Alone Mod Installed", properties);
 	}
 
 	return true;
