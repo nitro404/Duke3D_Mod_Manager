@@ -977,13 +977,8 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::s
 
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		std::map<std::string, std::any> properties;
-		properties["dosboxID"] = dosboxVersion->getID();
-		properties["shortName"] = dosboxVersion->getShortName();
-		properties["longName"] = dosboxVersion->getLongName();
+		dosboxVersion->addMetadata(properties);
 		properties["version"] = internalLatestVersion;
-		properties["executableName"] = dosboxVersion->getExecutableName();
-		properties["hasDirectoryPath"] = dosboxVersion->hasDirectoryPath();
-		properties["numberOfSupportedOperatingSystems"] = dosboxVersion->numberOfSupportedOperatingSystems();
 		properties["url"] = request->getUrl();
 		properties["fileSize"] = response->getBody()->getSize();
 		properties["eTag"] = response->getETag();
@@ -1085,13 +1080,8 @@ bool DOSBoxManager::installLatestDOSBoxVersion(const std::string & dosboxVersion
 
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		std::map<std::string, std::any> properties;
-		properties["dosboxID"] = dosboxVersion->getID();
-		properties["shortName"] = dosboxVersion->getShortName();
-		properties["longName"] = dosboxVersion->getLongName();
+		dosboxVersion->addMetadata(properties);
 		properties["version"] = latestVersion;
-		properties["executableName"] = dosboxVersion->getExecutableName();
-		properties["hasDirectoryPath"] = dosboxVersion->hasDirectoryPath();
-		properties["numberOfSupportedOperatingSystems"] = dosboxVersion->numberOfSupportedOperatingSystems();
 		properties["numberOfFiles"] = dosboxArchive->numberOfFiles();
 		properties["numberOfFilesExtracted"] = numberOfFilesExtracted;
 		properties["installDurationMs"] = installDuration.count();

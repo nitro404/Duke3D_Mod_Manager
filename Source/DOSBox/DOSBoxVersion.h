@@ -6,6 +6,8 @@
 #include <boost/signals2.hpp>
 #include <rapidjson/document.h>
 
+#include <any>
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
@@ -56,6 +58,7 @@ public:
 	bool removeSupportedOperatingSystemWithName(const std::string & operatingSystemName);
 	void clearSupportedOperatingSystems();
 
+	void addMetadata(std::map<std::string, std::any> & metadata) const;
 	bool checkForMissingExecutable() const;
 
 	rapidjson::Value toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const;

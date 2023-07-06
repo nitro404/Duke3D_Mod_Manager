@@ -370,6 +370,15 @@ void DOSBoxVersion::clearSupportedOperatingSystems() {
 	setModified(true);
 }
 
+void DOSBoxVersion::addMetadata(std::map<std::string, std::any> & metadata) const {
+	metadata["dosboxID"] = m_id;
+	metadata["longName"] = m_longName;
+	metadata["shortName"] = m_shortName;
+	metadata["executableName"] = m_executableName;
+	metadata["hasDirectoryPath"] = !m_directoryPath.empty();
+	metadata["numberOfSupportedOperatingSystems"] = m_supportedOperatingSystems.size();
+}
+
 bool DOSBoxVersion::checkForMissingExecutable() const {
 	if(!isConfigured()) {
 		return false;

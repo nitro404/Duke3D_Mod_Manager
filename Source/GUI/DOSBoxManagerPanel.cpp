@@ -739,12 +739,7 @@ void DOSBoxManagerPanel::onNotebookPageChanged(wxBookCtrlEvent & event) {
 
 		if(currentDOSBoxVersion != nullptr && currentDOSBoxVersion->hasID() && currentDOSBoxVersion->hasLongName()) {
 			std::map<std::string, std::any> properties;
-			properties["dosboxID"] = currentDOSBoxVersion->getID();
-			properties["shortName"] = currentDOSBoxVersion->getShortName();
-			properties["longName"] = currentDOSBoxVersion->getLongName();
-			properties["executableName"] = currentDOSBoxVersion->getExecutableName();
-			properties["hasDirectoryPath"] = currentDOSBoxVersion->hasDirectoryPath();
-			properties["numberOfSupportedOperatingSystems"] = currentDOSBoxVersion->numberOfSupportedOperatingSystems();
+			currentDOSBoxVersion->addMetadata(properties);
 
 			SegmentAnalytics::getInstance()->screen(currentDOSBoxVersion->getLongName(), "DOSBox Manager", properties);
 		}
