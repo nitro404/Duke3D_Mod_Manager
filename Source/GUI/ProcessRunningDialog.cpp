@@ -1,7 +1,9 @@
 #include "ProcessRunningDialog.h"
 
+#include "Manager/SettingsManager.h"
 #include "Project.h"
 
+#include <Analytics/Segment/SegmentAnalytics.h>
 #include <Platform/Process.h>
 
 #include <wx/gbsizer.h>
@@ -93,6 +95,10 @@ void ProcessRunningDialog::setProcess(std::shared_ptr<Process> process) {
 void ProcessRunningDialog::close() {
 	if(m_process->isRunning()) {
 		m_process->terminate();
+
+		if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+			SegmentAnalytics::getInstance()->track("Process Terminated");
+		}
 	}
 }
 
