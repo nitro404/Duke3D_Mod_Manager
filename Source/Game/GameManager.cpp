@@ -11,6 +11,7 @@
 #include "Game/File/Group/GRP/GroupGRP.h"
 #include "Manager/SettingsManager.h"
 
+#include <Analytics/Segment/SegmentAnalytics.h>
 #include <Archive/ArchiveFactoryRegistry.h>
 #include <Bitbucket/BitbucketService.h>
 #include <GitHub/GitHubService.h>
@@ -508,6 +509,18 @@ bool GameManager::updateGameDownloadList(bool force) const {
 	settings->fileETags.emplace(settings->remoteGamesListFileName, response->getETag());
 	settings->gameDownloadListLastDownloadedTimestamp = std::chrono::system_clock::now();
 	settings->save();
+
+	if(settings->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["fileName"] = settings->remoteGamesListFileName;
+		properties["fileSize"] = response->getBody()->getSize();
+		properties["eTag"] = response->getETag();
+		properties["transferDurationMs"] = response->getRequestDuration().value().count();
+		properties["forced"] = force;
+		properties["numberOfDownloads"] = m_gameDownloads->numberOfDownloads();
+
+		SegmentAnalytics::getInstance()->track("Game Download List Downloaded", properties);
+	}
 
 	return true;
 }
