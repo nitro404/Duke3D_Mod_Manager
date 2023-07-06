@@ -1477,7 +1477,15 @@ bool ModManager::selectRandomMod(bool selectPreferredVersion, bool selectFirstVe
 		return false;
 	}
 
-	return m_organizedMods->selectRandomMod();
+	if(!m_organizedMods->selectRandomMod()) {
+		return false;
+	}
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		SegmentAnalytics::getInstance()->track("Random Mod Selected");
+	}
+
+	return true;
 }
 
 bool ModManager::selectRandomGameVersion() {
@@ -1487,7 +1495,15 @@ bool ModManager::selectRandomGameVersion() {
 		return false;
 	}
 
-	return m_organizedMods->selectRandomGameVersion();
+	if(!m_organizedMods->selectRandomGameVersion()) {
+		return false;
+	}
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		SegmentAnalytics::getInstance()->track("Random Game Selected");
+	}
+
+	return true;
 }
 
 bool ModManager::selectRandomTeam() {
@@ -1497,7 +1513,15 @@ bool ModManager::selectRandomTeam() {
 		return false;
 	}
 
-	return m_organizedMods->selectRandomTeam();
+	if(!m_organizedMods->selectRandomTeam()) {
+		return false;
+	}
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		SegmentAnalytics::getInstance()->track("Random Team Selected");
+	}
+
+	return true;
 }
 
 bool ModManager::selectRandomAuthor() {
@@ -1507,7 +1531,15 @@ bool ModManager::selectRandomAuthor() {
 		return false;
 	}
 
-	return m_organizedMods->selectRandomAuthor();
+	if(!m_organizedMods->selectRandomAuthor()) {
+		return false;
+	}
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		SegmentAnalytics::getInstance()->track("Random Author Selected");
+	}
+
+	return true;
 }
 
 std::vector<ModMatch> ModManager::searchForMod(const std::vector<std::shared_ptr<Mod>> & mods, const std::string & query, bool autoPopulateVersion, bool autoPopulateVersionType) {
