@@ -14,6 +14,7 @@
 #include <wx/hyperlink.h>
 
 #include <memory>
+#include <string>
 
 class ModTeamMember;
 

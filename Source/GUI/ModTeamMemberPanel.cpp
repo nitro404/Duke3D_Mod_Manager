@@ -1,7 +1,13 @@
 #include "ModTeamMemberPanel.h"
 
+#include "Manager/SettingsManager.h"
 #include "Mod/ModTeamMember.h"
 #include "WXUtilities.h"
+
+#include <Analytics/Segment/SegmentAnalytics.h>
+
+#include <any>
+#include <map>
 
 ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "Mod Team Member") {
@@ -169,5 +175,14 @@ ModTeamMemberPanel::~ModTeamMemberPanel() { }
 void ModTeamMemberPanel::onModTeamMemberNameDeepLinkClicked(wxHyperlinkEvent & event) {
 	event.Skip(false);
 
-	modTeamMemberSelectionRequested(std::string(event.GetURL().mb_str()));
+	std::string modTeamMemberName(event.GetURL().mb_str());
+
+	modTeamMemberSelectionRequested(modTeamMemberName);
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["teamMemberName"] = modTeamMemberName;
+
+		SegmentAnalytics::getInstance()->track("Team Member Deep Link Clicked", properties);
+	}
 }
