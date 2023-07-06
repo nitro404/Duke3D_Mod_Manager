@@ -4,9 +4,12 @@
 
 #include "WXUtilities.h"
 
+#include <Analytics/Segment/SegmentAnalytics.h>
 #include <Date.h>
 #include <GitHub/GitHubService.h>
+#include <Manager/SettingsManager.h>
 #include <Utilities/StringUtilities.h>
+#include <Utilities/TimeUtilities.h>
 
 #include <magic_enum.hpp>
 #include <wx/gbsizer.h>
@@ -109,6 +112,21 @@ void ReleaseNotesPanel::setSelectedRelease(std::shared_ptr<GitHubRelease> releas
 	m_releaseDescriptionText->SetLabel(m_selectedRelease->getBody());
 
 	m_scrollableDescriptionWindow->FitInside();
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["releaseID"] = m_selectedRelease->getID();
+		properties["releaseName"] = m_selectedRelease->getReleaseName();
+		properties["tagName"] = m_selectedRelease->getTagName();
+		properties["draft"] = m_selectedRelease->isDraft();
+		properties["preRelease"] = m_selectedRelease->isPreRelease();
+		properties["createdAt"] = Utilities::timePointToString(m_selectedRelease->getCreatedTimestamp(), Utilities::TimeFormat::ISO8601);
+		properties["publishedAt"] = Utilities::timePointToString(m_selectedRelease->getPublishedTimestamp(), Utilities::TimeFormat::ISO8601);
+		properties["numberOfAssets"] = m_selectedRelease->numberOfAssets();
+		properties["numberOfReleases"] = m_releases->numberOfReleases();
+
+		SegmentAnalytics::getInstance()->track("View Release Notes", properties);
+	}
 }
 
 void ReleaseNotesPanel::onReleasesLoaded(ReleasesLoadedEvent & event) {
