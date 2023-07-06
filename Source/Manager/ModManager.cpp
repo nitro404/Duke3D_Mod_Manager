@@ -2,6 +2,7 @@
 
 #include "DOSBox/DOSBoxManager.h"
 #include "DOSBox/DOSBoxVersion.h"
+#include "Download/CachedPackageFile.h"
 #include "Download/DownloadCache.h"
 #include "Download/DownloadManager.h"
 #include "Environment.h"
@@ -2092,13 +2093,45 @@ bool ModManager::uninstallModGameVersion(const ModGameVersion & modGameVersion) 
 		return false;
 	}
 
+	SettingsManager * settings = SettingsManager::getInstance();
+
 	if(!m_localMode) {
-		std::shared_ptr<ModGameVersion> selectedModGameVersion(getSelectedModGameVersion());
 		std::shared_ptr<DownloadManager> downloadManager(m_downloadManager);
 
-		if(selectedModGameVersion != nullptr && downloadManager->isModGameVersionDownloaded(selectedModGameVersion.get())) {
-			if(!downloadManager->uninstallModGameVersion(selectedModGameVersion.get(), getGameVersions().get())) {
-				spdlog::warn("Failed to uninstall '{}' mod files.", selectedModGameVersion->getFullName(true));
+		if(downloadManager->isModGameVersionDownloaded(&modGameVersion)) {
+			std::shared_ptr<CachedPackageFile> cachedModPackageFile(m_downloadManager->getDownloadCache()->getCachedPackageFile(modGameVersion.getDownload().get()));
+
+			if(downloadManager->uninstallModGameVersion(&modGameVersion, getGameVersions().get())) {
+				if(!modGameVersion.isStandAlone()) {
+					if(settings->segmentAnalyticsEnabled) {
+						std::map<std::string, std::any> properties;
+						properties["fullModName"] = modGameVersion.getParentModVersionType()->getFullName();
+						properties["modID"] = modGameVersion.getParentMod()->getID();
+						properties["modName"] = modGameVersion.getParentMod()->getName();
+						properties["modVersion"] = modGameVersion.getParentModVersion()->getVersion();
+						properties["modVersionType"] = modGameVersion.getParentModVersionType()->getType();
+						properties["modGameVersionID"] = modGameVersion.getGameVersionID();
+
+						if(cachedModPackageFile != nullptr) {
+							properties["packageFileName"] = cachedModPackageFile->getFileName();
+							properties["packageFileSize"] = cachedModPackageFile->getFileSize();
+							properties["sha1"] =  cachedModPackageFile->getSHA1();
+
+							if(cachedModPackageFile->hasETag()) {
+								properties["eTag"] = cachedModPackageFile->getETag();
+							}
+
+							if(cachedModPackageFile->hasDownloadedTimePoint()) {
+								properties["downloadedAt"] = Utilities::timePointToString(cachedModPackageFile->getDownloadedTimePoint().value(), Utilities::TimeFormat::ISO8601);
+							}
+						}
+
+						SegmentAnalytics::getInstance()->track("Mod Uninstalled", properties);
+					}
+				}
+			}
+			else {
+				spdlog::warn("Failed to uninstall '{}' mod files.", modGameVersion.getFullName(true));
 			}
 		}
 	}
@@ -2107,8 +2140,6 @@ bool ModManager::uninstallModGameVersion(const ModGameVersion & modGameVersion) 
 		std::shared_ptr<StandAloneMod> standAloneMod(m_standAloneMods->getStandAloneMod(modGameVersion));
 
 		if(standAloneMod != nullptr && standAloneMod->isConfigured()) {
-			SettingsManager * settings = SettingsManager::getInstance();
-
 			spdlog::info("Deleting stand-alone '{}' mod game directory: '{}'...", modGameVersion.getParentModVersion()->getFullName(), standAloneMod->getGamePath());
 
 			if(std::filesystem::is_directory(std::filesystem::path(standAloneMod->getGamePath()))) {
@@ -2133,6 +2164,23 @@ bool ModManager::uninstallModGameVersion(const ModGameVersion & modGameVersion) 
 			else {
 				spdlog::error("Failed to save Installed stand-alone mod list to file: '{}'.", settings->standAloneModsListFilePath);
 			}
+		}
+
+		if(settings->segmentAnalyticsEnabled) {
+			std::map<std::string, std::any> properties;
+			properties["modID"] = standAloneMod->getID();
+			properties["modName"] = standAloneMod->getLongName();
+			properties["version"] = standAloneMod->getVersion();
+
+			if(standAloneMod->hasInstalledTimePoint()) {
+				properties["installedAt"] = Utilities::timePointToString(standAloneMod->getInstalledTimePoint().value(), Utilities::TimeFormat::ISO8601);
+			}
+
+			if(standAloneMod->hasLastPlayedTimePoint()) {
+				properties["lastPlayedAt"] = Utilities::timePointToString(standAloneMod->getLastPlayedTimePoint().value(), Utilities::TimeFormat::ISO8601);
+			}
+
+			SegmentAnalytics::getInstance()->track("Stand-Alone Mod Uninstalled", properties);
 		}
 	}
 
