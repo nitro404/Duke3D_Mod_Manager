@@ -159,6 +159,29 @@ bool ModManager::notifyInitializationProgress(const std::string & description) {
 	return true;
 }
 
+void ModManager::notifyModSelectionChanged() {
+	modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		if(m_selectedMod != nullptr) {
+			std::map<std::string, std::any> properties;
+			properties["fullModName"] = m_selectedMod->getFullName(m_selectedModVersionIndex, m_selectedModVersionTypeIndex);
+			properties["modID"] = m_selectedMod->getID();
+			properties["modName"] = m_selectedMod->getName();
+
+			if(m_selectedModVersionIndex != std::numeric_limits<size_t>::max()) {
+				properties["modVersion"] = getSelectedModVersion()->getVersion();
+
+				if(m_selectedModVersionTypeIndex != std::numeric_limits<size_t>::max()) {
+					properties["modVersionType"] = getSelectedModVersionType()->getType();
+				}
+			}
+
+			SegmentAnalytics::getInstance()->track("Mod Selection Changed", properties);
+		}
+	}
+}
+
 std::future<bool> ModManager::initializeAsync(int argc, char * argv[]) {
 	std::unique_lock<std::recursive_mutex> lock(m_mutex);
 
@@ -903,7 +926,7 @@ bool ModManager::setPreferredGameVersion(std::shared_ptr<GameVersion> gameVersio
 		}
 	}
 
-	modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
+	notifyModSelectionChanged();
 	preferredGameVersionChanged(m_preferredGameVersion);
 
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
@@ -1119,7 +1142,7 @@ bool ModManager::setSelectedMod(std::shared_ptr<Mod> mod) {
 		m_selectedModVersionTypeIndex = std::numeric_limits<size_t>::max();
 		m_selectedModGameVersionIndex = std::numeric_limits<size_t>::max();
 
-		modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
+		notifyModSelectionChanged();
 
 		return false;
 	}
@@ -1172,7 +1195,7 @@ bool ModManager::setSelectedMod(std::shared_ptr<Mod> mod) {
 		}
 	}
 
-	modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
+	notifyModSelectionChanged();
 
 	return true;
 }
@@ -1228,7 +1251,7 @@ bool ModManager::setSelectedModFromMatch(const ModMatch & modMatch) {
 		}
 	}
 
-	modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
+	notifyModSelectionChanged();
 
 	return true;
 }
@@ -1296,7 +1319,7 @@ bool ModManager::setSelectedMod(const ModIdentifier & modIdentifier) {
 		}
 	}
 
-	modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
+	notifyModSelectionChanged();
 
 	return true;
 }
@@ -1314,7 +1337,7 @@ bool ModManager::setSelectedModVersionIndex(size_t modVersionIndex) {
 		m_selectedModGameVersionIndex = std::numeric_limits<size_t>::max();
 
 		if(didModSelectionChange) {
-			modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
+			notifyModSelectionChanged();
 		}
 
 		return true;
@@ -1365,7 +1388,8 @@ bool ModManager::setSelectedModVersionIndex(size_t modVersionIndex) {
 		}
 	}
 
-	modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
+	notifyModSelectionChanged();
+
 	return true;
 }
 
@@ -1380,7 +1404,7 @@ bool ModManager::setSelectedModVersionTypeIndex(size_t modVersionTypeIndex) {
 		m_selectedModGameVersionIndex = std::numeric_limits<size_t>::max();
 
 		if(modVersionTypeChanged) {
-			modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
+			notifyModSelectionChanged();
 		}
 
 		return true;
@@ -1423,7 +1447,8 @@ bool ModManager::setSelectedModVersionTypeIndex(size_t modVersionTypeIndex) {
 		}
 	}
 
-	modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
+	notifyModSelectionChanged();
+
 	return true;
 }
 
@@ -1436,7 +1461,7 @@ bool ModManager::setSelectedModGameVersionIndex(size_t modGameVersionIndex) {
 		m_selectedModGameVersionIndex = std::numeric_limits<size_t>::max();
 
 		if(modGameVersionChanged) {
-			modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
+			notifyModSelectionChanged();
 		}
 
 		return true;
@@ -1466,7 +1491,8 @@ bool ModManager::setSelectedModGameVersionIndex(size_t modGameVersionIndex) {
 
 	m_selectedModGameVersionIndex = newModGameVersionIndex;
 
-	modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
+	notifyModSelectionChanged();
+
 	return true;
 }
 
@@ -1876,7 +1902,7 @@ void ModManager::clearSelectedMod() {
 	m_selectedModVersionTypeIndex = std::numeric_limits<size_t>::max();
 
 	if(selectedModChanged) {
-		modSelectionChanged(m_selectedMod, m_selectedModVersionIndex, m_selectedModVersionTypeIndex, m_selectedModGameVersionIndex);
+		notifyModSelectionChanged();
 	}
 }
 

@@ -158,6 +158,7 @@ private:
 	bool runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersion = nullptr, std::shared_ptr<ModGameVersion> alternateModGameVersion = nullptr);
 	void notifyLaunchError(const std::string & errorMessage);
 	bool notifyInitializationProgress(const std::string & description);
+	void notifyModSelectionChanged();
 	void assignPlatformFactories();
 	bool handleArguments(const ArgumentParser * args);
 	std::string generateCommand(std::shared_ptr<ModGameVersion> modGameVersion, std::shared_ptr<GameVersion> selectedGameVersion, ScriptArguments & scriptArgs, std::string_view combinedGroupFileName = "", bool * customMod = nullptr, std::string * customMap = nullptr, std::shared_ptr<GameVersion> * customTargetGameVersion = nullptr, std::vector<std::string> * customGroupFileNames = nullptr) const;
