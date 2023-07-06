@@ -6,6 +6,8 @@
 #include <boost/signals2.hpp>
 #include <rapidjson/document.h>
 
+#include <any>
+#include <map>
 #include <memory>
 #include <optional>
 #include <string>
@@ -199,6 +201,7 @@ public:
 	bool removeNote(const std::string & note);
 	void clearNotes();
 
+	void addMetadata(std::map<std::string, std::any> & metadata) const;
 	std::unique_ptr<GameVersion> createTemplateFrom() const;
 	size_t checkForMissingExecutables() const;
 

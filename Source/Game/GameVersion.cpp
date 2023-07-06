@@ -1719,6 +1719,106 @@ void GameVersion::clearNotes() {
 	m_notes.clear();
 }
 
+void GameVersion::addMetadata(std::map<std::string, std::any> & metadata) const {
+	metadata["gameID"] = m_id;
+	metadata["longName"] = m_shortName;
+	metadata["shortName"] = m_longName;
+
+	if(m_installedTimePoint.has_value()) {
+		metadata["installedAt"] = Utilities::timePointToString(m_installedTimePoint.value(), Utilities::TimeFormat::ISO8601);
+	}
+
+	if(m_lastPlayedTimePoint.has_value()) {
+		metadata["lastPlayedAt"] = Utilities::timePointToString(m_lastPlayedTimePoint.value(), Utilities::TimeFormat::ISO8601);
+	}
+
+	metadata["hasGamePath"] = !m_gamePath.empty();
+	metadata["gameExecutableName"] = m_gameExecutableName;
+
+	if(m_setupExecutableName.has_value()) {
+		metadata["setupExecutableName"] = m_setupExecutableName.value();
+	}
+
+	if(m_groupFileInstallPath.has_value()) {
+		metadata["groupFileInstallPath"] = m_groupFileInstallPath.value();
+	}
+
+	if(m_requiresCombinedGroup.has_value()) {
+		metadata["requiresCombinedGroup"] = m_requiresCombinedGroup.value();
+	}
+
+	if(m_requiresGroupFileExtraction.has_value()) {
+		metadata["requiresGroupFileExtraction"] = m_requiresGroupFileExtraction.value();
+	}
+
+	metadata["requiresDOSBox"] = doesRequireDOSBox();
+	metadata["localWorkingDirectory"] = m_localWorkingDirectory;
+	metadata["relativeConFilePath"] = m_relativeConFilePath;
+	metadata["supportsSubdirectories"] = m_supportsSubdirectories;
+	metadata["modDirectoryName"] = m_modDirectoryName;
+
+	if(m_worldTourGroupSupported.has_value()) {
+		metadata["worldTourGroupSupported"] = m_worldTourGroupSupported.value();
+	}
+
+	if(m_conFileArgumentFlag.has_value()) {
+		metadata["conFileArgumentFlag"] = m_conFileArgumentFlag.value();
+	}
+
+	if(m_extraConFileArgumentFlag.has_value()) {
+		metadata["extraConFileArgumentFlag"] = m_extraConFileArgumentFlag.value();
+	}
+
+	if(m_groupFileArgumentFlag.has_value()) {
+		metadata["groupFileArgumentFlag"] = m_groupFileArgumentFlag.value();
+	}
+
+	if(m_defFileArgumentFlag.has_value()) {
+		metadata["defFileArgumentFlag"] = m_defFileArgumentFlag.value();
+	}
+
+	if(m_extraDefFileArgumentFlag.has_value()) {
+		metadata["extraDefFileArgumentFlag"] = m_extraDefFileArgumentFlag.value();
+	}
+
+	if(m_mapFileArgumentFlag.has_value()) {
+		metadata["mapFileArgumentFlag"] = m_mapFileArgumentFlag.value();
+	}
+
+	metadata["episodeArgumentFlag"] = m_episodeArgumentFlag;
+	metadata["levelArgumentFlag"] = m_levelArgumentFlag;
+	metadata["skillArgumentFlag"] = m_skillArgumentFlag;
+	metadata["skillStartValue"] = m_skillStartValue;
+	metadata["recordDemoArgumentFlag"] = m_recordDemoArgumentFlag;
+
+	if(m_playDemoArgumentFlag.has_value()) {
+		metadata["playDemoArgumentFlag"] = m_playDemoArgumentFlag.value();
+	}
+
+	if(m_respawnModeArgumentFlag.has_value()) {
+		metadata["respawnModeArgumentFlag"] = m_respawnModeArgumentFlag.value();
+	}
+
+	if(m_weaponSwitchOrderArgumentFlag.has_value()) {
+		metadata["weaponSwitchOrderArgumentFlag"] = m_weaponSwitchOrderArgumentFlag.value();
+	}
+
+	if(m_disableMonstersArgumentFlag.has_value()) {
+		metadata["disableMonstersArgumentFlag"] = m_disableMonstersArgumentFlag.value();
+	}
+
+	if(m_disableSoundArgumentFlag.has_value()) {
+		metadata["disableSoundArgumentFlag"] = m_disableSoundArgumentFlag.value();
+	}
+
+	if(m_disableMusicArgumentFlag.has_value()) {
+		metadata["disableMusicArgumentFlag"] = m_disableMusicArgumentFlag.value();
+	}
+
+	metadata["numberOfSupportedOperatingSystems"] = m_supportedOperatingSystems.size();
+	metadata["numberOfCompatibleGameVersions"] = m_compatibleGameVersionIdentifiers.size();
+}
+
 std::unique_ptr<GameVersion> GameVersion::createTemplateFrom() const {
 	return std::make_unique<GameVersion>(
 		Utilities::emptyString,
