@@ -1,5 +1,6 @@
 #include "DOSBoxManager.h"
 
+#include <Analytics/Segment/SegmentAnalytics.h>
 #include <Archive/ArchiveFactoryRegistry.h>
 #include <GitHub/GitHubService.h>
 #include <Manager/SettingsManager.h>
@@ -9,6 +10,7 @@
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
 #include <Utilities/TidyHTMLUtilities.h>
+#include <Utilities/TimeUtilities.h>
 #include <Utilities/TinyXML2Utilities.h>
 
 #include <fmt/core.h>
@@ -275,6 +277,18 @@ bool DOSBoxManager::updateDOSBoxDownloadList(bool force) const {
 	settings->fileETags.emplace(settings->remoteDOSBoxVersionsListFileName, response->getETag());
 	settings->dosboxDownloadListLastDownloadedTimestamp = std::chrono::system_clock::now();
 	settings->save();
+
+	if(settings->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["fileName"] = settings->remoteDOSBoxVersionsListFileName;
+		properties["fileSize"] = response->getBody()->getSize();
+		properties["eTag"] = response->getETag();
+		properties["transferDurationMs"] = response->getRequestDuration().value().count();
+		properties["forced"] = force;
+		properties["numberOfDownloads"] = m_dosboxDownloads->numberOfDownloads();
+
+		SegmentAnalytics::getInstance()->track("DOSBox Download List Downloaded", properties);
+	}
 
 	return true;
 }
