@@ -14,6 +14,7 @@
 #include <Utilities/TinyXML2Utilities.h>
 
 #include <fmt/core.h>
+#include <magic_enum.hpp>
 #include <spdlog/spdlog.h>
 #include <tinyxml2.h>
 
@@ -905,29 +906,34 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::s
 	}
 
 	std::string latestDOSBoxDownloadURL;
+	std::string internalLatestVersion;
 
 	if(useFallback) {
 		spdlog::info("Using fallback {} application package file download URL.", dosboxVersion->getLongName());
 
-		latestDOSBoxDownloadURL = getLatestDOSBoxDownloadFallbackURL(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, latestVersion);
+		latestDOSBoxDownloadURL = getLatestDOSBoxDownloadFallbackURL(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, &internalLatestVersion);
 
 		installStatusChanged(fmt::format("Re-trying '{}' application files download using fallback URL.", dosboxVersion->getLongName()));
 	}
 	else {
-		latestDOSBoxDownloadURL = getLatestDOSBoxDownloadURL(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, latestVersion);
+		latestDOSBoxDownloadURL = getLatestDOSBoxDownloadURL(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, &internalLatestVersion);
 
 		installStatusChanged(fmt::format("Downloading '{}' application files.", dosboxVersion->getLongName()));
 	}
 
+	if(latestVersion != nullptr) {
+		*latestVersion = internalLatestVersion;
+	}
+
 	if(latestDOSBoxDownloadURL.empty()) {
 		if(!useFallback) {
-			return downloadLatestDOSBoxVersion(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, true, latestVersion);
+			return downloadLatestDOSBoxVersion(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, true, &internalLatestVersion);
 		}
 
 		return nullptr;
 	}
 
-	spdlog::info("Downloading {} {} application archive file from: '{}'...", dosboxVersion->getLongName(), latestVersion != nullptr ? *latestVersion : "", latestDOSBoxDownloadURL);
+	spdlog::info("Downloading {} {} application archive file from: '{}'...", dosboxVersion->getLongName(), internalLatestVersion, latestDOSBoxDownloadURL);
 
 	std::shared_ptr<HTTPRequest> request(httpService->createRequest(HTTPRequest::Method::Get, latestDOSBoxDownloadURL));
 
@@ -938,7 +944,7 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::s
 	progressConnection.disconnect();
 
 	if(response->isFailure()) {
-		spdlog::error("Failed to download {} {} application archive file with error: {}", dosboxVersion->getLongName(), latestVersion != nullptr ? *latestVersion : "", response->getErrorMessage());
+		spdlog::error("Failed to download {} {} application archive file with error: {}", dosboxVersion->getLongName(), internalLatestVersion, response->getErrorMessage());
 
 		if(!useFallback) {
 			return downloadLatestDOSBoxVersion(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, true, latestVersion);
@@ -948,7 +954,7 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::s
 	}
 	else if(response->isFailureStatusCode()) {
 		std::string statusCodeName(HTTPUtilities::getStatusCodeName(response->getStatusCode()));
-		spdlog::error("Failed to download {} {} application files package ({}{})!", dosboxVersion->getLongName(), latestVersion != nullptr ? *latestVersion : "", response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
+		spdlog::error("Failed to download {} {} application files package ({}{})!", dosboxVersion->getLongName(), internalLatestVersion, response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
 
 		if(!useFallback) {
 			return downloadLatestDOSBoxVersion(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, true, latestVersion);
@@ -960,13 +966,33 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::s
 	std::unique_ptr<Archive> dosboxArchive(ArchiveFactoryRegistry::getInstance()->createArchiveFrom(response->transferBody(), latestDOSBoxDownloadURL));
 
 	if(dosboxArchive == nullptr) {
-		spdlog::error("Failed to create archive for {} {} application archive.", dosboxVersion->getLongName(), latestVersion != nullptr ? *latestVersion : "");
+		spdlog::error("Failed to create archive for {} {} application archive.", dosboxVersion->getLongName(), internalLatestVersion);
 
 		if(!useFallback) {
 			return downloadLatestDOSBoxVersion(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, true, latestVersion);
 		}
 
 		return nullptr;
+	}
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["dosboxID"] = dosboxVersion->getID();
+		properties["shortName"] = dosboxVersion->getShortName();
+		properties["longName"] = dosboxVersion->getLongName();
+		properties["version"] = internalLatestVersion;
+		properties["executableName"] = dosboxVersion->getExecutableName();
+		properties["hasDirectoryPath"] = dosboxVersion->hasDirectoryPath();
+		properties["numberOfSupportedOperatingSystems"] = dosboxVersion->numberOfSupportedOperatingSystems();
+		properties["url"] = request->getUrl();
+		properties["fileSize"] = response->getBody()->getSize();
+		properties["eTag"] = response->getETag();
+		properties["transferDurationMs"] = response->getRequestDuration().value().count();
+		properties["usedFallback"] = useFallback;
+		properties["operatingSystemType"] = magic_enum::enum_name(operatingSystemType);
+		properties["architectureType"] = magic_enum::enum_name(operatingSystemArchitectureType);
+
+		SegmentAnalytics::getInstance()->track("DOSBox Application Downloaded", properties);
 	}
 
 	return std::move(dosboxArchive);
