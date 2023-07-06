@@ -51,6 +51,7 @@
 #include <Utilities/NumberUtilities.h>
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
+#include <Utilities/TimeUtilities.h>
 #include <Utilities/TinyXML2Utilities.h>
 #include <Utilities/Utilities.h>
 
@@ -533,17 +534,56 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 		properties["initializationDuration"] = initializationDuration.count();
 		properties["environment"] = Utilities::toCapitalCase(APPLICATION_ENVIRONMENT);
 		properties["gameType"] = Utilities::toCapitalCase(magic_enum::enum_name(settings->gameType));
-		properties["preferredDOSBoxVersion"] = settings->preferredDOSBoxVersionID;
-		properties["preferredGameVersion"] = settings->preferredGameVersionID;
+		properties["demoRecordingEnabled"] = m_demoRecordingEnabled;
+		properties["preferredDOSBoxVersionID"] = settings->preferredDOSBoxVersionID;
+		properties["preferredGameVersionID"] = settings->preferredGameVersionID;
+		properties["numberMods"] = m_mods->numberOfMods();
+		properties["numberOfFavouriteMods"] = m_favouriteMods->numberOfFavourites();
 		properties["numberOfDownloadedMods"] = m_downloadManager != nullptr ? m_downloadManager->numberOfDownloadedMods() : 0;
+		properties["numberOfInstalledStandAloneMods"] = m_standAloneMods->numberOfStandAloneMods();
+		properties["dosboxShowConsole"] = settings->dosboxShowConsole;
+		properties["dosboxAutoExit"] = settings->dosboxAutoExit;
 		properties["dosboxArguments"] = settings->dosboxArguments;
-		properties["dosboxServerIPAddress"] = settings->dosboxServerIPAddress;
-		properties["dosboxServerLocalPort"] = settings->dosboxLocalServerPort;
-		properties["dosboxServerRemotePort"] = settings->dosboxRemoteServerPort;
+		properties["dosboxServerIPAddressChanged"] = !Utilities::areStringsEqual(settings->dosboxServerIPAddress, SettingsManager::DEFAULT_DOSBOX_SERVER_IP_ADDRESS);
+		properties["dosboxServerLocalPortChanged"] = settings->dosboxLocalServerPort != SettingsManager::DEFAULT_DOSBOX_LOCAL_SERVER_PORT;
+		properties["dosboxServerRemotePortChanged"] = settings->dosboxRemoteServerPort != SettingsManager::DEFAULT_DOSBOX_REMOTE_SERVER_PORT;
+		properties["windowPosition"] = settings->windowPosition.toString();
+		properties["windowSize"] = settings->windowSize.toString();
 		properties["apiBaseURL"] = settings->apiBaseURL;
 		properties["connectionTimeoutSeconds"] = settings->connectionTimeout.count();
 		properties["networkTimeoutSeconds"] = settings->networkTimeout.count();
 		properties["transferTimeoutSeconds"] = settings->transferTimeout.count();
+		properties["downloadThrottlingEnabled"] = settings->downloadThrottlingEnabled;
+		properties["verboseRequestLogging"] = settings->verboseRequestLogging;
+		properties["modListUpdateFrequencyMinutes"] = settings->modListUpdateFrequency.count();
+		properties["dosboxDownloadListUpdateFrequencyMinutes"] = settings->dosboxDownloadListUpdateFrequency.count();
+		properties["gameDownloadListUpdateFrequencyMinutes"] = settings->gameDownloadListUpdateFrequency.count();
+		properties["cacertUpdateFrequencyMinutes"] = settings->cacertUpdateFrequency.count();
+		properties["timeZoneDataUpdateFrequencyMinutes"] = settings->timeZoneDataUpdateFrequency.count();
+
+		if(settings->modListLastDownloadedTimestamp.has_value()) {
+			properties["modListLastDownloaded"] = Utilities::timePointToString(settings->modListLastDownloadedTimestamp.value(), Utilities::TimeFormat::ISO8601);
+		}
+
+		if(settings->dosboxDownloadListLastDownloadedTimestamp.has_value()) {
+			properties["dosboxDownloadListLastDownloaded"] = Utilities::timePointToString(settings->dosboxDownloadListLastDownloadedTimestamp.value(), Utilities::TimeFormat::ISO8601);
+		}
+
+		if(settings->gameDownloadListLastDownloadedTimestamp.has_value()) {
+			properties["gameDownloadListLastDownloaded"] = Utilities::timePointToString(settings->gameDownloadListLastDownloadedTimestamp.value(), Utilities::TimeFormat::ISO8601);
+		}
+
+		if(settings->cacertLastDownloadedTimestamp.has_value()) {
+			properties["cacertLastDownloaded"] = Utilities::timePointToString(settings->cacertLastDownloadedTimestamp.value(), Utilities::TimeFormat::ISO8601);
+		}
+
+		if(settings->timeZoneDataLastDownloadedTimestamp.has_value()) {
+			properties["timeZoneDataLastDownloaded"] = Utilities::timePointToString(settings->timeZoneDataLastDownloadedTimestamp.value(), Utilities::TimeFormat::ISO8601);
+		}
+
+		if(m_arguments != nullptr) {
+			properties["arguments"] = m_arguments->toString();
+		}
 
 		segmentAnalytics->track("Application Initialized", properties);
 	}
