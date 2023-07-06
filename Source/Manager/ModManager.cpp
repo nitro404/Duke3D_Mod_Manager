@@ -780,10 +780,24 @@ bool ModManager::setPreferredDOSBoxVersion(std::shared_ptr<DOSBoxVersion> dosbox
 		return true;
 	}
 
+	std::shared_ptr<DOSBoxVersion> previousPreferredDOSBoxVersion(m_preferredDOSBoxVersion);
+
 	m_preferredDOSBoxVersion = dosboxVersion;
 	SettingsManager::getInstance()->preferredDOSBoxVersionID = m_preferredDOSBoxVersion->getID();
 
 	preferredDOSBoxVersionChanged(m_preferredDOSBoxVersion);
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		if(previousPreferredDOSBoxVersion != nullptr) {
+			properties["previousDOSBoxVersionID"] = previousPreferredDOSBoxVersion->getID();
+		}
+
+		properties["newDOSBoxVersionID"] = m_preferredDOSBoxVersion->getID();
+
+		SegmentAnalytics::getInstance()->track("Preferred DOSBox Version Changed", properties);
+	}
+
 	return true;
 }
 
