@@ -3030,6 +3030,10 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 		return {};
 	}
 
+	SettingsManager * settings = SettingsManager::getInstance();
+
+	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
+
 	std::string destinationGroupFilePath(getGroupFilePath(gameVersionID));
 
 	if(destinationGroupFilePath.empty()) {
@@ -3063,6 +3067,7 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 		GameLocator * gameLocator = GameLocator::getInstance();
 
 		for(size_t i = 0; i < gameLocator->numberOfGamePaths(); i++) {
+			bool isAtomicEditionGroup = false;
 			std::string sourceGroupFilePath(Utilities::joinPaths(*gameLocator->getGamePath(i), GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME));
 
 			if(!std::filesystem::is_regular_file(std::filesystem::path(sourceGroupFilePath))) {
@@ -3079,6 +3084,8 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 			}
 			else if(Utilities::areStringsEqual(groupSHA1, GroupGRP::DUKE_NUKEM_3D_ATOMIC_EDITION_GROUP_SHA1_FILE_HASH)) {
 				spdlog::debug("Verified '{}' group file SHA1 hash.", GameVersion::ORIGINAL_ATOMIC_EDITION.getLongName());
+
+				isAtomicEditionGroup = true;
 			}
 			else if(Utilities::areStringsEqual(groupSHA1, GroupGRP::DUKE_NUKEM_3D_WORLD_TOUR_GROUP_SHA1_FILE_HASH)) {
 				spdlog::debug("Verified '{}' group file SHA1 hash.", WORLD_TOUR_GAME_LONG_NAME);
@@ -3093,10 +3100,12 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 				destinationGroupFilePath = getWorldTourGroupFilePath();
 			}
 			else if(Utilities::areStringsEqual(groupSHA1, GroupGRP::DUKE_NUKEM_3D_PLUTONIUM_PAK_GROUP_SHA1_FILE_HASH)) {
-				spdlog::error("Calculated '{}' SHA1 hash for Duke Nukem 3D group file '{}', when '{}' group file was expected! This may cause unexpected gameplay issues.", GameVersion::ORIGINAL_PLUTONIUM_PAK.getLongName(), sourceGroupFilePath, GameVersion::ORIGINAL_ATOMIC_EDITION.getLongName());
+				spdlog::error("Calculated '{}' SHA1 hash for Duke Nukem 3D group file '{}', when '{}' group file was expected, skipping!.", GameVersion::ORIGINAL_PLUTONIUM_PAK.getLongName(), sourceGroupFilePath, GameVersion::ORIGINAL_PLUTONIUM_PAK.getLongName());
+				continue;
 			}
 			else if(Utilities::areStringsEqual(groupSHA1, GroupGRP::DUKE_NUKEM_3D_REGULAR_VERSION_GROUP_SHA1_FILE_HASH)) {
-				spdlog::error("Calculated '{}' SHA1 hash for Duke Nukem 3D group file '{}', when '{}' group file was expected! This may cause unexpected gameplay issues.", GameVersion::ORIGINAL_REGULAR_VERSION.getLongName(), sourceGroupFilePath, GameVersion::ORIGINAL_ATOMIC_EDITION.getLongName());
+				spdlog::error("Calculated '{}' SHA1 hash for Duke Nukem 3D group file '{}', when '{}' group file was expected, skipping!", GameVersion::ORIGINAL_REGULAR_VERSION.getLongName(), sourceGroupFilePath, GameVersion::ORIGINAL_ATOMIC_EDITION.getLongName());
+				continue;
 			}
 			else {
 				spdlog::warn("Unexpected SHA1 hash calculated for Duke Nukem 3D group file '{}'! Game data may be modified, and may cause gameplay issues.", sourceGroupFilePath);
@@ -3126,6 +3135,17 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 
 			if(errorCode) {
 				spdlog::error("Failed to copy Duke Nukem 3D group file from '{}' to '{}' with error: '{}'.", sourceGroupFilePath, destinationGroupFilePath, errorCode.message());
+			}
+
+			if(settings->segmentAnalyticsEnabled) {
+				std::map<std::string, std::any> properties;
+				properties["groupGameVersionID"] = groupGameVersion->getID();
+				properties["atomicEditionGroup"] = isAtomicEditionGroup;
+				properties["worldTourGroup"] = isWorldTourGroup;
+				properties["sha1"] = groupSHA1;
+				properties["numberOfGamePaths"] = gameLocator->numberOfGamePaths();
+
+				segmentAnalytics->track("Group File Copied", properties);
 			}
 
 			return true;
@@ -3304,6 +3324,20 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 	if(!groupFileData->writeTo(destinationGroupFilePath, true)) {
 		spdlog::error("Failed to write '{}' group file data from package file to '{}'.", groupGameVersion->getLongName(), destinationGroupFilePath);
 		return false;
+	}
+
+	if(settings->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["groupGameVersionID"] = groupGameVersion->getID();
+		properties["url"] = request->getUrl();
+		properties["fileSize"] = response->getBody()->getSize();
+		properties["sha1"] = calculatedGroupSHA1;
+		properties["eTag"] = response->getETag();
+		properties["transferDurationMs"] = response->getRequestDuration().value().count();
+		properties["usedFallback"] = useFallback;
+		properties["numberOfFiles"] = groupArchive->numberOfFiles();
+
+		segmentAnalytics->track("Group File Downloaded", properties);
 	}
 
 	return true;
