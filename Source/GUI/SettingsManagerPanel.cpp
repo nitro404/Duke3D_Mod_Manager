@@ -200,6 +200,10 @@ bool SettingsManagerPanel::isValid() const {
 void SettingsManagerPanel::reset() {
 	SettingsManager * settings = SettingsManager::getInstance();
 
+	if(settings->segmentAnalyticsEnabled) {
+		SegmentAnalytics::getInstance()->track("Settings Reset");
+	}
+
 	settings->reset();
 
 	m_modified = false;
@@ -261,6 +265,10 @@ bool SettingsManagerPanel::save() {
 	}
 
 	SettingsManager * settings = SettingsManager::getInstance();
+
+	if(settings->segmentAnalyticsEnabled) {
+		SegmentAnalytics::getInstance()->track("Settings Saved");
+	}
 
 	if(!settings->save()) {
 		wxMessageBox("Failed to save settings!", "Save Failed", wxOK | wxICON_ERROR, this);
