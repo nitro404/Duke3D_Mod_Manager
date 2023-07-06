@@ -989,6 +989,7 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::s
 		properties["eTag"] = response->getETag();
 		properties["transferDurationMs"] = response->getRequestDuration().value().count();
 		properties["usedFallback"] = useFallback;
+		properties["numberOfFiles"] = dosboxArchive->numberOfFiles();
 		properties["operatingSystemType"] = magic_enum::enum_name(operatingSystemType);
 		properties["architectureType"] = magic_enum::enum_name(operatingSystemArchitectureType);
 
@@ -1031,6 +1032,10 @@ bool DOSBoxManager::installLatestDOSBoxVersion(const std::string & dosboxVersion
 
 	installStatusChanged(fmt::format("Extracting '{}' application files to destination directory.", dosboxVersion->getLongName()));
 
+	std::chrono::time_point<std::chrono::steady_clock> installSteadyStartTimePoint(std::chrono::steady_clock::now());
+
+	size_t numberOfFilesExtracted = 0;
+
 	if(Utilities::areStringsEqualIgnoreCase(dosboxVersion->getID(), DOSBoxVersion::DOSBOX_STAGING.getID())) {
 		std::shared_ptr<ArchiveEntry> executableFileArchiveEntry(dosboxArchive->getFirstEntryWithName(dosboxVersion->getExecutableName()));
 
@@ -1041,7 +1046,7 @@ bool DOSBoxManager::installLatestDOSBoxVersion(const std::string & dosboxVersion
 
 		std::string applicationArchiveBasePath(executableFileArchiveEntry->getBasePath());
 
-		return dosboxArchive->extractAllEntriesInSubdirectory(destinationDirectoryPath, applicationArchiveBasePath, true, true, overwrite) != 0;
+		numberOfFilesExtracted = dosboxArchive->extractAllEntriesInSubdirectory(destinationDirectoryPath, applicationArchiveBasePath, true, true, overwrite);
 	}
 	else if(Utilities::areStringsEqualIgnoreCase(dosboxVersion->getID(), DOSBoxVersion::DOSBOX_X.getID())) {
 		std::vector<std::shared_ptr<ArchiveEntry>> executableFileArchiveEntries(dosboxArchive->getEntriesWithName(dosboxVersion->getExecutableName()));
@@ -1065,10 +1070,36 @@ bool DOSBoxManager::installLatestDOSBoxVersion(const std::string & dosboxVersion
 
 		std::string applicationArchiveBasePath(sdl2ExecutableArchiveFileEntry->getBasePath());
 
-		return dosboxArchive->extractAllEntriesInSubdirectory(destinationDirectoryPath, applicationArchiveBasePath, true, true, overwrite) != 0;
+		numberOfFilesExtracted = dosboxArchive->extractAllEntriesInSubdirectory(destinationDirectoryPath, applicationArchiveBasePath, true, true, overwrite);
+	}
+	else {
+		numberOfFilesExtracted = dosboxArchive->extractAllEntries(destinationDirectoryPath, overwrite);
 	}
 
-	return dosboxArchive->extractAllEntries(destinationDirectoryPath, overwrite) != 0;
+	if(numberOfFilesExtracted == 0) {
+		spdlog::error("Failed to extract any files from {} {} application archive to directory: '{}'.", dosboxVersion->getLongName(), latestVersion, destinationDirectoryPath);
+		return false;
+	}
+
+	std::chrono::milliseconds installDuration(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - installSteadyStartTimePoint));
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["dosboxID"] = dosboxVersion->getID();
+		properties["shortName"] = dosboxVersion->getShortName();
+		properties["longName"] = dosboxVersion->getLongName();
+		properties["version"] = latestVersion;
+		properties["executableName"] = dosboxVersion->getExecutableName();
+		properties["hasDirectoryPath"] = dosboxVersion->hasDirectoryPath();
+		properties["numberOfSupportedOperatingSystems"] = dosboxVersion->numberOfSupportedOperatingSystems();
+		properties["numberOfFiles"] = dosboxArchive->numberOfFiles();
+		properties["numberOfFilesExtracted"] = numberOfFilesExtracted;
+		properties["installDurationMs"] = installDuration.count();
+
+		SegmentAnalytics::getInstance()->track("DOSBox Application Installed", properties);
+	}
+
+	return true;
 }
 
 bool DOSBoxManager::isDOSBoxVersionDownloadable(const DOSBoxVersion & dosboxVersion) {
