@@ -285,16 +285,11 @@ std::unique_ptr<GroupSSI> GroupSSI::readFrom(const ByteBuffer & byteBuffer) {
 		return nullptr;
 	}
 
-	std::string title(byteBuffer.readString(titleLength, &error));
+	std::string title(byteBuffer.readFixedLengthString(titleLength, MAX_TITLE_LENGTH, &error));
 
 	if(error) {
 		spdlog::error("Failed to read Sunstorm Interactive SSI group title.");
 		return nullptr;
-	}
-
-	if(!byteBuffer.skipReadBytes(MAX_TITLE_LENGTH - titleLength)) {
-		spdlog::error("Invalid Sunstorm Interactive SSI group title data.");
-		return false;
 	}
 
 	std::string runFile;
@@ -312,16 +307,11 @@ std::unique_ptr<GroupSSI> GroupSSI::readFrom(const ByteBuffer & byteBuffer) {
 			return nullptr;
 		}
 
-		runFile = byteBuffer.readString(runFileLength, &error);
+		runFile = byteBuffer.readFixedLengthString(runFileLength, MAX_RUN_FILE_LENGTH, &error);
 
 		if(error) {
 			spdlog::error("Failed to read Sunstorm Interactive SSI group run file.");
 			return nullptr;
-		}
-
-		if(!byteBuffer.skipReadBytes(MAX_RUN_FILE_LENGTH - runFileLength)) {
-			spdlog::error("Invalid Sunstorm Interactive SSI group run file data.");
-			return false;
 		}
 	}
 
@@ -341,16 +331,11 @@ std::unique_ptr<GroupSSI> GroupSSI::readFrom(const ByteBuffer & byteBuffer) {
 			return nullptr;
 		}
 
-		descriptions[i] = byteBuffer.readString(descriptionLength, &error);
+		descriptions[i] = byteBuffer.readFixedLengthString(descriptionLength, MAX_DESCRIPTION_LENGTH, &error);
 
 		if(error) {
 			spdlog::error("Failed to read Sunstorm Interactive SSI group description #{}.", i + 1);
 			return nullptr;
-		}
-
-		if(!byteBuffer.skipReadBytes(MAX_DESCRIPTION_LENGTH - descriptionLength)) {
-			spdlog::error("Invalid Sunstorm Interactive SSI group description #{} data.", i + 1);
-			return false;
 		}
 	}
 
@@ -374,16 +359,11 @@ std::unique_ptr<GroupSSI> GroupSSI::readFrom(const ByteBuffer & byteBuffer) {
 			return nullptr;
 		}
 
-		fileName = byteBuffer.readString(fileNameLength, &error);
+		fileName = byteBuffer.readFixedLengthString(fileNameLength, GroupFile::MAX_FILE_NAME_LENGTH, &error);
 
 		if(error) {
 			spdlog::error("Failed to read Sunstorm Interactive SSI group file name #{}.", i + 1);
 			return nullptr;
-		}
-
-		if(!byteBuffer.skipReadBytes(GroupFile::MAX_FILE_NAME_LENGTH - fileNameLength)) {
-			spdlog::error("Invalid Sunstorm Interactive SSI group file #{} name data.", i + 1);
-			return false;
 		}
 
 		fileSizes.push_back(byteBuffer.readUnsignedInteger(&error));
@@ -431,12 +411,8 @@ bool GroupSSI::writeTo(ByteBuffer & byteBuffer) const {
 		return false;
 	}
 
-	if(!byteBuffer.writeString(m_title)) {
+	if(!byteBuffer.writeFixedLengthString(m_title, MAX_TITLE_LENGTH)) {
 		spdlog::error("Failed to write Sunstorm Interactive SSI group title.");
-		return false;
-	}
-
-	if(!byteBuffer.skipWriteBytes(MAX_TITLE_LENGTH - m_title.length())) {
 		return false;
 	}
 
@@ -446,12 +422,8 @@ bool GroupSSI::writeTo(ByteBuffer & byteBuffer) const {
 			return false;
 		}
 
-		if(!byteBuffer.writeString(m_runFile)) {
+		if(!byteBuffer.writeFixedLengthString(m_runFile, MAX_RUN_FILE_LENGTH)) {
 			spdlog::error("Failed to write Sunstorm Interactive SSI group run file.");
-			return false;
-		}
-
-		if(!byteBuffer.skipWriteBytes(MAX_RUN_FILE_LENGTH - m_runFile.length())) {
 			return false;
 		}
 	}
@@ -462,12 +434,8 @@ bool GroupSSI::writeTo(ByteBuffer & byteBuffer) const {
 			return false;
 		}
 
-		if(!byteBuffer.writeString(m_descriptions[i])) {
+		if(!byteBuffer.writeFixedLengthString(m_descriptions[i], MAX_DESCRIPTION_LENGTH)) {
 			spdlog::error("Failed to write Sunstorm Interactive SSI group description #{}.", i + 1);
-			return false;
-		}
-
-		if(!byteBuffer.skipWriteBytes(MAX_DESCRIPTION_LENGTH - m_descriptions[i].length())) {
 			return false;
 		}
 	}
@@ -478,12 +446,8 @@ bool GroupSSI::writeTo(ByteBuffer & byteBuffer) const {
 			return false;
 		}
 
-		if(!byteBuffer.writeString(m_files[i]->getFileName())) {
+		if(!byteBuffer.writeFixedLengthString(m_files[i]->getFileName(), GroupFile::MAX_FILE_NAME_LENGTH)) {
 			spdlog::error("Failed to write Sunstorm Interactive SSI group file #{} name #{}.", i + 1);
-			return false;
-		}
-
-		if(!byteBuffer.skipWriteBytes(GroupFile::MAX_FILE_NAME_LENGTH - m_files[i]->getFileName().length())) {
 			return false;
 		}
 
