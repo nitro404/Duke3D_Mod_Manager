@@ -1,6 +1,8 @@
 #ifndef _GROUP_INFO_PANEL_H_
 #define _GROUP_INFO_PANEL_H_
 
+#include "SunstormInteractiveMetadataPanel.h"
+
 #include <boost/signals2.hpp>
 #include <wx/wxprec.h>
 
@@ -40,7 +42,7 @@ private:
 	void onFileSelected(wxCommandEvent & event);
 	void onGroupModified(const GameFile & group);
 
-	std::unique_ptr<Group> m_group;
+	std::shared_ptr<Group> m_group;
 	boost::signals2::connection m_groupModifiedConnection;
 	wxStaticText * m_numberOfFilesText;
 	wxStaticText * m_groupSizeText;
@@ -48,6 +50,8 @@ private:
 	wxListBox * m_fileListBox;
 	wxStaticBox * m_fileInfoBox;
 	MetadataPanel * m_fileInfoPanel;
+	wxStaticBox * m_ssiMetadataBox;
+	SunstormInteractiveMetadataPanel * m_ssiMetadataPanel;
 	wxBoxSizer * m_fileInfoBoxSizer;
 	wxFlexGridSizer * m_groupPropertiesSizer;
 

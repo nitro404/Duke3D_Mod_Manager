@@ -1,6 +1,7 @@
 #include "GroupEditorPanel.h"
 
 #include "Game/File/Group/GRP/GroupGRP.h"
+#include "Game/File/Group/SSI/GroupSSI.h"
 #include "Manager/SettingsManager.h"
 #include "WXUtilities.h"
 
@@ -20,7 +21,13 @@
 #include <filesystem>
 #include <sstream>
 
-static const std::string DEFAULT_NEW_GROUP_FILE_NAME("NEW.GRP");
+static const std::string DEFAULT_NEW_GRP_FILE_NAME("NEW.GRP");
+static const std::string DEFAULT_NEW_SSI_FILE_NAME("NEW.SSI");
+
+static const std::string FILE_DIALOG_GRP_FILE_TYPE("Build Engine Group Files (*.grp)|*.grp");
+static const std::string FILE_DIALOG_SSI_FILE_TYPE("Sunstorm Interactive Files (*.ssi)|*.ssi");
+static const std::string FILE_DIALOG_FILE_TYPES(FILE_DIALOG_GRP_FILE_TYPE + "|" + FILE_DIALOG_SSI_FILE_TYPE);
+static const std::string FILE_DIALOG_ALL_FILES("All Files (*.*)|*.*");
 
 GroupEditorPanel::GroupEditorPanel(wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "Group Editor")
@@ -310,12 +317,42 @@ bool GroupEditorPanel::addGroupPanel(GroupPanel * groupPanel) {
 }
 
 bool GroupEditorPanel::newGroup() {
-	if(!addGroupPanel(new GroupPanel(std::make_unique<GroupGRP>(), m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL))) {
+	int selectedGroupTypeIndex = wxGetSingleChoiceIndex(
+		"Please choose a group type to create:",
+		"Choose Group Type",
+		WXUtilities::createItemWXArrayString({ "Build Engine Group", "Sunstorm Interactive File Collection" }),
+		0,
+		this
+	);
+
+	std::unique_ptr<Group> newGroup;
+
+	switch(selectedGroupTypeIndex) {
+		case 0: {
+			newGroup = std::make_unique<GroupGRP>();
+			break;
+		}
+
+		case 1: {
+			newGroup = std::make_unique<GroupSSI>();
+			break;
+		}
+
+		case wxNOT_FOUND:
+		default: {
+			return false;
+		}
+	}
+
+	if(!addGroupPanel(new GroupPanel(std::move(newGroup), m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL))) {
 		return false;
 	}
 
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
-		SegmentAnalytics::getInstance()->track("New Group Created");
+		std::map<std::string, std::any> properties;
+		properties["groupType"] = selectedGroupTypeIndex == 0 ? "GRP" : "SSI";
+
+		SegmentAnalytics::getInstance()->track("New Group Created", properties);
 	}
 
 	return true;
@@ -332,7 +369,17 @@ bool GroupEditorPanel::openGroup(const std::string & filePath) {
 		return false;
 	}
 
-	std::unique_ptr<Group> group(GroupGRP::loadFrom(filePath));
+	bool isSSIGroup = false;
+	std::unique_ptr<Group> group;
+	std::string_view fileExtension(Utilities::getFileExtension(filePath));
+
+	if(Utilities::areStringsEqualIgnoreCase(fileExtension, "SSI")) {
+		group = GroupSSI::loadFrom(filePath);
+		isSSIGroup = true;
+	}
+	else {
+		group = GroupGRP::loadFrom(filePath);
+	}
 
 	if(!Group::isValid(group.get())) {
 		wxMessageBox(fmt::format("Failed to open group file: '{}'.", filePath), "Group Loading Failed", wxOK | wxICON_ERROR, this);
@@ -352,6 +399,7 @@ bool GroupEditorPanel::openGroup(const std::string & filePath) {
 		properties["fileName"] = group->getFileName();
 		properties["fileSize"] = group->getSizeInBytes();
 		properties["numberOfFiles"] = group->numberOfFiles();
+		properties["groupType"] = isSSIGroup ? "SSI" : "GRP";
 
 		SegmentAnalytics::getInstance()->track("Group Opened", properties);
 	}
@@ -360,7 +408,7 @@ bool GroupEditorPanel::openGroup(const std::string & filePath) {
 }
 
 size_t GroupEditorPanel::openGroups() {
-	wxFileDialog openFilesDialog(this, "Open Group(s) from File(s)", std::filesystem::current_path().string(), "", "Group Files (*.grp)|*.grp", wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST, wxDefaultPosition, wxDefaultSize, "Open Groups");
+	wxFileDialog openFilesDialog(this, "Open Group(s) from File(s)", std::filesystem::current_path().string(), "", FILE_DIALOG_FILE_TYPES, wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST, wxDefaultPosition, wxDefaultSize, "Open Groups");
 	int openFilesResult = openFilesDialog.ShowModal();
 
 	if(openFilesResult == wxID_CANCEL) {
@@ -381,7 +429,32 @@ size_t GroupEditorPanel::openGroups() {
 }
 
 bool GroupEditorPanel::createGroupFromDirectory(const std::string & directoryPath) {
-	std::unique_ptr<Group> group(GroupGRP::createFrom(directoryPath));
+	int selectedGroupTypeIndex = wxGetSingleChoiceIndex(
+		"Please choose a group type to create:",
+		"Choose Group Type",
+		WXUtilities::createItemWXArrayString({ "Build Engine Group", "Sunstorm Interactive File Collection" }),
+		0,
+		this
+	);
+
+	std::unique_ptr<Group> group;
+
+	switch(selectedGroupTypeIndex) {
+		case 0: {
+			group = GroupGRP::createFrom(directoryPath);
+			break;
+		}
+
+		case 1: {
+			group = GroupSSI::createFrom(directoryPath);
+			break;
+		}
+
+		case wxNOT_FOUND:
+		default: {
+			return false;
+		}
+	}
 
 	if(!Group::isValid(group.get())) {
 		wxMessageBox(fmt::format("Failed to create group from directory: '{}'.", directoryPath), "Group Creation Failed", wxOK | wxICON_ERROR, this);
@@ -401,6 +474,7 @@ bool GroupEditorPanel::createGroupFromDirectory(const std::string & directoryPat
 		properties["directoryName"] = Utilities::getFileName(directoryPath);
 		properties["fileSize"] = group->getSizeInBytes();
 		properties["numberOfFiles"] = group->numberOfFiles();
+		properties["groupType"] = selectedGroupTypeIndex == 0 ? "GRP" : "SSI";
 
 		SegmentAnalytics::getInstance()->track("Group Created from Directory", properties);
 	}
@@ -424,8 +498,20 @@ bool GroupEditorPanel::saveGroup(Group * group) {
 		return false;
 	}
 
+	std::string fileDialogFileTypes;
+	std::string newGroupFileName;
+
+	if(dynamic_cast<GroupSSI *>(group) != nullptr) {
+		newGroupFileName = DEFAULT_NEW_SSI_FILE_NAME;
+		fileDialogFileTypes = FILE_DIALOG_SSI_FILE_TYPE;
+	}
+	else {
+		newGroupFileName = DEFAULT_NEW_GRP_FILE_NAME;
+		fileDialogFileTypes = FILE_DIALOG_GRP_FILE_TYPE;
+	}
+
 	if(group->getFilePath().empty()) {
-		wxFileDialog saveFileDialog(this, "Save Group to File", std::filesystem::current_path().string(), DEFAULT_NEW_GROUP_FILE_NAME, "Group Files (*.grp)|*.grp", wxFD_SAVE, wxDefaultPosition, wxDefaultSize, "Save Group");
+		wxFileDialog saveFileDialog(this, "Save Group to File", std::filesystem::current_path().string(), newGroupFileName, fileDialogFileTypes, wxFD_SAVE, wxDefaultPosition, wxDefaultSize, "Save Group");
 		int saveFileResult = saveFileDialog.ShowModal();
 
 		if(saveFileResult == wxID_CANCEL) {
@@ -438,6 +524,7 @@ bool GroupEditorPanel::saveGroup(Group * group) {
 	}
 
 	if(!group->save()) {
+		wxMessageBox(fmt::format("Failed to save group to file: '{}'.", group->getFilePath()), "Group Writing Failed", wxOK | wxICON_ERROR, this);
 		return false;
 	}
 
@@ -446,6 +533,7 @@ bool GroupEditorPanel::saveGroup(Group * group) {
 		properties["fileName"] = group->getFileName();
 		properties["fileSize"] = group->getSizeInBytes();
 		properties["numberOfFiles"] = group->numberOfFiles();
+		properties["groupType"] = dynamic_cast<GroupSSI *>(group) != nullptr ? "SSI" : "GRP";
 
 		SegmentAnalytics::getInstance()->track("Group Saved", properties);
 	}
@@ -469,9 +557,33 @@ bool GroupEditorPanel::saveGroupAs(Group * group) {
 	}
 
 	std::string previousFileName(group->getFileName());
-	std::string newFileName(!group->getFilePath().empty() ? group->getFileName() : DEFAULT_NEW_GROUP_FILE_NAME);
 
-	wxFileDialog saveFileAsDialog(this, "Save Group to New File", Utilities::getAbsoluteFilePath(basePath, std::filesystem::current_path().string()), newFileName, "Group Files (*.grp)|*.grp", wxFD_SAVE, wxDefaultPosition, wxDefaultSize, "Save Group As");
+	std::string newFileName;
+
+	if(!group->getFilePath().empty()) {
+		newFileName = group->getFileName();
+	}
+
+	bool isSSIGroup = false;
+	std::string fileDialogFileTypes;
+
+	if(dynamic_cast<GroupSSI *>(group) != nullptr) {
+		isSSIGroup = true;
+		fileDialogFileTypes = FILE_DIALOG_SSI_FILE_TYPE;
+
+		if(newFileName.empty()) {
+			newFileName = DEFAULT_NEW_SSI_FILE_NAME;
+		}
+	}
+	else {
+		fileDialogFileTypes = FILE_DIALOG_GRP_FILE_TYPE;
+
+		if(newFileName.empty()) {
+			newFileName = DEFAULT_NEW_GRP_FILE_NAME;
+		}
+	}
+
+	wxFileDialog saveFileAsDialog(this, "Save Group to New File", Utilities::getAbsoluteFilePath(basePath, std::filesystem::current_path().string()), newFileName, fileDialogFileTypes, wxFD_SAVE, wxDefaultPosition, wxDefaultSize, "Save Group As");
 	int saveFileAsResult = saveFileAsDialog.ShowModal();
 
 	if(saveFileAsResult == wxID_CANCEL) {
@@ -483,6 +595,7 @@ bool GroupEditorPanel::saveGroupAs(Group * group) {
 	updateGroupPanelName(indexOfPanelWithGroup(group));
 
 	if(!group->save()) {
+		wxMessageBox(fmt::format("Failed to save group to new file: '{}'.", group->getFilePath()), "Group Writing Failed", wxOK | wxICON_ERROR, this);
 		return false;
 	}
 
@@ -492,6 +605,7 @@ bool GroupEditorPanel::saveGroupAs(Group * group) {
 		properties["previousFileName"] = previousFileName;
 		properties["fileSize"] = group->getSizeInBytes();
 		properties["numberOfFiles"] = group->numberOfFiles();
+		properties["groupType"] = isSSIGroup ? "SSI" : "GRP";
 
 		SegmentAnalytics::getInstance()->track("Group Saved As", properties);
 	}
@@ -508,7 +622,7 @@ size_t GroupEditorPanel::addFilesToGroup(Group * group) {
 		return 0;
 	}
 
-	wxFileDialog addFilesDialog(this, "Add Files to Group", std::filesystem::current_path().string(), "", "All Files (*.*)|*.*", wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST, wxDefaultPosition, wxDefaultSize, "Add Files");
+	wxFileDialog addFilesDialog(this, "Add Files to Group", std::filesystem::current_path().string(), "", FILE_DIALOG_ALL_FILES, wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST, wxDefaultPosition, wxDefaultSize, "Add Files");
 	int addFilesResult = addFilesDialog.ShowModal();
 
 	if(addFilesResult == wxID_CANCEL) {
@@ -594,6 +708,7 @@ size_t GroupEditorPanel::addFilesToGroup(Group * group) {
 		properties["fileSize"] = group->getSizeInBytes();
 		properties["numberOfFiles"] = group->numberOfFiles();
 		properties["numberOfFilesAdded"] = filePaths.size();
+		properties["groupType"] = dynamic_cast<const GroupSSI *>(group) != nullptr ? "SSI" : "GRP";
 
 		SegmentAnalytics::getInstance()->track("Files Added to Group", properties);
 	}
@@ -632,6 +747,7 @@ size_t GroupEditorPanel::removeSelectedFilesFromGroup(Group * group) {
 		properties["fileSize"] = group->getSizeInBytes();
 		properties["numberOfFiles"] = group->numberOfFiles();
 		properties["numberOfFilesRemoved"] = selectedFiles.size();
+		properties["groupType"] = dynamic_cast<GroupSSI *>(group) != nullptr ? "SSI" : "GRP";
 
 		SegmentAnalytics::getInstance()->track("Files Removed from Group", properties);
 	}
@@ -729,6 +845,7 @@ bool GroupEditorPanel::replaceSelectedFileInGroup(Group * group) {
 		properties["newGroupFileSize"] = newGroupFile->getSize();
 		properties["fileSize"] = group->getSizeInBytes();
 		properties["numberOfFiles"] = group->numberOfFiles();
+		properties["groupType"] = dynamic_cast<GroupSSI *>(group) != nullptr ? "SSI" : "GRP";
 
 		SegmentAnalytics::getInstance()->track("Group File Replaced", properties);
 	}
@@ -807,6 +924,7 @@ bool GroupEditorPanel::renameSelectedFileInGroup(Group * group) {
 		properties["newGroupFileName"] = groupFile->getFileName();
 		properties["fileSize"] = group->getSizeInBytes();
 		properties["numberOfFiles"] = group->numberOfFiles();
+		properties["groupType"] = dynamic_cast<GroupSSI *>(group) != nullptr ? "SSI" : "GRP";
 
 		SegmentAnalytics::getInstance()->track("Group File Renamed", properties);
 	}
@@ -911,6 +1029,7 @@ std::vector<std::shared_ptr<GroupFile>> GroupEditorPanel::extractFilesFromGroup(
 		properties["fileSize"] = group->getSizeInBytes();
 		properties["numberOfFiles"] = group->numberOfFiles();
 		properties["numberOfFilesExtracted"] = extractedFiles.size();
+		properties["groupType"] = dynamic_cast<const GroupSSI *>(group) != nullptr ? "SSI" : "GRP";
 
 		SegmentAnalytics::getInstance()->track("Group Files Extracted", properties);
 	}
@@ -956,6 +1075,7 @@ bool GroupEditorPanel::closeGroupPanel(size_t groupPanelIndex) {
 	std::string groupFileName(group->getFileName());
 	size_t groupFileSize = group->getSizeInBytes();
 	size_t numberOfFiles = group->numberOfFiles();
+	bool isSSIGroup = dynamic_cast<GroupSSI *>(group) != nullptr;
 
 	if(group->isModified()) {
 		int saveChangesResult = wxMessageBox("Group modifications have not been saved! Would you like to save your changes?", "Save Changes", wxICON_QUESTION | wxYES_NO | wxCANCEL, this);
@@ -990,6 +1110,7 @@ bool GroupEditorPanel::closeGroupPanel(size_t groupPanelIndex) {
 
 		properties["fileSize"] = groupFileSize;
 		properties["numberOfFiles"] = numberOfFiles;
+		properties["groupType"] = isSSIGroup ? "SSI" : "GRP";
 
 		SegmentAnalytics::getInstance()->track("Group Closed", properties);
 	}

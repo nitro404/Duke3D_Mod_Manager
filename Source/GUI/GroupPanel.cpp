@@ -4,6 +4,7 @@
 #include "Game/File/GameFileFactoryRegistry.h"
 #include "Game/File/Group/Group.h"
 #include "Game/File/Group/GroupFile.h"
+#include "Game/File/Group/SSI/GroupSSI.h"
 #include "MetadataPanel.h"
 #include "WXUtilities.h"
 
@@ -16,13 +17,15 @@
 
 GroupPanel::GroupPanel(std::unique_ptr<Group> group, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "Group Information")
-	, m_group(std::move(group))
+	, m_group(std::shared_ptr<Group>(group.release()))
 	, m_numberOfFilesText(nullptr)
 	, m_groupSizeText(nullptr)
 	, m_fileExtensionsText(nullptr)
 	, m_fileListBox(nullptr)
 	, m_fileInfoBox(nullptr)
 	, m_fileInfoPanel(nullptr)
+	, m_ssiMetadataBox(nullptr)
+	, m_ssiMetadataPanel(nullptr)
 	, m_fileInfoBoxSizer(nullptr)
 	, m_groupPropertiesSizer(nullptr) {
 	wxPanel * groupPropertiesPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
@@ -54,6 +57,15 @@ GroupPanel::GroupPanel(std::unique_ptr<Group> group, wxWindow * parent, wxWindow
 
 	m_fileInfoPanel = new MetadataPanel(m_fileInfoBox, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxNO_BORDER, "File Info");
 	m_fileInfoPanel->Hide();
+
+	std::shared_ptr<GroupSSI> groupSSI(std::dynamic_pointer_cast<GroupSSI>(m_group));
+
+	if(groupSSI != nullptr) {
+		m_ssiMetadataBox = new wxStaticBox(this, wxID_ANY, "Sunstorm Interactive File Metadata", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+		m_ssiMetadataBox->SetOwnFont(m_ssiMetadataBox->GetFont().MakeBold());
+
+		m_ssiMetadataPanel = new SunstormInteractiveMetadataPanel(groupSSI, m_ssiMetadataBox);
+	}
 
 	int border = 5;
 
@@ -88,6 +100,16 @@ GroupPanel::GroupPanel(std::unique_ptr<Group> group, wxWindow * parent, wxWindow
 	groupInfoSizer->Add(m_fileInfoBox, wxGBPosition(1, 1), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
 	groupInfoSizer->AddGrowableRow(1, 1);
 	groupInfoSizer->AddGrowableCol(1, 1);
+
+	if(m_ssiMetadataPanel != nullptr) {
+		wxBoxSizer * ssiMetadataBoxSizer = new wxBoxSizer(wxHORIZONTAL);
+		ssiMetadataBoxSizer->Add(m_ssiMetadataPanel, 1, wxEXPAND | wxALL, 20);
+		m_ssiMetadataBox->SetSizer(ssiMetadataBoxSizer);
+
+		groupInfoSizer->Add(m_ssiMetadataBox, wxGBPosition(2, 0), wxGBSpan(1, 2), wxEXPAND | wxHORIZONTAL, border);
+		groupInfoSizer->AddGrowableRow(2, 0);
+	}
+
 	SetSizer(groupInfoSizer);
 
 	m_groupModifiedConnection = m_group->modified.connect(std::bind(&GroupPanel::onGroupModified, this, std::placeholders::_1));
@@ -102,7 +124,7 @@ GroupPanel::~GroupPanel() {
 std::string GroupPanel::getPanelName() const {
 	std::string_view fileName(m_group->getFileName());
 
-	return fileName.empty() ? "NEW GROUP *" : fmt::format("{}{}", fileName, m_group->isModified() ? " *" : "");
+	return fileName.empty() ? fmt::format("NEW {} GROUP *", std::dynamic_pointer_cast<GroupSSI>(m_group) != nullptr ? "SSI" : "GRP") : fmt::format("{}{}", fileName, m_group->isModified() ? " *" : "");
 }
 
 const Group * GroupPanel::getGroup() const {

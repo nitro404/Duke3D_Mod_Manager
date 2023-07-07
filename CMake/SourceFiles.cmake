@@ -229,6 +229,8 @@ set(GUI_SOURCE_FILES
 	GUI/SettingPanel.cpp
 	GUI/SettingsManagerPanel.h
 	GUI/SettingsManagerPanel.cpp
+	GUI/SunstormInteractiveMetadataPanel.h
+	GUI/SunstormInteractiveMetadataPanel.cpp
 	GUI/WXUtilities.h
 	GUI/WXUtilities.cpp
 )
