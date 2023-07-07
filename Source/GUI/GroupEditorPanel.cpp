@@ -310,7 +310,7 @@ bool GroupEditorPanel::addGroupPanel(GroupPanel * groupPanel) {
 }
 
 bool GroupEditorPanel::newGroup() {
-	if(!addGroupPanel(new GroupPanel(nullptr, m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL))) {
+	if(!addGroupPanel(new GroupPanel(std::make_unique<GroupGRP>(), m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL))) {
 		return false;
 	}
 
