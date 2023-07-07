@@ -75,11 +75,17 @@ bool GroupSSI::setVersion(uint32_t version) {
 		return false;
 	}
 
+	if(m_version == version) {
+		return true;
+	}
+
 	m_version = version;
 
 	if(!versionSupportsRunFile()) {
 		m_runFile = "";
 	}
+
+	setModified(true);
 
 	return true;
 }
@@ -97,13 +103,25 @@ bool GroupSSI::setTitle(const std::string & title) {
 		return false;
 	}
 
+	if(Utilities::areStringsEqual(m_title, title)) {
+		return true;
+	}
+
 	m_title = title;
+
+	setModified(true);
 
 	return true;
 }
 
 void GroupSSI::clearTitle() {
+	if(m_title.empty()) {
+		return;
+	}
+
 	m_title = "";
+
+	setModified(true);
 }
 
 bool GroupSSI::hasAnyDescription() const {
@@ -133,7 +151,13 @@ bool GroupSSI::setDescription(size_t index, const std::string description) {
 		return false;
 	}
 
+	if(Utilities::areStringsEqual(m_descriptions[index], description)) {
+		return true;
+	}
+
 	m_descriptions[index] = description;
+
+	setModified(true);
 
 	return true;
 }
@@ -143,14 +167,31 @@ bool GroupSSI::clearDescription(size_t index) {
 		return false;
 	}
 
+	if(m_descriptions[index].empty()) {
+		return true;
+	}
+
 	m_descriptions[index] = "";
+
+	setModified(true);
 
 	return true;
 }
 
 void GroupSSI::clearAllDescriptions() {
+	bool anyDescriptionsCleared = false;
+
 	for(std::string & description : m_descriptions) {
+		if(description.empty()) {
+			continue;
+		}
+
 		description = "";
+		anyDescriptionsCleared = true;
+	}
+
+	if(anyDescriptionsCleared) {
+		setModified(true);
 	}
 }
 
@@ -175,13 +216,25 @@ bool GroupSSI::setRunFile(const std::string & runFile) {
 		return false;
 	}
 
+	if(Utilities::areStringsEqual(m_runFile, runFile)) {
+		return true;
+	}
+
 	m_runFile = runFile;
+
+	setModified(true);
 
 	return true;
 }
 
 void GroupSSI::clearRunFile() {
+	if(m_runFile.empty()) {
+		return;
+	}
+
 	m_runFile = "";
+
+	setModified(true);
 }
 
 bool GroupSSI::hasTrailingData() const {
@@ -209,6 +262,8 @@ bool GroupSSI::setTrailingData(std::vector<uint8_t> & trailingData) {
 		m_trailingData->setData(trailingData);
 	}
 
+	setModified(true);
+
 	return true;
 }
 
@@ -222,6 +277,8 @@ bool GroupSSI::setTrailingData(std::unique_ptr<ByteBuffer> trailingData) {
 	}
 
 	m_trailingData = std::move(trailingData);
+
+	setModified(true);
 
 	return true;
 }
@@ -241,6 +298,8 @@ bool GroupSSI::setTrailingData(const ByteBuffer & trailingData) {
 	else {
 		m_trailingData->setData(trailingData);
 	}
+
+	setModified(true);
 
 	return true;
 }
