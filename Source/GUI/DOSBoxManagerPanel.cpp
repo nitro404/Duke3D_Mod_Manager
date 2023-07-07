@@ -371,7 +371,7 @@ void DOSBoxManagerPanel::resetDefaultDOSBoxSettings() {
 	updateButtons();
 	dosboxSettingsReset();
 
-	if(settings->segmentAnalyticsEnabled) {
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		SegmentAnalytics::getInstance()->track("DOSBox Settings Reset");
 	}
 }
@@ -395,7 +395,7 @@ bool DOSBoxManagerPanel::saveDOSBoxSettings() {
 	updateButtons();
 	dosboxSettingsSaved();
 
-	if(settings->segmentAnalyticsEnabled) {
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		SegmentAnalytics::getInstance()->track("DOSBox Settings Saved");
 	}
 
@@ -479,7 +479,15 @@ bool DOSBoxManagerPanel::addDOSBoxVersionPanel(DOSBoxVersionPanel * dosboxVersio
 }
 
 bool DOSBoxManagerPanel::newDOSBoxVersion() {
-	return addDOSBoxVersionPanel(new DOSBoxVersionPanel(nullptr, m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL));
+	if(!addDOSBoxVersionPanel(new DOSBoxVersionPanel(nullptr, m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL))) {
+		return false;
+	}
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		SegmentAnalytics::getInstance()->track("New DOSBox Version Created");
+	}
+
+	return true;
 }
 
 bool DOSBoxManagerPanel::installDOSBoxVersion(size_t index) {
@@ -581,7 +589,7 @@ bool DOSBoxManagerPanel::uninstallDOSBoxVersion(size_t index) {
 		return false;
 	}
 
-	std::shared_ptr<DOSBoxVersion> dosboxVersion = dosboxVersionPanel->getDOSBoxVersion();
+	std::shared_ptr<DOSBoxVersion> dosboxVersion(dosboxVersionPanel->getDOSBoxVersion());
 
 	if(!dosboxVersion->hasID() || !dosboxVersion->hasDirectoryPath()) {
 		return false;
@@ -614,6 +622,13 @@ bool DOSBoxManagerPanel::uninstallDOSBoxVersion(size_t index) {
 
 	updateButtons();
 
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		dosboxVersion->addMetadata(properties);
+
+		SegmentAnalytics::getInstance()->track("Uninstalled DOSBox", properties);
+	}
+
 	wxMessageBox(fmt::format("'{}' was successfully uninstalled!", dosboxVersion->getLongName()), "DOSBox Uninstalled", wxOK | wxICON_INFORMATION, this);
 
 	return true;
@@ -630,7 +645,7 @@ bool DOSBoxManagerPanel::saveDOSBoxVersion(size_t index) {
 		return false;
 	}
 
-	std::shared_ptr<DOSBoxVersion> dosboxVersion = dosboxVersionPanel->getDOSBoxVersion();
+	std::shared_ptr<DOSBoxVersion> dosboxVersion(dosboxVersionPanel->getDOSBoxVersion());
 
 	if(!dosboxVersionPanel->save()) {
 		return false;
@@ -648,7 +663,18 @@ bool DOSBoxManagerPanel::saveDOSBoxVersion(size_t index) {
 		spdlog::info("Added new dosbox version to collection with name '{}'.", dosboxVersion->getLongName());
 	}
 
-	return saveDOSBoxVersions();
+	if(!saveDOSBoxVersions()) {
+		return false;
+	}
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		dosboxVersion->addMetadata(properties);
+
+		SegmentAnalytics::getInstance()->track("Saved DOSBox Configuration", properties);
+	}
+
+	return true;
 }
 
 bool DOSBoxManagerPanel::saveCurrentDOSBoxVersion() {
@@ -678,7 +704,7 @@ bool DOSBoxManagerPanel::resetDOSBoxVersion(size_t dosboxVersionPanelIndex) {
 		return false;
 	}
 
-	std::shared_ptr<DOSBoxVersion> dosboxVersion = dosboxVersionPanel->getDOSBoxVersion();
+	std::shared_ptr<DOSBoxVersion> dosboxVersion(dosboxVersionPanel->getDOSBoxVersion());
 
 	int resetResult = wxMessageBox(fmt::format("Are you sure you want to reset the '{}' dosbox version to its default configuration?", dosboxVersion->hasLongName() ? dosboxVersion->getLongName() : "NEW"), "Reset DOSBox", wxICON_QUESTION | wxYES_NO | wxCANCEL, this);
 
@@ -687,6 +713,13 @@ bool DOSBoxManagerPanel::resetDOSBoxVersion(size_t dosboxVersionPanelIndex) {
 	}
 
 	dosboxVersionPanel->reset();
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["dosboxID"] = dosboxVersion->getID();
+
+		SegmentAnalytics::getInstance()->track("Reset DOSBox Configuration", properties);
+	}
 
 	return true;
 }
