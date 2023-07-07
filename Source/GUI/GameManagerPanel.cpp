@@ -22,7 +22,9 @@
 #include <wx/textdlg.h>
 #include <wx/wrapsizer.h>
 
+#include <any>
 #include <filesystem>
+#include <map>
 #include <sstream>
 
 wxDECLARE_EVENT(EVENT_GAME_INSTALL_PROGRESS, GameInstallProgressEvent);
@@ -424,7 +426,18 @@ bool GameManagerPanel::newGameVersion() {
 		gameVersionTemplate = std::shared_ptr<GameVersion>(GameVersion::DEFAULT_GAME_VERSIONS[selectedGameVersionTemplateIndex - 1]->createTemplateFrom().release());
 	}
 
-	return addGameVersionPanel(new GameVersionPanel(gameVersionTemplate, m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL));
+	if(!addGameVersionPanel(new GameVersionPanel(gameVersionTemplate, m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL))) {
+		return false;
+	}
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["templateGameVersionID"] = gameVersionTemplate->getID();
+
+		SegmentAnalytics::getInstance()->track("New Game Version Created", properties);
+	}
+
+	return true;
 }
 
 bool GameManagerPanel::installGameVersion(size_t index) {
@@ -539,7 +552,7 @@ bool GameManagerPanel::uninstallGameVersion(size_t index) {
 		return false;
 	}
 
-	std::shared_ptr<GameVersion> gameVersion = gameVersionPanel->getGameVersion();
+	std::shared_ptr<GameVersion> gameVersion(gameVersionPanel->getGameVersion());
 
 	if(!gameVersion->hasID() || !gameVersion->hasGamePath()) {
 		return false;
@@ -572,6 +585,13 @@ bool GameManagerPanel::uninstallGameVersion(size_t index) {
 
 	updateButtons();
 
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		gameVersion->addMetadata(properties);
+
+		SegmentAnalytics::getInstance()->track("Uninstalled Game", properties);
+	}
+
 	wxMessageBox(fmt::format("'{}' was successfully uninstalled!", gameVersion->getLongName()), "Game Uninstalled", wxOK | wxICON_INFORMATION, this);
 
 	return true;
@@ -588,7 +608,7 @@ bool GameManagerPanel::saveGameVersion(size_t index) {
 		return false;
 	}
 
-	std::shared_ptr<GameVersion> gameVersion = gameVersionPanel->getGameVersion();
+	std::shared_ptr<GameVersion> gameVersion(gameVersionPanel->getGameVersion());
 
 	if(!gameVersionPanel->save()) {
 		return false;
@@ -606,7 +626,18 @@ bool GameManagerPanel::saveGameVersion(size_t index) {
 		spdlog::info("Added new game version to collection with name '{}'.", gameVersion->getLongName());
 	}
 
-	return saveGameVersions();
+	if(!saveGameVersions()) {
+		return false;
+	}
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		gameVersion->addMetadata(properties);
+
+		SegmentAnalytics::getInstance()->track("Saved Game Configuration", properties);
+	}
+
+	return true;
 }
 
 bool GameManagerPanel::saveCurrentGameVersion() {
@@ -636,7 +667,7 @@ bool GameManagerPanel::resetGameVersion(size_t gameVersionPanelIndex) {
 		return false;
 	}
 
-	std::shared_ptr<GameVersion> gameVersion = gameVersionPanel->getGameVersion();
+	std::shared_ptr<GameVersion> gameVersion(gameVersionPanel->getGameVersion());
 
 	int resetResult = wxMessageBox(fmt::format("Are you sure you want to reset the '{}' game version to its default configuration?", gameVersion->hasID() ? gameVersion->getLongName() : "NEW"), "Reset Game", wxICON_QUESTION | wxYES_NO | wxCANCEL, this);
 
@@ -645,6 +676,13 @@ bool GameManagerPanel::resetGameVersion(size_t gameVersionPanelIndex) {
 	}
 
 	gameVersionPanel->reset();
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["ganeID"] = gameVersion->getID();
+
+		SegmentAnalytics::getInstance()->track("Reset Game Configuration", properties);
+	}
 
 	return true;
 }
