@@ -147,6 +147,10 @@ bool DOSBoxManager::loadOrUpdateDOSBoxDownloadList(bool forceUpdate) const {
 	}
 
 	if(m_localMode) {
+		if(m_dosboxDownloads != nullptr) {
+			return true;
+		}
+
 		installStatusChanged("Loading DOSBox downloads list.");
 
 		std::unique_ptr<DOSBoxDownloadCollection> dosboxDownloads(std::make_unique<DOSBoxDownloadCollection>());
@@ -163,20 +167,22 @@ bool DOSBoxManager::loadOrUpdateDOSBoxDownloadList(bool forceUpdate) const {
 		return false;
 	}
 
-	if(!forceUpdate && std::filesystem::is_regular_file(std::filesystem::path(dosboxDownloadsListFilePath))) {
-		installStatusChanged("Loading DOSBox downloads list.");
+	if(!forceUpdate) {
+		if(m_dosboxDownloads == nullptr && std::filesystem::is_regular_file(std::filesystem::path(dosboxDownloadsListFilePath))) {
+			installStatusChanged("Loading DOSBox downloads list.");
 
-		std::unique_ptr<DOSBoxDownloadCollection> dosboxDownloads(std::make_unique<DOSBoxDownloadCollection>());
+			std::unique_ptr<DOSBoxDownloadCollection> dosboxDownloads(std::make_unique<DOSBoxDownloadCollection>());
 
-		if(dosboxDownloads->loadFrom(dosboxDownloadsListFilePath) && DOSBoxDownloadCollection::isValid(dosboxDownloads.get())) {
-			m_dosboxDownloads = std::move(dosboxDownloads);
-
-			if(!shouldUpdateDOSBoxDownloadList()) {
-				return true;
+			if(dosboxDownloads->loadFrom(dosboxDownloadsListFilePath) && DOSBoxDownloadCollection::isValid(dosboxDownloads.get())) {
+				m_dosboxDownloads = std::move(dosboxDownloads);
+			}
+			else {
+				spdlog::error("Failed to load DOSBox download collection from JSON file.");
 			}
 		}
-		else {
-			spdlog::error("Failed to load DOSBox download collection from JSON file.");
+
+		if(m_dosboxDownloads != nullptr && !shouldUpdateDOSBoxDownloadList()) {
+			return true;
 		}
 	}
 
@@ -926,6 +932,8 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::s
 	}
 
 	if(latestDOSBoxDownloadURL.empty()) {
+		spdlog::error("Failed to determine {} DOSBox download URL for '{}'.", useFallback ? "fallback" : "regular", dosboxVersion->getLongName());
+
 		if(!useFallback) {
 			return downloadLatestDOSBoxVersion(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, true, &internalLatestVersion);
 		}
