@@ -14,7 +14,7 @@
 #include <string>
 
 RelatedModsPanel::RelatedModsPanel(std::shared_ptr<ModCollection> mods, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
-	: wxPanel(parent, windowID, position, size, style, "Mod Downloads")
+	: wxPanel(parent, windowID, position, size, style, "Related Mods")
 	, m_relatedModsPanelSizer(nullptr) {
 	int border = 5;
 

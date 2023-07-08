@@ -177,6 +177,16 @@ public:
 	bool removeRelatedMod(const std::string & relatedModID);
 	void clearRelatedMods();
 
+	size_t numberOfSimilarMods() const;
+	bool hasSimilarMod(const std::string & similarModID) const;
+	size_t indexOfSimilarMod(const std::string & similarModID) const;
+	const std::string & getSimilarMod(size_t index) const;
+	const std::vector<std::string> & getSimilarMods() const;
+	bool addSimilarMod(const std::string & similarModID);
+	bool removeSimilarMod(size_t index);
+	bool removeSimilarMod(const std::string & similarModID);
+	void clearSimilarMods();
+
 	rapidjson::Value toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const;
 	tinyxml2::XMLElement * toXML(tinyxml2::XMLDocument * document) const;
 	static std::unique_ptr<Mod> parseFrom(const rapidjson::Value & modValue, bool skipFileInfoValidation = false);
@@ -227,6 +237,7 @@ private:
 	std::vector<std::shared_ptr<ModVideo>> m_videos;
 	std::vector<std::string> m_notes;
 	std::vector<std::string> m_relatedMods;
+	std::vector<std::string> m_similarMods;
 };
 
 #endif // _MOD_H_

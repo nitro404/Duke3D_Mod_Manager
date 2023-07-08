@@ -297,11 +297,11 @@
 			<download filename="Aliens-ModMgrR.zip" filesize="2540784" game="Regular" type="Mod Manager Files" state="Native" sha1="b2544004734e538572cb05549c183280bc84482e"/>
 			<download filename="Aliens-ModMgrA.zip" filesize="2755385" game="Atomic" type="Mod Manager Files" state="Converted" sha1="ef6374a0b1a8c2d662110ff58ff528f3317808d5"/>
 		</downloads>
-		<related>
+		<similar>
 			<mod id="aliens_2"/>
 			<mod id="aliens_3"/>
 			<mod id="zykov_eddys_aliens"/>
-		</related>
+		</similar>
 	</mod>
 	<mod name="All 4 One" id="all_4_one" type="Total Conversion">
 		<versions>
@@ -914,6 +914,10 @@
 			<download filename="Duke_Caribbean_-_Lifes_a_Beach-ModMgrR.zip" filesize="11090753" game="Regular" type="Mod Manager Files" state="Native" sha1="9e4c4e42615b2caec28d708c0a5ec18c1410df65"/>
 			<download filename="Duke_Caribbean_-_Lifes_a_Beach-ModMgrA.zip" filesize="10801127" game="Atomic" type="Mod Manager Files" state="Native" sha1="77cf4d8524699311e5ec01e2a7372ba5ef973d41"/>
 		</downloads>
+		<related>
+			<mod id="duke_it_out_in_dc"/>
+			<mod id="nuclear_winter"/>
+		</related>
 	</mod>
 	<mod name="Duke City" id="duke_city" type="Total Conversion" version="5.4b" website="http://geocities.com/Area51/9835">
 		<team email="duke@xblast-center.com">
@@ -1034,8 +1038,12 @@
 			<download filename="Duke_It_Out_in_D.C.-ModMgrA.zip" filesize="2369028" game="Atomic" type="Mod Manager Files" state="Native" sha1="99af212fcf5b457d09dcddc90883331fbf51180f"/>
 		</downloads>
 		<related>
-			<mod id="duke_it_out_in_dc_waffle_edition"/>
+			<mod id="nuclear_winter"/>
+			<mod id="duke_caribbean"/>
 		</related>
+		<similar>
+			<mod id="duke_it_out_in_dc_waffle_edition"/>
+		</similar>
 	</mod>
 	<mod name="Duke It Out in D.C. - Waffle Edition" id="duke_it_out_in_dc_waffle_edition" type="Total Conversion" version="1.20" website="http://www.geocities.com/TimesSquare/Fortress/1896">
 		<team>
@@ -1053,9 +1061,9 @@
 			<download filename="DUKEDCWW.zip" filesize="803954" version="1.20" game="Atomic" type="Original Files" sha1="feef085b165cb84c40ceda2eb390a9003411e1e6"/>
 			<download filename="Duke_It_Out_in_D.C._Waffle_Edition_1.20-ModMgrA.zip" filesize="3108847" version="1.20" game="Atomic" type="Mod Manager Files" state="Native" sha1="7e377cfd467a7b88060de8fe1c9995745b465ff4"/>
 		</downloads>
-		<related>
+		<similar>
 			<mod id="duke_it_out_in_dc"/>
-		</related>
+		</similar>
 	</mod>
 	<mod name="Duke It Out in NY" id="duke_it_out_in_ny" type="Total Conversion" version="2.0" website="http://www.NicksSoftware.tk">
 		<team name="Duke It Out in NY Team" email="NicksSoftware@gmail.com">
@@ -2715,13 +2723,17 @@
 			<download filename="Nuclear_Winter-ModMgrA.zip" filesize="12512579" game="Atomic" type="Mod Manager Files" state="Native" sha1="cd6d3979b441340c31af3ad432a303f980c7407b"/>
 		</downloads>
 		<related>
+			<mod id="duke_it_out_in_dc"/>
+			<mod id="duke_caribbean"/>
+		</related>
+		<similar>
 			<mod id="xmas_duke_96"/>
 			<mod id="xmas_1997"/>
 			<mod id="duke_nukem_xmas_2014"/>
 			<mod id="driving_home_for_christmas"/>
 			<mod id="fallout_freeze"/>
 			<mod id="countdown_to_christmas"/>
-		</related>
+		</similar>
 	</mod>
 	<mod name="Nuke the Bastards" id="nuke_the_bastards" type="Episode">
 		<team>
@@ -4691,14 +4703,14 @@
 			<download filename="Xmas_Duke_96-ModMgrR.zip" filesize="3060957" game="Regular" type="Mod Manager Files" state="Converted" sha1="51bc6f4aaf652456b459eb75c45c91faaed9b7f7"/>
 			<download filename="Xmas_Duke_96-ModMgrA.zip" filesize="3306024" game="Atomic" type="Mod Manager Files" state="Converted" sha1="aff0e0c3e0d361c2d4d4188258aa6cb902620fc4"/>
 		</downloads>
-		<related>
+		<similar>
 			<mod id="nuclear_winter"/>
 			<mod id="xmas_1997"/>
 			<mod id="duke_nukem_xmas_2014"/>
 			<mod id="driving_home_for_christmas"/>
 			<mod id="fallout_freeze"/>
 			<mod id="countdown_to_christmas"/>
-		</related>
+		</similar>
 	</mod>
 	<mod name="Y2K Nuklear Meltdown" id="y2k_nuklear_meltdown" type="Total Conversion" version="Demo 1.2" website="http://www.dukeworld.com/dukey2k">
 		<team email="dukey2ktc@hotmail.com">
@@ -5170,9 +5182,9 @@
 		<screenshots>
 			<screenshot filename="DUKE0003.png" filesize="302844" width="480" height="360" sha1="23d7867df9d54b431af4e896b9c54c4f83ed936e"/>
 		</screenshots>
-		<related>
+		<similar>
 			<mod id="drone_2_dope_fish"/>
-		</related>
+		</similar>
 	</mod>
 	<mod name="Drone 2 Dope Fish" id="drone_2_dope_fish" type="Enemy Replacement" website="http://www.greatbasin.net/~roland/home.htm">
 		<team>
@@ -5196,9 +5208,9 @@
 		<screenshots>
 			<screenshot filename="DUKE0001.png" filesize="259545" width="480" height="360" sha1="ae06e9619cb6a2bc46cec66bd127316c24712a67"/>
 		</screenshots>
-		<related>
+		<similar>
 			<mod id="drone_2_cheese"/>
-		</related>
+		</similar>
 	</mod>
 	<mod name="Flamethrower &amp; Dual Pistols" id="flamethrower_dual_pistols" type="Weapon Patch" version="1.0">
 		<team>
@@ -6501,14 +6513,14 @@
 			<download filename="xmas97.ZIP" filesize="4032694" game="Atomic" type="Original Files" sha1="0c4666c676a3f61de5da1487552236be4273db0a"/>
 			<download filename="XMAS_1997-ModMgrA.zip" filesize="8064710" game="Atomic" type="Mod Manager Files" state="Native" sha1="f5c84df1161c71f1c3681105bd0de2cf74523ea6"/>
 		</downloads>
-		<related>
+		<similar>
 			<mod id="nuclear_winter"/>
 			<mod id="xmas_duke_96"/>
 			<mod id="duke_nukem_xmas_2014"/>
 			<mod id="driving_home_for_christmas"/>
 			<mod id="fallout_freeze"/>
 			<mod id="countdown_to_christmas"/>
-		</related>
+		</similar>
 	</mod>
 	<mod name="Glock 18" id="glock_18" type="Weapon Patch">
 		<versions>
@@ -7138,14 +7150,14 @@
 			<download filename="DHFC.rar" filesize="507685" game="Atomic" type="Original Files" sha1="b76f3de5087db0aa275369523ecc676a4646bf24"/>
 			<download filename="Driving_Home_for_Christmas-ModMgrA.zip" filesize="615952" game="Atomic" type="Mod Manager Files" state="Native" sha1="e69b4e851c4be706996337f71b8f9242a85fe7b3"/>
 		</downloads>
-		<related>
+		<similar>
 			<mod id="nuclear_winter"/>
 			<mod id="xmas_duke_96"/>
 			<mod id="xmas_1997"/>
 			<mod id="duke_nukem_xmas_2014"/>
 			<mod id="fallout_freeze"/>
 			<mod id="countdown_to_christmas"/>
-		</related>
+		</similar>
 	</mod>
 	<mod name="The End of the World" id="the_end_of_the_world" type="Partial Conversion">
 		<team>
@@ -8186,11 +8198,11 @@
 			<download filename="aliens.zip" filesize="5501591" version="Demo" game="JFDuke3D" type="Original Files" sha1="4f4d5064011ed4a42e5976d397a1c9f745de694b"/>
 			<download filename="Zykov_Eddy&apos;s_Aliens_Demo-ModMgrJF.zip" filesize="5410027" version="Demo" game="JFDuke3D" type="Mod Manager Files" state="Native" sha1="de02bf9710531e530d3623e8a3389d4487898e43"/>
 		</downloads>
-		<related>
+		<similar>
 			<mod id="aliens"/>
 			<mod id="aliens_2"/>
 			<mod id="aliens_3"/>
-		</related>
+		</similar>
 	</mod>
 	<mod name="Aliens (2)" id="aliens_2" type="Total Conversion" version="Demo 1.0">
 		<team>
@@ -8208,11 +8220,11 @@
 			<download filename="Aliensdemo.rar" filesize="6488626" version="Demo 1.0" game="eDuke32" type="Original Files" sha1="d8c3f5a061e75ae926bee5f2759c3c72a8eb3bdf"/>
 			<download filename="Aliens_Demo_1.0-ModMgrE.zip" filesize="7297132" version="Demo 1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="0f5ce29ff625d8fb004150990b86e6c515de9f95"/>
 		</downloads>
-		<related>
+		<similar>
 			<mod id="aliens"/>
 			<mod id="aliens_3"/>
 			<mod id="zykov_eddys_aliens"/>
-		</related>
+		</similar>
 	</mod>
 	<mod name="A.Dream Trilogy" id="a_dream_trilogy" type="Total Conversion">
 		<team>
@@ -8455,9 +8467,9 @@
 			<download filename="lame_Duke_in_Duke_3d.rar" filesize="23746597" version="0.02" game="eDuke32" type="Original Files" sha1="fb383e2eaee167e2c092a136d687b258a1c088dd"/>
 			<download filename="Lameduke_Forever_0.02-ModMgrE.zip" filesize="8074065" version="0.02" game="eDuke32" type="Mod Manager Files" state="Native" sha1="08c70af2f8e8073af1e33918d0db191183e70b2a"/>
 		</downloads>
-		<related>
+		<similar>
 			<mod id="lameduke_95_redux"/>
-		</related>
+		</similar>
 	</mod>
 	<mod name="Duke Nukem 64" id="duke_nukem_64" type="Total Conversion" version="0.9.3" website="https://www.moddb.com/mods/dn64">
 		<team>
@@ -9220,9 +9232,9 @@
 			<download filename="LAMEDUKE_REDUX.ZIP" filesize="84183569" game="eDuke32" type="Original Files" sha1="f35a1f3a9add6c7a9fe0a258de1b7c61b577721b"/>
 			<download filename="Lameduke_95_Redux-ModMgrE.zip" filesize="83757938" game="eDuke32" type="Mod Manager Files" state="Native" sha1="1366a320fac7e893cb7276fa9bde71b2c6147d3d"/>
 		</downloads>
-		<related>
+		<similar>
 			<mod id="lameduke_forever"/>
-		</related>
+		</similar>
 	</mod>
 	<mod name="Phoenix Holocaust" id="phoenix_holocaust" type="Total Conversion" website="https://www.moddb.com/mods/phoenix-holocaust">
 		<team>
@@ -9320,10 +9332,10 @@
 			<download filename="PNP.rar" filesize="41105376" game="eDuke32" type="Original Files" sha1="7203499deb03a0f7cd481279da34aea8c80e7884"/>
 			<download filename="Plug_and_Pray_Remake-ModMgrE.zip" filesize="41329933" game="eDuke32" type="Mod Manager Files" state="Native" sha1="67b0f7bcc7545cc3b9387ebb7fb8dde2b9c79d62"/>
 		</downloads>
-		<related>
+		<similar>
 			<mod id="plug_n_pray"/>
 			<mod id="duke_nukem_total_meltdown"/>
-		</related>
+		</similar>
 	</mod>
 	<mod name="Aliens (3)" id="aliens_3" type="Partial Conversion" version="1.0">
 		<team>
@@ -9366,11 +9378,11 @@
 		<notes>
 			<note>Version 1.0 is single player, 2.0 is Dukematch only.</note>
 		</notes>
-		<related>
+		<similar>
 			<mod id="aliens"/>
 			<mod id="aliens_2"/>
 			<mod id="zykov_eddys_aliens"/>
-		</related>
+		</similar>
 	</mod>
 	<mod name="Alien Infiltration" id="alien_infiltration" type="Episode">
 		<team>
@@ -9631,14 +9643,14 @@
 			<download filename="dnxmas2014.zip" filesize="6637258" version="1.0" game="eDuke32" type="Original Files" sha1="7e3be259c5114947e5b804d28ff29650e1c1252b"/>
 			<download filename="Duke_Nukem_Xmas_2014_1.0-ModMgrE.zip" filesize="5408245" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="37983bdba333dd91b5b477724d20f85f53f87f20"/>
 		</downloads>
-		<related>
+		<similar>
 			<mod id="nuclear_winter"/>
 			<mod id="xmas_duke_96"/>
 			<mod id="xmas_1997"/>
 			<mod id="driving_home_for_christmas"/>
 			<mod id="fallout_freeze"/>
 			<mod id="countdown_to_christmas"/>
-		</related>
+		</similar>
 	</mod>
 	<mod name="DukeRUS" id="dukerus" type="Translation" website="http://M210.duke4.net">
 		<team>
@@ -9795,10 +9807,10 @@
 			<download filename="Duke_Nukem_Total_Meltdown_1.0.2-ModMgrE.zip" filesize="328812948" version="1.0.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e27cfbb0591d552f4ff299e12d6f59f13f3e5235"/>
 			<download filename="Duke_Nukem_Total_Meltdown_1.0.3-ModMgrE.zip" filesize="328812639" version="1.0.3" game="eDuke32" type="Mod Manager Files" state="Native" sha1="46ad987125cbfaf67b00d3a047d95f6876915e47"/>
 		</downloads>
-		<related>
+		<similar>
 			<mod id="plug_and_pray_remake"/>
 			<mod id="plug_n_pray"/>
-		</related>
+		</similar>
 	</mod>
 	<mod name="Electric Highways" id="electric_highways" type="Total Conversion" version="1.1.0" website="https://gamejolt.com/games/electric-highways/89123">
 		<team>
@@ -9971,14 +9983,14 @@
 			<download filename="Fallout_Freeze_v1.1.zip" filesize="8391231" version="1.1" game="eDuke32" type="Original Files" sha1="62529e6a33d46ef8bc90b66d56f0d85b2000fe23"/>
 			<download filename="Fallout_Freeze_1.1-ModMgrE.zip" filesize="6051379" version="1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="d745323f21978da5a2f341fbf70b52495b192649"/>
 		</downloads>
-		<related>
+		<similar>
 			<mod id="nuclear_winter"/>
 			<mod id="xmas_duke_96"/>
 			<mod id="xmas_1997"/>
 			<mod id="driving_home_for_christmas"/>
 			<mod id="duke_nukem_xmas_2014"/>
 			<mod id="countdown_to_christmas"/>
-		</related>
+		</similar>
 	</mod>
 	<mod name="Haunted Nukem" id="haunted_nukem" type="Total Conversion" version="2.1" website="https://www.moddb.com/mods/haunted-nukem">
 		<team>
@@ -10812,14 +10824,14 @@
 			<download filename="Countdown To Christmas.zip" filesize="1771786" game="eDuke32" type="Original Files" sha1="6c829c768003fc62899b41182684843a43403c0a"/>
 			<download filename="Countdown_to_Christmas-ModMgrE.zip" filesize="1747621" game="eDuke32" type="Mod Manager Files" state="Native" sha1="db7abe17bef8799114922480f02edaa91a1fb45a"/>
 		</downloads>
-		<related>
+		<similar>
 			<mod id="nuclear_winter"/>
 			<mod id="xmas_duke_96"/>
 			<mod id="xmas_1997"/>
 			<mod id="duke_nukem_xmas_2014"/>
 			<mod id="driving_home_for_christmas"/>
 			<mod id="fallout_freeze"/>
-		</related>
+		</similar>
 	</mod>
 	<mod name="Duke Nukem in Russia (New Year)" id="duke_nukem_in_russia" type="Total Conversion" website="http://www.coolduke.narod.ru/maps.htm">
 		<team>
@@ -11029,10 +11041,10 @@
 			<download filename="Plug_n_Pray-ModMgrA.zip" filesize="314124" game="Atomic" type="Mod Manager Files" state="Native" sha1="ecbf26218e85dd30280b41aa49606530204c9d83"/>
 			<download filename="Plug_n_Pray-ModMgrE.zip" filesize="289172" game="eDuke32" type="Mod Manager Files" state="Native" sha1="3ac0c09516a879d946343783abce4eb3cd2dc605"/>
 		</downloads>
-		<related>
+		<similar>
 			<mod id="plug_and_pray_remake"/>
 			<mod id="duke_nukem_total_meltdown"/>
-		</related>
+		</similar>
 	</mod>
 	<mod name="Unleashed" id="unleashed" type="Episode" website="http://www.mtnweb.com/~ghn">
 		<team name="DN3D Team Unleashed" email="LastPub@aol.com">

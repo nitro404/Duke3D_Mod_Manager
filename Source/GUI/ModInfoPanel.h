@@ -21,6 +21,7 @@ class ModDownloadsPanel;
 class ModTeamMembersPanel;
 class GameVersionCollection;
 class RelatedModsPanel;
+class SimilarModsPanel;
 
 class ModInfoPanel final : public wxScrolledWindow {
 public:
@@ -37,6 +38,7 @@ private:
 	void onModAliasDeepLinkClicked(wxHyperlinkEvent & event);
 	void onModTeamNameDeepLinkClicked(wxHyperlinkEvent & event);
 	void onRelatedModSelectionRequested(const std::string & relatedModID);
+	void onSimilarModSelectionRequested(const std::string & similarModID);
 	void onModTeamMemberSelectionRequested(const std::string & modTeamMemberName);
 
 	std::shared_ptr<Mod> m_mod;
@@ -62,6 +64,9 @@ private:
 	wxStaticText * m_relatedModsLabel;
 	wxWindow * m_relatedModsSpacers[2];
 	RelatedModsPanel * m_relatedModsPanel;
+	wxStaticText * m_similarModsLabel;
+	wxWindow * m_similarModsSpacers[2];
+	SimilarModsPanel * m_similarModsPanel;
 	wxStaticText * m_teamNameLabel;
 	wxGenericHyperlinkCtrl * m_teamNameDeepLink;
 	wxStaticText * m_teamWebsiteHyperlinkLabel;
@@ -81,6 +86,7 @@ private:
 	wxWindow * m_downloadsSpacers[2];
 	ModDownloadsPanel * m_downloadsPanel;
 	boost::signals2::connection m_relatedModSelectionRequestedConnection;
+	boost::signals2::connection m_similarModSelectionRequestedConnection;
 	boost::signals2::connection m_modTeamMemberSelectionRequestedConnection;
 
 	ModInfoPanel(const ModInfoPanel &) = delete;

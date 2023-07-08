@@ -41,7 +41,8 @@ static constexpr const char * JSON_MOD_IMAGES_PROPERTY_NAME = "images";
 static constexpr const char * JSON_MOD_VIDEOS_PROPERTY_NAME = "videos";
 static constexpr const char * JSON_MOD_NOTES_PROPERTY_NAME = "notes";
 static constexpr const char * JSON_MOD_RELATED_MODS_PROPERTY_NAME = "relatedMods";
-static const std::array<std::string_view, 16> JSON_MOD_PROPERTY_NAMES = {
+static constexpr const char * JSON_MOD_SIMILAR_MODS_PROPERTY_NAME = "similarMods";
+static const std::array<std::string_view, 17> JSON_MOD_PROPERTY_NAMES = {
 	JSON_MOD_ID_PROPERTY_NAME,
 	JSON_MOD_NAME_PROPERTY_NAME,
 	JSON_MOD_ALIAS_PROPERTY_NAME,
@@ -57,7 +58,8 @@ static const std::array<std::string_view, 16> JSON_MOD_PROPERTY_NAMES = {
 	JSON_MOD_IMAGES_PROPERTY_NAME,
 	JSON_MOD_VIDEOS_PROPERTY_NAME,
 	JSON_MOD_NOTES_PROPERTY_NAME,
-	JSON_MOD_RELATED_MODS_PROPERTY_NAME
+	JSON_MOD_RELATED_MODS_PROPERTY_NAME,
+	JSON_MOD_SIMILAR_MODS_PROPERTY_NAME
 };
 
 static const std::string XML_MOD_ELEMENT_NAME("mod");
@@ -69,9 +71,11 @@ static const std::string XML_IMAGES_ELEMENT_NAME("images");
 static const std::string XML_VIDEOS_ELEMENT_NAME("videos");
 static const std::string XML_RELATED_ELEMENT_NAME("related");
 static const std::string XML_RELATED_MOD_ELEMENT_NAME("mod");
+static const std::string XML_SIMILAR_ELEMENT_NAME("similar");
+static const std::string XML_SIMILAR_MOD_ELEMENT_NAME("mod");
 static const std::string XML_NOTES_ELEMENT_NAME("notes");
 static const std::string XML_NOTE_ELEMENT_NAME("note");
-static const std::array<std::string_view, 8> XML_MOD_CHILD_ELEMENT_NAMES = {
+static const std::array<std::string_view, 9> XML_MOD_CHILD_ELEMENT_NAMES = {
 	XML_MOD_TEAM_ELEMENT_NAME,
 	XML_VERSIONS_ELEMENT_NAME,
 	XML_DOWNLOADS_ELEMENT_NAME,
@@ -79,6 +83,7 @@ static const std::array<std::string_view, 8> XML_MOD_CHILD_ELEMENT_NAMES = {
 	XML_IMAGES_ELEMENT_NAME,
 	XML_VIDEOS_ELEMENT_NAME,
 	XML_RELATED_ELEMENT_NAME,
+	XML_SIMILAR_ELEMENT_NAME,
 	XML_NOTES_ELEMENT_NAME
 };
 
@@ -101,6 +106,7 @@ static const std::array<std::string_view, 8> XML_MOD_ATTRIBUTE_NAMES = {
 	XML_MOD_REPOSITORY_ATTRIBUTE_NAME
 };
 static const std::string XML_RELATED_MOD_ID_ATTRIBUTE_NAME("id");
+static const std::string XML_SIMILAR_MOD_ID_ATTRIBUTE_NAME("id");
 
 Mod::Mod(const std::string & id, const std::string & name, const std::string & type)
 	: m_id(Utilities::trimString(id))
@@ -123,7 +129,8 @@ Mod::Mod(Mod && m) noexcept
 	, m_images(std::move(m.m_images))
 	, m_videos(std::move(m.m_videos))
 	, m_notes(std::move(m.m_notes))
-	, m_relatedMods(std::move(m.m_relatedMods)) {
+	, m_relatedMods(std::move(m.m_relatedMods))
+	, m_similarMods(std::move(m.m_similarMods)) {
 	updateParent();
 }
 
@@ -137,7 +144,8 @@ Mod::Mod(const Mod & m)
 	, m_website(m.m_website)
 	, m_repositoryURL(m.m_repositoryURL)
 	, m_notes(m.m_notes)
-	, m_relatedMods(m.m_relatedMods) {
+	, m_relatedMods(m.m_relatedMods)
+	, m_similarMods(m.m_similarMods) {
 	if(m.m_team != nullptr) {
 		m_team = std::make_shared<ModTeam>(*m.m_team);
 	}
@@ -183,6 +191,7 @@ Mod & Mod::operator = (Mod && m) noexcept {
 		m_videos = std::move(m.m_videos);
 		m_notes = std::move(m.m_notes);
 		m_relatedMods = std::move(m.m_relatedMods);
+		m_similarMods = std::move(m.m_similarMods);
 
 		updateParent();
 	}
@@ -208,6 +217,7 @@ Mod & Mod::operator = (const Mod & m) {
 	m_team = m.m_team == nullptr ? nullptr : std::make_shared<ModTeam>(*m.m_team);
 	m_notes = m.m_notes;
 	m_relatedMods = m.m_relatedMods;
+	m_similarMods = m.m_similarMods;
 
 	for(std::vector<std::shared_ptr<ModVersion>>::const_iterator i = m.m_versions.begin(); i != m.m_versions.end(); ++i) {
 		m_versions.push_back(std::make_shared<ModVersion>(**i));
@@ -1457,6 +1467,76 @@ void Mod::clearRelatedMods() {
 	m_relatedMods.clear();
 }
 
+size_t Mod::numberOfSimilarMods() const {
+	return m_similarMods.size();
+}
+
+bool Mod::hasSimilarMod(const std::string & similarMod) const {
+	for(std::vector<std::string>::const_iterator i = m_similarMods.begin(); i != m_similarMods.end(); ++i) {
+		if(*i == similarMod) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+size_t Mod::indexOfSimilarMod(const std::string & similarMod) const {
+	for(size_t i = 0; i < m_similarMods.size(); i++) {
+		if(m_similarMods[i] == similarMod) {
+			return i;
+		}
+	}
+
+	return std::numeric_limits<size_t>::max();
+}
+
+const std::string & Mod::getSimilarMod(size_t index) const {
+	if(index >= m_similarMods.size()) {
+		return Utilities::emptyString;
+	}
+
+	return m_similarMods[index];
+}
+
+const std::vector<std::string> & Mod::getSimilarMods() const {
+	return m_similarMods;
+}
+
+bool Mod::addSimilarMod(const std::string & similarMod) {
+	if(similarMod.empty() || hasSimilarMod(similarMod)) {
+		return false;
+	}
+
+	m_similarMods.emplace_back(similarMod);
+
+	return true;
+}
+
+bool Mod::removeSimilarMod(size_t index) {
+	if(index >= m_similarMods.size()) {
+		return false;
+	}
+
+	m_similarMods.erase(m_similarMods.begin() + index);
+
+	return true;
+}
+
+bool Mod::removeSimilarMod(const std::string & similarMod) {
+	for(std::vector<std::string>::const_iterator i = m_similarMods.begin(); i != m_similarMods.end(); ++i) {
+		if(*i == similarMod) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void Mod::clearSimilarMods() {
+	m_similarMods.clear();
+}
+
 rapidjson::Value Mod::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const {
 	rapidjson::Value modValue(rapidjson::kObjectType);
 
@@ -1574,6 +1654,18 @@ rapidjson::Value Mod::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAlloca
 		modValue.AddMember(rapidjson::StringRef(JSON_MOD_RELATED_MODS_PROPERTY_NAME), relatedModsValue, allocator);
 	}
 
+	if(!m_similarMods.empty()) {
+		rapidjson::Value similarModsValue(rapidjson::kArrayType);
+		similarModsValue.Reserve(m_similarMods.size(), allocator);
+
+		for(const std::string & similarMod : m_similarMods) {
+			rapidjson::Value similarModValue(similarMod.c_str(), allocator);
+			similarModsValue.PushBack(similarModValue, allocator);
+		}
+
+		modValue.AddMember(rapidjson::StringRef(JSON_MOD_SIMILAR_MODS_PROPERTY_NAME), similarModsValue, allocator);
+	}
+
 	return modValue;
 }
 
@@ -1683,6 +1775,19 @@ tinyxml2::XMLElement * Mod::toXML(tinyxml2::XMLDocument * document) const {
 		}
 
 		modElement->InsertEndChild(relatedModsElement);
+	}
+
+	if(!m_similarMods.empty()) {
+		tinyxml2::XMLElement * similarModElement = nullptr;
+		tinyxml2::XMLElement * similarModsElement = document->NewElement(XML_SIMILAR_ELEMENT_NAME.c_str());
+
+		for(std::vector<std::string>::const_iterator i = m_similarMods.begin(); i != m_similarMods.end(); ++i) {
+			similarModElement = document->NewElement(XML_SIMILAR_MOD_ELEMENT_NAME.c_str());
+			similarModElement->SetAttribute(XML_SIMILAR_MOD_ID_ATTRIBUTE_NAME.c_str(), (*i).c_str());
+			similarModsElement->InsertEndChild(similarModElement);
+		}
+
+		modElement->InsertEndChild(similarModsElement);
 	}
 
 	return modElement;
@@ -2070,6 +2175,32 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue, bool skip
 			}
 
 			newMod->m_relatedMods.emplace_back(relatedMod);
+		}
+	}
+
+	// parse the mod similar mods property
+	if(modValue.HasMember(JSON_MOD_SIMILAR_MODS_PROPERTY_NAME)) {
+		const rapidjson::Value & modSimilarModsValue = modValue[JSON_MOD_SIMILAR_MODS_PROPERTY_NAME];
+
+		if(!modSimilarModsValue.IsArray()) {
+			spdlog::error("Mod '{}' '{}' property has invalid type: '{}', expected 'array'.", modID, JSON_MOD_SIMILAR_MODS_PROPERTY_NAME, Utilities::typeToString(modSimilarModsValue.GetType()));
+			return nullptr;
+		}
+
+		for(rapidjson::Value::ConstValueIterator i = modSimilarModsValue.Begin(); i != modSimilarModsValue.End(); ++i) {
+			std::string similarMod(Utilities::trimString((*i).GetString()));
+
+			if(similarMod.empty()) {
+				spdlog::error("Encountered empty similar mod #{} for mod with ID '{}'.", newMod->m_similarMods.size() + 1, modID);
+				return nullptr;
+			}
+
+			if(newMod->hasSimilarMod(similarMod)) {
+				spdlog::error("Encountered duplicate mod similar mod #{} for mod with ID '{}'.", newMod->m_similarMods.size() + 1, modID);
+				return nullptr;
+			}
+
+			newMod->m_similarMods.emplace_back(similarMod);
 		}
 	}
 
@@ -2486,6 +2617,40 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement, boo
 			mod->m_relatedMods.push_back(relatedModID);
 
 			modRelatedModElement = modRelatedModElement->NextSiblingElement();
+		}
+	}
+
+	// iterate over all of the similar mod elements
+	const tinyxml2::XMLElement * modSimilarElement = modElement->FirstChildElement(XML_SIMILAR_ELEMENT_NAME.c_str());
+
+	if(modSimilarElement != nullptr) {
+		if(modSimilarElement->NextSiblingElement(XML_SIMILAR_ELEMENT_NAME.c_str())) {
+			spdlog::error("Encountered more than one '{}' child element of '{}' element with ID '{}'.", XML_SIMILAR_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
+			return nullptr;
+		}
+
+		const tinyxml2::XMLElement * modSimilarModElement = modSimilarElement->FirstChildElement();
+
+		while(true) {
+			if(modSimilarModElement == nullptr) {
+				break;
+			}
+
+			if(modSimilarModElement->Name() != XML_SIMILAR_MOD_ELEMENT_NAME) {
+				spdlog::error("Encountered '{}' element child with name '{}', expected '{}' in '{}' element with ID '{}'.", XML_SIMILAR_ELEMENT_NAME, modSimilarModElement->Name(), XML_SIMILAR_MOD_ELEMENT_NAME, XML_MOD_ELEMENT_NAME, modID);
+				return nullptr;
+			}
+
+			const char * similarModID = modSimilarModElement->Attribute(XML_SIMILAR_MOD_ID_ATTRIBUTE_NAME.c_str());
+
+			if(similarModID == nullptr || Utilities::stringLength(similarModID) == 0) {
+				spdlog::error("Encountered '{}' element child with missing '{}' attribute in '{}' element with ID '{}'.", XML_SIMILAR_ELEMENT_NAME, XML_SIMILAR_MOD_ID_ATTRIBUTE_NAME, XML_MOD_ELEMENT_NAME, modID);
+				return nullptr;
+			}
+
+			mod->m_similarMods.push_back(similarModID);
+
+			modSimilarModElement = modSimilarModElement->NextSiblingElement();
 		}
 	}
 
@@ -2906,6 +3071,12 @@ bool Mod::isValid(bool skipFileInfoValidation) const {
 		}
 	}
 
+	for(const std::string & similarMod : m_similarMods) {
+		if(Utilities::areStringsEqualIgnoreCase(m_id, similarMod)) {
+			return false;
+		}
+	}
+
 	return true;
 }
 
@@ -2957,7 +3128,8 @@ bool Mod::operator == (const Mod & m) const {
 	   m_images.size() == m.m_images.size() ||
 	   m_videos.size() == m.m_videos.size() ||
 	   m_notes.size() == m.m_notes.size() ||
-	   m_relatedMods.size() != m.m_relatedMods.size()) {
+	   m_relatedMods.size() != m.m_relatedMods.size() ||
+	   m_similarMods.size() != m.m_similarMods.size()) {
 		return false;
 	}
 
@@ -2996,13 +3168,19 @@ bool Mod::operator == (const Mod & m) const {
 	}
 
 	for(size_t i = 0; i < m_notes.size(); i++) {
-		if(m_notes[i] != m.m_notes[i]) {
+		if(!Utilities::areStringsEqual(m_notes[i], m.m_notes[i])) {
 			return false;
 		}
 	}
 
 	for (size_t i = 0; i < m_relatedMods.size(); i++) {
-		if (m_relatedMods[i] != m.m_relatedMods[i]) {
+		if(!Utilities::areStringsEqual(m_relatedMods[i], m.m_relatedMods[i])) {
+			return false;
+		}
+	}
+
+	for (size_t i = 0; i < m_similarMods.size(); i++) {
+		if(!Utilities::areStringsEqual(m_similarMods[i], m.m_similarMods[i])) {
 			return false;
 		}
 	}

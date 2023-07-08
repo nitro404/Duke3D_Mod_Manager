@@ -8,6 +8,7 @@
 #include "Mod/ModTeam.h"
 #include "Mod/ModTeamMember.h"
 #include "RelatedModsPanel.h"
+#include "SimilarModsPanel.h"
 #include "Game/GameVersionCollection.h"
 #include "WXUtilities.h"
 
@@ -42,6 +43,8 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	, m_notesText(nullptr)
 	, m_relatedModsLabel(nullptr)
 	, m_relatedModsPanel(nullptr)
+	, m_similarModsLabel(nullptr)
+	, m_similarModsPanel(nullptr)
 	, m_teamNameLabel(nullptr)
 	, m_teamNameDeepLink(nullptr)
 	, m_teamWebsiteHyperlinkLabel(nullptr)
@@ -101,6 +104,11 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	m_relatedModsLabel->SetFont(m_relatedModsLabel->GetFont().MakeBold());
 	m_relatedModsPanel = new RelatedModsPanel(mods, this);
 	m_relatedModSelectionRequestedConnection = m_relatedModsPanel->modSelectionRequested.connect(std::bind(&ModInfoPanel::onRelatedModSelectionRequested, this, std::placeholders::_1));
+
+	m_similarModsLabel = new wxStaticText(this, wxID_ANY, "Similar Mods:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_similarModsLabel->SetFont(m_similarModsLabel->GetFont().MakeBold());
+	m_similarModsPanel = new SimilarModsPanel(mods, this);
+	m_similarModSelectionRequestedConnection = m_similarModsPanel->modSelectionRequested.connect(std::bind(&ModInfoPanel::onSimilarModSelectionRequested, this, std::placeholders::_1));
 
 	m_teamNameLabel = new wxStaticText(this, wxID_ANY, "Team Name:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamNameLabel->SetFont(m_teamNameLabel->GetFont().MakeBold());
@@ -194,11 +202,21 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	}
 
 	modPanelSizer->Add(m_downloadsPanel, 1, wxEXPAND | wxHORIZONTAL);
+
+	modPanelSizer->Add(m_similarModsLabel, 1, wxEXPAND | wxHORIZONTAL);
+
+	for(int i = 0; i < 2; i++) {
+		m_similarModsSpacers[i] = modPanelSizer->Add(new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER), 1, wxEXPAND | wxHORIZONTAL)->GetWindow();
+	}
+
+	modPanelSizer->Add(m_similarModsPanel, 1, wxEXPAND | wxHORIZONTAL);
+
 	SetSizer(modPanelSizer);
 }
 
 ModInfoPanel::~ModInfoPanel() {
 	m_relatedModSelectionRequestedConnection.disconnect();
+	m_similarModSelectionRequestedConnection.disconnect();
 	m_modTeamMemberSelectionRequestedConnection.disconnect();
 }
 
@@ -467,6 +485,24 @@ void ModInfoPanel::setMod(std::shared_ptr<Mod> mod) {
 		}
 	}
 
+	if(m_mod->numberOfSimilarMods() != 0) {
+		m_similarModsPanel->setMod(m_mod);
+		m_similarModsLabel->Show();
+		m_similarModsPanel->Show();
+
+		for(int i = 0; i < 2; i++) {
+			m_similarModsSpacers[i]->Show();
+		}
+	}
+	else {
+		m_similarModsLabel->Hide();
+		m_similarModsPanel->Hide();
+
+		for(int i = 0; i < 2; i++) {
+			m_similarModsSpacers[i]->Hide();
+		}
+	}
+
 	if(m_mod->numberOfDownloads() != 0) {
 		m_downloadsPanel->setMod(m_mod);
 		m_downloadsLabel->Show();
@@ -520,6 +556,10 @@ void ModInfoPanel::onModTeamNameDeepLinkClicked(wxHyperlinkEvent & event) {
 
 void ModInfoPanel::onRelatedModSelectionRequested(const std::string & relatedModID) {
 	modSelectionRequested(relatedModID);
+}
+
+void ModInfoPanel::onSimilarModSelectionRequested(const std::string & similarModID) {
+	modSelectionRequested(similarModID);
 }
 
 void ModInfoPanel::onModTeamMemberSelectionRequested(const std::string & modTeamMemberName) {

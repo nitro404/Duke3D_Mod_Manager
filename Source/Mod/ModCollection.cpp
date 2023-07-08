@@ -741,6 +741,12 @@ bool ModCollection::isValid(bool skipFileInfoValidation) const {
 				return false;
 			}
 		}
+
+		for(size_t j = 0; j < mod->numberOfSimilarMods(); j++) {
+			if(!hasModWithID(mod->getSimilarMod(j))) {
+				return false;
+			}
+		}
 	}
 
 	return true;

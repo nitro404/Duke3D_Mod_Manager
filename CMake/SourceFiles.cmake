@@ -223,6 +223,8 @@ set(GUI_SOURCE_FILES
 	GUI/ProcessRunningDialog.cpp
 	GUI/RelatedModsPanel.h
 	GUI/RelatedModsPanel.cpp
+	GUI/SimilarModsPanel.h
+	GUI/SimilarModsPanel.cpp
 	GUI/ReleaseNotesPanel.h
 	GUI/ReleaseNotesPanel.cpp
 	GUI/SettingPanel.h
