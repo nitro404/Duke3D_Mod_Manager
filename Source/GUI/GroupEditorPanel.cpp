@@ -534,7 +534,10 @@ bool GroupEditorPanel::saveGroup(Group * group) {
 		updateGroupPanelName(indexOfPanelWithGroup(group));
 	}
 
-	if(!group->save()) {
+	if(group->save()) {
+		spdlog::info("Successfully saved group to file: '{}'.", group->getFilePath());
+	}
+	else {
 		wxMessageBox(fmt::format("Failed to save group to file: '{}'.", group->getFilePath()), "Group Writing Failed", wxOK | wxICON_ERROR, this);
 		return false;
 	}
@@ -615,7 +618,10 @@ bool GroupEditorPanel::saveGroupAs(Group * group) {
 
 	updateGroupPanelName(indexOfPanelWithGroup(group));
 
-	if(!group->save()) {
+	if(group->save()) {
+		spdlog::info("Successfully saved group to file: '{}'.", group->getFilePath());
+	}
+	else {
 		wxMessageBox(fmt::format("Failed to save group to new file: '{}'.", group->getFilePath()), "Group Writing Failed", wxOK | wxICON_ERROR, this);
 		return false;
 	}
