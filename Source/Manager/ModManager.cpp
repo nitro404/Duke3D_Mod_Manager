@@ -2673,6 +2673,10 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 	selectedGameVersion->updateLastPlayedTimePoint();
 
+	if(selectedGameVersion->doesRequireDOSBox()) {
+		selectedDOSBoxVersion->updateLastLaunchedTimePoint();
+	}
+
 	launched();
 
 	m_gameProcess->wait();

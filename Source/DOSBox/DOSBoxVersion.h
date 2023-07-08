@@ -7,6 +7,7 @@
 #include <rapidjson/document.h>
 
 #include <any>
+#include <chrono>
 #include <map>
 #include <memory>
 #include <string>
@@ -32,6 +33,15 @@ public:
 	bool hasLongName() const;
 	const std::string & getLongName() const;
 	bool setLongName(const std::string & longName);
+	bool hasInstalledTimePoint() const;
+	const std::optional<std::chrono::time_point<std::chrono::system_clock>> & getInstalledTimePoint() const;
+	void setInstalledTimePoint(std::chrono::time_point<std::chrono::system_clock> installedTimePoint);
+	void clearInstalledTimePoint();
+	bool hasLastLaunchedTimePoint() const;
+	const std::optional<std::chrono::time_point<std::chrono::system_clock>> & getLastLaunchedTimePoint() const;
+	void setLastLaunchedTimePoint(std::chrono::time_point<std::chrono::system_clock> lastLaunchedTimePoint);
+	void updateLastLaunchedTimePoint();
+	void clearLastLaunchedTimePoint();
 	bool isRemovable() const;
 	bool hasDirectoryPath() const;
 	const std::string & getDirectoryPath() const;
@@ -90,6 +100,8 @@ private:
 	std::string m_id;
 	std::string m_longName;
 	std::string m_shortName;
+	std::optional<std::chrono::time_point<std::chrono::system_clock>> m_installedTimePoint;
+	std::optional<std::chrono::time_point<std::chrono::system_clock>> m_lastLaunchedTimePoint;
 	bool m_removable;
 	std::string m_executableName;
 	std::string m_launchArguments;

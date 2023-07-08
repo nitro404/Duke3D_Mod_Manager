@@ -2,6 +2,7 @@
 
 #include <Utilities/FileUtilities.h>
 #include <Utilities/StringUtilities.h>
+#include <Utilities/TimeUtilities.h>
 #include <Utilities/RapidJSONUtilities.h>
 
 #include <magic_enum.hpp>
@@ -14,6 +15,8 @@
 static constexpr const char * JSON_ID_PROPERTY_NAME = "id";
 static constexpr const char * JSON_LONG_NAME_PROPERTY_NAME = "longName";
 static constexpr const char * JSON_SHORT_NAME_PROPERTY_NAME = "shortName";
+static constexpr const char * JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME = "installed";
+static constexpr const char * JSON_LAST_LAUNCHED_TIMESTAMP_PROPERTY_NAME = "lastLaunched";
 static constexpr const char * JSON_REMOVABLE_PROPERTY_NAME = "removable";
 static constexpr const char * JSON_RENAMABLE_PROPERTY_NAME = "renamable";
 static constexpr const char * JSON_EXECUTABLE_NAME_PROPERTY_NAME = "executableName";
@@ -22,10 +25,12 @@ static constexpr const char * JSON_DIRECTORY_PATH_PROPERTY_NAME = "directoryPath
 static constexpr const char * JSON_WEBSITE_PROPERTY_NAME = "website";
 static constexpr const char * JSON_SOURCE_CODE_URL_PROPERTY_NAME = "sourceCodeURL";
 static constexpr const char * JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME = "supportedOperatingSystems";
-static const std::array<std::string_view, 10> JSON_PROPERTY_NAMES = {
+static const std::array<std::string_view, 12> JSON_PROPERTY_NAMES = {
 	JSON_ID_PROPERTY_NAME,
 	JSON_LONG_NAME_PROPERTY_NAME,
 	JSON_SHORT_NAME_PROPERTY_NAME,
+	JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME,
+	JSON_LAST_LAUNCHED_TIMESTAMP_PROPERTY_NAME,
 	JSON_REMOVABLE_PROPERTY_NAME,
 	JSON_EXECUTABLE_NAME_PROPERTY_NAME,
 	JSON_LAUNCH_ARGUMENTS_PROPERTY_NAME,
@@ -64,6 +69,10 @@ DOSBoxVersion::DOSBoxVersion(const std::string & id, const std::string & longNam
 	, m_website(website)
 	, m_sourceCodeURL(sourceCodeURL)
 	, m_modified(false) {
+	if(!m_directoryPath.empty()) {
+		m_installedTimePoint = std::chrono::system_clock::now();
+	}
+
 	addSupportedOperatingSystems(supportedOperatingSystems);
 
 	setModified(false);
@@ -73,6 +82,8 @@ DOSBoxVersion::DOSBoxVersion(DOSBoxVersion && dosboxVersion) noexcept
 	: m_id(std::move(dosboxVersion.m_id))
 	, m_longName(std::move(dosboxVersion.m_longName))
 	, m_shortName(std::move(dosboxVersion.m_shortName))
+	, m_installedTimePoint(std::move(dosboxVersion.m_installedTimePoint))
+	, m_lastLaunchedTimePoint(std::move(dosboxVersion.m_lastLaunchedTimePoint))
 	, m_removable(dosboxVersion.m_removable)
 	, m_executableName(std::move(dosboxVersion.m_executableName))
 	, m_launchArguments(std::move(dosboxVersion.m_launchArguments))
@@ -85,6 +96,8 @@ DOSBoxVersion::DOSBoxVersion(const DOSBoxVersion & dosboxVersion)
 	: m_id(dosboxVersion.m_id)
 	, m_longName(dosboxVersion.m_longName)
 	, m_shortName(dosboxVersion.m_shortName)
+	, m_installedTimePoint(dosboxVersion.m_installedTimePoint)
+	, m_lastLaunchedTimePoint(dosboxVersion.m_lastLaunchedTimePoint)
 	, m_removable(dosboxVersion.m_removable)
 	, m_executableName(dosboxVersion.m_executableName)
 	, m_launchArguments(dosboxVersion.m_launchArguments)
@@ -99,6 +112,8 @@ DOSBoxVersion & DOSBoxVersion::operator = (DOSBoxVersion && dosboxVersion) noexc
 		m_id = std::move(dosboxVersion.m_id);
 		m_longName = std::move(dosboxVersion.m_longName);
 		m_shortName = std::move(dosboxVersion.m_shortName);
+		m_installedTimePoint = std::move(dosboxVersion.m_installedTimePoint);
+		m_lastLaunchedTimePoint = std::move(dosboxVersion.m_lastLaunchedTimePoint);
 		m_removable = dosboxVersion.m_removable;
 		m_executableName = std::move(dosboxVersion.m_executableName);
 		m_launchArguments = std::move(dosboxVersion.m_launchArguments);
@@ -117,6 +132,8 @@ DOSBoxVersion & DOSBoxVersion::operator = (const DOSBoxVersion & dosboxVersion) 
 	m_id = dosboxVersion.m_id;
 	m_longName = dosboxVersion.m_longName;
 	m_shortName = dosboxVersion.m_shortName;
+	m_installedTimePoint = dosboxVersion.m_installedTimePoint;
+	m_lastLaunchedTimePoint = dosboxVersion.m_lastLaunchedTimePoint;
 	m_removable = dosboxVersion.m_removable;
 	m_executableName = dosboxVersion.m_executableName;
 	m_launchArguments = dosboxVersion.m_launchArguments;
@@ -202,6 +219,66 @@ bool DOSBoxVersion::setShortName(const std::string & shortName) {
 	return true;
 }
 
+bool DOSBoxVersion::hasInstalledTimePoint() const {
+	return m_installedTimePoint.has_value();
+}
+
+const std::optional<std::chrono::time_point<std::chrono::system_clock>> & DOSBoxVersion::getInstalledTimePoint() const {
+	return m_installedTimePoint;
+}
+
+void DOSBoxVersion::setInstalledTimePoint(std::chrono::time_point<std::chrono::system_clock> installedTimePoint) {
+	if(m_installedTimePoint == installedTimePoint) {
+		return;
+	}
+
+	m_installedTimePoint = installedTimePoint;
+
+	setModified(true);
+}
+
+void DOSBoxVersion::clearInstalledTimePoint() {
+	if(!m_installedTimePoint.has_value()) {
+		return;
+	}
+
+	m_installedTimePoint.reset();
+
+	setModified(true);
+}
+
+bool DOSBoxVersion::hasLastLaunchedTimePoint() const {
+	return m_lastLaunchedTimePoint.has_value();
+}
+
+const std::optional<std::chrono::time_point<std::chrono::system_clock>> & DOSBoxVersion::getLastLaunchedTimePoint() const {
+	return m_lastLaunchedTimePoint;
+}
+
+void DOSBoxVersion::setLastLaunchedTimePoint(std::chrono::time_point<std::chrono::system_clock> lastLaunchedTimePoint) {
+	if(m_lastLaunchedTimePoint == lastLaunchedTimePoint) {
+		return;
+	}
+
+	m_lastLaunchedTimePoint = lastLaunchedTimePoint;
+
+	setModified(true);
+}
+
+void DOSBoxVersion::updateLastLaunchedTimePoint() {
+	setLastLaunchedTimePoint(std::chrono::system_clock::now());
+}
+
+void DOSBoxVersion::clearLastLaunchedTimePoint() {
+	if(!m_lastLaunchedTimePoint.has_value()) {
+		return;
+	}
+
+	m_lastLaunchedTimePoint.reset();
+
+	setModified(true);
+}
+
 bool DOSBoxVersion::isRemovable() const {
 	return m_removable;
 }
@@ -257,7 +334,18 @@ const std::string & DOSBoxVersion::getDirectoryPath() const {
 }
 
 void DOSBoxVersion::setDirectoryPath(const std::string & directoryPath) {
+	if(Utilities::areStringsEqual(m_directoryPath, directoryPath)) {
+		return;
+	}
+
 	m_directoryPath = directoryPath;
+
+	if(m_directoryPath.empty()) {
+		m_installedTimePoint.reset();
+	}
+	else {
+		m_installedTimePoint = std::chrono::system_clock::now();
+	}
 
 	setModified(true);
 }
@@ -408,6 +496,15 @@ void DOSBoxVersion::addMetadata(std::map<std::string, std::any> & metadata) cons
 	metadata["dosboxID"] = m_id;
 	metadata["longName"] = m_longName;
 	metadata["shortName"] = m_shortName;
+
+	if(m_installedTimePoint.has_value()) {
+		metadata["installedAt"] = Utilities::timePointToString(m_installedTimePoint.value(), Utilities::TimeFormat::ISO8601);
+	}
+
+	if(m_lastLaunchedTimePoint.has_value()) {
+		metadata["lastLaunchedAt"] = Utilities::timePointToString(m_lastLaunchedTimePoint.value(), Utilities::TimeFormat::ISO8601);
+	}
+
 	metadata["executableName"] = m_executableName;
 
 	if(!m_launchArguments.empty()) {
@@ -444,6 +541,16 @@ rapidjson::Value DOSBoxVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson:
 
 	rapidjson::Value shortNameValue(m_shortName.c_str(), allocator);
 	dosboxVersionValue.AddMember(rapidjson::StringRef(JSON_SHORT_NAME_PROPERTY_NAME), shortNameValue, allocator);
+
+	if(m_installedTimePoint.has_value()) {
+		rapidjson::Value installedTimestampValue(Utilities::timePointToString(m_installedTimePoint.value(), Utilities::TimeFormat::ISO8601).c_str(), allocator);
+		dosboxVersionValue.AddMember(rapidjson::StringRef(JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME), installedTimestampValue, allocator);
+	}
+
+	if(m_lastLaunchedTimePoint.has_value()) {
+		rapidjson::Value lastLaunchedTimestampValue(Utilities::timePointToString(m_lastLaunchedTimePoint.value(), Utilities::TimeFormat::ISO8601).c_str(), allocator);
+		dosboxVersionValue.AddMember(rapidjson::StringRef(JSON_LAST_LAUNCHED_TIMESTAMP_PROPERTY_NAME), lastLaunchedTimestampValue, allocator);
+	}
 
 	dosboxVersionValue.AddMember(rapidjson::StringRef(JSON_REMOVABLE_PROPERTY_NAME), rapidjson::Value(m_removable), allocator);
 
@@ -673,6 +780,48 @@ std::unique_ptr<DOSBoxVersion> DOSBoxVersion::parseFrom(const rapidjson::Value &
 		newDOSBoxVersion->setLaunchArguments(launchArguments);
 	}
 
+	// parse DOSBox version installed timestamp
+	std::optional<std::chrono::time_point<std::chrono::system_clock>> optionalInstalledTimePoint;
+
+	if(dosboxVersionValue.HasMember(JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME)) {
+		const rapidjson::Value & installedTimestampValue = dosboxVersionValue[JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME];
+
+		if(!installedTimestampValue.IsString()) {
+			spdlog::error("DOSBox version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME, Utilities::typeToString(installedTimestampValue.GetType()));
+			return nullptr;
+		}
+
+		optionalInstalledTimePoint = Utilities::parseTimePointFromString(installedTimestampValue.GetString());
+
+		if(!optionalInstalledTimePoint.has_value()) {
+			spdlog::error("DOSBox version with ID '{}' has an invalid '{}' timestamp value: '{}'.", id, JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME, installedTimestampValue.GetString());
+			return nullptr;
+		}
+
+		newDOSBoxVersion->setInstalledTimePoint(optionalInstalledTimePoint.value());
+	}
+
+	// parse DOSBox version last launched timestamp
+	std::optional<std::chrono::time_point<std::chrono::system_clock>> optionalLastLaunchedTimePoint;
+
+	if(dosboxVersionValue.HasMember(JSON_LAST_LAUNCHED_TIMESTAMP_PROPERTY_NAME)) {
+		const rapidjson::Value & lastLaunchedTimestampValue = dosboxVersionValue[JSON_LAST_LAUNCHED_TIMESTAMP_PROPERTY_NAME];
+
+		if(!lastLaunchedTimestampValue.IsString()) {
+			spdlog::error("DOSBox version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_LAST_LAUNCHED_TIMESTAMP_PROPERTY_NAME, Utilities::typeToString(lastLaunchedTimestampValue.GetType()));
+			return nullptr;
+		}
+
+		optionalLastLaunchedTimePoint = Utilities::parseTimePointFromString(lastLaunchedTimestampValue.GetString());
+
+		if(!optionalLastLaunchedTimePoint.has_value()) {
+			spdlog::error("DOSBox version with ID '{}' has an invalid '{}' timestamp value: '{}'.", id, JSON_LAST_LAUNCHED_TIMESTAMP_PROPERTY_NAME, lastLaunchedTimestampValue.GetString());
+			return nullptr;
+		}
+
+		newDOSBoxVersion->setLastLaunchedTimePoint(optionalLastLaunchedTimePoint.value());
+	}
+
 	// parse the supported operating systems property
 	if(dosboxVersionValue.HasMember(JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME)) {
 		const rapidjson::Value & supportedOperatingSystemsValue = dosboxVersionValue[JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME];
@@ -747,6 +896,8 @@ bool DOSBoxVersion::operator == (const DOSBoxVersion & dosboxVersion) const {
 		   Utilities::areStringsEqual(m_id, dosboxVersion.m_id) &&
 		   Utilities::areStringsEqual(m_longName, dosboxVersion.m_longName) &&
 		   Utilities::areStringsEqual(m_shortName, dosboxVersion.m_shortName) &&
+		   m_installedTimePoint == dosboxVersion.m_installedTimePoint &&
+		   m_lastLaunchedTimePoint == dosboxVersion.m_lastLaunchedTimePoint &&
 		   Utilities::areStringsEqual(m_executableName, dosboxVersion.m_executableName) &&
 		   Utilities::areStringsEqual(m_launchArguments, dosboxVersion.m_launchArguments) &&
 		   Utilities::areStringsEqual(m_directoryPath, dosboxVersion.m_directoryPath) &&

@@ -48,7 +48,7 @@ public:
 	void clearInstalledTimePoint();
 	bool hasLastPlayedTimePoint() const;
 	const std::optional<std::chrono::time_point<std::chrono::system_clock>> & getLastPlayedTimePoint() const;
-	void setLastPlayedTimePoint(std::chrono::time_point<std::chrono::system_clock> lastplayedtimepoint);
+	void setLastPlayedTimePoint(std::chrono::time_point<std::chrono::system_clock> lastPlayedTimePoint);
 	void updateLastPlayedTimePoint();
 	void clearLastPlayedTimePoint();
 	bool isStandAlone() const;

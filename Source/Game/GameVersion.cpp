@@ -511,7 +511,13 @@ void GameVersion::setInstalledTimePoint(std::chrono::time_point<std::chrono::sys
 }
 
 void GameVersion::clearInstalledTimePoint() {
+	if(!m_installedTimePoint.has_value()) {
+		return;
+	}
+
 	m_installedTimePoint.reset();
+
+	setModified(true);
 }
 
 bool GameVersion::hasLastPlayedTimePoint() const {
@@ -537,7 +543,13 @@ void GameVersion::updateLastPlayedTimePoint() {
 }
 
 void GameVersion::clearLastPlayedTimePoint() {
+	if(!m_lastPlayedTimePoint.has_value()) {
+		return;
+	}
+
 	m_lastPlayedTimePoint.reset();
+
+	setModified(true);
 }
 
 bool GameVersion::isStandAlone() const {
@@ -573,13 +585,11 @@ const std::string & GameVersion::getGamePath() const {
 }
 
 void GameVersion::setGamePath(const std::string & gamePath) {
-	std::string formattedGamePath(Utilities::trimString(gamePath));
-
-	if(Utilities::areStringsEqual(m_gamePath, formattedGamePath)) {
+	if(Utilities::areStringsEqual(m_gamePath, gamePath)) {
 		return;
 	}
 
-	m_gamePath = std::move(formattedGamePath);
+	m_gamePath = gamePath;
 
 	if(m_gamePath.empty()) {
 		m_installedTimePoint.reset();
@@ -2680,7 +2690,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		newGameVersion->setLaunchArguments(launchArguments);
 	}
 
-	// parse stand-alone mod installed timestamp
+	// parse game version installed timestamp
 	std::optional<std::chrono::time_point<std::chrono::system_clock>> optionalInstalledTimePoint;
 
 	if(gameVersionValue.HasMember(JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME)) {
@@ -2701,7 +2711,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		newGameVersion->setInstalledTimePoint(optionalInstalledTimePoint.value());
 	}
 
-	// parse stand-alone mod last played timestamp
+	// parse game version last played timestamp
 	std::optional<std::chrono::time_point<std::chrono::system_clock>> optionalLastPlayedTimePoint;
 
 	if(gameVersionValue.HasMember(JSON_LAST_PLAYED_TIMESTAMP_PROPERTY_NAME)) {
