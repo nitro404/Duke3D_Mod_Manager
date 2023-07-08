@@ -38,6 +38,10 @@ public:
 	void setDirectoryPath(const std::string & directoryPath);
 	const std::string & getExecutableName() const;
 	void setExecutableName(const std::string & executableName);
+	bool hasLaunchArguments() const;
+	const std::string & getLaunchArguments() const;
+	void setLaunchArguments(const std::string & arguments);
+	void clearLaunchArguments();
 	const std::string & getWebsite() const;
 	void setWebsite(const std::string & website);
 	const std::string & getSourceCodeURL() const;
@@ -88,6 +92,7 @@ private:
 	std::string m_shortName;
 	bool m_removable;
 	std::string m_executableName;
+	std::string m_launchArguments;
 	std::string m_directoryPath;
 	std::string m_website;
 	std::string m_sourceCodeURL;

@@ -56,6 +56,7 @@ DOSBoxVersionPanel::DOSBoxVersionPanel(std::shared_ptr<DOSBoxVersion> dosboxVers
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&DOSBoxVersion::getDirectoryPath, m_dosboxVersion.get()), std::bind(&DOSBoxVersion::setDirectoryPath, m_dosboxVersion.get(), std::placeholders::_1), defaultDOSBoxVersion != nullptr ? defaultDOSBoxVersion->getDirectoryPath() : "", "DOSBox Path", dosboxConfigurationPanel, dosboxConfigurationSizer));
 	m_dosboxPathSettingPanel = m_settingsPanels.back();
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&DOSBoxVersion::getExecutableName, m_dosboxVersion.get()), std::bind(&DOSBoxVersion::setExecutableName, m_dosboxVersion.get(), std::placeholders::_1), defaultDOSBoxVersion != nullptr ? defaultDOSBoxVersion->getExecutableName() : "", "DOSBox Executable Name", dosboxConfigurationPanel, dosboxConfigurationSizer, 1));
+	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&DOSBoxVersion::getLaunchArguments, m_dosboxVersion.get()), std::bind(&DOSBoxVersion::setLaunchArguments, m_dosboxVersion.get(), std::placeholders::_1), Utilities::emptyString, "Launch Arguments", dosboxConfigurationPanel, dosboxConfigurationSizer));
 
 	wxStaticBox * supportedOperatingSystemsBox = new wxStaticBox(this, wxID_ANY, "Supported Operating Systems", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Supported Operating Systems");
 	supportedOperatingSystemsBox->SetOwnFont(supportedOperatingSystemsBox->GetFont().MakeBold());

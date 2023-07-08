@@ -95,7 +95,7 @@ SettingsManagerPanel::SettingsManagerPanel(std::shared_ptr<ModManager> modManage
 	m_preferredDOSBoxVersionSettingPanel = SettingPanel::createStringChoiceSettingPanel(settings->preferredDOSBoxVersionID, SettingsManager::DEFAULT_PREFERRED_DOSBOX_VERSION_ID, "Preferred DOSBox Version", dosboxVersions->getDOSBoxVersionShortNames(false), dosboxSettingsPanel, dosboxSettingsSizer, dosboxVersions->getDOSBoxVersionIdentifiers());
 	m_settingsPanels.push_back(m_preferredDOSBoxVersionSettingPanel);
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxVersionsListFilePath, SettingsManager::DEFAULT_DOSBOX_VERSIONS_LIST_FILE_PATH, "DOSBox Versions List File Path", dosboxSettingsPanel, dosboxSettingsSizer));
-	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxArguments, SettingsManager::DEFAULT_DOSBOX_ARGUMENTS, "Application Arguments", dosboxSettingsPanel, dosboxSettingsSizer));
+	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxArguments, SettingsManager::DEFAULT_DOSBOX_ARGUMENTS, "Shared Launch Arguments", dosboxSettingsPanel, dosboxSettingsSizer));
 	m_settingsPanels.push_back(SettingPanel::createBooleanSettingPanel(settings->dosboxShowConsole, SettingsManager::DEFAULT_DOSBOX_SHOW_CONSOLE, "Show Console", dosboxSettingsPanel, dosboxSettingsSizer));
 	m_settingsPanels.push_back(SettingPanel::createBooleanSettingPanel(settings->dosboxAutoExit, SettingsManager::DEFAULT_DOSBOX_AUTO_EXIT, "Auto Exit", dosboxSettingsPanel, dosboxSettingsSizer));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxDataDirectoryName, SettingsManager::DEFAULT_DOSBOX_DATA_DIRECTORY_NAME, "Data Directory Name", dosboxSettingsPanel, dosboxSettingsSizer));

@@ -17,16 +17,18 @@ static constexpr const char * JSON_SHORT_NAME_PROPERTY_NAME = "shortName";
 static constexpr const char * JSON_REMOVABLE_PROPERTY_NAME = "removable";
 static constexpr const char * JSON_RENAMABLE_PROPERTY_NAME = "renamable";
 static constexpr const char * JSON_EXECUTABLE_NAME_PROPERTY_NAME = "executableName";
+static constexpr const char * JSON_LAUNCH_ARGUMENTS_PROPERTY_NAME = "launchArguments";
 static constexpr const char * JSON_DIRECTORY_PATH_PROPERTY_NAME = "directoryPath";
 static constexpr const char * JSON_WEBSITE_PROPERTY_NAME = "website";
 static constexpr const char * JSON_SOURCE_CODE_URL_PROPERTY_NAME = "sourceCodeURL";
 static constexpr const char * JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME = "supportedOperatingSystems";
-static const std::array<std::string_view, 9> JSON_PROPERTY_NAMES = {
+static const std::array<std::string_view, 10> JSON_PROPERTY_NAMES = {
 	JSON_ID_PROPERTY_NAME,
 	JSON_LONG_NAME_PROPERTY_NAME,
 	JSON_SHORT_NAME_PROPERTY_NAME,
 	JSON_REMOVABLE_PROPERTY_NAME,
 	JSON_EXECUTABLE_NAME_PROPERTY_NAME,
+	JSON_LAUNCH_ARGUMENTS_PROPERTY_NAME,
 	JSON_DIRECTORY_PATH_PROPERTY_NAME,
 	JSON_WEBSITE_PROPERTY_NAME,
 	JSON_SOURCE_CODE_URL_PROPERTY_NAME,
@@ -73,6 +75,7 @@ DOSBoxVersion::DOSBoxVersion(DOSBoxVersion && dosboxVersion) noexcept
 	, m_shortName(std::move(dosboxVersion.m_shortName))
 	, m_removable(dosboxVersion.m_removable)
 	, m_executableName(std::move(dosboxVersion.m_executableName))
+	, m_launchArguments(std::move(dosboxVersion.m_launchArguments))
 	, m_website(std::move(dosboxVersion.m_website))
 	, m_sourceCodeURL(std::move(dosboxVersion.m_sourceCodeURL))
 	, m_supportedOperatingSystems(std::move(dosboxVersion.m_supportedOperatingSystems))
@@ -84,6 +87,7 @@ DOSBoxVersion::DOSBoxVersion(const DOSBoxVersion & dosboxVersion)
 	, m_shortName(dosboxVersion.m_shortName)
 	, m_removable(dosboxVersion.m_removable)
 	, m_executableName(dosboxVersion.m_executableName)
+	, m_launchArguments(dosboxVersion.m_launchArguments)
 	, m_directoryPath(dosboxVersion.m_directoryPath)
 	, m_website(dosboxVersion.m_website)
 	, m_sourceCodeURL(dosboxVersion.m_sourceCodeURL)
@@ -97,6 +101,7 @@ DOSBoxVersion & DOSBoxVersion::operator = (DOSBoxVersion && dosboxVersion) noexc
 		m_shortName = std::move(dosboxVersion.m_shortName);
 		m_removable = dosboxVersion.m_removable;
 		m_executableName = std::move(dosboxVersion.m_executableName);
+		m_launchArguments = std::move(dosboxVersion.m_launchArguments);
 		m_directoryPath = std::move(dosboxVersion.m_directoryPath);
 		m_website = std::move(dosboxVersion.m_website);
 		m_sourceCodeURL = std::move(dosboxVersion.m_sourceCodeURL);
@@ -114,6 +119,7 @@ DOSBoxVersion & DOSBoxVersion::operator = (const DOSBoxVersion & dosboxVersion) 
 	m_shortName = dosboxVersion.m_shortName;
 	m_removable = dosboxVersion.m_removable;
 	m_executableName = dosboxVersion.m_executableName;
+	m_launchArguments = dosboxVersion.m_launchArguments;
 	m_directoryPath = dosboxVersion.m_directoryPath;
 	m_website = dosboxVersion.m_website;
 	m_sourceCodeURL = dosboxVersion.m_sourceCodeURL;
@@ -210,6 +216,34 @@ void DOSBoxVersion::setExecutableName(const std::string & executableName) {
 	}
 
 	m_executableName = executableName;
+
+	setModified(true);
+}
+
+bool DOSBoxVersion::hasLaunchArguments() const {
+	return !m_launchArguments.empty();
+}
+
+const std::string & DOSBoxVersion::getLaunchArguments() const {
+	return m_launchArguments;
+}
+
+void DOSBoxVersion::setLaunchArguments(const std::string & arguments) {
+	if(Utilities::areStringsEqual(m_launchArguments, arguments)) {
+		return;
+	}
+
+	m_launchArguments = arguments;
+
+	setModified(true);
+}
+
+void DOSBoxVersion::clearLaunchArguments() {
+	if(m_launchArguments.empty()) {
+		return;
+	}
+
+	m_launchArguments = "";
 
 	setModified(true);
 }
@@ -375,6 +409,11 @@ void DOSBoxVersion::addMetadata(std::map<std::string, std::any> & metadata) cons
 	metadata["longName"] = m_longName;
 	metadata["shortName"] = m_shortName;
 	metadata["executableName"] = m_executableName;
+
+	if(!m_launchArguments.empty()) {
+		metadata["launchArguments"] = m_launchArguments;
+	}
+
 	metadata["hasDirectoryPath"] = !m_directoryPath.empty();
 	metadata["numberOfSupportedOperatingSystems"] = m_supportedOperatingSystems.size();
 }
@@ -410,6 +449,11 @@ rapidjson::Value DOSBoxVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson:
 
 	rapidjson::Value executableNameValue(m_executableName.c_str(), allocator);
 	dosboxVersionValue.AddMember(rapidjson::StringRef(JSON_EXECUTABLE_NAME_PROPERTY_NAME), executableNameValue, allocator);
+
+	if(!m_launchArguments.empty()) {
+		rapidjson::Value launchArgumentsValue(m_launchArguments.c_str(), allocator);
+		dosboxVersionValue.AddMember(rapidjson::StringRef(JSON_LAUNCH_ARGUMENTS_PROPERTY_NAME), launchArgumentsValue, allocator);
+	}
 
 	rapidjson::Value directoryPathValue(m_directoryPath.c_str(), allocator);
 	dosboxVersionValue.AddMember(rapidjson::StringRef(JSON_DIRECTORY_PATH_PROPERTY_NAME), directoryPathValue, allocator);
@@ -560,6 +604,25 @@ std::unique_ptr<DOSBoxVersion> DOSBoxVersion::parseFrom(const rapidjson::Value &
 		return nullptr;
 	}
 
+	// parse DOSBox version launch arguments
+	std::string launchArguments;
+
+	if(dosboxVersionValue.HasMember(JSON_LAUNCH_ARGUMENTS_PROPERTY_NAME)) {
+		const rapidjson::Value & launchArgumentsValue = dosboxVersionValue[JSON_LAUNCH_ARGUMENTS_PROPERTY_NAME];
+
+		if(!launchArgumentsValue.IsString()) {
+			spdlog::error("DOSBox version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_LAUNCH_ARGUMENTS_PROPERTY_NAME, Utilities::typeToString(launchArgumentsValue.GetType()));
+			return nullptr;
+		}
+
+		launchArguments = Utilities::trimString(launchArgumentsValue.GetString());
+
+		if(launchArguments.empty()) {
+			spdlog::error("DOSBox version with ID '{}' '{}' property cannot be empty.", id, JSON_LAUNCH_ARGUMENTS_PROPERTY_NAME);
+			return nullptr;
+		}
+	}
+
 	// parse DOSBox version directory path
 	if(!dosboxVersionValue.HasMember(JSON_DIRECTORY_PATH_PROPERTY_NAME)) {
 		spdlog::error("DOSBox version with ID '{}' is missing '{}' property.", id, JSON_DIRECTORY_PATH_PROPERTY_NAME);
@@ -605,6 +668,10 @@ std::unique_ptr<DOSBoxVersion> DOSBoxVersion::parseFrom(const rapidjson::Value &
 
 	// initialize the DOSBox version
 	std::unique_ptr<DOSBoxVersion> newDOSBoxVersion(std::make_unique<DOSBoxVersion>(id, longName, shortName, removable, executableName, directoryPath, website, sourceCodeURL));
+
+	if(!launchArguments.empty()) {
+		newDOSBoxVersion->setLaunchArguments(launchArguments);
+	}
 
 	// parse the supported operating systems property
 	if(dosboxVersionValue.HasMember(JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME)) {
@@ -681,6 +748,7 @@ bool DOSBoxVersion::operator == (const DOSBoxVersion & dosboxVersion) const {
 		   Utilities::areStringsEqual(m_longName, dosboxVersion.m_longName) &&
 		   Utilities::areStringsEqual(m_shortName, dosboxVersion.m_shortName) &&
 		   Utilities::areStringsEqual(m_executableName, dosboxVersion.m_executableName) &&
+		   Utilities::areStringsEqual(m_launchArguments, dosboxVersion.m_launchArguments) &&
 		   Utilities::areStringsEqual(m_directoryPath, dosboxVersion.m_directoryPath) &&
 		   Utilities::areStringsEqual(m_website, dosboxVersion.m_website) &&
 		   Utilities::areStringsEqual(m_sourceCodeURL, dosboxVersion.m_sourceCodeURL) &&

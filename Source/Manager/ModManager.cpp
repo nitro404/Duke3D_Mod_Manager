@@ -3506,7 +3506,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 		}
 
 		if(!selectedDOSBoxVersion->isConfigured()) {
-			spdlog::error("Selected DOSBox version '{}' is not configured.", selectedGameVersion->getLongName());
+			spdlog::error("Selected DOSBox version '{}' is not configured.", selectedDOSBoxVersion->getLongName());
 			return {};
 		}
 
@@ -3547,6 +3547,10 @@ std::string ModManager::generateDOSBoxCommand(const Script & script, const Scrip
 
 	if(!dosboxArguments.empty()) {
 		command << " " << dosboxArguments;
+	}
+
+	if(dosboxVersion.hasLaunchArguments()) {
+		command << " " << dosboxVersion.getLaunchArguments();
 	}
 
 	std::string line;
