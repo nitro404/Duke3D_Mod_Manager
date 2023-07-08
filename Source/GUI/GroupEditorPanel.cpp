@@ -26,7 +26,8 @@ static const std::string DEFAULT_NEW_SSI_FILE_NAME("NEW.SSI");
 
 static const std::string FILE_DIALOG_GRP_FILE_TYPE("Build Engine Group Files (*.grp)|*.grp");
 static const std::string FILE_DIALOG_SSI_FILE_TYPE("Sunstorm Interactive Files (*.ssi)|*.ssi");
-static const std::string FILE_DIALOG_FILE_TYPES(FILE_DIALOG_GRP_FILE_TYPE + "|" + FILE_DIALOG_SSI_FILE_TYPE);
+static const std::string FILE_DIALOG_SEPARATE_FILE_TYPES(FILE_DIALOG_GRP_FILE_TYPE + "|" + FILE_DIALOG_SSI_FILE_TYPE);
+static const std::string FILE_DIALOG_GROUPED_FILE_TYPES("Group / SSI Files (*.grp;*.ssi)|*.grp;*.ssi");
 static const std::string FILE_DIALOG_ALL_FILES("All Files (*.*)|*.*");
 
 GroupEditorPanel::GroupEditorPanel(wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
@@ -408,7 +409,7 @@ bool GroupEditorPanel::openGroup(const std::string & filePath) {
 }
 
 size_t GroupEditorPanel::openGroups() {
-	wxFileDialog openFilesDialog(this, "Open Group(s) from File(s)", std::filesystem::current_path().string(), "", FILE_DIALOG_FILE_TYPES, wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST, wxDefaultPosition, wxDefaultSize, "Open Groups");
+	wxFileDialog openFilesDialog(this, "Open Group(s) from File(s)", std::filesystem::current_path().string(), "", FILE_DIALOG_GROUPED_FILE_TYPES, wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST, wxDefaultPosition, wxDefaultSize, "Open Groups");
 	int openFilesResult = openFilesDialog.ShowModal();
 
 	if(openFilesResult == wxID_CANCEL) {
