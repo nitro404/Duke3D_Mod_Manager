@@ -2,9 +2,11 @@
 
 #include "Game/GameVersion.h"
 
+#include <Utilities/FileUtilities.h>
 #include <Utilities/StringUtilities.h>
 
 #include <fmt/core.h>
+#include <spdlog/spdlog.h>
 
 #include <filesystem>
 
@@ -13,6 +15,8 @@ static constexpr uint32_t PLUTONIUM_PAK_NO_CD_CRACK_BYTE_INDEX = 553795;
 static constexpr uint32_t ATOMIC_EDITION_EXECUTABLE_SIZE = 1246231;
 static constexpr uint32_t ATOMIC_EDITION_NO_CD_CRACK_BYTE_INDEX = 556947;
 static constexpr uint8_t NO_CD_CRACK_BYTE_VALUE = 42;
+static const std::string CDROM_INI_FILE_NAME("CDROM.INI");
+static const std::string CDROM_INI_FILE_CONTENTS("D:\\support\\");
 
 NoCDCracker::GameExecutableStatus NoCDCracker::getGameExecutableStatus(const std::string & gameExecutablePath) {
 	if(gameExecutablePath.empty() || !std::filesystem::is_regular_file(std::filesystem::path(gameExecutablePath))) {
@@ -80,11 +84,11 @@ bool NoCDCracker::isGameExecutableCracked(const std::string & gameExecutablePath
 	return Any(gameExecutableStatus & (GameExecutableStatus::AtomicEdition | GameExecutableStatus::PlutoniumPak)) && Any(gameExecutableStatus & GameExecutableStatus::Cracked);
 }
 
-bool NoCDCracker::crackGameExecutable(const std::string & gameExecutablePath) {
-	return crackGameExecutable(gameExecutablePath, gameExecutablePath);
+bool NoCDCracker::crackGameExecutable(const std::string & gameExecutablePath, bool writeCDROMFile) {
+	return crackGameExecutable(gameExecutablePath, gameExecutablePath, writeCDROMFile);
 }
 
-bool NoCDCracker::crackGameExecutable(const std::string & inputGameExecutablePath, const std::string & outputGameExecutablePath) {
+bool NoCDCracker::crackGameExecutable(const std::string & inputGameExecutablePath, const std::string & outputGameExecutablePath, bool writeCDROMFile) {
 	if(inputGameExecutablePath.empty() || !std::filesystem::is_regular_file(std::filesystem::path(inputGameExecutablePath))) {
 		return false;
 	}
@@ -120,5 +124,23 @@ bool NoCDCracker::crackGameExecutable(const std::string & inputGameExecutablePat
 	// crack the game executable data
 	gameExecutableBuffer->putByte(NO_CD_CRACK_BYTE_VALUE, noCDCrackByteIndex);
 
-	return gameExecutableBuffer->writeTo(outputGameExecutablePath, true);
+	if(!gameExecutableBuffer->writeTo(outputGameExecutablePath, true)) {
+		return false;
+	}
+
+	if(writeCDROMFile) {
+		std::string cdromFilePath(Utilities::joinPaths(Utilities::getBasePath(outputGameExecutablePath), CDROM_INI_FILE_NAME));
+
+		ByteBuffer cdromData;
+		cdromData.writeLine(CDROM_INI_FILE_CONTENTS, "\r\n");
+
+		if(cdromData.writeTo(cdromFilePath, true)) {
+			spdlog::info("Wrote CD-ROM path to file: '{}'.", cdromFilePath);
+		}
+		else {
+			spdlog::error("Failed to write CD-ROM path to file: '{}'.", cdromFilePath);
+		}
+	}
+
+	return true;
 }

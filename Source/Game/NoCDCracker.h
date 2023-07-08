@@ -26,8 +26,8 @@ public:
 	static bool isAtomicEditionGameExecutable(const std::string & gameExecutablePath);
 	static bool isGameExecutableCrackable(const std::string & gameExecutablePath);
 	static bool isGameExecutableCracked(const std::string & gameExecutablePath);
-	static bool crackGameExecutable(const std::string & gameExecutablePath);
-	static bool crackGameExecutable(const std::string & inputGameExecutablePath, const std::string & outputGameExecutablePath);
+	static bool crackGameExecutable(const std::string & gameExecutablePath, bool writeCDROMFile = true);
+	static bool crackGameExecutable(const std::string & inputGameExecutablePath, const std::string & outputGameExecutablePath, bool writeCDROMFile = true);
 
 };
 
