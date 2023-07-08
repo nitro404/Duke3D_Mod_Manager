@@ -91,10 +91,12 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	m_modWebsiteHyperlinkLabel = new wxStaticText(this, wxID_ANY, "Mod Website:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_modWebsiteHyperlinkLabel->SetFont(m_modWebsiteHyperlinkLabel->GetFont().MakeBold());
 	m_modWebsiteHyperlink = WXUtilities::createHyperlink(this, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Mod Website");
+	m_modWebsiteHyperlink->Bind(wxEVT_HYPERLINK, &ModInfoPanel::onModWebsiteHyperlinkClicked, this);
 
 	m_modRepositoryHyperlinkLabel = new wxStaticText(this, wxID_ANY, "Mod Repository:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_modRepositoryHyperlinkLabel->SetFont(m_modRepositoryHyperlinkLabel->GetFont().MakeBold());
 	m_modRepositoryHyperlink = WXUtilities::createHyperlink(this, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Mod Repository");
+	m_modRepositoryHyperlink->Bind(wxEVT_HYPERLINK, &ModInfoPanel::onModRepositoryHyperlinkClicked, this);
 
 	m_notesLabel = new wxStaticText(this, wxID_ANY, "Notes:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_notesLabel->SetFont(m_notesLabel->GetFont().MakeBold());
@@ -118,18 +120,22 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	m_teamWebsiteHyperlinkLabel = new wxStaticText(this, wxID_ANY, "Team Website:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamWebsiteHyperlinkLabel->SetFont(m_teamWebsiteHyperlinkLabel->GetFont().MakeBold());
 	m_teamWebsiteHyperlink = WXUtilities::createHyperlink(this, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Website");
+	m_teamWebsiteHyperlink->Bind(wxEVT_HYPERLINK, &ModInfoPanel::onTeamWebsiteHyperlinkClicked, this);
 
 	m_teamEmailHyperlinkLabel = new wxStaticText(this, wxID_ANY, "Team E-Mail:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamEmailHyperlinkLabel->SetFont(m_teamEmailHyperlinkLabel->GetFont().MakeBold());
 	m_teamEmailHyperlink = WXUtilities::createHyperlink(this, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team E-Mail");
+	m_teamEmailHyperlink->Bind(wxEVT_HYPERLINK, &ModInfoPanel::onTeamEmailHyperlinkClicked, this);
 
 	m_teamTwitterLabel = new wxStaticText(this, wxID_ANY, "Team Twitter:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamTwitterLabel->SetFont(m_teamTwitterLabel->GetFont().MakeBold());
 	m_teamTwitterHyperlink = WXUtilities::createHyperlink(this, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Twitter");
+	m_teamTwitterHyperlink->Bind(wxEVT_HYPERLINK, &ModInfoPanel::onTeamTwitterHyperlinkClicked, this);
 
 	m_teamDiscordLabel = new wxStaticText(this, wxID_ANY, "Team Discord:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamDiscordLabel->SetFont(m_teamDiscordLabel->GetFont().MakeBold());
 	m_teamDiscordHyperlink = WXUtilities::createHyperlink(this, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Discord");
+	m_teamDiscordHyperlink->Bind(wxEVT_HYPERLINK, &ModInfoPanel::onTeamDiscordHyperlinkClicked, this);
 
 	m_teamLocationLabel = new wxStaticText(this, wxID_ANY, "Team Location:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_teamLocationLabel->SetFont(m_teamLocationLabel->GetFont().MakeBold());
@@ -527,13 +533,12 @@ void ModInfoPanel::setMod(std::shared_ptr<Mod> mod) {
 void ModInfoPanel::onModAliasDeepLinkClicked(wxHyperlinkEvent & event) {
 	event.Skip(false);
 
-	std::string modID(std::string(event.GetURL().mb_str()));
-
-	modSelectionRequested(modID);
+	modSelectionRequested(m_mod->getAlias());
 
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		std::map<std::string, std::any> properties;
-		properties["modID"] = modID;
+		properties["modID"] = m_mod->getID();
+		properties["modName"] = m_mod->getName();
 
 		SegmentAnalytics::getInstance()->track("Mod Alias Deep Link Clicked", properties);
 	}
@@ -542,15 +547,83 @@ void ModInfoPanel::onModAliasDeepLinkClicked(wxHyperlinkEvent & event) {
 void ModInfoPanel::onModTeamNameDeepLinkClicked(wxHyperlinkEvent & event) {
 	event.Skip(false);
 
-	std::string teamName(event.GetURL().mb_str());
-
-	modTeamSelectionRequested(teamName);
+	modTeamSelectionRequested(m_mod->getTeam()->getName());
 
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		std::map<std::string, std::any> properties;
-		properties["teamName"] = teamName;
+		properties["modID"] = m_mod->getID();
+		properties["modName"] = m_mod->getName();
+		properties["teamName"] = m_mod->getTeam()->getName();
 
 		SegmentAnalytics::getInstance()->track("Team Deep Link Clicked", properties);
+	}
+}
+
+void ModInfoPanel::onModWebsiteHyperlinkClicked(wxHyperlinkEvent & event) {
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["modID"] = m_mod->getID();
+		properties["modName"] = m_mod->getName();
+		properties["url"] = m_mod->getWebsite();
+
+		SegmentAnalytics::getInstance()->track("Mod Website Hyperlink Clicked", properties);
+	}
+}
+
+void ModInfoPanel::onModRepositoryHyperlinkClicked(wxHyperlinkEvent & event) {
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["modID"] = m_mod->getID();
+		properties["modName"] = m_mod->getName();
+		properties["url"] = m_mod->getRepositoryURL();
+
+		SegmentAnalytics::getInstance()->track("Mod Repository Hyperlink Clicked", properties);
+	}
+}
+
+void ModInfoPanel::onTeamWebsiteHyperlinkClicked(wxHyperlinkEvent & event) {
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["modID"] = m_mod->getID();
+		properties["modName"] = m_mod->getName();
+		properties["url"] = m_mod->getTeam()->getWebsite();
+
+		SegmentAnalytics::getInstance()->track("Team Website Hyperlink Clicked", properties);
+	}
+}
+
+void ModInfoPanel::onTeamEmailHyperlinkClicked(wxHyperlinkEvent & event) {
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["modID"] = m_mod->getID();
+		properties["modName"] = m_mod->getName();
+		properties["teamEmail"] = m_mod->getTeam()->getEmail();
+		properties["url"] = std::string(event.GetURL().mb_str());
+
+		SegmentAnalytics::getInstance()->track("Team Email Hyperlink Clicked", properties);
+	}
+}
+
+void ModInfoPanel::onTeamTwitterHyperlinkClicked(wxHyperlinkEvent & event) {
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["modID"] = m_mod->getID();
+		properties["modName"] = m_mod->getName();
+		properties["teamTwitter"] = m_mod->getTeam()->getTwitter();
+		properties["url"] = std::string(event.GetURL().mb_str());
+
+		SegmentAnalytics::getInstance()->track("Team Twitter Hyperlink Clicked", properties);
+	}
+}
+
+void ModInfoPanel::onTeamDiscordHyperlinkClicked(wxHyperlinkEvent & event) {
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["modID"] = m_mod->getID();
+		properties["modName"] = m_mod->getName();
+		properties["url"] = std::string(event.GetURL().mb_str());
+
+		SegmentAnalytics::getInstance()->track("Team Discord Hyperlink Clicked", properties);
 	}
 }
 

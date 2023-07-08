@@ -37,6 +37,12 @@ public:
 private:
 	void onModAliasDeepLinkClicked(wxHyperlinkEvent & event);
 	void onModTeamNameDeepLinkClicked(wxHyperlinkEvent & event);
+	void onModWebsiteHyperlinkClicked(wxHyperlinkEvent & event);
+	void onModRepositoryHyperlinkClicked(wxHyperlinkEvent & event);
+	void onTeamWebsiteHyperlinkClicked(wxHyperlinkEvent & event);
+	void onTeamEmailHyperlinkClicked(wxHyperlinkEvent & event);
+	void onTeamTwitterHyperlinkClicked(wxHyperlinkEvent & event);
+	void onTeamDiscordHyperlinkClicked(wxHyperlinkEvent & event);
 	void onRelatedModSelectionRequested(const std::string & relatedModID);
 	void onSimilarModSelectionRequested(const std::string & similarModID);
 	void onModTeamMemberSelectionRequested(const std::string & modTeamMemberName);
