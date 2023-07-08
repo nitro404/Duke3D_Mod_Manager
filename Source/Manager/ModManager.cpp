@@ -3124,195 +3124,6 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 
 	std::stringstream command;
 
-	std::vector<std::string> customGroupFiles;
-	std::vector<std::string> customConFiles;
-	std::vector<std::string> customDefFiles;
-
-	if(m_arguments != nullptr) {
-		if((m_arguments->hasArgument("g") || m_arguments->hasArgument("group")) ||
-		   (m_arguments->hasArgument("x") || m_arguments->hasArgument("con")) ||
-		   (m_arguments->hasArgument("h") || m_arguments->hasArgument("def"))) {
-			customGroupFiles = m_arguments->getValues("g");
-
-			if(customGroupFiles.empty()) {
-				customGroupFiles = m_arguments->getValues("group");
-			}
-
-			if(!customGroupFiles.empty()) {
-				customConFiles = m_arguments->getValues("x");
-				customDefFiles = m_arguments->getValues("h");
-
-				if(customConFiles.empty()) {
-					m_arguments->getValues("con");
-				}
-
-				if(customDefFiles.empty()) {
-					m_arguments->getValues("def");
-				}
-
-				for(std::vector<std::string>::const_iterator i = customGroupFiles.begin(); i != customGroupFiles.end(); ++i) {
-					scriptArgs.addArgument("GROUP", *i);
-				}
-
-				for(std::vector<std::string>::const_iterator i = customConFiles.begin(); i != customConFiles.end(); ++i) {
-					scriptArgs.addArgument("CON", *i);
-				}
-
-				for(std::vector<std::string>::const_iterator i = customDefFiles.begin(); i != customDefFiles.end(); ++i) {
-					scriptArgs.addArgument("DEF", *i);
-				}
-
-				if(customMod != nullptr) {
-					*customMod = true;
-				}
-
-				if(customGroupFileNames != nullptr) {
-					*customGroupFileNames = customGroupFiles;
-				}
-			}
-		}
-	}
-
-	if(modGameVersion != nullptr || !customGroupFiles.empty()) {
-		if(!selectedGameVersion->doesRequireGroupFileExtraction()) {
-			std::string modPath;
-
-			if(Utilities::areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories()) {
-				modPath = Utilities::joinPaths(settings->modsSymlinkName, targetGameVersion->getModDirectoryName());
-			}
-			else if(selectedGameVersion->doesSupportSubdirectories()) {
-				modPath = settings->gameTempDirectoryName;
-			}
-
-			std::vector<std::string> conFileNames;
-
-			if(!customGroupFiles.empty()) {
-				conFileNames = customConFiles;
-			}
-			else if(!standAlone) {
-				std::vector<std::shared_ptr<ModFile>> conFiles(modGameVersion->getFilesOfType("con"));
-
-				for(const std::shared_ptr<ModFile> & conFile : conFiles) {
-					conFileNames.push_back(conFile->getFileName());
-				}
-			}
-
-			if(!selectedGameVersion->hasGroupFileArgumentFlag()) {
-				spdlog::error("Game version '{}' does not have a group file argument flag specified in its configuration.", selectedGameVersion->getLongName());
-				return {};
-			}
-
-			if(!conFileNames.empty()) {
-				if(!selectedGameVersion->hasConFileArgumentFlag()) {
-					spdlog::error("Game version '{}' does not have a con file argument flag specified in its configuration.", selectedGameVersion->getLongName());
-					return {};
-				}
-				else if(conFileNames.size() > 1 && !selectedGameVersion->hasExtraConFileArgumentFlag()) {
-					spdlog::error("Multiple con files specified, but game version '{}' does not have an extra con file argument flag specified in its configuration.", selectedGameVersion->getLongName());
-					return {};
-				}
-
-				for(std::vector<std::string>::const_iterator i = conFileNames.cbegin(); i != conFileNames.cend(); ++i) {
-					const std::string & conFileName = *i;
-
-					command << " ";
-
-					if(i == conFileNames.begin()) {
-						command << selectedGameVersion->getConFileArgumentFlag().value();
-					}
-					else {
-						command << selectedGameVersion->getExtraConFileArgumentFlag().value();
-					}
-
-					command << (selectedGameVersion->hasRelativeConFilePath() ? conFileName : Utilities::joinPaths(modPath, conFileName));
-				}
-			}
-
-			if(!customGroupFiles.empty()) {
-				for(std::vector<std::string>::const_iterator i = customGroupFiles.begin(); i != customGroupFiles.end(); ++i) {
-					const std::string & groupFileName = *i;
-
-					command << " " << selectedGameVersion->getGroupFileArgumentFlag().value() << Utilities::joinPaths(modPath, groupFileName);
-				}
-			}
-			else if(!combinedGroupFileName.empty()) {
-				std::string combinedGroupFilePath;
-
-				if(Utilities::areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories()) {
-					combinedGroupFilePath = Utilities::joinPaths(settings->tempSymlinkName, combinedGroupFileName);
-				}
-				else if(selectedGameVersion->doesSupportSubdirectories()) {
-					combinedGroupFilePath = Utilities::joinPaths(settings->gameTempDirectoryName, combinedGroupFileName);
-				}
-				else {
-					combinedGroupFilePath = combinedGroupFileName;
-				}
-
-				command << " " << selectedGameVersion->getGroupFileArgumentFlag().value() << Utilities::joinPaths(settings->tempSymlinkName, combinedGroupFileName);
-			}
-			else if(!standAlone) {
-				std::vector<std::shared_ptr<ModFile>> groupFiles(modGameVersion->getFilesOfType("grp"));
-
-				for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = groupFiles.begin(); i != groupFiles.end(); ++i) {
-					command << " " << selectedGameVersion->getGroupFileArgumentFlag().value() << Utilities::joinPaths(modPath, (*i)->getFileName());
-				}
-			}
-
-			if(!customGroupFiles.empty() || modGameVersion->isEDuke32()) {
-				if(customGroupFiles.empty() && !standAlone) {
-					std::vector<std::shared_ptr<ModFile>> zipFiles(modGameVersion->getFilesOfType("zip"));
-
-					for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = zipFiles.begin(); i != zipFiles.end(); ++i) {
-						command << " " << selectedGameVersion->getGroupFileArgumentFlag().value() << Utilities::joinPaths(modPath, (*i)->getFileName());
-					}
-				}
-
-				std::vector<std::string> defFileNames;
-
-				if(!customGroupFiles.empty()) {
-					defFileNames = customDefFiles;
-				}
-				else if(!standAlone) {
-					std::vector<std::shared_ptr<ModFile>> defFiles(modGameVersion->getFilesOfType("def"));
-
-					for(const std::shared_ptr<ModFile> & defFile : defFiles) {
-						defFileNames.push_back(defFile->getFileName());
-					}
-				}
-
-				if(!defFileNames.empty()) {
-					if(!selectedGameVersion->hasDefFileArgumentFlag()) {
-						spdlog::error("Game version '{}' does not have a def file argument flag specified in its configuration.", selectedGameVersion->getLongName());
-						return {};
-					}
-					else if(defFileNames.size() > 1 && !selectedGameVersion->hasExtraDefFileArgumentFlag()) {
-						spdlog::error("Multiple def files specified, but game version '{}' does not have an extra def file argument flag specified in its configuration.", selectedGameVersion->getLongName());
-						return {};
-					}
-
-					for(std::vector<std::string>::const_iterator i = defFileNames.cbegin(); i != defFileNames.cend(); ++i) {
-						const std::string & defFileName = *i;
-
-						command << " ";
-
-						if(i == defFileNames.begin()) {
-							command << selectedGameVersion->getDefFileArgumentFlag().value();
-						}
-						else {
-							command << selectedGameVersion->getExtraDefFileArgumentFlag().value();
-						}
-
-						command << defFileName;
-					}
-				}
-			}
-		}
-	}
-
-	if(selectedGameVersion->hasLaunchArguments()) {
-		command << " " << selectedGameVersion->getLaunchArguments();
-	}
-
 	if(m_arguments != nullptr) {
 		if(m_arguments->hasArgument("map")) {
 			if(settings->mapsSymlinkName.empty()) {
@@ -3497,6 +3308,195 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			}
 			else {
 				spdlog::warn("Game version '{}' does not have a disable music argument flag specified in its configuration.", selectedGameVersion->getLongName());
+			}
+		}
+	}
+
+	if(selectedGameVersion->hasLaunchArguments()) {
+		command << " " << selectedGameVersion->getLaunchArguments();
+	}
+
+	std::vector<std::string> customGroupFiles;
+	std::vector<std::string> customConFiles;
+	std::vector<std::string> customDefFiles;
+
+	if(m_arguments != nullptr) {
+		if((m_arguments->hasArgument("g") || m_arguments->hasArgument("group")) ||
+		   (m_arguments->hasArgument("x") || m_arguments->hasArgument("con")) ||
+		   (m_arguments->hasArgument("h") || m_arguments->hasArgument("def"))) {
+			customGroupFiles = m_arguments->getValues("g");
+
+			if(customGroupFiles.empty()) {
+				customGroupFiles = m_arguments->getValues("group");
+			}
+
+			if(!customGroupFiles.empty()) {
+				customConFiles = m_arguments->getValues("x");
+				customDefFiles = m_arguments->getValues("h");
+
+				if(customConFiles.empty()) {
+					m_arguments->getValues("con");
+				}
+
+				if(customDefFiles.empty()) {
+					m_arguments->getValues("def");
+				}
+
+				for(std::vector<std::string>::const_iterator i = customGroupFiles.begin(); i != customGroupFiles.end(); ++i) {
+					scriptArgs.addArgument("GROUP", *i);
+				}
+
+				for(std::vector<std::string>::const_iterator i = customConFiles.begin(); i != customConFiles.end(); ++i) {
+					scriptArgs.addArgument("CON", *i);
+				}
+
+				for(std::vector<std::string>::const_iterator i = customDefFiles.begin(); i != customDefFiles.end(); ++i) {
+					scriptArgs.addArgument("DEF", *i);
+				}
+
+				if(customMod != nullptr) {
+					*customMod = true;
+				}
+
+				if(customGroupFileNames != nullptr) {
+					*customGroupFileNames = customGroupFiles;
+				}
+			}
+		}
+	}
+
+	if(modGameVersion != nullptr || !customGroupFiles.empty()) {
+		if(!selectedGameVersion->doesRequireGroupFileExtraction()) {
+			std::string modPath;
+
+			if(Utilities::areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories()) {
+				modPath = Utilities::joinPaths(settings->modsSymlinkName, targetGameVersion->getModDirectoryName());
+			}
+			else if(selectedGameVersion->doesSupportSubdirectories()) {
+				modPath = settings->gameTempDirectoryName;
+			}
+
+			std::vector<std::string> conFileNames;
+
+			if(!customGroupFiles.empty()) {
+				conFileNames = customConFiles;
+			}
+			else if(!standAlone) {
+				std::vector<std::shared_ptr<ModFile>> conFiles(modGameVersion->getFilesOfType("con"));
+
+				for(const std::shared_ptr<ModFile> & conFile : conFiles) {
+					conFileNames.push_back(conFile->getFileName());
+				}
+			}
+
+			if(!selectedGameVersion->hasGroupFileArgumentFlag()) {
+				spdlog::error("Game version '{}' does not have a group file argument flag specified in its configuration.", selectedGameVersion->getLongName());
+				return {};
+			}
+
+			if(!conFileNames.empty()) {
+				if(!selectedGameVersion->hasConFileArgumentFlag()) {
+					spdlog::error("Game version '{}' does not have a con file argument flag specified in its configuration.", selectedGameVersion->getLongName());
+					return {};
+				}
+				else if(conFileNames.size() > 1 && !selectedGameVersion->hasExtraConFileArgumentFlag()) {
+					spdlog::error("Multiple con files specified, but game version '{}' does not have an extra con file argument flag specified in its configuration.", selectedGameVersion->getLongName());
+					return {};
+				}
+
+				for(std::vector<std::string>::const_iterator i = conFileNames.cbegin(); i != conFileNames.cend(); ++i) {
+					const std::string & conFileName = *i;
+
+					command << " ";
+
+					if(i == conFileNames.begin()) {
+						command << selectedGameVersion->getConFileArgumentFlag().value();
+					}
+					else {
+						command << selectedGameVersion->getExtraConFileArgumentFlag().value();
+					}
+
+					command << (selectedGameVersion->hasRelativeConFilePath() ? conFileName : Utilities::joinPaths(modPath, conFileName));
+				}
+			}
+
+			if(!customGroupFiles.empty()) {
+				for(std::vector<std::string>::const_iterator i = customGroupFiles.begin(); i != customGroupFiles.end(); ++i) {
+					const std::string & groupFileName = *i;
+
+					command << " " << selectedGameVersion->getGroupFileArgumentFlag().value() << Utilities::joinPaths(modPath, groupFileName);
+				}
+			}
+			else if(!combinedGroupFileName.empty()) {
+				std::string combinedGroupFilePath;
+
+				if(Utilities::areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories()) {
+					combinedGroupFilePath = Utilities::joinPaths(settings->tempSymlinkName, combinedGroupFileName);
+				}
+				else if(selectedGameVersion->doesSupportSubdirectories()) {
+					combinedGroupFilePath = Utilities::joinPaths(settings->gameTempDirectoryName, combinedGroupFileName);
+				}
+				else {
+					combinedGroupFilePath = combinedGroupFileName;
+				}
+
+				command << " " << selectedGameVersion->getGroupFileArgumentFlag().value() << Utilities::joinPaths(settings->tempSymlinkName, combinedGroupFileName);
+			}
+			else if(!standAlone) {
+				std::vector<std::shared_ptr<ModFile>> groupFiles(modGameVersion->getFilesOfType("grp"));
+
+				for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = groupFiles.begin(); i != groupFiles.end(); ++i) {
+					command << " " << selectedGameVersion->getGroupFileArgumentFlag().value() << Utilities::joinPaths(modPath, (*i)->getFileName());
+				}
+			}
+
+			if(!customGroupFiles.empty() || modGameVersion->isEDuke32()) {
+				if(customGroupFiles.empty() && !standAlone) {
+					std::vector<std::shared_ptr<ModFile>> zipFiles(modGameVersion->getFilesOfType("zip"));
+
+					for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = zipFiles.begin(); i != zipFiles.end(); ++i) {
+						command << " " << selectedGameVersion->getGroupFileArgumentFlag().value() << Utilities::joinPaths(modPath, (*i)->getFileName());
+					}
+				}
+
+				std::vector<std::string> defFileNames;
+
+				if(!customGroupFiles.empty()) {
+					defFileNames = customDefFiles;
+				}
+				else if(!standAlone) {
+					std::vector<std::shared_ptr<ModFile>> defFiles(modGameVersion->getFilesOfType("def"));
+
+					for(const std::shared_ptr<ModFile> & defFile : defFiles) {
+						defFileNames.push_back(defFile->getFileName());
+					}
+				}
+
+				if(!defFileNames.empty()) {
+					if(!selectedGameVersion->hasDefFileArgumentFlag()) {
+						spdlog::error("Game version '{}' does not have a def file argument flag specified in its configuration.", selectedGameVersion->getLongName());
+						return {};
+					}
+					else if(defFileNames.size() > 1 && !selectedGameVersion->hasExtraDefFileArgumentFlag()) {
+						spdlog::error("Multiple def files specified, but game version '{}' does not have an extra def file argument flag specified in its configuration.", selectedGameVersion->getLongName());
+						return {};
+					}
+
+					for(std::vector<std::string>::const_iterator i = defFileNames.cbegin(); i != defFileNames.cend(); ++i) {
+						const std::string & defFileName = *i;
+
+						command << " ";
+
+						if(i == defFileNames.begin()) {
+							command << selectedGameVersion->getDefFileArgumentFlag().value();
+						}
+						else {
+							command << selectedGameVersion->getExtraDefFileArgumentFlag().value();
+						}
+
+						command << defFileName;
+					}
+				}
 			}
 		}
 	}
