@@ -315,6 +315,8 @@ bool DOSBoxManagerPanel::selectDOSBoxVersionPanel(size_t dosboxVersionPanelIndex
 
 	m_notebook->ChangeSelection(dosboxVersionPanelIndex);
 
+	updateButtons();
+
 	return true;
 }
 
@@ -327,6 +329,8 @@ bool DOSBoxManagerPanel::selectPanelWithDOSBoxVersion(const DOSBoxVersion & dosb
 
 	m_notebook->ChangeSelection(dosboxVersionPanelIndex);
 
+	updateButtons();
+
 	return true;
 }
 
@@ -338,6 +342,8 @@ bool DOSBoxManagerPanel::selectPanelWithDOSBoxVersionID(const std::string & dosb
 	}
 
 	m_notebook->ChangeSelection(dosboxVersionPanelIndex);
+
+	updateButtons();
 
 	return true;
 }

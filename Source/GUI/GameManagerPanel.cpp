@@ -287,6 +287,8 @@ bool GameManagerPanel::selectGameVersionPanel(size_t gameVersionPanelIndex) {
 
 	m_notebook->ChangeSelection(gameVersionPanelIndex);
 
+	updateButtons();
+
 	return true;
 }
 
@@ -299,6 +301,8 @@ bool GameManagerPanel::selectPanelWithGameVersion(const GameVersion & gameVersio
 
 	m_notebook->ChangeSelection(gameVersionPanelIndex);
 
+	updateButtons();
+
 	return true;
 }
 
@@ -310,6 +314,8 @@ bool GameManagerPanel::selectPanelWithGameVersionID(const std::string & gameVers
 	}
 
 	m_notebook->ChangeSelection(gameVersionPanelIndex);
+
+	updateButtons();
 
 	return true;
 }
