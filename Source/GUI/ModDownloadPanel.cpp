@@ -8,17 +8,22 @@
 
 #include "WXUtilities.h"
 
+#include <Analytics/Segment/SegmentAnalytics.h>
 #include <Utilities/FileUtilities.h>
 #include <Utilities/StringUtilities.h>
 
 #include <fmt/core.h>
 #include <wx/wrapsizer.h>
 
+#include <any>
+#include <map>
 #include <sstream>
+#include <string>
 #include <vector>
 
 ModDownloadPanel::ModDownloadPanel(std::shared_ptr<ModDownload> modDownload, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
-	: wxPanel(parent, windowID, position, size, style, "Mod Download") {
+	: wxPanel(parent, windowID, position, size, style, "Mod Download")
+	, m_download(modDownload) {
 	if(ModDownload::isValid(modDownload.get(), true)) {
 		const Mod * mod = modDownload->getParentMod();
 		std::shared_ptr<ModVersion> modVersion(modDownload->getModVersion());
@@ -31,6 +36,7 @@ ModDownloadPanel::ModDownloadPanel(std::shared_ptr<ModDownload> modDownload, wxW
 		SetSizer(downloadInfoSizer);
 
 		wxGenericHyperlinkCtrl * downloadHyperlink = WXUtilities::createHyperlink(this, wxID_ANY, modDownload->getFileName(), Utilities::joinPaths(downloadBaseURL, modDownload->getFileName()), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Mod Download");
+		downloadHyperlink->Bind(wxEVT_HYPERLINK, &ModDownloadPanel::onModDownloadHyperlinkClicked, this);
 		downloadInfoSizer->Add(downloadHyperlink, 1, wxEXPAND | wxALL);
 
 		std::stringstream descriptionStringStream;
@@ -88,3 +94,32 @@ ModDownloadPanel::ModDownloadPanel(std::shared_ptr<ModDownload> modDownload, wxW
 }
 
 ModDownloadPanel::~ModDownloadPanel() { }
+
+void ModDownloadPanel::onModDownloadHyperlinkClicked(wxHyperlinkEvent & event) {
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		const Mod * mod = m_download->getParentMod();
+
+		std::map<std::string, std::any> properties;
+		properties["modID"] = mod->getID();
+		properties["modName"] = mod->getName();
+		properties["modVersion"] = m_download->getVersion();
+		properties["modVersionType"] = m_download->getVersionType();
+		properties["gameVersionID"] = m_download->getGameVersionID();
+		properties["type"] = m_download->getType();
+		properties["fileName"] = m_download->getFileName();
+		properties["fileSize"] = m_download->getFileSize();
+		properties["sha1"] = m_download->getSHA1();
+		properties["url"] = std::string(event.GetURL().mb_str());
+
+		if(m_download->hasSpecial()) {
+			properties["special"] = m_download->getSpecial();
+		}
+
+		if(m_download->hasMultipleParts()) {
+			properties["partNumber"] = m_download->getPartNumber();
+			properties["numberOfParts"] = m_download->getPartCount();
+		}
+
+		SegmentAnalytics::getInstance()->track("Mod Download Hyperlink Clicked", properties);
+	}
+}

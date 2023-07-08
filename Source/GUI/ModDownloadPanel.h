@@ -20,6 +20,11 @@ public:
 	ModDownloadPanel(std::shared_ptr<ModDownload> modDownload, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
 	virtual ~ModDownloadPanel();
 
+private:
+	void onModDownloadHyperlinkClicked(wxHyperlinkEvent & event);
+
+	std::shared_ptr<ModDownload> m_download;
+
 	ModDownloadPanel(const ModDownloadPanel &) = delete;
 	const ModDownloadPanel & operator = (const ModDownloadPanel &) = delete;
 };
