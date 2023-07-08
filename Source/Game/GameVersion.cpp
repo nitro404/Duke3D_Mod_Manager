@@ -28,6 +28,7 @@ static constexpr const char * JSON_REMOVABLE_PROPERTY_NAME = "removable";
 static constexpr const char * JSON_GAME_PATH_PROPERTY_NAME = "gamePath";
 static constexpr const char * JSON_GAME_EXECUTABLE_NAME_PROPERTY_NAME = "gameExecutableName";
 static constexpr const char * JSON_SETUP_EXECUTABLE_NAME_PROPERTY_NAME = "setupExecutableName";
+static constexpr const char * JSON_LAUNCH_ARGUMENTS_PROPERTY_NAME = "launchArguments";
 static constexpr const char * JSON_GROUP_FILE_INSTALL_PATH_PROPERTY_NAME = "groupFileInstallPath";
 static constexpr const char * JSON_RELATIVE_CON_FILE_PATH_PROPERTY_NAME = "relativeConFilePath";
 static constexpr const char * JSON_SUPPORTS_SUBDIRECTORIES_PROPERTY_NAME = "supportsSubdirectories";
@@ -58,7 +59,7 @@ static constexpr const char * JSON_SOURCE_CODE_URL_PROPERTY_NAME = "sourceCodeUR
 static constexpr const char * JSON_SUPPORTED_OPERATING_SYSTEMS_PROPERTY_NAME = "supportedOperatingSystems";
 static constexpr const char * JSON_COMPATIBLE_GAME_VERSIONS_PROPERTY_NAME = "compatibleGameVersions";
 static constexpr const char * JSON_NOTES_PROPERTY_NAME = "notes";
-static const std::array<std::string_view, 41> JSON_PROPERTY_NAMES = {
+static const std::array<std::string_view, 42> JSON_PROPERTY_NAMES = {
 	JSON_ID_PROPERTY_NAME,
 	JSON_LONG_NAME_PROPERTY_NAME,
 	JSON_SHORT_NAME_PROPERTY_NAME,
@@ -70,6 +71,7 @@ static const std::array<std::string_view, 41> JSON_PROPERTY_NAMES = {
 	JSON_GAME_PATH_PROPERTY_NAME,
 	JSON_GAME_EXECUTABLE_NAME_PROPERTY_NAME,
 	JSON_SETUP_EXECUTABLE_NAME_PROPERTY_NAME,
+	JSON_LAUNCH_ARGUMENTS_PROPERTY_NAME,
 	JSON_GROUP_FILE_INSTALL_PATH_PROPERTY_NAME,
 	JSON_RELATIVE_CON_FILE_PATH_PROPERTY_NAME,
 	JSON_SUPPORTS_SUBDIRECTORIES_PROPERTY_NAME,
@@ -235,6 +237,7 @@ GameVersion::GameVersion(GameVersion && gameVersion) noexcept
 	, m_gamePath(std::move(gameVersion.m_gamePath))
 	, m_gameExecutableName(std::move(gameVersion.m_gameExecutableName))
 	, m_setupExecutableName(std::move(gameVersion.m_setupExecutableName))
+	, m_launchArguments(std::move(gameVersion.m_launchArguments))
 	, m_groupFileInstallPath(std::move(gameVersion.m_groupFileInstallPath))
 	, m_requiresCombinedGroup(gameVersion.m_requiresCombinedGroup)
 	, m_requiresGroupFileExtraction(gameVersion.m_requiresGroupFileExtraction)
@@ -279,6 +282,7 @@ GameVersion::GameVersion(const GameVersion & gameVersion)
 	, m_gamePath(gameVersion.m_gamePath)
 	, m_gameExecutableName(gameVersion.m_gameExecutableName)
 	, m_setupExecutableName(gameVersion.m_setupExecutableName)
+	, m_launchArguments(gameVersion.m_launchArguments)
 	, m_groupFileInstallPath(gameVersion.m_groupFileInstallPath)
 	, m_requiresCombinedGroup(gameVersion.m_requiresCombinedGroup)
 	, m_requiresGroupFileExtraction(gameVersion.m_requiresGroupFileExtraction)
@@ -324,6 +328,7 @@ GameVersion & GameVersion::operator = (GameVersion && gameVersion) noexcept {
 		m_gamePath = std::move(gameVersion.m_gamePath);
 		m_gameExecutableName = std::move(gameVersion.m_gameExecutableName);
 		m_setupExecutableName = std::move(gameVersion.m_setupExecutableName);
+		m_launchArguments = std::move(gameVersion.m_launchArguments);
 		m_groupFileInstallPath = std::move(gameVersion.m_groupFileInstallPath);
 		m_requiresCombinedGroup = gameVersion.m_requiresCombinedGroup;
 		m_requiresGroupFileExtraction = gameVersion.m_requiresGroupFileExtraction;
@@ -372,6 +377,7 @@ GameVersion & GameVersion::operator = (const GameVersion & gameVersion) {
 	m_gamePath = gameVersion.m_gamePath;
 	m_gameExecutableName = gameVersion.m_gameExecutableName;
 	m_setupExecutableName = gameVersion.m_setupExecutableName;
+	m_launchArguments = gameVersion.m_launchArguments;
 	m_groupFileInstallPath = gameVersion.m_groupFileInstallPath;
 	m_requiresCombinedGroup = gameVersion.m_requiresCombinedGroup;
 	m_requiresGroupFileExtraction = gameVersion.m_requiresGroupFileExtraction;
@@ -627,6 +633,34 @@ void GameVersion::clearSetupExecutableName() {
 	}
 
 	m_setupExecutableName.reset();
+
+	setModified(true);
+}
+
+bool GameVersion::hasLaunchArguments() const {
+	return !m_launchArguments.empty();
+}
+
+const std::string & GameVersion::getLaunchArguments() const {
+	return m_launchArguments;
+}
+
+void GameVersion::setLaunchArguments(const std::string & arguments) {
+	if(Utilities::areStringsEqual(m_launchArguments, arguments)) {
+		return;
+	}
+
+	m_launchArguments = arguments;
+
+	setModified(true);
+}
+
+void GameVersion::clearLaunchArguments() {
+	if(m_launchArguments.empty()) {
+		return;
+	}
+
+	m_launchArguments = "";
 
 	setModified(true);
 }
@@ -1739,6 +1773,10 @@ void GameVersion::addMetadata(std::map<std::string, std::any> & metadata) const 
 		metadata["setupExecutableName"] = m_setupExecutableName.value();
 	}
 
+	if(!m_launchArguments.empty()) {
+		metadata["launchArguments"] = m_launchArguments;
+	}
+
 	if(m_groupFileInstallPath.has_value()) {
 		metadata["groupFileInstallPath"] = m_groupFileInstallPath.value();
 	}
@@ -2008,6 +2046,11 @@ rapidjson::Value GameVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::C
 		gameVersionValue.AddMember(rapidjson::StringRef(JSON_SETUP_EXECUTABLE_NAME_PROPERTY_NAME), setupExecutableNameValue, allocator);
 	}
 
+	if(!m_launchArguments.empty()) {
+		rapidjson::Value launchArgumentsValue(m_launchArguments.c_str(), allocator);
+		gameVersionValue.AddMember(rapidjson::StringRef(JSON_LAUNCH_ARGUMENTS_PROPERTY_NAME), launchArgumentsValue, allocator);
+	}
+
 	if(m_groupFileInstallPath.has_value()) {
 		rapidjson::Value groupFileInstallPathValue(m_groupFileInstallPath.value().c_str(), allocator);
 		gameVersionValue.AddMember(rapidjson::StringRef(JSON_GROUP_FILE_INSTALL_PATH_PROPERTY_NAME), groupFileInstallPathValue, allocator);
@@ -2226,6 +2269,25 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 
 		if(setupExecutableNameOptional.value().empty()) {
 			spdlog::error("Game version with ID '{}' '{}' property cannot be empty.", id, JSON_SETUP_EXECUTABLE_NAME_PROPERTY_NAME);
+			return nullptr;
+		}
+	}
+
+	// parse game version launch arguments
+	std::string launchArguments;
+
+	if(gameVersionValue.HasMember(JSON_LAUNCH_ARGUMENTS_PROPERTY_NAME)) {
+		const rapidjson::Value & launchArgumentsValue = gameVersionValue[JSON_LAUNCH_ARGUMENTS_PROPERTY_NAME];
+
+		if(!launchArgumentsValue.IsString()) {
+			spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_LAUNCH_ARGUMENTS_PROPERTY_NAME, Utilities::typeToString(launchArgumentsValue.GetType()));
+			return nullptr;
+		}
+
+		launchArguments = Utilities::trimString(launchArgumentsValue.GetString());
+
+		if(launchArguments.empty()) {
+			spdlog::error("Game version with ID '{}' '{}' property cannot be empty.", id, JSON_LAUNCH_ARGUMENTS_PROPERTY_NAME);
 			return nullptr;
 		}
 	}
@@ -2614,6 +2676,10 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 	// initialize the game version
 	std::unique_ptr<GameVersion> newGameVersion(std::make_unique<GameVersion>(id, longName, shortName, removable, gamePath, gameExecutableName, localWorkingDirectory, relativeConFilePath, supportsSubdirectories, worldTourGroupSupported, modDirectoryName, optionalConFileArgumentFlag, optionalExtraConFileArgumentFlag,optionalGroupFileArgumentFlag, optionalMapFileArgumentFlag, episodeArgumentFlag, levelArgumentFlag, skillArgumentFlag, skillStartValue, recordDemoArgumentFlag, optionalPlayDemoArgumentFlag, optionalRespawnModeArgumentFlag, optionalWeaponSwitchOrderArgumentFlag, optionalDisableMonstersArgumentFlag, optionalDisableSoundArgumentFlag, optionalDisableMusicArgumentFlag, setupExecutableNameOptional, groupFileInstallPathOptional));
 
+	if(!launchArguments.empty()) {
+		newGameVersion->setLaunchArguments(launchArguments);
+	}
+
 	// parse stand-alone mod installed timestamp
 	std::optional<std::chrono::time_point<std::chrono::system_clock>> optionalInstalledTimePoint;
 
@@ -2913,8 +2979,9 @@ bool GameVersion::operator == (const GameVersion & gameVersion) const {
 	   !Utilities::areStringsEqual(m_shortName, gameVersion.m_shortName) ||
 	   !Utilities::areStringsEqual(m_base, gameVersion.m_base) ||
 	   m_gamePath != gameVersion.m_gamePath ||
-	   m_gameExecutableName != gameVersion.m_gameExecutableName ||
+	   !Utilities::areStringsEqual(m_gameExecutableName, gameVersion.m_gameExecutableName) ||
 	   m_setupExecutableName != gameVersion.m_setupExecutableName ||
+	   !Utilities::areStringsEqual(m_launchArguments, gameVersion.m_launchArguments) ||
 	   m_groupFileInstallPath != gameVersion.m_groupFileInstallPath ||
 	   m_modDirectoryName != gameVersion.m_modDirectoryName ||
 	   m_website != gameVersion.m_website ||

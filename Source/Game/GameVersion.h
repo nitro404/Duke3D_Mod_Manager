@@ -66,6 +66,10 @@ public:
 	const std::optional<std::string> & getSetupExecutableName() const;
 	void setSetupExecutableName(const std::string & setupExecutableName);
 	void clearSetupExecutableName();
+	bool hasLaunchArguments() const;
+	const std::string & getLaunchArguments() const;
+	void setLaunchArguments(const std::string & arguments);
+	void clearLaunchArguments();
 	bool hasGroupFileInstallPath() const;
 	const std::optional<std::string> & getGroupFileInstallPath() const;
 	void setGroupFileInstallPath(const std::string & setupExecutableName);
@@ -273,6 +277,7 @@ private:
 	std::string m_gamePath;
 	std::string m_gameExecutableName;
 	std::optional<std::string> m_setupExecutableName;
+	std::string m_launchArguments;
 	std::optional<std::string> m_groupFileInstallPath;
 	std::optional<bool> m_requiresCombinedGroup;
 	std::optional<bool> m_requiresGroupFileExtraction;

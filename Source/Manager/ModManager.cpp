@@ -3305,6 +3305,10 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 		}
 	}
 
+	if(selectedGameVersion->hasLaunchArguments()) {
+		command << " " << selectedGameVersion->getLaunchArguments();
+	}
+
 	if(m_arguments != nullptr) {
 		if(m_arguments->hasArgument("map")) {
 			if(settings->mapsSymlinkName.empty()) {
