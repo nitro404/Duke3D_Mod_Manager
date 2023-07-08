@@ -4117,13 +4117,13 @@
 		<versions>
 			<version id="Demo" release_date="August 11, 2008">
 				<game type="Atomic" state="Native">
-					<file name="TOONNUKE.GRP" size="7596959" type="grp" sha1="b57a8ee55a51a5f6ac52c88a4ae235fdfa3ea040"/>
+					<file name="TOONNUKE.GRP" size="7612684" type="grp" sha1="ac5f2fc085e019ea818dd8a44f4bfd9b538042f8"/>
 				</game>
 			</version>
 		</versions>
 		<downloads>
 			<download filename="Toon Nukem Demo.zip" filesize="2515394" version="Demo" game="Atomic" type="Original Files" sha1="b47c79354bba8b5565047f16ff97a317c4358e63"/>
-			<download filename="Toon_Nukem_Demo-ModMgrA.zip" filesize="2363053" version="Demo" game="Atomic" type="Mod Manager Files" state="Native" sha1="38b64a20c24a4f8aae2fceeaab1645fcaf7c984e"/>
+			<download filename="Toon_Nukem_Demo-ModMgrA.zip" filesize="2379171" version="Demo" game="Atomic" type="Mod Manager Files" state="Native" sha1="880a35947320e37b48c385902bceb59e0cb8310f"/>
 		</downloads>
 		<videos>
 			<video url="https://www.youtube.com/watch?v=IeSW5utrKC4" title="Toon Nukem Level 1" width="480" height="385"/>
