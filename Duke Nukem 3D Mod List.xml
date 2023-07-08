@@ -1645,13 +1645,13 @@
 			<version id="Demo" release_date="August 12, 2008">
 				<game type="Atomic" state="Native">
 					<file name="EI_DEMO.CON" size="154478" type="con" sha1="b6a8f5713d6776efa6de8c8d7f168cad81bbd98d"/>
-					<file name="EI_DEMO.GRP" size="22949309" type="grp" sha1="2fe4f39cb8672af9c8888749cfa1800bc972129d"/>
+					<file name="EI_DEMO.GRP" size="22960754" type="grp" sha1="7a733f6752bc0f682ba9df5df6bad738949394d0"/>
 				</game>
 			</version>
 		</versions>
 		<downloads>
 			<download filename="Evil Incarnate (Demo).rar" filesize="7255870" version="Demo" game="Atomic" type="Original Files" sha1="6e551da4f90dcea5dd4081302173da88d3f5a0ff"/>
-			<download filename="Evil_Incarnate_Demo-ModMgrA.zip" filesize="8178884" version="Demo" game="Atomic" type="Mod Manager Files" state="Native" sha1="fe09b0763dc62862d235db8a127e59a28b1776d1"/>
+			<download filename="Evil_Incarnate_Demo-ModMgrA.zip" filesize="8189662" version="Demo" game="Atomic" type="Mod Manager Files" state="Native" sha1="d8e462a238095dc9ba21e1b10e486175d5804be3"/>
 		</downloads>
 		<videos>
 			<video url="https://www.youtube.com/watch?v=7md1CCJatU0" title="Evil Incarnate Level 1" width="480" height="385"/>
