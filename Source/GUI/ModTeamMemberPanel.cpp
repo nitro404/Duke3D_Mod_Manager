@@ -10,7 +10,8 @@
 #include <map>
 
 ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
-	: wxPanel(parent, windowID, position, size, style, "Mod Team Member") {
+	: wxPanel(parent, windowID, position, size, style, "Mod Team Member")
+	, m_teamMember(teamMember) {
 	wxGenericHyperlinkCtrl * nameDeepLink = WXUtilities::createDeepLink(this, wxID_ANY, wxString::FromUTF8(teamMember->getName()), teamMember->getName(), wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxHL_ALIGN_LEFT, "Team Member Name");
 	nameDeepLink->Bind(wxEVT_HYPERLINK, &ModTeamMemberPanel::onModTeamMemberNameDeepLinkClicked, this);
 
@@ -53,6 +54,7 @@ ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember
 			wxStaticText * emailLabel = new wxStaticText(detailsPanel, wxID_ANY, "Email:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 			emailLabel->SetFont(emailLabel->GetFont().MakeBold());
 			wxGenericHyperlinkCtrl * emailHyperlink = WXUtilities::createHyperlink(detailsPanel, wxID_ANY, teamMember->getEmail(), "mailto:" + teamMember->getEmail(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member E-Mail");
+			emailHyperlink->Bind(wxEVT_HYPERLINK, &ModTeamMemberPanel::onModTeamMemberEmailHyperlinkClicked, this);
 
 			detailsPanelSizer->Add(emailLabel, 1, wxEXPAND | wxALL);
 			detailsPanelSizer->Add(emailHyperlink, 1, wxEXPAND | wxALL);
@@ -62,6 +64,7 @@ ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember
 			wxStaticText * twitterLabel = new wxStaticText(detailsPanel, wxID_ANY, "Twitter:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 			twitterLabel->SetFont(twitterLabel->GetFont().MakeBold());
 			wxGenericHyperlinkCtrl * twitterHyperlink = WXUtilities::createHyperlink(detailsPanel, wxID_ANY, teamMember->getTwitter(), "https://twitter.com/" + teamMember->getTwitter(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member Twitter");
+			twitterHyperlink->Bind(wxEVT_HYPERLINK, &ModTeamMemberPanel::onModTeamMemberTwitterHyperlinkClicked, this);
 
 			detailsPanelSizer->Add(twitterLabel, 1, wxEXPAND | wxALL);
 			detailsPanelSizer->Add(twitterHyperlink, 1, wxEXPAND | wxALL);
@@ -71,6 +74,7 @@ ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember
 			wxStaticText * websiteLabel = new wxStaticText(detailsPanel, wxID_ANY, "Website:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 			websiteLabel->SetFont(websiteLabel->GetFont().MakeBold());
 			wxGenericHyperlinkCtrl * websiteHyperlink = WXUtilities::createHyperlink(detailsPanel, wxID_ANY, teamMember->getWebsite(), teamMember->getWebsite(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member Website");
+			websiteHyperlink->Bind(wxEVT_HYPERLINK, &ModTeamMemberPanel::onModTeamMemberWebsiteHyperlinkClicked, this);
 
 			detailsPanelSizer->Add(websiteLabel, 1, wxEXPAND | wxALL);
 			detailsPanelSizer->Add(websiteHyperlink, 1, wxEXPAND | wxALL);
@@ -80,6 +84,7 @@ ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember
 			wxStaticText * youtubeLabel = new wxStaticText(detailsPanel, wxID_ANY, "YouTube:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 			youtubeLabel->SetFont(youtubeLabel->GetFont().MakeBold());
 			wxGenericHyperlinkCtrl * youtubeHyperlink = WXUtilities::createHyperlink(detailsPanel, wxID_ANY, teamMember->getYouTube(), "https://youtube.com/" + teamMember->getYouTube(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member YouTube");
+			youtubeHyperlink->Bind(wxEVT_HYPERLINK, &ModTeamMemberPanel::onModTeamMemberYouTubeHyperlinkClicked, this);
 
 			detailsPanelSizer->Add(youtubeLabel, 1, wxEXPAND | wxALL);
 			detailsPanelSizer->Add(youtubeHyperlink, 1, wxEXPAND | wxALL);
@@ -89,6 +94,7 @@ ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember
 			wxStaticText * redditLabel = new wxStaticText(detailsPanel, wxID_ANY, "Reddit:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 			redditLabel->SetFont(redditLabel->GetFont().MakeBold());
 			wxGenericHyperlinkCtrl * redditHyperlink = WXUtilities::createHyperlink(detailsPanel, wxID_ANY, teamMember->getReddit(), "https://www.reddit.com/user/" + teamMember->getReddit(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member Reddit");
+			redditHyperlink->Bind(wxEVT_HYPERLINK, &ModTeamMemberPanel::onModTeamMemberRedditHyperlinkClicked, this);
 
 			detailsPanelSizer->Add(redditLabel, 1, wxEXPAND | wxALL);
 			detailsPanelSizer->Add(redditHyperlink, 1, wxEXPAND | wxALL);
@@ -98,6 +104,7 @@ ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember
 			wxStaticText * githubLabel = new wxStaticText(detailsPanel, wxID_ANY, "GitHub:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 			githubLabel->SetFont(githubLabel->GetFont().MakeBold());
 			wxGenericHyperlinkCtrl * githubHyperlink = WXUtilities::createHyperlink(detailsPanel, wxID_ANY, teamMember->getGitHub(), "https://github.com/" + teamMember->getGitHub(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member GitHub");
+			githubHyperlink->Bind(wxEVT_HYPERLINK, &ModTeamMemberPanel::onModTeamMemberGitHubHyperlinkClicked, this);
 
 			detailsPanelSizer->Add(githubLabel, 1, wxEXPAND | wxALL);
 			detailsPanelSizer->Add(githubHyperlink, 1, wxEXPAND | wxALL);
@@ -116,6 +123,7 @@ ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember
 			wxStaticText * steamLabel = new wxStaticText(detailsPanel, wxID_ANY, "Steam ID:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 			steamLabel->SetFont(steamLabel->GetFont().MakeBold());
 			wxGenericHyperlinkCtrl * steamHyperlink = WXUtilities::createHyperlink(detailsPanel, wxID_ANY, teamMember->getSteamID(), "https://steamcommunity.com/id/" + teamMember->getSteamID(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member Steam ID");
+			steamHyperlink->Bind(wxEVT_HYPERLINK, &ModTeamMemberPanel::onModTeamMemberSteamHyperlinkClicked, this);
 
 			detailsPanelSizer->Add(steamLabel, 1, wxEXPAND | wxALL);
 			detailsPanelSizer->Add(steamHyperlink, 1, wxEXPAND | wxALL);
@@ -175,14 +183,87 @@ ModTeamMemberPanel::~ModTeamMemberPanel() { }
 void ModTeamMemberPanel::onModTeamMemberNameDeepLinkClicked(wxHyperlinkEvent & event) {
 	event.Skip(false);
 
-	std::string modTeamMemberName(event.GetURL().mb_str());
-
-	modTeamMemberSelectionRequested(modTeamMemberName);
+	modTeamMemberSelectionRequested(m_teamMember->getName());
 
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		std::map<std::string, std::any> properties;
-		properties["teamMemberName"] = modTeamMemberName;
+		properties["teamMemberName"] = m_teamMember->getName();
 
 		SegmentAnalytics::getInstance()->track("Team Member Deep Link Clicked", properties);
+	}
+}
+
+void ModTeamMemberPanel::onModTeamMemberEmailHyperlinkClicked(wxHyperlinkEvent & event) {
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["teamMemberName"] = m_teamMember->getName();
+		properties["teamMemberEmail"] = m_teamMember->getEmail();
+		properties["url"] = std::string(event.GetURL().mb_str());
+
+		SegmentAnalytics::getInstance()->track("Team Member Email Hyperlink Clicked", properties);
+	}
+}
+
+void ModTeamMemberPanel::onModTeamMemberTwitterHyperlinkClicked(wxHyperlinkEvent & event) {
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["teamMemberName"] = m_teamMember->getName();
+		properties["teamMemberTwitter"] = m_teamMember->getTwitter();
+		properties["url"] = std::string(event.GetURL().mb_str());
+
+		SegmentAnalytics::getInstance()->track("Team Member Twitter Hyperlink Clicked", properties);
+	}
+}
+
+void ModTeamMemberPanel::onModTeamMemberWebsiteHyperlinkClicked(wxHyperlinkEvent & event) {
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["teamMemberName"] = m_teamMember->getName();
+		properties["url"] = std::string(event.GetURL().mb_str());
+
+		SegmentAnalytics::getInstance()->track("Team Member Website Hyperlink Clicked", properties);
+	}
+}
+
+void ModTeamMemberPanel::onModTeamMemberYouTubeHyperlinkClicked(wxHyperlinkEvent & event) {
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["teamMemberName"] = m_teamMember->getName();
+		properties["teamMemberYouTube"] = m_teamMember->getYouTube();
+		properties["url"] = std::string(event.GetURL().mb_str());
+
+		SegmentAnalytics::getInstance()->track("Team Member YouTube Hyperlink Clicked", properties);
+	}
+}
+
+void ModTeamMemberPanel::onModTeamMemberRedditHyperlinkClicked(wxHyperlinkEvent & event) {
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["teamMemberName"] = m_teamMember->getName();
+		properties["teamMemberReddit"] = m_teamMember->getReddit();
+		properties["url"] = std::string(event.GetURL().mb_str());
+
+		SegmentAnalytics::getInstance()->track("Team Member Reddit Hyperlink Clicked", properties);
+	}
+}
+
+void ModTeamMemberPanel::onModTeamMemberGitHubHyperlinkClicked(wxHyperlinkEvent & event) {
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["teamMemberName"] = m_teamMember->getName();
+		properties["url"] = std::string(event.GetURL().mb_str());
+
+		SegmentAnalytics::getInstance()->track("Team Member GitHub Hyperlink Clicked", properties);
+	}
+}
+
+void ModTeamMemberPanel::onModTeamMemberSteamHyperlinkClicked(wxHyperlinkEvent & event) {
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["teamMemberName"] = m_teamMember->getName();
+		properties["teamMemberSteamID"] = m_teamMember->getSteamID();
+		properties["url"] = std::string(event.GetURL().mb_str());
+
+		SegmentAnalytics::getInstance()->track("Team Member Steam Hyperlink Clicked", properties);
 	}
 }

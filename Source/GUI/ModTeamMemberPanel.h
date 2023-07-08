@@ -27,6 +27,15 @@ public:
 
 private:
 	void onModTeamMemberNameDeepLinkClicked(wxHyperlinkEvent & event);
+	void onModTeamMemberEmailHyperlinkClicked(wxHyperlinkEvent & event);
+	void onModTeamMemberTwitterHyperlinkClicked(wxHyperlinkEvent & event);
+	void onModTeamMemberWebsiteHyperlinkClicked(wxHyperlinkEvent & event);
+	void onModTeamMemberYouTubeHyperlinkClicked(wxHyperlinkEvent & event);
+	void onModTeamMemberRedditHyperlinkClicked(wxHyperlinkEvent & event);
+	void onModTeamMemberGitHubHyperlinkClicked(wxHyperlinkEvent & event);
+	void onModTeamMemberSteamHyperlinkClicked(wxHyperlinkEvent & event);
+
+	std::shared_ptr<ModTeamMember> m_teamMember;
 
 	ModTeamMemberPanel(const ModTeamMemberPanel &) = delete;
 	const ModTeamMemberPanel & operator = (const ModTeamMemberPanel &) = delete;
