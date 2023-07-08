@@ -518,7 +518,17 @@ bool GroupEditorPanel::saveGroup(Group * group) {
 			return false;
 		}
 
-		group->setFilePath(saveFileDialog.GetPath());
+		std::string newFilePath(saveFileDialog.GetPath());
+
+		if(std::filesystem::exists(std::filesystem::path(newFilePath))) {
+			int overwriteFileConfirmationResult = wxMessageBox(fmt::format("Group file already exists at path:\n\n{}\n\n Are you sure that want to overwrite this file?", newFilePath), "Overwrite Group File", wxYES_NO | wxCANCEL | wxICON_WARNING, this);
+
+			if(overwriteFileConfirmationResult != wxYES) {
+				return false;
+			}
+		}
+
+		group->setFilePath(newFilePath);
 
 		updateGroupPanelName(indexOfPanelWithGroup(group));
 	}
@@ -590,7 +600,17 @@ bool GroupEditorPanel::saveGroupAs(Group * group) {
 		return false;
 	}
 
-	group->setFilePath(saveFileAsDialog.GetPath());
+	std::string newFilePath(saveFileAsDialog.GetPath());
+
+	if(std::filesystem::exists(std::filesystem::path(newFilePath))) {
+		int overwriteFileConfirmationResult = wxMessageBox(fmt::format("Group file already exists at path:\n\n{}\n\n Are you sure that want to overwrite this file?", newFilePath), "Overwrite Group File", wxYES_NO | wxCANCEL | wxICON_WARNING, this);
+
+		if(overwriteFileConfirmationResult != wxYES) {
+			return false;
+		}
+	}
+
+	group->setFilePath(newFilePath);
 
 	updateGroupPanelName(indexOfPanelWithGroup(group));
 
