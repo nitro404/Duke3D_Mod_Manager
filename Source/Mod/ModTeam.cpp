@@ -534,7 +534,7 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const rapidjson::Value & modTeamValu
 
 			newModTeamMember->setParentModTeam(newModTeam.get());
 
-			if(newModTeam->hasMember(*newModTeamMember.get())) {
+			if(newModTeam->hasMember(*newModTeamMember)) {
 				spdlog::error("Encountered duplicate mod team member #{}.", newModTeam->m_members.size() + 1);
 				return nullptr;
 			}
@@ -625,7 +625,7 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const tinyxml2::XMLElement * modTeam
 
 			newModTeamMember->setParentModTeam(newModTeam.get());
 
-			if(newModTeam->hasMember(*newModTeamMember.get())) {
+			if(newModTeam->hasMember(*newModTeamMember)) {
 				spdlog::error("Encountered duplicate mod team member #{}.", newModTeam->m_members.size() + 1);
 				return nullptr;
 			}

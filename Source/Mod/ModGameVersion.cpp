@@ -1202,7 +1202,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value
 
 		newModFile->setParentModGameVersion(newModGameVersion.get());
 
-		if(newModGameVersion->hasFile(*newModFile.get())) {
+		if(newModGameVersion->hasFile(*newModFile)) {
 			spdlog::error("Encountered duplicate mod file #{}.", newModGameVersion->m_files.size() + 1);
 			return nullptr;
 		}
@@ -1603,7 +1603,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const tinyxml2::XMLEle
 
 		newModFile->setParentModGameVersion(newModGameVersion.get());
 
-		if(newModGameVersion->hasFile(*newModFile.get())) {
+		if(newModGameVersion->hasFile(*newModFile)) {
 			spdlog::error("Encountered duplicate mod file #{}.", newModGameVersion->m_files.size() + 1);
 			return nullptr;
 		}

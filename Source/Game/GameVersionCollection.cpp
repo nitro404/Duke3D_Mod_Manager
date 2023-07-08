@@ -605,7 +605,7 @@ std::unique_ptr<GameVersionCollection> GameVersionCollection::parseFrom(const ra
 			return nullptr;
 		}
 
-		if(newGameVersionCollection->hasGameVersion(*newGameVersion.get())) {
+		if(newGameVersionCollection->hasGameVersion(*newGameVersion)) {
 			spdlog::error("Encountered duplicate game version #{}{}.", newGameVersionCollection->m_gameVersions.size() + 1, newGameVersionCollection->numberOfGameVersions() == 0 ? "" : fmt::format(" (after game version '{}')", newGameVersionCollection->getGameVersion(newGameVersionCollection->numberOfGameVersions() - 1)->getLongName()));
 			return nullptr;
 		}

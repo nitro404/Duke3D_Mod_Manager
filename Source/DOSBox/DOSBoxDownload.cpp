@@ -351,7 +351,7 @@ std::unique_ptr<DOSBoxDownload> DOSBoxDownload::parseFrom(const rapidjson::Value
 
 		newVersion->setParentDOSBoxDownload(newDOSBoxDownload.get());
 
-		if(newDOSBoxDownload->hasVersion(*newVersion.get())) {
+		if(newDOSBoxDownload->hasVersion(*newVersion)) {
 			spdlog::error("Encountered duplicate mod file #{}.", newDOSBoxDownload->m_versions.size() + 1);
 			return nullptr;
 		}

@@ -372,7 +372,7 @@ std::unique_ptr<GameDownload> GameDownload::parseFrom(const rapidjson::Value & g
 
 		newVersion->setParentGameDownload(newGameDownload.get());
 
-		if(newGameDownload->hasVersion(*newVersion.get())) {
+		if(newGameDownload->hasVersion(*newVersion)) {
 			spdlog::error("Encountered duplicate mod file #{}.", newGameDownload->m_versions.size() + 1);
 			return nullptr;
 		}

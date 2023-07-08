@@ -427,7 +427,7 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const rapidjson::Value &
 			return nullptr;
 		}
 
-		if(newModCollection->hasMod(*newMod.get())) {
+		if(newModCollection->hasMod(*newMod)) {
 			spdlog::error("Encountered duplicate mod #{}{}.", newModCollection->m_mods.size() + 1, newModCollection->numberOfMods() == 0 ? "" : fmt::format(" (after mod with ID '{}')", newModCollection->getMod(newModCollection->numberOfMods() - 1)->getID()));
 			return nullptr;
 		}
@@ -515,7 +515,7 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const tinyxml2::XMLEleme
 			return nullptr;
 		}
 
-		if(modCollection->hasMod(*newMod.get())) {
+		if(modCollection->hasMod(*newMod)) {
 			spdlog::error("Encountered duplicate mod #{}{}.", modCollection->m_mods.size() + 1, modCollection->numberOfMods() == 0 ? "" : fmt::format(" (after mod with ID '{}')", modCollection->getMod(modCollection->numberOfMods() - 1)->getID()));
 			return nullptr;
 		}

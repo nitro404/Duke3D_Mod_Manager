@@ -332,7 +332,7 @@ std::unique_ptr<GameDownloadCollection> GameDownloadCollection::parseFrom(const 
 			return nullptr;
 		}
 
-		if(newGameDownloadCollection->hasDownload(*newDownload.get())) {
+		if(newGameDownloadCollection->hasDownload(*newDownload)) {
 			spdlog::warn("Encountered duplicate game download #{}{}.", newGameDownloadCollection->m_downloads.size() + 1, newGameDownloadCollection->numberOfDownloads() == 0 ? "" : fmt::format(" (after game download with ID '{}')", newGameDownloadCollection->getDownload(newGameDownloadCollection->numberOfDownloads() - 1)->getID()));
 		}
 

@@ -416,7 +416,7 @@ std::unique_ptr<DOSBoxDownloadVersion> DOSBoxDownloadVersion::parseFrom(const ra
 
 		newFile->setParentDOSBoxDownloadVersion(newDOSBoxDownloadVersion.get());
 
-		if(newDOSBoxDownloadVersion->hasFile(*newFile.get())) {
+		if(newDOSBoxDownloadVersion->hasFile(*newFile)) {
 			spdlog::error("Encountered duplicate mod file #{}.", newDOSBoxDownloadVersion->m_files.size() + 1);
 			return nullptr;
 		}

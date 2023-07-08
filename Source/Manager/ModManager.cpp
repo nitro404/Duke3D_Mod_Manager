@@ -482,7 +482,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 	}
 
 	m_favouriteMods->loadFrom(settings->favouriteModsListFilePath);
-	m_favouriteMods->checkForMissingFavouriteMods(*m_mods.get());
+	m_favouriteMods->checkForMissingFavouriteMods(*m_mods);
 
 	if(m_favouriteMods->numberOfFavourites() != 0) {
 		spdlog::info("Loaded {} favourite mod{} from '{}'.", m_favouriteMods->numberOfFavourites(), m_favouriteMods->numberOfFavourites() == 1 ? "" : "s", settings->favouriteModsListFilePath);
@@ -5256,7 +5256,7 @@ void ModManager::onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & 
 
 	std::shared_ptr<DOSBoxVersionCollection> dosboxVersions(getDOSBoxVersions());
 
-	if(m_preferredDOSBoxVersion != nullptr && !dosboxVersions->hasDOSBoxVersion(*m_preferredDOSBoxVersion.get())) {
+	if(m_preferredDOSBoxVersion != nullptr && !dosboxVersions->hasDOSBoxVersion(*m_preferredDOSBoxVersion)) {
 		SettingsManager * settings = SettingsManager::getInstance();
 
 		if(dosboxVersions->numberOfDOSBoxVersions() == 0) {
@@ -5281,7 +5281,7 @@ void ModManager::onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection &
 void ModManager::onGameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
-	if(m_preferredGameVersion != nullptr && !getGameVersions()->hasGameVersion(*m_preferredGameVersion.get())) {
+	if(m_preferredGameVersion != nullptr && !getGameVersions()->hasGameVersion(*m_preferredGameVersion)) {
 		SettingsManager * settings = SettingsManager::getInstance();
 
 		if(getGameVersions()->numberOfGameVersions() == 0) {

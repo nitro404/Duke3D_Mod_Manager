@@ -522,7 +522,7 @@ std::unique_ptr<DOSBoxVersionCollection> DOSBoxVersionCollection::parseFrom(cons
 			return nullptr;
 		}
 
-		if(newDOSBoxVersionCollection->hasDOSBoxVersion(*newDOSBoxVersion.get())) {
+		if(newDOSBoxVersionCollection->hasDOSBoxVersion(*newDOSBoxVersion)) {
 			spdlog::error("Encountered duplicate DOSBox version #{}{}.", newDOSBoxVersionCollection->m_dosboxVersions.size() + 1, newDOSBoxVersionCollection->numberOfDOSBoxVersions() == 0 ? "" : fmt::format(" (after DOSBox version '{}')", newDOSBoxVersionCollection->getDOSBoxVersion(newDOSBoxVersionCollection->numberOfDOSBoxVersions() - 1)->getLongName()));
 			return nullptr;
 		}

@@ -510,7 +510,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const rapidjson::Value & modVe
 
 		newModVersionType->setParentModVersion(newModVersion.get());
 
-		if(newModVersion->hasType(*newModVersionType.get())) {
+		if(newModVersion->hasType(*newModVersionType)) {
 			spdlog::error("Encountered duplicate mod version type #{}.", newModVersion->m_types.size() + 1);
 			return nullptr;
 		}
@@ -608,7 +608,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const tinyxml2::XMLElement * m
 
 		newModVersionType->setParentModVersion(newModVersion.get());
 
-		if(newModVersion->hasType(*newModVersionType.get())) {
+		if(newModVersion->hasType(*newModVersionType)) {
 			spdlog::error("Encountered duplicate mod version type #{}.", newModVersion->m_types.size() + 1);
 			return nullptr;
 		}
