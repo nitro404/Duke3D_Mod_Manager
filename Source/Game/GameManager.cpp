@@ -377,6 +377,10 @@ bool GameManager::loadOrUpdateGameDownloadList(bool forceUpdate) const {
 	}
 
 	if(m_localMode) {
+		if(m_gameDownloads != nullptr) {
+			return true;
+		}
+
 		installStatusChanged("Loading game downloads list.");
 
 		std::unique_ptr<GameDownloadCollection> gameDownloads(std::make_unique<GameDownloadCollection>());
@@ -393,20 +397,22 @@ bool GameManager::loadOrUpdateGameDownloadList(bool forceUpdate) const {
 		return false;
 	}
 
-	if(!forceUpdate && std::filesystem::is_regular_file(std::filesystem::path(gameDownloadsListFilePath))) {
-		installStatusChanged("Loading game downloads list.");
+	if(!forceUpdate) {
+		if(m_gameDownloads == nullptr && std::filesystem::is_regular_file(std::filesystem::path(gameDownloadsListFilePath))) {
+			installStatusChanged("Loading game downloads list.");
 
-		std::unique_ptr<GameDownloadCollection> gameDownloads(std::make_unique<GameDownloadCollection>());
+			std::unique_ptr<GameDownloadCollection> gameDownloads(std::make_unique<GameDownloadCollection>());
 
-		if(gameDownloads->loadFrom(gameDownloadsListFilePath) && GameDownloadCollection::isValid(gameDownloads.get())) {
-			m_gameDownloads = std::move(gameDownloads);
-
-			if(!shouldUpdateGameDownloadList()) {
-				return true;
+			if(gameDownloads->loadFrom(gameDownloadsListFilePath) && GameDownloadCollection::isValid(gameDownloads.get())) {
+				m_gameDownloads = std::move(gameDownloads);
+			}
+			else {
+				spdlog::error("Failed to load game download collection from JSON file.");
 			}
 		}
-		else {
-			spdlog::error("Failed to load game download collection from JSON file.");
+
+		if(m_gameDownloads != nullptr && !shouldUpdateGameDownloadList()) {
+			return true;
 		}
 	}
 
@@ -545,15 +551,15 @@ bool GameManager::isGameDownloadable(const std::string & gameVersionID) {
 }
 
 std::string GameManager::getGameDownloadURL(const std::string & gameVersionID) {
-	if(!loadOrUpdateGameDownloadList()) {
-		return {};
-	}
-
 	if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::LAMEDUKE.getID()) ||
 	   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_BETA_VERSION.getID()) ||
 	   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_REGULAR_VERSION.getID()) ||
 	   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_PLUTONIUM_PAK.getID()) ||
 	   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_ATOMIC_EDITION.getID())) {
+		if(!loadOrUpdateGameDownloadList()) {
+			return {};
+		}
+
 		std::shared_ptr<GameDownloadFile> gameDownloadFile(m_gameDownloads->getLatestGameDownloadFile(gameVersionID, GameDownloadFile::Type::Game, GameVersion::OperatingSystem::DOS));
 
 		if(gameDownloadFile == nullptr) {
@@ -618,8 +624,7 @@ std::string GameManager::getGameDownloadURL(const std::string & gameVersionID) {
 }
 
 std::string GameManager::getGameDownloadSHA1(const std::string & gameVersionID) {
-	if(!m_initialized) {
-		spdlog::error("Game manager not initialized!");
+	if(!loadOrUpdateGameDownloadList()) {
 		return {};
 	}
 
@@ -642,8 +647,7 @@ std::string GameManager::getGameDownloadSHA1(const std::string & gameVersionID) 
 }
 
 std::string GameManager::getGroupDownloadURL(const std::string & gameVersionID) {
-	if(!m_initialized) {
-		spdlog::error("Game manager not initialized!");
+	if(!loadOrUpdateGameDownloadList()) {
 		return {};
 	}
 
@@ -2352,7 +2356,12 @@ bool GameManager::installGame(const std::string & gameVersionID, const std::stri
 	}
 
 	if(gameDownloadURL.empty()) {
-		spdlog::error("Failed to determine download URL for '{}'.", gameVersion->getLongName());
+		spdlog::error("Failed to determine {} game download URL for '{}'.", useFallback ? "fallback" : "regular", gameVersion->getLongName());
+
+		if(!useFallback) {
+			return installGame(gameVersion->getID(), destinationDirectoryPath, true, overwrite);
+		}
+
 		return false;
 	}
 
@@ -3175,7 +3184,12 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 	}
 
 	if(groupDownloadURL.empty()) {
-		spdlog::error("Failed to determine group download URL for '{}'.", groupGameVersion->getLongName());
+		spdlog::error("Failed to determine {} group download URL for '{}'.", useFallback ? "fallback" : "regular", groupGameVersion->getLongName());
+
+		if(!useFallback) {
+			return downloadGroupFile(gameVersionID, true);
+		}
+
 		return false;
 	}
 
