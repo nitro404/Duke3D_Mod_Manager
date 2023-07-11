@@ -1,9 +1,9 @@
 #include "GameManager.h"
 
-#include "GameDownload.h"
-#include "GameDownloadCollection.h"
-#include "GameDownloadFile.h"
-#include "GameDownloadVersion.h"
+#include "Download/GameDownload.h"
+#include "Download/GameDownloadCollection.h"
+#include "Download/GameDownloadFile.h"
+#include "Download/GameDownloadVersion.h"
 #include "GameLocator.h"
 #include "Game/GameVersion.h"
 #include "Game/NoCDCracker.h"

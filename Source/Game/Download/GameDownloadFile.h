@@ -1,7 +1,7 @@
 #ifndef _GAME_DOWNLOAD_FILE_H_
 #define _GAME_DOWNLOAD_FILE_H_
 
-#include "GameVersion.h"
+#include "../GameVersion.h"
 
 #include <Platform/DeviceInformationBridge.h>
 

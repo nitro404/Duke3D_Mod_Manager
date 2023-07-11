@@ -30,14 +30,6 @@ set(MAIN_SOURCE_FILES
 	Download/DownloadManager.h
 	Download/DownloadManager.cpp
 	Environment.h
-	Game/GameDownload.h
-	Game/GameDownload.cpp
-	Game/GameDownloadCollection.h
-	Game/GameDownloadCollection.cpp
-	Game/GameDownloadFile.h
-	Game/GameDownloadFile.cpp
-	Game/GameDownloadVersion.h
-	Game/GameDownloadVersion.cpp
 	Game/GameLocator.h
 	Game/GameLocator.cpp
 	Game/GameManager.h
@@ -54,6 +46,14 @@ set(MAIN_SOURCE_FILES
 	Game/Configuration/GameConfigurationEntry.cpp
 	Game/Configuration/GameConfigurationGenerator.cpp
 	Game/Configuration/GameConfigurationSection.cpp
+	Game/Download/GameDownload.h
+	Game/Download/GameDownload.cpp
+	Game/Download/GameDownloadCollection.h
+	Game/Download/GameDownloadCollection.cpp
+	Game/Download/GameDownloadFile.h
+	Game/Download/GameDownloadFile.cpp
+	Game/Download/GameDownloadVersion.h
+	Game/Download/GameDownloadVersion.cpp
 	Game/File/GameFile.h
 	Game/File/GameFile.cpp
 	Game/File/GameFileFactoryRegistry.h
