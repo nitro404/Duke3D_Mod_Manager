@@ -597,7 +597,7 @@ std::string GameConfiguration::Section::toString() const {
 		sectionData << std::endl;
 	}
 
-	sectionData << GameConfiguration::SECTION_NAME_START_CHARACTER << m_name << GameConfiguration::SECTION_NAME_END_CHARACTER;
+	sectionData << GameConfiguration::Section::NAME_START_CHARACTER << m_name << GameConfiguration::Section::NAME_END_CHARACTER;
 
 	std::string followingComments(formatComments(m_followingComments));
 
@@ -631,15 +631,15 @@ std::unique_ptr<GameConfiguration::Section> GameConfiguration::Section::parseFro
 			continue;
 		}
 
-		if(line[0] == SECTION_NAME_START_CHARACTER) {
+		if(line[0] == Section::NAME_START_CHARACTER) {
 			if(!sectionName.empty()) {
 				break;
 			}
 
-			size_t sectionNameEndCharacter = line.find_last_not_of(SECTION_NAME_END_CHARACTER);
+			size_t sectionNameEndCharacter = line.find_last_not_of(Section::NAME_END_CHARACTER);
 
 			if(sectionNameEndCharacter == std::string::npos) {
-				spdlog::warn("Invalid section name identifier, missing '{}' end character.", SECTION_NAME_END_CHARACTER);
+				spdlog::warn("Invalid section name identifier, missing '{}' end character.", Section::NAME_END_CHARACTER);
 				continue;
 			}
 
@@ -722,8 +722,10 @@ bool GameConfiguration::Section::isValid(const Section * section, bool validateP
 }
 
 bool GameConfiguration::Section::isNameValid(const std::string & sectionName) {
+	static const std::string INVALID_NAME_CHARACTERS(fmt::format("{}{}{}\r\n", Section::COMMENT_CHARACTER, Section::NAME_START_CHARACTER, Section::NAME_END_CHARACTER));
+
 	return !sectionName.empty() &&
-		   sectionName.find_first_of("[]") == std::string::npos;
+		   sectionName.find_first_of(INVALID_NAME_CHARACTERS) == std::string::npos;
 }
 
 std::string GameConfiguration::Section::formatComments(const std::string & unformattedComments) {
@@ -739,7 +741,7 @@ std::string GameConfiguration::Section::formatComments(const std::string & unfor
 			formattedCommentsStream << '\n';
 		}
 
-		formattedCommentsStream << GameConfiguration::COMMENT_CHARACTER << unformattedComment;
+		formattedCommentsStream << GameConfiguration::Section::COMMENT_CHARACTER << unformattedComment;
 	}
 
 	return formattedCommentsStream.str();

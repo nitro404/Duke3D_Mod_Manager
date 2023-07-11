@@ -12,7 +12,7 @@ static const std::string & getAssignmentString() {
 	static std::string s_assignmentString;
 
 	if(s_assignmentString.empty()) {
-		s_assignmentString = fmt::format(" {} ", GameConfiguration::ASSIGNMENT_CHARACTER);
+		s_assignmentString = fmt::format(" {} ", GameConfiguration::Entry::ASSIGNMENT_CHARACTER);
 	}
 
 	return s_assignmentString;
@@ -464,15 +464,17 @@ bool GameConfiguration::Entry::isValid(const Entry * entry, bool validateParents
 }
 
 bool GameConfiguration::Entry::isNameValid(const std::string & entryName) {
+	static const std::string INVALID_NAME_CHARACTERS(fmt::format("{}{}{}{}\r\n\t ", ASSIGNMENT_CHARACTER, Section::COMMENT_CHARACTER, Section::NAME_START_CHARACTER, Section::NAME_END_CHARACTER));
+
 	return !entryName.empty() &&
-		   entryName.find_first_of(";[]=\t ") == std::string::npos;
+		   entryName.find_first_of(INVALID_NAME_CHARACTERS) == std::string::npos;
 }
 
-bool GameConfiguration::Entry::operator == (const Entry & e) const {
-	return Utilities::areStringsEqualIgnoreCase(m_name, e.m_name) &&
-		   m_value == e.m_value;
+bool GameConfiguration::Entry::operator == (const Entry & entry) const {
+	return Utilities::areStringsEqualIgnoreCase(m_name, entry.m_name) &&
+		   m_value == entry.m_value;
 }
 
-bool GameConfiguration::Entry::operator != (const Entry & e) const {
-	return !operator == (e);
+bool GameConfiguration::Entry::operator != (const Entry & entry) const {
+	return !operator == (entry);
 }

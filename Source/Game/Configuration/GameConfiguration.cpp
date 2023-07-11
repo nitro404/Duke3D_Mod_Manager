@@ -9,11 +9,6 @@
 #include <fstream>
 #include <sstream>
 
-const char GameConfiguration::COMMENT_CHARACTER = ';';
-const char GameConfiguration::SECTION_NAME_START_CHARACTER = '[';
-const char GameConfiguration::SECTION_NAME_END_CHARACTER = ']';
-const char GameConfiguration::ASSIGNMENT_CHARACTER = '=';
-const char GameConfiguration::EMPTY_VALUE_CHARACTER = '~';
 const std::string GameConfiguration::DEFAULT_GAME_CONFIGURATION_FILE_NAME("DUKE3D.CFG");
 const std::string GameConfiguration::SETUP_SECTION_NAME("Setup");
 const std::string GameConfiguration::SETUP_VERSION_ENTRY_NAME("SetupVersion");
@@ -372,7 +367,7 @@ std::shared_ptr<GameConfiguration::Section> GameConfiguration::getSection(size_t
 		return nullptr;
 	}
 
-	return getSection(m_orderedSectionNames[index]);
+	return getSectionWithName(m_orderedSectionNames[index]);
 }
 
 std::shared_ptr<GameConfiguration::Section> GameConfiguration::getSection(const Section & section) const {
@@ -404,7 +399,7 @@ bool GameConfiguration::setSectionName(size_t index, const std::string & newSect
 }
 
 bool GameConfiguration::setSectionName(const std::string & oldSectionName, const std::string & newSectionName) {
-	std::shared_ptr<Section> sharedSection(getSection(oldSectionName));
+	std::shared_ptr<Section> sharedSection(getSectionWithName(oldSectionName));
 
 	if(sharedSection == nullptr) {
 		return false;
@@ -414,17 +409,19 @@ bool GameConfiguration::setSectionName(const std::string & oldSectionName, const
 }
 
 bool GameConfiguration::setSectionName(Section & section, const std::string & newSectionName) {
-	if(!Section::isNameValid(newSectionName) || hasSection(newSectionName)) {
+	if(!Section::isNameValid(newSectionName) || hasSectionWithName(newSectionName)) {
 		return false;
 	}
 
-	std::shared_ptr<Section> sharedSection(getSection(section));
+	size_t sectionIndex = indexOfSection(section);
 
-	if(sharedSection == nullptr || m_sections.erase(section.m_name) == 0) {
+	if(sectionIndex == std::numeric_limits<size_t>::max() || m_sections.erase(section.m_name) == 0) {
 		return false;
 	}
 
-	m_orderedSectionNames[indexOfSectionWithName(section.m_name)] = newSectionName;
+	std::shared_ptr<Section> sharedSection(m_sections[m_orderedSectionNames[sectionIndex]]);
+
+	m_orderedSectionNames[sectionIndex] = newSectionName;
 	section.m_name = newSectionName;
 	m_sections.emplace(newSectionName, sharedSection);
 
@@ -462,15 +459,17 @@ bool GameConfiguration::removeSection(size_t index) {
 		return false;
 	}
 
-	return removeSection(m_orderedSectionNames[index]);
+	return removeSectionWithName(m_orderedSectionNames[index]);
 }
 
 bool GameConfiguration::removeSection(const Section & section) {
-	std::shared_ptr<Section> sharedSection(getSection(section));
+	size_t sectionIndex = indexOfSection(section);
 
-	if(sharedSection == nullptr) {
+	if(sectionIndex == std::numeric_limits<size_t>::max()) {
 		return false;
 	}
+
+	std::shared_ptr<Section> sharedSection(m_sections[m_orderedSectionNames[sectionIndex]]);
 
 	for(std::vector<std::shared_ptr<Entry>>::const_iterator sectionEntryiterator = sharedSection->m_entries.cbegin(); sectionEntryiterator != sharedSection->m_entries.cend(); ++sectionEntryiterator) {
 		(*sectionEntryiterator)->m_parentGameConfiguration = nullptr;
@@ -481,7 +480,7 @@ bool GameConfiguration::removeSection(const Section & section) {
 	}
 
 	sharedSection->m_parentGameConfiguration = nullptr;
-	m_orderedSectionNames.erase(m_orderedSectionNames.begin() + indexOfSection(*sharedSection));
+	m_orderedSectionNames.erase(m_orderedSectionNames.begin() + sectionIndex);
 
 	return m_sections.erase(sharedSection->getName()) != 0;
 }

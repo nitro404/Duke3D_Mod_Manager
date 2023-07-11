@@ -83,6 +83,9 @@ public:
 		bool operator == (const Entry & e) const;
 		bool operator != (const Entry & e) const;
 
+		static constexpr char ASSIGNMENT_CHARACTER = '=';
+		static constexpr char EMPTY_VALUE_CHARACTER = '~';
+
 	private:
 		std::string m_name;
 		Type m_type;
@@ -162,6 +165,10 @@ public:
 		bool operator == (const Section & s) const;
 		bool operator != (const Section & s) const;
 
+		static constexpr char COMMENT_CHARACTER = ';';
+		static constexpr char NAME_START_CHARACTER = '[';
+		static constexpr char NAME_END_CHARACTER = ']';
+
 	private:
 		static std::string formatComments(const std::string & unformattedComments);
 		std::shared_ptr<Entry> getOrCreateEntry(const std::string & entryName, bool create, bool & exists);
@@ -226,7 +233,7 @@ public:
 
 	static std::unique_ptr<GameConfiguration> loadFrom(const std::string & filePath);
 	bool save(bool overwrite = true, bool createParentDirectories = true) const;
-	bool saveTo(const std::string & filePath, bool overwrite = false, bool createParentDirectories = true) const;
+	bool saveTo(const std::string & filePath, bool overwrite = true, bool createParentDirectories = true) const;
 
 	bool isValid(bool validateParents = true) const;
 	static bool isValid(const GameConfiguration * gameConfiguration, bool validateParents = true);
@@ -234,11 +241,6 @@ public:
 	bool operator == (const GameConfiguration & c) const;
 	bool operator != (const GameConfiguration & c) const;
 
-	static const char COMMENT_CHARACTER;
-	static const char SECTION_NAME_START_CHARACTER;
-	static const char SECTION_NAME_END_CHARACTER;
-	static const char ASSIGNMENT_CHARACTER;
-	static const char EMPTY_VALUE_CHARACTER;
 	static const std::string DEFAULT_GAME_CONFIGURATION_FILE_NAME;
 	static const std::string SETUP_SECTION_NAME;
 	static const std::string SETUP_VERSION_ENTRY_NAME;
