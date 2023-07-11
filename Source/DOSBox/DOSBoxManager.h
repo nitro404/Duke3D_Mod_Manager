@@ -1,9 +1,9 @@
 #ifndef _DOSBOX_MANAGER_H_
 #define _DOSBOX_MANAGER_H_
 
-#include "DOSBoxDownloadCollection.h"
 #include "DOSBoxVersion.h"
 #include "DOSBoxVersionCollection.h"
+#include "Download/DOSBoxDownloadCollection.h"
 
 #include <boost/signals2.hpp>
 

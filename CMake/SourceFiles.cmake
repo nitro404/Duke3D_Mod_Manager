@@ -1,14 +1,6 @@
 include_guard()
 
 set(MAIN_SOURCE_FILES
-	DOSBox/DOSBoxDownload.h
-	DOSBox/DOSBoxDownload.cpp
-	DOSBox/DOSBoxDownloadCollection.h
-	DOSBox/DOSBoxDownloadCollection.cpp
-	DOSBox/DOSBoxDownloadFile.h
-	DOSBox/DOSBoxDownloadFile.cpp
-	DOSBox/DOSBoxDownloadVersion.h
-	DOSBox/DOSBoxDownloadVersion.cpp
 	DOSBox/DOSBoxManager.h
 	DOSBox/DOSBoxManager.cpp
 	DOSBox/DOSBoxVersion.h
@@ -21,6 +13,14 @@ set(MAIN_SOURCE_FILES
 	DOSBox/Configuration/DOSBoxConfiguration.cpp
 	DOSBox/Configuration/DOSBoxConfigurationEntry.cpp
 	DOSBox/Configuration/DOSBoxConfigurationSection.cpp
+	DOSBox/Download/DOSBoxDownload.h
+	DOSBox/Download/DOSBoxDownload.cpp
+	DOSBox/Download/DOSBoxDownloadCollection.h
+	DOSBox/Download/DOSBoxDownloadCollection.cpp
+	DOSBox/Download/DOSBoxDownloadFile.h
+	DOSBox/Download/DOSBoxDownloadFile.cpp
+	DOSBox/Download/DOSBoxDownloadVersion.h
+	DOSBox/Download/DOSBoxDownloadVersion.cpp
 	Download/CachedFile.h
 	Download/CachedFile.cpp
 	Download/CachedPackageFile.h

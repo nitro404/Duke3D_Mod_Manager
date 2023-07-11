@@ -1,7 +1,7 @@
 #ifndef _DOSBOX_DOWNLOAD_FILE_H_
 #define _DOSBOX_DOWNLOAD_FILE_H_
 
-#include "DOSBoxVersion.h"
+#include "../DOSBoxVersion.h"
 
 #include <Platform/DeviceInformationBridge.h>
 
