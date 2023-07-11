@@ -15,6 +15,12 @@ set(MAIN_SOURCE_FILES
 	DOSBox/DOSBoxVersion.cpp
 	DOSBox/DOSBoxVersionCollection.h
 	DOSBox/DOSBoxVersionCollection.cpp
+	DOSBox/Configuration/CommentCollection.h
+	DOSBox/Configuration/CommentCollection.cpp
+	DOSBox/Configuration/DOSBoxConfiguration.h
+	DOSBox/Configuration/DOSBoxConfiguration.cpp
+	DOSBox/Configuration/DOSBoxConfigurationEntry.cpp
+	DOSBox/Configuration/DOSBoxConfigurationSection.cpp
 	Download/CachedFile.h
 	Download/CachedFile.cpp
 	Download/CachedPackageFile.h
