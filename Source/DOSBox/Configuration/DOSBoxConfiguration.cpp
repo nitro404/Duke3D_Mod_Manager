@@ -144,9 +144,13 @@ void DOSBoxConfiguration::setNewlineType(NewlineType newlineType) {
 }
 
 bool DOSBoxConfiguration::hasSection(const Section & section) const {
-	std::shared_ptr<Section> sharedSection(getSectionWithName(section.getName()));
+	if(!section.isValid(false)) {
+		return false;
+	}
 
-	if(sharedSection == nullptr || &section != sharedSection.get()) {
+	SectionMap::const_iterator sectionIterator(m_sections.find(section.m_name));
+
+	if(sectionIterator == m_sections.cend() || sectionIterator->second.get() != &section) {
 		return false;
 	}
 
@@ -158,9 +162,13 @@ bool DOSBoxConfiguration::hasSectionWithName(const std::string & sectionName) co
 }
 
 size_t DOSBoxConfiguration::indexOfSection(const Section & section) const {
-	std::vector<std::string>::const_iterator orderedSectionNameIterator = std::find_if(m_orderedSectionNames.cbegin(), m_orderedSectionNames.cend(), [&section](const std::string & sectionName) {
+	if(!section.isValid(true)) {
+		return std::numeric_limits<size_t>::max();
+	}
+
+	std::vector<std::string>::const_iterator orderedSectionNameIterator(std::find_if(m_orderedSectionNames.cbegin(), m_orderedSectionNames.cend(), [&section](const std::string & sectionName) {
 		return Utilities::areStringsEqualIgnoreCase(section.m_name, sectionName);
-	});
+	}));
 
 	if(orderedSectionNameIterator == m_orderedSectionNames.cend()) {
 		return std::numeric_limits<size_t>::max();
@@ -168,9 +176,9 @@ size_t DOSBoxConfiguration::indexOfSection(const Section & section) const {
 
 	size_t sectionIndex = orderedSectionNameIterator - m_orderedSectionNames.cbegin();
 
-	std::shared_ptr<Section> sharedSection(getSection(section));
+	SectionMap::const_iterator sectionIterator(m_sections.find(m_orderedSectionNames[sectionIndex]));
 
-	if(sharedSection == nullptr) {
+	if(sectionIterator == m_sections.cend() || &section != sectionIterator->second.get()) {
 		return std::numeric_limits<size_t>::max();
 	}
 
@@ -178,13 +186,17 @@ size_t DOSBoxConfiguration::indexOfSection(const Section & section) const {
 }
 
 size_t DOSBoxConfiguration::indexOfSectionWithName(const std::string & sectionName) const {
-	std::shared_ptr<Section> sharedSection(getSectionWithName(sectionName));
-
-	if(sharedSection == nullptr) {
+	if(!Section::isNameValid(sectionName)) {
 		return std::numeric_limits<size_t>::max();
 	}
 
-	return indexOfSection(*sharedSection);
+	std::vector<std::string>::const_iterator orderedSectionNameIterator(std::find(m_orderedSectionNames.cbegin(), m_orderedSectionNames.cend(), sectionName));
+
+	if(orderedSectionNameIterator == m_orderedSectionNames.cend()) {
+		return std::numeric_limits<size_t>::max();
+	}
+
+	return orderedSectionNameIterator - m_orderedSectionNames.cbegin();
 }
 
 std::shared_ptr<DOSBoxConfiguration::Section> DOSBoxConfiguration::getSection(size_t sectionIndex) const {
@@ -196,6 +208,10 @@ std::shared_ptr<DOSBoxConfiguration::Section> DOSBoxConfiguration::getSection(si
 }
 
 std::shared_ptr<DOSBoxConfiguration::Section> DOSBoxConfiguration::getSection(const Section & section) const {
+	if(!section.isValid(true)) {
+		return nullptr;
+	}
+
 	std::shared_ptr<Section> sharedSection(getSectionWithName(section.getName()));
 
 	if(sharedSection == nullptr || &section != sharedSection.get()) {
@@ -206,6 +222,10 @@ std::shared_ptr<DOSBoxConfiguration::Section> DOSBoxConfiguration::getSection(co
 }
 
 std::shared_ptr<DOSBoxConfiguration::Section> DOSBoxConfiguration::getSectionWithName(const std::string & sectionName) const {
+	if(!Section::isNameValid(sectionName)) {
+		return nullptr;
+	}
+
 	SectionMap::const_iterator sectionIterator(m_sections.find(sectionName));
 
 	if(sectionIterator == m_sections.cend()) {

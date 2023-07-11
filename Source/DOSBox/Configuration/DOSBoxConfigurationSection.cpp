@@ -119,19 +119,23 @@ bool DOSBoxConfiguration::Section::hasEntryWithName(const std::string & entryNam
 }
 
 size_t DOSBoxConfiguration::Section::indexOfEntry(const Entry & entry) const {
-	size_t entryIndex = indexOfEntryWithName(entry.m_name);
-
-	if(entryIndex == std::numeric_limits<size_t>::max()) {
+	if(!entry.isValid(true)) {
 		return std::numeric_limits<size_t>::max();
 	}
+
+	std::vector<std::string>::const_iterator orderedEntryNameIterator(std::find_if(m_orderedEntryNames.cbegin(), m_orderedEntryNames.cend(), [&entry](const std::string & entryName) {
+		return Utilities::areStringsEqualIgnoreCase(entry.m_name, entryName);
+	}));
+
+	if(orderedEntryNameIterator == m_orderedEntryNames.cend()) {
+		return std::numeric_limits<size_t>::max();
+	}
+
+	size_t entryIndex = orderedEntryNameIterator - m_orderedEntryNames.cbegin();
 
 	EntryMap::const_iterator entryIterator(m_entries.find(m_orderedEntryNames[entryIndex]));
 
-	if(entryIterator == m_entries.cend()) {
-		return std::numeric_limits<size_t>::max();
-	}
-
-	if(&entry != entryIterator->second.get()) {
+	if(entryIterator == m_entries.cend() || &entry != entryIterator->second.get()) {
 		return std::numeric_limits<size_t>::max();
 	}
 
@@ -139,17 +143,17 @@ size_t DOSBoxConfiguration::Section::indexOfEntry(const Entry & entry) const {
 }
 
 size_t DOSBoxConfiguration::Section::indexOfEntryWithName(const std::string & entryName) const {
-	if(Entry::isNameValid(entryName)) {
+	if(!Entry::isNameValid(entryName)) {
 		return std::numeric_limits<size_t>::max();
 	}
 
-	std::vector<std::string>::const_iterator entryIterator(std::find(m_orderedEntryNames.cbegin(), m_orderedEntryNames.cend(), entryName));
+	std::vector<std::string>::const_iterator orderedEntryNameIterator(std::find(m_orderedEntryNames.cbegin(), m_orderedEntryNames.cend(), entryName));
 
-	if(entryIterator == m_orderedEntryNames.cend()) {
+	if(orderedEntryNameIterator == m_orderedEntryNames.cend()) {
 		return std::numeric_limits<size_t>::max();
 	}
 
-	return entryIterator - m_orderedEntryNames.cbegin();
+	return orderedEntryNameIterator - m_orderedEntryNames.cbegin();
 }
 
 std::shared_ptr<DOSBoxConfiguration::Section::Entry> DOSBoxConfiguration::Section::getEntry(size_t entryIndex) const {
@@ -177,7 +181,7 @@ std::shared_ptr<DOSBoxConfiguration::Section::Entry> DOSBoxConfiguration::Sectio
 }
 
 std::shared_ptr<DOSBoxConfiguration::Section::Entry> DOSBoxConfiguration::Section::getEntryWithName(const std::string & entryName) const {
-	if(Entry::isNameValid(entryName)) {
+	if(!Entry::isNameValid(entryName)) {
 		return nullptr;
 	}
 
