@@ -18,7 +18,7 @@ PaletteGPL::PaletteGPL(const std::string & filePath)
 
 PaletteGPL::PaletteGPL(std::unique_ptr<ColourTable> colourTable, std::vector<std::string> && colourNames, std::optional<uint8_t> columnCount, std::vector<std::string> && comments, const std::string & filePath)
 	: Palette(filePath)
-	, m_colourTable(colourTable != nullptr ? std::shared_ptr<ColourTable>(colourTable.release()) : std::make_shared<ColourTable>())
+	, m_colourTable(colourTable != nullptr ? std::move(colourTable) : std::make_shared<ColourTable>())
 	, m_colourNames(std::move(colourNames))
 	, m_numberOfColumns(columnCount)
 	, m_comments(std::move(comments)) {

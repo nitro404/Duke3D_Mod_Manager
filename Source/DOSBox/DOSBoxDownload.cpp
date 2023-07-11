@@ -342,7 +342,7 @@ std::unique_ptr<DOSBoxDownload> DOSBoxDownload::parseFrom(const rapidjson::Value
 	std::shared_ptr<DOSBoxDownloadVersion> newVersion;
 
 	for(rapidjson::Value::ConstValueIterator i = versionsValue.Begin(); i != versionsValue.End(); ++i) {
-		newVersion = std::shared_ptr<DOSBoxDownloadVersion>(DOSBoxDownloadVersion::parseFrom(*i).release());
+		newVersion = DOSBoxDownloadVersion::parseFrom(*i);
 
 		if(!DOSBoxDownloadVersion::isValid(newVersion.get())) {
 			spdlog::error("Failed to parse mod file #{}.", newDOSBoxDownload->m_versions.size() + 1);

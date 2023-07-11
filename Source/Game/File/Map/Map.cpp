@@ -32,19 +32,19 @@ Map::Map(uint32_t version, const PlayerSpawn & playerSpawn, std::vector<std::uni
 	m_sectors.reserve(sectors.size());
 
 	for(std::unique_ptr<Sector> & sector : sectors) {
-		m_sectors.push_back(std::shared_ptr<Sector>(sector.release()));
+		m_sectors.emplace_back(std::move(sector));
 	}
 
 	m_walls.reserve(walls.size());
 
 	for(std::unique_ptr<Wall> & wall : walls) {
-		m_walls.push_back(std::shared_ptr<Wall>(wall.release()));
+		m_walls.emplace_back(std::move(wall));
 	}
 
 	m_sprites.reserve(sprites.size());
 
 	for(std::unique_ptr<Sprite> & sprite : sprites) {
-		m_sprites.push_back(std::shared_ptr<Sprite>(sprite.release()));
+		m_sprites.emplace_back(std::move(sprite));
 	}
 }
 
@@ -320,7 +320,7 @@ void Map::setTrailingData(std::unique_ptr<ByteBuffer> trailingData) {
 		return;
 	}
 
-	m_trailingData = std::shared_ptr<ByteBuffer>(trailingData.release());
+	m_trailingData = std::move(trailingData);
 }
 
 void Map::clearTrailingData() {

@@ -6,7 +6,7 @@ MIDIByteBufferReadStream::MIDIByteBufferReadStream(const ByteBuffer & data)
 
 MIDIByteBufferReadStream::MIDIByteBufferReadStream(std::unique_ptr<ByteBuffer> data)
 	: jdksmidi::MIDIFileReadStream()
-	, m_data(std::shared_ptr<ByteBuffer>(data.release())) { }
+	, m_data(std::move(data)) { }
 
 MIDIByteBufferReadStream::MIDIByteBufferReadStream(std::shared_ptr<ByteBuffer> data)
 	: jdksmidi::MIDIFileReadStream()

@@ -349,7 +349,7 @@ std::unique_ptr<StandAloneModCollection> StandAloneModCollection::parseFrom(cons
 			return nullptr;
 		}
 
-		newStandAloneModCollection->m_standAloneMods.push_back(std::shared_ptr<StandAloneMod>(newStandAloneMod.release()));
+		newStandAloneModCollection->m_standAloneMods.emplace_back(std::move(newStandAloneMod));
 	}
 
 	return newStandAloneModCollection;

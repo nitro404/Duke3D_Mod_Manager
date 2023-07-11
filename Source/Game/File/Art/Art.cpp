@@ -42,7 +42,7 @@ Art::Art(uint16_t artNumber, uint32_t tileCount, std::unique_ptr<ByteBuffer> tra
 	, m_localTileStart(artNumber * tileCount)
 	, m_localTileEnd(m_localTileStart + tileCount - 1)
 	, m_legacyTileCount(0)
-	, m_trailingData(std::shared_ptr<ByteBuffer>(trailingData.release())) {
+	, m_trailingData(std::move(trailingData)) {
 	for(uint32_t i = 0; i < tileCount; i++) {
 		m_tiles.push_back(std::make_shared<Tile>(m_localTileStart + i, this));
 	}
@@ -66,11 +66,11 @@ Art::Art(uint32_t localTileStart, uint32_t localTileEnd, uint32_t legacyTileCoun
 	, m_localTileStart(localTileStart)
 	, m_localTileEnd(localTileEnd)
 	, m_legacyTileCount(legacyTileCount)
-	, m_trailingData(std::shared_ptr<ByteBuffer>(trailingData.release())) {
+	, m_trailingData(std::move(trailingData)) {
 	m_tiles.reserve(tiles.size());
 
 	for(std::unique_ptr<Tile> & tile : tiles) {
-		m_tiles.push_back(std::shared_ptr<Tile>(tile.release()));
+		m_tiles.emplace_back(std::move(tile));
 	}
 
 	autosize();
@@ -87,7 +87,7 @@ Art::Art(uint32_t localTileStart, uint32_t localTileEnd, uint32_t legacyTileCoun
 	m_tiles.reserve(tiles.size());
 
 	for(std::unique_ptr<Tile> & tile : tiles) {
-		m_tiles.push_back(std::shared_ptr<Tile>(tile.release()));
+		m_tiles.emplace_back(std::move(tile));
 	}
 
 	autosize();
@@ -257,7 +257,7 @@ void Art::setTrailingData(std::unique_ptr<ByteBuffer> trailingData) {
 		return;
 	}
 
-	m_trailingData = std::shared_ptr<ByteBuffer>(trailingData.release());
+	m_trailingData = std::move(trailingData);
 }
 
 void Art::clearTrailingData() {

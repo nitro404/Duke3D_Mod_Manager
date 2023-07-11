@@ -66,8 +66,8 @@ Sector::Sector(uint16_t firstWallIndex, uint16_t numberOfWalls, std::unique_ptr<
 	: TaggedItem(taggedItem)
 	, m_firstWallIndex(firstWallIndex)
 	, m_numberOfWalls(numberOfWalls)
-	, m_ceiling(std::shared_ptr<Partition>(ceiling.release()))
-	, m_floor(std::shared_ptr<Partition>(floor.release()))
+	, m_ceiling(std::move(ceiling))
+	, m_floor(std::move(floor))
 	, m_visibility(visibility)
 	, m_filler(filler)
 	, m_trailingData(trailingData) {
@@ -79,8 +79,8 @@ Sector::Sector(uint16_t firstWallIndex, uint16_t numberOfWalls, std::unique_ptr<
 	: TaggedItem(lowTag, highTag, extra)
 	, m_firstWallIndex(firstWallIndex)
 	, m_numberOfWalls(numberOfWalls)
-	, m_ceiling(std::shared_ptr<Partition>(ceiling.release()))
-	, m_floor(std::shared_ptr<Partition>(floor.release()))
+	, m_ceiling(std::move(ceiling))
+	, m_floor(std::move(floor))
 	, m_visibility(visibility)
 	, m_filler(filler)
 	, m_trailingData(trailingData) {
@@ -262,7 +262,7 @@ void Sector::setCeiling(std::unique_ptr<Partition> ceiling) {
 
 	ceiling->setType(Partition::Type::Ceiling);
 
-	m_ceiling = std::shared_ptr<Partition>(ceiling.release());
+	m_ceiling = std::move(ceiling);
 }
 
 bool Sector::isFloorParallaxed() const {
@@ -387,7 +387,7 @@ void Sector::setFloor(std::unique_ptr<Partition> floor) {
 
 	floor->setType(Partition::Type::Floor);
 
-	m_floor = std::shared_ptr<Partition>(floor.release());
+	m_floor = std::move(floor);
 }
 
 uint16_t Sector::getFirstWallIndex() const {

@@ -2653,7 +2653,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	spdlog::info("Using working directory: '{}'.", workingDirectory);
 	spdlog::info("Executing command: {}", command);
 
-	m_gameProcess = std::shared_ptr<Process>(ProcessCreator::getInstance()->createProcess(command, workingDirectory).release());
+	m_gameProcess = ProcessCreator::getInstance()->createProcess(command, workingDirectory);
 
 	if(m_gameProcess == nullptr) {
 		if(installedModInfo != nullptr && !installedModInfo->isEmpty() && !removeModFilesFromGameDirectory(*selectedGameVersion, *installedModInfo)) {
@@ -2831,7 +2831,7 @@ bool ModManager::extractModFilesToGameDirectory(const ModGameVersion & modGameVe
 						continue;
 					}
 
-					modFiles[modFilesArchiveEntry->getPath()] = std::shared_ptr<ByteBuffer>(modFilesArchiveEntry->getData().release());
+					modFiles[modFilesArchiveEntry->getPath()] = modFilesArchiveEntry->getData();
 				}
 			}
 		}

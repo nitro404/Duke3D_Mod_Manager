@@ -363,7 +363,7 @@ std::unique_ptr<GameDownload> GameDownload::parseFrom(const rapidjson::Value & g
 	std::shared_ptr<GameDownloadVersion> newVersion;
 
 	for(rapidjson::Value::ConstValueIterator i = versionsValue.Begin(); i != versionsValue.End(); ++i) {
-		newVersion = std::shared_ptr<GameDownloadVersion>(GameDownloadVersion::parseFrom(*i).release());
+		newVersion = GameDownloadVersion::parseFrom(*i);
 
 		if(!GameDownloadVersion::isValid(newVersion.get())) {
 			spdlog::error("Failed to parse mod file #{}.", newGameDownload->m_versions.size() + 1);

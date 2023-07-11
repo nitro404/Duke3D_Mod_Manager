@@ -16,7 +16,7 @@ PalettePAL::PalettePAL(const std::string & filePath)
 PalettePAL::PalettePAL(std::unique_ptr<ColourTable> colourTable, std::vector<ColourFlag> colourFlags, uint16_t version, const std::string & filePath)
 	: Palette(filePath)
 	, m_version(version)
-	, m_colourTable(colourTable != nullptr ? std::shared_ptr<ColourTable>(colourTable.release()) : std::make_shared<ColourTable>())
+	, m_colourTable(colourTable != nullptr ? std::move(colourTable) : std::make_shared<ColourTable>())
 	, m_colourFlags(colourFlags) {
 	m_colourFlags.resize(m_colourTable->numberOfColours(), ColourFlag::None);
 	updateParent();

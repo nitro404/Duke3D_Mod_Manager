@@ -312,7 +312,7 @@ std::unique_ptr<DOSBoxDownloadCollection> DOSBoxDownloadCollection::parseFrom(co
 			spdlog::warn("Encountered duplicate dosbox download #{}{}.", newDOSBoxDownloadCollection->m_downloads.size() + 1, newDOSBoxDownloadCollection->numberOfDownloads() == 0 ? "" : fmt::format(" (after dosbox download with ID '{}')", newDOSBoxDownloadCollection->getDownload(newDOSBoxDownloadCollection->numberOfDownloads() - 1)->getID()));
 		}
 
-		newDOSBoxDownloadCollection->m_downloads.push_back(std::shared_ptr<DOSBoxDownload>(newDownload.release()));
+		newDOSBoxDownloadCollection->m_downloads.emplace_back(std::move(newDownload));
 	}
 
 	return newDOSBoxDownloadCollection;

@@ -57,7 +57,7 @@ Tile::Tile(uint32_t number, uint16_t width, uint16_t height, const Attributes & 
 	, m_width(width)
 	, m_height(height)
 	, m_attributes(attributes)
-	, m_data(std::shared_ptr<ByteBuffer>(data.release()))
+	, m_data(std::move(data))
 	, m_parent(parent) { }
 
 Tile::Tile(uint32_t number, uint16_t width, uint16_t height, const Attributes & attributes, ByteBuffer && data, Art * parent)
@@ -273,7 +273,7 @@ void Tile::setData(std::unique_ptr<ByteBuffer> data) {
 		return;
 	}
 
-	m_data = std::shared_ptr<ByteBuffer>(data.release());
+	m_data = std::move(data);
 }
 
 void Tile::clearData() {

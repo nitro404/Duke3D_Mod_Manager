@@ -297,7 +297,7 @@ bool FavouriteModCollection::parseFrom(const rapidjson::Value & favouriteModsCol
 			continue;
 		}
 
-		newFavourites.push_back(std::shared_ptr<ModIdentifier>(newModIdentifier.release()));
+		newFavourites.emplace_back(std::move(newModIdentifier));
 	}
 
 	m_favourites = newFavourites;

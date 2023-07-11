@@ -280,7 +280,7 @@ bool ModTeam::addMember(const ModTeamMember & member) {
 		return false;
 	}
 
-	std::shared_ptr<ModTeamMember> newModTeamMember = std::make_shared<ModTeamMember>(member);
+	std::shared_ptr<ModTeamMember> newModTeamMember(std::make_shared<ModTeamMember>(member));
 	newModTeamMember->setParentModTeam(this);
 
 	m_members.push_back(newModTeamMember);
@@ -525,7 +525,7 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const rapidjson::Value & modTeamValu
 		std::shared_ptr<ModTeamMember> newModTeamMember;
 
 		for(rapidjson::Value::ConstValueIterator i = modTeamMembersValue.Begin(); i != modTeamMembersValue.End(); ++i) {
-			newModTeamMember = std::shared_ptr<ModTeamMember>(std::move(ModTeamMember::parseFrom(*i)).release());
+			newModTeamMember = ModTeamMember::parseFrom(*i);
 
 			if(!ModTeamMember::isValid(newModTeamMember.get())) {
 				spdlog::error("Failed to parse mod team member #{}.", newModTeam->m_members.size() + 1);
@@ -616,7 +616,7 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const tinyxml2::XMLElement * modTeam
 				break;
 			}
 
-			newModTeamMember = std::shared_ptr<ModTeamMember>(std::move(ModTeamMember::parseFrom(modTeamMemberElement)).release());
+			newModTeamMember = ModTeamMember::parseFrom(modTeamMemberElement);
 
 			if(!ModTeamMember::isValid(newModTeamMember.get())) {
 				spdlog::error("Failed to parse mod team member #{}.", newModTeam->m_members.size() + 1);

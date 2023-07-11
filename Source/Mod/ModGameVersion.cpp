@@ -186,7 +186,7 @@ ModGameVersion::ModGameVersion(const ModGameVersion & m)
 	, m_converted(m.m_converted)
 	, m_parentModVersionType(nullptr) {
 	for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = m.m_files.begin(); i != m.m_files.end(); ++i) {
-		m_files.push_back(std::make_shared<ModFile>(**i));
+		m_files.emplace_back(std::make_shared<ModFile>(**i));
 	}
 
 	updateParent();
@@ -211,7 +211,7 @@ ModGameVersion & ModGameVersion::operator = (const ModGameVersion & m) {
 	m_converted = m.m_converted;
 
 	for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = m.m_files.begin(); i != m.m_files.end(); ++i) {
-		m_files.push_back(std::make_shared<ModFile>(**i));
+		m_files.emplace_back(std::make_shared<ModFile>(**i));
 	}
 
 	updateParent();
@@ -500,7 +500,7 @@ bool ModGameVersion::addFile(const ModFile & file) {
 		return false;
 	}
 
-	std::shared_ptr<ModFile> newModFile = std::make_shared<ModFile>(file);
+	std::shared_ptr<ModFile> newModFile(std::make_shared<ModFile>(file));
 	newModFile->setParentModGameVersion(this);
 
 	m_files.push_back(newModFile);
@@ -1193,7 +1193,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value
 	std::shared_ptr<ModFile> newModFile;
 
 	for(rapidjson::Value::ConstValueIterator i = modFilesValue.Begin(); i != modFilesValue.End(); ++i) {
-		newModFile = std::shared_ptr<ModFile>(ModFile::parseFrom(*i, skipFileInfoValidation).release());
+		newModFile = ModFile::parseFrom(*i, skipFileInfoValidation);
 
 		if(!ModFile::isValid(newModFile.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod file #{}.", newModGameVersion->m_files.size() + 1);
@@ -1594,7 +1594,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const tinyxml2::XMLEle
 			break;
 		}
 
-		newModFile = std::shared_ptr<ModFile>(ModFile::parseFrom(modFileElement, skipFileInfoValidation).release());
+		newModFile = ModFile::parseFrom(modFileElement, skipFileInfoValidation);
 
 		if(!ModFile::isValid(newModFile.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod file #{}.", newModGameVersion->m_files.size() + 1);

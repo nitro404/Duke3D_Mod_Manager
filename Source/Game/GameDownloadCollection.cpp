@@ -336,7 +336,7 @@ std::unique_ptr<GameDownloadCollection> GameDownloadCollection::parseFrom(const 
 			spdlog::warn("Encountered duplicate game download #{}{}.", newGameDownloadCollection->m_downloads.size() + 1, newGameDownloadCollection->numberOfDownloads() == 0 ? "" : fmt::format(" (after game download with ID '{}')", newGameDownloadCollection->getDownload(newGameDownloadCollection->numberOfDownloads() - 1)->getID()));
 		}
 
-		newGameDownloadCollection->m_downloads.push_back(std::shared_ptr<GameDownload>(newDownload.release()));
+		newGameDownloadCollection->m_downloads.emplace_back(std::move(newDownload));
 	}
 
 	return newGameDownloadCollection;

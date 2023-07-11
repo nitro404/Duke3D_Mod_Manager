@@ -610,7 +610,7 @@ std::unique_ptr<GameVersionCollection> GameVersionCollection::parseFrom(const ra
 			return nullptr;
 		}
 
-		newGameVersionCollection->m_gameVersions.push_back(std::shared_ptr<GameVersion>(newGameVersion.release()));
+		newGameVersionCollection->m_gameVersions.emplace_back(std::move(newGameVersion));
 	}
 
 	return newGameVersionCollection;

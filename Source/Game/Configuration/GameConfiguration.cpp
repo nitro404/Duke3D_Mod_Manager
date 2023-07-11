@@ -538,7 +538,7 @@ std::unique_ptr<GameConfiguration> GameConfiguration::parseFrom(const std::strin
 	std::shared_ptr<Section> section;
 
 	while(offset <= data.length()) {
-		section = std::shared_ptr<Section>(Section::parseFrom(data, offset).release());
+		section = Section::parseFrom(data, offset);
 
 		if(section == nullptr) {
 			if(offset < data.length()) {

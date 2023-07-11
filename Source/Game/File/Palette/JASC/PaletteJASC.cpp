@@ -16,7 +16,7 @@ PaletteJASC::PaletteJASC(const std::string & filePath)
 
 PaletteJASC::PaletteJASC(std::unique_ptr<ColourTable> colourTable, const std::string & version, const std::string & filePath)
 	: Palette(filePath)
-	, m_colourTable(colourTable != nullptr ? std::shared_ptr<ColourTable>(colourTable.release()) : std::make_shared<ColourTable>())
+	, m_colourTable(colourTable != nullptr ? std::move(colourTable) : std::make_shared<ColourTable>())
 	, m_version(version) {
 	updateParent();
 }

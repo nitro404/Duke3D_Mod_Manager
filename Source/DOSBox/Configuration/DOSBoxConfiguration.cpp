@@ -242,7 +242,7 @@ bool DOSBoxConfiguration::addSection(std::unique_ptr<Section> section) {
 	section->m_parent = this;
 	m_orderedSectionNames.push_back(section->getName());
 	const std::string & sectionName = section->m_name;
-	m_sections.emplace(sectionName, std::shared_ptr<Section>(section.release()));
+	m_sections.emplace(sectionName, std::move(section));
 
 	return true;
 }

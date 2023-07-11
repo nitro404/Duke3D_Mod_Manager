@@ -371,7 +371,11 @@ bool GameManagerPanel::updateGameVersionPanelName(size_t gameVersionPanelIndex) 
 
 void GameManagerPanel::updateButtons() {
 	GameVersionPanel * gameVersionPanel = getCurrentGameVersionPanel();
-	std::shared_ptr<GameVersion> gameVersion = gameVersionPanel != nullptr ? gameVersionPanel->getGameVersion() : nullptr;
+	std::shared_ptr<GameVersion> gameVersion;
+
+	if(gameVersionPanel != nullptr) {
+		gameVersion = gameVersionPanel->getGameVersion();
+	}
 
 	bool isGameVersionModified = gameVersionPanel != nullptr ? gameVersionPanel->isModified() : false;
 	bool isGameVersionInstallable = gameVersion != nullptr ? GameManager::isGameDownloadable(gameVersion->getID()) : false;
@@ -429,7 +433,7 @@ bool GameManagerPanel::newGameVersion() {
 	std::shared_ptr<GameVersion> gameVersionTemplate;
 
 	if(selectedGameVersionTemplateIndex != 0) {
-		gameVersionTemplate = std::shared_ptr<GameVersion>(GameVersion::DEFAULT_GAME_VERSIONS[selectedGameVersionTemplateIndex - 1]->createTemplateFrom().release());
+		gameVersionTemplate = GameVersion::DEFAULT_GAME_VERSIONS[selectedGameVersionTemplateIndex - 1]->createTemplateFrom();
 	}
 
 	if(!addGameVersionPanel(new GameVersionPanel(gameVersionTemplate, m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL))) {

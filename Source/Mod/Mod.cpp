@@ -1956,7 +1956,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue, bool skip
 			return nullptr;
 		}
 
-		newMod->m_team = std::shared_ptr<ModTeam>(newModTeam.release());
+		newMod->m_team = std::move(newModTeam);
 		newMod->m_team->setParentMod(newMod.get());
 	}
 
@@ -1981,7 +1981,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue, bool skip
 	std::shared_ptr<ModVersion> newModVersion;
 
 	for(rapidjson::Value::ConstValueIterator i = modVersionsValue.Begin(); i != modVersionsValue.End(); ++i) {
-		newModVersion = std::shared_ptr<ModVersion>(ModVersion::parseFrom(*i, modValue, skipFileInfoValidation).release());
+		newModVersion = ModVersion::parseFrom(*i, modValue, skipFileInfoValidation);
 
 		if(!ModVersion::isValid(newModVersion.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod version #{} for mod with ID '{}'.", newMod->m_versions.size() + 1, modID);
@@ -2019,7 +2019,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue, bool skip
 	std::shared_ptr<ModDownload> newModDownload;
 
 	for(rapidjson::Value::ConstValueIterator i = modDownloadsValue.Begin(); i != modDownloadsValue.End(); ++i) {
-		newModDownload = std::shared_ptr<ModDownload>(ModDownload::parseFrom(*i, skipFileInfoValidation).release());
+		newModDownload = ModDownload::parseFrom(*i, skipFileInfoValidation);
 
 		if(!ModDownload::isValid(newModDownload.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod download #{} for mod with ID '{}'.", newMod->m_downloads.size() + 1, modID);
@@ -2048,7 +2048,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue, bool skip
 		std::shared_ptr<ModScreenshot> newModScreenshot;
 
 		for(rapidjson::Value::ConstValueIterator i = modScreenshotsValue.Begin(); i != modScreenshotsValue.End(); ++i) {
-			newModScreenshot = std::shared_ptr<ModScreenshot>(ModScreenshot::parseFrom(*i, skipFileInfoValidation).release());
+			newModScreenshot = ModScreenshot::parseFrom(*i, skipFileInfoValidation);
 
 			if(!ModScreenshot::isValid(newModScreenshot.get(), skipFileInfoValidation)) {
 				spdlog::error("Failed to parse mod screenshot #{} for mod with ID '{}'.", newMod->m_screenshots.size() + 1, modID);
@@ -2078,7 +2078,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue, bool skip
 		std::shared_ptr<ModImage> newModImage;
 
 		for(rapidjson::Value::ConstValueIterator i = modImagesValue.Begin(); i != modImagesValue.End(); ++i) {
-			newModImage = std::shared_ptr<ModImage>(ModImage::parseFrom(*i, skipFileInfoValidation).release());
+			newModImage = ModImage::parseFrom(*i, skipFileInfoValidation);
 
 			if(!ModImage::isValid(newModImage.get(), skipFileInfoValidation)) {
 				spdlog::error("Failed to parse mod image #{} for mod with ID '{}'.", newMod->m_images.size() + 1, modID);
@@ -2108,7 +2108,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue, bool skip
 		std::shared_ptr<ModVideo> newModVideo;
 
 		for(rapidjson::Value::ConstValueIterator i = modVideosValue.Begin(); i != modVideosValue.End(); ++i) {
-			newModVideo = std::shared_ptr<ModVideo>(std::move(ModVideo::parseFrom(*i)).release());
+			newModVideo = ModVideo::parseFrom(*i);
 
 			if(!ModVideo::isValid(newModVideo.get())) {
 				spdlog::error("Failed to parse mod video #{} for mod with ID '{}'.", newMod->m_videos.size() + 1, modID);
@@ -2346,7 +2346,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement, boo
 			return nullptr;
 		}
 
-		mod->m_team = std::shared_ptr<ModTeam>(newModTeam.release());
+		mod->m_team = std::move(newModTeam);
 		mod->m_team->setParentMod(mod.get());
 	}
 
@@ -2378,7 +2378,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement, boo
 			break;
 		}
 
-		newModVersion = std::shared_ptr<ModVersion>(std::move(ModVersion::parseFrom(modVersionElement, skipFileInfoValidation)).release());
+		newModVersion = ModVersion::parseFrom(modVersionElement, skipFileInfoValidation);
 
 		if(!ModVersion::isValid(newModVersion.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod version #{} for '{}' element with ID '{}'.", mod->m_versions.size() + 1, XML_MOD_ELEMENT_NAME, modID);
@@ -2419,7 +2419,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement, boo
 			break;
 		}
 
-		newModDownload = std::shared_ptr<ModDownload>(ModDownload::parseFrom(modDownloadElement, skipFileInfoValidation).release());
+		newModDownload = ModDownload::parseFrom(modDownloadElement, skipFileInfoValidation);
 
 		if(!ModDownload::isValid(newModDownload.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod download #{} for '{}' element with ID '{}'.", mod->m_downloads.size() + 1, XML_MOD_ELEMENT_NAME, modID);
@@ -2456,7 +2456,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement, boo
 				break;
 			}
 
-			newModScreenshot = std::shared_ptr<ModScreenshot>(ModScreenshot::parseFrom(modScreenshotElement, skipFileInfoValidation).release());
+			newModScreenshot = ModScreenshot::parseFrom(modScreenshotElement, skipFileInfoValidation);
 
 			if(!ModScreenshot::isValid(newModScreenshot.get(), skipFileInfoValidation)) {
 				spdlog::error("Failed to parse mod screenshot #{} for '{}' element with ID '{}'.", mod->m_screenshots.size() + 1, XML_MOD_ELEMENT_NAME, modID);
@@ -2494,7 +2494,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement, boo
 				break;
 			}
 
-			newModImage = std::shared_ptr<ModImage>(ModImage::parseFrom(modImageElement, skipFileInfoValidation).release());
+			newModImage = ModImage::parseFrom(modImageElement, skipFileInfoValidation);
 
 			if(!ModImage::isValid(newModImage.get(), skipFileInfoValidation)) {
 				spdlog::error("Failed to parse mod image #{} for '{}' element with ID '{}'.", mod->m_images.size() + 1, XML_MOD_ELEMENT_NAME, modID);
@@ -2532,7 +2532,7 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement, boo
 				break;
 			}
 
-			newModVideo = std::shared_ptr<ModVideo>(std::move(ModVideo::parseFrom(modVideoElement)).release());
+			newModVideo = ModVideo::parseFrom(modVideoElement);
 
 			if(!ModVideo::isValid(newModVideo.get())) {
 				spdlog::error("Failed to parse mod video #{} for '{}' element with ID '{}'.", mod->m_videos.size() + 1, XML_MOD_ELEMENT_NAME, modID);

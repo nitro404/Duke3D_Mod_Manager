@@ -38,7 +38,7 @@ DOSBoxDownloadVersion::DOSBoxDownloadVersion(const DOSBoxDownloadVersion & v)
 	, m_releaseDate(v.m_releaseDate)
 	, m_parentDOSBoxDownload(nullptr) {
 	for(std::vector<std::shared_ptr<DOSBoxDownloadFile>>::const_iterator i = v.m_files.begin(); i != v.m_files.end(); ++i) {
-		m_files.push_back(std::make_shared<DOSBoxDownloadFile>(**i));
+		m_files.emplace_back(std::make_shared<DOSBoxDownloadFile>(**i));
 	}
 
 	updateParent();
@@ -63,7 +63,7 @@ DOSBoxDownloadVersion & DOSBoxDownloadVersion::operator = (const DOSBoxDownloadV
 	m_releaseDate = v.m_releaseDate;
 
 	for(std::vector<std::shared_ptr<DOSBoxDownloadFile>>::const_iterator i = v.m_files.begin(); i != v.m_files.end(); ++i) {
-		m_files.push_back(std::make_shared<DOSBoxDownloadFile>(**i));
+		m_files.emplace_back(std::make_shared<DOSBoxDownloadFile>(**i));
 	}
 
 	updateParent();
@@ -248,7 +248,7 @@ bool DOSBoxDownloadVersion::addFile(const DOSBoxDownloadFile & file) {
 		return false;
 	}
 
-	std::shared_ptr<DOSBoxDownloadFile> newFile = std::make_shared<DOSBoxDownloadFile>(file);
+	std::shared_ptr<DOSBoxDownloadFile> newFile(std::make_shared<DOSBoxDownloadFile>(file));
 	newFile->setParentDOSBoxDownloadVersion(this);
 
 	m_files.push_back(newFile);
@@ -407,7 +407,7 @@ std::unique_ptr<DOSBoxDownloadVersion> DOSBoxDownloadVersion::parseFrom(const ra
 	std::shared_ptr<DOSBoxDownloadFile> newFile;
 
 	for(rapidjson::Value::ConstValueIterator i = filesValue.Begin(); i != filesValue.End(); ++i) {
-		newFile = std::shared_ptr<DOSBoxDownloadFile>(DOSBoxDownloadFile::parseFrom(*i).release());
+		newFile = DOSBoxDownloadFile::parseFrom(*i);
 
 		if(!DOSBoxDownloadFile::isValid(newFile.get())) {
 			spdlog::error("Failed to parse mod file #{}.", newDOSBoxDownloadVersion->m_files.size() + 1);

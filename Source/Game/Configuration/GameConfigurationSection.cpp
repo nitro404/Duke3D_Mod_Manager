@@ -661,7 +661,7 @@ std::unique_ptr<GameConfiguration::Section> GameConfiguration::Section::parseFro
 			*commentsStream << comment;
 		}
 		else {
-			entry = std::shared_ptr<Entry>(Entry::parseFrom(line).release());
+			entry = Entry::parseFrom(line);
 
 			if(entry == nullptr) {
 				spdlog::warn("Failed to parse configuration entry from line: '{}' at offset {}.", line, offset - line.length());

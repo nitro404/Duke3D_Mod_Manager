@@ -527,7 +527,7 @@ std::unique_ptr<DOSBoxVersionCollection> DOSBoxVersionCollection::parseFrom(cons
 			return nullptr;
 		}
 
-		newDOSBoxVersionCollection->m_dosboxVersions.push_back(std::shared_ptr<DOSBoxVersion>(newDOSBoxVersion.release()));
+		newDOSBoxVersionCollection->m_dosboxVersions.emplace_back(std::move(newDOSBoxVersion));
 	}
 
 	return newDOSBoxVersionCollection;

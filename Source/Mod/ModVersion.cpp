@@ -290,7 +290,7 @@ bool ModVersion::addType(const ModVersionType & type) {
 		return false;
 	}
 
-	std::shared_ptr<ModVersionType> newModVersionType = std::make_shared<ModVersionType>(type);
+	std::shared_ptr<ModVersionType> newModVersionType(std::make_shared<ModVersionType>(type));
 	newModVersionType->setParentModVersion(this);
 
 	m_types.push_back(newModVersionType);
@@ -439,7 +439,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const rapidjson::Value & modVe
 	}
 
 	// initialize the mod version
-	std::unique_ptr<ModVersion> newModVersion = std::make_unique<ModVersion>();
+	std::unique_ptr<ModVersion> newModVersion(std::make_unique<ModVersion>());
 
 	// parse the mod version version property
 	if(modVersionValue.HasMember(JSON_MOD_VERSION_VERSION_PROPERTY_NAME)) {
@@ -462,7 +462,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const rapidjson::Value & modVe
 			return nullptr;
 		}
 
-		std::optional<Date> releaseDate = Date::parseFrom(modVersionReleaseDateValue.GetString());
+		std::optional<Date> releaseDate(Date::parseFrom(modVersionReleaseDateValue.GetString()));
 
 		if(releaseDate.has_value()) {
 			newModVersion->setReleaseDate(releaseDate.value());
@@ -501,7 +501,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const rapidjson::Value & modVe
 	std::shared_ptr<ModVersionType> newModVersionType;
 
 	for(rapidjson::Value::ConstValueIterator i = modVersionTypesValue.Begin(); i != modVersionTypesValue.End(); ++i) {
-		newModVersionType = std::shared_ptr<ModVersionType>(ModVersionType::parseFrom(*i, modValue, skipFileInfoValidation).release());
+		newModVersionType = ModVersionType::parseFrom(*i, modValue, skipFileInfoValidation);
 
 		if(!ModVersionType::isValid(newModVersionType.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod version type #{}.", newModVersion->m_types.size() + 1);
@@ -569,7 +569,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const tinyxml2::XMLElement * m
 	}
 
 	// initialize the mod version
-	std::unique_ptr<ModVersion> newModVersion = std::make_unique<ModVersion>(modVersionVersion == nullptr ? "" : modVersionVersion, modVersionReleaseDateOptional);
+	std::unique_ptr<ModVersion> newModVersion(std::make_unique<ModVersion>(modVersionVersion == nullptr ? "" : modVersionVersion, modVersionReleaseDateOptional));
 
 	bool error = false;
 
@@ -599,7 +599,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const tinyxml2::XMLElement * m
 			break;
 		}
 
-		newModVersionType = std::shared_ptr<ModVersionType>(ModVersionType::parseFrom(modVersionTypeElement, skipFileInfoValidation).release());
+		newModVersionType = ModVersionType::parseFrom(modVersionTypeElement, skipFileInfoValidation);
 
 		if(!ModVersionType::isValid(newModVersionType.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod version type #{}.", newModVersion->m_types.size() + 1);

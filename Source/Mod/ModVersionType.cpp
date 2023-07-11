@@ -392,7 +392,7 @@ std::unique_ptr<ModVersionType> ModVersionType::parseFrom(const rapidjson::Value
 	std::shared_ptr<ModGameVersion> newModGameVersion;
 
 	for(rapidjson::Value::ConstValueIterator i = modGameVersionsValue.Begin(); i != modGameVersionsValue.End(); ++i) {
-		newModGameVersion = std::shared_ptr<ModGameVersion>(ModGameVersion::parseFrom(*i, modValue, skipFileInfoValidation).release());
+		newModGameVersion = ModGameVersion::parseFrom(*i, modValue, skipFileInfoValidation);
 
 		if(!ModGameVersion::isValid(newModGameVersion.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod game version #{}.", newModVersionType->m_gameVersions.size() + 1);
@@ -485,7 +485,7 @@ std::unique_ptr<ModVersionType> ModVersionType::parseFrom(const tinyxml2::XMLEle
 			break;
 		}
 
-		newModGameVersion = std::shared_ptr<ModGameVersion>(ModGameVersion::parseFrom(modGameVersionElement, skipFileInfoValidation).release());
+		newModGameVersion = ModGameVersion::parseFrom(modGameVersionElement, skipFileInfoValidation);
 
 		if(!ModGameVersion::isValid(newModGameVersion.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod game version #{}.", newModVersionType->m_gameVersions.size() + 1);

@@ -116,7 +116,7 @@ bool CachedPackageFile::addCachedFile(std::unique_ptr<CachedFile> cachedFile) {
 
 	std::string cachedFileName(cachedFile->getFileName());
 
-	m_cachedFiles[cachedFileName] = std::shared_ptr<CachedFile>(cachedFile.release());
+	m_cachedFiles[cachedFileName] = std::move(cachedFile);
 
 	return true;
 }
@@ -184,7 +184,7 @@ std::unique_ptr<CachedPackageFile> CachedPackageFile::parseFrom(const rapidjson:
 	std::shared_ptr<CachedFile> newCachedFile;
 
 	for(rapidjson::Value::ConstValueIterator i = cachedPackageFileContentsValue.Begin(); i != cachedPackageFileContentsValue.End(); ++i) {
-		newCachedFile = std::shared_ptr<CachedFile>(std::move(CachedFile::parseFrom(*i)).release());
+		newCachedFile = CachedFile::parseFrom(*i);
 
 		if(!CachedFile::isValid(newCachedFile.get())) {
 			spdlog::error("Failed to parse cached package file cached file #{}.", newCachedPackageFile->m_cachedFiles.size() + 1);

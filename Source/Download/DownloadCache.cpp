@@ -328,7 +328,7 @@ std::unique_ptr<DownloadCache> DownloadCache::parseFrom(const rapidjson::Value &
 	if(downloadCacheValue.HasMember(JSON_DOWNLOAD_CACHE_MOD_LIST_PROPERTY_NAME)) {
 		const rapidjson::Value & modListValue = downloadCacheValue[JSON_DOWNLOAD_CACHE_MOD_LIST_PROPERTY_NAME];
 
-		newDownloadCache->m_cachedModListFile = std::shared_ptr<CachedFile>(std::move(CachedFile::parseFrom(modListValue)).release());
+		newDownloadCache->m_cachedModListFile = CachedFile::parseFrom(modListValue);
 
 		if(!CachedFile::isValid(newDownloadCache->m_cachedModListFile.get())) {
 			spdlog::error("Failed to parse download cache mod list cached file.");
@@ -372,7 +372,7 @@ std::unique_ptr<DownloadCache> DownloadCache::parseFrom(const rapidjson::Value &
 
 			std::string cachedPackageFileName(newCachedPackageFile->getFileName());
 
-			newDownloadCache->m_cachedPackageFiles[cachedPackageFileName] = std::shared_ptr<CachedPackageFile>(newCachedPackageFile.release());
+			newDownloadCache->m_cachedPackageFiles[cachedPackageFileName] = std::move(newCachedPackageFile);
 		}
 	}
 

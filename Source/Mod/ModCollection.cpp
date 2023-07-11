@@ -432,7 +432,7 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const rapidjson::Value &
 			return nullptr;
 		}
 
-		newModCollection->m_mods.push_back(std::shared_ptr<Mod>(newMod.release()));
+		newModCollection->m_mods.emplace_back(std::move(newMod));
 	}
 
 	return newModCollection;
@@ -520,7 +520,7 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const tinyxml2::XMLEleme
 			return nullptr;
 		}
 
-		modCollection->m_mods.push_back(std::shared_ptr<Mod>(newMod.release()));
+		modCollection->m_mods.emplace_back(std::move(newMod));
 
 		modElement = modElement->NextSiblingElement();
 	}

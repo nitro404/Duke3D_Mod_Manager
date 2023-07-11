@@ -77,13 +77,13 @@ PaletteDAT::PaletteDAT(Type type, const std::string & filePath)
 PaletteDAT::PaletteDAT(std::unique_ptr<ColourTable> colourTable, std::vector<std::unique_ptr<ShadeTable>> shadeTables, std::unique_ptr<TranslucencyTable> translucencyTable, std::unique_ptr<ByteBuffer> trailingData, const std::string & filePath)
 	: Palette(filePath)
 	, m_type(Type::Palette)
-	, m_colourTables({ colourTable != nullptr ? std::shared_ptr<ColourTable>(colourTable.release()) : std::make_shared<ColourTable>() })
+	, m_colourTables({ colourTable != nullptr ? std::move(colourTable) : std::make_shared<ColourTable>() })
 	, m_translucencyTable(std::move(translucencyTable))
 	, m_trailingData(trailingData != nullptr ? std::move(trailingData) : std::make_unique<ByteBuffer>()) {
 	m_shadeTables.reserve(shadeTables.size());
 
 	for(std::unique_ptr<ShadeTable> & shadeTable : shadeTables) {
-		m_shadeTables.emplace_back(std::shared_ptr<ShadeTable>(shadeTable.release()));
+		m_shadeTables.emplace_back(std::move(shadeTable));
 	}
 }
 
@@ -95,11 +95,11 @@ PaletteDAT::PaletteDAT(std::vector<std::unique_ptr<ColourTable>> colourTables, s
 	m_swapTables.reserve(swapTables.size());
 
 	for(std::unique_ptr<ColourTable> & colourTable : colourTables) {
-		m_colourTables.emplace_back(std::shared_ptr<ColourTable>(colourTable.release()));
+		m_colourTables.emplace_back(std::move(colourTable));
 	}
 
 	for(std::unique_ptr<SwapTable> & swapTable : swapTables) {
-		m_swapTables.emplace_back(std::shared_ptr<SwapTable>(swapTable.release()));
+		m_swapTables.emplace_back(std::move(swapTable));
 	}
 }
 
@@ -204,7 +204,7 @@ bool PaletteDAT::addShadeTable(std::unique_ptr<ShadeTable> shadeTable) {
 		return false;
 	}
 
-	m_shadeTables.emplace_back(std::shared_ptr<ShadeTable>(shadeTable.release()));
+	m_shadeTables.emplace_back(std::move(shadeTable));
 
 	return true;
 }
@@ -218,10 +218,10 @@ bool PaletteDAT::insertShadeRable(size_t index, std::unique_ptr<ShadeTable> shad
 		return false;
 	}
 	else if(index == m_shadeTables.size()) {
-		m_shadeTables.emplace_back(std::shared_ptr<ShadeTable>(shadeTable.release()));
+		m_shadeTables.emplace_back(std::move(shadeTable));
 	}
 	else {
-		m_shadeTables.emplace(m_shadeTables.begin() + index, std::shared_ptr<ShadeTable>(shadeTable.release()));
+		m_shadeTables.emplace(m_shadeTables.begin() + index, std::move(shadeTable));
 	}
 
 	return true;
@@ -246,7 +246,7 @@ bool PaletteDAT::replaceShadeRable(size_t index, std::unique_ptr<ShadeTable> sha
 		return false;
 	}
 
-	m_shadeTables[index] = std::shared_ptr<ShadeTable>(shadeTable.release());
+	m_shadeTables[index] = std::move(shadeTable);
 
 	return true;
 }
@@ -342,7 +342,7 @@ bool PaletteDAT::addSwapTable(std::unique_ptr<SwapTable> swapTable) {
 		return false;
 	}
 
-	m_swapTables.emplace_back(std::shared_ptr<SwapTable>(swapTable.release()));
+	m_swapTables.emplace_back(std::move(swapTable));
 
 	return true;
 }
@@ -362,10 +362,10 @@ bool PaletteDAT::insertSwapRable(size_t index, std::unique_ptr<SwapTable> swapTa
 		return false;
 	}
 	else if(index == m_swapTables.size()) {
-		m_swapTables.emplace_back(std::shared_ptr<SwapTable>(swapTable.release()));
+		m_swapTables.emplace_back(std::move(swapTable));
 	}
 	else {
-		m_swapTables.emplace(m_swapTables.begin() + index, std::shared_ptr<SwapTable>(swapTable.release()));
+		m_swapTables.emplace(m_swapTables.begin() + index, std::move(swapTable));
 	}
 
 	return true;
@@ -390,7 +390,7 @@ bool PaletteDAT::replaceSwapRable(size_t index, std::unique_ptr<SwapTable> swapT
 		return false;
 	}
 
-	m_swapTables[index] = std::shared_ptr<SwapTable>(swapTable.release());
+	m_swapTables[index] = std::move(swapTable);
 
 	return true;
 }

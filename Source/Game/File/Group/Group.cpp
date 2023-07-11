@@ -20,7 +20,7 @@ Group::Group(std::vector<std::unique_ptr<GroupFile>> files, const std::string & 
 	m_files.reserve(files.size());
 
 	for(std::unique_ptr<GroupFile> & file : files) {
-		m_files.push_back(std::shared_ptr<GroupFile>(file.release()));
+		m_files.emplace_back(std::move(file));
 	}
 
 	updateParent();
@@ -327,7 +327,7 @@ bool Group::addFile(std::unique_ptr<GroupFile> file, bool replace) {
 	size_t fileIndex = indexOfFileWithName(file->getFileName());
 
 	if(fileIndex == std::numeric_limits<size_t>::max()) {
-		m_files.emplace_back(file.release());
+		m_files.emplace_back(std::move(file));
 		m_files.back()->m_parentGroup = this;
 		m_fileConnections.push_back(m_files.back()->modified.connect(std::bind(&Group::onGroupFileModified, this, std::placeholders::_1)));
 
@@ -337,7 +337,7 @@ bool Group::addFile(std::unique_ptr<GroupFile> file, bool replace) {
 	}
 	else {
 		if(replace) {
-			m_files[fileIndex] = std::shared_ptr<GroupFile>(file.release());
+			m_files[fileIndex] = std::move(file);
 			m_files[fileIndex]->m_parentGroup = this;
 			m_fileConnections[fileIndex].disconnect();
 			m_fileConnections[fileIndex] = m_files[fileIndex]->modified.connect(std::bind(&Group::onGroupFileModified, this, std::placeholders::_1));

@@ -229,7 +229,7 @@ bool DOSBoxConfiguration::Section::addEntry(std::unique_ptr<Entry> newEntry) {
 	m_orderedEntryNames.push_back(newEntry->m_name);
 	newEntry->m_parent = this;
 	const std::string & entryName = newEntry->m_name;
-	m_entries.emplace(entryName, std::shared_ptr<Entry>(newEntry.release()));
+	m_entries.emplace(entryName, std::move(newEntry));
 
 	return true;
 }

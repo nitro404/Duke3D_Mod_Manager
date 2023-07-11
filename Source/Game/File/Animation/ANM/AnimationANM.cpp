@@ -55,7 +55,7 @@ AnimationANM::AnimationANM(uint16_t maximumNumberOfLargePages, uint32_t numberOf
 	, m_numberOfFramesPerSecond(numberOfFramesPerSecond)
 	, m_headerFillerData(std::move(headerFillerData))
 	, m_colourCycles(colourCycles != nullptr ? std::move(colourCycles) : std::make_unique<ColourCycleInfoData>())
-	, m_colourTable(colourTable != nullptr ? std::shared_ptr<ColourTable>(colourTable.release()) : std::make_shared<ColourTable>(Colour::INVISIBLE))
+	, m_colourTable(colourTable != nullptr ? std::move(colourTable) : std::make_shared<ColourTable>(Colour::INVISIBLE))
 	, m_colourFlags(colourFlags != nullptr ? std::move(colourFlags) : std::make_unique<ColourFlagsData>())
 	, m_largePageDescriptors(largePageDescriptors != nullptr ? std::move(largePageDescriptors) : std::make_unique<LargePageDescriptorData>())
 	, m_largePageData(largePageData != nullptr ? std::move(largePageData) : std::make_unique<ByteBuffer>()) {
