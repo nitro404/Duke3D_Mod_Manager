@@ -1,6 +1,6 @@
 #include "LogSinkWX.h"
 
-#include "../WXUtilities.h"
+#include "../../WXUtilities.h"
 
 #include <Logging/LogSystem.h>
 

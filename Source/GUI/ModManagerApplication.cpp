@@ -1,6 +1,6 @@
 #include "ModManagerApplication.h"
 
-#include "Logging/LogSinkWX.h"
+#include "Console/Logging/LogSinkWX.h"
 #include "Manager/SettingsManager.h"
 #include "Project.h"
 #include "WXUtilities.h"

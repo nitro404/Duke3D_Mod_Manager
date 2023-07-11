@@ -1,5 +1,7 @@
 #include "SettingsManagerPanel.h"
 
+#include "../SettingPanel.h"
+#include "../WXUtilities.h"
 #include "DOSBox/DOSBoxVersion.h"
 #include "DOSBox/DOSBoxVersionCollection.h"
 #include "Game/GameVersion.h"
@@ -7,8 +9,6 @@
 #include "Manager/ModManager.h"
 #include "Manager/SettingsManager.h"
 #include "Project.h"
-#include "SettingPanel.h"
-#include "WXUtilities.h"
 
 #include <Logging/LogSystem.h>
 

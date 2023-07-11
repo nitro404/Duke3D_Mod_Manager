@@ -1,9 +1,9 @@
 #include "RelatedModsPanel.h"
 
+#include "../../WXUtilities.h"
 #include "Manager/SettingsManager.h"
 #include "Mod/Mod.h"
 #include "Mod/ModCollection.h"
-#include "WXUtilities.h"
 
 #include <Analytics/Segment/SegmentAnalytics.h>
 

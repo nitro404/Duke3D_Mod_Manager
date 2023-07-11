@@ -1,12 +1,11 @@
 #include "ModDownloadPanel.h"
 
+#include "../../WXUtilities.h"
 #include "Game/GameVersion.h"
 #include "Manager/SettingsManager.h"
 #include "Mod/Mod.h"
 #include "Mod/ModDownload.h"
 #include "Mod/ModVersion.h"
-
-#include "WXUtilities.h"
 
 #include <Analytics/Segment/SegmentAnalytics.h>
 #include <Utilities/FileUtilities.h>

@@ -1,7 +1,7 @@
 #ifndef _GROUP_INFO_PANEL_H_
 #define _GROUP_INFO_PANEL_H_
 
-#include "SunstormInteractiveMetadataPanel.h"
+#include "SSI/SunstormInteractiveMetadataPanel.h"
 
 #include <boost/signals2.hpp>
 #include <wx/wxprec.h>

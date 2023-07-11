@@ -1,8 +1,11 @@
 #include "ModBrowserPanel.h"
 
+#include "../ProcessRunningDialog.h"
+#include "../WXUtilities.h"
 #include "Download/DownloadManager.h"
 #include "Game/GameVersion.h"
 #include "Game/GameVersionCollection.h"
+#include "Info/ModInfoPanel.h"
 #include "Manager/ModManager.h"
 #include "Manager/ModMatch.h"
 #include "Mod/FavouriteModCollection.h"
@@ -16,9 +19,6 @@
 #include "Mod/ModVersion.h"
 #include "Mod/ModVersionType.h"
 #include "Mod/StandAloneModCollection.h"
-#include "ModInfoPanel.h"
-#include "ProcessRunningDialog.h"
-#include "WXUtilities.h"
 
 #include <Utilities/FileUtilities.h>
 #include <Utilities/StringUtilities.h>

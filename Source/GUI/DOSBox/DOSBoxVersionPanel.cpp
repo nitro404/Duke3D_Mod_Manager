@@ -1,10 +1,10 @@
 #include "DOSBoxVersionPanel.h"
 
+#include "../SettingPanel.h"
+#include "../WXUtilities.h"
 #include "DOSBox/DOSBoxVersion.h"
 #include "DOSBox/DOSBoxVersionCollection.h"
 #include "Project.h"
-#include "SettingPanel.h"
-#include "WXUtilities.h"
 
 #include <boost/signals2.hpp>
 #include <fmt/core.h>

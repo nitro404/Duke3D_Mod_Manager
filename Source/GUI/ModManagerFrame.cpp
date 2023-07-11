@@ -1,14 +1,14 @@
 #include "ModManagerFrame.h"
 
-#include "ConsolePanel.h"
-#include "DOSBoxManagerPanel.h"
-#include "GameManagerPanel.h"
-#include "GroupEditorPanel.h"
+#include "Console/ConsolePanel.h"
+#include "DOSBox/DOSBoxManagerPanel.h"
+#include "Game/GameManagerPanel.h"
+#include "Group/GroupEditorPanel.h"
 #include "Manager/SettingsManager.h"
-#include "ModBrowserPanel.h"
+#include "Mod/ModBrowserPanel.h"
 #include "Project.h"
-#include "ReleaseNotesPanel.h"
-#include "SettingsManagerPanel.h"
+#include "Releases/ReleaseNotesPanel.h"
+#include "Settings/SettingsManagerPanel.h"
 #include "WXUtilities.h"
 
 #include <Analytics/Segment/SegmentAnalytics.h>

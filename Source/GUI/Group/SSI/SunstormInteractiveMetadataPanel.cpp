@@ -1,6 +1,6 @@
 #include "SunstormInteractiveMetadataPanel.h"
 
-#include "WXUtilities.h"
+#include "../../WXUtilities.h"
 
 #include <Utilities/StringUtilities.h>
 

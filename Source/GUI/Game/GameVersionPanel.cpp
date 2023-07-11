@@ -1,17 +1,17 @@
 #include "GameVersionPanel.h"
 
+#include "../SettingPanel.h"
 #include "Game/GameVersion.h"
 #include "Game/GameVersionCollection.h"
 #include "GameVersionPanel.h"
 #include "Project.h"
-#include "SettingPanel.h"
 
 #include <fmt/core.h>
 #include <spdlog/spdlog.h>
 #include <wx/gbsizer.h>
 #include <wx/wrapsizer.h>
 
-#include "WXUtilities.h"
+#include "../WXUtilities.h"
 
 #include <sstream>
 

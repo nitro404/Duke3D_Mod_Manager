@@ -1,5 +1,6 @@
 #include "ModInfoPanel.h"
 
+#include "../../WXUtilities.h"
 #include "Manager/SettingsManager.h"
 #include "ModDownloadsPanel.h"
 #include "ModTeamMembersPanel.h"
@@ -10,7 +11,6 @@
 #include "RelatedModsPanel.h"
 #include "SimilarModsPanel.h"
 #include "Game/GameVersionCollection.h"
-#include "WXUtilities.h"
 
 #include <Analytics/Segment/SegmentAnalytics.h>
 

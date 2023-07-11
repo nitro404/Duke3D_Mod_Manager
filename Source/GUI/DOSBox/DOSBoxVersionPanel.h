@@ -1,7 +1,7 @@
 #ifndef _DOSBOX_VERSION_PANEL_H_
 #define _DOSBOX_VERSION_PANEL_H_
 
-#include "SettingPanel.h"
+#include "../SettingPanel.h"
 
 #include <boost/signals2.hpp>
 #include <wx/wxprec.h>

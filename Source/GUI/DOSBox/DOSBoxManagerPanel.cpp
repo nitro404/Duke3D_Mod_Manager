@@ -1,9 +1,9 @@
 #include "DOSBoxManagerPanel.h"
 
+#include "../SettingPanel.h"
+#include "../WXUtilities.h"
 #include "DOSBox/DOSBoxManager.h"
 #include "Manager/SettingsManager.h"
-#include "SettingPanel.h"
-#include "WXUtilities.h"
 
 #include <Analytics/Segment/SegmentAnalytics.h>
 #include <Network/HTTPRequest.h>

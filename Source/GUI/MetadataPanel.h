@@ -1,5 +1,5 @@
-#ifndef _FILE_INFO_PANEL_H_
-#define _FILE_INFO_PANEL_H_
+#ifndef _METADATA_PANEL_H_
+#define _METADATA_PANEL_H_
 
 #include <ByteBuffer.h>
 
@@ -30,4 +30,4 @@ private:
 	const MetadataPanel & operator = (const MetadataPanel &) = delete;
 };
 
-#endif // _FILE_INFO_PANEL_H_
+#endif // _METADATA_PANEL_H_

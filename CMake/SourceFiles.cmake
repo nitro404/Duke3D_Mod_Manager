@@ -185,60 +185,60 @@ set(MAIN_SOURCE_FILES_WINDOWS
 )
 
 set(GUI_SOURCE_FILES
-	GUI/ConsolePanel.h
-	GUI/ConsolePanel.cpp
-	GUI/DOSBoxManagerPanel.h
-	GUI/DOSBoxManagerPanel.cpp
-	GUI/DOSBoxSettingsPanel.h
-	GUI/DOSBoxSettingsPanel.cpp
-	GUI/DOSBoxVersionPanel.h
-	GUI/DOSBoxVersionPanel.cpp
-	GUI/GameManagerPanel.h
-	GUI/GameManagerPanel.cpp
-	GUI/GameVersionPanel.h
-	GUI/GameVersionPanel.cpp
-	GUI/GroupEditorPanel.h
-	GUI/GroupEditorPanel.cpp
-	GUI/GroupPanel.h
-	GUI/GroupPanel.cpp
-	GUI/Logging/CustomLogTextControl.h
-	GUI/Logging/CustomLogTextControl.cpp
-	GUI/Logging/LogSinkWX.h
-	GUI/Logging/LogSinkWX.cpp
-	GUI/Logging/PreformattedLogFormatter.h
-	GUI/Logging/PreformattedLogFormatter.cpp
+	GUI/Console/ConsolePanel.h
+	GUI/Console/ConsolePanel.cpp
+	GUI/Console/Logging/CustomLogTextControl.h
+	GUI/Console/Logging/CustomLogTextControl.cpp
+	GUI/Console/Logging/LogSinkWX.h
+	GUI/Console/Logging/LogSinkWX.cpp
+	GUI/Console/Logging/PreformattedLogFormatter.h
+	GUI/Console/Logging/PreformattedLogFormatter.cpp
+	GUI/DOSBox/DOSBoxManagerPanel.h
+	GUI/DOSBox/DOSBoxManagerPanel.cpp
+	GUI/DOSBox/DOSBoxSettingsPanel.h
+	GUI/DOSBox/DOSBoxSettingsPanel.cpp
+	GUI/DOSBox/DOSBoxVersionPanel.h
+	GUI/DOSBox/DOSBoxVersionPanel.cpp
+	GUI/Game/GameManagerPanel.h
+	GUI/Game/GameManagerPanel.cpp
+	GUI/Game/GameVersionPanel.h
+	GUI/Game/GameVersionPanel.cpp
+	GUI/Group/GroupEditorPanel.h
+	GUI/Group/GroupEditorPanel.cpp
+	GUI/Group/GroupPanel.h
+	GUI/Group/GroupPanel.cpp
+	GUI/Group/SSI/SunstormInteractiveMetadataPanel.h
+	GUI/Group/SSI/SunstormInteractiveMetadataPanel.cpp
+	GUI/Mod/ModBrowserPanel.h
+	GUI/Mod/ModBrowserPanel.cpp
+	GUI/Mod/Info/ModDownloadPanel.h
+	GUI/Mod/Info/ModDownloadPanel.cpp
+	GUI/Mod/Info/ModDownloadsPanel.h
+	GUI/Mod/Info/ModDownloadsPanel.cpp
+	GUI/Mod/Info/ModInfoPanel.h
+	GUI/Mod/Info/ModInfoPanel.cpp
+	GUI/Mod/Info/ModTeamMemberPanel.h
+	GUI/Mod/Info/ModTeamMemberPanel.cpp
+	GUI/Mod/Info/ModTeamMembersPanel.h
+	GUI/Mod/Info/ModTeamMembersPanel.cpp
+	GUI/Mod/Info/RelatedModsPanel.h
+	GUI/Mod/Info/RelatedModsPanel.cpp
+	GUI/Mod/Info/SimilarModsPanel.h
+	GUI/Mod/Info/SimilarModsPanel.cpp
+	GUI/Releases/ReleaseNotesPanel.h
+	GUI/Releases/ReleaseNotesPanel.cpp
+	GUI/Settings/SettingsManagerPanel.h
+	GUI/Settings/SettingsManagerPanel.cpp
 	GUI/MetadataPanel.h
 	GUI/MetadataPanel.cpp
-	GUI/ModBrowserPanel.h
-	GUI/ModBrowserPanel.cpp
-	GUI/ModDownloadPanel.h
-	GUI/ModDownloadPanel.cpp
-	GUI/ModDownloadsPanel.h
-	GUI/ModDownloadsPanel.cpp
-	GUI/ModInfoPanel.h
-	GUI/ModInfoPanel.cpp
 	GUI/ModManagerApplication.h
 	GUI/ModManagerApplication.cpp
 	GUI/ModManagerFrame.h
 	GUI/ModManagerFrame.cpp
-	GUI/ModTeamMemberPanel.h
-	GUI/ModTeamMemberPanel.cpp
-	GUI/ModTeamMembersPanel.h
-	GUI/ModTeamMembersPanel.cpp
 	GUI/ProcessRunningDialog.h
 	GUI/ProcessRunningDialog.cpp
-	GUI/RelatedModsPanel.h
-	GUI/RelatedModsPanel.cpp
-	GUI/SimilarModsPanel.h
-	GUI/SimilarModsPanel.cpp
-	GUI/ReleaseNotesPanel.h
-	GUI/ReleaseNotesPanel.cpp
 	GUI/SettingPanel.h
 	GUI/SettingPanel.cpp
-	GUI/SettingsManagerPanel.h
-	GUI/SettingsManagerPanel.cpp
-	GUI/SunstormInteractiveMetadataPanel.h
-	GUI/SunstormInteractiveMetadataPanel.cpp
 	GUI/WXUtilities.h
 	GUI/WXUtilities.cpp
 )

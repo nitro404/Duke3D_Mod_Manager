@@ -1,9 +1,9 @@
 #include "GroupEditorPanel.h"
 
+#include "../WXUtilities.h"
 #include "Game/File/Group/GRP/GroupGRP.h"
 #include "Game/File/Group/SSI/GroupSSI.h"
 #include "Manager/SettingsManager.h"
-#include "WXUtilities.h"
 
 #include <Analytics/Segment/SegmentAnalytics.h>
 #include <Signal/SignalConnectionGroup.h>

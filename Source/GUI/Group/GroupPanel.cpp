@@ -1,12 +1,12 @@
 #include "GroupPanel.h"
 
+#include "../MetadataPanel.h"
+#include "../WXUtilities.h"
 #include "Game/File/GameFile.h"
 #include "Game/File/GameFileFactoryRegistry.h"
 #include "Game/File/Group/Group.h"
 #include "Game/File/Group/GroupFile.h"
 #include "Game/File/Group/SSI/GroupSSI.h"
-#include "MetadataPanel.h"
-#include "WXUtilities.h"
 
 #include <Utilities/FileUtilities.h>
 

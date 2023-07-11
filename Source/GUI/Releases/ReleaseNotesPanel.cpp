@@ -1,8 +1,7 @@
 #include "ReleaseNotesPanel.h"
 
+#include "../WXUtilities.h"
 #include "Project.h"
-
-#include "WXUtilities.h"
 
 #include <Analytics/Segment/SegmentAnalytics.h>
 #include <Date.h>

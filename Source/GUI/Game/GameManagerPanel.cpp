@@ -1,11 +1,11 @@
 #include "GameManagerPanel.h"
 
+#include "../SettingPanel.h"
+#include "../WXUtilities.h"
 #include "Game/GameManager.h"
 #include "Game/GameVersionCollection.h"
 #include "GameVersionPanel.h"
 #include "Manager/SettingsManager.h"
-#include "SettingPanel.h"
-#include "WXUtilities.h"
 
 #include <Analytics/Segment/SegmentAnalytics.h>
 #include <Network/HTTPRequest.h>

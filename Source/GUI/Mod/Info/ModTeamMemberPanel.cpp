@@ -1,8 +1,8 @@
 #include "ModTeamMemberPanel.h"
 
+#include "../../WXUtilities.h"
 #include "Manager/SettingsManager.h"
 #include "Mod/ModTeamMember.h"
-#include "WXUtilities.h"
 
 #include <Analytics/Segment/SegmentAnalytics.h>
 

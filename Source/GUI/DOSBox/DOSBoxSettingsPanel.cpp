@@ -1,9 +1,9 @@
 #include "DOSBoxSettingsPanel.h"
 
+#include "../SettingPanel.h"
 #include "DOSBox/DOSBoxManager.h"
 #include "DOSBox/DOSBoxVersionCollection.h"
 #include "Manager/SettingsManager.h"
-#include "SettingPanel.h"
 
 #include <wx/wrapsizer.h>
 
