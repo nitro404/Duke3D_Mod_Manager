@@ -17,11 +17,15 @@ public:
 
 	size_t numberOfComments() const;
 	bool hasComment(std::string_view comment) const;
+	bool containsComments(const std::vector<std::string> & comments) const;
+	bool containsComments(const CommentCollection & comments) const;
 	size_t firstIndexOfComment(std::string_view comment) const;
 	size_t lastIndexOfComment(std::string_view comment) const;
 	const std::string & getComment(size_t index) const;
 	const std::vector<std::string> & getComments() const;
 	void addComment(std::string_view comment);
+	void addComments(const std::vector<std::string> & comments);
+	void addComments(const CommentCollection & comments);
 	bool replaceComment(size_t index, std::string_view newComment);
 	bool replaceFirstInstanceOfComment(std::string_view oldComment, std::string_view newComment);
 	bool replaceLastInstanceOfComment(std::string_view oldComment, std::string_view newComment);
@@ -30,6 +34,7 @@ public:
 	bool removeFirstInstanceOfComment(std::string_view comment);
 	bool removeLastInstanceOfComment(std::string_view comment);
 	void clearComments();
+	void mergeWith(const CommentCollection & comments);
 
 	bool operator == (const CommentCollection & comments) const;
 	bool operator != (const CommentCollection & comments) const;

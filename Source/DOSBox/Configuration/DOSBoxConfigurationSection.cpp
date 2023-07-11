@@ -92,6 +92,29 @@ bool DOSBoxConfiguration::Section::remove() {
 	return m_parent->removeSection(*this);
 }
 
+bool DOSBoxConfiguration::Section::mergeWith(const Section & section) {
+	if(!isValid(true) || !section.isValid(true)) {
+		return false;
+	}
+
+	CommentCollection::mergeWith(section);
+
+	for(const auto & currentEntry : section.m_entries) {
+		std::shared_ptr<Entry> existingEntry(getEntryWithName(currentEntry.second->m_name));
+
+		if(existingEntry != nullptr) {
+			existingEntry->setValue(currentEntry.second->getValue());
+		}
+		else {
+			if(!addEntry(std::make_unique<Entry>(*currentEntry.second))) {
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
 const DOSBoxConfiguration * DOSBoxConfiguration::Section::getParentConfiguration() const {
 	return m_parent;
 }

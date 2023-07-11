@@ -98,6 +98,7 @@ public:
 		const std::string & getName() const;
 		bool setName(const std::string & newName);
 		bool remove();
+		bool mergeWith(const Section & section);
 		const DOSBoxConfiguration * getParentConfiguration() const;
 
 		size_t numberOfEntries() const;
@@ -171,6 +172,7 @@ public:
 	void removeStyle(Style style);
 	NewlineType getNewlineType() const;
 	void setNewlineType(NewlineType newlineType);
+	bool mergeWith(const DOSBoxConfiguration & configuration);
 
 	size_t numberOfSections() const;
 	bool hasSection(const Section & section) const;

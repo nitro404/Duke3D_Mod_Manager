@@ -143,6 +143,31 @@ void DOSBoxConfiguration::setNewlineType(NewlineType newlineType) {
 	m_newlineType = newlineType;
 }
 
+bool DOSBoxConfiguration::mergeWith(const DOSBoxConfiguration & configuration) {
+	if(!isValid(true) || !configuration.isValid(true)) {
+		return false;
+	}
+
+	CommentCollection::mergeWith(configuration);
+
+	for(const auto & currentSection : configuration.m_sections) {
+		std::shared_ptr<Section> existingSection(getSectionWithName(currentSection.second->m_name));
+
+		if(existingSection != nullptr) {
+			if(!existingSection->mergeWith(*currentSection.second)) {
+				return false;
+			}
+		}
+		else {
+			if(!addSection(std::make_unique<Section>(*currentSection.second))) {
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
 bool DOSBoxConfiguration::hasSection(const Section & section) const {
 	if(!section.isValid(false)) {
 		return false;

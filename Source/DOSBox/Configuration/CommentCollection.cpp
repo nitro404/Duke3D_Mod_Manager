@@ -38,6 +38,30 @@ bool CommentCollection::hasComment(std::string_view comment) const {
 	return firstIndexOfComment(comment) != std::numeric_limits<size_t>::max();
 }
 
+bool CommentCollection::containsComments(const std::vector<std::string> & comments) const {
+	if(comments.empty() || m_comments.size() < comments.size()) {
+		return false;
+	}
+
+	size_t firstCommentIndex = firstIndexOfComment(comments.front());
+
+	if(firstCommentIndex == std::numeric_limits<size_t>::max() || firstCommentIndex + comments.size() - 1 >= m_comments.size()) {
+		return false;
+	}
+
+	for(size_t i = 1; i < comments.size(); i++) {
+		if(!Utilities::areStringsEqual(m_comments[firstCommentIndex + i], comments[i])) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool CommentCollection::containsComments(const CommentCollection & comments) const {
+	return containsComments(comments.m_comments);
+}
+
 size_t CommentCollection::firstIndexOfComment(std::string_view comment) const {
 	std::vector<std::string>::const_iterator commentIterator(std::find(m_comments.cbegin(), m_comments.cend(), comment));
 
@@ -72,6 +96,16 @@ const std::vector<std::string> & CommentCollection::getComments() const {
 
 void CommentCollection::addComment(std::string_view comment) {
 	m_comments.push_back(std::string(comment));
+}
+
+void CommentCollection::addComments(const std::vector<std::string> & comments) {
+	for(const std::string & comment : comments) {
+		addComment(comment);
+	}
+}
+
+void CommentCollection::addComments(const CommentCollection & comments) {
+	return addComments(comments.m_comments);
 }
 
 bool CommentCollection::replaceComment(size_t index, std::string_view newComment) {
@@ -122,6 +156,14 @@ bool CommentCollection::removeLastInstanceOfComment(std::string_view comment) {
 
 void CommentCollection::clearComments() {
 	m_comments.clear();
+}
+
+void CommentCollection::mergeWith(const CommentCollection & comments) {
+	if(containsComments(comments)) {
+		return;
+	}
+
+	addComments(comments);
 }
 
 bool CommentCollection::operator == (const CommentCollection & comments) const {
