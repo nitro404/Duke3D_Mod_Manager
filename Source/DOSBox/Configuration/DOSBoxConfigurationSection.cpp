@@ -1,5 +1,6 @@
 #include "DOSBoxConfiguration.h"
 
+#include <Utilities/FileUtilities.h>
 #include <Utilities/StringUtilities.h>
 
 #include <spdlog/spdlog.h>
@@ -412,23 +413,25 @@ std::unique_ptr<DOSBoxConfiguration::Section> DOSBoxConfiguration::Section::read
 	return section;
 }
 
-bool DOSBoxConfiguration::Section::writeTo(ByteBuffer & data, const Style & style) const {
+bool DOSBoxConfiguration::Section::writeTo(ByteBuffer & data, Style style, const std::string & newline) const {
 	if(!isValid(false)) {
 		return false;
 	}
 
-	if(!data.writeLine(fmt::format("{}{}{}", Section::NAME_START_CHARACTER, m_name, Section::NAME_END_CHARACTER))) {
+	const std::string & actualNewline = newline.empty() ? Utilities::newLine : newline;
+
+	if(!data.writeLine(fmt::format("{}{}{}", Section::NAME_START_CHARACTER, m_name, Section::NAME_END_CHARACTER), actualNewline)) {
 		return false;
 	}
 
 	for(const std::string & comment : m_comments) {
-		if(!data.writeLine(fmt::format("{}{}{}", COMMENT_CHARACTER, comment.empty() ? "" : " ", comment))) {
+		if(!data.writeLine(fmt::format("{}{}{}", COMMENT_CHARACTER, comment.empty() ? "" : " ", comment), actualNewline)) {
 			return false;
 		}
 	}
 
 	if(!m_comments.empty() && Any(style & Style::NewlineAfterSectionComments)) {
-		if(!data.writeLine(Utilities::emptyString)) {
+		if(!data.writeLine(Utilities::emptyString, actualNewline)) {
 			return false;
 		}
 	}
@@ -448,13 +451,13 @@ bool DOSBoxConfiguration::Section::writeTo(ByteBuffer & data, const Style & styl
 			return false;
 		}
 
-		if(!entryIterator->second->writeTo(data, style, maxEntryNameLength)) {
+		if(!entryIterator->second->writeTo(data, style, maxEntryNameLength, actualNewline)) {
 			return false;
 		}
 	}
 
 	if(m_entries.empty() && Utilities::areStringsEqual(m_name, AUTOEXEC_SECTION_NAME)) {
-		if(!data.writeLine(Utilities::emptyString)) {
+		if(!data.writeLine(Utilities::emptyString, actualNewline)) {
 			return false;
 		}
 	}

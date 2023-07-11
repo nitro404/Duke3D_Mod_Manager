@@ -1,5 +1,6 @@
 #include "DOSBoxConfiguration.h"
 
+#include <Utilities/FileUtilities.h>
 #include <Utilities/StringUtilities.h>
 
 #include <fmt/core.h>
@@ -105,10 +106,12 @@ std::unique_ptr<DOSBoxConfiguration::Section::Entry> DOSBoxConfiguration::Sectio
 	return std::make_unique<Entry>(Utilities::trimString(name), Utilities::trimString(value));
 }
 
-bool DOSBoxConfiguration::Section::Entry::writeTo(ByteBuffer & data, const Style & style, size_t maxLength) const {
+bool DOSBoxConfiguration::Section::Entry::writeTo(ByteBuffer & data, Style style, size_t maxLength, const std::string & newline) const {
 	if(!isValid(false)) {
 		return false;
 	}
+
+	const std::string & actualNewline = newline.empty() ? Utilities::newLine : newline;
 
 	std::stringstream entryStream;
 	bool whitespaceAfterEntryNames = Any(style & Style::WhitespaceAfterEntryNames);
@@ -127,7 +130,7 @@ bool DOSBoxConfiguration::Section::Entry::writeTo(ByteBuffer & data, const Style
 
 	entryStream << m_value;
 
-	return data.writeLine(entryStream.str());
+	return data.writeLine(entryStream.str(), actualNewline);
 }
 
 bool DOSBoxConfiguration::Section::Entry::isValid(bool validateParents) const {

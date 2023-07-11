@@ -10,11 +10,13 @@
 DOSBoxConfiguration::DOSBoxConfiguration(const std::string & filePath)
 	: CommentCollection()
 	, m_style(Style::None)
+	, m_newlineType(Utilities::newLine[0] == '\r' ? NewlineType::Windows : NewlineType::Unix)
 	, m_filePath(filePath) { }
 
 DOSBoxConfiguration::DOSBoxConfiguration(DOSBoxConfiguration && configuration) noexcept
 	: CommentCollection(std::move(configuration))
 	, m_style(configuration.m_style)
+	, m_newlineType(configuration.m_newlineType)
 	, m_sections(std::move(configuration.m_sections))
 	, m_orderedSectionNames(std::move(configuration.m_orderedSectionNames))
 	, m_filePath(std::move(configuration.m_filePath)) {
@@ -24,6 +26,7 @@ DOSBoxConfiguration::DOSBoxConfiguration(DOSBoxConfiguration && configuration) n
 DOSBoxConfiguration::DOSBoxConfiguration(const DOSBoxConfiguration & configuration)
 	: CommentCollection(configuration)
 	, m_style(configuration.m_style)
+	, m_newlineType(configuration.m_newlineType)
 	, m_orderedSectionNames(configuration.m_orderedSectionNames)
 	, m_filePath(configuration.m_filePath) {
 	clearSections();
@@ -40,6 +43,7 @@ DOSBoxConfiguration & DOSBoxConfiguration::operator = (DOSBoxConfiguration && co
 		CommentCollection::operator = (std::move(configuration));
 
 		m_style = configuration.m_style;
+		m_newlineType = configuration.m_newlineType;
 		m_sections = std::move(configuration.m_sections);
 		m_orderedSectionNames = std::move(configuration.m_orderedSectionNames);
 		m_filePath = std::move(configuration.m_filePath);
@@ -56,6 +60,7 @@ DOSBoxConfiguration & DOSBoxConfiguration::operator = (const DOSBoxConfiguration
 	clearSections();
 
 	m_style = configuration.m_style;
+	m_newlineType = configuration.m_newlineType;
 	m_orderedSectionNames = configuration.m_orderedSectionNames;
 	m_filePath = configuration.m_filePath;
 
@@ -128,6 +133,14 @@ void DOSBoxConfiguration::removeStyle(Style style) {
 
 size_t DOSBoxConfiguration::numberOfSections() const {
 	return m_sections.size();
+}
+
+DOSBoxConfiguration::NewlineType DOSBoxConfiguration::getNewlineType() const {
+	return m_newlineType;
+}
+
+void DOSBoxConfiguration::setNewlineType(NewlineType newlineType) {
+	m_newlineType = newlineType;
 }
 
 bool DOSBoxConfiguration::hasSection(const Section & section) const {
@@ -611,8 +624,33 @@ std::unique_ptr<DOSBoxConfiguration> DOSBoxConfiguration::readFrom(const ByteBuf
 	bool error = false;
 	Style sectionStyle = Style::None;
 	size_t previousReadOffset = 0;
+	size_t newlineOffset = 0;
+	uint8_t currentByte = 0;
 	std::string line;
 	std::unique_ptr<DOSBoxConfiguration> configuration(std::make_unique<DOSBoxConfiguration>());
+
+	while(newlineOffset < data.getSize()) {
+		currentByte = data.getUnsignedByte(newlineOffset++, &error);
+
+		if(error) {
+			break;
+		}
+
+		if(currentByte == '\r') {
+			spdlog::trace("Detected Windows style newlines in DOSBox configuration data.");
+
+			configuration->setNewlineType(NewlineType::Windows);\
+
+			break;
+		}
+		else if(currentByte == '\n') {
+			spdlog::trace("Detected Unix style newlines in DOSBox configuration data.");
+
+			configuration->setNewlineType(NewlineType::Unix);
+
+			break;
+		}
+	}
 
 	while(data.hasMoreLines()) {
 		previousReadOffset = data.getReadOffset();
@@ -655,36 +693,52 @@ std::unique_ptr<DOSBoxConfiguration> DOSBoxConfiguration::readFrom(const ByteBuf
 	return configuration;
 }
 
-bool DOSBoxConfiguration::writeTo(ByteBuffer & data, const Style * styleOverride) const {
+bool DOSBoxConfiguration::writeTo(ByteBuffer & data, std::optional<Style> styleOverride, std::optional<NewlineType> newlineTypeOverride) const {
 	if(!isValid(false)) {
 		return false;
 	}
 
-	const Style * style = styleOverride != nullptr ? styleOverride : &m_style;
+	Style style = styleOverride.has_value() ? styleOverride.value() : m_style;
+
+	NewlineType newlineType = newlineTypeOverride.has_value() ? newlineTypeOverride.value() : m_newlineType;
+
+	std::string newline;
+
+	switch(newlineType) {
+		case NewlineType::Unix: {
+			newline = "\n";
+			break;
+		}
+
+		case NewlineType::Windows: {
+			newline = "\r\n";
+			break;
+		}
+	}
 
 	if(!m_comments.empty()) {
 		for(const std::string & comment : m_comments) {
-			if(!data.writeLine(fmt::format("{}{}{}", COMMENT_CHARACTER, comment.empty() ? "" : " ", comment))) {
+			if(!data.writeLine(fmt::format("{}{}{}", COMMENT_CHARACTER, comment.empty() ? "" : " ", comment), newline)) {
 				return false;
 			}
 		}
 
 		if(!m_sections.empty() &&
-		   !data.writeLine(Utilities::emptyString)) {
+		   !data.writeLine(Utilities::emptyString, newline)) {
 			return false;
 		}
 	}
 
 	for(std::vector<std::string>::const_iterator sectionNameIterator = m_orderedSectionNames.cbegin(); sectionNameIterator != m_orderedSectionNames.cend(); ++sectionNameIterator) {
 		if(sectionNameIterator != m_orderedSectionNames.cbegin() &&
-		   !data.writeLine(Utilities::emptyString)) {
+		   !data.writeLine(Utilities::emptyString, newline)) {
 			return false;
 		}
 
 		SectionMap::const_iterator sectionIterator(m_sections.find(*sectionNameIterator));
 
 		if(sectionIterator == m_sections.cend() ||
-		   !sectionIterator->second->writeTo(data, *style)) {
+		   !sectionIterator->second->writeTo(data, style, newline)) {
 			return false;
 		}
 	}

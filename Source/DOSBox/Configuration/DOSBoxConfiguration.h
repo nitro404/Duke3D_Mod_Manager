@@ -8,6 +8,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <string>
 #include <map>
 #include <vector>
@@ -20,6 +21,11 @@ public:
 		NewlineAfterSectionComments = 1 << 1,
 		All = WhitespaceAfterEntryNames | NewlineAfterSectionComments,
 		Default = NewlineAfterSectionComments
+	};
+
+	enum class NewlineType : uint8_t {
+		Unix,
+		Windows
 	};
 
 	class Section;
@@ -62,7 +68,7 @@ public:
 			const DOSBoxConfiguration * getParentConfiguration() const;
 
 			static std::unique_ptr<Entry> parseFrom(std::string_view data, Style * style = nullptr);
-			bool writeTo(ByteBuffer & data, const Style & style, size_t maxLength = 0) const;
+			bool writeTo(ByteBuffer & data, Style style, size_t maxLength = 0, const std::string & newline = {}) const;
 
 			bool isValid(bool validateParents = true) const;
 			static bool isValid(const Entry * entry, bool validateParents = true);
@@ -121,7 +127,7 @@ public:
 		void clearEntries();
 
 		static std::unique_ptr<Section> readFrom(const ByteBuffer & data, Style * style = nullptr);
-		bool writeTo(ByteBuffer & data, const Style & style) const;
+		bool writeTo(ByteBuffer & data, Style style, const std::string & newline = {}) const;
 
 		bool isValid(bool validateParents = true) const;
 		static bool isValid(const Section * section, bool validateParents = true);
@@ -163,6 +169,8 @@ public:
 	void setStyle(Style style);
 	void addStyle(Style style);
 	void removeStyle(Style style);
+	NewlineType getNewlineType() const;
+	void setNewlineType(NewlineType newlineType);
 
 	size_t numberOfSections() const;
 	bool hasSection(const Section & section) const;
@@ -214,7 +222,7 @@ public:
 	void clearSections();
 
 	static std::unique_ptr<DOSBoxConfiguration> readFrom(const ByteBuffer & data);
-	bool writeTo(ByteBuffer & data, const Style * styleOverride = nullptr) const;
+	bool writeTo(ByteBuffer & data, std::optional<Style> styleOverride = {}, std::optional<NewlineType> newlineTypeOverride = {}) const;
 
 	static std::unique_ptr<DOSBoxConfiguration> loadFrom(const std::string & filePath);
 	bool save(bool overwrite = true, bool createParentDirectories = true) const;
@@ -232,6 +240,7 @@ private:
 	void updateParent(bool recursive = true);
 
 	Style m_style;
+	NewlineType m_newlineType;
 	SectionMap m_sections;
 	std::vector<std::string> m_orderedSectionNames;
 	std::string m_filePath;
