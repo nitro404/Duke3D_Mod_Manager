@@ -53,7 +53,7 @@ ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember
 		if(teamMember->hasEmail()) {
 			wxStaticText * emailLabel = new wxStaticText(detailsPanel, wxID_ANY, "Email:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 			emailLabel->SetFont(emailLabel->GetFont().MakeBold());
-			wxGenericHyperlinkCtrl * emailHyperlink = WXUtilities::createHyperlink(detailsPanel, wxID_ANY, teamMember->getEmail(), "mailto:" + teamMember->getEmail(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member E-Mail");
+			wxGenericHyperlinkCtrl * emailHyperlink = WXUtilities::createHyperlink(detailsPanel, wxID_ANY, wxString::FromUTF8(teamMember->getEmail()), "mailto:" + teamMember->getEmail(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member E-Mail");
 			emailHyperlink->Bind(wxEVT_HYPERLINK, &ModTeamMemberPanel::onModTeamMemberEmailHyperlinkClicked, this);
 
 			detailsPanelSizer->Add(emailLabel, 1, wxEXPAND | wxALL);
@@ -63,7 +63,7 @@ ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember
 		if(teamMember->hasTwitter()) {
 			wxStaticText * twitterLabel = new wxStaticText(detailsPanel, wxID_ANY, "Twitter:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 			twitterLabel->SetFont(twitterLabel->GetFont().MakeBold());
-			wxGenericHyperlinkCtrl * twitterHyperlink = WXUtilities::createHyperlink(detailsPanel, wxID_ANY, teamMember->getTwitter(), "https://twitter.com/" + teamMember->getTwitter(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member Twitter");
+			wxGenericHyperlinkCtrl * twitterHyperlink = WXUtilities::createHyperlink(detailsPanel, wxID_ANY, wxString::FromUTF8(teamMember->getTwitter()), "https://twitter.com/" + teamMember->getTwitter(), wxDefaultPosition, wxDefaultSize, wxBORDER_NONE | wxHL_ALIGN_LEFT | wxHL_CONTEXTMENU, "Team Member Twitter");
 			twitterHyperlink->Bind(wxEVT_HYPERLINK, &ModTeamMemberPanel::onModTeamMemberTwitterHyperlinkClicked, this);
 
 			detailsPanelSizer->Add(twitterLabel, 1, wxEXPAND | wxALL);
@@ -113,7 +113,7 @@ ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember
 		if(teamMember->hasDiscord()) {
 			wxStaticText * discordLabel = new wxStaticText(detailsPanel, wxID_ANY, "Discord:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 			discordLabel->SetFont(discordLabel->GetFont().MakeBold());
-			wxStaticText * discordText = new wxStaticText(detailsPanel, wxID_ANY, teamMember->getDiscord(), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Team Member Discord");
+			wxStaticText * discordText = new wxStaticText(detailsPanel, wxID_ANY, wxString::FromUTF8(teamMember->getDiscord()), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Team Member Discord");
 
 			detailsPanelSizer->Add(discordLabel, 1, wxEXPAND | wxALL);
 			detailsPanelSizer->Add(discordText, 1, wxEXPAND | wxALL);
