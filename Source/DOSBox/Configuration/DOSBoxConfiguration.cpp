@@ -246,6 +246,34 @@ std::shared_ptr<DOSBoxConfiguration::Section> DOSBoxConfiguration::getSection(co
 	return sharedSection;
 }
 
+const DOSBoxConfiguration::SectionMap & DOSBoxConfiguration::getUnorderedSections() const {
+	return m_sections;
+}
+
+std::vector<std::shared_ptr<DOSBoxConfiguration::Section>> DOSBoxConfiguration::getOrderedSections() const {
+	if(!isValid(true)) {
+		return {};
+	}
+
+	std::vector<std::shared_ptr<Section>> orderedSections;
+
+	for(const std::string & sectionName : m_orderedSectionNames) {
+		SectionMap::const_iterator sectionIterator(m_sections.find(sectionName));
+
+		if(sectionIterator == m_sections.cend()) {
+			continue;
+		}
+
+		orderedSections.push_back(sectionIterator->second);
+	}
+
+	return orderedSections;
+}
+
+const std::vector<std::string> & DOSBoxConfiguration::getOrderedSectionNames() const {
+	return m_orderedSectionNames;
+}
+
 std::shared_ptr<DOSBoxConfiguration::Section> DOSBoxConfiguration::getSectionWithName(const std::string & sectionName) const {
 	if(!Section::isNameValid(sectionName)) {
 		return nullptr;

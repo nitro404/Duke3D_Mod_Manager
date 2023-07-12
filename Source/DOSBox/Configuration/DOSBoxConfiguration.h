@@ -109,6 +109,9 @@ public:
 		std::shared_ptr<Entry> getEntry(size_t entryIndex) const;
 		std::shared_ptr<Entry> getEntry(const Entry & entry) const;
 		std::shared_ptr<Entry> getEntryWithName(const std::string & entryName) const;
+		const EntryMap & getUnorderedEntries() const;
+		std::vector<std::shared_ptr<Entry>> getOrderedEntries() const;
+		const std::vector<std::string> & getOrderedEntryNames() const;
 		bool setEntryName(size_t entryIndex, const std::string & newEntryName);
 		bool setEntryName(const std::string & oldEntryName, const std::string & newEntryName);
 		bool setEntryName(Entry & entry, const std::string & newEntryName);
@@ -182,6 +185,9 @@ public:
 	std::shared_ptr<Section> getSection(size_t sectionIndex) const;
 	std::shared_ptr<Section> getSection(const Section & section) const;
 	std::shared_ptr<Section> getSectionWithName(const std::string & sectionName) const;
+	const SectionMap & getUnorderedSections() const;
+	std::vector<std::shared_ptr<Section>> getOrderedSections() const;
+	const std::vector<std::string> & getOrderedSectionNames() const;
 	bool setSectionName(size_t sectionIndex, const std::string & newSectionName);
 	bool setSectionName(const std::string & oldSectionName, const std::string & newSectionName);
 	bool setSectionName(Section & section, const std::string & newSectionName);

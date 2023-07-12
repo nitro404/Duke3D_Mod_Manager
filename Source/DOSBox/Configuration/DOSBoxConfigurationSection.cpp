@@ -217,6 +217,30 @@ std::shared_ptr<DOSBoxConfiguration::Section::Entry> DOSBoxConfiguration::Sectio
 	return entryIterator->second;
 }
 
+const DOSBoxConfiguration::Section::EntryMap & DOSBoxConfiguration::Section::getUnorderedEntries() const {
+	return m_entries;
+}
+
+std::vector<std::shared_ptr<DOSBoxConfiguration::Section::Entry>> DOSBoxConfiguration::Section::getOrderedEntries() const {
+	std::vector<std::shared_ptr<Entry>> orderedEntries;
+
+	for(const std::string & entryName : m_orderedEntryNames) {
+		EntryMap::const_iterator entryIterator(m_entries.find(entryName));
+
+		if(entryIterator == m_entries.cend()) {
+			continue;
+		}
+
+		orderedEntries.push_back(entryIterator->second);
+	}
+
+	return orderedEntries;
+}
+
+const std::vector<std::string> & DOSBoxConfiguration::Section::getOrderedEntryNames() const {
+	return m_orderedEntryNames;
+}
+
 bool DOSBoxConfiguration::Section::setEntryName(size_t entryIndex, const std::string & newEntryName) {
 	if(entryIndex >= m_entries.size() || !Entry::isNameValid(newEntryName) || hasEntryWithName(newEntryName)) {
 		return false;
