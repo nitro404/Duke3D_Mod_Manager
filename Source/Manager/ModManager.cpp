@@ -357,11 +357,11 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 		}
 	}
 
-	if(!notifyInitializationProgress("Creating DOSBox Template Script Files")) {
+	if(!notifyInitializationProgress("Creating DOSBox Command Script Files")) {
 		return false;
 	}
 
-	createDOSBoxTemplateScriptFiles();
+	createDOSBoxTemplateCommandScriptFiles();
 
 	if(!notifyInitializationProgress("Locating Existing Duke Nukem 3D Game Installations")) {
 		return false;
@@ -3518,11 +3518,10 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 
 		scriptArgs.addArgument("COMMAND", executableName + command.str());
 
-		std::string dosboxDataDirectoryPath(Utilities::joinPaths(settings->dataDirectoryPath, settings->dosboxDataDirectoryName));
-		std::string dosboxTemplateScriptFilePath(Utilities::joinPaths(dosboxDataDirectoryPath, getDOSBoxTemplateScriptFileName(m_gameType)));
+		std::string dosboxTemplateScriptFilePath(getDOSBoxCommandScriptFilePath(m_gameType));
 
 		if(!dosboxScript.readFrom(dosboxTemplateScriptFilePath)) {
-			spdlog::error("Failed to load DOSBox template script file: '{}'.", dosboxTemplateScriptFilePath);
+			spdlog::error("Failed to load DOSBox command script file: '{}'.", dosboxTemplateScriptFilePath);
 			return {};
 		}
 
@@ -5149,17 +5148,17 @@ std::vector<std::string> ModManager::renameFilesWithSuffixTo(const std::string &
 	return originalRenamedFilePaths;
 }
 
-size_t ModManager::createDOSBoxTemplateScriptFiles(bool overwrite) {
+size_t ModManager::createDOSBoxTemplateCommandScriptFiles(bool overwrite) {
 	SettingsManager* settings = SettingsManager::getInstance();
 
-	return createDOSBoxTemplateScriptFiles(Utilities::joinPaths(settings->dataDirectoryPath, settings->dosboxDataDirectoryName), overwrite);
+	return createDOSBoxTemplateCommandScriptFiles(Utilities::joinPaths(settings->dataDirectoryPath, settings->dosboxDataDirectoryName, settings->dosboxCommandScriptsDirectoryName), overwrite);
 }
 
-size_t ModManager::createDOSBoxTemplateScriptFiles(const std::string & directoryPath, bool overwrite) {
+size_t ModManager::createDOSBoxTemplateCommandScriptFiles(const std::string & directoryPath, bool overwrite) {
 	size_t numberOfDOSBoxTemplateScriptFilesCreated = 0;
 
 	for(GameType gameType : magic_enum::enum_values<GameType>()) {
-		if(createDOSBoxTemplateScriptFile(gameType, directoryPath, overwrite)) {
+		if(createDOSBoxTemplateCommandScriptFile(gameType, directoryPath, overwrite)) {
 			numberOfDOSBoxTemplateScriptFilesCreated++;
 		}
 	}
@@ -5167,7 +5166,7 @@ size_t ModManager::createDOSBoxTemplateScriptFiles(const std::string & directory
 	return numberOfDOSBoxTemplateScriptFilesCreated;
 }
 
-bool ModManager::createDOSBoxTemplateScriptFile(GameType gameType, const std::string & directoryPath, bool overwrite) {
+bool ModManager::createDOSBoxTemplateCommandScriptFile(GameType gameType, const std::string & directoryPath, bool overwrite) {
 	if(!directoryPath.empty()) {
 		std::filesystem::path outputDirectoryPath(directoryPath);
 
@@ -5176,21 +5175,21 @@ bool ModManager::createDOSBoxTemplateScriptFile(GameType gameType, const std::st
 			std::filesystem::create_directories(outputDirectoryPath, errorCode);
 
 			if(errorCode) {
-				spdlog::error("Cannot create '{}' DOSBox template script file, output directory '{}' creation failed: {}", magic_enum::enum_name(gameType), directoryPath, errorCode.message());
+				spdlog::error("Cannot create '{}' DOSBox template command script file, output directory '{}' creation failed: {}", magic_enum::enum_name(gameType), directoryPath, errorCode.message());
 				return false;
 			}
 		}
 	}
 
-	std::string templateScriptFileName(getDOSBoxTemplateScriptFileName(gameType));
+	std::string templateScriptFileName(getDOSBoxCommandScriptFileName(gameType));
 	std::string templateScriptFilePath(Utilities::joinPaths(directoryPath, templateScriptFileName));
 
 	if(std::filesystem::is_regular_file(std::filesystem::path(templateScriptFilePath)) && !overwrite) {
-		spdlog::debug("'{}' DOSBox template script already exists at '{}', specify overwrite to replace.", magic_enum::enum_name(gameType), templateScriptFilePath);
+		spdlog::debug("'{}' DOSBox template command script already exists at '{}', specify overwrite to replace.", magic_enum::enum_name(gameType), templateScriptFilePath);
 		return false;
 	}
 
-	std::string templateScriptFileData(generateDOSBoxTemplateScriptFileData(gameType));
+	std::string templateCommandScriptFileData(generateDOSBoxTemplateCommandScriptFileData(gameType));
 
 	std::ofstream fileStream(templateScriptFilePath);
 
@@ -5198,20 +5197,26 @@ bool ModManager::createDOSBoxTemplateScriptFile(GameType gameType, const std::st
 		return false;
 	}
 
-	fileStream.write(reinterpret_cast<const char *>(templateScriptFileData.data()), templateScriptFileData.size());
+	fileStream.write(reinterpret_cast<const char *>(templateCommandScriptFileData.data()), templateCommandScriptFileData.size());
 
 	fileStream.close();
 
-	spdlog::info("Created '{}' DOSBox template file script '{}' in directory '{}'.", magic_enum::enum_name(gameType), templateScriptFileName, directoryPath);
+	spdlog::info("Created '{}' DOSBox template command file script '{}' in directory '{}'.", magic_enum::enum_name(gameType), templateScriptFileName, directoryPath);
 
 	return true;
 }
 
-std::string ModManager::getDOSBoxTemplateScriptFileName(GameType gameType) {
-	return Utilities::toLowerCase(magic_enum::enum_name(gameType)) + ".conf.in";
+std::string ModManager::getDOSBoxCommandScriptFileName(GameType gameType) {
+	return Utilities::toLowerCase(magic_enum::enum_name(gameType)) + ".cmd.in";
 }
 
-std::string ModManager::generateDOSBoxTemplateScriptFileData(GameType gameType) {
+std::string ModManager::getDOSBoxCommandScriptFilePath(GameType gameType) {
+	SettingsManager * settings = SettingsManager::getInstance();
+
+	return Utilities::joinPaths(settings->dataDirectoryPath, settings->dosboxDataDirectoryName, settings->dosboxCommandScriptsDirectoryName, getDOSBoxCommandScriptFileName(gameType));
+}
+
+std::string ModManager::generateDOSBoxTemplateCommandScriptFileData(GameType gameType) {
 	std::stringstream templateStream;
 
 	templateStream << "MOUNT C \":GAMEPATH:\"" << std::endl;

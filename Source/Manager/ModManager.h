@@ -194,11 +194,12 @@ private:
 	void onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion);
 	void onGameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection);
 	void onGameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion);
-	static size_t createDOSBoxTemplateScriptFiles(bool overwrite = false);
-	static size_t createDOSBoxTemplateScriptFiles(const std::string & directoryPath, bool overwrite = false);
-	static bool createDOSBoxTemplateScriptFile(GameType gameType, const std::string & directoryPath, bool overwrite = false);
-	static std::string getDOSBoxTemplateScriptFileName(GameType gameType);
-	static std::string generateDOSBoxTemplateScriptFileData(GameType gameType);
+	static size_t createDOSBoxTemplateCommandScriptFiles(bool overwrite = false);
+	static size_t createDOSBoxTemplateCommandScriptFiles(const std::string & directoryPath, bool overwrite = false);
+	static bool createDOSBoxTemplateCommandScriptFile(GameType gameType, const std::string & directoryPath, bool overwrite = false);
+	static std::string getDOSBoxCommandScriptFileName(GameType gameType);
+	static std::string getDOSBoxCommandScriptFilePath(GameType gameType);
+	static std::string generateDOSBoxTemplateCommandScriptFileData(GameType gameType);
 	static void displayArgumentHelp();
 
 	std::atomic<bool> m_initialized;
