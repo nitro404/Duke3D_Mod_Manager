@@ -3548,12 +3548,12 @@ std::string ModManager::generateDOSBoxCommand(const Script & script, const Scrip
 		command << " -noconsole";
 	}
 
-	if(!dosboxArguments.empty()) {
-		command << " " << dosboxArguments;
-	}
-
 	if(dosboxVersion.hasLaunchArguments()) {
 		command << " " << dosboxVersion.getLaunchArguments();
+	}
+
+	if(!dosboxArguments.empty()) {
+		command << " " << dosboxArguments;
 	}
 
 	std::string line;
