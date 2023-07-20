@@ -116,7 +116,7 @@ DOSBoxConfiguration::Style DOSBoxConfiguration::getStyle() const {
 }
 
 bool DOSBoxConfiguration::hasStyle(Style style) const {
-	return Any(m_style & style);
+	return (m_style & style) == style;
 }
 
 void DOSBoxConfiguration::setStyle(Style style) {
