@@ -80,6 +80,7 @@ static constexpr const char * DOSBOX_SHOW_CONSOLE_PROPERTY_NAME = "showConsole";
 static constexpr const char * DOSBOX_AUTO_EXIT_PROPERTY_NAME = "autoExit";
 static constexpr const char * DOSBOX_DATA_DIRECTORY_NAME_PROPERTY_NAME = DATA_DIRECTORY_NAME;
 static constexpr const char * DOSBOX_COMMAND_SCRIPTS_DIRECTORY_NAME_PROPERTY_NAME = "commandScriptsDirectoryName";
+static constexpr const char * DOSBOX_CONFIGURATIONS_DIRECTORY_NAME_PROPERTY_NAME = "configurationsDirectoryName";
 
 static constexpr const char * DOSBOX_NETWORKING_CATEGORY_NAME = "networking";
 static constexpr const char * DOSBOX_SERVER_IP_ADDRESS_PROPERTY_NAME = "serverIPAddress";
@@ -168,6 +169,7 @@ const bool SettingsManager::DEFAULT_DOSBOX_SHOW_CONSOLE = false;
 const bool SettingsManager::DEFAULT_DOSBOX_AUTO_EXIT = true;
 const std::string SettingsManager::DEFAULT_DOSBOX_DATA_DIRECTORY_NAME("DOSBox");
 const std::string SettingsManager::DEFAULT_DOSBOX_COMMAND_SCRIPTS_DIRECTORY_NAME("Command Scripts");
+const std::string SettingsManager::DEFAULT_DOSBOX_CONFIGURATIONS_DIRECTORY_NAME("Configurations");
 const GameType SettingsManager::DEFAULT_GAME_TYPE = ModManager::DEFAULT_GAME_TYPE;
 const std::string SettingsManager::DEFAULT_PREFERRED_GAME_VERSION_ID(ModManager::DEFAULT_PREFERRED_GAME_VERSION_ID);
 const std::string SettingsManager::DEFAULT_DOSBOX_VERSIONS_LIST_FILE_PATH("DOSBox Versions.json");
@@ -335,6 +337,7 @@ SettingsManager::SettingsManager()
 	, dosboxAutoExit(DEFAULT_DOSBOX_AUTO_EXIT)
 	, dosboxDataDirectoryName(DEFAULT_DOSBOX_DATA_DIRECTORY_NAME)
 	, dosboxCommandScriptsDirectoryName(DEFAULT_DOSBOX_COMMAND_SCRIPTS_DIRECTORY_NAME)
+	, dosboxConfigurationsDirectoryName(DEFAULT_DOSBOX_CONFIGURATIONS_DIRECTORY_NAME)
 	, dosboxServerIPAddress(DEFAULT_DOSBOX_SERVER_IP_ADDRESS)
 	, gameType(DEFAULT_GAME_TYPE)
 	, preferredGameVersionID(DEFAULT_PREFERRED_GAME_VERSION_ID)
@@ -404,6 +407,7 @@ void SettingsManager::reset() {
 	dosboxAutoExit = DEFAULT_DOSBOX_AUTO_EXIT;
 	dosboxDataDirectoryName = DEFAULT_DOSBOX_DATA_DIRECTORY_NAME;
 	dosboxCommandScriptsDirectoryName = DEFAULT_DOSBOX_COMMAND_SCRIPTS_DIRECTORY_NAME;
+	dosboxConfigurationsDirectoryName = DEFAULT_DOSBOX_CONFIGURATIONS_DIRECTORY_NAME;
 	dosboxServerIPAddress = DEFAULT_DOSBOX_SERVER_IP_ADDRESS;
 	gameType = DEFAULT_GAME_TYPE;
 	preferredGameVersionID = DEFAULT_PREFERRED_GAME_VERSION_ID;
@@ -560,9 +564,10 @@ rapidjson::Document SettingsManager::toJSON() const {
 
 	rapidjson::Value dosboxDataDirectroryNameValue(dosboxDataDirectoryName.c_str(), allocator);
 	dosboxCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_DATA_DIRECTORY_NAME_PROPERTY_NAME), dosboxDataDirectroryNameValue, allocator);
-
 	rapidjson::Value dosboxCommandScriptsDirectroryNameValue(dosboxCommandScriptsDirectoryName.c_str(), allocator);
 	dosboxCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_COMMAND_SCRIPTS_DIRECTORY_NAME_PROPERTY_NAME), dosboxCommandScriptsDirectroryNameValue, allocator);
+	rapidjson::Value dosboxConfigurationsDirectroryNameValue(dosboxConfigurationsDirectoryName.c_str(), allocator);
+	dosboxCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_CONFIGURATIONS_DIRECTORY_NAME_PROPERTY_NAME), dosboxConfigurationsDirectroryNameValue, allocator);
 
 	rapidjson::Value dosboxNetworkingCategoryValue(rapidjson::kObjectType);
 
@@ -823,6 +828,7 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 		assignBooleanSetting(dosboxAutoExit, dosboxCategoryValue, DOSBOX_AUTO_EXIT_PROPERTY_NAME);
 		assignStringSetting(dosboxDataDirectoryName, dosboxCategoryValue, DOSBOX_DATA_DIRECTORY_NAME_PROPERTY_NAME);
 		assignStringSetting(dosboxCommandScriptsDirectoryName, dosboxCategoryValue, DOSBOX_COMMAND_SCRIPTS_DIRECTORY_NAME_PROPERTY_NAME);
+		assignStringSetting(dosboxConfigurationsDirectoryName, dosboxCategoryValue, DOSBOX_CONFIGURATIONS_DIRECTORY_NAME_PROPERTY_NAME);
 
 		if(dosboxCategoryValue.HasMember(DOSBOX_NETWORKING_CATEGORY_NAME) && dosboxCategoryValue[DOSBOX_NETWORKING_CATEGORY_NAME].IsObject()) {
 			const rapidjson::Value & dosboxNetworkingCategoryValue = dosboxCategoryValue[DOSBOX_NETWORKING_CATEGORY_NAME];

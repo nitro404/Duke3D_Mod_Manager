@@ -64,6 +64,7 @@ public:
 	static const bool DEFAULT_DOSBOX_AUTO_EXIT;
 	static const std::string DEFAULT_DOSBOX_DATA_DIRECTORY_NAME;
 	static const std::string DEFAULT_DOSBOX_COMMAND_SCRIPTS_DIRECTORY_NAME;
+	static const std::string DEFAULT_DOSBOX_CONFIGURATIONS_DIRECTORY_NAME;
 	static const GameType DEFAULT_GAME_TYPE;
 	static const std::string DEFAULT_PREFERRED_GAME_VERSION_ID;
 	static const std::string DEFAULT_DOSBOX_VERSIONS_LIST_FILE_PATH;
@@ -130,6 +131,7 @@ public:
 	bool dosboxAutoExit;
 	std::string dosboxDataDirectoryName;
 	std::string dosboxCommandScriptsDirectoryName;
+	std::string dosboxConfigurationsDirectoryName;
 	GameType gameType;
 	std::string preferredGameVersionID;
 	std::string dosboxVersionsListFilePath;
