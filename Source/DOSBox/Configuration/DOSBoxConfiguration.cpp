@@ -163,6 +163,14 @@ void DOSBoxConfiguration::setNewlineType(NewlineType newlineType) {
 	m_newlineType = newlineType;
 }
 
+bool DOSBoxConfiguration::isEmpty() const {
+	return m_sections.empty();
+}
+
+bool DOSBoxConfiguration::isNotEmpty() const {
+	return !m_sections.empty();
+}
+
 bool DOSBoxConfiguration::mergeWith(const DOSBoxConfiguration & configuration) {
 	if(!isValid(true) || !configuration.isValid(true)) {
 		return false;

@@ -175,6 +175,8 @@ public:
 	void removeStyle(Style style);
 	NewlineType getNewlineType() const;
 	void setNewlineType(NewlineType newlineType);
+	bool isEmpty() const;
+	bool isNotEmpty() const;
 	bool mergeWith(const DOSBoxConfiguration & configuration);
 
 	size_t numberOfSections() const;
