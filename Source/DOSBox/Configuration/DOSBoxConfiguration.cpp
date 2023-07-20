@@ -135,6 +135,26 @@ size_t DOSBoxConfiguration::numberOfSections() const {
 	return m_sections.size();
 }
 
+size_t DOSBoxConfiguration::totalNumberOfEntries() const {
+	size_t totalEntryCount = 0;
+
+	for(const auto & section : m_sections) {
+		totalEntryCount += section.second->numberOfEntries();
+	}
+
+	return totalEntryCount;
+}
+
+size_t DOSBoxConfiguration::totalNumberOfComments() const {
+	size_t totalCommentCount = m_comments.size();
+
+	for(const auto & section : m_sections) {
+		totalCommentCount += section.second->numberOfComments();
+	}
+
+	return totalCommentCount;
+}
+
 DOSBoxConfiguration::NewlineType DOSBoxConfiguration::getNewlineType() const {
 	return m_newlineType;
 }

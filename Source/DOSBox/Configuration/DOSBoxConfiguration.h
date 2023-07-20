@@ -178,6 +178,8 @@ public:
 	bool mergeWith(const DOSBoxConfiguration & configuration);
 
 	size_t numberOfSections() const;
+	size_t totalNumberOfEntries() const;
+	size_t totalNumberOfComments() const;
 	bool hasSection(const Section & section) const;
 	bool hasSectionWithName(const std::string & sectionName) const;
 	size_t indexOfSection(const Section & section) const;
