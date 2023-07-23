@@ -98,6 +98,8 @@ public:
 		const std::string & getName() const;
 		bool setName(const std::string & newName);
 		bool remove();
+		bool isEmpty() const;
+		bool isNotEmpty() const;
 		bool mergeWith(const Section & section);
 		const DOSBoxConfiguration * getParentConfiguration() const;
 
@@ -115,8 +117,12 @@ public:
 		bool setEntryName(size_t entryIndex, const std::string & newEntryName);
 		bool setEntryName(const std::string & oldEntryName, const std::string & newEntryName);
 		bool setEntryName(Entry & entry, const std::string & newEntryName);
-		bool addEntry(std::unique_ptr<Entry> entry);
-		bool addEntry(const Entry & entry);
+		bool setEntryValue(size_t entryIndex, const std::string & newEntryValue);
+		bool setEntryValue(const std::string & entryName, const std::string & newEntryValue);
+		bool setEntryValue(Entry & entry, const std::string & newEntryValue);
+		bool addEntry(std::unique_ptr<Entry> newEntry);
+		bool addEntry(const Entry & newEntry);
+		bool addEntry(const std::string & newEntryName, const std::string & newEntryValue);
 		bool replaceEntry(size_t entryIndex, std::unique_ptr<Entry> newEntry);
 		bool replaceEntry(const Entry & oldEntry, std::unique_ptr<Entry> newEntry);
 		bool replaceEntryWithName(const std::string & oldEntryName, std::unique_ptr<Entry> newEntry);
@@ -197,10 +203,13 @@ public:
 	bool setSectionName(Section & section, const std::string & newSectionName);
 	bool addSection(std::unique_ptr<Section> newSection);
 	bool addSection(const Section & newSection);
+	bool addSection(const std::string & newSectionName);
 	bool addEntryToSection(std::unique_ptr<Section::Entry> newEntry, size_t sectionIndex);
 	bool addEntryToSection(const Section::Entry & newEntry, size_t sectionIndex);
+	bool addEntryToSection(const std::string & newEntryName, const std::string & newEntryValue, size_t sectionIndex);
 	bool addEntryToSectionWithName(std::unique_ptr<Section::Entry> newEntry, const std::string & sectionName);
 	bool addEntryToSectionWithName(const Section::Entry & newEntry, const std::string & sectionName);
+	bool addEntryToSectionWithName(const std::string & newEntryName, const std::string & newEntryValue, const std::string & sectionName);
 	bool replaceSection(size_t sectionIndex, std::unique_ptr<Section> newSection);
 	bool replaceSection(const Section & oldSection, std::unique_ptr<Section> newSection);
 	bool replaceSection(const std::string & oldSectionName, std::unique_ptr<Section> newSection);

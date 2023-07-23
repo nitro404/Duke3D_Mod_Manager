@@ -92,6 +92,16 @@ bool DOSBoxConfiguration::Section::remove() {
 	return m_parent->removeSection(*this);
 }
 
+bool DOSBoxConfiguration::Section::isEmpty() const {
+	return m_entries.empty() &&
+		   m_comments.empty();
+}
+
+bool DOSBoxConfiguration::Section::isNotEmpty() const {
+	return !m_entries.empty() ||
+		   !m_comments.empty();
+}
+
 bool DOSBoxConfiguration::Section::mergeWith(const Section & section) {
 	if(!isValid(true) || !section.isValid(true)) {
 		return false;
@@ -273,6 +283,46 @@ bool DOSBoxConfiguration::Section::setEntryName(Entry & entry, const std::string
 	return setEntryName(indexOfEntry(entry), newEntryName);
 }
 
+bool DOSBoxConfiguration::Section::setEntryValue(size_t entryIndex, const std::string & newEntryValue) {
+	if(entryIndex >= m_entries.size()) {
+		return false;
+	}
+
+	EntryMap::const_iterator entryIterator(m_entries.find(m_orderedEntryNames[entryIndex]));
+
+	if(entryIterator == m_entries.cend()) {
+		return false;
+	}
+
+	entryIterator->second->setValue(newEntryValue);
+
+	return true;
+}
+
+bool DOSBoxConfiguration::Section::setEntryValue(const std::string & entryName, const std::string & newEntryValue) {
+	std::shared_ptr<Entry> internalEntry(getEntryWithName(entryName));
+
+	if(internalEntry == nullptr) {
+		return false;
+	}
+
+	internalEntry->setValue(newEntryValue);
+
+	return true;
+}
+
+bool DOSBoxConfiguration::Section::setEntryValue(Entry & entry, const std::string & newEntryValue) {
+	std::shared_ptr<Entry> internalEntry(getEntryWithName(entry.getName()));
+
+	if(internalEntry.get() != &entry) {
+		return false;
+	}
+
+	internalEntry->setValue(newEntryValue);
+
+	return true;
+}
+
 bool DOSBoxConfiguration::Section::addEntry(std::unique_ptr<Entry> newEntry) {
 	if(!Entry::isValid(newEntry.get(), false) || hasEntryWithName(newEntry->m_name)) {
 		return false;
@@ -292,6 +342,14 @@ bool DOSBoxConfiguration::Section::addEntry(const Entry & newEntry) {
 	}
 
 	return addEntry(std::make_unique<Entry>(newEntry));
+}
+
+bool DOSBoxConfiguration::Section::addEntry(const std::string & newEntryName, const std::string & newEntryValue) {
+	if(!Entry::isNameValid(newEntryName) || hasEntryWithName(newEntryName)) {
+		return false;
+	}
+
+	return addEntry(std::make_unique<Entry>(newEntryName, newEntryValue));
 }
 
 bool DOSBoxConfiguration::Section::replaceEntry(size_t entryIndex, std::unique_ptr<Entry> newEntry) {

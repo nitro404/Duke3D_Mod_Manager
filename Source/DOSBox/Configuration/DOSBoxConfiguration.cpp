@@ -168,7 +168,8 @@ bool DOSBoxConfiguration::isEmpty() const {
 }
 
 bool DOSBoxConfiguration::isNotEmpty() const {
-	return !m_sections.empty();
+	return !m_sections.empty() ||
+		   !m_comments.empty();
 }
 
 bool DOSBoxConfiguration::mergeWith(const DOSBoxConfiguration & configuration) {
@@ -369,6 +370,14 @@ bool DOSBoxConfiguration::addSection(const Section & newSection) {
 	return addSection(std::make_unique<Section>(newSection));
 }
 
+bool DOSBoxConfiguration::addSection(const std::string & newSectionName) {
+	if(!Section::isNameValid(newSectionName) || hasSectionWithName(newSectionName)) {
+		return false;
+	}
+
+	return addSection(std::make_unique<Section>(newSectionName));
+}
+
 bool DOSBoxConfiguration::addEntryToSection(std::unique_ptr<Section::Entry> newEntry, size_t sectionIndex) {
 	std::shared_ptr<Section> section(getSection(sectionIndex));
 
@@ -389,6 +398,16 @@ bool DOSBoxConfiguration::addEntryToSection(const Section::Entry & newEntry, siz
 	return section->addEntry(newEntry);
 }
 
+bool DOSBoxConfiguration::addEntryToSection(const std::string & newEntryName, const std::string & newEntryValue, size_t sectionIndex) {
+	std::shared_ptr<Section> section(getSection(sectionIndex));
+
+	if(section == nullptr) {
+		return false;
+	}
+
+	return section->addEntry(newEntryName, newEntryValue);
+}
+
 bool DOSBoxConfiguration::addEntryToSectionWithName(std::unique_ptr<Section::Entry> newEntry, const std::string & sectionName) {
 	std::shared_ptr<Section> section(getSectionWithName(sectionName));
 
@@ -407,6 +426,16 @@ bool DOSBoxConfiguration::addEntryToSectionWithName(const Section::Entry & newEn
 	}
 
 	return section->addEntry(newEntry);
+}
+
+bool DOSBoxConfiguration::addEntryToSectionWithName(const std::string & newEntryName, const std::string & newEntryValue, const std::string & sectionName) {
+	std::shared_ptr<Section> section(getSectionWithName(sectionName));
+
+	if(section == nullptr) {
+		return false;
+	}
+
+	return section->addEntry(newEntryName, newEntryValue);
 }
 
 bool DOSBoxConfiguration::replaceSection(size_t sectionIndex, std::unique_ptr<Section> newSection) {
