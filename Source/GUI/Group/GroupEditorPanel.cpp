@@ -907,7 +907,7 @@ bool GroupEditorPanel::renameSelectedFileInGroup(Group * group) {
 	newFileNameDialog.SetMaxLength(GroupFile::MAX_FILE_NAME_LENGTH);
 	int renameFileResult = newFileNameDialog.ShowModal();
 
-	if(renameFileResult == wxCANCEL) {
+	if(renameFileResult == wxID_CANCEL) {
 		return false;
 	}
 
