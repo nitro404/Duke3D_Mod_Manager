@@ -103,7 +103,7 @@ GroupEditorPanel::GroupEditorPanel(wxWindow * parent, wxWindowID windowID, const
 
 	int border = 2;
 
-	wxWrapSizer * actionsPanelSizer = new wxWrapSizer(wxVERTICAL);
+	wxWrapSizer * actionsPanelSizer = new wxWrapSizer(wxHORIZONTAL);
 	actionsPanelSizer->Add(m_newButton, 1, wxEXPAND | wxHORIZONTAL, border);
 	actionsPanelSizer->Add(m_openButton, 1, wxEXPAND | wxHORIZONTAL, border);
 	actionsPanelSizer->Add(m_createFromButton, 1, wxEXPAND | wxHORIZONTAL, border);
@@ -120,10 +120,11 @@ GroupEditorPanel::GroupEditorPanel(wxWindow * parent, wxWindowID windowID, const
 	actionsPanel->SetSizerAndFit(actionsPanelSizer);
 
 	wxGridBagSizer * groupEditorPanelSizer = new wxGridBagSizer(border, border);
-	groupEditorPanelSizer->Add(actionsPanel, wxGBPosition(0, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
-	groupEditorPanelSizer->Add(m_notebook, wxGBPosition(0, 1), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
-	groupEditorPanelSizer->AddGrowableRow(0, 0);
-	groupEditorPanelSizer->AddGrowableCol(1, 0);
+	groupEditorPanelSizer->Add(m_notebook, wxGBPosition(0, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
+	groupEditorPanelSizer->Add(actionsPanel, wxGBPosition(1, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
+	groupEditorPanelSizer->AddGrowableRow(0, 1);
+	groupEditorPanelSizer->AddGrowableRow(1, 0);
+	groupEditorPanelSizer->AddGrowableCol(0, 1);
 	SetSizerAndFit(groupEditorPanelSizer);
 
 	update();
