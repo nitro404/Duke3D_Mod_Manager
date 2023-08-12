@@ -5,6 +5,9 @@
 
 #include <BitmaskOperators.h>
 #include <ByteBuffer.h>
+#include <Signal/SignalConnectionGroup.h>
+
+#include <boost/signals2.hpp>
 
 #include <cstdint>
 #include <memory>
@@ -64,6 +67,7 @@ public:
 			void setValue(std::string_view value);
 			void clearValue();
 			bool remove();
+			bool isModified() const;
 			const Section * getParentSection() const;
 			const DOSBoxConfiguration * getParentConfiguration() const;
 
@@ -79,16 +83,25 @@ public:
 			bool operator == (const Entry & entry) const;
 			bool operator != (const Entry & entry) const;
 
+			boost::signals2::signal<void (Entry & /* entry */)> entryModified;
+			boost::signals2::signal<void (Entry & /* entry */, std::string /* oldEntryName */)> entryNameChanged;
+			boost::signals2::signal<void (Entry & /* entry */, std::string /* oldEntryValue */)> entryValueChanged;
+
 			static constexpr char ASSIGNMENT_CHARACTER = '=';
 
 		private:
+			void setModified(bool value);
+
 			std::string m_name;
 			std::string m_value;
 
+			mutable bool m_modified;
 			Section * m_parent;
 		};
 
 		Section(std::string_view name, DOSBoxConfiguration * parent = nullptr);
+		Section(std::string_view name, std::vector<std::unique_ptr<Entry>> entries, DOSBoxConfiguration * parent = nullptr);
+		Section(std::string_view name, const std::vector<Entry> & entries, DOSBoxConfiguration * parent = nullptr);
 		Section(Section && section) noexcept;
 		Section(const Section & section);
 		Section & operator = (Section && section) noexcept;
@@ -101,6 +114,9 @@ public:
 		bool isEmpty() const;
 		bool isNotEmpty() const;
 		bool mergeWith(const Section & section);
+		bool setSection(const Section & section);
+		void clear();
+		bool isModified() const;
 		const DOSBoxConfiguration * getParentConfiguration() const;
 
 		size_t numberOfEntries() const;
@@ -146,20 +162,55 @@ public:
 		bool operator == (const Section & section) const;
 		bool operator != (const Section & section) const;
 
+		boost::signals2::signal<void (Section & /* section */)> sectionModified;
+		boost::signals2::signal<void (Section & /* section */, std::string /* oldSectionName */)> sectionNameChanged;
+
+		boost::signals2::signal<void (Section & /* section */, std::string /* newComment */, size_t /* commentIndex */)> sectionCommentAdded;
+		boost::signals2::signal<void (Section & /* section */, std::string /* newComment */, size_t /* commentIndex */, std::string /* oldComment */)> sectionCommentReplaced;
+		boost::signals2::signal<void (Section & /* section */, std::string /* newComment */, size_t /* commentIndex */)> sectionCommentInserted;
+		boost::signals2::signal<void (Section & /* section */, std::string /* comment */, size_t /* commentIndex */)> sectionCommentRemoved;
+		boost::signals2::signal<void (Section & /* section */)> sectionCommentsCleared;
+
+		boost::signals2::signal<void (Section & /* section */, std::shared_ptr<Section::Entry> /* entry */, size_t /* entryIndex */, std::string /* oldEntryName */)> sectionEntryNameChanged;
+		boost::signals2::signal<void (Section & /* section */, std::shared_ptr<Section::Entry> /* entry */, size_t /* entryIndex */, std::string /* oldEntryValue */)> sectionEntryValueChanged;
+		boost::signals2::signal<void (Section & /* section */, std::shared_ptr<Section::Entry> /* newEntry */, size_t /* entryIndex */)> sectionEntryAdded;
+		boost::signals2::signal<void (Section & /* section */, std::shared_ptr<Section::Entry> /* newEntry */, size_t /* entryIndex */, std::shared_ptr<Section::Entry> /* oldEntry */)> sectionEntryReplaced;
+		boost::signals2::signal<void (Section & /* section */, std::shared_ptr<Section::Entry> /* newEntry */, size_t /* entryIndex */)> sectionEntryInserted;
+		boost::signals2::signal<void (Section & /* section */, std::shared_ptr<Section::Entry> /* entry */, size_t /* entryIndex */)> sectionEntryRemoved;
+		boost::signals2::signal<void (Section & /* section */)> sectionEntriesCleared;
+
 		static constexpr char NAME_START_CHARACTER = '[';
 		static constexpr char NAME_END_CHARACTER = ']';
 
 	private:
 		void updateParent();
+		void setModified(bool value);
+		void disconnectSignals();
+		void connectSignals();
+		SignalConnectionGroup connectEntrySignals(Entry & entry);
+		void onCommentCollectionModified(CommentCollection & commentCollection);
+		void onCommentAdded(CommentCollection & commentCollection, std::string newComment, size_t commentIndex);
+		void onCommentReplaced(CommentCollection & commentCollection, std::string newComment, size_t commentIndex, std::string oldComment);
+		void onCommentInserted(CommentCollection & commentCollection, std::string newComment, size_t commentIndex);
+		void onCommentRemoved(CommentCollection & commentCollection, std::string comment, size_t commentIndex);
+		void onCommentsCleared(CommentCollection & commentCollection);
+		void onEntryModified(Entry & entry);
+		void onEntryNameChanged(Entry & entry, std::string oldEntryName);
+		void onEntryValueChanged(Entry & entry, std::string oldEntryValue);
 
 		std::string m_name;
 		EntryMap m_entries;
 		std::vector<std::string> m_orderedEntryNames;
 
+		mutable bool m_modified;
 		DOSBoxConfiguration * m_parent;
+		SignalConnectionGroup m_commentCollectionConnections;
+		std::vector<SignalConnectionGroup> m_entryConnections;
 	};
 
 	DOSBoxConfiguration(const std::string & filePath = {});
+	DOSBoxConfiguration(std::vector<std::unique_ptr<Section>> sections, const std::string & filePath = {});
+	DOSBoxConfiguration(const std::vector<Section> & sections, const std::string & filePath = {});
 	DOSBoxConfiguration(DOSBoxConfiguration && configuration) noexcept;
 	DOSBoxConfiguration(const DOSBoxConfiguration & configuration);
 	DOSBoxConfiguration & operator = (DOSBoxConfiguration && configuration) noexcept;
@@ -184,6 +235,10 @@ public:
 	bool isEmpty() const;
 	bool isNotEmpty() const;
 	bool mergeWith(const DOSBoxConfiguration & configuration);
+	bool setConfiguration(const DOSBoxConfiguration & configuration);
+	void clear();
+	bool isModified() const;
+	void setModified(bool value);
 
 	size_t numberOfSections() const;
 	size_t totalNumberOfEntries() const;
@@ -246,8 +301,8 @@ public:
 	bool writeTo(ByteBuffer & data, std::optional<Style> styleOverride = {}, std::optional<NewlineType> newlineTypeOverride = {}) const;
 
 	static std::unique_ptr<DOSBoxConfiguration> loadFrom(const std::string & filePath);
-	bool save(bool overwrite = true, bool createParentDirectories = true) const;
-	bool saveTo(const std::string & filePath, bool overwrite = true, bool createParentDirectories = true) const;
+	bool save(bool overwrite = true, bool createParentDirectories = true);
+	bool saveTo(const std::string & filePath, bool overwrite = true, bool createParentDirectories = true);
 
 	bool isValid(bool validateParents = true) const;
 	static bool isValid(const DOSBoxConfiguration * configuration, bool validateParents = true);
@@ -255,16 +310,75 @@ public:
 	bool operator == (const DOSBoxConfiguration & configuration) const;
 	bool operator != (const DOSBoxConfiguration & configuration) const;
 
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */)> configurationModified;
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */, Style /* newStyle */, Style /* oldStyle */)> configurationStyleChanged;
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */, NewlineType /* newNewlineType */, NewlineType /* oldNewlineType */)> configurationNewlineTypeChanged;
+
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */, std::string /* newComment */, size_t /* commentIndex */)> configurationCommentAdded;
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */, std::string /* newComment */, size_t /* commentIndex */, std::string /* oldComment */)> configurationCommentReplaced;
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */, std::string /* newComment */, size_t /* commentIndex */)> configurationCommentInserted;
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */, std::string /* comment */, size_t /* commentIndex */)> configurationCommentRemoved;
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */)> configurationCommentsCleared;
+
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */, std::shared_ptr<Section> /* section */, size_t /* sectionIndex */, std::string /* oldSectionName */)> configurationSectionNameChanged;
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */, std::shared_ptr<Section> /* newSection */, size_t /* sectionIndex */)> configurationSectionAdded;
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */, std::shared_ptr<Section> /* newSection */, size_t /* sectionIndex */, std::shared_ptr<Section> /* oldSection */)> configurationSectionReplaced;
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */, std::shared_ptr<Section> /* newSection */, size_t /* sectionIndex */)> configurationSectionInserted;
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */, std::shared_ptr<Section> /* section */, size_t /* sectionIndex */)> configurationSectionRemoved;
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */)> configurationSectionsCleared;
+
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */, std::shared_ptr<Section> /* section */, size_t /* sectionIndex */, std::string /* newComment */, size_t /* commentIndex */)> configurationSectionCommentAdded;
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */, std::shared_ptr<Section> /* section */, size_t /* sectionIndex */, std::string /* newComment */, size_t /* commentIndex */, std::string /* oldComment */)> configurationSectionCommentReplaced;
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */, std::shared_ptr<Section> /* section */, size_t /* sectionIndex */, std::string /* newComment */, size_t /* commentIndex */)> configurationSectionCommentInserted;
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */, std::shared_ptr<Section> /* section */, size_t /* sectionIndex */, std::string /* comment */, size_t /* commentIndex */)> configurationSectionCommentRemoved;
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */, std::shared_ptr<Section> /* section */, size_t /* sectionIndex */)> configurationSectionCommentsCleared;
+
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */, std::shared_ptr<Section> /* section */, size_t /* sectionIndex */, std::shared_ptr<Section::Entry> /* entry */, size_t /* entryIndex */, std::string /* oldEntryName */)> configurationSectionEntryNameChanged;
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */, std::shared_ptr<Section> /* section */, size_t /* sectionIndex */, std::shared_ptr<Section::Entry> /* entry */, size_t /* entryIndex */, std::string /* oldEntryValue */)> configurationSectionEntryValueChanged;
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */, std::shared_ptr<Section> /* section */, size_t /* sectionIndex */, std::shared_ptr<Section::Entry> /* newEntry */, size_t /* entryIndex */)> configurationSectionEntryAdded;
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */, std::shared_ptr<Section> /* section */, size_t /* sectionIndex */, std::shared_ptr<Section::Entry> /* newEntry */, size_t /* entryIndex */, std::shared_ptr<Section::Entry> /* oldEntry */)> configurationSectionEntryReplaced;
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */, std::shared_ptr<Section> /* section */, size_t /* sectionIndex */, std::shared_ptr<Section::Entry> /* newEntry */, size_t /* entryIndex */)> configurationSectionEntryInserted;
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */, std::shared_ptr<Section> /* section */, size_t /* sectionIndex */, std::shared_ptr<Section::Entry> /* entry */, size_t /* entryIndex */)> configurationSectionEntryRemoved;
+	boost::signals2::signal<void (DOSBoxConfiguration & /* dosboxConfiguration */, std::shared_ptr<Section> /* section */, size_t /* sectionIndex */)> configurationSectionEntriesCleared;
+
+	static inline const std::string FILE_EXTENSION = "conf";
+	static inline const std::string DEFAULT_FILE_NAME = "dosbox." + FILE_EXTENSION;
 	static constexpr char COMMENT_CHARACTER = '#';
 
 private:
 	void updateParent(bool recursive = true);
+	void connectSignals();
+	SignalConnectionGroup connectSectionSignals(Section & section);
+	void disconnectSignals();
+	void onCommentCollectionModified(CommentCollection & commentCollection);
+	void onCommentAdded(CommentCollection & commentCollection, std::string newComment, size_t commentIndex);
+	void onCommentReplaced(CommentCollection & commentCollection, std::string newComment, size_t commentIndex, std::string oldComment);
+	void onCommentInserted(CommentCollection & commentCollection, std::string newComment, size_t commentIndex);
+	void onCommentRemoved(CommentCollection & commentCollection, std::string comment, size_t commentIndex);
+	void onCommentsCleared(CommentCollection & commentCollection);
+	void onSectionModified(Section & section);
+	void onSectionNameChanged(Section & section, std::string oldSectionName);
+	void onSectionCommentAdded(Section & section, std::string newComment, size_t commentIndex);
+	void onSectionCommentReplaced(Section & section, std::string newComment, size_t commentIndex, std::string oldComment);
+	void onSectionCommentInserted(Section & section, std::string newComment, size_t commentIndex);
+	void onSectionCommentRemoved(Section & section, std::string comment, size_t commentIndex);
+	void onSectionCommentsCleared(Section & section);
+	void onSectionEntryNameChanged(Section & section, std::shared_ptr<Section::Entry> entry, size_t entryIndex, std::string oldEntryName);
+	void onSectionEntryValueChanged(Section & section, std::shared_ptr<Section::Entry> entry, size_t entryIndex, std::string oldEntryValue);
+	void onSectionEntryAdded(Section & section, std::shared_ptr<Section::Entry> newEntry, size_t entryIndex);
+	void onSectionEntryReplaced(Section & section, std::shared_ptr<Section::Entry> newEntry, size_t entryIndex, std::shared_ptr<Section::Entry> oldEntry);
+	void onSectionEntryInserted(Section & section, std::shared_ptr<Section::Entry> newEntry, size_t entryIndex);
+	void onSectionEntryRemoved(Section & section, std::shared_ptr<Section::Entry> entry, size_t entryIndex);
+	void onSectionEntriesCleared(Section & section);
 
 	Style m_style;
 	NewlineType m_newlineType;
 	SectionMap m_sections;
 	std::vector<std::string> m_orderedSectionNames;
 	std::string m_filePath;
+	mutable bool m_modified;
+	SignalConnectionGroup m_commentCollectionConnections;
+	std::vector<SignalConnectionGroup> m_sectionConnections;
 };
 
 template<>

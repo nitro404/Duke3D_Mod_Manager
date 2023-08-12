@@ -3,27 +3,47 @@
 #include <Utilities/StringUtilities.h>
 
 CommentCollection::CommentCollection(const std::vector<std::string> & comments)
-	: m_comments(comments) { }
+	: m_comments(comments)
+	, m_commentCollectionModified(false) { }
 
 CommentCollection::CommentCollection(std::vector<std::string> && comments)
-	: m_comments(std::move(comments)) { }
+	: m_comments(std::move(comments))
+	, m_commentCollectionModified(false) { }
 
 CommentCollection::CommentCollection(CommentCollection && comments) noexcept
-	: m_comments(std::move(comments.m_comments)) { }
+	: m_comments(std::move(comments.m_comments))
+	, m_commentCollectionModified(false) { }
 
 CommentCollection::CommentCollection(const CommentCollection & comments)
-	: m_comments(comments.m_comments) { }
+	: m_comments(comments.m_comments)
+	, m_commentCollectionModified(false) { }
 
 CommentCollection & CommentCollection::operator = (CommentCollection && comments) noexcept {
 	if(this != &comments) {
+		clearComments();
+
 		m_comments = std::move(comments.m_comments);
+
+		for(size_t i = 0; i < m_comments.size(); i++) {
+			commentAdded(*this, m_comments[i], i);
+		}
+
+		setCommentCollectionModified(true);
 	}
 
 	return *this;
 }
 
 CommentCollection & CommentCollection::operator = (const CommentCollection & comments) {
+	clearComments();
+
 	m_comments = comments.m_comments;
+
+	for(size_t i = 0; i < m_comments.size(); i++) {
+		commentAdded(*this, m_comments[i], i);
+	}
+
+	setCommentCollectionModified(true);
 
 	return *this;
 }
@@ -96,6 +116,10 @@ const std::vector<std::string> & CommentCollection::getComments() const {
 
 void CommentCollection::addComment(std::string_view comment) {
 	m_comments.push_back(std::string(comment));
+
+	commentAdded(*this, m_comments.back(), m_comments.size() - 1);
+
+	setCommentCollectionModified(true);
 }
 
 void CommentCollection::addComments(const std::vector<std::string> & comments) {
@@ -108,12 +132,26 @@ void CommentCollection::addComments(const CommentCollection & comments) {
 	return addComments(comments.m_comments);
 }
 
+void CommentCollection::setComments(const CommentCollection & comments) {
+	m_comments = comments.m_comments;
+}
+
+void CommentCollection::setComments(const std::vector<std::string> & comments) {
+	m_comments = comments;
+}
+
 bool CommentCollection::replaceComment(size_t index, std::string_view newComment) {
 	if(index >= m_comments.size()) {
 		return false;
 	}
 
+	std::string oldComment(m_comments[index]);
+
 	m_comments[index] = newComment;
+
+	commentReplaced(*this, m_comments[index], index, oldComment);
+
+	setCommentCollectionModified(true);
 
 	return true;
 }
@@ -133,6 +171,10 @@ bool CommentCollection::insertComment(size_t index, std::string_view comment) {
 
 	m_comments.insert(m_comments.cbegin() + index, std::string(comment));
 
+	commentInserted(*this, m_comments[index], index);
+
+	setCommentCollectionModified(true);
+
 	return true;
 }
 
@@ -141,7 +183,13 @@ bool CommentCollection::removeComment(size_t index) {
 		return false;
 	}
 
-	m_comments.erase(m_comments.cbegin() + index);
+	std::string removedComment(m_comments[index]);
+
+	m_comments.erase(m_comments.begin() + index);
+
+	commentRemoved(*this, removedComment, index);
+
+	setCommentCollectionModified(true);
 
 	return true;
 }
@@ -155,7 +203,15 @@ bool CommentCollection::removeLastInstanceOfComment(std::string_view comment) {
 }
 
 void CommentCollection::clearComments() {
+	if(m_comments.empty()) {
+		return;
+	}
+
 	m_comments.clear();
+
+	commentsCleared(*this);
+
+	setCommentCollectionModified(true);
 }
 
 void CommentCollection::mergeWith(const CommentCollection & comments) {
@@ -164,6 +220,16 @@ void CommentCollection::mergeWith(const CommentCollection & comments) {
 	}
 
 	addComments(comments);
+}
+
+bool CommentCollection::isCommentCollectionModified() const {
+	return m_commentCollectionModified;
+}
+
+void CommentCollection::setCommentCollectionModified(bool value) {
+	m_commentCollectionModified = value;
+
+	commentCollectionModified(*this);
 }
 
 bool CommentCollection::operator == (const CommentCollection & comments) const {

@@ -11,7 +11,36 @@ DOSBoxConfiguration::DOSBoxConfiguration(const std::string & filePath)
 	: CommentCollection()
 	, m_style(Style::None)
 	, m_newlineType(Utilities::newLine[0] == '\r' ? NewlineType::Windows : NewlineType::Unix)
-	, m_filePath(filePath) { }
+	, m_filePath(filePath)
+	, m_modified(false) {
+	connectSignals();
+}
+
+DOSBoxConfiguration::DOSBoxConfiguration(std::vector<std::unique_ptr<Section>> sections, const std::string & filePath)
+	: CommentCollection()
+	, m_style(Style::None)
+	, m_newlineType(Utilities::newLine[0] == '\r' ? NewlineType::Windows : NewlineType::Unix)
+	, m_filePath(filePath)
+	, m_modified(false) {
+	connectSignals();
+
+	for(std::unique_ptr<Section> & section : sections) {
+		addSection(std::move(section));
+	}
+}
+
+DOSBoxConfiguration::DOSBoxConfiguration(const std::vector<Section> & sections, const std::string & filePath)
+	: CommentCollection()
+	, m_style(Style::None)
+	, m_newlineType(Utilities::newLine[0] == '\r' ? NewlineType::Windows : NewlineType::Unix)
+	, m_filePath(filePath)
+	, m_modified(false) {
+	connectSignals();
+
+	for(const Section & section : sections) {
+		addSection(section);
+	}
+}
 
 DOSBoxConfiguration::DOSBoxConfiguration(DOSBoxConfiguration && configuration) noexcept
 	: CommentCollection(std::move(configuration))
@@ -19,8 +48,10 @@ DOSBoxConfiguration::DOSBoxConfiguration(DOSBoxConfiguration && configuration) n
 	, m_newlineType(configuration.m_newlineType)
 	, m_sections(std::move(configuration.m_sections))
 	, m_orderedSectionNames(std::move(configuration.m_orderedSectionNames))
-	, m_filePath(std::move(configuration.m_filePath)) {
+	, m_filePath(std::move(configuration.m_filePath))
+	, m_modified(false) {
 	updateParent();
+	connectSignals();
 }
 
 DOSBoxConfiguration::DOSBoxConfiguration(const DOSBoxConfiguration & configuration)
@@ -28,19 +59,23 @@ DOSBoxConfiguration::DOSBoxConfiguration(const DOSBoxConfiguration & configurati
 	, m_style(configuration.m_style)
 	, m_newlineType(configuration.m_newlineType)
 	, m_orderedSectionNames(configuration.m_orderedSectionNames)
-	, m_filePath(configuration.m_filePath) {
-	clearSections();
-
+	, m_filePath(configuration.m_filePath)
+	, m_modified(false) {
 	for(const auto & section : configuration.m_sections) {
 		m_sections[section.first] = std::make_shared<Section>(*section.second);
 	}
 
 	updateParent();
+	connectSignals();
 }
 
 DOSBoxConfiguration & DOSBoxConfiguration::operator = (DOSBoxConfiguration && configuration) noexcept {
 	if(this != &configuration) {
+		disconnectSignals();
+
 		CommentCollection::operator = (std::move(configuration));
+
+		clearSections();
 
 		m_style = configuration.m_style;
 		m_newlineType = configuration.m_newlineType;
@@ -49,12 +84,21 @@ DOSBoxConfiguration & DOSBoxConfiguration::operator = (DOSBoxConfiguration && co
 		m_filePath = std::move(configuration.m_filePath);
 
 		updateParent();
+		connectSignals();
+
+		for(size_t i = 0; i < m_sections.size(); i++) {
+			configurationSectionAdded(*this, m_sections[m_orderedSectionNames[i]], i);
+		}
+
+		setModified(true);
 	}
 
 	return *this;
 }
 
 DOSBoxConfiguration & DOSBoxConfiguration::operator = (const DOSBoxConfiguration & configuration) {
+	disconnectSignals();
+
 	CommentCollection::operator = (configuration);
 
 	clearSections();
@@ -69,11 +113,20 @@ DOSBoxConfiguration & DOSBoxConfiguration::operator = (const DOSBoxConfiguration
 	}
 
 	updateParent();
+	connectSignals();
+
+	for(size_t i = 0; i < m_sections.size(); i++) {
+		configurationSectionAdded(*this, m_sections[m_orderedSectionNames[i]], i);
+	}
+
+	setModified(true);
 
 	return *this;
 }
 
 DOSBoxConfiguration::~DOSBoxConfiguration() {
+	disconnectSignals();
+
 	for(const auto & section : m_sections) {
 		section.second->m_parent = nullptr;
 	}
@@ -96,6 +149,10 @@ std::string_view DOSBoxConfiguration::getFileExtension() const {
 }
 
 void DOSBoxConfiguration::setFilePath(const std::string & filePath) {
+	if(Utilities::areStringsEqual(m_filePath, filePath)) {
+		return;
+	}
+
 	m_filePath = filePath;
 }
 
@@ -120,15 +177,33 @@ bool DOSBoxConfiguration::hasStyle(Style style) const {
 }
 
 void DOSBoxConfiguration::setStyle(Style style) {
+	if(m_style == style) {
+		return;
+	}
+
+	Style oldStyle = m_style;
+
 	m_style = style;
+
+	configurationStyleChanged(*this, m_style, oldStyle);
+
+	setModified(true);
 }
 
 void DOSBoxConfiguration::addStyle(Style style) {
-	m_style |= style;
+	if(hasStyle(style)) {
+		return;
+	}
+
+	setStyle(m_style | style);
 }
 
 void DOSBoxConfiguration::removeStyle(Style style) {
-	m_style &= ~style;
+	if(!hasStyle(style)) {
+		return;
+	}
+
+	setStyle(m_style & ~style);
 }
 
 size_t DOSBoxConfiguration::numberOfSections() const {
@@ -160,11 +235,22 @@ DOSBoxConfiguration::NewlineType DOSBoxConfiguration::getNewlineType() const {
 }
 
 void DOSBoxConfiguration::setNewlineType(NewlineType newlineType) {
+	if(m_newlineType == newlineType) {
+		return;
+	}
+
+	NewlineType oldNewlineType = m_newlineType;
+
 	m_newlineType = newlineType;
+
+	configurationNewlineTypeChanged(*this, m_newlineType, oldNewlineType);
+
+	setModified(true);
 }
 
 bool DOSBoxConfiguration::isEmpty() const {
-	return m_sections.empty();
+	return m_sections.empty() &&
+		   m_comments.empty();
 }
 
 bool DOSBoxConfiguration::isNotEmpty() const {
@@ -180,7 +266,7 @@ bool DOSBoxConfiguration::mergeWith(const DOSBoxConfiguration & configuration) {
 	CommentCollection::mergeWith(configuration);
 
 	for(const auto & currentSection : configuration.m_sections) {
-		std::shared_ptr<Section> existingSection(getSectionWithName(currentSection.second->m_name));
+		std::shared_ptr<Section> existingSection(getSectionWithName(currentSection.second->getName()));
 
 		if(existingSection != nullptr) {
 			if(!existingSection->mergeWith(*currentSection.second)) {
@@ -188,13 +274,77 @@ bool DOSBoxConfiguration::mergeWith(const DOSBoxConfiguration & configuration) {
 			}
 		}
 		else {
-			if(!addSection(std::make_unique<Section>(*currentSection.second))) {
+			if(!addSection(*currentSection.second)) {
 				return false;
 			}
 		}
 	}
 
+	setModified(true);
+
 	return true;
+}
+
+bool DOSBoxConfiguration::setConfiguration(const DOSBoxConfiguration & configuration) {
+	if(!configuration.isValid()) {
+		return false;
+	}
+
+	setComments(configuration.m_comments);
+
+	for(const auto & currentSection : m_sections) {
+		size_t existingSectionIndex = configuration.indexOfSectionWithName(currentSection.second->getName());
+
+		if(existingSectionIndex == std::numeric_limits<size_t>::max()) {
+			if(!removeSection(existingSectionIndex)) {
+				return false;
+			}
+		}
+	}
+
+	for(const auto & currentSection : configuration.m_sections) {
+		std::shared_ptr<Section> existingSection(getSectionWithName(currentSection.second->getName()));
+
+		if(existingSection != nullptr) {
+			if(!existingSection->setSection(*currentSection.second)) {
+				return false;
+			}
+		}
+		else {
+			if(!addSection(*currentSection.second)) {
+				return false;
+			}
+		}
+	}
+
+	m_orderedSectionNames = configuration.m_orderedSectionNames;
+
+	setModified(true);
+
+	return true;
+}
+
+void DOSBoxConfiguration::clear() {
+	clearComments();
+	clearSections();
+}
+
+bool DOSBoxConfiguration::isModified() const {
+	return m_modified;
+}
+
+void DOSBoxConfiguration::setModified(bool value) {
+	m_modified = value;
+
+	if(!m_modified) {
+		m_commentCollectionModified = false;
+
+		for(auto & section : m_sections) {
+			section.second->setModified(false);
+		}
+	}
+
+	configurationModified(*this);
 }
 
 bool DOSBoxConfiguration::hasSection(const Section & section) const {
@@ -318,7 +468,7 @@ std::shared_ptr<DOSBoxConfiguration::Section> DOSBoxConfiguration::getSectionWit
 }
 
 bool DOSBoxConfiguration::setSectionName(size_t sectionIndex, const std::string & newSectionName) {
-	if(sectionIndex >= m_orderedSectionNames.size() || !Section::isNameValid(newSectionName) || hasSectionWithName(newSectionName)) {
+	if(sectionIndex >= m_orderedSectionNames.size() || !Section::isNameValid(newSectionName)) {
 		return false;
 	}
 
@@ -330,13 +480,23 @@ bool DOSBoxConfiguration::setSectionName(size_t sectionIndex, const std::string 
 
 	std::shared_ptr<Section> sharedSection(m_sections[m_orderedSectionNames[sectionIndex]]);
 
-	if(m_sections.erase(sharedSection->m_name) == 0) {
+	if(Utilities::areStringsEqual(sharedSection->getName(), newSectionName)) {
+		return true;
+	}
+
+	if(hasSectionWithName(newSectionName) || m_sections.erase(sharedSection->m_name) == 0) {
 		return false;
 	}
+
+	std::string oldSectionName(sharedSection->m_name);
 
 	sharedSection->m_name = newSectionName;
 	m_orderedSectionNames[sectionIndex] = newSectionName;
 	m_sections.emplace(newSectionName, sharedSection);
+
+	sharedSection->sectionNameChanged(*sharedSection, oldSectionName);
+
+	sharedSection->setModified(true);
 
 	return true;
 }
@@ -349,15 +509,20 @@ bool DOSBoxConfiguration::setSectionName(Section & section, const std::string & 
 	return setSectionName(indexOfSection(section), newSectionName);
 }
 
-bool DOSBoxConfiguration::addSection(std::unique_ptr<Section> section) {
-	if(!Section::isValid(section.get(), false) || hasSectionWithName(section->m_name)) {
+bool DOSBoxConfiguration::addSection(std::unique_ptr<Section> newSection) {
+	if(!Section::isValid(newSection.get(), false) || hasSectionWithName(newSection->m_name)) {
 		return false;
 	}
 
-	section->m_parent = this;
-	m_orderedSectionNames.push_back(section->getName());
-	const std::string & sectionName = section->m_name;
-	m_sections.emplace(sectionName, std::move(section));
+	newSection->m_parent = this;
+	m_orderedSectionNames.push_back(newSection->getName());
+	const std::string & sectionName = newSection->m_name;
+	m_sectionConnections.emplace_back(connectSectionSignals(*newSection));
+	m_sections.emplace(sectionName, std::move(newSection));
+
+	configurationSectionAdded(*this, m_sections[m_orderedSectionNames.back()], m_sections.size() - 1);
+
+	setModified(true);
 
 	return true;
 }
@@ -449,10 +614,17 @@ bool DOSBoxConfiguration::replaceSection(size_t sectionIndex, std::unique_ptr<Se
 		return false;
 	}
 
+	std::shared_ptr<Section> oldSection(m_sections[newSection->m_name]);
+
 	std::shared_ptr<Section> sharedNewSection(std::move(newSection));
 	m_orderedSectionNames[sectionIndex] = sharedNewSection->m_name;
 	sharedNewSection->m_parent = this;
-	m_sections[sharedNewSection->m_name] = sharedNewSection;
+	m_sectionConnections[sectionIndex] = connectSectionSignals(*sharedNewSection);
+	m_sections[sharedNewSection->m_name] = std::move(sharedNewSection);
+
+	configurationSectionReplaced(*this, sharedNewSection, sectionIndex, oldSection);
+
+	setModified(true);
 
 	return true;
 }
@@ -623,7 +795,12 @@ bool DOSBoxConfiguration::insertSection(size_t sectionIndex, std::unique_ptr<Sec
 	std::shared_ptr<Section> sharedNewSection(std::move(newSection));
 	m_orderedSectionNames.insert(m_orderedSectionNames.begin() + sectionIndex, sharedNewSection->m_name);
 	sharedNewSection->m_parent = this;
-	m_sections[sharedNewSection->m_name] = sharedNewSection;
+	m_sectionConnections.insert(m_sectionConnections.begin() + sectionIndex, connectSectionSignals(*sharedNewSection));
+	m_sections[sharedNewSection->m_name] = std::move(sharedNewSection);
+
+	configurationSectionInserted(*this, sharedNewSection, sectionIndex);
+
+	setModified(true);
 
 	return true;
 }
@@ -687,8 +864,18 @@ bool DOSBoxConfiguration::removeSection(const Section & section) {
 
 	sharedSection->m_parent = nullptr;
 	m_orderedSectionNames.erase(m_orderedSectionNames.begin() + sectionIndex);
+	m_sectionConnections[sectionIndex].disconnect();
+	m_sectionConnections.erase(m_sectionConnections.begin() + sectionIndex);
 
-	return m_sections.erase(sharedSection->getName()) != 0;
+	if(m_sections.erase(sharedSection->getName()) == 0) {
+		return false;
+	}
+
+	configurationSectionRemoved(*this, sharedSection, sectionIndex);
+
+	setModified(true);
+
+	return true;
 }
 
 bool DOSBoxConfiguration::removeSectionWithName(const std::string & sectionName) {
@@ -742,12 +929,26 @@ bool DOSBoxConfiguration::removeEntryFromSectionWithName(const Section::Entry & 
 }
 
 void DOSBoxConfiguration::clearSections() {
+	if(m_sections.empty()) {
+		return;
+	}
+
 	for(SectionMap::const_iterator i = m_sections.cbegin(); i != m_sections.cend(); ++i) {
 		i->second->m_parent = nullptr;
 	}
 
 	m_sections.clear();
 	m_orderedSectionNames.clear();
+
+	for(SignalConnectionGroup & connection : m_sectionConnections) {
+		connection.disconnect();
+	}
+
+	m_sectionConnections.clear();
+
+	configurationSectionsCleared(*this);
+
+	setModified(true);
 }
 
 std::unique_ptr<DOSBoxConfiguration> DOSBoxConfiguration::readFrom(const ByteBuffer & data) {
@@ -769,7 +970,7 @@ std::unique_ptr<DOSBoxConfiguration> DOSBoxConfiguration::readFrom(const ByteBuf
 		if(currentByte == '\r') {
 			spdlog::trace("Detected Windows style newlines in DOSBox configuration data.");
 
-			configuration->setNewlineType(NewlineType::Windows);\
+			configuration->setNewlineType(NewlineType::Windows);
 
 			break;
 		}
@@ -814,6 +1015,8 @@ std::unique_ptr<DOSBoxConfiguration> DOSBoxConfiguration::readFrom(const ByteBuf
 			}
 		}
 	}
+
+	configuration->setModified(false);
 
 	if(!configuration->isValid(true)) {
 		spdlog::error("Parsed DOSBox configuration is not valid.");
@@ -896,7 +1099,7 @@ std::unique_ptr<DOSBoxConfiguration> DOSBoxConfiguration::loadFrom(const std::st
 	return configuration;
 }
 
-bool DOSBoxConfiguration::save(bool overwrite, bool createParentDirectories) const {
+bool DOSBoxConfiguration::save(bool overwrite, bool createParentDirectories) {
 	if(m_filePath.empty()) {
 		spdlog::error("DOSBox configuration has no file path.");
 		return false;
@@ -905,7 +1108,7 @@ bool DOSBoxConfiguration::save(bool overwrite, bool createParentDirectories) con
 	return saveTo(m_filePath, overwrite);
 }
 
-bool DOSBoxConfiguration::saveTo(const std::string & filePath, bool overwrite, bool createParentDirectories) const {
+bool DOSBoxConfiguration::saveTo(const std::string & filePath, bool overwrite, bool createParentDirectories) {
 	if(!overwrite && std::filesystem::is_regular_file(std::filesystem::path(filePath))) {
 		spdlog::warn("File '{}' already exists, use overwrite to force write.", filePath);
 		return false;
@@ -916,6 +1119,8 @@ bool DOSBoxConfiguration::saveTo(const std::string & filePath, bool overwrite, b
 	if(!writeTo(byteBuffer) || !byteBuffer.writeTo(filePath, overwrite)) {
 		return false;
 	}
+
+	setModified(false);
 
 	return true;
 }
@@ -941,6 +1146,242 @@ bool DOSBoxConfiguration::isValid(bool validateParents) const {
 bool DOSBoxConfiguration::isValid(const DOSBoxConfiguration * configuration, bool validateParents) {
 	return configuration != nullptr &&
 		   configuration->isValid(validateParents);
+}
+
+void DOSBoxConfiguration::connectSignals() {
+	m_commentCollectionConnections = SignalConnectionGroup(
+		commentCollectionModified.connect(std::bind(&DOSBoxConfiguration::onCommentCollectionModified, this, std::placeholders::_1)),
+		commentAdded.connect(std::bind(&DOSBoxConfiguration::onCommentAdded, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)),
+		commentReplaced.connect(std::bind(&DOSBoxConfiguration::onCommentReplaced, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4)),
+		commentInserted.connect(std::bind(&DOSBoxConfiguration::onCommentInserted, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)),
+		commentRemoved.connect(std::bind(&DOSBoxConfiguration::onCommentRemoved, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)),
+		commentsCleared.connect(std::bind(&DOSBoxConfiguration::onCommentsCleared, this, std::placeholders::_1))
+	);
+
+	for(const std::string & sectionName : m_orderedSectionNames) {
+		SectionMap::const_iterator sectionIterator(m_sections.find(sectionName));
+
+		if(sectionIterator == m_sections.cend()) {
+			continue;
+		}
+
+		m_sectionConnections.emplace_back(connectSectionSignals(*sectionIterator->second));
+	}
+}
+
+SignalConnectionGroup DOSBoxConfiguration::connectSectionSignals(Section & section) {
+	return SignalConnectionGroup(
+		section.sectionModified.connect(std::bind(&DOSBoxConfiguration::onSectionModified, this, std::placeholders::_1)),
+		section.sectionNameChanged.connect(std::bind(&DOSBoxConfiguration::onSectionNameChanged, this, std::placeholders::_1, std::placeholders::_2)),
+		section.sectionCommentAdded.connect(std::bind(&DOSBoxConfiguration::onSectionCommentAdded, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)),
+		section.sectionCommentReplaced.connect(std::bind(&DOSBoxConfiguration::onSectionCommentReplaced, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4)),
+		section.sectionCommentInserted.connect(std::bind(&DOSBoxConfiguration::onSectionCommentInserted, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)),
+		section.sectionCommentRemoved.connect(std::bind(&DOSBoxConfiguration::onSectionCommentRemoved, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)),
+		section.sectionCommentsCleared.connect(std::bind(&DOSBoxConfiguration::onSectionCommentsCleared, this, std::placeholders::_1)),
+		section.sectionEntryNameChanged.connect(std::bind(&DOSBoxConfiguration::onSectionEntryNameChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4)),
+		section.sectionEntryValueChanged.connect(std::bind(&DOSBoxConfiguration::onSectionEntryValueChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4)),
+		section.sectionEntryAdded.connect(std::bind(&DOSBoxConfiguration::onSectionEntryAdded, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)),
+		section.sectionEntryReplaced.connect(std::bind(&DOSBoxConfiguration::onSectionEntryReplaced, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4)),
+		section.sectionEntryInserted.connect(std::bind(&DOSBoxConfiguration::onSectionEntryInserted, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)),
+		section.sectionEntryRemoved.connect(std::bind(&DOSBoxConfiguration::onSectionEntryRemoved, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)),
+		section.sectionEntriesCleared.connect(std::bind(&DOSBoxConfiguration::onSectionEntriesCleared, this, std::placeholders::_1))
+	);
+}
+
+void DOSBoxConfiguration::disconnectSignals() {
+	m_commentCollectionConnections.disconnect();
+
+	for(SignalConnectionGroup & connection : m_sectionConnections) {
+		connection.disconnect();
+	}
+
+	m_sectionConnections.clear();
+}
+
+void DOSBoxConfiguration::onCommentCollectionModified(CommentCollection & commentCollection) {
+	if(this != &commentCollection) {
+		return;
+	}
+
+	if(commentCollection.isCommentCollectionModified()) {
+		setModified(true);
+	}
+}
+
+void DOSBoxConfiguration::onCommentAdded(CommentCollection & commentCollection, std::string newComment, size_t commentIndex) {
+	if(this != &commentCollection) {
+		return;
+	}
+
+	configurationCommentAdded(*this, newComment, commentIndex);
+}
+
+void DOSBoxConfiguration::onCommentReplaced(CommentCollection & commentCollection, std::string newComment, size_t commentIndex, std::string oldComment) {
+	if(this != &commentCollection) {
+		return;
+	}
+
+	configurationCommentReplaced(*this, newComment, commentIndex, oldComment);
+}
+
+void DOSBoxConfiguration::onCommentInserted(CommentCollection & commentCollection, std::string newComment, size_t commentIndex) {
+	if(this != &commentCollection) {
+		return;
+	}
+
+	configurationCommentInserted(*this, newComment, commentIndex);
+}
+
+void DOSBoxConfiguration::onCommentRemoved(CommentCollection & commentCollection, std::string comment, size_t commentIndex) {
+	if(this != &commentCollection) {
+		return;
+	}
+
+	configurationCommentRemoved(*this, comment, commentIndex);
+}
+
+void DOSBoxConfiguration::onCommentsCleared(CommentCollection & commentCollection) {
+	if(this != &commentCollection) {
+		return;
+	}
+
+	configurationCommentsCleared(*this);
+}
+
+void DOSBoxConfiguration::onSectionModified(Section & section) {
+	if(section.isModified()) {
+		setModified(true);
+	}
+}
+
+void DOSBoxConfiguration::onSectionNameChanged(Section & section, std::string oldSectionName) {
+	size_t sectionIndex = indexOfSection(section);
+
+	if(sectionIndex == std::numeric_limits<size_t>::max()) {
+		return;
+	}
+
+	configurationSectionNameChanged(*this, m_sections[m_orderedSectionNames[sectionIndex]], sectionIndex, oldSectionName);
+}
+
+void DOSBoxConfiguration::onSectionCommentAdded(Section & section, std::string newComment, size_t commentIndex) {
+	size_t sectionIndex = indexOfSection(section);
+
+	if(sectionIndex == std::numeric_limits<size_t>::max()) {
+		return;
+	}
+
+	configurationSectionCommentAdded(*this, m_sections[m_orderedSectionNames[sectionIndex]], sectionIndex, newComment, commentIndex);
+}
+
+void DOSBoxConfiguration::onSectionCommentReplaced(Section & section, std::string newComment, size_t commentIndex, std::string oldComment) {
+	size_t sectionIndex = indexOfSection(section);
+
+	if(sectionIndex == std::numeric_limits<size_t>::max()) {
+		return;
+	}
+
+	configurationSectionCommentReplaced(*this, m_sections[m_orderedSectionNames[sectionIndex]], sectionIndex, newComment, commentIndex, oldComment);
+}
+
+void DOSBoxConfiguration::onSectionCommentInserted(Section & section, std::string newComment, size_t commentIndex) {
+	size_t sectionIndex = indexOfSection(section);
+
+	if(sectionIndex == std::numeric_limits<size_t>::max()) {
+		return;
+	}
+
+	configurationSectionCommentInserted(*this, m_sections[m_orderedSectionNames[sectionIndex]], sectionIndex, newComment, commentIndex);
+}
+
+void DOSBoxConfiguration::onSectionCommentRemoved(Section & section, std::string comment, size_t commentIndex) {
+	size_t sectionIndex = indexOfSection(section);
+
+	if(sectionIndex == std::numeric_limits<size_t>::max()) {
+		return;
+	}
+
+	configurationSectionCommentRemoved(*this, m_sections[m_orderedSectionNames[sectionIndex]], sectionIndex, comment, commentIndex);
+}
+
+void DOSBoxConfiguration::onSectionCommentsCleared(Section & section) {
+	size_t sectionIndex = indexOfSection(section);
+
+	if(sectionIndex == std::numeric_limits<size_t>::max()) {
+		return;
+	}
+
+	configurationSectionCommentsCleared(*this, m_sections[m_orderedSectionNames[sectionIndex]], sectionIndex);
+}
+
+void DOSBoxConfiguration::onSectionEntryNameChanged(Section & section, std::shared_ptr<Section::Entry> entry, size_t entryIndex, std::string oldEntryName) {
+	size_t sectionIndex = indexOfSection(section);
+
+	if(sectionIndex == std::numeric_limits<size_t>::max()) {
+		return;
+	}
+
+	configurationSectionEntryNameChanged(*this, m_sections[m_orderedSectionNames[sectionIndex]], sectionIndex, entry, entryIndex, oldEntryName);
+}
+
+void DOSBoxConfiguration::onSectionEntryValueChanged(Section & section, std::shared_ptr<Section::Entry> entry, size_t entryIndex, std::string oldEntryValue) {
+	size_t sectionIndex = indexOfSection(section);
+
+	if(sectionIndex == std::numeric_limits<size_t>::max()) {
+		return;
+	}
+
+	configurationSectionEntryValueChanged(*this, m_sections[m_orderedSectionNames[sectionIndex]], sectionIndex, entry, entryIndex, oldEntryValue);
+}
+
+void DOSBoxConfiguration::onSectionEntryAdded(Section & section, std::shared_ptr<Section::Entry> newEntry, size_t entryIndex) {
+	size_t sectionIndex = indexOfSection(section);
+
+	if(sectionIndex == std::numeric_limits<size_t>::max()) {
+		return;
+	}
+
+	configurationSectionEntryAdded(*this, m_sections[m_orderedSectionNames[sectionIndex]], sectionIndex, newEntry, entryIndex);
+}
+
+void DOSBoxConfiguration::onSectionEntryReplaced(Section & section, std::shared_ptr<Section::Entry> newEntry, size_t entryIndex, std::shared_ptr<Section::Entry> oldEntry) {
+	size_t sectionIndex = indexOfSection(section);
+
+	if(sectionIndex == std::numeric_limits<size_t>::max()) {
+		return;
+	}
+
+	configurationSectionEntryReplaced(*this, m_sections[m_orderedSectionNames[sectionIndex]], sectionIndex, newEntry, entryIndex, oldEntry);
+}
+
+void DOSBoxConfiguration::onSectionEntryInserted(Section & section, std::shared_ptr<Section::Entry> newEntry, size_t entryIndex) {
+	size_t sectionIndex = indexOfSection(section);
+
+	if(sectionIndex == std::numeric_limits<size_t>::max()) {
+		return;
+	}
+
+	configurationSectionEntryInserted(*this, m_sections[m_orderedSectionNames[sectionIndex]], sectionIndex, newEntry, entryIndex);
+}
+
+void DOSBoxConfiguration::onSectionEntryRemoved(Section & section, std::shared_ptr<Section::Entry> entry, size_t entryIndex) {
+	size_t sectionIndex = indexOfSection(section);
+
+	if(sectionIndex == std::numeric_limits<size_t>::max()) {
+		return;
+	}
+
+	configurationSectionEntryRemoved(*this, m_sections[m_orderedSectionNames[sectionIndex]], sectionIndex, entry, entryIndex);
+}
+
+void DOSBoxConfiguration::onSectionEntriesCleared(Section & section) {
+	size_t sectionIndex = indexOfSection(section);
+
+	if(sectionIndex == std::numeric_limits<size_t>::max()) {
+		return;
+	}
+
+	configurationSectionEntriesCleared(*this, m_sections[m_orderedSectionNames[sectionIndex]], sectionIndex);
 }
 
 bool DOSBoxConfiguration::operator == (const DOSBoxConfiguration & configuration) const {

@@ -11,22 +11,48 @@
 DOSBoxConfiguration::Section::Entry::Entry(std::string_view name, std::string_view value, Section * parent)
 	: m_name(name)
 	, m_value(value)
+	, m_modified(false)
 	, m_parent(parent) { }
 
 DOSBoxConfiguration::Section::Entry::Entry(Entry && entry) noexcept
 	: m_name(std::move(entry.m_name))
 	, m_value(std::move(entry.m_value))
+	, m_modified(false)
 	, m_parent(nullptr) { }
 
 DOSBoxConfiguration::Section::Entry::Entry(const Entry & e)
 	: m_name(e.m_name)
 	, m_value(e.m_value)
+	, m_modified(false)
 	, m_parent(nullptr) { }
 
 DOSBoxConfiguration::Section::Entry & DOSBoxConfiguration::Section::Entry::operator = (Entry && entry) noexcept {
 	if(this != &entry) {
+		bool nameChanged = !Utilities::areStringsEqual(m_name, entry.m_name);
+		bool valueChanged = !Utilities::areStringsEqual(m_value, entry.m_value);
+		std::string oldName;
+		std::string oldValue;
+
+		if(nameChanged) {
+			oldName = m_name;
+		}
+
+		if(valueChanged) {
+			oldValue = m_value;
+		}
+
 		m_name = std::move(entry.m_name);
 		m_value = std::move(entry.m_value);
+
+		if(nameChanged) {
+			entryNameChanged(*this, oldName);
+		}
+
+		if(valueChanged) {
+			entryValueChanged(*this, oldValue);
+		}
+
+		setModified(true);
 	}
 
 	return *this;
@@ -35,6 +61,28 @@ DOSBoxConfiguration::Section::Entry & DOSBoxConfiguration::Section::Entry::opera
 DOSBoxConfiguration::Section::Entry & DOSBoxConfiguration::Section::Entry::operator = (const Entry & entry) {
 	m_name = entry.m_name;
 	m_value = entry.m_value;
+	bool nameChanged = !Utilities::areStringsEqual(m_name, entry.m_name);
+	bool valueChanged = !Utilities::areStringsEqual(m_value, entry.m_value);
+	std::string oldName;
+	std::string oldValue;
+
+	if(nameChanged) {
+		oldName = m_name;
+	}
+
+	if(valueChanged) {
+		oldValue = m_value;
+	}
+
+	if(nameChanged) {
+		entryNameChanged(*this, oldName);
+	}
+
+	if(valueChanged) {
+		entryValueChanged(*this, oldValue);
+	}
+
+	setModified(true);
 
 	return *this;
 }
@@ -62,7 +110,17 @@ const std::string & DOSBoxConfiguration::Section::Entry::getValue() const {
 }
 
 void DOSBoxConfiguration::Section::Entry::setValue(std::string_view value) {
+	if(Utilities::areStringsEqual(m_value, value)) {
+		return;
+	}
+
+	std::string oldValue(m_value);
+
 	m_value = value;
+
+	entryValueChanged(*this, oldValue);
+
+	setModified(true);
 }
 
 void DOSBoxConfiguration::Section::Entry::clearValue() {
@@ -75,6 +133,16 @@ bool DOSBoxConfiguration::Section::Entry::remove() {
 	}
 
 	return m_parent->removeEntry(*this);
+}
+
+bool DOSBoxConfiguration::Section::Entry::isModified() const {
+	return m_modified;
+}
+
+void DOSBoxConfiguration::Section::Entry::setModified(bool value) {
+	m_modified = value;
+
+	entryModified(*this);
 }
 
 const DOSBoxConfiguration::Section * DOSBoxConfiguration::Section::Entry::getParentSection() const {

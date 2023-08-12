@@ -10,46 +10,88 @@ static const std::string AUTOEXEC_SECTION_NAME("autoexec");
 DOSBoxConfiguration::Section::Section(std::string_view name, DOSBoxConfiguration * parent)
 	: CommentCollection()
 	, m_name(name)
-	, m_parent(parent) { }
+	, m_modified(false)
+	, m_parent(parent) {
+	connectSignals();
+}
+
+DOSBoxConfiguration::Section::Section(std::string_view name, std::vector<std::unique_ptr<Entry>> entries, DOSBoxConfiguration * parent)
+	: CommentCollection()
+	, m_name(name)
+	, m_modified(false)
+	, m_parent(parent) {
+	connectSignals();
+
+	for(std::unique_ptr<Entry> & entry : entries) {
+		addEntry(std::move(entry));
+	}
+}
+
+DOSBoxConfiguration::Section::Section(std::string_view name, const std::vector<Entry> & entries, DOSBoxConfiguration * parent)
+	: CommentCollection()
+	, m_name(name)
+	, m_modified(false)
+	, m_parent(parent) {
+	connectSignals();
+
+	for(const Entry & entry : entries) {
+		addEntry(entry);
+	}
+}
 
 DOSBoxConfiguration::Section::Section(Section && section) noexcept
 	: CommentCollection(std::move(section))
 	, m_name(std::move(section.m_name))
 	, m_entries(std::move(section.m_entries))
 	, m_orderedEntryNames(std::move(section.m_orderedEntryNames))
+	, m_modified(false)
 	, m_parent(nullptr) {
 	updateParent();
+	connectSignals();
 }
 
 DOSBoxConfiguration::Section::Section(const Section & section)
 	: CommentCollection(section)
 	, m_name(section.m_name)
 	, m_orderedEntryNames(section.m_orderedEntryNames)
+	, m_modified(false)
 	, m_parent(nullptr) {
-	clearEntries();
-
 	for(const auto & entry : section.m_entries) {
 		m_entries[entry.first] = std::make_shared<Entry>(*entry.second);
 	}
 
 	updateParent();
+	connectSignals();
 }
 
 DOSBoxConfiguration::Section & DOSBoxConfiguration::Section::operator = (Section && section) noexcept {
 	if(this != &section) {
+		disconnectSignals();
+
 		CommentCollection::operator = (std::move(section));
+
+		clearEntries();
 
 		m_name = std::move(section.m_name);
 		m_entries = std::move(section.m_entries);
 		m_orderedEntryNames = std::move(section.m_orderedEntryNames);
 
 		updateParent();
+		connectSignals();
+
+		for(size_t i = 0; i < m_entries.size(); i++) {
+			sectionEntryAdded(*this, m_entries[m_orderedEntryNames[i]], i);
+		}
+
+		setModified(true);
 	}
 
 	return *this;
 }
 
 DOSBoxConfiguration::Section & DOSBoxConfiguration::Section::operator = (const Section & section) {
+	disconnectSignals();
+
 	CommentCollection::operator = (section);
 
 	clearEntries();
@@ -62,11 +104,20 @@ DOSBoxConfiguration::Section & DOSBoxConfiguration::Section::operator = (const S
 	}
 
 	updateParent();
+	connectSignals();
+
+	for(size_t i = 0; i < m_entries.size(); i++) {
+		sectionEntryAdded(*this, m_entries[m_orderedEntryNames[i]], i);
+	}
+
+	setModified(true);
 
 	return *this;
 }
 
 DOSBoxConfiguration::Section::~Section() {
+	disconnectSignals();
+
 	for(const auto & entry : m_entries) {
 		entry.second->m_parent = nullptr;
 	}
@@ -110,7 +161,42 @@ bool DOSBoxConfiguration::Section::mergeWith(const Section & section) {
 	CommentCollection::mergeWith(section);
 
 	for(const auto & currentEntry : section.m_entries) {
-		std::shared_ptr<Entry> existingEntry(getEntryWithName(currentEntry.second->m_name));
+		std::shared_ptr<Entry> existingEntry(getEntryWithName(currentEntry.second->getName()));
+
+		if(existingEntry != nullptr) {
+			existingEntry->setValue(currentEntry.second->getValue());
+		}
+		else {
+			if(!addEntry(*currentEntry.second)) {
+				return false;
+			}
+		}
+	}
+
+	setModified(true);
+
+	return true;
+}
+
+bool DOSBoxConfiguration::Section::setSection(const Section & section) {
+	if(!section.isValid()) {
+		return false;
+	}
+
+	setComments(section.m_comments);
+
+	for(const auto & currentEntry : m_entries) {
+		size_t existingEntryIndex = section.indexOfEntryWithName(currentEntry.second->getName());
+
+		if(existingEntryIndex == std::numeric_limits<size_t>::max()) {
+			if(!removeEntry(existingEntryIndex)) {
+				return false;
+			}
+		}
+	}
+
+	for(const auto & currentEntry : section.m_entries) {
+		std::shared_ptr<Entry> existingEntry(getEntryWithName(currentEntry.second->getName()));
 
 		if(existingEntry != nullptr) {
 			existingEntry->setValue(currentEntry.second->getValue());
@@ -122,7 +208,34 @@ bool DOSBoxConfiguration::Section::mergeWith(const Section & section) {
 		}
 	}
 
+	m_orderedEntryNames = section.m_orderedEntryNames;
+
+	setModified(true);
+
 	return true;
+}
+
+void DOSBoxConfiguration::Section::clear() {
+	clearComments();
+	clearEntries();
+}
+
+bool DOSBoxConfiguration::Section::isModified() const {
+	return m_modified;
+}
+
+void DOSBoxConfiguration::Section::setModified(bool value) {
+	m_modified = value;
+
+	if(!m_modified) {
+		m_commentCollectionModified = false;
+
+		for(auto & entry : m_entries) {
+			entry.second->setModified(false);
+		}
+	}
+
+	sectionModified(*this);
 }
 
 const DOSBoxConfiguration * DOSBoxConfiguration::Section::getParentConfiguration() const {
@@ -252,7 +365,7 @@ const std::vector<std::string> & DOSBoxConfiguration::Section::getOrderedEntryNa
 }
 
 bool DOSBoxConfiguration::Section::setEntryName(size_t entryIndex, const std::string & newEntryName) {
-	if(entryIndex >= m_entries.size() || !Entry::isNameValid(newEntryName) || hasEntryWithName(newEntryName)) {
+	if(entryIndex >= m_entries.size() || !Entry::isNameValid(newEntryName)) {
 		return false;
 	}
 
@@ -264,13 +377,23 @@ bool DOSBoxConfiguration::Section::setEntryName(size_t entryIndex, const std::st
 
 	std::shared_ptr<Entry> sharedEntry(entryIterator->second);
 
-	if(m_entries.erase(sharedEntry->m_name) == 0) {
+	if(Utilities::areStringsEqual(sharedEntry->getName(), newEntryName)) {
+		return true;
+	}
+
+	if(hasEntryWithName(newEntryName) || m_entries.erase(sharedEntry->m_name) == 0) {
 		return false;
 	}
+
+	std::string oldEntryName(sharedEntry->m_name);
 
 	sharedEntry->m_name = newEntryName;
 	m_orderedEntryNames[entryIndex] = newEntryName;
 	m_entries.emplace(sharedEntry->m_name, sharedEntry);
+
+	sharedEntry->entryNameChanged(*sharedEntry, oldEntryName);
+
+	sharedEntry->setModified(true);
 
 	return true;
 }
@@ -331,7 +454,12 @@ bool DOSBoxConfiguration::Section::addEntry(std::unique_ptr<Entry> newEntry) {
 	m_orderedEntryNames.push_back(newEntry->m_name);
 	newEntry->m_parent = this;
 	const std::string & entryName = newEntry->m_name;
+	m_entryConnections.emplace_back(connectEntrySignals(*newEntry));
 	m_entries.emplace(entryName, std::move(newEntry));
+
+	sectionEntryAdded(*this, m_entries[m_orderedEntryNames.back()], m_entries.size() - 1);
+
+	setModified(true);
 
 	return true;
 }
@@ -363,10 +491,17 @@ bool DOSBoxConfiguration::Section::replaceEntry(size_t entryIndex, std::unique_p
 		return false;
 	}
 
+	std::shared_ptr<Entry> oldEntry(m_entries[newEntry->m_name]);
+
 	std::shared_ptr<Entry> sharedNewEntry(std::move(newEntry));
 	m_orderedEntryNames[entryIndex] = sharedNewEntry->m_name;
 	sharedNewEntry->m_parent = this;
-	m_entries[sharedNewEntry->m_name] = sharedNewEntry;
+	m_entryConnections[entryIndex] = connectEntrySignals(*sharedNewEntry);
+	m_entries[sharedNewEntry->m_name] = std::move(sharedNewEntry);
+
+	sectionEntryReplaced(*this, sharedNewEntry, entryIndex, oldEntry);
+
+	setModified(true);
 
 	return true;
 }
@@ -417,7 +552,12 @@ bool DOSBoxConfiguration::Section::insertEntry(size_t entryIndex, std::unique_pt
 	std::shared_ptr<Entry> sharedNewEntry(std::move(newEntry));
 	m_orderedEntryNames.insert(m_orderedEntryNames.begin() + entryIndex, sharedNewEntry->m_name);
 	sharedNewEntry->m_parent = this;
-	m_entries[sharedNewEntry->m_name] = sharedNewEntry;
+	m_entryConnections.insert(m_entryConnections.begin() + entryIndex, connectEntrySignals(*sharedNewEntry));
+	m_entries[sharedNewEntry->m_name] = std::move(sharedNewEntry);
+
+	sectionEntryInserted(*this, sharedNewEntry, entryIndex);
+
+	setModified(true);
 
 	return true;
 }
@@ -446,6 +586,12 @@ bool DOSBoxConfiguration::Section::removeEntry(size_t entryIndex) {
 	sharedEntry->m_parent = nullptr;
 	bool removed = m_entries.erase(sharedEntry->m_name) != 0;
 	m_orderedEntryNames.erase(m_orderedEntryNames.begin() + entryIndex);
+	m_entryConnections[entryIndex].disconnect();
+	m_entryConnections.erase(m_entryConnections.begin() + entryIndex);
+
+	sectionEntryRemoved(*this, sharedEntry, entryIndex);
+
+	setModified(true);
 
 	return removed;
 }
@@ -465,6 +611,16 @@ void DOSBoxConfiguration::Section::clearEntries() {
 
 	m_entries.clear();
 	m_orderedEntryNames.clear();
+
+	for(SignalConnectionGroup & connection : m_entryConnections) {
+		connection.disconnect();
+	}
+
+	m_entryConnections.clear();
+
+	sectionEntriesCleared(*this);
+
+	setModified(true);
 }
 
 std::unique_ptr<DOSBoxConfiguration::Section> DOSBoxConfiguration::Section::readFrom(const ByteBuffer & data, Style * style) {
@@ -618,6 +774,121 @@ void DOSBoxConfiguration::Section::updateParent() {
 	for(auto & entry : m_entries) {
 		entry.second->m_parent = this;
 	}
+}
+
+void DOSBoxConfiguration::Section::connectSignals() {
+	m_commentCollectionConnections = SignalConnectionGroup(
+		commentCollectionModified.connect(std::bind(&DOSBoxConfiguration::Section::onCommentCollectionModified, this, std::placeholders::_1)),
+		commentAdded.connect(std::bind(&DOSBoxConfiguration::Section::onCommentAdded, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)),
+		commentReplaced.connect(std::bind(&DOSBoxConfiguration::Section::onCommentReplaced, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4)),
+		commentInserted.connect(std::bind(&DOSBoxConfiguration::Section::onCommentInserted, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)),
+		commentRemoved.connect(std::bind(&DOSBoxConfiguration::Section::onCommentRemoved, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)),
+		commentsCleared.connect(std::bind(&DOSBoxConfiguration::Section::onCommentsCleared, this, std::placeholders::_1))
+	);
+
+	for(const std::string & entryName : m_orderedEntryNames) {
+		EntryMap::const_iterator entryIterator(m_entries.find(entryName));
+
+		if(entryIterator == m_entries.cend()) {
+			continue;
+		}
+
+		m_entryConnections.emplace_back(connectEntrySignals(*entryIterator->second));
+	}
+}
+
+SignalConnectionGroup DOSBoxConfiguration::Section::connectEntrySignals(Entry & entry) {
+	return SignalConnectionGroup(
+		entry.entryModified.connect(std::bind(&DOSBoxConfiguration::Section::onEntryModified, this, std::placeholders::_1)),
+		entry.entryNameChanged.connect(std::bind(&DOSBoxConfiguration::Section::onEntryNameChanged, this, std::placeholders::_1, std::placeholders::_2)),
+		entry.entryValueChanged.connect(std::bind(&DOSBoxConfiguration::Section::onEntryValueChanged, this, std::placeholders::_1, std::placeholders::_2))
+	);
+}
+
+void DOSBoxConfiguration::Section::disconnectSignals() {
+	m_commentCollectionConnections.disconnect();
+
+	for(SignalConnectionGroup & connection : m_entryConnections) {
+		connection.disconnect();
+	}
+
+	m_entryConnections.clear();
+}
+
+void DOSBoxConfiguration::Section::onCommentCollectionModified(CommentCollection & commentCollection) {
+	if(this != &commentCollection) {
+		return;
+	}
+
+	if(commentCollection.isCommentCollectionModified()) {
+		setModified(true);
+	}
+}
+
+void DOSBoxConfiguration::Section::onCommentAdded(CommentCollection & commentCollection, std::string newComment, size_t commentIndex) {
+	if(this != &commentCollection) {
+		return;
+	}
+
+	sectionCommentAdded(*this, newComment, commentIndex);
+}
+
+void DOSBoxConfiguration::Section::onCommentReplaced(CommentCollection & commentCollection, std::string newComment, size_t commentIndex, std::string oldComment) {
+	if(this != &commentCollection) {
+		return;
+	}
+
+	sectionCommentReplaced(*this, newComment, commentIndex, oldComment);
+}
+
+void DOSBoxConfiguration::Section::onCommentInserted(CommentCollection & commentCollection, std::string newComment, size_t commentIndex) {
+	if(this != &commentCollection) {
+		return;
+	}
+
+	sectionCommentInserted(*this, newComment, commentIndex);
+}
+
+void DOSBoxConfiguration::Section::onCommentRemoved(CommentCollection & commentCollection, std::string comment, size_t commentIndex) {
+	if(this != &commentCollection) {
+		return;
+	}
+
+	sectionCommentRemoved(*this, comment, commentIndex);
+}
+
+void DOSBoxConfiguration::Section::onCommentsCleared(CommentCollection & commentCollection) {
+	if(this != &commentCollection) {
+		return;
+	}
+
+	sectionCommentsCleared(*this);
+}
+
+void DOSBoxConfiguration::Section::onEntryModified(Entry & entry) {
+	if(entry.isModified()) {
+		setModified(true);
+	}
+}
+
+void DOSBoxConfiguration::Section::onEntryNameChanged(Entry & entry, std::string oldEntryName) {
+	size_t entryIndex = indexOfEntry(entry);
+
+	if(entryIndex == std::numeric_limits<size_t>::max()) {
+		return;
+	}
+
+	sectionEntryNameChanged(*this, m_entries[m_orderedEntryNames[entryIndex]], entryIndex, oldEntryName);
+}
+
+void DOSBoxConfiguration::Section::onEntryValueChanged(Entry & entry, std::string oldEntryValue) {
+	size_t entryIndex = indexOfEntry(entry);
+
+	if(entryIndex == std::numeric_limits<size_t>::max()) {
+		return;
+	}
+
+	sectionEntryValueChanged(*this, m_entries[m_orderedEntryNames[entryIndex]], entryIndex, oldEntryValue);
 }
 
 bool DOSBoxConfiguration::Section::operator == (const Section & section) const {
