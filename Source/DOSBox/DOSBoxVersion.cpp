@@ -57,9 +57,10 @@ const std::vector<const DOSBoxVersion *> DOSBoxVersion::DEFAULT_DOSBOX_VERSIONS 
 DOSBoxVersion::DOSBoxVersion()
 	: m_removable(true)
 	, m_executableName(DEFAULT_EXECUTABLE_FILE_NAME)
+	, m_dosboxConfiguration(std::make_shared<DOSBoxConfiguration>())
 	, m_modified(false) { }
 
-DOSBoxVersion::DOSBoxVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool removable, const std::string & executableName, const std::string & directoryPath, const std::string & website, const std::string & sourceCodeURL, const std::vector<DeviceInformationBridge::OperatingSystemType> & supportedOperatingSystems)
+DOSBoxVersion::DOSBoxVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool removable, const std::string & executableName, const std::string & directoryPath, const std::string & website, const std::string & sourceCodeURL, const std::vector<DeviceInformationBridge::OperatingSystemType> & supportedOperatingSystems, const DOSBoxConfiguration & dosboxConfiguration)
 	: m_id(id)
 	, m_longName(longName)
 	, m_shortName(shortName)
@@ -68,6 +69,7 @@ DOSBoxVersion::DOSBoxVersion(const std::string & id, const std::string & longNam
 	, m_directoryPath(directoryPath)
 	, m_website(website)
 	, m_sourceCodeURL(sourceCodeURL)
+	, m_dosboxConfiguration(std::make_shared<DOSBoxConfiguration>(dosboxConfiguration))
 	, m_modified(false) {
 	if(!m_directoryPath.empty()) {
 		m_installedTimePoint = std::chrono::system_clock::now();
@@ -90,6 +92,7 @@ DOSBoxVersion::DOSBoxVersion(DOSBoxVersion && dosboxVersion) noexcept
 	, m_website(std::move(dosboxVersion.m_website))
 	, m_sourceCodeURL(std::move(dosboxVersion.m_sourceCodeURL))
 	, m_supportedOperatingSystems(std::move(dosboxVersion.m_supportedOperatingSystems))
+	, m_dosboxConfiguration(std::move(dosboxVersion.m_dosboxConfiguration))
 	, m_modified(false) { }
 
 DOSBoxVersion::DOSBoxVersion(const DOSBoxVersion & dosboxVersion)
@@ -105,6 +108,7 @@ DOSBoxVersion::DOSBoxVersion(const DOSBoxVersion & dosboxVersion)
 	, m_website(dosboxVersion.m_website)
 	, m_sourceCodeURL(dosboxVersion.m_sourceCodeURL)
 	, m_supportedOperatingSystems(dosboxVersion.m_supportedOperatingSystems)
+	, m_dosboxConfiguration(dosboxVersion.m_dosboxConfiguration)
 	, m_modified(false) { }
 
 DOSBoxVersion & DOSBoxVersion::operator = (DOSBoxVersion && dosboxVersion) noexcept {
@@ -121,6 +125,7 @@ DOSBoxVersion & DOSBoxVersion::operator = (DOSBoxVersion && dosboxVersion) noexc
 		m_website = std::move(dosboxVersion.m_website);
 		m_sourceCodeURL = std::move(dosboxVersion.m_sourceCodeURL);
 		m_supportedOperatingSystems = std::move(dosboxVersion.m_supportedOperatingSystems);
+		m_dosboxConfiguration = std::move(dosboxVersion.m_dosboxConfiguration);
 
 		setModified(true);
 	}
@@ -141,6 +146,7 @@ DOSBoxVersion & DOSBoxVersion::operator = (const DOSBoxVersion & dosboxVersion) 
 	m_website = dosboxVersion.m_website;
 	m_sourceCodeURL = dosboxVersion.m_sourceCodeURL;
 	m_supportedOperatingSystems = dosboxVersion.m_supportedOperatingSystems;
+	m_dosboxConfiguration = dosboxVersion.m_dosboxConfiguration;
 
 	setModified(true);
 
@@ -376,6 +382,35 @@ void DOSBoxVersion::setSourceCodeURL(const std::string & sourceCodeURL) {
 	m_sourceCodeURL = sourceCodeURL;
 
 	setModified(true);
+}
+
+std::shared_ptr<DOSBoxConfiguration> DOSBoxVersion::getDOSBoxConfiguration() const {
+	return m_dosboxConfiguration;
+}
+
+bool DOSBoxVersion::setDOSBoxConfiguration(const DOSBoxConfiguration & dosboxConfiguration) {
+	return m_dosboxConfiguration->setConfiguration(dosboxConfiguration);
+}
+
+void DOSBoxVersion::resetDOSBoxConfigurationToDefault() {
+	std::shared_ptr<const DOSBoxConfiguration> defaultDOSBoxConfiguration(getDefaultDOSBoxConfiguration());
+
+	if(defaultDOSBoxConfiguration != nullptr) {
+		m_dosboxConfiguration->setConfiguration(*defaultDOSBoxConfiguration);
+	}
+	else {
+		m_dosboxConfiguration->clear();
+	}
+}
+
+std::shared_ptr<const DOSBoxConfiguration> DOSBoxVersion::getDefaultDOSBoxConfiguration() const {
+	for(const DOSBoxVersion * dosboxVersion : DEFAULT_DOSBOX_VERSIONS) {
+		if(Utilities::areStringsEqualIgnoreCase(m_id, dosboxVersion->getID())) {
+			return dosboxVersion->getDOSBoxConfiguration();
+		}
+	}
+
+	return nullptr;
 }
 
 size_t DOSBoxVersion::numberOfSupportedOperatingSystems() const {
@@ -868,6 +903,77 @@ std::unique_ptr<DOSBoxVersion> DOSBoxVersion::parseFrom(const rapidjson::Value &
 	return newDOSBoxVersion;
 }
 
+std::string DOSBoxVersion::getDOSBoxConfigurationFileName() const {
+	if(m_id.empty()) {
+		return {};
+	}
+
+	return m_id + "." + DOSBoxConfiguration::FILE_EXTENSION;
+}
+
+bool DOSBoxVersion::loadDOSBoxConfigurationFrom(const std::string & directoryPath, bool * loaded) {
+	std::string dosboxConfigurationFileName(getDOSBoxConfigurationFileName());
+
+	if(dosboxConfigurationFileName.empty()) {
+		return true;
+	}
+
+	std::string dosboxConfigurationFilePath(Utilities::joinPaths(directoryPath, dosboxConfigurationFileName));
+	m_dosboxConfiguration->setFilePath(dosboxConfigurationFilePath);
+
+	if(!std::filesystem::is_regular_file(std::filesystem::path(dosboxConfigurationFilePath))) {
+		return true;
+	}
+
+	std::unique_ptr<DOSBoxConfiguration> dosboxConfiguration(DOSBoxConfiguration::loadFrom(dosboxConfigurationFilePath));
+
+	if(dosboxConfiguration == nullptr) {
+		spdlog::error("Failed to load DOSBox configuration from file: '{}'.", dosboxConfigurationFilePath);
+		return false;
+	}
+
+	*m_dosboxConfiguration = std::move(*dosboxConfiguration);
+	m_dosboxConfiguration->setModified(false);
+
+	if(loaded != nullptr) {
+		*loaded = true;
+	}
+
+	return true;
+}
+
+bool DOSBoxVersion::saveDOSBoxConfigurationTo(const std::string & directoryPath, bool * saved) const {
+	if(m_dosboxConfiguration == nullptr || m_dosboxConfiguration->isEmpty()) {
+		return true;
+	}
+
+	if(!m_dosboxConfiguration->isValid()) {
+		spdlog::error("Failed to save invalid DOSBox configuration to file.");
+		return false;
+	}
+
+	std::string dosboxConfigurationFileName(getDOSBoxConfigurationFileName());
+
+	if(dosboxConfigurationFileName.empty()) {
+		return true;
+	}
+
+	m_dosboxConfiguration->setFilePath(Utilities::joinPaths(directoryPath, dosboxConfigurationFileName));
+
+	if(!m_dosboxConfiguration->save()) {
+		spdlog::error("Failed to save DOSBox configuration to file: '{}'.", m_dosboxConfiguration->getFilePath());
+		return false;
+	}
+
+	m_dosboxConfiguration->setModified(false);
+
+	if(saved != nullptr) {
+		*saved = true;
+	}
+
+	return true;
+}
+
 bool DOSBoxVersion::isConfigured() const {
 	return isValid() &&
 		   !m_directoryPath.empty();
@@ -903,7 +1009,8 @@ bool DOSBoxVersion::operator == (const DOSBoxVersion & dosboxVersion) const {
 		   Utilities::areStringsEqual(m_directoryPath, dosboxVersion.m_directoryPath) &&
 		   Utilities::areStringsEqual(m_website, dosboxVersion.m_website) &&
 		   Utilities::areStringsEqual(m_sourceCodeURL, dosboxVersion.m_sourceCodeURL) &&
-		   m_supportedOperatingSystems != dosboxVersion.m_supportedOperatingSystems;
+		   m_supportedOperatingSystems != dosboxVersion.m_supportedOperatingSystems &&
+		   (m_dosboxConfiguration == nullptr && dosboxVersion.m_dosboxConfiguration == nullptr || (m_dosboxConfiguration != nullptr && dosboxVersion.m_dosboxConfiguration != nullptr && *m_dosboxConfiguration != *dosboxVersion.m_dosboxConfiguration));
 }
 
 bool DOSBoxVersion::operator != (const DOSBoxVersion & dosboxVersion) const {

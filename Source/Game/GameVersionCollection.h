@@ -75,6 +75,9 @@ public:
 	bool saveTo(const std::string & filePath, bool overwrite = true) const;
 	bool saveToJSON(const std::string & filePath, bool overwrite = true) const;
 
+	bool loadDOSBoxConfigurationsFrom(const std::string & directoryPath, size_t * numberOfConfigurationsLoaded = nullptr);
+	bool saveDOSBoxConfigurationsTo(const std::string & directoryPath, size_t * numberOfConfigurationsSaved = nullptr) const;
+
 	bool isValid() const;
 	static bool isValid(const GameVersionCollection * g);
 

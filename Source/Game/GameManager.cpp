@@ -287,6 +287,10 @@ bool GameManager::initialize() {
 
 	m_gameVersions->addMissingDefaultGameVersions();
 
+	if(!loadDOSBoxConfigurations()) {
+		return false;
+	}
+
 	if(m_localMode && !loadOrUpdateGameDownloadList()) {
 		return false;
 	}
@@ -311,6 +315,27 @@ void GameManager::setLocalMode(bool localMode) {
 	}
 
 	m_localMode = localMode;
+}
+
+std::string GameManager::getDOSBoxConfigurationsDirectoryPath() const {
+	SettingsManager * settings = SettingsManager::getInstance();
+
+	if(settings->dataDirectoryPath.empty()) {
+		spdlog::error("Missing data directory path setting.");
+		return {};
+	}
+
+	if(settings->dosboxDataDirectoryName.empty()) {
+		spdlog::error("Missing DOSBox data directory name setting.");
+		return {};
+	}
+
+	if(settings->dosboxConfigurationsDirectoryName.empty()) {
+		spdlog::error("Missing DOSBox configurations directory name setting.");
+		return {};
+	}
+
+	return Utilities::joinPaths(settings->dataDirectoryPath, settings->dosboxDataDirectoryName, settings->dosboxConfigurationsDirectoryName);
 }
 
 std::string GameManager::getGameDownloadsListFilePath() const {
@@ -341,6 +366,46 @@ std::string GameManager::getGameDownloadsListFilePath() const {
 	}
 
 	return Utilities::joinPaths(settings->downloadsDirectoryPath, settings->gameDownloadsDirectoryName, settings->remoteGamesListFileName);
+}
+
+bool GameManager::loadDOSBoxConfigurations() const {
+	std::string dosboxConfigurationsDirectoryPath(getDOSBoxConfigurationsDirectoryPath());
+
+	if(dosboxConfigurationsDirectoryPath.empty()) {
+		return false;
+	}
+
+	size_t numberOfConfigurationsLoaded = 0;
+
+	if(!m_gameVersions->loadDOSBoxConfigurationsFrom(dosboxConfigurationsDirectoryPath, &numberOfConfigurationsLoaded)) {
+		spdlog::error("Failed to load one or more game specific DOSBox configuration files. Please check the logs and manually address any issues.");
+	}
+
+	if(numberOfConfigurationsLoaded != 0) {
+		spdlog::info("Loaded {} game specific DOSBox configuration file{}.", numberOfConfigurationsLoaded, numberOfConfigurationsLoaded == 1 ? "" : " ");
+	}
+
+	return true;
+}
+
+bool GameManager::saveDOSBoxConfigurations() const {
+	std::string dosboxConfigurationsDirectoryPath(getDOSBoxConfigurationsDirectoryPath());
+
+	if(dosboxConfigurationsDirectoryPath.empty()) {
+		return false;
+	}
+
+	size_t numberOfConfigurationsSaved = 0;
+
+	if(!m_gameVersions->saveDOSBoxConfigurationsTo(dosboxConfigurationsDirectoryPath, &numberOfConfigurationsSaved)) {
+		spdlog::error("Failed to save one or more game specific DOSBox configuration files.");
+	}
+
+	if(numberOfConfigurationsSaved != 0) {
+		spdlog::info("Saved {} game specific DOSBox configuration file{}.", numberOfConfigurationsSaved, numberOfConfigurationsSaved == 1 ? "" : " ");
+	}
+
+	return true;
 }
 
 bool GameManager::shouldUpdateGameDownloadList() const {

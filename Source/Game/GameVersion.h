@@ -1,6 +1,8 @@
 #ifndef _GAME_VERSION_H_
 #define _GAME_VERSION_H_
 
+#include "DOSBox/Configuration/DOSBoxConfiguration.h"
+
 #include <Platform/DeviceInformationBridge.h>
 
 #include <boost/signals2.hpp>
@@ -25,7 +27,7 @@ public:
 	};
 
 	GameVersion();
-	GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool removable, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, bool supportsSubdirectories, std::optional<bool> worldTourGroupSupported, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag = {}, const std::optional<std::string> & weaponSwitchOrderArgumentFlag = {}, const std::optional<std::string> & disableMonstersArgumentFlag = {}, const std::optional<std::string> & disableSoundArgumentFlag = {}, const std::optional<std::string> & disableMusicArgumentFlag = {}, const std::optional<std::string> & setupExecutableName = {}, const std::optional<std::string> & groupFileInstallPath = {}, const std::optional<std::string> & defFileArgumentFlag = {}, const std::optional<std::string> & extraDefFileArgumentFlag = {}, const std::optional<bool> & requiresCombinedGroup = {}, const std::optional<bool> & requiresGroupFileExtraction = {}, const std::string & website = {}, const std::string & sourceCodeURL = {}, const std::vector<OperatingSystem> & supportedOperatingSystems = {}, const std::vector<std::string> & compatibleGameVersions = {}, const std::vector<std::string> & notes = {});
+	GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool removable, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, bool supportsSubdirectories, std::optional<bool> worldTourGroupSupported, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag = {}, const std::optional<std::string> & weaponSwitchOrderArgumentFlag = {}, const std::optional<std::string> & disableMonstersArgumentFlag = {}, const std::optional<std::string> & disableSoundArgumentFlag = {}, const std::optional<std::string> & disableMusicArgumentFlag = {}, const std::optional<std::string> & setupExecutableName = {}, const std::optional<std::string> & groupFileInstallPath = {}, const std::optional<std::string> & defFileArgumentFlag = {}, const std::optional<std::string> & extraDefFileArgumentFlag = {}, const std::optional<bool> & requiresCombinedGroup = {}, const std::optional<bool> & requiresGroupFileExtraction = {}, const std::string & website = {}, const std::string & sourceCodeURL = {}, const std::vector<OperatingSystem> & supportedOperatingSystems = {}, const std::vector<std::string> & compatibleGameVersions = {}, const std::vector<std::string> & notes = {}, const DOSBoxConfiguration & dosboxConfiguration = {});
 	GameVersion(GameVersion && gameVersion) noexcept;
 	GameVersion(const GameVersion & gameVersion);
 	GameVersion & operator = (GameVersion && gameVersion) noexcept;
@@ -157,6 +159,10 @@ public:
 	void setWebsite(const std::string & website);
 	const std::string & getSourceCodeURL() const;
 	void setSourceCodeURL(const std::string & sourceCodeURL);
+	std::shared_ptr<DOSBoxConfiguration> getDOSBoxConfiguration() const;
+	bool setDOSBoxConfiguration(const DOSBoxConfiguration & dosboxConfiguration);
+	void resetDOSBoxConfigurationToDefault();
+	std::shared_ptr<const DOSBoxConfiguration> getDefaultDOSBoxConfiguration() const;
 
 	size_t numberOfSupportedOperatingSystems() const;
 	bool hasSupportedOperatingSystem(OperatingSystem operatingSystem) const;
@@ -211,6 +217,10 @@ public:
 
 	rapidjson::Value toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const;
 	static std::unique_ptr<GameVersion> parseFrom(const rapidjson::Value & gameVersionValue);
+
+	std::string getDOSBoxConfigurationFileName() const;
+	bool loadDOSBoxConfigurationFrom(const std::string & directoryPath, bool * loaded = nullptr);
+	bool saveDOSBoxConfigurationTo(const std::string & directoryPath, bool * saved = nullptr) const;
 
 	static std::optional<OperatingSystem> convertOperatingSystemType(DeviceInformationBridge::OperatingSystemType operatingSystemType);
 
@@ -308,6 +318,7 @@ private:
 	std::vector<OperatingSystem> m_supportedOperatingSystems;
 	std::vector<std::string> m_compatibleGameVersionIdentifiers;
 	std::vector<std::string> m_notes;
+	std::shared_ptr<DOSBoxConfiguration> m_dosboxConfiguration;
 	mutable bool m_modified;
 };
 

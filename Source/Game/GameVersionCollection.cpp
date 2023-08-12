@@ -627,10 +627,17 @@ bool GameVersionCollection::loadFrom(const std::string & filePath, bool autoCrea
 		return false;
 	}
 	else if(Utilities::areStringsEqualIgnoreCase(fileExtension, "json")) {
-		return loadFromJSON(filePath, autoCreate);
+		if(!loadFromJSON(filePath, autoCreate)) {
+			return false;
+		}
 	}
 
-	return false;
+	for(std::shared_ptr<GameVersion> & gameVersion : m_gameVersions) {
+		gameVersion->resetDOSBoxConfigurationToDefault();
+		gameVersion->getDOSBoxConfiguration()->setModified(false);
+	}
+
+	return true;
 }
 
 bool GameVersionCollection::loadFromJSON(const std::string & filePath, bool autoCreate) {
@@ -710,6 +717,50 @@ bool GameVersionCollection::saveToJSON(const std::string & filePath, bool overwr
 	fileStream.close();
 
 	return true;
+}
+
+bool GameVersionCollection::loadDOSBoxConfigurationsFrom(const std::string & directoryPath, size_t * numberOfConfigurationsLoaded) {
+	bool success = true;
+	bool configurationLoaded = false;
+
+	for(const std::shared_ptr<GameVersion> & gameVersion : m_gameVersions) {
+		if(!gameVersion->loadDOSBoxConfigurationFrom(directoryPath, &configurationLoaded)) {
+			success = false;
+			continue;
+		}
+
+		if(configurationLoaded) {
+			configurationLoaded = false;
+
+			if(numberOfConfigurationsLoaded != nullptr) {
+				(*numberOfConfigurationsLoaded)++;
+			}
+		}
+	}
+
+	return success;
+}
+
+bool GameVersionCollection::saveDOSBoxConfigurationsTo(const std::string & directoryPath, size_t * numberOfConfigurationsSaved) const {
+	bool success = true;
+	bool configurationSaved = false;
+
+	for(const std::shared_ptr<GameVersion> & gameVersion : m_gameVersions) {
+		if(!gameVersion->saveDOSBoxConfigurationTo(directoryPath, &configurationSaved)) {
+			success = false;
+			continue;
+		}
+
+		if(configurationSaved) {
+			configurationSaved = false;
+
+			if(numberOfConfigurationsSaved != nullptr) {
+				(*numberOfConfigurationsSaved)++;
+			}
+		}
+	}
+
+	return success;
 }
 
 bool GameVersionCollection::isValid() const {

@@ -24,7 +24,10 @@ public:
 	bool isUsingLocalMode() const;
 	void setLocalMode(bool localMode);
 	std::shared_ptr<DOSBoxVersionCollection> getDOSBoxVersions() const;
+	std::string getDOSBoxConfigurationsDirectoryPath() const;
 	std::string getDOSBoxDownloadsListFilePath() const;
+	bool loadDOSBoxConfigurations() const;
+	bool saveDOSBoxConfigurations() const;
 	bool shouldUpdateDOSBoxDownloadList() const;
 	bool loadOrUpdateDOSBoxDownloadList(bool forceUpdate = false) const;
 	bool updateDOSBoxDownloadList(bool force = false) const;

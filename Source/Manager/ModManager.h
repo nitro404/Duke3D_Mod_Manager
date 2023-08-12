@@ -19,6 +19,7 @@
 #include <vector>
 
 class ArgumentParser;
+class DOSBoxConfiguration;
 class DOSBoxManager;
 class DOSBoxVersion;
 class DOSBoxVersionCollection;
@@ -60,9 +61,12 @@ public:
 	std::shared_ptr<StandAloneModCollection> getStandAloneMods() const;
 	std::shared_ptr<FavouriteModCollection> getFavouriteMods() const;
 	std::shared_ptr<OrganizedModCollection> getOrganizedMods() const;
+	std::shared_ptr<DOSBoxConfiguration> getGeneralDOSBoxConfiguration() const;
 	std::string getModsListFilePath() const;
 	std::string getModsDirectoryPath() const;
 	std::string getMapsDirectoryPath() const;
+	std::string getGeneralDOSBoxConfigurationFilePath() const;
+	std::string getDOSBoxConfigurationsDirectoryPath() const;
 
 	GameType getGameType() const;
 	bool setGameType(const std::string & gameType);
@@ -152,6 +156,8 @@ public:
 	static const std::string DEFAULT_PREFERRED_GAME_VERSION_ID;
 	static const std::string HTTP_USER_AGENT;
 	static const std::string DEFAULT_BACKUP_FILE_RENAME_SUFFIX;
+	static const std::string GENERAL_DOSBOX_CONFIGURATION_FILE_NAME;
+	static const DOSBoxConfiguration DEFAULT_GENERAL_DOSBOX_CONFIGURATION;
 
 private:
 	bool initialize(std::shared_ptr<ArgumentParser> arguments);
@@ -161,8 +167,8 @@ private:
 	void notifyModSelectionChanged();
 	void assignPlatformFactories();
 	bool handleArguments(const ArgumentParser * args);
-	std::string generateCommand(std::shared_ptr<ModGameVersion> modGameVersion, std::shared_ptr<GameVersion> selectedGameVersion, ScriptArguments & scriptArgs, std::string_view combinedGroupFileName = "", bool * customMod = nullptr, std::string * customMap = nullptr, std::shared_ptr<GameVersion> * customTargetGameVersion = nullptr, std::vector<std::string> * customGroupFileNames = nullptr) const;
-	std::string generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const DOSBoxVersion & dosboxVersion, const  std::string & dosboxArguments, bool showConsole) const;
+	std::string generateCommand(std::shared_ptr<ModGameVersion> modGameVersion, std::shared_ptr<GameVersion> selectedGameVersion, ScriptArguments & scriptArgs, std::string_view combinedGroupFileName = "", std::string_view combinedDOSBoxConfigurationFilePath = "", bool * customMod = nullptr, std::string * customMap = nullptr, std::shared_ptr<GameVersion> * customTargetGameVersion = nullptr, std::vector<std::string> * customGroupFileNames = nullptr) const;
+	std::string generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const DOSBoxVersion & dosboxVersion, const  std::string & dosboxArguments, bool showConsole, std::string_view combinedDOSBoxConfigurationFilePath = "") const;
 	size_t checkForUnlinkedModFiles() const;
 	size_t checkForUnlinkedModFilesForGameVersion(const GameVersion & gameVersion) const;
 	size_t checkModForMissingFiles(const std::string & modID, std::optional<size_t> versionIndex = {}, std::optional<size_t> versionTypeIndex = {}) const;
@@ -221,6 +227,7 @@ private:
 	std::shared_ptr<GameManager> m_gameManager;
 	boost::signals2::connection m_gameVersionCollectionSizeChangedConnection;
 	boost::signals2::connection m_gameVersionCollectionItemModifiedConnection;
+	std::shared_ptr<DOSBoxConfiguration> m_generalDOSBoxConfiguration;
 	std::shared_ptr<ModCollection> m_mods;
 	std::shared_ptr<StandAloneModCollection> m_standAloneMods;
 	std::shared_ptr<FavouriteModCollection> m_favouriteMods;

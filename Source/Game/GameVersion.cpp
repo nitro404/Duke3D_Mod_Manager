@@ -111,10 +111,10 @@ const std::string GameVersion::STANDALONE_DIRECTORY_NAME("stand-alone");
 // Note: Duke Nukem 3D: 1.3D & Atomic Edition 1.5 game version identifiers are pre-defined separately in order to avoid a circular dependency:
 static const std::string REGULAR_ID("regular");
 static const std::string ATOMIC_ID("atomic");
-const GameVersion GameVersion::LAMEDUKE                ("lameduke",   "Duke Nukem 3D Beta 1.3.95 (LameDuke)",       "LameDuke",                 false, "", "D3D.EXE",            true,  false, false, false, "LameDuke",  {},    {},     {},    {},      "/v", "/l", "/s", 0, "/r", {},    {},   {},   {},   {},    {},    "SETUP.EXE", {}, {},    {},     {},    true, "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS });
+const GameVersion GameVersion::LAMEDUKE                ("lameduke",   "Duke Nukem 3D Beta 1.3.95 (LameDuke)",       "LameDuke",                 false, "", "D3D.EXE",            true,  false, false, false, "LameDuke",  {},    {},     {},    {},      "/v", "/l", "/s", 0, "/r", {},    {},   {},   {},   {},    {},    "SETUP.EXE", {}, {},    {},     {},    true, "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS },                                                     { },                                                                                                                                      { },                                                                                      { DOSBoxConfiguration({ DOSBoxConfiguration::Section("cpu", { DOSBoxConfiguration::Section::Entry("cycles", "50000") }) }) });
 const GameVersion GameVersion::ORIGINAL_BETA_VERSION   ("beta",       "Duke Nukem 3D Beta 0.99",                    "Duke 3D Beta 0.99",        true,  "", "DUKE3D.EXE",         true,  false, false, false, "Beta",      {},    {},     {},    {},      "/v", "/l", "/s", 0, "/r", {},    "/t", {},   "/m", {},    {},    "SETUP.EXE", "", {},    {},     {},    true, "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS },                                                     { REGULAR_ID },                                                                                                                           { "Has extremely poor support for mods.", "Does not function properly out of the box." });
 const GameVersion GameVersion::ORIGINAL_REGULAR_VERSION(REGULAR_ID,   "Duke Nukem 3D 1.3D",                         "Duke 3D 1.3D",             false, "", "DUKE3D.EXE",         true,  false, true,  false, "Regular",   "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", {},    "/t", "/u", "/m", "/ns", "/nm", "SETUP.EXE", "", {},    {},     true,  {},   "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS },                                                     { ORIGINAL_BETA_VERSION.getID() });
-const GameVersion GameVersion::ORIGINAL_PLUTONIUM_PAK  ("plutonium",  "Duke Nukem 3D: Plutonium Pak 1.4",           "Plutonium Pak",            true, "", "DUKE3D.EXE",         true,  false, true,  false, "PlutPak",   "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", "SETUP.EXE", "", {},    {},     {},    {},   "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS },                                                     { ATOMIC_ID },                                                                                                                            { "Virtually identical to Duke Nukem 3D Atomic Edition." });
+const GameVersion GameVersion::ORIGINAL_PLUTONIUM_PAK  ("plutonium",  "Duke Nukem 3D: Plutonium Pak 1.4",           "Plutonium Pak",            true,  "", "DUKE3D.EXE",         true,  false, true,  false, "PlutPak",   "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", "SETUP.EXE", "", {},    {},     {},    {},   "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS },                                                     { ATOMIC_ID },                                                                                                                            { "Virtually identical to Duke Nukem 3D Atomic Edition." });
 const GameVersion GameVersion::ORIGINAL_ATOMIC_EDITION (ATOMIC_ID,    "Duke Nukem 3D: Atomic Edition 1.5",          "Atomic Edition",           false, "", "DUKE3D.EXE",         true,  false, true,  true,  "Atomic",    "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", "SETUP.EXE", "", {},    {},     {},    {},   "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS },                                                     { ORIGINAL_PLUTONIUM_PAK.getID() });
 const GameVersion GameVersion::JFDUKE3D                ("jfduke3d",   "JFDuke3D",                                   "JFDuke3D",                 false, "", "duke3d.exe",         true,  false, true,  true,  "JFDuke3D",  "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          {}, {},    {},     {},    {},   "http://www.jonof.id.au/jfduke3d",                               "https://github.com/jonof/jfduke3d",                                        { OperatingSystem::Windows, OperatingSystem::MacOS },                         { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
 const GameVersion GameVersion::EDUKE32                 ("eduke32",    "eDuke32",                                    "eDuke32",                  false, "", "eduke32.exe",        false, true,  true,  true,  "eDuke32",   "-x ", "-mx ", "-g ", "-map ", "-v", "-l", "-s", 1, "-r", "-d ", "-t", "-u", "-m", "-ns", "-nm", {},          {}, "-h ", "-mh ", {},    {},   "https://www.eduke32.com",                                       "https://voidpoint.io/terminx/eduke32",                                     { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(), JFDUKE3D.getID() });
@@ -169,9 +169,10 @@ GameVersion::GameVersion()
 	, m_supportsSubdirectories(DEFAULT_SUPPORTS_SUBDIRECTORIES)
 	, m_worldTourGroupSupported(DEFAULT_WORLD_TOUR_GROUP_SUPPORTED)
 	, m_skillStartValue(DEFAULT_SKILL_START_VALUE)
+	, m_dosboxConfiguration(std::make_shared<DOSBoxConfiguration>())
 	, m_modified(false) { }
 
-GameVersion::GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool removable, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, bool supportsSubdirectories, std::optional<bool> worldTourGroupSupported, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag, const std::optional<std::string> & weaponSwitchOrderArgumentFlag, const std::optional<std::string> & disableMonstersArgumentFlag, const std::optional<std::string> & disableSoundArgumentFlag, const std::optional<std::string> & disableMusicArgumentFlag, const std::optional<std::string> & setupExecutableName, const std::optional<std::string> & groupFileInstallPath, const std::optional<std::string> & defFileArgumentFlag, const std::optional<std::string> & extraDefFileArgumentFlag,const std::optional<bool> & requiresCombinedGroup, const std::optional<bool> & requiresGroupFileExtraction, const std::string & website, const std::string & sourceCodeURL, const std::vector<OperatingSystem> & supportedOperatingSystems, const std::vector<std::string> & compatibleGameVersionIdentifiers, const std::vector<std::string> & notes)
+GameVersion::GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool removable, const std::string & gamePath, const std::string & gameExecutableName, bool localWorkingDirectory, bool relativeConFilePath, bool supportsSubdirectories, std::optional<bool> worldTourGroupSupported, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag, const std::optional<std::string> & weaponSwitchOrderArgumentFlag, const std::optional<std::string> & disableMonstersArgumentFlag, const std::optional<std::string> & disableSoundArgumentFlag, const std::optional<std::string> & disableMusicArgumentFlag, const std::optional<std::string> & setupExecutableName, const std::optional<std::string> & groupFileInstallPath, const std::optional<std::string> & defFileArgumentFlag, const std::optional<std::string> & extraDefFileArgumentFlag,const std::optional<bool> & requiresCombinedGroup, const std::optional<bool> & requiresGroupFileExtraction, const std::string & website, const std::string & sourceCodeURL, const std::vector<OperatingSystem> & supportedOperatingSystems, const std::vector<std::string> & compatibleGameVersionIdentifiers, const std::vector<std::string> & notes, const DOSBoxConfiguration & dosboxConfiguration)
 	: m_id(Utilities::trimString(id))
 	, m_longName(Utilities::trimString(longName))
 	, m_shortName(Utilities::trimString(shortName))
@@ -206,6 +207,7 @@ GameVersion::GameVersion(const std::string & id, const std::string & longName, c
 	, m_disableSoundArgumentFlag(disableSoundArgumentFlag)
 	, m_disableMusicArgumentFlag(disableMusicArgumentFlag)
 	, m_notes(notes)
+	, m_dosboxConfiguration(std::make_shared<DOSBoxConfiguration>(dosboxConfiguration))
 	, m_modified(false) {
 	if(!gamePath.empty()) {
 		m_installedTimePoint = std::chrono::system_clock::now();
@@ -268,6 +270,7 @@ GameVersion::GameVersion(GameVersion && gameVersion) noexcept
 	, m_supportedOperatingSystems(std::move(gameVersion.m_supportedOperatingSystems))
 	, m_compatibleGameVersionIdentifiers(std::move(gameVersion.m_compatibleGameVersionIdentifiers))
 	, m_notes(std::move(gameVersion.m_notes))
+	, m_dosboxConfiguration(std::move(gameVersion.m_dosboxConfiguration))
 	, m_modified(false) { }
 
 GameVersion::GameVersion(const GameVersion & gameVersion)
@@ -313,6 +316,7 @@ GameVersion::GameVersion(const GameVersion & gameVersion)
 	, m_supportedOperatingSystems(gameVersion.m_supportedOperatingSystems)
 	, m_compatibleGameVersionIdentifiers(gameVersion.m_compatibleGameVersionIdentifiers)
 	, m_notes(gameVersion.m_notes)
+	, m_dosboxConfiguration(gameVersion.m_dosboxConfiguration)
 	, m_modified(false)  { }
 
 GameVersion & GameVersion::operator = (GameVersion && gameVersion) noexcept {
@@ -359,6 +363,7 @@ GameVersion & GameVersion::operator = (GameVersion && gameVersion) noexcept {
 		m_supportedOperatingSystems = std::move(gameVersion.m_supportedOperatingSystems);
 		m_compatibleGameVersionIdentifiers = std::move(gameVersion.m_compatibleGameVersionIdentifiers);
 		m_notes = std::move(gameVersion.m_notes);
+		m_dosboxConfiguration = std::move(gameVersion.m_dosboxConfiguration);
 		setModified(true);
 	}
 
@@ -408,6 +413,7 @@ GameVersion & GameVersion::operator = (const GameVersion & gameVersion) {
 	m_supportedOperatingSystems = gameVersion.m_supportedOperatingSystems;
 	m_compatibleGameVersionIdentifiers = gameVersion.m_compatibleGameVersionIdentifiers;
 	m_notes = gameVersion.m_notes;
+	m_dosboxConfiguration = gameVersion.m_dosboxConfiguration;
 
 	setModified(true);
 
@@ -1387,6 +1393,35 @@ void GameVersion::setSourceCodeURL(const std::string & sourceCodeURL) {
 	m_sourceCodeURL = formattedSourceCodeURL;
 
 	setModified(true);
+}
+
+std::shared_ptr<DOSBoxConfiguration> GameVersion::getDOSBoxConfiguration() const {
+	return m_dosboxConfiguration;
+}
+
+bool GameVersion::setDOSBoxConfiguration(const DOSBoxConfiguration & dosboxConfiguration) {
+	return m_dosboxConfiguration->setConfiguration(dosboxConfiguration);
+}
+
+void GameVersion::resetDOSBoxConfigurationToDefault() {
+	std::shared_ptr<const DOSBoxConfiguration> defaultDOSBoxConfiguration(getDefaultDOSBoxConfiguration());
+
+	if(defaultDOSBoxConfiguration != nullptr) {
+		m_dosboxConfiguration->setConfiguration(*defaultDOSBoxConfiguration);
+	}
+	else {
+		m_dosboxConfiguration->clear();
+	}
+}
+
+std::shared_ptr<const DOSBoxConfiguration> GameVersion::getDefaultDOSBoxConfiguration() const {
+	for(const GameVersion * gameVersion : DEFAULT_GAME_VERSIONS) {
+		if(Utilities::areStringsEqualIgnoreCase(m_id, gameVersion->getID())) {
+			return gameVersion->getDOSBoxConfiguration();
+		}
+	}
+
+	return nullptr;
 }
 
 size_t GameVersion::numberOfSupportedOperatingSystems() const {
@@ -2914,6 +2949,77 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 	return newGameVersion;
 }
 
+std::string GameVersion::getDOSBoxConfigurationFileName() const {
+	if(m_id.empty()) {
+		return {};
+	}
+
+	return m_id + + "." + DOSBoxConfiguration::FILE_EXTENSION;
+}
+
+bool GameVersion::loadDOSBoxConfigurationFrom(const std::string & directoryPath, bool * loaded) {
+	std::string dosboxConfigurationFileName(getDOSBoxConfigurationFileName());
+
+	if(dosboxConfigurationFileName.empty()) {
+		return true;
+	}
+
+	std::string dosboxConfigurationFilePath(Utilities::joinPaths(directoryPath, dosboxConfigurationFileName));
+	m_dosboxConfiguration->setFilePath(dosboxConfigurationFilePath);
+
+	if(!std::filesystem::is_regular_file(std::filesystem::path(dosboxConfigurationFilePath))) {
+		return true;
+	}
+
+	std::unique_ptr<DOSBoxConfiguration> dosboxConfiguration(DOSBoxConfiguration::loadFrom(dosboxConfigurationFilePath));
+
+	if(dosboxConfiguration == nullptr) {
+		spdlog::error("Failed to load DOSBox configuration from file: '{}'.", dosboxConfigurationFilePath);
+		return false;
+	}
+
+	*m_dosboxConfiguration = std::move(*dosboxConfiguration);
+	m_dosboxConfiguration->setModified(false);
+
+	if(loaded != nullptr) {
+		*loaded = true;
+	}
+
+	return true;
+}
+
+bool GameVersion::saveDOSBoxConfigurationTo(const std::string & directoryPath, bool * saved) const {
+	if(m_dosboxConfiguration == nullptr || m_dosboxConfiguration->isEmpty()) {
+		return true;
+	}
+
+	if(!m_dosboxConfiguration->isValid()) {
+		spdlog::error("Failed to save invalid DOSBox configuration to file.");
+		return false;
+	}
+
+	std::string dosboxConfigurationFileName(getDOSBoxConfigurationFileName());
+
+	if(dosboxConfigurationFileName.empty()) {
+		return true;
+	}
+
+	m_dosboxConfiguration->setFilePath(Utilities::joinPaths(directoryPath, dosboxConfigurationFileName));
+
+	if(!m_dosboxConfiguration->save()) {
+		spdlog::error("Failed to save DOSBox configuration to file: '{}'.", m_dosboxConfiguration->getFilePath());
+		return false;
+	}
+
+	m_dosboxConfiguration->setModified(false);
+
+	if(saved != nullptr) {
+		*saved = true;
+	}
+
+	return true;
+}
+
 std::optional<GameVersion::OperatingSystem> GameVersion::convertOperatingSystemType(DeviceInformationBridge::OperatingSystemType operatingSystemType) {
 	switch(operatingSystemType) {
 		case DeviceInformationBridge::OperatingSystemType::Windows: {
@@ -3015,7 +3121,8 @@ bool GameVersion::operator == (const GameVersion & gameVersion) const {
 	   m_disableMusicArgumentFlag != gameVersion.m_disableMusicArgumentFlag ||
 	   m_compatibleGameVersionIdentifiers.size() != gameVersion.m_compatibleGameVersionIdentifiers.size() ||
 	   m_supportedOperatingSystems != gameVersion.m_supportedOperatingSystems ||
-	   m_notes != gameVersion.m_notes) {
+	   m_notes != gameVersion.m_notes ||
+	   !(m_dosboxConfiguration == nullptr && gameVersion.m_dosboxConfiguration == nullptr || (m_dosboxConfiguration != nullptr && gameVersion.m_dosboxConfiguration != nullptr && *m_dosboxConfiguration != *gameVersion.m_dosboxConfiguration))) {
 		return false;
 	}
 

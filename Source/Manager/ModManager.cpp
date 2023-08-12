@@ -2,6 +2,7 @@
 
 #include "DOSBox/DOSBoxManager.h"
 #include "DOSBox/DOSBoxVersion.h"
+#include "DOSBox/Configuration/DOSBoxConfiguration.h"
 #include "Download/CachedPackageFile.h"
 #include "Download/DownloadCache.h"
 #include "Download/DownloadManager.h"
@@ -82,6 +83,14 @@ const std::string ModManager::DEFAULT_PREFERRED_DOSBOX_VERSION_ID(DOSBoxVersion:
 const std::string ModManager::DEFAULT_PREFERRED_GAME_VERSION_ID(GameVersion::ORIGINAL_ATOMIC_EDITION.getID());
 const std::string ModManager::HTTP_USER_AGENT("DukeNukem3DModManager/" + APPLICATION_VERSION);
 const std::string ModManager::DEFAULT_BACKUP_FILE_RENAME_SUFFIX("_");
+const std::string ModManager::GENERAL_DOSBOX_CONFIGURATION_FILE_NAME("general." + DOSBoxConfiguration::FILE_EXTENSION);
+
+const DOSBoxConfiguration ModManager::DEFAULT_GENERAL_DOSBOX_CONFIGURATION({
+	DOSBoxConfiguration::Section("dosbox", {
+		DOSBoxConfiguration::Section::Entry("machine", "vesa_nolfb"),
+		DOSBoxConfiguration::Section::Entry("memsize", "63"),
+	})
+});
 
 ModManager::ModManager()
 	: Application()
@@ -95,6 +104,7 @@ ModManager::ModManager()
 	, m_selectedModGameVersionIndex(std::numeric_limits<size_t>::max())
 	, m_dosboxManager(std::make_shared<DOSBoxManager>())
 	, m_gameManager(std::make_shared<GameManager>())
+	, m_generalDOSBoxConfiguration(std::make_shared<DOSBoxConfiguration>(DEFAULT_GENERAL_DOSBOX_CONFIGURATION))
 	, m_mods(std::make_shared<ModCollection>())
 	, m_standAloneMods(std::make_shared<StandAloneModCollection>())
 	, m_favouriteMods(std::make_shared<FavouriteModCollection>())
@@ -443,6 +453,34 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 	m_gameVersionCollectionSizeChangedConnection = gameVersions->sizeChanged.connect(std::bind(&ModManager::onGameVersionCollectionSizeChanged, this, std::placeholders::_1));
 	m_gameVersionCollectionItemModifiedConnection = gameVersions->itemModified.connect(std::bind(&ModManager::onGameVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
 
+	std::string generalDOSBoxConfigurationFilePath(getGeneralDOSBoxConfigurationFilePath());
+
+	if(generalDOSBoxConfigurationFilePath.empty()) {
+		spdlog::error("Failed to load general DOSBox configuration file!");
+		initializationFailed();
+		return false;
+	}
+
+	m_generalDOSBoxConfiguration->setFilePath(generalDOSBoxConfigurationFilePath);
+
+	if(std::filesystem::is_regular_file(std::filesystem::path(generalDOSBoxConfigurationFilePath))) {
+		std::unique_ptr<DOSBoxConfiguration> generalDOSBoxConfiguration(DOSBoxConfiguration::loadFrom(generalDOSBoxConfigurationFilePath));
+
+		if(generalDOSBoxConfiguration == nullptr) {
+			spdlog::error("Failed to load general DOSBox configuration from file: '{}'.", generalDOSBoxConfigurationFilePath);
+			initializationFailed();
+			return false;
+		}
+
+		*m_generalDOSBoxConfiguration = std::move(*generalDOSBoxConfiguration);
+		m_generalDOSBoxConfiguration->setModified(false);
+
+		size_t sectionCount = m_generalDOSBoxConfiguration->numberOfSections();
+		size_t totalEntryCount = m_generalDOSBoxConfiguration->totalNumberOfEntries();
+
+		spdlog::info("Loaded general DOSBox configuration file with {} section{} and {} {}.", sectionCount, sectionCount == 1 ? "" : "s", totalEntryCount, totalEntryCount == 1 ? "entry" : "entries");
+	}
+
 	if(!notifyInitializationProgress("Loading Mod List")) {
 		return false;
 	}
@@ -693,6 +731,12 @@ std::shared_ptr<OrganizedModCollection> ModManager::getOrganizedMods() const {
 	return m_organizedMods;
 }
 
+std::shared_ptr<DOSBoxConfiguration> ModManager::getGeneralDOSBoxConfiguration() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	return m_generalDOSBoxConfiguration;
+}
+
 std::string ModManager::getModsListFilePath() const {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
@@ -733,6 +777,42 @@ std::string ModManager::getMapsDirectoryPath() const {
 	}
 
 	return m_downloadManager->getDownloadedMapsDirectoryPath();
+}
+
+
+std::string ModManager::getGeneralDOSBoxConfigurationFilePath() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	std::string dosboxConfigurationsDirectoryPath(getDOSBoxConfigurationsDirectoryPath());
+
+	if(dosboxConfigurationsDirectoryPath.empty()) {
+		return {};
+	}
+
+	return Utilities::joinPaths(dosboxConfigurationsDirectoryPath, GENERAL_DOSBOX_CONFIGURATION_FILE_NAME);
+}
+
+std::string ModManager::getDOSBoxConfigurationsDirectoryPath() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	SettingsManager * settings = SettingsManager::getInstance();
+
+	if(settings->dataDirectoryPath.empty()) {
+		spdlog::error("Missing data directory path setting.");
+		return {};
+	}
+
+	if(settings->dosboxDataDirectoryName.empty()) {
+		spdlog::error("Missing DOSBox data directory name setting.");
+		return {};
+	}
+
+	if(settings->dosboxConfigurationsDirectoryName.empty()) {
+		spdlog::error("Missing DOSBox configurations directory name setting.");
+		return {};
+	}
+
+	return Utilities::joinPaths(settings->dataDirectoryPath, settings->dosboxDataDirectoryName, settings->dosboxConfigurationsDirectoryName);
 }
 
 GameType ModManager::getGameType() const {
@@ -2303,7 +2383,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		}
 	}
 
-	bool shouldConfigureApplicationTemporaryDirectory = selectedGameVersion->doesRequireCombinedGroup() && Utilities::areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories();
+	bool shouldSymlinkToCombinedGroup = selectedGameVersion->doesRequireCombinedGroup() && Utilities::areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories();
+	bool shouldConfigureApplicationTemporaryDirectory = shouldSymlinkToCombinedGroup || selectedGameVersion->doesRequireDOSBox();
 	bool shouldConfigureGameTemporaryDirectory = !Utilities::areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories();
 
 	std::string temporaryDirectoryName;
@@ -2408,7 +2489,39 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		scriptArgs.addArgument("EXIT", "EXIT");
 	}
 
-	if(!selectedGameVersion->doesRequireDOSBox() && (m_gameType == GameType::Client || m_gameType == GameType::Server)) {
+	std::string combinedDOSBoxConfigurationFilePath;
+
+	if(selectedGameVersion->doesRequireDOSBox()) {
+		combinedDOSBoxConfigurationFilePath = Utilities::joinPaths(settings->appTempDirectoryPath, DOSBoxConfiguration::DEFAULT_FILE_NAME);
+		std::unique_ptr<DOSBoxConfiguration> combinedDOSBoxConfiguration(std::make_unique<DOSBoxConfiguration>(combinedDOSBoxConfigurationFilePath));
+
+		if(!combinedDOSBoxConfiguration->mergeWith(*m_generalDOSBoxConfiguration)) {
+			spdlog::error("Failed to merge general DOSBox configuration.", selectedDOSBoxVersion->getLongName());
+		}
+
+		if(!combinedDOSBoxConfiguration->mergeWith(*selectedDOSBoxVersion->getDOSBoxConfiguration())) {
+			spdlog::error("Failed to merge '{}' configuration.", selectedDOSBoxVersion->getLongName());
+		}
+
+		if(!combinedDOSBoxConfiguration->mergeWith(*selectedGameVersion->getDOSBoxConfiguration())) {
+			spdlog::error("Failed to merge '{}' configuration.", selectedGameVersion->getLongName());
+		}
+
+		if(combinedDOSBoxConfiguration->isNotEmpty()) {
+			size_t sectionCount = combinedDOSBoxConfiguration->numberOfSections();
+			size_t totalEntryCount = combinedDOSBoxConfiguration->totalNumberOfEntries();
+
+			spdlog::debug("Using custom combined DOSBox configuration with {} section{} and {} {}.", sectionCount, sectionCount == 1 ? "" : "s", totalEntryCount, totalEntryCount == 1 ? "entry" : "entries");
+
+			if(combinedDOSBoxConfiguration->save()) {
+				spdlog::info("Saved custom combined DOSBox configuration to file: '{}'.", combinedDOSBoxConfiguration->getFilePath());
+			}
+			else {
+				spdlog::error("Failed to save custom combined DOSBox configuration to file: '{}'.", combinedDOSBoxConfiguration->getFilePath());
+			}
+		}
+	}
+	else if(m_gameType == GameType::Client || m_gameType == GameType::Server) {
 		spdlog::info("Network settings are only supported when running in DOSBox, ignoring {} game type setting.", Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)));
 	}
 
@@ -2418,7 +2531,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	std::vector<std::string> customGroupFileNames;
 	std::chrono::time_point<std::chrono::steady_clock> commandGenerationStartTimePoint(std::chrono::steady_clock::now());
 
-	std::string command(generateCommand(selectedModGameVersion, selectedGameVersion, scriptArgs, combinedGroupFileName, &customMod, &customMap, &customTargetGameVersion, &customGroupFileNames));
+	std::string command(generateCommand(selectedModGameVersion, selectedGameVersion, scriptArgs, combinedGroupFileName, combinedDOSBoxConfigurationFilePath, &customMod, &customMap, &customTargetGameVersion, &customGroupFileNames));
 
 	std::chrono::microseconds commandGenerationDuration(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - commandGenerationStartTimePoint));
 
@@ -2481,7 +2594,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 				return false;
 			}
 
-			if(shouldConfigureApplicationTemporaryDirectory) {
+			if(shouldSymlinkToCombinedGroup) {
 				absoluteCombinedGroupFilePath = Utilities::joinPaths(settings->appTempDirectoryPath, combinedGroupFileName);
 			}
 			else if(shouldConfigureGameTemporaryDirectory) {
@@ -2533,7 +2646,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 	if(combinedGroup != nullptr) {
 		if(combinedGroup->save(true)) {
-			if(!shouldConfigureApplicationTemporaryDirectory) {
+			if(!shouldSymlinkToCombinedGroup) {
 				std::error_code errorCode;
 				std::filesystem::path relativeCombinedGroupFilePath(std::filesystem::relative(std::filesystem::path(absoluteCombinedGroupFilePath), std::filesystem::path(selectedGameVersion->getGamePath()), errorCode));
 
@@ -2688,7 +2801,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		}
 	}
 
-	if(!absoluteCombinedGroupFilePath.empty() && shouldConfigureApplicationTemporaryDirectory) {
+	if(!absoluteCombinedGroupFilePath.empty() && shouldSymlinkToCombinedGroup) {
 		std::filesystem::path filePath(absoluteCombinedGroupFilePath);
 
 		if(std::filesystem::is_regular_file(filePath)) {
@@ -2699,6 +2812,21 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 			if(errorCode) {
 				spdlog::error("Failed to delete temporary combined group file '{}': {}", absoluteCombinedGroupFilePath, errorCode.message());
+			}
+		}
+	}
+
+	if(!combinedDOSBoxConfigurationFilePath.empty()) {
+		std::filesystem::path filePath(combinedDOSBoxConfigurationFilePath);
+
+		if(std::filesystem::is_regular_file(filePath)) {
+			spdlog::info("Deleting generated combined DOSBox configuration file: '{}'.", combinedDOSBoxConfigurationFilePath);
+
+			std::error_code errorCode;
+			std::filesystem::remove(filePath, errorCode);
+
+			if(errorCode) {
+				spdlog::error("Failed to delete generated combined DOSBox configuration file '{}': {}", combinedDOSBoxConfigurationFilePath, errorCode.message());
 			}
 		}
 	}
@@ -3019,7 +3147,7 @@ bool ModManager::removeModFilesFromGameDirectory(const GameVersion & gameVersion
 	return true;
 }
 
-std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameVersion, std::shared_ptr<GameVersion> selectedGameVersion, ScriptArguments & scriptArgs, std::string_view combinedGroupFileName, bool * customMod, std::string * customMap, std::shared_ptr<GameVersion> * customTargetGameVersion, std::vector<std::string> * customGroupFileNames) const {
+std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameVersion, std::shared_ptr<GameVersion> selectedGameVersion, ScriptArguments & scriptArgs, std::string_view combinedGroupFileName, std::string_view combinedDOSBoxConfigurationFilePath, bool * customMod, std::string * customMap, std::shared_ptr<GameVersion> * customTargetGameVersion, std::vector<std::string> * customGroupFileNames) const {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	static const std::regex respawnModeRegExp("[123x]");
@@ -3525,13 +3653,13 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			return {};
 		}
 
-		return generateDOSBoxCommand(dosboxScript, scriptArgs, *selectedDOSBoxVersion, settings->dosboxArguments, settings->dosboxShowConsole);
+		return generateDOSBoxCommand(dosboxScript, scriptArgs, *selectedDOSBoxVersion, settings->dosboxArguments, settings->dosboxShowConsole, combinedDOSBoxConfigurationFilePath);
 	}
 
 	return "\"" +  Utilities::joinPaths(selectedGameVersion->getGamePath(), executableName) + "\"" + command.str();
 }
 
-std::string ModManager::generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const DOSBoxVersion & dosboxVersion, const std::string & dosboxArguments, bool showConsole) const {
+std::string ModManager::generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const DOSBoxVersion & dosboxVersion, const std::string & dosboxArguments, bool showConsole, std::string_view combinedDOSBoxConfigurationFilePath) const {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	static const std::regex unescapedQuotesRegExp("(?:^\"|([^\\\\])\")");
@@ -3543,6 +3671,12 @@ std::string ModManager::generateDOSBoxCommand(const Script & script, const Scrip
 	std::stringstream command;
 
 	command << fmt::format("\"{}\"", Utilities::joinPaths(dosboxVersion.getDirectoryPath(), dosboxVersion.getExecutableName()));
+
+	if(!combinedDOSBoxConfigurationFilePath.empty() && std::filesystem::is_regular_file(std::filesystem::path(combinedDOSBoxConfigurationFilePath))) {
+		command << " -conf \"";
+		command << combinedDOSBoxConfigurationFilePath;
+		command << "\"";
+	}
 
 	if(!showConsole) {
 		command << " -noconsole";

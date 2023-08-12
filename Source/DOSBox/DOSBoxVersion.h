@@ -13,10 +13,12 @@
 #include <string>
 #include <vector>
 
+#include "Configuration/DOSBoxConfiguration.h"
+
 class DOSBoxVersion final {
 public:
 	DOSBoxVersion();
-	DOSBoxVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool removable, const std::string & executableName, const std::string & directoryPath, const std::string & website, const std::string & sourceCodeURL, const std::vector<DeviceInformationBridge::OperatingSystemType> & supportedOperatingSystems = std::vector<DeviceInformationBridge::OperatingSystemType>());
+	DOSBoxVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool removable, const std::string & executableName, const std::string & directoryPath, const std::string & website, const std::string & sourceCodeURL, const std::vector<DeviceInformationBridge::OperatingSystemType> & supportedOperatingSystems = std::vector<DeviceInformationBridge::OperatingSystemType>(), const DOSBoxConfiguration & dosboxConfiguration = {});
 	DOSBoxVersion(DOSBoxVersion && dosboxVersion) noexcept;
 	DOSBoxVersion(const DOSBoxVersion & dosboxVersion);
 	DOSBoxVersion & operator = (DOSBoxVersion && dosboxVersion) noexcept;
@@ -56,6 +58,10 @@ public:
 	void setWebsite(const std::string & website);
 	const std::string & getSourceCodeURL() const;
 	void setSourceCodeURL(const std::string & sourceCodeURL);
+	std::shared_ptr<DOSBoxConfiguration> getDOSBoxConfiguration() const;
+	bool setDOSBoxConfiguration(const DOSBoxConfiguration & dosboxConfiguration);
+	void resetDOSBoxConfigurationToDefault();
+	std::shared_ptr<const DOSBoxConfiguration> getDefaultDOSBoxConfiguration() const;
 
 	size_t numberOfSupportedOperatingSystems() const;
 	bool hasSupportedOperatingSystem(DeviceInformationBridge::OperatingSystemType operatingSystem) const;
@@ -77,6 +83,10 @@ public:
 
 	rapidjson::Value toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const;
 	static std::unique_ptr<DOSBoxVersion> parseFrom(const rapidjson::Value & dosboxVersionValue);
+
+	std::string getDOSBoxConfigurationFileName() const;
+	bool loadDOSBoxConfigurationFrom(const std::string & directoryPath, bool * loaded = nullptr);
+	bool saveDOSBoxConfigurationTo(const std::string & directoryPath, bool * saved = nullptr) const;
 
 	bool isConfigured() const;
 	static bool isConfigured(const DOSBoxVersion * dosboxVersion);
@@ -109,6 +119,7 @@ private:
 	std::string m_website;
 	std::string m_sourceCodeURL;
 	std::vector<DeviceInformationBridge::OperatingSystemType> m_supportedOperatingSystems;
+	std::shared_ptr<DOSBoxConfiguration> m_dosboxConfiguration;
 	mutable bool m_modified;
 };
 

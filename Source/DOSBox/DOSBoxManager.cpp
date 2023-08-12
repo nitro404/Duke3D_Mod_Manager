@@ -1,9 +1,10 @@
 #include "DOSBoxManager.h"
 
+#include "Manager/SettingsManager.h"
+
 #include <Analytics/Segment/SegmentAnalytics.h>
 #include <Archive/ArchiveFactoryRegistry.h>
 #include <GitHub/GitHubService.h>
-#include <Manager/SettingsManager.h>
 #include <Network/HTTPRequest.h>
 #include <Network/HTTPService.h>
 #include <Utilities/FileUtilities.h>
@@ -57,6 +58,10 @@ bool DOSBoxManager::initialize() {
 
 	m_dosboxVersions->addMissingDefaultDOSBoxVersions();
 
+	if(!loadDOSBoxConfigurations()) {
+		return false;
+	}
+
 	if(m_localMode && !loadOrUpdateDOSBoxDownloadList()) {
 		return false;
 	}
@@ -81,6 +86,27 @@ void DOSBoxManager::setLocalMode(bool localMode) {
 
 std::shared_ptr<DOSBoxVersionCollection> DOSBoxManager::getDOSBoxVersions() const {
 	return m_dosboxVersions;
+}
+
+std::string DOSBoxManager::getDOSBoxConfigurationsDirectoryPath() const {
+	SettingsManager * settings = SettingsManager::getInstance();
+
+	if(settings->dataDirectoryPath.empty()) {
+		spdlog::error("Missing data directory path setting.");
+		return {};
+	}
+
+	if(settings->dosboxDataDirectoryName.empty()) {
+		spdlog::error("Missing DOSBox data directory name setting.");
+		return {};
+	}
+
+	if(settings->dosboxConfigurationsDirectoryName.empty()) {
+		spdlog::error("Missing DOSBox configurations directory name setting.");
+		return {};
+	}
+
+	return Utilities::joinPaths(settings->dataDirectoryPath, settings->dosboxDataDirectoryName, settings->dosboxConfigurationsDirectoryName);
 }
 
 std::string DOSBoxManager::getDOSBoxDownloadsListFilePath() const {
@@ -111,6 +137,46 @@ std::string DOSBoxManager::getDOSBoxDownloadsListFilePath() const {
 	}
 
 	return Utilities::joinPaths(settings->downloadsDirectoryPath, settings->dosboxDownloadsDirectoryName, settings->remoteDOSBoxVersionsListFileName);
+}
+
+bool DOSBoxManager::loadDOSBoxConfigurations() const {
+	std::string dosboxConfigurationsDirectoryPath(getDOSBoxConfigurationsDirectoryPath());
+
+	if(dosboxConfigurationsDirectoryPath.empty()) {
+		return false;
+	}
+
+	size_t numberOfConfigurationsLoaded = 0;
+
+	if(!m_dosboxVersions->loadDOSBoxConfigurationsFrom(dosboxConfigurationsDirectoryPath, &numberOfConfigurationsLoaded)) {
+		spdlog::error("Failed to load one or more DOSBox specific configuration files. Please check the logs and manually address any issues.");
+	}
+
+	if(numberOfConfigurationsLoaded != 0) {
+		spdlog::info("Loaded {} DOSBox specific configuration file{}.", numberOfConfigurationsLoaded, numberOfConfigurationsLoaded == 1 ? "" : " ");
+	}
+
+	return true;
+}
+
+bool DOSBoxManager::saveDOSBoxConfigurations() const {
+	std::string dosboxConfigurationsDirectoryPath(getDOSBoxConfigurationsDirectoryPath());
+
+	if(dosboxConfigurationsDirectoryPath.empty()) {
+		return false;
+	}
+
+	size_t numberOfConfigurationsSaved = 0;
+
+	if(!m_dosboxVersions->saveDOSBoxConfigurationsTo(dosboxConfigurationsDirectoryPath, &numberOfConfigurationsSaved)) {
+		spdlog::error("Failed to save one or more DOSBox specific configuration files.");
+	}
+
+	if(numberOfConfigurationsSaved != 0) {
+		spdlog::info("Saved {} DOSBox specific configuration file{}.", numberOfConfigurationsSaved, numberOfConfigurationsSaved == 1 ? "" : " ");
+	}
+
+	return true;
 }
 
 bool DOSBoxManager::shouldUpdateDOSBoxDownloadList() const {

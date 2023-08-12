@@ -544,10 +544,17 @@ bool DOSBoxVersionCollection::loadFrom(const std::string & filePath, bool autoCr
 		return false;
 	}
 	else if(Utilities::areStringsEqualIgnoreCase(fileExtension, "json")) {
-		return loadFromJSON(filePath, autoCreate);
+		if(!loadFromJSON(filePath, autoCreate)) {
+			return false;
+		}
 	}
 
-	return false;
+	for(std::shared_ptr<DOSBoxVersion> & dosboxVersion : m_dosboxVersions) {
+		dosboxVersion->resetDOSBoxConfigurationToDefault();
+		dosboxVersion->getDOSBoxConfiguration()->setModified(false);
+	}
+
+	return true;
 }
 
 bool DOSBoxVersionCollection::loadFromJSON(const std::string & filePath, bool autoCreate) {
@@ -627,6 +634,50 @@ bool DOSBoxVersionCollection::saveToJSON(const std::string & filePath, bool over
 	fileStream.close();
 
 	return true;
+}
+
+bool DOSBoxVersionCollection::loadDOSBoxConfigurationsFrom(const std::string & directoryPath, size_t * numberOfConfigurationsLoaded) {
+	bool success = true;
+	bool configurationLoaded = false;
+
+	for(const std::shared_ptr<DOSBoxVersion> & dosboxVersion : m_dosboxVersions) {
+		if(!dosboxVersion->loadDOSBoxConfigurationFrom(directoryPath, &configurationLoaded)) {
+			success = false;
+			continue;
+		}
+
+		if(configurationLoaded) {
+			configurationLoaded = false;
+
+			if(numberOfConfigurationsLoaded != nullptr) {
+				(*numberOfConfigurationsLoaded)++;
+			}
+		}
+	}
+
+	return success;
+}
+
+bool DOSBoxVersionCollection::saveDOSBoxConfigurationsTo(const std::string & directoryPath, size_t * numberOfConfigurationsSaved) const {
+	bool success = true;
+	bool configurationSaved = false;
+
+	for(const std::shared_ptr<DOSBoxVersion> & dosboxVersion : m_dosboxVersions) {
+		if(!dosboxVersion->saveDOSBoxConfigurationTo(directoryPath, &configurationSaved)) {
+			success = false;
+			continue;
+		}
+
+		if(configurationSaved) {
+			configurationSaved = false;
+
+			if(numberOfConfigurationsSaved != nullptr) {
+				(*numberOfConfigurationsSaved)++;
+			}
+		}
+	}
+
+	return success;
 }
 
 bool DOSBoxVersionCollection::isValid() const {

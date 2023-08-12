@@ -20,6 +20,7 @@ Duke Nukem 3D Stand-Alone Mods.json
 Duke Nukem 3D Favourite Mods.json
 Segment Analytics Cache.json
 *.cmd.in
+*.conf
 *.ncb
 *.aps
 *.sdf

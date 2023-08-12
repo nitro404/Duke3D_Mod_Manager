@@ -25,7 +25,10 @@ public:
 	bool isUsingLocalMode() const;
 	void setLocalMode(bool localMode);
 	std::shared_ptr<GameVersionCollection> getGameVersions() const;
+	std::string getDOSBoxConfigurationsDirectoryPath() const;
 	std::string getGameDownloadsListFilePath() const;
+	bool loadDOSBoxConfigurations() const;
+	bool saveDOSBoxConfigurations() const;
 	bool shouldUpdateGameDownloadList() const;
 	bool loadOrUpdateGameDownloadList(bool forceUpdate = false) const;
 	bool updateGameDownloadList(bool force = false) const;
