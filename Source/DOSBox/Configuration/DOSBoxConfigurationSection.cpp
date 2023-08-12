@@ -28,7 +28,7 @@ DOSBoxConfiguration::Section::Section(const Section & section)
 	, m_parent(nullptr) {
 	clearEntries();
 
-	for(const auto & entry : m_entries) {
+	for(const auto & entry : section.m_entries) {
 		m_entries[entry.first] = std::make_shared<Entry>(*entry.second);
 	}
 
@@ -57,7 +57,7 @@ DOSBoxConfiguration::Section & DOSBoxConfiguration::Section::operator = (const S
 	m_name = section.m_name;
 	m_orderedEntryNames = section.m_orderedEntryNames;
 
-	for(const auto & entry : m_entries) {
+	for(const auto & entry : section.m_entries) {
 		m_entries[entry.first] = std::make_shared<Entry>(*entry.second);
 	}
 

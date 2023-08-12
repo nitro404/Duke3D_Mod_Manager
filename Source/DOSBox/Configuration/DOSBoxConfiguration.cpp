@@ -31,7 +31,7 @@ DOSBoxConfiguration::DOSBoxConfiguration(const DOSBoxConfiguration & configurati
 	, m_filePath(configuration.m_filePath) {
 	clearSections();
 
-	for(const auto & section : m_sections) {
+	for(const auto & section : configuration.m_sections) {
 		m_sections[section.first] = std::make_shared<Section>(*section.second);
 	}
 
@@ -64,7 +64,7 @@ DOSBoxConfiguration & DOSBoxConfiguration::operator = (const DOSBoxConfiguration
 	m_orderedSectionNames = configuration.m_orderedSectionNames;
 	m_filePath = configuration.m_filePath;
 
-	for(const auto & section : m_sections) {
+	for(const auto & section : configuration.m_sections) {
 		m_sections[section.first] = std::make_shared<Section>(*section.second);
 	}
 
