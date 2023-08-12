@@ -164,7 +164,7 @@ SettingsManagerPanel::SettingsManagerPanel(std::shared_ptr<ModManager> modManage
 	settingsPanelSizer->Add(actionsPanel, wxGBPosition(3, 0), wxGBSpan(1, 2), wxEXPAND | wxHORIZONTAL, border);
 	settingsPanelSizer->AddGrowableRow(0, 2);
 	settingsPanelSizer->AddGrowableRow(1, 3);
-	settingsPanelSizer->AddGrowableRow(2, 1);
+	settingsPanelSizer->AddGrowableRow(2, 2);
 	settingsPanelSizer->AddGrowableCol(0, 3);
 	settingsPanelSizer->AddGrowableCol(1, 1);
 	SetSizerAndFit(settingsPanelSizer);

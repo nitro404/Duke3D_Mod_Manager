@@ -199,6 +199,8 @@ set(GUI_SOURCE_FILES
 	GUI/DOSBox/DOSBoxSettingsPanel.cpp
 	GUI/DOSBox/DOSBoxVersionPanel.h
 	GUI/DOSBox/DOSBoxVersionPanel.cpp
+	GUI/DOSBox/Configuration/DOSBoxConfigurationPanel.h
+	GUI/DOSBox/Configuration/DOSBoxConfigurationPanel.cpp
 	GUI/Game/GameManagerPanel.h
 	GUI/Game/GameManagerPanel.cpp
 	GUI/Game/GameVersionPanel.h

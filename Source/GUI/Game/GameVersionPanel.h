@@ -12,6 +12,7 @@
 	#include <wx/wx.h>
 #endif
 
+class DOSBoxConfigurationPanel;
 class GameVersion;
 class SettingPanel;
 
@@ -47,6 +48,8 @@ private:
 	std::vector<SettingPanel *> m_settingsPanels;
 	SettingPanel * m_gameVersionIDSettingPanel;
 	SettingPanel * m_gamePathSettingPanel;
+	wxStaticBox * m_dosboxConfigurationBox;
+	DOSBoxConfigurationPanel * m_dosboxConfigurationPanel;
 	wxTextCtrl * m_notesTextField;
 	std::vector<boost::signals2::connection> m_settingModifiedConnections;
 	mutable bool m_modified;

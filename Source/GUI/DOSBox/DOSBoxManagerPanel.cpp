@@ -2,6 +2,8 @@
 
 #include "../SettingPanel.h"
 #include "../WXUtilities.h"
+#include "Configuration/DOSBoxConfigurationPanel.h"
+#include "DOSBox/Configuration/DOSBoxConfiguration.h"
 #include "DOSBox/DOSBoxManager.h"
 #include "Manager/SettingsManager.h"
 
@@ -99,6 +101,7 @@ DOSBoxManagerPanel::DOSBoxManagerPanel(std::shared_ptr<ModManager> modManager, w
 	, m_saveDOSBoxSettingsButton(nullptr)
 	, m_discardDOSBoxSettingsChangesButton(nullptr)
 	, m_dosboxSettingsPanel(nullptr)
+	, m_generalDOSBoxConfigurationPanel(nullptr)
 	, m_installProgressDialog(nullptr)
 	, m_modified(false) {
 	m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_TOP | wxNB_MULTILINE, "DOSBox Versions");
@@ -151,6 +154,11 @@ DOSBoxManagerPanel::DOSBoxManagerPanel(std::shared_ptr<ModManager> modManager, w
 	wxButton * resetDefaultDOSBoxSettingsButton = new wxButton(dosboxSettingsActionsPanel, wxID_ANY, "Reset Defaults", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "Reset Defaults");
 	resetDefaultDOSBoxSettingsButton->Bind(wxEVT_BUTTON, &DOSBoxManagerPanel::onResetDefaultDOSBoxSettingsButtonPressed, this);
 
+	wxStaticBox * dosboxConfigurationBox = new wxStaticBox(this, wxID_ANY, "General DOSBox Configuration", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "General DOSBox Configuration");
+	dosboxConfigurationBox->SetOwnFont(dosboxConfigurationBox->GetFont().MakeBold());
+
+	m_generalDOSBoxConfigurationPanel = new DOSBoxConfigurationPanel(m_modManager->getGeneralDOSBoxConfiguration(), dosboxConfigurationBox);
+
 	int border = 2;
 
 	wxWrapSizer * dosboxVersionActionsPanelSizer = new wxWrapSizer(wxHORIZONTAL);
@@ -169,14 +177,20 @@ DOSBoxManagerPanel::DOSBoxManagerPanel(std::shared_ptr<ModManager> modManager, w
 	dosboxSettingsActionsPanelSizer->Add(resetDefaultDOSBoxSettingsButton, 1, wxEXPAND | wxHORIZONTAL, border);
 	dosboxSettingsActionsPanel->SetSizerAndFit(dosboxSettingsActionsPanelSizer);
 
+	wxBoxSizer * dosboxConfigurationBoxSizer = new wxBoxSizer(wxHORIZONTAL);
+	dosboxConfigurationBoxSizer->Add(m_generalDOSBoxConfigurationPanel, 1, wxEXPAND | wxALL, 20);
+	dosboxConfigurationBox->SetSizerAndFit(dosboxConfigurationBoxSizer);
+
 	wxGridBagSizer * dosboxManagerPanelSizer = new wxGridBagSizer(border, border);
 	dosboxManagerPanelSizer->Add(m_notebook, wxGBPosition(0, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
 	dosboxManagerPanelSizer->Add(dosboxVersionActionsPanel, wxGBPosition(1, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
 	dosboxManagerPanelSizer->Add(m_dosboxSettingsPanel, wxGBPosition(2, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
 	dosboxManagerPanelSizer->Add(dosboxSettingsActionsPanel, wxGBPosition(3, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
-	dosboxManagerPanelSizer->AddGrowableCol(0, 1);
+	dosboxManagerPanelSizer->Add(dosboxConfigurationBox, wxGBPosition(4, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
+	dosboxManagerPanelSizer->AddGrowableCol(0, 3);
 	dosboxManagerPanelSizer->AddGrowableRow(0, 1);
 	dosboxManagerPanelSizer->AddGrowableRow(2, 1);
+	dosboxManagerPanelSizer->AddGrowableRow(4, 1);
 	SetSizerAndFit(dosboxManagerPanelSizer);
 
 	DOSBoxVersionPanel * dosboxVersionPanel = nullptr;

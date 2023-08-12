@@ -1,6 +1,7 @@
 #include "GameVersionPanel.h"
 
 #include "../SettingPanel.h"
+#include "../DOSBox/Configuration/DOSBoxConfigurationPanel.h"
 #include "Game/GameVersion.h"
 #include "Game/GameVersionCollection.h"
 #include "GameVersionPanel.h"
@@ -20,6 +21,8 @@ GameVersionPanel::GameVersionPanel(std::shared_ptr<GameVersion> gameVersion, wxW
 	, m_gameVersion(gameVersion != nullptr ? gameVersion : std::make_shared<GameVersion>())
 	, m_gameVersionIDSettingPanel(nullptr)
 	, m_gamePathSettingPanel(nullptr)
+	, m_dosboxConfigurationBox(nullptr)
+	, m_dosboxConfigurationPanel(nullptr)
 	, m_notesTextField(nullptr)
 	, m_modified(false) {
 	const GameVersion * defaultGameVersion = nullptr;
@@ -30,10 +33,6 @@ GameVersionPanel::GameVersionPanel(std::shared_ptr<GameVersion> gameVersion, wxW
 			break;
 		}
 	}
-
-	int border = 5;
-
-	wxGridBagSizer * gameVersionConfigurationSizer = new wxGridBagSizer(border, border);
 
 	wxWrapSizer * gameInformationSizer = new wxWrapSizer(wxHORIZONTAL);
 	wxStaticBox * gameInformationBox = new wxStaticBox(this, wxID_ANY, "Game Information", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Game Information");
@@ -118,19 +117,32 @@ GameVersionPanel::GameVersionPanel(std::shared_ptr<GameVersion> gameVersion, wxW
 	m_settingsPanels.push_back(SettingPanel::createOptionalStringSettingPanel<bool>(std::bind(&GameVersion::getDisableSoundArgumentFlag, m_gameVersion.get()), std::bind(&GameVersion::setDisableSoundArgumentFlag, m_gameVersion.get(), std::placeholders::_1), std::bind(&GameVersion::clearDisableSoundArgumentFlag, m_gameVersion.get()), defaultGameVersion != nullptr ? defaultGameVersion->getDisableSoundArgumentFlag() : std::optional<std::string>(), "Disable Sound", argumentsPanel, argumentsSizer, 1));
 	m_settingsPanels.push_back(SettingPanel::createOptionalStringSettingPanel<bool>(std::bind(&GameVersion::getDisableMusicArgumentFlag, m_gameVersion.get()), std::bind(&GameVersion::setDisableMusicArgumentFlag, m_gameVersion.get(), std::placeholders::_1), std::bind(&GameVersion::clearDisableMusicArgumentFlag, m_gameVersion.get()), defaultGameVersion != nullptr ? defaultGameVersion->getDisableMusicArgumentFlag() : std::optional<std::string>(), "Disable Music", argumentsPanel, argumentsSizer, 1));
 
+	m_dosboxConfigurationBox = new wxStaticBox(this, wxID_ANY, (m_gameVersion->hasLongName() ? m_gameVersion->getLongName() + " " : "") + "DOSBox Configuration", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Game DOSBox Configuration");
+	m_dosboxConfigurationBox->SetOwnFont(m_dosboxConfigurationBox->GetFont().MakeBold());
+
+	m_dosboxConfigurationPanel = new DOSBoxConfigurationPanel(m_gameVersion->getDOSBoxConfiguration(), m_dosboxConfigurationBox);
+	m_dosboxConfigurationPanel->setEnabled(m_gameVersion->doesRequireDOSBox());
+
 	wxStaticBox * notesBox = new wxStaticBox(this, wxID_ANY, "Notes", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Notes");
 	notesBox->SetOwnFont(notesBox->GetFont().MakeBold());
+	notesBox->SetMaxClientSize(wxSize(notesBox->GetMaxClientSize().x, 80));
 
 	wxPanel * notesPanel = new wxPanel(notesBox, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+	notesPanel->SetMaxClientSize(wxSize(notesPanel->GetMaxClientSize().x, 60));
 
 	m_notesTextField = new wxTextCtrl(notesPanel, wxID_ANY, m_gameVersion->getNotesAsString(), wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
+	m_notesTextField->SetMaxClientSize(wxSize(m_notesTextField->GetMaxSize().x, 70));
 	m_notesTextField->Bind(wxEVT_TEXT, std::bind(&GameVersionPanel::onNotesModified, this, std::placeholders::_1), wxID_ANY, wxID_ANY);
 
-	wxFlexGridSizer * notesSizer = new wxFlexGridSizer(1, border, border);
-	notesSizer->AddGrowableRow(0, 1);
-	notesSizer->AddGrowableCol(0, 1);
+	int border = 2;
+
+	wxBoxSizer * dosboxConfigurationBoxSizer = new wxBoxSizer(wxHORIZONTAL);
+	dosboxConfigurationBoxSizer->Add(m_dosboxConfigurationPanel, 1, wxEXPAND | wxALL, 20);
+	m_dosboxConfigurationBox->SetSizerAndFit(dosboxConfigurationBoxSizer);
+
+	wxBoxSizer * notesSizer = new wxBoxSizer(wxVERTICAL);
 	notesSizer->Add(m_notesTextField, 1, wxEXPAND | wxHORIZONTAL);
-	notesPanel->SetSizer(notesSizer);
+	notesPanel->SetSizerAndFit(notesSizer);
 
 	gameInformationPanel->SetSizerAndFit(gameInformationSizer);
 	gameConfigurationPanel->SetSizerAndFit(gameConfigurationSizer);
@@ -138,42 +150,45 @@ GameVersionPanel::GameVersionPanel(std::shared_ptr<GameVersion> gameVersion, wxW
 
 	wxBoxSizer * gameInformationBoxSizer = new wxBoxSizer(wxHORIZONTAL);
 	gameInformationBoxSizer->Add(gameInformationPanel, 1, wxEXPAND | wxALL, 18);
-	gameInformationBox->SetSizer(gameInformationBoxSizer);
+	gameInformationBox->SetSizerAndFit(gameInformationBoxSizer);
 
 	wxBoxSizer * gameConfigurationBoxSizer = new wxBoxSizer(wxHORIZONTAL);
 	gameConfigurationBoxSizer->Add(gameConfigurationPanel, 1, wxEXPAND | wxALL, 18);
-	gameConfigurationBox->SetSizer(gameConfigurationBoxSizer);
+	gameConfigurationBox->SetSizerAndFit(gameConfigurationBoxSizer);
 
 	wxBoxSizer * compatibleGameVersionsBoxSizer = new wxBoxSizer(wxHORIZONTAL);
 	compatibleGameVersionsBoxSizer->Add(compatibleGameVersionsPanel, 1, wxEXPAND | wxALL, 18);
-	compatibleGameVersionsBox->SetSizer(compatibleGameVersionsBoxSizer);
+	compatibleGameVersionsBox->SetSizerAndFit(compatibleGameVersionsBoxSizer);
 
 	wxBoxSizer * supportedOperatingSystemsBoxSizer = new wxBoxSizer(wxHORIZONTAL);
 	supportedOperatingSystemsBoxSizer->Add(supportedOperatingSystemsPanel, 1, wxEXPAND | wxALL, 18);
-	supportedOperatingSystemsBox->SetSizer(supportedOperatingSystemsBoxSizer);
+	supportedOperatingSystemsBox->SetSizerAndFit(supportedOperatingSystemsBoxSizer);
 
 	wxBoxSizer * argumentsBoxSizer = new wxBoxSizer(wxHORIZONTAL);
-	argumentsBoxSizer->Add(argumentsPanel, 1, wxEXPAND | wxALL, 20);
-	argumentsBox->SetSizer(argumentsBoxSizer);
+	argumentsBoxSizer->Add(argumentsPanel, 1, wxEXPAND | wxALL, 18);
+	argumentsBox->SetSizerAndFit(argumentsBoxSizer);
 
 	wxBoxSizer * notesBoxSizer = new wxBoxSizer(wxHORIZONTAL);
 	notesBoxSizer->Add(notesPanel, 1, wxEXPAND | wxALL, 18);
-	notesBox->SetSizer(notesBoxSizer);
+	notesBox->SetSizerAndFit(notesBoxSizer);
 
+	wxGridBagSizer * gameVersionConfigurationSizer = new wxGridBagSizer(border, border);
 	gameVersionConfigurationSizer->Add(gameInformationBox, wxGBPosition(0, 0), wxGBSpan(1, 2), wxEXPAND | wxALL, border);
 	gameVersionConfigurationSizer->Add(gameConfigurationBox, wxGBPosition(1, 0), wxGBSpan(1, 2), wxEXPAND | wxALL, border);
 	gameVersionConfigurationSizer->Add(compatibleGameVersionsBox, wxGBPosition(2, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
 	gameVersionConfigurationSizer->Add(supportedOperatingSystemsBox, wxGBPosition(2, 1), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
 	gameVersionConfigurationSizer->Add(argumentsBox, wxGBPosition(3, 0), wxGBSpan(1, 2), wxEXPAND | wxALL, border);
-	gameVersionConfigurationSizer->Add(notesBox, wxGBPosition(4, 0), wxGBSpan(1, 2), wxEXPAND | wxALL, border);
+	gameVersionConfigurationSizer->Add(m_dosboxConfigurationBox, wxGBPosition(4, 0), wxGBSpan(1, 2), wxEXPAND | wxALL, border);
+	gameVersionConfigurationSizer->Add(notesBox, wxGBPosition(5, 0), wxGBSpan(1, 2), wxEXPAND | wxALL, border);
 	gameVersionConfigurationSizer->AddGrowableRow(0, 1);
-	gameVersionConfigurationSizer->AddGrowableRow(1, 14);
+	gameVersionConfigurationSizer->AddGrowableRow(1, 3);
 	gameVersionConfigurationSizer->AddGrowableRow(2, 1);
-	gameVersionConfigurationSizer->AddGrowableRow(3, 20);
-	gameVersionConfigurationSizer->AddGrowableRow(4, 1);
+	gameVersionConfigurationSizer->AddGrowableRow(3, 6);
+	gameVersionConfigurationSizer->AddGrowableRow(4, 4);
+	gameVersionConfigurationSizer->AddGrowableRow(5, 1);
 	gameVersionConfigurationSizer->AddGrowableCol(0, 6);
 	gameVersionConfigurationSizer->AddGrowableCol(1, 1);
-	SetSizer(gameVersionConfigurationSizer);
+	SetSizerAndFit(gameVersionConfigurationSizer);
 
 	m_gameVersionModifiedConnection = m_gameVersion->modified.connect(std::bind(&GameVersionPanel::onGameVersionModified, this, std::placeholders::_1));
 
@@ -305,6 +320,9 @@ void GameVersionPanel::update() {
 	}
 
 	m_notesTextField->SetValue(m_gameVersion->getNotesAsString());
+
+	m_dosboxConfigurationPanel->setEnabled(m_gameVersion->doesRequireDOSBox());
+	m_dosboxConfigurationBox->SetLabelText((m_gameVersion->hasLongName() ? m_gameVersion->getLongName() + " " : "") + "DOSBox Configuration");
 }
 
 void GameVersionPanel::onGameVersionModified(GameVersion & gameVersion) {

@@ -2,6 +2,7 @@
 
 #include "../SettingPanel.h"
 #include "../WXUtilities.h"
+#include "Configuration/DOSBoxConfigurationPanel.h"
 #include "DOSBox/DOSBoxVersion.h"
 #include "DOSBox/DOSBoxVersionCollection.h"
 #include "Project.h"
@@ -19,6 +20,8 @@ DOSBoxVersionPanel::DOSBoxVersionPanel(std::shared_ptr<DOSBoxVersion> dosboxVers
 	, m_dosboxVersion(dosboxVersion != nullptr ? dosboxVersion : std::make_shared<DOSBoxVersion>())
 	, m_dosboxIDSettingPanel(nullptr)
 	, m_dosboxPathSettingPanel(nullptr)
+	, m_dosboxConfigurationBox(nullptr)
+	, m_dosboxConfigurationPanel(nullptr)
 	, m_modified(false) {
 	const DOSBoxVersion * defaultDOSBoxVersion = nullptr;
 
@@ -30,8 +33,6 @@ DOSBoxVersionPanel::DOSBoxVersionPanel(std::shared_ptr<DOSBoxVersion> dosboxVers
 	}
 
 	int border = 5;
-
-	wxGridBagSizer * dosboxVersionConfigurationSizer = new wxGridBagSizer(border, border);
 
 	wxWrapSizer * dosboxInformationSizer = new wxWrapSizer(wxHORIZONTAL);
 	wxStaticBox * dosboxInformationBox = new wxStaticBox(this, wxID_ANY, "Information", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Information");
@@ -47,46 +48,58 @@ DOSBoxVersionPanel::DOSBoxVersionPanel(std::shared_ptr<DOSBoxVersion> dosboxVers
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&DOSBoxVersion::getWebsite, m_dosboxVersion.get()), std::bind(&DOSBoxVersion::setWebsite, m_dosboxVersion.get(), std::placeholders::_1), defaultDOSBoxVersion != nullptr ? defaultDOSBoxVersion->getWebsite() : "", "Website", dosboxInformationPanel, dosboxInformationSizer));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&DOSBoxVersion::getSourceCodeURL, m_dosboxVersion.get()), std::bind(&DOSBoxVersion::setSourceCodeURL, m_dosboxVersion.get(), std::placeholders::_1), defaultDOSBoxVersion != nullptr ? defaultDOSBoxVersion->getSourceCodeURL() : "", "Source Code URL", dosboxInformationPanel, dosboxInformationSizer));
 
-	wxWrapSizer * dosboxConfigurationSizer = new wxWrapSizer(wxHORIZONTAL);
-	wxStaticBox * dosboxConfigurationBox = new wxStaticBox(this, wxID_ANY, "Configuration", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Configuration");
-	dosboxConfigurationBox->SetOwnFont(dosboxConfigurationBox->GetFont().MakeBold());
+	wxWrapSizer * dosboxOptionsSizer = new wxWrapSizer(wxHORIZONTAL);
+	wxStaticBox * dosboxOptionsBox = new wxStaticBox(this, wxID_ANY, "Options", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Options");
+	dosboxOptionsBox->SetOwnFont(dosboxOptionsBox->GetFont().MakeBold());
 
-	wxPanel * dosboxConfigurationPanel = new wxPanel(dosboxConfigurationBox, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+	wxPanel * dosboxOptionsPanel = new wxPanel(dosboxOptionsBox, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 
-	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&DOSBoxVersion::getDirectoryPath, m_dosboxVersion.get()), std::bind(&DOSBoxVersion::setDirectoryPath, m_dosboxVersion.get(), std::placeholders::_1), defaultDOSBoxVersion != nullptr ? defaultDOSBoxVersion->getDirectoryPath() : "", "DOSBox Path", dosboxConfigurationPanel, dosboxConfigurationSizer));
+	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&DOSBoxVersion::getDirectoryPath, m_dosboxVersion.get()), std::bind(&DOSBoxVersion::setDirectoryPath, m_dosboxVersion.get(), std::placeholders::_1), defaultDOSBoxVersion != nullptr ? defaultDOSBoxVersion->getDirectoryPath() : "", "DOSBox Path", dosboxOptionsPanel, dosboxOptionsSizer));
 	m_dosboxPathSettingPanel = m_settingsPanels.back();
-	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&DOSBoxVersion::getExecutableName, m_dosboxVersion.get()), std::bind(&DOSBoxVersion::setExecutableName, m_dosboxVersion.get(), std::placeholders::_1), defaultDOSBoxVersion != nullptr ? defaultDOSBoxVersion->getExecutableName() : "", "DOSBox Executable Name", dosboxConfigurationPanel, dosboxConfigurationSizer, 1));
-	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&DOSBoxVersion::getLaunchArguments, m_dosboxVersion.get()), std::bind(&DOSBoxVersion::setLaunchArguments, m_dosboxVersion.get(), std::placeholders::_1), Utilities::emptyString, "Launch Arguments", dosboxConfigurationPanel, dosboxConfigurationSizer));
+	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&DOSBoxVersion::getExecutableName, m_dosboxVersion.get()), std::bind(&DOSBoxVersion::setExecutableName, m_dosboxVersion.get(), std::placeholders::_1), defaultDOSBoxVersion != nullptr ? defaultDOSBoxVersion->getExecutableName() : "", "DOSBox Executable Name", dosboxOptionsPanel, dosboxOptionsSizer, 1));
+	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&DOSBoxVersion::getLaunchArguments, m_dosboxVersion.get()), std::bind(&DOSBoxVersion::setLaunchArguments, m_dosboxVersion.get(), std::placeholders::_1), Utilities::emptyString, "Launch Arguments", dosboxOptionsPanel, dosboxOptionsSizer));
 
 	wxStaticBox * supportedOperatingSystemsBox = new wxStaticBox(this, wxID_ANY, "Supported Operating Systems", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Supported Operating Systems");
 	supportedOperatingSystemsBox->SetOwnFont(supportedOperatingSystemsBox->GetFont().MakeBold());
 
+	m_dosboxConfigurationBox = new wxStaticBox(this, wxID_ANY, (m_dosboxVersion->hasLongName() ? m_dosboxVersion->getLongName() + " " : "") + "Configuration", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "DOSBox Configuration");
+	m_dosboxConfigurationBox->SetOwnFont(m_dosboxConfigurationBox->GetFont().MakeBold());
+
 	SettingPanel * supportedOperatingSystemsPanel = SettingPanel::createEnumMultiChoiceSettingPanel<DeviceInformationBridge::OperatingSystemType>(std::bind(&DOSBoxVersion::getSupportedOperatingSystems, m_dosboxVersion.get()), std::bind(&DOSBoxVersion::hasSupportedOperatingSystem, m_dosboxVersion.get(), std::placeholders::_1), std::bind(&DOSBoxVersion::addSupportedOperatingSystem, m_dosboxVersion.get(), std::placeholders::_1), std::bind(static_cast<bool(DOSBoxVersion::*)(DeviceInformationBridge::OperatingSystemType)>(&DOSBoxVersion::removeSupportedOperatingSystem), m_dosboxVersion.get(), std::placeholders::_1), "Supported Operating Systems", supportedOperatingSystemsBox, 1, nullptr, defaultDOSBoxVersion != nullptr ? defaultDOSBoxVersion->getSupportedOperatingSystems() : std::vector<DeviceInformationBridge::OperatingSystemType>());
 	m_settingsPanels.push_back(supportedOperatingSystemsPanel);
 
+	m_dosboxConfigurationPanel = new DOSBoxConfigurationPanel(m_dosboxVersion->getDOSBoxConfiguration(), m_dosboxConfigurationBox);
+
 	dosboxInformationPanel->SetSizerAndFit(dosboxInformationSizer);
-	dosboxConfigurationPanel->SetSizerAndFit(dosboxConfigurationSizer);
+	dosboxOptionsPanel->SetSizerAndFit(dosboxOptionsSizer);
 
 	wxBoxSizer * dosboxInformationBoxSizer = new wxBoxSizer(wxHORIZONTAL);
-	dosboxInformationBoxSizer->Add(dosboxInformationPanel, 1, wxEXPAND | wxALL, 20);
-	dosboxInformationBox->SetSizer(dosboxInformationBoxSizer);
+	dosboxInformationBoxSizer->Add(dosboxInformationPanel, 1, wxEXPAND | wxALL, 18);
+	dosboxInformationBox->SetSizerAndFit(dosboxInformationBoxSizer);
 
-	wxBoxSizer * dosboxConfigurationBoxSizer = new wxBoxSizer(wxHORIZONTAL);
-	dosboxConfigurationBoxSizer->Add(dosboxConfigurationPanel, 1, wxEXPAND | wxALL, 20);
-	dosboxConfigurationBox->SetSizer(dosboxConfigurationBoxSizer);
+	wxBoxSizer * dosboxOptionsBoxSizer = new wxBoxSizer(wxHORIZONTAL);
+	dosboxOptionsBoxSizer->Add(dosboxOptionsPanel, 1, wxEXPAND | wxALL, 18);
+	dosboxOptionsBox->SetSizerAndFit(dosboxOptionsBoxSizer);
 
 	wxBoxSizer * supportedOperatingSystemsBoxSizer = new wxBoxSizer(wxHORIZONTAL);
-	supportedOperatingSystemsBoxSizer->Add(supportedOperatingSystemsPanel, 1, wxEXPAND | wxALL, 20);
-	supportedOperatingSystemsBox->SetSizer(supportedOperatingSystemsBoxSizer);
+	supportedOperatingSystemsBoxSizer->Add(supportedOperatingSystemsPanel, 1, wxEXPAND | wxALL, 18);
+	supportedOperatingSystemsBox->SetSizerAndFit(supportedOperatingSystemsBoxSizer);
 
-	dosboxVersionConfigurationSizer->Add(dosboxInformationBox, wxGBPosition(0, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
-	dosboxVersionConfigurationSizer->Add(dosboxConfigurationBox, wxGBPosition(1, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
-	dosboxVersionConfigurationSizer->Add(supportedOperatingSystemsBox, wxGBPosition(2, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
-	dosboxVersionConfigurationSizer->AddGrowableRow(0, 1);
-	dosboxVersionConfigurationSizer->AddGrowableRow(1, 1);
-	dosboxVersionConfigurationSizer->AddGrowableRow(2, 1);
-	dosboxVersionConfigurationSizer->AddGrowableCol(0, 1);
-	SetSizer(dosboxVersionConfigurationSizer);
+	wxBoxSizer * dosboxConfigurationBoxSizer = new wxBoxSizer(wxHORIZONTAL);
+	dosboxConfigurationBoxSizer->Add(m_dosboxConfigurationPanel, 1, wxEXPAND | wxALL, 18);
+	m_dosboxConfigurationBox->SetSizerAndFit(dosboxConfigurationBoxSizer);
+
+	wxGridBagSizer * dosboxVersionSizer = new wxGridBagSizer(border, border);
+	dosboxVersionSizer->Add(dosboxInformationBox, wxGBPosition(0, 0), wxGBSpan(1, 2), wxEXPAND | wxALL, border);
+	dosboxVersionSizer->Add(dosboxOptionsBox, wxGBPosition(1, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
+	dosboxVersionSizer->Add(supportedOperatingSystemsBox, wxGBPosition(1, 1), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
+	dosboxVersionSizer->Add(m_dosboxConfigurationBox, wxGBPosition(2, 0), wxGBSpan(1, 2), wxEXPAND | wxALL, border);
+	dosboxVersionSizer->AddGrowableRow(0, 1);
+	dosboxVersionSizer->AddGrowableRow(1, 1);
+	dosboxVersionSizer->AddGrowableRow(2, 3);
+	dosboxVersionSizer->AddGrowableCol(0, 3);
+	dosboxVersionSizer->AddGrowableCol(1, 1);
+	SetSizerAndFit(dosboxVersionSizer);
 
 	m_dosboxVersionModifiedConnection = m_dosboxVersion->modified.connect(std::bind(&DOSBoxVersionPanel::onDOSBoxVersionModified, this, std::placeholders::_1));
 
@@ -203,6 +216,8 @@ void DOSBoxVersionPanel::update() {
 	for(SettingPanel * settingPanel : m_settingsPanels) {
 		settingPanel->update();
 	}
+
+	m_dosboxConfigurationBox->SetLabelText((m_dosboxVersion->hasLongName() ? m_dosboxVersion->getLongName() + " " : "") + "Configuration");
 }
 
 void DOSBoxVersionPanel::onDOSBoxVersionModified(DOSBoxVersion & dosboxVersion) {

@@ -24,6 +24,7 @@
 #include <string>
 #include <vector>
 
+class DOSBoxConfigurationPanel;
 class DOSBoxInstallProgressEvent;
 class DOSBoxInstallDoneEvent;
 
@@ -118,6 +119,7 @@ private:
 	wxButton * m_saveDOSBoxSettingsButton;
 	wxButton * m_discardDOSBoxSettingsChangesButton;
 	DOSBoxSettingsPanel * m_dosboxSettingsPanel;
+	DOSBoxConfigurationPanel * m_generalDOSBoxConfigurationPanel;
 	wxProgressDialog * m_installProgressDialog;
 	boost::signals2::connection m_dosboxSettingModifiedConnection;
 	bool m_modified;

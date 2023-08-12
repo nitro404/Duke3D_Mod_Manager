@@ -148,8 +148,9 @@ GameManagerPanel::GameManagerPanel(std::shared_ptr<GameManager> gameManager, wxW
 	wxGridBagSizer * gameManagerPanelSizer = new wxGridBagSizer(border, border);
 	gameManagerPanelSizer->Add(m_notebook, wxGBPosition(0, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
 	gameManagerPanelSizer->Add(actionsPanel, wxGBPosition(1, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
-	gameManagerPanelSizer->AddGrowableRow(0, 0);
-	gameManagerPanelSizer->AddGrowableCol(0, 0);
+	gameManagerPanelSizer->AddGrowableRow(0, 1);
+	gameManagerPanelSizer->AddGrowableRow(1, 0);
+	gameManagerPanelSizer->AddGrowableCol(0, 1);
 	SetSizerAndFit(gameManagerPanelSizer);
 
 	GameVersionPanel * gameVersionPanel = nullptr;
