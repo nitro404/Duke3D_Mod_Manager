@@ -22,9 +22,9 @@ class SettingPanel;
 class StringChoiceSettingPanel;
 
 class DOSBoxSettingsPanel final
-	: public wxStaticBox {
+	: public wxPanel {
 public:
-	DOSBoxSettingsPanel(std::shared_ptr<ModManager> modManager, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxALIGN_LEFT, const std::string & title = "DOSBox Settings");
+	DOSBoxSettingsPanel(std::shared_ptr<ModManager> modManager, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxALIGN_LEFT);
 	virtual ~DOSBoxSettingsPanel();
 
 	bool areSettingsModified() const;

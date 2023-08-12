@@ -138,10 +138,15 @@ DOSBoxManagerPanel::DOSBoxManagerPanel(std::shared_ptr<ModManager> modManager, w
 	m_removeDOSBoxVersionButton->Bind(wxEVT_BUTTON, &DOSBoxManagerPanel::onRemoveDOSBoxVersionButtonPressed, this);
 	m_removeDOSBoxVersionButton->Disable();
 
-	m_dosboxSettingsPanel = new DOSBoxSettingsPanel(modManager, this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "General DOSBox Settings");
+	wxStaticBox * dosboxSettingsBox = new wxStaticBox(this, wxID_ANY, "General DOSBox Settings", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "General DOSBox Settings");
+	dosboxSettingsBox->SetOwnFont(dosboxSettingsBox->GetFont().MakeBold());
+
+	wxPanel * dosboxSettingsContainerPanel = new wxPanel(dosboxSettingsBox, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, "DOSBox Settings");
+
+	m_dosboxSettingsPanel = new DOSBoxSettingsPanel(modManager, dosboxSettingsContainerPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
 	m_dosboxSettingModifiedConnection = m_dosboxSettingsPanel->dosboxSettingModified.connect(std::bind(&DOSBoxManagerPanel::onDOSBoxSettingModified, this, std::placeholders::_1));
 
-	wxPanel * dosboxSettingsActionsPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, "DOSBox Settings Actions");
+	wxPanel * dosboxSettingsActionsPanel = new wxPanel(dosboxSettingsContainerPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, "DOSBox Settings Actions");
 
 	m_saveDOSBoxSettingsButton = new wxButton(dosboxSettingsActionsPanel, wxID_ANY, "Save Settings", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "Save Settings");
 	m_saveDOSBoxSettingsButton->Bind(wxEVT_BUTTON, &DOSBoxManagerPanel::onSaveDOSBoxSettingsButtonPressed, this);
@@ -177,6 +182,18 @@ DOSBoxManagerPanel::DOSBoxManagerPanel(std::shared_ptr<ModManager> modManager, w
 	dosboxSettingsActionsPanelSizer->Add(resetDefaultDOSBoxSettingsButton, 1, wxEXPAND | wxHORIZONTAL, border);
 	dosboxSettingsActionsPanel->SetSizerAndFit(dosboxSettingsActionsPanelSizer);
 
+	wxGridBagSizer * dosboxSettingsContainerPanelSizer = new wxGridBagSizer(border, border);
+	dosboxSettingsContainerPanelSizer->Add(m_dosboxSettingsPanel, wxGBPosition(0, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
+	dosboxSettingsContainerPanelSizer->Add(dosboxSettingsActionsPanel, wxGBPosition(1, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
+	dosboxSettingsContainerPanelSizer->AddGrowableRow(0, 1);
+	dosboxSettingsContainerPanelSizer->AddGrowableRow(1, 0);
+	dosboxSettingsContainerPanelSizer->AddGrowableCol(0, 1);
+	dosboxSettingsContainerPanel->SetSizerAndFit(dosboxSettingsContainerPanelSizer);
+
+	wxBoxSizer * dosboxSettingsBoxSizer = new wxBoxSizer(wxHORIZONTAL);
+	dosboxSettingsBoxSizer->Add(dosboxSettingsContainerPanel, 1, wxEXPAND | wxALL, 20);
+	dosboxSettingsBox->SetSizerAndFit(dosboxSettingsBoxSizer);
+
 	wxBoxSizer * dosboxConfigurationBoxSizer = new wxBoxSizer(wxHORIZONTAL);
 	dosboxConfigurationBoxSizer->Add(m_generalDOSBoxConfigurationPanel, 1, wxEXPAND | wxALL, 20);
 	dosboxConfigurationBox->SetSizerAndFit(dosboxConfigurationBoxSizer);
@@ -184,13 +201,12 @@ DOSBoxManagerPanel::DOSBoxManagerPanel(std::shared_ptr<ModManager> modManager, w
 	wxGridBagSizer * dosboxManagerPanelSizer = new wxGridBagSizer(border, border);
 	dosboxManagerPanelSizer->Add(m_notebook, wxGBPosition(0, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
 	dosboxManagerPanelSizer->Add(dosboxVersionActionsPanel, wxGBPosition(1, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
-	dosboxManagerPanelSizer->Add(m_dosboxSettingsPanel, wxGBPosition(2, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
-	dosboxManagerPanelSizer->Add(dosboxSettingsActionsPanel, wxGBPosition(3, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
-	dosboxManagerPanelSizer->Add(dosboxConfigurationBox, wxGBPosition(4, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
+	dosboxManagerPanelSizer->Add(dosboxSettingsBox, wxGBPosition(2, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
+	dosboxManagerPanelSizer->Add(dosboxConfigurationBox, wxGBPosition(3, 0), wxGBSpan(1, 1), wxEXPAND | wxALL, border);
 	dosboxManagerPanelSizer->AddGrowableCol(0, 3);
 	dosboxManagerPanelSizer->AddGrowableRow(0, 1);
 	dosboxManagerPanelSizer->AddGrowableRow(2, 1);
-	dosboxManagerPanelSizer->AddGrowableRow(4, 1);
+	dosboxManagerPanelSizer->AddGrowableRow(3, 1);
 	SetSizerAndFit(dosboxManagerPanelSizer);
 
 	DOSBoxVersionPanel * dosboxVersionPanel = nullptr;

@@ -9,8 +9,8 @@
 
 #include <sstream>
 
-DOSBoxSettingsPanel::DOSBoxSettingsPanel(std::shared_ptr<ModManager> modManager, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style, const std::string & title)
-	: wxStaticBox(parent, windowID, title, position, size, style, title)
+DOSBoxSettingsPanel::DOSBoxSettingsPanel(std::shared_ptr<ModManager> modManager, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
+	: wxPanel(parent, windowID, position, size, style, "DOSBox Settings")
 	, m_modManager(modManager)
 	, m_preferredDOSBoxVersionSettingPanel(nullptr)
 	, m_modified(false) {
@@ -20,26 +20,21 @@ DOSBoxSettingsPanel::DOSBoxSettingsPanel(std::shared_ptr<ModManager> modManager,
 	SetOwnFont(GetFont().MakeBold());
 
 	wxWrapSizer * dosboxSettingsSizer = new wxWrapSizer(wxHORIZONTAL);
-	wxPanel * dosboxSettingsPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 
-	m_preferredDOSBoxVersionSettingPanel = SettingPanel::createStringChoiceSettingPanel([modManager = modManager.get()]() { return modManager->getPreferredDOSBoxVersion()->getID(); }, std::bind(static_cast<bool(ModManager::*)(const std::string &)>(&ModManager::setPreferredDOSBoxVersionByID), modManager.get(), std::placeholders::_1), SettingsManager::DEFAULT_PREFERRED_DOSBOX_VERSION_ID, "Preferred DOSBox Version", dosboxVersions->getDOSBoxVersionShortNames(false), dosboxSettingsPanel, dosboxSettingsSizer, dosboxVersions->getDOSBoxVersionIdentifiers());
+	m_preferredDOSBoxVersionSettingPanel = SettingPanel::createStringChoiceSettingPanel([modManager = modManager.get()]() { return modManager->getPreferredDOSBoxVersion()->getID(); }, std::bind(static_cast<bool(ModManager::*)(const std::string &)>(&ModManager::setPreferredDOSBoxVersionByID), modManager.get(), std::placeholders::_1), SettingsManager::DEFAULT_PREFERRED_DOSBOX_VERSION_ID, "Preferred DOSBox Version", dosboxVersions->getDOSBoxVersionShortNames(false), this, dosboxSettingsSizer, dosboxVersions->getDOSBoxVersionIdentifiers());
 	m_settingsPanels.push_back(m_preferredDOSBoxVersionSettingPanel);
-	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxVersionsListFilePath, SettingsManager::DEFAULT_DOSBOX_VERSIONS_LIST_FILE_PATH, "DOSBox Versions List File Path", dosboxSettingsPanel, dosboxSettingsSizer));
-	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxArguments, SettingsManager::DEFAULT_DOSBOX_ARGUMENTS, "Shared Launch Arguments", dosboxSettingsPanel, dosboxSettingsSizer));
-	m_settingsPanels.push_back(SettingPanel::createBooleanSettingPanel(settings->dosboxShowConsole, SettingsManager::DEFAULT_DOSBOX_SHOW_CONSOLE, "Show Console", dosboxSettingsPanel, dosboxSettingsSizer));
-	m_settingsPanels.push_back(SettingPanel::createBooleanSettingPanel(settings->dosboxAutoExit, SettingsManager::DEFAULT_DOSBOX_AUTO_EXIT, "Auto Exit", dosboxSettingsPanel, dosboxSettingsSizer));
-	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxDataDirectoryName, SettingsManager::DEFAULT_DOSBOX_DATA_DIRECTORY_NAME, "Data Directory Name", dosboxSettingsPanel, dosboxSettingsSizer));
-	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxCommandScriptsDirectoryName, SettingsManager::DEFAULT_DOSBOX_COMMAND_SCRIPTS_DIRECTORY_NAME, "Command Scripts Directory Name", dosboxSettingsPanel, dosboxSettingsSizer));
-	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxConfigurationsDirectoryName, SettingsManager::DEFAULT_DOSBOX_CONFIGURATIONS_DIRECTORY_NAME, "Configurations Directory Name", dosboxSettingsPanel, dosboxSettingsSizer));
-	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&ModManager::getDOSBoxServerIPAddress, modManager.get()), std::bind(&ModManager::setDOSBoxServerIPAddress, modManager.get(), std::placeholders::_1), SettingsManager::DEFAULT_DOSBOX_SERVER_IP_ADDRESS, "Server IP Address", dosboxSettingsPanel, dosboxSettingsSizer));
-	m_settingsPanels.push_back(SettingPanel::createIntegerSettingPanel<uint16_t>(std::bind(&ModManager::getDOSBoxRemoteServerPort, modManager.get()), std::bind(&ModManager::setDOSBoxRemoteServerPort, modManager.get(), std::placeholders::_1), SettingsManager::DEFAULT_DOSBOX_REMOTE_SERVER_PORT, "Remote Server Port", dosboxSettingsPanel, dosboxSettingsSizer));
-	m_settingsPanels.push_back(SettingPanel::createIntegerSettingPanel<uint16_t>(std::bind(&ModManager::getDOSBoxLocalServerPort, modManager.get()), std::bind(&ModManager::setDOSBoxLocalServerPort, modManager.get(), std::placeholders::_1), SettingsManager::DEFAULT_DOSBOX_LOCAL_SERVER_PORT, "Local Server Port", dosboxSettingsPanel, dosboxSettingsSizer));
+	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxVersionsListFilePath, SettingsManager::DEFAULT_DOSBOX_VERSIONS_LIST_FILE_PATH, "DOSBox Versions List File Path", this, dosboxSettingsSizer));
+	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxArguments, SettingsManager::DEFAULT_DOSBOX_ARGUMENTS, "Shared Launch Arguments", this, dosboxSettingsSizer));
+	m_settingsPanels.push_back(SettingPanel::createBooleanSettingPanel(settings->dosboxShowConsole, SettingsManager::DEFAULT_DOSBOX_SHOW_CONSOLE, "Show Console", this, dosboxSettingsSizer));
+	m_settingsPanels.push_back(SettingPanel::createBooleanSettingPanel(settings->dosboxAutoExit, SettingsManager::DEFAULT_DOSBOX_AUTO_EXIT, "Auto Exit", this, dosboxSettingsSizer));
+	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxDataDirectoryName, SettingsManager::DEFAULT_DOSBOX_DATA_DIRECTORY_NAME, "Data Directory Name", this, dosboxSettingsSizer));
+	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxCommandScriptsDirectoryName, SettingsManager::DEFAULT_DOSBOX_COMMAND_SCRIPTS_DIRECTORY_NAME, "Command Scripts Directory Name", this, dosboxSettingsSizer));
+	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel(settings->dosboxConfigurationsDirectoryName, SettingsManager::DEFAULT_DOSBOX_CONFIGURATIONS_DIRECTORY_NAME, "Configurations Directory Name", this, dosboxSettingsSizer));
+	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&ModManager::getDOSBoxServerIPAddress, modManager.get()), std::bind(&ModManager::setDOSBoxServerIPAddress, modManager.get(), std::placeholders::_1), SettingsManager::DEFAULT_DOSBOX_SERVER_IP_ADDRESS, "Server IP Address", this, dosboxSettingsSizer));
+	m_settingsPanels.push_back(SettingPanel::createIntegerSettingPanel<uint16_t>(std::bind(&ModManager::getDOSBoxRemoteServerPort, modManager.get()), std::bind(&ModManager::setDOSBoxRemoteServerPort, modManager.get(), std::placeholders::_1), SettingsManager::DEFAULT_DOSBOX_REMOTE_SERVER_PORT, "Remote Server Port", this, dosboxSettingsSizer));
+	m_settingsPanels.push_back(SettingPanel::createIntegerSettingPanel<uint16_t>(std::bind(&ModManager::getDOSBoxLocalServerPort, modManager.get()), std::bind(&ModManager::setDOSBoxLocalServerPort, modManager.get(), std::placeholders::_1), SettingsManager::DEFAULT_DOSBOX_LOCAL_SERVER_PORT, "Local Server Port", this, dosboxSettingsSizer));
 
-	dosboxSettingsPanel->SetSizerAndFit(dosboxSettingsSizer);
-
-	wxBoxSizer * dosboxSettingsBoxSizer = new wxBoxSizer(wxHORIZONTAL);
-	dosboxSettingsBoxSizer->Add(dosboxSettingsPanel, 1, wxEXPAND | wxALL, 20);
-	SetSizer(dosboxSettingsBoxSizer);
+	SetSizerAndFit(dosboxSettingsSizer);
 
 	m_preferredDOSBoxVersionChangedConnection = modManager->preferredDOSBoxVersionChanged.connect(std::bind(&DOSBoxSettingsPanel::onPreferredDOSBoxVersionChanged, this, std::placeholders::_1));
 	m_dosboxServerIPAddressChangedConnection = modManager->dosboxServerIPAddressChanged.connect(std::bind(&DOSBoxSettingsPanel::onDOSBoxServerIPAddressChanged, this, std::placeholders::_1));
