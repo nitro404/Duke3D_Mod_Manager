@@ -1378,15 +1378,29 @@ bool OrganizedModCollection::setSelectedAuthor(size_t index) {
 		return false;
 	}
 
-	bool shouldOrganize = m_selectedAuthor != m_authors[index] ||
-						  m_filterType != FilterType::Authors;
+	bool shouldOrganize = false;
 
-	m_selectedAuthor = m_authors[index];
-	m_filterType = FilterType::Authors;
+	if(m_selectedAuthor != m_authors[index]) {
+		m_selectedAuthor = m_authors[index];
+
+		selectedAuthorChanged(m_selectedAuthor);
+
+		shouldOrganize = true;
+	}
+
+	if(m_filterType != FilterType::Authors) {
+		m_filterType = FilterType::Authors;
+
+		filterTypeChanged(m_filterType);
+
+		shouldOrganize = true;
+	}
 
 	if(!areCurrentSortOptionsValidInCurrentContext()) {
 		m_sortType = OrganizedModCollection::DEFAULT_SORT_TYPE;
 		m_sortDirection = OrganizedModCollection::DEFAULT_SORT_DIRECTION;
+
+		sortOptionsChanged(m_sortType, m_sortDirection);
 
 		shouldOrganize = true;
 	}
