@@ -581,6 +581,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 		properties["numberOfDownloadedMods"] = m_downloadManager != nullptr ? m_downloadManager->numberOfDownloadedMods() : 0;
 		properties["numberOfInstalledStandAloneMods"] = m_standAloneMods->numberOfStandAloneMods();
 		properties["dosboxShowConsole"] = settings->dosboxShowConsole;
+		properties["dosboxFullscreen"] = settings->dosboxFullscreen;
 		properties["dosboxAutoExit"] = settings->dosboxAutoExit;
 		properties["dosboxArguments"] = settings->dosboxArguments;
 		properties["dosboxServerIPAddressChanged"] = !Utilities::areStringsEqual(settings->dosboxServerIPAddress, SettingsManager::DEFAULT_DOSBOX_SERVER_IP_ADDRESS);
@@ -2485,6 +2486,10 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		scriptArgs.addArgument("PORT", std::to_string(settings->dosboxLocalServerPort));
 	}
 
+	if(settings->dosboxFullscreen) {
+		scriptArgs.addArgument("FULLSCREEN", "FULLSCREEN");
+	}
+
 	if(settings->dosboxAutoExit) {
 		scriptArgs.addArgument("EXIT", "EXIT");
 	}
@@ -3653,13 +3658,13 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 			return {};
 		}
 
-		return generateDOSBoxCommand(dosboxScript, scriptArgs, *selectedDOSBoxVersion, settings->dosboxArguments, settings->dosboxShowConsole, combinedDOSBoxConfigurationFilePath);
+		return generateDOSBoxCommand(dosboxScript, scriptArgs, *selectedDOSBoxVersion, settings->dosboxArguments, settings->dosboxShowConsole, settings->dosboxFullscreen, combinedDOSBoxConfigurationFilePath);
 	}
 
 	return "\"" +  Utilities::joinPaths(selectedGameVersion->getGamePath(), executableName) + "\"" + command.str();
 }
 
-std::string ModManager::generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const DOSBoxVersion & dosboxVersion, const std::string & dosboxArguments, bool showConsole, std::string_view combinedDOSBoxConfigurationFilePath) const {
+std::string ModManager::generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const DOSBoxVersion & dosboxVersion, const std::string & dosboxArguments, bool showConsole, bool fullscreen, std::string_view combinedDOSBoxConfigurationFilePath) const {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	static const std::regex unescapedQuotesRegExp("(?:^\"|([^\\\\])\")");
@@ -3680,6 +3685,10 @@ std::string ModManager::generateDOSBoxCommand(const Script & script, const Scrip
 
 	if(!showConsole) {
 		command << " -noconsole";
+	}
+
+	if(fullscreen) {
+		command << " -fullscreen";
 	}
 
 	if(dosboxVersion.hasLaunchArguments()) {
