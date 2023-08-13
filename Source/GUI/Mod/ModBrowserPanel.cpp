@@ -160,8 +160,9 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 
 	wxStaticText * modListSortTypeLabel = new wxStaticText(modListOptionsPanel, wxID_ANY, "Sort Type:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	modListSortTypeLabel->SetFont(modListSortTypeLabel->GetFont().MakeBold());
-	m_modListSortTypeComboBox = new wxComboBox(modListOptionsPanel, wxID_ANY, Utilities::toCapitalCase(magic_enum::enum_name(OrganizedModCollection::DEFAULT_SORT_TYPE)), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<OrganizedModCollection::SortType>(), 0, wxDefaultValidator, "Mod List Sort Type");
+	m_modListSortTypeComboBox = new wxComboBox(modListOptionsPanel, wxID_ANY, Utilities::toCapitalCase(magic_enum::enum_name(OrganizedModCollection::DEFAULT_SORT_TYPE)), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<OrganizedModCollection::SortType>(organizedMods->getInvalidSortTypesInCurrentContext()), 0, wxDefaultValidator, "Mod List Sort Type");
 	m_modListSortTypeComboBox->SetEditable(false);
+	m_modListSortTypeComboBox->SetMinClientSize(wxSize(170, m_modListSortTypeComboBox->GetMinClientSize().GetHeight()));
 	m_modListSortTypeComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onModListSortTypeSelected, this);
 
 	wxStaticText * modListSortDirectionLabel = new wxStaticText(modListOptionsPanel, wxID_ANY, "Direction:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
@@ -437,11 +438,7 @@ void ModBrowserPanel::update() {
 }
 
 void ModBrowserPanel::updateModListFilterType() {
-	std::optional<uint64_t> optionalFilterTypeIndex = magic_enum::enum_index(m_modManager->getOrganizedMods()->getFilterType());
-
-	if(optionalFilterTypeIndex.has_value()) {
-		m_modListFilterTypeComboBox->SetSelection(optionalFilterTypeIndex.value());
-	}
+	m_modListFilterTypeComboBox->SetSelection(magic_enum::enum_index(m_modManager->getOrganizedMods()->getFilterType()).value_or(wxNOT_FOUND));
 }
 
 void ModBrowserPanel::updateModListSortOptions() {
@@ -450,19 +447,14 @@ void ModBrowserPanel::updateModListSortOptions() {
 }
 
 void ModBrowserPanel::updateModListSortType() {
-	std::optional<uint64_t> optionalSortTypeIndex = magic_enum::enum_index(m_modManager->getOrganizedMods()->getSortType());
+	std::shared_ptr<OrganizedModCollection> organizedMods(m_modManager->getOrganizedMods());
 
-	if(optionalSortTypeIndex.has_value()) {
-		m_modListSortTypeComboBox->SetSelection(optionalSortTypeIndex.value());
-	}
+	m_modListSortTypeComboBox->Set(WXUtilities::createEnumWXArrayString<OrganizedModCollection::SortType>(organizedMods->getInvalidSortTypesInCurrentContext()));
+	m_modListSortTypeComboBox->SetSelection(organizedMods->indexOfCurrentSortType());
 }
 
 void ModBrowserPanel::updateModListSortDirection() {
-	std::optional<uint64_t> optionalSortDirectionIndex = magic_enum::enum_index(m_modManager->getOrganizedMods()->getSortDirection());
-
-	if(optionalSortDirectionIndex.has_value()) {
-		m_modListSortDirectionComboBox->SetSelection(optionalSortDirectionIndex.value());
-	}
+	m_modListSortDirectionComboBox->SetSelection(magic_enum::enum_index(m_modManager->getOrganizedMods()->getSortDirection()).value_or(wxNOT_FOUND));
 }
 
 void ModBrowserPanel::updateModList() {
@@ -899,7 +891,7 @@ void ModBrowserPanel::onModListSortTypeSelected(wxCommandEvent & event) {
 	int selectedSortTypeIndex = m_modListSortTypeComboBox->GetSelection();
 
 	if(selectedSortTypeIndex != wxNOT_FOUND) {
-		m_modManager->getOrganizedMods()->setSortType(magic_enum::enum_value<OrganizedModCollection::SortType>(selectedSortTypeIndex));
+		m_modManager->getOrganizedMods()->setSortTypeByIndex(selectedSortTypeIndex);
 	}
 }
 
@@ -1554,6 +1546,7 @@ void ModBrowserPanel::onGameProcessEnded(GameProcessTerminatedEvent & gameProces
 
 void ModBrowserPanel::onModSelectionChanged(std::shared_ptr<Mod> mod, size_t modVersionIndex, size_t modVersionTypeIndex, size_t modGameVersionIndex) {
 	updateModSelection();
+	updateModListSortOptions();
 
 	m_clearButton->Enable();
 }
@@ -1591,6 +1584,7 @@ void ModBrowserPanel::onFilterTypeChanged(OrganizedModCollection::FilterType fil
 	m_modManager->getOrganizedMods()->clearSelectedItems();
 
 	updateModListFilterType();
+	updateModListSortOptions();
 	updateModList();
 }
 
@@ -1601,22 +1595,27 @@ void ModBrowserPanel::onSortOptionsChanged(OrganizedModCollection::SortType sort
 
 void ModBrowserPanel::onSelectedModChanged(std::shared_ptr<Mod> mod) {
 	updateModSelection();
+	updateModListSortOptions();
 }
 
 void ModBrowserPanel::onSelectedFavouriteModChanged(std::shared_ptr<ModIdentifier> favouriteMod) {
 	updateModSelection();
+	updateModListSortOptions();
 }
 
 void ModBrowserPanel::onSelectedGameVersionChanged(std::shared_ptr<GameVersion> gameVersion) {
 	updateModSelection();
+	updateModListSortOptions();
 }
 
 void ModBrowserPanel::onSelectedTeamChanged(std::shared_ptr<ModAuthorInformation> team) {
 	updateModSelection();
+	updateModListSortOptions();
 }
 
 void ModBrowserPanel::onSelectedAuthorChanged(std::shared_ptr<ModAuthorInformation> author) {
 	updateModSelection();
+	updateModListSortOptions();
 }
 
 void ModBrowserPanel::onOrganizedModCollectionChanged(const std::vector<std::shared_ptr<Mod>> & organizedMods) {

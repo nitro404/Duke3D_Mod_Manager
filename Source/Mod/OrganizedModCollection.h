@@ -74,6 +74,7 @@ public:
 	void setGameVersionCollection(std::shared_ptr<GameVersionCollection> gameVersions);
 	bool setFilterType(FilterType filterType);
 	bool setSortType(SortType sortType);
+	bool setSortTypeByIndex(size_t sortTypeIndex);
 	bool setSortDirection(SortDirection sortDirection);
 	bool setSortOptions(SortType sortType, SortDirection sortDirection);
 
@@ -173,8 +174,12 @@ public:
 
 	void organize();
 
-	bool areCurrentSortOptionsValidInCurrentContext();
-	bool areSortOptionsValidInCurrentContext(SortType sortType, FilterType filterType);
+	size_t indexOfCurrentSortType() const;
+	size_t indexOfSortType(SortType sortType) const;
+	std::vector<SortType> getValidSortTypesInCurrentContext() const;
+	std::vector<SortType> getInvalidSortTypesInCurrentContext() const;
+	bool areCurrentSortOptionsValidInCurrentContext() const;
+	bool areSortOptionsValidInCurrentContext(SortType sortType, FilterType filterType) const;
 	static bool areSortOptionsValidInContext(SortType sortType, FilterType filterType, bool hasSelectedGameVersion, bool hasSelectedTeam, bool hasSelectedAuthor);
 
 	bool operator == (const OrganizedModCollection & m) const;

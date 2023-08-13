@@ -14,6 +14,8 @@
 #include <Utilities/Utilities.h>
 #include <Utilities/StringUtilities.h>
 
+#include <magic_enum.hpp>
+
 #include <sstream>
 
 const OrganizedModCollection::FilterType OrganizedModCollection::DEFAULT_FILTER_TYPE = FilterType::None;
@@ -481,6 +483,25 @@ bool OrganizedModCollection::setSortType(SortType sortType) {
 	sort();
 
 	return true;
+}
+
+bool OrganizedModCollection::setSortTypeByIndex(size_t sortTypeIndex) {
+	const auto & sortTypes = magic_enum::enum_values<SortType>();
+	size_t currentSortTypeIndex = 0;
+
+	for(SortType currentSortType : sortTypes) {
+		if(!areSortOptionsValidInCurrentContext(currentSortType, m_filterType)) {
+			continue;
+		}
+
+		if(currentSortTypeIndex == sortTypeIndex) {
+			return setSortType(currentSortType);
+		}
+
+		currentSortTypeIndex++;
+	}
+
+	return false;
 }
 
 bool OrganizedModCollection::setSortDirection(SortDirection sortDirection) {
@@ -1798,11 +1819,60 @@ void OrganizedModCollection::updateGameVersionCompatibleModCounts() {
 	}
 }
 
-bool OrganizedModCollection::areCurrentSortOptionsValidInCurrentContext() {
+size_t OrganizedModCollection::indexOfCurrentSortType() const {
+	return indexOfSortType(m_sortType);
+}
+
+size_t OrganizedModCollection::indexOfSortType(SortType sortType) const {
+	const auto & sortTypes = magic_enum::enum_values<SortType>();
+	size_t sortTypeIndex = 0;
+
+	for(SortType currentSortType : sortTypes) {
+		if(!areSortOptionsValidInCurrentContext(currentSortType, m_filterType)) {
+			continue;
+		}
+
+		if(currentSortType == sortType) {
+			return sortTypeIndex;
+		}
+
+		sortTypeIndex++;
+	}
+
+	return std::numeric_limits<size_t>::max();
+}
+
+std::vector<OrganizedModCollection::SortType> OrganizedModCollection::getValidSortTypesInCurrentContext() const {
+	const auto & sortTypes = magic_enum::enum_values<SortType>();
+	std::vector<SortType> validSortTypes;
+
+	for(SortType sortType : sortTypes) {
+		if(areSortOptionsValidInContext(sortType, m_filterType, m_selectedGameVersion != nullptr, m_selectedTeam != nullptr, m_selectedAuthor != nullptr)) {
+			validSortTypes.push_back(sortType);
+		}
+	}
+
+	return validSortTypes;
+}
+
+std::vector<OrganizedModCollection::SortType> OrganizedModCollection::getInvalidSortTypesInCurrentContext() const {
+	const auto & sortTypes = magic_enum::enum_values<SortType>();
+	std::vector<SortType> invalidSortTypes;
+
+	for(SortType sortType : sortTypes) {
+		if(!areSortOptionsValidInContext(sortType, m_filterType, m_selectedGameVersion != nullptr, m_selectedTeam != nullptr, m_selectedAuthor != nullptr)) {
+			invalidSortTypes.push_back(sortType);
+		}
+	}
+
+	return invalidSortTypes;
+}
+
+bool OrganizedModCollection::areCurrentSortOptionsValidInCurrentContext() const {
 	return areSortOptionsValidInContext(m_sortType, m_filterType, m_selectedGameVersion != nullptr, m_selectedTeam != nullptr, m_selectedAuthor != nullptr);
 }
 
-bool OrganizedModCollection::areSortOptionsValidInCurrentContext(SortType sortType, FilterType filterType) {
+bool OrganizedModCollection::areSortOptionsValidInCurrentContext(SortType sortType, FilterType filterType) const {
 	return areSortOptionsValidInContext(sortType, filterType, m_selectedGameVersion != nullptr, m_selectedTeam != nullptr, m_selectedAuthor != nullptr);
 }
 
@@ -1824,7 +1894,7 @@ bool OrganizedModCollection::areSortOptionsValidInContext(SortType sortType, Fil
 			   sortType == SortType::NumberOfVersions;
 	}
 	else if((filterType == FilterType::SupportedGameVersions || filterType == FilterType::CompatibleGameVersions) && !hasSelectedGameVersion) {
-		return  sortType == SortType::NumberOfSupportedMods ||
+		return sortType == SortType::NumberOfSupportedMods ||
 			   sortType == SortType::NumberOfCompatibleMods;
 	}
 	else if((filterType == FilterType::Teams && !hasSelectedTeam) ||
