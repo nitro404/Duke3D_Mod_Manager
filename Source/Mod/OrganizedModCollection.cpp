@@ -1690,16 +1690,30 @@ void OrganizedModCollection::sort() {
 			break;
 		}
 		case FilterType::Teams: {
-			m_teams = mergeSortAuthors(m_teams);
+			if(m_selectedTeam == nullptr) {
+				m_teams = mergeSortAuthors(m_teams);
 
-			organizedModTeamCollectionChanged(m_teams);
+				organizedModTeamCollectionChanged(m_teams);
+			}
+			else {
+				m_organizedMods = mergeSortMods(m_organizedMods);
+
+				organizedModCollectionChanged(m_organizedMods);
+			}
 
 			break;
 		}
 		case FilterType::Authors: {
-			m_authors = mergeSortAuthors(m_authors);
+			if(m_selectedAuthor == nullptr) {
+				m_authors = mergeSortAuthors(m_authors);
 
-			organizedModAuthorCollectionChanged(m_authors);
+				organizedModAuthorCollectionChanged(m_authors);
+			}
+			else {
+				m_organizedMods = mergeSortMods(m_organizedMods);
+
+				organizedModCollectionChanged(m_organizedMods);
+			}
 
 			break;
 		}
