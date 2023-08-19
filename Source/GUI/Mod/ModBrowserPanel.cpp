@@ -154,20 +154,20 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 
 	wxStaticText * modListFilterTypeLabel = new wxStaticText(modListOptionsPanel, wxID_ANY, "Filter Type:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	modListFilterTypeLabel->SetFont(modListFilterTypeLabel->GetFont().MakeBold());
-	m_modListFilterTypeComboBox = new wxComboBox(modListOptionsPanel, wxID_ANY, Utilities::toCapitalCase(magic_enum::enum_name(OrganizedModCollection::DEFAULT_FILTER_TYPE)), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<OrganizedModCollection::FilterType>(), 0, wxDefaultValidator, "Mod List Filter Type");
+	m_modListFilterTypeComboBox = new wxComboBox(modListOptionsPanel, wxID_ANY, Utilities::toCapitalCase(magic_enum::enum_name(organizedMods->getFilterType())), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<OrganizedModCollection::FilterType>(), 0, wxDefaultValidator, "Mod List Filter Type");
 	m_modListFilterTypeComboBox->SetEditable(false);
 	m_modListFilterTypeComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onModListFilterTypeSelected, this);
 
 	wxStaticText * modListSortTypeLabel = new wxStaticText(modListOptionsPanel, wxID_ANY, "Sort Type:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	modListSortTypeLabel->SetFont(modListSortTypeLabel->GetFont().MakeBold());
-	m_modListSortTypeComboBox = new wxComboBox(modListOptionsPanel, wxID_ANY, Utilities::toCapitalCase(magic_enum::enum_name(OrganizedModCollection::DEFAULT_SORT_TYPE)), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<OrganizedModCollection::SortType>(organizedMods->getInvalidSortTypesInCurrentContext()), 0, wxDefaultValidator, "Mod List Sort Type");
+	m_modListSortTypeComboBox = new wxComboBox(modListOptionsPanel, wxID_ANY, Utilities::toCapitalCase(magic_enum::enum_name(organizedMods->getSortType())), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<OrganizedModCollection::SortType>(organizedMods->getInvalidSortTypesInCurrentContext()), 0, wxDefaultValidator, "Mod List Sort Type");
 	m_modListSortTypeComboBox->SetEditable(false);
 	m_modListSortTypeComboBox->SetMinClientSize(wxSize(170, m_modListSortTypeComboBox->GetMinClientSize().GetHeight()));
 	m_modListSortTypeComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onModListSortTypeSelected, this);
 
 	wxStaticText * modListSortDirectionLabel = new wxStaticText(modListOptionsPanel, wxID_ANY, "Direction:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	modListSortDirectionLabel->SetFont(modListSortDirectionLabel->GetFont().MakeBold());
-	m_modListSortDirectionComboBox = new wxComboBox(modListOptionsPanel, wxID_ANY, Utilities::toCapitalCase(magic_enum::enum_name(OrganizedModCollection::DEFAULT_SORT_DIRECTION)), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<OrganizedModCollection::SortDirection>(), 0, wxDefaultValidator, "Mod List Sort Direction");
+	m_modListSortDirectionComboBox = new wxComboBox(modListOptionsPanel, wxID_ANY, Utilities::toCapitalCase(magic_enum::enum_name(organizedMods->getSortDirection())), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<OrganizedModCollection::SortDirection>(), 0, wxDefaultValidator, "Mod List Sort Direction");
 	m_modListSortDirectionComboBox->SetEditable(false);
 	m_modListSortDirectionComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onModListSortDirectionSelected, this);
 
