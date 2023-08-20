@@ -56,6 +56,7 @@ public:
 	const std::string & getWebsite() const;
 	const std::string & getRepositoryURL() const;
 	bool isStandAlone() const;
+	bool isOfficialExpansion() const;
 	bool hasTeam() const;
 	std::shared_ptr<ModTeam> getTeam() const;
 
@@ -217,6 +218,8 @@ public:
 
 	bool operator == (const Mod & m) const;
 	bool operator != (const Mod & m) const;
+
+	static const std::string OFFICIAL_EXPANSION_TYPE;
 
 private:
 	void updateParent();

@@ -44,6 +44,7 @@ public:
 		SupportedGameVersions,
 		CompatibleGameVersions,
 		StandAlone,
+		OfficialExpansion,
 		Teams,
 		Authors
 	};

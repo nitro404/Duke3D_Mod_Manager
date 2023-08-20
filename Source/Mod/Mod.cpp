@@ -108,6 +108,8 @@ static const std::array<std::string_view, 8> XML_MOD_ATTRIBUTE_NAMES = {
 static const std::string XML_RELATED_MOD_ID_ATTRIBUTE_NAME("id");
 static const std::string XML_SIMILAR_MOD_ID_ATTRIBUTE_NAME("id");
 
+const std::string Mod::OFFICIAL_EXPANSION_TYPE("Official Expansion");
+
 Mod::Mod(const std::string & id, const std::string & name, const std::string & type)
 	: m_id(Utilities::trimString(id))
 	, m_name(Utilities::trimString(name))
@@ -373,6 +375,10 @@ bool Mod::isStandAlone() const {
 	}
 
 	return false;
+}
+
+bool Mod::isOfficialExpansion() const {
+	return Utilities::areStringsEqualIgnoreCase(m_type, OFFICIAL_EXPANSION_TYPE);
 }
 
 bool Mod::hasTeam() const {
