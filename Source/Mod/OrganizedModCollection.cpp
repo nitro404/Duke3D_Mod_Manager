@@ -237,6 +237,14 @@ const std::vector<std::shared_ptr<GameVersion>> & OrganizedModCollection::getOrg
 	return m_organizedGameVersions;
 }
 
+const std::vector<std::shared_ptr<ModAuthorInformation>> & OrganizedModCollection::getOrganizedTeams() const {
+	return m_teams;
+}
+
+const std::vector<std::shared_ptr<ModAuthorInformation>> & OrganizedModCollection::getOrganizedAuthors() const {
+	return m_authors;
+}
+
 std::shared_ptr<FavouriteModCollection> OrganizedModCollection::getFavouriteModCollection() const {
 	return m_favouriteMods;
 }
@@ -255,7 +263,7 @@ std::vector<std::string> OrganizedModCollection::getOrganizedItemDisplayNames(bo
 			std::stringstream modTextStream;
 
 			if(prependItemNumber) {
-				modTextStream << i + 1 << ": ";
+				modTextStream << i + 1 << ". ";
 			}
 
 			modTextStream << m_organizedMods[i]->getName();
@@ -281,7 +289,7 @@ std::vector<std::string> OrganizedModCollection::getOrganizedItemDisplayNames(bo
 			std::stringstream favouriteTextStream;
 
 			if(prependItemNumber) {
-				favouriteTextStream << i + 1 << ": ";
+				favouriteTextStream << i + 1 << ". ";
 			}
 
 			favouriteTextStream << m_organizedFavouriteMods[i]->getFullName();
@@ -296,10 +304,10 @@ std::vector<std::string> OrganizedModCollection::getOrganizedItemDisplayNames(bo
 			std::stringstream gameVersionTextStream;
 
 			if(prependItemNumber) {
-				gameVersionTextStream << std::to_string(i + 1) << ": ";
+				gameVersionTextStream << std::to_string(i + 1) << ". ";
 			}
 
-			gameVersionTextStream << m_organizedGameVersions[i]->getShortName();
+			gameVersionTextStream << m_organizedGameVersions[i]->getLongName();
 
 			if(m_sortType == OrganizedModCollection::SortType::NumberOfSupportedMods ||
 			   (m_filterType == OrganizedModCollection::FilterType::SupportedGameVersions && m_sortType != OrganizedModCollection::SortType::NumberOfCompatibleMods)) {
@@ -319,7 +327,7 @@ std::vector<std::string> OrganizedModCollection::getOrganizedItemDisplayNames(bo
 			std::stringstream teamTextStream;
 
 			if(prependItemNumber) {
-				teamTextStream << std::to_string(i + 1) << ": ";
+				teamTextStream << std::to_string(i + 1) << ". ";
 			}
 
 			teamTextStream << m_teams[i]->getName() << " (" << std::to_string(m_teams[i]->getModCount()) << ")";
@@ -334,7 +342,7 @@ std::vector<std::string> OrganizedModCollection::getOrganizedItemDisplayNames(bo
 			std::stringstream authorTextStream;
 
 			if(prependItemNumber) {
-				authorTextStream << std::to_string(i + 1) << ": ";
+				authorTextStream << std::to_string(i + 1) << ". ";
 			}
 
 			authorTextStream << m_authors[i]->getName() << " (" << std::to_string(m_authors[i]->getModCount()) << ")";
@@ -2154,10 +2162,10 @@ std::vector<std::shared_ptr<GameVersion>> OrganizedModCollection::mergeGameVersi
 	while(!left.empty() && !right.empty()) {
 		if(m_sortType == SortType::Name) {
 			if(m_sortDirection == SortDirection::Ascending) {
-				pushLeft = Utilities::compareStringsIgnoreCase(left[0]->getShortName(), right[0]->getShortName()) <= 0;
+				pushLeft = Utilities::compareStringsIgnoreCase(left[0]->getLongName(), right[0]->getLongName()) <= 0;
 			}
 			else {
-				pushLeft = Utilities::compareStringsIgnoreCase(left[0]->getShortName(), right[0]->getShortName()) > 0;
+				pushLeft = Utilities::compareStringsIgnoreCase(left[0]->getLongName(), right[0]->getLongName()) > 0;
 			}
 		}
 		else if(m_sortType == SortType::NumberOfSupportedMods) {

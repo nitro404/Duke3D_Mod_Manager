@@ -63,6 +63,7 @@ public:
 
 	void clear();
 	void clearSearch();
+	void clearSearchResults();
 
 private:
 	void onModSearchTextChanged(wxCommandEvent & event);
@@ -153,6 +154,9 @@ private:
 	SignalConnectionGroup m_modInfoPanelSignalConnectionGroup;
 	std::string m_searchQuery;
 	std::vector<ModMatch> m_modMatches;
+	std::vector<std::shared_ptr<ModIdentifier>> m_favouriteModMatches;
+	std::vector<std::shared_ptr<GameVersion>> m_gameVersionMatches;
+	std::vector<std::shared_ptr<ModAuthorInformation>> m_modAuthorMatches;
 	wxSearchCtrl * m_modSearchTextField;
 	wxButton * m_selectRandomModButton;
 	wxComboBox * m_modListFilterTypeComboBox;

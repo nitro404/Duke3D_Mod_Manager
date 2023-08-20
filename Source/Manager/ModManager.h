@@ -121,9 +121,9 @@ public:
 	bool selectRandomTeam();
 	bool selectRandomAuthor();
 	static std::vector<ModMatch> searchForMod(const std::vector<std::shared_ptr<Mod>> & mods, const std::string & query, bool autoPopulateVersion = false, bool autoPopulateVersionType = false);
-	size_t searchForAndSelectGameVersion(const std::string & query, std::vector<std::shared_ptr<GameVersion>> * matches = nullptr);
-	size_t searchForAndSelectTeam(const std::string & query, std::vector<std::shared_ptr<ModAuthorInformation>> * matches = nullptr);
-	size_t searchForAndSelectAuthor(const std::string & query, std::vector<std::shared_ptr<ModAuthorInformation>> * matches = nullptr);
+	static std::vector<std::shared_ptr<ModIdentifier>> searchForFavouriteMod(const std::vector<std::shared_ptr<ModIdentifier>> & favouriteMods, const std::string & query);
+	static std::vector<std::shared_ptr<GameVersion>> searchForGameVersion(const std::vector<std::shared_ptr<GameVersion>> & gameVersions, const std::string & query);
+	static std::vector<std::shared_ptr<ModAuthorInformation>> searchForAuthor(const std::vector<std::shared_ptr<ModAuthorInformation>> & authors, const std::string & query);
 	void clearSelectedMod();
 
 	bool isModSupportedOnSelectedGameVersion();

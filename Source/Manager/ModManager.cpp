@@ -1834,184 +1834,139 @@ std::vector<ModMatch> ModManager::searchForMod(const std::vector<std::shared_ptr
 	return matches;
 }
 
-size_t ModManager::searchForAndSelectGameVersion(const std::string & query, std::vector<std::shared_ptr<GameVersion>> * matches) {
-	std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
-	if(!m_initialized) {
-		return std::numeric_limits<size_t>::max();
-	}
-
+std::vector<std::shared_ptr<ModIdentifier>> ModManager::searchForFavouriteMod(const std::vector<std::shared_ptr<ModIdentifier>> & favouriteMods, const std::string & query) {
 	std::string formattedQuery(Utilities::toLowerCase(Utilities::trimString(query)));
 
 	if(formattedQuery.empty()) {
-		return std::numeric_limits<size_t>::max();
+		return {};
+	}
+
+	std::string favouriteModName;
+	std::vector<std::shared_ptr<ModIdentifier>> matchingFavouriteMods;
+	bool exactMatchFound = false;
+
+	for(size_t i = 0; i < favouriteMods.size(); i++) {
+		favouriteModName = Utilities::toLowerCase(favouriteMods[i]->toString());
+
+		if(favouriteModName == formattedQuery) {
+			exactMatchFound = true;
+			matchingFavouriteMods.clear();
+			matchingFavouriteMods.push_back(favouriteMods[i]);
+
+			break;
+		}
+
+		if(favouriteModName.find(formattedQuery) != std::string::npos) {
+			matchingFavouriteMods.push_back(favouriteMods[i]);
+		}
+	}
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["query"] = formattedQuery;
+		properties["exactMatch"] = exactMatchFound;
+		properties["numberOfMatches"] = matchingFavouriteMods.size();
+
+		SegmentAnalytics::getInstance()->track("Favourite Mod Search", properties);
+	}
+
+	return matchingFavouriteMods;
+}
+
+std::vector<std::shared_ptr<GameVersion>> ModManager::searchForGameVersion(const std::vector<std::shared_ptr<GameVersion>> & gameVersions, const std::string & query) {
+	std::string formattedQuery(Utilities::toLowerCase(Utilities::trimString(query)));
+
+	if(formattedQuery.empty()) {
+		return {};
 	}
 
 	std::string gameVersionName;
-	size_t matchingGameVersionIndex = std::numeric_limits<size_t>::max();
-	size_t numberOfMatches = 0;
+	std::vector<std::shared_ptr<GameVersion>> matchingGameVersions;
+	bool exactMatchFound = false;
 
-	for(size_t i = 0; i < m_organizedMods->numberOfGameVersions(); i++) {
-		gameVersionName = Utilities::toLowerCase(m_organizedMods->getGameVersion(i)->getShortName());
+	for(size_t i = 0; i < gameVersions.size(); i++) {
+		gameVersionName = Utilities::toLowerCase(gameVersions[i]->getLongName());
 
 		if(gameVersionName == formattedQuery) {
-			matchingGameVersionIndex = i;
-			numberOfMatches = 1;
-
-			if(matches != nullptr) {
-				matches->clear();
-				matches->push_back(m_organizedMods->getGameVersion(i));
-			}
+			exactMatchFound = true;
+			matchingGameVersions.clear();
+			matchingGameVersions.push_back(gameVersions[i]);
 
 			break;
 		}
 
 		if(gameVersionName.find(formattedQuery) != std::string::npos) {
-			if(matchingGameVersionIndex == std::numeric_limits<size_t>::max()) {
-				matchingGameVersionIndex = i;
-			}
+			matchingGameVersions.push_back(gameVersions[i]);
 
-			if(matches != nullptr) {
-				matches->push_back(m_organizedMods->getGameVersion(i));
-			}
-
-			numberOfMatches++;
+			continue;
 		}
-	}
 
-	if(numberOfMatches == 1) {
-		m_organizedMods->setSelectedGameVersion(matchingGameVersionIndex);
-	}
+		gameVersionName = Utilities::toLowerCase(gameVersions[i]->getShortName());
 
-	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
-		std::map<std::string, std::any> properties;
-		properties["query"] = formattedQuery;
-		properties["numberOfMatches"] = numberOfMatches;
-
-		SegmentAnalytics::getInstance()->track("Game Version Search", properties);
-	}
-
-	return numberOfMatches;
-}
-
-size_t ModManager::searchForAndSelectTeam(const std::string & query, std::vector<std::shared_ptr<ModAuthorInformation>> * matches) {
-	std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
-	if(!m_initialized) {
-		return std::numeric_limits<size_t>::max();
-	}
-
-	std::string formattedQuery(Utilities::toLowerCase(Utilities::trimString(query)));
-
-	if(formattedQuery.empty()) {
-		return std::numeric_limits<size_t>::max();
-	}
-
-	std::string teamName;
-	size_t matchingTeamIndex = std::numeric_limits<size_t>::max();
-	size_t numberOfMatches = 0;
-
-	for(size_t i = 0; i < m_organizedMods->numberOfTeams(); i++) {
-		teamName = Utilities::toLowerCase(m_organizedMods->getTeamInfo(i)->getName());
-
-		if(teamName == formattedQuery) {
-			matchingTeamIndex = i;
-			numberOfMatches = 1;
-
-			if(matches != nullptr) {
-				matches->clear();
-				matches->push_back(m_organizedMods->getTeamInfo(i));
-			}
+		if(gameVersionName == formattedQuery) {
+			exactMatchFound = true;
+			matchingGameVersions.clear();
+			matchingGameVersions.push_back(gameVersions[i]);
 
 			break;
 		}
 
-		if(teamName.find(formattedQuery) != std::string::npos) {
-			if(matchingTeamIndex == std::numeric_limits<size_t>::max()) {
-				matchingTeamIndex = i;
-			}
+		if(gameVersionName.find(formattedQuery) != std::string::npos) {
+			matchingGameVersions.push_back(gameVersions[i]);
 
-			if(matches != nullptr) {
-				matches->push_back(m_organizedMods->getTeamInfo(i));
-			}
-
-			numberOfMatches++;
+			continue;
 		}
-	}
-
-	if(numberOfMatches == 1) {
-		m_organizedMods->setSelectedTeam(matchingTeamIndex);
 	}
 
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		std::map<std::string, std::any> properties;
 		properties["query"] = formattedQuery;
-		properties["numberOfMatches"] = numberOfMatches;
+		properties["exactMatch"] = exactMatchFound;
+		properties["numberOfMatches"] = matchingGameVersions.size();
 
-		SegmentAnalytics::getInstance()->track("Team Search", properties);
+		SegmentAnalytics::getInstance()->track("Game Version Search", properties);
 	}
 
-	return numberOfMatches;
+	return matchingGameVersions;
 }
 
-size_t ModManager::searchForAndSelectAuthor(const std::string & query, std::vector<std::shared_ptr<ModAuthorInformation>> * matches) {
-	std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
-	if(!m_initialized) {
-		return std::numeric_limits<size_t>::max();
-	}
-
+std::vector<std::shared_ptr<ModAuthorInformation>> ModManager::searchForAuthor(const std::vector<std::shared_ptr<ModAuthorInformation>> & authors, const std::string & query) {
 	std::string formattedQuery(Utilities::toLowerCase(Utilities::trimString(query)));
 
 	if(formattedQuery.empty()) {
-		return std::numeric_limits<size_t>::max();
+		return {};
 	}
 
 	std::string authorName;
-	size_t matchingAuthorIndex = std::numeric_limits<size_t>::max();
-	size_t numberOfMatches = 0;
+	std::vector<std::shared_ptr<ModAuthorInformation>> matchingAuthors;
+	bool exactMatchFound = false;
 
-	for(size_t i = 0; i < m_organizedMods->numberOfAuthors(); i++) {
-		authorName = Utilities::toLowerCase(m_organizedMods->getAuthorInfo(i)->getName());
+	for(size_t i = 0; i < authors.size(); i++) {
+		authorName = Utilities::toLowerCase(authors[i]->getName());
 
 		if(authorName == formattedQuery) {
-			matchingAuthorIndex = i;
-			numberOfMatches = 1;
-
-			if(matches != nullptr) {
-				matches->clear();
-				matches->push_back(m_organizedMods->getAuthorInfo(i));
-			}
+			exactMatchFound = true;
+			matchingAuthors.clear();
+			matchingAuthors.push_back(authors[i]);
 
 			break;
 		}
 
 		if(authorName.find(formattedQuery) != std::string::npos) {
-			if(matchingAuthorIndex == std::numeric_limits<size_t>::max()) {
-				matchingAuthorIndex = i;
-			}
-
-			if(matches != nullptr) {
-				matches->push_back(m_organizedMods->getAuthorInfo(i));
-			}
-
-			numberOfMatches++;
+			matchingAuthors.push_back(authors[i]);
 		}
-	}
-
-	if(numberOfMatches == 1) {
-		m_organizedMods->setSelectedAuthor(matchingAuthorIndex);
 	}
 
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		std::map<std::string, std::any> properties;
 		properties["query"] = formattedQuery;
-		properties["numberOfMatches"] = numberOfMatches;
+		properties["exactMatch"] = exactMatchFound;
+		properties["numberOfMatches"] = matchingAuthors.size();
 
 		SegmentAnalytics::getInstance()->track("Author Search", properties);
 	}
 
-	return numberOfMatches;
+	return matchingAuthors;
 }
 
 void ModManager::clearSelectedMod() {

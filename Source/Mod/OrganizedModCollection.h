@@ -61,6 +61,8 @@ public:
 	const std::vector<std::shared_ptr<Mod>> & getOrganizedMods() const;
 	const std::vector<std::shared_ptr<ModIdentifier>> & getOrganizedFavouriteMods() const;
 	const std::vector<std::shared_ptr<GameVersion>> & getOrganizedGameVersions() const;
+	const std::vector<std::shared_ptr<ModAuthorInformation>> & getOrganizedTeams() const;
+	const std::vector<std::shared_ptr<ModAuthorInformation>> & getOrganizedAuthors() const;
 	std::shared_ptr<FavouriteModCollection> getFavouriteModCollection() const;
 	std::shared_ptr<GameVersionCollection> getGameVersionCollection() const;
 	std::vector<std::string> getOrganizedItemDisplayNames(bool prependItemNumber = true) const;

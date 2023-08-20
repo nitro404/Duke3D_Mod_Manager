@@ -465,7 +465,7 @@ void ModBrowserPanel::updateModList() {
 	if(m_searchQuery.empty()) {
 		std::shared_ptr<Mod> mod(m_modManager->getSelectedMod());
 
-		m_modMatches.clear();
+		clearSearchResults();
 
 		if(organizedMods->shouldDisplayMods()) {
 			m_modListLabel->SetLabelText("Mods");
@@ -497,15 +497,64 @@ void ModBrowserPanel::updateModList() {
 	else {
 		m_selectRandomModButton->Disable();
 
-		wxArrayString modMatchesArrayString;
-		m_modMatches = ModManager::searchForMod(organizedMods->getOrganizedMods(), m_searchQuery);
+		wxArrayString matchesArrayString;
 
-		for(const ModMatch & modMatch : m_modMatches) {
-			modMatchesArrayString.Add(wxString::FromUTF8(modMatch.toString()));
+		if(organizedMods->shouldDisplayMods()) {
+			m_modMatches = ModManager::searchForMod(organizedMods->getOrganizedMods(), m_searchQuery);
+
+			for(size_t i = 0; i < m_modMatches.size(); i++) {
+				std::stringstream modMatchStringStream;
+				modMatchStringStream << std::to_string(i + 1) << ". " << m_modMatches[i].toString();
+
+				if(organizedMods->getSortType() == OrganizedModCollection::SortType::InitialReleaseDate || organizedMods->getSortType() == OrganizedModCollection::SortType::LatestReleaseDate) {
+					std::string releaseDate(organizedMods->getSortType() == OrganizedModCollection::SortType::InitialReleaseDate ?  m_modMatches[i].getMod()->getInitialReleaseDateAsString() : m_modMatches[i].getMod()->getLatestReleaseDateAsString());
+
+					if(!releaseDate.empty()) {
+						modMatchStringStream << " (" << releaseDate << ")";
+					}
+				}
+				else if(organizedMods->getSortType() == OrganizedModCollection::SortType::NumberOfVersions) {
+					modMatchStringStream << " (" << std::to_string(m_modMatches[i].getMod()->numberOfVersions()) << ")";
+				}
+
+				matchesArrayString.Add(wxString::FromUTF8(modMatchStringStream.str()));
+			}
+		}
+		else if(organizedMods->shouldDisplayFavouriteMods()) {
+			m_favouriteModMatches = ModManager::searchForFavouriteMod(organizedMods->getOrganizedFavouriteMods(), m_searchQuery);
+
+			for(size_t i = 0; i < m_favouriteModMatches.size(); i++) {
+				matchesArrayString.Add(wxString::FromUTF8(fmt::format("{}. {}", i + 1, m_favouriteModMatches[i]->getFullName())));
+			}
+		}
+		else if(organizedMods->shouldDisplayGameVersions()) {
+			m_gameVersionMatches = ModManager::searchForGameVersion(organizedMods->getOrganizedGameVersions(), m_searchQuery);
+
+			for(size_t i = 0; i < m_gameVersionMatches.size(); i++) {
+				std::stringstream gameVersionMatchStringStream;
+				gameVersionMatchStringStream << std::to_string(i + 1) << ". " << m_gameVersionMatches[i]->getLongName();
+
+				if(organizedMods->getSortType() == OrganizedModCollection::SortType::NumberOfSupportedMods ||
+				   (organizedMods->getFilterType() == OrganizedModCollection::FilterType::SupportedGameVersions && organizedMods->getSortType() != OrganizedModCollection::SortType::NumberOfCompatibleMods)) {
+					gameVersionMatchStringStream << " (" << std::to_string(organizedMods->getSupportedModCountForGameVersionWithID(m_gameVersionMatches[i]->getID())) << ")";
+				}
+				else if(organizedMods->getFilterType() == OrganizedModCollection::FilterType::CompatibleGameVersions || organizedMods->getSortType() == OrganizedModCollection::SortType::NumberOfCompatibleMods) {
+					gameVersionMatchStringStream << " (" << std::to_string(organizedMods->getCompatibleModCountForGameVersionWithID(m_gameVersionMatches[i]->getID())) << ")";
+				}
+
+				matchesArrayString.Add(wxString::FromUTF8(gameVersionMatchStringStream.str()));
+			}
+		}
+		else if(organizedMods->shouldDisplayTeams() || organizedMods->shouldDisplayAuthors()) {
+			m_modAuthorMatches = ModManager::searchForAuthor(organizedMods->shouldDisplayTeams() ? organizedMods->getOrganizedTeams() : organizedMods->getOrganizedAuthors(), m_searchQuery);
+
+			for(size_t i = 0; i < m_modAuthorMatches.size(); i++) {
+				matchesArrayString.Add(wxString::FromUTF8(fmt::format("{}. {} ({})", i + 1, m_modAuthorMatches[i]->getName(), m_modAuthorMatches[i]->getModCount())));
+			}
 		}
 
 		m_modListLabel->SetLabelText("Search Results");
-		m_modListBox->Set(modMatchesArrayString);
+		m_modListBox->Set(matchesArrayString);
 
 		m_selectRandomModButton->Disable();
 	}
@@ -850,9 +899,17 @@ void ModBrowserPanel::clear() {
 }
 
 void ModBrowserPanel::clearSearch() {
-	m_modMatches.clear();
+	clearSearchResults();
+
 	m_searchQuery.clear();
 	m_modSearchTextField->Clear();
+}
+
+void ModBrowserPanel::clearSearchResults() {
+	m_modMatches.clear();
+	m_favouriteModMatches.clear();
+	m_gameVersionMatches.clear();
+	m_modAuthorMatches.clear();
 }
 
 void ModBrowserPanel::onModSearchTextChanged(wxCommandEvent & event) {
@@ -904,26 +961,45 @@ void ModBrowserPanel::onModListSortDirectionSelected(wxCommandEvent & event) {
 }
 
 void ModBrowserPanel::onModSelected(wxCommandEvent & event) {
-	int selectedModIndex = m_modListBox->GetSelection();
+	int selectedItemIndex = m_modListBox->GetSelection();
 
-	if(selectedModIndex == wxNOT_FOUND) {
+	if(selectedItemIndex == wxNOT_FOUND) {
 		return;
 	}
 
 	if(m_searchQuery.empty()) {
-		if(!m_modManager->getOrganizedMods()->selectItem(selectedModIndex)) {
-			spdlog::error("Failed to select item '{}' with index: '{}'.", std::string(event.GetString()), selectedModIndex);
+		if(!m_modManager->getOrganizedMods()->selectItem(selectedItemIndex)) {
+			spdlog::error("Failed to select item '{}' with index: '{}'.", std::string(event.GetString()), selectedItemIndex);
 			return;
 		}
 	}
 	else {
-		const ModMatch & modMatch = m_modMatches[selectedModIndex];
-		m_modMatches.clear();
+		clearSearchResults();
 		m_searchQuery.clear();
 		m_modSearchTextField->Clear();
 		updateModList();
-		m_modManager->getOrganizedMods()->setSelectedMod(modMatch.getMod().get());
-		m_modManager->setSelectedModFromMatch(modMatch);
+
+		std::shared_ptr<OrganizedModCollection> organizedMods(m_modManager->getOrganizedMods());
+
+		if(organizedMods->shouldDisplayMods()) {
+			const ModMatch & modMatch = m_modMatches[selectedItemIndex];
+			m_modManager->getOrganizedMods()->setSelectedMod(modMatch.getMod().get());
+			m_modManager->setSelectedModFromMatch(modMatch);
+		}
+		if(organizedMods->shouldDisplayFavouriteMods()) {
+			std::shared_ptr<ModIdentifier> favouriteModMatch(m_favouriteModMatches[selectedItemIndex]);
+			m_modManager->getOrganizedMods()->setSelectedFavouriteMod(*favouriteModMatch);
+			m_modManager->setSelectedMod(*favouriteModMatch);
+		}
+		else if(organizedMods->shouldDisplayGameVersions()) {
+			m_modManager->getOrganizedMods()->setSelectedGameVersion(m_gameVersionMatches[selectedItemIndex].get());
+		}
+		else if(organizedMods->shouldDisplayTeams()) {
+			m_modManager->getOrganizedMods()->setSelectedTeam(m_modAuthorMatches[selectedItemIndex].get());
+		}
+		else if(organizedMods->shouldDisplayAuthors()) {
+			m_modManager->getOrganizedMods()->setSelectedAuthor(m_modAuthorMatches[selectedItemIndex].get());
+		}
 	}
 }
 
@@ -1009,7 +1085,7 @@ void ModBrowserPanel::onModListRightClicked(wxMouseEvent & event) {
 			}
 		}
 		else {
-			if(m_modPopupMenuItemIndex < m_modMatches.size()) {
+			if(organizedMods->shouldDisplayMods() && m_modPopupMenuItemIndex < m_modMatches.size()) {
 				bool hasSearchResultFavourited = favouriteMods->hasFavourite(m_modMatches[m_modPopupMenuItemIndex]);
 
 				m_modListAddFavouriteMenuItem->Enable(!hasSearchResultFavourited);
@@ -1062,7 +1138,7 @@ void ModBrowserPanel::onModPopupMenuItemPressed(wxCommandEvent & event) {
 			}
 		}
 		else {
-			if(m_modPopupMenuItemIndex < m_modMatches.size()) {
+			if(organizedMods->shouldDisplayMods() && m_modPopupMenuItemIndex < m_modMatches.size()) {
 				std::string modMatchString(m_modMatches[m_modPopupMenuItemIndex].toString());
 
 				if(favouriteMods->addFavourite(m_modMatches[m_modPopupMenuItemIndex])) {
@@ -1091,7 +1167,7 @@ void ModBrowserPanel::onModPopupMenuItemPressed(wxCommandEvent & event) {
 			}
 		}
 		else {
-			if(m_modPopupMenuItemIndex < m_modMatches.size()) {
+			if(organizedMods->shouldDisplayMods() && m_modPopupMenuItemIndex < m_modMatches.size()) {
 				std::string modMatchString(m_modMatches[m_modPopupMenuItemIndex].toString());
 
 				if(favouriteMods->removeFavourite(m_modMatches[m_modPopupMenuItemIndex])) {
