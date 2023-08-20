@@ -4,6 +4,7 @@
 #include "FavouriteModCollection.h"
 #include "Game/GameVersion.h"
 #include "Game/GameVersionCollection.h"
+#include "Manager/SettingsManager.h"
 #include "Mod.h"
 #include "ModAuthorInformation.h"
 #include "ModCollection.h"
@@ -11,6 +12,7 @@
 #include "ModTeamMember.h"
 #include "Mod/ModIdentifier.h"
 
+#include <Analytics/Segment/SegmentAnalytics.h>
 #include <Utilities/Utilities.h>
 #include <Utilities/StringUtilities.h>
 
@@ -440,6 +442,8 @@ bool OrganizedModCollection::setFilterType(FilterType filterType) {
 		return true;
 	}
 
+	FilterType previousFilterType = m_filterType;
+
 	m_filterType = filterType;
 
 	filterTypeChanged(m_filterType);
@@ -465,6 +469,14 @@ bool OrganizedModCollection::setFilterType(FilterType filterType) {
 
 	organize();
 
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["previousFilterType"] = magic_enum::enum_name(previousFilterType);
+		properties["newFilterType"] = magic_enum::enum_name(m_filterType);
+
+		SegmentAnalytics::getInstance()->track("Mod Filter Type Changed", properties);
+	}
+
 	return true;
 }
 
@@ -476,6 +488,8 @@ bool OrganizedModCollection::setSortType(SortType sortType) {
 	if(m_sortType == sortType) {
 		return true;
 	}
+
+	SortType previousSortType = m_sortType;
 
 	m_sortType = sortType;
 
@@ -489,6 +503,14 @@ bool OrganizedModCollection::setSortType(SortType sortType) {
 	}
 
 	sort();
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["previousSortType"] = magic_enum::enum_name(previousSortType);
+		properties["newSortType"] = magic_enum::enum_name(m_sortType);
+
+		SegmentAnalytics::getInstance()->track("Mod Sort Type Changed", properties);
+	}
 
 	return true;
 }
@@ -513,12 +535,24 @@ bool OrganizedModCollection::setSortTypeByIndex(size_t sortTypeIndex) {
 }
 
 bool OrganizedModCollection::setSortDirection(SortDirection sortDirection) {
-	if(m_sortDirection != sortDirection) {
-		m_sortDirection = sortDirection;
+	if(m_sortDirection == sortDirection) {
+		return true;
+	}
 
-		sortOptionsChanged(m_sortType, m_sortDirection);
+	SortDirection previousSortDirection = m_sortDirection;
 
-		sort();
+	m_sortDirection = sortDirection;
+
+	sortOptionsChanged(m_sortType, m_sortDirection);
+
+	sort();
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["previousSortDirection"] = magic_enum::enum_name(previousSortDirection);
+		properties["newSortDirection"] = magic_enum::enum_name(m_sortDirection);
+
+		SegmentAnalytics::getInstance()->track("Mod Sort Direction Changed", properties);
 	}
 
 	return true;
@@ -529,11 +563,14 @@ bool OrganizedModCollection::setSortOptions(SortType sortType, SortDirection sor
 		return false;
 	}
 
-	bool sortTypeChanged = m_sortType != sortType;
-
 	if(m_sortType == sortType && m_sortDirection == sortDirection) {
 		return true;
 	}
+
+	bool sortTypeChanged = m_sortType != sortType;
+
+	SortType previousSortType = m_sortType;
+	SortDirection previousSortDirection = m_sortDirection;
 
 	m_sortType = sortType;
 	m_sortDirection = sortDirection;
@@ -548,6 +585,16 @@ bool OrganizedModCollection::setSortOptions(SortType sortType, SortDirection sor
 	}
 
 	sort();
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		std::map<std::string, std::any> properties;
+		properties["previousSortType"] = magic_enum::enum_name(previousSortType);
+		properties["previousSortDirection"] = magic_enum::enum_name(previousSortDirection);
+		properties["newSortType"] = magic_enum::enum_name(m_sortType);
+		properties["newSortDirection"] = magic_enum::enum_name(m_sortDirection);
+
+		SegmentAnalytics::getInstance()->track("Mod Sort Options Changed", properties);
+	}
 
 	return true;
 }
