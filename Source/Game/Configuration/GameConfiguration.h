@@ -321,6 +321,9 @@ public:
 	static const std::string MAP_ENTRY_NAME;
 	static const std::string THIRD_PERSON_VIEW_ENTRY_NAME;
 	static const std::string CONTROLS_SECTION_NAME;
+	static const std::string CONTROLLER_TYPE_ENTRY_NAME;
+	static const std::string MOUSE_AIMING_ENTRY_NAME;
+	static const std::string GAME_MOUSE_AIMING_ENTRY_NAME;
 	static const std::string MOUSE_AIMING_FLIPPED_ENTRY_NAME;
 	static const std::string AIMING_FLAG_ENTRY_NAME;
 	static const std::string MISC_SECTION_NAME;
@@ -336,7 +339,7 @@ public:
 	static const uint32_t DEFAULT_ANALOG_SCALE;
 
 private:
-	bool determineGameVersion(bool & isBeta, bool & isRegularVersion, bool & isAtomicEdition, bool & isJFDuke3D, bool & isEDuke32);
+	bool determineGameVersion(bool & isBeta, bool & isRegularVersion, bool & isAtomicEdition, bool & isJFDuke3D, bool & isEDuke32, bool & isBelgian);
 	void updateParent();
 
 	Style m_style;

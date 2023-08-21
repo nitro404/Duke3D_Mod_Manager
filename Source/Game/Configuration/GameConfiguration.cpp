@@ -75,6 +75,9 @@ const std::string GameConfiguration::MAP_FOLLOW_MODE_ENTRY_NAME("Map_Follow_Mode
 const std::string GameConfiguration::MAP_ENTRY_NAME("Map");
 const std::string GameConfiguration::THIRD_PERSON_VIEW_ENTRY_NAME("Third_Person_View");
 const std::string GameConfiguration::CONTROLS_SECTION_NAME("Controls");
+const std::string GameConfiguration::CONTROLLER_TYPE_ENTRY_NAME("ControllerType");
+const std::string GameConfiguration::MOUSE_AIMING_ENTRY_NAME("MouseAiming");
+const std::string GameConfiguration::GAME_MOUSE_AIMING_ENTRY_NAME("GameMouseAiming");
 const std::string GameConfiguration::MOUSE_AIMING_FLIPPED_ENTRY_NAME("MouseAimingFlipped");
 const std::string GameConfiguration::AIMING_FLAG_ENTRY_NAME("AimingFlag");
 
