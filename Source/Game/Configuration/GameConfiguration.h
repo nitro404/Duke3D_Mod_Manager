@@ -339,7 +339,7 @@ public:
 	static const uint32_t DEFAULT_ANALOG_SCALE;
 
 private:
-	bool determineGameVersion(bool & isBeta, bool & isRegularVersion, bool & isAtomicEdition, bool & isJFDuke3D, bool & isEDuke32, bool & isBelgian, bool & isRedNukem);
+	bool determineGameVersion(bool & isBeta, bool & isRegularVersion, bool & isAtomicEdition, bool & isJFDuke3D, bool & isEDuke32, bool & isBelgian, bool & isRedNukem, bool & isNetDuke32);
 	void updateParent();
 
 	Style m_style;
