@@ -160,11 +160,11 @@ void DOSBoxConfiguration::clearFilePath() {
 	setFilePath(Utilities::emptyString);
 }
 
-bool DOSBoxConfiguration::hasWhitespaceAfterEntryNames() {
+bool DOSBoxConfiguration::hasWhitespaceAfterEntryNames() const {
 	return Any(m_style & Style::WhitespaceAfterEntryNames);
 }
 
-bool DOSBoxConfiguration::hasNewlineAfterSectionComments() {
+bool DOSBoxConfiguration::hasNewlineAfterSectionComments() const {
 	return Any(m_style & Style::NewlineAfterSectionComments);
 }
 

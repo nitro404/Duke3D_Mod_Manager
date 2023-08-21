@@ -223,8 +223,8 @@ public:
 	std::string_view getFileExtension() const;
 	void setFilePath(const std::string & filePath);
 	void clearFilePath();
-	bool hasWhitespaceAfterEntryNames();
-	bool hasNewlineAfterSectionComments();
+	bool hasWhitespaceAfterEntryNames() const;
+	bool hasNewlineAfterSectionComments() const;
 	Style getStyle() const;
 	bool hasStyle(Style style) const;
 	void setStyle(Style style);
