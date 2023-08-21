@@ -1521,7 +1521,7 @@ void ModBrowserPanel::onLaunchButtonPressed(wxCommandEvent & event) {
 	if(!m_activeGameVersion->isConfigured()) {
 		wxMessageBox(
 			fmt::format(
-				"Failed to launch, game version '{}' is not configured/installed.",
+				"Failed to launch{}, game version '{}' is not configured/installed.",
 				!fullModName.empty() ? fmt::format(" '{}'", fullModName) : "",
 				m_activeGameVersion->getLongName()
 			),
