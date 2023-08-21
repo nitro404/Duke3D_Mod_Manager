@@ -357,7 +357,7 @@ bool GameConfiguration::Section::addEmptyEntry(const std::string & entryName) {
 	return addEntry(entry);
 }
 
-bool GameConfiguration::Section::addIntegerEntry(const std::string & entryName, uint64_t value) {
+bool GameConfiguration::Section::addIntegerEntry(const std::string & entryName, int64_t value) {
 	if(!Entry::isNameValid(entryName)) {
 		return false;
 	}
@@ -470,7 +470,7 @@ bool GameConfiguration::Section::setEntryEmptyValue(const std::string & entryNam
 	return true;
 }
 
-bool GameConfiguration::Section::setEntryIntegerValue(const std::string & entryName, uint64_t value, bool createEntry) {
+bool GameConfiguration::Section::setEntryIntegerValue(const std::string & entryName, int64_t value, bool createEntry) {
 	bool entryExists = false;
 	std::shared_ptr<Entry> entry(getOrCreateEntry(entryName, createEntry, entryExists));
 

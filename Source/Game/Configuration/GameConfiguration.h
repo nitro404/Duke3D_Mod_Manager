@@ -141,7 +141,7 @@ public:
 		std::shared_ptr<Entry> getEntryWithName(const std::string & entryName) const;
 		bool addEntry(std::shared_ptr<Entry> entry);
 		bool addEmptyEntry(const std::string & entryName);
-		bool addIntegerEntry(const std::string & entryName, uint64_t value);
+		bool addIntegerEntry(const std::string & entryName, int64_t value);
 		bool addHexadecimalEntryUsingDecimal(const std::string & entryName, uint64_t value);
 		bool addStringEntry(const std::string & entryName, const std::string & value);
 		bool addMultiStringEntry(const std::string & entryName, const std::string & valueA, const std::string & valueB);
@@ -149,7 +149,7 @@ public:
 		bool addMultiStringEntry(const std::string & entryName, const std::array<std::string, N> & values);
 		bool addMultiStringEntry(const std::string & entryName, const std::vector<std::string> & values);
 		bool setEntryEmptyValue(const std::string & entryName, bool createEntry = false);
-		bool setEntryIntegerValue(const std::string & entryName, uint64_t value, bool createEntry = false);
+		bool setEntryIntegerValue(const std::string & entryName, int64_t value, bool createEntry = false);
 		bool setEntryHexadecimalValueUsingDecimal(const std::string & entryName, uint64_t value, bool createEntry = false);
 		bool setEntryStringValue(const std::string & entryName, const std::string & value, bool createEntry = false);
 		bool setEntryMultiStringValue(const std::string & entryName, const std::string & value, size_t index, bool resizeValue = false, bool createEntry = false);
@@ -339,7 +339,7 @@ public:
 	static const uint32_t DEFAULT_ANALOG_SCALE;
 
 private:
-	bool determineGameVersion(bool & isBeta, bool & isRegularVersion, bool & isAtomicEdition, bool & isJFDuke3D, bool & isEDuke32, bool & isBelgian);
+	bool determineGameVersion(bool & isBeta, bool & isRegularVersion, bool & isAtomicEdition, bool & isJFDuke3D, bool & isEDuke32, bool & isBelgian, bool & isRedNukem);
 	void updateParent();
 
 	Style m_style;
