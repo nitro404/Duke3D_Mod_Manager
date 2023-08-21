@@ -1,6 +1,8 @@
 #ifndef _GAME_CONFIGURATION_H_
 #define _GAME_CONFIGURATION_H_
 
+#include <BitmaskOperators.h>
+
 #include <array>
 #include <cstdint>
 #include <map>
@@ -11,6 +13,12 @@
 
 class GameConfiguration final {
 public:
+	enum class Style : uint8_t {
+		None = 0,
+		NewlineAfterSections = 1,
+		Default = None
+	};
+
 	class Entry;
 	class Section;
 
@@ -192,6 +200,12 @@ public:
 	const std::string & getFilePath() const;
 	void setFilePath(const std::string & filePath);
 	void clearFilePath();
+	bool hasNewlineAfterSections() const;
+	Style getStyle() const;
+	bool hasStyle(Style style) const;
+	void setStyle(Style style);
+	void addStyle(Style style);
+	void removeStyle(Style style);
 
 	size_t numberOfEntries() const;
 	bool hasEntry(const Entry & entry) const;
@@ -289,6 +303,7 @@ private:
 	bool determineGameVersion(bool & isBeta, bool & isRegularVersion, bool & isAtomicEdition);
 	void updateParent();
 
+	Style m_style;
 	std::string m_filePath;
 	EntryMap m_entries;
 	SectionMap m_sections;
@@ -337,5 +352,10 @@ bool GameConfiguration::Section::setEntryMultiStringValue(const std::string & en
 
 	return true;
 }
+
+template<>
+struct BitmaskOperators<GameConfiguration::Style> {
+	static const bool enabled = true;
+};
 
 #endif // _GAME_CONFIGURATION_H_

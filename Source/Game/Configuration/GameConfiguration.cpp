@@ -68,10 +68,12 @@ bool GameConfiguration::NameComparator::operator () (const std::string & nameA, 
 	});
 }
 
-GameConfiguration::GameConfiguration() { }
+GameConfiguration::GameConfiguration()
+	: m_style(Style::None) { }
 
 GameConfiguration::GameConfiguration(GameConfiguration && c) noexcept
-	: m_filePath(std::move(c.m_filePath))
+	: m_style(c.m_style)
+	, m_filePath(std::move(c.m_filePath))
 	, m_entries(std::move(c.m_entries))
 	, m_sections(std::move(c.m_sections))
 	, m_orderedSectionNames(std::move(c.m_orderedSectionNames)) {
@@ -79,7 +81,8 @@ GameConfiguration::GameConfiguration(GameConfiguration && c) noexcept
 }
 
 GameConfiguration::GameConfiguration(const GameConfiguration & c)
-	: m_filePath(c.m_filePath)
+	: m_style(c.m_style)
+	, m_filePath(c.m_filePath)
 	, m_orderedSectionNames(c.m_orderedSectionNames) {
 	for(EntryMap::const_iterator i = c.m_entries.cbegin(); i != c.m_entries.cend(); ++i) {
 		m_entries.emplace(i->first, std::make_shared<Entry>(*i->second));
@@ -96,6 +99,7 @@ GameConfiguration & GameConfiguration::operator = (GameConfiguration && c) noexc
 	if(this != &c) {
 		clearSections();
 
+		m_style = c.m_style;
 		m_filePath = std::move(c.m_filePath);
 		m_entries = std::move(c.m_entries);
 		m_sections = std::move(c.m_sections);
@@ -110,6 +114,7 @@ GameConfiguration & GameConfiguration::operator = (GameConfiguration && c) noexc
 GameConfiguration & GameConfiguration::operator = (const GameConfiguration & c) {
 	clearSections();
 
+	m_style = c.m_style;
 	m_orderedSectionNames = c.m_orderedSectionNames;
 
 	for(EntryMap::const_iterator i = c.m_entries.cbegin(); i != c.m_entries.cend(); ++i) {
@@ -149,6 +154,42 @@ void GameConfiguration::setFilePath(const std::string & filePath) {
 
 void GameConfiguration::clearFilePath() {
 	m_filePath = "";
+}
+
+bool GameConfiguration::hasNewlineAfterSections() const {
+	return Any(m_style & Style::NewlineAfterSections);
+}
+
+GameConfiguration::Style GameConfiguration::getStyle() const {
+	return m_style;
+}
+
+bool GameConfiguration::hasStyle(Style style) const {
+	return (m_style & style) == style;
+}
+
+void GameConfiguration::setStyle(Style style) {
+	if(m_style == style) {
+		return;
+	}
+
+	m_style = style;
+}
+
+void GameConfiguration::addStyle(Style style) {
+	if(hasStyle(style)) {
+		return;
+	}
+
+	setStyle(m_style | style);
+}
+
+void GameConfiguration::removeStyle(Style style) {
+	if(!hasStyle(style)) {
+		return;
+	}
+
+	setStyle(m_style & ~style);
 }
 
 size_t GameConfiguration::numberOfEntries() const {
@@ -522,6 +563,10 @@ std::string GameConfiguration::toString() const {
 		}
 
 		gameConfigurationStream << currentSection->toString();
+
+		if(hasNewlineAfterSections()) {
+			gameConfigurationStream << std::endl;
+		}
 	}
 
 	return gameConfigurationStream.str();
@@ -535,6 +580,7 @@ std::unique_ptr<GameConfiguration> GameConfiguration::parseFrom(const std::strin
 	}
 
 	size_t offset = 0;
+	std::string line;
 	std::shared_ptr<Section> section;
 
 	while(offset <= data.length()) {
@@ -546,6 +592,17 @@ std::unique_ptr<GameConfiguration> GameConfiguration::parseFrom(const std::strin
 			}
 
 			break;
+		}
+
+		if(offset < data.length()) {
+			size_t temporaryOffset = offset;
+			line = Utilities::readLine(data, temporaryOffset);
+
+			if(line.empty() && !gameConfiguration->hasStyle(Style::NewlineAfterSections)) {
+				spdlog::trace("Detected newlines after sections in game configuration data.");
+
+				gameConfiguration->addStyle(Style::NewlineAfterSections);
+			}
 		}
 
 		section->m_parentGameConfiguration = gameConfiguration.get();
