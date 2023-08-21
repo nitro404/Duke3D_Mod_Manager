@@ -2,6 +2,7 @@
 #define _GAME_CONFIGURATION_H_
 
 #include <BitmaskOperators.h>
+#include <Dimension.h>
 
 #include <array>
 #include <cstdint>
@@ -267,40 +268,66 @@ public:
 	static const std::string SCREEN_MODE_ENTRY_NAME;
 	static const std::string SCREEN_WIDTH_ENTRY_NAME;
 	static const std::string SCREEN_HEIGHT_ENTRY_NAME;
+	static const std::string SCREEN_SHADOWS_ENTRY_NAME;
+	static const std::string SCREEN_PASSWORD_ENTRY_NAME;
+	static const std::string SCREEN_DETAIL_ENTRY_NAME;
+	static const std::string SCREEN_TILT_ENTRY_NAME;
+	static const std::string SCREEN_MESSAGES_ENTRY_NAME;
+	static const std::string SCREEN_OUT_ENTRY_NAME;
+	static const std::string SCREEN_SIZE_ENTRY_NAME;
+	static const std::string SCREEN_GAMMA_ENTRY_NAME;
 	static const std::string SOUND_SETUP_SECTION_NAME;
-	static const std::string FX_DEVICE_ENTRY_NAME;
-	static const std::string MUSIC_DEVICE_ENTRY_NAME;
-	static const std::string FX_VOLUME_ENTRY_NAME;
-	static const std::string MUSIC_VOLUME_ENTRY_NAME;
-	static const std::string NUM_BITS_ENTRY_NAME;
-	static const std::string MIX_RATE_ENTRY_NAME;
+	static const std::string SOUND_FX_DEVICE_ENTRY_NAME;
+	static const std::string SOUND_MUSIC_DEVICE_ENTRY_NAME;
+	static const std::string SOUND_FX_VOLUME_ENTRY_NAME;
+	static const std::string SOUND_MUSIC_VOLUME_ENTRY_NAME;
+	static const std::string SOUND_SOUND_TOGGLE_ENTRY_NAME;
+	static const std::string SOUND_VOICE_TOGGLE_ENTRY_NAME;
+	static const std::string SOUND_AMBIENCE_TOGGLE_ENTRY_NAME;
+	static const std::string SOUND_MUSIC_TOGGLE_ENTRY_NAME;
+	static const std::string SOUND_NUM_BITS_ENTRY_NAME;
+	static const std::string SOUND_MIX_RATE_ENTRY_NAME;
 	static const std::string KEY_DEFINITIONS_SECTION_NAME;
 	static const std::string MOVE_FORWARD_ENTRY_NAME;
 	static const std::string MOVE_BACKWARD_ENTRY_NAME;
 	static const std::string TURN_LEFT_ENTRY_NAME;
 	static const std::string TURN_RIGHT_ENTRY_NAME;
 	static const std::string FIRE_ENTRY_NAME;
+	static const std::string QUICK_KICK_ENTRY_NAME;
 	static const std::string OPEN_ENTRY_NAME;
+	static const std::string RUN_ENTRY_NAME;
 	static const std::string JUMP_ENTRY_NAME;
 	static const std::string CROUCH_ENTRY_NAME;
+	static const std::string INVENTORY_ENTRY_NAME;
+	static const std::string JETPACK_ENTRY_NAME;
+	static const std::string STRAFE_ENTRY_NAME;
 	static const std::string STRAFE_LEFT_ENTRY_NAME;
 	static const std::string STRAFE_RIGHT_ENTRY_NAME;
+	static const std::string LOOK_UP_ENTRY_NAME;
+	static const std::string LOOK_DOWN_ENTRY_NAME;
+	static const std::string LOOK_LEFT_ENTRY_NAME;
+	static const std::string LOOK_RIGHT_ENTRY_NAME;
+	static const std::string AIM_UP_ENTRY_NAME;
+	static const std::string AIM_DOWN_ENTRY_NAME;
 	static const std::string SHOW_OPPONENTS_WEAPON_ENTRY_NAME;
 	static const std::string MAP_FOLLOW_MODE_ENTRY_NAME;
-	static const std::string WEAPON_KEY_DEFINITION_ENTRY_NAME_PREFIX;
 	static const std::string CONTROLS_SECTION_NAME;
 	static const std::string MOUSE_AIMING_FLIPPED_ENTRY_NAME;
-	static const std::string MOUSE_BUTTON_1_ENTRY_NAME;
-	static const std::string MOUSE_BUTTON_CLICKED_1_ENTRY_NAME;
-	static const std::string MOUSE_BUTTON_2_ENTRY_NAME;
-	static const std::string COMBAT_MACRO_ENTRY_NAME_PREFIX;
-	static const std::string PHONE_NAME_ENTRY_NAME_PREFIX;
-	static const std::string PHONE_NUMBER_ENTRY_NAME_PREFIX;
+	static const std::string AIMING_FLAG_ENTRY_NAME;
 	static const std::string MISC_SECTION_NAME;
+	static const std::string MISC_RUN_MODE_ENTRY_NAME;
+	static const std::string MISC_CROSSHAIRS_ENTRY_NAME;
+	static const std::string MISC_EXECUTIONS_ENTRY_NAME;
+
 	static const std::array<std::string, 10> DEFAULT_COMBAT_MACROS;
+	static const std::string DEFAULT_PLAYER_NAME;
+	static const Dimension DEFAULT_RESOLUTION;
+	static const uint8_t SOUND_DEVICE_UNSET;
+	static const uint8_t MUSIC_DEVICE_UNSET;
+	static const uint32_t DEFAULT_ANALOG_SCALE;
 
 private:
-	bool determineGameVersion(bool & isBeta, bool & isRegularVersion, bool & isAtomicEdition);
+	bool determineGameVersion(bool & isBeta, bool & isRegularVersion, bool & isAtomicEdition, bool & isJFDuke3D);
 	void updateParent();
 
 	Style m_style;

@@ -18,38 +18,65 @@ const std::string GameConfiguration::SCREEN_SETUP_SECTION_NAME("Screen Setup");
 const std::string GameConfiguration::SCREEN_MODE_ENTRY_NAME("ScreenMode");
 const std::string GameConfiguration::SCREEN_WIDTH_ENTRY_NAME("ScreenWidth");
 const std::string GameConfiguration::SCREEN_HEIGHT_ENTRY_NAME("ScreenHeight");
+const std::string GameConfiguration::SCREEN_SHADOWS_ENTRY_NAME("Shadows");
+const std::string GameConfiguration::SCREEN_PASSWORD_ENTRY_NAME("Password");
+const std::string GameConfiguration::SCREEN_DETAIL_ENTRY_NAME("Detail");
+const std::string GameConfiguration::SCREEN_TILT_ENTRY_NAME("Tilt");
+const std::string GameConfiguration::SCREEN_MESSAGES_ENTRY_NAME("Messages");
+const std::string GameConfiguration::SCREEN_OUT_ENTRY_NAME("Out");
+const std::string GameConfiguration::SCREEN_SIZE_ENTRY_NAME("ScreenSize");
+const std::string GameConfiguration::SCREEN_GAMMA_ENTRY_NAME("ScreenGamma");
 const std::string GameConfiguration::SOUND_SETUP_SECTION_NAME("Sound Setup");
-const std::string GameConfiguration::FX_DEVICE_ENTRY_NAME("FXDevice");
-const std::string GameConfiguration::MUSIC_DEVICE_ENTRY_NAME("MusicDevice");
-const std::string GameConfiguration::FX_VOLUME_ENTRY_NAME("FXVolume");
-const std::string GameConfiguration::MUSIC_VOLUME_ENTRY_NAME("MusicVolume");
-const std::string GameConfiguration::NUM_BITS_ENTRY_NAME("NumBits");
-const std::string GameConfiguration::MIX_RATE_ENTRY_NAME("MixRate");
+const std::string GameConfiguration::SOUND_FX_DEVICE_ENTRY_NAME("FXDevice");
+const std::string GameConfiguration::SOUND_MUSIC_DEVICE_ENTRY_NAME("MusicDevice");
+const std::string GameConfiguration::SOUND_FX_VOLUME_ENTRY_NAME("FXVolume");
+const std::string GameConfiguration::SOUND_MUSIC_VOLUME_ENTRY_NAME("MusicVolume");
+const std::string GameConfiguration::SOUND_SOUND_TOGGLE_ENTRY_NAME("SoundToggle");
+const std::string GameConfiguration::SOUND_VOICE_TOGGLE_ENTRY_NAME("VoiceToggle");
+const std::string GameConfiguration::SOUND_AMBIENCE_TOGGLE_ENTRY_NAME("AmbienceToggle");
+const std::string GameConfiguration::SOUND_MUSIC_TOGGLE_ENTRY_NAME("MusicToggle");
+const std::string GameConfiguration::SOUND_NUM_BITS_ENTRY_NAME("NumBits");
+const std::string GameConfiguration::SOUND_MIX_RATE_ENTRY_NAME("MixRate");
 const std::string GameConfiguration::KEY_DEFINITIONS_SECTION_NAME("KeyDefinitions");
-const std::string GameConfiguration::WEAPON_KEY_DEFINITION_ENTRY_NAME_PREFIX("Weapon_");
-const std::string GameConfiguration::COMBAT_MACRO_ENTRY_NAME_PREFIX("CommbatMacro#");
-const std::string GameConfiguration::PHONE_NAME_ENTRY_NAME_PREFIX("PhoneName#");
-const std::string GameConfiguration::PHONE_NUMBER_ENTRY_NAME_PREFIX("PhoneNumber#");
 const std::string GameConfiguration::MISC_SECTION_NAME("Misc");
+const std::string GameConfiguration::MISC_EXECUTIONS_ENTRY_NAME("Executions");
+const std::string GameConfiguration::MISC_RUN_MODE_ENTRY_NAME("RunMode");
+const std::string GameConfiguration::MISC_CROSSHAIRS_ENTRY_NAME("Crosshairs");
 const std::string GameConfiguration::MOVE_FORWARD_ENTRY_NAME("Move_Forward");
 const std::string GameConfiguration::MOVE_BACKWARD_ENTRY_NAME("Move_Backward");
 const std::string GameConfiguration::TURN_LEFT_ENTRY_NAME("Turn_Left");
 const std::string GameConfiguration::TURN_RIGHT_ENTRY_NAME("Turn_Right");
 const std::string GameConfiguration::FIRE_ENTRY_NAME("Fire");
+const std::string GameConfiguration::QUICK_KICK_ENTRY_NAME("Quick_Kick");
 const std::string GameConfiguration::OPEN_ENTRY_NAME("Open");
+const std::string GameConfiguration::RUN_ENTRY_NAME("Run");
 const std::string GameConfiguration::JUMP_ENTRY_NAME("Jump");
 const std::string GameConfiguration::CROUCH_ENTRY_NAME("Crouch");
+const std::string GameConfiguration::INVENTORY_ENTRY_NAME("Inventory");
+const std::string GameConfiguration::JETPACK_ENTRY_NAME("Jetpack");
+const std::string GameConfiguration::STRAFE_ENTRY_NAME("Strafe");
 const std::string GameConfiguration::STRAFE_LEFT_ENTRY_NAME("Strafe_Left");
 const std::string GameConfiguration::STRAFE_RIGHT_ENTRY_NAME("Strafe_Right");
+const std::string GameConfiguration::LOOK_UP_ENTRY_NAME("Look_Up");
+const std::string GameConfiguration::LOOK_DOWN_ENTRY_NAME("Look_Down");
+const std::string GameConfiguration::LOOK_LEFT_ENTRY_NAME("Look_Left");
+const std::string GameConfiguration::LOOK_RIGHT_ENTRY_NAME("Look_Right");
+const std::string GameConfiguration::AIM_UP_ENTRY_NAME("Aim_Up");
+const std::string GameConfiguration::AIM_DOWN_ENTRY_NAME("Aim_Down");
 const std::string GameConfiguration::SHOW_OPPONENTS_WEAPON_ENTRY_NAME("Show_Opponents_Weapon");
 const std::string GameConfiguration::MAP_FOLLOW_MODE_ENTRY_NAME("Map_Follow_Mode");
 const std::string GameConfiguration::CONTROLS_SECTION_NAME("Controls");
 const std::string GameConfiguration::MOUSE_AIMING_FLIPPED_ENTRY_NAME("MouseAimingFlipped");
-const std::string GameConfiguration::MOUSE_BUTTON_1_ENTRY_NAME("MouseButton1");
-const std::string GameConfiguration::MOUSE_BUTTON_CLICKED_1_ENTRY_NAME("MouseButtonClicked1");
-const std::string GameConfiguration::MOUSE_BUTTON_2_ENTRY_NAME("MouseButton2");
+const std::string GameConfiguration::AIMING_FLAG_ENTRY_NAME("AimingFlag");
 
-const std::array<std::string, 10> GameConfiguration::DEFAULT_COMBAT_MACROS = {
+const std::string GameConfiguration::DEFAULT_PLAYER_NAME("DUKE");
+const Dimension GameConfiguration::DEFAULT_RESOLUTION(320, 200);
+static constexpr uint8_t AUDIO_DEVICE_UNSET = 13;
+const uint8_t GameConfiguration::SOUND_DEVICE_UNSET = AUDIO_DEVICE_UNSET;
+const uint8_t GameConfiguration::MUSIC_DEVICE_UNSET = AUDIO_DEVICE_UNSET;
+const uint32_t GameConfiguration::DEFAULT_ANALOG_SCALE = std::numeric_limits<uint16_t>::max() + 1;
+
+const std::array<std::string, 10> GameConfiguration::DEFAULT_COMBAT_MACROS({
 	"An inspiration for birth control.",
 	"You're gonna die for that!",
 	"It hurts to be you.",
@@ -60,7 +87,7 @@ const std::array<std::string, 10> GameConfiguration::DEFAULT_COMBAT_MACROS = {
 	"Ha ha ha...Wasted!",
 	"You suck!",
 	"AARRRGHHHHH!!!"
-};
+});
 
 bool GameConfiguration::NameComparator::operator () (const std::string & nameA, const std::string & nameB) const {
 	return std::lexicographical_compare(nameA.begin(), nameA.end(), nameB.begin(), nameB.end(), [](unsigned char a, unsigned char b) {

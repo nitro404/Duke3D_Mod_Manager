@@ -2955,7 +2955,7 @@ bool GameManager::installGame(const std::string & gameVersionID, const std::stri
 				spdlog::warn("Failed to generate default game configuration.");
 			}
 			else {
-				if(!gameConfiguration->updateForDOSBox()) {
+				if(gameVersion->doesRequireDOSBox() && !gameConfiguration->updateForDOSBox()) {
 					spdlog::warn("Failed to update default game configuration for use with DOSBox.");
 				}
 
