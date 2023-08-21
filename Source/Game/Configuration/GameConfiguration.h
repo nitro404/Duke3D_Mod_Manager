@@ -293,13 +293,20 @@ public:
 	static const std::string TURN_LEFT_ENTRY_NAME;
 	static const std::string TURN_RIGHT_ENTRY_NAME;
 	static const std::string FIRE_ENTRY_NAME;
+	static const std::string ALT_FIRE_ENTRY_NAME;
 	static const std::string QUICK_KICK_ENTRY_NAME;
 	static const std::string OPEN_ENTRY_NAME;
 	static const std::string RUN_ENTRY_NAME;
 	static const std::string JUMP_ENTRY_NAME;
 	static const std::string CROUCH_ENTRY_NAME;
+	static const std::string TOGGLE_CROUCH_ENTRY_NAME;
 	static const std::string INVENTORY_ENTRY_NAME;
+	static const std::string INVENTORY_LEFT_ENTRY_NAME;
+	static const std::string INVENTORY_RIGHT_ENTRY_NAME;
+	static const std::string MEDKIT_ENTRY_NAME;
 	static const std::string JETPACK_ENTRY_NAME;
+	static const std::string PREVIOUS_WEAPON_ENTRY_NAME;
+	static const std::string NEXT_WEAPON_ENTRY_NAME;
 	static const std::string STRAFE_ENTRY_NAME;
 	static const std::string STRAFE_LEFT_ENTRY_NAME;
 	static const std::string STRAFE_RIGHT_ENTRY_NAME;
@@ -311,6 +318,8 @@ public:
 	static const std::string AIM_DOWN_ENTRY_NAME;
 	static const std::string SHOW_OPPONENTS_WEAPON_ENTRY_NAME;
 	static const std::string MAP_FOLLOW_MODE_ENTRY_NAME;
+	static const std::string MAP_ENTRY_NAME;
+	static const std::string THIRD_PERSON_VIEW_ENTRY_NAME;
 	static const std::string CONTROLS_SECTION_NAME;
 	static const std::string MOUSE_AIMING_FLIPPED_ENTRY_NAME;
 	static const std::string AIMING_FLAG_ENTRY_NAME;
@@ -327,7 +336,7 @@ public:
 	static const uint32_t DEFAULT_ANALOG_SCALE;
 
 private:
-	bool determineGameVersion(bool & isBeta, bool & isRegularVersion, bool & isAtomicEdition, bool & isJFDuke3D);
+	bool determineGameVersion(bool & isBeta, bool & isRegularVersion, bool & isAtomicEdition, bool & isJFDuke3D, bool & isEDuke32);
 	void updateParent();
 
 	Style m_style;
