@@ -121,10 +121,12 @@ bool GameConfiguration::NameComparator::operator () (const std::string & nameA, 
 }
 
 GameConfiguration::GameConfiguration()
-	: m_style(Style::None) { }
+	: m_style(Style::None)
+	, m_newlineType(Utilities::newLine[0] == '\r' ? NewlineType::Windows : NewlineType::Unix) { }
 
 GameConfiguration::GameConfiguration(GameConfiguration && c) noexcept
 	: m_style(c.m_style)
+	, m_newlineType(c.m_newlineType)
 	, m_filePath(std::move(c.m_filePath))
 	, m_entries(std::move(c.m_entries))
 	, m_sections(std::move(c.m_sections))
@@ -134,6 +136,7 @@ GameConfiguration::GameConfiguration(GameConfiguration && c) noexcept
 
 GameConfiguration::GameConfiguration(const GameConfiguration & c)
 	: m_style(c.m_style)
+	, m_newlineType(c.m_newlineType)
 	, m_filePath(c.m_filePath)
 	, m_orderedSectionNames(c.m_orderedSectionNames) {
 	for(EntryMap::const_iterator i = c.m_entries.cbegin(); i != c.m_entries.cend(); ++i) {
@@ -152,6 +155,7 @@ GameConfiguration & GameConfiguration::operator = (GameConfiguration && c) noexc
 		clearSections();
 
 		m_style = c.m_style;
+		m_newlineType = c.m_newlineType;
 		m_filePath = std::move(c.m_filePath);
 		m_entries = std::move(c.m_entries);
 		m_sections = std::move(c.m_sections);
@@ -167,6 +171,7 @@ GameConfiguration & GameConfiguration::operator = (const GameConfiguration & c) 
 	clearSections();
 
 	m_style = c.m_style;
+	m_newlineType = c.m_newlineType;
 	m_orderedSectionNames = c.m_orderedSectionNames;
 
 	for(EntryMap::const_iterator i = c.m_entries.cbegin(); i != c.m_entries.cend(); ++i) {
@@ -242,6 +247,18 @@ void GameConfiguration::removeStyle(Style style) {
 	}
 
 	setStyle(m_style & ~style);
+}
+
+GameConfiguration::NewlineType GameConfiguration::getNewlineType() const {
+	return m_newlineType;
+}
+
+void GameConfiguration::setNewlineType(NewlineType newlineType) {
+	if(m_newlineType == newlineType) {
+		return;
+	}
+
+	m_newlineType = newlineType;
 }
 
 size_t GameConfiguration::numberOfEntries() const {
@@ -603,21 +620,33 @@ void GameConfiguration::clearSections() {
 }
 
 std::string GameConfiguration::toString() const {
-	std::stringstream gameConfigurationStream;
-
 	std::shared_ptr<Section> currentSection;
+	std::stringstream gameConfigurationStream;
+	std::string newline;
+
+	switch(m_newlineType) {
+		case NewlineType::Unix: {
+			newline = "\n";
+			break;
+		}
+
+		case NewlineType::Windows: {
+			newline = "\r\n";
+			break;
+		}
+	}
 
 	for(const std::string & sectionName : m_orderedSectionNames) {
 		currentSection = m_sections.find(sectionName)->second;
 
 		if(gameConfigurationStream.tellp() != 0) {
-			gameConfigurationStream << std::endl;
+			gameConfigurationStream << newline;
 		}
 
-		gameConfigurationStream << currentSection->toString();
+		gameConfigurationStream << currentSection->toString(newline);
 
 		if(hasNewlineAfterSections()) {
-			gameConfigurationStream << std::endl;
+			gameConfigurationStream << newline;
 		}
 	}
 
@@ -629,6 +658,28 @@ std::unique_ptr<GameConfiguration> GameConfiguration::parseFrom(const std::strin
 
 	if(data.empty()) {
 		return std::move(gameConfiguration);
+	}
+
+	char currentCharacter = '\0';
+	size_t newlineOffset = 0;
+
+	while(newlineOffset < data.size()) {
+		currentCharacter = data[newlineOffset++];
+
+		if(currentCharacter == '\r') {
+			spdlog::trace("Detected Windows style newlines in game configuration data.");
+
+			gameConfiguration->setNewlineType(NewlineType::Windows);
+
+			break;
+		}
+		else if(currentCharacter == '\n') {
+			spdlog::trace("Detected Unix style newlines in game configuration data.");
+
+			gameConfiguration->setNewlineType(NewlineType::Unix);
+
+			break;
+		}
 	}
 
 	size_t offset = 0;

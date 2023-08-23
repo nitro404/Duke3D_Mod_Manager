@@ -1,5 +1,6 @@
 #include "GameConfiguration.h"
 
+#include <Utilities/FileUtilities.h>
 #include <Utilities/StringUtilities.h>
 
 #include <spdlog/spdlog.h>
@@ -586,15 +587,16 @@ const GameConfiguration * GameConfiguration::Section::getParentGameConfiguration
 	return m_parentGameConfiguration;
 }
 
-std::string GameConfiguration::Section::toString() const {
+std::string GameConfiguration::Section::toString(const std::string & newline) const {
 	std::stringstream sectionData;
+	const std::string & actualNewline = newline.empty() ? Utilities::newLine : newline;
 
 	std::string precedingComments(formatComments(m_precedingComments));
 
 	sectionData << precedingComments;
 
 	if(!precedingComments.empty()) {
-		sectionData << std::endl;
+		sectionData << actualNewline;
 	}
 
 	sectionData << GameConfiguration::Section::NAME_START_CHARACTER << m_name << GameConfiguration::Section::NAME_END_CHARACTER;
@@ -602,13 +604,13 @@ std::string GameConfiguration::Section::toString() const {
 	std::string followingComments(formatComments(m_followingComments));
 
 	if(!followingComments.empty()) {
-		sectionData << std::endl;
+		sectionData << actualNewline;
 	}
 
 	sectionData << followingComments;
 
 	for(std::vector<std::shared_ptr<Entry>>::const_iterator i = m_entries.cbegin(); i != m_entries.cend(); ++i) {
-		sectionData << std::endl << (*i)->toString();
+		sectionData << actualNewline << (*i)->toString();
 	}
 
 	return sectionData.str();

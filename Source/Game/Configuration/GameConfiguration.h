@@ -20,6 +20,11 @@ public:
 		Default = None
 	};
 
+	enum class NewlineType : uint8_t {
+		Unix,
+		Windows
+	};
+
 	class Entry;
 	class Section;
 
@@ -164,7 +169,7 @@ public:
 		bool remove();
 		const GameConfiguration * getParentGameConfiguration() const;
 
-		std::string toString() const;
+		std::string toString(const std::string & newline = {}) const;
 		static std::unique_ptr<Section> parseFrom(const std::string & data, size_t & offset);
 
 		bool isValid(bool validateParents = true) const;
@@ -207,6 +212,8 @@ public:
 	void setStyle(Style style);
 	void addStyle(Style style);
 	void removeStyle(Style style);
+	NewlineType getNewlineType() const;
+	void setNewlineType(NewlineType newlineType);
 
 	size_t numberOfEntries() const;
 	bool hasEntry(const Entry & entry) const;
@@ -356,6 +363,7 @@ private:
 	void updateParent();
 
 	Style m_style;
+	NewlineType m_newlineType;
 	std::string m_filePath;
 	EntryMap m_entries;
 	SectionMap m_sections;
@@ -407,6 +415,11 @@ bool GameConfiguration::Section::setEntryMultiStringValue(const std::string & en
 
 template<>
 struct BitmaskOperators<GameConfiguration::Style> {
+	static const bool enabled = true;
+};
+
+template<>
+struct BitmaskOperators<GameConfiguration::NewlineType> {
 	static const bool enabled = true;
 };
 
