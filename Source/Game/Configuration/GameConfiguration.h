@@ -297,6 +297,7 @@ public:
 	static const std::string QUICK_KICK_ENTRY_NAME;
 	static const std::string OPEN_ENTRY_NAME;
 	static const std::string RUN_ENTRY_NAME;
+	static const std::string AUTO_RUN_ENTRY_NAME;
 	static const std::string JUMP_ENTRY_NAME;
 	static const std::string CROUCH_ENTRY_NAME;
 	static const std::string TOGGLE_CROUCH_ENTRY_NAME;
@@ -304,7 +305,11 @@ public:
 	static const std::string INVENTORY_LEFT_ENTRY_NAME;
 	static const std::string INVENTORY_RIGHT_ENTRY_NAME;
 	static const std::string MEDKIT_ENTRY_NAME;
+	static const std::string TURN_AROUND_ENTRY_NAME;
+	static const std::string SEND_MESSAGE_ENTRY_NAME;
+	static const std::string HOLO_DUKE_ENTRY_NAME;
 	static const std::string JETPACK_ENTRY_NAME;
+	static const std::string NIGHT_VISION_ENTRY_NAME;
 	static const std::string PREVIOUS_WEAPON_ENTRY_NAME;
 	static const std::string NEXT_WEAPON_ENTRY_NAME;
 	static const std::string STRAFE_ENTRY_NAME;
@@ -318,11 +323,19 @@ public:
 	static const std::string AIM_DOWN_ENTRY_NAME;
 	static const std::string SHOW_OPPONENTS_WEAPON_ENTRY_NAME;
 	static const std::string MAP_FOLLOW_MODE_ENTRY_NAME;
+	static const std::string SEE_COOP_VIEW_ENTRY_NAME;
+	static const std::string MOUSE_AIMING_ENTRY_NAME;
+	static const std::string TOGGLE_CROSSHAIR_ENTRY_NAME;
+	static const std::string STEROIDS_ENTRY_NAME;
 	static const std::string MAP_ENTRY_NAME;
+	static const std::string SHRINK_SCREEN_ENTRY_NAME;
+	static const std::string ENLARGE_SCREEN_ENTRY_NAME;
+	static const std::string CENTER_VIEW_ENTRY_NAME;
+	static const std::string HOLSTER_WEAPON_ENTRY_NAME;
 	static const std::string THIRD_PERSON_VIEW_ENTRY_NAME;
 	static const std::string CONTROLS_SECTION_NAME;
 	static const std::string CONTROLLER_TYPE_ENTRY_NAME;
-	static const std::string MOUSE_AIMING_ENTRY_NAME;
+	static const std::string CONTROLS_MOUSE_AIMING_ENTRY_NAME;
 	static const std::string GAME_MOUSE_AIMING_ENTRY_NAME;
 	static const std::string MOUSE_AIMING_FLIPPED_ENTRY_NAME;
 	static const std::string AIMING_FLAG_ENTRY_NAME;
@@ -339,7 +352,7 @@ public:
 	static const uint32_t DEFAULT_ANALOG_SCALE;
 
 private:
-	bool determineGameVersion(bool & isBeta, bool & isRegularVersion, bool & isAtomicEdition, bool & isJFDuke3D, bool & isEDuke32, bool & isBelgian, bool & isRedNukem, bool & isNetDuke32);
+	bool determineGameVersion(bool & isBeta, bool & isRegularVersion, bool & isAtomicEdition, bool & isJFDuke3D, bool & isEDuke32, bool & isBelgian, bool & isRedNukem, bool & isNetDuke32, bool & isPKDuke3D);
 	void updateParent();
 
 	Style m_style;

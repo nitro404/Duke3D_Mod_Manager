@@ -21,19 +21,22 @@ static const std::string SCREEN_EDUKE32_POLYMER_ENTRY_NAME("Polymer");
 static const std::string SCREEN_AMBIENT_LIGHT_ENTRY_NAME("AmbientLight");
 static const std::string SCREEN_USE_MODELS_ENTRY_NAME("UseModels");
 static const std::string MISC_AUTO_AIM_ENTRY_NAME("AutoAim");
-static const std::string MISC_JFDUKE3D_SHOW_LEVEL_STATISTICS_ENTRY_NAME("ShowLevelStats");
-static const std::string MISC_JFDUKE3D_STATUS_BAR_SCALE_ENTRY_NAME("StatusBarScale");
-static const std::string MISC_JDFUKE3D_SHOW_OPPONENT_WEAPONS_ENTRY_NAME("ShowOpponentWeapons");
+static const std::string MISC_SHOW_LEVEL_STATISTICS_ENTRY_NAME("ShowLevelStats");
+static const std::string MISC_STATUS_BAR_SCALE_ENTRY_NAME("StatusBarScale");
+static const std::string MISC_SHOW_OPPONENT_WEAPONS_ENTRY_NAME("ShowOpponentWeapons");
 static const std::string MISC_USE_PRECACHE_ENTRY_NAME("UsePrecache");
 static const std::string MISC_PREDICTION_DEBUG_ENTRY_NAME("PredictionDebug");
 static const std::string SETUP_EDUKE32_CONFIGURATION_VERSION("ConfigVersion");
 static const std::string CONTROLS_USE_JOYSTICK_ENTRY_NAME("UseJoystick");
 static const std::string CONTROLS_USE_MOUSE_ENTRY_NAME("UseMouse");
-static const std::string CONTROLS_JFDUKE3D_RUN_KEY_BEHAVIOUR_ENTRY_NAME("RunKeyBehaviour");
+static const std::string CONTROLS_RUN_KEY_BEHAVIOUR_ENTRY_NAME("RunKeyBehaviour");
 static const std::string CONTROLS_AUTO_AIM_ENTRY_NAME("AutoAim");
-static const std::string CONTROLS_JFDUKE3D_WEAPON_SWITCH_MODE_ENTRY_NAME("WeaponSwitchMode");
+static const std::string CONTROLS_WEAPON_SWITCH_MODE_ENTRY_NAME("WeaponSwitchMode");
+static const std::string CONTROLS_MOUSE_Y_LOCK_ENTRY_NAME("MouseYLock");
+static const std::string CONTROLS_MOUSE_SCALE_X_ENTRY_NAME("MouseScaleX");
+static const std::string CONTROLS_MOUSE_SCALE_Y_ENTRY_NAME("MouseScaleY");
 static const std::string JFDUKE3D_SHOW_MENU_ENTRY_NAME("Show_Menu");
-static const std::string JFDUKE3D_SHOW_CONSOLE_ENTRY_NAME("Show_Console");
+static const std::string SHOW_CONSOLE_ENTRY_NAME("Show_Console");
 static const std::string BELGIAN_HIDE_WEAPON_ENTRY_NAME("Hide_Weapon");
 static const std::string BELGIAN_AUTO_AIM_ENTRY_NAME("Auto_Aim");
 static const std::string BELGIAN_CONSOLE_ENTRY_NAME("Console");
@@ -45,6 +48,23 @@ static const std::string BELGIAN_OPPONENT_SOUND_TOGGLE_ENTRY_NAME("OpponentSound
 static const std::string RED_NUKEM_WINDOW_POSITIONING_ENTRY_NAME("WindowPositioning");
 static const std::string RED_NUKEM_WINDOW_X_POSITION_ENTRY_NAME("WindowPosX");
 static const std::string RED_NUKEM_WINDOW_Y_POSITION_ENTRY_NAME("WindowPosY");
+static const std::string LOBBY_FILTER_SECTION_NAME("Lobby Filter");
+static const std::string LOBBY_FILTER_GAME_MODE_ENTRY_NAME("GameMode");
+static const std::string LOBBY_FILTER_SHOW_FULL_LOBBIES_ENTRY_NAME("ShowFullLobies");
+static const std::string LOBBY_FILTER_MAPS_ENTRY_NAME("Maps");
+static const std::string MULTIPLAYER_SECTION_NAME("Multiplayer");
+static const std::string MULTIPLAYER_SHOW_INFO_ENTRY_NAME("ShowInfo");
+static const std::string QUICK_LOAD_ENTRY_NAME("Quick_Load");
+static const std::string QUICK_SAVE_ENTRY_NAME("Quick_Save");
+static const std::string SAVE_MENU_ENTRY_NAME("Save_Menu");
+static const std::string LOAD_MENU_ENTRY_NAME("Load_Menu");
+static const std::string HELP_MENU_ENTRY_NAME("Help_Menu");
+static const std::string SOUND_MENU_ENTRY_NAME("Sound_Menu");
+static const std::string NEXT_TRACK_ENTRY_NAME("Next_Track");
+static const std::string VIEW_MODE_ENTRY_NAME("View_Mode");
+static const std::string VIDEO_MENU_ENTRY_NAME("Video_Menu");
+static const std::string QUIT_GAME_ENTRY_NAME("Quit_Game");
+static const std::string GAME_MENU_ENTRY_NAME("Game_Menu");
 
 static const std::string MOUSE_PREFIX("Mouse");
 static const std::string GAMEPAD_PREFIX("GamePad");
@@ -67,8 +87,8 @@ static const std::string PHONE_NUMBER_ENTRY_NAME_PREFIX("PhoneNumber#");
 static const std::string WEAPON_CHOICE_PREFIX("WeaponChoice");
 static const std::string RANCID_MEAT_SUFFIX("Rancid");
 
-static constexpr uint16_t DEFAULT_JFDUKE3D_JOYSTICK_ANALOG_DEADZONE = 1024;
-static constexpr uint32_t DEFAULT_JFDUKE3D_JOYSTICK_ANALOG_SATURATE = 31743;
+static constexpr uint16_t DEFAULT_JOYSTICK_ANALOG_DEADZONE = 1024;
+static constexpr uint32_t DEFAULT_JOYSTICK_ANALOG_SATURATE = 31743;
 static constexpr uint8_t DEFAULT_CONTROLLER_ANALOG_SENSITIVITY = 5;
 static constexpr uint16_t DEFAULT_CONTROLLER_ANALOG_DEADZONE = 1000;
 static constexpr uint16_t DEFAULT_CONTROLLER_ANALOG_SATURATE = 9500;
@@ -182,24 +202,7 @@ static const std::vector<std::pair<std::string, std::string>> DEFAULT_JDFUKE3D_J
 	{ GameConfiguration::AIM_UP_ENTRY_NAME,     "" },
 	{ GameConfiguration::AIM_DOWN_ENTRY_NAME,   "" },
 	{ GameConfiguration::LOOK_LEFT_ENTRY_NAME,  "" },
-	{ GameConfiguration::LOOK_RIGHT_ENTRY_NAME, "" },
-	{ "",                                       "" },
-	{ "",                                       "" },
-	{ "",                                       "" },
-	{ "",                                       "" },
-	{ "",                                       "" },
-	{ "",                                       "" },
-	{ "",                                       "" },
-	{ "",                                       "" },
-	{ "",                                       "" },
-	{ "",                                       "" },
-	{ "",                                       "" },
-	{ "",                                       "" },
-	{ "",                                       "" },
-	{ "",                                       "" },
-	{ "",                                       "" },
-	{ "",                                       "" },
-	{ "",                                       "" }
+	{ GameConfiguration::LOOK_RIGHT_ENTRY_NAME, "" }
 });
 
 const std::array<std::string, 16> DEFAULT_CONTROLLER_BUTTON_ACTIONS({
@@ -237,6 +240,96 @@ static const std::array<std::pair<std::string, std::string>, 6> DEFAULT_CONTROLL
 	std::make_pair("", GameConfiguration::FIRE_ENTRY_NAME)
 });
 
+static const std::array<std::tuple<std::string, std::string, std::string>, 42> DEFAULT_KEY_DEFINITIONS({
+	std::make_tuple(GameConfiguration::MOVE_FORWARD_ENTRY_NAME,          "Up",     "Kpad8"),
+	std::make_tuple(GameConfiguration::MOVE_BACKWARD_ENTRY_NAME,         "Down",   "Kpad2"),
+	std::make_tuple(GameConfiguration::TURN_LEFT_ENTRY_NAME,             "Left",   "Kpad4"),
+	std::make_tuple(GameConfiguration::TURN_RIGHT_ENTRY_NAME,            "Right",  "KPad6"),
+	std::make_tuple(GameConfiguration::STRAFE_ENTRY_NAME,                "LAlt",   "RAlt"),
+	std::make_tuple(GameConfiguration::FIRE_ENTRY_NAME,                  "LCtrl",  "RCtrl"),
+	std::make_tuple(GameConfiguration::OPEN_ENTRY_NAME,                  "Space",  ""),
+	std::make_tuple(GameConfiguration::RUN_ENTRY_NAME,                   "LShift", "RShift"),
+	std::make_tuple(GameConfiguration::AUTO_RUN_ENTRY_NAME,              "CapLck", ""),
+	std::make_tuple(GameConfiguration::JUMP_ENTRY_NAME,                  "A",      "/"),
+	std::make_tuple(GameConfiguration::CROUCH_ENTRY_NAME,                "Z",      ""),
+	std::make_tuple(GameConfiguration::LOOK_UP_ENTRY_NAME,               "PgUp",   "Kpad9"),
+	std::make_tuple(GameConfiguration::LOOK_DOWN_ENTRY_NAME,             "PgDn",   "Kpad3"),
+	std::make_tuple(GameConfiguration::LOOK_LEFT_ENTRY_NAME,             "Insert", "Kpad0"),
+	std::make_tuple(GameConfiguration::LOOK_RIGHT_ENTRY_NAME,            "Delete", "Kpad."),
+	std::make_tuple(GameConfiguration::STRAFE_LEFT_ENTRY_NAME,           ",",      ""),
+	std::make_tuple(GameConfiguration::STRAFE_RIGHT_ENTRY_NAME,          ".",      ""),
+	std::make_tuple(GameConfiguration::AIM_UP_ENTRY_NAME,                "Home",   "KPad7"),
+	std::make_tuple(GameConfiguration::AIM_DOWN_ENTRY_NAME,              "End",    "Kpad1"),
+	std::make_tuple(GameConfiguration::INVENTORY_ENTRY_NAME,             "Enter",  "KpdEnt"),
+	std::make_tuple(GameConfiguration::INVENTORY_LEFT_ENTRY_NAME,        "[",      ""),
+	std::make_tuple(GameConfiguration::INVENTORY_RIGHT_ENTRY_NAME,       "]",      ""),
+	std::make_tuple(GameConfiguration::HOLO_DUKE_ENTRY_NAME,             "H",      ""),
+	std::make_tuple(GameConfiguration::JETPACK_ENTRY_NAME,               "J",      ""),
+	std::make_tuple(GameConfiguration::NIGHT_VISION_ENTRY_NAME,          "N",      ""),
+	std::make_tuple(GameConfiguration::MEDKIT_ENTRY_NAME,                "M",      ""),
+	std::make_tuple(GameConfiguration::TURN_AROUND_ENTRY_NAME,           "BakSpc", ""),
+	std::make_tuple(GameConfiguration::SEND_MESSAGE_ENTRY_NAME,          "T",      ""),
+	std::make_tuple(GameConfiguration::MAP_ENTRY_NAME,                   "Tab",    ""),
+	std::make_tuple(GameConfiguration::SHRINK_SCREEN_ENTRY_NAME,         "-",      "Kpad-"),
+	std::make_tuple(GameConfiguration::ENLARGE_SCREEN_ENTRY_NAME,        "=",      "Kpad+"),
+	std::make_tuple(GameConfiguration::CENTER_VIEW_ENTRY_NAME,           "KPad5",  ""),
+	std::make_tuple(GameConfiguration::HOLSTER_WEAPON_ENTRY_NAME,        "ScrLck", ""),
+	std::make_tuple(GameConfiguration::SHOW_OPPONENTS_WEAPON_ENTRY_NAME, "W",      ""),
+	std::make_tuple(GameConfiguration::MAP_FOLLOW_MODE_ENTRY_NAME,       "F",      ""),
+	std::make_tuple(GameConfiguration::SEE_COOP_VIEW_ENTRY_NAME,         "K",      ""),
+	std::make_tuple(GameConfiguration::MOUSE_AIMING_ENTRY_NAME,          "U",      ""),
+	std::make_tuple(GameConfiguration::TOGGLE_CROSSHAIR_ENTRY_NAME,      "I",      ""),
+	std::make_tuple(GameConfiguration::STEROIDS_ENTRY_NAME,              "R",      ""),
+	std::make_tuple(GameConfiguration::QUICK_KICK_ENTRY_NAME,            "`",      ""),
+	std::make_tuple(GameConfiguration::NEXT_WEAPON_ENTRY_NAME,           "'",      ""),
+	std::make_tuple(GameConfiguration::PREVIOUS_WEAPON_ENTRY_NAME,       ";",      "")
+});
+
+static const std::array<std::tuple<std::string, std::string, std::string>, 42> DEFAULT_PKDUKE3D_KEY_DEFINITIONS({
+	std::make_tuple(GameConfiguration::MOVE_FORWARD_ENTRY_NAME,          "W",        "Up"),
+	std::make_tuple(GameConfiguration::MOVE_BACKWARD_ENTRY_NAME,         "S",        "Down"),
+	std::make_tuple(GameConfiguration::TURN_LEFT_ENTRY_NAME,             "None",     "Left"),
+	std::make_tuple(GameConfiguration::TURN_RIGHT_ENTRY_NAME,            "None",     "Right"),
+	std::make_tuple(GameConfiguration::STRAFE_ENTRY_NAME,                "LAlt",     "RAlt"),
+	std::make_tuple(GameConfiguration::FIRE_ENTRY_NAME,                  "Mouse 1",  "None"),
+	std::make_tuple(GameConfiguration::OPEN_ENTRY_NAME,                  "E",        "Mouse 3"),
+	std::make_tuple(GameConfiguration::RUN_ENTRY_NAME,                   "LShift",   "RShift"),
+	std::make_tuple(GameConfiguration::AUTO_RUN_ENTRY_NAME,              "CapsLock", "None"),
+	std::make_tuple(GameConfiguration::JUMP_ENTRY_NAME,                  "Space",    "None"),
+	std::make_tuple(GameConfiguration::CROUCH_ENTRY_NAME,                "LCtrl",    "None"),
+	std::make_tuple(GameConfiguration::LOOK_UP_ENTRY_NAME,               "None",     "None"),
+	std::make_tuple(GameConfiguration::LOOK_DOWN_ENTRY_NAME,             "None",     "None"),
+	std::make_tuple(GameConfiguration::LOOK_LEFT_ENTRY_NAME,             "None",     "None"),
+	std::make_tuple(GameConfiguration::LOOK_RIGHT_ENTRY_NAME,            "None",     "None"),
+	std::make_tuple(GameConfiguration::STRAFE_LEFT_ENTRY_NAME,           "A",        "None"),
+	std::make_tuple(GameConfiguration::STRAFE_RIGHT_ENTRY_NAME,          "D",        "None"),
+	std::make_tuple(GameConfiguration::AIM_UP_ENTRY_NAME,                "Home",     "KPad 7"),
+	std::make_tuple(GameConfiguration::AIM_DOWN_ENTRY_NAME,              "End",      "KPad 1"),
+	std::make_tuple(GameConfiguration::INVENTORY_ENTRY_NAME,             "Enter",    "KP Enter"),
+	std::make_tuple(GameConfiguration::INVENTORY_LEFT_ENTRY_NAME,        "[",        "None"),
+	std::make_tuple(GameConfiguration::INVENTORY_RIGHT_ENTRY_NAME,       "]",        "None"),
+	std::make_tuple(GameConfiguration::HOLO_DUKE_ENTRY_NAME,             "H",        "None"),
+	std::make_tuple(GameConfiguration::JETPACK_ENTRY_NAME,               "J",        "None"),
+	std::make_tuple(GameConfiguration::NIGHT_VISION_ENTRY_NAME,          "N",        "None"),
+	std::make_tuple(GameConfiguration::MEDKIT_ENTRY_NAME,                "M",        "None"),
+	std::make_tuple(GameConfiguration::TURN_AROUND_ENTRY_NAME,           "None",     "None"),
+	std::make_tuple(GameConfiguration::SEND_MESSAGE_ENTRY_NAME,          "T",        "None"),
+	std::make_tuple(GameConfiguration::MAP_ENTRY_NAME,                   "Tab",      "None"),
+	std::make_tuple(GameConfiguration::SHRINK_SCREEN_ENTRY_NAME,         "-",        "None"),
+	std::make_tuple(GameConfiguration::ENLARGE_SCREEN_ENTRY_NAME,        "=",        "None"),
+	std::make_tuple(GameConfiguration::CENTER_VIEW_ENTRY_NAME,           "KPad 5",   "None"),
+	std::make_tuple(GameConfiguration::HOLSTER_WEAPON_ENTRY_NAME,        "None",     "None"),
+	std::make_tuple(GameConfiguration::SHOW_OPPONENTS_WEAPON_ENTRY_NAME, "None",     "None"),
+	std::make_tuple(GameConfiguration::MAP_FOLLOW_MODE_ENTRY_NAME,       "F",        "None"),
+	std::make_tuple(GameConfiguration::SEE_COOP_VIEW_ENTRY_NAME,         "None",     "None"),
+	std::make_tuple(GameConfiguration::MOUSE_AIMING_ENTRY_NAME,          "U",        "None"),
+	std::make_tuple(GameConfiguration::TOGGLE_CROSSHAIR_ENTRY_NAME,      "None",     "None"),
+	std::make_tuple(GameConfiguration::STEROIDS_ENTRY_NAME,              "R",        "None"),
+	std::make_tuple(GameConfiguration::QUICK_KICK_ENTRY_NAME,            ",",        "`"),
+	std::make_tuple(GameConfiguration::NEXT_WEAPON_ENTRY_NAME,           "'",        "Wheel Up"),
+	std::make_tuple(GameConfiguration::PREVIOUS_WEAPON_ENTRY_NAME,       ";",        "Wheel Dn")
+});
+
 const std::array<std::string, 10> DEFAULT_EDUKE32_COMBAT_MACROS({
 	"An inspiration for birth control.",
 	"You're gonna die for that!",
@@ -250,7 +343,32 @@ const std::array<std::string, 10> DEFAULT_EDUKE32_COMBAT_MACROS({
 	"AARRRGHHHHH!!!"
 });
 
-bool GameConfiguration::determineGameVersion(bool & isBeta, bool & isRegularVersion, bool & isAtomicEdition, bool & isJFDuke3D, bool & isEDuke32, bool & isBelgian, bool & isRedNukem, bool & isNetDuke32) {
+bool GameConfiguration::determineGameVersion(bool & isBeta, bool & isRegularVersion, bool & isAtomicEdition, bool & isJFDuke3D, bool & isEDuke32, bool & isBelgian, bool & isRedNukem, bool & isNetDuke32, bool & isPKDuke3D) {
+	std::shared_ptr<Section> multiplayerSection(getSectionWithName(MULTIPLAYER_SECTION_NAME));
+
+	// pkDuke3D
+	if(multiplayerSection != nullptr &&
+	   multiplayerSection->hasEntryWithName(MULTIPLAYER_SHOW_INFO_ENTRY_NAME)) {
+
+		std::shared_ptr<Section> controlsSection(getSectionWithName(GameConfiguration::CONTROLS_SECTION_NAME));
+
+		if(controlsSection != nullptr &&
+		   controlsSection->hasEntryWithName(CONTROLS_MOUSE_Y_LOCK_ENTRY_NAME)) {
+
+			std::shared_ptr<Section> lobbyFilterSection(getSectionWithName(LOBBY_FILTER_SECTION_NAME));
+
+			if(lobbyFilterSection != nullptr &&
+			   lobbyFilterSection->hasEntryWithName(LOBBY_FILTER_GAME_MODE_ENTRY_NAME) &&
+			   lobbyFilterSection->hasEntryWithName(LOBBY_FILTER_SHOW_FULL_LOBBIES_ENTRY_NAME) &&
+			   lobbyFilterSection->hasEntryWithName(LOBBY_FILTER_MAPS_ENTRY_NAME)) {
+
+				isPKDuke3D = true;
+
+				return true;
+			}
+		}
+	}
+
 	std::shared_ptr<Section> screenSetupSection(getSectionWithName(SCREEN_SETUP_SECTION_NAME));
 
 	if(screenSetupSection != nullptr) {
@@ -262,6 +380,7 @@ bool GameConfiguration::determineGameVersion(bool & isBeta, bool & isRegularVers
 
 			if(miscSection != nullptr &&
 			   miscSection->hasEntryWithName(MISC_PREDICTION_DEBUG_ENTRY_NAME)) {
+
 				isNetDuke32 = true;
 
 				return true;
@@ -309,27 +428,11 @@ bool GameConfiguration::determineGameVersion(bool & isBeta, bool & isRegularVers
 				std::shared_ptr<Section> keyDefinitionsSection(getSectionWithName(KEY_DEFINITIONS_SECTION_NAME));
 
 				if(keyDefinitionsSection != nullptr &&
-				   keyDefinitionsSection->hasEntryWithName(JFDUKE3D_SHOW_MENU_ENTRY_NAME) &&
-				   keyDefinitionsSection->hasEntryWithName(JFDUKE3D_SHOW_CONSOLE_ENTRY_NAME)) {
+				   keyDefinitionsSection->hasEntryWithName(JFDUKE3D_SHOW_MENU_ENTRY_NAME)) {
 
-					std::shared_ptr<Section> controlsSection(getSectionWithName(CONTROLS_SECTION_NAME));
+					isJFDuke3D = true;
 
-					if(controlsSection != nullptr &&
-					   controlsSection->hasEntryWithName(CONTROLS_JFDUKE3D_RUN_KEY_BEHAVIOUR_ENTRY_NAME) &&
-					   controlsSection->hasEntryWithName(CONTROLS_JFDUKE3D_WEAPON_SWITCH_MODE_ENTRY_NAME)) {
-
-						std::shared_ptr<Section> miscSection(getSectionWithName(MISC_SECTION_NAME));
-
-						if(miscSection != nullptr &&
-						   miscSection->hasEntryWithName(MISC_JFDUKE3D_SHOW_LEVEL_STATISTICS_ENTRY_NAME) &&
-						   miscSection->hasEntryWithName(MISC_JFDUKE3D_STATUS_BAR_SCALE_ENTRY_NAME) &&
-						   miscSection->hasEntryWithName(MISC_JDFUKE3D_SHOW_OPPONENT_WEAPONS_ENTRY_NAME)) {
-
-							isJFDuke3D = true;
-
-							return true;
-						}
-					}
+					return true;
 				}
 			}
 		}
@@ -375,76 +478,95 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 	bool isNetDuke32 = Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::NETDUKE32.getID());
 	bool isBelgian = Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getID());
 	bool isRedNukem = Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::RED_NUKEM.getID());
+	bool isPKDuke3D = Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::PKDUKE3D.getID());
 	bool isEDuke32Based = isEDuke32 || isNetDuke32 || isRedNukem;
+	bool isMegatonBased = isPKDuke3D;
 
 	// determine game version specific configuration features
-	bool hasComments = !isJFDuke3D && !isEDuke32Based && !isBelgian;
+	bool hasComments = !isJFDuke3D && !isEDuke32Based && !isBelgian && !isMegatonBased;
 	bool hasSetupSection = !isBelgian;
-	bool hasMiscSection = isJFDuke3D || isEDuke32Based || isBelgian;
-	bool hasDefaultMiscSectionEntries = hasMiscSection && (isJFDuke3D || isEDuke32Based || isBelgian);
-	bool hasHeadsUpDisplayEntries = hasDefaultMiscSectionEntries && !isEDuke32Based;
-	bool hasControlsAutoAimEntry = isJFDuke3D;
+	bool hasMiscSection = isJFDuke3D || isEDuke32Based || isBelgian || isMegatonBased;
+	bool hasHeadsUpDisplayEntries = !isEDuke32Based;
+	bool hasExtendedHeadsUpDisplayEntries = isJFDuke3D || isMegatonBased;
+	bool hasControlsAutoAimEntry = isJFDuke3D || isMegatonBased;
+	bool hasWeaponSwitchModeEntry = isJFDuke3D || isMegatonBased;
 	bool hasMiscAutoAimEntry = isBelgian;
-	bool hasUsePrecacheEntry = isJFDuke3D || isNetDuke32;
+	bool hasUsePrecacheEntry = isJFDuke3D || isNetDuke32 || isMegatonBased;
 	bool hasShowCinematicsEntry = isBelgian;
 	bool hasWeaponVisibilityEntries = isBelgian;
 	bool hasWeaponAutoSwitchEntry = isBelgian;
-	bool hasWeaponChoicePreferences = isJFDuke3D || isBelgian;
-	bool hasForceSetupEntry = isJFDuke3D || isEDuke32Based;
-	bool hasModLoadingSupport = hasSetupSection && isEDuke32Based;
-	bool hasNoAutoLoadEntry = hasModLoadingSupport && !isNetDuke32;
+	bool hasWeaponChoicePreferences = isJFDuke3D || isBelgian || isMegatonBased;
+	bool hasForceSetupEntry = isJFDuke3D || isEDuke32Based || isPKDuke3D;
+	bool hasModLoadingSupport = isEDuke32Based;
+	bool hasNoAutoLoadEntry = !isNetDuke32;
 	bool hasSoundSection = !isEDuke32Based;
-	bool hasLegacyAudioEntries = hasSoundSection && !isJFDuke3D && !isEDuke32Based && !isBelgian;
-	bool hasDefaultAudioEntries = hasSoundSection && (isJFDuke3D || isBelgian);
+	bool hasLegacyAudioEntries = !isJFDuke3D && !isEDuke32Based && !isBelgian && !isMegatonBased;
+	bool hasDefaultAudioEntries = isJFDuke3D || isBelgian || isMegatonBased;
 	bool hasAudioQualityEntries = !isBelgian;
+	bool hasScreenSetupSection = !isMegatonBased;
 	bool shouldAddDefaultScreenSize = !isEDuke32Based;
 	bool hasAdvancedGraphicsEntries = isJFDuke3D || isEDuke32Based;
-	bool hasPolymerSupport = hasAdvancedGraphicsEntries && isEDuke32Based;
+	bool hasPolymerSupport = isEDuke32Based;
 	bool hasAmbientLightEntry = isNetDuke32;
 	bool hasUseModelsEntry = isNetDuke32;
 	bool hasDefaultScreenEntries = isJFDuke3D || isEDuke32Based || isBelgian;
-	bool hasAllDefaultScreenEntries = hasDefaultScreenEntries && (!isEDuke32Based || isNetDuke32);
-	bool hasShadowsEntry = hasDefaultScreenEntries && !isEDuke32Based;
+	bool hasAllDefaultScreenEntries = !isEDuke32Based || isNetDuke32;
+	bool hasShadowsEntry = !isEDuke32Based;
 	bool hasScreenModeEntry = !isBelgian;
 	bool hasShowFramesPerSecondEntry = isBelgian;
 	bool hasOpenGLAnimationSmoothingEntry = isNetDuke32;
 	bool hasOpenGLTextureModeEntry = isJFDuke3D || isNetDuke32;
 	bool hasOpenGLUseTextureCompressionEntry = isJFDuke3D || isNetDuke32;
+	bool hasOpenGLAnisotropyEntry = isJFDuke3D;
+	bool hasOpenGLUseCompressedTextureCacheEntry = isJFDuke3D;
+	bool hasScreenDisplayEntry = isEDuke32;
+	bool hasWindowPropertyEntries = isRedNukem;
 	bool hasFullScreenEntry = isBelgian;
 	bool hasExtendedScreenSizeEntry = isBelgian;
 	bool hasKeyDefinitions = !isEDuke32Based;
 	bool hasLegacyControllerEntries = !isEDuke32Based;
-	bool hasJoystickPortEntry = hasLegacyControllerEntries && !isBelgian;
+	bool hasJoystickPortEntry = !isBelgian;
 	bool hasMouseAnalogAxesEntries = !isBelgian;
 	bool hasMouseAnalogScaleEntries = !isBelgian && !isRedNukem && !isNetDuke32;
 	bool hasMouseDigitalEntries = !isRedNukem;
+	bool hasMouseYLockEntry = isPKDuke3D;
+	bool hasMouseScale = isPKDuke3D;
 	bool hasGameMouseAimingEntry = isBelgian;
+	bool hasRunKeyBehaviourEntry = isJFDuke3D || isPKDuke3D;
+	bool hasShowMenuEntry = isJFDuke3D;
+	bool hasShowConsoleEntry = isJFDuke3D || isMegatonBased;
+	bool hasExtraKeyDefinitionEntries = isPKDuke3D;
 	bool hasMouseSensitivity = !isEDuke32Based && !isBelgian;
-	bool hasExternalFileNameEntry = !isJFDuke3D && !isEDuke32Based && !isBelgian;
-	bool hasRudderEntry = !isJFDuke3D && !isEDuke32Based && !isBelgian;
-	bool hasDefaultControls = isJFDuke3D || isBelgian;
+	bool hasExternalFileNameEntry = !isJFDuke3D && !isEDuke32Based && !isBelgian && !isMegatonBased;
+	bool hasRudderEntry = !isJFDuke3D && !isEDuke32Based && !isBelgian && !isMegatonBased;
+	bool hasDefaultControls = isJFDuke3D || isBelgian || isMegatonBased;
 	bool hasMouseAimingEntry = !isEDuke32Based;
 	bool hasMouseAimFlippingEntry = !isBeta && !isRegularVersion && !isEDuke32Based;
 	bool hasMouseButtonClickedEntries = !isBelgian && !isRedNukem;
-	bool hasGamepadControls = !isJFDuke3D && !isEDuke32Based && !isBelgian;
+	bool hasGamepadControls = !isJFDuke3D && !isEDuke32Based && !isBelgian && !isMegatonBased;
 	bool hasJoystickControls = !isEDuke32Based && !isBelgian;
+	bool hasJoystickAnalogDeadZoneAndSaturateEntries = isJFDuke3D || isMegatonBased;
 	bool hasControllerControls = isEDuke32 || isNetDuke32;
-	bool hasControllerAnalogSensitivityEntries = hasControllerControls && !isNetDuke32;
-	bool hasControllerAnalogScaleEntries = hasControllerControls && isNetDuke32;
-	bool hasNoramlizedKeyPadPrefix = isJFDuke3D || isBelgian;
-	bool hasDialupNetworking = !isJFDuke3D && !isEDuke32Based && !isBelgian;
-	bool hasCombatMacros = !isJFDuke3D;
-	bool hasRemoteRidiculeFileName = !isJFDuke3D;
+	bool hasControllerAnalogSensitivityEntries = !isNetDuke32;
+	bool hasControllerAnalogScaleEntries = isNetDuke32;
+	bool hasNormalizedKeyPadPrefix = isJFDuke3D || isBelgian;
+	bool hasDialupNetworking = !isJFDuke3D && !isEDuke32Based && !isBelgian && !isMegatonBased;
+	bool hasCombatMacros = !isJFDuke3D && !isMegatonBased;
+	bool hasRemoteRidiculeFileName = !isJFDuke3D && !isMegatonBased;
 	bool hasUpdatesSection = isEDuke32Based && !isNetDuke32;
-	bool hasUseMouseAndJoystickEntries = isJFDuke3D || isNetDuke32;
+	bool hasUseMouseAndJoystickEntries = isJFDuke3D || isNetDuke32 || isMegatonBased;
 	bool hasPredictionDebugEntry = isNetDuke32;
+	bool hasLobbyFilterSection = isMegatonBased;
+	bool hasMultiplayerSection = isMegatonBased;
 
 	// determine game version specific configuration parameters
 	GameConfiguration::Style style = GameConfiguration::Style::Default;
 
-	if(isJFDuke3D || isEDuke32Based || isBelgian) {
+	if(isJFDuke3D || isEDuke32Based || isBelgian || isPKDuke3D) {
 		style |= GameConfiguration::Style::NewlineAfterSections;
 	}
+
+	const auto & keyDefinitions = isPKDuke3D ? DEFAULT_PKDUKE3D_KEY_DEFINITIONS : DEFAULT_KEY_DEFINITIONS;
 
 	uint16_t configurationVersion = 0;
 
@@ -469,6 +591,9 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 	else if(isEDuke32Based) {
 		playerName = "";
 	}
+	else if(isPKDuke3D) {
+		playerName = "NoSteam";
+	}
 
 	Dimension resolution(DEFAULT_RESOLUTION);
 
@@ -479,7 +604,7 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 	uint64_t soundDevice = SOUND_DEVICE_UNSET;
 	uint64_t musicDevice = MUSIC_DEVICE_UNSET;
 
-	if(isJFDuke3D || isBelgian) {
+	if(isJFDuke3D || isBelgian || isPKDuke3D) {
 		soundDevice = 0;
 		musicDevice = 0;
 	}
@@ -488,7 +613,7 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 	uint8_t soundNumberOfBits = 1;
 	uint16_t soundMixRate = 11000;
 
-	if(isJFDuke3D) {
+	if(isJFDuke3D || isMegatonBased) {
 		soundNumberOfVoices = 16;
 		soundNumberOfBits = 16;
 		soundMixRate = 44100;
@@ -526,23 +651,43 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 		screenSize = 4;
 	}
 
+	uint8_t aimingFlag = 0;
 	uint8_t autoAim = 0;
+	uint16_t statusBarScale = 8;
 	bool runModeEnabled = false;
 	bool crosshairEnabled = false;
+	uint32_t mouseSensitivity = std::numeric_limits<uint16_t>::max() + 1;
+	uint32_t mouseAnalogScale = DEFAULT_ANALOG_SCALE;
+	uint32_t mouseScale = 10;
 
 	if(isJFDuke3D) {
 		autoAim = 1;
 	}
 	else if(isBelgian) {
 		autoAim = 2;
+	}
+	else if(isPKDuke3D) {
+		aimingFlag = 1;
+		statusBarScale = 100;
+		mouseSensitivity = 36864;
+		mouseAnalogScale = 0;
+	}
+
+	if(isBelgian || isMegatonBased) {
 		runModeEnabled = true;
 		crosshairEnabled = true;
+	}
+
+	std::string unboundKeyValue;
+
+	if(isMegatonBased) {
+		unboundKeyValue = "None";
 	}
 
 	uint8_t numberOfMouseButtons = 3;
 	uint8_t numberOfClickableMouseButtons = numberOfMouseButtons;
 
-	if(isJFDuke3D) {
+	if(isJFDuke3D || isMegatonBased) {
 		numberOfMouseButtons = 6;
 		numberOfClickableMouseButtons = 4;
 	}
@@ -560,13 +705,29 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 	}
 
 	bool useJoystick = true;
+	uint8_t numberOfJoystickButtons = 8;
 	uint8_t numberOfJoysticks = 4;
+	uint32_t joystickAnalogScale = DEFAULT_ANALOG_SCALE;
+	uint32_t joystickAnalogDeadzone = DEFAULT_JOYSTICK_ANALOG_DEADZONE;
+	uint32_t joystickAnalogSaturate = DEFAULT_JOYSTICK_ANALOG_SATURATE;
 
 	if(isJFDuke3D) {
+		numberOfJoystickButtons = 32;
 		numberOfJoysticks = 12;
 	}
 	else if(isNetDuke32) {
 		useJoystick = false;
+	}
+	else if(isMegatonBased) {
+		useJoystick = false;
+		numberOfJoystickButtons = 36;
+		numberOfJoysticks = 8;
+
+		if(isPKDuke3D) {
+			joystickAnalogScale = 0;
+			joystickAnalogDeadzone = 0;
+			joystickAnalogSaturate = 0;
+		}
 	}
 
 	uint16_t controllerAnalogDeadZone = DEFAULT_CONTROLLER_ANALOG_DEADZONE;
@@ -587,6 +748,9 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 
 	if(isEDuke32 || isNetDuke32) {
 		numberOfControllerThumbSticks = 9;
+	}
+	else if(isPKDuke3D) {
+		numberOfControllerThumbSticks = 8;
 	}
 
 	size_t numberOfPhoneNumbers = 10;
@@ -634,13 +798,11 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 		std::shared_ptr<Section> miscSection(std::make_shared<Section>(MISC_SECTION_NAME));
 		gameConfiguration->addSection(miscSection);
 
-		if(hasDefaultMiscSectionEntries) {
-			miscSection->addIntegerEntry(MISC_EXECUTIONS_ENTRY_NAME, 0);
+		miscSection->addIntegerEntry(MISC_EXECUTIONS_ENTRY_NAME, 0);
 
-			if(hasHeadsUpDisplayEntries) {
-				miscSection->addIntegerEntry(MISC_RUN_MODE_ENTRY_NAME, runModeEnabled ? 1 : 0);
-				miscSection->addIntegerEntry(MISC_CROSSHAIRS_ENTRY_NAME, crosshairEnabled ? 1 : 0);
-			}
+		if(hasHeadsUpDisplayEntries) {
+			miscSection->addIntegerEntry(MISC_RUN_MODE_ENTRY_NAME, runModeEnabled ? 1 : 0);
+			miscSection->addIntegerEntry(MISC_CROSSHAIRS_ENTRY_NAME, crosshairEnabled ? 1 : 0);
 		}
 
 		if(hasShowCinematicsEntry) {
@@ -660,10 +822,10 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 			miscSection->addIntegerEntry(MISC_AUTO_AIM_ENTRY_NAME, autoAim);
 		}
 
-		if(isJFDuke3D) {
-			miscSection->addIntegerEntry(MISC_JFDUKE3D_SHOW_LEVEL_STATISTICS_ENTRY_NAME, 0);
-			miscSection->addIntegerEntry(MISC_JFDUKE3D_STATUS_BAR_SCALE_ENTRY_NAME, 8);
-			miscSection->addIntegerEntry(MISC_JDFUKE3D_SHOW_OPPONENT_WEAPONS_ENTRY_NAME, 0);
+		if(hasExtendedHeadsUpDisplayEntries) {
+			miscSection->addIntegerEntry(MISC_SHOW_LEVEL_STATISTICS_ENTRY_NAME, 0);
+			miscSection->addIntegerEntry(MISC_STATUS_BAR_SCALE_ENTRY_NAME, statusBarScale);
+			miscSection->addIntegerEntry(MISC_SHOW_OPPONENT_WEAPONS_ENTRY_NAME, 0);
 		}
 
 		if(hasUsePrecacheEntry) {
@@ -681,123 +843,125 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 		}
 	}
 
-	// create screen setup section
-	std::shared_ptr<Section> screenSetupSection(std::make_shared<Section>(SCREEN_SETUP_SECTION_NAME, hasComments ? " \n " : ""));
-	gameConfiguration->addSection(screenSetupSection);
+	if(hasScreenSetupSection) {
+		// create screen setup section
+		std::shared_ptr<Section> screenSetupSection(std::make_shared<Section>(SCREEN_SETUP_SECTION_NAME, hasComments ? " \n " : ""));
+		gameConfiguration->addSection(screenSetupSection);
 
-	if(hasComments) {
-		std::stringstream screenSetupSectionFollowingCommentsStream;
-		screenSetupSectionFollowingCommentsStream << " \n";
-		screenSetupSectionFollowingCommentsStream << " \n";
-		screenSetupSectionFollowingCommentsStream << SCREEN_MODE_ENTRY_NAME << "\n";
-		screenSetupSectionFollowingCommentsStream << " - Chained - 0\n";
-		screenSetupSectionFollowingCommentsStream << " - Vesa 2.0 - 1\n";
-		screenSetupSectionFollowingCommentsStream << " - Screen Buffered - 2\n";
-		screenSetupSectionFollowingCommentsStream << " - Tseng optimized - 3\n";
-		screenSetupSectionFollowingCommentsStream << " - Paradise optimized - 4\n";
-		screenSetupSectionFollowingCommentsStream << " - S3 optimized - 5\n";
-		screenSetupSectionFollowingCommentsStream << " - RedBlue Stereo - 7\n";
-		screenSetupSectionFollowingCommentsStream << " - Crystal Eyes - 6\n";
-		screenSetupSectionFollowingCommentsStream << " \n";
-		screenSetupSectionFollowingCommentsStream << SCREEN_WIDTH_ENTRY_NAME << " passed to engine\n";
-		screenSetupSectionFollowingCommentsStream << " \n";
-		screenSetupSectionFollowingCommentsStream << SCREEN_HEIGHT_ENTRY_NAME << " passed to engine\n";
-		screenSetupSectionFollowingCommentsStream << " \n";
-		screenSetupSectionFollowingCommentsStream << " ";
-		screenSetupSection->setFollowingComments(screenSetupSectionFollowingCommentsStream.str());
-	}
-
-	if(hasScreenModeEntry) {
-		screenSetupSection->addIntegerEntry(SCREEN_MODE_ENTRY_NAME, screenMode);
-	}
-
-	if(hasDefaultScreenEntries) {
-		if(hasShadowsEntry) {
-			screenSetupSection->addIntegerEntry(SCREEN_SHADOWS_ENTRY_NAME, 1);
+		if(hasComments) {
+			std::stringstream screenSetupSectionFollowingCommentsStream;
+			screenSetupSectionFollowingCommentsStream << " \n";
+			screenSetupSectionFollowingCommentsStream << " \n";
+			screenSetupSectionFollowingCommentsStream << SCREEN_MODE_ENTRY_NAME << "\n";
+			screenSetupSectionFollowingCommentsStream << " - Chained - 0\n";
+			screenSetupSectionFollowingCommentsStream << " - Vesa 2.0 - 1\n";
+			screenSetupSectionFollowingCommentsStream << " - Screen Buffered - 2\n";
+			screenSetupSectionFollowingCommentsStream << " - Tseng optimized - 3\n";
+			screenSetupSectionFollowingCommentsStream << " - Paradise optimized - 4\n";
+			screenSetupSectionFollowingCommentsStream << " - S3 optimized - 5\n";
+			screenSetupSectionFollowingCommentsStream << " - RedBlue Stereo - 7\n";
+			screenSetupSectionFollowingCommentsStream << " - Crystal Eyes - 6\n";
+			screenSetupSectionFollowingCommentsStream << " \n";
+			screenSetupSectionFollowingCommentsStream << SCREEN_WIDTH_ENTRY_NAME << " passed to engine\n";
+			screenSetupSectionFollowingCommentsStream << " \n";
+			screenSetupSectionFollowingCommentsStream << SCREEN_HEIGHT_ENTRY_NAME << " passed to engine\n";
+			screenSetupSectionFollowingCommentsStream << " \n";
+			screenSetupSectionFollowingCommentsStream << " ";
+			screenSetupSection->setFollowingComments(screenSetupSectionFollowingCommentsStream.str());
 		}
 
-		screenSetupSection->addStringEntry(SCREEN_PASSWORD_ENTRY_NAME, "");
+		if(hasScreenModeEntry) {
+			screenSetupSection->addIntegerEntry(SCREEN_MODE_ENTRY_NAME, screenMode);
+		}
+
+		if(hasDefaultScreenEntries) {
+			if(hasShadowsEntry) {
+				screenSetupSection->addIntegerEntry(SCREEN_SHADOWS_ENTRY_NAME, 1);
+			}
+
+			screenSetupSection->addStringEntry(SCREEN_PASSWORD_ENTRY_NAME, "");
+
+			if(hasAllDefaultScreenEntries) {
+				screenSetupSection->addIntegerEntry(SCREEN_DETAIL_ENTRY_NAME, 1);
+				screenSetupSection->addIntegerEntry(SCREEN_TILT_ENTRY_NAME, 1);
+				screenSetupSection->addIntegerEntry(SCREEN_MESSAGES_ENTRY_NAME, 1);
+			}
+
+			screenSetupSection->addIntegerEntry(SCREEN_OUT_ENTRY_NAME, 0);
+		}
+
+		if(hasUseModelsEntry) {
+			screenSetupSection->addIntegerEntry(SCREEN_USE_MODELS_ENTRY_NAME, 1);
+		}
+
+		if(hasShowFramesPerSecondEntry) {
+			screenSetupSection->addIntegerEntry(BELGIAN_SHOW_FRAMES_PER_SECOND_ENTRY_NAME, 0);
+		}
+
+		if(shouldAddDefaultScreenSize) {
+			screenSetupSection->addIntegerEntry(SCREEN_WIDTH_ENTRY_NAME, resolution.w);
+			screenSetupSection->addIntegerEntry(SCREEN_HEIGHT_ENTRY_NAME, resolution.h);
+		}
+
+		if(hasWindowPropertyEntries) {
+			screenSetupSection->addIntegerEntry(RED_NUKEM_WINDOW_POSITIONING_ENTRY_NAME, 0);
+			screenSetupSection->addIntegerEntry(RED_NUKEM_WINDOW_X_POSITION_ENTRY_NAME, -1);
+			screenSetupSection->addIntegerEntry(RED_NUKEM_WINDOW_Y_POSITION_ENTRY_NAME, -1);
+		}
+
+		if(hasAdvancedGraphicsEntries) {
+			if(hasPolymerSupport) {
+				screenSetupSection->addIntegerEntry(SCREEN_EDUKE32_POLYMER_ENTRY_NAME, 0);
+			}
+
+			if(hasAmbientLightEntry) {
+				screenSetupSection->addStringEntry(SCREEN_AMBIENT_LIGHT_ENTRY_NAME, "1.00");
+			}
+
+			screenSetupSection->addIntegerEntry(SCREEN_BITS_PER_PIXEL_ENTRY_NAME, screenBitsPerPixel);
+
+			if(hasScreenDisplayEntry) {
+				screenSetupSection->addIntegerEntry("ScreenDisplay", 0);
+			}
+
+			screenSetupSection->addIntegerEntry(SCREEN_MAXIMUM_REFRESH_FREQUENCY_ENTRY_NAME, screenMaximumRefreshFrequency);
+		}
+
+		if(hasOpenGLAnimationSmoothingEntry) {
+			screenSetupSection->addIntegerEntry(SCREEN_OPENGL_ANIMATION_SMOOTHING_ENTRY_NAME, 1);
+		}
+
+		if(hasOpenGLTextureModeEntry) {
+			screenSetupSection->addIntegerEntry(SCREEN_OPENGL_TEXTURE_MODE_ENTRY_NAME, 5);
+		}
+
+		if(hasOpenGLAnisotropyEntry) {
+			screenSetupSection->addIntegerEntry(SCREEN_JFDUKE3D_OPENGL_ANISOTROPY_ENTRY_NAME, 0);
+		}
+
+		if(hasOpenGLUseTextureCompressionEntry) {
+			screenSetupSection->addIntegerEntry(SCREEN_OPENGL_USE_TEXTURE_COMPRESSION_ENTRY_NAME, 1);
+		}
+
+		if(hasOpenGLUseCompressedTextureCacheEntry) {
+			screenSetupSection->addIntegerEntry(SCREEN_JFDUKE3D_OPENGL_USE_COMPRESSED_TEXTURE_CACHE_ENTRY_NAME, 1);
+		}
+
+		if(hasFullScreenEntry) {
+			screenSetupSection->addIntegerEntry(BELGIAN_FULL_SCREEN_ENTRY_NAME, 0);
+		}
 
 		if(hasAllDefaultScreenEntries) {
-			screenSetupSection->addIntegerEntry(SCREEN_DETAIL_ENTRY_NAME, 1);
-			screenSetupSection->addIntegerEntry(SCREEN_TILT_ENTRY_NAME, 1);
-			screenSetupSection->addIntegerEntry(SCREEN_MESSAGES_ENTRY_NAME, 1);
+			screenSetupSection->addIntegerEntry(SCREEN_SIZE_ENTRY_NAME, screenSize);
 		}
 
-		screenSetupSection->addIntegerEntry(SCREEN_OUT_ENTRY_NAME, 0);
-	}
-
-	if(hasUseModelsEntry) {
-		screenSetupSection->addIntegerEntry(SCREEN_USE_MODELS_ENTRY_NAME, 1);
-	}
-
-	if(hasShowFramesPerSecondEntry) {
-		screenSetupSection->addIntegerEntry(BELGIAN_SHOW_FRAMES_PER_SECOND_ENTRY_NAME, 0);
-	}
-
-	if(shouldAddDefaultScreenSize) {
-		screenSetupSection->addIntegerEntry(SCREEN_WIDTH_ENTRY_NAME, resolution.w);
-		screenSetupSection->addIntegerEntry(SCREEN_HEIGHT_ENTRY_NAME, resolution.h);
-	}
-
-	if(isRedNukem) {
-		screenSetupSection->addIntegerEntry(RED_NUKEM_WINDOW_POSITIONING_ENTRY_NAME, 0);
-		screenSetupSection->addIntegerEntry(RED_NUKEM_WINDOW_X_POSITION_ENTRY_NAME, -1);
-		screenSetupSection->addIntegerEntry(RED_NUKEM_WINDOW_Y_POSITION_ENTRY_NAME, -1);
-	}
-
-	if(hasAdvancedGraphicsEntries) {
-		if(hasPolymerSupport) {
-			screenSetupSection->addIntegerEntry(SCREEN_EDUKE32_POLYMER_ENTRY_NAME, 0);
+		if(hasExtendedScreenSizeEntry) {
+			screenSetupSection->addIntegerEntry(BELGIAN_EXTENDED_SCREEN_SIZE_ENTRY_NAME, 0);
 		}
 
-		if(hasAmbientLightEntry) {
-			screenSetupSection->addStringEntry(SCREEN_AMBIENT_LIGHT_ENTRY_NAME, "1.00");
+		if(hasAllDefaultScreenEntries) {
+			screenSetupSection->addIntegerEntry(SCREEN_GAMMA_ENTRY_NAME, screenGamma);
 		}
-
-		screenSetupSection->addIntegerEntry(SCREEN_BITS_PER_PIXEL_ENTRY_NAME, screenBitsPerPixel);
-
-		if(isEDuke32) {
-			screenSetupSection->addIntegerEntry("ScreenDisplay", 0);
-		}
-
-		screenSetupSection->addIntegerEntry(SCREEN_MAXIMUM_REFRESH_FREQUENCY_ENTRY_NAME, screenMaximumRefreshFrequency);
-	}
-
-	if(hasOpenGLAnimationSmoothingEntry) {
-		screenSetupSection->addIntegerEntry(SCREEN_OPENGL_ANIMATION_SMOOTHING_ENTRY_NAME, 1);
-	}
-
-	if(hasOpenGLTextureModeEntry) {
-		screenSetupSection->addIntegerEntry(SCREEN_OPENGL_TEXTURE_MODE_ENTRY_NAME, 5);
-	}
-
-	if(isJFDuke3D) {
-		screenSetupSection->addIntegerEntry(SCREEN_JFDUKE3D_OPENGL_ANISOTROPY_ENTRY_NAME, 0);
-	}
-
-	if(hasOpenGLUseTextureCompressionEntry) {
-		screenSetupSection->addIntegerEntry(SCREEN_OPENGL_USE_TEXTURE_COMPRESSION_ENTRY_NAME, 1);
-	}
-
-	if(isJFDuke3D) {
-		screenSetupSection->addIntegerEntry(SCREEN_JFDUKE3D_OPENGL_USE_COMPRESSED_TEXTURE_CACHE_ENTRY_NAME, 1);
-	}
-
-	if(hasFullScreenEntry) {
-		screenSetupSection->addIntegerEntry(BELGIAN_FULL_SCREEN_ENTRY_NAME, 0);
-	}
-
-	if(hasAllDefaultScreenEntries) {
-		screenSetupSection->addIntegerEntry(SCREEN_SIZE_ENTRY_NAME, screenSize);
-	}
-
-	if(hasExtendedScreenSizeEntry) {
-		screenSetupSection->addIntegerEntry(BELGIAN_EXTENDED_SCREEN_SIZE_ENTRY_NAME, 0);
-	}
-
-	if(hasAllDefaultScreenEntries) {
-		screenSetupSection->addIntegerEntry(SCREEN_GAMMA_ENTRY_NAME, screenGamma);
 	}
 
 	if(hasUpdatesSection) {
@@ -859,63 +1023,48 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 		std::shared_ptr<Section> keyDefinitionsSection(std::make_shared<Section>(KEY_DEFINITIONS_SECTION_NAME, hasComments ? " \n " : "", hasComments ? " \n " : ""));
 		gameConfiguration->addSection(keyDefinitionsSection);
 
-		keyDefinitionsSection->addMultiStringEntry(MOVE_FORWARD_ENTRY_NAME, "Up", "Kpad8");
-		keyDefinitionsSection->addMultiStringEntry(MOVE_BACKWARD_ENTRY_NAME, "Down", "Kpad2");
-		keyDefinitionsSection->addMultiStringEntry(TURN_LEFT_ENTRY_NAME, "Left", "Kpad4");
-		keyDefinitionsSection->addMultiStringEntry(TURN_RIGHT_ENTRY_NAME, "Right", hasNoramlizedKeyPadPrefix ? "Kpad6" : "KPad6");
-		keyDefinitionsSection->addMultiStringEntry(STRAFE_ENTRY_NAME, "LAlt", "RAlt");
-		keyDefinitionsSection->addMultiStringEntry(FIRE_ENTRY_NAME, "LCtrl", "RCtrl");
-		keyDefinitionsSection->addMultiStringEntry(OPEN_ENTRY_NAME, "Space", "");
-		keyDefinitionsSection->addMultiStringEntry(RUN_ENTRY_NAME, "LShift", "RShift");
-		keyDefinitionsSection->addMultiStringEntry("AutoRun", "CapLck", "");
-		keyDefinitionsSection->addMultiStringEntry(JUMP_ENTRY_NAME, "A", "/");
-		keyDefinitionsSection->addMultiStringEntry(CROUCH_ENTRY_NAME, "Z", "");
-		keyDefinitionsSection->addMultiStringEntry(LOOK_UP_ENTRY_NAME, "PgUp", "Kpad9");
-		keyDefinitionsSection->addMultiStringEntry(LOOK_DOWN_ENTRY_NAME, "PgDn", "Kpad3");
-		keyDefinitionsSection->addMultiStringEntry(LOOK_LEFT_ENTRY_NAME, "Insert", "Kpad0");
-		keyDefinitionsSection->addMultiStringEntry(LOOK_RIGHT_ENTRY_NAME, "Delete", "Kpad.");
-		keyDefinitionsSection->addMultiStringEntry(STRAFE_LEFT_ENTRY_NAME, ",", "");
-		keyDefinitionsSection->addMultiStringEntry(STRAFE_RIGHT_ENTRY_NAME, ".", "");
-		keyDefinitionsSection->addMultiStringEntry(AIM_UP_ENTRY_NAME, "Home", hasNoramlizedKeyPadPrefix ? "Kpad7" : "KPad7");
-		keyDefinitionsSection->addMultiStringEntry(AIM_DOWN_ENTRY_NAME, "End", "Kpad1");
+		for(size_t i = 0; i < keyDefinitions.size(); i++) {
+			const auto & keyDefinitionInfo = keyDefinitions[i];
 
-		for(size_t i = 1; i <= 10; i++) {
-			keyDefinitionsSection->addMultiStringEntry(fmt::format("{}{}", WEAPON_KEY_DEFINITION_ENTRY_NAME_PREFIX, i), fmt::format("{}", i % 10) , "");
+			keyDefinitionsSection->addMultiStringEntry(
+				std::get<0>(keyDefinitionInfo),
+				isBelgian && Utilities::areStringsEqualIgnoreCase(std::get<0>(keyDefinitionInfo), QUICK_KICK_ENTRY_NAME) ? "C" : (std::get<1>(keyDefinitionInfo).empty() ? unboundKeyValue : (hasNormalizedKeyPadPrefix && Utilities::startsWith(std::get<1>(keyDefinitionInfo), "KP") ? "Kp" + std::get<1>(keyDefinitionInfo).substr(2) : std::get<1>(keyDefinitionInfo))),
+				std::get<2>(keyDefinitionInfo).empty() ? unboundKeyValue : (hasNormalizedKeyPadPrefix && Utilities::startsWith(std::get<2>(keyDefinitionInfo), "KP") ? "Kp" + std::get<2>(keyDefinitionInfo).substr(2) : std::get<2>(keyDefinitionInfo))
+			);
+
+			if(i == 18) {
+				for(size_t i = 1; i <= 10; i++) {
+					keyDefinitionsSection->addMultiStringEntry(fmt::format("{}{}", WEAPON_KEY_DEFINITION_ENTRY_NAME_PREFIX, i), fmt::format("{}", i % 10) , unboundKeyValue);
+				}
+			}
 		}
 
-		keyDefinitionsSection->addMultiStringEntry(INVENTORY_ENTRY_NAME, "Enter", "KpdEnt");
-		keyDefinitionsSection->addMultiStringEntry(INVENTORY_LEFT_ENTRY_NAME, "[", "");
-		keyDefinitionsSection->addMultiStringEntry(INVENTORY_RIGHT_ENTRY_NAME, "]", "");
-		keyDefinitionsSection->addMultiStringEntry("Holo_Duke", "H", "");
-		keyDefinitionsSection->addMultiStringEntry(JETPACK_ENTRY_NAME, "J", "");
-		keyDefinitionsSection->addMultiStringEntry("NightVision", "N", "");
-		keyDefinitionsSection->addMultiStringEntry(MEDKIT_ENTRY_NAME, "M", "");
-		keyDefinitionsSection->addMultiStringEntry("TurnAround", "BakSpc", "");
-		keyDefinitionsSection->addMultiStringEntry("SendMessage", "T", "");
-		keyDefinitionsSection->addMultiStringEntry(MAP_ENTRY_NAME, "Tab", "");
-		keyDefinitionsSection->addMultiStringEntry("Shrink_Screen", "-", "Kpad-");
-		keyDefinitionsSection->addMultiStringEntry("Enlarge_Screen", "=", "Kpad+");
-		keyDefinitionsSection->addMultiStringEntry("Center_View", hasNoramlizedKeyPadPrefix ? "Kpad5" : "KPad5", "");
-		keyDefinitionsSection->addMultiStringEntry("Holster_Weapon", "ScrLck", "");
-		keyDefinitionsSection->addMultiStringEntry(SHOW_OPPONENTS_WEAPON_ENTRY_NAME, "W", "");
-		keyDefinitionsSection->addMultiStringEntry(MAP_FOLLOW_MODE_ENTRY_NAME, "F", "");
-		keyDefinitionsSection->addMultiStringEntry("See_Coop_View", "K", "");
-		keyDefinitionsSection->addMultiStringEntry("Mouse_Aiming", "U", "");
-		keyDefinitionsSection->addMultiStringEntry("Toggle_Crosshair", "I", "");
-		keyDefinitionsSection->addMultiStringEntry("Steroids", "R", "");
-		keyDefinitionsSection->addMultiStringEntry(QUICK_KICK_ENTRY_NAME, isBelgian ? "C" : "`", "");
-		keyDefinitionsSection->addMultiStringEntry(NEXT_WEAPON_ENTRY_NAME, "'", "");
-		keyDefinitionsSection->addMultiStringEntry(PREVIOUS_WEAPON_ENTRY_NAME, ";", "");
+		if(hasShowMenuEntry) {
+			keyDefinitionsSection->addMultiStringEntry(JFDUKE3D_SHOW_MENU_ENTRY_NAME, unboundKeyValue, unboundKeyValue);
+		}
 
-		if(isJFDuke3D) {
-			keyDefinitionsSection->addMultiStringEntry(JFDUKE3D_SHOW_MENU_ENTRY_NAME, "", "");
-			keyDefinitionsSection->addMultiStringEntry(JFDUKE3D_SHOW_CONSOLE_ENTRY_NAME, "NumLck", "");
+		if(hasShowConsoleEntry) {
+			keyDefinitionsSection->addMultiStringEntry(SHOW_CONSOLE_ENTRY_NAME, unboundKeyValue, unboundKeyValue);
+		}
+
+		if(hasExtraKeyDefinitionEntries) {
+			keyDefinitionsSection->addMultiStringEntry(QUICK_LOAD_ENTRY_NAME, "F9", unboundKeyValue);
+			keyDefinitionsSection->addMultiStringEntry(QUICK_SAVE_ENTRY_NAME, "F6", unboundKeyValue);
+			keyDefinitionsSection->addMultiStringEntry(SAVE_MENU_ENTRY_NAME, "F2", unboundKeyValue);
+			keyDefinitionsSection->addMultiStringEntry(LOAD_MENU_ENTRY_NAME, "F3", unboundKeyValue);
+			keyDefinitionsSection->addMultiStringEntry(HELP_MENU_ENTRY_NAME, "F1", unboundKeyValue);
+			keyDefinitionsSection->addMultiStringEntry(SOUND_MENU_ENTRY_NAME, "F4", unboundKeyValue);
+			keyDefinitionsSection->addMultiStringEntry(NEXT_TRACK_ENTRY_NAME, "F5", unboundKeyValue);
+			keyDefinitionsSection->addMultiStringEntry(VIEW_MODE_ENTRY_NAME, "F7", unboundKeyValue);
+			keyDefinitionsSection->addMultiStringEntry(VIDEO_MENU_ENTRY_NAME, "F11", unboundKeyValue);
+			keyDefinitionsSection->addMultiStringEntry(QUIT_GAME_ENTRY_NAME, "F10", unboundKeyValue);
+			keyDefinitionsSection->addMultiStringEntry(GAME_MENU_ENTRY_NAME, "F8", unboundKeyValue);
 		}
 
 		if(isBelgian) {
-			keyDefinitionsSection->addMultiStringEntry(BELGIAN_HIDE_WEAPON_ENTRY_NAME, "S", "");
-			keyDefinitionsSection->addMultiStringEntry(BELGIAN_AUTO_AIM_ENTRY_NAME, "V", "");
-			keyDefinitionsSection->addMultiStringEntry(BELGIAN_CONSOLE_ENTRY_NAME, "`", "");
+			keyDefinitionsSection->addMultiStringEntry(BELGIAN_HIDE_WEAPON_ENTRY_NAME, "S", unboundKeyValue);
+			keyDefinitionsSection->addMultiStringEntry(BELGIAN_AUTO_AIM_ENTRY_NAME, "V", unboundKeyValue);
+			keyDefinitionsSection->addMultiStringEntry(BELGIAN_CONSOLE_ENTRY_NAME, "`", unboundKeyValue);
 		}
 	}
 
@@ -955,7 +1104,12 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 	}
 
 	if(hasMouseSensitivity) {
-		controlsSection->addIntegerEntry("MouseSensitivity", 32768);
+		controlsSection->addIntegerEntry("MouseSensitivity", mouseSensitivity);
+	}
+
+	if(hasMouseScale) {
+		controlsSection->addIntegerEntry(CONTROLS_MOUSE_SCALE_X_ENTRY_NAME, mouseScale);
+		controlsSection->addIntegerEntry(CONTROLS_MOUSE_SCALE_Y_ENTRY_NAME, mouseScale);
 	}
 
 	if(hasExternalFileNameEntry) {
@@ -966,8 +1120,12 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 		controlsSection->addIntegerEntry("EnableRudder", 0);
 	}
 
+	if(hasMouseYLockEntry) {
+		controlsSection->addIntegerEntry(CONTROLS_MOUSE_Y_LOCK_ENTRY_NAME, 0);
+	}
+
 	if(hasMouseAimingEntry) {
-		controlsSection->addIntegerEntry(MOUSE_AIMING_ENTRY_NAME, 0);
+		controlsSection->addIntegerEntry(CONTROLS_MOUSE_AIMING_ENTRY_NAME, 0);
 	}
 
 	if(hasGameMouseAimingEntry) {
@@ -975,23 +1133,23 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 	}
 
 	if(hasDefaultControls) {
-		controlsSection->addIntegerEntry(AIMING_FLAG_ENTRY_NAME, 0);
+		controlsSection->addIntegerEntry(AIMING_FLAG_ENTRY_NAME, aimingFlag);
 	}
 
 	if(hasMouseAimFlippingEntry) {
 		controlsSection->addIntegerEntry(MOUSE_AIMING_FLIPPED_ENTRY_NAME, 0);
 	}
 
-	if(isJFDuke3D) {
-		controlsSection->addIntegerEntry(CONTROLS_JFDUKE3D_RUN_KEY_BEHAVIOUR_ENTRY_NAME, 0);
+	if(hasRunKeyBehaviourEntry) {
+		controlsSection->addIntegerEntry(CONTROLS_RUN_KEY_BEHAVIOUR_ENTRY_NAME, 0);
 	}
 
 	if(hasControlsAutoAimEntry) {
 		controlsSection->addIntegerEntry(CONTROLS_AUTO_AIM_ENTRY_NAME, autoAim);
 	}
 
-	if(isJFDuke3D) {
-		controlsSection->addIntegerEntry(CONTROLS_JFDUKE3D_WEAPON_SWITCH_MODE_ENTRY_NAME, 3);
+	if(hasWeaponSwitchModeEntry) {
+		controlsSection->addIntegerEntry(CONTROLS_WEAPON_SWITCH_MODE_ENTRY_NAME, 3);
 	}
 
 	const std::vector<std::string> & mouseButtonActions = isEDuke32 ? DEFAULT_EDUKE32_MOUSE_BUTTON_ACTIONS : (isRedNukem ? DEFAULT_RED_NUKEM_MOUSE_BUTTON_ACTIONS : (isNetDuke32 ? DEFAULT_NETDUKE32_MOUSE_BUTTON_ACTIONS : DEFAULT_MOUSE_BUTTON_ACTIONS));
@@ -1012,10 +1170,10 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 			joystickButtonActionList = &DEFAULT_JDFUKE3D_JOYSTICK_BUTTON_ACTIONS;
 		}
 
-		for(size_t i = 0; i < joystickButtonActionList->size(); i++) {
-			const std::pair<std::string, std::string> & joystickButtonActions = (*joystickButtonActionList)[i];
-			controlsSection->addStringEntry(fmt::format("{}{}{}", JOYSTICK_PREFIX, BUTTON_SUFFIX, i), joystickButtonActions.first);
-			controlsSection->addStringEntry(fmt::format("{}{}{}{}", JOYSTICK_PREFIX, BUTTON_SUFFIX, CLICKED_SUFFIX, i), joystickButtonActions.second);
+		for(size_t i = 0; i < numberOfJoystickButtons; i++) {
+			const std::pair<std::string, std::string> * joystickButtonActions = i < joystickButtonActionList->size() ? &(*joystickButtonActionList)[i] : nullptr;
+			controlsSection->addStringEntry(fmt::format("{}{}{}", JOYSTICK_PREFIX, BUTTON_SUFFIX, i), joystickButtonActions != nullptr ? joystickButtonActions->first : "");
+			controlsSection->addStringEntry(fmt::format("{}{}{}{}", JOYSTICK_PREFIX, BUTTON_SUFFIX, CLICKED_SUFFIX, i), joystickButtonActions != nullptr ? joystickButtonActions->second : "");
 		}
 	}
 
@@ -1037,7 +1195,7 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 		}
 
 		if(hasMouseAnalogScaleEntries) {
-			controlsSection->addIntegerEntry(fmt::format("{}{}{}{}", MOUSE_PREFIX, ANALOG_SUFFIX, SCALE_SUFFIX, i), DEFAULT_ANALOG_SCALE);
+			controlsSection->addIntegerEntry(fmt::format("{}{}{}{}", MOUSE_PREFIX, ANALOG_SUFFIX, SCALE_SUFFIX, i), mouseAnalogScale);
 		}
 	}
 
@@ -1061,11 +1219,11 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 				controlsSection->addStringEntry(fmt::format("{}{}{}{}_{}", JOYSTICK_PREFIX, DIGITAL_SUFFIX, AXES_SUFFIX, i, j), joystickDigitalAxesAction);
 			}
 
-			controlsSection->addIntegerEntry(fmt::format("{}{}{}{}", JOYSTICK_PREFIX, ANALOG_SUFFIX, SCALE_SUFFIX, i), DEFAULT_ANALOG_SCALE);
+			controlsSection->addIntegerEntry(fmt::format("{}{}{}{}", JOYSTICK_PREFIX, ANALOG_SUFFIX, SCALE_SUFFIX, i), joystickAnalogScale);
 
-			if(isJFDuke3D) {
-				controlsSection->addIntegerEntry(fmt::format("{}{}{}{}", JOYSTICK_PREFIX, ANALOG_SUFFIX, DEADZONE_SUFFIX, i), DEFAULT_JFDUKE3D_JOYSTICK_ANALOG_DEADZONE);
-				controlsSection->addIntegerEntry(fmt::format("{}{}{}{}", JOYSTICK_PREFIX, ANALOG_SUFFIX, SATURATE_SUFFIX, i), DEFAULT_JFDUKE3D_JOYSTICK_ANALOG_SATURATE);
+			if(hasJoystickAnalogDeadZoneAndSaturateEntries) {
+				controlsSection->addIntegerEntry(fmt::format("{}{}{}{}", JOYSTICK_PREFIX, ANALOG_SUFFIX, DEADZONE_SUFFIX, i), joystickAnalogDeadzone);
+				controlsSection->addIntegerEntry(fmt::format("{}{}{}{}", JOYSTICK_PREFIX, ANALOG_SUFFIX, SATURATE_SUFFIX, i), joystickAnalogSaturate);
 			}
 		}
 	}
@@ -1108,6 +1266,22 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 			controlsSection->addIntegerEntry(fmt::format("{}{}{}{}", CONTROLLER_PREFIX, ANALOG_SUFFIX, DEADZONE_SUFFIX, i), controllerAnalogDeadZone);
 			controlsSection->addIntegerEntry(fmt::format("{}{}{}{}", CONTROLLER_PREFIX, ANALOG_SUFFIX, SATURATE_SUFFIX, i), controllerAnalogSaturate);
 		}
+	}
+
+	if(hasLobbyFilterSection) {
+		std::shared_ptr<Section> lobbyFilterSection(std::make_shared<Section>(LOBBY_FILTER_SECTION_NAME));
+		gameConfiguration->addSection(lobbyFilterSection);
+
+		lobbyFilterSection->addIntegerEntry(LOBBY_FILTER_GAME_MODE_ENTRY_NAME, 3);
+		lobbyFilterSection->addIntegerEntry(LOBBY_FILTER_SHOW_FULL_LOBBIES_ENTRY_NAME, 1);
+		lobbyFilterSection->addIntegerEntry(LOBBY_FILTER_MAPS_ENTRY_NAME, 0);
+	}
+
+	if(hasMultiplayerSection) {
+		std::shared_ptr<Section> multiplayerSection(std::make_shared<Section>(MULTIPLAYER_SECTION_NAME));
+		gameConfiguration->addSection(multiplayerSection);
+
+		multiplayerSection->addIntegerEntry(MULTIPLAYER_SHOW_INFO_ENTRY_NAME, 1);
 	}
 
 	// create communication setup section
@@ -1169,8 +1343,9 @@ bool GameConfiguration::updateForDOSBox() {
 	bool isBelgian = false;
 	bool isRedNukem = false;
 	bool isNetDuke32 = false;
+	bool isPKDuke3D = false;
 
-	if(!determineGameVersion(isBeta, isRegularVersion, isAtomicEdition, isJFDuke3D, isEDuke32, isBelgian, isRedNukem, isNetDuke32)) {
+	if(!determineGameVersion(isBeta, isRegularVersion, isAtomicEdition, isJFDuke3D, isEDuke32, isBelgian, isRedNukem, isNetDuke32, isPKDuke3D)) {
 		return false;
 	}
 
@@ -1229,8 +1404,9 @@ bool GameConfiguration::updateWithBetterControls() {
 	bool isBelgian = false;
 	bool isRedNukem = false;
 	bool isNetDuke32 = false;
+	bool isPKDuke3D = false;
 
-	if(!determineGameVersion(isBeta, isRegularVersion, isAtomicEdition, isJFDuke3D, isEDuke32, isBelgian, isRedNukem, isNetDuke32)) {
+	if(!determineGameVersion(isBeta, isRegularVersion, isAtomicEdition, isJFDuke3D, isEDuke32, isBelgian, isRedNukem, isNetDuke32, isPKDuke3D)) {
 		return false;
 	}
 
