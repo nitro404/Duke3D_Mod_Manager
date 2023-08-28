@@ -283,6 +283,7 @@ public:
 	static const std::string SCREEN_HEIGHT_ENTRY_NAME;
 	static const std::string SCREEN_SHADOWS_ENTRY_NAME;
 	static const std::string SCREEN_PASSWORD_ENTRY_NAME;
+	static const std::string SCREEN_ENVIRONMENT_ENTRY_NAME;
 	static const std::string SCREEN_DETAIL_ENTRY_NAME;
 	static const std::string SCREEN_TILT_ENTRY_NAME;
 	static const std::string SCREEN_MESSAGES_ENTRY_NAME;
@@ -356,6 +357,9 @@ public:
 	static const std::string MISC_RUN_MODE_ENTRY_NAME;
 	static const std::string MISC_CROSSHAIRS_ENTRY_NAME;
 	static const std::string MISC_EXECUTIONS_ENTRY_NAME;
+	static const std::string COMMUNICATION_IRQ_NUMBER_ENTRY_NAME;
+	static const std::string COMMUNICATION_UART_ADDRESS_ENTRY_NAME;
+	static const std::string COMMUNICATION_SOCKET_NUMBER_ENTRY_NAME;
 
 	static const std::array<std::string, 10> DEFAULT_COMBAT_MACROS;
 	static const std::string DEFAULT_PLAYER_NAME;
@@ -365,7 +369,7 @@ public:
 	static const uint32_t DEFAULT_ANALOG_SCALE;
 
 private:
-	bool determineGameVersion(bool & isBeta, bool & isRegularVersion, bool & isAtomicEdition, bool & isJFDuke3D, bool & isEDuke32, bool & isBelgian, bool & isRedNukem, bool & isNetDuke32, bool & isPKDuke3D, bool & isDuke3dw);
+	bool determineGameVersion(bool & isBeta, bool & isRegularVersion, bool & isAtomicEdition, bool & isJFDuke3D, bool & isEDuke32, bool & isBelgian, bool & isRedNukem, bool & isNetDuke32, bool & isPKDuke3D, bool & isDuke3dw, bool & isDuke3d_w32);
 	void updateParent();
 
 	Style m_style;

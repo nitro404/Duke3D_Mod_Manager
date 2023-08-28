@@ -20,6 +20,7 @@ const std::string GameConfiguration::SCREEN_WIDTH_ENTRY_NAME("ScreenWidth");
 const std::string GameConfiguration::SCREEN_HEIGHT_ENTRY_NAME("ScreenHeight");
 const std::string GameConfiguration::SCREEN_SHADOWS_ENTRY_NAME("Shadows");
 const std::string GameConfiguration::SCREEN_PASSWORD_ENTRY_NAME("Password");
+const std::string GameConfiguration::SCREEN_ENVIRONMENT_ENTRY_NAME("Environment");
 const std::string GameConfiguration::SCREEN_DETAIL_ENTRY_NAME("Detail");
 const std::string GameConfiguration::SCREEN_TILT_ENTRY_NAME("Tilt");
 const std::string GameConfiguration::SCREEN_MESSAGES_ENTRY_NAME("Messages");
@@ -93,6 +94,9 @@ const std::string GameConfiguration::CONTROLS_MOUSE_AIMING_ENTRY_NAME("MouseAimi
 const std::string GameConfiguration::GAME_MOUSE_AIMING_ENTRY_NAME("GameMouseAiming");
 const std::string GameConfiguration::MOUSE_AIMING_FLIPPED_ENTRY_NAME("MouseAimingFlipped");
 const std::string GameConfiguration::AIMING_FLAG_ENTRY_NAME("AimingFlag");
+const std::string GameConfiguration::COMMUNICATION_IRQ_NUMBER_ENTRY_NAME("IrqNumber");
+const std::string GameConfiguration::COMMUNICATION_UART_ADDRESS_ENTRY_NAME("UartAddress");
+const std::string GameConfiguration::COMMUNICATION_SOCKET_NUMBER_ENTRY_NAME("SocketNumber");
 
 const std::string GameConfiguration::DEFAULT_PLAYER_NAME("DUKE");
 const Dimension GameConfiguration::DEFAULT_RESOLUTION(320, 200);
