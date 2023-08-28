@@ -373,6 +373,21 @@ bool GameConfiguration::Section::addIntegerEntry(const std::string & entryName, 
 	return addEntry(entry);
 }
 
+bool GameConfiguration::Section::addFloatEntry(const std::string & entryName, float value) {
+	if(!Entry::isNameValid(entryName)) {
+		return false;
+	}
+
+	std::shared_ptr<Entry> entry(std::make_shared<Entry>(entryName));
+	entry->setFloatValue(value);
+
+	if(!entry->isValid(false)) {
+		return false;
+	}
+
+	return addEntry(entry);
+}
+
 bool GameConfiguration::Section::addHexadecimalEntryUsingDecimal(const std::string & entryName, uint64_t value) {
 	if(!Entry::isNameValid(entryName)) {
 		return false;
@@ -476,6 +491,19 @@ bool GameConfiguration::Section::setEntryIntegerValue(const std::string & entryN
 	std::shared_ptr<Entry> entry(getOrCreateEntry(entryName, createEntry, entryExists));
 
 	entry->setIntegerValue(value);
+
+	if(!entryExists) {
+		return addEntry(entry);
+	}
+
+	return true;
+}
+
+bool GameConfiguration::Section::setEntryFloatValue(const std::string & entryName, float value, bool createEntry) {
+	bool entryExists = false;
+	std::shared_ptr<Entry> entry(getOrCreateEntry(entryName, createEntry, entryExists));
+
+	entry->setFloatValue(value);
 
 	if(!entryExists) {
 		return addEntry(entry);

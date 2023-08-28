@@ -44,6 +44,7 @@ public:
 		enum class Type {
 			Empty,
 			Integer,
+			Float,
 			Hexadecimal,
 			String,
 			MultiString
@@ -61,11 +62,13 @@ public:
 		Type getType() const;
 		bool isEmpty() const;
 		bool isInteger() const;
+		bool isFloat() const;
 		bool isHexadecimal() const;
 		bool isString() const;
 		bool isMultiString() const;
 		bool getBooleanValue() const;
 		int64_t getIntegerValue() const;
+		float getFloatValue() const;
 		std::string getHexadecimalValue() const;
 		const std::string & getStringValue() const;
 		size_t numberOfMultiStringValues() const;
@@ -75,6 +78,7 @@ public:
 		const std::vector<std::string> & getMultiStringValue() const;
 		void setEmpty();
 		void setIntegerValue(int64_t value);
+		void setFloatValue(float value);
 		void setHexadecimalValueFromDecimal(int64_t value);
 		void setStringValue(const std::string & value);
 		bool setMultiStringValue(const std::string & value, size_t index, bool resizeValue = false);
@@ -103,7 +107,7 @@ public:
 	private:
 		std::string m_name;
 		Type m_type;
-		std::variant<int64_t, std::string, std::vector<std::string>> m_value;
+		std::variant<int64_t, float, std::string, std::vector<std::string>> m_value;
 		Section * m_parentSection;
 		GameConfiguration * m_parentGameConfiguration;
 	};
@@ -147,6 +151,7 @@ public:
 		bool addEntry(std::shared_ptr<Entry> entry);
 		bool addEmptyEntry(const std::string & entryName);
 		bool addIntegerEntry(const std::string & entryName, int64_t value);
+		bool addFloatEntry(const std::string & entryName, float value);
 		bool addHexadecimalEntryUsingDecimal(const std::string & entryName, uint64_t value);
 		bool addStringEntry(const std::string & entryName, const std::string & value);
 		bool addMultiStringEntry(const std::string & entryName, const std::string & valueA, const std::string & valueB);
@@ -155,6 +160,7 @@ public:
 		bool addMultiStringEntry(const std::string & entryName, const std::vector<std::string> & values);
 		bool setEntryEmptyValue(const std::string & entryName, bool createEntry = false);
 		bool setEntryIntegerValue(const std::string & entryName, int64_t value, bool createEntry = false);
+		bool setEntryFloatValue(const std::string & entryName, float value, bool createEntry = false);
 		bool setEntryHexadecimalValueUsingDecimal(const std::string & entryName, uint64_t value, bool createEntry = false);
 		bool setEntryStringValue(const std::string & entryName, const std::string & value, bool createEntry = false);
 		bool setEntryMultiStringValue(const std::string & entryName, const std::string & value, size_t index, bool resizeValue = false, bool createEntry = false);

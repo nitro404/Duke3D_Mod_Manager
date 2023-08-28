@@ -109,6 +109,10 @@ bool GameConfiguration::Entry::isInteger() const {
 	return m_type == Type::Integer;
 }
 
+bool GameConfiguration::Entry::isFloat() const {
+	return m_type == Type::Float;
+}
+
 bool GameConfiguration::Entry::isHexadecimal() const {
 	return m_type == Type::Hexadecimal;
 }
@@ -127,6 +131,14 @@ int64_t GameConfiguration::Entry::getIntegerValue() const {
 	}
 
 	return std::get<int64_t>(m_value);
+}
+
+float GameConfiguration::Entry::getFloatValue() const {
+	if(!std::holds_alternative<float>(m_value)) {
+		return 0.0f;
+	}
+
+	return std::get<float>(m_value);
 }
 
 std::string GameConfiguration::Entry::getHexadecimalValue() const {
@@ -209,6 +221,11 @@ void GameConfiguration::Entry::setIntegerValue(int64_t value) {
 	m_value = value;
 }
 
+void GameConfiguration::Entry::setFloatValue(float value) {
+	m_type = Type::Float;
+	m_value = value;
+}
+
 void GameConfiguration::Entry::setHexadecimalValueFromDecimal(int64_t value) {
 	m_type = Type::Hexadecimal;
 	m_value = value;
@@ -271,6 +288,11 @@ void GameConfiguration::Entry::clearValue() {
 			break;
 		}
 
+		case Type::Float: {
+			m_value = 0.0f;
+			break;
+		}
+
 		case Type::String: {
 			m_value = Utilities::emptyString;
 			break;
@@ -317,6 +339,11 @@ std::string GameConfiguration::Entry::toString() const {
 
 		case Type::Integer: {
 			valueStream << std::get<int64_t>(m_value);
+			break;
+		}
+
+		case Type::Float: {
+			valueStream << fmt::format("{:.6f}f", std::get<float>(m_value));
 			break;
 		}
 
@@ -398,11 +425,22 @@ std::unique_ptr<GameConfiguration::Entry> GameConfiguration::Entry::parseFrom(st
 			entry->m_value = parseQuotedValues(value);
 		}
 	}
+	else if(value[value.length() - 1] == 'f') {
+		std::optional<float> optionalFloatValue(Utilities::parseFloat(value.substr(0, value.length() - 1)));
+
+		if(!optionalFloatValue.has_value()) {
+			spdlog::warn("'{}' entry has an invalid float value: '{}'.", name, value);
+			return nullptr;
+		}
+
+		entry->m_type = Type::Float;
+		entry->m_value = optionalFloatValue.value();
+	}
 	else {
 		std::optional<int64_t> optionalLongValue(Utilities::parseLong(value));
 
 		if(!optionalLongValue.has_value()) {
-			spdlog::warn("'{}' entry has an invalid value: '{}'.", name, value);
+			spdlog::warn("'{}' entry has an invalid integer value: '{}'.", name, value);
 			return nullptr;
 		}
 
@@ -432,6 +470,14 @@ bool GameConfiguration::Entry::isValid(bool validateParents) const {
 		case Type::Integer:
 		case Type::Hexadecimal: {
 			if(!std::holds_alternative<int64_t>(m_value)) {
+				return false;
+			}
+
+			break;
+		}
+
+		case Type::Float: {
+			if(!std::holds_alternative<float>(m_value)) {
 				return false;
 			}
 
