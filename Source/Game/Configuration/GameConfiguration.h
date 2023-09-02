@@ -369,7 +369,25 @@ public:
 	static const uint32_t DEFAULT_ANALOG_SCALE;
 
 private:
-	bool determineGameVersion(bool & isBeta, bool & isRegularVersion, bool & isAtomicEdition, bool & isJFDuke3D, bool & isEDuke32, bool & isBelgian, bool & isRedNukem, bool & isNetDuke32, bool & isPKDuke3D, bool & isDuke3dw, bool & isDuke3d_w32, bool & isXDuke, bool & isRDuke);
+	enum class GameVersionType {
+		Beta,
+		RegularVersion,
+		AtomicEdition,
+		JFDuke3D,
+		eDuke32,
+		NetDuke32,
+		RedNukem,
+		BelgianChocolate,
+		Duke3dw,
+		pkDuke3D,
+		xDuke,
+		rDuke,
+		Duke3d_w32
+	};
+
+	static std::string getGameVersionIDFromType(GameVersionType gameVersionType);
+	static std::optional<GameVersionType> getGameVersionTypeFromID(std::string_view gameVersionID);
+	std::optional<GameVersionType> determineGameVersionType();
 	void updateParent();
 
 	Style m_style;

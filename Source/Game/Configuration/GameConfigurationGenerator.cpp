@@ -604,7 +604,97 @@ const std::array<std::string, 10> DEFAULT_EDUKE32_COMBAT_MACROS({
 	"AARRRGHHHHH!!!"
 });
 
-bool GameConfiguration::determineGameVersion(bool & isBeta, bool & isRegularVersion, bool & isAtomicEdition, bool & isJFDuke3D, bool & isEDuke32, bool & isBelgian, bool & isRedNukem, bool & isNetDuke32, bool & isPKDuke3D, bool & isDuke3dw, bool & isDuke3d_w32, bool & isXDuke, bool & isRDuke) {
+std::string GameConfiguration::getGameVersionIDFromType(GameVersionType gameVersionType) {
+	switch(gameVersionType) {
+		case GameVersionType::Beta:
+			return GameVersion::ORIGINAL_BETA_VERSION.getID();
+
+		case GameVersionType::RegularVersion:
+			return GameVersion::ORIGINAL_REGULAR_VERSION.getID();
+
+		case GameVersionType::AtomicEdition:
+			return GameVersion::ORIGINAL_ATOMIC_EDITION.getID();
+
+		case GameVersionType::JFDuke3D:
+			return GameVersion::JFDUKE3D.getID();
+
+		case GameVersionType::eDuke32:
+			return GameVersion::EDUKE32.getID();
+
+		case GameVersionType::NetDuke32:
+			return GameVersion::NETDUKE32.getID();
+
+		case GameVersionType::RedNukem:
+			return GameVersion::RED_NUKEM.getID();
+
+		case GameVersionType::BelgianChocolate:
+			return GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getID();
+
+		case GameVersionType::Duke3dw:
+			return GameVersion::DUKE3DW.getID();
+
+		case GameVersionType::pkDuke3D:
+			return GameVersion::PKDUKE3D.getID();
+
+		case GameVersionType::xDuke:
+			return GameVersion::XDUKE.getID();
+
+		case GameVersionType::rDuke:
+			return GameVersion::RDUKE.getID();
+
+		case GameVersionType::Duke3d_w32:
+			return GameVersion::DUKE3D_W32.getID();
+	}
+
+	return {};
+}
+
+std::optional<GameConfiguration::GameVersionType> GameConfiguration::getGameVersionTypeFromID(std::string_view gameVersionID) {
+	if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_BETA_VERSION.getID())) {
+		return GameVersionType::Beta;
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_REGULAR_VERSION.getID())) {
+		return GameVersionType::RegularVersion;
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_ATOMIC_EDITION.getID()) ||
+			Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_PLUTONIUM_PAK.getID())) {
+		return GameVersionType::AtomicEdition;
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::JFDUKE3D.getID())) {
+		return GameVersionType::JFDuke3D;
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::EDUKE32.getID())) {
+		return GameVersionType::eDuke32;
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::NETDUKE32.getID())) {
+		return GameVersionType::NetDuke32;
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::RED_NUKEM.getID())) {
+		return GameVersionType::RedNukem;
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getID())) {
+		return GameVersionType::BelgianChocolate;
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::DUKE3DW.getID())) {
+		return GameVersionType::Duke3dw;
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::PKDUKE3D.getID())) {
+		return GameVersionType::pkDuke3D;
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::XDUKE.getID())) {
+		return GameVersionType::xDuke;
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::RDUKE.getID())) {
+		return GameVersionType::rDuke;
+	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::DUKE3D_W32.getID())) {
+		return GameVersionType::Duke3d_w32;
+	}
+
+	return {};
+}
+
+std::optional<GameConfiguration::GameVersionType> GameConfiguration::determineGameVersionType() {
 	std::shared_ptr<Section> screenSetupSection(getSectionWithName(SCREEN_SETUP_SECTION_NAME));
 
 	// xDuke / rDuke
@@ -616,9 +706,7 @@ bool GameConfiguration::determineGameVersion(bool & isBeta, bool & isRegularVers
 		   screenSetupSection->hasEntryWithName(SCREEN_WIDESCREEN_HUD_ENTRY_NAME) &&
 		   screenSetupSection->hasEntryWithName(SCREEN_COLOR_FIX_ENTRY_NAME)) {
 
-			isRDuke = true;
-
-			return true;
+			return GameVersionType::rDuke;
 		}
 
 		// xDuke
@@ -636,9 +724,7 @@ bool GameConfiguration::determineGameVersion(bool & isBeta, bool & isRegularVers
 		   screenSetupSection->hasEntryWithName(SCREEN_MENU_WIDTH_ENTRY_NAME) &&
 		   screenSetupSection->hasEntryWithName(SCREEN_MENU_HEIGHT_ENTRY_NAME)) {
 
-			isXDuke = true;
-
-			return true;
+			return GameVersionType::xDuke;
 		}
 	}
 
@@ -660,9 +746,7 @@ bool GameConfiguration::determineGameVersion(bool & isBeta, bool & isRegularVers
 			   lobbyFilterSection->hasEntryWithName(LOBBY_FILTER_SHOW_FULL_LOBBIES_ENTRY_NAME) &&
 			   lobbyFilterSection->hasEntryWithName(LOBBY_FILTER_MAPS_ENTRY_NAME)) {
 
-				isPKDuke3D = true;
-
-				return true;
+				return GameVersionType::pkDuke3D;
 			}
 		}
 	}
@@ -687,9 +771,7 @@ bool GameConfiguration::determineGameVersion(bool & isBeta, bool & isRegularVers
 				   setupVersionEntry->isString() &&
 				   Utilities::areStringsEqual(setupVersionEntry->getStringValue(), REGULAR_VERSION_SETUP_VERSION)) {
 
-					isDuke3d_w32 = true;
-
-					return true;
+					return GameVersionType::Duke3d_w32;
 				}
 			}
 		}
@@ -706,9 +788,7 @@ bool GameConfiguration::determineGameVersion(bool & isBeta, bool & isRegularVers
 			if(miscSection != nullptr &&
 			   miscSection->hasEntryWithName(MISC_PREDICTION_DEBUG_ENTRY_NAME)) {
 
-				isNetDuke32 = true;
-
-				return true;
+				return GameVersionType::NetDuke32;
 			}
 		}
 
@@ -720,9 +800,7 @@ bool GameConfiguration::determineGameVersion(bool & isBeta, bool & isRegularVers
 			if(miscSection != nullptr &&
 			   miscSection->hasEntryWithName(SHOW_CINEMATICS_ENTRY_NAME)) {
 
-				isBelgian = true;
-
-				return true;
+				return GameVersionType::BelgianChocolate;
 			}
 		}
 
@@ -733,15 +811,11 @@ bool GameConfiguration::determineGameVersion(bool & isBeta, bool & isRegularVers
 			if(screenSetupSection->hasEntryWithName(SCREEN_EDUKE32_POLYMER_ENTRY_NAME)) {
 				// RedNukem
 				if(screenSetupSection->hasEntryWithName(RED_NUKEM_WINDOW_POSITIONING_ENTRY_NAME)) {
-					isRedNukem = true;
-
-					return true;
+					return GameVersionType::RedNukem;
 				}
 
 				// eDuke32
-				isEDuke32 = true;
-
-				return true;
+				return GameVersionType::eDuke32;
 			}
 
 			// JFDuke3D / Duke3dw
@@ -770,9 +844,7 @@ bool GameConfiguration::determineGameVersion(bool & isBeta, bool & isRegularVers
 						   miscSection->hasEntryWithName(MISC_WEAPON_HIDE_ENTRY_NAME) &&
 						   miscSection->hasEntryWithName(MISC_AUTO_SAVE_ENTRY_NAME)) {
 
-							isDuke3dw = true;
-
-							return true;
+							return GameVersionType::Duke3dw;
 						}
 					}
 				}
@@ -783,9 +855,7 @@ bool GameConfiguration::determineGameVersion(bool & isBeta, bool & isRegularVers
 				if(keyDefinitionsSection != nullptr &&
 				   keyDefinitionsSection->hasEntryWithName(JFDUKE3D_SHOW_MENU_ENTRY_NAME)) {
 
-					isJFDuke3D = true;
-
-					return true;
+					return GameVersionType::JFDuke3D;
 				}
 			}
 		}
@@ -794,58 +864,114 @@ bool GameConfiguration::determineGameVersion(bool & isBeta, bool & isRegularVers
 	std::shared_ptr<Section> setupSection(getSectionWithName(SETUP_SECTION_NAME));
 
 	if(setupSection == nullptr) {
-		return false;
+		return {};
 	}
 
 	// Beta 0.99
 	std::shared_ptr<Entry> setupVersionEntry(setupSection->getEntryWithName(SETUP_VERSION_ENTRY_NAME));
 
 	if(setupVersionEntry == nullptr || !setupVersionEntry->isString()) {
-		isBeta = true;
-
-		return true;
+		return GameVersionType::Beta;
 	}
 
-	// Regular 1.3D / Plutonium Pak 1.4 / Atomic Edition 1.5
+	// Regular 1.3D
 	if(Utilities::areStringsEqual(setupVersionEntry->getStringValue(), REGULAR_VERSION_SETUP_VERSION)) {
-		isRegularVersion = true;
+		return GameVersionType::RegularVersion;
 	}
-	else if(Utilities::areStringsEqual(setupVersionEntry->getStringValue(), ATOMIC_EDITION_SETUP_VERSION)) {
-		isAtomicEdition = true;
-	}
-	else {
+
+	// Plutonium Pak 1.4 / Atomic Edition 1.5
+	if(!Utilities::areStringsEqual(setupVersionEntry->getStringValue(), ATOMIC_EDITION_SETUP_VERSION)) {
 		spdlog::warn("Unexpected setup version '{}', expected '{}' or '{}'. Assuming game configuration version is for Atomic Edition / Plutonium Pak.", setupVersionEntry->getStringValue(), REGULAR_VERSION_SETUP_VERSION, ATOMIC_EDITION_SETUP_VERSION);
-
-		isAtomicEdition = true;
 	}
 
-	return true;
+	return GameVersionType::AtomicEdition;
 }
 
 std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfiguration(const std::string & gameVersionID) {
-	bool isBeta = Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_BETA_VERSION.getID());
-	bool isRegularVersion = Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_REGULAR_VERSION.getID());
-	bool isAtomicEdition = Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_PLUTONIUM_PAK.getID()) || Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_ATOMIC_EDITION.getID());
-	bool isJFDuke3D = Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::JFDUKE3D.getID());
-	bool isEDuke32 = Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::EDUKE32.getID());
-	bool isNetDuke32 = Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::NETDUKE32.getID());
-	bool isBelgian = Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getID());
-	bool isRedNukem = Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::RED_NUKEM.getID());
-	bool isPKDuke3D = Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::PKDUKE3D.getID());
-	bool isDuke3dw = Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::DUKE3DW.getID());
-	bool isDuke3d_w32 = Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::DUKE3D_W32.getID());
-	bool isXDuke = Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::XDUKE.getID());
-	bool isRDuke = Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::RDUKE.getID());
+	std::optional<GameVersionType> optionalGameVersionType(getGameVersionTypeFromID(gameVersionID));
+
+	if(!optionalGameVersionType.has_value()) {
+		return nullptr;
+	}
+
+	bool isBeta = false;
+	bool isRegularVersion = false;
+	bool isAtomicEdition = false;
+	bool isJFDuke3D = false;
+	bool isEDuke32 = false;
+	bool isNetDuke32 = false;
+	bool isRedNukem = false;
+	bool isBelgianChocolate = false;
+	bool isDuke3dw = false;
+	bool isPKDuke3D = false;
+	bool isXDuke = false;
+	bool isRDuke = false;
+	bool isDuke3d_w32 = false;
+
+	switch(optionalGameVersionType.value()) {
+		case GameVersionType::Beta:
+			isBeta = true;
+			break;
+
+		case GameVersionType::RegularVersion:
+			isRegularVersion = true;
+			break;
+
+		case GameVersionType::AtomicEdition:
+			isAtomicEdition = true;
+			break;
+
+		case GameVersionType::JFDuke3D:
+			isJFDuke3D = true;
+			break;
+
+		case GameVersionType::eDuke32:
+			isEDuke32 = true;
+			break;
+
+		case GameVersionType::NetDuke32:
+			isNetDuke32 = true;
+			break;
+
+		case GameVersionType::RedNukem:
+			isRedNukem = true;
+			break;
+
+		case GameVersionType::BelgianChocolate:
+			isBelgianChocolate = true;
+			break;
+
+		case GameVersionType::Duke3dw:
+			isDuke3dw = true;
+			break;
+
+		case GameVersionType::pkDuke3D:
+			isPKDuke3D = true;
+			break;
+
+		case GameVersionType::xDuke:
+			isXDuke = true;
+			break;
+
+		case GameVersionType::rDuke:
+			isRDuke = true;
+			break;
+
+		case GameVersionType::Duke3d_w32:
+			isDuke3d_w32 = true;
+			break;
+	}
+
 	bool isEDuke32Based = isEDuke32 || isNetDuke32 || isRedNukem;
 	bool isMegatonBased = isPKDuke3D;
 	bool isDuke3d_w32Based = isDuke3d_w32 || isXDuke;
 	bool isXDukeBased = isXDuke || isRDuke;
 
 	// determine game version specific configuration features
-	bool hasComments = !isJFDuke3D && !isEDuke32Based && !isBelgian && !isMegatonBased && !isDuke3dw && !isDuke3d_w32Based && !isXDukeBased;
+	bool hasComments = !isJFDuke3D && !isEDuke32Based && !isBelgianChocolate && !isMegatonBased && !isDuke3dw && !isDuke3d_w32Based && !isXDukeBased;
 	bool doesSupportFloatingPointEntryValues = isDuke3d_w32;
-	bool hasSetupSection = !isBelgian && !isXDukeBased;
-	bool hasMiscSection = isJFDuke3D || isEDuke32Based || isBelgian || isMegatonBased || isDuke3dw || isDuke3d_w32Based || isXDukeBased;
+	bool hasSetupSection = !isBelgianChocolate && !isXDukeBased;
+	bool hasMiscSection = isJFDuke3D || isEDuke32Based || isBelgianChocolate || isMegatonBased || isDuke3dw || isDuke3d_w32Based || isXDukeBased;
 	bool hasHeadsUpDisplayEntries = !isEDuke32Based;
 	bool hasExtendedHeadsUpDisplayEntries = isJFDuke3D || isMegatonBased || isDuke3dw;
 	bool hasMiscWeaponIconsEntry = isDuke3dw;
@@ -853,36 +979,36 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 	bool hasMiscAutoSaveEntry = isDuke3dw;
 	bool hasControlsAutoAimEntry = isJFDuke3D || isMegatonBased || isDuke3dw;
 	bool hasWeaponSwitchModeEntry = isJFDuke3D || isMegatonBased || isDuke3dw;
-	bool hasMiscAutoAimEntry = isBelgian || isXDukeBased;
+	bool hasMiscAutoAimEntry = isBelgianChocolate || isXDukeBased;
 	bool hasUsePrecacheEntry = isJFDuke3D || isNetDuke32 || isMegatonBased;
-	bool hasShowCinematicsEntry = isBelgian || isXDukeBased;
-	bool hasWeaponVisibilityEntries = isBelgian || isXDukeBased;
-	bool hasWeaponAutoSwitchEntry = isBelgian || isXDukeBased;
-	bool hasWeaponChoicePreferences = isJFDuke3D || isBelgian || isMegatonBased || isDuke3dw || isDuke3d_w32Based || isXDukeBased;
+	bool hasShowCinematicsEntry = isBelgianChocolate || isXDukeBased;
+	bool hasWeaponVisibilityEntries = isBelgianChocolate || isXDukeBased;
+	bool hasWeaponAutoSwitchEntry = isBelgianChocolate || isXDukeBased;
+	bool hasWeaponChoicePreferences = isJFDuke3D || isBelgianChocolate || isMegatonBased || isDuke3dw || isDuke3d_w32Based || isXDukeBased;
 	bool hasForceSetupEntry = isJFDuke3D || isEDuke32Based || isPKDuke3D || isDuke3dw;
 	bool hasModLoadingSupport = isEDuke32Based;
 	bool hasNoAutoLoadEntry = !isNetDuke32;
 	bool hasSoundSetupSection = !isEDuke32Based;
-	bool hasLegacyAudioEntries = !isJFDuke3D && !isEDuke32Based && !isBelgian && !isMegatonBased && !isDuke3dw && !isXDukeBased;
-	bool hasDefaultAudioEntries = isJFDuke3D || isBelgian || isMegatonBased || isDuke3dw || isDuke3d_w32Based || isXDukeBased;
-	bool hasAudioQualityEntries = !isBelgian && !isRDuke;
+	bool hasLegacyAudioEntries = !isJFDuke3D && !isEDuke32Based && !isBelgianChocolate && !isMegatonBased && !isDuke3dw && !isXDukeBased;
+	bool hasDefaultAudioEntries = isJFDuke3D || isBelgianChocolate || isMegatonBased || isDuke3dw || isDuke3d_w32Based || isXDukeBased;
+	bool hasAudioQualityEntries = !isBelgianChocolate && !isRDuke;
 	bool hasNumberOfChannelsEntry = !isDuke3dw;
 	bool hasSoundDeviceEntry = !isDuke3dw;
 	bool hasSoundRandomMusicEntry = isDuke3dw;
-	bool hasOpponentSoundToggleEntry = isBelgian || isXDukeBased;
+	bool hasOpponentSoundToggleEntry = isBelgianChocolate || isXDukeBased;
 	bool hasScreenSetupSection = !isMegatonBased;
 	bool shouldAddDefaultScreenSize = !isEDuke32Based;
 	bool hasAdvancedGraphicsEntries = isJFDuke3D || isEDuke32Based || isDuke3dw;
 	bool hasPolymerSupport = isEDuke32Based;
 	bool hasAmbientLightEntry = isNetDuke32;
 	bool hasUseModelsEntry = isNetDuke32 || isDuke3dw;
-	bool hasDefaultScreenEntries = isJFDuke3D || isEDuke32Based || isBelgian || isDuke3dw || isDuke3d_w32Based || isXDukeBased;
+	bool hasDefaultScreenEntries = isJFDuke3D || isEDuke32Based || isBelgianChocolate || isDuke3dw || isDuke3d_w32Based || isXDukeBased;
 	bool hasAllDefaultScreenEntries = !isEDuke32Based || isNetDuke32;
 	bool hasShadowsEntry = !isEDuke32Based;
-	bool hasScreenModeEntry = !isBelgian && !isXDukeBased;
+	bool hasScreenModeEntry = !isBelgianChocolate && !isXDukeBased;
 	bool hasCustomScreenEntries = isXDuke;
 	bool hasEnvironmentEntry = isDuke3d_w32;
-	bool hasShowFramesPerSecondEntry = isBelgian || isXDukeBased;
+	bool hasShowFramesPerSecondEntry = isBelgianChocolate || isXDukeBased;
 	bool hasOpenGLAnimationSmoothingEntry = isNetDuke32;
 	bool hasOpenGLTextureModeEntry = isJFDuke3D || isNetDuke32 || isDuke3dw;
 	bool hasOpenGLUseTextureCompressionEntry = isJFDuke3D || isNetDuke32 || isDuke3dw;
@@ -896,44 +1022,44 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 	bool hasOpenGLUseHighTileEntry = isDuke3dw;
 	bool hasScreenDisplayEntry = isEDuke32;
 	bool hasWindowPropertyEntries = isRedNukem;
-	bool hasFullScreenEntry = isBelgian || isDuke3d_w32 || isXDukeBased;
+	bool hasFullScreenEntry = isBelgianChocolate || isDuke3d_w32 || isXDukeBased;
 	bool hasWideScreenEntries = isRDuke;
 	bool hasColourFixEntry = isRDuke;
-	bool hasExtendedScreenSizeEntry = isBelgian || isXDukeBased;
+	bool hasExtendedScreenSizeEntry = isBelgianChocolate || isXDukeBased;
 	bool hasKeyDefinitions = !isEDuke32Based;
 	bool hasLegacyControllerEntries = !isEDuke32Based && !isDuke3dw;
-	bool hasJoystickPortEntry = !isBelgian && !isXDukeBased;
-	bool hasMouseAnalogAxesEntries = !isBelgian && !isDuke3d_w32Based && !isXDukeBased;
-	bool hasMouseAnalogScaleEntries = !isBelgian && !isRedNukem && !isNetDuke32 && !isDuke3d_w32Based && !isXDukeBased;
+	bool hasJoystickPortEntry = !isBelgianChocolate && !isXDukeBased;
+	bool hasMouseAnalogAxesEntries = !isBelgianChocolate && !isDuke3d_w32Based && !isXDukeBased;
+	bool hasMouseAnalogScaleEntries = !isBelgianChocolate && !isRedNukem && !isNetDuke32 && !isDuke3d_w32Based && !isXDukeBased;
 	bool hasMouseDigitalEntries = !isRedNukem && !isDuke3d_w32;
-	bool hasRancidMeatMouseSensitivityEntries = isBelgian || isXDukeBased;
+	bool hasRancidMeatMouseSensitivityEntries = isBelgianChocolate || isXDukeBased;
 	bool hasMouseYLockEntry = isPKDuke3D;
 	bool hasMouseScale = isPKDuke3D;
-	bool hasGameMouseAimingEntry = isBelgian || isDuke3d_w32Based || isXDukeBased;
+	bool hasGameMouseAimingEntry = isBelgianChocolate || isDuke3d_w32Based || isXDukeBased;
 	bool hasRunKeyBehaviourEntry = isJFDuke3D || isPKDuke3D || isDuke3dw;
 	bool hasShowMenuEntry = isJFDuke3D;
 	bool hasShowConsoleEntry = isJFDuke3D || isMegatonBased || isDuke3dw;
-	bool hasConsoleEntry = isBelgian || isDuke3d_w32Based || isXDukeBased;
+	bool hasConsoleEntry = isBelgianChocolate || isDuke3d_w32Based || isXDukeBased;
 	bool hasExtraKeyDefinitionEntries = isPKDuke3D;
-	bool hasHideWeaponKeyDefinitionEntry = isBelgian || isXDukeBased;
-	bool hasAutoAimKeyDefinitionEntry = isBelgian || isXDukeBased;
-	bool hasMouseSensitivity = !isEDuke32Based && !isBelgian && !isXDukeBased;
-	bool hasExternalFileNameEntry = !isJFDuke3D && !isEDuke32Based && !isBelgian && !isMegatonBased && !isDuke3dw && !isXDukeBased;
-	bool hasRudderEntry = !isJFDuke3D && !isEDuke32Based && !isBelgian && !isMegatonBased && !isDuke3dw && !isXDukeBased;
-	bool hasAimingFlagEntry = isJFDuke3D || isBelgian || isMegatonBased || isDuke3dw || isDuke3d_w32Based || isXDukeBased;
+	bool hasHideWeaponKeyDefinitionEntry = isBelgianChocolate || isXDukeBased;
+	bool hasAutoAimKeyDefinitionEntry = isBelgianChocolate || isXDukeBased;
+	bool hasMouseSensitivity = !isEDuke32Based && !isBelgianChocolate && !isXDukeBased;
+	bool hasExternalFileNameEntry = !isJFDuke3D && !isEDuke32Based && !isBelgianChocolate && !isMegatonBased && !isDuke3dw && !isXDukeBased;
+	bool hasRudderEntry = !isJFDuke3D && !isEDuke32Based && !isBelgianChocolate && !isMegatonBased && !isDuke3dw && !isXDukeBased;
+	bool hasAimingFlagEntry = isJFDuke3D || isBelgianChocolate || isMegatonBased || isDuke3dw || isDuke3d_w32Based || isXDukeBased;
 	bool hasMouseAimingEntry = !isEDuke32Based;
 	bool hasMouseAimFlippedEntry = !isBeta && !isRegularVersion && !isEDuke32Based;
-	bool hasMouseButtonClickedEntries = !isBelgian && !isRedNukem && !isRDuke;
-	bool hasGamepadControls = !isJFDuke3D && !isEDuke32Based && !isBelgian && !isMegatonBased && !isDuke3dw && !isXDukeBased;
-	bool hasJoystickControls = !isEDuke32Based && !isBelgian && !isXDukeBased;
+	bool hasMouseButtonClickedEntries = !isBelgianChocolate && !isRedNukem && !isRDuke;
+	bool hasGamepadControls = !isJFDuke3D && !isEDuke32Based && !isBelgianChocolate && !isMegatonBased && !isDuke3dw && !isXDukeBased;
+	bool hasJoystickControls = !isEDuke32Based && !isBelgianChocolate && !isXDukeBased;
 	bool hasJoystickButtonClickedEntries = !isDuke3d_w32;
 	bool hasJoystickAnalogDeadZoneEntries = isJFDuke3D || isMegatonBased || isDuke3dw || isDuke3d_w32;
 	bool hasJoystickAnalogSaturateEntries = isJFDuke3D || isMegatonBased || isDuke3dw;
 	bool hasControllerControls = isEDuke32 || isNetDuke32;
 	bool hasControllerAnalogSensitivityEntries = !isNetDuke32;
 	bool hasControllerAnalogScaleEntries = isNetDuke32;
-	bool hasNormalizedKeyPadPrefix = isJFDuke3D || isBelgian || isDuke3dw || isXDukeBased;
-	bool hasDialupNetworking = !isJFDuke3D && !isEDuke32Based && !isBelgian && !isMegatonBased && !isDuke3dw && !isXDukeBased;
+	bool hasNormalizedKeyPadPrefix = isJFDuke3D || isBelgianChocolate || isDuke3dw || isXDukeBased;
+	bool hasDialupNetworking = !isJFDuke3D && !isEDuke32Based && !isBelgianChocolate && !isMegatonBased && !isDuke3dw && !isXDukeBased;
 	bool hasCombatMacros = !isJFDuke3D && !isMegatonBased && !isDuke3dw;
 	bool hasRemoteRidiculeFileName = !isJFDuke3D && !isMegatonBased && !isDuke3dw;
 	bool hasPlayerColourEntry = isDuke3dw;
@@ -951,7 +1077,7 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 	// determine game version specific configuration parameters
 	GameConfiguration::Style style = GameConfiguration::Style::Default;
 
-	if(isJFDuke3D || isEDuke32Based || isBelgian || isPKDuke3D || isDuke3dw || isDuke3d_w32Based || isXDukeBased) {
+	if(isJFDuke3D || isEDuke32Based || isBelgianChocolate || isPKDuke3D || isDuke3dw || isDuke3d_w32Based || isXDukeBased) {
 		style |= GameConfiguration::Style::NewlineAfterSections;
 	}
 
@@ -997,7 +1123,7 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 	bool useHighTile = true;
 	Dimension resolution(DEFAULT_RESOLUTION);
 
-	if(isJFDuke3D || isBelgian || isDuke3d_w32Based) {
+	if(isJFDuke3D || isBelgianChocolate || isDuke3d_w32Based) {
 		resolution = Dimension(640, 480);
 	}
 	else if(isDuke3dw) {
@@ -1021,7 +1147,7 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 	uint8_t blasterType = 6;
 	uint8_t blasterInterrupt = 7;
 
-	if(isJFDuke3D || isBelgian || isPKDuke3D || isDuke3dw || isDuke3d_w32) {
+	if(isJFDuke3D || isBelgianChocolate || isPKDuke3D || isDuke3dw || isDuke3d_w32) {
 		soundDevice = 0;
 		musicDevice = 0;
 	}
@@ -1083,7 +1209,7 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 		screenBitsPerPixel = 32;
 	}
 
-	if(isBelgian) {
+	if(isBelgianChocolate) {
 		screenGamma = 16;
 	}
 	else if(isNetDuke32) {
@@ -1125,7 +1251,7 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 	if(isJFDuke3D) {
 		autoAim = 1;
 	}
-	else if(isBelgian) {
+	else if(isBelgianChocolate) {
 		autoAim = 2;
 	}
 	else if(isPKDuke3D) {
@@ -1157,7 +1283,7 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 		statusBarScale = 100;
 	}
 
-	if(isBelgian || isMegatonBased || isDuke3dw || isDuke3d_w32Based || isXDukeBased) {
+	if(isBelgianChocolate || isMegatonBased || isDuke3dw || isDuke3d_w32Based || isXDukeBased) {
 		runModeEnabled = true;
 		crosshairEnabled = true;
 	}
@@ -1183,7 +1309,7 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 		numberOfMouseButtons = 10;
 		numberOfClickableMouseButtons = 8;
 	}
-	else if(isBelgian || isXDuke) {
+	else if(isBelgianChocolate || isXDuke) {
 		numberOfMouseButtons = 7;
 		numberOfClickableMouseButtons = 0;
 	}
@@ -1510,7 +1636,7 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 		}
 
 		if(hasFullScreenEntry) {
-			if(isBelgian) {
+			if(isBelgianChocolate) {
 				screenSetupSection->addIntegerEntry(FULL_SCREEN_ENTRY_NAME, fullScreen ? 1 : 0);
 			}
 			else if(isDuke3d_w32 || isXDuke || isRDuke) {
@@ -1650,7 +1776,7 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 
 			keyDefinitionsSection->addMultiStringEntry(
 				std::get<0>(keyDefinitionInfo),
-				(isBelgian || isXDuke || isDuke3dw) && Utilities::areStringsEqualIgnoreCase(std::get<0>(keyDefinitionInfo), QUICK_KICK_ENTRY_NAME) ? (isBelgian || isXDuke ? "C" : "Q") : (std::get<1>(keyDefinitionInfo).empty() ? unboundKeyValue : (hasNormalizedKeyPadPrefix && Utilities::startsWith(std::get<1>(keyDefinitionInfo), "KP") ? "Kp" + std::get<1>(keyDefinitionInfo).substr(2) : std::get<1>(keyDefinitionInfo))),
+				(isBelgianChocolate || isXDuke || isDuke3dw) && Utilities::areStringsEqualIgnoreCase(std::get<0>(keyDefinitionInfo), QUICK_KICK_ENTRY_NAME) ? (isBelgianChocolate || isXDuke ? "C" : "Q") : (std::get<1>(keyDefinitionInfo).empty() ? unboundKeyValue : (hasNormalizedKeyPadPrefix && Utilities::startsWith(std::get<1>(keyDefinitionInfo), "KP") ? "Kp" + std::get<1>(keyDefinitionInfo).substr(2) : std::get<1>(keyDefinitionInfo))),
 				std::get<2>(keyDefinitionInfo).empty() ? unboundKeyValue : (hasNormalizedKeyPadPrefix && Utilities::startsWith(std::get<2>(keyDefinitionInfo), "KP") ? "Kp" + std::get<2>(keyDefinitionInfo).substr(2) : std::get<2>(keyDefinitionInfo))
 			);
 
@@ -2050,21 +2176,9 @@ std::unique_ptr<GameConfiguration> GameConfiguration::generateDefaultGameConfigu
 }
 
 bool GameConfiguration::updateForDOSBox() {
-	bool isBeta = false;
-	bool isRegularVersion = false;
-	bool isAtomicEdition = false;
-	bool isJFDuke3D = false;
-	bool isEDuke32 = false;
-	bool isBelgian = false;
-	bool isRedNukem = false;
-	bool isNetDuke32 = false;
-	bool isPKDuke3D = false;
-	bool isDuke3dw = false;
-	bool isDuke3d_w32 = false;
-	bool isXDuke = false;
-	bool isRDuke = false;
+	std::optional<GameVersionType> optionalGameVersionType(determineGameVersionType());
 
-	if(!determineGameVersion(isBeta, isRegularVersion, isAtomicEdition, isJFDuke3D, isEDuke32, isBelgian, isRedNukem, isNetDuke32, isPKDuke3D, isDuke3dw, isDuke3d_w32, isXDuke, isRDuke)) {
+	if(!optionalGameVersionType.has_value()) {
 		return false;
 	}
 
@@ -2085,7 +2199,7 @@ bool GameConfiguration::updateForDOSBox() {
 	if(!screenSetupSection->setEntryIntegerValue(SCREEN_HEIGHT_ENTRY_NAME, 600, true)) { return false; }
 	if(!screenSetupSection->setEntryIntegerValue(SCREEN_SHADOWS_ENTRY_NAME, 1, true)) { return false; }
 
-	if(isAtomicEdition) {
+	if(optionalGameVersionType == GameVersionType::AtomicEdition) {
 		if(!screenSetupSection->setEntryStringValue(SCREEN_PASSWORD_ENTRY_NAME, "", true)) { return false; }
 	}
 	else {
@@ -2096,7 +2210,7 @@ bool GameConfiguration::updateForDOSBox() {
 	if(!screenSetupSection->setEntryIntegerValue(SCREEN_TILT_ENTRY_NAME, 1, true)) { return false; }
 	if(!screenSetupSection->setEntryIntegerValue(SCREEN_MESSAGES_ENTRY_NAME, 1, true)) { return false; }
 	if(!screenSetupSection->setEntryIntegerValue(SCREEN_OUT_ENTRY_NAME, 0, true)) { return false; }
-	if(isBeta) {
+	if(optionalGameVersionType == GameVersionType::Beta) {
 		if(!screenSetupSection->setEntryIntegerValue("LastIOSlot", 0, true)) { return false; }
 	}
 	if(!screenSetupSection->setEntryIntegerValue(SCREEN_SIZE_ENTRY_NAME, 4, true)) { return false; }
@@ -2105,7 +2219,7 @@ bool GameConfiguration::updateForDOSBox() {
 	if(!soundSetupSection->setEntryIntegerValue(SOUND_FX_DEVICE_ENTRY_NAME, 0, true)) { return false; }
 	if(!soundSetupSection->setEntryIntegerValue(SOUND_MUSIC_DEVICE_ENTRY_NAME, 0, true)) { return false; }
 	if(!soundSetupSection->setEntryIntegerValue(SOUND_NUM_BITS_ENTRY_NAME, 16, true)) { return false; }
-	if(!soundSetupSection->setEntryIntegerValue(SOUND_MIX_RATE_ENTRY_NAME, isAtomicEdition ? 44000 : 22000, true)) { return false; }
+	if(!soundSetupSection->setEntryIntegerValue(SOUND_MIX_RATE_ENTRY_NAME, optionalGameVersionType == GameVersionType::AtomicEdition ? 44000 : 22000, true)) { return false; }
 	if(!soundSetupSection->setEntryIntegerValue(SOUND_SOUND_TOGGLE_ENTRY_NAME, 1, true)) { return false; }
 	if(!soundSetupSection->setEntryIntegerValue(SOUND_VOICE_TOGGLE_ENTRY_NAME, 1, true)) { return false; }
 	if(!soundSetupSection->setEntryIntegerValue(SOUND_AMBIENCE_TOGGLE_ENTRY_NAME, 1, true)) { return false; }
@@ -2115,21 +2229,9 @@ bool GameConfiguration::updateForDOSBox() {
 }
 
 bool GameConfiguration::updateWithBetterControls() {
-	bool isBeta = false;
-	bool isRegularVersion = false;
-	bool isAtomicEdition = false;
-	bool isJFDuke3D = false;
-	bool isEDuke32 = false;
-	bool isBelgian = false;
-	bool isRedNukem = false;
-	bool isNetDuke32 = false;
-	bool isPKDuke3D = false;
-	bool isDuke3dw = false;
-	bool isDuke3d_w32 = false;
-	bool isXDuke = false;
-	bool isRDuke = false;
+	std::optional<GameVersionType> optionalGameVersionType(determineGameVersionType());
 
-	if(!determineGameVersion(isBeta, isRegularVersion, isAtomicEdition, isJFDuke3D, isEDuke32, isBelgian, isRedNukem, isNetDuke32, isPKDuke3D, isDuke3dw, isDuke3d_w32, isXDuke, isRDuke)) {
+	if(!optionalGameVersionType.has_value()) {
 		return false;
 	}
 
@@ -2182,13 +2284,13 @@ bool GameConfiguration::updateWithBetterControls() {
 		if(!keyDefinitionsSection->setEntryMultiStringValue(MAP_FOLLOW_MODE_ENTRY_NAME, "", 0, true, true)) { return false; }
 	}
 
-	if(isAtomicEdition) {
+	if(optionalGameVersionType == GameVersionType::AtomicEdition) {
 		if(!controlsSection->setEntryIntegerValue(MOUSE_AIMING_FLIPPED_ENTRY_NAME, 1, true)) { return false; }
 	}
 
 	std::string firstMouseButtonEntryName(fmt::format("{}{}{}", MOUSE_PREFIX, BUTTON_SUFFIX, 1));
 
-	if(isAtomicEdition) {
+	if(optionalGameVersionType == GameVersionType::AtomicEdition) {
 		if(!controlsSection->setEntryStringValue(firstMouseButtonEntryName, QUICK_KICK_ENTRY_NAME, true)) { return false; }
 	}
 	else {
@@ -2198,7 +2300,7 @@ bool GameConfiguration::updateWithBetterControls() {
 	if(!controlsSection->setEntryStringValue(fmt::format("{}{}{}{}", MOUSE_PREFIX, BUTTON_SUFFIX, CLICKED_SUFFIX, 1), "", true)) { return false; }
 	if(!controlsSection->setEntryStringValue(fmt::format("{}{}{}", MOUSE_PREFIX, BUTTON_SUFFIX, 2), OPEN_ENTRY_NAME, true)) { return false; }
 
-	if(isAtomicEdition) {
+	if(optionalGameVersionType == GameVersionType::AtomicEdition) {
 		if(!controlsSection->setEntryIntegerValue(GAME_MOUSE_AIMING_ENTRY_NAME, 1, true)) { return false; }
 		if(!controlsSection->setEntryIntegerValue(AIMING_FLAG_ENTRY_NAME, 1, true)) { return false; }
 	}
@@ -2210,7 +2312,7 @@ bool GameConfiguration::updateWithBetterControls() {
 		addSection(miscSection);
 	}
 
-	if(!isBeta) {
+	if(optionalGameVersionType != GameVersionType::Beta) {
 		if(!miscSection->setEntryIntegerValue(MISC_RUN_MODE_ENTRY_NAME, 1, true)) { return false; }
 		if(!miscSection->setEntryIntegerValue(MISC_CROSSHAIRS_ENTRY_NAME, 1, true)) { return false; }
 	}
