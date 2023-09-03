@@ -254,6 +254,7 @@ public:
 
 	static std::unique_ptr<GameConfiguration> generateDefaultGameConfiguration(const std::string & gameVersionID);
 	bool updateForDOSBox();
+	bool updateWithBetterSettings();
 	bool updateWithBetterControls();
 
 	std::string toString() const;
@@ -419,7 +420,9 @@ private:
 			HasWeaponAutoSwitchEntry = 1 << 11,
 			HasWeaponChoicePreferences = 1 << 12,
 			HasPredictionDebugEntry = 1 << 13,
-			Default = Supported | HasHeadsUpDisplayEntries
+			DoesSupportRunModeToggle = 1 << 14,
+			DoesSupportCrosshairToggle = 1 << 15,
+			Default = Supported | HasHeadsUpDisplayEntries | DoesSupportRunModeToggle | DoesSupportCrosshairToggle
 		};
 
 		enum class Controls : uint32_t {
@@ -454,7 +457,8 @@ private:
 			HasControllerAnalogSensitivityEntries = 1 << 27,
 			HasControllerAnalogScaleEntries = 1 << 28,
 			HasUseMouseAndJoystickEntries = 1 << 29,
-			Default = Supported | Populated | HasLegacyControllerEntries | HasJoystickPortEntry | HasMouseAnalogAxesEntries | HasMouseAnalogScaleEntries | HasMouseDigitalEntries | HasMouseSensitivity | HasExternalFileNameEntry | HasRudderEntry | HasMouseAimingEntry | HasMouseAimFlippedEntry | HasMouseButtonClickedEntries | HasGamepadControls | HasJoystickControls | HasJoystickButtonClickedEntries
+			DoesSupportQuickKick = 1 << 30,
+			Default = Supported | Populated | HasLegacyControllerEntries | HasJoystickPortEntry | HasMouseAnalogAxesEntries | HasMouseAnalogScaleEntries | HasMouseDigitalEntries | HasMouseSensitivity | HasExternalFileNameEntry | HasRudderEntry | HasMouseAimingEntry | HasMouseAimFlippedEntry | HasMouseButtonClickedEntries | HasGamepadControls | HasJoystickControls | HasJoystickButtonClickedEntries | DoesSupportQuickKick
 		};
 
 		enum class Sound : uint16_t {
@@ -503,6 +507,7 @@ private:
 			HasWideScreenEntries = 1 << 27,
 			HasColourFixEntry = 1 << 28,
 			HasExtendedScreenSizeEntry = 1 << 29,
+			HasLastInputOutputSlotEntry = 1 << 30,
 			Default = Supported | Populated | HasAllDefaultEntries | HasShadowsEntry | HasScreenModeEntry
 		};
 

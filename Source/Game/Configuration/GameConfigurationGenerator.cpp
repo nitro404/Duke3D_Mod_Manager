@@ -459,8 +459,8 @@ static const std::array<std::tuple<std::string, std::string, std::string>, 42> D
 static const std::array<std::tuple<std::string, std::string, std::string>, 42> DEFAULT_DUKE3DW_KEY_DEFINITIONS({
 	std::make_tuple(GameConfiguration::MOVE_FORWARD_ENTRY_NAME,          "Up",     "W"),
 	std::make_tuple(GameConfiguration::MOVE_BACKWARD_ENTRY_NAME,         "Down",   "S"),
-	std::make_tuple(GameConfiguration::TURN_LEFT_ENTRY_NAME,             "Left",   "Left"),
-	std::make_tuple(GameConfiguration::TURN_RIGHT_ENTRY_NAME,            "Right",  "Right"),
+	std::make_tuple(GameConfiguration::TURN_LEFT_ENTRY_NAME,             "Left",   ""),
+	std::make_tuple(GameConfiguration::TURN_RIGHT_ENTRY_NAME,            "Right",  ""),
 	std::make_tuple(GameConfiguration::STRAFE_ENTRY_NAME,                "",       "RAlt"),
 	std::make_tuple(GameConfiguration::FIRE_ENTRY_NAME,                  "LCtrl",  "RCtrl"),
 	std::make_tuple(GameConfiguration::OPEN_ENTRY_NAME,                  "E",      "Kpad0"),
@@ -709,12 +709,19 @@ GameConfiguration::SectionFeatures GameConfiguration::getSectionFeaturesForGameV
 
 	switch(gameVersionType) {
 		case GameVersionType::Beta: {
-			sectionFeatures.controls &= ~SectionFeatures::Controls::HasMouseAimFlippedEntry;
+			sectionFeatures.misc &= ~(SectionFeatures::Misc::DoesSupportRunModeToggle |
+									  SectionFeatures::Misc::DoesSupportCrosshairToggle);
+
+			sectionFeatures.controls &= ~(SectionFeatures::Controls::HasMouseAimFlippedEntry |
+										  SectionFeatures::Controls::DoesSupportQuickKick);
+
+			sectionFeatures.screen |= SectionFeatures::Screen::HasLastInputOutputSlotEntry;
 			break;
 		}
 
 		case GameVersionType::RegularVersion: {
-			sectionFeatures.controls &= ~SectionFeatures::Controls::HasMouseAimFlippedEntry;
+			sectionFeatures.controls &= ~(SectionFeatures::Controls::HasMouseAimFlippedEntry |
+										  SectionFeatures::Controls::DoesSupportQuickKick);
 			break;
 		}
 
@@ -2584,48 +2591,88 @@ bool GameConfiguration::updateForDOSBox() {
 		return false;
 	}
 
+	GameVersionType gameVersionType = optionalGameVersionType.value();
+
+	SectionFeatures sectionFeatures(getSectionFeaturesForGameVersion(gameVersionType));
+
+	uint16_t mixRate = 44000;
+
+	if(gameVersionType == GameVersionType::RegularVersion || gameVersionType == GameVersionType::Beta) {
+		mixRate = 22000;
+	}
+
 	std::shared_ptr<Section> screenSetupSection(getSectionWithName(SCREEN_SETUP_SECTION_NAME));
 
-	if(screenSetupSection == nullptr) {
-		return false;
+	if(screenSetupSection != nullptr) {
+		if(!screenSetupSection->setEntryIntegerValue(SCREEN_MODE_ENTRY_NAME, 1, true)) { return false; }
+		if(!screenSetupSection->setEntryIntegerValue(SCREEN_WIDTH_ENTRY_NAME, 800, true)) { return false; }
+		if(!screenSetupSection->setEntryIntegerValue(SCREEN_HEIGHT_ENTRY_NAME, 600, true)) { return false; }
+		if(!screenSetupSection->setEntryStringValue(SCREEN_PASSWORD_ENTRY_NAME, "", true)) { return false; }
+		if(!screenSetupSection->setEntryStringValue(SCREEN_ENVIRONMENT_ENTRY_NAME, "", true)) { return false; }
+		if(!screenSetupSection->setEntryIntegerValue(SCREEN_DETAIL_ENTRY_NAME, 1, true)) { return false; }
+		if(!screenSetupSection->setEntryIntegerValue(SCREEN_TILT_ENTRY_NAME, 1, true)) { return false; }
+		if(!screenSetupSection->setEntryIntegerValue(SCREEN_MESSAGES_ENTRY_NAME, 1, true)) { return false; }
+		if(!screenSetupSection->setEntryIntegerValue(SCREEN_OUT_ENTRY_NAME, 0, true)) { return false; }
+		if(Any(sectionFeatures.screen & SectionFeatures::Screen::HasLastInputOutputSlotEntry)) {
+			if(!screenSetupSection->setEntryIntegerValue("LastIOSlot", 0, true)) { return false; }
+		}
+		if(!screenSetupSection->setEntryIntegerValue(SCREEN_SIZE_ENTRY_NAME, 4, true)) { return false; }
+		if(!screenSetupSection->setEntryIntegerValue(SCREEN_GAMMA_ENTRY_NAME, 0, true)) { return false; }
 	}
 
 	std::shared_ptr<Section> soundSetupSection(getSectionWithName(SOUND_SETUP_SECTION_NAME));
 
-	if(soundSetupSection == nullptr) {
+	if(soundSetupSection != nullptr) {
+		if(!soundSetupSection->setEntryIntegerValue(SOUND_FX_DEVICE_ENTRY_NAME, 0, true)) { return false; }
+		if(!soundSetupSection->setEntryIntegerValue(SOUND_MUSIC_DEVICE_ENTRY_NAME, 0, true)) { return false; }
+		if(!soundSetupSection->setEntryIntegerValue(SOUND_NUM_BITS_ENTRY_NAME, 16, true)) { return false; }
+		if(!soundSetupSection->setEntryIntegerValue(SOUND_MIX_RATE_ENTRY_NAME, mixRate, true)) { return false; }
+	}
+
+	return true;
+}
+
+bool GameConfiguration::updateWithBetterSettings() {
+	std::optional<GameVersionType> optionalGameVersionType(determineGameVersionType());
+
+	if(!optionalGameVersionType.has_value()) {
 		return false;
 	}
 
-	if(!screenSetupSection->setEntryIntegerValue(SCREEN_MODE_ENTRY_NAME, 1, true)) { return false; }
-	if(!screenSetupSection->setEntryIntegerValue(SCREEN_WIDTH_ENTRY_NAME, 800, true)) { return false; }
-	if(!screenSetupSection->setEntryIntegerValue(SCREEN_HEIGHT_ENTRY_NAME, 600, true)) { return false; }
-	if(!screenSetupSection->setEntryIntegerValue(SCREEN_SHADOWS_ENTRY_NAME, 1, true)) { return false; }
+	GameVersionType gameVersionType = optionalGameVersionType.value();
 
-	if(optionalGameVersionType == GameVersionType::AtomicEdition) {
-		if(!screenSetupSection->setEntryStringValue(SCREEN_PASSWORD_ENTRY_NAME, "", true)) { return false; }
-	}
-	else {
-		if(!screenSetupSection->setEntryStringValue(SCREEN_ENVIRONMENT_ENTRY_NAME, "", true)) { return false; }
+	SectionFeatures sectionFeatures(getSectionFeaturesForGameVersion(gameVersionType));
+
+	std::shared_ptr<Section> miscSection(getSectionWithName(MISC_SECTION_NAME));
+
+	if(miscSection == nullptr) {
+		miscSection = std::shared_ptr<Section>(new Section(MISC_SECTION_NAME));
+		addSection(miscSection);
 	}
 
-	if(!screenSetupSection->setEntryIntegerValue(SCREEN_DETAIL_ENTRY_NAME, 1, true)) { return false; }
-	if(!screenSetupSection->setEntryIntegerValue(SCREEN_TILT_ENTRY_NAME, 1, true)) { return false; }
-	if(!screenSetupSection->setEntryIntegerValue(SCREEN_MESSAGES_ENTRY_NAME, 1, true)) { return false; }
-	if(!screenSetupSection->setEntryIntegerValue(SCREEN_OUT_ENTRY_NAME, 0, true)) { return false; }
-	if(optionalGameVersionType == GameVersionType::Beta) {
-		if(!screenSetupSection->setEntryIntegerValue("LastIOSlot", 0, true)) { return false; }
-	}
-	if(!screenSetupSection->setEntryIntegerValue(SCREEN_SIZE_ENTRY_NAME, 4, true)) { return false; }
-	if(!screenSetupSection->setEntryIntegerValue(SCREEN_GAMMA_ENTRY_NAME, 0, true)) { return false; }
+	if(Any(sectionFeatures.misc & SectionFeatures::Misc::DoesSupportRunModeToggle)) {
+		if(!miscSection->setEntryIntegerValue(MISC_RUN_MODE_ENTRY_NAME, 1, true)) { return false; }
 
-	if(!soundSetupSection->setEntryIntegerValue(SOUND_FX_DEVICE_ENTRY_NAME, 0, true)) { return false; }
-	if(!soundSetupSection->setEntryIntegerValue(SOUND_MUSIC_DEVICE_ENTRY_NAME, 0, true)) { return false; }
-	if(!soundSetupSection->setEntryIntegerValue(SOUND_NUM_BITS_ENTRY_NAME, 16, true)) { return false; }
-	if(!soundSetupSection->setEntryIntegerValue(SOUND_MIX_RATE_ENTRY_NAME, optionalGameVersionType == GameVersionType::AtomicEdition ? 44000 : 22000, true)) { return false; }
-	if(!soundSetupSection->setEntryIntegerValue(SOUND_SOUND_TOGGLE_ENTRY_NAME, 1, true)) { return false; }
-	if(!soundSetupSection->setEntryIntegerValue(SOUND_VOICE_TOGGLE_ENTRY_NAME, 1, true)) { return false; }
-	if(!soundSetupSection->setEntryIntegerValue(SOUND_AMBIENCE_TOGGLE_ENTRY_NAME, 1, true)) { return false; }
-	if(!soundSetupSection->setEntryIntegerValue(SOUND_MUSIC_TOGGLE_ENTRY_NAME, 1, true)) { return false; }
+	}
+
+	if(Any(sectionFeatures.misc & SectionFeatures::Misc::DoesSupportCrosshairToggle)) {
+		if(!miscSection->setEntryIntegerValue(MISC_CROSSHAIRS_ENTRY_NAME, 1, true)) { return false; }
+	}
+
+	std::shared_ptr<Section> screenSetupSection(getSectionWithName(SCREEN_SETUP_SECTION_NAME));
+
+	if(screenSetupSection != nullptr) {
+		if(!screenSetupSection->setEntryIntegerValue(SCREEN_SHADOWS_ENTRY_NAME, 1, true)) { return false; }
+	}
+
+	std::shared_ptr<Section> soundSetupSection(getSectionWithName(SOUND_SETUP_SECTION_NAME));
+
+	if(soundSetupSection != nullptr) {
+		if(!soundSetupSection->setEntryIntegerValue(SOUND_SOUND_TOGGLE_ENTRY_NAME, 1, true)) { return false; }
+		if(!soundSetupSection->setEntryIntegerValue(SOUND_VOICE_TOGGLE_ENTRY_NAME, 1, true)) { return false; }
+		if(!soundSetupSection->setEntryIntegerValue(SOUND_AMBIENCE_TOGGLE_ENTRY_NAME, 1, true)) { return false; }
+		if(!soundSetupSection->setEntryIntegerValue(SOUND_MUSIC_TOGGLE_ENTRY_NAME, 1, true)) { return false; }
+	}
 
 	return true;
 }
@@ -2637,25 +2684,21 @@ bool GameConfiguration::updateWithBetterControls() {
 		return false;
 	}
 
+	GameVersionType gameVersionType = optionalGameVersionType.value();
+
+	SectionFeatures sectionFeatures(getSectionFeaturesForGameVersion(gameVersionType));
+
 	std::shared_ptr<Section> keyDefinitionsSection(getSectionWithName(KEY_DEFINITIONS_SECTION_NAME));
 
 	if(keyDefinitionsSection != nullptr) {
 		if(!keyDefinitionsSection->setEntryMultiStringValue(MOVE_FORWARD_ENTRY_NAME, "W", 0, true, true)) { return false; }
 		if(!keyDefinitionsSection->setEntryMultiStringValue(MOVE_BACKWARD_ENTRY_NAME, "S", 0, true, true)) { return false; }
-		if(!keyDefinitionsSection->setEntryMultiStringValue(TURN_LEFT_ENTRY_NAME, "", 0, true, true)) { return false; }
-		if(!keyDefinitionsSection->setEntryMultiStringValue(TURN_RIGHT_ENTRY_NAME, "", 0, true, true)) { return false; }
 		if(!keyDefinitionsSection->setEntryMultiStringValue(FIRE_ENTRY_NAME, "", 0, true, true)) { return false; }
 		if(!keyDefinitionsSection->setEntryMultiStringValue(OPEN_ENTRY_NAME, "E", "F", true)) { return false; }
 		if(!keyDefinitionsSection->setEntryMultiStringValue(JUMP_ENTRY_NAME, "Space", 0, true, true)) { return false; }
 		if(!keyDefinitionsSection->setEntryMultiStringValue(CROUCH_ENTRY_NAME, "LCtrl", 1, true, true)) { return false; }
 		if(!keyDefinitionsSection->setEntryMultiStringValue(STRAFE_LEFT_ENTRY_NAME, "A", 1, true, true)) { return false; }
 		if(!keyDefinitionsSection->setEntryMultiStringValue(STRAFE_RIGHT_ENTRY_NAME, "D", 1, true, true)) { return false; }
-	}
-
-	std::shared_ptr<Section> controlsSection(getSectionWithName(CONTROLS_SECTION_NAME));
-
-	if(controlsSection == nullptr) {
-		return false;
 	}
 
 	std::shared_ptr<Entry> showOpponentsWeaponEntry(getEntryWithName(SHOW_OPPONENTS_WEAPON_ENTRY_NAME));
@@ -2686,37 +2729,32 @@ bool GameConfiguration::updateWithBetterControls() {
 		if(!keyDefinitionsSection->setEntryMultiStringValue(MAP_FOLLOW_MODE_ENTRY_NAME, "", 0, true, true)) { return false; }
 	}
 
-	if(optionalGameVersionType == GameVersionType::AtomicEdition) {
-		if(!controlsSection->setEntryIntegerValue(MOUSE_AIMING_FLIPPED_ENTRY_NAME, 1, true)) { return false; }
-	}
+	std::shared_ptr<Section> controlsSection(getSectionWithName(CONTROLS_SECTION_NAME));
 
-	std::string firstMouseButtonEntryName(fmt::format("{}{}{}", MOUSE_PREFIX, BUTTON_SUFFIX, 1));
+	if(controlsSection != nullptr) {
+		if(Any(sectionFeatures.controls & SectionFeatures::Controls::HasMouseAimFlippedEntry)) {
+			if(!controlsSection->setEntryIntegerValue(MOUSE_AIMING_FLIPPED_ENTRY_NAME, 1, true)) { return false; }
+		}
 
-	if(optionalGameVersionType == GameVersionType::AtomicEdition) {
-		if(!controlsSection->setEntryStringValue(firstMouseButtonEntryName, QUICK_KICK_ENTRY_NAME, true)) { return false; }
-	}
-	else {
-		if(!controlsSection->setEntryStringValue(firstMouseButtonEntryName, JETPACK_ENTRY_NAME, true)) { return false; }
-	}
+		std::string firstMouseButtonEntryName(fmt::format("{}{}{}", MOUSE_PREFIX, BUTTON_SUFFIX, 1));
 
-	if(!controlsSection->setEntryStringValue(fmt::format("{}{}{}{}", MOUSE_PREFIX, BUTTON_SUFFIX, CLICKED_SUFFIX, 1), "", true)) { return false; }
-	if(!controlsSection->setEntryStringValue(fmt::format("{}{}{}", MOUSE_PREFIX, BUTTON_SUFFIX, 2), OPEN_ENTRY_NAME, true)) { return false; }
+		if(Any(sectionFeatures.controls & SectionFeatures::Controls::DoesSupportQuickKick)) {
+			if(!controlsSection->setEntryStringValue(firstMouseButtonEntryName, QUICK_KICK_ENTRY_NAME, true)) { return false; }
+		}
+		else {
+			if(!controlsSection->setEntryStringValue(firstMouseButtonEntryName, JETPACK_ENTRY_NAME, true)) { return false; }
+		}
 
-	if(optionalGameVersionType == GameVersionType::AtomicEdition) {
-		if(!controlsSection->setEntryIntegerValue(GAME_MOUSE_AIMING_ENTRY_NAME, 1, true)) { return false; }
-		if(!controlsSection->setEntryIntegerValue(AIMING_FLAG_ENTRY_NAME, 1, true)) { return false; }
-	}
+		if(!controlsSection->setEntryStringValue(fmt::format("{}{}{}{}", MOUSE_PREFIX, BUTTON_SUFFIX, CLICKED_SUFFIX, 1), "", true)) { return false; }
+		if(!controlsSection->setEntryStringValue(fmt::format("{}{}{}", MOUSE_PREFIX, BUTTON_SUFFIX, 2), OPEN_ENTRY_NAME, true)) { return false; }
 
-	std::shared_ptr<Section> miscSection(getSectionWithName(MISC_SECTION_NAME));
+		if(Any(sectionFeatures.controls & SectionFeatures::Controls::HasGameMouseAimingEntry)) {
+			if(!controlsSection->setEntryIntegerValue(GAME_MOUSE_AIMING_ENTRY_NAME, 1, true)) { return false; }
+		}
 
-	if(miscSection == nullptr) {
-		miscSection = std::shared_ptr<Section>(new Section(MISC_SECTION_NAME));
-		addSection(miscSection);
-	}
-
-	if(optionalGameVersionType != GameVersionType::Beta) {
-		if(!miscSection->setEntryIntegerValue(MISC_RUN_MODE_ENTRY_NAME, 1, true)) { return false; }
-		if(!miscSection->setEntryIntegerValue(MISC_CROSSHAIRS_ENTRY_NAME, 1, true)) { return false; }
+		if(Any(sectionFeatures.controls & SectionFeatures::Controls::HasAimingFlagEntry)) {
+			if(!controlsSection->setEntryIntegerValue(AIMING_FLAG_ENTRY_NAME, 1, true)) { return false; }
+		}
 	}
 
 	return true;
