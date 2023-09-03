@@ -9,7 +9,6 @@
 #include <fstream>
 #include <sstream>
 
-const std::string GameConfiguration::DEFAULT_GAME_CONFIGURATION_FILE_NAME("DUKE3D.CFG");
 const std::string GameConfiguration::SETUP_SECTION_NAME("Setup");
 const std::string GameConfiguration::SETUP_VERSION_ENTRY_NAME("SetupVersion");
 const std::string GameConfiguration::REGULAR_VERSION_SETUP_VERSION("1.3D");

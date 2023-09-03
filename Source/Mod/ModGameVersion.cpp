@@ -33,6 +33,8 @@ static const std::string XML_MOD_GAME_VERSION_PROPERTIES_ELEMENT_NAME("propertie
 static const std::string XML_MOD_GAME_VERSION_PROPERTY_BASE_NAME("base");
 static const std::string XML_MOD_GAME_VERSION_PROPERTY_GAME_EXE_NAME_NAME("game_exe_name");
 static const std::string XML_MOD_GAME_VERSION_PROPERTY_SETUP_EXE_NAME_NAME("setup_exe_name");
+static const std::string XML_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_FILE_NAME_NAME("game_config_file_name");
+static const std::string XML_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_DIRECTORY_PATH_NAME("game_config_directory_path");
 static const std::string XML_MOD_GAME_VERSION_PROPERTY_SKILL_START_VALUE_NAME("skill_start_value");
 static const std::string XML_MOD_GAME_VERSION_PROPERTY_LOCAL_WORKING_DIRECTORY_NAME("local_working_directory");
 static const std::string XML_MOD_GAME_VERSION_PROPERTY_RELATIVE_CON_FILE_PATH_NAME("relative_con_file_path");
@@ -67,10 +69,12 @@ static const std::array<std::string_view, 2> XML_MOD_GAME_VERSION_ATTRIBUTE_NAME
 	XML_MOD_GAME_VERSION_CONVERTED_ATTRIBUTE_NAME
 };
 
-static const std::array<std::string_view, 9> XML_MOD_GAME_VERSION_PROPERTIES_ATTRIBUTE_NAMES = {
+static const std::array<std::string_view, 11> XML_MOD_GAME_VERSION_PROPERTIES_ATTRIBUTE_NAMES = {
 	XML_MOD_GAME_VERSION_PROPERTY_BASE_NAME,
 	XML_MOD_GAME_VERSION_PROPERTY_GAME_EXE_NAME_NAME,
 	XML_MOD_GAME_VERSION_PROPERTY_SETUP_EXE_NAME_NAME,
+	XML_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_FILE_NAME_NAME,
+	XML_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_DIRECTORY_PATH_NAME,
 	XML_MOD_GAME_VERSION_PROPERTY_SKILL_START_VALUE_NAME,
 	XML_MOD_GAME_VERSION_PROPERTY_LOCAL_WORKING_DIRECTORY_NAME,
 	XML_MOD_GAME_VERSION_PROPERTY_RELATIVE_CON_FILE_PATH_NAME,
@@ -106,6 +110,8 @@ static const std::string JSON_MOD_GAME_VERSION_PROPERTIES_PROPERTY_NAME("propert
 static const std::string JSON_MOD_GAME_VERSION_PROPERTY_BASE_PROPERTY_NAME("base");
 static const std::string JSON_MOD_GAME_VERSION_PROPERTY_GAME_EXECUTABLE_NAME_PROPERTY_NAME("gameExecutableName");
 static const std::string JSON_MOD_GAME_VERSION_PROPERTY_SETUP_EXECUTABLE_NAME_PROPERTY_NAME("setupExecutableName");
+static const std::string JSON_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_FILE_NAME_PROPERTY_NAME("gameConfigurationFileName");
+static const std::string JSON_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_DIRECTORY_PATH_PROPERTY_NAME("gameConfigurationDirectoryPath");
 static const std::string JSON_MOD_GAME_VERSION_PROPERTY_SKILL_START_VALUE_PROPERTY_NAME("skillStartValue");
 static const std::string JSON_MOD_GAME_VERSION_PROPERTY_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME("localWorkingDirectory");
 static const std::string JSON_MOD_GAME_VERSION_PROPERTY_RELATIVE_CON_FILE_PATH_PROPERTY_NAME("relativeConFilePath");
@@ -138,10 +144,12 @@ static const std::array<std::string_view, 6> JSON_MOD_GAME_VERSION_ATTRIBUTE_NAM
 	JSON_MOD_GAME_VERSION_FILES_PROPERTY_NAME
 };
 
-static const std::array<std::string_view, 8> JSON_MOD_GAME_VERSION_PROPERTY_NAMES = {
+static const std::array<std::string_view, 10> JSON_MOD_GAME_VERSION_PROPERTY_NAMES = {
 	JSON_MOD_GAME_VERSION_PROPERTY_BASE_PROPERTY_NAME,
 	JSON_MOD_GAME_VERSION_PROPERTY_GAME_EXECUTABLE_NAME_PROPERTY_NAME,
 	JSON_MOD_GAME_VERSION_PROPERTY_SETUP_EXECUTABLE_NAME_PROPERTY_NAME,
+	JSON_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_FILE_NAME_PROPERTY_NAME,
+	JSON_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_DIRECTORY_PATH_PROPERTY_NAME,
 	JSON_MOD_GAME_VERSION_PROPERTY_SKILL_START_VALUE_PROPERTY_NAME,
 	JSON_MOD_GAME_VERSION_PROPERTY_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME,
 	JSON_MOD_GAME_VERSION_PROPERTY_RELATIVE_CON_FILE_PATH_PROPERTY_NAME,
@@ -590,9 +598,11 @@ rapidjson::Value ModGameVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson
 		rapidjson::Value propertiesValue(rapidjson::kObjectType);
 
 		std::vector<std::pair<std::string, std::optional<std::string>>> stringProperties({
-			{ JSON_MOD_GAME_VERSION_PROPERTY_BASE_PROPERTY_NAME,  m_standAloneGameVersion->getBase() },
-			{ JSON_MOD_GAME_VERSION_PROPERTY_GAME_EXECUTABLE_NAME_PROPERTY_NAME,  m_standAloneGameVersion->getGameExecutableName() },
-			{ JSON_MOD_GAME_VERSION_PROPERTY_SETUP_EXECUTABLE_NAME_PROPERTY_NAME, m_standAloneGameVersion->getSetupExecutableName() }
+			{ JSON_MOD_GAME_VERSION_PROPERTY_BASE_PROPERTY_NAME,                               m_standAloneGameVersion->getBase() },
+			{ JSON_MOD_GAME_VERSION_PROPERTY_GAME_EXECUTABLE_NAME_PROPERTY_NAME,               m_standAloneGameVersion->getGameExecutableName() },
+			{ JSON_MOD_GAME_VERSION_PROPERTY_SETUP_EXECUTABLE_NAME_PROPERTY_NAME,              m_standAloneGameVersion->getSetupExecutableName() },
+			{ JSON_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_FILE_NAME_PROPERTY_NAME,       m_standAloneGameVersion->getGameConfigurationFileName() },
+			{ JSON_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_DIRECTORY_PATH_PROPERTY_NAME,  m_standAloneGameVersion->getGameConfigurationDirectoryPath() }
 		});
 
 		for(const std::pair<std::string, std::optional<std::string>> & stringProperty : stringProperties) {
@@ -697,10 +707,11 @@ tinyxml2::XMLElement * ModGameVersion::toXML(tinyxml2::XMLDocument * document) c
 		tinyxml2::XMLElement * propertiesElement = document->NewElement(XML_MOD_GAME_VERSION_PROPERTIES_ELEMENT_NAME.c_str());
 
 		std::vector<std::pair<std::string, std::optional<std::string>>> stringProperties({
-			{ XML_MOD_GAME_VERSION_PROPERTY_BASE_NAME,              m_standAloneGameVersion->getBase() },
-			{ XML_MOD_GAME_VERSION_PROPERTY_GAME_EXE_NAME_NAME,     m_standAloneGameVersion->getGameExecutableName() },
-			{ XML_MOD_GAME_VERSION_PROPERTY_SETUP_EXE_NAME_NAME,    m_standAloneGameVersion->getSetupExecutableName() },
-			{ XML_MOD_GAME_VERSION_PROPERTY_SKILL_START_VALUE_NAME, std::to_string(m_standAloneGameVersion->getSkillStartValue()) }
+			{ XML_MOD_GAME_VERSION_PROPERTY_BASE_NAME,                              m_standAloneGameVersion->getBase() },
+			{ XML_MOD_GAME_VERSION_PROPERTY_GAME_EXE_NAME_NAME,                     m_standAloneGameVersion->getGameExecutableName() },
+			{ XML_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_FILE_NAME_NAME,      m_standAloneGameVersion->getGameConfigurationFileName() },
+			{ XML_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_DIRECTORY_PATH_NAME, m_standAloneGameVersion->getGameConfigurationDirectoryPath() },
+			{ XML_MOD_GAME_VERSION_PROPERTY_SKILL_START_VALUE_NAME,                 std::to_string(m_standAloneGameVersion->getSkillStartValue()) }
 		});
 
 		for(const std::pair<std::string, std::optional<std::string>> & stringProperty : stringProperties) {
@@ -937,6 +948,43 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value
 
 			standAloneGameVersion->setSetupExecutableName(setupExecutableName);
 		}
+
+		// read game configuration file name property
+		if(!propertiesValue.HasMember(JSON_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_FILE_NAME_PROPERTY_NAME.c_str())) {
+			spdlog::error("Stand-alone mod game version '{}' is missing '{}' property.", JSON_MOD_GAME_VERSION_PROPERTIES_PROPERTY_NAME, JSON_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_FILE_NAME_PROPERTY_NAME);
+			return nullptr;
+		}
+
+		const rapidjson::Value & gameConfigurationFileNameValue = propertiesValue[JSON_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_FILE_NAME_PROPERTY_NAME.c_str()];
+
+		if(!gameConfigurationFileNameValue.IsString()) {
+			spdlog::error("Stand-alone mod game version '{}' '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_GAME_VERSION_PROPERTIES_PROPERTY_NAME, JSON_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_FILE_NAME_PROPERTY_NAME, Utilities::typeToString(gameConfigurationFileNameValue.GetType()));
+			return nullptr;
+		}
+
+		std::string gameConfigurationFileName(gameConfigurationFileNameValue.GetString());
+
+		if(gameConfigurationFileName.empty()) {
+			spdlog::error("Stand-alone mod game version '{}' has empty '{}' property value.", JSON_MOD_GAME_VERSION_PROPERTIES_PROPERTY_NAME, JSON_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_FILE_NAME_PROPERTY_NAME);
+			return nullptr;
+		}
+
+		standAloneGameVersion->setGameConfigurationFileName(gameConfigurationFileName);
+
+		// read game configuration directory path property
+		if(!propertiesValue.HasMember(JSON_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_DIRECTORY_PATH_PROPERTY_NAME.c_str())) {
+			spdlog::error("Stand-alone mod game version '{}' is missing '{}' property.", JSON_MOD_GAME_VERSION_PROPERTIES_PROPERTY_NAME, JSON_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_DIRECTORY_PATH_PROPERTY_NAME);
+			return nullptr;
+		}
+
+		const rapidjson::Value & gameConfigurationDirectoryPathValue = propertiesValue[JSON_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_DIRECTORY_PATH_PROPERTY_NAME.c_str()];
+
+		if(!gameConfigurationDirectoryPathValue.IsString()) {
+			spdlog::error("Stand-alone mod game version '{}' '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_GAME_VERSION_PROPERTIES_PROPERTY_NAME, JSON_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_DIRECTORY_PATH_PROPERTY_NAME, Utilities::typeToString(gameConfigurationDirectoryPathValue.GetType()));
+			return nullptr;
+		}
+
+		standAloneGameVersion->setGameConfigurationDirectoryPath(gameConfigurationDirectoryPathValue.GetString());
 
 		// read skill start value property
 		if(propertiesValue.HasMember(JSON_MOD_GAME_VERSION_PROPERTY_SKILL_START_VALUE_PROPERTY_NAME.c_str())) {
@@ -1477,6 +1525,14 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const tinyxml2::XMLEle
 
 			if(properties.find(XML_MOD_GAME_VERSION_PROPERTY_SETUP_EXE_NAME_NAME) != properties.cend()) {
 				standAloneGameVersion->setSetupExecutableName(properties[XML_MOD_GAME_VERSION_PROPERTY_SETUP_EXE_NAME_NAME]);
+			}
+
+			if(properties.find(XML_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_FILE_NAME_NAME) != properties.cend()) {
+				standAloneGameVersion->setGameConfigurationFileName(properties[XML_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_FILE_NAME_NAME]);
+			}
+
+			if(properties.find(XML_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_DIRECTORY_PATH_NAME) != properties.cend()) {
+				standAloneGameVersion->setGameConfigurationDirectoryPath(properties[XML_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_DIRECTORY_PATH_NAME]);
 			}
 
 			if(properties.find(XML_MOD_GAME_VERSION_PROPERTY_SKILL_START_VALUE_NAME) != properties.cend()) {
