@@ -2945,44 +2945,51 @@ bool GameManager::installGame(const std::string & gameVersionID, const std::stri
 				}
 			}
 		}
+	}
 
-		if(isBetaVersion || isRegularVersion || isPlutoniumPakOrAtomicEdition) {
-			installStatusChanged(fmt::format("Generating default '{}' game configuration file.", gameVersion->getLongName()));
+	if(Utilities::areStringsEqualIgnoreCase(Utilities::getFileExtension(gameVersion->getGameConfigurationFileName()), GameConfiguration::DEFAULT_FILE_EXTENSION)) {
+		installStatusChanged(fmt::format("Generating default '{}' game configuration file.", gameVersion->getLongName()));
 
-			std::unique_ptr<GameConfiguration> gameConfiguration(GameConfiguration::generateDefaultGameConfiguration(gameVersion->getID()));
+		std::unique_ptr<GameConfiguration> gameConfiguration(GameConfiguration::generateDefaultGameConfiguration(gameVersion->getID()));
 
-			if(gameConfiguration == nullptr) {
-				spdlog::warn("Failed to generate default game configuration.");
+		if(gameConfiguration == nullptr) {
+			spdlog::warn("Failed to generate default game configuration.");
+		}
+		else {
+			if(gameVersion->doesRequireDOSBox() && !gameConfiguration->updateForDOSBox()) {
+				spdlog::warn("Failed to update default game configuration for use with DOSBox.");
+			}
+
+			if(!gameConfiguration->updateWithBetterSettings()) {
+				spdlog::warn("Failed to update default game configuration with better settings.");
+			}
+
+			if(!gameConfiguration->updateWithBetterControls()) {
+				spdlog::warn("Failed to update default game configuration with better controls.");
+			}
+
+			std::string gameConfigurationFilePath(gameVersion->getEvaluatedGameConfigurationFilePath());
+
+			bool isGameConfigurationFilePathAbsolute = Utilities::isFilePathAbsolute(gameConfigurationFilePath);
+
+			if(!isGameConfigurationFilePathAbsolute) {
+				gameConfigurationFilePath = Utilities::joinPaths(destinationDirectoryPath, gameConfigurationFilePath);
+			}
+
+			// only overwrite game configuration files that are located within the game directory to avoid clobbering global configuration files
+			if(gameConfiguration->saveTo(gameConfigurationFilePath, !isGameConfigurationFilePathAbsolute)) {
+				spdlog::info("Successfully generated and saved default game configuration to file: '{}'.", gameConfigurationFilePath);
 			}
 			else {
-				if(gameVersion->doesRequireDOSBox() && !gameConfiguration->updateForDOSBox()) {
-					spdlog::warn("Failed to update default game configuration for use with DOSBox.");
-				}
+				spdlog::warn("Failed to save default game configuration to file: '{}'.", gameConfigurationFilePath);
+			}
 
-				if(!gameConfiguration->updateWithBetterSettings()) {
-					spdlog::warn("Failed to update default game configuration with better settings.");
-				}
+			if(settings->segmentAnalyticsEnabled) {
+				std::map<std::string, std::any> properties;
+				gameVersion->addMetadata(properties);
+				properties["fileName"] = gameVersion->getGameConfigurationFileName();
 
-				if(!gameConfiguration->updateWithBetterControls()) {
-					spdlog::warn("Failed to update default game configuration with better controls.");
-				}
-
-				std::string gameConfigurationFilePath(Utilities::joinPaths(destinationDirectoryPath, GameConfiguration::DEFAULT_GAME_CONFIGURATION_FILE_NAME));
-
-				if(gameConfiguration->saveTo(gameConfigurationFilePath)) {
-					spdlog::info("Successfully generated and saved default game configuration to file: '{}'.", gameConfigurationFilePath);
-				}
-				else {
-					spdlog::warn("Failed to save default game configuration to file: '{}'.", gameConfigurationFilePath);
-				}
-
-				if(settings->segmentAnalyticsEnabled) {
-					std::map<std::string, std::any> properties;
-					gameVersion->addMetadata(properties);
-					properties["fileName"] = GameConfiguration::DEFAULT_GAME_CONFIGURATION_FILE_NAME;
-
-					segmentAnalytics->track("Game Configuration Generated", properties);
-				}
+				segmentAnalytics->track("Game Configuration Generated", properties);
 			}
 		}
 	}

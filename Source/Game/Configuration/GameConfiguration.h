@@ -270,8 +270,8 @@ public:
 	bool operator == (const GameConfiguration & c) const;
 	bool operator != (const GameConfiguration & c) const;
 
-	static inline const std::string DEFAULT_GAME_CONFIGURATION_FILE_EXTENSION = "CFG";
-	static inline const std::string DEFAULT_GAME_CONFIGURATION_FILE_NAME = "DUKE3D." + DEFAULT_GAME_CONFIGURATION_FILE_EXTENSION;
+	static inline const std::string DEFAULT_FILE_EXTENSION = "CFG";
+	static inline const std::string DEFAULT_FILE_NAME = "DUKE3D." + DEFAULT_FILE_EXTENSION;
 	static const std::string SETUP_SECTION_NAME;
 	static const std::string SETUP_VERSION_ENTRY_NAME;
 	static const std::string REGULAR_VERSION_SETUP_VERSION;
