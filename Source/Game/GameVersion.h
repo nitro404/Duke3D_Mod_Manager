@@ -71,6 +71,7 @@ public:
 	const std::string & getGameConfigurationFileName() const;
 	bool setGameConfigurationFileName(const std::string & fileName);
 	const std::string & getGameConfigurationDirectoryPath() const;
+	std::string getEvaluatedGameConfigurationDirectoryPath() const;
 	bool setGameConfigurationDirectoryPath(const std::string & directoryPath);
 	bool hasLaunchArguments() const;
 	const std::string & getLaunchArguments() const;
