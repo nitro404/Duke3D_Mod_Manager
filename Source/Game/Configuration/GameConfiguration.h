@@ -385,9 +385,197 @@ private:
 		Duke3d_w32
 	};
 
+	struct SectionFeatures {
+		enum class General : uint8_t {
+			None = 0,
+			HasComments = 1,
+			DoesSupportFloatingPointEntryValues = 1 << 1,
+			Default = HasComments
+		};
+
+		enum class Setup : uint8_t {
+			None = 0,
+			Supported = 1,
+			Populated = 1 << 1,
+			HasForceSetupEntry = 1 << 2,
+			HasModLoadingSupport = 1 << 3,
+			HasNoAutoLoadEntry = 1 << 4,
+			Default = Supported | Populated
+		};
+
+		enum class Misc : uint16_t {
+			None = 0,
+			Supported = 1,
+			Populated = 1 << 1,
+			HasHeadsUpDisplayEntries = 1 << 2,
+			HasExtendedHeadsUpDisplayEntries = 1 << 3,
+			HasWeaponIconsEntry = 1 << 4,
+			HasWeaponHideEntry = 1 << 5,
+			HasAutoSaveEntry = 1 << 6,
+			HasAutoAimEntry = 1 << 7,
+			HasUsePrecacheEntry = 1 << 8,
+			HasShowCinematicsEntry = 1 << 9,
+			HasWeaponVisibilityEntries = 1 << 10,
+			HasWeaponAutoSwitchEntry = 1 << 11,
+			HasWeaponChoicePreferences = 1 << 12,
+			HasPredictionDebugEntry = 1 << 13,
+			Default = Supported | HasHeadsUpDisplayEntries
+		};
+
+		enum class Controls : uint32_t {
+			None = 0,
+			Supported = 1,
+			Populated = 1 << 1,
+			HasAutoAimEntry = 1 << 2,
+			HasWeaponSwitchModeEntry = 1 << 3,
+			HasLegacyControllerEntries = 1 << 4,
+			HasJoystickPortEntry = 1 << 5,
+			HasMouseAnalogAxesEntries = 1 << 6,
+			HasMouseAnalogScaleEntries = 1 << 7,
+			HasMouseDigitalEntries = 1 << 8,
+			HasRancidMeatMouseSensitivityEntries = 1 << 9,
+			HasMouseYLockEntry = 1 << 10,
+			HasMouseScale = 1 << 11,
+			HasGameMouseAimingEntry = 1 << 12,
+			HasRunKeyBehaviourEntry = 1 << 13,
+			HasMouseSensitivity = 1 << 14,
+			HasExternalFileNameEntry = 1 << 15,
+			HasRudderEntry = 1 << 16,
+			HasAimingFlagEntry = 1 << 17,
+			HasMouseAimingEntry = 1 << 18,
+			HasMouseAimFlippedEntry = 1 << 19,
+			HasMouseButtonClickedEntries = 1 << 20,
+			HasGamepadControls = 1 << 21,
+			HasJoystickControls = 1 << 22,
+			HasJoystickButtonClickedEntries = 1 << 23,
+			HasJoystickAnalogDeadZoneEntries = 1 << 24,
+			HasJoystickAnalogSaturateEntries = 1 << 25,
+			HasControllerControls = 1 << 26,
+			HasControllerAnalogSensitivityEntries = 1 << 27,
+			HasControllerAnalogScaleEntries = 1 << 28,
+			HasUseMouseAndJoystickEntries = 1 << 29,
+			Default = Supported | Populated | HasLegacyControllerEntries | HasJoystickPortEntry | HasMouseAnalogAxesEntries | HasMouseAnalogScaleEntries | HasMouseDigitalEntries | HasMouseSensitivity | HasExternalFileNameEntry | HasRudderEntry | HasMouseAimingEntry | HasMouseAimFlippedEntry | HasMouseButtonClickedEntries | HasGamepadControls | HasJoystickControls | HasJoystickButtonClickedEntries
+		};
+
+		enum class Sound : uint16_t {
+			None = 0,
+			Supported = 1,
+			Populated = 1 << 1,
+			HasLegacyEntries = 1 << 2,
+			HasDefaultEntries = 1 << 3,
+			HasQualityEntries = 1 << 4,
+			HasNumberOfChannelsEntry = 1 << 5,
+			HasSoundDeviceEntry = 1 << 6,
+			HasRandomMusicEntry = 1 << 7,
+			HasOpponentSoundToggleEntry = 1 << 8,
+			Default = Supported | Populated | HasLegacyEntries | HasQualityEntries | HasNumberOfChannelsEntry | HasSoundDeviceEntry
+		};
+
+		enum class Screen : uint32_t {
+			None = 0,
+			Supported = 1,
+			Populated = 1 << 1,
+			HasAdvancedGraphicsEntries = 1 << 2,
+			HasPolymerSupport = 1 << 3,
+			HasAmbientLightEntry = 1 << 4,
+			HasUseModelsEntry = 1 << 5,
+			HasDefaultEntries = 1 << 6,
+			HasAllDefaultEntries = 1 << 7,
+			HasShadowsEntry = 1 << 8,
+			HasScreenModeEntry = 1 << 9,
+			HasCustomEntries = 1 << 10,
+			HasEnvironmentEntry = 1 << 11,
+			HasShowFramesPerSecondEntry = 1 << 12,
+			HasOpenGLAnimationSmoothingEntry = 1 << 13,
+			HasOpenGLTextureModeEntry = 1 << 14,
+			HasOpenGLUseTextureCompressionEntry = 1 << 15,
+			HasOpenGLAnisotropyEntry = 1 << 16,
+			HasOpenGLUsePreCacheEntry = 1 << 17,
+			HasOpenGLUseCompressedTextureCacheEntry = 1 << 18,
+			HasOpenGLUseTextureCacheCompressionEntry = 1 << 19,
+			HasOpenGLWideScreenEntry = 1 << 20,
+			HasOpenGLFovScreenEntry = 1 << 21,
+			HasOpenGLVerticalSyncEntry = 1 << 22,
+			HasOpenGLUseHighTileEntry = 1 << 23,
+			HasScreenDisplayEntry = 1 << 24,
+			HasWindowPropertyEntries = 1 << 25,
+			HasFullScreenEntry = 1 << 26,
+			HasWideScreenEntries = 1 << 27,
+			HasColourFixEntry = 1 << 28,
+			HasExtendedScreenSizeEntry = 1 << 29,
+			Default = Supported | Populated | HasAllDefaultEntries | HasShadowsEntry | HasScreenModeEntry
+		};
+
+		enum class KeyDefinitions : uint16_t {
+			None = 0,
+			Supported = 1,
+			Populated = 1 << 1,
+			HasShowMenuEntry = 1 << 2,
+			HasShowConsoleEntry = 1 << 3,
+			HasConsoleEntry = 1 << 4,
+			HasExtraEntries = 1 << 5,
+			HasHideWeaponEntry = 1 << 6,
+			HasAutoAimEntry = 1 << 7,
+			HasNormalizedKeyPadPrefix = 1 << 8,
+			Default = Supported | Populated
+		};
+
+		enum class Communication : uint16_t {
+			None = 0,
+			Supported = 1,
+			Populated = 1 << 1,
+			HasDialupNetworking = 1 << 2,
+			HasCombatMacros = 1 << 3,
+			HasRemoteRidiculeFileName = 1 << 4,
+			HasPlayerColourEntry = 1 << 5,
+			HasIPAddressEntries = 1 << 6,
+			HasBotNameEntries = 1 << 7,
+			HasEmptyIRQNumber = 1 << 8,
+			HasEmptyUARTAddress = 1 << 9,
+			HasEmptySocketNumber = 1 << 10,
+			Default = Supported | Populated | HasDialupNetworking | HasCombatMacros | HasRemoteRidiculeFileName | HasEmptyIRQNumber | HasEmptyUARTAddress | HasEmptySocketNumber
+		};
+
+		enum class Updates : uint8_t {
+			None = 0,
+			Supported = 1,
+			Populated = 1 << 2,
+			Default = Populated
+		};
+
+		enum class LobbyFilter : uint8_t {
+			None = 0,
+			Supported = 1,
+			Populated = 1 << 2,
+			Default = Populated
+		};
+
+		enum class Multiplayer : uint8_t {
+			None = 0,
+			Supported = 1,
+			Populated = 1 << 2,
+			Default = Populated
+		};
+
+		General general = General::Default;
+		Setup setup = Setup::Default;
+		Misc misc = Misc::Default;
+		Controls controls = Controls::Default;
+		Sound sound = Sound::Default;
+		Screen screen = Screen::Default;
+		KeyDefinitions keyDefinitions = KeyDefinitions::Default;
+		Communication communication = Communication::Default;
+		Updates updates = Updates::Default;
+		LobbyFilter lobbyFilter = LobbyFilter::Default;
+		Multiplayer multiplayer = Multiplayer::Default;
+	};
+
 	static std::string getGameVersionIDFromType(GameVersionType gameVersionType);
 	static std::optional<GameVersionType> getGameVersionTypeFromID(std::string_view gameVersionID);
-	std::optional<GameVersionType> determineGameVersionType();
+	static std::optional<SectionFeatures> getSectionFeaturesForGameVersion(std::string_view gameVersionID);
+	static SectionFeatures getSectionFeaturesForGameVersion(GameVersionType gameVersionType);
+	std::optional<SectionFeatures> getSectionFeatures() const;
+	std::optional<GameVersionType> determineGameVersionType() const;
 	void updateParent();
 
 	Style m_style;
@@ -448,6 +636,61 @@ struct BitmaskOperators<GameConfiguration::Style> {
 
 template<>
 struct BitmaskOperators<GameConfiguration::NewlineType> {
+	static const bool enabled = true;
+};
+
+template<>
+struct BitmaskOperators<GameConfiguration::SectionFeatures::General> {
+	static const bool enabled = true;
+};
+
+template<>
+struct BitmaskOperators<GameConfiguration::SectionFeatures::Setup> {
+	static const bool enabled = true;
+};
+
+template<>
+struct BitmaskOperators<GameConfiguration::SectionFeatures::Misc> {
+	static const bool enabled = true;
+};
+
+template<>
+struct BitmaskOperators<GameConfiguration::SectionFeatures::Controls> {
+	static const bool enabled = true;
+};
+
+template<>
+struct BitmaskOperators<GameConfiguration::SectionFeatures::Sound> {
+	static const bool enabled = true;
+};
+
+template<>
+struct BitmaskOperators<GameConfiguration::SectionFeatures::Screen> {
+	static const bool enabled = true;
+};
+
+template<>
+struct BitmaskOperators<GameConfiguration::SectionFeatures::KeyDefinitions> {
+	static const bool enabled = true;
+};
+
+template<>
+struct BitmaskOperators<GameConfiguration::SectionFeatures::Communication> {
+	static const bool enabled = true;
+};
+
+template<>
+struct BitmaskOperators<GameConfiguration::SectionFeatures::Updates> {
+	static const bool enabled = true;
+};
+
+template<>
+struct BitmaskOperators<GameConfiguration::SectionFeatures::LobbyFilter> {
+	static const bool enabled = true;
+};
+
+template<>
+struct BitmaskOperators<GameConfiguration::SectionFeatures::Multiplayer> {
 	static const bool enabled = true;
 };
 
