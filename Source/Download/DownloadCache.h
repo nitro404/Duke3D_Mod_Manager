@@ -29,14 +29,14 @@ public:
 
 	size_t numberOfCachedPackageFiles() const;
 	bool hasCachedPackageFileWithName(const std::string & fileName) const;
-	bool hasCachedPackageFile(const ModDownload * modDownload) const;
-	std::shared_ptr<CachedPackageFile> getCachedPackageFile(const ModDownload * modDownload) const;
-	bool hasCachedFile(const ModFile * modFile) const;
-	std::shared_ptr<CachedFile> getCachedFile(const ModFile * modFile) const;
-	bool updateCachedPackageFile(const ModDownload * modDownload, const ModGameVersion * modGameVersion, uint64_t fileSize, const std::string & eTag);
+	bool hasCachedPackageFile(const ModDownload & modDownload) const;
+	std::shared_ptr<CachedPackageFile> getCachedPackageFile(const ModDownload & modDownload) const;
+	bool hasCachedFile(const ModFile & modFile) const;
+	std::shared_ptr<CachedFile> getCachedFile(const ModFile & modFile) const;
+	bool updateCachedPackageFile(const ModDownload & modDownload, const ModGameVersion & modGameVersion, uint64_t fileSize, const std::string & eTag);
 	void removeCachedPackageFile(const std::string & modPackageDownloadFileName);
-	void removeCachedPackageFile(const CachedPackageFile * cachedPackageFile);
-	void removeCachedPackageFile(const ModDownload * modDownload);
+	void removeCachedPackageFile(const CachedPackageFile & cachedPackageFile);
+	void removeCachedPackageFile(const ModDownload & modDownload);
 	void clearCachedPackageFiles();
 
 	bool loadFrom(const std::string & filePath);

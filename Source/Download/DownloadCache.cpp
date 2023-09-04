@@ -85,20 +85,20 @@ bool DownloadCache::hasCachedPackageFileWithName(const std::string & fileName) c
 	return m_cachedPackageFiles.find(fileName) != m_cachedPackageFiles.end();
 }
 
-bool DownloadCache::hasCachedPackageFile(const ModDownload * modDownload) const {
-	if(!ModDownload::isValid(modDownload)) {
+bool DownloadCache::hasCachedPackageFile(const ModDownload & modDownload) const {
+	if(!modDownload.isValid()) {
 		return false;
 	}
 
-	return m_cachedPackageFiles.find(modDownload->getFileName()) != m_cachedPackageFiles.end();
+	return m_cachedPackageFiles.find(modDownload.getFileName()) != m_cachedPackageFiles.end();
 }
 
-std::shared_ptr<CachedPackageFile> DownloadCache::getCachedPackageFile(const ModDownload * modDownload) const {
-	if(!ModDownload::isValid(modDownload)) {
+std::shared_ptr<CachedPackageFile> DownloadCache::getCachedPackageFile(const ModDownload & modDownload) const {
+	if(!modDownload.isValid()) {
 		return nullptr;
 	}
 
-	std::map<std::string, std::shared_ptr<CachedPackageFile>>::const_iterator cachedPackageFile(m_cachedPackageFiles.find(modDownload->getFileName()));
+	std::map<std::string, std::shared_ptr<CachedPackageFile>>::const_iterator cachedPackageFile(m_cachedPackageFiles.find(modDownload.getFileName()));
 
 	if(cachedPackageFile == m_cachedPackageFiles.end()) {
 		return nullptr;
@@ -107,16 +107,16 @@ std::shared_ptr<CachedPackageFile> DownloadCache::getCachedPackageFile(const Mod
 	return cachedPackageFile->second;
 }
 
-bool DownloadCache::hasCachedFile(const ModFile * modFile) const {
+bool DownloadCache::hasCachedFile(const ModFile & modFile) const {
 	return getCachedFile(modFile) != nullptr;
 }
 
-std::shared_ptr<CachedFile> DownloadCache::getCachedFile(const ModFile * modFile) const {
-	if(!ModFile::isValid(modFile)) {
+std::shared_ptr<CachedFile> DownloadCache::getCachedFile(const ModFile & modFile) const {
+	if(!modFile.isValid()) {
 		return nullptr;
 	}
 
-	const ModGameVersion * modGameVersion = modFile->getParentModGameVersion();
+	const ModGameVersion * modGameVersion = modFile.getParentModGameVersion();
 
 	if(modGameVersion == nullptr) {
 		return nullptr;
@@ -128,17 +128,17 @@ std::shared_ptr<CachedFile> DownloadCache::getCachedFile(const ModFile * modFile
 		return nullptr;
 	}
 
-	std::shared_ptr<CachedPackageFile> cachedPackageFile(getCachedPackageFile(modDownload.get()));
+	std::shared_ptr<CachedPackageFile> cachedPackageFile(getCachedPackageFile(*modDownload));
 
 	if(cachedPackageFile == nullptr) {
 		return nullptr;
 	}
 
-	return cachedPackageFile->getCachedFileWithName(modFile->getFileName());
+	return cachedPackageFile->getCachedFileWithName(modFile.getFileName());
 }
 
-bool DownloadCache::updateCachedPackageFile(const ModDownload * modDownload, const ModGameVersion * modGameVersion, uint64_t fileSize, const std::string & eTag) {
-	if(!ModDownload::isValid(modDownload) || !ModGameVersion::isValid(modGameVersion) || modDownload->getParentMod() != modGameVersion->getParentMod() || eTag.empty()) {
+bool DownloadCache::updateCachedPackageFile(const ModDownload & modDownload, const ModGameVersion & modGameVersion, uint64_t fileSize, const std::string & eTag) {
+	if(!modDownload.isValid() || !modGameVersion.isValid() || modDownload.getParentMod() != modGameVersion.getParentMod() || eTag.empty()) {
 		spdlog::error("Failed to update cached package file, invalid arguments provided.");
 		return false;
 	}
@@ -147,29 +147,24 @@ bool DownloadCache::updateCachedPackageFile(const ModDownload * modDownload, con
 	std::shared_ptr<CachedPackageFile> cachedPackageFile(getCachedPackageFile(modDownload));
 
 	if(cachedPackageFile == nullptr) {
-		cachedPackageFile = createCachedPackageFile(modDownload->getFileName(), fileSize, modDownload->getSHA1(), eTag, std::chrono::system_clock::now());
+		cachedPackageFile = createCachedPackageFile(modDownload.getFileName(), fileSize, modDownload.getSHA1(), eTag, std::chrono::system_clock::now());
 		isNewCachedPackageFile = true;
 	}
 	else {
-		cachedPackageFile->setFileName(modDownload->getFileName());
+		cachedPackageFile->setFileName(modDownload.getFileName());
 		cachedPackageFile->setFileSize(fileSize);
-		cachedPackageFile->setSHA1(modDownload->getSHA1());
+		cachedPackageFile->setSHA1(modDownload.getSHA1());
 		cachedPackageFile->setETag(eTag);
 		cachedPackageFile->setDownloadedTimePoint(std::chrono::system_clock::now());
-	}
-
-	if(modGameVersion == nullptr) {
-		spdlog::error("Failed to update cached package file '{}', could not find corresponding mod game version.", modDownload->getFileName());
-		return false;
 	}
 
 	std::shared_ptr<CachedFile> cachedFile;
 	std::shared_ptr<ModFile> modFile;
 
-	for(size_t i = 0; i < modGameVersion->numberOfFiles(); i++) {
-		modFile = modGameVersion->getFile(i);
+	for(size_t i = 0; i < modGameVersion.numberOfFiles(); i++) {
+		modFile = modGameVersion.getFile(i);
 
-		if(modGameVersion->isEDuke32() && modFile->getType() != "zip" && modFile->getType() != "grp") {
+		if(modGameVersion.isEDuke32() && modFile->getType() != "zip" && modFile->getType() != "grp") {
 			continue;
 		}
 
@@ -188,7 +183,7 @@ bool DownloadCache::updateCachedPackageFile(const ModDownload * modDownload, con
 	}
 
 	if(isNewCachedPackageFile) {
-		m_cachedPackageFiles[modDownload->getFileName()] = cachedPackageFile;
+		m_cachedPackageFiles[modDownload.getFileName()] = cachedPackageFile;
 	}
 
 	return true;
@@ -202,20 +197,16 @@ void DownloadCache::removeCachedPackageFile(const std::string & modPackageDownlo
 	m_cachedPackageFiles.erase(modPackageDownloadFileName);
 }
 
-void DownloadCache::removeCachedPackageFile(const CachedPackageFile * cachedPackageFile) {
-	if(cachedPackageFile == nullptr) {
-		return;
-	}
-
-	removeCachedPackageFile(cachedPackageFile->getFileName());
+void DownloadCache::removeCachedPackageFile(const CachedPackageFile & cachedPackageFile) {
+	removeCachedPackageFile(cachedPackageFile.getFileName());
 }
 
-void DownloadCache::removeCachedPackageFile(const ModDownload * modDownload) {
-	if(!ModDownload::isValid(modDownload)) {
+void DownloadCache::removeCachedPackageFile(const ModDownload & modDownload) {
+	if(!modDownload.isValid()) {
 		return;
 	}
 
-	removeCachedPackageFile(modDownload->getFileName());
+	removeCachedPackageFile(modDownload.getFileName());
 }
 
 void DownloadCache::clearCachedPackageFiles() {

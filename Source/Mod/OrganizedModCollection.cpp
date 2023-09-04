@@ -1624,7 +1624,7 @@ void OrganizedModCollection::applyFilter() {
 				for(size_t i = 0; i < m_mods->numberOfMods(); i++) {
 					mod = m_mods->getMod(i);
 
-					if(m_localMode || m_downloadManager->isModDownloaded(mod.get())) {
+					if(m_localMode || m_downloadManager->isModDownloaded(*mod)) {
 						m_organizedMods.push_back(mod);
 					}
 				}

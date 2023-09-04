@@ -2027,7 +2027,7 @@ bool ModManager::installStandAloneMod(const ModGameVersion & standAloneModGameVe
 		return false;
 	}
 
-	if(!m_localMode && !m_downloadManager->downloadModGameVersion(&standAloneModGameVersion, getGameVersions().get())) {
+	if(!m_localMode && !m_downloadManager->downloadModGameVersion(standAloneModGameVersion, *getGameVersions())) {
 		spdlog::error("Failed to download stand-alone '{}' mod!", standAloneModGameVersion.getParentModVersion()->getFullName());
 		return false;
 	}
@@ -2096,7 +2096,7 @@ bool ModManager::installStandAloneMod(const ModGameVersion & standAloneModGameVe
 		else {
 			spdlog::info("Removing stand-alone mod '{}' archive package entry from cached download list.", standAloneModGameVersion.getParentModVersion()->getFullName());
 
-			m_downloadManager->getDownloadCache()->removeCachedPackageFile(modDownload.get());
+			m_downloadManager->getDownloadCache()->removeCachedPackageFile(*modDownload);
 			m_downloadManager->saveDownloadCache();
 		}
 	}
@@ -2134,10 +2134,10 @@ bool ModManager::uninstallModGameVersion(const ModGameVersion & modGameVersion) 
 	if(!m_localMode) {
 		std::shared_ptr<DownloadManager> downloadManager(m_downloadManager);
 
-		if(downloadManager->isModGameVersionDownloaded(&modGameVersion)) {
-			std::shared_ptr<CachedPackageFile> cachedModPackageFile(m_downloadManager->getDownloadCache()->getCachedPackageFile(modGameVersion.getDownload().get()));
+		if(downloadManager->isModGameVersionDownloaded(modGameVersion)) {
+			std::shared_ptr<CachedPackageFile> cachedModPackageFile(m_downloadManager->getDownloadCache()->getCachedPackageFile(*modGameVersion.getDownload()));
 
-			if(downloadManager->uninstallModGameVersion(&modGameVersion, getGameVersions().get())) {
+			if(downloadManager->uninstallModGameVersion(modGameVersion, *getGameVersions())) {
 				if(!modGameVersion.isStandAlone()) {
 					if(settings->segmentAnalyticsEnabled) {
 						std::map<std::string, std::any> properties;
@@ -2352,7 +2352,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		temporaryDirectoryName = settings->tempSymlinkName;
 	}
 
-	if(!m_localMode && !standAlone && selectedModGameVersion != nullptr && !m_downloadManager->downloadModGameVersion(selectedModGameVersion.get(), getGameVersions().get())) {
+	if(!m_localMode && !standAlone && selectedModGameVersion != nullptr && !m_downloadManager->downloadModGameVersion(*selectedModGameVersion, *getGameVersions())) {
 		notifyLaunchError(fmt::format("Failed to download '{}' game version of '{}' mod!", getGameVersions()->getLongNameOfGameVersionWithID(selectedModGameVersion->getGameVersionID()), selectedModGameVersion->getFullName(false)));
 		return false;
 	}

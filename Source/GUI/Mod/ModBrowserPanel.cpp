@@ -884,7 +884,7 @@ void ModBrowserPanel::updateUninstallButton() {
 		WXUtilities::setButtonEnabled(m_uninstallButton, m_modManager->getStandAloneMods()->isStandAloneModInstalled(*selectedModGameVersion));
 	}
 	else {
-		WXUtilities::setButtonEnabled(m_uninstallButton, !m_modManager->isUsingLocalMode() && m_modManager->getDownloadManager()->isModGameVersionDownloaded(selectedModGameVersion.get()));
+		WXUtilities::setButtonEnabled(m_uninstallButton, !m_modManager->isUsingLocalMode() && m_modManager->getDownloadManager()->isModGameVersionDownloaded(*selectedModGameVersion));
 	}
 }
 
