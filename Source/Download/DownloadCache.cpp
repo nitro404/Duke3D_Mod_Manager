@@ -2,6 +2,7 @@
 
 #include "CachedFile.h"
 #include "CachedPackageFile.h"
+#include "Game/GameVersion.h"
 #include "Mod/ModDownload.h"
 #include "Mod/ModFile.h"
 #include "Mod/ModGameVersion.h"
@@ -137,8 +138,8 @@ std::shared_ptr<CachedFile> DownloadCache::getCachedFile(const ModFile & modFile
 	return cachedPackageFile->getCachedFileWithName(modFile.getFileName());
 }
 
-bool DownloadCache::updateCachedPackageFile(const ModDownload & modDownload, const ModGameVersion & modGameVersion, uint64_t fileSize, const std::string & eTag) {
-	if(!modDownload.isValid() || !modGameVersion.isValid() || modDownload.getParentMod() != modGameVersion.getParentMod() || eTag.empty()) {
+bool DownloadCache::updateCachedPackageFile(const ModDownload & modDownload, const ModGameVersion & modGameVersion, const GameVersion & gameVersion, uint64_t fileSize, const std::string & eTag) {
+	if(!modDownload.isValid() || !modGameVersion.isValid() || modDownload.getParentMod() != modGameVersion.getParentMod() || eTag.empty() || Utilities::areStringsEqualIgnoreCase(modGameVersion.getGameVersionID(), gameVersion.getID())) {
 		spdlog::error("Failed to update cached package file, invalid arguments provided.");
 		return false;
 	}
@@ -164,7 +165,7 @@ bool DownloadCache::updateCachedPackageFile(const ModDownload & modDownload, con
 	for(size_t i = 0; i < modGameVersion.numberOfFiles(); i++) {
 		modFile = modGameVersion.getFile(i);
 
-		if(modGameVersion.isEDuke32() && modFile->getType() != "zip" && modFile->getType() != "grp") {
+		if(gameVersion.areScriptFilesReadFromGroup() && modFile->getType() != "zip" && modFile->getType() != "grp") {
 			continue;
 		}
 

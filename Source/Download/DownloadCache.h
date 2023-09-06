@@ -12,6 +12,7 @@
 
 class CachedFile;
 class CachedPackageFile;
+class GameVersion;
 class ModDownload;
 class ModFile;
 class ModGameVersion;
@@ -33,7 +34,7 @@ public:
 	std::shared_ptr<CachedPackageFile> getCachedPackageFile(const ModDownload & modDownload) const;
 	bool hasCachedFile(const ModFile & modFile) const;
 	std::shared_ptr<CachedFile> getCachedFile(const ModFile & modFile) const;
-	bool updateCachedPackageFile(const ModDownload & modDownload, const ModGameVersion & modGameVersion, uint64_t fileSize, const std::string & eTag);
+	bool updateCachedPackageFile(const ModDownload & modDownload, const ModGameVersion & modGameVersion, const GameVersion & gameVersion, uint64_t fileSize, const std::string & eTag);
 	void removeCachedPackageFile(const std::string & modPackageDownloadFileName);
 	void removeCachedPackageFile(const CachedPackageFile & cachedPackageFile);
 	void removeCachedPackageFile(const ModDownload & modDownload);

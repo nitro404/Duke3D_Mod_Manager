@@ -518,7 +518,7 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 			modFile = modGameVersion.getFile(i);
 
 			// eDuke32 mod files can be read straight out of the group or zip file, and are not stored separately
-			if(modGameVersion.isEDuke32() && modFile->getType() != "zip") {
+			if(gameVersion->areZipArchiveGroupsSupported() && modFile->getType() != "zip") {
 				continue;
 			}
 
@@ -558,7 +558,7 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 		return false;
 	}
 
-	m_downloadCache->updateCachedPackageFile(*modDownload, modGameVersion, modDownloadZipArchive->getCompressedSize(), response->getETag());
+	m_downloadCache->updateCachedPackageFile(*modDownload, modGameVersion, *gameVersion, modDownloadZipArchive->getCompressedSize(), response->getETag());
 
 	size_t numberOfFiles = modDownloadZipArchive->numberOfFiles();
 

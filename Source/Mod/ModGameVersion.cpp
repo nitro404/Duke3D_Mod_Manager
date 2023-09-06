@@ -37,7 +37,7 @@ static const std::string XML_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_FILE_N
 static const std::string XML_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_DIRECTORY_PATH_NAME("game_config_directory_path");
 static const std::string XML_MOD_GAME_VERSION_PROPERTY_SKILL_START_VALUE_NAME("skill_start_value");
 static const std::string XML_MOD_GAME_VERSION_PROPERTY_LOCAL_WORKING_DIRECTORY_NAME("local_working_directory");
-static const std::string XML_MOD_GAME_VERSION_PROPERTY_RELATIVE_CON_FILE_PATH_NAME("relative_con_file_path");
+static const std::string XML_MOD_GAME_VERSION_PROPERTY_SCRIPT_FILES_READ_FROM_GROUP_NAME("script_files_read_from_group");
 static const std::string XML_MOD_GAME_VERSION_PROPERTY_SUPPORTS_SUBDIRECTORIES_NAME("supports_subdirectories");
 static const std::string XML_MOD_GAME_VERSION_PROPERTY_REQUIRES_GROUP_FILE_EXTRACTION_NAME("requires_group_file_extraction");
 static const std::string XML_MOD_GAME_VERSION_ARGUMENTS_ELEMENT_NAME("arguments");
@@ -77,7 +77,7 @@ static const std::array<std::string_view, 11> XML_MOD_GAME_VERSION_PROPERTIES_AT
 	XML_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_DIRECTORY_PATH_NAME,
 	XML_MOD_GAME_VERSION_PROPERTY_SKILL_START_VALUE_NAME,
 	XML_MOD_GAME_VERSION_PROPERTY_LOCAL_WORKING_DIRECTORY_NAME,
-	XML_MOD_GAME_VERSION_PROPERTY_RELATIVE_CON_FILE_PATH_NAME,
+	XML_MOD_GAME_VERSION_PROPERTY_SCRIPT_FILES_READ_FROM_GROUP_NAME,
 	XML_MOD_GAME_VERSION_PROPERTY_SUPPORTS_SUBDIRECTORIES_NAME,
 	XML_MOD_GAME_VERSION_PROPERTY_REQUIRES_GROUP_FILE_EXTRACTION_NAME
 };
@@ -114,7 +114,7 @@ static const std::string JSON_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_FILE_
 static const std::string JSON_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_DIRECTORY_PATH_PROPERTY_NAME("gameConfigurationDirectoryPath");
 static const std::string JSON_MOD_GAME_VERSION_PROPERTY_SKILL_START_VALUE_PROPERTY_NAME("skillStartValue");
 static const std::string JSON_MOD_GAME_VERSION_PROPERTY_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME("localWorkingDirectory");
-static const std::string JSON_MOD_GAME_VERSION_PROPERTY_RELATIVE_CON_FILE_PATH_PROPERTY_NAME("relativeConFilePath");
+static const std::string JSON_MOD_GAME_VERSION_PROPERTY_SCRIPT_FILES_READ_FROM_GROUP_PROPERTY_NAME("scriptFilesReadFromGroup");
 static const std::string JSON_MOD_GAME_VERSION_PROPERTY_SUPPORTS_SUBDIRECTORIES_PROPERTY_NAME("supportsSubdirectories");
 static const std::string JSON_MOD_GAME_VERSION_PROPERTY_REQUIRES_GROUP_FILE_EXTRACTION_PROPERTY_NAME("requiresGroupFileExtraction");
 static const std::string JSON_MOD_GAME_VERSION_ARGUMENTS_PROPERTY_NAME("arguments");
@@ -152,7 +152,7 @@ static const std::array<std::string_view, 10> JSON_MOD_GAME_VERSION_PROPERTY_NAM
 	JSON_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_DIRECTORY_PATH_PROPERTY_NAME,
 	JSON_MOD_GAME_VERSION_PROPERTY_SKILL_START_VALUE_PROPERTY_NAME,
 	JSON_MOD_GAME_VERSION_PROPERTY_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME,
-	JSON_MOD_GAME_VERSION_PROPERTY_RELATIVE_CON_FILE_PATH_PROPERTY_NAME,
+	JSON_MOD_GAME_VERSION_PROPERTY_SCRIPT_FILES_READ_FROM_GROUP_PROPERTY_NAME,
 	JSON_MOD_GAME_VERSION_PROPERTY_SUPPORTS_SUBDIRECTORIES_PROPERTY_NAME,
 	JSON_MOD_GAME_VERSION_PROPERTY_REQUIRES_GROUP_FILE_EXTRACTION_PROPERTY_NAME
 };
@@ -267,10 +267,6 @@ std::string ModGameVersion::getFullName(bool includeGameVersionID = true) const 
 
 bool ModGameVersion::isStandAlone() const {
 	return m_standAloneGameVersion != nullptr;
-}
-
-bool ModGameVersion::isEDuke32() const {
-	return Utilities::areStringsEqualIgnoreCase(m_gameVersionID, GameVersion::EDUKE32.getID());
 }
 
 bool ModGameVersion::isConverted() const {
@@ -619,7 +615,7 @@ rapidjson::Value ModGameVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson
 
 		std::vector<std::pair<std::string, std::optional<bool>>> booleanProperties({
 			{ JSON_MOD_GAME_VERSION_PROPERTY_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME,          m_standAloneGameVersion->hasLocalWorkingDirectory() },
-			{ JSON_MOD_GAME_VERSION_PROPERTY_RELATIVE_CON_FILE_PATH_PROPERTY_NAME,           m_standAloneGameVersion->hasRelativeConFilePath() },
+			{ JSON_MOD_GAME_VERSION_PROPERTY_SCRIPT_FILES_READ_FROM_GROUP_PROPERTY_NAME,     m_standAloneGameVersion->getScriptFilesReadFromGroup() },
 			{ JSON_MOD_GAME_VERSION_PROPERTY_SUPPORTS_SUBDIRECTORIES_PROPERTY_NAME,          m_standAloneGameVersion->doesSupportSubdirectories() },
 			{ JSON_MOD_GAME_VERSION_PROPERTY_REQUIRES_GROUP_FILE_EXTRACTION_PROPERTY_NAME,   m_standAloneGameVersion->getRequiresGroupFileExtraction() }
 		});
@@ -724,7 +720,7 @@ tinyxml2::XMLElement * ModGameVersion::toXML(tinyxml2::XMLDocument * document) c
 
 		std::vector<std::pair<std::string, std::optional<bool>>> booleanProperties({
 			{ XML_MOD_GAME_VERSION_PROPERTY_LOCAL_WORKING_DIRECTORY_NAME,        m_standAloneGameVersion->hasLocalWorkingDirectory() },
-			{ XML_MOD_GAME_VERSION_PROPERTY_RELATIVE_CON_FILE_PATH_NAME,         m_standAloneGameVersion->hasRelativeConFilePath() },
+			{ XML_MOD_GAME_VERSION_PROPERTY_SCRIPT_FILES_READ_FROM_GROUP_NAME,   m_standAloneGameVersion->getScriptFilesReadFromGroup() },
 			{ XML_MOD_GAME_VERSION_PROPERTY_SUPPORTS_SUBDIRECTORIES_NAME,        m_standAloneGameVersion->doesSupportSubdirectories() },
 			{ XML_MOD_GAME_VERSION_PROPERTY_REQUIRES_GROUP_FILE_EXTRACTION_NAME, m_standAloneGameVersion->getRequiresGroupFileExtraction() }
 		});
@@ -1017,16 +1013,16 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value
 			standAloneGameVersion->setLocalWorkingDirectory(localWorkingDirectoryValue.GetBool());
 		}
 
-		// read relative con file path property
-		if(propertiesValue.HasMember(JSON_MOD_GAME_VERSION_PROPERTY_RELATIVE_CON_FILE_PATH_PROPERTY_NAME.c_str())) {
-			const rapidjson::Value & relativeConFilePathValue = propertiesValue[JSON_MOD_GAME_VERSION_PROPERTY_RELATIVE_CON_FILE_PATH_PROPERTY_NAME.c_str()];
+		// read script files read from group property
+		if(propertiesValue.HasMember(JSON_MOD_GAME_VERSION_PROPERTY_SCRIPT_FILES_READ_FROM_GROUP_PROPERTY_NAME.c_str())) {
+			const rapidjson::Value & scriptFilesReadFromGroupValue = propertiesValue[JSON_MOD_GAME_VERSION_PROPERTY_SCRIPT_FILES_READ_FROM_GROUP_PROPERTY_NAME.c_str()];
 
-			if(!relativeConFilePathValue.IsBool()) {
-				spdlog::error("Stand-alone mod game version '{}' '{}' property has invalid type: '{}', expected 'boolean'.", JSON_MOD_GAME_VERSION_PROPERTIES_PROPERTY_NAME, JSON_MOD_GAME_VERSION_PROPERTY_RELATIVE_CON_FILE_PATH_PROPERTY_NAME, Utilities::typeToString(relativeConFilePathValue.GetType()));
+			if(!scriptFilesReadFromGroupValue.IsBool()) {
+				spdlog::error("Stand-alone mod game version '{}' '{}' property has invalid type: '{}', expected 'boolean'.", JSON_MOD_GAME_VERSION_PROPERTIES_PROPERTY_NAME, JSON_MOD_GAME_VERSION_PROPERTY_SCRIPT_FILES_READ_FROM_GROUP_PROPERTY_NAME, Utilities::typeToString(scriptFilesReadFromGroupValue.GetType()));
 				return nullptr;
 			}
 
-			standAloneGameVersion->setRelativeConFilePath(relativeConFilePathValue.GetBool());
+			standAloneGameVersion->setScriptFilesReadFromGroup(scriptFilesReadFromGroupValue.GetBool());
 		}
 
 		// read supports subdirectories property
@@ -1543,8 +1539,12 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const tinyxml2::XMLEle
 				standAloneGameVersion->setLocalWorkingDirectory(Utilities::parseBoolean(properties[XML_MOD_GAME_VERSION_PROPERTY_LOCAL_WORKING_DIRECTORY_NAME]).value_or(GameVersion::DEFAULT_LOCAL_WORKING_DIRECTORY));
 			}
 
-			if(properties.find(XML_MOD_GAME_VERSION_PROPERTY_RELATIVE_CON_FILE_PATH_NAME) != properties.cend()) {
-				standAloneGameVersion->setRelativeConFilePath(Utilities::parseBoolean(properties[XML_MOD_GAME_VERSION_PROPERTY_RELATIVE_CON_FILE_PATH_NAME]).value_or(GameVersion::DEFAULT_RELATIVE_CON_FILE_PATH));
+			if(properties.find(XML_MOD_GAME_VERSION_PROPERTY_SCRIPT_FILES_READ_FROM_GROUP_NAME) != properties.cend()) {
+				std::optional<bool> optionalScriptFilesReadFromGroup(Utilities::parseBoolean(properties[XML_MOD_GAME_VERSION_PROPERTY_SCRIPT_FILES_READ_FROM_GROUP_NAME]));
+
+				if(optionalScriptFilesReadFromGroup.has_value()) {
+					standAloneGameVersion->setScriptFilesReadFromGroup(optionalScriptFilesReadFromGroup.value());
+				}
 			}
 
 			if(properties.find(XML_MOD_GAME_VERSION_PROPERTY_SUPPORTS_SUBDIRECTORIES_NAME) != properties.cend()) {
@@ -1697,12 +1697,7 @@ bool ModGameVersion::isValid(bool skipFileInfoValidation) const {
 		return false;
 	}
 
-	if(isEDuke32()) {
-		if(!hasFileOfType("grp") && !hasFileOfType("zip")) {
-			return false;
-		}
-	}
-	else if(!isStandAlone() && !hasFileOfType("grp")) {
+	if(!isStandAlone() && !hasFileOfType("grp") && !hasFileOfType("zip")) {
 		return false;
 	}
 

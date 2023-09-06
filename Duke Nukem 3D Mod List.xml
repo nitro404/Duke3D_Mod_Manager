@@ -542,7 +542,7 @@
 			<version release_date="May 14, 2002">
 				<type>
 					<game type="Stand-Alone" state="Native">
-						<properties base="Atomic" game_exe_name="Borg3d.exe" setup_exe_name="SETUP.EXE" game_config_file_name="BORG3D.CFG" game_config_directory_path="" skill_start_value="1" local_working_directory="true" relative_con_file_path="false" supports_subdirectories="true"/>
+						<properties base="Atomic" game_exe_name="Borg3d.exe" setup_exe_name="SETUP.EXE" game_config_file_name="BORG3D.CFG" game_config_directory_path="" skill_start_value="1" local_working_directory="true" supports_subdirectories="true"/>
 						<arguments>
 							<argument name="con-file" flag="/x"/>
 							<argument name="group-file" flag="/g"/>
@@ -9821,7 +9821,7 @@
 			<version id="1.0.0" release_date="September 15, 2015">
 				<type>
 					<game type="Stand-Alone" state="Native">
-						<properties base="eDuke32" game_exe_name="Electric Highways.exe" game_config_file_name="eduke32.cfg" game_config_directory_path="" skill_start_value="1" local_working_directory="false" relative_con_file_path="true" supports_subdirectories="true"/>
+						<properties base="eDuke32" game_exe_name="Electric Highways.exe" game_config_file_name="eduke32.cfg" game_config_directory_path="" skill_start_value="1" local_working_directory="false" script_files_read_from_group="true" supports_subdirectories="true"/>
 						<arguments>
 							<argument name="con-file" flag="-x "/>
 							<argument name="extra-con-file" flag="-mx "/>
@@ -9861,7 +9861,7 @@
 			<version id="1.1.0" release_date="October 30, 2015">
 				<type>
 					<game type="Stand-Alone" state="Native">
-						<properties base="eDuke32" game_exe_name="Electric Highways.exe" game_config_file_name="eduke32.cfg" game_config_directory_path="" skill_start_value="1" local_working_directory="false" relative_con_file_path="true" supports_subdirectories="true"/>
+						<properties base="eDuke32" game_exe_name="Electric Highways.exe" game_config_file_name="eduke32.cfg" game_config_directory_path="" skill_start_value="1" local_working_directory="false" script_files_read_from_group="true" supports_subdirectories="true"/>
 						<arguments>
 							<argument name="con-file" flag="-x "/>
 							<argument name="extra-con-file" flag="-mx "/>
@@ -11673,7 +11673,7 @@
 			<version id="1.0" release_date="March 29, 2023">
 				<type>
 					<game type="Stand-Alone" state="Native">
-						<properties base="eDuke32" game_exe_name="eduke32.exe" game_config_file_name="eduke32.cfg" game_config_directory_path="" skill_start_value="1" local_working_directory="false" relative_con_file_path="true" supports_subdirectories="true"/>
+						<properties base="eDuke32" game_exe_name="eduke32.exe" game_config_file_name="eduke32.cfg" game_config_directory_path="" skill_start_value="1" local_working_directory="false" script_files_read_from_group="true" supports_subdirectories="true"/>
 						<arguments>
 							<argument name="con-file" flag="-x "/>
 							<argument name="extra-con-file" flag="-mx "/>
@@ -11745,7 +11745,7 @@
 			<version release_date="September 15, 2022">
 				<type>
 					<game type="Stand-Alone" state="Native">
-						<properties base="eDuke32" game_exe_name="awol.exe" game_config_file_name="awol.cfg" game_config_directory_path="" skill_start_value="1" local_working_directory="false" relative_con_file_path="true" supports_subdirectories="true"/>
+						<properties base="eDuke32" game_exe_name="awol.exe" game_config_file_name="awol.cfg" game_config_directory_path="" skill_start_value="1" local_working_directory="false" script_files_read_from_group="true" supports_subdirectories="true"/>
 						<arguments>
 							<argument name="con-file" flag="-x "/>
 							<argument name="extra-con-file" flag="-mx "/>
@@ -11797,7 +11797,7 @@
 			<version id="1.3.98" release_date="March 29, 2002">
 				<type>
 					<game type="Stand-Alone" state="Native">
-						<properties base="LameDuke" game_exe_name="Avatar.exe" setup_exe_name="SETUP.EXE" game_config_file_name="SETUP.DAT" game_config_directory_path="" skill_start_value="0" local_working_directory="true" relative_con_file_path="false" supports_subdirectories="false" requires_group_file_extraction="true"/>
+						<properties base="LameDuke" game_exe_name="Avatar.exe" setup_exe_name="SETUP.EXE" game_config_file_name="SETUP.DAT" game_config_directory_path="" skill_start_value="0" local_working_directory="true" supports_subdirectories="false" requires_group_file_extraction="true"/>
 						<arguments>
 							<argument name="episode" flag="/v"/>
 							<argument name="level" flag="/l"/>

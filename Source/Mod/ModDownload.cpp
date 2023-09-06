@@ -237,10 +237,6 @@ bool ModDownload::isStandAlone() const {
 	return Utilities::areStringsEqualIgnoreCase(m_gameVersionID, GameVersion::STANDALONE);
 }
 
-bool ModDownload::isEDuke32() const {
-	return Utilities::areStringsEqualIgnoreCase(m_gameVersionID, GameVersion::EDUKE32.getID());
-}
-
 bool ModDownload::isConverted() const {
 	return m_converted.has_value() ? m_converted.value() : false;
 }

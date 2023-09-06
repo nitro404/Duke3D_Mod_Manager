@@ -27,7 +27,7 @@ public:
 	};
 
 	GameVersion();
-	GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool removable, const std::string & gamePath, const std::string & gameExecutableName, const std::string & gameConfigurationFileName, const std::string & gameConfigurationDirectoryPath, bool localWorkingDirectory, bool relativeConFilePath, bool supportsSubdirectories, std::optional<bool> worldTourGroupSupported, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag = {}, const std::optional<std::string> & weaponSwitchOrderArgumentFlag = {}, const std::optional<std::string> & disableMonstersArgumentFlag = {}, const std::optional<std::string> & disableSoundArgumentFlag = {}, const std::optional<std::string> & disableMusicArgumentFlag = {}, const std::optional<std::string> & setupExecutableName = {}, const std::optional<std::string> & groupFileInstallPath = {}, const std::optional<std::string> & defFileArgumentFlag = {}, const std::optional<std::string> & extraDefFileArgumentFlag = {}, const std::optional<bool> & requiresCombinedGroup = {}, const std::optional<bool> & requiresGroupFileExtraction = {}, const std::string & website = {}, const std::string & sourceCodeURL = {}, const std::vector<OperatingSystem> & supportedOperatingSystems = {}, const std::vector<std::string> & compatibleGameVersions = {}, const std::vector<std::string> & notes = {}, const DOSBoxConfiguration & dosboxConfiguration = {});
+	GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool removable, const std::string & gamePath, const std::string & gameExecutableName, const std::string & gameConfigurationFileName, const std::string & gameConfigurationDirectoryPath, bool localWorkingDirectory, std::optional<bool> scriptFilesReadFromGroup, bool supportsSubdirectories, std::optional<bool> worldTourGroupSupported, std::optional<bool> zipArchiveGroupsSupported, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag = {}, const std::optional<std::string> & weaponSwitchOrderArgumentFlag = {}, const std::optional<std::string> & disableMonstersArgumentFlag = {}, const std::optional<std::string> & disableSoundArgumentFlag = {}, const std::optional<std::string> & disableMusicArgumentFlag = {}, const std::optional<std::string> & setupExecutableName = {}, const std::optional<std::string> & groupFileInstallPath = {}, const std::optional<std::string> & defFileArgumentFlag = {}, const std::optional<std::string> & extraDefFileArgumentFlag = {}, const std::optional<bool> & requiresCombinedGroup = {}, const std::optional<bool> & requiresGroupFileExtraction = {}, const std::string & website = {}, const std::string & sourceCodeURL = {}, const std::vector<OperatingSystem> & supportedOperatingSystems = {}, const std::vector<std::string> & compatibleGameVersions = {}, const std::vector<std::string> & notes = {}, const DOSBoxConfiguration & dosboxConfiguration = {});
 	GameVersion(GameVersion && gameVersion) noexcept;
 	GameVersion(const GameVersion & gameVersion);
 	GameVersion & operator = (GameVersion && gameVersion) noexcept;
@@ -95,14 +95,20 @@ public:
 	void setLocalWorkingDirectory(bool localWorkingDirectory);
 	const std::string & getModDirectoryName() const;
 	void setModDirectoryName(const std::string & modDirectoryName);
-	bool hasRelativeConFilePath() const;
-	void setRelativeConFilePath(bool relativeConFilePath);
+	bool areScriptFilesReadFromGroup() const;
+	std::optional<bool> getScriptFilesReadFromGroup() const;
+	void setScriptFilesReadFromGroup(bool scriptFilesReadFromGroup);
+	void clearScriptFilesReadFromGroup();
 	bool doesSupportSubdirectories() const;
 	void setSupportsSubdirectories(bool supportsSubdirectories);
 	bool isWorldTourGroupSupported() const;
 	std::optional<bool> getWorldTourGroupSupported() const;
 	void setWorldTourGroupSupported(bool worldTourGroupSupported);
 	void clearWorldTourGroupSupported();
+	bool areZipArchiveGroupsSupported() const;
+	std::optional<bool> getZipArchiveGroupsSupported() const;
+	void setZipArchiveGroupsSupported(bool zipArchiveGroupsSupported);
+	void clearZipArchiveGroupsSupported();
 	bool hasConFileArgumentFlag() const;
 	const std::optional<std::string> & getConFileArgumentFlag() const;
 	bool setConFileArgumentFlag(const std::string & flag);
@@ -274,7 +280,6 @@ public:
 	static inline const std::string ATOMIC_EDITION_GAME_EXECTUABLE_CRACKED_SHA1 = "a849e1e00ac58c0271498dd302d5c5f2819ab2e9";
 
 	static const bool DEFAULT_LOCAL_WORKING_DIRECTORY;
-	static const bool DEFAULT_RELATIVE_CON_FILE_PATH;
 	static const bool DEFAULT_SUPPORTS_SUBDIRECTORIES;
 	static const bool DEFAULT_WORLD_TOUR_GROUP_SUPPORTED;
 	static const uint8_t DEFAULT_SKILL_START_VALUE;
@@ -303,9 +308,10 @@ private:
 	std::string m_website;
 	std::string m_sourceCodeURL;
 	bool m_localWorkingDirectory;
-	bool m_relativeConFilePath;
+	std::optional<bool> m_scriptFilesReadFromGroup;
 	bool m_supportsSubdirectories;
 	std::optional<bool> m_worldTourGroupSupported;
+	std::optional<bool> m_zipArchiveGroupsSupported;
 	std::optional<std::string> m_conFileArgumentFlag;
 	std::optional<std::string> m_extraConFileArgumentFlag;
 	std::optional<std::string> m_groupFileArgumentFlag;

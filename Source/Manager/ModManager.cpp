@@ -3504,7 +3504,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 						command << selectedGameVersion->getExtraConFileArgumentFlag().value();
 					}
 
-					command << (selectedGameVersion->hasRelativeConFilePath() ? conFileName : Utilities::joinPaths(modPath, conFileName));
+					command << (selectedGameVersion->areScriptFilesReadFromGroup() ? conFileName : Utilities::joinPaths(modPath, conFileName));
 				}
 			}
 
@@ -3538,7 +3538,7 @@ std::string ModManager::generateCommand(std::shared_ptr<ModGameVersion> modGameV
 				}
 			}
 
-			if(!customGroupFiles.empty() || modGameVersion->isEDuke32()) {
+			if(!customGroupFiles.empty() || targetGameVersion->areZipArchiveGroupsSupported()) {
 				if(customGroupFiles.empty() && !standAlone) {
 					std::vector<std::shared_ptr<ModFile>> zipFiles(modGameVersion->getFilesOfType("zip"));
 
@@ -3915,8 +3915,7 @@ size_t ModManager::checkForUnlinkedModFilesForGameVersion(const GameVersion & ga
 					fileName = modFile->getFileName();
 
 					if(linkedModFiles.find(fileName) != linkedModFiles.end() && linkedModFiles[fileName].size() != 0) {
-						// eDuke32 mod files can be read straight out of the group or zip file, and are not stored separately
-						if(modGameVersion->isEDuke32() && modFile->getType() != "zip" && modFile->getType() != "grp") {
+						if(gameVersion.areScriptFilesReadFromGroup() && modFile->getType() != "zip" && modFile->getType() != "grp") {
 							continue;
 						}
 					}
@@ -4056,8 +4055,7 @@ size_t ModManager::checkModForMissingFiles(const Mod & mod, std::optional<size_t
 					modFilePath = Utilities::joinPaths(gameModsPath, modFile->getFileName());
 
 					if(!std::filesystem::is_regular_file(std::filesystem::path(modFilePath))) {
-						// skip eDuke 32 mod files which are contained within the main zip file
-						if(modGameVersion->isEDuke32() && modFile->getType() != "zip" && modFile->getType() != "grp") {
+						if(gameVersion->areScriptFilesReadFromGroup() && modFile->getType() != "zip" && modFile->getType() != "grp") {
 							continue;
 						}
 
@@ -4451,7 +4449,7 @@ size_t ModManager::updateModFileInfo(Mod & mod, bool skipPopulatedFiles, std::op
 					continue;
 				}
 
-				if(modGameVersion->isEDuke32()) {
+				if(gameVersion->areZipArchiveGroupsSupported()) {
 					std::shared_ptr<ModFile> modZipFile(modGameVersion->getFirstFileOfType("zip"));
 
 					if(modZipFile != nullptr) {
@@ -4487,8 +4485,7 @@ size_t ModManager::updateModFileInfo(Mod & mod, bool skipPopulatedFiles, std::op
 					std::string fileSHA1;
 					uint64_t fileSize = 0;
 
-					// eDuke32 mod files can be read straight out of the group or zip file, and are not stored separately
-					if(modGameVersion->isEDuke32() && modFile->getType() != "zip" && modFile->getType() != "grp") {
+					if(gameVersion->areScriptFilesReadFromGroup() && modFile->getType() != "zip" && modFile->getType() != "grp") {
 						if(!zipArchiveFilePath.empty()) {
 							if(zipArchive == nullptr) {
 								spdlog::error("Skipping update of mod file '{}' info since zip archive could not be opened.", zipArchiveFilePath);
