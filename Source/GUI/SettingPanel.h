@@ -44,9 +44,9 @@ public:
 	static SettingPanel * createOptionalBooleanSettingPanel(std::optional<bool> & setting, std::optional<bool> defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer);
 	static SettingPanel * createOptionalBooleanSettingPanel(std::function<std::optional<bool>()> getSettingValueFunction, std::function<void(bool)> setSettingValueFunction, std::function<void()> clearSettingValueFunction, std::optional<bool> defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer);
 	template <typename T>
-	static SettingPanel * createIntegerSettingPanel(T & setting, T defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, size_t minValue = std::numeric_limits<T>::min(), size_t maxValue = std::numeric_limits<T>::max(), std::function<bool(const SettingPanel *)> customValidatorFunction = nullptr);
+	static SettingPanel * createIntegerSettingPanel(T & setting, T defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, T minValue = std::numeric_limits<T>::min(), T maxValue = std::numeric_limits<T>::max(), std::function<bool(const SettingPanel *)> customValidatorFunction = nullptr);
 	template <typename T>
-	static SettingPanel * createIntegerSettingPanel(std::function<T()> getSettingValueFunction, std::function<void(T)> setSettingValueFunction, T defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, size_t minValue = std::numeric_limits<T>::min(), size_t maxValue = std::numeric_limits<T>::max(), std::function<bool(const SettingPanel *)> customValidatorFunction = nullptr);
+	static SettingPanel * createIntegerSettingPanel(std::function<T()> getSettingValueFunction, std::function<void(T)> setSettingValueFunction, T defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, T minValue = std::numeric_limits<T>::min(), T maxValue = std::numeric_limits<T>::max(), std::function<bool(const SettingPanel *)> customValidatorFunction = nullptr);
 	template <typename T>
 	static SettingPanel * createChronoSettingPanel(T & setting, T defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, std::function<bool(const SettingPanel *)> customValidatorFunction = nullptr);
 	static SettingPanel * createStringSettingPanel(std::string & setting, std::string defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, size_t minLength = 0, size_t maxLength = std::numeric_limits<size_t>::max(), std::function<bool(const SettingPanel *)> customValidatorFunction = nullptr);
@@ -112,12 +112,12 @@ private:
 };
 
 template <typename T>
-SettingPanel * SettingPanel::createIntegerSettingPanel(T & setting, T defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, size_t minValue, size_t maxValue, std::function<bool(const SettingPanel *)> customValidatorFunction) {
+SettingPanel * SettingPanel::createIntegerSettingPanel(T & setting, T defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, T minValue, T maxValue, std::function<bool(const SettingPanel *)> customValidatorFunction) {
 	return createIntegerSettingPanel<T>([&setting]() { return setting; }, [&setting](T newSetting) { setting = newSetting; }, defaultSetting, name, parent, parentSizer, minValue, maxValue, customValidatorFunction);
 }
 
 template <typename T>
-SettingPanel * SettingPanel::createIntegerSettingPanel(std::function<T()> getSettingValueFunction, std::function<void(T)> setSettingValueFunction, T defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, size_t minValue, size_t maxValue, std::function<bool(const SettingPanel *)> customValidatorFunction) {
+SettingPanel * SettingPanel::createIntegerSettingPanel(std::function<T()> getSettingValueFunction, std::function<void(T)> setSettingValueFunction, T defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, T minValue, T maxValue, std::function<bool(const SettingPanel *)> customValidatorFunction) {
 	if(parent == nullptr) {
 		return nullptr;
 	}
