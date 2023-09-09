@@ -48,6 +48,10 @@ public:
 	template <typename T>
 	static SettingPanel * createIntegerSettingPanel(std::function<T()> getSettingValueFunction, std::function<void(T)> setSettingValueFunction, T defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, T minValue = std::numeric_limits<T>::min(), T maxValue = std::numeric_limits<T>::max(), std::function<bool(const SettingPanel *)> customValidatorFunction = nullptr);
 	template <typename T>
+	static SettingPanel * createOptionalIntegerSettingPanel(std::optional<T> & setting, std::optional<T> defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, T minValue = std::numeric_limits<T>::min(), T maxValue = std::numeric_limits<T>::max(), std::function<bool(const SettingPanel *)> customValidatorFunction = nullptr);
+	template <typename T>
+	static SettingPanel * createOptionalIntegerSettingPanel(std::function<std::optional<T>()> getSettingValueFunction, std::function<void(T)> setSettingValueFunction, std::function<void()> clearSettingValueFunction, std::optional<T> defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, T minValue = std::numeric_limits<T>::min(), T maxValue = std::numeric_limits<T>::max(), std::function<bool(const SettingPanel *)> customValidatorFunction = nullptr);
+	template <typename T>
 	static SettingPanel * createChronoSettingPanel(T & setting, T defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, std::function<bool(const SettingPanel *)> customValidatorFunction = nullptr);
 	static SettingPanel * createStringSettingPanel(std::string & setting, std::string defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, size_t minLength = 0, size_t maxLength = std::numeric_limits<size_t>::max(), std::function<bool(const SettingPanel *)> customValidatorFunction = nullptr);
 	template <typename R>
@@ -184,6 +188,124 @@ SettingPanel * SettingPanel::createIntegerSettingPanel(std::function<T()> getSet
 
 	wxBoxSizer * settingBoxSizer = new wxBoxSizer(wxVERTICAL);
 	settingBoxSizer->Add(settingLabel, 1, wxEXPAND | wxHORIZONTAL, 2);
+	settingBoxSizer->Add(settingTextField, 1, wxEXPAND | wxHORIZONTAL, 2);
+	settingPanel->SetSizer(settingBoxSizer);
+
+	if(parentSizer != nullptr) {
+		parentSizer->Add(settingPanel, 1, wxEXPAND | wxALL, 5);
+	}
+
+	return settingPanel;
+}
+
+template <typename T>
+SettingPanel * SettingPanel::createOptionalIntegerSettingPanel(std::optional<T> & setting, std::optional<T> defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, T minValue, T maxValue, std::function<bool(const SettingPanel *)> customValidatorFunction) {
+	return createOptionalIntegerSettingPanel<T>([&setting]() { return setting; }, [&setting](T newSetting) { setting = newSetting; }, [&setting]() { setting.reset(); }, defaultSetting, name, parent, parentSizer, minValue, maxValue, customValidatorFunction);
+}
+
+template <typename T>
+SettingPanel * SettingPanel::createOptionalIntegerSettingPanel(std::function<std::optional<T>()> getSettingValueFunction, std::function<void(T)> setSettingValueFunction, std::function<void()> clearSettingValueFunction, std::optional<T> defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, T minValue, T maxValue, std::function<bool(const SettingPanel *)> customValidatorFunction) {
+	if(parent == nullptr) {
+		return nullptr;
+	}
+
+	std::optional<T> setting(getSettingValueFunction());
+
+	SettingPanel * settingPanel = new SettingPanel(name, parent);
+
+	settingPanel->m_customValidatorFunction = customValidatorFunction;
+
+	wxCheckBox * settingEnabledCheckBox = new wxCheckBox(settingPanel, wxID_ANY, name, wxDefaultPosition, wxDefaultSize, wxCHK_2STATE, wxDefaultValidator, name);
+	settingEnabledCheckBox->SetFont(settingEnabledCheckBox->GetFont().MakeBold());
+	settingEnabledCheckBox->SetValue(setting.has_value());
+
+	wxTextCtrl * settingTextField = new wxTextCtrl(settingPanel, wxID_ANY, setting.has_value() ? std::to_string(setting.value()) : "", wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, name);
+	settingTextField->SetMinSize(wxSize(150, settingTextField->GetMinSize().y));
+	WXUtilities::setTextControlEnabled(settingTextField, setting.has_value());
+
+	settingPanel->m_changedFunction = [settingPanel, settingTextField, settingEnabledCheckBox](wxCommandEvent & event) {
+		settingPanel->setModified(true);
+		WXUtilities::setTextControlEnabled(settingTextField, settingEnabledCheckBox->GetValue());
+	};
+
+	settingEnabledCheckBox->Bind(wxEVT_CHECKBOX, settingPanel->m_changedFunction, wxID_ANY, wxID_ANY);
+	settingTextField->Bind(wxEVT_TEXT, settingPanel->m_changedFunction, wxID_ANY, wxID_ANY);
+
+	settingPanel->m_getValueFunction = [settingTextField, settingEnabledCheckBox]() {
+		if(!settingEnabledCheckBox->GetValue()) {
+			return Utilities::emptyString;
+		}
+
+		return std::string(settingTextField->GetValue());
+	};
+
+	settingPanel->m_defaultValidatorFunction = [settingTextField, settingEnabledCheckBox, minValue, maxValue]() {
+		if(!settingEnabledCheckBox->GetValue()) {
+			return true;
+		}
+
+		bool error = false;
+
+		if(std::is_signed<T>()) {
+			int64_t value = Utilities::parseLong(settingTextField->GetValue(), &error);
+
+			return !error &&
+				   value >= std::numeric_limits<T>::min() &&
+				   value <= std::numeric_limits<T>::max() &&
+				   value >= minValue &&
+				   value <= maxValue;
+		}
+		else {
+			uint64_t value = Utilities::parseUnsignedLong(settingTextField->GetValue(), &error);
+
+			return !error &&
+				   value <= std::numeric_limits<T>::max() &&
+				   value >= minValue &&
+				   value <= maxValue;
+		}
+	};
+
+	settingPanel->m_saveFunction = [settingTextField, settingEnabledCheckBox, setSettingValueFunction, clearSettingValueFunction]() {
+		if(settingEnabledCheckBox->GetValue()) {
+			if(std::is_signed<T>()) {
+				setSettingValueFunction(static_cast<T>(Utilities::parseLong(settingTextField->GetValue(), nullptr)));
+			}
+			else {
+				setSettingValueFunction(static_cast<T>(Utilities::parseUnsignedLong(settingTextField->GetValue(), nullptr)));
+			}
+		}
+		else {
+			clearSettingValueFunction();
+		}
+	};
+
+	settingPanel->m_discardFunction = [settingTextField, settingEnabledCheckBox, getSettingValueFunction]() {
+		std::optional<T> setting(getSettingValueFunction());
+
+		settingTextField->ChangeValue(setting.has_value() ? std::to_string(setting.value()) : "");
+		settingEnabledCheckBox->SetValue(setting.has_value());
+		WXUtilities::setTextControlEnabled(settingTextField, setting.has_value());
+	};
+
+	settingPanel->m_resetFunction = [settingTextField, settingEnabledCheckBox, defaultSetting]() {
+		settingTextField->ChangeValue(defaultSetting.has_value() ? std::to_string(defaultSetting.value()) : "");
+		settingEnabledCheckBox->SetValue(defaultSetting.has_value());
+		WXUtilities::setTextControlEnabled(settingTextField, defaultSetting.has_value());
+	};
+
+	settingPanel->m_setEditableFunction = [settingTextField, settingEnabledCheckBox](bool editable) {
+		settingTextField->SetEditable(editable);
+
+		if(editable) {
+			settingEnabledCheckBox->Enable();
+		}
+		else {
+			settingEnabledCheckBox->Disable();
+		}
+	};
+
+	wxBoxSizer * settingBoxSizer = new wxBoxSizer(wxVERTICAL);
+	settingBoxSizer->Add(settingEnabledCheckBox, 1, wxEXPAND | wxHORIZONTAL, 2);
 	settingBoxSizer->Add(settingTextField, 1, wxEXPAND | wxHORIZONTAL, 2);
 	settingPanel->SetSizer(settingBoxSizer);
 
