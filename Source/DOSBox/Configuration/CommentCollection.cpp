@@ -99,7 +99,7 @@ size_t CommentCollection::lastIndexOfComment(std::string_view comment) const {
 		return std::numeric_limits<size_t>::max();
 	}
 
-	return commentIterator - m_comments.crbegin();
+	return m_comments.crend() - commentIterator - 1;
 }
 
 const std::string & CommentCollection::getComment(size_t index) const {
