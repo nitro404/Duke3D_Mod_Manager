@@ -558,15 +558,26 @@ size_t ModGameVersion::removeFilesOfType(const std::string & fileType) {
 		return 0;
 	}
 
+	std::vector<std::shared_ptr<ModFile>> modFilesToRemove;
 	size_t numberOfFilesRemoved = 0;
 
 	for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
 		if(Utilities::areStringsEqualIgnoreCase((*i)->getType(), fileType)) {
-			(*i)->setParentModGameVersion(nullptr);
-			m_files.erase(i);
-
-			numberOfFilesRemoved++;
+			modFilesToRemove.push_back(*i);
 		}
+	}
+
+	for(const std::shared_ptr<ModFile> & modFile : modFilesToRemove) {
+		modFile->setParentModGameVersion(nullptr);
+
+		std::vector<std::shared_ptr<ModFile>>::const_iterator modFileIterator(std::find(m_files.cbegin(), m_files.cend(), modFile));
+
+		if(modFileIterator == m_files.cend()) {
+			continue;
+		}
+
+		m_files.erase(modFileIterator);
+		numberOfFilesRemoved++;
 	}
 
 	return numberOfFilesRemoved;
