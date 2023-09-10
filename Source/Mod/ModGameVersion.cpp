@@ -3,7 +3,6 @@
 #include "Game/GameVersion.h"
 #include "Mod.h"
 #include "ModDownload.h"
-#include "ModFile.h"
 #include "ModVersion.h"
 #include "ModVersionType.h"
 
@@ -403,6 +402,20 @@ size_t ModGameVersion::indexOfFirstFileOfType(const std::string & fileType) cons
 	return std::numeric_limits<size_t>::max();
 }
 
+size_t ModGameVersion::indexOfLastFileOfType(const std::string & fileType) const {
+	if(fileType.empty()) {
+		return std::numeric_limits<size_t>::max();
+	}
+
+	for(std::vector<std::shared_ptr<ModFile>>::const_reverse_iterator i = m_files.crbegin(); i != m_files.crend(); ++i) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getType(), fileType)) {
+			return m_files.crend() - i - 1;
+		}
+	}
+
+	return std::numeric_limits<size_t>::max();
+}
+
 std::shared_ptr<ModFile> ModGameVersion::getFile(size_t index) const {
 	if(index >= m_files.size()) {
 		return nullptr;
@@ -439,6 +452,20 @@ std::shared_ptr<ModFile> ModGameVersion::getFirstFileOfType(const std::string & 
 	return nullptr;
 }
 
+std::shared_ptr<ModFile> ModGameVersion::getLastFileOfType(const std::string & fileType) const {
+	if(fileType.empty()) {
+		return nullptr;
+	}
+
+	for(std::vector<std::shared_ptr<ModFile>>::const_reverse_iterator i = m_files.crbegin(); i != m_files.crend(); ++i) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getType(), fileType)) {
+			return *i;
+		}
+	}
+
+	return nullptr;
+}
+
 std::vector<std::shared_ptr<ModFile>> ModGameVersion::getFilesOfType(const std::string & fileType) const {
 	std::vector<std::shared_ptr<ModFile>> files;
 
@@ -461,6 +488,20 @@ std::optional<std::string> ModGameVersion::getFirstFileNameOfType(const std::str
 	}
 
 	for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
+		if(Utilities::areStringsEqualIgnoreCase((*i)->getType(), fileType)) {
+			return (*i)->getFileName();
+		}
+	}
+
+	return {};
+}
+
+std::optional<std::string> ModGameVersion::getLastFileNameOfType(const std::string & fileType) const {
+	if(fileType.empty()) {
+		return {};
+	}
+
+	for(std::vector<std::shared_ptr<ModFile>>::const_reverse_iterator i = m_files.crbegin(); i != m_files.crend(); ++i) {
 		if(Utilities::areStringsEqualIgnoreCase((*i)->getType(), fileType)) {
 			return (*i)->getFileName();
 		}
