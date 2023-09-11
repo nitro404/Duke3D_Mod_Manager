@@ -26,16 +26,29 @@ public:
 	size_t numberOfFiles() const;
 	bool hasFile(const GroupFile & file) const;
 	bool hasFileWithName(const std::string & fileName) const;
+	bool hasFileWithExtension(const std::string & extension) const;
+	template <typename ...Arguments, typename = typename std::enable_if<sizeof...(Arguments) >= 2>::type>
+	bool hasFileWithExtension(Arguments &&... arguments) const;
 	size_t indexOfFile(const GroupFile & file) const;
 	size_t indexOfFileWithName(const std::string & fileName) const;
 	size_t indexOfFirstFileWithExtension(const std::string & extension) const;
+	template <typename ...Arguments, typename = typename std::enable_if<sizeof...(Arguments) >= 2>::type>
+	size_t indexOfFirstFileWithExtension(Arguments &&... arguments) const;
 	size_t indexOfLastFileWithExtension(const std::string & extension) const;
+	template <typename ...Arguments, typename = typename std::enable_if<sizeof...(Arguments) >= 2>::type>
+	size_t indexOfLastFileWithExtension(Arguments &&... arguments) const;
 	std::shared_ptr<GroupFile> getFile(size_t index) const;
 	std::shared_ptr<GroupFile> getFileWithName(const std::string & fileName) const;
 	std::shared_ptr<GroupFile> getFirstFileWithExtension(const std::string & extension) const;
+	template <typename ...Arguments, typename = typename std::enable_if<sizeof...(Arguments) >= 2>::type>
+	std::shared_ptr<GroupFile> getFirstFileWithExtension(Arguments &&... arguments) const;
 	std::shared_ptr<GroupFile> getLastFileWithExtension(const std::string & extension) const;
+	template <typename ...Arguments, typename = typename std::enable_if<sizeof...(Arguments) >= 2>::type>
+	std::shared_ptr<GroupFile> getLastFileWithExtension(Arguments &&... arguments) const;
 	const std::vector<std::shared_ptr<GroupFile>> & getFiles() const;
 	std::vector<std::shared_ptr<GroupFile>> getFilesWithExtension(const std::string & extension) const;
+	template <typename ...Arguments, typename = typename std::enable_if<sizeof...(Arguments) >= 2>::type>
+	std::vector<std::shared_ptr<GroupFile>> getFilesWithExtension(Arguments &&... arguments) const;
 	std::vector<std::string> getFileExtensions() const;
 	std::string getFileExtensionsAsString() const;
 	std::shared_ptr<GroupFile> extractFile(size_t index, const std::string & directory, bool overwrite = GroupFile::DEFAULT_OVERWRITE_FILES) const;
@@ -98,5 +111,90 @@ protected:
 	std::vector<std::shared_ptr<GroupFile>> m_files;
 	std::vector<boost::signals2::connection> m_fileConnections;
 };
+
+template <typename ...Arguments, typename>
+bool Group::hasFileWithExtension(Arguments &&... arguments) const {
+	return indexOfFirstFileWithExtension(arguments...) != std::numeric_limits<size_t>::max();
+}
+
+template <typename ...Arguments, typename>
+size_t Group::indexOfFirstFileWithExtension(Arguments &&... arguments) const {
+	std::string_view unpackedArguments[sizeof...(arguments)] = {arguments...};
+
+	for(std::vector<std::shared_ptr<GroupFile>>::const_iterator i = m_files.cbegin(); i != m_files.cend(); ++i) {
+		std::string_view currentFileExtension((*i)->getFileExtension());
+
+		if(currentFileExtension.empty()) {
+			continue;
+		}
+
+		for(size_t j = 0; j < sizeof...(arguments); j++) {
+			const std::string_view & extension = unpackedArguments[j];
+
+			if(!extension.empty() && Utilities::areStringsEqualIgnoreCase(currentFileExtension, extension)) {
+				return i - m_files.cbegin();
+			}
+		}
+	}
+
+	return std::numeric_limits<size_t>::max();
+}
+
+template <typename ...Arguments, typename>
+size_t Group::indexOfLastFileWithExtension(Arguments &&... arguments) const {
+	std::string_view unpackedArguments[sizeof...(arguments)] = {arguments...};
+
+	for(std::vector<std::shared_ptr<GroupFile>>::const_reverse_iterator i = m_files.crbegin(); i != m_files.crend(); ++i) {
+		std::string_view currentFileExtension((*i)->getFileExtension());
+
+		if(currentFileExtension.empty()) {
+			continue;
+		}
+
+		for(size_t j = 0; j < sizeof...(arguments); j++) {
+			const std::string_view & extension = unpackedArguments[j];
+
+			if(!extension.empty() && Utilities::areStringsEqualIgnoreCase(currentFileExtension, extension)) {
+				return m_files.crend() - i - 1;
+			}
+		}
+	}
+
+	return std::numeric_limits<size_t>::max();
+}
+
+template <typename ...Arguments, typename>
+std::shared_ptr<GroupFile> Group::getFirstFileWithExtension(Arguments &&... arguments) const {
+	return getFile(indexOfFirstFileWithExtension(arguments...));
+}
+
+template <typename ...Arguments, typename>
+std::shared_ptr<GroupFile> Group::getLastFileWithExtension(Arguments &&... arguments) const {
+	return getFile(indexOfLastFileWithExtension(arguments...));
+}
+
+template <typename ...Arguments, typename>
+std::vector<std::shared_ptr<GroupFile>> Group::getFilesWithExtension(Arguments &&... arguments) const {
+	std::string_view unpackedArguments[sizeof...(arguments)] = {arguments...};
+	std::vector<std::shared_ptr<GroupFile>> files;
+
+	for(const std::shared_ptr<GroupFile> & file : m_files) {
+		std::string_view currentFileExtension(file->getFileExtension());
+
+		if(currentFileExtension.empty()) {
+			continue;
+		}
+
+		for(size_t i = 0; i < sizeof...(arguments); i++) {
+			const std::string_view & extension = unpackedArguments[i];
+
+			if(!extension.empty() && Utilities::areStringsEqualIgnoreCase(currentFileExtension, extension)) {
+				files.push_back(file);
+			}
+		}
+	}
+
+	return files;
+}
 
 #endif // _GROUP_H_

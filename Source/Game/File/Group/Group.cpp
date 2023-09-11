@@ -116,6 +116,10 @@ bool Group::hasFileWithName(const std::string & fileName) const {
 	return indexOfFileWithName(fileName) != std::numeric_limits<size_t>::max();
 }
 
+bool Group::hasFileWithExtension(const std::string & extension) const {
+	return indexOfFirstFileWithExtension(extension) != std::numeric_limits<size_t>::max();
+}
+
 size_t Group::indexOfFileWithName(const std::string & fileName) const {
 	if(fileName.empty()) {
 		return std::numeric_limits<size_t>::max();
