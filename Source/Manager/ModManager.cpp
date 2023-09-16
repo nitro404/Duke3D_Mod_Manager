@@ -5019,6 +5019,8 @@ bool ModManager::createSymlinksOrCopyTemporaryFiles(const GameVersionCollection 
 			result &= createSymlink(settings->appTempDirectoryPath, settings->tempSymlinkName, gameVersion.getGamePath());
 		}
 
+		result &= createSymlink(std::filesystem::current_path().string(), settings->appSymlinkName, gameVersion.getGamePath());
+
 		result &= createSymlink(getModsDirectoryPath(), settings->modsSymlinkName, gameVersion.getGamePath());
 
 		if(!mapsDirectoryPath.empty()) {
@@ -5147,6 +5149,8 @@ bool ModManager::removeSymlinks(const GameVersion & gameVersion) {
 		bool result = true;
 
 		result &= removeSymlink(settings->gameSymlinkName, std::filesystem::current_path().string());
+
+		result &= removeSymlink(settings->appSymlinkName, gameVersion.getGamePath());
 
 		result &= removeSymlink(settings->tempSymlinkName, gameVersion.getGamePath());
 

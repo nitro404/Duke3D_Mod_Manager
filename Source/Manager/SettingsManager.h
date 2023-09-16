@@ -56,6 +56,7 @@ public:
 	static const std::string DEFAULT_GROUP_DOWNLOADS_DIRECTORY_NAME;
 	static const std::string DEFAULT_DATA_DIRECTORY_PATH;
 	static const std::string DEFAULT_APP_TEMP_DIRECTORY_PATH;
+	static const std::string DEFAULT_APP_SYMLINK_NAME;
 	static const std::string DEFAULT_GAME_TEMP_DIRECTORY_NAME;
 	static const std::string DEFAULT_TEMP_SYMLINK_NAME;
 	static const std::string DEFAULT_CACHE_DIRECTORY_PATH;
@@ -124,6 +125,7 @@ public:
 	std::string groupDownloadsDirectoryName;
 	std::string dataDirectoryPath;
 	std::string appTempDirectoryPath;
+	std::string appSymlinkName;
 	std::string gameTempDirectoryName;
 	std::string tempSymlinkName;
 	std::string cacheDirectoryPath;
