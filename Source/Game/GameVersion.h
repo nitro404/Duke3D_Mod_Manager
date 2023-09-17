@@ -27,7 +27,7 @@ public:
 	};
 
 	GameVersion();
-	GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool removable, const std::string & gamePath, const std::string & gameExecutableName, const std::string & gameConfigurationFileName, const std::string & gameConfigurationDirectoryPath, bool localWorkingDirectory, std::optional<bool> scriptFilesReadFromGroup, bool supportsSubdirectories, std::optional<bool> worldTourGroupSupported, std::optional<bool> zipArchiveGroupsSupported, std::optional<uint16_t> maximumGroupFiles, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag = {}, const std::optional<std::string> & weaponSwitchOrderArgumentFlag = {}, const std::optional<std::string> & disableMonstersArgumentFlag = {}, const std::optional<std::string> & disableSoundArgumentFlag = {}, const std::optional<std::string> & disableMusicArgumentFlag = {}, const std::optional<std::string> & setupExecutableName = {}, const std::optional<std::string> & groupFileInstallPath = {}, const std::optional<std::string> & defFileArgumentFlag = {}, const std::optional<std::string> & extraDefFileArgumentFlag = {}, const std::optional<bool> & requiresCombinedGroup = {}, const std::optional<bool> & requiresGroupFileExtraction = {}, const std::string & website = {}, const std::string & sourceCodeURL = {}, const std::vector<OperatingSystem> & supportedOperatingSystems = {}, const std::vector<std::string> & compatibleGameVersions = {}, const std::vector<std::string> & notes = {}, const DOSBoxConfiguration & dosboxConfiguration = {});
+	GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool removable, const std::string & gamePath, const std::string & gameExecutableName, const std::string & gameConfigurationFileName, const std::string & gameConfigurationDirectoryPath, bool localWorkingDirectory, std::optional<bool> scriptFilesReadFromGroup, bool supportsSubdirectories, std::optional<bool> worldTourGroupSupported, std::optional<bool> zipArchiveGroupsSupported, std::optional<uint16_t> maximumGroupFiles, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag = {}, const std::optional<std::string> & weaponSwitchOrderArgumentFlag = {}, const std::optional<std::string> & disableMonstersArgumentFlag = {}, const std::optional<std::string> & disableSoundArgumentFlag = {}, const std::optional<std::string> & disableMusicArgumentFlag = {}, const std::optional<std::string> & setupExecutableName = {}, const std::optional<std::string> & groupFileInstallPath = {}, const std::optional<std::string> & defFileArgumentFlag = {}, const std::optional<std::string> & extraDefFileArgumentFlag = {}, const std::optional<bool> & requiresOriginalGameFiles = {}, const std::optional<bool> & requiresGroupFileExtraction = {}, const std::string & website = {}, const std::string & sourceCodeURL = {}, const std::vector<OperatingSystem> & supportedOperatingSystems = {}, const std::vector<std::string> & compatibleGameVersions = {}, const std::vector<std::string> & notes = {}, const DOSBoxConfiguration & dosboxConfiguration = {});
 	GameVersion(GameVersion && gameVersion) noexcept;
 	GameVersion(const GameVersion & gameVersion);
 	GameVersion & operator = (GameVersion && gameVersion) noexcept;
@@ -84,12 +84,13 @@ public:
 	void clearGroupFileInstallPath();
 	bool hasGroupFileMaximum() const;
 	const std::optional<uint16_t> & getMaximumGroupFiles() const;
+	bool doesGroupCountExceedMaximumGroupFilesLimit(uint16_t groupCount) const;
 	void setMaximumGroupFiles(uint16_t maximumGroupFiles);
 	void clearMaximumGroupFiles();
-	bool doesRequireCombinedGroup() const;
-	const std::optional<bool> & getRequiresCombinedGroup() const;
-	void setRequiresCombinedGroup(bool requiresCombinedGroup);
-	void clearRequiresCombinedGroup();
+	bool doesRequireOriginalGameFiles() const;
+	const std::optional<bool> & getRequiresOriginalGameFiles() const;
+	void setRequiresOriginalGameFiles(bool requiresOriginalGameFiles);
+	void clearRequiresOriginalGameFiles();
 	bool doesRequireGroupFileExtraction() const;
 	const std::optional<bool> & getRequiresGroupFileExtraction() const;
 	void setRequiresGroupFileExtraction(bool requiresGroupFileExtraction);
@@ -308,7 +309,7 @@ private:
 	std::string m_launchArguments;
 	std::optional<std::string> m_groupFileInstallPath;
 	std::optional<uint16_t> m_maximumGroupFiles;
-	std::optional<bool> m_requiresCombinedGroup;
+	std::optional<bool> m_requiresOriginalGameFiles;
 	std::optional<bool> m_requiresGroupFileExtraction;
 	std::string m_modDirectoryName;
 	std::string m_website;

@@ -167,8 +167,8 @@ private:
 	void notifyModSelectionChanged();
 	void assignPlatformFactories();
 	bool handleArguments(const ArgumentParser * args);
-	std::string generateCommand(std::shared_ptr<ModGameVersion> modGameVersion, std::shared_ptr<GameVersion> selectedGameVersion, ScriptArguments & scriptArgs, std::string_view combinedGroupFileName = "", std::string_view combinedDOSBoxConfigurationFilePath = "", bool * customMod = nullptr, std::string * customMap = nullptr, std::shared_ptr<GameVersion> * customTargetGameVersion = nullptr, std::vector<std::string> * customGroupFileNames = nullptr) const;
-	std::string generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const DOSBoxVersion & dosboxVersion, const  std::string & dosboxArguments, bool showConsole, bool fullscreen, std::string_view combinedDOSBoxConfigurationFilePath = "") const;
+	std::string generateCommand(std::shared_ptr<GameVersion> gameVersion, const std::vector<std::string> & relativeConFilePaths, const std::vector<std::string> & relativeDefFilePaths, const std::vector<std::string> & relativeGroupFilePaths, ScriptArguments & scriptArgs, std::string_view relativeCombinedGroupFilePath = {}, std::string_view combinedDOSBoxConfigurationFilePath = {}, std::string_view relativeCustomMapFilePath = {}) const;
+	std::string generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const DOSBoxVersion & dosboxVersion, const  std::string & dosboxArguments, bool showConsole, bool fullscreen, std::string_view combinedDOSBoxConfigurationFilePath = {}) const;
 	size_t checkForUnlinkedModFiles() const;
 	size_t checkForUnlinkedModFilesForGameVersion(const GameVersion & gameVersion) const;
 	size_t checkModForMissingFiles(const std::string & modID, std::optional<size_t> versionIndex = {}, std::optional<size_t> versionTypeIndex = {}) const;
@@ -180,7 +180,7 @@ private:
 	static bool testParsing();
 	static bool areModFilesPresentInGameDirectory(const GameVersion & gameVersion);
 	static bool areModFilesPresentInGameDirectory(const std::string & gamePath);
-	bool extractModFilesToGameDirectory(const ModGameVersion & modGameVersion, const GameVersion & selectedGameVersion, const GameVersion & targetGameVersion, InstalledModInfo * installedModInfo = nullptr, const std::vector<std::string> & customGroupFileNames = {});
+	bool extractModFilesToGameDirectory(const ModGameVersion & modGameVersion, const GameVersion & selectedGameVersion, const GameVersion & targetGameVersion, InstalledModInfo * installedModInfo = nullptr, const std::vector<std::string> & groupFilePaths = {});
 	bool removeModFilesFromGameDirectory(const GameVersion & gameVersion);
 	bool removeModFilesFromGameDirectory(const GameVersion & gameVersion, const InstalledModInfo & installedModInfo);
 	bool createApplicationTemporaryDirectory();
@@ -190,7 +190,7 @@ private:
 	bool areSymlinkSettingsValid() const;
 	static bool createSymlink(const std::string & symlinkName, const std::string & symlinkTarget, const std::string & symlinkDestinationDirectory);
 	static bool removeSymlink(const std::string & symlinkName, const std::string & symlinkDestinationDirectory);
-	bool createSymlinksOrCopyTemporaryFiles(const GameVersionCollection & gameVersions, const GameVersion & gameVersion, const ModGameVersion * selectedModGameVersion, const std::string & customMap, bool createTempSymlink = true, InstalledModInfo * installedModInfo = nullptr);
+	bool createSymlinksOrCopyTemporaryFiles(const GameVersion & gameVersion, const std::vector<std::string> & conFilePaths, const std::vector<std::string> & defFilePaths, const std::vector<std::string> & groupFilePaths, std::string_view customMapFilePath, bool doesRequireCombinedGroup, bool createTempSymlink = true, InstalledModInfo * installedModInfo = nullptr);
 	bool removeSymlinks(const GameVersion & gameVersion);
 	std::vector<std::string> deleteFilesWithSuffix(const std::string & suffix, const std::string & path = "");
 	std::vector<std::string> renameFilesWithSuffixTo(const std::string & fromSuffix, const std::string & toSuffix, const std::string & path = "");

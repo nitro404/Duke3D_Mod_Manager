@@ -13,7 +13,7 @@ class ModVersion;
 
 class InstalledModInfo final {
 public:
-	InstalledModInfo(const ModVersion & modVersion, const std::vector<std::string> & originalFiles = {}, const std::vector<std::string> & modFiles = {});
+	InstalledModInfo(const ModVersion * modVersion = nullptr, const std::vector<std::string> & originalFiles = {}, const std::vector<std::string> & modFiles = {});
 	InstalledModInfo(InstalledModInfo && i) noexcept;
 	InstalledModInfo(const InstalledModInfo & i);
 	InstalledModInfo & operator = (InstalledModInfo && i) noexcept;

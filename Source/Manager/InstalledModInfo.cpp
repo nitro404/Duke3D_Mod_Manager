@@ -41,10 +41,10 @@ static const std::array<std::string, 6> JSON_INSTALLED_MOD_INFO_PROPERTY_NAMES =
 	JSON_MOD_FILES_LIST_PROPERTY_NAME
 };
 
-InstalledModInfo::InstalledModInfo(const ModVersion & modVersion, const std::vector<std::string> & originalFiles, const std::vector<std::string> & modFiles)
-	: m_modID(modVersion.getParentMod()->getID())
-	, m_modName(modVersion.getParentMod()->getName())
-	, m_modVersion(modVersion.getVersion())
+InstalledModInfo::InstalledModInfo(const ModVersion * modVersion, const std::vector<std::string> & originalFiles, const std::vector<std::string> & modFiles)
+	: m_modID(modVersion != nullptr ? modVersion->getParentMod()->getID() : "")
+	, m_modName(modVersion != nullptr ? modVersion->getParentMod()->getName() : "")
+	, m_modVersion(modVersion != nullptr ? modVersion->getVersion() : "")
 	, m_installedTimestamp(std::chrono::system_clock::now())
 	, m_originalFiles(originalFiles)
 	, m_modFiles(modFiles) { }
@@ -253,14 +253,20 @@ rapidjson::Document InstalledModInfo::toJSON() const {
 
 	rapidjson::Value modInfoValue(rapidjson::kObjectType);
 
-	rapidjson::Value modIDValue(m_modID.c_str(), allocator);
-	modInfoValue.AddMember(rapidjson::StringRef(JSON_MOD_ID_PROPERTY_NAME.c_str()), modIDValue, allocator);
+	if(!m_modID.empty()) {
+		rapidjson::Value modIDValue(m_modID.c_str(), allocator);
+		modInfoValue.AddMember(rapidjson::StringRef(JSON_MOD_ID_PROPERTY_NAME.c_str()), modIDValue, allocator);
+	}
 
-	rapidjson::Value modNameValue(m_modName.c_str(), allocator);
-	modInfoValue.AddMember(rapidjson::StringRef(JSON_MOD_NAME_PROPERTY_NAME.c_str()), modNameValue, allocator);
+	if(!m_modName.empty()) {
+		rapidjson::Value modNameValue(m_modName.c_str(), allocator);
+		modInfoValue.AddMember(rapidjson::StringRef(JSON_MOD_NAME_PROPERTY_NAME.c_str()), modNameValue, allocator);
+	}
 
-	rapidjson::Value modVersionValue(m_modVersion.c_str(), allocator);
-	modInfoValue.AddMember(rapidjson::StringRef(JSON_MOD_VERSION_PROPERTY_NAME.c_str()), modVersionValue, allocator);
+	if(!m_modVersion.empty()) {
+		rapidjson::Value modVersionValue(m_modVersion.c_str(), allocator);
+		modInfoValue.AddMember(rapidjson::StringRef(JSON_MOD_VERSION_PROPERTY_NAME.c_str()), modVersionValue, allocator);
+	}
 
 	installedModInfoDocument.AddMember(rapidjson::StringRef(JSON_MOD_INFO_CATEGORY_PROPERTY_NAME.c_str(), JSON_MOD_INFO_CATEGORY_PROPERTY_NAME.length()), modInfoValue, allocator);
 
@@ -371,59 +377,46 @@ std::unique_ptr<InstalledModInfo> InstalledModInfo::parseFrom(const rapidjson::V
 	}
 
 	// parse mod identifier
-	if(!modInfoValue.HasMember(JSON_MOD_ID_PROPERTY_NAME.c_str())) {
-		spdlog::error("Installed mod info '{}' category is missing '{}' property.", JSON_MOD_INFO_CATEGORY_PROPERTY_NAME, JSON_MOD_ID_PROPERTY_NAME);
-		return nullptr;
-	}
+	std::string modID;
 
-	const rapidjson::Value & modIDValue = modInfoValue[JSON_MOD_ID_PROPERTY_NAME.c_str()];
+	if(modInfoValue.HasMember(JSON_MOD_ID_PROPERTY_NAME.c_str())) {
+		const rapidjson::Value & modIDValue = modInfoValue[JSON_MOD_ID_PROPERTY_NAME.c_str()];
 
-	if(!modIDValue.IsString()) {
-		spdlog::error("Installed mod info has an invalid '{}' category '{}' property type: '{}', expected 'string'.", JSON_MOD_INFO_CATEGORY_PROPERTY_NAME, JSON_MOD_ID_PROPERTY_NAME, Utilities::typeToString(modIDValue.GetType()));
-		return nullptr;
-	}
+		if(!modIDValue.IsString()) {
+			spdlog::error("Installed mod info has an invalid '{}' category '{}' property type: '{}', expected 'string'.", JSON_MOD_INFO_CATEGORY_PROPERTY_NAME, JSON_MOD_ID_PROPERTY_NAME, Utilities::typeToString(modIDValue.GetType()));
+			return nullptr;
+		}
 
-	std::string modID(Utilities::trimString(modIDValue.GetString()));
-
-	if(modID.empty()) {
-		spdlog::error("Installed mod info '{}' category '{}' property cannot be empty.", JSON_MOD_INFO_CATEGORY_PROPERTY_NAME, JSON_MOD_ID_PROPERTY_NAME);
-		return nullptr;
+		modID = Utilities::trimString(modIDValue.GetString());
 	}
 
 	// parse mod name
-	if(!modInfoValue.HasMember(JSON_MOD_NAME_PROPERTY_NAME.c_str())) {
-		spdlog::error("Installed mod info '{}' category is missing '{}' property.", JSON_MOD_INFO_CATEGORY_PROPERTY_NAME, JSON_MOD_NAME_PROPERTY_NAME);
-		return nullptr;
-	}
+	std::string modName;
 
-	const rapidjson::Value & modNameValue = modInfoValue[JSON_MOD_NAME_PROPERTY_NAME.c_str()];
+	if(modInfoValue.HasMember(JSON_MOD_NAME_PROPERTY_NAME.c_str())) {
+		const rapidjson::Value & modNameValue = modInfoValue[JSON_MOD_NAME_PROPERTY_NAME.c_str()];
 
-	if(!modNameValue.IsString()) {
-		spdlog::error("Installed mod info has an invalid '{}' category '{}' property type: '{}', expected 'string'.", JSON_MOD_INFO_CATEGORY_PROPERTY_NAME, JSON_MOD_NAME_PROPERTY_NAME, Utilities::typeToString(modNameValue.GetType()));
-		return nullptr;
-	}
+		if(!modNameValue.IsString()) {
+			spdlog::error("Installed mod info has an invalid '{}' category '{}' property type: '{}', expected 'string'.", JSON_MOD_INFO_CATEGORY_PROPERTY_NAME, JSON_MOD_NAME_PROPERTY_NAME, Utilities::typeToString(modNameValue.GetType()));
+			return nullptr;
+		}
 
-	std::string modName(Utilities::trimString(modNameValue.GetString()));
-
-	if(modName.empty()) {
-		spdlog::error("Installed mod info '{}' category '{}' property cannot be empty.", JSON_MOD_INFO_CATEGORY_PROPERTY_NAME, JSON_MOD_NAME_PROPERTY_NAME);
-		return nullptr;
+		modName = Utilities::trimString(modNameValue.GetString());
 	}
 
 	// parse mod version
-	if(!modInfoValue.HasMember(JSON_MOD_VERSION_PROPERTY_NAME.c_str())) {
-		spdlog::error("Installed mod info '{}' category is missing '{}' property.", JSON_MOD_INFO_CATEGORY_PROPERTY_NAME, JSON_MOD_VERSION_PROPERTY_NAME);
-		return nullptr;
+	std::string modVersion;
+
+	if(modInfoValue.HasMember(JSON_MOD_VERSION_PROPERTY_NAME.c_str())) {
+		const rapidjson::Value & modVersionValue = modInfoValue[JSON_MOD_VERSION_PROPERTY_NAME.c_str()];
+
+		if(!modVersionValue.IsString()) {
+			spdlog::error("Installed mod info has an invalid '{}' category '{}' property type: '{}', expected 'string'.", JSON_MOD_INFO_CATEGORY_PROPERTY_NAME, JSON_MOD_VERSION_PROPERTY_NAME, Utilities::typeToString(modVersionValue.GetType()));
+			return nullptr;
+		}
+
+		modVersion = Utilities::trimString(modVersionValue.GetString());
 	}
-
-	const rapidjson::Value & modVersionValue = modInfoValue[JSON_MOD_VERSION_PROPERTY_NAME.c_str()];
-
-	if(!modVersionValue.IsString()) {
-		spdlog::error("Installed mod info has an invalid '{}' category '{}' property type: '{}', expected 'string'.", JSON_MOD_INFO_CATEGORY_PROPERTY_NAME, JSON_MOD_VERSION_PROPERTY_NAME, Utilities::typeToString(modVersionValue.GetType()));
-		return nullptr;
-	}
-
-	std::string modVersion(Utilities::trimString(modVersionValue.GetString()));
 
 	// parse mod installed timestamp
 	if(!installedModInfoValue.HasMember(JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME.c_str())) {
@@ -621,11 +614,6 @@ bool InstalledModInfo::saveToJSON(const std::string & filePath, bool overwrite) 
 }
 
 bool InstalledModInfo::isValid() const {
-	if(m_modID.empty() ||
-	   m_modName.empty()) {
-		return false;
-	}
-
 	for(const std::string & originalFile : m_originalFiles) {
 		if(originalFile.empty()) {
 			return false;

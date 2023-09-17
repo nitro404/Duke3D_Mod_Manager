@@ -56,7 +56,7 @@ static constexpr const char * JSON_DISABLE_MONSTERS_ARGUMENT_FLAG_PROPERTY_NAME 
 static constexpr const char * JSON_DISABLE_SOUND_ARGUMENT_FLAG_PROPERTY_NAME = "disableSoundArgumentFlag";
 static constexpr const char * JSON_DISABLE_MUSIC_ARGUMENT_FLAG_PROPERTY_NAME = "disableMusicArgumentFlag";
 static constexpr const char * JSON_MAXIMUM_GROUP_FILES_PROPERTY_NAME = "maximumGroupFiles";
-static constexpr const char * JSON_REQUIRES_COMBINED_GROUP_PROPERTY_NAME = "requiresCombinedGroup";
+static constexpr const char * JSON_REQUIRES_ORIGINAL_GAME_FILES_PROPERTY_NAME = "requiresOriginalGameFiles";
 static constexpr const char * JSON_REQUIRES_GROUP_FILE_EXTRACTION_PROPERTY_NAME = "requiresGroupFileExtraction";
 static constexpr const char * JSON_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME = "localWorkingDirectory";
 static constexpr const char * JSON_MOD_DIRECTORY_NAME_PROPERTY_NAME = "modDirectoryName";
@@ -103,7 +103,7 @@ static const std::array<std::string_view, 46> JSON_PROPERTY_NAMES = {
 	JSON_DISABLE_SOUND_ARGUMENT_FLAG_PROPERTY_NAME,
 	JSON_DISABLE_MUSIC_ARGUMENT_FLAG_PROPERTY_NAME,
 	JSON_MAXIMUM_GROUP_FILES_PROPERTY_NAME,
-	JSON_REQUIRES_COMBINED_GROUP_PROPERTY_NAME,
+	JSON_REQUIRES_ORIGINAL_GAME_FILES_PROPERTY_NAME,
 	JSON_REQUIRES_GROUP_FILE_EXTRACTION_PROPERTY_NAME,
 	JSON_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME,
 	JSON_MOD_DIRECTORY_NAME_PROPERTY_NAME,
@@ -182,7 +182,7 @@ GameVersion::GameVersion()
 	, m_dosboxConfiguration(std::make_shared<DOSBoxConfiguration>())
 	, m_modified(false) { }
 
-GameVersion::GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool removable, const std::string & gamePath, const std::string & gameExecutableName, const std::string & gameConfigurationFileName, const std::string & gameConfigurationDirectoryPath, bool localWorkingDirectory, std::optional<bool> scriptFilesReadFromGroup, bool supportsSubdirectories, std::optional<bool> worldTourGroupSupported, std::optional<bool> zipArchiveGroupsSupported, std::optional<uint16_t> maximumGroupFiles, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag, const std::optional<std::string> & weaponSwitchOrderArgumentFlag, const std::optional<std::string> & disableMonstersArgumentFlag, const std::optional<std::string> & disableSoundArgumentFlag, const std::optional<std::string> & disableMusicArgumentFlag, const std::optional<std::string> & setupExecutableName, const std::optional<std::string> & groupFileInstallPath, const std::optional<std::string> & defFileArgumentFlag, const std::optional<std::string> & extraDefFileArgumentFlag,const std::optional<bool> & requiresCombinedGroup, const std::optional<bool> & requiresGroupFileExtraction, const std::string & website, const std::string & sourceCodeURL, const std::vector<OperatingSystem> & supportedOperatingSystems, const std::vector<std::string> & compatibleGameVersionIdentifiers, const std::vector<std::string> & notes, const DOSBoxConfiguration & dosboxConfiguration)
+GameVersion::GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool removable, const std::string & gamePath, const std::string & gameExecutableName, const std::string & gameConfigurationFileName, const std::string & gameConfigurationDirectoryPath, bool localWorkingDirectory, std::optional<bool> scriptFilesReadFromGroup, bool supportsSubdirectories, std::optional<bool> worldTourGroupSupported, std::optional<bool> zipArchiveGroupsSupported, std::optional<uint16_t> maximumGroupFiles, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag, const std::optional<std::string> & weaponSwitchOrderArgumentFlag, const std::optional<std::string> & disableMonstersArgumentFlag, const std::optional<std::string> & disableSoundArgumentFlag, const std::optional<std::string> & disableMusicArgumentFlag, const std::optional<std::string> & setupExecutableName, const std::optional<std::string> & groupFileInstallPath, const std::optional<std::string> & defFileArgumentFlag, const std::optional<std::string> & extraDefFileArgumentFlag,const std::optional<bool> & requiresOriginalGameFiles, const std::optional<bool> & requiresGroupFileExtraction, const std::string & website, const std::string & sourceCodeURL, const std::vector<OperatingSystem> & supportedOperatingSystems, const std::vector<std::string> & compatibleGameVersionIdentifiers, const std::vector<std::string> & notes, const DOSBoxConfiguration & dosboxConfiguration)
 	: m_id(Utilities::trimString(id))
 	, m_longName(Utilities::trimString(longName))
 	, m_shortName(Utilities::trimString(shortName))
@@ -193,7 +193,7 @@ GameVersion::GameVersion(const std::string & id, const std::string & longName, c
 	, m_gameConfigurationFileName(Utilities::trimString(gameConfigurationFileName))
 	, m_gameConfigurationDirectoryPath(Utilities::trimString(gameConfigurationDirectoryPath))
 	, m_maximumGroupFiles(maximumGroupFiles)
-	, m_requiresCombinedGroup(requiresCombinedGroup)
+	, m_requiresOriginalGameFiles(requiresOriginalGameFiles)
 	, m_requiresGroupFileExtraction(requiresGroupFileExtraction)
 	, m_modDirectoryName(Utilities::trimString(modDirectoryName))
 	, m_website(Utilities::trimString(website))
@@ -258,7 +258,7 @@ GameVersion::GameVersion(GameVersion && gameVersion) noexcept
 	, m_launchArguments(std::move(gameVersion.m_launchArguments))
 	, m_groupFileInstallPath(std::move(gameVersion.m_groupFileInstallPath))
 	, m_maximumGroupFiles(gameVersion.m_maximumGroupFiles)
-	, m_requiresCombinedGroup(gameVersion.m_requiresCombinedGroup)
+	, m_requiresOriginalGameFiles(gameVersion.m_requiresOriginalGameFiles)
 	, m_requiresGroupFileExtraction(gameVersion.m_requiresGroupFileExtraction)
 	, m_localWorkingDirectory(gameVersion.m_localWorkingDirectory)
 	, m_modDirectoryName(std::move(gameVersion.m_modDirectoryName))
@@ -308,7 +308,7 @@ GameVersion::GameVersion(const GameVersion & gameVersion)
 	, m_launchArguments(gameVersion.m_launchArguments)
 	, m_groupFileInstallPath(gameVersion.m_groupFileInstallPath)
 	, m_maximumGroupFiles(gameVersion.m_maximumGroupFiles)
-	, m_requiresCombinedGroup(gameVersion.m_requiresCombinedGroup)
+	, m_requiresOriginalGameFiles(gameVersion.m_requiresOriginalGameFiles)
 	, m_requiresGroupFileExtraction(gameVersion.m_requiresGroupFileExtraction)
 	, m_localWorkingDirectory(gameVersion.m_localWorkingDirectory)
 	, m_modDirectoryName(gameVersion.m_modDirectoryName)
@@ -359,7 +359,7 @@ GameVersion & GameVersion::operator = (GameVersion && gameVersion) noexcept {
 		m_launchArguments = std::move(gameVersion.m_launchArguments);
 		m_groupFileInstallPath = std::move(gameVersion.m_groupFileInstallPath);
 		m_maximumGroupFiles = gameVersion.m_maximumGroupFiles;
-		m_requiresCombinedGroup = gameVersion.m_requiresCombinedGroup;
+		m_requiresOriginalGameFiles = gameVersion.m_requiresOriginalGameFiles;
 		m_requiresGroupFileExtraction = gameVersion.m_requiresGroupFileExtraction;
 		m_localWorkingDirectory = gameVersion.m_localWorkingDirectory;
 		m_modDirectoryName = std::move(gameVersion.m_modDirectoryName);
@@ -413,7 +413,7 @@ GameVersion & GameVersion::operator = (const GameVersion & gameVersion) {
 	m_launchArguments = gameVersion.m_launchArguments;
 	m_groupFileInstallPath = gameVersion.m_groupFileInstallPath;
 	m_maximumGroupFiles = gameVersion.m_maximumGroupFiles;
-	m_requiresCombinedGroup = gameVersion.m_requiresCombinedGroup;
+	m_requiresOriginalGameFiles = gameVersion.m_requiresOriginalGameFiles;
 	m_requiresGroupFileExtraction = gameVersion.m_requiresGroupFileExtraction;
 	m_localWorkingDirectory = gameVersion.m_localWorkingDirectory;
 	m_modDirectoryName = gameVersion.m_modDirectoryName;
@@ -851,6 +851,14 @@ const std::optional<uint16_t> & GameVersion::getMaximumGroupFiles() const {
 	return m_maximumGroupFiles;
 }
 
+bool GameVersion::doesGroupCountExceedMaximumGroupFilesLimit(uint16_t groupCount) const {
+	if(!m_maximumGroupFiles.has_value() || groupCount == 0) {
+		return false;
+	}
+
+	return groupCount > m_maximumGroupFiles.value() - 1;
+}
+
 void GameVersion::setMaximumGroupFiles(uint16_t maximumGroupFiles) {
 	if(m_maximumGroupFiles == maximumGroupFiles) {
 		return;
@@ -871,30 +879,30 @@ void GameVersion::clearMaximumGroupFiles() {
 	setModified(true);
 }
 
-bool GameVersion::doesRequireCombinedGroup() const {
-	return m_requiresCombinedGroup.has_value() && m_requiresCombinedGroup.value();
+bool GameVersion::doesRequireOriginalGameFiles() const {
+	return m_requiresOriginalGameFiles.has_value() && m_requiresOriginalGameFiles.value();
 }
 
-const std::optional<bool> & GameVersion::getRequiresCombinedGroup() const {
-	return m_requiresCombinedGroup;
+const std::optional<bool> & GameVersion::getRequiresOriginalGameFiles() const {
+	return m_requiresOriginalGameFiles;
 }
 
-void GameVersion::setRequiresCombinedGroup(bool requiresCombinedGroup) {
-	if(m_requiresCombinedGroup == requiresCombinedGroup) {
+void GameVersion::setRequiresOriginalGameFiles(bool requiresOriginalGameFiles) {
+	if(m_requiresOriginalGameFiles == requiresOriginalGameFiles) {
 		return;
 	}
 
-	m_requiresCombinedGroup = requiresCombinedGroup;
+	m_requiresOriginalGameFiles = requiresOriginalGameFiles;
 
 	setModified(true);
 }
 
-void GameVersion::clearRequiresCombinedGroup() {
-	if(!m_requiresCombinedGroup.has_value()) {
+void GameVersion::clearRequiresOriginalGameFiles() {
+	if(!m_requiresOriginalGameFiles.has_value()) {
 		return;
 	}
 
-	m_requiresCombinedGroup.reset();
+	m_requiresOriginalGameFiles.reset();
 
 	setModified(true);
 }
@@ -2050,8 +2058,8 @@ void GameVersion::addMetadata(std::map<std::string, std::any> & metadata) const 
 		metadata["maximumGroupFiles"] = m_maximumGroupFiles.value();
 	}
 
-	if(m_requiresCombinedGroup.has_value()) {
-		metadata["requiresCombinedGroup"] = m_requiresCombinedGroup.value();
+	if(m_requiresOriginalGameFiles.has_value()) {
+		metadata["requiresOriginalGameFiles"] = m_requiresOriginalGameFiles.value();
 	}
 
 	if(m_requiresGroupFileExtraction.has_value()) {
@@ -2169,7 +2177,7 @@ std::unique_ptr<GameVersion> GameVersion::createTemplateFrom() const {
 		m_groupFileInstallPath,
 		m_defFileArgumentFlag,
 		m_extraDefFileArgumentFlag,
-		m_requiresCombinedGroup,
+		m_requiresOriginalGameFiles,
 		m_requiresGroupFileExtraction
 	);
 }
@@ -2352,8 +2360,8 @@ rapidjson::Value GameVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::C
 		gameVersionValue.AddMember(rapidjson::StringRef(JSON_MAXIMUM_GROUP_FILES_PROPERTY_NAME), rapidjson::Value(m_maximumGroupFiles.value()), allocator);
 	}
 
-	if(m_requiresCombinedGroup.has_value()) {
-		gameVersionValue.AddMember(rapidjson::StringRef(JSON_REQUIRES_COMBINED_GROUP_PROPERTY_NAME), rapidjson::Value(m_requiresCombinedGroup.value()), allocator);
+	if(m_requiresOriginalGameFiles.has_value()) {
+		gameVersionValue.AddMember(rapidjson::StringRef(JSON_REQUIRES_ORIGINAL_GAME_FILES_PROPERTY_NAME), rapidjson::Value(m_requiresOriginalGameFiles.value()), allocator);
 	}
 
 	if(m_requiresGroupFileExtraction.has_value()) {
@@ -3123,16 +3131,16 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 		newGameVersion->m_extraDefFileArgumentFlag = extraDefFileArgumentFlagValue.GetString();
 	}
 
-	// parse the game version requires full combined group property
-	if(gameVersionValue.HasMember(JSON_REQUIRES_COMBINED_GROUP_PROPERTY_NAME)) {
-		const rapidjson::Value & requiresCombinedGroupValue = gameVersionValue[JSON_REQUIRES_COMBINED_GROUP_PROPERTY_NAME];
+	// parse the game version requires original game files in combined group property
+	if(gameVersionValue.HasMember(JSON_REQUIRES_ORIGINAL_GAME_FILES_PROPERTY_NAME)) {
+		const rapidjson::Value & requiresOriginalGameFilesValue = gameVersionValue[JSON_REQUIRES_ORIGINAL_GAME_FILES_PROPERTY_NAME];
 
-		if(!requiresCombinedGroupValue.IsBool()) {
-			spdlog::error("Game version with ID '{}' '{}' property has invalid type: '{}', expected 'boolean'.", id, JSON_REQUIRES_COMBINED_GROUP_PROPERTY_NAME, Utilities::typeToString(requiresCombinedGroupValue.GetType()));
+		if(!requiresOriginalGameFilesValue.IsBool()) {
+			spdlog::error("Game version with ID '{}' '{}' property has invalid type: '{}', expected 'boolean'.", id, JSON_REQUIRES_ORIGINAL_GAME_FILES_PROPERTY_NAME, Utilities::typeToString(requiresOriginalGameFilesValue.GetType()));
 			return nullptr;
 		}
 
-		newGameVersion->m_requiresCombinedGroup = requiresCombinedGroupValue.GetBool();
+		newGameVersion->m_requiresOriginalGameFiles = requiresOriginalGameFilesValue.GetBool();
 	}
 
 	// parse the game version requires group file extraction property
@@ -3393,6 +3401,10 @@ bool GameVersion::isValid() const {
 		return false;
 	}
 
+	if(m_requiresOriginalGameFiles && m_requiresGroupFileExtraction) {
+		return false;
+	}
+
 	return true;
 }
 
@@ -3404,7 +3416,7 @@ bool GameVersion::operator == (const GameVersion & gameVersion) const {
 	if(m_standAlone != gameVersion.m_standAlone ||
 	   m_removable != gameVersion.m_removable ||
 	   m_maximumGroupFiles != gameVersion.m_maximumGroupFiles ||
-	   m_requiresCombinedGroup != gameVersion.m_requiresCombinedGroup ||
+	   m_requiresOriginalGameFiles != gameVersion.m_requiresOriginalGameFiles ||
 	   m_requiresGroupFileExtraction != gameVersion.m_requiresGroupFileExtraction ||
 	   m_localWorkingDirectory != gameVersion.m_localWorkingDirectory ||
 	   m_scriptFilesReadFromGroup != gameVersion.m_scriptFilesReadFromGroup ||
