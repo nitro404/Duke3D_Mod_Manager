@@ -2564,9 +2564,9 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 				else {
 					combinedGroup = std::make_unique<GroupGRP>();
 				}
-			}
 
-			combinedGroup->setFilePath(absoluteCombinedGroupFilePath);
+				combinedGroup->setFilePath(absoluteCombinedGroupFilePath);
+			}
 		}
 
 		for(const std::string & absoluteGroupFilePath : allAbsoluteGroupFilePaths) {
