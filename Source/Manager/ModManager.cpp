@@ -2581,7 +2581,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 				std::shared_ptr<ArchiveEntry> modZipEntry;
 
-				for(size_t i = 0; i < modZip->numberOfFiles(); i++) {
+				for(size_t i = 0; i < modZip->numberOfEntries(); i++) {
 					modZipEntry = modZip->getEntry(i);
 
 					if(modZipEntry == nullptr || !modZipEntry->isFile()) {
