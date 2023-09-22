@@ -980,10 +980,6 @@ bool GameVersion::areScriptFilesReadFromGroup() const {
 }
 
 std::optional<bool> GameVersion::getScriptFilesReadFromGroup() const {
-	if(isStandAlone()) {
-		return {};
-	}
-
 	return m_scriptFilesReadFromGroup;
 }
 

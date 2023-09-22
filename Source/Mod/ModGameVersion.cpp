@@ -757,6 +757,7 @@ tinyxml2::XMLElement * ModGameVersion::toXML(tinyxml2::XMLDocument * document) c
 		std::vector<std::pair<std::string, std::optional<std::string>>> stringProperties({
 			{ XML_MOD_GAME_VERSION_PROPERTY_BASE_NAME,                              m_standAloneGameVersion->getBase() },
 			{ XML_MOD_GAME_VERSION_PROPERTY_GAME_EXE_NAME_NAME,                     m_standAloneGameVersion->getGameExecutableName() },
+			{ XML_MOD_GAME_VERSION_PROPERTY_SETUP_EXE_NAME_NAME,                    m_standAloneGameVersion->getSetupExecutableName() },
 			{ XML_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_FILE_NAME_NAME,      m_standAloneGameVersion->getGameConfigurationFileName() },
 			{ XML_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_DIRECTORY_PATH_NAME, m_standAloneGameVersion->getGameConfigurationDirectoryPath() },
 			{ XML_MOD_GAME_VERSION_PROPERTY_SKILL_START_VALUE_NAME,                 std::to_string(m_standAloneGameVersion->getSkillStartValue()) }
