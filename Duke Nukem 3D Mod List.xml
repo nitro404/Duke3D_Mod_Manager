@@ -11438,6 +11438,34 @@
 			<download filename="The_Conundrum_1.0-ModMgrE.zip" filesize="9983817" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="8f9da1efd156342fbe40f28495b7084d53971fdd"/>
 		</downloads>
 	</mod>
+	<mod name="Leisure Suit Larry" id="leisure_suit_larry" type="Partial Conversion" website="https://www.moddb.com/games/duke-nukem-3d/addons/leisure-suit-larry-mod-for-duke-nukem-3d">
+		<team country="Portugal">
+			<member name="ALF" email="barroselasnow@hotmail.com" website="https://www.moddb.com/members/alfdude"/>
+		</team>
+		<versions>
+			<version release_date="August 14, 2018">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="LARRY.GRP" size="9417610" type="grp" sha1="b9ae7c4bb1c873f7dad02ad307aea8bfa2c87c88"/>
+					</game>
+				</type>
+				<type id="Life&apos;s a Beach Edition">
+					<game type="Atomic" state="Native">
+						<file name="VACATION.CON" size="98724" type="con" sha1="8c366f3f0fa77521241d1dea187b91a12f6683c1"/>
+						<file name="LARCARIB.GRP" size="6302161" type="grp" sha1="b742d9ee10ff1b919d3cfb97b7203945a352ff71"/>
+					</game>
+					<dependencies>
+						<dependency id="duke_caribbean"/>
+					</dependencies>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Leisure_Suit_Larry_Mod_for_DUKE_NUKEM_3D.zip" filesize="10572170" game="Atomic" type="Original Files" sha1="b6fb133bf65e776a364bdccf6b081f13b196ad39"/>
+			<download filename="Leisure_Suit_Larry-ModMgrA.zip" filesize="4351709" game="Atomic" type="Mod Manager Files" state="Native" sha1="1cddfc211c7d7ebcdf651ef68a8fbd75a309be78"/>
+			<download filename="Leisure_Suit_Larry_-_Lifes_a_Beach_Edition-ModMgrA.zip" filesize="2529953" version_type="Life&apos;s a Beach Edition" game="Atomic" type="Mod Manager Files" state="Native" sha1="8e25db0c1b5832e467ecb6d4fd89f55e8c02ce59"/>
+		</downloads>
+	</mod>
 	<mod name="Hunt for Khilafat" id="hunt_for_khilafat" type="Total Conversion" version="1.0" website="https://www.moddb.com/mods/hunt-for-khilafat">
 		<team name="Free Speech Studio">
 			<member name="Jesse Petrilla" email="jesse@datatap.com"/>
