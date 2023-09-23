@@ -2699,6 +2699,12 @@ bool GameConfiguration::updateWithBetterControls() {
 		if(!keyDefinitionsSection->setEntryMultiStringValue(CROUCH_ENTRY_NAME, "LCtrl", 1, true, true)) { return false; }
 		if(!keyDefinitionsSection->setEntryMultiStringValue(STRAFE_LEFT_ENTRY_NAME, "A", 1, true, true)) { return false; }
 		if(!keyDefinitionsSection->setEntryMultiStringValue(STRAFE_RIGHT_ENTRY_NAME, "D", 1, true, true)) { return false; }
+
+		std::shared_ptr<Entry> hideWeaponEntry(keyDefinitionsSection->getEntryWithName(KEY_DEFINITIONS_HIDE_WEAPON_ENTRY_NAME));
+
+		if(hideWeaponEntry != nullptr) {
+			if(!hideWeaponEntry->setMultiStringValue("", 0, true)) { return false; }
+		}
 	}
 
 	std::shared_ptr<Entry> showOpponentsWeaponEntry(getEntryWithName(SHOW_OPPONENTS_WEAPON_ENTRY_NAME));
