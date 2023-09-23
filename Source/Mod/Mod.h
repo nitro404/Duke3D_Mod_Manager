@@ -56,6 +56,7 @@ public:
 	const std::string & getWebsite() const;
 	const std::string & getRepositoryURL() const;
 	bool isStandAlone() const;
+	bool hasDependencies() const;
 	bool isOfficialExpansion() const;
 	bool hasTeam() const;
 	std::shared_ptr<ModTeam> getTeam() const;

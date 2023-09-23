@@ -2,6 +2,7 @@
 
 #include "Game/GameVersion.h"
 #include "Mod.h"
+#include "ModDependency.h"
 #include "ModGameVersion.h"
 #include "ModVersionType.h"
 
@@ -26,6 +27,7 @@ static const std::array<std::string_view, 3> XML_MOD_VERSION_ATTRIBUTE_NAMES = {
 	XML_MOD_VERSION_REPAIRED_ATTRIBUTE_NAME
 };
 static const std::string XML_MOD_GAME_VERSION_ELEMENT_NAME("game");
+static const std::string XML_MOD_DEPENDENCIES_ELEMENT_NAME("dependencies");
 
 static constexpr const char * JSON_MOD_VERSION_VERSION_PROPERTY_NAME = "version";
 static constexpr const char * JSON_MOD_VERSION_RELEASE_DATE_PROPERTY_NAME = "releaseDate";
@@ -375,7 +377,7 @@ rapidjson::Value ModVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::Cr
 }
 
 tinyxml2::XMLElement * ModVersion::toXML(tinyxml2::XMLDocument * document) const {
-	static constexpr bool forceAddSingleEmptyVersionTypes = false;
+	static constexpr bool FORCE_ADD_SINGLE_EMPTY_VERSION_TYPES = false;
 
 	if(document == nullptr) {
 		return nullptr;
@@ -395,19 +397,29 @@ tinyxml2::XMLElement * ModVersion::toXML(tinyxml2::XMLDocument * document) const
 		modVersionElement->SetAttribute(XML_MOD_VERSION_REPAIRED_ATTRIBUTE_NAME.c_str(), m_repaired.value());
 	}
 
-	if(!forceAddSingleEmptyVersionTypes &&
+	if(!FORCE_ADD_SINGLE_EMPTY_VERSION_TYPES &&
 	   m_types.size() == 1 &&
 	   m_types[0]->isDefault() &&
 	   !m_types[0]->hadXMLElement()) {
-		const std::shared_ptr<ModVersionType> modVersionType = m_types[0];
+		const std::shared_ptr<ModVersionType> & modVersionType = m_types[0];
 
 		for(size_t i = 0; i < modVersionType->numberOfGameVersions(); i++) {
 			modVersionElement->InsertEndChild(modVersionType->getGameVersion(i)->toXML(document));
 		}
+
+		if(modVersionType->hasDependencies()) {
+			tinyxml2::XMLElement * modDependenciesElement = document->NewElement(XML_MOD_DEPENDENCIES_ELEMENT_NAME.c_str());
+
+			for(const std::shared_ptr<ModDependency> & modDependency : modVersionType->getDependencies()) {
+				modDependenciesElement->InsertEndChild(modDependency->toXML(document));
+			}
+
+			modVersionElement->InsertEndChild(modDependenciesElement);
+		}
 	}
 	else {
-		for(std::vector<std::shared_ptr<ModVersionType>>::const_iterator i = m_types.begin(); i != m_types.end(); ++i) {
-			modVersionElement->InsertEndChild((*i)->toXML(document));
+		for(const std::shared_ptr<ModVersionType> & modVersionType : m_types) {
+			modVersionElement->InsertEndChild(modVersionType->toXML(document));
 		}
 	}
 
@@ -503,14 +515,16 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const rapidjson::Value & modVe
 	for(rapidjson::Value::ConstValueIterator i = modVersionTypesValue.Begin(); i != modVersionTypesValue.End(); ++i) {
 		newModVersionType = ModVersionType::parseFrom(*i, modValue, skipFileInfoValidation);
 
+		if(newModVersionType != nullptr) {
+			newModVersionType->setParentModVersion(newModVersion.get());
+		}
+
 		if(!ModVersionType::isValid(newModVersionType.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod version type #{}.", newModVersion->m_types.size() + 1);
 			return nullptr;
 		}
 
-		newModVersionType->setParentModVersion(newModVersion.get());
-
-		if(newModVersion->hasType(*newModVersionType)) {
+		if(newModVersion->hasType(newModVersionType->getType())) {
 			spdlog::error("Encountered duplicate mod version type #{}.", newModVersion->m_types.size() + 1);
 			return nullptr;
 		}
@@ -536,11 +550,7 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const tinyxml2::XMLElement * m
 	bool attributeHandled = false;
 	const tinyxml2::XMLAttribute * modVersionAttribute = modVersionElement->FirstAttribute();
 
-	while(true) {
-		if(modVersionAttribute == nullptr) {
-			break;
-		}
-
+	while(modVersionAttribute != nullptr) {
 		attributeHandled = false;
 
 		for(const std::string_view & attributeName : XML_MOD_VERSION_ATTRIBUTE_NAMES) {
@@ -594,21 +604,19 @@ std::unique_ptr<ModVersion> ModVersion::parseFrom(const tinyxml2::XMLElement * m
 
 	std::shared_ptr<ModVersionType> newModVersionType;
 
-	while(true) {
-		if(modVersionTypeElement == nullptr) {
-			break;
-		}
-
+	while(modVersionTypeElement != nullptr) {
 		newModVersionType = ModVersionType::parseFrom(modVersionTypeElement, skipFileInfoValidation);
+
+		if(newModVersionType != nullptr) {
+			newModVersionType->setParentModVersion(newModVersion.get());
+		}
 
 		if(!ModVersionType::isValid(newModVersionType.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod version type #{}.", newModVersion->m_types.size() + 1);
 			return nullptr;
 		}
 
-		newModVersionType->setParentModVersion(newModVersion.get());
-
-		if(newModVersion->hasType(*newModVersionType)) {
+		if(newModVersion->hasType(newModVersionType->getType())) {
 			spdlog::error("Encountered duplicate mod version type #{}.", newModVersion->m_types.size() + 1);
 			return nullptr;
 		}

@@ -377,6 +377,24 @@ bool Mod::isStandAlone() const {
 	return false;
 }
 
+bool Mod::hasDependencies() const {
+	if(!isValid(true)) {
+		return false;
+	}
+
+	for(size_t i = 0; i < numberOfVersions(); i++) {
+		std::shared_ptr<ModVersion> modVersion(getVersion(i));
+
+		for(size_t j = 0; j < modVersion->numberOfTypes(); j++) {
+			if(modVersion->getType(j)->hasDependencies()) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 bool Mod::isOfficialExpansion() const {
 	return Utilities::areStringsEqualIgnoreCase(m_type, OFFICIAL_EXPANSION_TYPE);
 }
@@ -1989,14 +2007,16 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue, bool skip
 	for(rapidjson::Value::ConstValueIterator i = modVersionsValue.Begin(); i != modVersionsValue.End(); ++i) {
 		newModVersion = ModVersion::parseFrom(*i, modValue, skipFileInfoValidation);
 
+		if(newModVersion != nullptr) {
+			newModVersion->setParentMod(newMod.get());
+		}
+
 		if(!ModVersion::isValid(newModVersion.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod version #{} for mod with ID '{}'.", newMod->m_versions.size() + 1, modID);
 			return nullptr;
 		}
 
-		newModVersion->setParentMod(newMod.get());
-
-		if(newMod->hasVersion(*newModVersion)) {
+		if(newMod->hasVersion(newModVersion->getVersion())) {
 			spdlog::error("Encountered duplicate mod version #{} for mod with ID '{}'.", newMod->m_versions.size() + 1, modID);
 			return nullptr;
 		}
@@ -2027,12 +2047,14 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue, bool skip
 	for(rapidjson::Value::ConstValueIterator i = modDownloadsValue.Begin(); i != modDownloadsValue.End(); ++i) {
 		newModDownload = ModDownload::parseFrom(*i, skipFileInfoValidation);
 
+		if(newModDownload != nullptr) {
+			newModDownload->setParentMod(newMod.get());
+		}
+
 		if(!ModDownload::isValid(newModDownload.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod download #{} for mod with ID '{}'.", newMod->m_downloads.size() + 1, modID);
 			return nullptr;
 		}
-
-		newModDownload->setParentMod(newMod.get());
 
 		if(newMod->hasDownload(*newModDownload)) {
 			spdlog::error("Encountered duplicate mod download #{} for mod with ID '{}'.", newMod->m_downloads.size() + 1, modID);
@@ -2056,12 +2078,14 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue, bool skip
 		for(rapidjson::Value::ConstValueIterator i = modScreenshotsValue.Begin(); i != modScreenshotsValue.End(); ++i) {
 			newModScreenshot = ModScreenshot::parseFrom(*i, skipFileInfoValidation);
 
+			if(newModScreenshot != nullptr) {
+				newModScreenshot->setParentMod(newMod.get());
+			}
+
 			if(!ModScreenshot::isValid(newModScreenshot.get(), skipFileInfoValidation)) {
 				spdlog::error("Failed to parse mod screenshot #{} for mod with ID '{}'.", newMod->m_screenshots.size() + 1, modID);
 				return nullptr;
 			}
-
-			newModScreenshot->setParentMod(newMod.get());
 
 			if(newMod->hasScreenshot(*newModScreenshot)) {
 				spdlog::error("Encountered duplicate mod screenshot #{} for mod with ID '{}'.", newMod->m_screenshots.size() + 1, modID);
@@ -2086,12 +2110,14 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue, bool skip
 		for(rapidjson::Value::ConstValueIterator i = modImagesValue.Begin(); i != modImagesValue.End(); ++i) {
 			newModImage = ModImage::parseFrom(*i, skipFileInfoValidation);
 
+			if(newModImage != nullptr) {
+				newModImage->setParentMod(newMod.get());
+			}
+
 			if(!ModImage::isValid(newModImage.get(), skipFileInfoValidation)) {
 				spdlog::error("Failed to parse mod image #{} for mod with ID '{}'.", newMod->m_images.size() + 1, modID);
 				return nullptr;
 			}
-
-			newModImage->setParentMod(newMod.get());
 
 			if(newMod->hasImage(*newModImage)) {
 				spdlog::error("Encountered duplicate mod image #{} for mod with ID '{}'.", newMod->m_images.size() + 1, modID);
@@ -2116,12 +2142,14 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue, bool skip
 		for(rapidjson::Value::ConstValueIterator i = modVideosValue.Begin(); i != modVideosValue.End(); ++i) {
 			newModVideo = ModVideo::parseFrom(*i);
 
+			if(newModVideo != nullptr) {
+				newModVideo->setParentMod(newMod.get());
+			}
+
 			if(!ModVideo::isValid(newModVideo.get())) {
 				spdlog::error("Failed to parse mod video #{} for mod with ID '{}'.", newMod->m_videos.size() + 1, modID);
 				return nullptr;
 			}
-
-			newModVideo->setParentMod(newMod.get());
 
 			if(newMod->hasVideo(*newModVideo)) {
 				spdlog::error("Encountered duplicate mod video #{} for mod with ID '{}'.", newMod->m_videos.size() + 1, modID);
@@ -2386,14 +2414,16 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement, boo
 
 		newModVersion = ModVersion::parseFrom(modVersionElement, skipFileInfoValidation);
 
+		if(newModVersion != nullptr) {
+			newModVersion->setParentMod(mod.get());
+		}
+
 		if(!ModVersion::isValid(newModVersion.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod version #{} for '{}' element with ID '{}'.", mod->m_versions.size() + 1, XML_MOD_ELEMENT_NAME, modID);
 			return nullptr;
 		}
 
-		newModVersion->setParentMod(mod.get());
-
-		if(mod->hasVersion(*newModVersion)) {
+		if(mod->hasVersion(newModVersion->getVersion())) {
 			spdlog::error("Encountered duplicate mod version #{} for '{}' element with ID '{}'.", mod->m_versions.size() + 1, XML_MOD_ELEMENT_NAME, modID);
 			return nullptr;
 		}
@@ -2427,12 +2457,14 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement, boo
 
 		newModDownload = ModDownload::parseFrom(modDownloadElement, skipFileInfoValidation);
 
+		if(newModDownload != nullptr) {
+			newModDownload->setParentMod(mod.get());
+		}
+
 		if(!ModDownload::isValid(newModDownload.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod download #{} for '{}' element with ID '{}'.", mod->m_downloads.size() + 1, XML_MOD_ELEMENT_NAME, modID);
 			return nullptr;
 		}
-
-		newModDownload->setParentMod(mod.get());
 
 		if(mod->hasDownload(*newModDownload)) {
 			spdlog::error("Encountered duplicate mod download #{} for '{}' element with ID '{}'.", mod->m_downloads.size() + 1, XML_MOD_ELEMENT_NAME, modID);
@@ -2464,12 +2496,14 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement, boo
 
 			newModScreenshot = ModScreenshot::parseFrom(modScreenshotElement, skipFileInfoValidation);
 
+			if(newModScreenshot != nullptr) {
+				newModScreenshot->setParentMod(mod.get());
+			}
+
 			if(!ModScreenshot::isValid(newModScreenshot.get(), skipFileInfoValidation)) {
 				spdlog::error("Failed to parse mod screenshot #{} for '{}' element with ID '{}'.", mod->m_screenshots.size() + 1, XML_MOD_ELEMENT_NAME, modID);
 				return nullptr;
 			}
-
-			newModScreenshot->setParentMod(mod.get());
 
 			if(mod->hasScreenshot(*newModScreenshot)) {
 				spdlog::error("Encountered duplicate mod download #{} for '{}' element with ID '{}'.", mod->m_screenshots.size() + 1, XML_MOD_ELEMENT_NAME, modID);
@@ -2502,12 +2536,14 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement, boo
 
 			newModImage = ModImage::parseFrom(modImageElement, skipFileInfoValidation);
 
+			if(newModImage != nullptr) {
+				newModImage->setParentMod(mod.get());
+			}
+
 			if(!ModImage::isValid(newModImage.get(), skipFileInfoValidation)) {
 				spdlog::error("Failed to parse mod image #{} for '{}' element with ID '{}'.", mod->m_images.size() + 1, XML_MOD_ELEMENT_NAME, modID);
 				return nullptr;
 			}
-
-			newModImage->setParentMod(mod.get());
 
 			if(mod->hasImage(*newModImage)) {
 				spdlog::error("Encountered duplicate mod download #{} for '{}' element with ID '{}'.", mod->m_images.size() + 1, XML_MOD_ELEMENT_NAME, modID);
@@ -2540,12 +2576,14 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement, boo
 
 			newModVideo = ModVideo::parseFrom(modVideoElement);
 
+			if(newModVideo != nullptr) {
+				newModVideo->setParentMod(mod.get());
+			}
+
 			if(!ModVideo::isValid(newModVideo.get())) {
 				spdlog::error("Failed to parse mod video #{} for '{}' element with ID '{}'.", mod->m_videos.size() + 1, XML_MOD_ELEMENT_NAME, modID);
 				return nullptr;
 			}
-
-			newModVideo->setParentMod(mod.get());
 
 			if(mod->hasVideo(*newModVideo)) {
 				spdlog::error("Encountered duplicate mod download #{} for '{}' element with ID '{}'.", mod->m_videos.size() + 1, XML_MOD_ELEMENT_NAME, modID);

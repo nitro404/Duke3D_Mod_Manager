@@ -100,6 +100,10 @@ const std::string & ModFile::getFileName() const {
 	return m_fileName;
 }
 
+bool ModFile::hasFileExtension(std::string_view fileExtension) const {
+	return Utilities::areStringsEqualIgnoreCase(getFileExtension(), fileExtension);
+}
+
 std::string_view ModFile::getFileExtension() const {
 	return Utilities::getFileExtension(m_fileName);
 }

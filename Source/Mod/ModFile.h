@@ -29,6 +29,7 @@ public:
 	~ModFile();
 
 	const std::string & getFileName() const;
+	bool hasFileExtension(std::string_view fileExtension) const;
 	std::string_view getFileExtension() const;
 	uint64_t getFileSize() const;
 	const std::string & getType() const;

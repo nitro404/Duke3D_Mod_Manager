@@ -148,6 +148,8 @@ set(MAIN_SOURCE_FILES
 	Mod/ModAuthorInformation.cpp
 	Mod/ModCollection.h
 	Mod/ModCollection.cpp
+	Mod/ModDependency.h
+	Mod/ModDependency.cpp
 	Mod/ModDownload.h
 	Mod/ModDownload.cpp
 	Mod/ModFile.h
@@ -213,6 +215,10 @@ set(GUI_SOURCE_FILES
 	GUI/Group/SSI/SunstormInteractiveMetadataPanel.cpp
 	GUI/Mod/ModBrowserPanel.h
 	GUI/Mod/ModBrowserPanel.cpp
+	GUI/Mod/Info/ModDependenciesPanel.h
+	GUI/Mod/Info/ModDependenciesPanel.cpp
+	GUI/Mod/Info/ModDependencyPanel.h
+	GUI/Mod/Info/ModDependencyPanel.cpp
 	GUI/Mod/Info/ModDownloadPanel.h
 	GUI/Mod/Info/ModDownloadPanel.cpp
 	GUI/Mod/Info/ModDownloadsPanel.h

@@ -9,9 +9,15 @@
 #include <string>
 #include <vector>
 
+class GameVersion;
 class GameVersionCollection;
 class Mod;
+class ModDependency;
+class ModDownload;
+class ModFile;
+class ModGameVersion;
 class ModVersion;
+class ModVersionType;
 class StandAloneMod;
 
 namespace tinyxml2 {
@@ -37,7 +43,11 @@ public:
 	size_t indexOfModWithName(const std::string & name) const;
 	std::shared_ptr<Mod> getMod(size_t index) const;
 	std::shared_ptr<Mod> getModWithID(const std::string & id) const;
+	std::shared_ptr<ModVersion> getModVersionWithModID(const std::string & id, const std::string & version) const;
+	std::shared_ptr<ModVersionType> getModVersionTypeWithModID(const std::string & id, const std::string & version, const std::string & versionType) const;
+	std::shared_ptr<ModGameVersion> getModGameVersionByIDWithModID(const std::string & id, const std::string & version, const std::string & versionType, const std::string & gameVersionID) const;
 	std::shared_ptr<Mod> getModWithName(const std::string & name) const;
+	std::shared_ptr<ModVersionType> getModVersionTypeFromDependency(const ModDependency & modDependency) const;
 	std::shared_ptr<ModVersion> getStandAloneModVersion(const StandAloneMod & standAloneMod) const;
 	const std::vector<std::shared_ptr<Mod>> & getMods() const;
 	bool addMod(const Mod & mod);
@@ -47,6 +57,16 @@ public:
 	bool removeModWithName(const std::string & name);
 	void clearMods();
 	bool copyHiddenPropertiesFrom(const ModCollection & modCollection);
+
+	std::shared_ptr<ModGameVersion> getModDependencyGameVersion(const ModDependency & modDependency, const std::string & gameVersionID) const;
+	std::vector<std::shared_ptr<ModGameVersion>> getModDependencyGameVersions(const std::vector<std::shared_ptr<ModDependency>> & modDependencies, const std::string & gameVersionID) const;
+	std::vector<std::shared_ptr<ModGameVersion>> getModDependencyGameVersions(const ModGameVersion & modGameVersion) const;
+	std::shared_ptr<ModDownload> getModDependencyDownload(const ModDependency & modDependency, const std::string & gameVersionID) const;
+	std::vector<std::shared_ptr<ModDownload>> getModDependencyDownloads(const std::vector<std::shared_ptr<ModDependency>> & modDependencies, const std::string & gameVersionID) const;
+	std::vector<std::shared_ptr<ModDownload>> getModDependencyDownloads(const ModGameVersion & modGameVersion) const;
+	std::vector<std::shared_ptr<ModFile>> getModDependencyGroupFiles(const ModDependency & modDependency, const GameVersion & gameVersion, bool recursive = true) const;
+	std::vector<std::shared_ptr<ModFile>> getModDependencyGroupFiles(const std::vector<std::shared_ptr<ModDependency>> & modDependencies, const GameVersion & gameVersion, bool recursive = true) const;
+	std::vector<std::shared_ptr<ModFile>> getModDependencyGroupFiles(const ModGameVersion & modGameVersion, const GameVersion & gameVersion, bool recursive = true) const;
 
 	rapidjson::Document toJSON() const;
 	tinyxml2::XMLElement * toXML(tinyxml2::XMLDocument* document) const;

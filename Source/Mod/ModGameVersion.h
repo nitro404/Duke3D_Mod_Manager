@@ -100,8 +100,8 @@ public:
 	bool isGameVersionSupported(const GameVersion & gameVersion) const;
 	bool isGameVersionCompatible(const GameVersion & gameVersion) const;
 
-	bool isValid(bool skipFileInfoValidation = false) const;
-	static bool isValid(const ModGameVersion * m, bool skipFileInfoValidation = false);
+	bool isValid(bool skipFileInfoValidation = false, bool skipGroupFileValidation = false) const;
+	static bool isValid(const ModGameVersion * m, bool skipFileInfoValidation = false, bool skipGroupFileValidation = false);
 
 	bool operator == (const ModGameVersion & m) const;
 	bool operator != (const ModGameVersion & m) const;

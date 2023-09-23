@@ -603,6 +603,7 @@ bool OrganizedModCollection::shouldDisplayMods() const {
 	return  m_filterType == FilterType::None ||
 		    m_filterType == FilterType::Downloaded ||
 		    m_filterType == FilterType::StandAlone ||
+		    m_filterType == FilterType::HasDependencies ||
 		    m_filterType == FilterType::OfficialExpansion ||
 		   (m_filterType == FilterType::Teams && m_selectedTeam != nullptr) ||
 		   (m_filterType == FilterType::Authors && m_selectedAuthor != nullptr) ||
@@ -1679,6 +1680,20 @@ void OrganizedModCollection::applyFilter() {
 			break;
 		}
 
+		case FilterType::HasDependencies: {
+			std::shared_ptr<Mod> mod;
+
+			for(size_t i = 0; i < m_mods->numberOfMods(); i++) {
+				mod = m_mods->getMod(i);
+
+				if(mod->hasDependencies()) {
+					m_organizedMods.push_back(mod);
+				}
+			}
+
+			break;
+		}
+
 		case FilterType::OfficialExpansion: {
 			std::shared_ptr<Mod> mod;
 
@@ -1744,6 +1759,7 @@ void OrganizedModCollection::sort() {
 		case FilterType::SupportedGameVersions:
 		case FilterType::CompatibleGameVersions:
 		case FilterType::StandAlone:
+		case FilterType::HasDependencies:
 		case FilterType::OfficialExpansion: {
 			m_organizedMods = mergeSortMods(m_organizedMods);
 			m_organizedGameVersions = mergeSortGameVersions(m_organizedGameVersions);
@@ -1972,6 +1988,7 @@ bool OrganizedModCollection::areSortOptionsValidInContext(SortType sortType, Fil
 		 filterType == FilterType::Downloaded ||
 	   ((filterType == FilterType::SupportedGameVersions || filterType == FilterType::CompatibleGameVersions) && hasSelectedGameVersion) ||
 	     filterType == FilterType::StandAlone ||
+	     filterType == FilterType::HasDependencies ||
 	     filterType == FilterType::OfficialExpansion ||
 	    (filterType == FilterType::Teams && hasSelectedTeam) ||
 	    (filterType == FilterType::Authors && hasSelectedAuthor)) {

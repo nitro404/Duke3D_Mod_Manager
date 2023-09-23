@@ -4,6 +4,7 @@
 class DownloadCache;
 class GameVersionCollection;
 class Mod;
+class ModCollection;
 class ModGameVersion;
 class ModVersion;
 class ModVersionType;
@@ -29,13 +30,13 @@ public:
 	std::string getDownloadedMapsDirectoryPath() const;
 	bool isModListDownloaded() const;
 	bool shouldUpdateModList() const;
-	bool isModDownloaded(const Mod & mod) const;
-	bool isModVersionDownloaded(const ModVersion & modVersion) const;
-	bool isModVersionTypeDownloaded(const ModVersionType & modVersionType) const;
-	bool isModGameVersionDownloaded(const ModGameVersion & modGameVersion) const;
+	bool isModDownloaded(const Mod & mod, const ModCollection * mods = nullptr, bool checkDependencies = false) const;
+	bool isModVersionDownloaded(const ModVersion & modVersion, const ModCollection * mods = nullptr, bool checkDependencies = false) const;
+	bool isModVersionTypeDownloaded(const ModVersionType & modVersionType, const ModCollection * mods = nullptr, bool checkDependencies = false) const;
+	bool isModGameVersionDownloaded(const ModGameVersion & modGameVersion, const ModCollection * mods = nullptr, bool checkDependencies = false) const;
 	DownloadCache * getDownloadCache() const;
 	bool downloadModList(bool force = false);
-	bool downloadModGameVersion(const ModGameVersion & modGameVersion, const GameVersionCollection & gameVersions, bool force = false);
+	bool downloadModGameVersion(const ModGameVersion & modGameVersion, const ModCollection & mods, const GameVersionCollection & gameVersions, bool downloadDependencies = true, bool force = false);
 	bool uninstallModGameVersion(const ModGameVersion & modGameVersion, const GameVersionCollection & gameVersions);
 	bool saveDownloadCache() const;
 

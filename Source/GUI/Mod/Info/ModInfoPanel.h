@@ -17,8 +17,10 @@
 
 class Mod;
 class ModCollection;
+class ModDependenciesPanel;
 class ModDownloadsPanel;
 class ModTeamMembersPanel;
+class ModVersionType;
 class GameVersionCollection;
 class RelatedModsPanel;
 class SimilarModsPanel;
@@ -29,10 +31,12 @@ public:
 	virtual ~ModInfoPanel();
 
 	void setMod(std::shared_ptr<Mod> mod);
+	void setModVersionType(std::shared_ptr<ModVersionType> modVersionType);
 
 	boost::signals2::signal<void (std::string /* modID */)> modSelectionRequested;
 	boost::signals2::signal<void (std::string /* modTeamName */)> modTeamSelectionRequested;
 	boost::signals2::signal<void (std::string /* modTeamMemberName */)> modTeamMemberSelectionRequested;
+	boost::signals2::signal<void (std::string /* modID */, std::string /* modVersion */, std::string /* modVersionType */)> modVersionTypeSelectionRequested;
 
 private:
 	void onModAliasDeepLinkClicked(wxHyperlinkEvent & event);
@@ -46,8 +50,10 @@ private:
 	void onRelatedModSelectionRequested(const std::string & relatedModID);
 	void onSimilarModSelectionRequested(const std::string & similarModID);
 	void onModTeamMemberSelectionRequested(const std::string & modTeamMemberName);
+	void onModVersionTypeSelectionRequested(const std::string & modID, const std::string & modVersion, const std::string & modVersionType);
 
 	std::shared_ptr<Mod> m_mod;
+	std::shared_ptr<ModVersionType> m_modVersionType;
 	std::shared_ptr<ModCollection> m_mods;
 	std::shared_ptr<GameVersionCollection> m_gameVersions;
 
@@ -61,6 +67,8 @@ private:
 	wxStaticText * m_latestReleaseDateText;
 	wxStaticText * m_supportedGameVersionsLabel;
 	wxStaticText * m_supportedGameVersionsText;
+	wxStaticText * m_dependenciesLabel;
+	ModDependenciesPanel * m_dependenciesPanel;
 	wxStaticText * m_modWebsiteHyperlinkLabel;
 	wxGenericHyperlinkCtrl * m_modWebsiteHyperlink;
 	wxStaticText * m_modRepositoryHyperlinkLabel;
@@ -68,7 +76,6 @@ private:
 	wxStaticText * m_notesLabel;
 	wxStaticText * m_notesText;
 	wxStaticText * m_relatedModsLabel;
-	wxWindow * m_relatedModsSpacers[2];
 	RelatedModsPanel * m_relatedModsPanel;
 	wxStaticText * m_similarModsLabel;
 	wxWindow * m_similarModsSpacers[2];
@@ -94,6 +101,7 @@ private:
 	boost::signals2::connection m_relatedModSelectionRequestedConnection;
 	boost::signals2::connection m_similarModSelectionRequestedConnection;
 	boost::signals2::connection m_modTeamMemberSelectionRequestedConnection;
+	boost::signals2::connection m_modVersionTypeSelectionRequestedConnection;
 
 	ModInfoPanel(const ModInfoPanel &) = delete;
 	const ModInfoPanel & operator = (const ModInfoPanel &) = delete;

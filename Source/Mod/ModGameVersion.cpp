@@ -1292,12 +1292,14 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const rapidjson::Value
 	for(rapidjson::Value::ConstValueIterator i = modFilesValue.Begin(); i != modFilesValue.End(); ++i) {
 		newModFile = ModFile::parseFrom(*i, skipFileInfoValidation);
 
+		if(newModFile != nullptr) {
+			newModFile->setParentModGameVersion(newModGameVersion.get());
+		}
+
 		if(!ModFile::isValid(newModFile.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod file #{}.", newModGameVersion->m_files.size() + 1);
 			return nullptr;
 		}
-
-		newModFile->setParentModGameVersion(newModGameVersion.get());
 
 		if(newModGameVersion->hasFile(*newModFile)) {
 			spdlog::error("Encountered duplicate mod file #{}.", newModGameVersion->m_files.size() + 1);
@@ -1705,12 +1707,14 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const tinyxml2::XMLEle
 
 		newModFile = ModFile::parseFrom(modFileElement, skipFileInfoValidation);
 
+		if(newModFile != nullptr) {
+			newModFile->setParentModGameVersion(newModGameVersion.get());
+		}
+
 		if(!ModFile::isValid(newModFile.get(), skipFileInfoValidation)) {
 			spdlog::error("Failed to parse mod file #{}.", newModGameVersion->m_files.size() + 1);
 			return nullptr;
 		}
-
-		newModFile->setParentModGameVersion(newModGameVersion.get());
 
 		if(newModGameVersion->hasFile(*newModFile)) {
 			spdlog::error("Encountered duplicate mod file #{}.", newModGameVersion->m_files.size() + 1);
@@ -1744,14 +1748,16 @@ bool ModGameVersion::isGameVersionCompatible(const GameVersion & gameVersion) co
 		   gameVersion.hasCompatibleGameVersionWithID(m_gameVersionID);
 }
 
-bool ModGameVersion::isValid(bool skipFileInfoValidation) const {
+bool ModGameVersion::isValid(bool skipFileInfoValidation, bool skipGroupFileValidation) const {
 	if(m_gameVersionID.empty() ||
 	   m_files.empty()) {
 		return false;
 	}
 
 	if(!isStandAlone() && !hasFileOfType("grp") && !hasFileOfType("zip")) {
-		return false;
+		if(!skipGroupFileValidation && (m_parentModVersionType == nullptr || (m_parentModVersionType != nullptr && !m_parentModVersionType->hasDependencies()))) {
+			return false;
+		}
 	}
 
 	for(std::vector<std::shared_ptr<ModFile>>::const_iterator i = m_files.begin(); i != m_files.end(); ++i) {
@@ -1773,8 +1779,8 @@ bool ModGameVersion::isValid(bool skipFileInfoValidation) const {
 	return true;
 }
 
-bool ModGameVersion::isValid(const ModGameVersion * m, bool skipFileInfoValidation) {
-	return m != nullptr && m->isValid(skipFileInfoValidation);
+bool ModGameVersion::isValid(const ModGameVersion * m, bool skipFileInfoValidation, bool skipGroupFileValidation) {
+	return m != nullptr && m->isValid(skipFileInfoValidation, skipGroupFileValidation);
 }
 
 bool ModGameVersion::operator == (const ModGameVersion & m) const {

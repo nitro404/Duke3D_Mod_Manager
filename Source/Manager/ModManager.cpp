@@ -1447,6 +1447,56 @@ bool ModManager::setSelectedMod(const ModIdentifier & modIdentifier) {
 	return true;
 }
 
+bool ModManager::setSelectedMod(const std::string & modID, const std::string & modVersion, const std::string & modVersionType) {
+	if(modID.empty()) {
+		return false;
+	}
+
+	std::shared_ptr<Mod> selectedMod(m_mods->getModWithID(modID));
+
+	if(selectedMod == nullptr) {
+		return false;
+	}
+
+	size_t selectedModVersionIndex = selectedMod->indexOfVersion(modVersion);
+
+	if(selectedModVersionIndex == std::numeric_limits<size_t>::max()) {
+		return false;
+	}
+
+	size_t selectedModVersionTypeIndex = selectedMod->getVersion(selectedModVersionIndex)->indexOfType(modVersionType);
+
+	if(selectedModVersionTypeIndex == std::numeric_limits<size_t>::max()) {
+		return false;
+	}
+
+	m_selectedMod = selectedMod;
+	m_selectedModVersionIndex = selectedModVersionIndex;
+	m_selectedModVersionTypeIndex = selectedModVersionTypeIndex;
+	m_selectedModGameVersionIndex = std::numeric_limits<size_t>::max();
+
+	std::shared_ptr<ModVersionType> selectedModVersionType(m_selectedMod->getVersion(m_selectedModVersionIndex)->getType(m_selectedModVersionTypeIndex));
+
+	if(selectedModVersionType->isStandAlone()) {
+		m_selectedModGameVersionIndex = 0;
+	}
+	else {
+		std::shared_ptr<GameVersion> selectedGameVersion(getSelectedGameVersion());
+
+		if(selectedGameVersion != nullptr) {
+			std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions(selectedModVersionType->getCompatibleModGameVersions(*selectedGameVersion));
+
+			if(!compatibleModGameVersions.empty()) {
+				m_selectedModGameVersionIndex = selectedModVersionType->indexOfGameVersionWithID(compatibleModGameVersions.back()->getGameVersionID());
+			}
+		}
+	}
+
+	notifyModSelectionChanged();
+
+	return true;
+}
+
 bool ModManager::setSelectedModVersionIndex(size_t modVersionIndex) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
@@ -2028,7 +2078,7 @@ bool ModManager::installStandAloneMod(const ModGameVersion & standAloneModGameVe
 		return false;
 	}
 
-	if(!m_localMode && !m_downloadManager->downloadModGameVersion(standAloneModGameVersion, *getGameVersions())) {
+	if(!m_localMode && !m_downloadManager->downloadModGameVersion(standAloneModGameVersion, *m_mods, *getGameVersions())) {
 		spdlog::error("Failed to download stand-alone '{}' mod!", standAloneModGameVersion.getParentModVersion()->getFullName());
 		return false;
 	}
@@ -2346,12 +2396,15 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	std::vector<std::shared_ptr<ModFile>> modConFiles;
 	std::vector<std::shared_ptr<ModFile>> modDefFiles;
 	std::vector<std::shared_ptr<ModFile>> modGroupFiles;
+	std::vector<std::shared_ptr<ModFile>> modDependencyGroupFiles;
 	std::vector<std::string> relativeModConFilePaths;
 	std::vector<std::string> relativeModDefFilePaths;
 	std::vector<std::string> relativeModGroupFilePaths;
+	std::vector<std::string> relativeModDependencyGroupFilePaths;
 	std::vector<std::string> absoluteModConFilePaths;
 	std::vector<std::string> absoluteModDefFilePaths;
 	std::vector<std::string> absoluteModGroupFilePaths;
+	std::vector<std::string> absoluteModDependencyGroupFilePaths;
 	std::vector<std::string> allRelativeConFilePaths;
 	std::vector<std::string> allRelativeDefFilePaths;
 	std::vector<std::string> allRelativeGroupFilePaths;
@@ -2374,7 +2427,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	}
 
 	if(!standAlone && selectedModGameVersion != nullptr) {
-		const std::string & modDirectoryName(getGameVersions()->getGameVersionWithID(selectedModGameVersion->getGameVersionID())->getModDirectoryName());
+		std::shared_ptr<GameVersion> targetGameVersion(getGameVersions()->getGameVersionWithID(selectedModGameVersion->getGameVersionID()));
+		const std::string & modDirectoryName(targetGameVersion->getModDirectoryName());
 		absoluteModFilesBaseDirectoryPath = Utilities::joinPaths(getModsDirectoryPath(), modDirectoryName);
 
 		if(selectedGameVersion->doesSupportSubdirectories()) {
@@ -2385,6 +2439,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 				relativeModFilesBaseDirectoryPath = settings->gameTempDirectoryName;
 			}
 		}
+
+		modDependencyGroupFiles = m_mods->getModDependencyGroupFiles(*selectedModGameVersion, *targetGameVersion, true);
 
 		modConFiles = selectedModGameVersion->getFilesOfType("con");
 		modDefFiles = selectedModGameVersion->getFilesOfType("def");
@@ -2421,12 +2477,25 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 			absoluteModGroupFilePaths.push_back(Utilities::joinPaths(absoluteModFilesBaseDirectoryPath, modGroupFile->getFileName()));
 		}
 
+		for(const std::shared_ptr<ModFile> & modDependencyGroupFile : modDependencyGroupFiles) {
+			relativeModDependencyGroupFilePaths.push_back(Utilities::joinPaths(relativeModFilesBaseDirectoryPath, modDependencyGroupFile->getFileName()));
+			absoluteModDependencyGroupFilePaths.push_back(Utilities::joinPaths(absoluteModFilesBaseDirectoryPath, modDependencyGroupFile->getFileName()));
+		}
+
 		allRelativeConFilePaths = relativeModConFilePaths;
 		allRelativeDefFilePaths = relativeModDefFilePaths;
-		allRelativeGroupFilePaths = relativeModGroupFilePaths;
+		allRelativeGroupFilePaths = relativeModDependencyGroupFilePaths;
 		allAbsoluteConFilePaths = absoluteModConFilePaths;
 		allAbsoluteDefFilePaths = absoluteModDefFilePaths;
-		allAbsoluteGroupFilePaths = absoluteModGroupFilePaths;
+		allAbsoluteGroupFilePaths = absoluteModDependencyGroupFilePaths;
+
+		for(const std::string & relativeModGroupFilePath : relativeModGroupFilePaths) {
+			allRelativeGroupFilePaths.push_back(relativeModGroupFilePath);
+		}
+
+		for(const std::string & absoluteModGroupFilePath : absoluteModGroupFilePaths) {
+			allAbsoluteGroupFilePaths.push_back(absoluteModGroupFilePath);
+		}
 	}
 
 	if(selectedGameVersion->doesSupportSubdirectories()) {
@@ -2479,8 +2548,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		allAbsoluteGroupFilePaths.push_back(customGroupFilePath);
 	}
 
-	bool doesRequireCombinedGroup = !standAlone && !selectedGameVersion->doesRequireGroupFileExtraction() && (selectedGameVersion->doesRequireOriginalGameFiles() || selectedGameVersion->doesGroupCountExceedMaximumGroupFilesLimit(customGroupFilePaths.size() + modGroupFiles.size()));
-	bool doesRequireCombinedZip = doesRequireCombinedGroup && ((selectedModGameVersion != nullptr && selectedModGameVersion->hasFileOfType("zip") || std::find_if(customGroupFilePaths.cbegin(), customGroupFilePaths.cend(), [](const std::string & groupFile) { return Utilities::hasFileExtension(groupFile, "zip"); }) != customGroupFilePaths.cend()));
+	bool doesRequireCombinedGroup = !standAlone && !selectedGameVersion->doesRequireGroupFileExtraction() && (selectedGameVersion->doesRequireOriginalGameFiles() || selectedGameVersion->doesGroupCountExceedMaximumGroupFilesLimit(modDependencyGroupFiles.size() + modGroupFiles.size() + customGroupFilePaths.size()));
+	bool doesRequireCombinedZip = doesRequireCombinedGroup && (((selectedModGameVersion != nullptr && selectedModGameVersion->hasFileOfType("zip")) || std::find_if(modDependencyGroupFiles.cbegin(), modDependencyGroupFiles.cend(), [](const std::shared_ptr<ModFile> & dependencyModFile) { return Utilities::areStringsEqualIgnoreCase(dependencyModFile->getType(), "zip"); }) != modDependencyGroupFiles.cend() || std::find_if(customGroupFilePaths.cbegin(), customGroupFilePaths.cend(), [](const std::string & groupFile) { return Utilities::hasFileExtension(groupFile, "zip"); }) != customGroupFilePaths.cend()));
 	bool shouldSymlinkToCombinedGroup = doesRequireCombinedGroup && Utilities::areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories();
 	bool shouldConfigureApplicationTemporaryDirectory = shouldSymlinkToCombinedGroup || selectedGameVersion->doesRequireDOSBox();
 	bool shouldConfigureGameTemporaryDirectory = !Utilities::areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories();
@@ -2512,9 +2581,13 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 				}
 
 				combinedGroupFileName = fmt::format("{}-Combined.zip", Utilities::getFileNameNoExtension(modGroupFiles.back()->getFileName()));
+
+				spdlog::info("Generating combined zip archive file '{}'...", combinedGroupFileName);
 			}
 			else {
 				combinedGroupFileName = Utilities::replaceFileExtension(modGroupFiles.back()->getFileName(), "CMB");
+
+				spdlog::info("Generating combined group file '{}'...", combinedGroupFileName);
 			}
 
 			if(shouldSymlinkToCombinedGroup) {
@@ -2530,15 +2603,21 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 				relativeCombinedGroupFilePath = combinedGroupFileName;
 			}
 
+			std::shared_ptr<GameVersion> dukeNukemGroupGameVersion;
 			std::unique_ptr<GroupGRP> dukeNukemGroup;
 
 			if(selectedGameVersion->doesRequireOriginalGameFiles()) {
+				dukeNukemGroupGameVersion = m_gameManager->getGroupGameVersion(selectedGameVersion->getID());
 				std::string dukeNukemGroupPath(m_gameManager->getGroupFilePath(selectedGameVersion->getID()));
+
+				if(dukeNukemGroupGameVersion == nullptr || dukeNukemGroupPath.empty()) {
+					return false;
+				}
+
 				dukeNukemGroup = GroupGRP::loadFrom(dukeNukemGroupPath);
 
 				if(dukeNukemGroup == nullptr) {
-					notifyLaunchError(fmt::format("Failed to load Duke Nukem 3D group for creation of combined group from file path: '{}'.", dukeNukemGroupPath));
-
+					notifyLaunchError(fmt::format("Failed to load '{}' group for creation of combined group from file path: '{}'.", dukeNukemGroupGameVersion->getLongName(), dukeNukemGroupPath));
 					return false;
 				}
 			}
@@ -2554,12 +2633,16 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 						combinedZip->addData(groupFile->transferData(), groupFile->getFileName(), true);
 					}
 
+					spdlog::info("Added {} original '{}' game file{} to combined zip archive file.", dukeNukemGroup->numberOfFiles(), dukeNukemGroup->numberOfFiles() == 1 ? "" : "s", dukeNukemGroupGameVersion->getLongName());
+
 					dukeNukemGroup.reset();
 				}
 			}
 			else {
 				if(selectedGameVersion->doesRequireOriginalGameFiles()) {
 					combinedGroup = std::move(dukeNukemGroup);
+
+					spdlog::info("Added {} original '{}' game file{} to combined group file.", combinedGroup->numberOfFiles(), dukeNukemGroup->numberOfFiles() == 1 ? "" : "s", dukeNukemGroupGameVersion->getLongName());
 				}
 				else {
 					combinedGroup = std::make_unique<GroupGRP>();
@@ -2579,6 +2662,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 					return false;
 				}
 
+				size_t addedFileCount = 0;
 				std::shared_ptr<ArchiveEntry> modZipEntry;
 
 				for(size_t i = 0; i < modZip->numberOfEntries(); i++) {
@@ -2596,8 +2680,11 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 					if(combinedZip != nullptr) {
 						combinedZip->addData(std::move(modZipEntryData), modZipEntry->getPath(), true);
+						addedFileCount++;
 					}
 				}
+
+				spdlog::info("Added {} file{} from '{}' to combined zip archive file.", addedFileCount, addedFileCount == 1 ? "" : "s", Utilities::getFileName(absoluteGroupFilePath));
 			}
 			else {
 				std::unique_ptr<Group> modGroup(GroupGRP::loadFrom(absoluteGroupFilePath));
@@ -2612,7 +2699,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 				for(size_t i = 0; i < modGroup->numberOfFiles(); i++) {
 					groupFile = modGroup->getFile(i);
-					
+
 					if(Utilities::hasFileExtension(groupFile->getFileName(), "dmo")) {
 						demoFiles.emplace(groupFile->getFileName(), std::make_unique<ByteBuffer>(groupFile->getData()));
 					}
@@ -2624,6 +2711,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 						combinedGroup->addFile(std::make_unique<GroupFile>(groupFile->getFileName(), groupFile->transferData()), true);
 					}
 				}
+
+				spdlog::info("Added {} file{} from '{}' to combined {} file.", modGroup->numberOfFiles(), modGroup->numberOfFiles() == 1 ? "" : "s", Utilities::getFileName(absoluteGroupFilePath), combinedZip != nullptr ? "zip archive" : "group");
 			}
 		}
 	}
@@ -2677,7 +2766,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		temporaryDirectoryName = settings->tempSymlinkName;
 	}
 
-	if(!m_localMode && !standAlone && selectedModGameVersion != nullptr && !m_downloadManager->downloadModGameVersion(*selectedModGameVersion, *getGameVersions())) {
+	if(!m_localMode && !standAlone && selectedModGameVersion != nullptr && !m_downloadManager->downloadModGameVersion(*selectedModGameVersion, *m_mods, *getGameVersions())) {
 		notifyLaunchError(fmt::format("Failed to download '{}' game version of '{}' mod!", getGameVersions()->getLongNameOfGameVersionWithID(selectedModGameVersion->getGameVersionID()), selectedModGameVersion->getFullName(false)));
 		return false;
 	}

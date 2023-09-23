@@ -2,12 +2,14 @@
 
 #include "../../WXUtilities.h"
 #include "Manager/SettingsManager.h"
+#include "ModDependenciesPanel.h"
 #include "ModDownloadsPanel.h"
 #include "ModTeamMembersPanel.h"
 #include "Mod/Mod.h"
 #include "Mod/ModCollection.h"
 #include "Mod/ModTeam.h"
 #include "Mod/ModTeamMember.h"
+#include "Mod/ModVersionType.h"
 #include "RelatedModsPanel.h"
 #include "SimilarModsPanel.h"
 #include "Game/GameVersionCollection.h"
@@ -35,6 +37,8 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	, m_latestReleaseDateText(nullptr)
 	, m_supportedGameVersionsLabel(nullptr)
 	, m_supportedGameVersionsText(nullptr)
+	, m_dependenciesLabel(nullptr)
+	, m_dependenciesPanel(nullptr)
 	, m_modWebsiteHyperlinkLabel(nullptr)
 	, m_modWebsiteHyperlink(nullptr)
 	, m_modRepositoryHyperlinkLabel(nullptr)
@@ -87,6 +91,11 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	m_supportedGameVersionsLabel = new wxStaticText(this, wxID_ANY, "Supported Game Versions:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_supportedGameVersionsLabel->SetFont(m_supportedGameVersionsLabel->GetFont().MakeBold());
 	m_supportedGameVersionsText = new wxStaticText(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+
+	m_dependenciesLabel = new wxStaticText(this, wxID_ANY, "Dependencies:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	m_dependenciesLabel->SetFont(m_dependenciesLabel->GetFont().MakeBold());
+	m_dependenciesPanel = new ModDependenciesPanel(m_mods, this);
+	m_modVersionTypeSelectionRequestedConnection = m_dependenciesPanel->modVersionTypeSelectionRequested.connect(std::bind(&ModInfoPanel::onModVersionTypeSelectionRequested, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 	m_modWebsiteHyperlinkLabel = new wxStaticText(this, wxID_ANY, "Mod Website:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_modWebsiteHyperlinkLabel->SetFont(m_modWebsiteHyperlinkLabel->GetFont().MakeBold());
@@ -167,21 +176,16 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	modPanelSizer->Add(m_latestReleaseDateText, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_supportedGameVersionsLabel, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_supportedGameVersionsText, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_dependenciesLabel, 1, wxEXPAND | wxHORIZONTAL);
+	modPanelSizer->Add(m_dependenciesPanel, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_modWebsiteHyperlinkLabel, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_modWebsiteHyperlink, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_modRepositoryHyperlinkLabel, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_modRepositoryHyperlink, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_notesLabel, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_notesText, 1, wxEXPAND | wxALL);
-
 	modPanelSizer->Add(m_relatedModsLabel, 1, wxEXPAND | wxHORIZONTAL);
-
-	for(int i = 0; i < 2; i++) {
-		m_relatedModsSpacers[i] = modPanelSizer->Add(new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER), 1, wxEXPAND | wxHORIZONTAL)->GetWindow();
-	}
-
 	modPanelSizer->Add(m_relatedModsPanel, 1, wxEXPAND | wxHORIZONTAL);
-
 	modPanelSizer->Add(m_teamNameLabel, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_teamNameDeepLink, 1, wxEXPAND | wxHORIZONTAL);
 	modPanelSizer->Add(m_teamWebsiteHyperlinkLabel, 1, wxEXPAND | wxHORIZONTAL);
@@ -224,6 +228,7 @@ ModInfoPanel::~ModInfoPanel() {
 	m_relatedModSelectionRequestedConnection.disconnect();
 	m_similarModSelectionRequestedConnection.disconnect();
 	m_modTeamMemberSelectionRequestedConnection.disconnect();
+	m_modVersionTypeSelectionRequestedConnection.disconnect();
 }
 
 void ModInfoPanel::setMod(std::shared_ptr<Mod> mod) {
@@ -232,10 +237,15 @@ void ModInfoPanel::setMod(std::shared_ptr<Mod> mod) {
 	}
 
 	m_mod = mod;
+	m_modVersionType = nullptr;
+	m_dependenciesPanel->setModVersionType(nullptr);
 
 	if(m_mod == nullptr) {
 		return;
 	}
+
+	m_dependenciesLabel->Hide();
+	m_dependenciesPanel->Hide();
 
 	m_modNameText->SetLabelText(wxString::FromUTF8(m_mod->getName()));
 
@@ -477,18 +487,10 @@ void ModInfoPanel::setMod(std::shared_ptr<Mod> mod) {
 		m_relatedModsPanel->setMod(m_mod);
 		m_relatedModsLabel->Show();
 		m_relatedModsPanel->Show();
-
-		for(int i = 0; i < 2; i++) {
-			m_relatedModsSpacers[i]->Show();
-		}
 	}
 	else {
 		m_relatedModsLabel->Hide();
 		m_relatedModsPanel->Hide();
-
-		for(int i = 0; i < 2; i++) {
-			m_relatedModsSpacers[i]->Hide();
-		}
 	}
 
 	if(m_mod->numberOfSimilarMods() != 0) {
@@ -528,6 +530,24 @@ void ModInfoPanel::setMod(std::shared_ptr<Mod> mod) {
 	}
 
 	Layout();
+}
+
+void ModInfoPanel::setModVersionType(std::shared_ptr<ModVersionType> modVersionType) {
+	if(m_modVersionType == modVersionType) {
+		return;
+	}
+
+	m_modVersionType = modVersionType;
+	m_dependenciesPanel->setModVersionType(m_modVersionType);
+
+	if(ModVersionType::isValid(m_modVersionType.get(), true) && modVersionType->getParentMod() == m_mod.get() && m_modVersionType->hasDependencies()) {
+		m_dependenciesLabel->Show();
+		m_dependenciesPanel->Show();
+	}
+	else {
+		m_dependenciesLabel->Hide();
+		m_dependenciesPanel->Hide();
+	}
 }
 
 void ModInfoPanel::onModAliasDeepLinkClicked(wxHyperlinkEvent & event) {
@@ -637,4 +657,8 @@ void ModInfoPanel::onSimilarModSelectionRequested(const std::string & similarMod
 
 void ModInfoPanel::onModTeamMemberSelectionRequested(const std::string & modTeamMemberName) {
 	modTeamMemberSelectionRequested(modTeamMemberName);
+}
+
+void ModInfoPanel::onModVersionTypeSelectionRequested(const std::string & modID, const std::string & modVersion, const std::string & modVersionType) {
+	modVersionTypeSelectionRequested(modID, modVersion, modVersionType);
 }

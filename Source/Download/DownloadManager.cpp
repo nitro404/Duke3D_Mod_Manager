@@ -8,6 +8,7 @@
 #include "Manager/SettingsManager.h"
 #include "Mod/ModDownload.h"
 #include "Mod/Mod.h"
+#include "Mod/ModCollection.h"
 #include "Mod/ModFile.h"
 #include "Mod/ModGameVersion.h"
 #include "Mod/ModVersion.h"
@@ -238,13 +239,13 @@ bool DownloadManager::shouldUpdateModList() const {
 	return std::chrono::system_clock::now() - settings->modListLastDownloadedTimestamp.value() > settings->modListUpdateFrequency;
 }
 
-bool DownloadManager::isModDownloaded(const Mod & mod) const {
+bool DownloadManager::isModDownloaded(const Mod & mod, const ModCollection * mods, bool checkDependencies) const {
 	if(!mod.isValid(true)) {
 		return false;
 	}
 
 	for(size_t i = 0; i < mod.numberOfVersions(); i++) {
-		if(isModVersionDownloaded(*mod.getVersion(i))) {
+		if(isModVersionDownloaded(*mod.getVersion(i), mods, checkDependencies)) {
 			return true;
 		}
 	}
@@ -252,13 +253,13 @@ bool DownloadManager::isModDownloaded(const Mod & mod) const {
 	return false;
 }
 
-bool DownloadManager::isModVersionDownloaded(const ModVersion & modVersion) const {
+bool DownloadManager::isModVersionDownloaded(const ModVersion & modVersion, const ModCollection * mods, bool checkDependencies) const {
 	if(!modVersion.isValid(true)) {
 		return false;
 	}
 
 	for(size_t i = 0; i < modVersion.numberOfTypes(); i++) {
-		if(isModVersionTypeDownloaded(*modVersion.getType(i))) {
+		if(isModVersionTypeDownloaded(*modVersion.getType(i), mods, checkDependencies)) {
 			return true;
 		}
 	}
@@ -266,13 +267,13 @@ bool DownloadManager::isModVersionDownloaded(const ModVersion & modVersion) cons
 	return false;
 }
 
-bool DownloadManager::isModVersionTypeDownloaded(const ModVersionType & modVersionType) const {
+bool DownloadManager::isModVersionTypeDownloaded(const ModVersionType & modVersionType, const ModCollection * mods, bool checkDependencies) const {
 	if(!modVersionType.isValid(true)) {
 		return false;
 	}
 
 	for(size_t i = 0; i < modVersionType.numberOfGameVersions(); i++) {
-		if(isModGameVersionDownloaded(*modVersionType.getGameVersion(i))) {
+		if(isModGameVersionDownloaded(*modVersionType.getGameVersion(i), mods, checkDependencies)) {
 			return true;
 		}
 	}
@@ -280,7 +281,7 @@ bool DownloadManager::isModVersionTypeDownloaded(const ModVersionType & modVersi
 	return false;
 }
 
-bool DownloadManager::isModGameVersionDownloaded(const ModGameVersion & modGameVersion) const {
+bool DownloadManager::isModGameVersionDownloaded(const ModGameVersion & modGameVersion, const ModCollection * mods, bool checkDependencies) const {
 	if(!modGameVersion.isValid(true)) {
 		return false;
 	}
@@ -292,7 +293,27 @@ bool DownloadManager::isModGameVersionDownloaded(const ModGameVersion & modGameV
 		return false;
 	}
 
-	return m_downloadCache->hasCachedPackageFile(*modDownload);
+	if(!m_downloadCache->hasCachedPackageFile(*modDownload)) {
+		return false;
+	}
+
+	if(!checkDependencies) {
+		return true;
+	}
+
+	if(!ModCollection::isValid(mods, true)) {
+		return false;
+	}
+
+	std::vector<std::shared_ptr<ModGameVersion>> modDependencyGameVersions(mods->getModDependencyGameVersions(modGameVersion));
+
+	for(const std::shared_ptr<ModGameVersion> & dependencyModGameVersion : modDependencyGameVersions) {
+		if(!isModGameVersionDownloaded(*dependencyModGameVersion, mods, true)) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
 DownloadCache * DownloadManager::getDownloadCache() const {
@@ -378,7 +399,7 @@ bool DownloadManager::downloadModList(bool force) {
 	return true;
 }
 
-bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersion, const GameVersionCollection & gameVersions, bool force) {
+bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersion, const ModCollection & mods, const GameVersionCollection & gameVersions, bool downloadDependencies, bool force) {
 	if(!m_initialized) {
 		return false;
 	}
@@ -418,10 +439,30 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 		return false;
 	}
 
+	std::vector<std::shared_ptr<ModGameVersion>> modDependencyGameVersions;
+
+	if(downloadDependencies) {
+		if(!mods.isValid(true)) {
+			return false;
+		}
+
+		modDependencyGameVersions = mods.getModDependencyGameVersions(modGameVersion);
+	}
+
 	std::shared_ptr<CachedPackageFile> cachedModPackageFile(m_downloadCache->getCachedPackageFile(*modDownload));
 
 	if(!DeviceInformationBridge::getInstance()->isConnectedToInternet()) {
-		return cachedModPackageFile != nullptr;
+		if(cachedModPackageFile == nullptr) {
+			return false;
+		}
+
+		for(const std::shared_ptr<ModGameVersion> & dependencyModGameVersion : modDependencyGameVersions) {
+			if(!downloadModGameVersion(*dependencyModGameVersion, mods, gameVersions, true, force)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	std::string modDownloadLocalBasePath(Utilities::joinPaths(settings->downloadsDirectoryPath, settings->modDownloadsDirectoryName, gameVersion->getModDirectoryName()));
@@ -456,6 +497,13 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 	}
 	else if(response->getStatusCode() == magic_enum::enum_integer(HTTPStatusCode::NotModified)) {
 		spdlog::info("Mod '{}' is already up to date!", modGameVersion.getFullName(true));
+
+		for(const std::shared_ptr<ModGameVersion> & dependencyModGameVersion : modDependencyGameVersions) {
+			if(!downloadModGameVersion(*dependencyModGameVersion, mods, gameVersions, true, force)) {
+				return false;
+			}
+		}
+
 		return true;
 	}
 	else if(response->isFailureStatusCode()) {
@@ -586,6 +634,12 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 		}
 
 		SegmentAnalytics::getInstance()->track("Mod Downloaded", properties);
+	}
+
+	for(const std::shared_ptr<ModGameVersion> & dependencyModGameVersion : modDependencyGameVersions) {
+		if(!downloadModGameVersion(*dependencyModGameVersion, mods, gameVersions, true, force)) {
+			return false;
+		}
 	}
 
 	return true;

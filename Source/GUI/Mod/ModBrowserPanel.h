@@ -121,6 +121,7 @@ private:
 	void onModSelectionRequested(const std::string & modID);
 	void onModTeamSelectionRequested(const std::string & modTeamName);
 	void onModTeamMemberSelectionRequested(const std::string & modTeamMemberName);
+	void onModVersionTypeSelectionRequested(const std::string & modID, const std::string & modVersion, const std::string & modVersionType);
 
 	std::shared_ptr<ModManager> m_modManager;
 	std::shared_ptr<GameVersion> m_activeGameVersion;

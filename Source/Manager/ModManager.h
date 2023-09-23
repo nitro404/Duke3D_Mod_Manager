@@ -113,6 +113,7 @@ public:
 	bool setSelectedMod(std::shared_ptr<Mod> mod);
 	bool setSelectedModFromMatch(const ModMatch & modMatch);
 	bool setSelectedMod(const ModIdentifier & modIdentifier);
+	bool setSelectedMod(const std::string & modID, const std::string & modVersion, const std::string & modVersionType);
 	bool setSelectedModVersionIndex(size_t modVersionIndex);
 	bool setSelectedModVersionTypeIndex(size_t modVersionTypeIndex);
 	bool setSelectedModGameVersionIndex(size_t modGameVersionIndex);

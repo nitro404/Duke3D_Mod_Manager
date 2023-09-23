@@ -233,7 +233,8 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_modInfoPanelSignalConnectionGroup = SignalConnectionGroup(
 		m_modInfoPanel->modSelectionRequested.connect(std::bind(&ModBrowserPanel::onModSelectionRequested, this, std::placeholders::_1)),
 		m_modInfoPanel->modTeamSelectionRequested.connect(std::bind(&ModBrowserPanel::onModTeamSelectionRequested, this, std::placeholders::_1)),
-		m_modInfoPanel->modTeamMemberSelectionRequested.connect(std::bind(&ModBrowserPanel::onModTeamMemberSelectionRequested, this, std::placeholders::_1))
+		m_modInfoPanel->modTeamMemberSelectionRequested.connect(std::bind(&ModBrowserPanel::onModTeamMemberSelectionRequested, this, std::placeholders::_1)),
+		m_modInfoPanel->modVersionTypeSelectionRequested.connect(std::bind(&ModBrowserPanel::onModVersionTypeSelectionRequested, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3))
 	);
 
 	m_gameOptionsPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, "Game Options");
@@ -743,6 +744,7 @@ void ModBrowserPanel::updateModInfo() {
 
 		if(mod != nullptr && (m_modManager->getOrganizedMods()->shouldDisplayMods() || m_modManager->getOrganizedMods()->shouldDisplayFavouriteMods())) {
 			m_modInfoPanel->setMod(mod);
+			m_modInfoPanel->setModVersionType(m_modManager->getSelectedModVersionType());
 			m_modInfoBox->Layout();
 			m_modInfoPanel->Show();
 		}
@@ -1763,5 +1765,17 @@ void ModBrowserPanel::onModTeamMemberSelectionRequested(const std::string & modT
 
 	if(!organizedMods->setSelectedAuthor(modTeamMemberName)) {
 		spdlog::error("Failed to select mod team member with name: '{}'.", modTeamMemberName);
+	}
+}
+
+void ModBrowserPanel::onModVersionTypeSelectionRequested(const std::string & modID, const std::string & modVersion, const std::string & modVersionType) {
+	clearSearch();
+
+	std::shared_ptr<OrganizedModCollection> organizedMods(m_modManager->getOrganizedMods());
+	organizedMods->clearSelectedItems();
+	organizedMods->setFilterType(OrganizedModCollection::FilterType::None);
+
+	if(!m_modManager->setSelectedMod(modID, modVersion, modVersionType) || !organizedMods->setSelectedModByID(modID)) {
+		spdlog::error("Failed to select mod version type with ID: '{}', version: '{}', and type: '{}'.", modID, modVersion, modVersionType);
 	}
 }

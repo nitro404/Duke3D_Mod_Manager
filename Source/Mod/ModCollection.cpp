@@ -3,6 +3,7 @@
 #include "Game/GameVersion.h"
 #include "Game/GameVersionCollection.h"
 #include "Mod.h"
+#include "ModDependency.h"
 #include "ModDownload.h"
 #include "ModFile.h"
 #include "ModGameVersion.h"
@@ -160,6 +161,36 @@ std::shared_ptr<Mod> ModCollection::getModWithID(const std::string & id) const {
 	return nullptr;
 }
 
+std::shared_ptr<ModVersion> ModCollection::getModVersionWithModID(const std::string & id, const std::string & version) const {
+	std::shared_ptr<Mod> mod(getModWithID(id));
+
+	if(mod == nullptr) {
+		return nullptr;
+	}
+
+	return mod->getVersion(version);
+}
+
+std::shared_ptr<ModVersionType> ModCollection::getModVersionTypeWithModID(const std::string & id, const std::string & version, const std::string & versionType) const {
+	std::shared_ptr<ModVersion> modVersion(getModVersionWithModID(id, version));
+
+	if(modVersion == nullptr) {
+		return nullptr;
+	}
+
+	return modVersion->getType(versionType);
+}
+
+std::shared_ptr<ModGameVersion> ModCollection::getModGameVersionByIDWithModID(const std::string & id, const std::string & version, const std::string & versionType, const std::string & gameVersionID) const {
+	std::shared_ptr<ModVersionType> modVersionType(getModVersionTypeWithModID(id, version, versionType));
+
+	if(modVersionType == nullptr) {
+		return nullptr;
+	}
+
+	return modVersionType->getGameVersionWithID(gameVersionID);
+}
+
 std::shared_ptr<Mod> ModCollection::getModWithName(const std::string & name) const {
 	if(name.empty()) {
 		return nullptr;
@@ -172,6 +203,14 @@ std::shared_ptr<Mod> ModCollection::getModWithName(const std::string & name) con
 	}
 
 	return nullptr;
+}
+
+std::shared_ptr<ModVersionType> ModCollection::getModVersionTypeFromDependency(const ModDependency & modDependency) const {
+	if(!modDependency.isValid()) {
+		return nullptr;
+	}
+
+	return getModVersionTypeWithModID(modDependency.getID(), modDependency.getVersion(), modDependency.getVersionType());
 }
 
 std::shared_ptr<ModVersion> ModCollection::getStandAloneModVersion(const StandAloneMod & standAloneMod) const {
@@ -284,6 +323,170 @@ bool ModCollection::copyHiddenPropertiesFrom(const ModCollection & modCollection
 	}
 
 	return true;
+}
+
+std::shared_ptr<ModGameVersion> ModCollection::getModDependencyGameVersion(const ModDependency & modDependency, const std::string & gameVersionID) const {
+	if(!modDependency.isValid() || gameVersionID.empty()) {
+		return nullptr;
+	}
+
+	std::shared_ptr<Mod> mod(getModWithID(modDependency.getID()));
+
+	if(mod == nullptr) {
+		return nullptr;
+	}
+
+	std::shared_ptr<ModVersion> modVersion(mod->getVersion(modDependency.getVersion()));
+
+	if(modVersion == nullptr) {
+		return nullptr;
+	}
+
+	std::shared_ptr<ModVersionType> modVersionType(modVersion->getType(modDependency.getVersionType()));
+
+	if(modVersionType == nullptr) {
+		return nullptr;
+	}
+
+	return modVersionType->getGameVersionWithID(gameVersionID);
+}
+
+std::vector<std::shared_ptr<ModGameVersion>> ModCollection::getModDependencyGameVersions(const std::vector<std::shared_ptr<ModDependency>> & modDependencies, const std::string & gameVersionID) const {
+	std::vector<std::shared_ptr<ModGameVersion>> modDependencyGameVersions;
+	std::shared_ptr<ModGameVersion> modDependencyGameVersion;
+
+	for(const std::shared_ptr<ModDependency> & modDependency : modDependencies) {
+		modDependencyGameVersion = getModDependencyGameVersion(*modDependency, gameVersionID);
+
+		if(modDependencyGameVersion == nullptr) {
+			spdlog::error("No mod dependency with ID: '{}', version: '{}', and version type: '{}' found for game version with ID: '{}'.", modDependency->getID(), modDependency->getVersion(), modDependency->getVersionType(), gameVersionID);
+
+			return {};
+		}
+
+		modDependencyGameVersions.push_back(modDependencyGameVersion);
+	}
+
+	return modDependencyGameVersions;
+}
+
+std::vector<std::shared_ptr<ModGameVersion>> ModCollection::getModDependencyGameVersions(const ModGameVersion & modGameVersion) const {
+	if(!modGameVersion.isValid(true)) {
+		return {};
+	}
+
+	return getModDependencyGameVersions(modGameVersion.getParentModVersionType()->getDependencies(), modGameVersion.getGameVersionID());
+}
+
+std::shared_ptr<ModDownload> ModCollection::getModDependencyDownload(const ModDependency & modDependency, const std::string & gameVersionID) const {
+	std::shared_ptr<ModGameVersion> modDependencyModGameVersion(getModDependencyGameVersion(modDependency, gameVersionID));
+
+	if(modDependencyModGameVersion == nullptr) {
+		return nullptr;
+	}
+
+	return modDependencyModGameVersion->getDownload();
+}
+
+std::vector<std::shared_ptr<ModDownload>> ModCollection::getModDependencyDownloads(const std::vector<std::shared_ptr<ModDependency>> & modDependencies, const std::string & gameVersionID) const {
+	std::vector<std::shared_ptr<ModDownload>> modDependencyDownloads;
+	std::shared_ptr<ModDownload> modDependencyDownload;
+
+	for(const std::shared_ptr<ModDependency> & modDependency : modDependencies) {
+		modDependencyDownload = getModDependencyDownload(*modDependency, gameVersionID);
+
+		if(modDependencyDownload == nullptr) {
+			spdlog::error("No mod dependency download with ID: '{}', version: '{}', and version type: '{}' found for game version with ID: '{}'.", modDependency->getID(), modDependency->getVersion(), modDependency->getVersionType(), gameVersionID);
+
+			return {};
+		}
+
+		modDependencyDownloads.push_back(modDependencyDownload);
+	}
+
+	return modDependencyDownloads;
+}
+
+std::vector<std::shared_ptr<ModDownload>> ModCollection::getModDependencyDownloads(const ModGameVersion & modGameVersion) const {
+	if(!modGameVersion.isValid(true)) {
+		return {};
+	}
+
+	return getModDependencyDownloads(modGameVersion.getParentModVersionType()->getDependencies(), modGameVersion.getGameVersionID());
+}
+
+std::vector<std::shared_ptr<ModFile>> ModCollection::getModDependencyGroupFiles(const ModDependency & modDependency, const GameVersion & gameVersion, bool recursive) const {
+	std::shared_ptr<ModGameVersion> modDependencyModGameVersion(getModDependencyGameVersion(modDependency, gameVersion.getID()));
+
+	if(modDependencyModGameVersion == nullptr) {
+		return {};
+	}
+
+	std::vector<std::shared_ptr<ModFile>> groupModFiles;
+
+	if(recursive) {
+		std::shared_ptr<ModGameVersion> modDependencyModGameVersion(getModDependencyGameVersion(modDependency, gameVersion.getID()));
+
+		if(modDependencyModGameVersion == nullptr) {
+			return {};
+		}
+
+		std::vector<std::shared_ptr<ModFile>> currentModDependencyGroupModFiles(getModDependencyGroupFiles(modDependencyModGameVersion->getParentModVersionType()->getDependencies(), gameVersion, true));
+
+		for(const std::shared_ptr<ModFile> & currentModDependencyGroupModFile : currentModDependencyGroupModFiles) {
+			groupModFiles.push_back(currentModDependencyGroupModFile);
+		}
+	}
+
+	for(const std::shared_ptr<ModFile> & modFile : modDependencyModGameVersion->getFiles()) {
+		if(modFile->hasFileExtension("grp")) {
+			groupModFiles.push_back(modFile);
+		}
+		else if(gameVersion.areZipArchiveGroupsSupported() && modFile->hasFileExtension("zip")) {
+			groupModFiles.push_back(modFile);
+		}
+	}
+
+	return groupModFiles;
+}
+
+std::vector<std::shared_ptr<ModFile>> ModCollection::getModDependencyGroupFiles(const std::vector<std::shared_ptr<ModDependency>> & modDependencies, const GameVersion & gameVersion, bool recursive) const {
+	std::vector<std::shared_ptr<ModFile>> allModDependencyGroupModFiles;
+	std::vector<std::shared_ptr<ModFile>> currentModDependencyGroupModFiles;
+
+	if(recursive) {
+		for(const std::shared_ptr<ModDependency> & modDependency : modDependencies) {
+			std::shared_ptr<ModGameVersion> modDependencyModGameVersion(getModDependencyGameVersion(*modDependency, gameVersion.getID()));
+
+			if(modDependencyModGameVersion == nullptr) {
+				return {};
+			}
+
+			currentModDependencyGroupModFiles = getModDependencyGroupFiles(modDependencyModGameVersion->getParentModVersionType()->getDependencies(), gameVersion, true);
+
+			for(const std::shared_ptr<ModFile> & currentModDependencyGroupModFile : currentModDependencyGroupModFiles) {
+				allModDependencyGroupModFiles.push_back(currentModDependencyGroupModFile);
+			}
+		}
+	}
+
+	for(const std::shared_ptr<ModDependency> & modDependency : modDependencies) {
+		currentModDependencyGroupModFiles = getModDependencyGroupFiles(*modDependency, gameVersion, false);
+
+		for(const std::shared_ptr<ModFile> & currentModDependencyGroupModFile : currentModDependencyGroupModFiles) {
+			allModDependencyGroupModFiles.push_back(currentModDependencyGroupModFile);
+		}
+	}
+
+	return allModDependencyGroupModFiles;
+}
+
+std::vector<std::shared_ptr<ModFile>> ModCollection::getModDependencyGroupFiles(const ModGameVersion & modGameVersion, const GameVersion & gameVersion, bool recursive) const {
+	if(!modGameVersion.isValid(true) || !gameVersion.isValid() || !Utilities::areStringsEqualIgnoreCase(modGameVersion.getGameVersionID(), gameVersion.getID())) {
+		return {};
+	}
+
+	return getModDependencyGroupFiles(modGameVersion.getParentModVersionType()->getDependencies(), gameVersion, recursive);
 }
 
 rapidjson::Document ModCollection::toJSON() const {
@@ -723,11 +926,12 @@ bool ModCollection::checkGameVersions(const GameVersionCollection & gameVersions
 }
 
 bool ModCollection::isValid(bool skipFileInfoValidation) const {
-	std::shared_ptr<Mod> mod;
+	std::shared_ptr<ModVersion> modVersion;
+	std::shared_ptr<ModVersionType> modVersionType;
+	std::shared_ptr<ModGameVersion> modGameVersion;
+	std::shared_ptr<ModDependency> modDepdency;
 
-	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_mods.begin(); i != m_mods.end(); ++i) {
-		mod = *i;
-
+	for(const std::shared_ptr<Mod> & mod : m_mods) {
 		if(!mod->isValid(skipFileInfoValidation)) {
 			return false;
 		}
@@ -736,15 +940,36 @@ bool ModCollection::isValid(bool skipFileInfoValidation) const {
 			return false;
 		}
 
-		for(size_t j = 0; j < mod->numberOfRelatedMods(); j++) {
-			if(!hasModWithID(mod->getRelatedMod(j))) {
+		for(size_t i = 0; i < mod->numberOfRelatedMods(); i++) {
+			if(!hasModWithID(mod->getRelatedMod(i))) {
 				return false;
 			}
 		}
 
-		for(size_t j = 0; j < mod->numberOfSimilarMods(); j++) {
-			if(!hasModWithID(mod->getSimilarMod(j))) {
+		for(size_t i = 0; i < mod->numberOfSimilarMods(); i++) {
+			if(!hasModWithID(mod->getSimilarMod(i))) {
 				return false;
+			}
+		}
+
+		for(size_t i = 0; i < mod->numberOfVersions(); i++) {
+			modVersion = mod->getVersion(i);
+
+			for(size_t j = 0; j < modVersion->numberOfTypes(); j++) {
+				modVersionType = modVersion->getType(j);
+
+				for(size_t k = 0; k < modVersionType->numberOfDependencies(); k++) {
+					modDepdency = modVersionType->getDependency(k);
+
+					for(size_t l = 0; l < modVersionType->numberOfGameVersions(); l++) {
+						modGameVersion = modVersionType->getGameVersion(l);
+
+						if(getModDependencyGameVersion(*modDepdency, modGameVersion->getGameVersionID()) == nullptr) {
+							spdlog::error("'{}' mod is missing dependency with ID: '{}', version: '{}', and version type: '{}' for game version with ID: '{}'.", modVersionType->getFullName(), modDepdency->getID(), modDepdency->getVersion(), modDepdency->getVersionType(), modGameVersion->getGameVersionID());
+							return false;
+						}
+					}
+				}
 			}
 		}
 	}
