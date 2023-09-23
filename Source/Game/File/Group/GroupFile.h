@@ -29,6 +29,7 @@ public:
 
 	bool isModified() const;
 	const std::string & getFileName() const;
+	bool hasFileExtension(std::string_view fileExtension) const;
 	std::string_view getFileExtension() const;
 	size_t getSize() const;
 	size_t getTrailingDataSize() const;

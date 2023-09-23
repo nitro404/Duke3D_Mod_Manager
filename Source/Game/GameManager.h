@@ -49,7 +49,7 @@ public:
 	std::string getXDukeDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const;
 	std::string getRDukeDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const;
 	std::vector<std::string> getDuke3d_w32DownloadURLs(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const;
-	bool installGame(const std::string & gameVersionID, const std::string & destinationDirectoryPath, bool useFallback = false, bool overwrite = true);
+	bool installGame(const std::string & gameVersionID, const std::string & destinationDirectoryPath, std::string * newGameExecutableName = nullptr, bool useFallback = false, bool overwrite = true);
 	static bool isGameDownloadable(const std::string & gameVersionID);
 	bool isGroupFileDownloaded(const std::string & gameVersionID) const;
 	std::shared_ptr<GameVersion> getGroupGameVersion(const std::string & gameVersionID) const;

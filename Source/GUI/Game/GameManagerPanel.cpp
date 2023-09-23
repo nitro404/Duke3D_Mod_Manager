@@ -521,7 +521,8 @@ bool GameManagerPanel::installGameVersion(size_t index) {
 	}
 
 	m_installGameFuture = std::async(std::launch::async, [this, gameVersion, gameVersionPanel, destinationDirectoryPath, installStatusChangedConnection, gameDownloadProgressConnection, groupDownloadProgressConnection]() {
-		bool gameInstalled = m_gameManager->installGame(gameVersion->getID(), destinationDirectoryPath);
+		std::string newGameExecutableName;
+		bool gameInstalled = m_gameManager->installGame(gameVersion->getID(), destinationDirectoryPath, &newGameExecutableName);
 
 		installStatusChangedConnection.disconnect();
 		gameDownloadProgressConnection.disconnect();
@@ -535,8 +536,16 @@ bool GameManagerPanel::installGameVersion(size_t index) {
 			return false;
 		}
 
+		spdlog::info("Setting '{}' game path to '{}'.", gameVersion->getLongName(), destinationDirectoryPath);
+
 		gameVersionPanel->discardGamePathChanges();
 		gameVersion->setGamePath(destinationDirectoryPath);
+
+		if(!newGameExecutableName.empty() && !Utilities::areStringsEqual(gameVersion->getGameExecutableName(), newGameExecutableName)) {
+			spdlog::info("Updating '{}' game executable name from '{}' to '{}'.", gameVersion->getLongName(), gameVersion->getGameExecutableName(), newGameExecutableName);
+
+			gameVersion->setGameExecutableName(newGameExecutableName);
+		}
 
 		saveGameVersions();
 
@@ -589,8 +598,10 @@ bool GameManagerPanel::uninstallGameVersion(size_t index) {
 		return false;
 	}
 
+	spdlog::info("Clearing '{}' game path.", gameVersion->getLongName());
+
 	gameVersionPanel->discardGamePathChanges();
-	gameVersion->setGamePath("");
+	gameVersion->clearGamePath();
 
 	saveGameVersions();
 

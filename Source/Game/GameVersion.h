@@ -63,6 +63,7 @@ public:
 	bool hasGamePath() const;
 	const std::string & getGamePath() const;
 	void setGamePath(const std::string & gamePath);
+	void clearGamePath();
 	const std::string & getGameExecutableName() const;
 	void setGameExecutableName(const std::string & gameExecutableName);
 	bool hasSetupExecutableName() const;

@@ -101,6 +101,15 @@ const std::string & GroupFile::getFileName() const {
 	return m_fileName;
 }
 
+bool GroupFile::hasFileExtension(std::string_view fileExtension) const {
+	if(m_fileName.length() < fileExtension.length() + 1) {
+		return false;
+	}
+
+	return m_fileName[m_fileName.length() - fileExtension.length() - 1] == '.' &&
+		   Utilities::areStringsEqualIgnoreCase(std::string_view(m_fileName.data() + m_fileName.length() - fileExtension.length(), fileExtension.length()), fileExtension);
+}
+
 std::string_view GroupFile::getFileExtension() const {
 	return Utilities::getFileExtension(m_fileName);
 }

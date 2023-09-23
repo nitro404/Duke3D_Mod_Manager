@@ -638,6 +638,10 @@ void GameVersion::setGamePath(const std::string & gamePath) {
 	setModified(true);
 }
 
+void GameVersion::clearGamePath() {
+	return setGamePath(Utilities::emptyString);
+}
+
 const std::string & GameVersion::getGameExecutableName() const {
 	return m_gameExecutableName;
 }
