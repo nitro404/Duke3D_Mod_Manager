@@ -11465,6 +11465,32 @@
 			<download filename="Leisure_Suit_Larry-ModMgrA.zip" filesize="4351709" game="Atomic" type="Mod Manager Files" state="Native" sha1="1cddfc211c7d7ebcdf651ef68a8fbd75a309be78"/>
 			<download filename="Leisure_Suit_Larry_-_Lifes_a_Beach_Edition-ModMgrA.zip" filesize="2529953" version_type="Life&apos;s a Beach Edition" game="Atomic" type="Mod Manager Files" state="Native" sha1="8e25db0c1b5832e467ecb6d4fd89f55e8c02ce59"/>
 		</downloads>
+		<related>
+			<mod id="alfs_resort"/>
+		</related>
+	</mod>
+	<mod name="ALF&apos;s Resort" id="alfs_resort" type="Total Conversion" website="https://www.moddb.com/games/duke-nukem-3d/addons/alfs-resort">
+		<team country="Portugal">
+			<member name="ALF" email="barroselasnow@hotmail.com" website="https://www.moddb.com/members/alfdude"/>
+		</team>
+		<versions>
+			<version release_date="August 14, 2018">
+				<game type="eDuke32" state="Native">
+					<file name="VACATION.CON" size="98724" type="con" sha1="8c366f3f0fa77521241d1dea187b91a12f6683c1"/>
+					<file name="ALFS_RESORT.GRP" size="3193939" type="grp" sha1="7a6f3e63d8c746e9da4546e4a3fe0b88e72e2eeb"/>
+				</game>
+				<dependencies>
+					<dependency id="leisure_suit_larry" version_type="Life&apos;s a Beach Edition"/>
+				</dependencies>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="ALFsResort.zip" filesize="13327705" game="eDuke32" type="Original Files" sha1="10f0cded70435f82bbd9ffc58e0388b99894b2c3"/>
+			<download filename="ALFs_Resort-ModMgrE.zip" filesize="2593781" game="eDuke32" type="Mod Manager Files" state="Native" sha1="6f7fa7d380111658b1b5b27adfd23289ed24c3bb"/>
+		</downloads>
+		<related>
+			<mod id="leisure_suit_larry"/>
+		</related>
 	</mod>
 	<mod name="Hunt for Khilafat" id="hunt_for_khilafat" type="Total Conversion" version="1.0" website="https://www.moddb.com/mods/hunt-for-khilafat">
 		<team name="Free Speech Studio">
