@@ -237,6 +237,8 @@ set(GUI_SOURCE_FILES
 	GUI/Releases/ReleaseNotesPanel.cpp
 	GUI/Settings/SettingsManagerPanel.h
 	GUI/Settings/SettingsManagerPanel.cpp
+	GUI/Hyperlink.h
+	GUI/Hyperlink.cpp
 	GUI/MetadataPanel.h
 	GUI/MetadataPanel.cpp
 	GUI/ModManagerApplication.h
