@@ -1055,6 +1055,9 @@
 					<file name="DCWAFFLE.CON" size="163031" type="con" sha1="7cc84c7a678766850b845d0b89b7d7ebe64c1398"/>
 					<file name="DCWAFFLE.GRP" size="10657583" type="grp" sha1="d223201d965426f97e67ced7ad9a89d2e4c7c046"/>
 				</game>
+				<dependencies>
+					<dependency id="duke_it_out_in_dc"/>
+				</dependencies>
 			</version>
 		</versions>
 		<downloads>
@@ -1552,6 +1555,9 @@
 					<file name="DSA2.CON" size="154269" type="con" sha1="2bb2ddc7319e0935569b724f3c67cb953fdb79d6"/>
 					<file name="DSA2.GRP" size="20926540" type="grp" sha1="12e84cc8ada0eca8c640f7141a12c2c52c4e9979"/>
 				</game>
+				<dependencies>
+					<dependency id="nuclear_winter"/>
+				</dependencies>
 			</version>
 		</versions>
 		<downloads>
@@ -1939,12 +1945,13 @@
 				<type id="Multiplayer">
 					<game type="Regular" state="Native">
 						<file name="IW11MULT.CON" size="111223" type="con" sha1="77e9180578e5ea4611cbbed92ca5a0054c96134a"/>
-						<file name="IW11.GRP" size="48206721" type="grp" shared="true" sha1="8d3907a181212edbc1cd6f300234ebcda89115f2"/>
 					</game>
 					<game type="Atomic" state="Converted">
 						<file name="IW11MULT.CON" size="159268" type="con" sha1="8184a1a77599c02c06cd209c0434716f498c66f7"/>
-						<file name="IW11.GRP" size="46085693" type="grp" shared="true" sha1="6652e298bbd2e4747b877ca9bf6d3a465c4f8f0a"/>
 					</game>
+					<dependencies>
+						<dependency id="imagination_world" version="1.1" version_type="Single Player"/>
+					</dependencies>
 				</type>
 			</version>
 		</versions>
@@ -2019,6 +2026,7 @@
 			<member name="Jonathon Fowler" email="jonathon_f@usa.net"/>
 			<member name="Jason Bredhauer" email="jason_bredhauer@usa.net"/>
 		</team>
+<!-- TODO: dependencies: -->
 		<versions>
 			<version id="1.01a" release_date="November 12, 1998">
 				<type>
@@ -2930,6 +2938,9 @@
 					<file name="PLATOON.CON" size="149313" type="con" sha1="ae58533321c671479f6849b0e4959bc91697d7a9"/>
 					<file name="PLATOON.GRP" size="13528164" type="grp" sha1="04a922d093291d7344e20d658b1731f93e1d911b"/>
 				</game>
+				<dependencies>
+					<dependency id="platoon" version="1.1"/>
+				</dependencies>
 			</version>
 		</versions>
 		<downloads>
@@ -4240,6 +4251,9 @@
 					<file name="PTOD3.CON" size="149375" type="con" sha1="3c649575c15d6449ceaa4cbfb38999d06ff34eba"/>
 					<file name="PTOD3.GRP" size="14665647" type="grp" sha1="0d3f8de07a4554e652a40cf2c2d635dc3a488285"/>
 				</game>
+				<dependencies>
+					<dependency id="platoon" version="1.1B"/>
+				</dependencies>
 			</version>
 		</versions>
 		<downloads>
@@ -4447,14 +4461,15 @@
 			<version id="2.04" release_date="October 7, 1999">
 				<game type="Regular" state="Native">
 					<file name="VIXENS2.CON" size="123168" type="con" shared="true" sha1="9df41123026a1361a644c342695b2b3135eff5a8"/>
-					<file name="VIXENS23.GRP" size="36619898" type="grp" shared="true" sha1="c1ed22836967db4ddbcacb6363e8b8f7c7254ade"/>
 					<file name="VIXENS24.GRP" size="193414" type="grp" sha1="1c7f43702b1d853d3f9a59989d374aa05520d2e8"/>
 				</game>
 				<game type="Atomic" state="Native">
 					<file name="VIXENS2.CON" size="174362" type="con" shared="true" sha1="4890fa2fbeafbe23ecbb265b583dcc43d35fb588"/>
-					<file name="VIXENS23.GRP" size="37109567" type="grp" shared="true" sha1="fe9f6ebc97a8c43c2534971d863441a1f29593e5"/>
 					<file name="VIXENS24.GRP" size="193414" type="grp" sha1="e66c10cfc9cddef2fbb7a48254abb49322b6d24e"/>
 				</game>
+				<dependencies>
+					<dependency id="vixens_resurrection" version="2.03"/>
+				</dependencies>
 			</version>
 		</versions>
 		<downloads>
@@ -6902,11 +6917,15 @@
 						<file name="DT.GRP" size="10619800" type="grp" sha1="30f1417c3fa007736b31999b0a37586d54fd068f"/>
 					</game>
 				</type>
+<!-- TODO: test dependency downloads: -->
 				<type id="Dukematch 2000 Mission Pack">
 					<game type="Atomic" state="Native">
 						<file name="DTDM2KMP.CON" size="151745" type="con" sha1="1132d1166be237f7d310e9e3c1117e2b2feacde7"/>
 						<file name="DTDM2KMP.GRP" size="11107327" type="grp" sha1="70d26a130d6d036dc8e4f83188037c63b1f21bec"/>
 					</game>
+					<dependencies>
+						<dependency id="duke_tournament"/>
+					</dependencies>
 				</type>
 			</version>
 		</versions>
@@ -7414,12 +7433,18 @@
 					<file name="SHARK_V1.CON" size="98724" type="con" sha1="8c366f3f0fa77521241d1dea187b91a12f6683c1"/>
 					<file name="SHARK_V1.GRP" size="22621813" type="grp" sha1="8551d4f71492ee89f02cf721497f1f93a87ca1c1"/>
 				</game>
+				<dependencies>
+					<dependency id="duke_caribbean"/>
+				</dependencies>
 			</version>
 			<version id="V2" release_date="June 14, 2007">
 				<game type="Atomic" state="Native">
 					<file name="SHARK_V2.CON" size="98724" type="con" sha1="8c366f3f0fa77521241d1dea187b91a12f6683c1"/>
 					<file name="SHARK_V2.GRP" size="22854922" type="grp" sha1="0eef3322aecafb83fe507831c454a57f8b2b91ef"/>
 				</game>
+				<dependencies>
+					<dependency id="duke_caribbean"/>
+				</dependencies>
 			</version>
 		</versions>
 		<downloads>
@@ -11213,6 +11238,7 @@
 					</game>
 				</type>
 			</version>
+<!-- TODO: dependencies -->
 			<version id="0.65 Hotfix" release_date="May 2, 2023">
 				<type>
 					<game type="eDuke32" state="Native">
