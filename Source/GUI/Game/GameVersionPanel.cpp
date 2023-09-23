@@ -7,6 +7,8 @@
 #include "GameVersionPanel.h"
 #include "Project.h"
 
+#include <Utilities/TimeUtilities.h>
+
 #include <fmt/core.h>
 #include <spdlog/spdlog.h>
 #include <wx/gbsizer.h>
@@ -19,6 +21,8 @@
 GameVersionPanel::GameVersionPanel(std::shared_ptr<GameVersion> gameVersion, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "Game Version")
 	, m_gameVersion(gameVersion != nullptr ? gameVersion : std::make_shared<GameVersion>())
+	, m_lastPlayedText(nullptr)
+	, m_installedText(nullptr)
 	, m_gameVersionIDSettingPanel(nullptr)
 	, m_gamePathSettingPanel(nullptr)
 	, m_dosboxConfigurationBox(nullptr)
@@ -47,6 +51,30 @@ GameVersionPanel::GameVersionPanel(std::shared_ptr<GameVersion> gameVersion, wxW
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&GameVersion::getShortName, m_gameVersion.get()), std::bind(&GameVersion::setShortName, m_gameVersion.get(), std::placeholders::_1), defaultGameVersion != nullptr ? defaultGameVersion->getShortName() : "", "Game Version Short Name", gameInformationPanel, gameInformationSizer, 1));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&GameVersion::getWebsite, m_gameVersion.get()), std::bind(&GameVersion::setWebsite, m_gameVersion.get(), std::placeholders::_1), defaultGameVersion != nullptr ? defaultGameVersion->getWebsite() : "", "Website", gameInformationPanel, gameInformationSizer));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&GameVersion::getSourceCodeURL, m_gameVersion.get()), std::bind(&GameVersion::setSourceCodeURL, m_gameVersion.get(), std::placeholders::_1), defaultGameVersion != nullptr ? defaultGameVersion->getSourceCodeURL() : "", "Source Code URL", gameInformationPanel, gameInformationSizer));
+
+	wxPanel * installedPanel = new wxPanel(gameInformationPanel);
+
+	wxStaticText * installedLabel = new wxStaticText(installedPanel, wxID_ANY, "Installed", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	installedLabel->SetFont(installedLabel->GetFont().MakeBold());
+	m_installedText = new wxStaticText(installedPanel, wxID_ANY, m_gameVersion->hasInstalledTimePoint() ? Utilities::timePointToString(*m_gameVersion->getInstalledTimePoint()) : "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+
+	wxBoxSizer * installedBoxSizer = new wxBoxSizer(wxVERTICAL);
+	installedBoxSizer->Add(installedLabel, 1, wxEXPAND | wxHORIZONTAL, 2);
+	installedBoxSizer->Add(m_installedText, 1, wxEXPAND | wxHORIZONTAL, 2);
+	installedPanel->SetSizer(installedBoxSizer);
+	gameInformationSizer->Add(installedPanel, 1, wxEXPAND | wxALL, 5);
+
+	wxPanel * lastPlayedPanel = new wxPanel(gameInformationPanel);
+
+	wxStaticText * lastPlayedLabel = new wxStaticText(lastPlayedPanel, wxID_ANY, "Last Played", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	lastPlayedLabel->SetFont(lastPlayedLabel->GetFont().MakeBold());
+	m_lastPlayedText = new wxStaticText(lastPlayedPanel, wxID_ANY, m_gameVersion->hasLastPlayedTimePoint() ? Utilities::timePointToString(*m_gameVersion->getLastPlayedTimePoint()) : "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+
+	wxBoxSizer * lastPlayedBoxSizer = new wxBoxSizer(wxVERTICAL);
+	lastPlayedBoxSizer->Add(lastPlayedLabel, 1, wxEXPAND | wxHORIZONTAL, 2);
+	lastPlayedBoxSizer->Add(m_lastPlayedText, 1, wxEXPAND | wxHORIZONTAL, 2);
+	lastPlayedPanel->SetSizer(lastPlayedBoxSizer);
+	gameInformationSizer->Add(lastPlayedPanel, 1, wxEXPAND | wxALL, 5);
 
 	wxWrapSizer * gameConfigurationSizer = new wxWrapSizer(wxHORIZONTAL);
 	wxStaticBox * gameConfigurationBox = new wxStaticBox(this, wxID_ANY, "Game Configuration", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Game Configuration");
@@ -322,6 +350,9 @@ void GameVersionPanel::update() {
 	for(SettingPanel * settingPanel : m_settingsPanels) {
 		settingPanel->update();
 	}
+
+	m_installedText->SetLabelText(m_gameVersion->hasInstalledTimePoint() ? Utilities::timePointToString(*m_gameVersion->getInstalledTimePoint()) : "N/A");
+	m_lastPlayedText->SetLabelText(m_gameVersion->hasLastPlayedTimePoint() ? Utilities::timePointToString(*m_gameVersion->getLastPlayedTimePoint()) : "N/A");
 
 	m_notesTextField->SetValue(m_gameVersion->getNotesAsString());
 

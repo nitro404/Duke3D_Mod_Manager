@@ -46,6 +46,8 @@ private:
 	std::shared_ptr<GameVersion> m_gameVersion;
 	boost::signals2::connection m_gameVersionModifiedConnection;
 	std::vector<SettingPanel *> m_settingsPanels;
+	wxStaticText * m_lastPlayedText;
+	wxStaticText * m_installedText;
 	SettingPanel * m_gameVersionIDSettingPanel;
 	SettingPanel * m_gamePathSettingPanel;
 	wxStaticBox * m_dosboxConfigurationBox;
