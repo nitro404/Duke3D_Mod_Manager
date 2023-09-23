@@ -239,13 +239,13 @@ bool DownloadManager::shouldUpdateModList() const {
 	return std::chrono::system_clock::now() - settings->modListLastDownloadedTimestamp.value() > settings->modListUpdateFrequency;
 }
 
-bool DownloadManager::isModDownloaded(const Mod & mod, const ModCollection * mods, bool checkDependencies) const {
+bool DownloadManager::isModDownloaded(const Mod & mod, const ModCollection * mods, const GameVersionCollection * gameVersions, bool checkDependencies, bool allowCompatibleGameVersions) const {
 	if(!mod.isValid(true)) {
 		return false;
 	}
 
 	for(size_t i = 0; i < mod.numberOfVersions(); i++) {
-		if(isModVersionDownloaded(*mod.getVersion(i), mods, checkDependencies)) {
+		if(isModVersionDownloaded(*mod.getVersion(i), mods, gameVersions, checkDependencies, allowCompatibleGameVersions)) {
 			return true;
 		}
 	}
@@ -253,13 +253,13 @@ bool DownloadManager::isModDownloaded(const Mod & mod, const ModCollection * mod
 	return false;
 }
 
-bool DownloadManager::isModVersionDownloaded(const ModVersion & modVersion, const ModCollection * mods, bool checkDependencies) const {
+bool DownloadManager::isModVersionDownloaded(const ModVersion & modVersion, const ModCollection * mods, const GameVersionCollection * gameVersions, bool checkDependencies, bool allowCompatibleGameVersions) const {
 	if(!modVersion.isValid(true)) {
 		return false;
 	}
 
 	for(size_t i = 0; i < modVersion.numberOfTypes(); i++) {
-		if(isModVersionTypeDownloaded(*modVersion.getType(i), mods, checkDependencies)) {
+		if(isModVersionTypeDownloaded(*modVersion.getType(i), mods, gameVersions, checkDependencies, allowCompatibleGameVersions)) {
 			return true;
 		}
 	}
@@ -267,13 +267,13 @@ bool DownloadManager::isModVersionDownloaded(const ModVersion & modVersion, cons
 	return false;
 }
 
-bool DownloadManager::isModVersionTypeDownloaded(const ModVersionType & modVersionType, const ModCollection * mods, bool checkDependencies) const {
+bool DownloadManager::isModVersionTypeDownloaded(const ModVersionType & modVersionType, const ModCollection * mods, const GameVersionCollection * gameVersions, bool checkDependencies, bool allowCompatibleGameVersions) const {
 	if(!modVersionType.isValid(true)) {
 		return false;
 	}
 
 	for(size_t i = 0; i < modVersionType.numberOfGameVersions(); i++) {
-		if(isModGameVersionDownloaded(*modVersionType.getGameVersion(i), mods, checkDependencies)) {
+		if(isModGameVersionDownloaded(*modVersionType.getGameVersion(i), mods, gameVersions, checkDependencies, allowCompatibleGameVersions)) {
 			return true;
 		}
 	}
@@ -281,34 +281,69 @@ bool DownloadManager::isModVersionTypeDownloaded(const ModVersionType & modVersi
 	return false;
 }
 
-bool DownloadManager::isModGameVersionDownloaded(const ModGameVersion & modGameVersion, const ModCollection * mods, bool checkDependencies) const {
+bool DownloadManager::isModGameVersionDownloaded(const ModGameVersion & modGameVersion, const ModCollection * mods, const GameVersionCollection * gameVersions, bool checkDependencies, bool allowCompatibleGameVersions) const {
 	if(!modGameVersion.isValid(true)) {
 		return false;
 	}
 
+	bool modGameVersionDownloaded = false;
 	std::shared_ptr<ModDownload> modDownload(modGameVersion.getDownload());
 
 	if(modDownload == nullptr) {
-		spdlog::error("Failed to obtain download for mod game version: '{}'. Is your mod collection data correct?", modGameVersion.getFullName(true));
-		return false;
+		if(!allowCompatibleGameVersions || gameVersions == nullptr) {
+			spdlog::error("Failed to obtain download for mod game version: '{}'. Is your mod collection data correct?", modGameVersion.getFullName(true));
+			return false;
+		}
+	}
+	else if(m_downloadCache->hasCachedPackageFile(*modDownload)) {
+		modGameVersionDownloaded = true;
 	}
 
-	if(!m_downloadCache->hasCachedPackageFile(*modDownload)) {
-		return false;
+	if(!modGameVersionDownloaded) {
+		if(!allowCompatibleGameVersions || !GameVersionCollection::isValid(gameVersions)) {
+			return false;
+		}
+
+		std::shared_ptr<GameVersion> gameVersion(gameVersions->getGameVersionWithID(modGameVersion.getGameVersionID()));
+
+		if(gameVersion == nullptr) {
+			return false;
+		}
+
+		bool compatibleModGameVersionDownloaded = false;
+		std::vector<std::shared_ptr<GameVersion>> compatibleGameVersions(gameVersion->getCompatibleGameVersions(*gameVersions));
+		std::shared_ptr<ModGameVersion> compatibleModGameVersion;
+
+		for(std::vector<std::shared_ptr<GameVersion>>::const_reverse_iterator i = compatibleGameVersions.crbegin(); i != compatibleGameVersions.crend(); ++i) {
+			compatibleModGameVersion = modGameVersion.getParentModVersionType()->getGameVersionWithID((*i)->getID());
+
+			if(compatibleModGameVersion == nullptr) {
+				continue;
+			}
+
+			if(isModGameVersionDownloaded(*compatibleModGameVersion, mods, gameVersions, checkDependencies, true)) {
+				compatibleModGameVersionDownloaded = true;
+				break;
+			}
+		}
+
+		if(!compatibleModGameVersionDownloaded) {
+			return false;
+		}
 	}
 
 	if(!checkDependencies) {
 		return true;
 	}
 
-	if(!ModCollection::isValid(mods, true)) {
+	if(!ModCollection::isValid(mods, gameVersions, true)) {
 		return false;
 	}
 
 	std::vector<std::shared_ptr<ModGameVersion>> modDependencyGameVersions(mods->getModDependencyGameVersions(modGameVersion));
 
 	for(const std::shared_ptr<ModGameVersion> & dependencyModGameVersion : modDependencyGameVersions) {
-		if(!isModGameVersionDownloaded(*dependencyModGameVersion, mods, true)) {
+		if(!isModGameVersionDownloaded(*dependencyModGameVersion, mods, gameVersions, true, allowCompatibleGameVersions)) {
 			return false;
 		}
 	}
@@ -399,7 +434,7 @@ bool DownloadManager::downloadModList(bool force) {
 	return true;
 }
 
-bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersion, const ModCollection & mods, const GameVersionCollection & gameVersions, bool downloadDependencies, bool force) {
+bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersion, const ModCollection & mods, const GameVersionCollection & gameVersions, bool downloadDependencies, bool allowCompatibleGameVersions, bool force) {
 	if(!m_initialized) {
 		return false;
 	}
@@ -442,11 +477,11 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 	std::vector<std::shared_ptr<ModGameVersion>> modDependencyGameVersions;
 
 	if(downloadDependencies) {
-		if(!mods.isValid(true)) {
+		if(!mods.isValid(&gameVersions, true)) {
 			return false;
 		}
 
-		modDependencyGameVersions = mods.getModDependencyGameVersions(modGameVersion);
+		modDependencyGameVersions = mods.getModDependencyGameVersions(modGameVersion, &gameVersions, allowCompatibleGameVersions);
 	}
 
 	std::shared_ptr<CachedPackageFile> cachedModPackageFile(m_downloadCache->getCachedPackageFile(*modDownload));
@@ -457,7 +492,7 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 		}
 
 		for(const std::shared_ptr<ModGameVersion> & dependencyModGameVersion : modDependencyGameVersions) {
-			if(!downloadModGameVersion(*dependencyModGameVersion, mods, gameVersions, true, force)) {
+			if(!downloadModGameVersion(*dependencyModGameVersion, mods, gameVersions, true, allowCompatibleGameVersions, force)) {
 				return false;
 			}
 		}
@@ -499,7 +534,7 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 		spdlog::info("Mod '{}' is already up to date!", modGameVersion.getFullName(true));
 
 		for(const std::shared_ptr<ModGameVersion> & dependencyModGameVersion : modDependencyGameVersions) {
-			if(!downloadModGameVersion(*dependencyModGameVersion, mods, gameVersions, true, force)) {
+			if(!downloadModGameVersion(*dependencyModGameVersion, mods, gameVersions, true, allowCompatibleGameVersions, force)) {
 				return false;
 			}
 		}
@@ -637,7 +672,7 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 	}
 
 	for(const std::shared_ptr<ModGameVersion> & dependencyModGameVersion : modDependencyGameVersions) {
-		if(!downloadModGameVersion(*dependencyModGameVersion, mods, gameVersions, true, force)) {
+		if(!downloadModGameVersion(*dependencyModGameVersion, mods, gameVersions, true, allowCompatibleGameVersions, force)) {
 			return false;
 		}
 	}

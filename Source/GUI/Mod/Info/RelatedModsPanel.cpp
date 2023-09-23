@@ -27,7 +27,7 @@ RelatedModsPanel::RelatedModsPanel(std::shared_ptr<ModCollection> mods, wxWindow
 RelatedModsPanel::~RelatedModsPanel() { }
 
 bool RelatedModsPanel::setMods(std::shared_ptr<ModCollection> mods) {
-	if(!ModCollection::isValid(mods.get(), true)) {
+	if(!ModCollection::isValid(mods.get(), nullptr, true)) {
 		return false;
 	}
 

@@ -15,6 +15,7 @@
 #include <string>
 #include <vector>
 
+class GameVersionCollection;
 class ModGameVersion;
 
 class GameVersion {
@@ -208,6 +209,9 @@ public:
 	const std::vector<std::string> & getCompatibleGameVersionIdentifiers() const;
 	std::shared_ptr<ModGameVersion> getMostCompatibleModGameVersion(const std::vector<std::shared_ptr<ModGameVersion>> & modGameVersions) const;
 	std::vector<std::shared_ptr<ModGameVersion>> getCompatibleModGameVersions(const std::vector<std::shared_ptr<ModGameVersion>> & modGameVersions) const;
+	const std::vector<std::string> & getCompatibleGameVersionIDs() const;
+	std::vector<std::shared_ptr<GameVersion>> getCompatibleGameVersions(const GameVersionCollection & gameVersions) const;
+	std::vector<std::shared_ptr<GameVersion>> getCompatibleGameVersions(const std::vector<std::shared_ptr<GameVersion>> & gameVersions) const;
 	bool addCompatibleGameVersion(const GameVersion & gameVersion);
 	bool addCompatibleGameVersionWithID(const std::string & gameVersionID);
 	size_t addCompatibleGameVersionIdentifiers(const std::vector<std::string> & gameVersionIdentifiers);

@@ -58,32 +58,32 @@ public:
 	void clearMods();
 	bool copyHiddenPropertiesFrom(const ModCollection & modCollection);
 
-	std::shared_ptr<ModGameVersion> getModDependencyGameVersion(const ModDependency & modDependency, const std::string & gameVersionID) const;
-	std::vector<std::shared_ptr<ModGameVersion>> getModDependencyGameVersions(const std::vector<std::shared_ptr<ModDependency>> & modDependencies, const std::string & gameVersionID) const;
-	std::vector<std::shared_ptr<ModGameVersion>> getModDependencyGameVersions(const ModGameVersion & modGameVersion) const;
-	std::shared_ptr<ModDownload> getModDependencyDownload(const ModDependency & modDependency, const std::string & gameVersionID) const;
-	std::vector<std::shared_ptr<ModDownload>> getModDependencyDownloads(const std::vector<std::shared_ptr<ModDependency>> & modDependencies, const std::string & gameVersionID) const;
-	std::vector<std::shared_ptr<ModDownload>> getModDependencyDownloads(const ModGameVersion & modGameVersion) const;
-	std::vector<std::shared_ptr<ModFile>> getModDependencyGroupFiles(const ModDependency & modDependency, const GameVersion & gameVersion, bool recursive = true) const;
-	std::vector<std::shared_ptr<ModFile>> getModDependencyGroupFiles(const std::vector<std::shared_ptr<ModDependency>> & modDependencies, const GameVersion & gameVersion, bool recursive = true) const;
-	std::vector<std::shared_ptr<ModFile>> getModDependencyGroupFiles(const ModGameVersion & modGameVersion, const GameVersion & gameVersion, bool recursive = true) const;
+	std::shared_ptr<ModGameVersion> getModDependencyGameVersion(const ModDependency & modDependency, const std::string & gameVersionID, const GameVersionCollection * gameVersions = nullptr, bool allowCompatibleGameVersions = true) const;
+	std::vector<std::shared_ptr<ModGameVersion>> getModDependencyGameVersions(const std::vector<std::shared_ptr<ModDependency>> & modDependencies, const std::string & gameVersionID, const GameVersionCollection * gameVersions = nullptr, bool allowCompatibleGameVersions = true) const;
+	std::vector<std::shared_ptr<ModGameVersion>> getModDependencyGameVersions(const ModGameVersion & modGameVersion, const GameVersionCollection * gameVersions = nullptr, bool allowCompatibleGameVersions = true) const;
+	std::shared_ptr<ModDownload> getModDependencyDownload(const ModDependency & modDependency, const std::string & gameVersionID, const GameVersionCollection * gameVersions = nullptr, bool allowCompatibleGameVersions = true) const;
+	std::vector<std::shared_ptr<ModDownload>> getModDependencyDownloads(const std::vector<std::shared_ptr<ModDependency>> & modDependencies, const std::string & gameVersionID, const GameVersionCollection * gameVersions = nullptr, bool allowCompatibleGameVersions = true) const;
+	std::vector<std::shared_ptr<ModDownload>> getModDependencyDownloads(const ModGameVersion & modGameVersion, const GameVersionCollection * gameVersions = nullptr, bool allowCompatibleGameVersions = true) const;
+	std::vector<std::shared_ptr<ModFile>> getModDependencyGroupFiles(const ModDependency & modDependency, const GameVersion & gameVersion, const GameVersionCollection * gameVersions = nullptr, bool allowCompatibleGameVersions = true, bool recursive = true) const;
+	std::vector<std::shared_ptr<ModFile>> getModDependencyGroupFiles(const std::vector<std::shared_ptr<ModDependency>> & modDependencies, const GameVersion & gameVersion, const GameVersionCollection * gameVersions = nullptr, bool allowCompatibleGameVersions = true, bool recursive = true) const;
+	std::vector<std::shared_ptr<ModFile>> getModDependencyGroupFiles(const ModGameVersion & modGameVersion, const GameVersion & gameVersion, const GameVersionCollection * gameVersions = nullptr, bool allowCompatibleGameVersions = true, bool recursive = true) const;
 
 	rapidjson::Document toJSON() const;
 	tinyxml2::XMLElement * toXML(tinyxml2::XMLDocument* document) const;
 	static std::unique_ptr<ModCollection> parseFrom(const rapidjson::Value & modCollectionValue, bool skipFileInfoValidation = false);
 	static std::unique_ptr<ModCollection> parseFrom(const tinyxml2::XMLElement * modsElement, bool skipFileInfoValidation = false);
 
-	bool loadFrom(const std::string & filePath, bool skipFileInfoValidation = false);
-	bool loadFromXML(const std::string & filePath, bool skipFileInfoValidation = false);
-	bool loadFromJSON(const std::string & filePath, bool skipFileInfoValidation = false);
+	bool loadFrom(const std::string & filePath, const GameVersionCollection * gameVersions = nullptr, bool skipFileInfoValidation = false);
+	bool loadFromXML(const std::string & filePath, const GameVersionCollection * gameVersions = nullptr, bool skipFileInfoValidation = false);
+	bool loadFromJSON(const std::string & filePath, const GameVersionCollection * gameVersions = nullptr, bool skipFileInfoValidation = false);
 	bool saveTo(const std::string & filePath, bool overwrite = true) const;
 	bool saveToXML(const std::string & filePath, bool overwrite = true) const;
 	bool saveToJSON(const std::string & filePath, bool overwrite = true) const;
 
 	bool checkGameVersions(const GameVersionCollection & gameVersions, bool verbose = true) const;
 
-	bool isValid(bool skipFileInfoValidation = false) const;
-	static bool isValid(const ModCollection * m, bool skipFileInfoValidation = false);
+	bool isValid(const GameVersionCollection * gameVersions = nullptr, bool skipFileInfoValidation = false) const;
+	static bool isValid(const ModCollection * m, const GameVersionCollection * gameVersions = nullptr, bool skipFileInfoValidation = false);
 
 	bool operator == (const ModCollection & m) const;
 	bool operator != (const ModCollection & m) const;

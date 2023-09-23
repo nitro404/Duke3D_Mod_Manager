@@ -27,7 +27,7 @@ SimilarModsPanel::SimilarModsPanel(std::shared_ptr<ModCollection> mods, wxWindow
 SimilarModsPanel::~SimilarModsPanel() { }
 
 bool SimilarModsPanel::setMods(std::shared_ptr<ModCollection> mods) {
-	if(!ModCollection::isValid(mods.get(), true)) {
+	if(!ModCollection::isValid(mods.get(), nullptr, true)) {
 		return false;
 	}
 

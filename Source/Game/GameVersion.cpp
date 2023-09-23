@@ -1,6 +1,7 @@
 #include "GameVersion.h"
 
 #include "Game/Configuration/GameConfiguration.h"
+#include "Game/GameVersionCollection.h"
 #include "Mod/ModGameVersion.h"
 
 #include <Utilities/FileUtilities.h>
@@ -1859,6 +1860,30 @@ std::vector<std::shared_ptr<ModGameVersion>> GameVersion::getCompatibleModGameVe
 	}
 
 	return compatibleModGameVersions;
+}
+
+const std::vector<std::string> & GameVersion::getCompatibleGameVersionIDs() const {
+	return m_compatibleGameVersionIdentifiers;
+}
+
+std::vector<std::shared_ptr<GameVersion>> GameVersion::getCompatibleGameVersions(const GameVersionCollection & gameVersions) const {
+	return getCompatibleGameVersions(gameVersions.getGameVersions());
+}
+
+std::vector<std::shared_ptr<GameVersion>> GameVersion::getCompatibleGameVersions(const std::vector<std::shared_ptr<GameVersion>> & gameVersions) const {
+	std::vector<std::shared_ptr<GameVersion>> compatibleGameVersions;
+
+	for(const std::string & gameVersionID : m_compatibleGameVersionIdentifiers) {
+		std::vector<std::shared_ptr<GameVersion>>::const_iterator compatibleGameVersionIterator(std::find_if(gameVersions.cbegin(), gameVersions.cend(), [gameVersionID](const std::shared_ptr<GameVersion> & currentGameVersion) {
+			return Utilities::areStringsEqualIgnoreCase(currentGameVersion->getID(), gameVersionID);
+		}));
+
+		if(compatibleGameVersionIterator != gameVersions.cend() && *compatibleGameVersionIterator != nullptr) {
+			compatibleGameVersions.push_back(*compatibleGameVersionIterator);
+		}
+	}
+
+	return compatibleGameVersions;
 }
 
 bool GameVersion::addCompatibleGameVersion(const GameVersion & gameVersion) {

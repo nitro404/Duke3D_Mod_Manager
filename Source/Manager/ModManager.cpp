@@ -486,7 +486,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 		return false;
 	}
 
-	if(!m_mods->loadFrom(getModsListFilePath(), skipFileInfoValidation)) {
+	if(!m_mods->loadFrom(getModsListFilePath(), getGameVersions().get(), skipFileInfoValidation)) {
 		spdlog::error("Failed to load mod list '{}'!", getModsListFilePath());
 		initializationFailed();
 		return false;
@@ -2440,7 +2440,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 			}
 		}
 
-		modDependencyGroupFiles = m_mods->getModDependencyGroupFiles(*selectedModGameVersion, *targetGameVersion, true);
+		modDependencyGroupFiles = m_mods->getModDependencyGroupFiles(*selectedModGameVersion, *targetGameVersion, getGameVersions().get(), true, true);
 
 		modConFiles = selectedModGameVersion->getFilesOfType("con");
 		modDefFiles = selectedModGameVersion->getFilesOfType("def");
@@ -2478,8 +2478,22 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		}
 
 		for(const std::shared_ptr<ModFile> & modDependencyGroupFile : modDependencyGroupFiles) {
-			relativeModDependencyGroupFilePaths.push_back(Utilities::joinPaths(relativeModFilesBaseDirectoryPath, modDependencyGroupFile->getFileName()));
-			absoluteModDependencyGroupFilePaths.push_back(Utilities::joinPaths(absoluteModFilesBaseDirectoryPath, modDependencyGroupFile->getFileName()));
+			std::shared_ptr<GameVersion> modDependencyGameVersion(getGameVersions()->getGameVersionWithID(modDependencyGroupFile->getParentModGameVersion()->getGameVersionID()));
+			const std::string & modDependencyDirectoryName(modDependencyGameVersion->getModDirectoryName());
+			std::string absoluteModDependencyFilesBaseDirectoryPath(Utilities::joinPaths(getModsDirectoryPath(), modDependencyDirectoryName));
+			std::string relativeModDependencyFilesBaseDirectoryPath;
+
+			if(selectedGameVersion->doesSupportSubdirectories()) {
+				if(Utilities::areSymlinksSupported()) {
+					relativeModDependencyFilesBaseDirectoryPath = Utilities::joinPaths(settings->modsSymlinkName, modDependencyDirectoryName);
+				}
+				else {
+					relativeModDependencyFilesBaseDirectoryPath = settings->gameTempDirectoryName;
+				}
+			}
+
+			relativeModDependencyGroupFilePaths.push_back(Utilities::joinPaths(relativeModDependencyFilesBaseDirectoryPath, modDependencyGroupFile->getFileName()));
+			absoluteModDependencyGroupFilePaths.push_back(Utilities::joinPaths(absoluteModDependencyFilesBaseDirectoryPath, modDependencyGroupFile->getFileName()));
 		}
 
 		allRelativeConFilePaths = relativeModConFilePaths;
@@ -2766,7 +2780,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		temporaryDirectoryName = settings->tempSymlinkName;
 	}
 
-	if(!m_localMode && !standAlone && selectedModGameVersion != nullptr && !m_downloadManager->downloadModGameVersion(*selectedModGameVersion, *m_mods, *getGameVersions())) {
+	if(!m_localMode && !standAlone && selectedModGameVersion != nullptr && !m_downloadManager->downloadModGameVersion(*selectedModGameVersion, *m_mods, *getGameVersions(), true, true)) {
 		notifyLaunchError(fmt::format("Failed to download '{}' game version of '{}' mod!", getGameVersions()->getLongNameOfGameVersionWithID(selectedModGameVersion->getGameVersionID()), selectedModGameVersion->getFullName(false)));
 		return false;
 	}
