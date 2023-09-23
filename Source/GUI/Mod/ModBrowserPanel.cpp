@@ -976,11 +976,6 @@ void ModBrowserPanel::onModSelected(wxCommandEvent & event) {
 		}
 	}
 	else {
-		clearSearchResults();
-		m_searchQuery.clear();
-		m_modSearchTextField->Clear();
-		updateModList();
-
 		std::shared_ptr<OrganizedModCollection> organizedMods(m_modManager->getOrganizedMods());
 
 		if(organizedMods->shouldDisplayMods()) {
@@ -988,7 +983,7 @@ void ModBrowserPanel::onModSelected(wxCommandEvent & event) {
 			m_modManager->getOrganizedMods()->setSelectedMod(modMatch.getMod().get());
 			m_modManager->setSelectedModFromMatch(modMatch);
 		}
-		if(organizedMods->shouldDisplayFavouriteMods()) {
+		else if(organizedMods->shouldDisplayFavouriteMods()) {
 			std::shared_ptr<ModIdentifier> favouriteModMatch(m_favouriteModMatches[selectedItemIndex]);
 			m_modManager->getOrganizedMods()->setSelectedFavouriteMod(*favouriteModMatch);
 			m_modManager->setSelectedMod(*favouriteModMatch);
@@ -1002,6 +997,11 @@ void ModBrowserPanel::onModSelected(wxCommandEvent & event) {
 		else if(organizedMods->shouldDisplayAuthors()) {
 			m_modManager->getOrganizedMods()->setSelectedAuthor(m_modAuthorMatches[selectedItemIndex].get());
 		}
+
+		clearSearchResults();
+		m_searchQuery.clear();
+		m_modSearchTextField->Clear();
+		updateModList();
 	}
 }
 
