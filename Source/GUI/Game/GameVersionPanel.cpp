@@ -358,6 +358,8 @@ void GameVersionPanel::update() {
 
 	m_dosboxConfigurationPanel->setEnabled(m_gameVersion->doesRequireDOSBox());
 	m_dosboxConfigurationBox->SetLabelText((m_gameVersion->hasLongName() ? m_gameVersion->getLongName() + " " : "") + "DOSBox Configuration");
+
+	Layout();
 }
 
 void GameVersionPanel::onGameVersionModified(GameVersion & gameVersion) {

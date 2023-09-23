@@ -46,6 +46,8 @@ private:
 	std::shared_ptr<DOSBoxVersion> m_dosboxVersion;
 	boost::signals2::connection m_dosboxVersionModifiedConnection;
 	std::vector<SettingPanel *> m_settingsPanels;
+	wxStaticText * m_installedText;
+	wxStaticText * m_lastLaunchedText;
 	SettingPanel * m_dosboxIDSettingPanel;
 	SettingPanel * m_dosboxPathSettingPanel;
 	wxStaticBox * m_dosboxConfigurationBox;

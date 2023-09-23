@@ -7,6 +7,8 @@
 #include "DOSBox/DOSBoxVersionCollection.h"
 #include "Project.h"
 
+#include <Utilities/TimeUtilities.h>
+
 #include <boost/signals2.hpp>
 #include <fmt/core.h>
 #include <spdlog/spdlog.h>
@@ -18,6 +20,8 @@
 DOSBoxVersionPanel::DOSBoxVersionPanel(std::shared_ptr<DOSBoxVersion> dosboxVersion, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "DOSBox Version")
 	, m_dosboxVersion(dosboxVersion != nullptr ? dosboxVersion : std::make_shared<DOSBoxVersion>())
+	, m_installedText(nullptr)
+	, m_lastLaunchedText(nullptr)
 	, m_dosboxIDSettingPanel(nullptr)
 	, m_dosboxPathSettingPanel(nullptr)
 	, m_dosboxConfigurationBox(nullptr)
@@ -47,6 +51,30 @@ DOSBoxVersionPanel::DOSBoxVersionPanel(std::shared_ptr<DOSBoxVersion> dosboxVers
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&DOSBoxVersion::getShortName, m_dosboxVersion.get()), std::bind(&DOSBoxVersion::setShortName, m_dosboxVersion.get(), std::placeholders::_1), defaultDOSBoxVersion != nullptr ? defaultDOSBoxVersion->getShortName() : "", "DOSBox Version Short Name", dosboxInformationPanel, dosboxInformationSizer, 1));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&DOSBoxVersion::getWebsite, m_dosboxVersion.get()), std::bind(&DOSBoxVersion::setWebsite, m_dosboxVersion.get(), std::placeholders::_1), defaultDOSBoxVersion != nullptr ? defaultDOSBoxVersion->getWebsite() : "", "Website", dosboxInformationPanel, dosboxInformationSizer));
 	m_settingsPanels.push_back(SettingPanel::createStringSettingPanel<void>(std::bind(&DOSBoxVersion::getSourceCodeURL, m_dosboxVersion.get()), std::bind(&DOSBoxVersion::setSourceCodeURL, m_dosboxVersion.get(), std::placeholders::_1), defaultDOSBoxVersion != nullptr ? defaultDOSBoxVersion->getSourceCodeURL() : "", "Source Code URL", dosboxInformationPanel, dosboxInformationSizer));
+
+	wxPanel * installedPanel = new wxPanel(dosboxInformationPanel);
+
+	wxStaticText * installedLabel = new wxStaticText(installedPanel, wxID_ANY, "Installed", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	installedLabel->SetFont(installedLabel->GetFont().MakeBold());
+	m_installedText = new wxStaticText(installedPanel, wxID_ANY, m_dosboxVersion->hasInstalledTimePoint() ? Utilities::timePointToString(*m_dosboxVersion->getInstalledTimePoint()) : "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+
+	wxBoxSizer * installedBoxSizer = new wxBoxSizer(wxVERTICAL);
+	installedBoxSizer->Add(installedLabel, 1, wxEXPAND | wxHORIZONTAL, 2);
+	installedBoxSizer->Add(m_installedText, 1, wxEXPAND | wxHORIZONTAL, 2);
+	installedPanel->SetSizer(installedBoxSizer);
+	dosboxInformationSizer->Add(installedPanel, 1, wxEXPAND | wxALL, 5);
+
+	wxPanel * lastLaunchedPanel = new wxPanel(dosboxInformationPanel);
+
+	wxStaticText * lastLaunchedLabel = new wxStaticText(lastLaunchedPanel, wxID_ANY, "Last Launched", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	lastLaunchedLabel->SetFont(lastLaunchedLabel->GetFont().MakeBold());
+	m_lastLaunchedText = new wxStaticText(lastLaunchedPanel, wxID_ANY, m_dosboxVersion->hasLastLaunchedTimePoint() ? Utilities::timePointToString(*m_dosboxVersion->getLastLaunchedTimePoint()) : "N/A", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+
+	wxBoxSizer * lastLaunchedBoxSizer = new wxBoxSizer(wxVERTICAL);
+	lastLaunchedBoxSizer->Add(lastLaunchedLabel, 1, wxEXPAND | wxHORIZONTAL, 2);
+	lastLaunchedBoxSizer->Add(m_lastLaunchedText, 1, wxEXPAND | wxHORIZONTAL, 2);
+	lastLaunchedPanel->SetSizer(lastLaunchedBoxSizer);
+	dosboxInformationSizer->Add(lastLaunchedPanel, 1, wxEXPAND | wxALL, 5);
 
 	wxWrapSizer * dosboxOptionsSizer = new wxWrapSizer(wxHORIZONTAL);
 	wxStaticBox * dosboxOptionsBox = new wxStaticBox(this, wxID_ANY, "Options", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Options");
@@ -217,7 +245,12 @@ void DOSBoxVersionPanel::update() {
 		settingPanel->update();
 	}
 
+	m_installedText->SetLabelText(m_dosboxVersion->hasInstalledTimePoint() ? Utilities::timePointToString(*m_dosboxVersion->getInstalledTimePoint()) : "N/A");
+	m_lastLaunchedText->SetLabelText(m_dosboxVersion->hasLastLaunchedTimePoint() ? Utilities::timePointToString(*m_dosboxVersion->getLastLaunchedTimePoint()) : "N/A");
+
 	m_dosboxConfigurationBox->SetLabelText((m_dosboxVersion->hasLongName() ? m_dosboxVersion->getLongName() + " " : "") + "Configuration");
+
+	Layout();
 }
 
 void DOSBoxVersionPanel::onDOSBoxVersionModified(DOSBoxVersion & dosboxVersion) {
