@@ -207,7 +207,6 @@ private:
 	static std::string getDOSBoxCommandScriptFileName(GameType gameType);
 	static std::string getDOSBoxCommandScriptFilePath(GameType gameType);
 	static std::string generateDOSBoxTemplateCommandScriptFileData(GameType gameType);
-	static void displayArgumentHelp();
 
 	std::atomic<bool> m_initialized;
 	std::atomic<bool> m_initializing;

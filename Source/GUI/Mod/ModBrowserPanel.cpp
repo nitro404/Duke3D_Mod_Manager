@@ -392,6 +392,11 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	modBrowserSizer->Add(modSelectionPanel, 1, wxEXPAND | wxALL, 0);
 	modBrowserSizer->Add(m_gameOptionsPanel, 0, wxEXPAND | wxHORIZONTAL, 0);
 	SetSizer(modBrowserSizer);
+
+	if(m_modManager->hasModSelected()) {
+		updateModList();
+		organizedMods->setSelectedMod(m_modManager->getSelectedMod().get());
+	}
 }
 
 ModBrowserPanel::~ModBrowserPanel() {

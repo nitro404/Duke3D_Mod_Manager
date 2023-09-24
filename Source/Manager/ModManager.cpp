@@ -237,18 +237,6 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 	if(arguments != nullptr) {
 		m_arguments = arguments;
 
-		if(m_arguments->hasArgument("?") || m_arguments->hasArgument("help")) {
-			displayArgumentHelp();
-			initialized();
-			return true;
-		}
-
-		if(m_arguments->hasArgument("version")) {
-			fmt::print("{}\n", APPLICATION_VERSION);
-			initialized();
-			return true;
-		}
-
 		if(m_arguments->hasArgument("local")) {
 			m_localMode = true;
 			localModeSet = true;
@@ -3824,177 +3812,169 @@ std::string ModManager::generateDOSBoxCommand(const Script & script, const Scrip
 bool ModManager::handleArguments(const ArgumentParser * args) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
+	if(args == nullptr) {
+		return true;
+	}
+
 	SettingsManager * settings = SettingsManager::getInstance();
 
-	if(args != nullptr) {
-		if(args->hasArgument("update-new")) {
-			updateFileInfoForAllMods(true, true);
-		}
 
-		if(args->hasArgument("update-all")) {
-			updateFileInfoForAllMods(true, false);
-			return true;
-		}
+	if(args->hasArgument("update-new")) {
+		updateFileInfoForAllMods(true, true);
+	}
 
-		if(args->hasArgument("test-parsing")) {
-			testParsing();
-		}
+	if(args->hasArgument("update-all")) {
+		updateFileInfoForAllMods(true, false);
+		return true;
+	}
 
-		if(args->hasArgument("type")) {
-			std::optional<GameType> newGameTypeOptional(magic_enum::enum_cast<GameType>(Utilities::toPascalCase(args->getFirstValue("type"))));
+	if(args->hasArgument("test-parsing")) {
+		testParsing();
+	}
 
-			if(newGameTypeOptional.has_value()) {
-				m_gameType = newGameTypeOptional.value();
+	if(args->hasArgument("type")) {
+		std::optional<GameType> newGameTypeOptional(magic_enum::enum_cast<GameType>(Utilities::toPascalCase(args->getFirstValue("type"))));
 
-				spdlog::info("Setting game type to: '{}'.", Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)));
+		if(newGameTypeOptional.has_value()) {
+			m_gameType = newGameTypeOptional.value();
 
-				if(m_gameType == GameType::Client) {
-					std::string ipAddress;
+			spdlog::info("Setting game type to: '{}'.", Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)));
 
-					if(args->hasArgument("ip")) {
-						ipAddress = Utilities::trimString(args->getFirstValue("ip"));
+			if(m_gameType == GameType::Client) {
+				std::string ipAddress;
 
-						bool error = ipAddress.empty() || ipAddress.find_first_of(" \t") != std::string::npos;
+				if(args->hasArgument("ip")) {
+					ipAddress = Utilities::trimString(args->getFirstValue("ip"));
 
-						if(error) {
-							spdlog::error("Invalid IP Address entered in arguments: '{}'.", ipAddress);
-							return false;
+					bool error = ipAddress.empty() || ipAddress.find_first_of(" \t") != std::string::npos;
+
+					if(error) {
+						spdlog::error("Invalid IP Address entered in arguments: '{}'.", ipAddress);
+						return false;
+					}
+					else {
+						settings->dosboxServerIPAddress = ipAddress;
+					}
+				}
+			}
+
+			if(m_gameType == GameType::Client || m_gameType == GameType::Server) {
+				if(args->hasArgument("port")) {
+					std::string portData(Utilities::trimString(args->getFirstValue("port")));
+					bool error = false;
+					uint16_t port = static_cast<uint16_t>(Utilities::parseUnsignedInteger(portData, &error));
+
+					if(port == 0) {
+						error = true;
+					}
+
+					if(error) {
+						spdlog::error("Invalid {} Server Port entered in arguments: '{}'.", m_gameType == GameType::Server ? "Local" : "Remote", portData);
+						return false;
+					}
+					else {
+						if(m_gameType == GameType::Server) {
+							settings->dosboxLocalServerPort = port;
 						}
 						else {
-							settings->dosboxServerIPAddress = ipAddress;
+							settings->dosboxRemoteServerPort = port;
 						}
 					}
 				}
-
-				if(m_gameType == GameType::Client || m_gameType == GameType::Server) {
-					if(args->hasArgument("port")) {
-						std::string portData(Utilities::trimString(args->getFirstValue("port")));
-						bool error = false;
-						uint16_t port = static_cast<uint16_t>(Utilities::parseUnsignedInteger(portData, &error));
-
-						if(port == 0) {
-							error = true;
-						}
-
-						if(error) {
-							spdlog::error("Invalid {} Server Port entered in arguments: '{}'.", m_gameType == GameType::Server ? "Local" : "Remote", portData);
-							return false;
-						}
-						else {
-							if(m_gameType == GameType::Server) {
-								settings->dosboxLocalServerPort = port;
-							}
-							else {
-								settings->dosboxRemoteServerPort = port;
-							}
-						}
-					}
-				}
-			}
-			else {
-				static std::string gameTypes;
-
-				if(gameTypes.empty()) {
-					std::stringstream gameTypesStream;
-					constexpr auto & gameTypeNames = magic_enum::enum_names<GameType>();
-
-					for(size_t i = 0; i < gameTypeNames.size(); i++) {
-						if(gameTypesStream.tellp() != 0) {
-							gameTypesStream << ", ";
-						}
-
-						gameTypesStream << Utilities::toCapitalCase(gameTypeNames[i]);
-					}
-
-					gameTypes = gameTypesStream.str();
-				}
-
-				spdlog::error("Invalid game type, please specify one of the following: {}.", gameTypes);
-
-				return false;
 			}
 		}
+		else {
+			static std::string gameTypes;
 
-		if(args->hasArgument("search")) {
-			if(args->hasArgument("random") || (args->hasArgument("g") || args->hasArgument("group")) || (args->hasArgument("x") || args->hasArgument("con")) || (args->hasArgument("n") || args->hasArgument("normal"))) {
-				spdlog::error("Redundant arguments specified, please specify either search OR random OR n/normal OR (x/con AND/OR g/group).");
-				return false;
+			if(gameTypes.empty()) {
+				std::stringstream gameTypesStream;
+				constexpr auto & gameTypeNames = magic_enum::enum_names<GameType>();
+
+				for(size_t i = 0; i < gameTypeNames.size(); i++) {
+					if(gameTypesStream.tellp() != 0) {
+						gameTypesStream << ", ";
+					}
+
+					gameTypesStream << Utilities::toCapitalCase(gameTypeNames[i]);
+				}
+
+				gameTypes = gameTypesStream.str();
 			}
 
-			std::vector<ModMatch> modMatches(searchForMod(m_mods->getMods(), args->getFirstValue("search"), true, true));
+			spdlog::error("Invalid game type, please specify one of the following: {}.", gameTypes);
 
-			if(modMatches.empty()) {
-				spdlog::error("No matches found for specified search query.");
-				return false;
-			}
-			else if(modMatches.size() == 1) {
-				const ModMatch & modMatch = modMatches[0];
+			return false;
+		}
+	}
 
-				fmt::print("Selected {} from search query: '{}'.\n", Utilities::toCapitalCase(magic_enum::enum_name(modMatch.getMatchType())), modMatch.toString());
+	if(args->hasArgument("search")) {
+		if(args->hasArgument("random")) {
+			spdlog::error("Redundant arguments specified, please specify either search or random.");
+			return false;
+		}
 
-				setSelectedMod(modMatch.getMod());
-				setSelectedModVersionIndex(modMatch.getModVersionIndex());
-				setSelectedModVersionTypeIndex(modMatch.getModVersionTypeIndex());
+		std::vector<ModMatch> modMatches(searchForMod(m_mods->getMods(), args->getFirstValue("search"), true, true));
 
+		if(modMatches.empty()) {
+			spdlog::error("No matches found for specified search query.");
+			return false;
+		}
+		else if(modMatches.size() == 1) {
+			const ModMatch & modMatch = modMatches[0];
+
+			spdlog::info("Selected {} from search query: '{}'.", Utilities::toCapitalCase(magic_enum::enum_name(modMatch.getMatchType())), modMatch.toString());
+
+			setSelectedMod(modMatch.getMod());
+			setSelectedModVersionIndex(modMatch.getModVersionIndex());
+			setSelectedModVersionTypeIndex(modMatch.getModVersionTypeIndex());
+
+			if(args->hasArgument("start")) {
 				runSelectedMod();
+			}
 
-				return true;
+			return true;
+		}
+		else {
+			if(modMatches.size() > 20) {
+				spdlog::info("Found {} matches, please refine your search query.", modMatches.size());
 			}
 			else {
-				if(modMatches.size() > 20) {
-					fmt::print("Found {} matches, please refine your search query.\n", modMatches.size());
-				}
-				else {
-					fmt::print("Found {} matches:\n", modMatches.size());
+				std::stringstream matchesStringStream;
 
-					for(size_t i = 0; i < modMatches.size(); i++) {
-						size_t spacingLength = Utilities::unsignedLongLength(modMatches.size()) - Utilities::unsignedLongLength(i + 1);
+				matchesStringStream << fmt::format("Found {} matches:", modMatches.size()) << std::endl;
 
-						for(size_t i = 0; i < spacingLength; i++) {
-							fmt::print(" ");
-						}
+				for(size_t i = 0; i < modMatches.size(); i++) {
+					size_t spacingLength = Utilities::unsignedLongLength(modMatches.size()) - Utilities::unsignedLongLength(i + 1);
 
-						fmt::print("{}. {}\n", i + 1, modMatches[i].toString());
+					for(size_t i = 0; i < spacingLength; i++) {
+						matchesStringStream << ' ';
 					}
 
-					fmt::print("\n");
-					fmt::print("Please refine your search query.\n");
+					matchesStringStream << fmt::format("{}. {}", i + 1, modMatches[i].toString()) << std::endl;
 				}
 
-				return false;
-			}
-		}
-		else if(args->hasArgument("random")) {
-			if((args->hasArgument("g") || args->hasArgument("group")) || (args->hasArgument("x") || args->hasArgument("con")) || (args->hasArgument("n") || args->hasArgument("normal"))) {
-				spdlog::error("Redundant arguments specified, please specify either search OR random OR n/normal OR (x/con AND/OR g/group).");
-				return false;
+				matchesStringStream << std::endl;
+				matchesStringStream << "Please refine your search query.";
 			}
 
-			selectRandomMod(true, true);
-
-			spdlog::info("Selected random mod: '{}'\n", m_selectedMod->getFullName(m_selectedModVersionIndex, m_selectedModVersionTypeIndex));
-			fmt::print("\n");
-
-			runSelectedMod();
-
-			return true;
+			return false;
 		}
-		else if(args->hasArgument("n") || args->hasArgument("normal")) {
-			if((args->hasArgument("g") || args->hasArgument("group")) || (args->hasArgument("x") || args->hasArgument("con"))) {
-				spdlog::error("Redundant arguments specified, please specify either search OR random OR n/normal OR (x/con AND/OR g/group).");
-				return false;
-			}
+	}
+	else if(args->hasArgument("random")) {
+		selectRandomMod(true, true);
 
-			clearSelectedMod();
+		spdlog::info("Selected random mod: '{}'", m_selectedMod->getFullName(m_selectedModVersionIndex, m_selectedModVersionTypeIndex));
+
+		if(args->hasArgument("start")) {
 			runSelectedMod();
-
-			return true;
 		}
-		else if((args->hasArgument("g") || args->hasArgument("group")) || (args->hasArgument("x") || args->hasArgument("con"))) {
-			runSelectedMod();
 
-			return true;
-		}
+		return true;
+	}
+	else if(args->hasArgument("start")) {
+		runSelectedMod();
+
+		return true;
 	}
 
 	return true;
@@ -4905,8 +4885,7 @@ std::string ModManager::getArgumentHelpInfo() {
 	argumentHelpStream << " --map _ZOO.MAP - manually specifies a user map file to load.\n";
 	argumentHelpStream << " --search \"Full Mod Name\" - searches for and selects the mod with a full or partially matching name, and optional version / type.\n";
 	argumentHelpStream << " --random - randomly selects a mod to run.\n";
-	argumentHelpStream << " --normal - runs normal Duke Nukem 3D without any mods.\n";
-	argumentHelpStream << " -n - alias for 'normal'.\n";
+	argumentHelpStream << " --start - launches the game immediately.\n";
 	argumentHelpStream << " --episode # - selects an episode (1-4+).\n";
 	argumentHelpStream << " -v # - alias for 'episode'\n";
 	argumentHelpStream << " --level # - selects a level (1-11).\n";
@@ -4929,15 +4908,10 @@ std::string ModManager::getArgumentHelpInfo() {
 	argumentHelpStream << " --nm - alias for 'nomusic'.\n";
 	argumentHelpStream << " --local - runs the mod manager in local mode.\n";
 	argumentHelpStream << " -- <args> - specify arguments to pass through to the target game executable when executing.\n";
-	argumentHelpStream << " --version - displays the application version.\n";
 	argumentHelpStream << " --help - displays this help message.\n";
 	argumentHelpStream << " -? - alias for 'help'.\n";
 
 	return argumentHelpStream.str();
-}
-
-void ModManager::displayArgumentHelp() {
-	fmt::print(getArgumentHelpInfo());
 }
 
 bool ModManager::createApplicationTemporaryDirectory() {
