@@ -11190,7 +11190,7 @@
 			<download filename="ODuke_002-ModMgrE.zip" filesize="2603767" version="002" game="eDuke32" type="Mod Manager Files" state="Native" sha1="972b248e262a12eca0e282958d8c0ae540179d17"/>
 		</downloads>
 	</mod>
-	<mod name="Duke Nukem 3D Savior of Babes" id="duke_nukem_3d_savior_of_babes" type="Total Conversion" version="0.75" version_type="HD Sounds" website="https://www.moddb.com/mods/duke-nukem-3d-savior-of-babes">
+	<mod name="Duke Nukem 3D Savior of Babes" id="duke_nukem_3d_savior_of_babes" type="Total Conversion" version="0.85" version_type="HD Sounds" website="https://www.moddb.com/mods/duke-nukem-3d-savior-of-babes">
 		<team>
 			<member name="VGames"/>
 			<member name="Valherran"/>
@@ -11249,15 +11249,34 @@
 					</game>
 				</type>
 			</version>
+			<version id="0.85" release_date="June 19, 2023">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="SOB.CON" size="263363" type="con" sha1="50b7767ac2489d013e0746a1b788cf17dd0e17e5"/>
+						<file name="SOB.def" size="3398" type="def" sha1="8790e79625d0b67cd251ae903c8db384bde3912a"/>
+						<file name="Duke_Nukem_3D_Savior_of_Babes_0.85.zip" size="467922567" type="zip" sha1="4bfa4e8a5c0ec5945de833a97c8b4e41100cf415"/>
+					</game>
+				</type>
+				<type id="HD Sounds">
+					<game type="eDuke32" state="Native">
+						<file name="SOB.CON" size="263363" type="con" sha1="50b7767ac2489d013e0746a1b788cf17dd0e17e5"/>
+						<file name="SOB.def" size="3398" type="def" sha1="8790e79625d0b67cd251ae903c8db384bde3912a"/>
+						<file name="SOB_HD.def" size="30431" type="def" sha1="240b3e3f3e5fbc65b720aaa6820e75e4470d98db"/>
+						<file name="Duke_Nukem_3D_Savior_of_Babes_0.85.zip" size="467922567" type="zip" sha1="4bfa4e8a5c0ec5945de833a97c8b4e41100cf415"/>
+					</game>
+				</type>
+			</version>
 		</versions>
 		<downloads>
 			<download filename="DN3D_SOB_v0.55_3-3-23.zip" filesize="427863577" version="0.55" game="eDuke32" type="Original Files" sha1="2ffdd74467be19620f12b123d898c2a3fbf19a82"/>
 			<download filename="DN3D_SOB_v0.65_4-30-23.zip" filesize="469750233" version="0.65" game="eDuke32" type="Original Files" sha1="85b4ec39ef98c1a16b553a7b7d9e09a6f7d97c00"/>
 			<download filename="DN3D_SOB_v0.65_HOTFIX_5-2-23.zip" filesize="45198" version="0.65 Hotfix" game="eDuke32" type="Original Files" sha1="e4809c6b6b9cd8c6b4b959e8a4d3398231ae37c7"/>
 			<download filename="DN3D_SOB_v0.75_6-19-23.zip" filesize="826313237" version="0.75" game="eDuke32" type="Original Files" sha1="0c86a6bd4e6d7f860ec7a0abfa7902c9a37f93b4"/>
+			<download filename="DN3D_SOB_v0.85_8-3-23.zip" filesize="470906731" version="0.85" game="eDuke32" type="Original Files" sha1="6f91316b4ac258a1dd9dabf5273010a24800ae11"/>
 			<download filename="Duke_Nukem_3D_Savior_of_Babes_0.55-ModMgrE.zip" filesize="403048405" version="0.55" game="eDuke32" type="Mod Manager Files" state="Native" sha1="0e97c68e695beba4b611fb2c28fde5bdc898393c"/>
 			<download filename="Duke_Nukem_3D_Savior_of_Babes_0.65-Hotfix-ModMgrE.zip" filesize="407072879" version="0.65 Hotfix" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b856556c52e3ef320fe329ee824871fd19dcdbd8"/>
 			<download filename="Duke_Nukem_3D_Savior_of_Babes_0.75-ModMgrE.zip" filesize="458172214" version="0.75" game="eDuke32" type="Mod Manager Files" state="Native" sha1="67086baeea2765189d54f09e50f8c1ee09dc8dcd"/>
+			<download filename="Duke_Nukem_3D_Savior_of_Babes_0.85-ModMgrE.zip" filesize="466291648" version="0.85" game="eDuke32" type="Mod Manager Files" state="Native" sha1="375ecef338c5c4f000350e4584fbdc0775443375"/>
 		</downloads>
 	</mod>
 	<mod name="Duke Nukem: Halloween Mayhem" id="duke_nukem_-_halloween_mayhem" type="Total Conversion">
