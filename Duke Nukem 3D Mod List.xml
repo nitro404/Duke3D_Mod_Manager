@@ -11609,7 +11609,7 @@
 			<download filename="Epic_1.00000000000000000000000000000001-ModMgrE.zip" filesize="2076955" version="1.00000000000000000000000000000001" game="Atomic" type="Mod Manager Files" state="Native" sha1="91631fcb07eedb6fcb6d369783ff37c9cfad8535"/>
 		</downloads>
 	</mod>
-	<mod name="Retro Deathmatch" id="retro_deathmatch" type="Dukematch" version="0.053" version_type="Beta" website="https://www.moddb.com/mods/retro-deathmatch">
+	<mod name="Retro Deathmatch" id="retro_deathmatch" type="Dukematch" version="0.055" version_type="Beta" website="https://www.moddb.com/mods/retro-deathmatch">
 		<team>
 			<member name="Graphics" website="https://www.moddb.com/mods/retro-deathmatch" discord="Graphics#8685"/>
 		</team>
@@ -11623,10 +11623,21 @@
 					</game>
 				</type>
 			</version>
+			<version id="0.055" release_date="August 20, 2023">
+				<type id="Beta">
+					<game type="eDuke32" state="Native">
+						<file name="RETRO_DM.CON" size="152212" type="con" sha1="16587f0f64d4f29514c6e7acb7b4c4b5dd4b96af"/>
+						<file name="RETRO_DM.def" size="382010" type="def" sha1="ef3fa44a435dce9e0c98606217f9fae3987dcd0a"/>
+						<file name="Retro_Deathmatch_0.055.zip" size="45925538" type="zip" sha1="02dfce6d4612539dbd7c1b2c03652ab87221345c"/>
+					</game>
+				</type>
+			</version>
 		</versions>
 		<downloads>
 			<download filename="Retro_Deathmatch_v0.053.zip" filesize="24248126" version="0.053" game="eDuke32" type="Original Files" sha1="ad28933a64861738ea01ff29fab35661126960f9"/>
+			<download filename="RetroDeathmatch.v0.055.zip" filesize="46090325" version="0.055" game="eDuke32" type="Original Files" sha1="145ba4f22077d917ee75ff5c81846a982127d36f"/>
 			<download filename="Retro_Deathmatch_0.053-ModMgrE.zip" filesize="21775459" version="0.053" game="eDuke32" type="Mod Manager Files" state="Native" sha1="13814091d6e68e701cfe79d874458469f98e3b1b"/>
+			<download filename="Retro_Deathmatch_0.055-ModMgrE.zip" filesize="43963062" version="0.055" game="eDuke32" type="Mod Manager Files" state="Native" sha1="fb3c76d84d92cadaa41a063e258db95c84c509c8"/>
 		</downloads>
 	</mod>
 	<mod name="WGRealms 2: Siege Breaker" id="wgrealms_2_-_siege_breaker" alias="wg_realms_-_demon_throne" type="Total Conversion" version="1.201" website="https://www.moddb.com/games/wgrealms-2">
