@@ -11,6 +11,7 @@
 class GameVersion;
 class GameVersionCollection;
 class Mod;
+class ModCollection;
 class ModDependency;
 class ModVersion;
 class ModGameVersion;
@@ -58,6 +59,8 @@ public:
 	size_t numberOfDependencies() const;
 	bool hasDependency(const std::string & modID, const std::string & modVersion, const std::string & modVersionType) const;
 	bool hasDependency(const ModDependency & modDependency) const;
+	bool isDependencyOf(const ModVersionType & modVersionType, const ModCollection * mods = nullptr, bool recursiveCheck = false) const;
+	bool matches(const ModDependency & modDependency) const;
 	size_t indexOfDependency(const std::string & modID, const std::string & modVersion, const std::string & modVersionType) const;
 	size_t indexOfDependency(const ModDependency & modDependency) const;
 	std::shared_ptr<ModDependency> getDependency(size_t index) const;

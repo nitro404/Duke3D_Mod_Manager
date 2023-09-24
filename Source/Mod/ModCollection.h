@@ -58,6 +58,10 @@ public:
 	void clearMods();
 	bool copyHiddenPropertiesFrom(const ModCollection & modCollection);
 
+	std::shared_ptr<ModVersionType> getModDependencyVersionType(const ModDependency & modDependency) const;
+	std::vector<std::shared_ptr<ModVersionType>> getModDependencyVersionTypes(const std::vector<std::shared_ptr<ModDependency>> & modDependencies) const;
+	std::vector<std::shared_ptr<ModVersionType>> getModDependencyVersionTypes(const ModVersionType & modVersionType) const;
+	std::vector<std::shared_ptr<ModVersionType>> getModDependencyVersionTypes(const ModGameVersion & modGameVersion) const;
 	std::shared_ptr<ModGameVersion> getModDependencyGameVersion(const ModDependency & modDependency, const std::string & gameVersionID, const GameVersionCollection * gameVersions = nullptr, bool allowCompatibleGameVersions = true) const;
 	std::vector<std::shared_ptr<ModGameVersion>> getModDependencyGameVersions(const std::vector<std::shared_ptr<ModDependency>> & modDependencies, const std::string & gameVersionID, const GameVersionCollection * gameVersions = nullptr, bool allowCompatibleGameVersions = true) const;
 	std::vector<std::shared_ptr<ModGameVersion>> getModDependencyGameVersions(const ModGameVersion & modGameVersion, const GameVersionCollection * gameVersions = nullptr, bool allowCompatibleGameVersions = true) const;

@@ -3,6 +3,7 @@
 #include "Game/GameVersion.h"
 #include "Game/GameVersionCollection.h"
 #include "Mod.h"
+#include "ModCollection.h"
 #include "ModDependency.h"
 #include "ModVersion.h"
 #include "ModGameVersion.h"
@@ -315,6 +316,44 @@ bool ModVersionType::hasDependency(const std::string & modID, const std::string 
 
 bool ModVersionType::hasDependency(const ModDependency & modDependency) const {
 	return indexOfDependency(modDependency) != std::numeric_limits<size_t>::max();
+}
+
+bool ModVersionType::isDependencyOf(const ModVersionType & modVersionType, const ModCollection * mods, bool recursiveCheck) const {
+	for(const std::shared_ptr<ModDependency> & modDependency : modVersionType.m_dependencies) {
+		if(matches(*modDependency)) {
+			return true;
+		}
+	}
+
+	if(recursiveCheck) {
+		if(!ModCollection::isValid(mods, nullptr, true)) {
+			spdlog::warn("Cannot recursively check mod version type dependencies, invalid mod collection provided.");
+			return false;
+		}
+
+		std::vector<std::shared_ptr<ModVersionType>> modDependencyVersionTypes(mods->getModDependencyVersionTypes(modVersionType));
+
+		for(const std::shared_ptr<ModVersionType> & modDependencyVersionType : modDependencyVersionTypes) {
+			if(isDependencyOf(*modDependencyVersionType, mods, true)) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+bool ModVersionType::matches(const ModDependency & modDependency) const {
+	const Mod * parentMod = getParentMod();
+	const ModVersion * parentModVersion = getParentModVersion();
+
+	if(parentMod == nullptr || parentModVersion == nullptr) {
+		return false;
+	}
+
+	return Utilities::areStringsEqualIgnoreCase(modDependency.getID(), parentMod->getID()) &&
+		   Utilities::areStringsEqualIgnoreCase(modDependency.getVersion(), parentModVersion->getVersion()) &&
+		   Utilities::areStringsEqualIgnoreCase(modDependency.getVersionType(), m_type);
 }
 
 size_t ModVersionType::indexOfDependency(const std::string & modID, const std::string & modVersion, const std::string & modVersionType) const {

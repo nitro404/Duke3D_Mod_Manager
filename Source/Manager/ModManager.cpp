@@ -4080,9 +4080,12 @@ size_t ModManager::checkForUnlinkedModFilesForGameVersion(const GameVersion & ga
 
 				for(std::vector<std::shared_ptr<ModFile>>::const_iterator k = j + 1; k != i->second.end(); ++k) {
 					if((*j)->getParentMod() != (*k)->getParentMod()) {
-						multipleLinkedFile = true;
+						if(!(*j)->getParentModVersionType()->isDependencyOf(*(*k)->getParentModVersionType(), m_mods.get(), true) &&
+						   !(*k)->getParentModVersionType()->isDependencyOf(*(*j)->getParentModVersionType(), m_mods.get(), true)) {
+							multipleLinkedFile = true;
 
-						break;
+							break;
+						}
 					}
 					else if((*j)->getParentModVersion() != (*k)->getParentModVersion()) {
 						if(!(*j)->isShared() || !(*k)->isShared()) {
