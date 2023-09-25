@@ -540,6 +540,18 @@ bool DOSBoxManagerPanel::installDOSBoxVersion(size_t index) {
 		return false;
 	}
 
+	SettingsManager * settings = SettingsManager::getInstance();
+
+	if(!settings->dosboxDisclaimerAcknowledged) {
+		int result = wxMessageBox("By default the latest DOSBox application version will be automatically downloaded externally from the official website. While this is generally quite safe, I assume no responsibility for any damages incurred as a result of this in the case that the website is compromised or malicious files are distributed on it. Do you understand the risk and wish to proceed?", "Comfirm Installation", wxOK | wxCANCEL | wxICON_WARNING, this);
+
+		if(result == wxCANCEL) {
+			return false;
+		}
+
+		settings->dosboxDisclaimerAcknowledged = true;
+	}
+
 	wxDirDialog selectInstallDirectoryDialog(this, "Install DOSBox to Directory", std::filesystem::current_path().string(), wxDD_DIR_MUST_EXIST, wxDefaultPosition, wxDefaultSize, "Install DOSBox");
 	int selectInstallDirectoryResult = selectInstallDirectoryDialog.ShowModal();
 

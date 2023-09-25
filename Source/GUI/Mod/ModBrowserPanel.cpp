@@ -8,6 +8,7 @@
 #include "Info/ModInfoPanel.h"
 #include "Manager/ModManager.h"
 #include "Manager/ModMatch.h"
+#include "Manager/SettingsManager.h"
 #include "Mod/FavouriteModCollection.h"
 #include "Mod/Mod.h"
 #include "Mod/ModAuthorInformation.h"
@@ -1342,6 +1343,7 @@ void ModBrowserPanel::onLaunchButtonPressed(wxCommandEvent & event) {
 		}
 	}
 
+	SettingsManager * settings = SettingsManager::getInstance();
 	bool standAlone = false;
 	std::shared_ptr<StandAloneMod> standAloneMod;
 	std::shared_ptr<StandAloneModCollection> standAloneMods(m_modManager->getStandAloneMods());
@@ -1361,6 +1363,16 @@ void ModBrowserPanel::onLaunchButtonPressed(wxCommandEvent & event) {
 			standAloneMod = standAloneMods->getStandAloneMod(*selectedModGameVersion);
 
 			if(standAloneMod == nullptr) {
+				if(!settings->standAloneModDisclaimerAcknowledged) {
+					int result = wxMessageBox("Stand-alone mods bring their own game executable file(s), which will be executed while playing. While this is generally quite safe as all mods are manually curated, vetted, and scanned for viruses or trojans, I assume no responsibility for any damages incurred as a result of this in the case that something does slip through this process. Do you understand the risk and wish to proceed?", "Comfirm Installation", wxOK | wxCANCEL | wxICON_WARNING, this);
+
+					if(result == wxCANCEL) {
+						return;
+					}
+
+					settings->standAloneModDisclaimerAcknowledged = true;
+				}
+
 				wxDirDialog selectInstallDirectoryDialog(this, "Install Stand-Alone Mod to Directory", std::filesystem::current_path().string(), wxDD_DIR_MUST_EXIST, wxDefaultPosition, wxDefaultSize, "Install Stand-Alone Mod");
 				int selectInstallDirectoryResult = selectInstallDirectoryDialog.ShowModal();
 

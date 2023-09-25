@@ -172,6 +172,9 @@ public:
 	std::chrono::minutes cacertUpdateFrequency;
 	std::optional<std::chrono::time_point<std::chrono::system_clock>> timeZoneDataLastDownloadedTimestamp;
 	std::chrono::minutes timeZoneDataUpdateFrequency;
+	bool gameDisclaimerAcknowledged;
+	bool dosboxDisclaimerAcknowledged;
+	bool standAloneModDisclaimerAcknowledged;
 	Point2D windowPosition;
 	Dimension windowSize;
 

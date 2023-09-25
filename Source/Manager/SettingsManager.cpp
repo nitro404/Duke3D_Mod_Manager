@@ -132,6 +132,14 @@ static constexpr const char * CACERT_UPDATE_FREQUENCY_PROPERTY_NAME = "cacertUpd
 static constexpr const char * TIME_ZONE_DATA_LAST_DOWNLOADED_PROPERTY_NAME = "timeZoneDataLastDownloaded";
 static constexpr const char * TIME_ZONE_DATA_UPDATE_FREQUENCY_PROPERTY_NAME = "timeZoneDataUpdateFrequency";
 
+static constexpr const char * NOTIFICATIONS_CATEGORY_NAME = "notifications";
+
+static constexpr const char * NOTIFICATIONS_DISCLAIMERS_CATEGORY_NAME = "disclaimers";
+
+static constexpr const char * DISCLAIMER_GAME_PROPERTY_NAME = "game";
+static constexpr const char * DISCLAIMER_DOSBOX_PROPERTY_NAME = "dosbox";
+static constexpr const char * DISCLAIMER_STAND_ALONE_MOD_PROPERTY_NAME = "standAloneMod";
+
 static constexpr const char * WINDOW_CATEGORY_NAME = "window";
 
 static constexpr const char * WINDOW_POSITION_PROPERTY_NAME = "position";
@@ -375,6 +383,9 @@ SettingsManager::SettingsManager()
 	, gameDownloadListUpdateFrequency(DEFAULT_GAME_DOWNLOAD_LIST_UPDATE_FREQUENCY)
 	, cacertUpdateFrequency(DEFAULT_CACERT_UPDATE_FREQUENCY)
 	, timeZoneDataUpdateFrequency(DEFAULT_TIME_ZONE_DATA_UPDATE_FREQUENCY)
+	, gameDisclaimerAcknowledged(false)
+	, dosboxDisclaimerAcknowledged(false)
+	, standAloneModDisclaimerAcknowledged(false)
 	, windowPosition(DEFAULT_WINDOW_POSITION)
 	, windowSize(DEFAULT_WINDOW_SIZE)
 	, m_filePath(DEFAULT_SETTINGS_FILE_PATH) { }
@@ -452,6 +463,9 @@ void SettingsManager::reset() {
 	cacertUpdateFrequency = DEFAULT_CACERT_UPDATE_FREQUENCY;
 	timeZoneDataLastDownloadedTimestamp.reset();
 	timeZoneDataUpdateFrequency = DEFAULT_TIME_ZONE_DATA_UPDATE_FREQUENCY;
+	gameDisclaimerAcknowledged = false;
+	dosboxDisclaimerAcknowledged = false;
+	standAloneModDisclaimerAcknowledged = false;
 	windowPosition = DEFAULT_WINDOW_POSITION;
 	windowSize = DEFAULT_WINDOW_SIZE;
 	fileETags.clear();
@@ -689,6 +703,18 @@ rapidjson::Document SettingsManager::toJSON() const {
 	downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(TIME_ZONE_DATA_UPDATE_FREQUENCY_PROPERTY_NAME), rapidjson::Value(timeZoneDataUpdateFrequency.count()), allocator);
 
 	settingsDocument.AddMember(rapidjson::StringRef(DOWNLOAD_THROTTLING_CATEGORY_NAME), downloadThrottlingCategoryValue, allocator);
+
+	rapidjson::Value notificationsCategoryValue(rapidjson::kObjectType);
+
+	rapidjson::Value disclaimersCategoryValue(rapidjson::kObjectType);
+
+	disclaimersCategoryValue.AddMember(rapidjson::StringRef(DISCLAIMER_GAME_PROPERTY_NAME), rapidjson::Value(gameDisclaimerAcknowledged), allocator);
+	disclaimersCategoryValue.AddMember(rapidjson::StringRef(DISCLAIMER_DOSBOX_PROPERTY_NAME), rapidjson::Value(dosboxDisclaimerAcknowledged), allocator);
+	disclaimersCategoryValue.AddMember(rapidjson::StringRef(DISCLAIMER_STAND_ALONE_MOD_PROPERTY_NAME), rapidjson::Value(standAloneModDisclaimerAcknowledged), allocator);
+
+	notificationsCategoryValue.AddMember(rapidjson::StringRef(NOTIFICATIONS_DISCLAIMERS_CATEGORY_NAME), disclaimersCategoryValue, allocator);
+
+	settingsDocument.AddMember(rapidjson::StringRef(NOTIFICATIONS_CATEGORY_NAME), notificationsCategoryValue, allocator);
 
 	rapidjson::Value windowCategoryValue(rapidjson::kObjectType);
 
@@ -943,6 +969,18 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 		assignChronoSetting(cacertUpdateFrequency, downloadThrottlingValue, CACERT_UPDATE_FREQUENCY_PROPERTY_NAME);
 		assignOptionalTimePointSetting(timeZoneDataLastDownloadedTimestamp, downloadThrottlingValue, TIME_ZONE_DATA_LAST_DOWNLOADED_PROPERTY_NAME);
 		assignChronoSetting(timeZoneDataUpdateFrequency, downloadThrottlingValue, TIME_ZONE_DATA_UPDATE_FREQUENCY_PROPERTY_NAME);
+	}
+
+	if(settingsDocument.HasMember(NOTIFICATIONS_CATEGORY_NAME) && settingsDocument[NOTIFICATIONS_CATEGORY_NAME].IsObject()) {
+		const rapidjson::Value & notificationsValue = settingsDocument[NOTIFICATIONS_CATEGORY_NAME];
+
+		if(notificationsValue.HasMember(NOTIFICATIONS_DISCLAIMERS_CATEGORY_NAME) && notificationsValue[NOTIFICATIONS_DISCLAIMERS_CATEGORY_NAME].IsObject()) {
+			const rapidjson::Value & disclaimersValue = notificationsValue[NOTIFICATIONS_DISCLAIMERS_CATEGORY_NAME];
+
+			assignBooleanSetting(gameDisclaimerAcknowledged, disclaimersValue, DISCLAIMER_GAME_PROPERTY_NAME);
+			assignBooleanSetting(dosboxDisclaimerAcknowledged, disclaimersValue, DISCLAIMER_DOSBOX_PROPERTY_NAME);
+			assignBooleanSetting(standAloneModDisclaimerAcknowledged, disclaimersValue, DISCLAIMER_STAND_ALONE_MOD_PROPERTY_NAME);
+		}
 	}
 
 	if(settingsDocument.HasMember(WINDOW_CATEGORY_NAME) && settingsDocument[WINDOW_CATEGORY_NAME].IsObject()) {
