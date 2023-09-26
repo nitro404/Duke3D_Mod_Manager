@@ -97,6 +97,27 @@ void ModManagerApplication::initialize() {
 
 	LogSystem::getInstance()->addLogSink(m_logSinkWX);
 
+	SettingsManager * settings = SettingsManager::getInstance();
+
+	settings->load(m_arguments.get());
+
+	if(!settings->analyticsConfirmationAcknowledged) {
+		int result = wxMessageBox("Do you consent to the collection of anonymous application usage statistics for the sole purpose of improving application functionality? This information is completely anonymous, non-intrusive, never shared, and extremely helpful to better understand if the application is used at all, what features are used most, or under utilized. Analytics can be enabled or disabled at any time from the application settings screen. Collected information includes:\n- Internal application state and version\n- Application configuration parameters\n- Generalized usage statistics\n- Hardware information\n- Operating system type and version\n- Locale and time zone\n- Coarse location accurate to city only", "Enable Analytics", wxYES_NO | wxCANCEL | wxICON_QUESTION, nullptr);
+
+		if(result == wxYES) {
+			settings->segmentAnalyticsEnabled = true;
+		}
+		else if(result == wxNO) {
+			settings->segmentAnalyticsEnabled = false;
+		}
+		else if(result == wxCANCEL) {
+			m_modManagerFrame->Close();
+			return;
+		}
+
+		settings->analyticsConfirmationAcknowledged = true;
+	}
+
 	std::string baseInitializationMessage(fmt::format("{} is initializing, please wait...", APPLICATION_NAME));
 
 	std::unique_ptr<wxProgressDialog> initializingProgressDialog(std::make_unique<wxProgressDialog>(

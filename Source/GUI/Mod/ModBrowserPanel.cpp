@@ -1364,7 +1364,7 @@ void ModBrowserPanel::onLaunchButtonPressed(wxCommandEvent & event) {
 
 			if(standAloneMod == nullptr) {
 				if(!settings->standAloneModDisclaimerAcknowledged) {
-					int result = wxMessageBox("Stand-alone mods bring their own game executable file(s), which will be executed while playing. While this is generally quite safe as all mods are manually curated, vetted, and scanned for viruses or trojans, I assume no responsibility for any damages incurred as a result of this in the case that something does slip through this process. Do you understand the risk and wish to proceed?", "Comfirm Installation", wxOK | wxCANCEL | wxICON_WARNING, this);
+					int result = wxMessageBox("Stand-alone mods bring their own game executable file(s), which will be executed while playing. While this is generally quite safe as all mods are manually curated, vetted, and scanned for viruses / trojans, I assume no responsibility for any damages incurred as a result of this in the case that something does slip through this process. Do you understand the risk and wish to proceed?", "Comfirm Installation", wxOK | wxCANCEL | wxICON_WARNING, this);
 
 					if(result == wxCANCEL) {
 						return;

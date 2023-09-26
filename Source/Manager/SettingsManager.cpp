@@ -134,6 +134,8 @@ static constexpr const char * TIME_ZONE_DATA_UPDATE_FREQUENCY_PROPERTY_NAME = "t
 
 static constexpr const char * NOTIFICATIONS_CATEGORY_NAME = "notifications";
 
+static constexpr const char * NOTIFICATIONS_ANALYTICS_CONFIRMATION_PROPERTY_NAME = "analyticsConfirmation";
+
 static constexpr const char * NOTIFICATIONS_DISCLAIMERS_CATEGORY_NAME = "disclaimers";
 
 static constexpr const char * DISCLAIMER_GAME_PROPERTY_NAME = "game";
@@ -383,11 +385,13 @@ SettingsManager::SettingsManager()
 	, gameDownloadListUpdateFrequency(DEFAULT_GAME_DOWNLOAD_LIST_UPDATE_FREQUENCY)
 	, cacertUpdateFrequency(DEFAULT_CACERT_UPDATE_FREQUENCY)
 	, timeZoneDataUpdateFrequency(DEFAULT_TIME_ZONE_DATA_UPDATE_FREQUENCY)
+	, analyticsConfirmationAcknowledged(false)
 	, gameDisclaimerAcknowledged(false)
 	, dosboxDisclaimerAcknowledged(false)
 	, standAloneModDisclaimerAcknowledged(false)
 	, windowPosition(DEFAULT_WINDOW_POSITION)
 	, windowSize(DEFAULT_WINDOW_SIZE)
+	, m_loaded(false)
 	, m_filePath(DEFAULT_SETTINGS_FILE_PATH) { }
 
 SettingsManager::~SettingsManager() = default;
@@ -463,6 +467,7 @@ void SettingsManager::reset() {
 	cacertUpdateFrequency = DEFAULT_CACERT_UPDATE_FREQUENCY;
 	timeZoneDataLastDownloadedTimestamp.reset();
 	timeZoneDataUpdateFrequency = DEFAULT_TIME_ZONE_DATA_UPDATE_FREQUENCY;
+	analyticsConfirmationAcknowledged = false;
 	gameDisclaimerAcknowledged = false;
 	dosboxDisclaimerAcknowledged = false;
 	standAloneModDisclaimerAcknowledged = false;
@@ -705,6 +710,8 @@ rapidjson::Document SettingsManager::toJSON() const {
 	settingsDocument.AddMember(rapidjson::StringRef(DOWNLOAD_THROTTLING_CATEGORY_NAME), downloadThrottlingCategoryValue, allocator);
 
 	rapidjson::Value notificationsCategoryValue(rapidjson::kObjectType);
+
+	notificationsCategoryValue.AddMember(rapidjson::StringRef(NOTIFICATIONS_ANALYTICS_CONFIRMATION_PROPERTY_NAME), rapidjson::Value(analyticsConfirmationAcknowledged), allocator);
 
 	rapidjson::Value disclaimersCategoryValue(rapidjson::kObjectType);
 
@@ -974,6 +981,8 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 	if(settingsDocument.HasMember(NOTIFICATIONS_CATEGORY_NAME) && settingsDocument[NOTIFICATIONS_CATEGORY_NAME].IsObject()) {
 		const rapidjson::Value & notificationsValue = settingsDocument[NOTIFICATIONS_CATEGORY_NAME];
 
+		assignBooleanSetting(analyticsConfirmationAcknowledged, notificationsValue, NOTIFICATIONS_ANALYTICS_CONFIRMATION_PROPERTY_NAME);
+
 		if(notificationsValue.HasMember(NOTIFICATIONS_DISCLAIMERS_CATEGORY_NAME) && notificationsValue[NOTIFICATIONS_DISCLAIMERS_CATEGORY_NAME].IsObject()) {
 			const rapidjson::Value & disclaimersValue = notificationsValue[NOTIFICATIONS_DISCLAIMERS_CATEGORY_NAME];
 
@@ -999,6 +1008,10 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 	}
 
 	return true;
+}
+
+bool SettingsManager::isLoaded() const {
+	return m_loaded;
 }
 
 bool SettingsManager::load(const ArgumentParser * arguments, bool autoCreate) {
@@ -1065,6 +1078,8 @@ bool SettingsManager::loadFrom(const std::string & filePath, bool autoCreate) {
 	}
 
 	spdlog::info("Settings successfully loaded from file '{}'.", filePath);
+
+	m_loaded = true;
 
 	return true;
 }

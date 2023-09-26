@@ -25,6 +25,7 @@ public:
 	rapidjson::Document toJSON() const;
 	bool parseFrom(const rapidjson::Value & settingsDocument);
 
+	bool isLoaded() const;
 	bool load(const ArgumentParser * arguments = nullptr, bool autoCreate = true);
 	bool save(bool overwrite = true) const;
 	bool loadFrom(const std::string & filePath, bool autoCreate = true);
@@ -172,6 +173,7 @@ public:
 	std::chrono::minutes cacertUpdateFrequency;
 	std::optional<std::chrono::time_point<std::chrono::system_clock>> timeZoneDataLastDownloadedTimestamp;
 	std::chrono::minutes timeZoneDataUpdateFrequency;
+	bool analyticsConfirmationAcknowledged;
 	bool gameDisclaimerAcknowledged;
 	bool dosboxDisclaimerAcknowledged;
 	bool standAloneModDisclaimerAcknowledged;
@@ -184,6 +186,7 @@ private:
 	SettingsManager(const SettingsManager &) = delete;
 	const SettingsManager & operator = (const SettingsManager &) = delete;
 
+	bool m_loaded;
 	std::string m_filePath;
 };
 

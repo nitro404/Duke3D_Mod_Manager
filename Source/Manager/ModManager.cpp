@@ -253,7 +253,9 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 
 	SettingsManager * settings = SettingsManager::getInstance();
 
-	settings->load(m_arguments.get());
+	if(!settings->isLoaded()) {
+		settings->load(m_arguments.get());
+	}
 
 	if(settings->localMode && !localModeSet) {
 		m_localMode = true;
