@@ -581,7 +581,7 @@ bool DOSBoxManagerPanel::installDOSBoxVersion(size_t index) {
 		break;
 	}
 
-	m_installProgressDialog = new wxProgressDialog("Installing", fmt::format("Installing '{}', please wait...", dosboxVersion->getLongName()), 100, this, wxPD_REMAINING_TIME);
+	m_installProgressDialog = new wxProgressDialog("Installing", fmt::format("Installing '{}', please wait...", dosboxVersion->getLongName()), 101, this, wxPD_REMAINING_TIME);
 	m_installProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
 
 	boost::signals2::connection installStatusChangedConnection(dosboxManager->installStatusChanged.connect([this](const std::string & statusMessage) {
@@ -590,7 +590,7 @@ bool DOSBoxManagerPanel::installDOSBoxVersion(size_t index) {
 
 	boost::signals2::connection dosboxDownloadProgressConnection(dosboxManager->dosboxDownloadProgress.connect([this](DOSBoxVersion & dosboxVersion, HTTPRequest & request, size_t numberOfBytesDownloaded, size_t totalNumberOfBytes) {
 		QueueEvent(new DOSBoxInstallProgressEvent(
-			static_cast<uint8_t>(static_cast<double>(numberOfBytesDownloaded) / static_cast<double>(totalNumberOfBytes) * 100.0),
+			static_cast<int>(static_cast<double>(numberOfBytesDownloaded) / static_cast<double>(totalNumberOfBytes) * 100.0),
 			fmt::format("Downloaded {} / {} of '{}' application files from: '{}'.", Utilities::fileSizeToString(numberOfBytesDownloaded), Utilities::fileSizeToString(totalNumberOfBytes), dosboxVersion.getLongName(), request.getUrl())
 		));
 	}));

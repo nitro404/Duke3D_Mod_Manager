@@ -507,7 +507,7 @@ bool GameManagerPanel::installGameVersion(size_t index) {
 
 	bool groupFileDownloaded = m_gameManager->isGroupFileDownloaded(gameVersion->getID());
 
-	m_installProgressDialog = new wxProgressDialog("Installing", fmt::format("Installing '{}', please wait...", gameVersion->getLongName()), 100, this, wxPD_REMAINING_TIME);
+	m_installProgressDialog = new wxProgressDialog("Installing", fmt::format("Installing '{}', please wait...", gameVersion->getLongName()), 101, this, wxPD_REMAINING_TIME);
 	m_installProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
 
 	boost::signals2::connection installStatusChangedConnection(m_gameManager->installStatusChanged.connect([this](const std::string & statusMessage) {
@@ -516,7 +516,7 @@ bool GameManagerPanel::installGameVersion(size_t index) {
 
 	boost::signals2::connection gameDownloadProgressConnection(m_gameManager->gameDownloadProgress.connect([this, groupFileDownloaded](GameVersion & gameVersion, HTTPRequest & request, size_t numberOfBytesDownloaded, size_t totalNumberOfBytes) {
 		QueueEvent(new GameInstallProgressEvent(
-			static_cast<uint8_t>(static_cast<double>(numberOfBytesDownloaded) / static_cast<double>(totalNumberOfBytes) * (groupFileDownloaded ? 100.0 : 50.0)),
+			static_cast<int>(static_cast<double>(numberOfBytesDownloaded) / static_cast<double>(totalNumberOfBytes) * (groupFileDownloaded ? 100.0 : 50.0)),
 			fmt::format("Downloaded {} / {} of '{}' game files from: '{}'.", Utilities::fileSizeToString(numberOfBytesDownloaded), Utilities::fileSizeToString(totalNumberOfBytes), gameVersion.getLongName(), request.getUrl())
 		));
 	}));
@@ -526,7 +526,7 @@ bool GameManagerPanel::installGameVersion(size_t index) {
 	if(!groupFileDownloaded) {
 		groupDownloadProgressConnection = m_gameManager->groupDownloadProgress.connect([this](GameVersion & gameVersion, HTTPRequest & request, size_t numberOfBytesDownloaded, size_t totalNumberOfBytes) {
 			QueueEvent(new GameInstallProgressEvent(
-				static_cast<uint8_t>(static_cast<double>(numberOfBytesDownloaded) / static_cast<double>(totalNumberOfBytes) * 50.0) + 50,
+				static_cast<int>(static_cast<double>(numberOfBytesDownloaded) / static_cast<double>(totalNumberOfBytes) * 50.0) + 50,
 				fmt::format("Downloaded {} / {} of '{}' group file from: '{}'.", Utilities::fileSizeToString(numberOfBytesDownloaded), Utilities::fileSizeToString(totalNumberOfBytes), m_gameManager->getGroupGameVersion(gameVersion.getID())->getLongName(), request.getUrl())
 			));
 		});
