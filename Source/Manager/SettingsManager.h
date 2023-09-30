@@ -41,6 +41,7 @@ public:
 	static const std::string DEFAULT_GAME_DOWNLOADS_LIST_FILE_PATH;
 	static const std::string DEFAULT_GAME_SYMLINK_NAME;
 	static const bool DEFAULT_LOCAL_MODE;
+	static const bool DEFAULT_DEMO_EXTRACTION_ENABLED;
 	static const std::string DEFAULT_MODS_DIRECTORY_PATH;
 	static const std::string DEFAULT_MODS_SYMLINK_NAME;
 	static const std::string DEFAULT_MOD_PACKAGE_DOWNLOADS_DIRECTORY_PATH;
@@ -110,6 +111,7 @@ public:
 	std::string gameDownloadsListFilePath;
 	std::string gameSymlinkName;
 	bool localMode;
+	bool demoExtractionEnabled;
 	std::string modsDirectoryPath;
 	std::string modsSymlinkName;
 	std::string modPackageDownloadsDirectoryPath;

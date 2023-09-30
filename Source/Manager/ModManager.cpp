@@ -125,7 +125,7 @@ ModManager::ModManager()
 	: Application()
 	, m_initialized(false)
 	, m_initializing(false)
-	, m_localMode(false)
+	, m_localMode(SettingsManager::DEFAULT_LOCAL_MODE)
 	, m_shouldRunSelectedMod(false)
 	, m_demoRecordingEnabled(false)
 	, m_gameType(ModManager::DEFAULT_GAME_TYPE)
@@ -2614,7 +2614,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 	std::map<std::string, std::unique_ptr<ByteBuffer>, FileNameComparator> demoFiles;
 
-	if(doesRequireCombinedGroup || !m_demoRecordingEnabled) {
+	if(doesRequireCombinedGroup || (!m_demoRecordingEnabled && settings->demoExtractionEnabled)) {
 		if(doesRequireCombinedGroup) {
 			if(doesRequireCombinedZip) {
 				if(!selectedGameVersion->areZipArchiveGroupsSupported()) {
@@ -2717,7 +2717,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 					std::unique_ptr<ByteBuffer> modZipEntryData(modZipEntry->getData());
 
-					if(Utilities::hasFileExtension(modZipEntry->getPath(), "dmo")) {
+					if(settings->demoExtractionEnabled && Utilities::hasFileExtension(modZipEntry->getPath(), "dmo")) {
 						demoFiles.emplace(modZipEntry->getPath(), std::make_unique<ByteBuffer>(*modZipEntryData));
 					}
 
@@ -2743,7 +2743,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 				for(size_t i = 0; i < modGroup->numberOfFiles(); i++) {
 					groupFile = modGroup->getFile(i);
 
-					if(Utilities::hasFileExtension(groupFile->getFileName(), "dmo")) {
+					if(settings->demoExtractionEnabled && Utilities::hasFileExtension(groupFile->getFileName(), "dmo")) {
 						demoFiles.emplace(groupFile->getFileName(), std::make_unique<ByteBuffer>(groupFile->getData()));
 					}
 
@@ -2982,22 +2982,26 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 			installedModInfo->addOriginalFile(originalRenamedDemoFilePath);
 		}
 
-		size_t numberOfDemoFilesWritten = 0;
-		size_t demoFileNumber = 1;
+		if(settings->demoExtractionEnabled) {
+			size_t numberOfDemoFilesWritten = 0;
+			size_t demoFileNumber = 1;
 
-		for(std::map<std::string, std::unique_ptr<ByteBuffer>, FileNameComparator>::const_iterator i = demoFiles.cbegin(); i != demoFiles.cend(); ++i) {
-			if(i->second->writeTo(Utilities::joinPaths(selectedGameVersion->getGamePath(), i->first))) {
-				numberOfDemoFilesWritten++;
-				installedModInfo->addModFile(i->first);
+			for(std::map<std::string, std::unique_ptr<ByteBuffer>, FileNameComparator>::const_iterator i = demoFiles.cbegin(); i != demoFiles.cend(); ++i) {
+				if(i->second->writeTo(Utilities::joinPaths(selectedGameVersion->getGamePath(), i->first))) {
+					numberOfDemoFilesWritten++;
+					installedModInfo->addModFile(i->first);
 
-				spdlog::debug("Wrote demo #{}/{} '{}' to game directory '{}'.", demoFileNumber++, demoFiles.size(), i->first, selectedGameVersion->getGamePath());
+					spdlog::debug("Wrote demo #{}/{} '{}' to game directory '{}'.", demoFileNumber++, demoFiles.size(), i->first, selectedGameVersion->getGamePath());
+				}
+				else {
+					spdlog::warn("Failed to write '{}' demo file to game directory '{}'.", i->first, selectedGameVersion->getGamePath());
+				}
 			}
-			else {
-				spdlog::warn("Failed to write '{}' demo file to game directory '{}'.", i->first, selectedGameVersion->getGamePath());
-			}
+
+			demoFiles.clear();
+
+			spdlog::info("Wrote {} demo{} to game directory '{}'.", numberOfDemoFilesWritten, numberOfDemoFilesWritten == 1 ? "" : "s", selectedGameVersion->getGamePath());
 		}
-
-		spdlog::info("Wrote {} demo{} to game directory '{}'.", numberOfDemoFilesWritten, numberOfDemoFilesWritten == 1 ? "" : "s", selectedGameVersion->getGamePath());
 	}
 
 	if(combinedGroup != nullptr || combinedZip != nullptr) {

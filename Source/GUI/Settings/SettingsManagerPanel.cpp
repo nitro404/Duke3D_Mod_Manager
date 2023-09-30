@@ -62,6 +62,7 @@ SettingsManagerPanel::SettingsManagerPanel(std::shared_ptr<ModManager> modManage
 	m_preferredGameVersionSettingPanel = SettingPanel::createStringChoiceSettingPanel(settings->preferredGameVersionID, SettingsManager::DEFAULT_PREFERRED_GAME_VERSION_ID, "Preferred Game Version", gameVersions->getGameVersionShortNames(false), generalSettingsPanel, generalSettingsSizer, gameVersions->getGameVersionIdentifiers());
 	m_settingsPanels.push_back(m_preferredGameVersionSettingPanel);
 	m_settingsPanels.push_back(SettingPanel::createEnumSettingPanel<GameType>(settings->gameType, SettingsManager::DEFAULT_GAME_TYPE, "Game Type", generalSettingsPanel, generalSettingsSizer));
+	m_settingsPanels.push_back(SettingPanel::createBooleanSettingPanel(settings->demoExtractionEnabled, SettingsManager::DEFAULT_DEMO_EXTRACTION_ENABLED, "Extract Demos", generalSettingsPanel, generalSettingsSizer));
 
 	wxWrapSizer * downloadsSettingsSizer = new wxWrapSizer(wrapSizerOrientation);
 	wxStaticBox * downloadsSettingsBox = new wxStaticBox(this, wxID_ANY, "Downloads", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Downloads");

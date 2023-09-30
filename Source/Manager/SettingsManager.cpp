@@ -40,6 +40,7 @@ static constexpr const char * GAME_TEMP_DIRECTORY_NAME_PROPERTY_NAME = "gameTemp
 static constexpr const char * TEMP_SYMLINK_NAME_PROPERTY_NAME = "tempSymlinkName";
 static constexpr const char * GAME_SYMLINK_NAME_PROPERTY_NAME = "gameSymlinkName";
 static constexpr const char * LOCAL_MODE_PROPERTY_NAME = "localMode";
+static constexpr const char * DEMO_EXTRACTION_ENABLED_PROPERTY_NAME = "demoExtractionEnabled";
 
 static constexpr const char * GAME_VERSIONS_CATEGORY_NAME = "gameVersions";
 static constexpr const char * GAME_VERSIONS_LIST_FILE_PATH_PROPERTY_NAME = LIST_FILE_PATH;
@@ -157,6 +158,7 @@ const std::string SettingsManager::DEFAULT_GAME_VERSIONS_LIST_FILE_PATH("Duke Nu
 const std::string SettingsManager::DEFAULT_GAME_DOWNLOADS_LIST_FILE_PATH("Duke Nukem 3D Game Downloads.json");
 const std::string SettingsManager::DEFAULT_GAME_SYMLINK_NAME("Game");
 const bool SettingsManager::DEFAULT_LOCAL_MODE = false;
+const bool SettingsManager::DEFAULT_DEMO_EXTRACTION_ENABLED = false;
 const std::string SettingsManager::DEFAULT_MODS_DIRECTORY_PATH("Mods");
 const std::string SettingsManager::DEFAULT_MODS_SYMLINK_NAME("DNMMMods");
 const std::string SettingsManager::DEFAULT_MOD_PACKAGE_DOWNLOADS_DIRECTORY_PATH("");
@@ -328,6 +330,7 @@ SettingsManager::SettingsManager()
 	, gameDownloadsListFilePath(DEFAULT_GAME_DOWNLOADS_LIST_FILE_PATH)
 	, gameSymlinkName(DEFAULT_GAME_SYMLINK_NAME)
 	, localMode(DEFAULT_LOCAL_MODE)
+	, demoExtractionEnabled(DEFAULT_DEMO_EXTRACTION_ENABLED)
 	, modsDirectoryPath(DEFAULT_MODS_DIRECTORY_PATH)
 	, modsSymlinkName(DEFAULT_MODS_SYMLINK_NAME)
 	, modPackageDownloadsDirectoryPath(DEFAULT_MOD_PACKAGE_DOWNLOADS_DIRECTORY_PATH)
@@ -404,6 +407,7 @@ void SettingsManager::reset() {
 	gameDownloadsListFilePath = DEFAULT_GAME_DOWNLOADS_LIST_FILE_PATH;
 	gameSymlinkName = DEFAULT_GAME_SYMLINK_NAME;
 	localMode = DEFAULT_LOCAL_MODE;
+	demoExtractionEnabled = DEFAULT_DEMO_EXTRACTION_ENABLED;
 	modsDirectoryPath = DEFAULT_MODS_DIRECTORY_PATH;
 	modsSymlinkName = DEFAULT_MODS_SYMLINK_NAME;
 	modPackageDownloadsDirectoryPath = DEFAULT_MOD_PACKAGE_DOWNLOADS_DIRECTORY_PATH;
@@ -501,6 +505,7 @@ rapidjson::Document SettingsManager::toJSON() const {
 	rapidjson::Value gameSymlinkNameValue(gameSymlinkName.c_str(), allocator);
 	settingsDocument.AddMember(rapidjson::StringRef(GAME_SYMLINK_NAME_PROPERTY_NAME), gameSymlinkNameValue, allocator);
 	settingsDocument.AddMember(rapidjson::StringRef(LOCAL_MODE_PROPERTY_NAME), rapidjson::Value(localMode), allocator);
+	settingsDocument.AddMember(rapidjson::StringRef(DEMO_EXTRACTION_ENABLED_PROPERTY_NAME), rapidjson::Value(demoExtractionEnabled), allocator);
 
 	rapidjson::Value gameVersionsCategoryValue(rapidjson::kObjectType);
 
@@ -815,6 +820,7 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 	assignStringSetting(tempSymlinkName, settingsDocument, TEMP_SYMLINK_NAME_PROPERTY_NAME);
 	assignStringSetting(gameSymlinkName, settingsDocument, GAME_SYMLINK_NAME_PROPERTY_NAME);
 	assignBooleanSetting(localMode, settingsDocument, LOCAL_MODE_PROPERTY_NAME);
+	assignBooleanSetting(demoExtractionEnabled, settingsDocument, DEMO_EXTRACTION_ENABLED_PROPERTY_NAME);
 
 	if(settingsDocument.HasMember(GAME_VERSIONS_CATEGORY_NAME) && settingsDocument[GAME_VERSIONS_CATEGORY_NAME].IsObject()) {
 		const rapidjson::Value & gameVersionsCategoryValue = settingsDocument[GAME_VERSIONS_CATEGORY_NAME];
