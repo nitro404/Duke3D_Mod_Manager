@@ -113,6 +113,10 @@ bool ModVersion::isStandAlone() const {
 	return false;
 }
 
+bool ModVersion::hasVersion() const {
+	return !m_version.empty();
+}
+
 const std::string & ModVersion::getVersion() const {
 	return m_version;
 }

@@ -34,6 +34,7 @@ public:
 
 	bool isDefault() const;
 	bool isStandAlone() const;
+	bool hasType() const;
 	const std::string & getType() const;
 	std::string getFullName() const;
 	const Mod * getParentMod() const;

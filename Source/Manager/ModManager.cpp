@@ -3113,9 +3113,33 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		}
 
 		if(settings->segmentAnalyticsEnabled) {
-			properties["modName"] = fullModName;
-			properties["modGameVersion"] = selectedModGameVersion->getGameVersionID();
+			properties["modID"] = m_selectedMod->getID();
+			properties["modName"] = m_selectedMod->getName();
+			properties["modVersion"] = selectedModVersion->getVersion();
+			properties["modVersionType"] = selectedModVersionType->getType();
+			properties["modFullName"] = fullModName;
+			properties["modGameVersionID"] = selectedModGameVersion->getGameVersionID();
+			properties["preferredVersion"] = m_selectedMod->getPreferredVersionName();
+			properties["defaultVersionType"] = m_selectedMod->getDefaultVersionType();
+			properties["initialReleaseDate"] = m_selectedMod->getInitialReleaseDateAsString();
+			properties["latestReleaseDate"] = m_selectedMod->getLatestReleaseDateAsString();
+			properties["hasDependencies"] = m_selectedMod->hasDependencies();
+			properties["officialExpansion"] = m_selectedMod->isOfficialExpansion();
+			properties["hasTeam"] = m_selectedMod->hasTeam();
+			properties["standAlone"] = standAlone;
 			properties["gameType"] = gameTypeName;
+			properties["numberOfVersions"] = m_selectedMod->numberOfVersions();
+			properties["numberOfDownloads"] = m_selectedMod->numberOfDownloads();
+			properties["numberOfScreenshots"] = m_selectedMod->numberOfScreenshots();
+			properties["numberOfImages"] = m_selectedMod->numberOfImages();
+			properties["numberOfVideos"] = m_selectedMod->numberOfVideos();
+			properties["numberOfNotes"] = m_selectedMod->numberOfNotes();
+			properties["numberOfRelatedMods"] = m_selectedMod->numberOfRelatedMods();
+			properties["numberOfSimilarMods"] = m_selectedMod->numberOfSimilarMods();
+
+			if(m_selectedMod->hasAlias()) {
+				properties["modAlias"] = m_selectedMod->getAlias();
+			}
 
 			if(!modConFiles.empty()) {
 				properties["modConFiles"] = modFilesToFileNameList(modConFiles);

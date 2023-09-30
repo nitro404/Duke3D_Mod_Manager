@@ -33,6 +33,7 @@ public:
 
 	bool isDefault() const;
 	bool isStandAlone() const;
+	bool hasVersion() const;
 	const std::string & getVersion() const;
 	std::string getFullName(size_t versionTypeIndex = std::numeric_limits<size_t>::max()) const;
 	const std::optional<Date> & getReleaseDate() const;

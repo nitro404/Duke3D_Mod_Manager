@@ -107,6 +107,10 @@ bool ModVersionType::isStandAlone() const {
 	return m_gameVersions[0]->isStandAlone();
 }
 
+bool ModVersionType::hasType() const {
+	return !m_type.empty();
+}
+
 const std::string & ModVersionType::getType() const {
 	return m_type;
 }
