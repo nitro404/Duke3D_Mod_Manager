@@ -93,6 +93,34 @@ const DOSBoxConfiguration ModManager::DEFAULT_GENERAL_DOSBOX_CONFIGURATION({
 	})
 });
 
+static std::string modFilesToFileNameList(const std::vector<std::shared_ptr<ModFile>> & modFiles) {
+	std::stringstream modFileNames;
+
+	for(const std::shared_ptr<ModFile> & modFile : modFiles) {
+		if(modFileNames.tellp() != 0) {
+			modFileNames << ", ";
+		}
+
+		modFileNames << modFile->getFileName();
+	}
+
+	return modFileNames.str();
+}
+
+static std::string filePathsToFileNameList(const std::vector<std::string> & filePaths) {
+	std::stringstream fileNames;
+
+	for(const std::string & filePath : filePaths) {
+		if(fileNames.tellp() != 0) {
+			fileNames << ", ";
+		}
+
+		fileNames << Utilities::getFileName(filePath);
+	}
+
+	return fileNames.str();
+}
+
 ModManager::ModManager()
 	: Application()
 	, m_initialized(false)
@@ -3049,13 +3077,25 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		}
 
 		properties["runDelayDurationMs"] = runDelayDuration.count();
+
+		if(!customConFilePaths.empty()) {
+			properties["customConFiles"] = filePathsToFileNameList(customConFilePaths);
+		}
+
+		if(!customDefFilePaths.empty()) {
+			properties["customDefFiles"] = filePathsToFileNameList(customDefFilePaths);
+		}
+
+		if(!customGroupFilePaths.empty()) {
+			properties["customGroupFiles"] = filePathsToFileNameList(customGroupFilePaths);
+		}
 	}
 
 	std::string gameTypeName(Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)));
 
 	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
 
-	if(customMod) {
+	if(customMod && m_selectedMod == nullptr) {
 		spdlog::info("Running custom mod in {} mode{}.", Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)), customMapMessage);
 
 		if(settings->segmentAnalyticsEnabled) {
@@ -3076,6 +3116,22 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 			properties["modName"] = fullModName;
 			properties["modGameVersion"] = selectedModGameVersion->getGameVersionID();
 			properties["gameType"] = gameTypeName;
+
+			if(!modConFiles.empty()) {
+				properties["modConFiles"] = modFilesToFileNameList(modConFiles);
+			}
+
+			if(!modDefFiles.empty()) {
+				properties["modDefFiles"] = modFilesToFileNameList(modDefFiles);
+			}
+
+			if(!modGroupFiles.empty()) {
+				properties["modGroupFiles"] = modFilesToFileNameList(modGroupFiles);
+			}
+
+			if(!modDependencyGroupFiles.empty()) {
+				properties["modDependencyGroupFiles"] = modFilesToFileNameList(modDependencyGroupFiles);
+			}
 
 			segmentAnalytics->track("Running Mod", properties);
 		}
