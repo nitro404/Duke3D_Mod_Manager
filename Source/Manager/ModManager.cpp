@@ -126,6 +126,7 @@ ModManager::ModManager()
 	, m_initialized(false)
 	, m_initializing(false)
 	, m_localMode(false)
+	, m_shouldRunSelectedMod(false)
 	, m_demoRecordingEnabled(false)
 	, m_gameType(ModManager::DEFAULT_GAME_TYPE)
 	, m_selectedModVersionIndex(std::numeric_limits<size_t>::max())
@@ -2292,6 +2293,10 @@ bool ModManager::uninstallModGameVersion(const ModGameVersion & modGameVersion) 
 	return true;
 }
 
+bool ModManager::shouldRunSelectedMod() const {
+	return m_shouldRunSelectedMod;
+}
+
 std::future<bool> ModManager::runSelectedModAsync(std::shared_ptr<GameVersion> alternateGameVersion, std::shared_ptr<ModGameVersion> alternateModGameVersion) {
 	return std::async(std::launch::async, &ModManager::runSelectedMod, std::ref(*this), alternateGameVersion, alternateModGameVersion);
 }
@@ -2301,10 +2306,16 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 	std::chrono::time_point<std::chrono::steady_clock> runStartTimePoint(std::chrono::steady_clock::now());
 
-	if(!m_initialized || m_gameProcess != nullptr) {
-		notifyLaunchError("Mod manager not initialized or game process already running.");
+	if(!m_initialized) {
+		notifyLaunchError("Mod manager not initialized");
 		return false;
 	}
+	else if(m_gameProcess != nullptr) {
+		notifyLaunchError("Game process already running.");
+		return false;
+	}
+
+	m_shouldRunSelectedMod = false;
 
 	SettingsManager * settings = SettingsManager::getInstance();
 
@@ -3904,10 +3915,8 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 	if(args->hasArgument("update-new")) {
 		updateFileInfoForAllMods(true, true);
 	}
-
-	if(args->hasArgument("update-all")) {
+	else if(args->hasArgument("update-all")) {
 		updateFileInfoForAllMods(true, false);
-		return true;
 	}
 
 	if(args->hasArgument("test-parsing")) {
@@ -3917,55 +3926,7 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 	if(args->hasArgument("type")) {
 		std::optional<GameType> newGameTypeOptional(magic_enum::enum_cast<GameType>(Utilities::toPascalCase(args->getFirstValue("type"))));
 
-		if(newGameTypeOptional.has_value()) {
-			m_gameType = newGameTypeOptional.value();
-
-			spdlog::info("Setting game type to: '{}'.", Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)));
-
-			if(m_gameType == GameType::Client) {
-				std::string ipAddress;
-
-				if(args->hasArgument("ip")) {
-					ipAddress = Utilities::trimString(args->getFirstValue("ip"));
-
-					bool error = ipAddress.empty() || ipAddress.find_first_of(" \t") != std::string::npos;
-
-					if(error) {
-						spdlog::error("Invalid IP Address entered in arguments: '{}'.", ipAddress);
-						return false;
-					}
-					else {
-						settings->dosboxServerIPAddress = ipAddress;
-					}
-				}
-			}
-
-			if(m_gameType == GameType::Client || m_gameType == GameType::Server) {
-				if(args->hasArgument("port")) {
-					std::string portData(Utilities::trimString(args->getFirstValue("port")));
-					bool error = false;
-					uint16_t port = static_cast<uint16_t>(Utilities::parseUnsignedInteger(portData, &error));
-
-					if(port == 0) {
-						error = true;
-					}
-
-					if(error) {
-						spdlog::error("Invalid {} Server Port entered in arguments: '{}'.", m_gameType == GameType::Server ? "Local" : "Remote", portData);
-						return false;
-					}
-					else {
-						if(m_gameType == GameType::Server) {
-							settings->dosboxLocalServerPort = port;
-						}
-						else {
-							settings->dosboxRemoteServerPort = port;
-						}
-					}
-				}
-			}
-		}
-		else {
+		if(!newGameTypeOptional.has_value()) {
 			static std::string gameTypes;
 
 			if(gameTypes.empty()) {
@@ -3986,6 +3947,53 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 			spdlog::error("Invalid game type, please specify one of the following: {}.", gameTypes);
 
 			return false;
+		}
+
+		m_gameType = newGameTypeOptional.value();
+
+		spdlog::info("Setting game type to: '{}'.", Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)));
+
+		if(m_gameType == GameType::Client) {
+			std::string ipAddress;
+
+			if(args->hasArgument("ip")) {
+				ipAddress = Utilities::trimString(args->getFirstValue("ip"));
+
+				bool error = ipAddress.empty() || ipAddress.find_first_of(" \t") != std::string::npos;
+
+				if(error) {
+					spdlog::error("Invalid IP Address entered in arguments: '{}'.", ipAddress);
+					return false;
+				}
+				else {
+					settings->dosboxServerIPAddress = ipAddress;
+				}
+			}
+		}
+
+		if(m_gameType == GameType::Client || m_gameType == GameType::Server) {
+			if(args->hasArgument("port")) {
+				std::string portData(Utilities::trimString(args->getFirstValue("port")));
+				bool error = false;
+				uint16_t port = static_cast<uint16_t>(Utilities::parseUnsignedInteger(portData, &error));
+
+				if(port == 0) {
+					error = true;
+				}
+
+				if(error) {
+					spdlog::error("Invalid {} Server Port entered in arguments: '{}'.", m_gameType == GameType::Server ? "Local" : "Remote", portData);
+					return false;
+				}
+				else {
+					if(m_gameType == GameType::Server) {
+						settings->dosboxLocalServerPort = port;
+					}
+					else {
+						settings->dosboxRemoteServerPort = port;
+					}
+				}
+			}
 		}
 	}
 
@@ -4011,7 +4019,7 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 			setSelectedModVersionTypeIndex(modMatch.getModVersionTypeIndex());
 
 			if(args->hasArgument("start")) {
-				runSelectedMod();
+				m_shouldRunSelectedMod = true;
 			}
 
 			return true;
@@ -4048,13 +4056,13 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 		spdlog::info("Selected random mod: '{}'", m_selectedMod->getFullName(m_selectedModVersionIndex, m_selectedModVersionTypeIndex));
 
 		if(args->hasArgument("start")) {
-			runSelectedMod();
+			m_shouldRunSelectedMod = true;
 		}
 
 		return true;
 	}
 	else if(args->hasArgument("start")) {
-		runSelectedMod();
+		m_shouldRunSelectedMod = true;
 
 		return true;
 	}

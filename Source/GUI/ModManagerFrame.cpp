@@ -76,8 +76,10 @@ bool ModManagerFrame::initialize(std::shared_ptr<ModManager> modManager) {
 	m_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGING, &ModManagerFrame::onNotebookPageChanging, this);
 	m_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &ModManagerFrame::onNotebookPageChanged, this);
 
+	ModBrowserPanel * modBrowserPanel = nullptr;
+
 	if(modManager->isInitialized()) {
-		ModBrowserPanel * modBrowserPanel = new ModBrowserPanel(modManager, m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+		modBrowserPanel = new ModBrowserPanel(modManager, m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 		m_notebook->AddPage(modBrowserPanel, "Mod Browser");
 
 		DOSBoxManagerPanel * dosboxManagerPanel = new DOSBoxManagerPanel(modManager, m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
@@ -129,6 +131,10 @@ bool ModManagerFrame::initialize(std::shared_ptr<ModManager> modManager) {
 	}
 
 	m_initialized = true;
+
+	if(modBrowserPanel != nullptr && modManager->shouldRunSelectedMod()) {
+		modBrowserPanel->launchGame();
+	}
 
 	return true;
 }

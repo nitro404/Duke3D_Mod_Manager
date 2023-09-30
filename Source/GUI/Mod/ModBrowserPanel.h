@@ -65,6 +65,8 @@ public:
 	void clearSearch();
 	void clearSearchResults();
 
+	bool launchGame();
+
 private:
 	void onModSearchTextChanged(wxCommandEvent & event);
 	void onModSearchCancelled(wxCommandEvent & event);

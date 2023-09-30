@@ -130,7 +130,9 @@ public:
 	bool isModSupportedOnSelectedGameVersion();
 	bool installStandAloneMod(const ModGameVersion & standAloneModGameVersion, const std::string & destinationDirectoryPath, bool removeArchivePackage = true);
 	bool uninstallModGameVersion(const ModGameVersion & modGameVersion);
+	bool shouldRunSelectedMod() const;
 	std::future<bool> runSelectedModAsync(std::shared_ptr<GameVersion> alternateGameVersion = nullptr, std::shared_ptr<ModGameVersion> alternateModGameVersion = nullptr);
+	bool runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersion = nullptr, std::shared_ptr<ModGameVersion> alternateModGameVersion = nullptr);
 	bool isGameProcessRunning() const;
 	std::shared_ptr<Process> getGameProcess() const;
 	bool terminateGameProcess();
@@ -162,7 +164,6 @@ public:
 
 private:
 	bool initialize(std::shared_ptr<ArgumentParser> arguments);
-	bool runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersion = nullptr, std::shared_ptr<ModGameVersion> alternateModGameVersion = nullptr);
 	void notifyLaunchError(const std::string & errorMessage);
 	bool notifyInitializationProgress(const std::string & description);
 	void notifyModSelectionChanged();
@@ -211,6 +212,7 @@ private:
 	std::atomic<bool> m_initialized;
 	std::atomic<bool> m_initializing;
 	bool m_localMode;
+	bool m_shouldRunSelectedMod;
 	bool m_demoRecordingEnabled;
 	std::shared_ptr<ArgumentParser> m_arguments;
 	std::shared_ptr<DownloadManager> m_downloadManager;

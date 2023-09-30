@@ -920,6 +920,303 @@ void ModBrowserPanel::clearSearchResults() {
 	m_modAuthorMatches.clear();
 }
 
+bool ModBrowserPanel::launchGame() {
+	if(m_modManager == nullptr || !m_modManager->isInitialized()) {
+		wxMessageBox(
+			"Mod manager is not initialized!",
+			"Launch Failed",
+			wxOK | wxICON_ERROR,
+			this
+		);
+
+		return false;
+	}
+
+	std::shared_ptr<Mod> selectedMod(m_modManager->getSelectedMod());
+
+	if(m_modManager->hasModSelected()) {
+		if(!m_modManager->hasModVersionSelected()) {
+			wxMessageBox(
+				fmt::format(
+					"Failed to launch '{}', no mod version selected.",
+					selectedMod->getName()
+				),
+				"Launch Failed",
+				wxOK | wxICON_ERROR,
+				this
+			);
+
+			return false;
+		}
+
+		if(!m_modManager->hasModVersionTypeSelected()) {
+			wxMessageBox(
+				fmt::format(
+					"Failed to launch '{}', no mod version type selected.",
+					selectedMod->getFullName(m_modManager->getSelectedModVersionIndex())
+				),
+				"Launch Failed",
+				wxOK | wxICON_ERROR,
+				this
+			);
+
+			return false;
+		}
+	}
+
+	SettingsManager * settings = SettingsManager::getInstance();
+	bool standAlone = false;
+	std::shared_ptr<StandAloneMod> standAloneMod;
+	std::shared_ptr<StandAloneModCollection> standAloneMods(m_modManager->getStandAloneMods());
+	std::shared_ptr<GameVersion> alternateGameVersion;
+	std::shared_ptr<ModGameVersion> selectedModGameVersion(m_modManager->getSelectedModGameVersion());
+	std::shared_ptr<ModGameVersion> alternateModGameVersion;
+	size_t selectedModVersionIndex = m_modManager->getSelectedModVersionIndex();
+	size_t selectedModVersionTypeIndex = m_modManager->getSelectedModVersionTypeIndex();
+	std::string fullModName;
+	std::shared_ptr<GameVersion> selectedGameVersion(m_modManager->getSelectedGameVersion());
+	std::shared_ptr<GameVersionCollection> gameVersions(m_modManager->getGameVersions());
+	std::shared_ptr<DOSBoxVersion> selectedDOSBoxVersion(m_modManager->getSelectedDOSBoxVersion());
+
+	if(selectedMod != nullptr) {
+		if(selectedModGameVersion != nullptr && selectedModGameVersion->isStandAlone()) {
+			standAlone = true;
+			standAloneMod = standAloneMods->getStandAloneMod(*selectedModGameVersion);
+
+			if(standAloneMod == nullptr) {
+				if(!settings->standAloneModDisclaimerAcknowledged) {
+					int result = wxMessageBox("Stand-alone mods bring their own game executable file(s), which will be executed while playing. While this is generally quite safe as all mods are manually curated, vetted, and scanned for viruses / trojans, I assume no responsibility for any damages incurred as a result of this in the case that something does slip through this process. Do you understand the risk and wish to proceed?", "Comfirm Installation", wxOK | wxCANCEL | wxICON_WARNING, this);
+
+					if(result == wxCANCEL) {
+						return false;
+					}
+
+					settings->standAloneModDisclaimerAcknowledged = true;
+				}
+
+				wxDirDialog selectInstallDirectoryDialog(this, "Install Stand-Alone Mod to Directory", std::filesystem::current_path().string(), wxDD_DIR_MUST_EXIST, wxDefaultPosition, wxDefaultSize, "Install Stand-Alone Mod");
+				int selectInstallDirectoryResult = selectInstallDirectoryDialog.ShowModal();
+
+				if(selectInstallDirectoryResult == wxID_CANCEL) {
+					return false;
+				}
+
+				std::string destinationDirectoryPath(selectInstallDirectoryDialog.GetPath());
+
+				if(Utilities::areStringsEqual(Utilities::getAbsoluteFilePath(destinationDirectoryPath), Utilities::getAbsoluteFilePath(std::filesystem::current_path().string()))) {
+					wxMessageBox("Cannot install stand-alone mod directly into mod manager directory!", "Invalid Installation Directory", wxOK | wxICON_ERROR, this);
+					return false;
+				}
+
+				if(!std::filesystem::is_directory(std::filesystem::path(destinationDirectoryPath))) {
+					wxMessageBox("Invalid stand-alone mod installation directory selected!", "Invalid Installation Directory", wxOK | wxICON_ERROR, this);
+					return false;
+				}
+
+				for(const std::filesystem::directory_entry & entry : std::filesystem::directory_iterator(std::filesystem::path(destinationDirectoryPath))) {
+					int installToNonEmptyDirectoryResult = wxMessageBox(fmt::format("Stand-alone mod installation installation directory '{}' is not empty!\n\nInstalling to a directory which already contains files may cause issues. Are you sure you would like to install '{}' to this directory?", destinationDirectoryPath, selectedModGameVersion->getParentModVersion()->getFullName()), "Non-Empty Installation Directory", wxYES_NO | wxCANCEL | wxICON_WARNING, this);
+
+					if(installToNonEmptyDirectoryResult != wxYES) {
+						return false;
+					}
+
+					break;
+				}
+
+				if(!m_modManager->installStandAloneMod(*selectedModGameVersion, destinationDirectoryPath)) {
+					wxMessageBox(fmt::format("Failed to install stand-alone '{}' mod.", selectedModGameVersion->getParentModVersion()->getFullName()), "Mod Install Failed", wxOK | wxICON_ERROR, this);
+					return false;
+				}
+
+				updateUninstallButton();
+
+				standAloneMod = standAloneMods->getStandAloneMod(*selectedModGameVersion);
+
+				if(standAloneMod == nullptr) {
+					wxMessageBox(fmt::format("Failed to locate installed stand-alone '{}' mod.", selectedModGameVersion->getParentModVersion()->getFullName()), "Missing Stand-Alone Mod", wxOK | wxICON_ERROR, this);
+					return false;
+				}
+			}
+		}
+		else {
+			fullModName = selectedMod->getFullName(selectedModVersionIndex, selectedModVersionTypeIndex);
+
+			if(!m_modManager->isModSupportedOnSelectedGameVersion()) {
+				std::vector<std::shared_ptr<ModGameVersion>> * modGameVersions = nullptr;
+				std::shared_ptr<ModVersionType> selectedModVersionType(selectedMod->getVersion(selectedModVersionIndex)->getType(selectedModVersionTypeIndex));
+				std::vector<std::pair<std::shared_ptr<GameVersion>, std::vector<std::shared_ptr<ModGameVersion>>>> compatibleGameVersions(gameVersions->getGameVersionsCompatibleWith(selectedModVersionType->getGameVersions(), true, true));
+
+				if(compatibleGameVersions.empty()) {
+					wxMessageBox(
+						fmt::format(
+							"Failed to launch '{}', there are no game versions compatible with this mod.",
+							fullModName
+						),
+						"Launch Failed",
+						wxOK | wxICON_ERROR,
+						this
+					);
+
+					return false;
+				}
+				else if(compatibleGameVersions.size() == 1) {
+					alternateGameVersion = compatibleGameVersions[0].first;
+					modGameVersions = &compatibleGameVersions[0].second;
+
+					int result = wxMessageBox(
+						fmt::format(
+							"{}\n"
+							"Launching mod using '{}' instead!",
+							selectedGameVersion != nullptr
+								? fmt::format("'{}' is not supported on '{}'.", fullModName, selectedGameVersion->getLongName())
+								: "No game version selected.",
+							alternateGameVersion->getLongName()
+						),
+						"Unsupported Game Version",
+						wxOK | wxCANCEL | wxICON_INFORMATION,
+						this
+					);
+
+					if(result == wxCANCEL) {
+						return false;
+					}
+				}
+				else {
+					std::vector<std::string> compatibleGameVersionNames;
+
+					for(std::vector<std::pair<std::shared_ptr<GameVersion>, std::vector<std::shared_ptr<ModGameVersion>>>>::const_iterator i = compatibleGameVersions.begin(); i != compatibleGameVersions.end(); ++i) {
+						compatibleGameVersionNames.push_back((*i).first->getShortName());
+					}
+
+					int selectedCompatibleGameVersionIndex = wxGetSingleChoiceIndex(
+						fmt::format("{}\nPlease choose an alternative compatible game version to run:",
+							selectedGameVersion != nullptr
+								? fmt::format("'{}' is not supported on '{}'.", fullModName, selectedGameVersion->getLongName())
+								: "No game version selected."
+						),
+						"Choose Game Version",
+						WXUtilities::createItemWXArrayString(compatibleGameVersionNames),
+						0,
+						this
+					);
+
+					if(selectedCompatibleGameVersionIndex == wxNOT_FOUND) {
+						return false;
+					}
+
+					alternateGameVersion = compatibleGameVersions[selectedCompatibleGameVersionIndex].first;
+					modGameVersions = &compatibleGameVersions[selectedCompatibleGameVersionIndex].second;
+				}
+
+				if(modGameVersions->empty()) {
+					return false;
+				}
+				else if(modGameVersions->size() == 1) {
+					alternateModGameVersion = (*modGameVersions)[0];
+				}
+				else {
+					std::vector<std::string> modGameVersionNames;
+
+					for(std::vector<std::shared_ptr<ModGameVersion>>::const_iterator i = modGameVersions->begin(); i != modGameVersions->end(); ++i) {
+						modGameVersionNames.push_back((*i)->getFullName(true));
+					}
+
+					int selectedModGameVersionIndex = wxGetSingleChoiceIndex(
+						fmt::format("Choose a '{}' mod game version to run:", fullModName),
+						"Choose Mod Game Version",
+						WXUtilities::createItemWXArrayString(modGameVersionNames),
+						0,
+						this
+					);
+
+					if(selectedModGameVersionIndex == wxNOT_FOUND) {
+						return false;
+					}
+
+					alternateModGameVersion = (*modGameVersions)[selectedModGameVersionIndex];
+				}
+
+				if(alternateGameVersion == nullptr || alternateModGameVersion == nullptr) {
+					spdlog::error("Alternative game version not selected, aborting launch.");
+					return false;
+				}
+
+				if(selectedGameVersion != nullptr) {
+					spdlog::info("Using game version '{}' since '{}' is not supported on '{}'.", alternateGameVersion->getLongName(), fullModName, selectedGameVersion->getLongName());
+				}
+				else {
+					spdlog::info("Using game version '{}' since no game version was selected.", alternateGameVersion->getLongName());
+				}
+			}
+		}
+	}
+
+	if(standAlone) {
+		m_activeGameVersion = m_modManager->getSelectedGameVersion();
+	}
+	else {
+		m_activeGameVersion = alternateGameVersion != nullptr ? alternateGameVersion : selectedGameVersion;
+	}
+
+	if(!m_activeGameVersion->isConfigured()) {
+		wxMessageBox(
+			fmt::format(
+				"Failed to launch{}, game version '{}' is not configured/installed.",
+				!fullModName.empty() ? fmt::format(" '{}'", fullModName) : "",
+				m_activeGameVersion->getLongName()
+			),
+			"Launch Failed",
+			wxOK | wxICON_ERROR,
+			this
+		);
+
+		return false;
+	}
+	else if(m_activeGameVersion->doesRequireDOSBox() && !selectedDOSBoxVersion->isConfigured()) {
+		wxMessageBox(
+			fmt::format(
+				"Failed to launch{}, '{}' is not configured/installed.",
+				!fullModName.empty() ? fmt::format(" '{}'", fullModName) : "",
+				selectedDOSBoxVersion->getLongName()
+			),
+			"Launch Failed",
+			wxOK | wxICON_ERROR,
+			this
+		);
+
+		return false;
+	}
+
+	std::stringstream dialogMessageStringStream;
+
+	if(!fullModName.empty()) {
+		dialogMessageStringStream << '\'' << fullModName << "' mod is currently running in ";
+	}
+
+	dialogMessageStringStream << '\'' << m_activeGameVersion->getLongName() << '\'';
+
+	if(fullModName.empty()) {
+		dialogMessageStringStream << " is currently running";
+	}
+
+	if(m_activeGameVersion->doesRequireDOSBox()) {
+		dialogMessageStringStream << " using '" << selectedDOSBoxVersion->getLongName() << '\'';
+	}
+
+	if(fullModName.empty()) {
+		dialogMessageStringStream << " without any mods";
+	}
+
+	dialogMessageStringStream << '.';
+
+	m_gameRunningDialog = new ProcessRunningDialog(this, "Game Running", dialogMessageStringStream.str(), "Close Game");
+	m_runSelectedModFuture = m_modManager->runSelectedModAsync(alternateGameVersion, alternateModGameVersion);
+	int processExitCode = m_gameRunningDialog->ShowModal();
+	m_gameRunningDialog = nullptr;
+
+	return true;
+}
+
 void ModBrowserPanel::onModSearchTextChanged(wxCommandEvent & event) {
 	m_searchQuery = event.GetString();
 
@@ -1300,298 +1597,7 @@ void ModBrowserPanel::onUninstallButtonPressed(wxCommandEvent & event) {
 }
 
 void ModBrowserPanel::onLaunchButtonPressed(wxCommandEvent & event) {
-	if(m_modManager == nullptr || !m_modManager->isInitialized()) {
-		wxMessageBox(
-			"Mod manager is not initialized!",
-			"Launch Failed",
-			wxOK | wxICON_ERROR,
-			this
-		);
-
-		return;
-	}
-
-	std::shared_ptr<Mod> selectedMod(m_modManager->getSelectedMod());
-
-	if(m_modManager->hasModSelected()) {
-		if(!m_modManager->hasModVersionSelected()) {
-			wxMessageBox(
-				fmt::format(
-					"Failed to launch '{}', no mod version selected.",
-					selectedMod->getName()
-				),
-				"Launch Failed",
-				wxOK | wxICON_ERROR,
-				this
-			);
-
-			return;
-		}
-
-		if(!m_modManager->hasModVersionTypeSelected()) {
-			wxMessageBox(
-				fmt::format(
-					"Failed to launch '{}', no mod version type selected.",
-					selectedMod->getFullName(m_modManager->getSelectedModVersionIndex())
-				),
-				"Launch Failed",
-				wxOK | wxICON_ERROR,
-				this
-			);
-
-			return;
-		}
-	}
-
-	SettingsManager * settings = SettingsManager::getInstance();
-	bool standAlone = false;
-	std::shared_ptr<StandAloneMod> standAloneMod;
-	std::shared_ptr<StandAloneModCollection> standAloneMods(m_modManager->getStandAloneMods());
-	std::shared_ptr<GameVersion> alternateGameVersion;
-	std::shared_ptr<ModGameVersion> selectedModGameVersion(m_modManager->getSelectedModGameVersion());
-	std::shared_ptr<ModGameVersion> alternateModGameVersion;
-	size_t selectedModVersionIndex = m_modManager->getSelectedModVersionIndex();
-	size_t selectedModVersionTypeIndex = m_modManager->getSelectedModVersionTypeIndex();
-	std::string fullModName;
-	std::shared_ptr<GameVersion> selectedGameVersion(m_modManager->getSelectedGameVersion());
-	std::shared_ptr<GameVersionCollection> gameVersions(m_modManager->getGameVersions());
-	std::shared_ptr<DOSBoxVersion> selectedDOSBoxVersion(m_modManager->getSelectedDOSBoxVersion());
-
-	if(selectedMod != nullptr) {
-		if(selectedModGameVersion != nullptr && selectedModGameVersion->isStandAlone()) {
-			standAlone = true;
-			standAloneMod = standAloneMods->getStandAloneMod(*selectedModGameVersion);
-
-			if(standAloneMod == nullptr) {
-				if(!settings->standAloneModDisclaimerAcknowledged) {
-					int result = wxMessageBox("Stand-alone mods bring their own game executable file(s), which will be executed while playing. While this is generally quite safe as all mods are manually curated, vetted, and scanned for viruses / trojans, I assume no responsibility for any damages incurred as a result of this in the case that something does slip through this process. Do you understand the risk and wish to proceed?", "Comfirm Installation", wxOK | wxCANCEL | wxICON_WARNING, this);
-
-					if(result == wxCANCEL) {
-						return;
-					}
-
-					settings->standAloneModDisclaimerAcknowledged = true;
-				}
-
-				wxDirDialog selectInstallDirectoryDialog(this, "Install Stand-Alone Mod to Directory", std::filesystem::current_path().string(), wxDD_DIR_MUST_EXIST, wxDefaultPosition, wxDefaultSize, "Install Stand-Alone Mod");
-				int selectInstallDirectoryResult = selectInstallDirectoryDialog.ShowModal();
-
-				if(selectInstallDirectoryResult == wxID_CANCEL) {
-					return;
-				}
-
-				std::string destinationDirectoryPath(selectInstallDirectoryDialog.GetPath());
-
-				if(Utilities::areStringsEqual(Utilities::getAbsoluteFilePath(destinationDirectoryPath), Utilities::getAbsoluteFilePath(std::filesystem::current_path().string()))) {
-					wxMessageBox("Cannot install stand-alone mod directly into mod manager directory!", "Invalid Installation Directory", wxOK | wxICON_ERROR, this);
-					return;
-				}
-
-				if(!std::filesystem::is_directory(std::filesystem::path(destinationDirectoryPath))) {
-					wxMessageBox("Invalid stand-alone mod installation directory selected!", "Invalid Installation Directory", wxOK | wxICON_ERROR, this);
-					return;
-				}
-
-				for(const std::filesystem::directory_entry & entry : std::filesystem::directory_iterator(std::filesystem::path(destinationDirectoryPath))) {
-					int installToNonEmptyDirectoryResult = wxMessageBox(fmt::format("Stand-alone mod installation installation directory '{}' is not empty!\n\nInstalling to a directory which already contains files may cause issues. Are you sure you would like to install '{}' to this directory?", destinationDirectoryPath, selectedModGameVersion->getParentModVersion()->getFullName()), "Non-Empty Installation Directory", wxYES_NO | wxCANCEL | wxICON_WARNING, this);
-
-					if(installToNonEmptyDirectoryResult != wxYES) {
-						return;
-					}
-
-					break;
-				}
-
-				if(!m_modManager->installStandAloneMod(*selectedModGameVersion, destinationDirectoryPath)) {
-					wxMessageBox(fmt::format("Failed to install stand-alone '{}' mod.", selectedModGameVersion->getParentModVersion()->getFullName()), "Mod Install Failed", wxOK | wxICON_ERROR, this);
-					return;
-				}
-
-				updateUninstallButton();
-
-				standAloneMod = standAloneMods->getStandAloneMod(*selectedModGameVersion);
-
-				if(standAloneMod == nullptr) {
-					wxMessageBox(fmt::format("Failed to locate installed stand-alone '{}' mod.", selectedModGameVersion->getParentModVersion()->getFullName()), "Missing Stand-Alone Mod", wxOK | wxICON_ERROR, this);
-					return;
-				}
-			}
-		}
-		else {
-			fullModName = selectedMod->getFullName(selectedModVersionIndex, selectedModVersionTypeIndex);
-
-			if(!m_modManager->isModSupportedOnSelectedGameVersion()) {
-				std::vector<std::shared_ptr<ModGameVersion>> * modGameVersions = nullptr;
-				std::shared_ptr<ModVersionType> selectedModVersionType(selectedMod->getVersion(selectedModVersionIndex)->getType(selectedModVersionTypeIndex));
-				std::vector<std::pair<std::shared_ptr<GameVersion>, std::vector<std::shared_ptr<ModGameVersion>>>> compatibleGameVersions(gameVersions->getGameVersionsCompatibleWith(selectedModVersionType->getGameVersions(), true, true));
-
-				if(compatibleGameVersions.empty()) {
-					wxMessageBox(
-						fmt::format(
-							"Failed to launch '{}', there are no game versions compatible with this mod.",
-							fullModName
-						),
-						"Launch Failed",
-						wxOK | wxICON_ERROR,
-						this
-					);
-
-					return;
-				}
-				else if(compatibleGameVersions.size() == 1) {
-					alternateGameVersion = compatibleGameVersions[0].first;
-					modGameVersions = &compatibleGameVersions[0].second;
-
-					int result = wxMessageBox(
-						fmt::format(
-							"{}\n"
-							"Launching mod using '{}' instead!",
-							selectedGameVersion != nullptr
-								? fmt::format("'{}' is not supported on '{}'.", fullModName, selectedGameVersion->getLongName())
-								: "No game version selected.",
-							alternateGameVersion->getLongName()
-						),
-						"Unsupported Game Version",
-						wxOK | wxCANCEL | wxICON_INFORMATION,
-						this
-					);
-
-					if(result == wxCANCEL) {
-						return;
-					}
-				}
-				else {
-					std::vector<std::string> compatibleGameVersionNames;
-
-					for(std::vector<std::pair<std::shared_ptr<GameVersion>, std::vector<std::shared_ptr<ModGameVersion>>>>::const_iterator i = compatibleGameVersions.begin(); i != compatibleGameVersions.end(); ++i) {
-						compatibleGameVersionNames.push_back((*i).first->getShortName());
-					}
-
-					int selectedCompatibleGameVersionIndex = wxGetSingleChoiceIndex(
-						fmt::format("{}\nPlease choose an alternative compatible game version to run:",
-							selectedGameVersion != nullptr
-								? fmt::format("'{}' is not supported on '{}'.", fullModName, selectedGameVersion->getLongName())
-								: "No game version selected."
-						),
-						"Choose Game Version",
-						WXUtilities::createItemWXArrayString(compatibleGameVersionNames),
-						0,
-						this
-					);
-
-					if(selectedCompatibleGameVersionIndex == wxNOT_FOUND) {
-						return;
-					}
-
-					alternateGameVersion = compatibleGameVersions[selectedCompatibleGameVersionIndex].first;
-					modGameVersions = &compatibleGameVersions[selectedCompatibleGameVersionIndex].second;
-				}
-
-				if(modGameVersions->empty()) {
-					return;
-				}
-				else if(modGameVersions->size() == 1) {
-					alternateModGameVersion = (*modGameVersions)[0];
-				}
-				else {
-					std::vector<std::string> modGameVersionNames;
-
-					for(std::vector<std::shared_ptr<ModGameVersion>>::const_iterator i = modGameVersions->begin(); i != modGameVersions->end(); ++i) {
-						modGameVersionNames.push_back((*i)->getFullName(true));
-					}
-
-					int selectedModGameVersionIndex = wxGetSingleChoiceIndex(
-						fmt::format("Choose a '{}' mod game version to run:", fullModName),
-						"Choose Mod Game Version",
-						WXUtilities::createItemWXArrayString(modGameVersionNames),
-						0,
-						this
-					);
-
-					if(selectedModGameVersionIndex == wxNOT_FOUND) {
-						return;
-					}
-
-					alternateModGameVersion = (*modGameVersions)[selectedModGameVersionIndex];
-				}
-
-				if(alternateGameVersion == nullptr || alternateModGameVersion == nullptr) {
-					spdlog::error("Alternative game version not selected, aborting launch.");
-					return;
-				}
-
-				if(selectedGameVersion != nullptr) {
-					spdlog::info("Using game version '{}' since '{}' is not supported on '{}'.", alternateGameVersion->getLongName(), fullModName, selectedGameVersion->getLongName());
-				}
-				else {
-					spdlog::info("Using game version '{}' since no game version was selected.", alternateGameVersion->getLongName());
-				}
-			}
-		}
-	}
-
-	if(standAlone) {
-		m_activeGameVersion = m_modManager->getSelectedGameVersion();
-	}
-	else {
-		m_activeGameVersion = alternateGameVersion != nullptr ? alternateGameVersion : selectedGameVersion;
-	}
-
-	if(!m_activeGameVersion->isConfigured()) {
-		wxMessageBox(
-			fmt::format(
-				"Failed to launch{}, game version '{}' is not configured/installed.",
-				!fullModName.empty() ? fmt::format(" '{}'", fullModName) : "",
-				m_activeGameVersion->getLongName()
-			),
-			"Launch Failed",
-			wxOK | wxICON_ERROR,
-			this
-		);
-
-		return;
-	}
-	else if(m_activeGameVersion->doesRequireDOSBox() && !selectedDOSBoxVersion->isConfigured()) {
-		wxMessageBox(
-			fmt::format(
-				"Failed to launch{}, '{}' is not configured/installed.",
-				!fullModName.empty() ? fmt::format(" '{}'", fullModName) : "",
-				selectedDOSBoxVersion->getLongName()
-			),
-			"Launch Failed",
-			wxOK | wxICON_ERROR,
-			this
-		);
-
-		return;
-	}
-
-	std::stringstream dialogMessageStringStream;
-
-	if(!fullModName.empty()) {
-		dialogMessageStringStream << '\'' << fullModName << "' mod is currently running in ";
-	}
-
-	dialogMessageStringStream << '\'' << m_activeGameVersion->getLongName() << '\'';
-
-	if(fullModName.empty()) {
-		dialogMessageStringStream << " is currently running";
-	}
-
-	if(m_activeGameVersion->doesRequireDOSBox()) {
-		dialogMessageStringStream << " using '" << selectedDOSBoxVersion->getLongName() << '\'';
-	}
-
-	if(fullModName.empty()) {
-		dialogMessageStringStream << " without any mods";
-	}
-
-	dialogMessageStringStream << '.';
-
-	m_gameRunningDialog = new ProcessRunningDialog(this, "Game Running", dialogMessageStringStream.str(), "Close Game");
-	m_runSelectedModFuture = m_modManager->runSelectedModAsync(alternateGameVersion, alternateModGameVersion);
-	int processExitCode = m_gameRunningDialog->ShowModal();
-	m_gameRunningDialog = nullptr;
+	launchGame();
 }
 
 void ModBrowserPanel::onLaunched() {
