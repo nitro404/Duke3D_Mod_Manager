@@ -2685,7 +2685,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 				if(selectedGameVersion->doesRequireOriginalGameFiles()) {
 					combinedGroup = std::move(dukeNukemGroup);
 
-					spdlog::info("Added {} original '{}' game file{} to combined group file.", combinedGroup->numberOfFiles(), dukeNukemGroup->numberOfFiles() == 1 ? "" : "s", dukeNukemGroupGameVersion->getLongName());
+					spdlog::info("Added {} original '{}' game file{} to combined group file.", combinedGroup->numberOfFiles(), combinedGroup->numberOfFiles() == 1 ? "" : "s", dukeNukemGroupGameVersion->getLongName());
 				}
 				else {
 					combinedGroup = std::make_unique<GroupGRP>();
