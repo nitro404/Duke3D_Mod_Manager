@@ -93,6 +93,65 @@ const DOSBoxConfiguration ModManager::DEFAULT_GENERAL_DOSBOX_CONFIGURATION({
 	})
 });
 
+static const std::array<std::string, 5> CONFLICTING_GAME_FILE_EXTENSIONS({
+	"ANM",
+	"ART",
+	"DMO",
+	"MID",
+	"VOC"
+});
+
+static const std::array<std::string, 48> CONFLICTING_GAME_FILE_NAMES({
+	"DEFS.CON",
+	"DUKE3D.DEF",
+	"E1L1.MAP",
+	"E1L2.MAP",
+	"E1L3.MAP",
+	"E1L4.MAP",
+	"E1L5.MAP",
+	"E1L6.MAP",
+	"E1L7.MAP",
+	"E1L8.MAP",
+	"E2L1.MAP",
+	"E2L10.MAP",
+	"E2L11.MAP",
+	"E2L2.MAP",
+	"E2L3.MAP",
+	"E2L4.MAP",
+	"E2L5.MAP",
+	"E2L6.MAP",
+	"E2L7.MAP",
+	"E2L8.MAP",
+	"E2L9.MAP",
+	"E3L1.MAP",
+	"E3L10.MAP",
+	"E3L11.MAP",
+	"E3L2.MAP",
+	"E3L3.MAP",
+	"E3L4.MAP",
+	"E3L5.MAP",
+	"E3L6.MAP",
+	"E3L7.MAP",
+	"E3L8.MAP",
+	"E3L9.MAP",
+	"E4L1.MAP",
+	"E4L10.MAP",
+	"E4L11.MAP",
+	"E4L2.MAP",
+	"E4L3.MAP",
+	"E4L4.MAP",
+	"E4L5.MAP",
+	"E4L6.MAP",
+	"E4L7.MAP",
+	"E4L8.MAP",
+	"E4L9.MAP",
+	"EDUKE.CON",
+	"GAME.CON",
+	"LOOKUP.DAT",
+	"PALETTE.DAT",
+	"USER.CON"
+});
+
 static std::string modFilesToFileNameList(const std::vector<std::shared_ptr<ModFile>> & modFiles) {
 	std::stringstream modFileNames;
 
@@ -2975,33 +3034,74 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		return false;
 	}
 
-	if(!selectedGameVersion->doesRequireGroupFileExtraction() && !m_demoRecordingEnabled) {
-		std::vector<std::string> originalRenamedDemoFilePaths(ModManager::renameFilesWithSuffixTo("DMO", "DMO" + DEFAULT_BACKUP_FILE_RENAME_SUFFIX, selectedGameVersion->getGamePath()));
+	size_t totalNumberOfBackedUpConflictingGameFiles = 0;
 
-		for(const std::string & originalRenamedDemoFilePath : originalRenamedDemoFilePaths) {
-			installedModInfo->addOriginalFile(originalRenamedDemoFilePath);
+	for(const std::string & conflictingGameFileExtension : CONFLICTING_GAME_FILE_EXTENSIONS) {
+		std::vector<std::string> originalRenamedGameFilePaths(ModManager::renameFilesWithSuffixTo(conflictingGameFileExtension, conflictingGameFileExtension + DEFAULT_BACKUP_FILE_RENAME_SUFFIX, selectedGameVersion->getGamePath()));
+
+		for(const std::string & originalRenamedGameFilePath : originalRenamedGameFilePaths) {
+			installedModInfo->addOriginalFile(originalRenamedGameFilePath);
 		}
 
-		if(settings->demoExtractionEnabled) {
-			size_t numberOfDemoFilesWritten = 0;
-			size_t demoFileNumber = 1;
+		totalNumberOfBackedUpConflictingGameFiles += originalRenamedGameFilePaths.size();
 
-			for(std::map<std::string, std::unique_ptr<ByteBuffer>, FileNameComparator>::const_iterator i = demoFiles.cbegin(); i != demoFiles.cend(); ++i) {
-				if(i->second->writeTo(Utilities::joinPaths(selectedGameVersion->getGamePath(), i->first))) {
-					numberOfDemoFilesWritten++;
-					installedModInfo->addModFile(i->first);
+		if(!originalRenamedGameFilePaths.empty()) {
+			spdlog::debug("Temporarily backed up {} '{}' game files.", originalRenamedGameFilePaths.size(), conflictingGameFileExtension);
+		}
+	}
 
-					spdlog::debug("Wrote demo #{}/{} '{}' to game directory '{}'.", demoFileNumber++, demoFiles.size(), i->first, selectedGameVersion->getGamePath());
-				}
-				else {
-					spdlog::warn("Failed to write '{}' demo file to game directory '{}'.", i->first, selectedGameVersion->getGamePath());
-				}
+	for(const std::string & conflictingGameFileName : CONFLICTING_GAME_FILE_NAMES) {
+		std::filesystem::path originalGameFilePath(Utilities::joinPaths(selectedGameVersion->getGamePath(), conflictingGameFileName));
+
+		if(std::filesystem::is_regular_file(originalGameFilePath)) {
+			std::filesystem::path newGameFilePath(Utilities::replaceFileExtension(originalGameFilePath.string(), std::string(Utilities::getFileExtension(conflictingGameFileName)) + "_"));
+
+			spdlog::info("Renaming conflicting game file: '{}' to '{}'.", originalGameFilePath.string(), newGameFilePath.string());
+
+			std::error_code errorCode;
+			std::filesystem::rename(originalGameFilePath, newGameFilePath, errorCode);
+
+			if(errorCode) {
+				spdlog::error("Failed to rename conflicting game file '{}' to '{}': {}", originalGameFilePath.string(), newGameFilePath.string(), errorCode.message());
+				continue;
 			}
 
-			demoFiles.clear();
+			std::filesystem::path relativeRenamedFilePath(std::filesystem::relative(originalGameFilePath, std::filesystem::path(selectedGameVersion->getGamePath()), errorCode));
 
-			spdlog::info("Wrote {} demo{} to game directory '{}'.", numberOfDemoFilesWritten, numberOfDemoFilesWritten == 1 ? "" : "s", selectedGameVersion->getGamePath());
+			if(errorCode) {
+				spdlog::warn("Failed to relativize renamed conflicting game file path: '{}' against base path: '{}'.", originalGameFilePath.string(), selectedGameVersion->getGamePath());
+				continue;
+			}
+
+			totalNumberOfBackedUpConflictingGameFiles++;
+
+			installedModInfo->addOriginalFile(relativeRenamedFilePath.string());
 		}
+	}
+
+	if(totalNumberOfBackedUpConflictingGameFiles != 0) {
+		spdlog::info("Temporarily backed up a total of {} game files with conflicting file extensions that could interfere with mod functionality. They will be restored when the game terminates, or on next launch of the mod manager.", totalNumberOfBackedUpConflictingGameFiles);
+	}
+
+	if(!selectedGameVersion->doesRequireGroupFileExtraction() && !m_demoRecordingEnabled && settings->demoExtractionEnabled) {
+		size_t numberOfDemoFilesWritten = 0;
+		size_t demoFileNumber = 1;
+
+		for(std::map<std::string, std::unique_ptr<ByteBuffer>, FileNameComparator>::const_iterator i = demoFiles.cbegin(); i != demoFiles.cend(); ++i) {
+			if(i->second->writeTo(Utilities::joinPaths(selectedGameVersion->getGamePath(), i->first))) {
+				numberOfDemoFilesWritten++;
+				installedModInfo->addModFile(i->first);
+
+				spdlog::debug("Wrote demo #{}/{} '{}' to game directory '{}'.", demoFileNumber++, demoFiles.size(), i->first, selectedGameVersion->getGamePath());
+			}
+			else {
+				spdlog::warn("Failed to write '{}' demo file to game directory '{}'.", i->first, selectedGameVersion->getGamePath());
+			}
+		}
+
+		demoFiles.clear();
+
+		spdlog::info("Wrote {} demo{} to game directory '{}'.", numberOfDemoFilesWritten, numberOfDemoFilesWritten == 1 ? "" : "s", selectedGameVersion->getGamePath());
 	}
 
 	if(combinedGroup != nullptr || combinedZip != nullptr) {
@@ -5449,7 +5549,7 @@ std::vector<std::string> ModManager::renameFilesWithSuffixTo(const std::string &
 		if(e.is_regular_file() && Utilities::areStringsEqualIgnoreCase(Utilities::getFileExtension(e.path().string()), fromSuffix)) {
 			newFilePath = Utilities::replaceFileExtension(e.path().string(), toSuffix);
 
-			spdlog::info("Renaming file: '{}' > '{}'.", e.path().string(), newFilePath);
+			spdlog::info("Renaming file: '{}' to '{}'.", e.path().string(), newFilePath);
 
 			std::error_code errorCode;
 			std::filesystem::rename(e.path(), newFilePath, errorCode);
