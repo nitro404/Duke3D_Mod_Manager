@@ -28,6 +28,7 @@ class FavouriteModCollection;
 class GameManager;
 class GameVersion;
 class GameVersionCollection;
+class HTTPRequest;
 class InstalledModInfo;
 class Mod;
 class ModAuthorInformation;
@@ -145,6 +146,11 @@ public:
 	boost::signals2::signal<bool (uint8_t /* initializationStep */, uint8_t /* initializationStepCount */, std::string /* description */)> initializationProgress;
 	boost::signals2::signal<void ()> launched;
 	boost::signals2::signal<void (std::string)> launchError;
+	boost::signals2::signal<void (const ModGameVersion & /* modGameVersion */, bool /* alreadyUpToDate */)> modDownloadCompleted;
+	boost::signals2::signal<void (const ModGameVersion & /* modGameVersion */)> modDownloadCancelled;
+	boost::signals2::signal<void (const ModGameVersion & /* modGameVersion */)> modDownloadFailed;
+	boost::signals2::signal<bool (const ModGameVersion & /* modGameVersion */, uint8_t /* downloadStep */, uint8_t /* downloadStepCount */, std::string /* status */)> modDownloadStatusChanged;
+	boost::signals2::signal<bool (const ModGameVersion & /* modGameVersion */, HTTPRequest & /* request */, size_t /* numberOfBytesDownloaded */, size_t /* totalNumberOfBytes */)> modDownloadProgress;
 	boost::signals2::signal<void (uint64_t /* nativeExitCode */, bool /* forceTerminated */)> gameProcessTerminated;
 	boost::signals2::signal<void (std::shared_ptr<Mod> /* mod */, size_t /* modVersionIndex */, size_t /* modVersionTypeIndex */, size_t /* modGameVersionIndex */)> modSelectionChanged;
 	boost::signals2::signal<void (GameType /* gameType */)> gameTypeChanged;
@@ -164,6 +170,7 @@ public:
 
 private:
 	bool initialize(std::shared_ptr<ArgumentParser> arguments);
+	SignalConnectionGroup connectDownloadManagerSignals();
 	void notifyLaunchError(const std::string & errorMessage);
 	bool notifyInitializationProgress(const std::string & description);
 	void notifyModSelectionChanged();

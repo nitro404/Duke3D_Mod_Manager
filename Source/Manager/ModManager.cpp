@@ -49,6 +49,7 @@
 #include <Platform/TimeZoneDataManager.h>
 #include <Script/Script.h>
 #include <Script/ScriptArguments.h>
+#include <Signal/SignalConnectionGroup.h>
 #include <Utilities/FileUtilities.h>
 #include <Utilities/NumberUtilities.h>
 #include <Utilities/RapidJSONUtilities.h>
@@ -2156,9 +2157,17 @@ bool ModManager::installStandAloneMod(const ModGameVersion & standAloneModGameVe
 		return false;
 	}
 
-	if(!m_localMode && !m_downloadManager->downloadModGameVersion(standAloneModGameVersion, *m_mods, *getGameVersions())) {
-		spdlog::error("Failed to download stand-alone '{}' mod!", standAloneModGameVersion.getParentModVersion()->getFullName());
-		return false;
+	if(!m_localMode) {
+		SignalConnectionGroup downloadManagerConnectionGroup(connectDownloadManagerSignals());
+
+		bool standAloneModDownloaded = m_downloadManager->downloadModGameVersion(standAloneModGameVersion, *m_mods, *getGameVersions());
+
+		downloadManagerConnectionGroup.disconnect();
+
+		if(!standAloneModDownloaded) {
+			spdlog::error("Failed to download stand-alone '{}' mod!", standAloneModGameVersion.getParentModVersion()->getFullName());
+			return false;
+		}
 	}
 
 	SettingsManager * settings = SettingsManager::getInstance();
@@ -2868,9 +2877,17 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		temporaryDirectoryName = settings->tempSymlinkName;
 	}
 
-	if(!m_localMode && !standAlone && selectedModGameVersion != nullptr && !m_downloadManager->downloadModGameVersion(*selectedModGameVersion, *m_mods, *getGameVersions(), true, true)) {
-		notifyLaunchError(fmt::format("Failed to download '{}' game version of '{}' mod!", getGameVersions()->getLongNameOfGameVersionWithID(selectedModGameVersion->getGameVersionID()), selectedModGameVersion->getFullName(false)));
-		return false;
+	if(!m_localMode && !standAlone && selectedModGameVersion != nullptr) {
+		SignalConnectionGroup downloadManagerConnectionGroup(connectDownloadManagerSignals());
+
+		bool modDownloaded = m_downloadManager->downloadModGameVersion(*selectedModGameVersion, *m_mods, *getGameVersions(), true, true);
+
+		downloadManagerConnectionGroup.disconnect();
+
+		if(!modDownloaded) {
+			notifyLaunchError(fmt::format("Failed to download '{}' game version of '{}' mod!", getGameVersions()->getLongNameOfGameVersionWithID(selectedModGameVersion->getGameVersionID()), selectedModGameVersion->getFullName(false)));
+			return false;
+		}
 	}
 
 	ScriptArguments scriptArgs;
@@ -3383,6 +3400,26 @@ bool ModManager::terminateGameProcess() {
 	m_gameProcess.reset();
 
 	return true;
+}
+
+SignalConnectionGroup ModManager::connectDownloadManagerSignals() {
+	return SignalConnectionGroup(
+		m_downloadManager->modDownloadCompleted.connect([this](const ModGameVersion & modGameVersion, bool alreadyUpToDate) {
+			modDownloadCompleted(modGameVersion, alreadyUpToDate);
+		}),
+		m_downloadManager->modDownloadCancelled.connect([this](const ModGameVersion & modGameVersion) {
+			modDownloadCancelled(modGameVersion);
+		}),
+		m_downloadManager->modDownloadFailed.connect([this](const ModGameVersion & modGameVersion) {
+			modDownloadFailed(modGameVersion);
+		}),
+		m_downloadManager->modDownloadStatusChanged.connect([this](const ModGameVersion & modGameVersion, uint8_t downloadStep, uint8_t downloadStepCount, const std::string & status) {
+			return modDownloadStatusChanged(modGameVersion, downloadStep, downloadStepCount, status).value_or(true);
+		}),
+		m_downloadManager->modDownloadProgress.connect([this](const ModGameVersion & modGameVersion, HTTPRequest & request, size_t numberOfBytesDownloaded, size_t totalNumberOfBytes) {
+			return modDownloadProgress(modGameVersion, request, numberOfBytesDownloaded, totalNumberOfBytes).value_or(true);
+		})
+	);
 }
 
 void ModManager::notifyLaunchError(const std::string & errorMessage) {

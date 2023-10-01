@@ -3,11 +3,14 @@
 
 class DownloadCache;
 class GameVersionCollection;
+class HTTPRequest;
 class Mod;
 class ModCollection;
 class ModGameVersion;
 class ModVersion;
 class ModVersionType;
+
+#include <boost/signals2.hpp>
 
 #include <memory>
 #include <string>
@@ -40,11 +43,20 @@ public:
 	bool uninstallModGameVersion(const ModGameVersion & modGameVersion, const GameVersionCollection & gameVersions);
 	bool saveDownloadCache() const;
 
+	boost::signals2::signal<void (const ModGameVersion & /* modGameVersion */, bool /* alreadyUpToDate */)> modDownloadCompleted;
+	boost::signals2::signal<void (const ModGameVersion & /* modGameVersion */)> modDownloadCancelled;
+	boost::signals2::signal<void (const ModGameVersion & /* modGameVersion */)> modDownloadFailed;
+	boost::signals2::signal<bool (const ModGameVersion & /* modGameVersion */, uint8_t /* downloadStep */, uint8_t /* downloadStepCount */, std::string /* status */)> modDownloadStatusChanged;
+	boost::signals2::signal<bool (const ModGameVersion & /* modGameVersion */, HTTPRequest & /* request */, size_t /* numberOfBytesDownloaded */, size_t /* totalNumberOfBytes */)> modDownloadProgress;
+
 private:
 	bool createRequiredDirectories();
 	bool loadDownloadCache();
+	bool notifyModDownloadStatusChanged(const ModGameVersion & modGameVersion, const std::string & status);
+	void onModDownloadProgress(const ModGameVersion & modGameVersion, HTTPRequest & request, size_t numberOfBytesDownloaded, size_t totalNumberOfBytes);
 
 	bool m_initialized;
+	uint8_t m_modDownloadStep;
 	std::unique_ptr<DownloadCache> m_downloadCache;
 
 	DownloadManager(const DownloadManager &) = delete;

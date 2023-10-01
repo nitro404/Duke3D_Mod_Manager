@@ -1190,7 +1190,13 @@ bool ModBrowserPanel::launchGame() {
 	std::stringstream dialogMessageStringStream;
 
 	if(!fullModName.empty()) {
-		dialogMessageStringStream << '\'' << fullModName << "' mod is currently running in ";
+		dialogMessageStringStream << '\'' << fullModName << "'";
+
+		if(standAlone) {
+			dialogMessageStringStream << " stand-alone";
+		}
+
+		dialogMessageStringStream << " mod is currently running in ";
 	}
 
 	dialogMessageStringStream << '\'' << m_activeGameVersion->getLongName() << '\'';
@@ -1204,7 +1210,13 @@ bool ModBrowserPanel::launchGame() {
 	}
 
 	if(fullModName.empty()) {
-		dialogMessageStringStream << " without any mods";
+		dialogMessageStringStream << " without any";
+
+		if(standAlone) {
+			dialogMessageStringStream << " additional";
+		}
+
+		dialogMessageStringStream << " mods";
 	}
 
 	dialogMessageStringStream << '.';

@@ -32,17 +32,22 @@
 
 using namespace std::chrono_literals;
 
+static const uint8_t MAX_NUMBER_OF_MOD_DOWNLOAD_STEPS = 6;
+
 DownloadManager::DownloadManager()
 	: m_initialized(false)
+	, m_modDownloadStep(0)
 	, m_downloadCache(std::make_unique<DownloadCache>()) { }
 
 DownloadManager::DownloadManager(DownloadManager && downloadManager) noexcept
 	: m_initialized(downloadManager.m_initialized)
+	, m_modDownloadStep(downloadManager.m_modDownloadStep)
 	, m_downloadCache(std::move(downloadManager.m_downloadCache)) { }
 
 const DownloadManager & DownloadManager::operator = (DownloadManager && downloadManager) noexcept {
 	if(this != &downloadManager) {
 		m_initialized = downloadManager.m_initialized;
+		m_modDownloadStep = downloadManager.m_modDownloadStep;
 		m_downloadCache = std::move(downloadManager.m_downloadCache);
 	}
 
@@ -426,14 +431,20 @@ bool DownloadManager::downloadModList(bool force) {
 }
 
 bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersion, const ModCollection & mods, const GameVersionCollection & gameVersions, bool downloadDependencies, bool allowCompatibleGameVersions, bool force) {
+	m_modDownloadStep = 0;
+
 	if(!m_initialized) {
 		return false;
+		modDownloadFailed(modGameVersion);
 	}
 
 	if(!modGameVersion.isValid()) {
 		spdlog::error("Failed to download mod, invalid mod game version provided!");
+		modDownloadFailed(modGameVersion);
 		return false;
 	}
+
+	notifyModDownloadStatusChanged(modGameVersion, "Checking mod download cache.");
 
 	SettingsManager * settings = SettingsManager::getInstance();
 	HTTPService * httpService = HTTPService::getInstance();
@@ -447,6 +458,7 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 	else {
 		if(!gameVersions.isValid()) {
 			spdlog::error("Failed to download mod, invalid game version collection provided!");
+			modDownloadFailed(modGameVersion);
 			return false;
 		}
 
@@ -455,6 +467,7 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 
 	if(gameVersion == nullptr) {
 		spdlog::error("Failed to download '{}' mod, could not find game version with ID '{}'! Is your game version configuration file missing information?", modGameVersion.getParentModVersionType()->getFullName(), modGameVersion.getGameVersionID());
+		modDownloadFailed(modGameVersion);
 		return false;
 	}
 
@@ -462,6 +475,7 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 
 	if(modDownload == nullptr) {
 		spdlog::error("Failed to obtain download for mod game version: '{}'. Is your mod collection data correct?", modGameVersion.getFullName(true));
+		modDownloadFailed(modGameVersion);
 		return false;
 	}
 
@@ -469,6 +483,7 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 
 	if(downloadDependencies) {
 		if(!mods.isValid(&gameVersions, true)) {
+			modDownloadFailed(modGameVersion);
 			return false;
 		}
 
@@ -479,14 +494,18 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 
 	if(!DeviceInformationBridge::getInstance()->isConnectedToInternet()) {
 		if(cachedModPackageFile == nullptr) {
+			modDownloadFailed(modGameVersion);
 			return false;
 		}
 
 		for(const std::shared_ptr<ModGameVersion> & dependencyModGameVersion : modDependencyGameVersions) {
 			if(!downloadModGameVersion(*dependencyModGameVersion, mods, gameVersions, true, allowCompatibleGameVersions, force)) {
+				modDownloadFailed(modGameVersion);
 				return false;
 			}
 		}
+
+		modDownloadCompleted(modGameVersion, true);
 
 		return true;
 	}
@@ -504,12 +523,22 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 
 	if(!force && cachedModPackageFile != nullptr) {
 		request->setIfNoneMatchETag(cachedModPackageFile->getETag());
+
+		notifyModDownloadStatusChanged(modGameVersion, fmt::format("Checking for '{}' mod updates...", modGameVersion.getParentModVersionType()->getFullName()));
 	}
+	else {
+		notifyModDownloadStatusChanged(modGameVersion, fmt::format("Downloading '{}' mod.", modGameVersion.getParentModVersionType()->getFullName()));
+	}
+
+	boost::signals2::connection modDownloadProgressConnection(request->progress.connect(std::bind(&DownloadManager::onModDownloadProgress, this, modGameVersion, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
 
 	std::shared_ptr<HTTPResponse> response(httpService->sendRequestAndWait(request));
 
+	modDownloadProgressConnection.disconnect();
+
 	if(response == nullptr || response->isFailure()) {
 		spdlog::error("Failed to download '{}' mod package file with error: {}", modGameVersion.getFullName(true), response != nullptr ? response->getErrorMessage() : "Invalid request.");
+		modDownloadFailed(modGameVersion);
 		return false;
 	}
 	else if(response->getStatusCode() == magic_enum::enum_integer(HTTPStatusCode::NotModified)) {
@@ -517,15 +546,19 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 
 		for(const std::shared_ptr<ModGameVersion> & dependencyModGameVersion : modDependencyGameVersions) {
 			if(!downloadModGameVersion(*dependencyModGameVersion, mods, gameVersions, true, allowCompatibleGameVersions, force)) {
+				modDownloadFailed(modGameVersion);
 				return false;
 			}
 		}
+
+		modDownloadCompleted(modGameVersion, true);
 
 		return true;
 	}
 	else if(response->isFailureStatusCode()) {
 		std::string statusCodeName(HTTPUtilities::getStatusCodeName(response->getStatusCode()));
 		spdlog::error("Failed to download '{}' mod package file ({}{})!", modGameVersion.getFullName(true), response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
+		modDownloadFailed(modGameVersion);
 		return false;
 	}
 
@@ -534,6 +567,7 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 	std::string modPackageFileSHA1(response->getBody()->getSHA1());
 	if(modPackageFileSHA1 != modDownload->getSHA1()) {
 		spdlog::error("Failed to download '{}' mod package file '{}' due to data corruption, SHA1 hash check failed!", modGameVersion.getFullName(true), modDownload->getFileName());
+		modDownloadFailed(modGameVersion);
 		return false;
 	}
 
@@ -542,6 +576,8 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 	if(standAlone) {
 		spdlog::info("Mod '{}' package file saved to '{}' mod download directory.", modGameVersion.getFullName(true), gameVersion->getModDirectoryName());
 
+		notifyModDownloadStatusChanged(modGameVersion, "Saving stand-alone mod package file archive to file system.");
+
 		response->getBody()->writeTo(modPackageDownloadLocalFilePath, true);
 	}
 
@@ -549,17 +585,21 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 
 	if(modDownloadZipArchive == nullptr) {
 		spdlog::error("Failed to create zip archive handle from mod '{}' package file '{}'!", modGameVersion.getFullName(true), modDownload->getFileName());
+		modDownloadFailed(modGameVersion);
 		return false;
 	}
 
 	// verify mod file SHA1 hashes
 	std::shared_ptr<ModFile> modZipFile(modGameVersion.getFirstFileOfType("zip"));
 
+	notifyModDownloadStatusChanged(modGameVersion, fmt::format("Verifying '{}' mod file integrities.", modGameVersion.getParentModVersionType()->getFullName()));
+
 	if(modZipFile != nullptr && !standAlone) {
 		std::weak_ptr<ArchiveEntry> modFileZipEntry(modDownloadZipArchive->getEntry(modZipFile->getFileName()));
 
 		if(modFileZipEntry.expired()) {
 			spdlog::error("Failed to download '{}' mod package file '{}', mod zip file '{}' not found!", modGameVersion.getFullName(true), modDownload->getFileName(), modZipFile->getFileName());
+			modDownloadFailed(modGameVersion);
 			return false;
 		}
 
@@ -567,11 +607,13 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 
 		if(modFileZipEntryData == nullptr) {
 			spdlog::error("Failed to download '{}' mod package file '{}', could not retrieve zip entry file '{}' data!", modGameVersion.getFullName(true), modDownload->getFileName(), modZipFile->getFileName());
+			modDownloadFailed(modGameVersion);
 			return false;
 		}
 
 		if(!Utilities::areStringsEqualIgnoreCase(modFileZipEntryData->getSHA1(), modZipFile->getSHA1())) {
 			spdlog::error("Failed to download '{}' mod package file '{}', zip entry file '{}' SHA1 hash validation failed!", modGameVersion.getFullName(true), modDownload->getFileName(), modZipFile->getFileName());
+			modDownloadFailed(modGameVersion);
 			return false;
 		}
 	}
@@ -587,11 +629,6 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 				continue;
 			}
 
-			// 0 size files don't really have a hash, skip them or else checks will fail
-			if(modFile->getFileSize() == 0) {
-				continue;
-			}
-
 			// zero size files don't really have a hash, so skip them or else checks will fail
 			if(modFile->getFileSize() == 0) {
 				continue;
@@ -601,6 +638,7 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 
 			if(modFileEntry.expired()) {
 				spdlog::error("Failed to download '{}' mod package file '{}', mod file '{}' not found!", modGameVersion.getFullName(true), modDownload->getFileName(), modFile->getFileName());
+				modDownloadFailed(modGameVersion);
 				return false;
 			}
 
@@ -608,19 +646,28 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 
 			if(modFileEntryData == nullptr) {
 				spdlog::error("Failed to download '{}' mod package file '{}', could not retrieve zip entry file '{}' data!", modGameVersion.getFullName(true), modDownload->getFileName(), modFile->getFileName());
+				modDownloadFailed(modGameVersion);
 				return false;
 			}
 			else if(!Utilities::areStringsEqualIgnoreCase(modFileEntryData->getSHA1(), modFile->getSHA1())) {
 				spdlog::error("Failed to download '{}' mod package file '{}', zip entry file '{}' SHA1 hash validation failed!", modGameVersion.getFullName(true), modDownload->getFileName(), modFile->getFileName());
+				modDownloadFailed(modGameVersion);
 				return false;
 			}
 		}
 	}
 
-	if(!standAlone && !modDownloadZipArchive->extractAllEntries(modDownloadLocalBasePath, true)) {
-		spdlog::error("Failed to extract '{}' mod package file '{}' contents to directory: '{}'.", modGameVersion.getFullName(true), modDownload->getFileName(), modDownloadLocalBasePath);
-		return false;
+	if(!standAlone) {
+		notifyModDownloadStatusChanged(modGameVersion, fmt::format("Extracting '{}' mod files from archive package file.", modGameVersion.getParentModVersionType()->getFullName()));
+
+		if(!modDownloadZipArchive->extractAllEntries(modDownloadLocalBasePath, true)) {
+			spdlog::error("Failed to extract '{}' mod package file '{}' contents to directory: '{}'.", modGameVersion.getFullName(true), modDownload->getFileName(), modDownloadLocalBasePath);
+			modDownloadFailed(modGameVersion);
+			return false;
+		}
 	}
+
+	notifyModDownloadStatusChanged(modGameVersion, "Updating download cache.");
 
 	m_downloadCache->updateCachedPackageFile(*modDownload, modGameVersion, *gameVersion, modDownloadZipArchive->getCompressedSize(), response->getETag());
 
@@ -652,11 +699,16 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 		SegmentAnalytics::getInstance()->track("Mod Downloaded", properties);
 	}
 
+	notifyModDownloadStatusChanged(modGameVersion, fmt::format("'{}' mod downloaded complete!", modGameVersion.getParentModVersionType()->getFullName()));
+
 	for(const std::shared_ptr<ModGameVersion> & dependencyModGameVersion : modDependencyGameVersions) {
 		if(!downloadModGameVersion(*dependencyModGameVersion, mods, gameVersions, true, allowCompatibleGameVersions, force)) {
+			modDownloadFailed(modGameVersion);
 			return false;
 		}
 	}
+
+	modDownloadCompleted(modGameVersion, false);
 
 	return true;
 }
@@ -777,4 +829,22 @@ bool DownloadManager::uninstallModGameVersion(const ModGameVersion & modGameVers
 	}
 
 	return true;
+}
+
+bool DownloadManager::notifyModDownloadStatusChanged(const ModGameVersion & modGameVersion, const std::string & status) {
+	if(!modDownloadStatusChanged(modGameVersion, m_modDownloadStep++, MAX_NUMBER_OF_MOD_DOWNLOAD_STEPS, status)) {
+		modDownloadCancelled(modGameVersion);
+
+		return false;
+	}
+
+	return true;
+}
+
+void DownloadManager::onModDownloadProgress(const ModGameVersion & modGameVersion, HTTPRequest & request, size_t numberOfBytesDownloaded, size_t totalNumberOfBytes) {
+	if(!modDownloadProgress(modGameVersion, request, numberOfBytesDownloaded, totalNumberOfBytes)) {
+		HTTPService::getInstance()->abortRequest(request);
+
+		modDownloadCancelled(modGameVersion);
+	}
 }
