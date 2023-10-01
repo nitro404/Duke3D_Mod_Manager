@@ -76,6 +76,8 @@ wxDEFINE_EVENT(EVENT_INITIALIZED, ModManagerInitializedEvent);
 wxDEFINE_EVENT(EVENT_INITIALIZATION_CANCELLED, ModManagerInitializationCancelledEvent);
 wxDEFINE_EVENT(EVENT_INITIALIZATION_FAILED, ModManagerInitializationFailedEvent);
 
+static const std::string BASE_INITIALIZATION_MESSAGE(fmt::format("{} is initializing, please wait...", APPLICATION_NAME));
+
 ModManagerApplication::ModManagerApplication()
 	: m_modManagerFrame(new ModManagerFrame())
 	, m_newModManagerFrame(nullptr)
@@ -118,20 +120,19 @@ void ModManagerApplication::initialize() {
 		settings->analyticsConfirmationAcknowledged = true;
 	}
 
-	std::string baseInitializationMessage(fmt::format("{} is initializing, please wait...", APPLICATION_NAME));
-
 	std::unique_ptr<wxProgressDialog> initializingProgressDialog(std::make_unique<wxProgressDialog>(
 		"Initializing",
-		baseInitializationMessage,
+		BASE_INITIALIZATION_MESSAGE,
 		m_modManager->numberOfInitializationSteps(),
 		nullptr,
 		wxPD_AUTO_HIDE | wxPD_CAN_ABORT
 	));
 
 	initializingProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
+	initializingProgressDialog->Fit();
 
-	m_modManagerInitializationProgressConnection = m_modManager->initializationProgress.connect([&initializingProgressDialog, baseInitializationMessage](uint8_t initializationStep, uint8_t initializationStepCount, std::string description) {
-		bool updateResult = initializingProgressDialog->Update(initializationStep, fmt::format("{}\n{}...", baseInitializationMessage, description));
+	m_modManagerInitializationProgressConnection = m_modManager->initializationProgress.connect([&initializingProgressDialog](uint8_t initializationStep, uint8_t initializationStepCount, std::string description) {
+		bool updateResult = initializingProgressDialog->Update(initializationStep, fmt::format("{}\n{}...", BASE_INITIALIZATION_MESSAGE, description));
 		initializingProgressDialog->Fit();
 
 		return updateResult;
@@ -166,13 +167,31 @@ void ModManagerApplication::displayArgumentHelp() {
 }
 
 void ModManagerApplication::showWindow() {
+	std::unique_ptr<wxProgressDialog> initializingProgressDialog(std::make_unique<wxProgressDialog>(
+		"Initializing",
+		BASE_INITIALIZATION_MESSAGE + "\nInitializing window...",
+		m_modManager->numberOfInitializationSteps() + 2,
+		nullptr,
+		wxPD_AUTO_HIDE | wxPD_CAN_ABORT
+	));
+
+	initializingProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
+	initializingProgressDialog->Fit();
+	initializingProgressDialog->Update(m_modManager->numberOfInitializationSteps(), initializingProgressDialog->GetMessage());
+
 	m_modManagerFrameReloadRequestedConnection = m_modManagerFrame->reloadRequested.connect(std::bind(&ModManagerApplication::onReloadRequested, this));
 	m_modManagerFrame->Bind(wxEVT_CLOSE_WINDOW, &ModManagerApplication::onFrameClosed, this);
 	m_modManagerFrame->initialize(m_modManager);
+
+	initializingProgressDialog->Update(initializingProgressDialog->GetValue() + 1, BASE_INITIALIZATION_MESSAGE + "\nApplication initialized!");
+	initializingProgressDialog->Fit();
+
 	m_modManagerFrame->Show(true);
 	m_modManagerFrame->Raise();
 
 	m_logSinkWX->initialize();
+
+	initializingProgressDialog->Update(initializingProgressDialog->GetValue() + 1, initializingProgressDialog->GetMessage());
 }
 
 void ModManagerApplication::onInitialized(ModManagerInitializedEvent & event) {
