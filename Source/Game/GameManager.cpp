@@ -529,8 +529,8 @@ bool GameManager::updateGameDownloadList(bool force) const {
 
 	std::shared_ptr<HTTPResponse> response(httpService->sendRequestAndWait(request));
 
-	if(response->isFailure()) {
-		spdlog::error("Failed to download Duke Nukem 3D game download list with error: {}", response->getErrorMessage());
+	if(response == nullptr || response->isFailure()) {
+		spdlog::error("Failed to download Duke Nukem 3D game download list with error: {}", response != nullptr ? response->getErrorMessage() : "Invalid request.");
 		return false;
 	}
 
@@ -1094,8 +1094,8 @@ static std::vector<NetDuke32Release> getNetDuke32Releases(size_t maxNumberOfRele
 
 	std::shared_ptr<HTTPResponse> response(httpService->sendRequestAndWait(downloadPageRequest));
 
-	if(response->isFailure()) {
-		spdlog::error("Failed to retrieve NetDuke32 release list with error: {}", response->getErrorMessage());
+	if(response == nullptr || response->isFailure()) {
+		spdlog::error("Failed to retrieve NetDuke32 release list with error: {}", response != nullptr ? response->getErrorMessage() : "Invalid request.");
 		return {};
 	}
 	else if(response->isFailureStatusCode()) {
@@ -1914,8 +1914,8 @@ static Duke3dwInfo getLatestDuke3dwInfo() {
 
 	std::shared_ptr<HTTPResponse> response(httpService->sendRequestAndWait(downloadPageRequest));
 
-	if(response->isFailure()) {
-		spdlog::error("Failed to retrieve Duke3dw download page with error: {}", response->getErrorMessage());
+	if(response == nullptr || response->isFailure()) {
+		spdlog::error("Failed to retrieve Duke3dw download page with error: {}", response != nullptr ? response->getErrorMessage() : "Invalid request.");
 		return {};
 	}
 	else if(response->isFailureStatusCode()) {
@@ -2064,8 +2064,8 @@ static std::vector<XDukeDownload> getXDukeDownloads() {
 
 	std::shared_ptr<HTTPResponse> response(httpService->sendRequestAndWait(downloadPageRequest));
 
-	if(response->isFailure()) {
-		spdlog::error("Failed to retrieve xDuke download page with error: {}", response->getErrorMessage());
+	if(response == nullptr || response->isFailure()) {
+		spdlog::error("Failed to retrieve xDuke download page with error: {}", response != nullptr ? response->getErrorMessage() : "Invalid request.");
 		return {};
 	}
 	else if(response->isFailureStatusCode()) {
@@ -2207,8 +2207,8 @@ static std::vector<Duke3d_w32Download> getDuke3d_w32Downloads() {
 
 	std::shared_ptr<HTTPResponse> response(httpService->sendRequestAndWait(downloadPageRequest));
 
-	if(response->isFailure()) {
-		spdlog::error("Failed to retrieve Duke3d_w32 download page with error: {}", response->getErrorMessage());
+	if(response == nullptr || response->isFailure()) {
+		spdlog::error("Failed to retrieve Duke3d_w32 download page with error: {}", response != nullptr ? response->getErrorMessage() : "Invalid request.");
 		return {};
 	}
 	else if(response->isFailureStatusCode()) {
@@ -2470,8 +2470,8 @@ bool GameManager::installGame(const std::string & gameVersionID, const std::stri
 
 		progressConnection.disconnect();
 
-		if(response->isFailure()) {
-			spdlog::error("Failed to download '{}' game files package with error: {}", gameVersion->getLongName(), response->getErrorMessage());
+		if(response == nullptr || response->isFailure()) {
+			spdlog::error("Failed to download '{}' game files package with error: {}", gameVersion->getLongName(), response != nullptr ? response->getErrorMessage() : "Invalid request.");
 
 			if(!useFallback) {
 				return installGame(gameVersion->getID(), destinationDirectoryPath, newGameExecutableName, true, overwrite);
@@ -3317,8 +3317,8 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 
 	progressConnection.disconnect();
 
-	if(response->isFailure()) {
-		spdlog::error("Failed to download {} group file with error: {}", groupGameVersion->getLongName(), response->getErrorMessage());
+	if(response == nullptr || response->isFailure()) {
+		spdlog::error("Failed to download {} group file with error: {}", groupGameVersion->getLongName(), response != nullptr ? response->getErrorMessage() : "Invalid request.");
 		return false;
 	}
 	else if(response->isFailureStatusCode()) {

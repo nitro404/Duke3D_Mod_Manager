@@ -300,8 +300,8 @@ bool DOSBoxManager::updateDOSBoxDownloadList(bool force) const {
 
 	std::shared_ptr<HTTPResponse> response(httpService->sendRequestAndWait(request));
 
-	if(response->isFailure()) {
-		spdlog::error("Failed to download DOSBox version download list with error: {}", response->getErrorMessage());
+	if(response == nullptr || response->isFailure()) {
+		spdlog::error("Failed to download DOSBox version download list with error: {}", response != nullptr ? response->getErrorMessage() : "Invalid request.");
 		return false;
 	}
 	else if(response->getStatusCode() == magic_enum::enum_integer(HTTPStatusCode::NotModified)) {
@@ -501,8 +501,8 @@ std::string DOSBoxManager::getLatestOriginalDOSBoxVersion() const {
 
 	std::shared_ptr<HTTPResponse> downloadPageResponse(httpService->sendRequestAndWait(downloadPageRequest));
 
-	if(downloadPageResponse->isFailure()) {
-		spdlog::error("Failed to retrieve DOSBox download page with error: {}", downloadPageResponse->getErrorMessage());
+	if(downloadPageResponse == nullptr || downloadPageResponse->isFailure()) {
+		spdlog::error("Failed to retrieve DOSBox download page with error: {}", downloadPageResponse != nullptr ? downloadPageResponse->getErrorMessage() : "Invalid request.");
 		return {};
 	}
 	else if(downloadPageResponse->isFailureStatusCode()) {
@@ -610,8 +610,8 @@ static std::vector<DOSBoxECEDownload> getLatestDOSBoxEnhancedCommunityEditionDow
 
 	std::shared_ptr<HTTPResponse> downloadInformationResponse(httpService->sendRequestAndWait(downloadInformationRequest));
 
-	if(downloadInformationResponse->isFailure()) {
-		spdlog::error("Failed to retrieve DOSBox Enhanced Community Edition download list with error: {}", downloadInformationResponse->getErrorMessage());
+	if(downloadInformationResponse == nullptr || downloadInformationResponse->isFailure()) {
+		spdlog::error("Failed to retrieve DOSBox Enhanced Community Edition download list with error: {}", downloadInformationResponse != nullptr ? downloadInformationResponse->getErrorMessage() : "Invalid request.");
 		return {};
 	}
 	else if(downloadInformationResponse->isFailureStatusCode()) {
@@ -1017,8 +1017,8 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::s
 
 	progressConnection.disconnect();
 
-	if(response->isFailure()) {
-		spdlog::error("Failed to download {} {} application archive file with error: {}", dosboxVersion->getLongName(), internalLatestVersion, response->getErrorMessage());
+	if(response == nullptr || response->isFailure()) {
+		spdlog::error("Failed to download {} {} application archive file with error: {}", dosboxVersion->getLongName(), internalLatestVersion, response != nullptr ? response->getErrorMessage() : "Invalid request.");
 
 		if(!useFallback) {
 			return downloadLatestDOSBoxVersion(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, true, latestVersion);
