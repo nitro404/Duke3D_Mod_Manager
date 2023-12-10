@@ -284,7 +284,7 @@ bool Location::parseFrom(const rapidjson::Value & locationValue) {
 
 bool Location::parseFrom(const tinyxml2::XMLElement * locationElement) {
 	if(locationElement == nullptr) {
-		return nullptr;
+		return false;
 	}
 
 	const char * townRaw = locationElement->Attribute(XML_LOCATION_TOWN_ATTRIBUTE_NAME.c_str());

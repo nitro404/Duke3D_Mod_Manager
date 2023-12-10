@@ -1593,14 +1593,14 @@ std::unique_ptr<Sector> Sector::parseFrom(const rapidjson::Value & sectorValue) 
 			const rapidjson::Value & trailingByteValue = *i;
 
 			if(!trailingByteValue.IsUint()) {
-				spdlog::error("Invalid sector trailing data byte #{} type: '{}', expected unsigned integer 'number'." + (trailingData.size() + 1), Utilities::typeToString(trailingByteValue.GetType()));
+				spdlog::error("Invalid sector trailing data byte #{} type: '{}', expected unsigned integer 'number'.", (trailingData.size() + 1), Utilities::typeToString(trailingByteValue.GetType()));
 				return nullptr;
 			}
 
 			uint32_t trailingByte = trailingByteValue.GetUint();
 
 			if(trailingByte > std::numeric_limits<uint8_t>::max()) {
-				spdlog::error("Invalid sector trailing data byte #{} value: {}, expected unsigned integer 'number' between 0 and {}, inclusively." + (trailingData.size() + 1), trailingByte, std::numeric_limits<uint8_t>::max());
+				spdlog::error("Invalid sector trailing data byte #{} value: {}, expected unsigned integer 'number' between 0 and {}, inclusively.", (trailingData.size() + 1), trailingByte, std::numeric_limits<uint8_t>::max());
 				return nullptr;
 			}
 

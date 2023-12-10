@@ -2,6 +2,10 @@
 #define _GROUP_UTILITIES_H_
 
 #include "Group.h"
+#include "GRP/GroupGRP.h"
+#include "SSI/GroupSSI.h"
+
+#include <Utilities/FileUtilities.h>
 
 #include <memory>
 
@@ -48,15 +52,18 @@ std::unique_ptr<Group> GroupUtilities::combineGroupsFromPaths(Arguments &&... ar
 
 	for(size_t i = 0; i < sizeof...(arguments); i++) {
 		std::string_view groupPath(groupPaths[i]);
+		std::string_view fileExtension(Utilities::getFileExtension(groupPath));
 
-		currentGroup = std::make_unique<Group>(groupPath);
-
-		if(!currentGroup->load()) {
-			return nullptr;
+		if(Utilities::areStringsEqualIgnoreCase(fileExtension, "SSI")) {
+			currentGroup = GroupSSI::loadFrom(groupPath);
+		}
+		else {
+			currentGroup = GroupGRP::loadFrom(groupPath);
 		}
 
 		if(combinedGroup == nullptr) {
 			combinedGroup = std::move(currentGroup);
+			combinedGroup->clearFilePath();
 			continue;
 		}
 

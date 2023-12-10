@@ -24,6 +24,7 @@ public:
 	std::string_view getFileName() const;
 	std::string_view getFileExtension() const;
 	void setFilePath(const std::string & filePath);
+	void clearFilePath();
 	bool isModified() const;
 	std::unique_ptr<ByteBuffer> getData() const;
 	virtual bool writeTo(ByteBuffer & byteBuffer) const = 0;

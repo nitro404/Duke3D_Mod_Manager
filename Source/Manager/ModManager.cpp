@@ -977,7 +977,7 @@ std::shared_ptr<DOSBoxVersion> ModManager::getSelectedDOSBoxVersion() const {
 
 	if(!DOSBoxVersion::isValid(selectedDOSBoxVersion.get())) {
 		spdlog::error("Invalid selected DOSBox version.");
-		return false;
+		return nullptr;
 	}
 
 	return selectedDOSBoxVersion;
@@ -1075,7 +1075,7 @@ std::shared_ptr<GameVersion> ModManager::getSelectedGameVersion() const {
 
 	if(!GameVersion::isValid(selectedGameVersion.get())) {
 		spdlog::error("Invalid selected game version.");
-		return false;
+		return nullptr;
 	}
 
 	return selectedGameVersion;
@@ -4947,7 +4947,7 @@ size_t ModManager::updateModFileInfo(Mod & mod, bool skipPopulatedFiles, std::op
 }
 
 bool ModManager::testParsing() {
-	std::string_view modListFilePath(SettingsManager::getInstance()->modsListFilePath);
+	std::string modListFilePath(SettingsManager::getInstance()->modsListFilePath);
 
 	if(!std::filesystem::is_regular_file(std::filesystem::path(modListFilePath))) {
 		spdlog::error("Local mod list file does not exist!");
@@ -4973,7 +4973,7 @@ bool ModManager::testParsing() {
 
 	if(modCollectionXMLDocument.Parse(modCollectionXMLData.data(), modCollectionXMLData.size()) != tinyxml2::XML_SUCCESS) {
 		spdlog::error("Failed to parse XML mod list file data!");
-		return nullptr;
+		return false;
 	}
 
 	std::unique_ptr<ModCollection> xmlModCollection(ModCollection::parseFrom(modCollectionXMLDocument.RootElement()));

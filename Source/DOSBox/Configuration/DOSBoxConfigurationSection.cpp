@@ -578,7 +578,7 @@ bool DOSBoxConfiguration::Section::removeEntry(size_t entryIndex) {
 	EntryMap::const_iterator entryIterator(m_entries.find(m_orderedEntryNames[entryIndex]));
 
 	if(entryIterator == m_entries.cend()) {
-		return nullptr;
+		return false;
 	}
 
 	std::shared_ptr<Entry> sharedEntry(entryIterator->second);

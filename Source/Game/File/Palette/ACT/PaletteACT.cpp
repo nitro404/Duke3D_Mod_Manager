@@ -135,7 +135,7 @@ std::unique_ptr<PaletteACT> PaletteACT::readFrom(const ByteBuffer & byteBuffer) 
 		}
 	}
 	else if(bytesRemaining != 0) {
-		spdlog::warn("Adobe Photoshop ACT palette contains an unexpected additional {} byte{} after the colour data, they will be discarded.", bytesRemaining == 1 ? "" : "s");
+		spdlog::warn("Adobe Photoshop ACT palette contains an unexpected additional {} byte{} after the colour data, they will be discarded.", bytesRemaining, bytesRemaining == 1 ? "" : "s");
 	}
 
 	return std::make_unique<PaletteACT>(std::make_unique<ColourTable>(std::move(colours), optionalTransparentColourIndex));

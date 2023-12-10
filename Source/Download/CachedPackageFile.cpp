@@ -75,7 +75,7 @@ size_t CachedPackageFile::numberOfCachedFiles() const {
 
 bool CachedPackageFile::hasCachedFile(const CachedFile * cachedFile) const {
 	if(!CachedFile::isValid(cachedFile)) {
-		return nullptr;
+		return false;
 	}
 
 	return hasCachedFileWithName(cachedFile->getFileName());

@@ -278,12 +278,12 @@ std::unique_ptr<DownloadCache> DownloadCache::parseFrom(const rapidjson::Value &
 
 		if(!fileTypeValue.IsString()) {
 			spdlog::error("Invalid download cache file type type: '{}', expected: 'string'.", Utilities::typeToString(fileTypeValue.GetType()));
-			return false;
+			return nullptr;
 		}
 
 		if(!Utilities::areStringsEqualIgnoreCase(fileTypeValue.GetString(), FILE_TYPE)) {
 			spdlog::error("Incorrect download cache file type: '{}', expected: '{}'.", fileTypeValue.GetString(), FILE_TYPE);
-			return false;
+			return nullptr;
 		}
 	}
 	else {
@@ -295,19 +295,19 @@ std::unique_ptr<DownloadCache> DownloadCache::parseFrom(const rapidjson::Value &
 
 		if(!fileFormatVersionValue.IsString()) {
 			spdlog::error("Invalid download cache file format version type: '{}', expected: 'string'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
-			return false;
+			return nullptr;
 		}
 
 		std::optional<std::uint8_t> optionalVersionComparison(Utilities::compareVersions(fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION));
 
 		if(!optionalVersionComparison.has_value()) {
 			spdlog::error("Invalid download cache file format version: '{}'.", fileFormatVersionValue.GetString());
-			return false;
+			return nullptr;
 		}
 
 		if(*optionalVersionComparison != 0) {
 			spdlog::error("Unsupported download cache file format version: '{}', only version '{}' is supported.", fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION);
-			return false;
+			return nullptr;
 		}
 	}
 	else {

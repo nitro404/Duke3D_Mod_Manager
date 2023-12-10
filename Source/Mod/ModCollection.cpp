@@ -628,12 +628,12 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const rapidjson::Value &
 
 		if(!fileTypeValue.IsString()) {
 			spdlog::error("Invalid mod collection file type type: '{}', expected: 'string'.", Utilities::typeToString(fileTypeValue.GetType()));
-			return false;
+			return nullptr;
 		}
 
 		if(!Utilities::areStringsEqualIgnoreCase(fileTypeValue.GetString(), FILE_TYPE)) {
 			spdlog::error("Incorrect mod collection file type: '{}', expected: '{}'.", fileTypeValue.GetString(), FILE_TYPE);
-			return false;
+			return nullptr;
 		}
 	}
 	else {
@@ -646,19 +646,19 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const rapidjson::Value &
 
 		if(!fileFormatVersionValue.IsString()) {
 			spdlog::error("Invalid mod collection file format version type: '{}', expected: 'string'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
-			return false;
+			return nullptr;
 		}
 
 		std::optional<std::uint8_t> optionalVersionComparison(Utilities::compareVersions(fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION));
 
 		if(!optionalVersionComparison.has_value()) {
 			spdlog::error("Invalid mod collection file format version: '{}'.", fileFormatVersionValue.GetString());
-			return false;
+			return nullptr;
 		}
 
 		if(*optionalVersionComparison != 0) {
 			spdlog::error("Unsupported mod collection file format version: '{}', only version '{}' is supported.", fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION);
-			return false;
+			return nullptr;
 		}
 	}
 	else {
@@ -743,7 +743,7 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const tinyxml2::XMLEleme
 	if(Utilities::stringLength(fileType) != 0) {
 		if(!Utilities::areStringsEqualIgnoreCase(fileType, FILE_TYPE)) {
 			spdlog::error("Incorrect XML mod collection file type: '{}', expected: '{}'.", fileType, FILE_TYPE);
-			return false;
+			return nullptr;
 		}
 	}
 	else {
@@ -758,12 +758,12 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const tinyxml2::XMLEleme
 
 		if(!optionalVersionComparison.has_value()) {
 			spdlog::error("Invalid mod collection file format version: '{}'.", fileFormatVersion);
-			return false;
+			return nullptr;
 		}
 
 		if(*optionalVersionComparison != 0) {
 			spdlog::error("Unsupported mod collection file format version: '{}', only version '{}' is supported.", fileFormatVersion, FILE_FORMAT_VERSION);
-			return false;
+			return nullptr;
 		}
 	}
 	else {

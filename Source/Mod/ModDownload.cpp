@@ -798,7 +798,7 @@ std::unique_ptr<ModDownload> ModDownload::parseFrom(const tinyxml2::XMLElement *
 	else {
 		if(!skipFileInfoValidation) {
 			spdlog::error("Attribute '{}' is missing from '{}' element.", XML_MOD_DOWNLOAD_FILE_SIZE_ATTRIBUTE_NAME, XML_MOD_DOWNLOAD_ELEMENT_NAME);
-			return false;
+			return nullptr;
 		}
 	}
 

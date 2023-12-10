@@ -443,7 +443,7 @@ std::string DOSBoxManager::getLatestDOSBoxDownloadFallbackURL(const std::string 
 
 	if(dosboxVersion == nullptr) {
 		spdlog::error("Failed to obtain latest DOSBox download fallback URL for missing or invalid DOSBox version ID: '{}'.", dosboxVersionID);
-		return false;
+		return {};
 	}
 
 	DeviceInformationBridge * deviceInformationBridge = DeviceInformationBridge::getInstance();
@@ -552,13 +552,11 @@ std::string DOSBoxManager::getLatestOriginalDOSBoxVersion() const {
 }
 
 std::string DOSBoxManager::getOriginalDOSBoxDownloadURL(const std::string & version) {
-	static const std::string DOSBOX_WINDOWS_INSTALLER_DOWNLOAD_URL_TEMPLATE("https://versaweb.dl.sourceforge.net/project/dosbox/dosbox/{0}/DOSBox{0}-win32-installer.exe");
-
 	if(version.empty()) {
 		return {};
 	}
 
-	return fmt::format(DOSBOX_WINDOWS_INSTALLER_DOWNLOAD_URL_TEMPLATE, version);
+	return fmt::format("https://versaweb.dl.sourceforge.net/project/dosbox/dosbox/{0}/DOSBox{0}-win32-installer.exe", version);
 }
 
 std::string DOSBoxManager::getLatestOriginalDOSBoxDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion) const {
@@ -974,7 +972,7 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::s
 
 	if(dosboxVersion == nullptr) {
 		spdlog::error("Cannot download latest DOSBox version with missing or invalid ID: '{}'.", dosboxVersionID);
-		return false;
+		return nullptr;
 	}
 
 	std::string latestDOSBoxDownloadURL;

@@ -230,7 +230,7 @@ rapidjson::Document FavouriteModCollection::toJSON() const {
 bool FavouriteModCollection::parseFrom(const rapidjson::Value & favouriteModsCollectionValue) {
 	if(!favouriteModsCollectionValue.IsObject()) {
 		spdlog::error("Invalid favourite mods collection type: '{}', expected 'object'.", Utilities::typeToString(favouriteModsCollectionValue.GetType()));
-		return nullptr;
+		return false;
 	}
 
 	if(favouriteModsCollectionValue.HasMember(JSON_FILE_TYPE_PROPERTY_NAME)) {
@@ -276,14 +276,14 @@ bool FavouriteModCollection::parseFrom(const rapidjson::Value & favouriteModsCol
 
 	if(!favouriteModsCollectionValue.HasMember(JSON_FAVOURITE_MODS_PROPERTY_NAME)) {
 		spdlog::error("Favourite mods collection is missing '{}' property.", JSON_FAVOURITE_MODS_PROPERTY_NAME);
-		return nullptr;
+		return false;
 	}
 
 	const rapidjson::Value & favouriteModsValue = favouriteModsCollectionValue[JSON_FAVOURITE_MODS_PROPERTY_NAME];
 
 	if(!favouriteModsValue.IsArray()) {
 		spdlog::error("Invalid favourite mods collection '{}' type: '{}', expected 'array'.", JSON_FAVOURITE_MODS_PROPERTY_NAME, Utilities::typeToString(favouriteModsValue.GetType()));
-		return nullptr;
+		return false;
 	}
 
 	std::unique_ptr<ModIdentifier> newModIdentifier;

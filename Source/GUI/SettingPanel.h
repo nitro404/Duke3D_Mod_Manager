@@ -1,6 +1,8 @@
 #ifndef _SETTING_PANEL_H_
 #define _SETTING_PANEL_H_
 
+#include "WXUtilities.h"
+
 #include <Utilities/StringUtilities.h>
 #include <Utilities/Utilities.h>
 
@@ -15,6 +17,8 @@
 #ifndef WX_PRECOMP
 	#include <wx/wx.h>
 #endif
+
+#include <wx/wrapsizer.h>
 
 #include <cstdint>
 #include <functional>

@@ -1577,10 +1577,11 @@ void ModBrowserPanel::onUninstallButtonPressed(wxCommandEvent & event) {
 
 	if(selectedModGameVersion->isStandAlone()) {
 		std::shared_ptr<StandAloneMod> standAloneMod(m_modManager->getStandAloneMods()->getStandAloneMod(*selectedModGameVersion));
-		std::string standAloneModFullName(fmt::format(standAloneMod->getLongName(), standAloneMod->getVersion().empty() ? "" : " " + standAloneMod->getVersion()));
+
+		std::string standAloneModFullName(standAloneMod->getLongName() + (standAloneMod->getVersion().empty() ? "" : " " + standAloneMod->getVersion()));
 
 		if(!standAloneMod->isConfigured()) {
-			spdlog::error("Stand-alone '{}' mod{} is not configured.", standAloneModFullName);
+			spdlog::error("Stand-alone '{}' mod is not configured.", standAloneModFullName);
 			return;
 		}
 

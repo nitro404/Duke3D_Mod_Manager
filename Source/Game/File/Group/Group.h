@@ -5,6 +5,7 @@
 #include "GroupFile.h"
 
 #include <ByteBuffer.h>
+#include <Utilities/StringUtilities.h>
 
 #include <boost/signals2.hpp>
 

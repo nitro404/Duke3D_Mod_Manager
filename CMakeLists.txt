@@ -41,6 +41,7 @@ include(ResourceFiles)
 
 if(MSVC)
 	add_compile_options(/bigobj)
+	add_compile_options(/Zc:__cplusplus)
 else()
 	add_compile_options(-Wa,-mbig-obj)
 endif()

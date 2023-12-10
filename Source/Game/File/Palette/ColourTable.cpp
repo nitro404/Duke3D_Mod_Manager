@@ -115,7 +115,7 @@ bool ColourTable::setColour(uint8_t colourIndex, uint8_t r, uint8_t g, uint8_t b
 }
 
 bool ColourTable::setColours(const ColourTable & colourTable) {
-	if(!colourTable.isValid(false)) {
+	if(!colourTable.isValid()) {
 		return false;
 	}
 

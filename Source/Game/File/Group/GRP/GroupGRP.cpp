@@ -45,13 +45,13 @@ std::unique_ptr<GroupGRP> GroupGRP::readFrom(const ByteBuffer & byteBuffer) {
 
 	if(error) {
 		spdlog::error("Build Engine GRP group is incomplete or corrupted: missing header text.");
-		return false;
+		return nullptr;
 	}
 
 	// verify that the header text is specified in the header
 	if(!Utilities::areStringsEqual(headerText, HEADER_TEXT)) {
 		spdlog::error("Build Engine GRP group is not a valid format, missing '{}' header text.", HEADER_TEXT);
-		return false;
+		return nullptr;
 	}
 
 	spdlog::trace("Verified Build Engine GRP group file header text.");
@@ -61,7 +61,7 @@ std::unique_ptr<GroupGRP> GroupGRP::readFrom(const ByteBuffer & byteBuffer) {
 
 	if(error) {
 		spdlog::error("Build Engine GRP group is incomplete or corrupted: missing number of files value.");
-		return false;
+		return nullptr;
 	}
 
 	spdlog::trace("Detected {} files in group.", numberOfFiles);
@@ -76,7 +76,7 @@ std::unique_ptr<GroupGRP> GroupGRP::readFrom(const ByteBuffer & byteBuffer) {
 
 		if(error) {
 			spdlog::error("Build Engine GRP group is incomplete or corrupted: missing file #{} name.", i + 1);
-			return false;
+			return nullptr;
 		}
 
 		// read and verify the file size
@@ -84,7 +84,7 @@ std::unique_ptr<GroupGRP> GroupGRP::readFrom(const ByteBuffer & byteBuffer) {
 
 		if(error) {
 			spdlog::error("Build Engine GRP group is incomplete or corrupted: missing file #{} size value.", i + 1);
-			return false;
+			return nullptr;
 		}
 	}
 
@@ -99,7 +99,7 @@ std::unique_ptr<GroupGRP> GroupGRP::readFrom(const ByteBuffer & byteBuffer) {
 
 			spdlog::error("Build Engine GRP group is corrupted: missing {} of {} byte{} for file #{} ('{}') data.{}", numberOfMissingBytes, fileSizes[i], fileSizes[i] == 1 ? "" : "s", i + 1, fileNames[i], numberOfAdditionalFiles > 0 ? fmt::format(" There is also an additional {} files that are missing data.", numberOfAdditionalFiles) : "");
 
-			return false;
+			return nullptr;
 		}
 
 		std::unique_ptr<GroupFile> file(std::make_unique<GroupFile>(fileNames[i], byteBuffer.readBytes(fileSizes[i])));
@@ -167,14 +167,14 @@ std::unique_ptr<GroupGRP> GroupGRP::createFrom(const std::string & directoryPath
 std::unique_ptr<GroupGRP> GroupGRP::loadFrom(const std::string & filePath) {
 	if(filePath.empty() || !std::filesystem::is_regular_file(std::filesystem::path(filePath))) {
 		spdlog::error("Build Engine GRP group file does not exist or is not a file: '{}'.", filePath);
-		return false;
+		return nullptr;
 	}
 
 	std::unique_ptr<ByteBuffer> byteBuffer(ByteBuffer::readFrom(filePath, ENDIANNESS));
 
 	if(byteBuffer == nullptr) {
 		spdlog::error("Failed to open Build Engine GRP group file: '{}'.", filePath);
-		return false;
+		return nullptr;
 	}
 
 	spdlog::trace("Opened Build Engine GRP group file: '{}', loaded {} bytes into memory.", filePath, byteBuffer->getSize());

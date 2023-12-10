@@ -86,7 +86,9 @@ std::unique_ptr<MIDI> MIDI::readFrom(const ByteBuffer & byteBuffer) {
 		return nullptr;
 	}
 
-	return readFrom(MIDIByteBufferReadStream(byteBuffer));
+	MIDIByteBufferReadStream midiByteBufferReadStream(byteBuffer);
+
+	return readFrom(midiByteBufferReadStream);
 }
 
 std::unique_ptr<MIDI> MIDI::loadFrom(const std::string & filePath) {

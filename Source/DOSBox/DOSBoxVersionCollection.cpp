@@ -458,12 +458,12 @@ std::unique_ptr<DOSBoxVersionCollection> DOSBoxVersionCollection::parseFrom(cons
 
 		if(!fileTypeValue.IsString()) {
 			spdlog::error("Invalid DOSBox version collection file type type: '{}', expected: 'string'.", Utilities::typeToString(fileTypeValue.GetType()));
-			return false;
+			return nullptr;
 		}
 
 		if(!Utilities::areStringsEqualIgnoreCase(fileTypeValue.GetString(), FILE_TYPE)) {
 			spdlog::error("Incorrect DOSBox version collection file type: '{}', expected: '{}'.", fileTypeValue.GetString(), FILE_TYPE);
-			return false;
+			return nullptr;
 		}
 	}
 	else {
@@ -475,19 +475,19 @@ std::unique_ptr<DOSBoxVersionCollection> DOSBoxVersionCollection::parseFrom(cons
 
 		if(!fileFormatVersionValue.IsString()) {
 			spdlog::error("Invalid DOSBox version collection file format version type: '{}', expected: 'string'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
-			return false;
+			return nullptr;
 		}
 
 		std::optional<std::uint8_t> optionalVersionComparison(Utilities::compareVersions(fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION));
 
 		if(!optionalVersionComparison.has_value()) {
 			spdlog::error("Invalid DOSBox version collection file format version: '{}'.", fileFormatVersionValue.GetString());
-			return false;
+			return nullptr;
 		}
 
 		if(*optionalVersionComparison != 0) {
 			spdlog::error("Unsupported DOSBox version collection file format version: '{}', only version '{}' is supported.", fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION);
-			return false;
+			return nullptr;
 		}
 	}
 	else {

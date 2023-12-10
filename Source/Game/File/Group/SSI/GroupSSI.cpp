@@ -506,7 +506,7 @@ bool GroupSSI::writeTo(ByteBuffer & byteBuffer) const {
 		}
 
 		if(!byteBuffer.writeFixedLengthString(m_files[i]->getFileName(), GroupFile::MAX_FILE_NAME_LENGTH)) {
-			spdlog::error("Failed to write Sunstorm Interactive SSI group file #{} name #{}.", i + 1);
+			spdlog::error("Failed to write Sunstorm Interactive SSI group file #{} name.", i + 1);
 			return false;
 		}
 
@@ -544,14 +544,14 @@ std::unique_ptr<GroupSSI> GroupSSI::createFrom(const std::string & directoryPath
 std::unique_ptr<GroupSSI> GroupSSI::loadFrom(const std::string & filePath) {
 	if(filePath.empty() || !std::filesystem::is_regular_file(std::filesystem::path(filePath))) {
 		spdlog::error("Sunstorm Interactive SSI group does not exist or is not a file: '{}'.", filePath);
-		return false;
+		return nullptr;
 	}
 
 	std::unique_ptr<ByteBuffer> byteBuffer(ByteBuffer::readFrom(filePath, ENDIANNESS));
 
 	if(byteBuffer == nullptr) {
 		spdlog::error("Failed to open group: '{}'.", filePath);
-		return false;
+		return nullptr;
 	}
 
 	spdlog::trace("Opened Sunstorm Interactive SSI group '{}', loaded {} bytes into memory.", filePath, byteBuffer->getSize());

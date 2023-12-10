@@ -308,12 +308,12 @@ std::unique_ptr<InstalledModInfo> InstalledModInfo::parseFrom(const rapidjson::V
 
 		if(!fileTypeValue.IsString()) {
 			spdlog::error("Invalid installed mod info file type type: '{}', expected: 'string'.", Utilities::typeToString(fileTypeValue.GetType()));
-			return false;
+			return nullptr;
 		}
 
 		if(!Utilities::areStringsEqualIgnoreCase(fileTypeValue.GetString(), FILE_TYPE)) {
 			spdlog::error("Incorrect installed mod info file type: '{}', expected: '{}'.", fileTypeValue.GetString(), FILE_TYPE);
-			return false;
+			return nullptr;
 		}
 	}
 	else {
@@ -326,19 +326,19 @@ std::unique_ptr<InstalledModInfo> InstalledModInfo::parseFrom(const rapidjson::V
 
 		if(!fileFormatVersionValue.IsString()) {
 			spdlog::error("Invalid installed mod info file format version type: '{}', expected: 'string'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
-			return false;
+			return nullptr;
 		}
 
 		std::optional<std::uint8_t> optionalVersionComparison(Utilities::compareVersions(fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION));
 
 		if(!optionalVersionComparison.has_value()) {
 			spdlog::error("Invalid installed mod info file format version: '{}'.", fileFormatVersionValue.GetString());
-			return false;
+			return nullptr;
 		}
 
 		if(*optionalVersionComparison != 0) {
 			spdlog::error("Unsupported installed mod info file format version: '{}', only version '{}' is supported.", fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION);
-			return false;
+			return nullptr;
 		}
 	}
 	else {

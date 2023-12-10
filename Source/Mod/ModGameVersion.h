@@ -3,6 +3,8 @@
 
 #include "ModFile.h"
 
+#include <Utilities/StringUtilities.h>
+
 #include <rapidjson/document.h>
 
 #include <cstdint>

@@ -62,6 +62,10 @@ void GameFile::setFilePath(const std::string & filePath) {
 	m_filePath = filePath;
 }
 
+void GameFile::clearFilePath() {
+	m_filePath = "";
+}
+
 bool GameFile::isModified() const {
 	return m_modified;
 }
