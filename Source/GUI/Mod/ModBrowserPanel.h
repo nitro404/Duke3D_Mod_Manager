@@ -18,6 +18,7 @@
 #endif
 
 #include <wx/hyperlink.h>
+#include <wx/progdlg.h>
 #include <wx/srchctrl.h>
 
 #include <future>
@@ -31,7 +32,10 @@ class GameVersionCollection;
 class LaunchFailedEvent;
 class Mod;
 class ModAuthorInformation;
+class ModGameVersion;
 class ModInfoPanel;
+class ModInstallProgressEvent;
+class ModInstallDoneEvent;
 class ModManager;
 class ModMatch;
 
@@ -65,6 +69,8 @@ public:
 	void clearSearch();
 	void clearSearchResults();
 
+
+	bool installStandAloneMod(std::shared_ptr<ModGameVersion> standAloneModGameVersion);
 	bool launchGame();
 
 private:
@@ -97,6 +103,8 @@ private:
 	void onGameProcessTerminated(uint64_t nativeExitCode, bool forceTerminated);
 	void onLaunchFailed(LaunchFailedEvent & launchFailedEvent);
 	void onGameProcessEnded(GameProcessTerminatedEvent & gameProcessTerminatedEvent);
+	void onModInstallProgress(ModInstallProgressEvent & event);
+	void onModInstallDone(ModInstallDoneEvent & event);
 	void onModSelectionChanged(std::shared_ptr<Mod> mod, size_t modVersionIndex, size_t modVersionTypeIndex, size_t modGameVersionIndex);
 	void onGameTypeChanged(GameType gameType);
 	void onPreferredDOSBoxVersionChanged(std::shared_ptr<DOSBoxVersion> dosboxVersion);
@@ -196,6 +204,9 @@ private:
 	wxButton * m_uninstallButton;
 	wxButton * m_launchButton;
 	ProcessRunningDialog * m_gameRunningDialog;
+	std::future<bool> m_installModFuture;
+	std::atomic<bool> m_modInstallationCancelled;
+	wxProgressDialog * m_installModProgressDialog;
 
 	ModBrowserPanel(const ModBrowserPanel &) = delete;
 	const ModBrowserPanel & operator = (const ModBrowserPanel &) = delete;

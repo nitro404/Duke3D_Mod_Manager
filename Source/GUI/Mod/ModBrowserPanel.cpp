@@ -21,9 +21,11 @@
 #include "Mod/ModVersionType.h"
 #include "Mod/StandAloneModCollection.h"
 
+#include <Network/HTTPRequest.h>
 #include <Utilities/FileUtilities.h>
 #include <Utilities/StringUtilities.h>
 
+#include <fmt/core.h>
 #include <spdlog/spdlog.h>
 #include <wx/choicdlg.h>
 #include <wx/gbsizer.h>
@@ -34,6 +36,8 @@
 
 wxDECLARE_EVENT(EVENT_LAUNCH_FAILED, LaunchFailedEvent);
 wxDECLARE_EVENT(EVENT_GAME_PROCESS_TERMINATED, GameProcessTerminatedEvent);
+wxDECLARE_EVENT(EVENT_MOD_INSTALL_PROGRESS, ModInstallProgressEvent);
+wxDECLARE_EVENT(EVENT_MOD_INSTALL_DONE, ModInstallDoneEvent);
 
 class LaunchFailedEvent final : public wxEvent {
 public:
@@ -67,8 +71,72 @@ public:
 
 IMPLEMENT_DYNAMIC_CLASS(GameProcessTerminatedEvent, wxEvent);
 
+class ModInstallProgressEvent final : public wxEvent {
+public:
+	ModInstallProgressEvent(int value = 0, const std::string & message = {})
+		: wxEvent(0, EVENT_MOD_INSTALL_PROGRESS)
+		, m_value(value)
+		, m_message(message) { }
+
+	virtual ~ModInstallProgressEvent() { }
+
+	int getValue() const {
+		return m_value;
+	}
+
+	void setValue(int value) {
+		m_value = value;
+	}
+
+	const std::string & getMessage() const {
+		return m_message;
+	}
+
+	void setMessage(const std::string & message) {
+		m_message = message;
+	}
+
+	virtual wxEvent * Clone() const override {
+		return new ModInstallProgressEvent(*this);
+	}
+
+	DECLARE_DYNAMIC_CLASS(ModInstallProgressEvent);
+
+private:
+	int m_value;
+	std::string m_message;
+};
+
+IMPLEMENT_DYNAMIC_CLASS(ModInstallProgressEvent, wxEvent);
+
+class ModInstallDoneEvent final : public wxEvent {
+public:
+	ModInstallDoneEvent(bool success = true)
+		: wxEvent(0, EVENT_MOD_INSTALL_DONE)
+		, m_success(success) { }
+
+	virtual ~ModInstallDoneEvent() { }
+
+	virtual wxEvent * Clone() const override {
+		return new ModInstallDoneEvent(*this);
+	}
+
+	bool wasSuccessful() const {
+		return m_success;
+	}
+
+	DECLARE_DYNAMIC_CLASS(ModInstallDoneEvent);
+
+private:
+	bool m_success;
+};
+
+IMPLEMENT_DYNAMIC_CLASS(ModInstallDoneEvent, wxEvent);
+
 wxDEFINE_EVENT(EVENT_LAUNCH_FAILED, LaunchFailedEvent);
 wxDEFINE_EVENT(EVENT_GAME_PROCESS_TERMINATED, GameProcessTerminatedEvent);
+wxDEFINE_EVENT(EVENT_MOD_INSTALL_PROGRESS, ModInstallProgressEvent);
+wxDEFINE_EVENT(EVENT_MOD_INSTALL_DONE, ModInstallDoneEvent);
 
 ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "Mod Browser")
@@ -105,7 +173,9 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	, m_preferredGameVersionComboBox(nullptr)
 	, m_uninstallButton(nullptr)
 	, m_launchButton(nullptr)
-	, m_gameRunningDialog(nullptr) {
+	, m_gameRunningDialog(nullptr)
+	, m_modInstallationCancelled(false)
+	, m_installModProgressDialog(nullptr) {
 	std::shared_ptr<OrganizedModCollection> organizedMods(m_modManager->getOrganizedMods());
 	std::shared_ptr<DOSBoxVersionCollection> dosboxVersions(m_modManager->getDOSBoxVersions());
 	std::shared_ptr<GameVersionCollection> gameVersions(m_modManager->getGameVersions());
@@ -139,6 +209,8 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 
 	Bind(EVENT_LAUNCH_FAILED, &ModBrowserPanel::onLaunchFailed, this);
 	Bind(EVENT_GAME_PROCESS_TERMINATED, &ModBrowserPanel::onGameProcessEnded, this);
+	Bind(EVENT_MOD_INSTALL_PROGRESS, &ModBrowserPanel::onModInstallProgress, this);
+	Bind(EVENT_MOD_INSTALL_DONE, &ModBrowserPanel::onModInstallDone, this);
 
 	wxPanel * modListOptionsPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, "Mod List Options");
 
@@ -920,6 +992,109 @@ void ModBrowserPanel::clearSearchResults() {
 	m_modAuthorMatches.clear();
 }
 
+bool ModBrowserPanel::installStandAloneMod(std::shared_ptr<ModGameVersion> standAloneModGameVersion) {
+	if(m_installModProgressDialog) {
+		spdlog::error("Stand-alone mod installation already in progress!");
+		return false;
+	}
+
+	m_modInstallationCancelled = false;
+
+	if(!ModGameVersion::isValid(standAloneModGameVersion.get()) || !standAloneModGameVersion->isStandAlone()) {
+		wxMessageBox("Cannot install invalid stand-alone mod!", "Invalid Stand-Alone Mod", wxOK | wxICON_ERROR, this);
+		return false;
+	}
+
+	SettingsManager * settings = SettingsManager::getInstance();
+	std::shared_ptr<StandAloneModCollection> standAloneMods(m_modManager->getStandAloneMods());
+	std::shared_ptr<StandAloneMod> standAloneMod(standAloneMods->getStandAloneMod(*standAloneModGameVersion));
+
+	if(standAloneMod != nullptr) {
+		wxMessageBox(fmt::format("Stand-alone mod '{}' is already installed!", standAloneModGameVersion->getParentModVersion()->getFullName()), "Stand-Alone Mod Already Installed", wxOK | wxICON_WARNING, this);
+		return true;
+	}
+
+	if(!settings->standAloneModDisclaimerAcknowledged) {
+		int result = wxMessageBox("Stand-alone mods bring their own game executable file(s), which will be executed while playing. While this is generally quite safe as all mods are manually curated, vetted, and scanned for viruses / trojans, I assume no responsibility for any damages incurred as a result of this in the case that something does slip through this process. Do you understand the risk and wish to proceed?", "Comfirm Installation", wxOK | wxCANCEL | wxICON_WARNING, this);
+
+		if(result == wxCANCEL) {
+			return false;
+		}
+
+		settings->standAloneModDisclaimerAcknowledged = true;
+	}
+
+	wxDirDialog selectInstallDirectoryDialog(this, "Install Stand-Alone Mod to Directory", std::filesystem::current_path().string(), wxDD_DIR_MUST_EXIST, wxDefaultPosition, wxDefaultSize, "Install Stand-Alone Mod");
+	int selectInstallDirectoryResult = selectInstallDirectoryDialog.ShowModal();
+
+	if(selectInstallDirectoryResult == wxID_CANCEL) {
+		return false;
+	}
+
+	std::string destinationDirectoryPath(selectInstallDirectoryDialog.GetPath());
+
+	if(Utilities::areStringsEqual(Utilities::getAbsoluteFilePath(destinationDirectoryPath), Utilities::getAbsoluteFilePath(std::filesystem::current_path().string()))) {
+		wxMessageBox("Cannot install stand-alone mod directly into mod manager directory!", "Invalid Installation Directory", wxOK | wxICON_ERROR, this);
+		return false;
+	}
+
+	if(!std::filesystem::is_directory(std::filesystem::path(destinationDirectoryPath))) {
+		wxMessageBox("Invalid stand-alone mod installation directory selected!", "Invalid Installation Directory", wxOK | wxICON_ERROR, this);
+		return false;
+	}
+
+	for(const std::filesystem::directory_entry & entry : std::filesystem::directory_iterator(std::filesystem::path(destinationDirectoryPath))) {
+		int installToNonEmptyDirectoryResult = wxMessageBox(fmt::format("Stand-alone mod installation installation directory '{}' is not empty!\n\nInstalling to a directory which already contains files may cause issues. Are you sure you would like to install '{}' to this directory?", destinationDirectoryPath, standAloneModGameVersion->getParentModVersion()->getFullName()), "Non-Empty Installation Directory", wxYES_NO | wxCANCEL | wxICON_WARNING, this);
+
+		if(installToNonEmptyDirectoryResult != wxYES) {
+			return false;
+		}
+
+		break;
+	}
+
+	m_installModProgressDialog = new wxProgressDialog("Installing Sand-Alone Mod", fmt::format("Installing '{}', please wait...", standAloneModGameVersion->getParentModVersion()->getFullName()), 101, this, wxPD_REMAINING_TIME);
+	m_installModProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
+
+	SignalConnectionGroup modDownloadConnections(
+		m_modManager->modDownloadStatusChanged.connect([this](const ModGameVersion & modGameVersion, uint8_t downloadStep, uint8_t downloadStepCount, const std::string & status) {
+			QueueEvent(new ModInstallProgressEvent(m_installModProgressDialog->GetValue(), status));
+
+			return true;
+		}),
+		m_modManager->modDownloadProgress.connect([this, standAloneModGameVersion](const ModGameVersion & modGameVersion, HTTPRequest & request, size_t numberOfBytesDownloaded, size_t totalNumberOfBytes) {
+			QueueEvent(new ModInstallProgressEvent(
+				static_cast<int>((static_cast<double>(numberOfBytesDownloaded) / static_cast<double>(totalNumberOfBytes)) * 100.0),
+				fmt::format("Downloaded {} / {} of '{}' stand-alone mod files from: '{}'.", Utilities::fileSizeToString(numberOfBytesDownloaded), Utilities::fileSizeToString(totalNumberOfBytes), standAloneModGameVersion->getParentModVersion()->getFullName(), request.getUrl())
+			));
+
+			return !m_modInstallationCancelled;
+		})
+	);
+
+	m_installModFuture = std::async(std::launch::async, [this, standAloneModGameVersion, destinationDirectoryPath, modDownloadConnections]() mutable {
+		bool modInstalled = m_modManager->installStandAloneMod(*standAloneModGameVersion, destinationDirectoryPath);
+
+		modDownloadConnections.disconnect();
+
+		if(!modInstalled) {
+			QueueEvent(new ModInstallDoneEvent(false));
+
+			wxMessageBox(fmt::format("Failed to install stand-alone '{}' mod.", standAloneModGameVersion->getParentModVersion()->getFullName()), "Mod Install Failed", wxOK | wxICON_ERROR, this);
+
+			return false;
+		}
+
+		updateUninstallButton();
+
+		QueueEvent(new ModInstallDoneEvent(true));
+
+		return true;
+	});
+
+	return true;
+}
+
 bool ModBrowserPanel::launchGame() {
 	if(m_modManager == nullptr || !m_modManager->isInitialized()) {
 		wxMessageBox(
@@ -984,58 +1159,9 @@ bool ModBrowserPanel::launchGame() {
 			standAloneMod = standAloneMods->getStandAloneMod(*selectedModGameVersion);
 
 			if(standAloneMod == nullptr) {
-				if(!settings->standAloneModDisclaimerAcknowledged) {
-					int result = wxMessageBox("Stand-alone mods bring their own game executable file(s), which will be executed while playing. While this is generally quite safe as all mods are manually curated, vetted, and scanned for viruses / trojans, I assume no responsibility for any damages incurred as a result of this in the case that something does slip through this process. Do you understand the risk and wish to proceed?", "Comfirm Installation", wxOK | wxCANCEL | wxICON_WARNING, this);
+				wxMessageBox(fmt::format("Failed to locate installed stand-alone '{}' mod.", selectedModGameVersion->getParentModVersion()->getFullName()), "Missing Stand-Alone Mod", wxOK | wxICON_ERROR, this);
 
-					if(result == wxCANCEL) {
-						return false;
-					}
-
-					settings->standAloneModDisclaimerAcknowledged = true;
-				}
-
-				wxDirDialog selectInstallDirectoryDialog(this, "Install Stand-Alone Mod to Directory", std::filesystem::current_path().string(), wxDD_DIR_MUST_EXIST, wxDefaultPosition, wxDefaultSize, "Install Stand-Alone Mod");
-				int selectInstallDirectoryResult = selectInstallDirectoryDialog.ShowModal();
-
-				if(selectInstallDirectoryResult == wxID_CANCEL) {
-					return false;
-				}
-
-				std::string destinationDirectoryPath(selectInstallDirectoryDialog.GetPath());
-
-				if(Utilities::areStringsEqual(Utilities::getAbsoluteFilePath(destinationDirectoryPath), Utilities::getAbsoluteFilePath(std::filesystem::current_path().string()))) {
-					wxMessageBox("Cannot install stand-alone mod directly into mod manager directory!", "Invalid Installation Directory", wxOK | wxICON_ERROR, this);
-					return false;
-				}
-
-				if(!std::filesystem::is_directory(std::filesystem::path(destinationDirectoryPath))) {
-					wxMessageBox("Invalid stand-alone mod installation directory selected!", "Invalid Installation Directory", wxOK | wxICON_ERROR, this);
-					return false;
-				}
-
-				for(const std::filesystem::directory_entry & entry : std::filesystem::directory_iterator(std::filesystem::path(destinationDirectoryPath))) {
-					int installToNonEmptyDirectoryResult = wxMessageBox(fmt::format("Stand-alone mod installation installation directory '{}' is not empty!\n\nInstalling to a directory which already contains files may cause issues. Are you sure you would like to install '{}' to this directory?", destinationDirectoryPath, selectedModGameVersion->getParentModVersion()->getFullName()), "Non-Empty Installation Directory", wxYES_NO | wxCANCEL | wxICON_WARNING, this);
-
-					if(installToNonEmptyDirectoryResult != wxYES) {
-						return false;
-					}
-
-					break;
-				}
-
-				if(!m_modManager->installStandAloneMod(*selectedModGameVersion, destinationDirectoryPath)) {
-					wxMessageBox(fmt::format("Failed to install stand-alone '{}' mod.", selectedModGameVersion->getParentModVersion()->getFullName()), "Mod Install Failed", wxOK | wxICON_ERROR, this);
-					return false;
-				}
-
-				updateUninstallButton();
-
-				standAloneMod = standAloneMods->getStandAloneMod(*selectedModGameVersion);
-
-				if(standAloneMod == nullptr) {
-					wxMessageBox(fmt::format("Failed to locate installed stand-alone '{}' mod.", selectedModGameVersion->getParentModVersion()->getFullName()), "Missing Stand-Alone Mod", wxOK | wxICON_ERROR, this);
-					return false;
-				}
+				return false;
 			}
 		}
 		else {
@@ -1610,6 +1736,15 @@ void ModBrowserPanel::onUninstallButtonPressed(wxCommandEvent & event) {
 }
 
 void ModBrowserPanel::onLaunchButtonPressed(wxCommandEvent & event) {
+	std::shared_ptr<ModGameVersion> selectedModGameVersion(m_modManager->getSelectedModGameVersion());
+
+	if(selectedModGameVersion != nullptr &&
+	   selectedModGameVersion->isStandAlone() &&
+	   !m_modManager->getStandAloneMods()->hasStandAloneMod(*selectedModGameVersion)) {
+		installStandAloneMod(selectedModGameVersion);
+		return;
+	}
+
 	launchGame();
 }
 
@@ -1657,6 +1792,32 @@ void ModBrowserPanel::onLaunchFailed(LaunchFailedEvent & launchFailedEvent) {
 }
 
 void ModBrowserPanel::onGameProcessEnded(GameProcessTerminatedEvent & gameProcessTerminatedEvent) { }
+
+void ModBrowserPanel::onModInstallProgress(ModInstallProgressEvent & event) {
+	if(m_installModProgressDialog == nullptr) {
+		return;
+	}
+
+	bool updateResult = m_installModProgressDialog->Update(event.getValue(), event.getMessage());
+	m_installModProgressDialog->Fit();
+
+	if(!updateResult) {
+		m_modInstallationCancelled = true;
+	}
+}
+
+void ModBrowserPanel::onModInstallDone(ModInstallDoneEvent & event) {
+	if(m_installModProgressDialog == nullptr) {
+		return;
+	}
+
+	m_installModProgressDialog->Destroy();
+	m_installModProgressDialog = nullptr;
+
+	if(event.wasSuccessful()) {
+		launchGame();
+	}
+}
 
 void ModBrowserPanel::onModSelectionChanged(std::shared_ptr<Mod> mod, size_t modVersionIndex, size_t modVersionTypeIndex, size_t modGameVersionIndex) {
 	updateModSelection();
