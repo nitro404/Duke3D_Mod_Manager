@@ -6,6 +6,7 @@
 #include <Analytics/Segment/SegmentAnalytics.h>
 #include <Platform/Process.h>
 
+#include <fmt/core.h>
 #include <wx/gbsizer.h>
 
 wxDECLARE_EVENT(EVENT_PROCESS_TERMINATED, ProcessTerminatedEvent);
@@ -48,21 +49,23 @@ IMPLEMENT_DYNAMIC_CLASS(ProcessTerminatedEvent, wxEvent);
 wxDEFINE_EVENT(EVENT_PROCESS_TERMINATED, ProcessTerminatedEvent);
 
 ProcessRunningDialog::ProcessRunningDialog(wxWindow * parent, const std::string & title, const std::string & message, const std::string & closeButtonCaption)
-	: wxDialog(parent, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxCAPTION | wxCLOSE_BOX, "Process Running Dialog") {
+	: wxDialog(parent, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxCAPTION | wxCLOSE_BOX, "Process Running Dialog")
+	, m_message(message)
+	, m_messageLabel(nullptr) {
 	SetIcon(wxICON(D3DMODMGR_ICON));
 
 	int border = 5;
 
 	wxPanel * contentsPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER);
 
-	wxStaticText * messageLabel = new wxStaticText(contentsPanel, wxID_ANY, message, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
-	messageLabel->Wrap(GetClientSize().x - (border * 2));
+	m_messageLabel = new wxStaticText(contentsPanel, wxID_ANY, m_message, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
+	m_messageLabel->Wrap(GetClientSize().x - (border * 2));
 
 	wxButton * closeButton = new wxButton(contentsPanel, wxID_ANY, closeButtonCaption, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "Close");
 	closeButton->Bind(wxEVT_BUTTON, &ProcessRunningDialog::onCloseButtonPressed, this);
 
 	wxGridBagSizer * contentsSizer = new wxGridBagSizer(border, border);
-	contentsSizer->Add(messageLabel, wxGBPosition(0, 0), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxVERTICAL | wxALIGN_LEFT | wxALIGN_TOP, border);
+	contentsSizer->Add(m_messageLabel, wxGBPosition(0, 0), wxGBSpan(1, 1), wxEXPAND | wxHORIZONTAL | wxVERTICAL | wxALIGN_LEFT | wxALIGN_TOP, border);
 	contentsSizer->Add(closeButton, wxGBPosition(1, 0), wxGBSpan(1, 1), wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT, border);
 	contentsSizer->AddGrowableRow(0, 1);
 	contentsSizer->AddGrowableCol(0, 1);
@@ -75,6 +78,14 @@ ProcessRunningDialog::ProcessRunningDialog(wxWindow * parent, const std::string 
 
 ProcessRunningDialog::~ProcessRunningDialog() {
 	m_processTermintedConnection.disconnect();
+}
+
+void ProcessRunningDialog::setStatus(const std::string & status) {
+	m_messageLabel->SetLabelText(fmt::format("{}\n\n{}", m_message, status));
+}
+
+void ProcessRunningDialog::clearStatus() {
+	m_messageLabel->SetLabelText(m_message);
 }
 
 void ProcessRunningDialog::setProcess(std::shared_ptr<Process> process) {

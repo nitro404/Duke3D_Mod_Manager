@@ -99,7 +99,8 @@ private:
 	void onUninstallButtonPressed(wxCommandEvent & event);
 	void onLaunchButtonPressed(wxCommandEvent & event);
 	void onLaunched();
-	void onLaunchError(std::string errorMessage);
+	void onLaunchStatus(const std::string & statusMessage);
+	void onLaunchError(const std::string & errorMessage);
 	void onGameProcessTerminated(uint64_t nativeExitCode, bool forceTerminated);
 	void onLaunchFailed(LaunchFailedEvent & launchFailedEvent);
 	void onGameProcessEnded(GameProcessTerminatedEvent & gameProcessTerminatedEvent);
@@ -137,6 +138,7 @@ private:
 	std::shared_ptr<GameVersion> m_activeGameVersion;
 	std::future<bool> m_runSelectedModFuture;
 	boost::signals2::connection m_launchedConnection;
+	boost::signals2::connection m_launchStatusConnection;
 	boost::signals2::connection m_launchErrorConnection;
 	boost::signals2::connection m_gameProcessTerminatedConnection;
 	boost::signals2::connection m_modSelectionChangedConnection;

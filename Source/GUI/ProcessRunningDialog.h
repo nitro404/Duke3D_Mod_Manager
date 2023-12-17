@@ -23,6 +23,8 @@ public:
 	ProcessRunningDialog(wxWindow * parent, const std::string & title, const std::string & message, const std::string & closeButtonCaption);
 	virtual ~ProcessRunningDialog();
 
+	void setStatus(const std::string & status);
+	void clearStatus();
 	void setProcess(std::shared_ptr<Process> process);
 	void close();
 
@@ -32,8 +34,10 @@ private:
 	void onCloseButtonPressed(wxCommandEvent & event);
 	void onClose(wxCloseEvent & closeEvent);
 
+	std::string m_message;
 	std::shared_ptr<Process> m_process;
 	boost::signals2::connection m_processTermintedConnection;
+	wxStaticText * m_messageLabel;
 
 	ProcessRunningDialog(const ProcessRunningDialog &) = delete;
 	const ProcessRunningDialog & operator = (const ProcessRunningDialog &) = delete;

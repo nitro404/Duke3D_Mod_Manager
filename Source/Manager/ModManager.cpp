@@ -2372,6 +2372,8 @@ std::future<bool> ModManager::runSelectedModAsync(std::shared_ptr<GameVersion> a
 bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersion, std::shared_ptr<ModGameVersion> alternateModGameVersion) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
+	launchStatus("Preparing to launch.");
+
 	std::chrono::time_point<std::chrono::steady_clock> runStartTimePoint(std::chrono::steady_clock::now());
 
 	if(!m_initialized) {
@@ -2421,6 +2423,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	std::shared_ptr<ModGameVersion> selectedModGameVersion;
 
 	if(m_selectedMod != nullptr) {
+		launchStatus("Checking mod for missing files.");
+
 		if(checkModForMissingFiles(*m_selectedMod) != 0) {
 			notifyLaunchError("Mod is missing files, aborting execution.");
 			return false;
@@ -2524,6 +2528,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	}
 
 	if(!standAlone && selectedModGameVersion != nullptr) {
+		launchStatus("Collecting list of all mod file paths.");
+
 		std::shared_ptr<GameVersion> targetGameVersion(getGameVersions()->getGameVersionWithID(selectedModGameVersion->getGameVersionID()));
 		const std::string & modDirectoryName(targetGameVersion->getModDirectoryName());
 		absoluteModFilesBaseDirectoryPath = Utilities::joinPaths(getModsDirectoryPath(), modDirectoryName);
@@ -2684,6 +2690,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 	if(doesRequireCombinedGroup || (!m_demoRecordingEnabled && settings->demoExtractionEnabled)) {
 		if(doesRequireCombinedGroup) {
+			launchStatus(fmt::format("Generating combined {} file (this may take some time).", doesRequireCombinedZip ? "zip" : "group"));
+
 			if(doesRequireCombinedZip) {
 				if(!selectedGameVersion->areZipArchiveGroupsSupported()) {
 					notifyLaunchError(fmt::format("Zip archive group files are not supported by '{}'.", selectedGameVersion->getLongName()));
@@ -2836,6 +2844,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		customMap = m_arguments->getFirstValue("map");
 
 		if(!customMap.empty()) {
+			launchStatus("Configuring custom map file path.");
+
 			std::string relativeCustomApplicationBaseDirectoryPath;
 			std::string relativeCustomMapsBaseDirectoryPath;
 
@@ -2878,6 +2888,13 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	}
 
 	if(!m_localMode && !standAlone && selectedModGameVersion != nullptr) {
+		if(m_downloadManager->isModGameVersionDownloaded(*selectedModGameVersion, m_mods.get(), getGameVersions().get(), true, true)) {
+			launchStatus("Checking for updates to mod files.");
+		}
+		else {
+			launchStatus("Starting mod download.");
+		}
+
 		SignalConnectionGroup downloadManagerConnectionGroup(connectDownloadManagerSignals());
 
 		bool modDownloaded = m_downloadManager->downloadModGameVersion(*selectedModGameVersion, *m_mods, *getGameVersions(), true, true);
@@ -2889,6 +2906,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 			return false;
 		}
 	}
+
+	launchStatus("Congfiguring script arguments.");
 
 	ScriptArguments scriptArgs;
 
@@ -2978,6 +2997,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	std::string combinedDOSBoxConfigurationFilePath;
 
 	if(selectedGameVersion->doesRequireDOSBox()) {
+		launchStatus("Generating combined DOSBox configuration file.");
+
 		combinedDOSBoxConfigurationFilePath = Utilities::joinPaths(settings->appTempDirectoryPath, DOSBoxConfiguration::DEFAULT_FILE_NAME);
 		combinedDOSBoxConfiguration = std::make_unique<DOSBoxConfiguration>(combinedDOSBoxConfigurationFilePath);
 
@@ -3006,17 +3027,20 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 	std::chrono::time_point<std::chrono::steady_clock> commandGenerationStartTimePoint(std::chrono::steady_clock::now());
 
+	launchStatus("Generating game launch command.");
+
 	std::string command(generateCommand(selectedGameVersion, allRelativeConFilePaths, allRelativeDefFilePaths, allRelativeGroupFilePaths, scriptArgs, relativeCombinedGroupFilePath, combinedDOSBoxConfigurationFilePath, relativeCustomMapFilePath));
 
-
 	if(command.empty()) {
-		notifyLaunchError("Failed to generate launch command.");
+		notifyLaunchError("Failed to generate game launch command.");
 		return false;
 	}
 
 	std::chrono::microseconds commandGenerationDuration(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - commandGenerationStartTimePoint));
 
 	spdlog::trace("Generated command string after {} us.", commandGenerationDuration.count());
+
+	launchStatus("Checking for and removing previous mod files from game directory.");
 
 	if(!removeModFilesFromGameDirectory(*selectedGameVersion)) {
 		notifyLaunchError(fmt::format("Failed to remove existing mod files from '{}' game directory.", selectedGameVersion->getLongName()));
@@ -3029,6 +3053,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	}
 
 	if(combinedDOSBoxConfiguration != nullptr) {
+		launchStatus("Saving combined DOSBox configuration file to temporary directory.");
+
 		if(combinedDOSBoxConfiguration->save()) {
 			spdlog::info("Saved custom combined DOSBox configuration to file: '{}'.", combinedDOSBoxConfiguration->getFilePath());
 		}
@@ -3040,6 +3066,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	}
 
 	std::unique_ptr<InstalledModInfo> installedModInfo(std::make_unique<InstalledModInfo>(selectedModVersion.get()));
+
+	launchStatus("Creating symbolic links and copying temporary files.");
 
 	if(!createSymlinksOrCopyTemporaryFiles(*selectedGameVersion, allAbsoluteConFilePaths, allAbsoluteDefFilePaths, allAbsoluteGroupFilePaths, absoluteCustomMapFilePath, doesRequireCombinedGroup, shouldConfigureApplicationTemporaryDirectory, installedModInfo.get())) {
 		if(!removeModFilesFromGameDirectory(*selectedGameVersion, *installedModInfo)) {
@@ -3066,6 +3094,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 			spdlog::debug("Temporarily backed up {} '{}' game files.", originalRenamedGameFilePaths.size(), conflictingGameFileExtension);
 		}
 	}
+
+	launchStatus("Backing up conflicting files in game directory.");
 
 	for(const std::string & conflictingGameFileName : CONFLICTING_GAME_FILE_NAMES) {
 		std::filesystem::path originalGameFilePath(Utilities::joinPaths(selectedGameVersion->getGamePath(), conflictingGameFileName));
@@ -3101,6 +3131,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	}
 
 	if(!selectedGameVersion->doesRequireGroupFileExtraction() && !m_demoRecordingEnabled && settings->demoExtractionEnabled) {
+		launchStatus("Extracting mod demo files to game directory.");
+
 		size_t numberOfDemoFilesWritten = 0;
 		size_t demoFileNumber = 1;
 
@@ -3122,6 +3154,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	}
 
 	if(combinedGroup != nullptr || combinedZip != nullptr) {
+		launchStatus(fmt::format("Saving combined {} file.", combinedZip != nullptr ? "zip" : "group"));
+
 		bool combinedGroupOrZipArchiveSaved = false;
 
 		if(combinedZip != nullptr) {
@@ -3161,6 +3195,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	}
 
 	if(m_selectedMod != nullptr && selectedGameVersion->doesRequireGroupFileExtraction()) {
+		launchStatus("Extracting group file contents to game directory.");
+
 		if(!extractModFilesToGameDirectory(*selectedModGameVersion, *selectedGameVersion, *selectedGameVersion, installedModInfo.get(), allAbsoluteGroupFilePaths)) {
 			if(!removeModFilesFromGameDirectory(*selectedGameVersion, *installedModInfo)) {
 				spdlog::error("Failed to remove '{}' mod files from '{}' game directory.", selectedModVersionType->getFullName(), selectedGameVersion->getLongName());
@@ -3173,6 +3209,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	}
 
 	if(installedModInfo != nullptr && !installedModInfo->isEmpty()) {
+		launchStatus("Saving installed mod info to file in game directory.");
+
 		if(installedModInfo->saveTo(*selectedGameVersion)) {
 			spdlog::info("Saved installed mod info to file '{}' in '{}' game directory.", InstalledModInfo::DEFAULT_FILE_NAME, selectedGameVersion->getLongName());
 		}
@@ -3300,6 +3338,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 	segmentAnalytics->flush();
 
+	launchStatus("Starting game process.");
+
 	std::string workingDirectory(selectedGameVersion->doesRequireDOSBox() ? selectedDOSBoxVersion->getDirectoryPath() : selectedGameVersion->getGamePath());
 
 	spdlog::info("Using working directory: '{}'.", workingDirectory);
@@ -3331,6 +3371,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 	launched();
 
+	launchStatus("Game running.");
+
 	m_gameProcess->wait();
 	terminatedConnection.disconnect();
 
@@ -3344,6 +3386,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		std::filesystem::path filePath(absoluteCombinedGroupFilePath);
 
 		if(std::filesystem::is_regular_file(filePath)) {
+			launchStatus(fmt::format("Deleting generated combined {} file.", doesRequireCombinedZip ? "zip" : "group"));
+
 			spdlog::info("Deleting temporary combined group file: '{}'.", absoluteCombinedGroupFilePath);
 
 			std::error_code errorCode;
@@ -3359,6 +3403,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		std::filesystem::path filePath(combinedDOSBoxConfigurationFilePath);
 
 		if(std::filesystem::is_regular_file(filePath)) {
+			launchStatus("Deleting generated combined DOSBox configuration file.");
+
 			spdlog::info("Deleting generated combined DOSBox configuration file: '{}'.", combinedDOSBoxConfigurationFilePath);
 
 			std::error_code errorCode;
@@ -3370,9 +3416,13 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		}
 	}
 
+	launchStatus("Removing symbolic links.");
+
 	removeSymlinks(*selectedGameVersion);
 
 	m_gameProcess.reset();
+
+	launchStatus("Game process ended.");
 
 	return true;
 }

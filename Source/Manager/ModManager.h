@@ -145,6 +145,7 @@ public:
 	boost::signals2::signal<void ()> initializationFailed;
 	boost::signals2::signal<bool (uint8_t /* initializationStep */, uint8_t /* initializationStepCount */, std::string /* description */)> initializationProgress;
 	boost::signals2::signal<void ()> launched;
+	boost::signals2::signal<void (std::string)> launchStatus;
 	boost::signals2::signal<void (std::string)> launchError;
 	boost::signals2::signal<void (const ModGameVersion & /* modGameVersion */, bool /* alreadyUpToDate */)> modDownloadCompleted;
 	boost::signals2::signal<void (const ModGameVersion & /* modGameVersion */)> modDownloadCancelled;

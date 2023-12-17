@@ -204,6 +204,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_gameVersionCollectionItemModifiedConnection = gameVersions->itemModified.connect(std::bind(&ModBrowserPanel::onGameVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
 
 	m_launchedConnection = m_modManager->launched.connect(std::bind(&ModBrowserPanel::onLaunched, this));
+	m_launchStatusConnection = m_modManager->launchStatus.connect(std::bind(&ModBrowserPanel::onLaunchStatus, this, std::placeholders::_1));
 	m_launchErrorConnection = m_modManager->launchError.connect(std::bind(&ModBrowserPanel::onLaunchError, this, std::placeholders::_1));
 	m_gameProcessTerminatedConnection = m_modManager->gameProcessTerminated.connect(std::bind(&ModBrowserPanel::onGameProcessTerminated, this, std::placeholders::_1, std::placeholders::_2));
 
@@ -474,6 +475,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 
 ModBrowserPanel::~ModBrowserPanel() {
 	m_launchedConnection.disconnect();
+	m_launchStatusConnection.disconnect();
 	m_launchErrorConnection.disconnect();
 	m_gameProcessTerminatedConnection.disconnect();
 	m_modSelectionChangedConnection.disconnect();
@@ -1754,7 +1756,15 @@ void ModBrowserPanel::onLaunched() {
 	m_gameRunningDialog->setProcess(m_modManager->getGameProcess());
 }
 
-void ModBrowserPanel::onLaunchError(std::string errorMessage) {
+void ModBrowserPanel::onLaunchStatus(const std::string & statusMessage) {
+	if(m_gameRunningDialog == nullptr) {
+		return;
+	}
+
+	m_gameRunningDialog->setStatus(statusMessage);
+}
+
+void ModBrowserPanel::onLaunchError(const std::string & errorMessage) {
 	std::shared_ptr<Mod> selectedMod(m_modManager->getSelectedMod());
 
 	std::string fullModName(selectedMod != nullptr ? selectedMod->getFullName(m_modManager->getSelectedModVersionIndex(), m_modManager->getSelectedModVersionTypeIndex()) : "");
