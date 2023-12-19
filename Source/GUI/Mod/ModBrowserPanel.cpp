@@ -1766,6 +1766,7 @@ void ModBrowserPanel::onLaunchStatus(const std::string & statusMessage) {
 
 void ModBrowserPanel::onLaunchError(const std::string & errorMessage) {
 	std::shared_ptr<Mod> selectedMod(m_modManager->getSelectedMod());
+	std::shared_ptr<ModGameVersion> selectedModGameVersion(m_modManager->getSelectedModGameVersion());
 
 	std::string fullModName(selectedMod != nullptr ? selectedMod->getFullName(m_modManager->getSelectedModVersionIndex(), m_modManager->getSelectedModVersionTypeIndex()) : "");
 
@@ -1777,7 +1778,7 @@ void ModBrowserPanel::onLaunchError(const std::string & errorMessage) {
 			"\n"
 			"See console for more details.",
 			m_activeGameVersion->getLongName(),
-			!fullModName.empty() ? fmt::format(" with mod '{}'", fullModName) : "",
+			!fullModName.empty() && selectedModGameVersion != nullptr && !selectedModGameVersion->isStandAlone() ? fmt::format(" with mod '{}'", fullModName) : "",
 			errorMessage
 		),
 		"Launch Failed",
