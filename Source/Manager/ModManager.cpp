@@ -3079,55 +3079,57 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		return false;
 	}
 
-	size_t totalNumberOfBackedUpConflictingGameFiles = 0;
+	if(!standAlone) {
+		launchStatus("Backing up conflicting files in game directory.");
 
-	for(const std::string & conflictingGameFileExtension : CONFLICTING_GAME_FILE_EXTENSIONS) {
-		std::vector<std::string> originalRenamedGameFilePaths(ModManager::renameFilesWithSuffixTo(conflictingGameFileExtension, conflictingGameFileExtension + DEFAULT_BACKUP_FILE_RENAME_SUFFIX, selectedGameVersion->getGamePath()));
+		size_t totalNumberOfBackedUpConflictingGameFiles = 0;
 
-		for(const std::string & originalRenamedGameFilePath : originalRenamedGameFilePaths) {
-			installedModInfo->addOriginalFile(originalRenamedGameFilePath);
-		}
+		for(const std::string & conflictingGameFileExtension : CONFLICTING_GAME_FILE_EXTENSIONS) {
+			std::vector<std::string> originalRenamedGameFilePaths(ModManager::renameFilesWithSuffixTo(conflictingGameFileExtension, conflictingGameFileExtension + DEFAULT_BACKUP_FILE_RENAME_SUFFIX, selectedGameVersion->getGamePath()));
 
-		totalNumberOfBackedUpConflictingGameFiles += originalRenamedGameFilePaths.size();
-
-		if(!originalRenamedGameFilePaths.empty()) {
-			spdlog::debug("Temporarily backed up {} '{}' game files.", originalRenamedGameFilePaths.size(), conflictingGameFileExtension);
-		}
-	}
-
-	launchStatus("Backing up conflicting files in game directory.");
-
-	for(const std::string & conflictingGameFileName : CONFLICTING_GAME_FILE_NAMES) {
-		std::filesystem::path originalGameFilePath(Utilities::joinPaths(selectedGameVersion->getGamePath(), conflictingGameFileName));
-
-		if(std::filesystem::is_regular_file(originalGameFilePath)) {
-			std::filesystem::path newGameFilePath(Utilities::replaceFileExtension(originalGameFilePath.string(), std::string(Utilities::getFileExtension(conflictingGameFileName)) + "_"));
-
-			spdlog::info("Renaming conflicting game file: '{}' to '{}'.", originalGameFilePath.string(), newGameFilePath.string());
-
-			std::error_code errorCode;
-			std::filesystem::rename(originalGameFilePath, newGameFilePath, errorCode);
-
-			if(errorCode) {
-				spdlog::error("Failed to rename conflicting game file '{}' to '{}': {}", originalGameFilePath.string(), newGameFilePath.string(), errorCode.message());
-				continue;
+			for(const std::string & originalRenamedGameFilePath : originalRenamedGameFilePaths) {
+				installedModInfo->addOriginalFile(originalRenamedGameFilePath);
 			}
 
-			std::filesystem::path relativeRenamedFilePath(std::filesystem::relative(originalGameFilePath, std::filesystem::path(selectedGameVersion->getGamePath()), errorCode));
+			totalNumberOfBackedUpConflictingGameFiles += originalRenamedGameFilePaths.size();
 
-			if(errorCode) {
-				spdlog::warn("Failed to relativize renamed conflicting game file path: '{}' against base path: '{}'.", originalGameFilePath.string(), selectedGameVersion->getGamePath());
-				continue;
+			if(!originalRenamedGameFilePaths.empty()) {
+				spdlog::debug("Temporarily backed up {} '{}' game files.", originalRenamedGameFilePaths.size(), conflictingGameFileExtension);
 			}
-
-			totalNumberOfBackedUpConflictingGameFiles++;
-
-			installedModInfo->addOriginalFile(relativeRenamedFilePath.string());
 		}
-	}
 
-	if(totalNumberOfBackedUpConflictingGameFiles != 0) {
-		spdlog::info("Temporarily backed up a total of {} game files with conflicting file extensions that could interfere with mod functionality. They will be restored when the game terminates, or on next launch of the mod manager.", totalNumberOfBackedUpConflictingGameFiles);
+		for(const std::string & conflictingGameFileName : CONFLICTING_GAME_FILE_NAMES) {
+			std::filesystem::path originalGameFilePath(Utilities::joinPaths(selectedGameVersion->getGamePath(), conflictingGameFileName));
+
+			if(std::filesystem::is_regular_file(originalGameFilePath)) {
+				std::filesystem::path newGameFilePath(Utilities::replaceFileExtension(originalGameFilePath.string(), std::string(Utilities::getFileExtension(conflictingGameFileName)) + "_"));
+
+				spdlog::info("Renaming conflicting game file: '{}' to '{}'.", originalGameFilePath.string(), newGameFilePath.string());
+
+				std::error_code errorCode;
+				std::filesystem::rename(originalGameFilePath, newGameFilePath, errorCode);
+
+				if(errorCode) {
+					spdlog::error("Failed to rename conflicting game file '{}' to '{}': {}", originalGameFilePath.string(), newGameFilePath.string(), errorCode.message());
+					continue;
+				}
+
+				std::filesystem::path relativeRenamedFilePath(std::filesystem::relative(originalGameFilePath, std::filesystem::path(selectedGameVersion->getGamePath()), errorCode));
+
+				if(errorCode) {
+					spdlog::warn("Failed to relativize renamed conflicting game file path: '{}' against base path: '{}'.", originalGameFilePath.string(), selectedGameVersion->getGamePath());
+					continue;
+				}
+
+				totalNumberOfBackedUpConflictingGameFiles++;
+
+				installedModInfo->addOriginalFile(relativeRenamedFilePath.string());
+			}
+		}
+
+		if(totalNumberOfBackedUpConflictingGameFiles != 0) {
+			spdlog::info("Temporarily backed up a total of {} game files with conflicting file extensions that could interfere with mod functionality. They will be restored when the game terminates, or on next launch of the mod manager.", totalNumberOfBackedUpConflictingGameFiles);
+		}
 	}
 
 	if(!selectedGameVersion->doesRequireGroupFileExtraction() && !m_demoRecordingEnabled && settings->demoExtractionEnabled) {
