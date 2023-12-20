@@ -1074,7 +1074,6 @@ static std::vector<NetDuke32Release> getNetDuke32Releases(size_t maxNumberOfRele
 	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator = releaseListGraphQLQueryDocument.GetAllocator();
 
 	rapidjson::Value queryValue(rapidjson::kObjectType);
-	queryValue.Reserve(3, allocator);
 
 	queryValue.AddMember(rapidjson::StringRef("operationName"), rapidjson::StringRef("allReleases"), allocator);
 
