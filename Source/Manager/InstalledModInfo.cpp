@@ -19,7 +19,7 @@
 #include <fstream>
 
 const std::string InstalledModInfo::FILE_TYPE("Installed Mod Information");
-const std::string InstalledModInfo::FILE_FORMAT_VERSION("1.0.0");
+const uint32_t InstalledModInfo::FILE_FORMAT_VERSION = 1;
 const std::string InstalledModInfo::DEFAULT_FILE_NAME(".duke3d_mod.json");
 
 static const std::string JSON_FILE_TYPE_PROPERTY_NAME("fileType");
@@ -249,7 +249,7 @@ rapidjson::Document InstalledModInfo::toJSON() const {
 
 	installedModInfoDocument.AddMember(rapidjson::StringRef(JSON_FILE_TYPE_PROPERTY_NAME.c_str()), rapidjson::StringRef(FILE_TYPE.c_str()), allocator);
 
-	installedModInfoDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME.c_str()), rapidjson::StringRef(FILE_FORMAT_VERSION.c_str()), allocator);
+	installedModInfoDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME.c_str()), rapidjson::Value(FILE_FORMAT_VERSION), allocator);
 
 	rapidjson::Value modInfoValue(rapidjson::kObjectType);
 
@@ -324,20 +324,13 @@ std::unique_ptr<InstalledModInfo> InstalledModInfo::parseFrom(const rapidjson::V
 	if(installedModInfoValue.HasMember(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME.c_str())) {
 		const rapidjson::Value & fileFormatVersionValue = installedModInfoValue[JSON_FILE_FORMAT_VERSION_PROPERTY_NAME.c_str()];
 
-		if(!fileFormatVersionValue.IsString()) {
-			spdlog::error("Invalid installed mod info file format version type: '{}', expected: 'string'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
+		if(!fileFormatVersionValue.IsUint()) {
+			spdlog::error("Invalid installed mod info file format version type: '{}', expected unsigned integer 'number'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
 			return nullptr;
 		}
 
-		std::optional<std::uint8_t> optionalVersionComparison(Utilities::compareVersions(fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION));
-
-		if(!optionalVersionComparison.has_value()) {
-			spdlog::error("Invalid installed mod info file format version: '{}'.", fileFormatVersionValue.GetString());
-			return nullptr;
-		}
-
-		if(*optionalVersionComparison != 0) {
-			spdlog::error("Unsupported installed mod info file format version: '{}', only version '{}' is supported.", fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION);
+		if(fileFormatVersionValue.GetUint() != FILE_FORMAT_VERSION) {
+			spdlog::error("Unsupported installed mod info file format version: {}, only version {} is supported.", fileFormatVersionValue.GetUint(), FILE_FORMAT_VERSION);
 			return nullptr;
 		}
 	}
