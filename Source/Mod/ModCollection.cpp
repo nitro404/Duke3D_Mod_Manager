@@ -644,7 +644,7 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const rapidjson::Value &
 		const rapidjson::Value & fileFormatVersionValue = modCollectionValue[JSON_FILE_FORMAT_VERSION_PROPERTY_NAME];
 
 		if(!fileFormatVersionValue.IsUint()) {
-			spdlog::error("Invalid mod collection file format version type: '{}', expected: unsigned integer 'number'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
+			spdlog::error("Invalid mod collection file format version type: '{}', expected unsigned integer 'number'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
 			return nullptr;
 		}
 
