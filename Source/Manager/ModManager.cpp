@@ -2676,7 +2676,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		allAbsoluteGroupFilePaths.push_back(customGroupFilePath);
 	}
 
-	bool doesRequireCombinedGroup = !standAlone && !selectedGameVersion->doesRequireGroupFileExtraction() && (selectedGameVersion->doesRequireOriginalGameFiles() || selectedGameVersion->doesGroupCountExceedMaximumGroupFilesLimit(modDependencyGroupFiles.size() + modGroupFiles.size() + customGroupFilePaths.size()));
+	bool hasAnyGroupFiles = !modDependencyGroupFiles.empty() + !modGroupFiles.empty() + !customGroupFilePaths.empty();
+	bool doesRequireCombinedGroup = hasAnyGroupFiles && !standAlone && !selectedGameVersion->doesRequireGroupFileExtraction() && (selectedGameVersion->doesRequireOriginalGameFiles() || selectedGameVersion->doesGroupCountExceedMaximumGroupFilesLimit(modDependencyGroupFiles.size() + modGroupFiles.size() + customGroupFilePaths.size()));
 	bool doesRequireCombinedZip = doesRequireCombinedGroup && (((selectedModGameVersion != nullptr && selectedModGameVersion->hasFileOfType("zip")) || std::find_if(modDependencyGroupFiles.cbegin(), modDependencyGroupFiles.cend(), [](const std::shared_ptr<ModFile> & dependencyModFile) { return Utilities::areStringsEqualIgnoreCase(dependencyModFile->getType(), "zip"); }) != modDependencyGroupFiles.cend() || std::find_if(customGroupFilePaths.cbegin(), customGroupFilePaths.cend(), [](const std::string & groupFile) { return Utilities::hasFileExtension(groupFile, "zip"); }) != customGroupFilePaths.cend()));
 	bool shouldSymlinkToCombinedGroup = doesRequireCombinedGroup && Utilities::areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories();
 	bool shouldConfigureApplicationTemporaryDirectory = shouldSymlinkToCombinedGroup || selectedGameVersion->doesRequireDOSBox();
