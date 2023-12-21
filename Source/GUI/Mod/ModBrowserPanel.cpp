@@ -1075,11 +1075,17 @@ bool ModBrowserPanel::installStandAloneMod(std::shared_ptr<ModGameVersion> stand
 	);
 
 	m_installModFuture = std::async(std::launch::async, [this, standAloneModGameVersion, destinationDirectoryPath, modDownloadConnections]() mutable {
-		bool modInstalled = m_modManager->installStandAloneMod(*standAloneModGameVersion, destinationDirectoryPath);
+		bool aborted = false;
+		bool modInstalled = m_modManager->installStandAloneMod(*standAloneModGameVersion, destinationDirectoryPath, true, &aborted);
 
 		modDownloadConnections.disconnect();
 
-		if(!modInstalled) {
+		if(aborted) {
+			QueueEvent(new ModInstallDoneEvent(false));
+
+			return false;
+		}
+		else if(!modInstalled) {
 			QueueEvent(new ModInstallDoneEvent(false));
 
 			wxMessageBox(fmt::format("Failed to install stand-alone '{}' mod.", standAloneModGameVersion->getParentModVersion()->getFullName()), "Mod Install Failed", wxOK | wxICON_ERROR, this);

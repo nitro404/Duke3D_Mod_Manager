@@ -129,7 +129,7 @@ public:
 	void clearSelectedMod();
 
 	bool isModSupportedOnSelectedGameVersion();
-	bool installStandAloneMod(const ModGameVersion & standAloneModGameVersion, const std::string & destinationDirectoryPath, bool removeArchivePackage = true);
+	bool installStandAloneMod(const ModGameVersion & standAloneModGameVersion, const std::string & destinationDirectoryPath, bool removeArchivePackage = true, bool * aborted = nullptr);
 	bool uninstallModGameVersion(const ModGameVersion & modGameVersion);
 	bool shouldRunSelectedMod() const;
 	std::future<bool> runSelectedModAsync(std::shared_ptr<GameVersion> alternateGameVersion = nullptr, std::shared_ptr<ModGameVersion> alternateModGameVersion = nullptr);
@@ -147,9 +147,6 @@ public:
 	boost::signals2::signal<void ()> launched;
 	boost::signals2::signal<void (std::string)> launchStatus;
 	boost::signals2::signal<void (std::string)> launchError;
-	boost::signals2::signal<void (const ModGameVersion & /* modGameVersion */, bool /* alreadyUpToDate */)> modDownloadCompleted;
-	boost::signals2::signal<void (const ModGameVersion & /* modGameVersion */)> modDownloadCancelled;
-	boost::signals2::signal<void (const ModGameVersion & /* modGameVersion */)> modDownloadFailed;
 	boost::signals2::signal<bool (const ModGameVersion & /* modGameVersion */, uint8_t /* downloadStep */, uint8_t /* downloadStepCount */, std::string /* status */)> modDownloadStatusChanged;
 	boost::signals2::signal<bool (const ModGameVersion & /* modGameVersion */, HTTPRequest & /* request */, size_t /* numberOfBytesDownloaded */, size_t /* totalNumberOfBytes */)> modDownloadProgress;
 	boost::signals2::signal<void (uint64_t /* nativeExitCode */, bool /* forceTerminated */)> gameProcessTerminated;
