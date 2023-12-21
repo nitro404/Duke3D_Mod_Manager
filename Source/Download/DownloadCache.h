@@ -47,7 +47,7 @@ public:
 	static bool isValid(const DownloadCache * d);
 
 	static const std::string FILE_TYPE;
-	static const std::string FILE_FORMAT_VERSION;
+	static const uint32_t FILE_FORMAT_VERSION;
 
 private:
 	std::unique_ptr<CachedFile> createCachedFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, const std::string & eTag, std::optional<std::chrono::time_point<std::chrono::system_clock>> downloadedTimePoint = {});

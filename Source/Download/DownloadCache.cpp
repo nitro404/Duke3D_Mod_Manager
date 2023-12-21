@@ -32,7 +32,7 @@ static const std::array<std::string_view, 4> JSON_DOWNLOAD_CACHE_PROPERTY_NAMES 
 };
 
 const std::string DownloadCache::FILE_TYPE = "Download Cache";
-const std::string DownloadCache::FILE_FORMAT_VERSION = "1.0.0";
+const uint32_t DownloadCache::FILE_FORMAT_VERSION = 1;
 
 DownloadCache::DownloadCache() = default;
 
@@ -229,8 +229,7 @@ rapidjson::Document DownloadCache::toJSON() const {
 	rapidjson::Value fileTypeValue(FILE_TYPE.c_str(), allocator);
 	downloadCacheDocument.AddMember(rapidjson::StringRef(JSON_DOWNLOAD_CACHE_FILE_TYPE_PROPERTY_NAME), fileTypeValue, allocator);
 
-	rapidjson::Value fileFormatVersionValue(FILE_FORMAT_VERSION.c_str(), allocator);
-	downloadCacheDocument.AddMember(rapidjson::StringRef(JSON_DOWNLOAD_CACHE_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
+	downloadCacheDocument.AddMember(rapidjson::StringRef(JSON_DOWNLOAD_CACHE_FILE_FORMAT_VERSION_PROPERTY_NAME), rapidjson::Value(FILE_FORMAT_VERSION), allocator);
 
 	if(m_cachedModListFile != nullptr) {
 		rapidjson::Value modListValue(m_cachedModListFile->toJSON(allocator));
@@ -293,20 +292,13 @@ std::unique_ptr<DownloadCache> DownloadCache::parseFrom(const rapidjson::Value &
 	if(downloadCacheValue.HasMember(JSON_DOWNLOAD_CACHE_FILE_FORMAT_VERSION_PROPERTY_NAME)) {
 		const rapidjson::Value & fileFormatVersionValue = downloadCacheValue[JSON_DOWNLOAD_CACHE_FILE_FORMAT_VERSION_PROPERTY_NAME];
 
-		if(!fileFormatVersionValue.IsString()) {
-			spdlog::error("Invalid download cache file format version type: '{}', expected: 'string'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
+		if(!fileFormatVersionValue.IsUint()) {
+			spdlog::error("Invalid download cache file format version type: '{}', expected unsigned integer 'number'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
 			return nullptr;
 		}
 
-		std::optional<std::uint8_t> optionalVersionComparison(Utilities::compareVersions(fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION));
-
-		if(!optionalVersionComparison.has_value()) {
-			spdlog::error("Invalid download cache file format version: '{}'.", fileFormatVersionValue.GetString());
-			return nullptr;
-		}
-
-		if(*optionalVersionComparison != 0) {
-			spdlog::error("Unsupported download cache file format version: '{}', only version '{}' is supported.", fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION);
+		if(fileFormatVersionValue.GetUint() != FILE_FORMAT_VERSION) {
+			spdlog::error("Unsupported download cache file format version: {}, only version {} is supported.", fileFormatVersionValue.GetUint(), FILE_FORMAT_VERSION);
 			return nullptr;
 		}
 	}
