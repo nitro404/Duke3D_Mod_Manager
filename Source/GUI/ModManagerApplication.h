@@ -17,12 +17,13 @@
 	#include <wx/wx.h>
 #endif
 
+#include <wx/progdlg.h>
+
+#include <future>
 #include <memory>
 
 class LogSinkWX;
-class ModManagerInitializedEvent;
-class ModManagerInitializationCancelledEvent;
-class ModManagerInitializationFailedEvent;
+class ModManagerInitializationDoneEvent;
 
 class ModManagerApplication : public wxApp {
 public:
@@ -42,9 +43,7 @@ public:
 private:
 	void initialize();
 	void showWindow();
-	void onInitialized(ModManagerInitializedEvent & event);
-	void onInitializationCancelled(ModManagerInitializationCancelledEvent & event);
-	void onInitializationFailed(ModManagerInitializationFailedEvent & event);
+	void onInitializationDone(ModManagerInitializationDoneEvent & event);
 	void onReloadRequested();
 
 	std::shared_ptr<ArgumentParser> m_arguments;
@@ -54,10 +53,9 @@ private:
 	ModManagerFrame * m_newModManagerFrame;
 	boost::signals2::connection m_modManagerFrameReloadRequestedConnection;
 	bool m_reloadRequired;
+	std::unique_ptr<wxProgressDialog> m_initializingProgressDialog;
+	std::future<void> m_initializeFuture;
 	boost::signals2::connection m_modManagerInitializationProgressConnection;
-	boost::signals2::connection m_modManagerInitializedConnection;
-	boost::signals2::connection m_modManagerInitializationCancelledConnection;
-	boost::signals2::connection m_modManagerInitializationFailedConnection;
 
 	ModManagerApplication(const ModManagerApplication &) = delete;
 	const ModManagerApplication & operator = (const ModManagerApplication &) = delete;

@@ -15,66 +15,43 @@
 #include <spdlog/spdlog.h>
 #include <wx/app.h>
 #include <wx/cmdline.h>
-#include <wx/progdlg.h>
 #include <wx/version.h>
 
 // #include <vld.h>
 
-wxDECLARE_EVENT(EVENT_INITIALIZED, ModManagerInitializedEvent);
-wxDECLARE_EVENT(EVENT_INITIALIZATION_CANCELLED, ModManagerInitializationCancelledEvent);
-wxDECLARE_EVENT(EVENT_INITIALIZATION_FAILED, ModManagerInitializationFailedEvent);
+wxDECLARE_EVENT(EVENT_INITIALIZATION_DONE, ModManagerInitializationDoneEvent);
 
-class ModManagerInitializedEvent final : public wxEvent {
+class ModManagerInitializationDoneEvent final : public wxEvent {
 public:
-	ModManagerInitializedEvent()
-		: wxEvent(0, EVENT_INITIALIZED) { }
+	ModManagerInitializationDoneEvent(bool success = true, bool aborted = false)
+		: wxEvent(0, EVENT_INITIALIZATION_DONE)
+		, m_success(success)
+		, m_aborted(aborted) { }
 
-	virtual ~ModManagerInitializedEvent() { }
+	virtual ~ModManagerInitializationDoneEvent() { }
 
 	virtual wxEvent * Clone() const override {
-		return new ModManagerInitializedEvent(*this);
+		return new ModManagerInitializationDoneEvent(*this);
 	}
 
-	DECLARE_DYNAMIC_CLASS(ModManagerInitializedEvent);
-};
-
-IMPLEMENT_DYNAMIC_CLASS(ModManagerInitializedEvent, wxEvent);
-
-class ModManagerInitializationCancelledEvent final : public wxEvent {
-public:
-	ModManagerInitializationCancelledEvent()
-		: wxEvent(0, EVENT_INITIALIZATION_CANCELLED) { }
-
-	virtual ~ModManagerInitializationCancelledEvent() { }
-
-	virtual wxEvent * Clone() const override {
-		return new ModManagerInitializationCancelledEvent(*this);
+	bool wasSuccessful() const {
+		return m_success;
 	}
 
-	DECLARE_DYNAMIC_CLASS(ModManagerInitializationCancelledEvent);
-};
-
-IMPLEMENT_DYNAMIC_CLASS(ModManagerInitializationCancelledEvent, wxEvent);
-
-class ModManagerInitializationFailedEvent final : public wxEvent {
-public:
-	ModManagerInitializationFailedEvent()
-		: wxEvent(0, EVENT_INITIALIZATION_FAILED) { }
-
-	virtual ~ModManagerInitializationFailedEvent() { }
-
-	virtual wxEvent * Clone() const override {
-		return new ModManagerInitializationFailedEvent(*this);
+	bool wasAborted() const {
+		return m_aborted;
 	}
 
-	DECLARE_DYNAMIC_CLASS(ModManagerInitializationFailedEvent);
+	DECLARE_DYNAMIC_CLASS(ModManagerInitializationDoneEvent);
+
+private:
+	bool m_success;
+	bool m_aborted;
 };
 
-IMPLEMENT_DYNAMIC_CLASS(ModManagerInitializationFailedEvent, wxEvent);
+IMPLEMENT_DYNAMIC_CLASS(ModManagerInitializationDoneEvent, wxEvent);
 
-wxDEFINE_EVENT(EVENT_INITIALIZED, ModManagerInitializedEvent);
-wxDEFINE_EVENT(EVENT_INITIALIZATION_CANCELLED, ModManagerInitializationCancelledEvent);
-wxDEFINE_EVENT(EVENT_INITIALIZATION_FAILED, ModManagerInitializationFailedEvent);
+wxDEFINE_EVENT(EVENT_INITIALIZATION_DONE, ModManagerInitializationDoneEvent);
 
 static const std::string BASE_INITIALIZATION_MESSAGE(fmt::format("{} is initializing, please wait...", APPLICATION_NAME));
 
@@ -120,41 +97,45 @@ void ModManagerApplication::initialize() {
 		settings->analyticsConfirmationAcknowledged = true;
 	}
 
-	std::unique_ptr<wxProgressDialog> initializingProgressDialog(std::make_unique<wxProgressDialog>(
+	m_initializingProgressDialog = std::make_unique<wxProgressDialog>(
 		"Initializing",
 		BASE_INITIALIZATION_MESSAGE,
 		m_modManager->numberOfInitializationSteps(),
 		nullptr,
 		wxPD_AUTO_HIDE | wxPD_CAN_ABORT
-	));
+	);
 
-	initializingProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
-	initializingProgressDialog->Fit();
+	m_initializingProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
+	m_initializingProgressDialog->Fit();
 
-	m_modManagerInitializationProgressConnection = m_modManager->initializationProgress.connect([&initializingProgressDialog](uint8_t initializationStep, uint8_t initializationStepCount, std::string description) {
-		bool updateResult = initializingProgressDialog->Update(initializationStep, fmt::format("{}\n{}...", BASE_INITIALIZATION_MESSAGE, description));
-		initializingProgressDialog->Fit();
+	m_modManagerInitializationProgressConnection = m_modManager->initializationProgress.connect([this](uint8_t initializationStep, uint8_t initializationStepCount, std::string description) {
+		bool updateResult = m_initializingProgressDialog->Update(initializationStep, fmt::format("{}\n{}...", BASE_INITIALIZATION_MESSAGE, description));
+		m_initializingProgressDialog->Fit();
 
 		return updateResult;
 	});
 
-	m_modManagerInitializedConnection = m_modManager->initialized.connect([this]() {
-		QueueEvent(new ModManagerInitializedEvent());
+	Bind(EVENT_INITIALIZATION_DONE, &ModManagerApplication::onInitializationDone, this);
+
+	m_initializeFuture = std::async(std::launch::async, [this]() mutable {
+		bool aborted = false;
+		bool initialized = m_modManager->initialize(m_arguments, &aborted);
+
+		if(aborted) {
+			QueueEvent(new ModManagerInitializationDoneEvent(false, true));
+		}
+		else if(!initialized) {
+			QueueEvent(new ModManagerInitializationDoneEvent(false, false));
+		}
+		else {
+			QueueEvent(new ModManagerInitializationDoneEvent(true, true));
+		}
 	});
 
-	m_modManagerInitializationCancelledConnection = m_modManager->initializationCancelled.connect([this]() {
-		QueueEvent(new ModManagerInitializationCancelledEvent());
-	});
+	m_initializeFuture.wait();
 
-	m_modManagerInitializationFailedConnection = m_modManager->initializationFailed.connect([this]() {
-		QueueEvent(new ModManagerInitializationFailedEvent());
-	});
-
-	Bind(EVENT_INITIALIZED, &ModManagerApplication::onInitialized, this);
-	Bind(EVENT_INITIALIZATION_CANCELLED, &ModManagerApplication::onInitializationCancelled, this);
-	Bind(EVENT_INITIALIZATION_FAILED, &ModManagerApplication::onInitializationFailed, this);
-
-	m_modManager->initializeAsync(m_arguments);
+	m_initializingProgressDialog->Destroy();
+	m_initializingProgressDialog = nullptr;
 }
 
 void ModManagerApplication::reload() {
@@ -167,47 +148,47 @@ void ModManagerApplication::displayArgumentHelp() {
 }
 
 void ModManagerApplication::showWindow() {
-	std::unique_ptr<wxProgressDialog> initializingProgressDialog(std::make_unique<wxProgressDialog>(
+	m_initializingProgressDialog = std::make_unique<wxProgressDialog>(
 		"Initializing",
 		BASE_INITIALIZATION_MESSAGE + "\nInitializing window...",
 		m_modManager->numberOfInitializationSteps() + 2,
 		nullptr,
 		wxPD_AUTO_HIDE | wxPD_CAN_ABORT
-	));
+	);
 
-	initializingProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
-	initializingProgressDialog->Fit();
-	initializingProgressDialog->Update(m_modManager->numberOfInitializationSteps(), initializingProgressDialog->GetMessage());
+	m_initializingProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
+	m_initializingProgressDialog->Fit();
+	m_initializingProgressDialog->Update(m_modManager->numberOfInitializationSteps(), m_initializingProgressDialog->GetMessage());
 
 	m_modManagerFrameReloadRequestedConnection = m_modManagerFrame->reloadRequested.connect(std::bind(&ModManagerApplication::onReloadRequested, this));
 	m_modManagerFrame->Bind(wxEVT_CLOSE_WINDOW, &ModManagerApplication::onFrameClosed, this);
 	m_modManagerFrame->initialize(m_modManager);
 
-	initializingProgressDialog->Update(initializingProgressDialog->GetValue() + 1, BASE_INITIALIZATION_MESSAGE + "\nApplication initialized!");
-	initializingProgressDialog->Fit();
+	m_initializingProgressDialog->Update(m_initializingProgressDialog->GetValue() + 1, BASE_INITIALIZATION_MESSAGE + "\nApplication initialized!");
+	m_initializingProgressDialog->Fit();
 
 	m_modManagerFrame->Show(true);
 	m_modManagerFrame->Raise();
 
 	m_logSinkWX->initialize();
 
-	initializingProgressDialog->Update(initializingProgressDialog->GetValue() + 1, initializingProgressDialog->GetMessage());
+	m_initializingProgressDialog->Update(m_initializingProgressDialog->GetValue() + 1, m_initializingProgressDialog->GetMessage());
 }
 
-void ModManagerApplication::onInitialized(ModManagerInitializedEvent & event) {
-	showWindow();
-}
+void ModManagerApplication::onInitializationDone(ModManagerInitializationDoneEvent & event) {
+	if(event.wasSuccessful()) {
+		showWindow();
+	}
+	else if(event.wasAborted()) {
+		spdlog::error("{} initialization cancelled!", APPLICATION_NAME);
 
-void ModManagerApplication::onInitializationCancelled(ModManagerInitializationCancelledEvent & event) {
-	spdlog::error("{} initialization cancelled!", APPLICATION_NAME);
+		m_modManagerFrame->Destroy();
+	}
+	else {
+		spdlog::error("{} initialization failed!", APPLICATION_NAME);
 
-	m_modManagerFrame->Destroy();
-}
-
-void ModManagerApplication::onInitializationFailed(ModManagerInitializationFailedEvent & event) {
-	spdlog::error("{} initialization failed!", APPLICATION_NAME);
-
-	showWindow();
+		showWindow();
+	}
 }
 
 void ModManagerApplication::onFrameClosed(wxCloseEvent & event) {
@@ -217,9 +198,6 @@ void ModManagerApplication::onFrameClosed(wxCloseEvent & event) {
 	settings->windowSize = WXUtilities::createDimension(m_modManagerFrame->GetSize());
 
 	m_modManagerInitializationProgressConnection.disconnect();
-	m_modManagerInitializedConnection.disconnect();
-	m_modManagerInitializationCancelledConnection.disconnect();
-	m_modManagerInitializationFailedConnection.disconnect();
 	m_modManagerFrameReloadRequestedConnection.disconnect();
 
 	m_modManagerFrame->Destroy();

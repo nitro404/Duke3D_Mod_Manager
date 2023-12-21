@@ -53,8 +53,8 @@ public:
 	bool isInitialized() const;
 	bool isInitializing() const;
 	uint8_t numberOfInitializationSteps() const;
-	std::future<bool> initializeAsync(int argc = 0, char * argv[] = nullptr);
-	std::future<bool> initializeAsync(std::shared_ptr<ArgumentParser> arguments);
+	bool initialize(int argc = 0, char * argv[] = nullptr, bool * aborted = nullptr);
+	bool initialize(std::shared_ptr<ArgumentParser> arguments, bool * aborted = nullptr);
 	bool uninitialize();
 
 	bool isUsingLocalMode() const;
@@ -140,9 +140,6 @@ public:
 
 	static std::string getArgumentHelpInfo();
 
-	boost::signals2::signal<void ()> initialized;
-	boost::signals2::signal<void ()> initializationCancelled;
-	boost::signals2::signal<void ()> initializationFailed;
 	boost::signals2::signal<bool (uint8_t /* initializationStep */, uint8_t /* initializationStepCount */, std::string /* description */)> initializationProgress;
 	boost::signals2::signal<void ()> launched;
 	boost::signals2::signal<void (std::string)> launchStatus;
@@ -167,10 +164,9 @@ public:
 	static const DOSBoxConfiguration DEFAULT_GENERAL_DOSBOX_CONFIGURATION;
 
 private:
-	bool initialize(std::shared_ptr<ArgumentParser> arguments);
 	SignalConnectionGroup connectDownloadManagerSignals();
 	void notifyLaunchError(const std::string & errorMessage);
-	bool notifyInitializationProgress(const std::string & description);
+	bool notifyInitializationProgress(const std::string & description, bool * aborted = nullptr);
 	void notifyModSelectionChanged();
 	void assignPlatformFactories();
 	bool handleArguments(const ArgumentParser * args);
