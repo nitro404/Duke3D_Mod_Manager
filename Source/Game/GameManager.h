@@ -49,23 +49,23 @@ public:
 	std::string getXDukeDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const;
 	std::string getRDukeDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const;
 	std::vector<std::string> getDuke3d_w32DownloadURLs(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const;
-	bool installGame(const std::string & gameVersionID, const std::string & destinationDirectoryPath, std::string * newGameExecutableName = nullptr, bool useFallback = false, bool overwrite = true);
+	bool installGame(const std::string & gameVersionID, const std::string & destinationDirectoryPath, std::string * newGameExecutableName = nullptr, bool useFallback = false, bool overwrite = true, bool * aborted = nullptr);
 	static bool isGameDownloadable(const std::string & gameVersionID);
 	bool isGroupFileDownloaded(const std::string & gameVersionID) const;
 	std::shared_ptr<GameVersion> getGroupGameVersion(const std::string & gameVersionID) const;
 	std::string getGroupFilePath(const std::string & gameVersionID) const;
 	std::string getFallbackGroupDownloadURL(const std::string & gameVersionID) const;
 	std::string getFallbackGroupDownloadSHA1(const std::string & gameVersionID) const;
-	bool downloadGroupFile(const std::string & gameVersionID);
-	bool installGroupFile(const std::string & gameVersionID, const std::string & directoryPath, bool overwrite = true, bool * groupSymlinked = nullptr, bool * worldTourGroup = nullptr, std::string * groupGameVersionID = nullptr);
+	bool downloadGroupFile(const std::string & gameVersionID, bool * aborted = nullptr);
+	bool installGroupFile(const std::string & gameVersionID, const std::string & directoryPath, bool overwrite = true, bool * groupSymlinked = nullptr, bool * worldTourGroup = nullptr, std::string * groupGameVersionID = nullptr, bool * aborted = nullptr);
 	void updateGroupFileSymlinks();
 
 	boost::signals2::signal<void (std::string /* statusMessage */)> installStatusChanged;
-	boost::signals2::signal<void (GameVersion & /* gameVersion */, HTTPRequest & /* request */, size_t /* numberOfBytesDownloaded */, size_t /* totalNumberOfBytes */)> gameDownloadProgress;
-	boost::signals2::signal<void (GameVersion & /* groupGameVersion */, HTTPRequest & /* request */, size_t /* numberOfBytesDownloaded */, size_t /* totalNumberOfBytes */)> groupDownloadProgress;
+	boost::signals2::signal<bool (GameVersion & /* gameVersion */, HTTPRequest & /* request */, size_t /* numberOfBytesDownloaded */, size_t /* totalNumberOfBytes */)> gameDownloadProgress;
+	boost::signals2::signal<bool (GameVersion & /* groupGameVersion */, HTTPRequest & /* request */, size_t /* numberOfBytesDownloaded */, size_t /* totalNumberOfBytes */)> groupDownloadProgress;
 
 private:
-	bool downloadGroupFile(const std::string & gameVersionID, bool useFallback);
+	bool downloadGroupFile(const std::string & gameVersionID, bool useFallback, bool * aborted = nullptr);
 	void onGameDownloadProgress(GameVersion & gameVersion, HTTPRequest & request, size_t numberOfBytesDownloaded, size_t totalNumberOfBytes);
 	void onGroupDownloadProgress(GameVersion & groupGameVersion, HTTPRequest & request, size_t numberOfBytesDownloaded, size_t totalNumberOfBytes);
 

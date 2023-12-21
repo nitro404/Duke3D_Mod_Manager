@@ -93,6 +93,7 @@ private:
 
 	std::shared_ptr<GameManager> m_gameManager;
 	std::future<bool> m_installGameFuture;
+	std::atomic<bool> m_gameInstallationCancelled;
 	std::vector<SignalConnectionGroup> m_gameVersionPanelSignalConnectionGroups;
 	wxNotebook * m_notebook;
 	wxButton * m_newButton;

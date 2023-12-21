@@ -2354,7 +2354,7 @@ std::vector<std::string> GameManager::getDuke3d_w32DownloadURLs(DeviceInformatio
 	return downloadURLs;
 }
 
-bool GameManager::installGame(const std::string & gameVersionID, const std::string & destinationDirectoryPath, std::string * newGameExecutableName, bool useFallback, bool overwrite) {
+bool GameManager::installGame(const std::string & gameVersionID, const std::string & destinationDirectoryPath, std::string * newGameExecutableName, bool useFallback, bool overwrite, bool * aborted) {
 	if(!m_initialized) {
 		spdlog::error("Game manager not initialized!");
 		return false;
@@ -2469,7 +2469,14 @@ bool GameManager::installGame(const std::string & gameVersionID, const std::stri
 
 		progressConnection.disconnect();
 
-		if(response == nullptr || response->isFailure()) {
+		if(response != nullptr && response->isAborted()) {
+			if(aborted != nullptr) {
+				*aborted = true;
+			}
+
+			return false;
+		}
+		else if(response == nullptr || response->isFailure()) {
 			spdlog::error("Failed to download '{}' game files package with error: {}", gameVersion->getLongName(), response != nullptr ? response->getErrorMessage() : "Invalid request.");
 
 			if(!useFallback) {
@@ -3036,7 +3043,17 @@ bool GameManager::installGame(const std::string & gameVersionID, const std::stri
 
 	// don't need to install the group file or verify it separately when using a fallback download for either of the original game versions, since it's already installed & verified
 	if (!isOriginalGameFallback && gameVersion->hasGroupFileInstallPath()) {
-		if(!installGroupFile(gameVersion->getID(), Utilities::joinPaths(destinationDirectoryPath, gameVersion->getGroupFileInstallPath().value()), overwrite, &groupSymlinked, &worldTourGroup, &groupGameVersionID)) {
+		bool internalGroupDownloadAborted = false;
+
+		if(!installGroupFile(gameVersion->getID(), Utilities::joinPaths(destinationDirectoryPath, gameVersion->getGroupFileInstallPath().value()), overwrite, &groupSymlinked, &worldTourGroup, &groupGameVersionID, &internalGroupDownloadAborted)) {
+			if(internalGroupDownloadAborted) {
+				if(aborted != nullptr) {
+					*aborted = true;
+				}
+
+				return false;
+			}
+
 			return false;
 		}
 	}
@@ -3142,11 +3159,11 @@ std::string GameManager::getFallbackGroupDownloadSHA1(const std::string & gameVe
 	return {};
 }
 
-bool GameManager::downloadGroupFile(const std::string & gameVersionID) {
-	return downloadGroupFile(gameVersionID, false);
+bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool * aborted) {
+	return downloadGroupFile(gameVersionID, false, aborted);
 }
 
-bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useFallback) {
+bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useFallback, bool * aborted) {
 	if(!m_initialized) {
 		spdlog::error("Game manager not initialized!");
 		return {};
@@ -3300,7 +3317,7 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 		spdlog::error("Failed to determine {} group download URL for '{}'.", useFallback ? "fallback" : "regular", groupGameVersion->getLongName());
 
 		if(!useFallback) {
-			return downloadGroupFile(gameVersionID, true);
+			return downloadGroupFile(gameVersionID, true, aborted);
 		}
 
 		return false;
@@ -3316,7 +3333,14 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 
 	progressConnection.disconnect();
 
-	if(response == nullptr || response->isFailure()) {
+	if(response != nullptr && response->isAborted()) {
+		if(aborted != nullptr) {
+			*aborted = true;
+		}
+
+		return false;
+	}
+	else if(response == nullptr || response->isFailure()) {
 		spdlog::error("Failed to download {} group file with error: {}", groupGameVersion->getLongName(), response != nullptr ? response->getErrorMessage() : "Invalid request.");
 		return false;
 	}
@@ -3325,7 +3349,7 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 		spdlog::error("Failed to download {} group file ({}{})!", groupGameVersion->getLongName(), response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
 
 		if(!useFallback) {
-			return downloadGroupFile(gameVersionID, true);
+			return downloadGroupFile(gameVersionID, true, aborted);
 		}
 
 		return false;
@@ -3372,7 +3396,7 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 					else {
 						spdlog::error("{} group file archive '{}' SHA1 hash validation failed! Expected '{}', but calculated: '{}'.", groupGameVersion->getLongName(), Utilities::getFileName(groupDownloadURL), groupFileDownload->getSHA1(), responseSHA1);
 
-						return downloadGroupFile(gameVersionID, true);
+						return downloadGroupFile(gameVersionID, true, aborted);
 					}
 				}
 			}
@@ -3389,7 +3413,7 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 		spdlog::error("Failed to create archive handle from '{}' group package file!", groupGameVersion->getLongName());
 
 		if(!useFallback) {
-			return downloadGroupFile(gameVersionID, true);
+			return downloadGroupFile(gameVersionID, true, aborted);
 		}
 
 		return false;
@@ -3401,7 +3425,7 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 		spdlog::error("{} group package file is missing group file entry!", groupGameVersion->getLongName());
 
 		if(!useFallback) {
-			return downloadGroupFile(gameVersionID, true);
+			return downloadGroupFile(gameVersionID, true, aborted);
 		}
 
 		return false;
@@ -3413,7 +3437,7 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 		spdlog::error("Failed to obtain '{}' group file data from package file.", groupGameVersion->getLongName());
 
 		if(!useFallback) {
-			return downloadGroupFile(gameVersionID, true);
+			return downloadGroupFile(gameVersionID, true, aborted);
 		}
 
 		return false;
@@ -3470,7 +3494,7 @@ bool GameManager::downloadGroupFile(const std::string & gameVersionID, bool useF
 	return true;
 }
 
-bool GameManager::installGroupFile(const std::string & gameVersionID, const std::string & directoryPath, bool overwrite, bool * groupSymlinked, bool * worldTourGroup, std::string * groupGameVersionID) {
+bool GameManager::installGroupFile(const std::string & gameVersionID, const std::string & directoryPath, bool overwrite, bool * groupSymlinked, bool * worldTourGroup, std::string * groupGameVersionID, bool * aborted) {
 	if(!m_initialized) {
 		spdlog::error("Game manager not initialized!");
 		return {};
@@ -3485,9 +3509,18 @@ bool GameManager::installGroupFile(const std::string & gameVersionID, const std:
 		return false;
 	}
 
+	bool internalGroupDownloadAborted = false;
 	std::filesystem::path destinationGroupFilePath(Utilities::joinPaths(directoryPath, GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME));
 
-	if(!isGroupFileDownloaded(gameVersionID) && !downloadGroupFile(gameVersionID)) {
+	if(!isGroupFileDownloaded(gameVersionID) && !downloadGroupFile(gameVersionID, false, &internalGroupDownloadAborted)) {
+		if(internalGroupDownloadAborted) {
+			if(aborted != nullptr) {
+				*aborted = true;
+			}
+
+			return false;
+		}
+
 		spdlog::error("Failed to install '{}' group file to destination: '{}'.", groupGameVersion->getLongName(), destinationGroupFilePath.string());
 		return false;
 	}
@@ -3709,9 +3742,13 @@ void GameManager::updateGroupFileSymlinks() {
 }
 
 void GameManager::onGameDownloadProgress(GameVersion & gameVersion, HTTPRequest & request, size_t numberOfBytesDownloaded, size_t totalNumberOfBytes) {
-	gameDownloadProgress(gameVersion, request, numberOfBytesDownloaded, totalNumberOfBytes);
+	if(!*gameDownloadProgress(gameVersion, request, numberOfBytesDownloaded, totalNumberOfBytes)) {
+		HTTPService::getInstance()->abortRequest(request);
+	}
 }
 
 void GameManager::onGroupDownloadProgress(GameVersion & groupGameVersion, HTTPRequest & request, size_t numberOfBytesDownloaded, size_t totalNumberOfBytes) {
-	groupDownloadProgress(groupGameVersion, request, numberOfBytesDownloaded, totalNumberOfBytes);
+	if(!*groupDownloadProgress(groupGameVersion, request, numberOfBytesDownloaded, totalNumberOfBytes)) {
+		HTTPService::getInstance()->abortRequest(request);
+	}
 }
