@@ -96,7 +96,7 @@ public:
 
 	static const std::string GAME_ID;
 	static const std::string FILE_TYPE;
-	static const std::string FILE_FORMAT_VERSION;
+	static const uint32_t FILE_FORMAT_VERSION;
 
 private:
 	std::vector<std::shared_ptr<Mod>> m_mods;

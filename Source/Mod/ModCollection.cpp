@@ -44,7 +44,7 @@ static constexpr const char * JSON_FILE_FORMAT_VERSION_PROPERTY_NAME("fileFormat
 
 const std::string ModCollection::GAME_ID("duke_nukem_3d");
 const std::string ModCollection::FILE_TYPE("Mod List");
-const std::string ModCollection::FILE_FORMAT_VERSION("1.0.0");
+const uint32_t ModCollection::FILE_FORMAT_VERSION = 1;
 
 ModCollection::ModCollection() { }
 
@@ -583,8 +583,7 @@ rapidjson::Document ModCollection::toJSON() const {
 	rapidjson::Value fileTypeVersionValue(FILE_TYPE.c_str(), allocator);
 	modsDocument.AddMember(rapidjson::StringRef(JSON_FILE_TYPE_PROPERTY_NAME), fileTypeVersionValue, allocator);
 
-	rapidjson::Value fileFormatVersionValue(FILE_FORMAT_VERSION.c_str(), allocator);
-	modsDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
+	modsDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), rapidjson::Value(FILE_FORMAT_VERSION), allocator);
 
 	rapidjson::Value modsValue(rapidjson::kArrayType);
 	modsValue.Reserve(m_mods.size(), allocator);
@@ -607,7 +606,7 @@ tinyxml2::XMLElement * ModCollection::toXML(tinyxml2::XMLDocument * document) co
 
 	modsElement->SetAttribute(XML_GAME_ID_ATTRIBUTE_NAME.c_str(), GAME_ID.c_str());
 	modsElement->SetAttribute(XML_FILE_TYPE_ATTRIBUTE_NAME.c_str(), FILE_TYPE.c_str());
-	modsElement->SetAttribute(XML_FILE_FORMAT_VERSION_ATTRIBUTE_NAME.c_str(), FILE_FORMAT_VERSION.c_str());
+	modsElement->SetAttribute(XML_FILE_FORMAT_VERSION_ATTRIBUTE_NAME.c_str(), FILE_FORMAT_VERSION);
 
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_mods.begin(); i != m_mods.end(); ++i) {
 		modsElement->InsertEndChild((*i)->toXML(document));
@@ -644,20 +643,13 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const rapidjson::Value &
 	if(modCollectionValue.HasMember(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME)) {
 		const rapidjson::Value & fileFormatVersionValue = modCollectionValue[JSON_FILE_FORMAT_VERSION_PROPERTY_NAME];
 
-		if(!fileFormatVersionValue.IsString()) {
-			spdlog::error("Invalid mod collection file format version type: '{}', expected: 'string'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
+		if(!fileFormatVersionValue.IsUint()) {
+			spdlog::error("Invalid mod collection file format version type: '{}', expected: unsigned integer 'number'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
 			return nullptr;
 		}
 
-		std::optional<std::uint8_t> optionalVersionComparison(Utilities::compareVersions(fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION));
-
-		if(!optionalVersionComparison.has_value()) {
-			spdlog::error("Invalid mod collection file format version: '{}'.", fileFormatVersionValue.GetString());
-			return nullptr;
-		}
-
-		if(*optionalVersionComparison != 0) {
-			spdlog::error("Unsupported mod collection file format version: '{}', only version '{}' is supported.", fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION);
+		if(fileFormatVersionValue.GetUint() != FILE_FORMAT_VERSION) {
+			spdlog::error("Unsupported mod collection file format version: {}, only version {} is supported.", fileFormatVersionValue.GetUint(), FILE_FORMAT_VERSION);
 			return nullptr;
 		}
 	}
@@ -751,18 +743,18 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const tinyxml2::XMLEleme
 	}
 
 	// verify file format version
-	const char * fileFormatVersion = modsElement->Attribute(XML_FILE_FORMAT_VERSION_ATTRIBUTE_NAME.c_str());
+	const char * fileFormatVersionData = modsElement->Attribute(XML_FILE_FORMAT_VERSION_ATTRIBUTE_NAME.c_str());
 
-	if(Utilities::stringLength(fileFormatVersion) != 0) {
-		std::optional<std::uint8_t> optionalVersionComparison(Utilities::compareVersions(fileFormatVersion, FILE_FORMAT_VERSION));
+	if(Utilities::stringLength(fileFormatVersionData) != 0) {
+		std::optional<uint32_t> optionalFileFormatVersionValue(Utilities::parseUnsignedInteger(fileFormatVersionData));
 
-		if(!optionalVersionComparison.has_value()) {
-			spdlog::error("Invalid mod collection file format version: '{}'.", fileFormatVersion);
+		if(!optionalFileFormatVersionValue.has_value()) {
+			spdlog::error("Invalid mod collection file format version: {}.", fileFormatVersionData);
 			return nullptr;
 		}
 
-		if(*optionalVersionComparison != 0) {
-			spdlog::error("Unsupported mod collection file format version: '{}', only version '{}' is supported.", fileFormatVersion, FILE_FORMAT_VERSION);
+		if(optionalFileFormatVersionValue.value() != FILE_FORMAT_VERSION) {
+			spdlog::error("Unsupported mod collection file format version: {}, only version {} is supported.", fileFormatVersionData, FILE_FORMAT_VERSION);
 			return nullptr;
 		}
 	}
