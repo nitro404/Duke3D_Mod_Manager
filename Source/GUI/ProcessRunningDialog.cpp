@@ -74,6 +74,7 @@ ProcessRunningDialog::ProcessRunningDialog(wxWindow * parent, const std::string 
 	wxGridSizer * processRunningDialogSizer = new wxGridSizer(1, 1, border);
 	processRunningDialogSizer->Add(contentsPanel, 1, wxEXPAND | wxALL, border);
 	SetSizer(processRunningDialogSizer);
+	Fit();
 }
 
 ProcessRunningDialog::~ProcessRunningDialog() {
@@ -82,6 +83,8 @@ ProcessRunningDialog::~ProcessRunningDialog() {
 
 void ProcessRunningDialog::setStatus(const std::string & status) {
 	m_messageLabel->SetLabelText(fmt::format("{}\n\n{}", m_message, status));
+
+	Fit();
 }
 
 void ProcessRunningDialog::clearStatus() {
