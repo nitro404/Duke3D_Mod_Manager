@@ -17,9 +17,6 @@
 	#include <wx/wx.h>
 #endif
 
-#include <wx/progdlg.h>
-
-#include <future>
 #include <memory>
 
 class LogSinkWX;
@@ -53,8 +50,6 @@ private:
 	ModManagerFrame * m_newModManagerFrame;
 	boost::signals2::connection m_modManagerFrameReloadRequestedConnection;
 	bool m_reloadRequired;
-	std::unique_ptr<wxProgressDialog> m_initializingProgressDialog;
-	std::future<void> m_initializeFuture;
 	boost::signals2::connection m_modManagerInitializationProgressConnection;
 
 	ModManagerApplication(const ModManagerApplication &) = delete;
