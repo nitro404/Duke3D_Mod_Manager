@@ -57,7 +57,7 @@ public:
 	boost::signals2::signal<void (DOSBoxDownloadCollection & /* dosboxDownloads */)> updated;
 
 	static const std::string FILE_TYPE;
-	static const std::string FILE_FORMAT_VERSION;
+	static const uint32_t FILE_FORMAT_VERSION;
 
 private:
 	std::vector<std::shared_ptr<DOSBoxDownload>> m_downloads;
