@@ -131,6 +131,10 @@ void ReleaseNotesPanel::setSelectedRelease(std::shared_ptr<GitHubRelease> releas
 void ReleaseNotesPanel::onReleasesLoaded(ReleasesLoadedEvent & event) {
 	std::lock_guard<std::recursive_mutex> lock(m_releasesMutex);
 
+	if(m_releases == nullptr) {
+		return;
+	}
+
 	size_t currentReleaseIndex = m_releases->indexOfReleaseWithTagVersion(APPLICATION_VERSION);
 
 	if(currentReleaseIndex == std::numeric_limits<size_t>::max()) {
@@ -148,6 +152,10 @@ void ReleaseNotesPanel::onReleasesLoaded(ReleasesLoadedEvent & event) {
 
 void ReleaseNotesPanel::onReleaseSelected(wxCommandEvent & event) {
 	std::lock_guard<std::recursive_mutex> lock(m_releasesMutex);
+
+	if(m_releases == nullptr) {
+		return;
+	}
 
 	int selectedReleaseIndex = m_releaseComboBox->GetSelection();
 
