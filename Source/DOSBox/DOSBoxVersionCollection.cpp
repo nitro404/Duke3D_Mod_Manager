@@ -22,7 +22,7 @@ static constexpr const char * JSON_FILE_FORMAT_VERSION_PROPERTY_NAME = "fileForm
 static constexpr const char * JSON_DOSBOX_VERSIONS_PROPERTY_NAME = "dosboxVersions";
 
 const std::string DOSBoxVersionCollection::FILE_TYPE = "DOSBox Versions";
-const std::string DOSBoxVersionCollection::FILE_FORMAT_VERSION = "1.0.0";
+const uint32_t DOSBoxVersionCollection::FILE_FORMAT_VERSION = 1;
 
 DOSBoxVersionCollection::DOSBoxVersionCollection() = default;
 
@@ -432,8 +432,7 @@ rapidjson::Document DOSBoxVersionCollection::toJSON() const {
 	rapidjson::Value fileTypeValue(FILE_TYPE.c_str(), allocator);
 	dosboxVersionsDocument.AddMember(rapidjson::StringRef(JSON_FILE_TYPE_PROPERTY_NAME), fileTypeValue, allocator);
 
-	rapidjson::Value fileFormatVersionValue(FILE_FORMAT_VERSION.c_str(), allocator);
-	dosboxVersionsDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
+	dosboxVersionsDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), rapidjson::Value(FILE_FORMAT_VERSION), allocator);
 
 	rapidjson::Value dosboxVersionsValue(rapidjson::kArrayType);
 	dosboxVersionsValue.Reserve(m_dosboxVersions.size(), allocator);
@@ -473,20 +472,13 @@ std::unique_ptr<DOSBoxVersionCollection> DOSBoxVersionCollection::parseFrom(cons
 	if(dosboxVersionCollectionValue.HasMember(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME)) {
 		const rapidjson::Value & fileFormatVersionValue = dosboxVersionCollectionValue[JSON_FILE_FORMAT_VERSION_PROPERTY_NAME];
 
-		if(!fileFormatVersionValue.IsString()) {
-			spdlog::error("Invalid DOSBox version collection file format version type: '{}', expected: 'string'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
+		if(!fileFormatVersionValue.IsUint()) {
+			spdlog::error("Invalid DOSBox version collection file format version type: '{}', expected unsigned integer 'number'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
 			return nullptr;
 		}
 
-		std::optional<std::uint8_t> optionalVersionComparison(Utilities::compareVersions(fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION));
-
-		if(!optionalVersionComparison.has_value()) {
-			spdlog::error("Invalid DOSBox version collection file format version: '{}'.", fileFormatVersionValue.GetString());
-			return nullptr;
-		}
-
-		if(*optionalVersionComparison != 0) {
-			spdlog::error("Unsupported DOSBox version collection file format version: '{}', only version '{}' is supported.", fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION);
+		if(fileFormatVersionValue.GetUint() != FILE_FORMAT_VERSION) {
+			spdlog::error("Unsupported DOSBox version collection file format version: {}, only version {} is supported.", fileFormatVersionValue.GetUint(), FILE_FORMAT_VERSION);
 			return nullptr;
 		}
 	}
