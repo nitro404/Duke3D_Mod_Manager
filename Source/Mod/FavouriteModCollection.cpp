@@ -29,7 +29,7 @@ static constexpr const char * JSON_FILE_FORMAT_VERSION_PROPERTY_NAME = "fileForm
 static constexpr const char * JSON_FAVOURITE_MODS_PROPERTY_NAME = "favouriteMods";
 
 const std::string FavouriteModCollection::FILE_TYPE = "Favourite Mods";
-const std::string FavouriteModCollection::FILE_FORMAT_VERSION = "1.0.0";
+const uint32_t FavouriteModCollection::FILE_FORMAT_VERSION = 1;
 
 FavouriteModCollection::FavouriteModCollection() { }
 
@@ -212,8 +212,7 @@ rapidjson::Document FavouriteModCollection::toJSON() const {
 	rapidjson::Value fileTypeValue(FILE_TYPE.c_str(), allocator);
 	favouriteModsDocument.AddMember(rapidjson::StringRef(JSON_FILE_TYPE_PROPERTY_NAME), fileTypeValue, allocator);
 
-	rapidjson::Value fileFormatVersionValue(FILE_FORMAT_VERSION.c_str(), allocator);
-	favouriteModsDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
+	favouriteModsDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), rapidjson::Value(FILE_FORMAT_VERSION), allocator);
 
 	rapidjson::Value favouriteModsListValue(rapidjson::kArrayType);
 	favouriteModsListValue.Reserve(m_favourites.size(), allocator);
@@ -253,20 +252,13 @@ bool FavouriteModCollection::parseFrom(const rapidjson::Value & favouriteModsCol
 	if(favouriteModsCollectionValue.HasMember(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME)) {
 		const rapidjson::Value & fileFormatVersionValue = favouriteModsCollectionValue[JSON_FILE_FORMAT_VERSION_PROPERTY_NAME];
 
-		if(!fileFormatVersionValue.IsString()) {
-			spdlog::error("Invalid favourite mods collection version collection file format version type: '{}', expected: 'string'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
+		if(!fileFormatVersionValue.IsUint()) {
+			spdlog::error("Invalid favourite mods collection version collection file format version type: '{}', expected unsigned integer 'number'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
 			return false;
 		}
 
-		std::optional<std::uint8_t> optionalVersionComparison(Utilities::compareVersions(fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION));
-
-		if(!optionalVersionComparison.has_value()) {
-			spdlog::error("Invalid favourite mods collection file format version: '{}'.", fileFormatVersionValue.GetString());
-			return false;
-		}
-
-		if(*optionalVersionComparison != 0) {
-			spdlog::error("Unsupported favourite mods collection file format version: '{}', only version '{}' is supported.", fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION);
+		if(fileFormatVersionValue.GetUint() != FILE_FORMAT_VERSION) {
+			spdlog::error("Unsupported favourite mods collection file format version: {}, only version {} is supported.", fileFormatVersionValue.GetUint(), FILE_FORMAT_VERSION);
 			return false;
 		}
 	}
