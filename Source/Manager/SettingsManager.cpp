@@ -149,7 +149,7 @@ static constexpr const char * WINDOW_POSITION_PROPERTY_NAME = "position";
 static constexpr const char * WINDOW_SIZE_PROPERTY_NAME = "size";
 
 const std::string SettingsManager::FILE_TYPE("Mod Manager Settings");
-const std::string SettingsManager::FILE_FORMAT_VERSION("1.0.0");
+const uint32_t SettingsManager::FILE_FORMAT_VERSION = 1;
 const std::string SettingsManager::DEFAULT_SETTINGS_FILE_PATH("Duke Nukem 3D Mod Manager Settings.json");
 const std::string SettingsManager::DEFAULT_MODS_LIST_FILE_PATH("Duke Nukem 3D Mod List.xml");
 const std::string SettingsManager::DEFAULT_STANDALONE_MODS_LIST_FILE_PATH("Duke Nukem 3D Stand-Alone Mods.json");
@@ -486,8 +486,7 @@ rapidjson::Document SettingsManager::toJSON() const {
 
 	rapidjson::Value fileTypeValue(FILE_TYPE.c_str(), allocator);
 	settingsDocument.AddMember(rapidjson::StringRef(FILE_TYPE_PROPERTY_NAME), fileTypeValue, allocator);
-	rapidjson::Value fileFormatVersionValue(FILE_FORMAT_VERSION.c_str(), allocator);
-	settingsDocument.AddMember(rapidjson::StringRef(FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
+	settingsDocument.AddMember(rapidjson::StringRef(FILE_FORMAT_VERSION_PROPERTY_NAME), rapidjson::Value(FILE_FORMAT_VERSION), allocator);
 	rapidjson::Value logLevelValue(std::string(magic_enum::enum_name(LogSystem::getInstance()->getLevel())).c_str(), allocator);
 	settingsDocument.AddMember(rapidjson::StringRef(LOG_LEVEL_PROPERTY_NAME), logLevelValue, allocator);
 	rapidjson::Value gameTypeValue(Utilities::toCapitalCase(magic_enum::enum_name(gameType)).c_str(), allocator);
@@ -776,20 +775,13 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 	if(settingsDocument.HasMember(FILE_FORMAT_VERSION_PROPERTY_NAME)) {
 		const rapidjson::Value & fileFormatVersionValue = settingsDocument[FILE_FORMAT_VERSION_PROPERTY_NAME];
 
-		if(!fileFormatVersionValue.IsString()) {
-			spdlog::error("Invalid settings file format version type: '{}', expected: 'string'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
+		if(!fileFormatVersionValue.IsUint()) {
+			spdlog::error("Invalid settings file format version type: '{}', expected unsigned integer 'number'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
 			return false;
 		}
 
-		std::optional<std::uint8_t> optionalVersionComparison(Utilities::compareVersions(fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION));
-
-		if(!optionalVersionComparison.has_value()) {
-			spdlog::error("Invalid settings file format version: '{}'.", fileFormatVersionValue.GetString());
-			return false;
-		}
-
-		if(*optionalVersionComparison != 0) {
-			spdlog::error("Unsupported settings file format version: '{}', only version '{}' is supported.", fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION);
+		if(fileFormatVersionValue.GetUint() != FILE_FORMAT_VERSION) {
+			spdlog::error("Unsupported settings file format version: {}, only version {} is supported.", fileFormatVersionValue.GetUint(), FILE_FORMAT_VERSION);
 			return false;
 		}
 	}
