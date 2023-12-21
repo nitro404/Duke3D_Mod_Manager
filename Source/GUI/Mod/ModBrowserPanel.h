@@ -54,6 +54,7 @@ public:
 	void updateModVersionTypeList();
 	void updateModGameVersionList();
 	void updateModSelection();
+	void updateLaunchButton();
 	void updateModInfo();
 	void updatePreferredDOSBoxVersion();
 	void updatePreferredDOSBoxVersionList();

@@ -685,7 +685,7 @@ void ModBrowserPanel::updateModVersionTypeList() {
 					m_modVersionTypeListBox->Set(WXUtilities::createItemWXArrayString(mod->getVersion(modVersionIndex)->getTypeDisplayNames("Default")));
 
 					if(modVersionTypeIndex != std::numeric_limits<size_t>::max()) {
-						m_launchButton->SetLabel("Launch Mod");
+						updateLaunchButton();
 						m_launchButton->Enable();
 						m_modVersionTypeListBox->SetSelection(modVersionTypeIndex);
 					}
@@ -705,7 +705,7 @@ void ModBrowserPanel::updateModVersionTypeList() {
 			}
 		}
 		else {
-			m_launchButton->SetLabel("Launch Game");
+			updateLaunchButton();
 			m_launchButton->Enable();
 			m_modVersionTypeListBox->Clear();
 		}
@@ -816,6 +816,25 @@ void ModBrowserPanel::updateModSelection() {
 
 	updateModInfo();
 	updateModVersionList();
+	updateLaunchButton();
+}
+
+void ModBrowserPanel::updateLaunchButton() {
+	std::shared_ptr<ModVersionType> selectedModVersionType(m_modManager->getSelectedModVersionType());
+
+	if(selectedModVersionType == nullptr) {
+		m_launchButton->SetLabelText("Launch Game");
+	}
+	else {
+		std::shared_ptr<ModGameVersion> selectedModGameVersion(m_modManager->getSelectedModGameVersion());
+
+		if(selectedModGameVersion != nullptr && selectedModGameVersion->isStandAlone() && !m_modManager->getStandAloneMods()->hasStandAloneMod(*selectedModGameVersion)) {
+			m_launchButton->SetLabelText("Install Mod");
+		}
+		else {
+			m_launchButton->SetLabelText("Launch Mod");
+		}
+	}
 }
 
 void ModBrowserPanel::updateModInfo() {
@@ -1088,7 +1107,7 @@ bool ModBrowserPanel::installStandAloneMod(std::shared_ptr<ModGameVersion> stand
 		else if(!modInstalled) {
 			QueueEvent(new ModInstallDoneEvent(false));
 
-			wxMessageBox(fmt::format("Failed to install stand-alone '{}' mod.", standAloneModGameVersion->getParentModVersion()->getFullName()), "Mod Install Failed", wxOK | wxICON_ERROR, this);
+			wxMessageBox(fmt::format("Failed to install stand-alone '{}' mod.", standAloneModGameVersion->getParentModVersion()->getFullName()), "Stand-Alone Mod Install Failed", wxOK | wxICON_ERROR, this);
 
 			return false;
 		}
@@ -1096,6 +1115,8 @@ bool ModBrowserPanel::installStandAloneMod(std::shared_ptr<ModGameVersion> stand
 		updateUninstallButton();
 
 		QueueEvent(new ModInstallDoneEvent(true));
+
+		wxMessageBox(fmt::format("Stand-alone mod '{}' was successfully installed to: '{}'!", standAloneModGameVersion->getParentModVersion()->getFullName(), destinationDirectoryPath), "Stand-Alone Mod Installed", wxOK | wxICON_INFORMATION, this);
 
 		return true;
 	});
@@ -1832,7 +1853,9 @@ void ModBrowserPanel::onModInstallDone(ModInstallDoneEvent & event) {
 	m_installModProgressDialog = nullptr;
 
 	if(event.wasSuccessful()) {
-		launchGame();
+		// Note: Directly launching the game from here results in the process running dialog not longer blocking user input into the main window.
+
+		updateLaunchButton();
 	}
 }
 
