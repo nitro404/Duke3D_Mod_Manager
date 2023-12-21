@@ -1055,7 +1055,7 @@ bool ModBrowserPanel::installStandAloneMod(std::shared_ptr<ModGameVersion> stand
 		break;
 	}
 
-	m_installModProgressDialog = new wxProgressDialog("Installing Sand-Alone Mod", fmt::format("Installing '{}', please wait...", standAloneModGameVersion->getParentModVersion()->getFullName()), 101, this, wxPD_REMAINING_TIME);
+	m_installModProgressDialog = new wxProgressDialog("Installing Stand-Alone Mod", fmt::format("Installing '{}', please wait...", standAloneModGameVersion->getParentModVersion()->getFullName()), 101, this, wxPD_CAN_ABORT | wxPD_REMAINING_TIME);
 	m_installModProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
 
 	SignalConnectionGroup modDownloadConnections(

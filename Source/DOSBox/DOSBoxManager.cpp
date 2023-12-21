@@ -930,7 +930,7 @@ std::string DOSBoxManager::getLatestDOSBoxXDownloadURL(DeviceInformationBridge::
 	return latestReleaseAsset->getDownloadURL();
 }
 
-std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::string & dosboxVersionID, std::string * latestVersion) {
+std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::string & dosboxVersionID, std::string * latestVersion, bool * aborted) {
 	if(!m_initialized) {
 		spdlog::error("DOSBox manager not initialized!");
 		return {};
@@ -952,10 +952,10 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::s
 		return {};
 	}
 
-	return downloadLatestDOSBoxVersion(dosboxVersionID, optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value(), false, latestVersion);
+	return downloadLatestDOSBoxVersion(dosboxVersionID, optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value(), false, latestVersion, aborted);
 }
 
-std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::string & dosboxVersionID, DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, bool useFallback, std::string * latestVersion) {
+std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::string & dosboxVersionID, DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, bool useFallback, std::string * latestVersion, bool * aborted) {
 	if(!m_initialized) {
 		spdlog::error("DOSBox manager not initialized!");
 		return nullptr;
@@ -979,7 +979,7 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::s
 	std::string internalLatestVersion;
 
 	if(useFallback) {
-		spdlog::info("Using fallback {} application package file download URL.", dosboxVersion->getLongName());
+		spdlog::info("Using fallback '{}' application package file download URL.", dosboxVersion->getLongName());
 
 		latestDOSBoxDownloadURL = getLatestDOSBoxDownloadFallbackURL(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, &internalLatestVersion);
 
@@ -996,16 +996,16 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::s
 	}
 
 	if(latestDOSBoxDownloadURL.empty()) {
-		spdlog::error("Failed to determine {} DOSBox download URL for '{}'.", useFallback ? "fallback" : "regular", dosboxVersion->getLongName());
+		spdlog::error("Failed to determine {} download URL for '{}'.", useFallback ? "fallback" : "regular", dosboxVersion->getLongName());
 
 		if(!useFallback) {
-			return downloadLatestDOSBoxVersion(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, true, &internalLatestVersion);
+			return downloadLatestDOSBoxVersion(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, true, &internalLatestVersion, aborted);
 		}
 
 		return nullptr;
 	}
 
-	spdlog::info("Downloading {} {} application archive file from: '{}'...", dosboxVersion->getLongName(), internalLatestVersion, latestDOSBoxDownloadURL);
+	spdlog::info("Downloading '{} {}' application archive file from: '{}'...", dosboxVersion->getLongName(), internalLatestVersion, latestDOSBoxDownloadURL);
 
 	std::shared_ptr<HTTPRequest> request(httpService->createRequest(HTTPRequest::Method::Get, latestDOSBoxDownloadURL));
 
@@ -1015,21 +1015,28 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::s
 
 	progressConnection.disconnect();
 
-	if(response == nullptr || response->isFailure()) {
-		spdlog::error("Failed to download {} {} application archive file with error: {}", dosboxVersion->getLongName(), internalLatestVersion, response != nullptr ? response->getErrorMessage() : "Invalid request.");
+	if(response != nullptr && response->isAborted()) {
+		if(aborted != nullptr) {
+			*aborted = true;
+		}
+
+		return nullptr;
+	}
+	else if(response == nullptr || response->isFailure()) {
+		spdlog::error("Failed to download '{} {}' application archive file with error: {}", dosboxVersion->getLongName(), internalLatestVersion, response != nullptr ? response->getErrorMessage() : "Invalid request.");
 
 		if(!useFallback) {
-			return downloadLatestDOSBoxVersion(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, true, latestVersion);
+			return downloadLatestDOSBoxVersion(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, true, latestVersion, aborted);
 		}
 
 		return nullptr;
 	}
 	else if(response->isFailureStatusCode()) {
 		std::string statusCodeName(HTTPUtilities::getStatusCodeName(response->getStatusCode()));
-		spdlog::error("Failed to download {} {} application files package ({}{})!", dosboxVersion->getLongName(), internalLatestVersion, response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
+		spdlog::error("Failed to download '{} {}' application files package ({}{})!", dosboxVersion->getLongName(), internalLatestVersion, response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
 
 		if(!useFallback) {
-			return downloadLatestDOSBoxVersion(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, true, latestVersion);
+			return downloadLatestDOSBoxVersion(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, true, latestVersion, aborted);
 		}
 
 		return nullptr;
@@ -1038,10 +1045,10 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::s
 	std::unique_ptr<Archive> dosboxArchive(ArchiveFactoryRegistry::getInstance()->createArchiveFrom(response->transferBody(), latestDOSBoxDownloadURL));
 
 	if(dosboxArchive == nullptr) {
-		spdlog::error("Failed to create archive for {} {} application archive.", dosboxVersion->getLongName(), internalLatestVersion);
+		spdlog::error("Failed to create archive for '{} {}' application archive.", dosboxVersion->getLongName(), internalLatestVersion);
 
 		if(!useFallback) {
-			return downloadLatestDOSBoxVersion(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, true, latestVersion);
+			return downloadLatestDOSBoxVersion(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, true, latestVersion, aborted);
 		}
 
 		return nullptr;
@@ -1066,7 +1073,7 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::s
 	return std::move(dosboxArchive);
 }
 
-bool DOSBoxManager::installLatestDOSBoxVersion(const std::string & dosboxVersionID, const std::string & destinationDirectoryPath, bool overwrite) {
+bool DOSBoxManager::installLatestDOSBoxVersion(const std::string & dosboxVersionID, const std::string & destinationDirectoryPath, bool overwrite, bool * aborted) {
 	if(!m_initialized) {
 		spdlog::error("DOSBox manager not initialized!");
 		return false;
@@ -1090,10 +1097,10 @@ bool DOSBoxManager::installLatestDOSBoxVersion(const std::string & dosboxVersion
 	}
 
 	std::string latestVersion;
-	std::unique_ptr<Archive> dosboxArchive(downloadLatestDOSBoxVersion(dosboxVersion->getID(), &latestVersion));
+	std::unique_ptr<Archive> dosboxArchive(downloadLatestDOSBoxVersion(dosboxVersion->getID(), &latestVersion, aborted));
 
 	if(dosboxArchive == nullptr) {
-		spdlog::error("Failed to download and create archive for {} {} application archive.", dosboxVersion->getLongName(), latestVersion);
+		spdlog::error("Failed to download and create archive for '{} {}' application archive.", dosboxVersion->getLongName(), latestVersion);
 		return false;
 	}
 
@@ -1179,6 +1186,8 @@ bool DOSBoxManager::isDOSBoxVersionDownloadable(const std::string & dosboxVersio
 		   Utilities::areStringsEqualIgnoreCase(dosboxVersionID, DOSBoxVersion::DOSBOX_X.getID());
 }
 
-void DOSBoxManager::onDOSBoxDownloadProgress(DOSBoxVersion & dosboxVersion, HTTPRequest & request, size_t numberOfBytesDownloaded, size_t totalNumberOfBytes) {
-	dosboxDownloadProgress(dosboxVersion, request, numberOfBytesDownloaded, totalNumberOfBytes);
+void DOSBoxManager::onDOSBoxDownloadProgress(const DOSBoxVersion & dosboxVersion, HTTPRequest & request, size_t numberOfBytesDownloaded, size_t totalNumberOfBytes) {
+	if(!*dosboxDownloadProgress(dosboxVersion, request, numberOfBytesDownloaded, totalNumberOfBytes)) {
+		HTTPService::getInstance()->abortRequest(request);
+	}
 }

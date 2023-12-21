@@ -121,6 +121,7 @@ private:
 	DOSBoxSettingsPanel * m_dosboxSettingsPanel;
 	DOSBoxConfigurationPanel * m_generalDOSBoxConfigurationPanel;
 	wxProgressDialog * m_installProgressDialog;
+	std::atomic<bool> m_dosboxInstallationCancelled;
 	boost::signals2::connection m_dosboxSettingModifiedConnection;
 	bool m_modified;
 

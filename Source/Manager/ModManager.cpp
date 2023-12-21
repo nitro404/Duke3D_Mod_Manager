@@ -2362,6 +2362,8 @@ bool ModManager::uninstallModGameVersion(const ModGameVersion & modGameVersion) 
 }
 
 bool ModManager::shouldRunSelectedMod() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 	return m_shouldRunSelectedMod;
 }
 
