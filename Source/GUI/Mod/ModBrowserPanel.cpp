@@ -1377,7 +1377,11 @@ bool ModBrowserPanel::launchGame() {
 	dialogMessageStringStream << '.';
 
 	m_gameRunningDialog = new ProcessRunningDialog(this, "Game Running", dialogMessageStringStream.str(), "Close Game");
-	m_runSelectedModFuture = m_modManager->runSelectedModAsync(alternateGameVersion, alternateModGameVersion);
+
+	m_runSelectedModFuture = std::async(std::launch::async, [this, alternateGameVersion, alternateModGameVersion]() {
+		return m_modManager->runSelectedMod(alternateGameVersion, alternateModGameVersion);
+	});
+
 	int processExitCode = m_gameRunningDialog->ShowModal();
 	m_gameRunningDialog = nullptr;
 

@@ -2352,10 +2352,6 @@ bool ModManager::shouldRunSelectedMod() const {
 	return m_shouldRunSelectedMod;
 }
 
-std::future<bool> ModManager::runSelectedModAsync(std::shared_ptr<GameVersion> alternateGameVersion, std::shared_ptr<ModGameVersion> alternateModGameVersion) {
-	return std::async(std::launch::async, &ModManager::runSelectedMod, std::ref(*this), alternateGameVersion, alternateModGameVersion);
-}
-
 bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersion, std::shared_ptr<ModGameVersion> alternateModGameVersion) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 

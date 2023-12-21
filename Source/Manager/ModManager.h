@@ -132,7 +132,6 @@ public:
 	bool installStandAloneMod(const ModGameVersion & standAloneModGameVersion, const std::string & destinationDirectoryPath, bool removeArchivePackage = true, bool * aborted = nullptr);
 	bool uninstallModGameVersion(const ModGameVersion & modGameVersion);
 	bool shouldRunSelectedMod() const;
-	std::future<bool> runSelectedModAsync(std::shared_ptr<GameVersion> alternateGameVersion = nullptr, std::shared_ptr<ModGameVersion> alternateModGameVersion = nullptr);
 	bool runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersion = nullptr, std::shared_ptr<ModGameVersion> alternateModGameVersion = nullptr);
 	bool isGameProcessRunning() const;
 	std::shared_ptr<Process> getGameProcess() const;
