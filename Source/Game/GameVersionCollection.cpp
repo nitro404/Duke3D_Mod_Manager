@@ -23,7 +23,7 @@ static constexpr const char * JSON_FILE_FORMAT_VERSION_PROPERTY_NAME = "fileForm
 static constexpr const char * JSON_GAME_VERSIONS_PROPERTY_NAME = "gameVersions";
 
 const std::string GameVersionCollection::FILE_TYPE = "Game Versions";
-const std::string GameVersionCollection::FILE_FORMAT_VERSION = "1.0.0";
+const uint32_t GameVersionCollection::FILE_FORMAT_VERSION = 1;
 
 GameVersionCollection::GameVersionCollection() = default;
 
@@ -515,8 +515,7 @@ rapidjson::Document GameVersionCollection::toJSON() const {
 	rapidjson::Value fileTypeValue(FILE_TYPE.c_str(), allocator);
 	gameVersionsDocument.AddMember(rapidjson::StringRef(JSON_FILE_TYPE_PROPERTY_NAME), fileTypeValue, allocator);
 
-	rapidjson::Value fileFormatVersionValue(FILE_FORMAT_VERSION.c_str(), allocator);
-	gameVersionsDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), fileFormatVersionValue, allocator);
+	gameVersionsDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), rapidjson::Value(FILE_FORMAT_VERSION), allocator);
 
 	rapidjson::Value gamesVersionsValue(rapidjson::kArrayType);
 	gamesVersionsValue.Reserve(m_gameVersions.size(), allocator);
@@ -556,20 +555,13 @@ std::unique_ptr<GameVersionCollection> GameVersionCollection::parseFrom(const ra
 	if(gameVersionCollectionValue.HasMember(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME)) {
 		const rapidjson::Value & fileFormatVersionValue = gameVersionCollectionValue[JSON_FILE_FORMAT_VERSION_PROPERTY_NAME];
 
-		if(!fileFormatVersionValue.IsString()) {
-			spdlog::error("Invalid game version collection file format version type: '{}', expected: 'string'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
+		if(!fileFormatVersionValue.IsUint()) {
+			spdlog::error("Invalid game version collection file format version type: '{}', expected unsigned integer 'number'.", Utilities::typeToString(fileFormatVersionValue.GetType()));
 			return nullptr;
 		}
 
-		std::optional<std::uint8_t> optionalVersionComparison(Utilities::compareVersions(fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION));
-
-		if(!optionalVersionComparison.has_value()) {
-			spdlog::error("Invalid game version collection file format version: '{}'.", fileFormatVersionValue.GetString());
-			return nullptr;
-		}
-
-		if(*optionalVersionComparison != 0) {
-			spdlog::error("Unsupported game version collection file format version: '{}', only version '{}' is supported.", fileFormatVersionValue.GetString(), FILE_FORMAT_VERSION);
+		if(fileFormatVersionValue.GetUint() != FILE_FORMAT_VERSION) {
+			spdlog::error("Unsupported game version collection file format version: {}, only version {} is supported.", fileFormatVersionValue.GetUint(), FILE_FORMAT_VERSION);
 			return nullptr;
 		}
 	}
