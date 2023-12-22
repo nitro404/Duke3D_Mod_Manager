@@ -1,6 +1,7 @@
 {
 	"fileType": "DOSBox Downloads",
 	"fileFormatVersion": 1,
+	"fileRevision": 1,
 	"dosboxDownloads": [
 		{
 			"id": "dosbox",

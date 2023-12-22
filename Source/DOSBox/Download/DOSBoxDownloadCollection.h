@@ -18,12 +18,14 @@ class DOSBoxDownload;
 
 class DOSBoxDownloadCollection final {
 public:
-	DOSBoxDownloadCollection();
+	DOSBoxDownloadCollection(uint32_t fileRevision = 1);
 	DOSBoxDownloadCollection(DOSBoxDownloadCollection && c) noexcept;
 	DOSBoxDownloadCollection(const DOSBoxDownloadCollection & c);
 	DOSBoxDownloadCollection & operator = (DOSBoxDownloadCollection && c) noexcept;
 	DOSBoxDownloadCollection & operator = (const DOSBoxDownloadCollection & c);
 	~DOSBoxDownloadCollection();
+
+	uint32_t getFileRevision() const;
 
 	size_t numberOfDownloads() const;
 	bool hasDownload(const DOSBoxDownload & download) const;
@@ -60,6 +62,7 @@ public:
 	static const uint32_t FILE_FORMAT_VERSION;
 
 private:
+	uint32_t m_fileRevision;
 	std::vector<std::shared_ptr<DOSBoxDownload>> m_downloads;
 };
 

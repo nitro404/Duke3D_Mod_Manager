@@ -21,17 +21,21 @@
 
 static constexpr const char * JSON_FILE_TYPE_PROPERTY_NAME = "fileType";
 static constexpr const char * JSON_FILE_FORMAT_VERSION_PROPERTY_NAME = "fileFormatVersion";
+static constexpr const char * JSON_FILE_REVISION_PROPERTY_NAME = "fileRevision";
 static constexpr const char * JSON_DOSBOX_DOWNLOADS_PROPERTY_NAME = "dosboxDownloads";
 
 const std::string DOSBoxDownloadCollection::FILE_TYPE = "DOSBox Downloads";
 const uint32_t DOSBoxDownloadCollection::FILE_FORMAT_VERSION = 1;
 
-DOSBoxDownloadCollection::DOSBoxDownloadCollection() { }
+DOSBoxDownloadCollection::DOSBoxDownloadCollection(uint32_t fileRevision)
+	: m_fileRevision(fileRevision) { }
 
 DOSBoxDownloadCollection::DOSBoxDownloadCollection(DOSBoxDownloadCollection && c) noexcept
-	: m_downloads(std::move(c.m_downloads)) { }
+	: m_fileRevision(c.m_fileRevision)
+	, m_downloads(std::move(c.m_downloads)) { }
 
-DOSBoxDownloadCollection::DOSBoxDownloadCollection(const DOSBoxDownloadCollection & c) {
+DOSBoxDownloadCollection::DOSBoxDownloadCollection(const DOSBoxDownloadCollection & c)
+	: m_fileRevision(c.m_fileRevision) {
 	for(std::vector<std::shared_ptr<DOSBoxDownload>>::const_iterator i = c.m_downloads.begin(); i != c.m_downloads.end(); ++i) {
 		m_downloads.push_back(std::make_shared<DOSBoxDownload>(**i));
 	}
@@ -39,6 +43,7 @@ DOSBoxDownloadCollection::DOSBoxDownloadCollection(const DOSBoxDownloadCollectio
 
 DOSBoxDownloadCollection & DOSBoxDownloadCollection::operator = (DOSBoxDownloadCollection && c) noexcept {
 	if(this != &c) {
+		m_fileRevision = c.m_fileRevision;
 		m_downloads = std::move(c.m_downloads);
 	}
 
@@ -48,6 +53,8 @@ DOSBoxDownloadCollection & DOSBoxDownloadCollection::operator = (DOSBoxDownloadC
 DOSBoxDownloadCollection & DOSBoxDownloadCollection::operator = (const DOSBoxDownloadCollection & c) {
 	m_downloads.clear();
 
+	m_fileRevision = c.m_fileRevision;
+
 	for(std::vector<std::shared_ptr<DOSBoxDownload>>::const_iterator i = c.m_downloads.begin(); i != c.m_downloads.end(); ++i) {
 		m_downloads.push_back(std::make_shared<DOSBoxDownload>(**i));
 	}
@@ -56,6 +63,10 @@ DOSBoxDownloadCollection & DOSBoxDownloadCollection::operator = (const DOSBoxDow
 }
 
 DOSBoxDownloadCollection::~DOSBoxDownloadCollection() { }
+
+uint32_t DOSBoxDownloadCollection::getFileRevision() const {
+	return m_fileRevision;
+}
 
 size_t DOSBoxDownloadCollection::numberOfDownloads() const {
 	return m_downloads.size();
@@ -220,6 +231,8 @@ rapidjson::Document DOSBoxDownloadCollection::toJSON() const {
 
 	dosboxDownloadCollectionValue.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), rapidjson::Value(FILE_FORMAT_VERSION), allocator);
 
+	dosboxDownloadCollectionValue.AddMember(rapidjson::StringRef(JSON_FILE_REVISION_PROPERTY_NAME), rapidjson::Value(m_fileRevision), allocator);
+
 	rapidjson::Value dosboxDownloadsValue(rapidjson::kArrayType);
 	dosboxDownloadsValue.Reserve(m_downloads.size(), allocator);
 
@@ -272,6 +285,22 @@ std::unique_ptr<DOSBoxDownloadCollection> DOSBoxDownloadCollection::parseFrom(co
 		spdlog::warn("DOSBox download collection JSON data is missing file format version, and may fail to load correctly!");
 	}
 
+	uint32_t fileRevision = 1;
+
+	if(dosboxDownloadCollectionValue.HasMember(JSON_FILE_REVISION_PROPERTY_NAME)) {
+		const rapidjson::Value & fileRevisionValue = dosboxDownloadCollectionValue[JSON_FILE_REVISION_PROPERTY_NAME];
+
+		if(!fileRevisionValue.IsUint()) {
+			spdlog::error("Invalid DOSBox download collection file revision type: '{}', expected unsigned integer 'number'.", Utilities::typeToString(fileRevisionValue.GetType()));
+			return nullptr;
+		}
+
+		fileRevision = fileRevisionValue.GetUint();
+	}
+	else {
+		spdlog::warn("DOSBox download collection JSON data is missing file revision!");
+	}
+
 	if(!dosboxDownloadCollectionValue.HasMember(JSON_DOSBOX_DOWNLOADS_PROPERTY_NAME)) {
 		spdlog::error("DOSBox download collection is missing '{}' property.", JSON_DOSBOX_DOWNLOADS_PROPERTY_NAME);
 		return nullptr;
@@ -284,7 +313,7 @@ std::unique_ptr<DOSBoxDownloadCollection> DOSBoxDownloadCollection::parseFrom(co
 		return nullptr;
 	}
 
-	std::unique_ptr<DOSBoxDownloadCollection> newDOSBoxDownloadCollection(std::make_unique<DOSBoxDownloadCollection>());
+	std::unique_ptr<DOSBoxDownloadCollection> newDOSBoxDownloadCollection(std::make_unique<DOSBoxDownloadCollection>(fileRevision));
 
 	if(dosboxDownloadsValue.Empty()) {
 		return newDOSBoxDownloadCollection;
@@ -415,7 +444,8 @@ bool DOSBoxDownloadCollection::isValid(const DOSBoxDownloadCollection * c) {
 }
 
 bool DOSBoxDownloadCollection::operator == (const DOSBoxDownloadCollection & c) const {
-	if(m_downloads.size() != c.m_downloads.size()) {
+	if(m_fileRevision != c.m_fileRevision ||
+	   m_downloads.size() != c.m_downloads.size()) {
 		return false;
 	}
 
