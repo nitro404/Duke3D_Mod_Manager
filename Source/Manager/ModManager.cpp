@@ -3067,7 +3067,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		return false;
 	}
 
-	if(!standAlone) {
+	if(!standAlone && hasAnyGroupFiles) {
 		launchStatus("Backing up conflicting files in game directory.");
 
 		size_t totalNumberOfBackedUpConflictingGameFiles = 0;
