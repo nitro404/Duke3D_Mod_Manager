@@ -22,16 +22,20 @@
 static constexpr const char * JSON_FILE_TYPE_PROPERTY_NAME = "fileType";
 static constexpr const char * JSON_FILE_FORMAT_VERSION_PROPERTY_NAME = "fileFormatVersion";
 static constexpr const char * JSON_GAME_DOWNLOADS_PROPERTY_NAME = "gameDownloads";
+static constexpr const char * JSON_FILE_REVISION_PROPERTY_NAME = "fileRevision";
 
 const std::string GameDownloadCollection::FILE_TYPE = "Game Downloads";
 const uint32_t GameDownloadCollection::FILE_FORMAT_VERSION = 1;
 
-GameDownloadCollection::GameDownloadCollection() { }
+GameDownloadCollection::GameDownloadCollection(uint32_t fileRevision)
+	: m_fileRevision(fileRevision) { }
 
 GameDownloadCollection::GameDownloadCollection(GameDownloadCollection && c) noexcept
-	: m_downloads(std::move(c.m_downloads)) { }
+	: m_fileRevision(c.m_fileRevision)
+	, m_downloads(std::move(c.m_downloads)) { }
 
-GameDownloadCollection::GameDownloadCollection(const GameDownloadCollection & c) {
+GameDownloadCollection::GameDownloadCollection(const GameDownloadCollection & c)
+	: m_fileRevision(c.m_fileRevision) {
 	for(std::vector<std::shared_ptr<GameDownload>>::const_iterator i = c.m_downloads.begin(); i != c.m_downloads.end(); ++i) {
 		m_downloads.push_back(std::make_shared<GameDownload>(**i));
 	}
@@ -39,6 +43,7 @@ GameDownloadCollection::GameDownloadCollection(const GameDownloadCollection & c)
 
 GameDownloadCollection & GameDownloadCollection::operator = (GameDownloadCollection && c) noexcept {
 	if(this != &c) {
+		m_fileRevision = c.m_fileRevision;
 		m_downloads = std::move(c.m_downloads);
 	}
 
@@ -48,6 +53,8 @@ GameDownloadCollection & GameDownloadCollection::operator = (GameDownloadCollect
 GameDownloadCollection & GameDownloadCollection::operator = (const GameDownloadCollection & c) {
 	m_downloads.clear();
 
+	m_fileRevision = c.m_fileRevision;
+
 	for(std::vector<std::shared_ptr<GameDownload>>::const_iterator i = c.m_downloads.begin(); i != c.m_downloads.end(); ++i) {
 		m_downloads.push_back(std::make_shared<GameDownload>(**i));
 	}
@@ -56,6 +63,10 @@ GameDownloadCollection & GameDownloadCollection::operator = (const GameDownloadC
 }
 
 GameDownloadCollection::~GameDownloadCollection() = default;
+
+uint32_t GameDownloadCollection::getFileRevision() const {
+	return m_fileRevision;
+}
 
 size_t GameDownloadCollection::numberOfDownloads() const {
 	return m_downloads.size();
@@ -244,6 +255,8 @@ rapidjson::Document GameDownloadCollection::toJSON() const {
 
 	gameDownloadCollectionValue.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), rapidjson::Value(FILE_FORMAT_VERSION), allocator);
 
+	gameDownloadCollectionValue.AddMember(rapidjson::StringRef(JSON_FILE_REVISION_PROPERTY_NAME), rapidjson::Value(m_fileRevision), allocator);
+
 	rapidjson::Value gameDownloadsValue(rapidjson::kArrayType);
 	gameDownloadsValue.Reserve(m_downloads.size(), allocator);
 
@@ -296,6 +309,23 @@ std::unique_ptr<GameDownloadCollection> GameDownloadCollection::parseFrom(const 
 		spdlog::warn("Game download collection JSON data is missing file format version, and may fail to load correctly!");
 	}
 
+	uint32_t fileRevision = 1;
+
+	if(gameDownloadCollectionValue.HasMember(JSON_FILE_REVISION_PROPERTY_NAME)) {
+		const rapidjson::Value & fileRevisionValue = gameDownloadCollectionValue[JSON_FILE_REVISION_PROPERTY_NAME];
+
+		if(!fileRevisionValue.IsUint()) {
+			spdlog::error("Invalid game download collection file revision type: '{}', expected unsigned integer 'number'.", Utilities::typeToString(fileRevisionValue.GetType()));
+			return nullptr;
+		}
+
+		fileRevision = fileRevisionValue.GetUint();
+	}
+	else {
+		spdlog::warn("Game download collection JSON data is missing file revision!");
+	}
+
+
 	if(!gameDownloadCollectionValue.HasMember(JSON_GAME_DOWNLOADS_PROPERTY_NAME)) {
 		spdlog::error("Game download collection is missing '{}' property.", JSON_GAME_DOWNLOADS_PROPERTY_NAME);
 		return nullptr;
@@ -308,7 +338,7 @@ std::unique_ptr<GameDownloadCollection> GameDownloadCollection::parseFrom(const 
 		return nullptr;
 	}
 
-	std::unique_ptr<GameDownloadCollection> newGameDownloadCollection(std::make_unique<GameDownloadCollection>());
+	std::unique_ptr<GameDownloadCollection> newGameDownloadCollection(std::make_unique<GameDownloadCollection>(fileRevision));
 
 	if(gameDownloadsValue.Empty()) {
 		return newGameDownloadCollection;
@@ -439,7 +469,8 @@ bool GameDownloadCollection::isValid(const GameDownloadCollection * c) {
 }
 
 bool GameDownloadCollection::operator == (const GameDownloadCollection & c) const {
-	if(m_downloads.size() != c.m_downloads.size()) {
+	if(m_fileRevision != c.m_fileRevision ||
+	   m_downloads.size() != c.m_downloads.size()) {
 		return false;
 	}
 

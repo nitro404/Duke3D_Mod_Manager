@@ -19,12 +19,14 @@ class GameDownload;
 
 class GameDownloadCollection final {
 public:
-	GameDownloadCollection();
+	GameDownloadCollection(uint32_t fileRevision = 1);
 	GameDownloadCollection(GameDownloadCollection && c) noexcept;
 	GameDownloadCollection(const GameDownloadCollection & c);
 	GameDownloadCollection & operator = (GameDownloadCollection && c) noexcept;
 	GameDownloadCollection & operator = (const GameDownloadCollection & c);
 	~GameDownloadCollection();
+
+	uint32_t getFileRevision() const;
 
 	size_t numberOfDownloads() const;
 	bool hasDownload(const GameDownload & download) const;
@@ -62,6 +64,7 @@ public:
 	static const uint32_t FILE_FORMAT_VERSION;
 
 private:
+	uint32_t m_fileRevision;
 	std::vector<std::shared_ptr<GameDownload>> m_downloads;
 };
 
