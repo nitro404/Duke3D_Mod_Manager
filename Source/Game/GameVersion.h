@@ -264,21 +264,21 @@ public:
 	static const GameVersion ORIGINAL_REGULAR_VERSION;
 	static const GameVersion ORIGINAL_PLUTONIUM_PAK;
 	static const GameVersion ORIGINAL_ATOMIC_EDITION;
+	//static const GameVersion WORLD_TOUR;
 	static const GameVersion JFDUKE3D;
+	//static const GameVersion MEGATON_EDITION;
+	static const GameVersion DUKE3DW;
 	static const GameVersion EDUKE32;
 	static const GameVersion NETDUKE32;
-	//static const GameVersion MEGATON_EDITION;
-	//static const GameVersion WORLD_TOUR;
-	//static const GameVersion BUILDGDX;
-	static const GameVersion RAZE;
 	static const GameVersion RED_NUKEM;
-	//static const GameVersion CHOCOLATE_DUKE3D;
-	static const GameVersion BELGIAN_CHOCOLATE_DUKE3D;
-	static const GameVersion DUKE3DW;
-	static const GameVersion PKDUKE3D;
+	static const GameVersion DUKE3D_W32;
 	static const GameVersion XDUKE;
 	static const GameVersion RDUKE;
-	static const GameVersion DUKE3D_W32;
+	//static const GameVersion CHOCOLATE_DUKE3D;
+	static const GameVersion BELGIAN_CHOCOLATE_DUKE3D;
+	static const GameVersion RAZE;
+	static const GameVersion PKDUKE3D;
+	//static const GameVersion BUILDGDX;
 	static const std::vector<const GameVersion *> DEFAULT_GAME_VERSIONS;
 
 	// Note: These SHA1 hashes are defined inline in the header file so that they are available at compile time in other classes
