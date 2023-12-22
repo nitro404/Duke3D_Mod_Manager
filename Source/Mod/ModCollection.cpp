@@ -36,22 +36,27 @@ static const std::string XML_MODS_ELEMENT_NAME("mods");
 static const std::string XML_GAME_ID_ATTRIBUTE_NAME("game_id");
 static const std::string XML_FILE_TYPE_ATTRIBUTE_NAME("file_type");
 static const std::string XML_FILE_FORMAT_VERSION_ATTRIBUTE_NAME("file_format_version");
+static const std::string XML_FILE_REVISION_ATTRIBUTE_NAME("file_revision");
 
-static constexpr const char * JSON_MODS_PROPERTY_NAME("mods");
-static constexpr const char * JSON_GAME_ID_PROPERTY_NAME("gameID");
-static constexpr const char * JSON_FILE_TYPE_PROPERTY_NAME("fileType");
-static constexpr const char * JSON_FILE_FORMAT_VERSION_PROPERTY_NAME("fileFormatVersion");
+static constexpr const char * JSON_MODS_PROPERTY_NAME = "mods";
+static constexpr const char * JSON_GAME_ID_PROPERTY_NAME = "gameID";
+static constexpr const char * JSON_FILE_TYPE_PROPERTY_NAME = "fileType";
+static constexpr const char * JSON_FILE_FORMAT_VERSION_PROPERTY_NAME = "fileFormatVersion";
+static constexpr const char * JSON_FILE_REVISION_PROPERTY_NAME = "fileRevision";
 
 const std::string ModCollection::GAME_ID("duke_nukem_3d");
 const std::string ModCollection::FILE_TYPE("Mod List");
 const uint32_t ModCollection::FILE_FORMAT_VERSION = 1;
 
-ModCollection::ModCollection() { }
+ModCollection::ModCollection(uint32_t fileRevision)
+	: m_fileRevision(fileRevision) { }
 
 ModCollection::ModCollection(ModCollection && m) noexcept
-	: m_mods(std::move(m.m_mods)) { }
+	: m_fileRevision(m.m_fileRevision)
+	, m_mods(std::move(m.m_mods)) { }
 
-ModCollection::ModCollection(const ModCollection & m) {
+ModCollection::ModCollection(const ModCollection & m)
+	: m_fileRevision(m.m_fileRevision) {
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m.m_mods.begin(); i != m.m_mods.end(); ++i) {
 		m_mods.push_back(std::make_shared<Mod>(**i));
 	}
@@ -59,6 +64,7 @@ ModCollection::ModCollection(const ModCollection & m) {
 
 ModCollection & ModCollection::operator = (ModCollection && m) noexcept {
 	if(this != &m) {
+		m_fileRevision = m.m_fileRevision;
 		m_mods = std::move(m.m_mods);
 	}
 
@@ -70,6 +76,8 @@ ModCollection & ModCollection::operator = (ModCollection && m) noexcept {
 ModCollection & ModCollection::operator = (const ModCollection & m) {
 	m_mods.clear();
 
+	m_fileRevision = m.m_fileRevision;
+
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m.m_mods.begin(); i != m.m_mods.end(); ++i) {
 		m_mods.push_back(std::make_shared<Mod>(**i));
 	}
@@ -80,6 +88,10 @@ ModCollection & ModCollection::operator = (const ModCollection & m) {
 }
 
 ModCollection::~ModCollection() = default;
+
+uint32_t ModCollection::getFileRevision() const {
+	return m_fileRevision;
+}
 
 size_t ModCollection::numberOfMods() const {
 	return m_mods.size();
@@ -585,6 +597,8 @@ rapidjson::Document ModCollection::toJSON() const {
 
 	modsDocument.AddMember(rapidjson::StringRef(JSON_FILE_FORMAT_VERSION_PROPERTY_NAME), rapidjson::Value(FILE_FORMAT_VERSION), allocator);
 
+	modsDocument.AddMember(rapidjson::StringRef(JSON_FILE_REVISION_PROPERTY_NAME), rapidjson::Value(m_fileRevision), allocator);
+
 	rapidjson::Value modsValue(rapidjson::kArrayType);
 	modsValue.Reserve(m_mods.size(), allocator);
 
@@ -607,6 +621,7 @@ tinyxml2::XMLElement * ModCollection::toXML(tinyxml2::XMLDocument * document) co
 	modsElement->SetAttribute(XML_GAME_ID_ATTRIBUTE_NAME.c_str(), GAME_ID.c_str());
 	modsElement->SetAttribute(XML_FILE_TYPE_ATTRIBUTE_NAME.c_str(), FILE_TYPE.c_str());
 	modsElement->SetAttribute(XML_FILE_FORMAT_VERSION_ATTRIBUTE_NAME.c_str(), FILE_FORMAT_VERSION);
+	modsElement->SetAttribute(XML_FILE_REVISION_ATTRIBUTE_NAME.c_str(), m_fileRevision);
 
 	for(std::vector<std::shared_ptr<Mod>>::const_iterator i = m_mods.begin(); i != m_mods.end(); ++i) {
 		modsElement->InsertEndChild((*i)->toXML(document));
@@ -677,6 +692,23 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const rapidjson::Value &
 		return nullptr;
 	}
 
+	// parse file revision
+	uint32_t fileRevision = 1;
+
+	if(modCollectionValue.HasMember(JSON_FILE_REVISION_PROPERTY_NAME)) {
+		const rapidjson::Value & fileRevisionValue = modCollectionValue[JSON_FILE_REVISION_PROPERTY_NAME];
+
+		if(!fileRevisionValue.IsUint()) {
+			spdlog::error("Invalid mod collection file revision type: '{}', expected unsigned integer 'number'.", Utilities::typeToString(fileRevisionValue.GetType()));
+			return nullptr;
+		}
+
+		fileRevision = fileRevisionValue.GetUint();
+	}
+	else {
+		spdlog::warn("Mod collection JSON data is missing file revision!");
+	}
+
 	// parse mods list
 	if(!modCollectionValue.HasMember(JSON_MODS_PROPERTY_NAME)) {
 		spdlog::error("Mod collection is missing '{}' property.", JSON_MODS_PROPERTY_NAME);
@@ -690,7 +722,7 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const rapidjson::Value &
 		return nullptr;
 	}
 
-	std::unique_ptr<ModCollection> newModCollection(std::make_unique<ModCollection>());
+	std::unique_ptr<ModCollection> newModCollection(std::make_unique<ModCollection>(fileRevision));
 
 	if(modsValue.Empty()) {
 		return newModCollection;
@@ -775,10 +807,28 @@ std::unique_ptr<ModCollection> ModCollection::parseFrom(const tinyxml2::XMLEleme
 		return nullptr;
 	}
 
+	// parse file revision
+	uint32_t fileRevision = 1;
+	const char * fileRevisionData = modsElement->Attribute(XML_FILE_REVISION_ATTRIBUTE_NAME.c_str());
+
+	if(Utilities::stringLength(fileRevisionData) != 0) {
+		std::optional<uint32_t> optionalFileRevisionValue(Utilities::parseUnsignedInteger(fileRevisionData));
+
+		if(!optionalFileRevisionValue.has_value()) {
+			spdlog::error("Invalid mod collection file revision: {}.", fileRevisionData);
+			return nullptr;
+		}
+
+		fileRevision = optionalFileRevisionValue.value();
+	}
+	else {
+		spdlog::warn("Mod collection XML data element '{}' is missing file revision attribute '{}'!", XML_MODS_ELEMENT_NAME, XML_FILE_REVISION_ATTRIBUTE_NAME);
+	}
+
 	// find the first mod element within the mods element
 	const tinyxml2::XMLElement * modElement = modsElement->FirstChildElement();
 
-	std::unique_ptr<ModCollection> modCollection(std::make_unique<ModCollection>());
+	std::unique_ptr<ModCollection> modCollection(std::make_unique<ModCollection>(fileRevision));
 	std::unique_ptr<Mod> newMod;
 
 	// iterate over all of the mod elements
@@ -1060,7 +1110,8 @@ bool ModCollection::isValid(const ModCollection * m, const GameVersionCollection
 }
 
 bool ModCollection::operator == (const ModCollection & m) const {
-	if(m_mods.size() != m.m_mods.size()) {
+	if(m_fileRevision != m.m_fileRevision ||
+	   m_mods.size() != m.m_mods.size()) {
 		return false;
 	}
 

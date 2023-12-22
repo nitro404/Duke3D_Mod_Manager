@@ -27,12 +27,14 @@ namespace tinyxml2 {
 
 class ModCollection final {
 public:
-	ModCollection();
+	ModCollection(uint32_t fileRevision = 1);
 	ModCollection(ModCollection && m) noexcept;
 	ModCollection(const ModCollection & m);
 	ModCollection & operator = (ModCollection && m) noexcept;
 	ModCollection & operator = (const ModCollection & m);
 	~ModCollection();
+
+	uint32_t getFileRevision() const;
 
 	size_t numberOfMods() const;
 	bool hasMod(const Mod & mod) const;
@@ -99,6 +101,7 @@ public:
 	static const uint32_t FILE_FORMAT_VERSION;
 
 private:
+	uint32_t m_fileRevision;
 	std::vector<std::shared_ptr<Mod>> m_mods;
 };
 
