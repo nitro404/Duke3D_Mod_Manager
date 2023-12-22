@@ -36,7 +36,7 @@ private:
 
 	std::string m_message;
 	std::shared_ptr<Process> m_process;
-	boost::signals2::connection m_processTermintedConnection;
+	boost::signals2::connection m_processTerminatedConnection;
 	wxStaticText * m_messageLabel;
 
 	ProcessRunningDialog(const ProcessRunningDialog &) = delete;

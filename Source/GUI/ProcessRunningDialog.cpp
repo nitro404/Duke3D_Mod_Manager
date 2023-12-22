@@ -78,7 +78,7 @@ ProcessRunningDialog::ProcessRunningDialog(wxWindow * parent, const std::string 
 }
 
 ProcessRunningDialog::~ProcessRunningDialog() {
-	m_processTermintedConnection.disconnect();
+	m_processTerminatedConnection.disconnect();
 }
 
 void ProcessRunningDialog::setStatus(const std::string & status) {
@@ -93,7 +93,7 @@ void ProcessRunningDialog::clearStatus() {
 
 void ProcessRunningDialog::setProcess(std::shared_ptr<Process> process) {
 	if(m_process != nullptr) {
-		m_processTermintedConnection.disconnect();
+		m_processTerminatedConnection.disconnect();
 	}
 
 	if(process == nullptr) {
@@ -101,18 +101,20 @@ void ProcessRunningDialog::setProcess(std::shared_ptr<Process> process) {
 	}
 
 	m_process = process;
-	m_processTermintedConnection = m_process->terminated.connect(std::bind(static_cast<void(ProcessRunningDialog::*)(uint64_t, bool)>(&ProcessRunningDialog::onProcessTerminated), this, std::placeholders::_1, std::placeholders::_2));
+	m_processTerminatedConnection = m_process->terminated.connect(std::bind(static_cast<void(ProcessRunningDialog::*)(uint64_t, bool)>(&ProcessRunningDialog::onProcessTerminated), this, std::placeholders::_1, std::placeholders::_2));
 
 	Bind(EVENT_PROCESS_TERMINATED, &ProcessRunningDialog::onProcessTerminated, this);
 }
 
 void ProcessRunningDialog::close() {
-	if(m_process->isRunning()) {
-		m_process->terminate();
+	if(!m_process->isRunning()) {
+		return;
+	}
 
-		if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
-			SegmentAnalytics::getInstance()->track("Process Terminated");
-		}
+	m_process->terminate();
+
+	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
+		SegmentAnalytics::getInstance()->track("Process Terminated");
 	}
 }
 
