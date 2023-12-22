@@ -4035,7 +4035,7 @@ std::string ModManager::generateDOSBoxCommand(const Script & script, const Scrip
 
 	command << fmt::format("\"{}\"", Utilities::joinPaths(dosboxVersion.getDirectoryPath(), dosboxVersion.getExecutableName()));
 
-	if(!combinedDOSBoxConfigurationFilePath.empty() && std::filesystem::is_regular_file(std::filesystem::path(combinedDOSBoxConfigurationFilePath))) {
+	if(!combinedDOSBoxConfigurationFilePath.empty()) {
 		command << " -conf \"";
 		command << combinedDOSBoxConfigurationFilePath;
 		command << "\"";
