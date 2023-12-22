@@ -2393,11 +2393,25 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		return false;
 	}
 
+	size_t numberOfMissingGameExecutables = selectedGameVersion->checkForMissingExecutables();
+
+	if(numberOfMissingGameExecutables != 0) {
+		notifyLaunchError(fmt::format("Game version '{}' is missing {} application executable{} at configured path, aborting execution. Please manually verify your game files, or consider re-installation.", selectedGameVersion->getLongName(), numberOfMissingGameExecutables, numberOfMissingGameExecutables == 1 ? "" : "s"));
+		return false;
+	}
+
 	std::shared_ptr<DOSBoxVersion> selectedDOSBoxVersion(getSelectedDOSBoxVersion());
 
-	if(selectedGameVersion->doesRequireDOSBox() && !selectedDOSBoxVersion->isConfigured()) {
-		notifyLaunchError(fmt::format("Selected DOSBox version '{}' is not configured.", selectedDOSBoxVersion->getLongName()));
-		return false;
+	if(selectedGameVersion->doesRequireDOSBox()) {
+		if(!selectedDOSBoxVersion->isConfigured()) {
+			notifyLaunchError(fmt::format("Selected DOSBox version '{}' is not configured.", selectedDOSBoxVersion->getLongName()));
+			return false;
+		}
+
+		if(selectedDOSBoxVersion->checkForMissingExecutable()) {
+			notifyLaunchError(fmt::format("Selected DOSBox version '{}' is missing application executable at configured path, aborting execution. Please manually verify your DOSBox program files, or consider re-installation.", selectedDOSBoxVersion->getLongName()));
+			return false;
+		}
 	}
 
 	bool standAlone = selectedGameVersion->isStandAlone();
