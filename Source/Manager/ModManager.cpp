@@ -4212,12 +4212,12 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 		}
 		else {
 			if(modMatches.size() > 20) {
-				spdlog::info("Found {} matches, please refine your search query.", modMatches.size());
+				spdlog::error("Found {} matches, please refine your search query.", modMatches.size());
 			}
 			else {
 				std::stringstream matchesStringStream;
 
-				matchesStringStream << fmt::format("Found {} matches:", modMatches.size()) << std::endl;
+				matchesStringStream << fmt::format("Found {} matches:\n", modMatches.size());
 
 				for(size_t i = 0; i < modMatches.size(); i++) {
 					size_t spacingLength = Utilities::unsignedLongLength(modMatches.size()) - Utilities::unsignedLongLength(i + 1);
@@ -4226,11 +4226,12 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 						matchesStringStream << ' ';
 					}
 
-					matchesStringStream << fmt::format("{}. {}", i + 1, modMatches[i].toString()) << std::endl;
+					matchesStringStream << fmt::format("{}. {}\n", i + 1, modMatches[i].toString());
 				}
 
-				matchesStringStream << std::endl;
 				matchesStringStream << "Please refine your search query.";
+
+				spdlog::error(matchesStringStream.str());
 			}
 
 			return false;
