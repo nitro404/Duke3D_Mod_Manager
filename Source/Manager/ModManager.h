@@ -58,6 +58,7 @@ public:
 	bool uninitialize();
 
 	bool isUsingLocalMode() const;
+	bool didArgumentHandlingFail() const;
 	std::shared_ptr<ModCollection> getMods() const;
 	std::shared_ptr<StandAloneModCollection> getStandAloneMods() const;
 	std::shared_ptr<FavouriteModCollection> getFavouriteMods() const;
@@ -214,6 +215,7 @@ private:
 	bool m_localMode;
 	bool m_shouldRunSelectedMod;
 	bool m_demoRecordingEnabled;
+	bool m_argumentHandlingFailed;
 	std::shared_ptr<ArgumentParser> m_arguments;
 	std::shared_ptr<DownloadManager> m_downloadManager;
 	GameType m_gameType;

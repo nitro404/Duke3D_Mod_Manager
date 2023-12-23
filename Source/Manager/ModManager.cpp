@@ -186,6 +186,7 @@ ModManager::ModManager()
 	, m_initialized(false)
 	, m_initializing(false)
 	, m_localMode(SettingsManager::DEFAULT_LOCAL_MODE)
+	, m_argumentHandlingFailed(false)
 	, m_shouldRunSelectedMod(false)
 	, m_demoRecordingEnabled(false)
 	, m_gameType(ModManager::DEFAULT_GAME_TYPE)
@@ -306,6 +307,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 	std::chrono::time_point<std::chrono::steady_clock> initializeSteadyStartTimePoint(std::chrono::steady_clock::now());
 	m_initializing = true;
 	m_initializationStep = 0;
+	m_argumentHandlingFailed = false;
 
 	if(!notifyInitializationProgress("Parsing Arguments", aborted)) {
 		return false;
@@ -688,12 +690,10 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 	}
 
 	if(!handleArguments(m_arguments.get())) {
-		return false;
+		m_argumentHandlingFailed = true;
 	}
 
-	if(!notifyInitializationProgress("Initialization Complete", aborted)) {
-		return false;
-	}
+	notifyInitializationProgress("Initialization Complete");
 
 	return true;
 }
@@ -762,6 +762,10 @@ bool ModManager::isUsingLocalMode() const {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	return m_localMode;
+}
+
+bool ModManager::didArgumentHandlingFail() const {
+	return m_argumentHandlingFailed;
 }
 
 std::shared_ptr<ModCollection> ModManager::getMods() const {

@@ -129,6 +129,21 @@ bool ModManagerFrame::initialize(std::shared_ptr<ModManager> modManager) {
 
 		return false;
 	}
+	else if(modManager->didArgumentHandlingFail()) {
+		wxMessageBox(
+			fmt::format(
+				"{} command line argument handling failed!\n"
+				"\n"
+				"See console for details.",
+				APPLICATION_NAME
+			),
+			"Argument Handling Failure",
+			wxOK | wxICON_ERROR,
+			this
+		);
+
+		wxMessageBox(ModManager::getArgumentHelpInfo(), "Argument Information", wxOK | wxICON_INFORMATION);
+	}
 
 	m_initialized = true;
 
