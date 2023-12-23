@@ -53,9 +53,9 @@ hunter_config(JDKSMIDI
 )
 
 hunter_config(SndFile
-	URL "https://codeload.github.com/libsndfile/libsndfile/zip/tags/1.2.0"
-	VERSION "1.2.0"
-	SHA1 "8b7905e43f6a8bab3118454c154f23bd14f6301b"
+	URL "https://codeload.github.com/libsndfile/libsndfile/zip/tags/1.2.2"
+	VERSION "1.2.2"
+	SHA1 "ac2f7d628dbd0c190deccba45670778ba4cab563"
 	CMAKE_ARGS
 		BUILD_TESTING=OFF
 		INSTALL_MANPAGES=OFF
