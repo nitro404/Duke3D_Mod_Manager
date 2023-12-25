@@ -139,8 +139,28 @@ std::shared_ptr<CachedFile> DownloadCache::getCachedFile(const ModFile & modFile
 }
 
 bool DownloadCache::updateCachedPackageFile(const ModDownload & modDownload, const ModGameVersion & modGameVersion, const GameVersion & gameVersion, uint64_t fileSize, const std::string & eTag) {
-	if(!modDownload.isValid() || !modGameVersion.isValid() || modDownload.getParentMod() != modGameVersion.getParentMod() || eTag.empty() || Utilities::areStringsEqualIgnoreCase(modGameVersion.getGameVersionID(), gameVersion.getID())) {
-		spdlog::error("Failed to update cached package file, invalid arguments provided.");
+	if(!modDownload.isValid()) {
+		spdlog::error("Failed to update cached package file, mod download is invalid.");
+		return false;
+	}
+
+	if(!modGameVersion.isValid()) {
+		spdlog::error("Failed to update cached package file, mod game version is invalid.");
+		return false;
+	}
+
+	if(modDownload.getParentMod() != modGameVersion.getParentMod()) {
+		spdlog::error("Failed to update cached package file, mod download does not share the same parent mod as the mod game version.");
+		return false;
+	}
+
+	if(eTag.empty()) {
+		spdlog::error("Failed to update cached package file, ETag is empty.");
+		return false;
+	}
+
+	if(!Utilities::areStringsEqualIgnoreCase(modGameVersion.getGameVersionID(), gameVersion.getID())) {
+		spdlog::error("Failed to update cached package file, mod game version ID does not match provided game version ID.");
 		return false;
 	}
 
