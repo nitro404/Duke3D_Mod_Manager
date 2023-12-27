@@ -318,7 +318,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_ipAddressTextField = new wxTextCtrl(m_gameOptionsPanel, wxID_ANY, m_modManager->getDOSBoxServerIPAddress(), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "Server IP Address");
 	m_ipAddressTextField->Bind(wxEVT_TEXT, &ModBrowserPanel::onIPAddressTextChanged, this);
 
-	if(m_modManager->getGameType() == GameType::Client) {
+	if(m_modManager->getGameType() == GameType::Client && !m_modManager->hasDOSBoxServerIPAddressOverride()) {
 		m_ipAddressTextField->Enable();
 	}
 	else {
@@ -354,7 +354,7 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_portTextField->SetMaxSize(wxSize(50, m_portTextField->GetMaxHeight()));
 	m_portTextField->Bind(wxEVT_TEXT, &ModBrowserPanel::onPortTextChanged, this);
 
-	if(m_modManager->getGameType() == GameType::Client || m_modManager->getGameType() == GameType::Server) {
+	if((m_modManager->getGameType() == GameType::Client && !m_modManager->hasDOSBoxRemoteServerPortOverride()) || (m_modManager->getGameType() == GameType::Server && !m_modManager->hasDOSBoxLocalServerPortOverride())) {
 		m_portTextField->Enable();
 	}
 	else {
@@ -374,6 +374,10 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_modGameTypeComboBox = new wxComboBox(m_gameOptionsPanel, wxID_ANY, Utilities::toCapitalCase(magic_enum::enum_name(m_modManager->getGameType())), wxDefaultPosition, wxDefaultSize, WXUtilities::createEnumWXArrayString<GameType>(), 0, wxDefaultValidator, "Game Type");
 	m_modGameTypeComboBox->SetEditable(false);
 	m_modGameTypeComboBox->Bind(wxEVT_COMBOBOX, &ModBrowserPanel::onModGameTypeSelected, this);
+
+	if(m_modManager->hasGameTypeOverride()) {
+		m_modGameTypeComboBox->Disable();
+	}
 
 	std::shared_ptr<GameVersion> preferredGameVersion(m_modManager->getPreferredGameVersion());
 
@@ -932,10 +936,17 @@ void ModBrowserPanel::updateDOSBoxServerIPAddress() {
 
 		case GameType::Client: {
 			m_ipAddressTextField->SetValue(m_modManager->getDOSBoxServerIPAddress());
-			m_ipAddressTextField->Enable();
 			m_portLabel->SetLabelText("Remote Port:");
 			m_portTextField->SetValue(std::to_string(m_modManager->getDOSBoxRemoteServerPort()));
-			m_portTextField->Enable();
+
+			if(!m_modManager->hasDOSBoxServerIPAddressOverride()) {
+				m_ipAddressTextField->Enable();
+			}
+
+			if(!m_modManager->hasDOSBoxRemoteServerPortOverride()) {
+				m_portTextField->Enable();
+			}
+
 			break;
 		}
 
@@ -943,7 +954,11 @@ void ModBrowserPanel::updateDOSBoxServerIPAddress() {
 			m_ipAddressTextField->Disable();
 			m_portLabel->SetLabelText("Local Port:");
 			m_portTextField->SetValue(std::to_string(m_modManager->getDOSBoxLocalServerPort()));
-			m_portTextField->Enable();
+
+			if(!m_modManager->hasDOSBoxLocalServerPortOverride()) {
+				m_portTextField->Enable();
+			}
+
 			break;
 		}
 	}
@@ -961,14 +976,22 @@ void ModBrowserPanel::updateDOSBoxServerPort() {
 		case GameType::Client: {
 			m_portLabel->SetLabelText("Remote Port:");
 			m_portTextField->SetValue(std::to_string(m_modManager->getDOSBoxRemoteServerPort()));
-			m_portTextField->Enable();
+
+			if(!m_modManager->hasDOSBoxRemoteServerPortOverride()) {
+				m_portTextField->Enable();
+			}
+
 			break;
 		}
 
 		case GameType::Server: {
 			m_portLabel->SetLabelText("Local Port:");
 			m_portTextField->SetValue(std::to_string(m_modManager->getDOSBoxLocalServerPort()));
-			m_portTextField->Enable();
+
+			if(!m_modManager->hasDOSBoxLocalServerPortOverride()) {
+				m_portTextField->Enable();
+			}
+
 			break;
 		}
 	}

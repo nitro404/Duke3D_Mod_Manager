@@ -70,9 +70,11 @@ public:
 	std::string getGeneralDOSBoxConfigurationFilePath() const;
 	std::string getDOSBoxConfigurationsDirectoryPath() const;
 
+	bool hasGameTypeOverride() const;
 	GameType getGameType() const;
 	bool setGameType(const std::string & gameType);
 	void setGameType(GameType gameType);
+	void clearGameTypeOverride();
 
 	bool hasPreferredDOSBoxVersion() const;
 	std::shared_ptr<DOSBoxVersion> getPreferredDOSBoxVersion() const;
@@ -92,12 +94,18 @@ public:
 	std::shared_ptr<GameManager> getGameManager() const;
 	std::shared_ptr<DownloadManager> getDownloadManager() const;
 
+	bool hasDOSBoxServerIPAddressOverride() const;
 	const std::string & getDOSBoxServerIPAddress() const;
 	void setDOSBoxServerIPAddress(const std::string & ipAddress);
+	void clearDOSBoxServerIPAddressOverride();
+	bool hasDOSBoxLocalServerPortOverride() const;
 	uint16_t getDOSBoxLocalServerPort() const;
 	void setDOSBoxLocalServerPort(uint16_t port);
+	void clearDOSBoxLocalServerPortOverride();
+	bool hasDOSBoxRemoteServerPortOverride() const;
 	uint16_t getDOSBoxRemoteServerPort() const;
 	void setDOSBoxRemoteServerPort(uint16_t port);
+	void clearDOSBoxRemoteServerPortOverride();
 
 	bool hasModSelected() const;
 	bool hasModVersionSelected() const;
@@ -218,7 +226,10 @@ private:
 	bool m_argumentHandlingFailed;
 	std::shared_ptr<ArgumentParser> m_arguments;
 	std::shared_ptr<DownloadManager> m_downloadManager;
-	GameType m_gameType;
+	std::optional<GameType> m_gameTypeOverride;
+	std::string m_dosboxServerIPAddressOverride;
+	std::optional<uint16_t> m_dosboxLocalServerPortOverride;
+	std::optional<uint16_t> m_dosboxRemoteServerPortOverride;
 	std::shared_ptr<DOSBoxVersion> m_preferredDOSBoxVersion;
 	std::shared_ptr<GameVersion> m_preferredGameVersion;
 	std::shared_ptr<Mod> m_selectedMod;

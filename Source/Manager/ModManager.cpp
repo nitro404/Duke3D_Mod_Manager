@@ -189,7 +189,6 @@ ModManager::ModManager()
 	, m_argumentHandlingFailed(false)
 	, m_shouldRunSelectedMod(false)
 	, m_demoRecordingEnabled(false)
-	, m_gameType(ModManager::DEFAULT_GAME_TYPE)
 	, m_selectedModVersionIndex(std::numeric_limits<size_t>::max())
 	, m_selectedModVersionTypeIndex(std::numeric_limits<size_t>::max())
 	, m_selectedModGameVersionIndex(std::numeric_limits<size_t>::max())
@@ -467,8 +466,6 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 		m_organizedMods->setDownloadManager(m_downloadManager);
 	}
 
-	m_gameType = settings->gameType;
-
 	if(!notifyInitializationProgress("Initializing DOSBox Manager", aborted)) {
 		return false;
 	}
@@ -645,9 +642,9 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 		properties["dosboxFullscreen"] = settings->dosboxFullscreen;
 		properties["dosboxAutoExit"] = settings->dosboxAutoExit;
 		properties["dosboxArguments"] = settings->dosboxArguments;
-		properties["dosboxServerIPAddressChanged"] = !Utilities::areStringsEqual(settings->dosboxServerIPAddress, SettingsManager::DEFAULT_DOSBOX_SERVER_IP_ADDRESS);
-		properties["dosboxServerLocalPortChanged"] = settings->dosboxLocalServerPort != SettingsManager::DEFAULT_DOSBOX_LOCAL_SERVER_PORT;
-		properties["dosboxServerRemotePortChanged"] = settings->dosboxRemoteServerPort != SettingsManager::DEFAULT_DOSBOX_REMOTE_SERVER_PORT;
+		properties["dosboxServerIPAddressChanged"] = !Utilities::areStringsEqual(getDOSBoxServerIPAddress(), SettingsManager::DEFAULT_DOSBOX_SERVER_IP_ADDRESS);
+		properties["dosboxServerLocalPortChanged"] = getDOSBoxLocalServerPort() != SettingsManager::DEFAULT_DOSBOX_LOCAL_SERVER_PORT;
+		properties["dosboxServerRemotePortChanged"] = getDOSBoxRemoteServerPort() != SettingsManager::DEFAULT_DOSBOX_REMOTE_SERVER_PORT;
 		properties["windowPosition"] = settings->windowPosition.toString();
 		properties["windowSize"] = settings->windowSize.toString();
 		properties["apiBaseURL"] = settings->apiBaseURL;
@@ -876,16 +873,26 @@ std::string ModManager::getDOSBoxConfigurationsDirectoryPath() const {
 	return Utilities::joinPaths(settings->dataDirectoryPath, settings->dosboxDataDirectoryName, settings->dosboxConfigurationsDirectoryName);
 }
 
+bool ModManager::hasGameTypeOverride() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	return m_gameTypeOverride.has_value();
+}
+
 GameType ModManager::getGameType() const {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
-	return m_gameType;
+	if(m_gameTypeOverride.has_value()) {
+		return m_gameTypeOverride.value();
+	}
+
+	return SettingsManager::getInstance()->gameType;
 }
 
 bool ModManager::setGameType(const std::string & gameTypeName) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
-	std::optional<GameType> gameTypeOptional = magic_enum::enum_cast<GameType>(Utilities::toPascalCase(gameTypeName));
+	std::optional<GameType> gameTypeOptional(magic_enum::enum_cast<GameType>(Utilities::toPascalCase(gameTypeName)));
 
 	if(gameTypeOptional.has_value()) {
 		setGameType(gameTypeOptional.value());
@@ -899,25 +906,36 @@ bool ModManager::setGameType(const std::string & gameTypeName) {
 void ModManager::setGameType(GameType gameType) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
-	if(m_gameType == gameType) {
+	if(m_gameTypeOverride.has_value()) {
+		spdlog::warn("Cannot change game type while override is set.");
 		return;
 	}
 
-	GameType previousGameType = m_gameType;
+	SettingsManager * settings = SettingsManager::getInstance();
 
-	m_gameType = gameType;
+	if(settings->gameType == gameType) {
+		return;
+	}
 
-	SettingsManager::getInstance()->gameType = m_gameType;
+	GameType previousGameType = settings->gameType;
 
-	gameTypeChanged(m_gameType);
+	settings->gameType = gameType;
+
+	gameTypeChanged(gameType);
 
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		std::map<std::string, std::any> properties;
 		properties["previousGameType"] = magic_enum::enum_name(previousGameType);
-		properties["newGameType"] = magic_enum::enum_name(m_gameType);
+		properties["newGameType"] = magic_enum::enum_name(gameType);
 
 		SegmentAnalytics::getInstance()->track("Game Type Changed", properties);
 	}
+}
+
+void ModManager::clearGameTypeOverride() {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	m_gameTypeOverride.reset();
 }
 
 bool ModManager::hasPreferredDOSBoxVersion() const {
@@ -1155,14 +1173,29 @@ std::shared_ptr<DownloadManager> ModManager::getDownloadManager() const {
 	return m_downloadManager;
 }
 
+bool ModManager::hasDOSBoxServerIPAddressOverride() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	return !m_dosboxServerIPAddressOverride.empty();
+}
+
 const std::string & ModManager::getDOSBoxServerIPAddress() const {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	if(!m_dosboxServerIPAddressOverride.empty()) {
+		return m_dosboxServerIPAddressOverride;
+	}
 
 	return SettingsManager::getInstance()->dosboxServerIPAddress;
 }
 
 void ModManager::setDOSBoxServerIPAddress(const std::string & ipAddress) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	if(!m_dosboxServerIPAddressOverride.empty()) {
+		spdlog::warn("Cannot change DOSBox server IP address while override is set.");
+		return;
+	}
 
 	SettingsManager * settings = SettingsManager::getInstance();
 
@@ -1177,14 +1210,35 @@ void ModManager::setDOSBoxServerIPAddress(const std::string & ipAddress) {
 	dosboxServerIPAddressChanged(settings->dosboxServerIPAddress);
 }
 
+void ModManager::clearDOSBoxServerIPAddressOverride() {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	m_dosboxServerIPAddressOverride = "";
+}
+
+bool ModManager::hasDOSBoxLocalServerPortOverride() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	return m_dosboxLocalServerPortOverride.has_value();
+}
+
 uint16_t ModManager::getDOSBoxLocalServerPort() const {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	if(m_dosboxLocalServerPortOverride.has_value()) {
+		return m_dosboxLocalServerPortOverride.value();
+	}
 
 	return SettingsManager::getInstance()->dosboxLocalServerPort;
 }
 
 void ModManager::setDOSBoxLocalServerPort(uint16_t port) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	if(m_dosboxLocalServerPortOverride.has_value()) {
+		spdlog::warn("Cannot change DOSBox local server port while override is set.");
+		return;
+	}
 
 	SettingsManager * settings = SettingsManager::getInstance();
 
@@ -1197,14 +1251,35 @@ void ModManager::setDOSBoxLocalServerPort(uint16_t port) {
 	dosboxLocalServerPortChanged(settings->dosboxLocalServerPort);
 }
 
+void ModManager::clearDOSBoxLocalServerPortOverride() {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	return m_dosboxLocalServerPortOverride.reset();
+}
+
+bool ModManager::hasDOSBoxRemoteServerPortOverride() const {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	return m_dosboxRemoteServerPortOverride.has_value();
+}
+
 uint16_t ModManager::getDOSBoxRemoteServerPort() const {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	if(m_dosboxRemoteServerPortOverride.has_value()) {
+		return m_dosboxRemoteServerPortOverride.value();
+	}
 
 	return SettingsManager::getInstance()->dosboxRemoteServerPort;
 }
 
 void ModManager::setDOSBoxRemoteServerPort(uint16_t port) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	if(m_dosboxRemoteServerPortOverride.has_value()) {
+		spdlog::warn("Cannot change DOSBox remote server port while override is set.");
+		return;
+	}
 
 	SettingsManager * settings = SettingsManager::getInstance();
 
@@ -1215,6 +1290,12 @@ void ModManager::setDOSBoxRemoteServerPort(uint16_t port) {
 	settings->dosboxRemoteServerPort = port;
 
 	dosboxRemoteServerPortChanged(settings->dosboxRemoteServerPort);
+}
+
+void ModManager::clearDOSBoxRemoteServerPortOverride() {
+	std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+	return m_dosboxRemoteServerPortOverride.reset();
 }
 
 bool ModManager::hasModSelected() const {
@@ -2983,12 +3064,14 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		}
 	}
 
-	if(m_gameType == GameType::Client) {
-		scriptArgs.addArgument("IP", settings->dosboxServerIPAddress);
-		scriptArgs.addArgument("PORT", std::to_string(settings->dosboxRemoteServerPort));
+	GameType gameType = getGameType();
+
+	if(gameType == GameType::Client) {
+		scriptArgs.addArgument("IP", getDOSBoxServerIPAddress());
+		scriptArgs.addArgument("PORT", std::to_string(getDOSBoxRemoteServerPort()));
 	}
-	else if(m_gameType == GameType::Server) {
-		scriptArgs.addArgument("PORT", std::to_string(settings->dosboxLocalServerPort));
+	else if(gameType == GameType::Server) {
+		scriptArgs.addArgument("PORT", std::to_string(getDOSBoxLocalServerPort()));
 	}
 
 	if(settings->dosboxFullscreen) {
@@ -3027,8 +3110,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 			spdlog::debug("Using custom combined DOSBox configuration with {} section{} and {} {}.", sectionCount, sectionCount == 1 ? "" : "s", totalEntryCount, totalEntryCount == 1 ? "entry" : "entries");
 		}
 	}
-	else if(m_gameType == GameType::Client || m_gameType == GameType::Server) {
-		spdlog::info("Network settings are only supported when running in DOSBox, ignoring {} game type setting.", Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)));
+	else if(gameType == GameType::Client || gameType == GameType::Server) {
+		spdlog::info("Network settings are only supported when running in DOSBox, ignoring {} game type setting.", Utilities::toCapitalCase(magic_enum::enum_name(gameType)));
 	}
 
 	std::chrono::time_point<std::chrono::steady_clock> commandGenerationStartTimePoint(std::chrono::steady_clock::now());
@@ -3269,12 +3352,12 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		}
 	}
 
-	std::string gameTypeName(Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)));
+	std::string gameTypeName(Utilities::toCapitalCase(magic_enum::enum_name(gameType)));
 
 	SegmentAnalytics * segmentAnalytics = SegmentAnalytics::getInstance();
 
 	if(customMod && m_selectedMod == nullptr) {
-		spdlog::info("Running custom mod in {} mode{}.", Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)), customMapMessage);
+		spdlog::info("Running custom mod in {} mode{}.", Utilities::toCapitalCase(magic_enum::enum_name(gameType)), customMapMessage);
 
 		if(settings->segmentAnalyticsEnabled) {
 			segmentAnalytics->track("Running Custom Mod", properties);
@@ -3774,8 +3857,9 @@ std::string ModManager::generateCommand(std::shared_ptr<GameVersion> gameVersion
 	}
 
 	std::string executableName;
+	GameType gameType = getGameType();
 
-	if(m_gameType == GameType::Game) {
+	if(gameType == GameType::Game) {
 		executableName = gameVersion->getGameExecutableName();
 	}
 	else {
@@ -4027,7 +4111,7 @@ std::string ModManager::generateCommand(std::shared_ptr<GameVersion> gameVersion
 
 		scriptArgs.addArgument("COMMAND", executableName + command.str());
 
-		std::string dosboxTemplateScriptFilePath(getDOSBoxCommandScriptFilePath(m_gameType));
+		std::string dosboxTemplateScriptFilePath(getDOSBoxCommandScriptFilePath(gameType));
 
 		if(!dosboxScript.readFrom(dosboxTemplateScriptFilePath)) {
 			spdlog::error("Failed to load DOSBox command script file: '{}'.", dosboxTemplateScriptFilePath);
@@ -4139,11 +4223,12 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 			return false;
 		}
 
-		m_gameType = newGameTypeOptional.value();
+		GameType newGameType = newGameTypeOptional.value();
+		m_gameTypeOverride = newGameType;
 
-		spdlog::info("Setting game type to: '{}'.", Utilities::toCapitalCase(magic_enum::enum_name(m_gameType)));
+		spdlog::info("Setting game type to: '{}'.", Utilities::toCapitalCase(magic_enum::enum_name(newGameType)));
 
-		if(m_gameType == GameType::Client) {
+		if(newGameType == GameType::Client) {
 			std::string ipAddress;
 
 			if(args->hasArgument("ip")) {
@@ -4156,12 +4241,12 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 					return false;
 				}
 				else {
-					settings->dosboxServerIPAddress = ipAddress;
+					m_dosboxServerIPAddressOverride = ipAddress;
 				}
 			}
 		}
 
-		if(m_gameType == GameType::Client || m_gameType == GameType::Server) {
+		if(newGameType == GameType::Client || newGameType == GameType::Server) {
 			if(args->hasArgument("port")) {
 				std::string portData(Utilities::trimString(args->getFirstValue("port")));
 				bool error = false;
@@ -4172,15 +4257,15 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 				}
 
 				if(error) {
-					spdlog::error("Invalid {} Server Port entered in arguments: '{}'.", m_gameType == GameType::Server ? "Local" : "Remote", portData);
+					spdlog::error("Invalid {} Server Port entered in arguments: '{}'.", newGameType == GameType::Server ? "Local" : "Remote", portData);
 					return false;
 				}
 				else {
-					if(m_gameType == GameType::Server) {
-						settings->dosboxLocalServerPort = port;
+					if(newGameType == GameType::Server) {
+						m_dosboxLocalServerPortOverride = port;
 					}
 					else {
-						settings->dosboxRemoteServerPort = port;
+						m_dosboxRemoteServerPortOverride = port;
 					}
 				}
 			}
