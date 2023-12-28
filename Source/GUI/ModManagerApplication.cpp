@@ -18,9 +18,25 @@
 #include <wx/progdlg.h>
 #include <wx/version.h>
 
+#if !wxUSE_UNICODE || wxUSE_UNICODE_UTF8
+	#define PCRE2_CODE_UNIT_WIDTH 8
+		typedef char wxRegChar;
+#elif wxUSE_UNICODE_UTF16
+	#define PCRE2_CODE_UNIT_WIDTH 16
+	typedef wchar_t wxRegChar;
+#else
+	#define PCRE2_CODE_UNIT_WIDTH 32
+	typedef wchar_t wxRegChar;
+#endif
+
+#include <pcre2.h>
+
 #include <future>
 
 // #include <vld.h>
+
+#define QUOTE(name) #name
+#define STR(macro) QUOTE(macro)
 
 wxDECLARE_EVENT(EVENT_INITIALIZATION_DONE, ModManagerInitializationDoneEvent);
 
@@ -75,6 +91,7 @@ void ModManagerApplication::initialize() {
 
 	LibraryInformation * libraryInformation = LibraryInformation::getInstance();
 	libraryInformation->addLibrary("LibPNG", PNG_LIBPNG_VER_STRING);
+	libraryInformation->addLibrary("PCRE2", fmt::format("{}.{}", PCRE2_MAJOR, PCRE2_MINOR), STR(PCRE2_DATE));
 	libraryInformation->addLibrary("wxWidgets", fmt::format("{}.{}.{}.{}", wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER, wxSUBRELEASE_NUMBER));
 
 	LogSystem::getInstance()->addLogSink(m_logSinkWX);
