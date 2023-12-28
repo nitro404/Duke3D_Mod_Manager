@@ -2,39 +2,39 @@ include_guard()
 
 # wxWidgets Dependencies
 hunter_config(CatchSelfTest
-	URL "https://github.com/Telefrag-Software/Catch2/archive/refs/heads/hunter-wx-5f5e4cec.zip"
-	VERSION "5f5e4cec"
-	SHA1 "178f730fe08c8d8de525790a17fc5fe6f9595181"
+	URL "https://codeload.github.com/catchorg/catch2/zip/tags/v3.5.0"
+	VERSION "3.5.0.0"
+	SHA1 "fd37a71ebf9455181a44fe7e2a0d56bb3c07b973"
 )
 
 hunter_config(EXPAT
-	URL "https://github.com/Telefrag-Software/libexpat/archive/refs/heads/hunter-wx-1187e407.zip"
-	VERSION "1187e407"
-	SHA1 "e7ff5d035356cd87bed5f7613bc5d1f69b9b5cb8"
+	URL "https://codeload.github.com/libexpat/libexpat/zip/tags/R_2_5_0"
+	VERSION "2.5.0.0"
+	SHA1 "67d6afffe9719484e9b1614c6759a4ca4281e2b6"
 )
 
 hunter_config(JPEG
-	URL "https://github.com/Telefrag-Software/libjpeg-turbo/archive/refs/heads/hunter-wx-8524936.zip"
-	VERSION "8524936"
-	SHA1 "b135f44ecafa08c91cd60ac5433e6d4fa5dfc990"
+	URL "https://codeload.github.com/libjpeg-turbo/libjpeg-turbo/zip/tags/3.0.1"
+	VERSION "3.0.1.0"
+	SHA1 "cd1ab159d6dccb7e14973dc4b72fe5f25a492fe2"
 )
 
-hunter_config(nanosvg
-	URL "https://github.com/Telefrag-Software/nanosvg/archive/refs/heads/hunter-wx-26db6fe.zip"
-	VERSION "26db6fe"
-	SHA1 "7e882edb4ffa7800c7944e91c8ef00c628d70e89"
+hunter_config(NanoSVG
+	URL "https://github.com/Telefrag-Software/nanosvg/archive/refs/heads/hunter-2023-11-22.zip"
+	VERSION "2023-11-22"
+	SHA1 "69a5e869e95234e734f5200987cf6ce3811148ba"
 )
 
 hunter_config(PCRE2
-	URL "https://github.com/Telefrag-Software/pcre/archive/refs/heads/hunter-wx-5b934c2.zip"
-	VERSION "5b934c2"
-	SHA1 "2833e75f036154c6b900313e24c4982b9b70b026"
+	URL "https://codeload.github.com/Telefrag-Software/pcre/zip/tags/v10.43"
+	VERSION "10.43.0"
+	SHA1 "5601b530d91d74c4e2da79ade0e314087d413e6c"
 )
 
 hunter_config(png
-	URL "https://github.com/Telefrag-Software/libpng/archive/refs/heads/hunter-1.6.39.0.zip"
-	VERSION "hunter-1.6.39.0"
-	SHA1 "6c450efdd05ff38c5cebff40147dd95d2787b365"
+	URL "https://github.com/Telefrag-Software/libpng/archive/refs/heads/hunter-1.6.40.0.zip"
+	VERSION "1.6.40.0"
+	SHA1 "caacb021be2661cf3d83f5892219fc98a910ec93"
 	CMAKE_ARGS
 		BUILD_SHARED_LIBS=OFF
 		PNG_SHARED=OFF
@@ -63,13 +63,12 @@ hunter_config(SndFile
 )
 
 hunter_config(wxWidgets
-	URL "https://github.com/Telefrag-Software/wxWidgets/archive/refs/heads/hunter-3.2.1.0.zip"
-	VERSION "3.2.1.0"
-	SHA1 "f3aac0c796fdab697979e5b45b31e8db3d4dd10b"
+	URL "https://github.com/Telefrag-Software/wxWidgets/archive/refs/heads/hunter-3.2.4.0.zip"
+	VERSION "3.2.4.0"
+	SHA1 "67d96df9a5b7f1d7bebeade3d34b5693bc97fc30"
 	CMAKE_ARGS
 		wxBUILD_MONOLITHIC=ON
 		wxBUILD_SHARED=OFF
 		wxUSE_STL=ON
 		wxUSE_GUI=ON
-		wxUSE_LIBLZMA=OFF
 )
