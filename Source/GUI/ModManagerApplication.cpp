@@ -9,6 +9,7 @@
 #include <LibraryInformation.h>
 #include <Logging/LogSystem.h>
 
+#include <expat.h>
 #include <fmt/core.h>
 #include <magic_enum.hpp>
 #include <png.h>
@@ -90,6 +91,8 @@ void ModManagerApplication::initialize() {
 	m_logSinkWX = std::make_shared<LogSinkWX>();
 
 	LibraryInformation * libraryInformation = LibraryInformation::getInstance();
+	XML_Expat_Version expatVersion = XML_ExpatVersionInfo();
+	libraryInformation->addLibrary("LibExpat", fmt::format("{}.{}.{}", expatVersion.major, expatVersion.minor, expatVersion.micro));
 	libraryInformation->addLibrary("LibPNG", PNG_LIBPNG_VER_STRING);
 	libraryInformation->addLibrary("PCRE2", fmt::format("{}.{}", PCRE2_MAJOR, PCRE2_MINOR), STR(PCRE2_DATE));
 	libraryInformation->addLibrary("wxWidgets", fmt::format("{}.{}.{}.{}", wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER, wxSUBRELEASE_NUMBER));
