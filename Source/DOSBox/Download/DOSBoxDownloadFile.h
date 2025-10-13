@@ -18,7 +18,7 @@ class DOSBoxDownloadFile final {
 	friend class DOSBoxDownloadVersion;
 
 public:
-	DOSBoxDownloadFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, DeviceInformationBridge::OperatingSystemType operatingSystem, std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> processorArchitecture = {});
+	DOSBoxDownloadFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, DeviceInformationBridge::OperatingSystemType operatingSystem, std::optional<DeviceInformationBridge::ArchitectureType> processorArchitecture = {});
 	DOSBoxDownloadFile(DOSBoxDownloadFile && f) noexcept;
 	DOSBoxDownloadFile(const DOSBoxDownloadFile & f);
 	DOSBoxDownloadFile & operator = (DOSBoxDownloadFile && f) noexcept;
@@ -31,7 +31,7 @@ public:
 	const std::string & getSHA1() const;
 	DeviceInformationBridge::OperatingSystemType getOperatingSystem() const;
 	bool hasProcessorArchitecture() const;
-	std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> getProcessorArchitecture() const;
+	std::optional<DeviceInformationBridge::ArchitectureType> getProcessorArchitecture() const;
 	const DOSBoxDownload * getParentDOSBoxDownload() const;
 	const DOSBoxDownloadVersion * getParentDOSBoxDownloadVersion() const;
 
@@ -52,7 +52,7 @@ private:
 	uint64_t m_fileSize;
 	std::string m_sha1;
 	DeviceInformationBridge::OperatingSystemType m_operatingSystem;
-	std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> m_processorArchitecture;
+	std::optional<DeviceInformationBridge::ArchitectureType> m_processorArchitecture;
 
 	const DOSBoxDownloadVersion * m_parentDOSBoxDownloadVersion;
 };

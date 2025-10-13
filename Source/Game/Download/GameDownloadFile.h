@@ -49,7 +49,7 @@ public:
 	rapidjson::Value toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const;
 	static std::unique_ptr<GameDownloadFile> parseFrom(const rapidjson::Value & modFileValue);
 
-	static std::optional<ProcessorArchitecture> convertOperatingSystemArchitectureType(DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType);
+	static std::optional<ProcessorArchitecture> convertOperatingSystemArchitectureType(DeviceInformationBridge::ArchitectureType architectureType);
 
 	bool isValid() const;
 	static bool isValid(const GameDownloadFile * f);

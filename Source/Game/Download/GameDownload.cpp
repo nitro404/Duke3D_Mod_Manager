@@ -152,7 +152,7 @@ std::shared_ptr<GameDownloadVersion> GameDownload::getVersion(const std::string 
 }
 
 
-std::shared_ptr<GameDownloadFile> GameDownload::getLatestGameDownloadFile(GameDownloadFile::Type downloadType, DeviceInformationBridge::OperatingSystemType operatingSystemType, std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalOperatingSystemArchitectureType) const {
+std::shared_ptr<GameDownloadFile> GameDownload::getLatestGameDownloadFile(GameDownloadFile::Type downloadType, DeviceInformationBridge::OperatingSystemType operatingSystemType, std::optional<DeviceInformationBridge::ArchitectureType> architectureType) const {
 	std::optional<GameVersion::OperatingSystem> optionalOperatingSystem(GameVersion::convertOperatingSystemType(operatingSystemType));
 
 	if(!optionalOperatingSystem.has_value()) {
@@ -161,8 +161,8 @@ std::shared_ptr<GameDownloadFile> GameDownload::getLatestGameDownloadFile(GameDo
 
 	std::optional<GameDownloadFile::ProcessorArchitecture> optionalProcessorArchitecture;
 
-	if(optionalOperatingSystemArchitectureType.has_value()) {
-		optionalProcessorArchitecture = GameDownloadFile::convertOperatingSystemArchitectureType(optionalOperatingSystemArchitectureType.value());
+	if(architectureType.has_value()) {
+		optionalProcessorArchitecture = GameDownloadFile::convertOperatingSystemArchitectureType(architectureType.value());
 
 		if(!optionalProcessorArchitecture.has_value()) {
 			return nullptr;

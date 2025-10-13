@@ -26,7 +26,7 @@ static const std::array<std::string_view, 5> JSON_DOSBOX_DOWNLOAD_FILE_PROPERTY_
 	JSON_DOSBOX_DOWNLOAD_FILE_PROCESSOR_ARCHITECTURE_PROPERTY_NAME
 };
 
-DOSBoxDownloadFile::DOSBoxDownloadFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, DeviceInformationBridge::OperatingSystemType operatingSystem, std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> processorArchitecture)
+DOSBoxDownloadFile::DOSBoxDownloadFile(const std::string & fileName, uint64_t fileSize, const std::string & sha1, DeviceInformationBridge::OperatingSystemType operatingSystem, std::optional<DeviceInformationBridge::ArchitectureType> processorArchitecture)
 	: m_fileName(Utilities::trimString(fileName))
 	, m_fileSize(fileSize)
 	, m_sha1(Utilities::trimString(sha1))
@@ -100,7 +100,7 @@ bool DOSBoxDownloadFile::hasProcessorArchitecture() const {
 	return m_processorArchitecture.has_value();
 }
 
-std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> DOSBoxDownloadFile::getProcessorArchitecture() const {
+std::optional<DeviceInformationBridge::ArchitectureType> DOSBoxDownloadFile::getProcessorArchitecture() const {
 	return m_processorArchitecture;
 }
 
@@ -243,7 +243,7 @@ std::unique_ptr<DOSBoxDownloadFile> DOSBoxDownloadFile::parseFrom(const rapidjso
 	}
 
 	// parse the dosbox download file processor architecture
-	std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalProcessorArchitecture;
+	std::optional<DeviceInformationBridge::ArchitectureType> optionalProcessorArchitecture;
 
 	if(dosboxDownloadFileValue.HasMember(JSON_DOSBOX_DOWNLOAD_FILE_PROCESSOR_ARCHITECTURE_PROPERTY_NAME)) {
 		const rapidjson::Value & processorArchitectureNameValue = dosboxDownloadFileValue[JSON_DOSBOX_DOWNLOAD_FILE_PROCESSOR_ARCHITECTURE_PROPERTY_NAME];
@@ -254,7 +254,7 @@ std::unique_ptr<DOSBoxDownloadFile> DOSBoxDownloadFile::parseFrom(const rapidjso
 		}
 
 		std::string processorArchitectureName(Utilities::trimString(processorArchitectureNameValue.GetString()));
-		optionalProcessorArchitecture = magic_enum::enum_cast<DeviceInformationBridge::OperatingSystemArchitectureType>(processorArchitectureName);
+		optionalProcessorArchitecture = magic_enum::enum_cast<DeviceInformationBridge::ArchitectureType>(processorArchitectureName);
 
 		if(!optionalProcessorArchitecture.has_value()) {
 			spdlog::error("DOSBox download file has an invalid '{}' property value: '{}'.", JSON_DOSBOX_DOWNLOAD_FILE_PROCESSOR_ARCHITECTURE_PROPERTY_NAME, processorArchitectureName);

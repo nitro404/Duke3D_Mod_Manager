@@ -35,7 +35,7 @@ public:
 	size_t indexOfDownloadWithID(const std::string & download) const;
 	std::shared_ptr<GameDownload> getDownload(size_t index) const;
 	std::shared_ptr<GameDownload> getDownloadWithID(const std::string & download) const;
-	std::shared_ptr<GameDownloadFile> getLatestGameDownloadFile(const std::string & gameID, GameDownloadFile::Type downloadType, DeviceInformationBridge::OperatingSystemType operatingSystemType, std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalOperatingSystemArchitectureType = {}) const;
+	std::shared_ptr<GameDownloadFile> getLatestGameDownloadFile(const std::string & gameID, GameDownloadFile::Type downloadType, DeviceInformationBridge::OperatingSystemType operatingSystemType, std::optional<DeviceInformationBridge::ArchitectureType> optionalArchitectureType = {}) const;
 	std::shared_ptr<GameDownloadFile> getLatestGameDownloadFile(const std::string & gameID, GameDownloadFile::Type downloadType, GameVersion::OperatingSystem operatingSystem, std::optional<GameDownloadFile::ProcessorArchitecture> optionalProcessorArchitecture = {}) const;
 	const std::vector<std::shared_ptr<GameDownload>> & getDownloads() const;
 	bool addDownload(const GameDownload & download);

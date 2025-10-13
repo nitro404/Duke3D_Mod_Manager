@@ -32,17 +32,17 @@ public:
 	bool loadOrUpdateDOSBoxDownloadList(bool forceUpdate = false) const;
 	bool updateDOSBoxDownloadList(bool force = false) const;
 	std::string getLatestDOSBoxDownloadURL(const std::string & dosboxVersionID, std::string * latestVersion = nullptr) const;
-	std::string getLatestDOSBoxDownloadURL(const std::string & dosboxVersionID, DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
+	std::string getLatestDOSBoxDownloadURL(const std::string & dosboxVersionID, DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
 	std::string getRemoteDOSBoxDownloadsBaseURL() const;
-	std::string getLatestDOSBoxDownloadFallbackURL(const std::string & dosboxVersionID, DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
+	std::string getLatestDOSBoxDownloadFallbackURL(const std::string & dosboxVersionID, DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
 	std::string getLatestOriginalDOSBoxVersion() const;
 	static std::string getOriginalDOSBoxDownloadURL(const std::string & version);
-	std::string getLatestOriginalDOSBoxDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
-	std::string getLatestDOSBoxStagingDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
-	std::string getLatestDOSBoxEnhancedCommunityEditionDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
-	std::string getLatestDOSBoxXDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
+	std::string getLatestOriginalDOSBoxDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
+	std::string getLatestDOSBoxStagingDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
+	std::string getLatestDOSBoxEnhancedCommunityEditionDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
+	std::string getLatestDOSBoxXDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType operatingSystemArchitectureType, std::string * latestVersion = nullptr) const;
 	std::unique_ptr<Archive> downloadLatestDOSBoxVersion(const std::string & dosboxVersionID, std::string * latestVersion = nullptr, bool * aborted = nullptr);
-	std::unique_ptr<Archive> downloadLatestDOSBoxVersion(const std::string & dosboxVersionID, DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, bool useFallback = false, std::string * latestVersion = nullptr, bool * aborted = nullptr);
+	std::unique_ptr<Archive> downloadLatestDOSBoxVersion(const std::string & dosboxVersionID, DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType operatingSystemArchitectureType, bool useFallback = false, std::string * latestVersion = nullptr, bool * aborted = nullptr);
 	bool installLatestDOSBoxVersion(const std::string & dosboxVersionID, const std::string & destinationDirectoryPath, bool overwrite = true, bool * aborted = nullptr);
 
 	static bool isDOSBoxVersionDownloadable(const DOSBoxVersion & dosboxVersion);

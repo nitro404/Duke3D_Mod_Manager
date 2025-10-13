@@ -644,7 +644,7 @@ std::vector<std::string> GameManager::getGameDownloadURLs(const std::string & ga
 		return {};
 	}
 
-	std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalOperatingSystemArchitectureType(deviceInformationBridge->getOperatingSystemArchitectureType());
+	std::optional<DeviceInformationBridge::ArchitectureType> optionalOperatingSystemArchitectureType(deviceInformationBridge->getArchitectureType());
 
 	if(!optionalOperatingSystemArchitectureType.has_value()) {
 		spdlog::error("Failed to determine operating system architecture type.");
@@ -759,7 +759,7 @@ std::string GameManager::getFallbackGameDownloadURL(const std::string & gameVers
 		return {};
 	}
 
-	std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalOperatingSystemArchitectureType(deviceInformationBridge->getOperatingSystemArchitectureType());
+	std::optional<DeviceInformationBridge::ArchitectureType> optionalOperatingSystemArchitectureType(deviceInformationBridge->getArchitectureType());
 
 	if(!optionalOperatingSystemArchitectureType.has_value()) {
 		spdlog::error("Failed to determine operating system architecture type.");
@@ -770,15 +770,15 @@ std::string GameManager::getFallbackGameDownloadURL(const std::string & gameVers
 
 	if(gameDownloadFile == nullptr) {
 		switch(optionalOperatingSystemArchitectureType.value()) {
-			case DeviceInformationBridge::OperatingSystemArchitectureType::x86: {
+			case DeviceInformationBridge::ArchitectureType::x86: {
 				spdlog::error("Could not find '{}' game file download information for '{}' ({}).", gameVersionID, magic_enum::enum_name(optionalOperatingSystemType.value()), magic_enum::enum_name(optionalOperatingSystemArchitectureType.value()));
 				return {};
 			}
-			case DeviceInformationBridge::OperatingSystemArchitectureType::x64: {
-				gameDownloadFile = m_gameDownloads->getLatestGameDownloadFile(gameVersionID, GameDownloadFile::Type::Game, optionalOperatingSystemType.value(), DeviceInformationBridge::OperatingSystemArchitectureType::x86);
+			case DeviceInformationBridge::ArchitectureType::x64: {
+				gameDownloadFile = m_gameDownloads->getLatestGameDownloadFile(gameVersionID, GameDownloadFile::Type::Game, optionalOperatingSystemType.value(), DeviceInformationBridge::ArchitectureType::x86);
 
 				if(gameDownloadFile == nullptr) {
-					spdlog::error("Could not find '{}' game file download information for '{}' ({} or {}).", gameVersionID, magic_enum::enum_name(optionalOperatingSystemType.value()), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x64), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x86));
+					spdlog::error("Could not find '{}' game file download information for '{}' ({} or {}).", gameVersionID, magic_enum::enum_name(optionalOperatingSystemType.value()), magic_enum::enum_name(DeviceInformationBridge::ArchitectureType::x64), magic_enum::enum_name(DeviceInformationBridge::ArchitectureType::x86));
 					return {};
 				}
 
@@ -821,7 +821,7 @@ std::string GameManager::getFallbackGameDownloadSHA1(const std::string & gameVer
 		return {};
 	}
 
-	std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalOperatingSystemArchitectureType(deviceInformationBridge->getOperatingSystemArchitectureType());
+	std::optional<DeviceInformationBridge::ArchitectureType> optionalOperatingSystemArchitectureType(deviceInformationBridge->getArchitectureType());
 
 	if(!optionalOperatingSystemArchitectureType.has_value()) {
 		spdlog::error("Failed to determine operating system architecture type.");
@@ -832,15 +832,15 @@ std::string GameManager::getFallbackGameDownloadSHA1(const std::string & gameVer
 
 	if(gameDownloadFile == nullptr) {
 		switch(optionalOperatingSystemArchitectureType.value()) {
-			case DeviceInformationBridge::OperatingSystemArchitectureType::x86: {
+			case DeviceInformationBridge::ArchitectureType::x86: {
 				spdlog::error("Could not find '{}' game file download information for '{}' ({}).", gameVersionID, magic_enum::enum_name(optionalOperatingSystemType.value()), magic_enum::enum_name(optionalOperatingSystemArchitectureType.value()));
 				return {};
 			}
-			case DeviceInformationBridge::OperatingSystemArchitectureType::x64: {
-				gameDownloadFile = m_gameDownloads->getLatestGameDownloadFile(gameVersionID, GameDownloadFile::Type::Game, optionalOperatingSystemType.value(), DeviceInformationBridge::OperatingSystemArchitectureType::x86);
+			case DeviceInformationBridge::ArchitectureType::x64: {
+				gameDownloadFile = m_gameDownloads->getLatestGameDownloadFile(gameVersionID, GameDownloadFile::Type::Game, optionalOperatingSystemType.value(), DeviceInformationBridge::ArchitectureType::x86);
 
 				if(gameDownloadFile == nullptr) {
-					spdlog::error("Could not find '{}' game file download information for '{}' ({} or {}).", gameVersionID, magic_enum::enum_name(optionalOperatingSystemType.value()), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x64), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x86));
+					spdlog::error("Could not find '{}' game file download information for '{}' ({} or {}).", gameVersionID, magic_enum::enum_name(optionalOperatingSystemType.value()), magic_enum::enum_name(DeviceInformationBridge::ArchitectureType::x64), magic_enum::enum_name(DeviceInformationBridge::ArchitectureType::x86));
 					return {};
 				}
 
@@ -878,7 +878,7 @@ std::string GameManager::getRemoteGameDownloadsBaseURL() const {
 	return Utilities::joinPaths(settings->apiBaseURL, settings->remoteDownloadsDirectoryName, settings->remoteGameDownloadsDirectoryName);
 }
 
-std::string GameManager::getJFDuke3DDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const {
+std::string GameManager::getJFDuke3DDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType architectureType) const {
 	static const std::string WINDOWS_IDENTIFIER("win");
 	static const std::string WINDOWS_X86_ARCHITECTURE_IDENTIFIER("x86");
 
@@ -1014,7 +1014,7 @@ std::string GameManager::getJFDuke3DDownloadURL(DeviceInformationBridge::Operati
 	}
 
 	if(operatingSystemType == DeviceInformationBridge::OperatingSystemType::Windows) {
-		if(operatingSystemArchitectureType == DeviceInformationBridge::OperatingSystemArchitectureType::x64) {
+		if(architectureType == DeviceInformationBridge::ArchitectureType::x64) {
 			if(!windowsX64DownloadPath.empty()) {
 				downloadPath = windowsX64DownloadPath;
 			}
@@ -1022,7 +1022,7 @@ std::string GameManager::getJFDuke3DDownloadURL(DeviceInformationBridge::Operati
 				downloadPath = windowsX86DownloadPath;
 			}
 		}
-		else if(operatingSystemArchitectureType == DeviceInformationBridge::OperatingSystemArchitectureType::x86) {
+		else if(architectureType == DeviceInformationBridge::ArchitectureType::x86) {
 			downloadPath = windowsX86DownloadPath;
 		}
 	}
@@ -1433,7 +1433,7 @@ static std::vector<NetDuke32Release> getNetDuke32Releases(size_t maxNumberOfRele
 	return netDuke32Releases;
 }
 
-std::string GameManager::getNetDuke32DownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const {
+std::string GameManager::getNetDuke32DownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType architectureType) const {
 	if(!m_initialized) {
 		spdlog::error("Game manager not initialized!");
 		return {};
@@ -1455,7 +1455,7 @@ std::string GameManager::getNetDuke32DownloadURL(DeviceInformationBridge::Operat
 	return netDuke32Releases.front().downloadURL;
 }
 
-std::string GameManager::getEDuke32DownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const {
+std::string GameManager::getEDuke32DownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType architectureType) const {
 	static const std::string WINDOWS_X86_ARCHITECTURE_IDENTIFIER("win32");
 	static const std::string WINDOWS_X64_ARCHITECTURE_IDENTIFIER("win64");
 
@@ -1557,7 +1557,7 @@ std::string GameManager::getEDuke32DownloadURL(DeviceInformationBridge::Operatin
 
 	std::string finalDownloadFileName;
 
-	if(operatingSystemArchitectureType == DeviceInformationBridge::OperatingSystemArchitectureType::x64) {
+	if(architectureType == DeviceInformationBridge::ArchitectureType::x64) {
 		if(!windowsX64DownloadFileName.empty()) {
 			finalDownloadFileName = windowsX64DownloadFileName;
 		}
@@ -1565,7 +1565,7 @@ std::string GameManager::getEDuke32DownloadURL(DeviceInformationBridge::Operatin
 			finalDownloadFileName = windowsX86DownloadFileName;
 		}
 	}
-	else if(operatingSystemArchitectureType == DeviceInformationBridge::OperatingSystemArchitectureType::x86) {
+	else if(architectureType == DeviceInformationBridge::ArchitectureType::x86) {
 		finalDownloadFileName = windowsX86DownloadFileName;
 	}
 
@@ -1578,7 +1578,7 @@ std::string GameManager::getEDuke32DownloadURL(DeviceInformationBridge::Operatin
 	return Utilities::joinPaths(EDUKE32_DOWNLOAD_PAGE_URL, finalDownloadFileName);
 }
 
-std::string GameManager::getRazeDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const {
+std::string GameManager::getRazeDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType architectureType) const {
 	static const std::string ARM64_ARCHITECTURE_IDENTIFIER("arm64");
 	static const std::string LINUX_IDENTIFIER("linux");
 	static const std::string MACOS_IDENTIFIER("mac");
@@ -1650,7 +1650,7 @@ std::string GameManager::getRazeDownloadURL(DeviceInformationBridge::OperatingSy
 	return latestReleaseAsset->getDownloadURL();
 }
 
-std::string GameManager::getBelgianChocolateDuke3DDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const {
+std::string GameManager::getBelgianChocolateDuke3DDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType architectureType) const {
 	static const std::string WINDOWS_X86_ARCHITECTURE_IDENTIFIER("win32");
 	static const std::string WINDOWS_X64_ARCHITECTURE_IDENTIFIER("win64");
 
@@ -1674,12 +1674,12 @@ std::string GameManager::getBelgianChocolateDuke3DDownloadURL(DeviceInformationB
 
 	std::string_view architectureIdentifier;
 
-	switch(operatingSystemArchitectureType) {
-		case DeviceInformationBridge::OperatingSystemArchitectureType::x86: {
+	switch(architectureType) {
+		case DeviceInformationBridge::ArchitectureType::x86: {
 			architectureIdentifier = WINDOWS_X86_ARCHITECTURE_IDENTIFIER;
 			break;
 		}
-		case DeviceInformationBridge::OperatingSystemArchitectureType::x64: {
+		case DeviceInformationBridge::ArchitectureType::x64: {
 			architectureIdentifier = WINDOWS_X64_ARCHITECTURE_IDENTIFIER;
 			break;
 		}
@@ -1698,12 +1698,12 @@ std::string GameManager::getBelgianChocolateDuke3DDownloadURL(DeviceInformationB
 	}
 
 	if(latestReleaseAsset == nullptr) {
-		switch(operatingSystemArchitectureType) {
-			case DeviceInformationBridge::OperatingSystemArchitectureType::x86: {
-				spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}' ({}).",  GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getLongName(), magic_enum::enum_name(operatingSystemType), magic_enum::enum_name(operatingSystemArchitectureType));
+		switch(architectureType) {
+			case DeviceInformationBridge::ArchitectureType::x86: {
+				spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}' ({}).",  GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getLongName(), magic_enum::enum_name(operatingSystemType), magic_enum::enum_name(architectureType));
 				return {};
 			}
-			case DeviceInformationBridge::OperatingSystemArchitectureType::x64: {
+			case DeviceInformationBridge::ArchitectureType::x64: {
 				for(size_t i = 0; i < latestRelease->numberOfAssets(); i++) {
 					currentReleaseAsset = latestRelease->getAsset(i);
 
@@ -1714,7 +1714,7 @@ std::string GameManager::getBelgianChocolateDuke3DDownloadURL(DeviceInformationB
 				}
 
 				if(latestReleaseAsset == nullptr) {
-					spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}' ({} or {}).", GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getLongName(), magic_enum::enum_name(operatingSystemType), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x64), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x86));
+					spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}' ({} or {}).", GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getLongName(), magic_enum::enum_name(operatingSystemType), magic_enum::enum_name(DeviceInformationBridge::ArchitectureType::x64), magic_enum::enum_name(DeviceInformationBridge::ArchitectureType::x86));
 					return {};
 				}
 
@@ -1726,7 +1726,7 @@ std::string GameManager::getBelgianChocolateDuke3DDownloadURL(DeviceInformationB
 	return latestReleaseAsset->getDownloadURL();
 }
 
-std::string GameManager::getRedNukemDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const {
+std::string GameManager::getRedNukemDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType architectureType) const {
 	const std::string WINDOWS_X86_ARCHITECTURE_IDENTIFIER("win32");
 	const std::string WINDOWS_X64_ARCHITECTURE_IDENTIFIER("win64");
 
@@ -1869,7 +1869,7 @@ std::string GameManager::getRedNukemDownloadURL(DeviceInformationBridge::Operati
 
 	std::string finalDownloadLink;
 
-	if(operatingSystemArchitectureType == DeviceInformationBridge::OperatingSystemArchitectureType::x64) {
+	if(architectureType == DeviceInformationBridge::ArchitectureType::x64) {
 		if(!windowsX64DownloadLink.empty()) {
 			finalDownloadLink = windowsX64DownloadLink;
 		}
@@ -1877,7 +1877,7 @@ std::string GameManager::getRedNukemDownloadURL(DeviceInformationBridge::Operati
 			finalDownloadLink = windowsX86DownloadLink;
 		}
 	}
-	else if(operatingSystemArchitectureType == DeviceInformationBridge::OperatingSystemArchitectureType::x86) {
+	else if(architectureType == DeviceInformationBridge::ArchitectureType::x86) {
 		finalDownloadLink = windowsX86DownloadLink;
 	}
 
@@ -2002,7 +2002,7 @@ static Duke3dwInfo getLatestDuke3dwInfo() {
 	return info;
 }
 
-std::string GameManager::getDuke3dwDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const {
+std::string GameManager::getDuke3dwDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType architectureType) const {
 	if(!m_initialized) {
 		spdlog::error("Game manager not initialized!");
 		return {};
@@ -2018,7 +2018,7 @@ std::string GameManager::getDuke3dwDownloadURL(DeviceInformationBridge::Operatin
 	return getLatestDuke3dwInfo().downloadURL;
 }
 
-std::string GameManager::getPKDuke3DDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const {
+std::string GameManager::getPKDuke3DDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType architectureType) const {
 	if(!m_initialized) {
 		spdlog::error("Game manager not initialized!");
 		return {};
@@ -2134,7 +2134,7 @@ static std::vector<XDukeDownload> getXDukeDownloads() {
 	return downloads;
 }
 
-std::string GameManager::getXDukeDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const {
+std::string GameManager::getXDukeDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType architectureType) const {
 	if(!m_initialized) {
 		spdlog::error("Game manager not initialized!");
 		return {};
@@ -2156,7 +2156,7 @@ std::string GameManager::getXDukeDownloadURL(DeviceInformationBridge::OperatingS
 	return xDukeDownloads.front().downloadURL;
 }
 
-std::string GameManager::getRDukeDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const {
+std::string GameManager::getRDukeDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType architectureType) const {
 	if(!m_initialized) {
 		spdlog::error("Game manager not initialized!");
 		return {};
@@ -2326,7 +2326,7 @@ static std::vector<Duke3d_w32Download> getLatestDuke3d_w32Downloads() {
 	return downloads;
 }
 
-std::vector<std::string> GameManager::getDuke3d_w32DownloadURLs(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) const {
+std::vector<std::string> GameManager::getDuke3d_w32DownloadURLs(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType architectureType) const {
 	if(!m_initialized) {
 		spdlog::error("Game manager not initialized!");
 		return {};

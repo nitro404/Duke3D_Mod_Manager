@@ -381,28 +381,28 @@ std::string DOSBoxManager::getLatestDOSBoxDownloadURL(const std::string & dosbox
 		return {};
 	}
 
-	std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalOperatingSystemArchitectureType(deviceInformationBridge->getOperatingSystemArchitectureType());
+	std::optional<DeviceInformationBridge::ArchitectureType> optionalArchitectureType(deviceInformationBridge->getArchitectureType());
 
-	if(!optionalOperatingSystemArchitectureType.has_value()) {
+	if(!optionalArchitectureType.has_value()) {
 		spdlog::error("Failed to determine operating system architecture type.");
 		return {};
 	}
 
-	return getLatestDOSBoxDownloadURL(dosboxVersionID, optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value(), latestVersion);
+	return getLatestDOSBoxDownloadURL(dosboxVersionID, optionalOperatingSystemType.value(), optionalArchitectureType.value(), latestVersion);
 }
 
-std::string DOSBoxManager::getLatestDOSBoxDownloadURL(const std::string & dosboxVersionID, DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion) const {
+std::string DOSBoxManager::getLatestDOSBoxDownloadURL(const std::string & dosboxVersionID, DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType ArchitectureType, std::string * latestVersion) const {
 	if(Utilities::areStringsEqualIgnoreCase(dosboxVersionID, DOSBoxVersion::DOSBOX.getID())) {
-		return getLatestOriginalDOSBoxDownloadURL(operatingSystemType, operatingSystemArchitectureType, latestVersion);
+		return getLatestOriginalDOSBoxDownloadURL(operatingSystemType, ArchitectureType, latestVersion);
 	}
 	else if(Utilities::areStringsEqualIgnoreCase(dosboxVersionID, DOSBoxVersion::DOSBOX_ECE.getID())) {
-		return getLatestDOSBoxEnhancedCommunityEditionDownloadURL(operatingSystemType, operatingSystemArchitectureType, latestVersion);
+		return getLatestDOSBoxEnhancedCommunityEditionDownloadURL(operatingSystemType, ArchitectureType, latestVersion);
 	}
 	else if(Utilities::areStringsEqualIgnoreCase(dosboxVersionID, DOSBoxVersion::DOSBOX_STAGING.getID())) {
-		return getLatestDOSBoxStagingDownloadURL(operatingSystemType, operatingSystemArchitectureType, latestVersion);
+		return getLatestDOSBoxStagingDownloadURL(operatingSystemType, ArchitectureType, latestVersion);
 	}
 	else if(Utilities::areStringsEqualIgnoreCase(dosboxVersionID, DOSBoxVersion::DOSBOX_X.getID())) {
-		return getLatestDOSBoxXDownloadURL(operatingSystemType, operatingSystemArchitectureType, latestVersion);
+		return getLatestDOSBoxXDownloadURL(operatingSystemType, ArchitectureType, latestVersion);
 	}
 
 	return {};
@@ -434,7 +434,7 @@ std::string DOSBoxManager::getRemoteDOSBoxDownloadsBaseURL() const {
 	return Utilities::joinPaths(settings->apiBaseURL, settings->remoteDownloadsDirectoryName, settings->remoteDOSBoxDownloadsDirectoryName);
 }
 
-std::string DOSBoxManager::getLatestDOSBoxDownloadFallbackURL(const std::string & dosboxVersionID, DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion) const {
+std::string DOSBoxManager::getLatestDOSBoxDownloadFallbackURL(const std::string & dosboxVersionID, DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType ArchitectureType, std::string * latestVersion) const {
 	if(!loadOrUpdateDOSBoxDownloadList()) {
 		return {};
 	}
@@ -455,26 +455,26 @@ std::string DOSBoxManager::getLatestDOSBoxDownloadFallbackURL(const std::string 
 		return {};
 	}
 
-	std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalOperatingSystemArchitectureType(deviceInformationBridge->getOperatingSystemArchitectureType());
+	std::optional<DeviceInformationBridge::ArchitectureType> optionalArchitectureType(deviceInformationBridge->getArchitectureType());
 
-	if(!optionalOperatingSystemArchitectureType.has_value()) {
+	if(!optionalArchitectureType.has_value()) {
 		spdlog::error("Failed to determine operating system architecture type.");
 		return {};
 	}
 
-	std::shared_ptr<DOSBoxDownloadFile> dosboxDownloadFile(m_dosboxDownloads->getLatestDOSBoxDownloadFile(dosboxVersionID, optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value()));
+	std::shared_ptr<DOSBoxDownloadFile> dosboxDownloadFile(m_dosboxDownloads->getLatestDOSBoxDownloadFile(dosboxVersionID, optionalOperatingSystemType.value(), optionalArchitectureType.value()));
 
 	if(dosboxDownloadFile == nullptr) {
-		switch(optionalOperatingSystemArchitectureType.value()) {
-			case DeviceInformationBridge::OperatingSystemArchitectureType::x86: {
-				spdlog::error("Could not find '{}' file download information for '{}' ({}).", dosboxVersion->getLongName(), magic_enum::enum_name(optionalOperatingSystemType.value()), magic_enum::enum_name(optionalOperatingSystemArchitectureType.value()));
+		switch(optionalArchitectureType.value()) {
+			case DeviceInformationBridge::ArchitectureType::x86: {
+				spdlog::error("Could not find '{}' file download information for '{}' ({}).", dosboxVersion->getLongName(), magic_enum::enum_name(optionalOperatingSystemType.value()), magic_enum::enum_name(optionalArchitectureType.value()));
 				return {};
 			}
-			case DeviceInformationBridge::OperatingSystemArchitectureType::x64: {
-				dosboxDownloadFile = m_dosboxDownloads->getLatestDOSBoxDownloadFile(dosboxVersionID, optionalOperatingSystemType.value(), DeviceInformationBridge::OperatingSystemArchitectureType::x86);
+			case DeviceInformationBridge::ArchitectureType::x64: {
+				dosboxDownloadFile = m_dosboxDownloads->getLatestDOSBoxDownloadFile(dosboxVersionID, optionalOperatingSystemType.value(), DeviceInformationBridge::ArchitectureType::x86);
 
 				if(dosboxDownloadFile == nullptr) {
-					spdlog::error("Could not find '{}' file download information for '{}' ({} or {}).", dosboxVersion->getLongName(), magic_enum::enum_name(optionalOperatingSystemType.value()), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x64), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x86));
+					spdlog::error("Could not find '{}' file download information for '{}' ({} or {}).", dosboxVersion->getLongName(), magic_enum::enum_name(optionalOperatingSystemType.value()), magic_enum::enum_name(DeviceInformationBridge::ArchitectureType::x64), magic_enum::enum_name(DeviceInformationBridge::ArchitectureType::x86));
 					return {};
 				}
 
@@ -559,7 +559,7 @@ std::string DOSBoxManager::getOriginalDOSBoxDownloadURL(const std::string & vers
 	return fmt::format("https://versaweb.dl.sourceforge.net/project/dosbox/dosbox/{0}/DOSBox{0}-win32-installer.exe", version);
 }
 
-std::string DOSBoxManager::getLatestOriginalDOSBoxDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion) const {
+std::string DOSBoxManager::getLatestOriginalDOSBoxDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType ArchitectureType, std::string * latestVersion) const {
 	if(!m_initialized) {
 		spdlog::error("DOSBox manager not initialized!");
 		return {};
@@ -767,7 +767,7 @@ static std::vector<DOSBoxECEDownload> getLatestDOSBoxEnhancedCommunityEditionDow
 	return downloads;
 }
 
-std::string DOSBoxManager::getLatestDOSBoxEnhancedCommunityEditionDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion) const {
+std::string DOSBoxManager::getLatestDOSBoxEnhancedCommunityEditionDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType ArchitectureType, std::string * latestVersion) const {
 	static const std::string DOSBOX_ECE_DOWNLOAD_BASE_URL("https://yesterplay.net/dosboxece/download");
 
 	std::vector<DOSBoxECEDownload> latestDownloads(getLatestDOSBoxEnhancedCommunityEditionDownloads());
@@ -798,7 +798,7 @@ std::string DOSBoxManager::getLatestDOSBoxEnhancedCommunityEditionDownloadURL(De
 	return Utilities::joinPaths(DOSBOX_ECE_DOWNLOAD_BASE_URL, latestDownload->path);
 }
 
-std::string DOSBoxManager::getLatestDOSBoxStagingDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion) const {
+std::string DOSBoxManager::getLatestDOSBoxStagingDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType ArchitectureType, std::string * latestVersion) const {
 	if(!m_initialized) {
 		spdlog::error("DOSBox manager not initialized!");
 		return {};
@@ -834,7 +834,7 @@ std::string DOSBoxManager::getLatestDOSBoxStagingDownloadURL(DeviceInformationBr
 	return latestReleaseAsset->getDownloadURL();
 }
 
-std::string DOSBoxManager::getLatestDOSBoxXDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, std::string * latestVersion) const {
+std::string DOSBoxManager::getLatestDOSBoxXDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType ArchitectureType, std::string * latestVersion) const {
 	static const std::string WINDOWS_IDENTIFIER("win");
 	static const std::string WINDOWS_X86_ARCHITECTURE_IDENTIFIER("win32");
 	static const std::string WINDOWS_X64_ARCHITECTURE_IDENTIFIER("win64");
@@ -859,12 +859,12 @@ std::string DOSBoxManager::getLatestDOSBoxXDownloadURL(DeviceInformationBridge::
 	if(operatingSystemType == DeviceInformationBridge::OperatingSystemType::Windows) {
 		operatingSystemIdentifier = WINDOWS_IDENTIFIER;
 
-		switch(operatingSystemArchitectureType) {
-			case DeviceInformationBridge::OperatingSystemArchitectureType::x86: {
+		switch(ArchitectureType) {
+			case DeviceInformationBridge::ArchitectureType::x86: {
 				architectureIdentifier = WINDOWS_X86_ARCHITECTURE_IDENTIFIER;
 				break;
 			}
-			case DeviceInformationBridge::OperatingSystemArchitectureType::x64: {
+			case DeviceInformationBridge::ArchitectureType::x64: {
 				architectureIdentifier = WINDOWS_X64_ARCHITECTURE_IDENTIFIER;
 				break;
 			}
@@ -872,7 +872,7 @@ std::string DOSBoxManager::getLatestDOSBoxXDownloadURL(DeviceInformationBridge::
 	}
 	else {
 		operatingSystemIdentifier = Utilities::toLowerCase(magic_enum::enum_name(operatingSystemType));
-		architectureIdentifier = Utilities::toLowerCase(magic_enum::enum_name(operatingSystemArchitectureType));
+		architectureIdentifier = Utilities::toLowerCase(magic_enum::enum_name(ArchitectureType));
 	}
 
 	for(size_t i = 0; i < latestRelease->numberOfAssets(); i++) {
@@ -893,7 +893,7 @@ std::string DOSBoxManager::getLatestDOSBoxXDownloadURL(DeviceInformationBridge::
 
 	if(latestReleaseAsset == nullptr &&
 	   operatingSystemType == DeviceInformationBridge::OperatingSystemType::Windows &&
-	   operatingSystemArchitectureType == DeviceInformationBridge::OperatingSystemArchitectureType::x64) {
+	   ArchitectureType == DeviceInformationBridge::ArchitectureType::x64) {
 		for(size_t i = 0; i < latestRelease->numberOfAssets(); i++) {
 			currentReleaseAsset = latestRelease->getAsset(i);
 
@@ -906,7 +906,7 @@ std::string DOSBoxManager::getLatestDOSBoxXDownloadURL(DeviceInformationBridge::
 		}
 
 		if(latestReleaseAsset == nullptr) {
-			spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}' ({} or {}).", DOSBoxVersion::DOSBOX_X.getLongName(), magic_enum::enum_name(operatingSystemType), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x64), magic_enum::enum_name(DeviceInformationBridge::OperatingSystemArchitectureType::x86));
+			spdlog::error("Could not find '{}' GitHub release asset with matching download file name for '{}' ({} or {}).", DOSBoxVersion::DOSBOX_X.getLongName(), magic_enum::enum_name(operatingSystemType), magic_enum::enum_name(DeviceInformationBridge::ArchitectureType::x64), magic_enum::enum_name(DeviceInformationBridge::ArchitectureType::x86));
 			return {};
 		}
 	}
@@ -945,17 +945,17 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::s
 		return {};
 	}
 
-	std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalOperatingSystemArchitectureType(deviceInformationBridge->getOperatingSystemArchitectureType());
+	std::optional<DeviceInformationBridge::ArchitectureType> optionalArchitectureType(deviceInformationBridge->getArchitectureType());
 
-	if(!optionalOperatingSystemArchitectureType.has_value()) {
+	if(!optionalArchitectureType.has_value()) {
 		spdlog::error("Failed to determine operating system architecture type.");
 		return {};
 	}
 
-	return downloadLatestDOSBoxVersion(dosboxVersionID, optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value(), false, latestVersion, aborted);
+	return downloadLatestDOSBoxVersion(dosboxVersionID, optionalOperatingSystemType.value(), optionalArchitectureType.value(), false, latestVersion, aborted);
 }
 
-std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::string & dosboxVersionID, DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType, bool useFallback, std::string * latestVersion, bool * aborted) {
+std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::string & dosboxVersionID, DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType ArchitectureType, bool useFallback, std::string * latestVersion, bool * aborted) {
 	if(!m_initialized) {
 		spdlog::error("DOSBox manager not initialized!");
 		return nullptr;
@@ -981,12 +981,12 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::s
 	if(useFallback) {
 		spdlog::info("Using fallback '{}' application package file download URL.", dosboxVersion->getLongName());
 
-		latestDOSBoxDownloadURL = getLatestDOSBoxDownloadFallbackURL(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, &internalLatestVersion);
+		latestDOSBoxDownloadURL = getLatestDOSBoxDownloadFallbackURL(dosboxVersion->getID(), operatingSystemType, ArchitectureType, &internalLatestVersion);
 
 		installStatusChanged(fmt::format("Re-trying '{}' application files download using fallback URL.", dosboxVersion->getLongName()));
 	}
 	else {
-		latestDOSBoxDownloadURL = getLatestDOSBoxDownloadURL(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, &internalLatestVersion);
+		latestDOSBoxDownloadURL = getLatestDOSBoxDownloadURL(dosboxVersion->getID(), operatingSystemType, ArchitectureType, &internalLatestVersion);
 
 		installStatusChanged(fmt::format("Downloading '{}' application files.", dosboxVersion->getLongName()));
 	}
@@ -999,7 +999,7 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::s
 		spdlog::error("Failed to determine {} download URL for '{}'.", useFallback ? "fallback" : "regular", dosboxVersion->getLongName());
 
 		if(!useFallback) {
-			return downloadLatestDOSBoxVersion(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, true, &internalLatestVersion, aborted);
+			return downloadLatestDOSBoxVersion(dosboxVersion->getID(), operatingSystemType, ArchitectureType, true, &internalLatestVersion, aborted);
 		}
 
 		return nullptr;
@@ -1026,7 +1026,7 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::s
 		spdlog::error("Failed to download '{} {}' application archive file with error: {}", dosboxVersion->getLongName(), internalLatestVersion, response != nullptr ? response->getErrorMessage() : "Invalid request.");
 
 		if(!useFallback) {
-			return downloadLatestDOSBoxVersion(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, true, latestVersion, aborted);
+			return downloadLatestDOSBoxVersion(dosboxVersion->getID(), operatingSystemType, ArchitectureType, true, latestVersion, aborted);
 		}
 
 		return nullptr;
@@ -1036,7 +1036,7 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::s
 		spdlog::error("Failed to download '{} {}' application files package ({}{})!", dosboxVersion->getLongName(), internalLatestVersion, response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
 
 		if(!useFallback) {
-			return downloadLatestDOSBoxVersion(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, true, latestVersion, aborted);
+			return downloadLatestDOSBoxVersion(dosboxVersion->getID(), operatingSystemType, ArchitectureType, true, latestVersion, aborted);
 		}
 
 		return nullptr;
@@ -1048,7 +1048,7 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::s
 		spdlog::error("Failed to create archive for '{} {}' application archive.", dosboxVersion->getLongName(), internalLatestVersion);
 
 		if(!useFallback) {
-			return downloadLatestDOSBoxVersion(dosboxVersion->getID(), operatingSystemType, operatingSystemArchitectureType, true, latestVersion, aborted);
+			return downloadLatestDOSBoxVersion(dosboxVersion->getID(), operatingSystemType, ArchitectureType, true, latestVersion, aborted);
 		}
 
 		return nullptr;
@@ -1065,7 +1065,7 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::s
 		properties["usedFallback"] = useFallback;
 		properties["numberOfFiles"] = dosboxArchive->numberOfFiles();
 		properties["operatingSystemType"] = magic_enum::enum_name(operatingSystemType);
-		properties["architectureType"] = magic_enum::enum_name(operatingSystemArchitectureType);
+		properties["architectureType"] = magic_enum::enum_name(ArchitectureType);
 
 		SegmentAnalytics::getInstance()->track("DOSBox Application Downloaded", properties);
 	}

@@ -33,7 +33,7 @@ public:
 	size_t indexOfVersion(const std::string & version) const;
 	std::shared_ptr<GameDownloadVersion> getVersion(size_t index) const;
 	std::shared_ptr<GameDownloadVersion> getVersion(const std::string & version) const;
-	std::shared_ptr<GameDownloadFile> getLatestGameDownloadFile(GameDownloadFile::Type downloadType, DeviceInformationBridge::OperatingSystemType operatingSystemType, std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalOperatingSystemArchitectureType = {}) const;
+	std::shared_ptr<GameDownloadFile> getLatestGameDownloadFile(GameDownloadFile::Type downloadType, DeviceInformationBridge::OperatingSystemType operatingSystemType, std::optional<DeviceInformationBridge::ArchitectureType> optionalOperatingSystemArchitectureType = {}) const;
 	std::shared_ptr<GameDownloadFile> getLatestGameDownloadFile(GameDownloadFile::Type downloadType, GameVersion::OperatingSystem operatingSystem, std::optional<GameDownloadFile::ProcessorArchitecture> optionalProcessorArchitecture = {}) const;
 	const std::vector<std::shared_ptr<GameDownloadVersion>> & getVersions() const;
 	bool addVersion(const GameDownloadVersion & version);

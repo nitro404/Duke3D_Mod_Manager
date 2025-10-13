@@ -34,7 +34,7 @@ public:
 	size_t indexOfDownloadWithID(const std::string & dosboxVersionID) const;
 	std::shared_ptr<DOSBoxDownload> getDownload(size_t index) const;
 	std::shared_ptr<DOSBoxDownload> getDownloadWithID(const std::string & dosboxVersionID) const;
-	std::shared_ptr<DOSBoxDownloadFile> getLatestDOSBoxDownloadFile(const std::string & dosboxVersionID, DeviceInformationBridge::OperatingSystemType operatingSystemType, std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalOperatingSystemArchitectureType = {}) const;
+	std::shared_ptr<DOSBoxDownloadFile> getLatestDOSBoxDownloadFile(const std::string & dosboxVersionID, DeviceInformationBridge::OperatingSystemType operatingSystemType, std::optional<DeviceInformationBridge::ArchitectureType> optionalOperatingSystemArchitectureType = {}) const;
 	const std::vector<std::shared_ptr<DOSBoxDownload>> & getDownloads() const;
 	bool addDownload(const DOSBoxDownload & download);
 	bool removeDownload(size_t index);

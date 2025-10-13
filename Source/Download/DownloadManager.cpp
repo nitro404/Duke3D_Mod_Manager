@@ -361,7 +361,7 @@ DownloadCache * DownloadManager::getDownloadCache() const {
 }
 
 bool DownloadManager::downloadModList(bool force) {
-	if(!DeviceInformationBridge::getInstance()->isConnectedToInternet()) {
+	if(!HTTPService::getInstance()->checkForInternetConnectivity()) {
 		return isModListDownloaded();
 	}
 
@@ -486,7 +486,7 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 
 	std::shared_ptr<CachedPackageFile> cachedModPackageFile(m_downloadCache->getCachedPackageFile(*modDownload));
 
-	if(!DeviceInformationBridge::getInstance()->isConnectedToInternet()) {
+	if(!HTTPService::getInstance()->checkForInternetConnectivity()) {
 		if(cachedModPackageFile == nullptr) {
 			return false;
 		}

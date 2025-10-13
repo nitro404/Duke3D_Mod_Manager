@@ -142,7 +142,7 @@ std::shared_ptr<DOSBoxDownload> DOSBoxDownloadCollection::getDownloadWithID(cons
 	return nullptr;
 }
 
-std::shared_ptr<DOSBoxDownloadFile> DOSBoxDownloadCollection::getLatestDOSBoxDownloadFile(const std::string & dosboxVersionID, DeviceInformationBridge::OperatingSystemType operatingSystem, std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalProcessorArchitecture) const {
+std::shared_ptr<DOSBoxDownloadFile> DOSBoxDownloadCollection::getLatestDOSBoxDownloadFile(const std::string & dosboxVersionID, DeviceInformationBridge::OperatingSystemType operatingSystem, std::optional<DeviceInformationBridge::ArchitectureType> optionalProcessorArchitecture) const {
 	if(dosboxVersionID.empty()) {
 		return nullptr;
 	}

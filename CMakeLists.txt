@@ -14,6 +14,7 @@ add_subdirectory(${_LIBRARY_DIRECTORY}/Core)
 
 list(APPEND CMAKE_MODULE_PATH "${CORE_DIRECTORY}/CMake")
 
+include(Modules/ConfigureCPlusPlus)
 include(Modules/GetGitCommitHash)
 include(Hunter/HunterInit)
 

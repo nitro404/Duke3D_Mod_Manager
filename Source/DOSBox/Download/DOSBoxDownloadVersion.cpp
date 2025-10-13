@@ -177,7 +177,7 @@ std::shared_ptr<DOSBoxDownloadFile> DOSBoxDownloadVersion::getFileWithName(const
 	return nullptr;
 }
 
-std::shared_ptr<DOSBoxDownloadFile> DOSBoxDownloadVersion::findFirstMatchingFile(std::optional<DeviceInformationBridge::OperatingSystemType> operatingSystem, std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> processorArchitecture) const {
+std::shared_ptr<DOSBoxDownloadFile> DOSBoxDownloadVersion::findFirstMatchingFile(std::optional<DeviceInformationBridge::OperatingSystemType> operatingSystem, std::optional<DeviceInformationBridge::ArchitectureType> processorArchitecture) const {
 	if(!operatingSystem.has_value() && !processorArchitecture.has_value()) {
 		return nullptr;
 	}
@@ -197,7 +197,7 @@ std::shared_ptr<DOSBoxDownloadFile> DOSBoxDownloadVersion::findFirstMatchingFile
 	return nullptr;
 }
 
-std::shared_ptr<DOSBoxDownloadFile> DOSBoxDownloadVersion::findLastMatchingFile(std::optional<DeviceInformationBridge::OperatingSystemType> operatingSystem, std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> processorArchitecture) const {
+std::shared_ptr<DOSBoxDownloadFile> DOSBoxDownloadVersion::findLastMatchingFile(std::optional<DeviceInformationBridge::OperatingSystemType> operatingSystem, std::optional<DeviceInformationBridge::ArchitectureType> processorArchitecture) const {
 	if(!operatingSystem.has_value() && !processorArchitecture.has_value()) {
 		return nullptr;
 	}
@@ -217,7 +217,7 @@ std::shared_ptr<DOSBoxDownloadFile> DOSBoxDownloadVersion::findLastMatchingFile(
 	return nullptr;
 }
 
-std::vector<std::shared_ptr<DOSBoxDownloadFile>> DOSBoxDownloadVersion::findAllMatchingFiles(std::optional<DeviceInformationBridge::OperatingSystemType> operatingSystem, std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> processorArchitecture) const {
+std::vector<std::shared_ptr<DOSBoxDownloadFile>> DOSBoxDownloadVersion::findAllMatchingFiles(std::optional<DeviceInformationBridge::OperatingSystemType> operatingSystem, std::optional<DeviceInformationBridge::ArchitectureType> processorArchitecture) const {
 	if(!operatingSystem.has_value() && !processorArchitecture.has_value()) {
 		return {};
 	}

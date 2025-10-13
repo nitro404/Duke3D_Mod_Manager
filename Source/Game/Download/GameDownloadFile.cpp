@@ -301,12 +301,12 @@ std::unique_ptr<GameDownloadFile> GameDownloadFile::parseFrom(const rapidjson::V
 	return std::make_unique<GameDownloadFile>(fileName, fileSize, optionalType.value(), fileSHA1, optionalOperatingSystem.value(), optionalProcessorArchitecture);
 }
 
-std::optional<GameDownloadFile::ProcessorArchitecture> GameDownloadFile::convertOperatingSystemArchitectureType(DeviceInformationBridge::OperatingSystemArchitectureType operatingSystemArchitectureType) {
-	switch(operatingSystemArchitectureType) {
-		case DeviceInformationBridge::OperatingSystemArchitectureType::x86: {
+std::optional<GameDownloadFile::ProcessorArchitecture> GameDownloadFile::convertOperatingSystemArchitectureType(DeviceInformationBridge::ArchitectureType architectureType) {
+	switch(architectureType) {
+		case DeviceInformationBridge::ArchitectureType::x86: {
 			return ProcessorArchitecture::x86;
 		}
-		case DeviceInformationBridge::OperatingSystemArchitectureType::x64: {
+		case DeviceInformationBridge::ArchitectureType::x64: {
 			return ProcessorArchitecture::x64;
 		}
 	}

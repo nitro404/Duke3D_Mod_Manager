@@ -151,7 +151,7 @@ std::shared_ptr<DOSBoxDownloadVersion> DOSBoxDownload::getVersion(const std::str
 	return nullptr;
 }
 
-std::shared_ptr<DOSBoxDownloadFile> DOSBoxDownload::getLatestDOSBoxDownloadFile(DeviceInformationBridge::OperatingSystemType operatingSystem, std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> optionalProcessorArchitecture) const {
+std::shared_ptr<DOSBoxDownloadFile> DOSBoxDownload::getLatestDOSBoxDownloadFile(DeviceInformationBridge::OperatingSystemType operatingSystem, std::optional<DeviceInformationBridge::ArchitectureType> optionalProcessorArchitecture) const {
 	std::shared_ptr<DOSBoxDownloadFile> matchingDownloadFile;
 	std::shared_ptr<DOSBoxDownloadFile> latestDOSBoxDownloadFile;
 	std::optional<Date> latestReleaseDate;

@@ -41,9 +41,9 @@ public:
 	size_t indexOfFileWithName(const std::string & fileName) const;
 	std::shared_ptr<DOSBoxDownloadFile> getFile(size_t index) const;
 	std::shared_ptr<DOSBoxDownloadFile> getFileWithName(const std::string & fileName) const;
-	std::shared_ptr<DOSBoxDownloadFile> findFirstMatchingFile(std::optional<DeviceInformationBridge::OperatingSystemType> operatingSystem, std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> processorArchitecture) const;
-	std::shared_ptr<DOSBoxDownloadFile> findLastMatchingFile(std::optional<DeviceInformationBridge::OperatingSystemType> operatingSystem, std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> processorArchitecture) const;
-	std::vector<std::shared_ptr<DOSBoxDownloadFile>> findAllMatchingFiles(std::optional<DeviceInformationBridge::OperatingSystemType> operatingSystem, std::optional<DeviceInformationBridge::OperatingSystemArchitectureType> processorArchitecture) const;
+	std::shared_ptr<DOSBoxDownloadFile> findFirstMatchingFile(std::optional<DeviceInformationBridge::OperatingSystemType> operatingSystem, std::optional<DeviceInformationBridge::ArchitectureType> processorArchitecture) const;
+	std::shared_ptr<DOSBoxDownloadFile> findLastMatchingFile(std::optional<DeviceInformationBridge::OperatingSystemType> operatingSystem, std::optional<DeviceInformationBridge::ArchitectureType> processorArchitecture) const;
+	std::vector<std::shared_ptr<DOSBoxDownloadFile>> findAllMatchingFiles(std::optional<DeviceInformationBridge::OperatingSystemType> operatingSystem, std::optional<DeviceInformationBridge::ArchitectureType> processorArchitecture) const;
 	const std::vector<std::shared_ptr<DOSBoxDownloadFile>> & getFiles() const;
 	bool addFile(const DOSBoxDownloadFile & file);
 	bool removeFile(size_t index);
