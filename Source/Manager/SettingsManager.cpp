@@ -9,7 +9,7 @@
 #include <Utilities/StringUtilities.h>
 #include <Utilities/TimeUtilities.h>
 
-#include <magic_enum.hpp>
+#include <magic_enum/magic_enum.hpp>
 #include <rapidjson/istreamwrapper.h>
 #include <rapidjson/ostreamwrapper.h>
 #include <rapidjson/prettywriter.h>

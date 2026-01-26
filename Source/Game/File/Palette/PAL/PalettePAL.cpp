@@ -3,7 +3,7 @@
 #include <ByteBuffer.h>
 #include <Utilities/StringUtilities.h>
 
-#include <magic_enum.hpp>
+#include <magic_enum/magic_enum.hpp>
 #include <spdlog/spdlog.h>
 
 PalettePAL::PalettePAL(const std::string & filePath)

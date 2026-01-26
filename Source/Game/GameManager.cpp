@@ -24,7 +24,7 @@
 #include <Utilities/TimeUtilities.h>
 #include <Utilities/TinyXML2Utilities.h>
 
-#include <magic_enum.hpp>
+#include <magic_enum/magic_enum.hpp>
 #include <rapidjson/document.h>
 #include <spdlog/spdlog.h>
 #include <tinyxml2.h>

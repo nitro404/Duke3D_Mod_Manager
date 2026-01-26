@@ -10,7 +10,7 @@
 #include <Utilities/StringUtilities.h>
 #include <Utilities/TinyXML2Utilities.h>
 
-#include <magic_enum.hpp>
+#include <magic_enum/magic_enum.hpp>
 #include <spdlog/spdlog.h>
 #include <tinyxml2.h>
 

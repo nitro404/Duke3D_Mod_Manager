@@ -73,7 +73,7 @@ void SunstormInteractiveMetadataPanel::onTitleTextChanged(wxCommandEvent & event
 		return;
 	}
 
-	m_group->setTitle(event.GetString());
+	m_group->setTitle(event.GetString().ToStdString());
 }
 
 void SunstormInteractiveMetadataPanel::onVersionSelected(wxCommandEvent & event) {
@@ -102,7 +102,7 @@ void SunstormInteractiveMetadataPanel::onDescriptionTextChanged(wxCommandEvent &
 		wxTextCtrl * descriptionTextField = m_descriptionTextFields[i];
 
 		if(event.GetId() == descriptionTextField->GetId()) {
-			m_group->setDescription(i, event.GetString());
+			m_group->setDescription(i, event.GetString().ToStdString());
 			break;
 		}
 	}
@@ -113,5 +113,5 @@ void SunstormInteractiveMetadataPanel::onRunFileTextChanged(wxCommandEvent & eve
 		return;
 	}
 
-	m_group->setRunFile(event.GetString());
+	m_group->setRunFile(event.GetString().ToStdString());
 }

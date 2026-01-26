@@ -1732,11 +1732,11 @@ void ModBrowserPanel::onPreferredGameVersionSelected(wxCommandEvent & event) {
 }
 
 void ModBrowserPanel::onIPAddressTextChanged(wxCommandEvent & event) {
-	m_modManager->setDOSBoxServerIPAddress(event.GetString());
+	m_modManager->setDOSBoxServerIPAddress(event.GetString().ToStdString());
 }
 
 void ModBrowserPanel::onPortTextChanged(wxCommandEvent & event) {
-	std::optional<uint16_t> port(Utilities::parseUnsignedShort(event.GetString()));
+	std::optional<uint16_t> port(Utilities::parseUnsignedShort(event.GetString().ToStdString()));
 
 	if(port.has_value()) {
 		switch(m_modManager->getGameType()) {

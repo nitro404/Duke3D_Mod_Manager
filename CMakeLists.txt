@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.19 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.5...4.2.1 FATAL_ERROR)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
@@ -41,8 +41,10 @@ include(SourceFiles)
 include(ResourceFiles)
 
 if(MSVC)
-	add_compile_options(/bigobj)
-	add_compile_options(/Zc:__cplusplus)
+	add_compile_options(
+		/bigobj
+		/Zc:__cplusplus
+	)
 else()
 	add_compile_options(-Wa,-mbig-obj)
 endif()
@@ -56,11 +58,30 @@ target_include_directories(${PROJECT_NAME}
 		${_SOURCE_DIRECTORY}
 )
 
+target_compile_definitions(${PROJECT_NAME}
+	PUBLIC
+		LEXILLA_VERSION="${lexilla_VERSION}"
+		NANOSVG_VERSION="${nanosvg_VERSION}"
+		SCINTILLA_VERSION="${scintilla_VERSION}"
+		WEBP_VERSION="${WebP_VERSION}"
+)
+
 target_link_libraries(${PROJECT_NAME}
 	PRIVATE
 		Core
-		expat::libexpat
+		expat::expat
 		JDKSMIDI::jdksmidi
+		JPEG::jpeg
+		lexilla::lexilla
+		PNG::png_static
+		NanoSVG::NanoSVG
+		pcre2::pcre2-8-static
+		scintilla::scintilla
 		SndFile::sndfile
+		TIFF::tiff
+		TIFF::tiffxx
+		WebP::webp
+		WebP::webpdemux
+		WebP::sharpyuv
 		${wxWidgets_LIBRARIES}
 )

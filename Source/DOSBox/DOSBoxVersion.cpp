@@ -5,7 +5,7 @@
 #include <Utilities/TimeUtilities.h>
 #include <Utilities/RapidJSONUtilities.h>
 
-#include <magic_enum.hpp>
+#include <magic_enum/magic_enum.hpp>
 #include <spdlog/spdlog.h>
 
 #include <array>

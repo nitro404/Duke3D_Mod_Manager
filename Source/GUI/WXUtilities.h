@@ -6,7 +6,7 @@
 #include <Point2D.h>
 #include <Utilities/StringUtilities.h>
 
-#include <magic_enum.hpp>
+#include <magic_enum/magic_enum.hpp>
 #include <spdlog/spdlog.h>
 #include <wx/wxprec.h>
 

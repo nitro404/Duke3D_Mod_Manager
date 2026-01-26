@@ -4,7 +4,7 @@
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
 
-#include <magic_enum.hpp>
+#include <magic_enum/magic_enum.hpp>
 #include <spdlog/spdlog.h>
 
 static const std::string JSON_X_OFFSET_ATTRIBUTE_PROPERTY_NAME("xOffset");

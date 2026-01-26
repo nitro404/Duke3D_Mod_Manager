@@ -301,7 +301,7 @@ bool GameVersionPanel::save() {
 		}
 	}
 
-	m_gameVersion->setNotes(m_notesTextField->GetValue());
+	m_gameVersion->setNotes(m_notesTextField->GetValue().ToStdString());
 
 	m_modified = false;
 

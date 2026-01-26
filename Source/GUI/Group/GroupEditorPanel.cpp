@@ -422,7 +422,7 @@ size_t GroupEditorPanel::openGroups() {
 	openFilesDialog.GetPaths(filePathArray);
 
 	for(size_t i = 0; i < filePathArray.GetCount(); i++) {
-		if(openGroup(filePathArray[i])) {
+		if(openGroup(filePathArray[i].ToStdString())) {
 			openedGroupCount++;
 		}
 	}
@@ -492,7 +492,7 @@ bool GroupEditorPanel::createGroupFromDirectory() {
 		return false;
 	}
 
-	return createGroupFromDirectory(selectDirectoryDialog.GetPath());
+	return createGroupFromDirectory(selectDirectoryDialog.GetPath().ToStdString());
 }
 
 bool GroupEditorPanel::saveGroup(Group * group) {
@@ -666,7 +666,7 @@ size_t GroupEditorPanel::addFilesToGroup(Group * group) {
 	addFilesDialog.GetPaths(filePathArray);
 
 	for(size_t i = 0; i < filePathArray.GetCount(); i++) {
-		filePaths.push_back(filePathArray[i]);
+		filePaths.push_back(filePathArray[i].ToStdString());
 
 		formattedFileName = GroupFile::formatFileName(Utilities::getFileName(filePaths.back()));
 

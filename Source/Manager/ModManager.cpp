@@ -60,7 +60,7 @@
 
 #include <fmt/core.h>
 #include <jdksmidi/version.h>
-#include <magic_enum.hpp>
+#include <magic_enum/magic_enum.hpp>
 #include <sndfile.h>
 #include <spdlog/spdlog.h>
 #include <tinyxml2.h>

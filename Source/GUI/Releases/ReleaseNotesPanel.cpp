@@ -10,7 +10,7 @@
 #include <Utilities/StringUtilities.h>
 #include <Utilities/TimeUtilities.h>
 
-#include <magic_enum.hpp>
+#include <magic_enum/magic_enum.hpp>
 #include <wx/gbsizer.h>
 #include <wx/listbox.h>
 #include <wx/wrapsizer.h>

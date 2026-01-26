@@ -20,7 +20,7 @@
 #include <Utilities/Utilities.h>
 
 #include <fmt/core.h>
-#include <magic_enum.hpp>
+#include <magic_enum/magic_enum.hpp>
 #include <rapidjson/document.h>
 #include <rapidjson/istreamwrapper.h>
 #include <rapidjson/ostreamwrapper.h>

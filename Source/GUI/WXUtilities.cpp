@@ -40,7 +40,7 @@ namespace WXUtilities {
 
 	wxGenericHyperlinkCtrl * createHyperlink(wxWindow * parent, wxWindowID id, const wxString & label, const wxString & url, const wxPoint & position, const wxSize & size, long style , const wxString & name) {
 		// Note: Generic hyperlinks assert if both the label and URL are empty, so a non-empty label must be forced to avoid assertion failures.
-		wxGenericHyperlinkCtrl * hyperlink = new Hyperlink(parent, id, label.empty() ? " " : label, url, position, size, style, name);
+		wxGenericHyperlinkCtrl * hyperlink = new Hyperlink(parent, id, label.empty() ? " " : label.ToStdString(), url, position, size, style, name.ToStdString());
 		hyperlink->SetNormalColour(createWXColour(Colour::BLUE));
 		hyperlink->SetVisitedColour(createWXColour(Colour::BLUE));
 		hyperlink->SetHoverColour(createWXColour(Colour::ROYAL_BLUE));
@@ -50,7 +50,7 @@ namespace WXUtilities {
 
 	wxGenericHyperlinkCtrl * createDeepLink(wxWindow * parent, wxWindowID id, const wxString & label, const wxString & url, const wxPoint & position, const wxSize & size, long style, const wxString & name) {
 		// Note: Generic hyperlinks assert if both the label and URL are empty, so a non-empty label must be forced to avoid assertion failures.
-		wxGenericHyperlinkCtrl * deepLink = new Hyperlink(parent, id, label.empty() ? " " : label, url, position, size, style, name);
+		wxGenericHyperlinkCtrl * deepLink = new Hyperlink(parent, id, label.empty() ? " " : label.ToStdString(), url, position, size, style, name.ToStdString());
 		deepLink->SetNormalColour(createWXColour(Colour::DARK_GREEN));
 		deepLink->SetVisitedColour(createWXColour(Colour::DARK_GREEN));
 		deepLink->SetHoverColour(createWXColour(Colour::FOREST_GREEN));

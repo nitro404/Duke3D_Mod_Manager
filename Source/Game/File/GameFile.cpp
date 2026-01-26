@@ -4,7 +4,7 @@
 #include <Utilities/FileUtilities.h>
 #include <Utilities/StringUtilities.h>
 
-#include <magic_enum.hpp>
+#include <magic_enum/magic_enum.hpp>
 #include <spdlog/spdlog.h>
 
 #include <filesystem>

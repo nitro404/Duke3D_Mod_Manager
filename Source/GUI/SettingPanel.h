@@ -144,14 +144,14 @@ SettingPanel * SettingPanel::createIntegerSettingPanel(std::function<T()> getSet
 	settingTextField->Bind(wxEVT_TEXT, settingPanel->m_changedFunction, wxID_ANY, wxID_ANY);
 
 	settingPanel->m_getValueFunction = [settingTextField]() {
-		return settingTextField->GetValue();
+		return settingTextField->GetValue().ToStdString();
 	};
 
 	settingPanel->m_defaultValidatorFunction = [settingPanel, settingTextField, minValue, maxValue]() {
 		bool error = false;
 
 		if(std::is_signed<T>()) {
-			int64_t value = Utilities::parseLong(settingTextField->GetValue(), &error);
+			int64_t value = Utilities::parseLong(settingTextField->GetValue().ToStdString(), &error);
 
 			return !error &&
 				   value >= std::numeric_limits<T>::min() &&
@@ -160,7 +160,7 @@ SettingPanel * SettingPanel::createIntegerSettingPanel(std::function<T()> getSet
 				   value <= maxValue;
 		}
 		else {
-			uint64_t value = Utilities::parseUnsignedLong(settingTextField->GetValue(), &error);
+			uint64_t value = Utilities::parseUnsignedLong(settingTextField->GetValue().ToStdString(), &error);
 
 			return !error &&
 				   value <= std::numeric_limits<T>::max() &&
@@ -171,10 +171,10 @@ SettingPanel * SettingPanel::createIntegerSettingPanel(std::function<T()> getSet
 
 	settingPanel->m_saveFunction = [settingTextField, setSettingValueFunction]() {
 		if(std::is_signed<T>()) {
-			setSettingValueFunction(static_cast<T>(Utilities::parseLong(settingTextField->GetValue(), nullptr)));
+			setSettingValueFunction(static_cast<T>(Utilities::parseLong(settingTextField->GetValue().ToStdString(), nullptr)));
 		}
 		else {
-			setSettingValueFunction(static_cast<T>(Utilities::parseUnsignedLong(settingTextField->GetValue(), nullptr)));
+			setSettingValueFunction(static_cast<T>(Utilities::parseUnsignedLong(settingTextField->GetValue().ToStdString(), nullptr)));
 		}
 	};
 
@@ -251,7 +251,7 @@ SettingPanel * SettingPanel::createOptionalIntegerSettingPanel(std::function<std
 		bool error = false;
 
 		if(std::is_signed<T>()) {
-			int64_t value = Utilities::parseLong(settingTextField->GetValue(), &error);
+			int64_t value = Utilities::parseLong(settingTextField->GetValue().ToStdString(), &error);
 
 			return !error &&
 				   value >= std::numeric_limits<T>::min() &&
@@ -260,7 +260,7 @@ SettingPanel * SettingPanel::createOptionalIntegerSettingPanel(std::function<std
 				   value <= maxValue;
 		}
 		else {
-			uint64_t value = Utilities::parseUnsignedLong(settingTextField->GetValue(), &error);
+			uint64_t value = Utilities::parseUnsignedLong(settingTextField->GetValue().ToStdString(), &error);
 
 			return !error &&
 				   value <= std::numeric_limits<T>::max() &&
@@ -272,10 +272,10 @@ SettingPanel * SettingPanel::createOptionalIntegerSettingPanel(std::function<std
 	settingPanel->m_saveFunction = [settingTextField, settingEnabledCheckBox, setSettingValueFunction, clearSettingValueFunction]() {
 		if(settingEnabledCheckBox->GetValue()) {
 			if(std::is_signed<T>()) {
-				setSettingValueFunction(static_cast<T>(Utilities::parseLong(settingTextField->GetValue(), nullptr)));
+				setSettingValueFunction(static_cast<T>(Utilities::parseLong(settingTextField->GetValue().ToStdString(), nullptr)));
 			}
 			else {
-				setSettingValueFunction(static_cast<T>(Utilities::parseUnsignedLong(settingTextField->GetValue(), nullptr)));
+				setSettingValueFunction(static_cast<T>(Utilities::parseUnsignedLong(settingTextField->GetValue().ToStdString(), nullptr)));
 			}
 		}
 		else {
@@ -341,19 +341,19 @@ SettingPanel * SettingPanel::createChronoSettingPanel(T & setting, T defaultSett
 	settingTextField->Bind(wxEVT_TEXT, settingPanel->m_changedFunction, wxID_ANY, wxID_ANY);
 
 	settingPanel->m_getValueFunction = [settingTextField]() {
-		return settingTextField->GetValue();
+		return settingTextField->GetValue().ToStdString();
 	};
 
 	settingPanel->m_defaultValidatorFunction = [settingTextField]() {
 		bool error = false;
-		int64_t value = Utilities::parseLong(settingTextField->GetValue(), &error);
+		int64_t value = Utilities::parseLong(settingTextField->GetValue().ToStdString(), &error);
 
 		return !error &&
 			   value >= 0;
 	};
 
 	settingPanel->m_saveFunction = [settingTextField, &setting]() {
-		setting = T(Utilities::parseLong(settingTextField->GetValue(), nullptr));
+		setting = T(Utilities::parseLong(settingTextField->GetValue().ToStdString(), nullptr));
 	};
 
 	settingPanel->m_discardFunction = [settingTextField, &setting]() {
@@ -407,11 +407,11 @@ SettingPanel * SettingPanel::createStringSettingPanel(std::function<const std::s
 	};
 
 	settingPanel->m_getValueFunction = [settingTextField]() {
-		return settingTextField->GetValue();
+		return settingTextField->GetValue().ToStdString();
 	};
 
 	settingPanel->m_saveFunction = [settingTextField, setSettingValueFunction]() {
-		setSettingValueFunction(settingTextField->GetValue());
+		setSettingValueFunction(settingTextField->GetValue().ToStdString());
 	};
 
 	settingPanel->m_discardFunction = [settingTextField, getSettingValueFunction]() {
@@ -487,7 +487,7 @@ SettingPanel * SettingPanel::createOptionalStringSettingPanel(std::function<std:
 
 	settingPanel->m_saveFunction = [settingTextField, settingEnabledCheckBox, setSettingValueFunction, clearSettingValueFunction]() {
 		if(settingEnabledCheckBox->GetValue()) {
-			setSettingValueFunction(settingTextField->GetValue());
+			setSettingValueFunction(settingTextField->GetValue().ToStdString());
 		}
 		else {
 			clearSettingValueFunction();
@@ -562,7 +562,7 @@ SettingPanel * SettingPanel::createEnumSettingPanel(std::function<E()> getSettin
 	settingComboBox->Bind(wxEVT_COMBOBOX, settingPanel->m_changedFunction, wxID_ANY, wxID_ANY);
 
 	settingPanel->m_getValueFunction = [settingComboBox]() {
-		return settingComboBox->GetValue();
+		return settingComboBox->GetValue().ToStdString();
 	};
 
 	settingPanel->m_defaultValidatorFunction = [enumValues, settingComboBox]() {

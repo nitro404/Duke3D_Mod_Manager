@@ -11,9 +11,13 @@
 
 #include <expat.h>
 #include <fmt/core.h>
-#include <magic_enum.hpp>
+#include <jdksmidi/version.h>
+#include <jpeg/jversion.h>
+#include <magic_enum/magic_enum.hpp>
 #include <png.h>
+#include <sndfile.h>
 #include <spdlog/spdlog.h>
+#include <tiffio.h>
 #include <wx/app.h>
 #include <wx/cmdline.h>
 #include <wx/progdlg.h>
@@ -37,7 +41,7 @@
 // #include <vld.h>
 
 #define QUOTE(name) #name
-#define STR(macro) QUOTE(macro)
+#define TOSTRING(macro) QUOTE(macro)
 
 wxDECLARE_EVENT(EVENT_INITIALIZATION_DONE, ModManagerInitializationDoneEvent);
 
@@ -92,9 +96,15 @@ void ModManagerApplication::initialize() {
 
 	LibraryInformation * libraryInformation = LibraryInformation::getInstance();
 	XML_Expat_Version expatVersion = XML_ExpatVersionInfo();
+	libraryInformation->addLibrary("JDKSMIDI", jdksmidi::LibraryVersion);
 	libraryInformation->addLibrary("LibExpat", fmt::format("{}.{}.{}", expatVersion.major, expatVersion.minor, expatVersion.micro));
+	libraryInformation->addLibrary("LibJPEG", JVERSION);
 	libraryInformation->addLibrary("LibPNG", PNG_LIBPNG_VER_STRING);
-	libraryInformation->addLibrary("PCRE2", fmt::format("{}.{}", PCRE2_MAJOR, PCRE2_MINOR), STR(PCRE2_DATE));
+	libraryInformation->addLibrary("LibSndFile", sf_version_string());
+	libraryInformation->addLibrary("LibTIFF", TIFFLIB_VERSION_STR_MAJ_MIN_MIC);
+	libraryInformation->addLibrary("NanoSVG", NANOSVG_VERSION);
+	libraryInformation->addLibrary("PCRE2", fmt::format("{}.{}", PCRE2_MAJOR, PCRE2_MINOR), TOSTRING(PCRE2_DATE));
+	libraryInformation->addLibrary("WebP", WEBP_VERSION);
 	libraryInformation->addLibrary("wxWidgets", fmt::format("{}.{}.{}.{}", wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER, wxSUBRELEASE_NUMBER));
 
 	LogSystem::getInstance()->addLogSink(m_logSinkWX);

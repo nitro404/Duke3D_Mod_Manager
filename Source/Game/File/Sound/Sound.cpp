@@ -2,7 +2,7 @@
 
 #include <Utilities/StringUtilities.h>
 
-#include <magic_enum.hpp>
+#include <magic_enum/magic_enum.hpp>
 #include <spdlog/spdlog.h>
 
 static sf_count_t getByteBufferLength(void * userData) {
