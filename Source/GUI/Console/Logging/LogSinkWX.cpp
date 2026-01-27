@@ -44,7 +44,7 @@ void LogSinkWX::sink_it_(const spdlog::details::log_msg & logMessage) {
 
 	wxLogLevel logLevel = WXUtilities::spdLogLevelToWXLogLevel(logMessage.level);
 	std::string_view formattedLogMessageWithNewlines(m_formatBuffer.data(), m_formatBuffer.size() - 1);
-	std::string formattedLogMessageWithoutNewlines(formattedLogMessageWithNewlines.data(), formattedLogMessageWithNewlines.find_last_not_of("\r\n"));
+	std::string formattedLogMessageWithoutNewlines(formattedLogMessageWithNewlines.data(), formattedLogMessageWithNewlines.find_last_not_of("\r\n") + 1);
 
 	if(m_initialized) {
 		wxLogGeneric(logLevel, "%s", formattedLogMessageWithoutNewlines.data());
