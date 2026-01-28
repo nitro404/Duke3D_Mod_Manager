@@ -200,7 +200,7 @@ const std::chrono::seconds SettingsManager::DEFAULT_CONNECTION_TIMEOUT = 15s;
 const std::chrono::seconds SettingsManager::DEFAULT_NETWORK_TIMEOUT = 30s;
 const std::chrono::seconds SettingsManager::DEFAULT_TRANSFER_TIMEOUT = 0s;
 const bool SettingsManager::DEFAULT_VERBOSE_REQUEST_LOGGING = false;
-const std::string SettingsManager::DEFAULT_API_BASE_URL("http://duke3dmods.com");
+const std::string SettingsManager::DEFAULT_API_BASE_URL("https://www.duke3dmods.com");
 const std::string SettingsManager::DEFAULT_REMOTE_MODS_LIST_FILE_NAME("duke3d_mods.xml");
 const std::string SettingsManager::DEFAULT_REMOTE_DOSBOX_VERSIONS_LIST_FILE_NAME("dosbox_versions.json");
 const std::string SettingsManager::DEFAULT_REMOTE_GAMES_LIST_FILE_NAME("duke3d_games.json");
