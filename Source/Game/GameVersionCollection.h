@@ -52,16 +52,14 @@ public:
 	std::vector<std::string> getGameVersionShortNames(bool prependItemNumber = true) const;
 	static std::vector<std::string> getGameVersionShortNamesFrom(const std::vector<std::shared_ptr<GameVersion>> & gameVersions, bool prependItemNumber = true);
 	static std::vector<std::string> getGameVersionShortNamesFrom(const std::vector<const GameVersion *> & gameVersions, bool prependItemNumber = true);
-	bool addGameVersion(const GameVersion & gameVersion);
-	bool addGameVersion(std::shared_ptr<GameVersion> gameVersion);
+	std::shared_ptr<GameVersion> addGameVersion(const GameVersion & gameVersion);
+	std::shared_ptr<GameVersion> addGameVersion(std::shared_ptr<GameVersion> gameVersion);
 	size_t addGameVersions(const std::vector<GameVersion> & gameVersions);
 	size_t addGameVersions(const std::vector<const GameVersion *> & gameVersions);
 	size_t addGameVersions(const std::vector<std::shared_ptr<GameVersion>> & gameVersions);
 	bool removeGameVersion(size_t index);
 	bool removeGameVersion(const GameVersion & gameVersion);
 	bool removeGameVersionWithID(const std::string & gameVersionID);
-	size_t addMissingDefaultGameVersions();
-	void setDefaultGameVersions();
 	void clearGameVersions();
 
 	size_t checkForMissingExecutables() const;

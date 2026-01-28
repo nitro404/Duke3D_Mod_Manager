@@ -9,7 +9,7 @@ public:
 	virtual ~GameLocatorWindows();
 
 	// GameLocator Virtuals
-	virtual std::vector<std::string> getGameSearchPaths() override;
+	virtual std::vector<std::pair<std::string, std::string>> getGameSearchPaths() override;
 
 private:
 	GameLocatorWindows(const GameLocatorWindows &) = delete;

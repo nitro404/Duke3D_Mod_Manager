@@ -29,6 +29,9 @@ public:
 	std::string getGameDownloadsListFilePath() const;
 	bool loadDOSBoxConfigurations() const;
 	bool saveDOSBoxConfigurations() const;
+	size_t addMissingDefaultGameVersions();
+	void setDefaultGameVersions();
+	size_t populateEmptyNonInstallableGamePaths();
 	bool shouldUpdateGameDownloadList() const;
 	bool loadOrUpdateGameDownloadList(bool forceUpdate = false) const;
 	bool updateGameDownloadList(bool force = false) const;
@@ -50,7 +53,6 @@ public:
 	std::string getRDukeDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType architectureType) const;
 	std::vector<std::string> getDuke3d_w32DownloadURLs(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType architectureType) const;
 	bool installGame(const std::string & gameVersionID, const std::string & destinationDirectoryPath, std::string * newGameExecutableName = nullptr, bool useFallback = false, bool overwrite = true, bool * aborted = nullptr);
-	static bool isGameDownloadable(const std::string & gameVersionID);
 	bool isGroupFileDownloaded(const std::string & gameVersionID) const;
 	std::shared_ptr<GameVersion> getGroupGameVersion(const std::string & gameVersionID) const;
 	std::string getGroupFilePath(const std::string & gameVersionID) const;

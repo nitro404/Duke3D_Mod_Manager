@@ -282,10 +282,10 @@ bool GameManager::initialize() {
 		}
 
 		// use default game version configurations
-		m_gameVersions->setDefaultGameVersions();
+		setDefaultGameVersions();
 	}
 
-	m_gameVersions->addMissingDefaultGameVersions();
+	addMissingDefaultGameVersions();
 
 	if(!loadDOSBoxConfigurations()) {
 		return false;
@@ -406,6 +406,60 @@ bool GameManager::saveDOSBoxConfigurations() const {
 	}
 
 	return true;
+}
+
+size_t GameManager::addMissingDefaultGameVersions() {
+	size_t numberOfGameVersionsAdded = 0;
+
+	for(std::vector<const GameVersion *>::const_iterator i = GameVersion::DEFAULT_GAME_VERSIONS.begin(); i != GameVersion::DEFAULT_GAME_VERSIONS.end(); ++i) {
+		if(m_gameVersions->hasGameVersionWithID((*i)->getID())) {
+			continue;
+		}
+
+		spdlog::info("Adding missing default game version '{}'.", (*i)->getLongName());
+
+		if(m_gameVersions->addGameVersion(**i) != nullptr) {
+			numberOfGameVersionsAdded++;
+		}
+	}
+
+	populateEmptyNonInstallableGamePaths();
+
+	return numberOfGameVersionsAdded;
+}
+
+void GameManager::setDefaultGameVersions() {
+	m_gameVersions->clearGameVersions();
+
+	m_gameVersions->addGameVersions(GameVersion::DEFAULT_GAME_VERSIONS);
+
+	populateEmptyNonInstallableGamePaths();
+}
+
+size_t GameManager::populateEmptyNonInstallableGamePaths() {
+	size_t numberOfEmptyNonInstallableGamePathsPopulated = 0;
+
+	for (size_t i = 0; i < m_gameVersions->numberOfGameVersions(); i++) {
+		std::shared_ptr<GameVersion> gameVersion(m_gameVersions->getGameVersion(i));
+
+		if(gameVersion->isInstallable() || gameVersion->hasGamePath()) {
+			continue;
+		}
+
+		const std::string * installedGamePath = GameLocator::getInstance()->getGamePathWithID(gameVersion->getID());
+
+		if(Utilities::isEmptyString(installedGamePath)) {
+			continue;
+		}
+
+		spdlog::info("Assigning automatically located installed game path for game version '{}': '{}'.", gameVersion->getLongName(), *installedGamePath);
+
+		gameVersion->setGamePath(*installedGamePath);
+
+		numberOfEmptyNonInstallableGamePathsPopulated++;
+	}
+
+	return numberOfEmptyNonInstallableGamePathsPopulated;
 }
 
 bool GameManager::shouldUpdateGameDownloadList() const {
@@ -594,25 +648,6 @@ bool GameManager::updateGameDownloadList(bool force) const {
 	}
 
 	return true;
-}
-
-bool GameManager::isGameDownloadable(const std::string & gameVersionID) {
-	return Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::LAMEDUKE.getID()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_BETA_VERSION.getID()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_REGULAR_VERSION.getID()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_PLUTONIUM_PAK.getID()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ORIGINAL_ATOMIC_EDITION.getID()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::JFDUKE3D.getID()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::EDUKE32.getID()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::NETDUKE32.getID()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::RAZE.getID()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::RED_NUKEM.getID()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::BELGIAN_CHOCOLATE_DUKE3D.getID()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::DUKE3DW.getID()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::PKDUKE3D.getID()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::XDUKE.getID()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::RDUKE.getID()) ||
-		   Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::DUKE3D_W32.getID());
 }
 
 std::vector<std::string> GameManager::getGameDownloadURLs(const std::string & gameVersionID) {
@@ -2392,7 +2427,7 @@ bool GameManager::installGame(const std::string & gameVersionID, const std::stri
 		return false;
 	}
 
-	if(!isGameDownloadable(gameVersion->getID())) {
+	if(!gameVersion->isInstallable()) {
 		spdlog::error("'{}' is not downloadable.", gameVersion->getLongName());
 		return false;
 	}

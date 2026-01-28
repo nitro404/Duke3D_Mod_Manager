@@ -388,7 +388,7 @@ void GameManagerPanel::updateButtons() {
 	}
 
 	bool isGameVersionModified = gameVersionPanel != nullptr ? gameVersionPanel->isModified() : false;
-	bool isGameVersionInstallable = gameVersion != nullptr ? GameManager::isGameDownloadable(gameVersion->getID()) : false;
+	bool isGameVersionInstallable = gameVersion != nullptr ? gameVersion->isInstallable() : false;
 	bool isGameVersionInstalled = gameVersion != nullptr ? gameVersion->hasGamePath() : false;
 	bool isGameVersionRemovable = gameVersion != nullptr ? gameVersion->isRemovable() : false;
 
@@ -476,7 +476,7 @@ bool GameManagerPanel::installGameVersion(size_t index) {
 
 	std::shared_ptr<GameVersion> gameVersion(gameVersionPanel->getGameVersion());
 
-	if(gameVersion->hasGamePath() || !gameVersion->hasID() || !GameManager::isGameDownloadable(gameVersion->getID()) || !m_gameManager->isInitialized()) {
+	if(gameVersion->hasGamePath() || !gameVersion->hasID() || !gameVersion->isInstallable() || !m_gameManager->isInitialized()) {
 		return false;
 	}
 
@@ -679,7 +679,7 @@ bool GameManagerPanel::saveGameVersion(size_t index) {
 
 	std::shared_ptr<GameVersionCollection> gameVersions(m_gameManager->getGameVersions());
 
-	if(gameVersions->addGameVersion(gameVersion)) {
+	if(gameVersions->addGameVersion(gameVersion) != nullptr) {
 		spdlog::info("Added new game version to collection with name '{}'.", gameVersion->getLongName());
 	}
 

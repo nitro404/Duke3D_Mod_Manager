@@ -449,11 +449,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 		return false;
 	}
 
-	GameLocator * gameLocator = GameLocator::getInstance();
-
-	if(gameLocator->locateGames()) {
-		spdlog::info("Located {} Duke Nukem 3D game install{}.", gameLocator->numberOfGamePaths(), gameLocator->numberOfGamePaths() == 1 ? "" : "s");
-	}
+	GameLocator::getInstance()->locateGames();
 
 	if(!notifyInitializationProgress("Initializing Mod Download Manager", aborted)) {
 		return false;
@@ -2321,6 +2317,10 @@ bool ModManager::installStandAloneMod(const ModGameVersion & standAloneModGameVe
 		properties["version"] = standAloneMod->getVersion();
 		properties["gameExecutableName"] = standAloneMod->getGameExecutableName();
 
+		if(standAloneMod->hasGameExecutableDirectoryPath()) {
+			properties["gameExecutableSubdirectoryName"] = standAloneMod->getGameExecutableDirectoryPath().value();
+		}
+
 		if(standAloneMod->hasSetupExecutableName()) {
 			properties["setupExecutableName"] = standAloneMod->getSetupExecutableName();
 		}
@@ -3008,6 +3008,10 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 	scriptArgs.addArgument("GAMEPATH", selectedGameVersion->getGamePath());
 	scriptArgs.addArgument("DUKE3D", selectedGameVersion->getGameExecutableName());
+
+	if(selectedGameVersion->hasGameExecutableDirectoryPath()) {
+		scriptArgs.addArgument("GAMEEXEPATH", selectedGameVersion->getGameExecutableDirectoryPath().value());
+	}
 
 	if(selectedGameVersion->hasSetupExecutableName()) {
 		scriptArgs.addArgument("SETUP", selectedGameVersion->getSetupExecutableName().value());
@@ -3861,10 +3865,12 @@ std::string ModManager::generateCommand(std::shared_ptr<GameVersion> gameVersion
 	}
 
 	std::string executableName;
+	std::optional<std::string> executableDirectoryPath;
 	GameType gameType = getGameType();
 
 	if(gameType == GameType::Game) {
 		executableName = gameVersion->getGameExecutableName();
+		executableDirectoryPath = gameVersion->getGameExecutableDirectoryPath();
 	}
 	else {
 		if(!gameVersion->hasSetupExecutableName()) {
@@ -4113,7 +4119,7 @@ std::string ModManager::generateCommand(std::shared_ptr<GameVersion> gameVersion
 
 		Script dosboxScript;
 
-		scriptArgs.addArgument("COMMAND", executableName + command.str());
+		scriptArgs.addArgument("COMMAND", Utilities::joinPaths(executableDirectoryPath.value_or(""), executableName) + command.str());
 
 		std::string dosboxTemplateScriptFilePath(getDOSBoxCommandScriptFilePath(gameType));
 
@@ -4125,7 +4131,7 @@ std::string ModManager::generateCommand(std::shared_ptr<GameVersion> gameVersion
 		return generateDOSBoxCommand(dosboxScript, scriptArgs, *selectedDOSBoxVersion, settings->dosboxArguments, settings->dosboxShowConsole, settings->dosboxFullscreen, combinedDOSBoxConfigurationFilePath);
 	}
 
-	return "\"" +  Utilities::joinPaths(gameVersion->getGamePath(), executableName) + "\"" + command.str();
+	return "\"" +  Utilities::joinPaths(gameVersion->getGamePath(), executableDirectoryPath.value_or(""), executableName) + "\"" + command.str();
 }
 
 std::string ModManager::generateDOSBoxCommand(const Script & script, const ScriptArguments & arguments, const DOSBoxVersion & dosboxVersion, const std::string & dosboxArguments, bool showConsole, bool fullscreen, std::string_view combinedDOSBoxConfigurationFilePath) const {
