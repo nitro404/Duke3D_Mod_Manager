@@ -152,6 +152,10 @@ bool GroupGRP::writeTo(ByteBuffer & byteBuffer) const {
 	for(size_t i = 0; i < m_files.size(); i++) {
 		const std::shared_ptr<GroupFile> file(m_files.at(i));
 
+		if(!file->hasData()) {
+			continue;
+		}
+
 		if(!byteBuffer.writeBytes(file->getData())) {
 			return false;
 		}
