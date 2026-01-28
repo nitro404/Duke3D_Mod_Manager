@@ -2839,7 +2839,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 						combinedZip->addData(groupFile->transferData(), groupFile->getFileName(), true);
 					}
 
-					spdlog::info("Added {} original '{}' game file{} to combined zip archive file.", dukeNukemGroup->numberOfFiles(), dukeNukemGroup->numberOfFiles() == 1 ? "" : "s", dukeNukemGroupGameVersion->getLongName());
+					spdlog::info("Added {} original '{}' game file{} to combined zip archive file.", dukeNukemGroup->numberOfFiles(), dukeNukemGroupGameVersion->getLongName(), dukeNukemGroup->numberOfFiles() == 1 ? "" : "s");
 
 					dukeNukemGroup.reset();
 				}
@@ -2848,7 +2848,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 				if(selectedGameVersion->doesRequireOriginalGameFiles()) {
 					combinedGroup = std::move(dukeNukemGroup);
 
-					spdlog::info("Added {} original '{}' game file{} to combined group file.", combinedGroup->numberOfFiles(), combinedGroup->numberOfFiles() == 1 ? "" : "s", dukeNukemGroupGameVersion->getLongName());
+					spdlog::info("Added {} original '{}' game file{} to combined group file.", combinedGroup->numberOfFiles(), dukeNukemGroupGameVersion->getLongName(), combinedGroup->numberOfFiles() == 1 ? "" : "s");
 				}
 				else {
 					combinedGroup = std::make_unique<GroupGRP>();
