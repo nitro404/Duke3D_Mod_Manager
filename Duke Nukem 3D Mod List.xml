@@ -12104,4 +12104,28 @@
 			<download filename="It_Lives_1.05-ModMgrJF.zip" filesize="399428" version="1.05" game="JFDuke3D" type="Mod Manager Files" state="Native" sha1="8ce05fdd353e13706f9e0e31ad554fe4844a7ef7"/>
 		</downloads>
 	</mod>
+	<mod name="Mission Istanbul" id="mission_istanbul" type="Total Conversion">
+		<team>
+			<member name="Gingis Khan"/>
+		</team>
+		<versions>
+			<version release_date="July 18, 2017">
+				<type>
+					<game type="Regular" state="Native">
+						<file name="ISTANBUL.CON" size="99598" type="con" sha1="70371a6dd27d600f5f5ad86107aa4c0ee76e14fa"/>
+						<file name="ISTANBUL.GRP" size="84301428" type="grp" sha1="336efa3c21864d091ff49b13e0d48d0751cd731d"/>
+					</game>
+					<game type="Atomic" state="Converted">
+						<file name="ISTANBUL.CON" size="151149" type="con" sha1="00ad677ce214f51c49880466c2b459c8086f2907"/>
+						<file name="ISTANBUL.GRP" size="84362397" type="grp" sha1="cde5ed92eaca84a51f3419c116b07cb68051ec7c"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="mission-istanbul.7z" filesize="47749116" game="Regular" type="Original Files" sha1="15961fc079226926c8b656d68ab532c7df70f9ae"/>
+			<download filename="Mission_Istanbul-ModMgrR.zip" filesize="62962643" game="Regular" type="Mod Manager Files" state="Native" sha1="f6bc59c53745ba43dc4a3738096d1f9954107451"/>
+			<download filename="Mission_Istanbul-ModMgrA.zip" filesize="62983071" game="Atomic" type="Mod Manager Files" state="Converted" sha1="e340f016bba594b86f23fbb259e689f2baa10c6b"/>
+		</downloads>
+	</mod>
 </mods>
