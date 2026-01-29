@@ -28,7 +28,7 @@ public:
 	};
 
 	GameVersion();
-	GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool installable, bool removable, const std::string & gamePath, const std::string & gameExecutableName, const std::optional<std::string> & gameExecutableDirectoryPath, const std::string & gameConfigurationFileName, const std::optional<std::string> & gameConfigurationDirectoryPath, bool localWorkingDirectory, std::optional<bool> scriptFilesReadFromGroup, bool supportsSubdirectories, std::optional<bool> worldTourGroupSupported, std::optional<bool> zipArchiveGroupsSupported, std::optional<uint16_t> maximumGroupFiles, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag = {}, const std::optional<std::string> & weaponSwitchOrderArgumentFlag = {}, const std::optional<std::string> & disableMonstersArgumentFlag = {}, const std::optional<std::string> & disableSoundArgumentFlag = {}, const std::optional<std::string> & disableMusicArgumentFlag = {}, const std::optional<std::string> & setupExecutableName = {}, const std::optional<std::string> & groupFileInstallPath = {}, const std::optional<std::string> & defFileArgumentFlag = {}, const std::optional<std::string> & extraDefFileArgumentFlag = {}, const std::optional<bool> & requiresOriginalGameFiles = {}, const std::optional<bool> & requiresGroupFileExtraction = {}, const std::string & website = {}, const std::string & sourceCodeURL = {}, const std::vector<OperatingSystem> & supportedOperatingSystems = {}, const std::vector<std::string> & compatibleGameVersions = {}, const std::vector<std::string> & notes = {}, const DOSBoxConfiguration & dosboxConfiguration = {});
+	GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool installable, bool removable, const std::string & gamePath, const std::string & gameExecutableName, const std::optional<std::string> & gameExecutableDirectoryPath, const std::string & gameConfigurationFileName, const std::optional<std::string> & gameConfigurationDirectoryPath, bool localWorkingDirectory, std::optional<bool> scriptFilesReadFromGroup, bool supportsSubdirectories, std::optional<bool> worldTourGroupSupported, std::optional<bool> zipArchiveGroupsSupported, std::optional<uint16_t> maximumGroupFiles, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag = {}, const std::optional<std::string> & weaponSwitchOrderArgumentFlag = {}, const std::optional<std::string> & disableMonstersArgumentFlag = {}, const std::optional<std::string> & disableSoundArgumentFlag = {}, const std::optional<std::string> & disableMusicArgumentFlag = {}, const std::optional<std::string> & setupExecutableName = {}, const std::optional<std::string> & groupFileInstallPath = {}, const std::optional<std::string> & defFileArgumentFlag = {}, const std::optional<std::string> & extraDefFileArgumentFlag = {}, const std::optional<bool> & requiresOriginalGameFiles = {}, const std::optional<bool> & requiresGroupFileExtraction = {}, const std::string & website = {}, const std::string & sourceCodeURL = {}, const std::vector<OperatingSystem> & supportedOperatingSystems = {}, const std::vector<std::string> & compatibleGameVersions = {}, const std::vector<std::string> & conflictingGameFiles = {}, const std::vector<std::string> & notes = {}, const DOSBoxConfiguration & dosboxConfiguration = {});
 	GameVersion(GameVersion && gameVersion) noexcept;
 	GameVersion(const GameVersion & gameVersion);
 	GameVersion & operator = (GameVersion && gameVersion) noexcept;
@@ -227,6 +227,17 @@ public:
 	bool removeCompatibleGameVersionWithID(const std::string & gameVersionID);
 	void clearCompatibleGameVersions();
 
+	size_t numberOfConflictingGameFiles() const;
+	bool hasConflictingGameFiles() const;
+	bool hasConflictingGameFile(const std::string & filePath) const;
+	size_t indexOfConflictingGameFile(const std::string & filePath) const;
+	std::string getConflictingGameFile(size_t index) const;
+	const std::vector<std::string> & getConflictingGameFiles() const;
+	bool addConflictingGameFile(const std::string & filePath);
+	bool removeConflictingGameFile(size_t index);
+	bool removeConflictingGameFile(const std::string & filePath);
+	void clearConflictingGameFiles();
+
 	size_t numberOfNotes() const;
 	bool hasNote(const std::string & note) const;
 	size_t indexOfNote(const std::string & note) const;
@@ -357,6 +368,7 @@ private:
 	std::optional<std::string> m_disableMusicArgumentFlag;
 	std::vector<OperatingSystem> m_supportedOperatingSystems;
 	std::vector<std::string> m_compatibleGameVersionIdentifiers;
+	std::vector<std::string> m_conflictingGameFiles;
 	std::vector<std::string> m_notes;
 	std::shared_ptr<DOSBoxConfiguration> m_dosboxConfiguration;
 	mutable bool m_modified;
