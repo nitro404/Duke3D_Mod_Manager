@@ -2384,7 +2384,14 @@ std::unique_ptr<GameVersion> GameVersion::createTemplateFrom() const {
 		m_defFileArgumentFlag,
 		m_extraDefFileArgumentFlag,
 		m_requiresOriginalGameFiles,
-		m_requiresGroupFileExtraction
+		m_requiresGroupFileExtraction,
+		"",
+		"",
+		m_supportedOperatingSystems,
+		m_compatibleGameVersionIdentifiers,
+		m_conflictingGameFiles,
+		std::vector<std::string>(),
+		*m_dosboxConfiguration
 	);
 }
 
