@@ -153,6 +153,10 @@ GameVersionPanel::GameVersionPanel(std::shared_ptr<GameVersion> gameVersion, wxW
 	m_dosboxConfigurationBox = new wxStaticBox(this, wxID_ANY, (m_gameVersion->hasLongName() ? m_gameVersion->getLongName() + " " : "") + "DOSBox Configuration", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Game DOSBox Configuration");
 	m_dosboxConfigurationBox->SetOwnFont(m_dosboxConfigurationBox->GetFont().MakeBold());
 
+	if(!m_gameVersion->doesRequireDOSBox()) {
+		m_dosboxConfigurationBox->Hide();
+	}
+
 	m_dosboxConfigurationPanel = new DOSBoxConfigurationPanel(m_gameVersion->getDOSBoxConfiguration(), m_dosboxConfigurationBox);
 	m_dosboxConfigurationPanel->setEnabled(m_gameVersion->doesRequireDOSBox());
 
@@ -359,6 +363,13 @@ void GameVersionPanel::update() {
 
 	m_dosboxConfigurationPanel->setEnabled(m_gameVersion->doesRequireDOSBox());
 	m_dosboxConfigurationBox->SetLabelText((m_gameVersion->hasLongName() ? m_gameVersion->getLongName() + " " : "") + "DOSBox Configuration");
+
+	if(m_gameVersion->doesRequireDOSBox()) {
+		m_dosboxConfigurationBox->Show();
+	}
+	else {
+		m_dosboxConfigurationBox->Hide();
+	}
 
 	Layout();
 }
