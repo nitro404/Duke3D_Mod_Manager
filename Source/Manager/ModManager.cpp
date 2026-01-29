@@ -3176,7 +3176,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		return false;
 	}
 
-	if(!standAlone && hasAnyGroupFiles) {
+	if(!standAlone && (hasAnyGroupFiles || selectedGameVersion->hasConflictingGameFiles())) {
 		launchStatus("Backing up conflicting files in game directory.");
 
 		size_t totalNumberOfBackedUpConflictingGameFiles = 0;
@@ -3195,33 +3195,41 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 			}
 		}
 
+		std::vector<std::string> conflictingGameFileNames(selectedGameVersion->getConflictingGameFiles());
+
 		for(const std::string & conflictingGameFileName : CONFLICTING_GAME_FILE_NAMES) {
+			conflictingGameFileNames.push_back(conflictingGameFileName);
+		}
+
+		for(const std::string & conflictingGameFileName : conflictingGameFileNames) {
 			std::filesystem::path originalGameFilePath(Utilities::joinPaths(selectedGameVersion->getGamePath(), conflictingGameFileName));
 
-			if(std::filesystem::is_regular_file(originalGameFilePath)) {
-				std::filesystem::path newGameFilePath(Utilities::replaceFileExtension(originalGameFilePath.string(), std::string(Utilities::getFileExtension(conflictingGameFileName)) + "_"));
-
-				spdlog::info("Renaming conflicting game file: '{}' to '{}'.", originalGameFilePath.string(), newGameFilePath.string());
-
-				std::error_code errorCode;
-				std::filesystem::rename(originalGameFilePath, newGameFilePath, errorCode);
-
-				if(errorCode) {
-					spdlog::error("Failed to rename conflicting game file '{}' to '{}': {}", originalGameFilePath.string(), newGameFilePath.string(), errorCode.message());
-					continue;
-				}
-
-				std::filesystem::path relativeRenamedFilePath(std::filesystem::relative(originalGameFilePath, std::filesystem::path(selectedGameVersion->getGamePath()), errorCode));
-
-				if(errorCode) {
-					spdlog::warn("Failed to relativize renamed conflicting game file path: '{}' against base path: '{}'.", originalGameFilePath.string(), selectedGameVersion->getGamePath());
-					continue;
-				}
-
-				totalNumberOfBackedUpConflictingGameFiles++;
-
-				installedModInfo->addOriginalFile(relativeRenamedFilePath.string());
+			if(!std::filesystem::is_regular_file(originalGameFilePath)) {
+				continue;
 			}
+
+			std::filesystem::path newGameFilePath(Utilities::replaceFileExtension(originalGameFilePath.string(), std::string(Utilities::getFileExtension(conflictingGameFileName)) + "_"));
+
+			spdlog::info("Renaming conflicting game file: '{}' to '{}'.", originalGameFilePath.string(), newGameFilePath.string());
+
+			std::error_code errorCode;
+			std::filesystem::rename(originalGameFilePath, newGameFilePath, errorCode);
+
+			if(errorCode) {
+				spdlog::error("Failed to rename conflicting game file '{}' to '{}': {}", originalGameFilePath.string(), newGameFilePath.string(), errorCode.message());
+				continue;
+			}
+
+			std::filesystem::path relativeRenamedFilePath(std::filesystem::relative(originalGameFilePath, std::filesystem::path(selectedGameVersion->getGamePath()), errorCode));
+
+			if(errorCode) {
+				spdlog::warn("Failed to relativize renamed conflicting game file path: '{}' against base path: '{}'.", originalGameFilePath.string(), selectedGameVersion->getGamePath());
+				continue;
+			}
+
+			totalNumberOfBackedUpConflictingGameFiles++;
+
+			installedModInfo->addOriginalFile(relativeRenamedFilePath.string());
 		}
 
 		if(totalNumberOfBackedUpConflictingGameFiles != 0) {
