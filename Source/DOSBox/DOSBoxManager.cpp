@@ -55,6 +55,9 @@ bool DOSBoxManager::initialize() {
 		// use default DOSBox version configurations
 		m_dosboxVersions->setDefaultDOSBoxVersions();
 	}
+	else {
+		spdlog::info("Loaded {} DOSBox version{} from file '{}'.", m_dosboxVersions->numberOfDOSBoxVersions(), m_dosboxVersions->numberOfDOSBoxVersions() == 1 ? "" : "s", settings->dosboxVersionsListFilePath);
+	}
 
 	m_dosboxVersions->addMissingDefaultDOSBoxVersions();
 

@@ -284,6 +284,9 @@ bool GameManager::initialize() {
 		// use default game version configurations
 		setDefaultGameVersions();
 	}
+	else {
+		spdlog::info("Loaded {} game version{} from file '{}'.", m_gameVersions->numberOfGameVersions(), m_gameVersions->numberOfGameVersions() == 1 ? "" : "s", settings->gameVersionsListFilePath);
+	}
 
 	addMissingDefaultGameVersions();
 
