@@ -287,7 +287,6 @@ public:
 	static const GameVersion ORIGINAL_REGULAR_VERSION;
 	static const GameVersion ORIGINAL_PLUTONIUM_PAK;
 	static const GameVersion ORIGINAL_ATOMIC_EDITION;
-	//static const GameVersion WORLD_TOUR;
 	static const GameVersion JFDUKE3D;
 	static const GameVersion MEGATON_EDITION;
 	static const GameVersion DUKE3DW;
