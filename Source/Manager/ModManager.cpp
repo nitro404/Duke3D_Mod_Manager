@@ -3943,8 +3943,8 @@ std::string ModManager::generateCommand(std::shared_ptr<GameVersion> gameVersion
 			}
 		}
 
-		if(m_demoRecordingEnabled) {
-			command << " " << gameVersion->getRecordDemoArgumentFlag();
+		if(m_demoRecordingEnabled && gameVersion->hasRecordDemoArgumentFlag()) {
+			command << " " << gameVersion->getRecordDemoArgumentFlag().value();
 		}
 
 		if(m_arguments->hasArgument("d") || m_arguments->hasArgument("demo")) {
