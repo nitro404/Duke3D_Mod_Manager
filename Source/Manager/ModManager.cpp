@@ -3926,7 +3926,7 @@ std::string ModManager::generateCommand(std::shared_ptr<GameVersion> gameVersion
 			}
 		}
 
-		if(m_arguments->hasArgument("s") || m_arguments->hasArgument("skill")) {
+		if(m_arguments->hasArgument("s") || m_arguments->hasArgument("skill") && gameVersion->hasSkillArgumentFlag()) {
 			std::string skillNumberData(m_arguments->getFirstValue("s"));
 
 			if(skillNumberData.empty()) {
@@ -3936,7 +3936,7 @@ std::string ModManager::generateCommand(std::shared_ptr<GameVersion> gameVersion
 			std::optional<uint8_t> optionalSkillNumber(Utilities::parseUnsignedByte(skillNumberData));
 
 			if(optionalSkillNumber.has_value() && optionalSkillNumber.value() >= 1 && optionalSkillNumber.value() <= 4) {
-				command << " " << gameVersion->getSkillArgumentFlag() << std::to_string(optionalSkillNumber.value() - 1 + gameVersion->getSkillStartValue());
+				command << " " << gameVersion->getSkillArgumentFlag().value() << std::to_string(optionalSkillNumber.value() - 1 + gameVersion->getSkillStartValue());
 			}
 			else {
 				spdlog::warn("Invalid skill number: '{}'.", skillNumberData);
