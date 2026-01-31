@@ -3909,7 +3909,7 @@ std::string ModManager::generateCommand(std::shared_ptr<GameVersion> gameVersion
 			}
 		}
 
-		if(m_arguments->hasArgument("l") || m_arguments->hasArgument("level")) {
+		if(m_arguments->hasArgument("l") || m_arguments->hasArgument("level") && gameVersion->hasLevelArgumentFlag()) {
 			std::string levelNumberData(m_arguments->getFirstValue("l"));
 
 			if(levelNumberData.empty()) {
@@ -3919,7 +3919,7 @@ std::string ModManager::generateCommand(std::shared_ptr<GameVersion> gameVersion
 			std::optional<uint8_t> optionalLevelNumber(Utilities::parseUnsignedByte(levelNumberData));
 
 			if(optionalLevelNumber.has_value() && optionalLevelNumber.value() >= 1 && optionalLevelNumber.value() <= 11) {
-				command << " " << gameVersion->getLevelArgumentFlag() << std::to_string(optionalLevelNumber.value());
+				command << " " << gameVersion->getLevelArgumentFlag().value() << std::to_string(optionalLevelNumber.value());
 			}
 			else {
 				spdlog::warn("Invalid level number: '{}'.", levelNumberData);
