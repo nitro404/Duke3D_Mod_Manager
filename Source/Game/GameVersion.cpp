@@ -187,7 +187,7 @@ GameVersion::GameVersion()
 	, m_dosboxConfiguration(std::make_shared<DOSBoxConfiguration>())
 	, m_modified(false) { }
 
-GameVersion::GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool installable, bool removable, const std::string & gamePath, const std::string & gameExecutableName, const std::optional<std::string> & gameExecutableDirectoryPath, const std::string & gameConfigurationFileName, const std::optional<std::string> & gameConfigurationDirectoryPath, bool localWorkingDirectory, std::optional<bool> scriptFilesReadFromGroup, bool supportsSubdirectories, std::optional<bool> worldTourGroupSupported, std::optional<bool> zipArchiveGroupsSupported, std::optional<uint16_t> maximumGroupFiles, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::string & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag, const std::optional<std::string> & weaponSwitchOrderArgumentFlag, const std::optional<std::string> & disableMonstersArgumentFlag, const std::optional<std::string> & disableSoundArgumentFlag, const std::optional<std::string> & disableMusicArgumentFlag, const std::optional<std::string> & setupExecutableName, const std::optional<std::string> & groupFileInstallPath, const std::optional<std::string> & defFileArgumentFlag, const std::optional<std::string> & extraDefFileArgumentFlag,const std::optional<bool> & requiresOriginalGameFiles, const std::optional<bool> & requiresGroupFileExtraction, const std::string & website, const std::string & sourceCodeURL, const std::vector<OperatingSystem> & supportedOperatingSystems, const std::vector<std::string> & compatibleGameVersionIdentifiers, const std::vector<std::string> & conflictingGameFiles, const std::vector<std::string> & notes, const DOSBoxConfiguration & dosboxConfiguration)
+GameVersion::GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool installable, bool removable, const std::string & gamePath, const std::string & gameExecutableName, const std::optional<std::string> & gameExecutableDirectoryPath, const std::string & gameConfigurationFileName, const std::optional<std::string> & gameConfigurationDirectoryPath, bool localWorkingDirectory, std::optional<bool> scriptFilesReadFromGroup, bool supportsSubdirectories, std::optional<bool> worldTourGroupSupported, std::optional<bool> zipArchiveGroupsSupported, std::optional<uint16_t> maximumGroupFiles, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::optional<std::string> & episodeArgumentFlag, const std::string & levelArgumentFlag, const std::string & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag, const std::optional<std::string> & weaponSwitchOrderArgumentFlag, const std::optional<std::string> & disableMonstersArgumentFlag, const std::optional<std::string> & disableSoundArgumentFlag, const std::optional<std::string> & disableMusicArgumentFlag, const std::optional<std::string> & setupExecutableName, const std::optional<std::string> & groupFileInstallPath, const std::optional<std::string> & defFileArgumentFlag, const std::optional<std::string> & extraDefFileArgumentFlag,const std::optional<bool> & requiresOriginalGameFiles, const std::optional<bool> & requiresGroupFileExtraction, const std::string & website, const std::string & sourceCodeURL, const std::vector<OperatingSystem> & supportedOperatingSystems, const std::vector<std::string> & compatibleGameVersionIdentifiers, const std::vector<std::string> & conflictingGameFiles, const std::vector<std::string> & notes, const DOSBoxConfiguration & dosboxConfiguration)
 	: m_id(Utilities::trimString(id))
 	, m_longName(Utilities::trimString(longName))
 	, m_shortName(Utilities::trimString(shortName))
@@ -1357,7 +1357,11 @@ void GameVersion::clearMapFileArgumentFlag() {
 	setModified(true);
 }
 
-const std::string & GameVersion::getEpisodeArgumentFlag() const {
+bool GameVersion::hasEpisodeArgumentFlag() const {
+	return m_episodeArgumentFlag.has_value();
+}
+
+const std::optional<std::string> & GameVersion::getEpisodeArgumentFlag() const {
 	return m_episodeArgumentFlag;
 }
 
@@ -1366,7 +1370,7 @@ bool GameVersion::setEpisodeArgumentFlag(const std::string & flag) {
 		return false;
 	}
 
-	if(Utilities::areStringsEqual(m_episodeArgumentFlag, flag)) {
+	if(m_episodeArgumentFlag.has_value() && Utilities::areStringsEqual(m_episodeArgumentFlag.value(), flag)) {
 		return true;
 	}
 
@@ -1375,6 +1379,16 @@ bool GameVersion::setEpisodeArgumentFlag(const std::string & flag) {
 	setModified(true);
 
 	return true;
+}
+
+void GameVersion::clearEpisodeArgumentFlag() {
+	if(!m_episodeArgumentFlag.has_value()) {
+		return;
+	}
+
+	m_episodeArgumentFlag.reset();
+
+	setModified(true);
 }
 
 const std::string & GameVersion::getLevelArgumentFlag() const {
@@ -2309,7 +2323,10 @@ void GameVersion::addMetadata(std::map<std::string, std::any> & metadata) const 
 		metadata["mapFileArgumentFlag"] = m_mapFileArgumentFlag.value();
 	}
 
-	metadata["episodeArgumentFlag"] = m_episodeArgumentFlag;
+	if(m_episodeArgumentFlag.has_value()) {
+		metadata["episodeArgumentFlag"] = m_episodeArgumentFlag.value();
+	}
+
 	metadata["levelArgumentFlag"] = m_levelArgumentFlag;
 	metadata["skillArgumentFlag"] = m_skillArgumentFlag;
 	metadata["skillStartValue"] = m_skillStartValue;
@@ -2507,8 +2524,10 @@ rapidjson::Value GameVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::C
 		gameVersionValue.AddMember(rapidjson::StringRef(JSON_MAP_FILE_ARGUMENT_FLAG_PROPERTY_NAME), mapFileArgumentFlagValue, allocator);
 	}
 
-	rapidjson::Value episodeArgumentFlagValue(m_episodeArgumentFlag.c_str(), allocator);
-	gameVersionValue.AddMember(rapidjson::StringRef(JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME), episodeArgumentFlagValue, allocator);
+	if(m_episodeArgumentFlag.has_value()) {
+		rapidjson::Value episodeArgumentFlagValue(m_episodeArgumentFlag->c_str(), allocator);
+		gameVersionValue.AddMember(rapidjson::StringRef(JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME), episodeArgumentFlagValue, allocator);
+	}
 
 	rapidjson::Value levelArgumentFlagValue(m_levelArgumentFlag.c_str(), allocator);
 	gameVersionValue.AddMember(rapidjson::StringRef(JSON_LEVEL_ARGUMENT_FLAG_PROPERTY_NAME), levelArgumentFlagValue, allocator);
@@ -3058,23 +3077,22 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 	}
 
 	// parse game version episode argument flag
-	if(!gameVersionValue.HasMember(JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME)) {
-		spdlog::error("Game version with ID '{}' is missing '{}' property.", id, JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME);
-		return nullptr;
-	}
+	std::optional<std::string> optionalEpisodeArgumentFlag;
 
-	const rapidjson::Value & episodeArgumentFlagValue = gameVersionValue[JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME];
+	if(gameVersionValue.HasMember(JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME)) {
+		const rapidjson::Value & episodeArgumentFlagValue = gameVersionValue[JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME];
 
-	if(!episodeArgumentFlagValue.IsString()) {
-		spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(episodeArgumentFlagValue.GetType()));
-		return nullptr;
-	}
+		if(!episodeArgumentFlagValue.IsString()) {
+			spdlog::error("Game version with ID '{}' has an invalid '{}' property type: '{}', expected 'string'.", id, JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME, Utilities::typeToString(episodeArgumentFlagValue.GetType()));
+			return nullptr;
+		}
 
-	std::string episodeArgumentFlag(episodeArgumentFlagValue.GetString());
+		optionalEpisodeArgumentFlag = episodeArgumentFlagValue.GetString();
 
-	if(episodeArgumentFlag.empty()) {
-		spdlog::error("Game version with ID '{}' '{}' property cannot be empty.", id, JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME);
-		return nullptr;
+		if(optionalEpisodeArgumentFlag.value().empty()) {
+			spdlog::error("Game version '{}' property cannot be empty.", JSON_EPISODE_ARGUMENT_FLAG_PROPERTY_NAME);
+			return nullptr;
+		}
 	}
 
 	// parse game version level argument flag
@@ -3290,7 +3308,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 	}
 
 	// initialize the game version
-	std::unique_ptr<GameVersion> newGameVersion(std::make_unique<GameVersion>(id, longName, shortName, isDefaultGameVersionWithIDInstallable(id), removable, gamePath, gameExecutableName, gameExecutableDirectoryPathOptional, gameConfigurationFileName, gameConfigurationDirectoryPathOptional, localWorkingDirectory, scriptFilesReadFromGroup, supportsSubdirectories, worldTourGroupSupported, zipArchiveGroupsSupported, optionalMaximumGroupFiles, modDirectoryName, optionalConFileArgumentFlag, optionalExtraConFileArgumentFlag, optionalGroupFileArgumentFlag, optionalMapFileArgumentFlag, episodeArgumentFlag, levelArgumentFlag, skillArgumentFlag, skillStartValue, recordDemoArgumentFlag, optionalPlayDemoArgumentFlag, optionalRespawnModeArgumentFlag, optionalWeaponSwitchOrderArgumentFlag, optionalDisableMonstersArgumentFlag, optionalDisableSoundArgumentFlag, optionalDisableMusicArgumentFlag, setupExecutableNameOptional, groupFileInstallPathOptional));
+	std::unique_ptr<GameVersion> newGameVersion(std::make_unique<GameVersion>(id, longName, shortName, isDefaultGameVersionWithIDInstallable(id), removable, gamePath, gameExecutableName, gameExecutableDirectoryPathOptional, gameConfigurationFileName, gameConfigurationDirectoryPathOptional, localWorkingDirectory, scriptFilesReadFromGroup, supportsSubdirectories, worldTourGroupSupported, zipArchiveGroupsSupported, optionalMaximumGroupFiles, modDirectoryName, optionalConFileArgumentFlag, optionalExtraConFileArgumentFlag, optionalGroupFileArgumentFlag, optionalMapFileArgumentFlag, optionalEpisodeArgumentFlag, levelArgumentFlag, skillArgumentFlag, skillStartValue, recordDemoArgumentFlag, optionalPlayDemoArgumentFlag, optionalRespawnModeArgumentFlag, optionalWeaponSwitchOrderArgumentFlag, optionalDisableMonstersArgumentFlag, optionalDisableSoundArgumentFlag, optionalDisableMusicArgumentFlag, setupExecutableNameOptional, groupFileInstallPathOptional));
 
 	if(!launchArguments.empty()) {
 		newGameVersion->setLaunchArguments(launchArguments);
@@ -3656,7 +3674,7 @@ bool GameVersion::isValid() const {
 	   (m_defFileArgumentFlag.has_value() && m_defFileArgumentFlag.value().empty()) ||
 	   (m_extraDefFileArgumentFlag.has_value() && m_extraDefFileArgumentFlag.value().empty()) ||
 	   (m_mapFileArgumentFlag.has_value() && m_mapFileArgumentFlag.value().empty()) ||
-	   m_episodeArgumentFlag.empty() ||
+	   (m_episodeArgumentFlag.has_value() && m_episodeArgumentFlag.value().empty()) ||
 	   m_levelArgumentFlag.empty() ||
 	   m_skillArgumentFlag.empty() ||
 	   m_recordDemoArgumentFlag.empty() ||

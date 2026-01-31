@@ -3892,7 +3892,7 @@ std::string ModManager::generateCommand(std::shared_ptr<GameVersion> gameVersion
 	std::stringstream command;
 
 	if(m_arguments != nullptr) {
-		if(m_arguments->hasArgument("v") || m_arguments->hasArgument("episode")) {
+		if(m_arguments->hasArgument("v") || m_arguments->hasArgument("episode") && gameVersion->hasEpisodeArgumentFlag()) {
 			std::string episodeNumberData(m_arguments->getFirstValue("v"));
 
 			if(episodeNumberData.empty()) {
@@ -3902,7 +3902,7 @@ std::string ModManager::generateCommand(std::shared_ptr<GameVersion> gameVersion
 			std::optional<uint8_t> optionalEpisodeNumber(Utilities::parseUnsignedByte(episodeNumberData));
 
 			if(optionalEpisodeNumber.has_value() && optionalEpisodeNumber.value() >= 1) {
-				command << " " << gameVersion->getEpisodeArgumentFlag() << std::to_string(optionalEpisodeNumber.value());
+				command << " " << gameVersion->getEpisodeArgumentFlag().value() << std::to_string(optionalEpisodeNumber.value());
 			}
 			else {
 				spdlog::warn("Invalid episode number: '{}'.", episodeNumberData);
