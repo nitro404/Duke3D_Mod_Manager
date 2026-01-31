@@ -663,7 +663,9 @@ rapidjson::Value ModGameVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson
 			propertiesValue.AddMember(propertyName, propertyValue, allocator);
 		}
 
-		propertiesValue.AddMember(rapidjson::StringRef(JSON_MOD_GAME_VERSION_PROPERTY_SKILL_START_VALUE_PROPERTY_NAME.c_str()), rapidjson::Value(m_standAloneGameVersion->getSkillStartValue()), allocator);
+		if(m_standAloneGameVersion->hasSkillStartValue()) {
+			propertiesValue.AddMember(rapidjson::StringRef(JSON_MOD_GAME_VERSION_PROPERTY_SKILL_START_VALUE_PROPERTY_NAME.c_str()), rapidjson::Value(m_standAloneGameVersion->getSkillStartValue().value()), allocator);
+		}
 
 		std::vector<std::pair<std::string, std::optional<bool>>> booleanProperties({
 			{ JSON_MOD_GAME_VERSION_PROPERTY_LOCAL_WORKING_DIRECTORY_PROPERTY_NAME,          m_standAloneGameVersion->hasLocalWorkingDirectory() },
@@ -759,9 +761,12 @@ tinyxml2::XMLElement * ModGameVersion::toXML(tinyxml2::XMLDocument * document) c
 			{ XML_MOD_GAME_VERSION_PROPERTY_GAME_EXE_NAME_NAME,                     m_standAloneGameVersion->getGameExecutableName() },
 			{ XML_MOD_GAME_VERSION_PROPERTY_SETUP_EXE_NAME_NAME,                    m_standAloneGameVersion->getSetupExecutableName() },
 			{ XML_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_FILE_NAME_NAME,      m_standAloneGameVersion->getGameConfigurationFileName() },
-			{ XML_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_DIRECTORY_PATH_NAME, m_standAloneGameVersion->getGameConfigurationDirectoryPath() },
-			{ XML_MOD_GAME_VERSION_PROPERTY_SKILL_START_VALUE_NAME,                 std::to_string(m_standAloneGameVersion->getSkillStartValue()) }
+			{ XML_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_DIRECTORY_PATH_NAME, m_standAloneGameVersion->getGameConfigurationDirectoryPath() }
 		});
+
+		if(m_standAloneGameVersion->hasSkillStartValue()) {
+			stringProperties.emplace_back(XML_MOD_GAME_VERSION_PROPERTY_SKILL_START_VALUE_NAME, std::to_string(m_standAloneGameVersion->getSkillStartValue().value()));
+		}
 
 		for(const std::pair<std::string, std::optional<std::string>> & stringProperty : stringProperties) {
 			if(!stringProperty.second.has_value()) {

@@ -187,7 +187,7 @@ GameVersion::GameVersion()
 	, m_dosboxConfiguration(std::make_shared<DOSBoxConfiguration>())
 	, m_modified(false) { }
 
-GameVersion::GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool installable, bool removable, const std::string & gamePath, const std::string & gameExecutableName, const std::optional<std::string> & gameExecutableDirectoryPath, const std::string & gameConfigurationFileName, const std::optional<std::string> & gameConfigurationDirectoryPath, bool localWorkingDirectory, std::optional<bool> scriptFilesReadFromGroup, bool supportsSubdirectories, std::optional<bool> worldTourGroupSupported, std::optional<bool> zipArchiveGroupsSupported, std::optional<uint16_t> maximumGroupFiles, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::optional<std::string> & episodeArgumentFlag, const std::optional<std::string> & levelArgumentFlag, const std::optional<std::string> & skillArgumentFlag, uint8_t skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag, const std::optional<std::string> & weaponSwitchOrderArgumentFlag, const std::optional<std::string> & disableMonstersArgumentFlag, const std::optional<std::string> & disableSoundArgumentFlag, const std::optional<std::string> & disableMusicArgumentFlag, const std::optional<std::string> & setupExecutableName, const std::optional<std::string> & groupFileInstallPath, const std::optional<std::string> & defFileArgumentFlag, const std::optional<std::string> & extraDefFileArgumentFlag,const std::optional<bool> & requiresOriginalGameFiles, const std::optional<bool> & requiresGroupFileExtraction, const std::string & website, const std::string & sourceCodeURL, const std::vector<OperatingSystem> & supportedOperatingSystems, const std::vector<std::string> & compatibleGameVersionIdentifiers, const std::vector<std::string> & conflictingGameFiles, const std::vector<std::string> & notes, const DOSBoxConfiguration & dosboxConfiguration)
+GameVersion::GameVersion(const std::string & id, const std::string & longName, const std::string & shortName, bool installable, bool removable, const std::string & gamePath, const std::string & gameExecutableName, const std::optional<std::string> & gameExecutableDirectoryPath, const std::string & gameConfigurationFileName, const std::optional<std::string> & gameConfigurationDirectoryPath, bool localWorkingDirectory, std::optional<bool> scriptFilesReadFromGroup, bool supportsSubdirectories, std::optional<bool> worldTourGroupSupported, std::optional<bool> zipArchiveGroupsSupported, std::optional<uint16_t> maximumGroupFiles, const std::string & modDirectoryName, const std::optional<std::string> & conFileArgumentFlag, const std::optional<std::string> & extraConFileArgumentFlag, const std::optional<std::string> & groupFileArgumentFlag, const std::optional<std::string> & mapFileArgumentFlag, const std::optional<std::string> & episodeArgumentFlag, const std::optional<std::string> & levelArgumentFlag, const std::optional<std::string> & skillArgumentFlag, std::optional<uint8_t> skillStartValue, const std::string & recordDemoArgumentFlag, const std::optional<std::string> & playDemoArgumentFlag, const std::optional<std::string> & respawnModeArgumentFlag, const std::optional<std::string> & weaponSwitchOrderArgumentFlag, const std::optional<std::string> & disableMonstersArgumentFlag, const std::optional<std::string> & disableSoundArgumentFlag, const std::optional<std::string> & disableMusicArgumentFlag, const std::optional<std::string> & setupExecutableName, const std::optional<std::string> & groupFileInstallPath, const std::optional<std::string> & defFileArgumentFlag, const std::optional<std::string> & extraDefFileArgumentFlag,const std::optional<bool> & requiresOriginalGameFiles, const std::optional<bool> & requiresGroupFileExtraction, const std::string & website, const std::string & sourceCodeURL, const std::vector<OperatingSystem> & supportedOperatingSystems, const std::vector<std::string> & compatibleGameVersionIdentifiers, const std::vector<std::string> & conflictingGameFiles, const std::vector<std::string> & notes, const DOSBoxConfiguration & dosboxConfiguration)
 	: m_id(Utilities::trimString(id))
 	, m_longName(Utilities::trimString(longName))
 	, m_shortName(Utilities::trimString(shortName))
@@ -281,7 +281,7 @@ GameVersion::GameVersion(GameVersion && gameVersion) noexcept
 	, m_episodeArgumentFlag(std::move(gameVersion.m_episodeArgumentFlag))
 	, m_levelArgumentFlag(std::move(gameVersion.m_levelArgumentFlag))
 	, m_skillArgumentFlag(std::move(gameVersion.m_skillArgumentFlag))
-	, m_skillStartValue(gameVersion.m_skillStartValue)
+	, m_skillStartValue(std::move(gameVersion.m_skillStartValue))
 	, m_recordDemoArgumentFlag(std::move(gameVersion.m_recordDemoArgumentFlag))
 	, m_playDemoArgumentFlag(std::move(gameVersion.m_playDemoArgumentFlag))
 	, m_respawnModeArgumentFlag(std::move(gameVersion.m_respawnModeArgumentFlag))
@@ -388,7 +388,7 @@ GameVersion & GameVersion::operator = (GameVersion && gameVersion) noexcept {
 		m_episodeArgumentFlag = std::move(gameVersion.m_episodeArgumentFlag);
 		m_levelArgumentFlag = std::move(gameVersion.m_levelArgumentFlag);
 		m_skillArgumentFlag = std::move(gameVersion.m_skillArgumentFlag);
-		m_skillStartValue = gameVersion.m_skillStartValue;
+		m_skillStartValue = std::move(gameVersion.m_skillStartValue);
 		m_recordDemoArgumentFlag = std::move(gameVersion.m_recordDemoArgumentFlag);
 		m_playDemoArgumentFlag = std::move(gameVersion.m_playDemoArgumentFlag);
 		m_respawnModeArgumentFlag = std::move(gameVersion.m_respawnModeArgumentFlag);
@@ -1459,12 +1459,32 @@ void GameVersion::clearSkillArgumentFlag() {
 	setModified(true);
 }
 
-uint8_t GameVersion::getSkillStartValue() const {
+bool GameVersion::hasSkillStartValue() const {
+	return m_skillStartValue.has_value();
+}
+
+std::optional<uint8_t> GameVersion::getSkillStartValue() const {
 	return m_skillStartValue;
 }
 
 void GameVersion::setSkillStartValue(uint8_t skillStartValue) {
+	if(m_skillStartValue.has_value() && m_skillStartValue.value() == skillStartValue) {
+		return;
+	}
+
 	m_skillStartValue = skillStartValue;
+
+	setModified(true);
+}
+
+void GameVersion::clearSkillStartValue() {
+	if(!m_skillStartValue.has_value()) {
+		return;
+	}
+
+	m_skillStartValue.reset();
+
+	setModified(true);
 }
 
 const std::string & GameVersion::getRecordDemoArgumentFlag() const {
@@ -2363,7 +2383,10 @@ void GameVersion::addMetadata(std::map<std::string, std::any> & metadata) const 
 		metadata["skillArgumentFlag"] = m_skillArgumentFlag.value();
 	}
 
-	metadata["skillStartValue"] = m_skillStartValue;
+	if(m_skillStartValue.has_value()) {
+		metadata["skillStartValue"] = m_skillStartValue.value();
+	}
+
 	metadata["recordDemoArgumentFlag"] = m_recordDemoArgumentFlag;
 
 	if(m_playDemoArgumentFlag.has_value()) {
@@ -2573,7 +2596,9 @@ rapidjson::Value GameVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::C
 		gameVersionValue.AddMember(rapidjson::StringRef(JSON_SKILL_ARGUMENT_FLAG_PROPERTY_NAME), skillArgumentFlagValue, allocator);
 	}
 
-	gameVersionValue.AddMember(rapidjson::StringRef(JSON_SKILL_START_VALUE_PROPERTY_NAME), rapidjson::Value(m_skillStartValue), allocator);
+	if(m_skillStartValue.has_value()) {
+		gameVersionValue.AddMember(rapidjson::StringRef(JSON_SKILL_START_VALUE_PROPERTY_NAME), rapidjson::Value(m_skillStartValue.value()), allocator);
+	}
 
 	rapidjson::Value recordDemoArgumentFlagValue(m_recordDemoArgumentFlag.c_str(), allocator);
 	gameVersionValue.AddMember(rapidjson::StringRef(JSON_RECORD_DEMO_ARGUMENT_FLAG_PROPERTY_NAME), recordDemoArgumentFlagValue, allocator);
@@ -3172,7 +3197,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 	}
 
 	// parse skill start value option
-	uint8_t skillStartValue = DEFAULT_SKILL_START_VALUE;
+	std::optional<uint8_t> optionalSkillStartValue;
 
 	if(gameVersionValue.HasMember(JSON_SKILL_START_VALUE_PROPERTY_NAME)) {
 		const rapidjson::Value & skillStartValueValue = gameVersionValue[JSON_SKILL_START_VALUE_PROPERTY_NAME];
@@ -3189,9 +3214,9 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 			return nullptr;
 		}
 
-		skillStartValue = static_cast<uint8_t>(tempSkillStartValue);
+		optionalSkillStartValue = static_cast<uint8_t>(tempSkillStartValue);
 	}
-	else {
+	else if(optionalSkillArgumentFlag.has_value()) {
 		spdlog::warn("Game version with ID '{}' is missing '{}' property.", id, JSON_SKILL_START_VALUE_PROPERTY_NAME);
 	}
 
@@ -3344,7 +3369,7 @@ std::unique_ptr<GameVersion> GameVersion::parseFrom(const rapidjson::Value & gam
 	}
 
 	// initialize the game version
-	std::unique_ptr<GameVersion> newGameVersion(std::make_unique<GameVersion>(id, longName, shortName, isDefaultGameVersionWithIDInstallable(id), removable, gamePath, gameExecutableName, gameExecutableDirectoryPathOptional, gameConfigurationFileName, gameConfigurationDirectoryPathOptional, localWorkingDirectory, scriptFilesReadFromGroup, supportsSubdirectories, worldTourGroupSupported, zipArchiveGroupsSupported, optionalMaximumGroupFiles, modDirectoryName, optionalConFileArgumentFlag, optionalExtraConFileArgumentFlag, optionalGroupFileArgumentFlag, optionalMapFileArgumentFlag, optionalEpisodeArgumentFlag, optionalLevelArgumentFlag, optionalSkillArgumentFlag, skillStartValue, recordDemoArgumentFlag, optionalPlayDemoArgumentFlag, optionalRespawnModeArgumentFlag, optionalWeaponSwitchOrderArgumentFlag, optionalDisableMonstersArgumentFlag, optionalDisableSoundArgumentFlag, optionalDisableMusicArgumentFlag, setupExecutableNameOptional, groupFileInstallPathOptional));
+	std::unique_ptr<GameVersion> newGameVersion(std::make_unique<GameVersion>(id, longName, shortName, isDefaultGameVersionWithIDInstallable(id), removable, gamePath, gameExecutableName, gameExecutableDirectoryPathOptional, gameConfigurationFileName, gameConfigurationDirectoryPathOptional, localWorkingDirectory, scriptFilesReadFromGroup, supportsSubdirectories, worldTourGroupSupported, zipArchiveGroupsSupported, optionalMaximumGroupFiles, modDirectoryName, optionalConFileArgumentFlag, optionalExtraConFileArgumentFlag, optionalGroupFileArgumentFlag, optionalMapFileArgumentFlag, optionalEpisodeArgumentFlag, optionalLevelArgumentFlag, optionalSkillArgumentFlag, optionalSkillStartValue, recordDemoArgumentFlag, optionalPlayDemoArgumentFlag, optionalRespawnModeArgumentFlag, optionalWeaponSwitchOrderArgumentFlag, optionalDisableMonstersArgumentFlag, optionalDisableSoundArgumentFlag, optionalDisableMusicArgumentFlag, setupExecutableNameOptional, groupFileInstallPathOptional));
 
 	if(!launchArguments.empty()) {
 		newGameVersion->setLaunchArguments(launchArguments);
@@ -3712,7 +3737,7 @@ bool GameVersion::isValid() const {
 	   (m_mapFileArgumentFlag.has_value() && m_mapFileArgumentFlag.value().empty()) ||
 	   (m_episodeArgumentFlag.has_value() && m_episodeArgumentFlag.value().empty()) ||
 	   (m_levelArgumentFlag.has_value() && m_levelArgumentFlag->empty()) ||
-	   (m_skillArgumentFlag.has_value() && m_skillArgumentFlag->empty()) ||
+	   (m_skillArgumentFlag.has_value() && (m_skillArgumentFlag->empty() || !m_skillStartValue.has_value())) ||
 	   m_recordDemoArgumentFlag.empty() ||
 	   (m_playDemoArgumentFlag.has_value() && m_playDemoArgumentFlag.value().empty()) ||
 	   (m_respawnModeArgumentFlag.has_value() && m_respawnModeArgumentFlag.value().empty()) ||
