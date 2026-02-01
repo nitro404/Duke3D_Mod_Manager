@@ -690,6 +690,21 @@ std::unique_ptr<GameConfiguration::Section> GameConfiguration::Section::parseFro
 
 			*commentsStream << comment;
 		}
+		else if(Utilities::startsWith(line, ALTERNATE_COMMENT_STRING)) {
+			if(!entries.empty()) {
+				continue;
+			}
+
+			std::string_view comment(line.data() + 2, line.length() - 2);
+
+			std::stringstream * commentsStream = sectionName.empty() ? &precedingCommentsStream : &followingCommentsStream;
+
+			if(commentsStream->tellp() != 0) {
+				*commentsStream << '\n';
+			}
+
+			*commentsStream << comment;
+		}
 		else {
 			entry = Entry::parseFrom(line);
 

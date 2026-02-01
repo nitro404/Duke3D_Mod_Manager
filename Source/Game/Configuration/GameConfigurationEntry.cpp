@@ -105,6 +105,10 @@ bool GameConfiguration::Entry::isEmpty() const {
 	return m_type == Type::Empty;
 }
 
+bool GameConfiguration::Entry::isBoolean() const {
+	return m_type == Type::Boolean;
+}
+
 bool GameConfiguration::Entry::isInteger() const {
 	return m_type == Type::Integer;
 }
@@ -123,6 +127,27 @@ bool GameConfiguration::Entry::isString() const {
 
 bool GameConfiguration::Entry::isMultiString() const {
 	return m_type == Type::MultiString;
+}
+
+bool GameConfiguration::Entry::getBooleanValue() const {
+	if(std::holds_alternative<bool>(m_value)) {
+		return std::get<bool>(m_value);
+	}
+
+	if(isEmpty()) {
+		return false;
+	}
+	else if(isInteger()) {
+		return getIntegerValue() != 0;
+	}
+	else if(isFloat()) {
+		return getFloatValue() != 0.0f;
+	}
+	else if(isString()) {
+		return Utilities::areStringsEqualIgnoreCase(getStringValue(), "true");
+	}
+
+	return false;
 }
 
 int64_t GameConfiguration::Entry::getIntegerValue() const {
@@ -216,6 +241,11 @@ void GameConfiguration::Entry::setEmpty() {
 	m_type = Type::Empty;
 }
 
+void GameConfiguration::Entry::setBooleanValue(bool value) {
+	m_type = Type::Boolean;
+	m_value = value;
+}
+
 void GameConfiguration::Entry::setIntegerValue(int64_t value) {
 	m_type = Type::Integer;
 	m_value = value;
@@ -282,6 +312,11 @@ void GameConfiguration::Entry::clearValue() {
 			break;
 		}
 
+		case Type::Boolean: {
+			m_value = false;
+			break;
+		}
+
 		case Type::Integer:
 		case Type::Hexadecimal: {
 			m_value = static_cast<int64_t>(0);
@@ -329,11 +364,33 @@ const GameConfiguration * GameConfiguration::Entry::getParentGameConfiguration()
 std::string GameConfiguration::Entry::toString() const {
 	const std::string & assignmentString(getAssignmentString());
 
+	Format format = Format::CFG;
+
+	if(m_parentGameConfiguration != nullptr) {
+		format = m_parentGameConfiguration->getFormat();
+	}
+
 	std::stringstream valueStream;
 
 	switch(m_type) {
 		case Type::Empty: {
 			valueStream << EMPTY_VALUE_CHARACTER;
+			break;
+		}
+
+		case Type::Boolean: {
+			switch(format) {
+				case Format::CFG: {
+					valueStream << std::get<bool>(m_value) ? 0 : 1;
+					break;
+				}
+
+				case Format::INI: {
+					valueStream << (std::get<bool>(m_value) ? "true" : "false");
+					break;
+				}
+			}
+
 			break;
 		}
 
@@ -343,7 +400,19 @@ std::string GameConfiguration::Entry::toString() const {
 		}
 
 		case Type::Float: {
-			valueStream << fmt::format("{:.6f}f", std::get<float>(m_value));
+			valueStream << fmt::format("{:.6f}", std::get<float>(m_value));
+
+			switch(format) {
+				case Format::CFG: {
+					valueStream << "f";
+					break;
+				}
+
+				case Format::INI: {
+					break;
+				}
+			}
+
 			break;
 		}
 
@@ -353,7 +422,18 @@ std::string GameConfiguration::Entry::toString() const {
 		}
 
 		case Type::String: {
-			valueStream << '"' << std::get<std::string>(m_value) << '"';
+			switch(format) {
+				case Format::CFG: {
+					valueStream << '"' << std::get<std::string>(m_value) << '"';
+					break;
+				}
+
+				case Format::INI: {
+					valueStream << std::get<std::string>(m_value);
+					break;
+				}
+			}
+
 			break;
 		}
 
@@ -362,6 +442,10 @@ std::string GameConfiguration::Entry::toString() const {
 
 			for(const std::string & stringValue : multiStringValue) {
 				if(valueStream.tellp() != 0) {
+					if(format == Format::INI) {
+						valueStream << ",";
+					}
+
 					valueStream << ' ';
 				}
 
@@ -402,14 +486,30 @@ std::unique_ptr<GameConfiguration::Entry> GameConfiguration::Entry::parseFrom(st
 	std::unique_ptr<Entry> entry(new Entry(std::string(name)));
 
 	if(value.empty()) {
-		spdlog::warn("'{}' entry is missing a value.", name);
-		return nullptr;
+		entry->m_type = Type::String;
+		entry->m_value = Utilities::emptyString;
 	}
-
-	if(value[0] == EMPTY_VALUE_CHARACTER) {
+	else if(value[0] == EMPTY_VALUE_CHARACTER) {
 		entry->m_type = Type::Empty;
 	}
-	else if(value[0] == '0' && value.length() >= 2 && value[1] == 'x') {
+	else if(Utilities::areStringsEqual(value, "false")) {
+		entry->m_type = Type::Boolean;
+		entry->m_value = false;
+	}
+	else if(Utilities::areStringsEqual(value, "true")) {
+		entry->m_type = Type::Boolean;
+		entry->m_value = true;
+	}
+	else if(value[0] == '0' && value.length() > 2 && value[1] == 'x') {
+		for(size_t i = 2; i < value.length(); i++) {
+			const char c = value[i];
+
+			if(!(std::isdigit(c) || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f'))) {
+				spdlog::warn("'{}' entry has an invalid hexadecimal value: '{}'.", name, value);
+				return nullptr;
+			}
+		}
+
 		entry->m_type = Type::Hexadecimal;
 		entry->m_value = static_cast<int64_t>(std::stoul(value, nullptr, 16));
 	}
@@ -425,30 +525,40 @@ std::unique_ptr<GameConfiguration::Entry> GameConfiguration::Entry::parseFrom(st
 			entry->m_value = parseQuotedValues(value);
 		}
 	}
-	else if(value[value.length() - 1] == 'f') {
-		std::optional<float> optionalFloatValue(Utilities::parseFloat(value.substr(0, value.length() - 1)));
-
-		if(!optionalFloatValue.has_value()) {
-			spdlog::warn("'{}' entry has an invalid float value: '{}'.", name, value);
-			return nullptr;
-		}
-
-		entry->m_type = Type::Float;
-		entry->m_value = optionalFloatValue.value();
-	}
 	else {
 		std::optional<int64_t> optionalLongValue(Utilities::parseLong(value));
 
-		if(!optionalLongValue.has_value()) {
-			spdlog::warn("'{}' entry has an invalid integer value: '{}'.", name, value);
-			return nullptr;
+		if(optionalLongValue.has_value()) {
+			entry->m_type = Type::Integer;
+			entry->m_value = optionalLongValue.value();
 		}
+		else {
+			std::optional<float> optionalFloatValue(Utilities::parseFloat(value));
 
-		entry->m_type = Type::Integer;
-		entry->m_value = optionalLongValue.value();
+			if(optionalFloatValue.has_value()) {
+				entry->m_type = Type::Float;
+				entry->m_value = optionalFloatValue.value();
+			}
+			else if(value[value.length() - 1] == 'f') {
+				std::optional<float> optionalFloatValue(Utilities::parseFloat(value.substr(0, value.length() - 1)));
+
+				if(optionalFloatValue.has_value()) {
+					entry->m_type = Type::Float;
+					entry->m_value = optionalFloatValue.value();
+				}
+				else {
+					entry->m_type = Type::String;
+					entry->m_value = std::string(value);
+				}
+			}
+			else {
+				entry->m_type = Type::String;
+				entry->m_value = std::string(value);
+			}
+		}
 	}
 
-	return std::move(entry);
+	return entry;
 }
 
 bool GameConfiguration::Entry::isValid(bool validateParents) const {
@@ -464,6 +574,14 @@ bool GameConfiguration::Entry::isValid(bool validateParents) const {
 
 	switch(m_type) {
 		case Type::Empty: {
+			break;
+		}
+
+		case Type::Boolean: {
+			if(!std::holds_alternative<bool>(m_value)) {
+				return false;
+			}
+
 			break;
 		}
 

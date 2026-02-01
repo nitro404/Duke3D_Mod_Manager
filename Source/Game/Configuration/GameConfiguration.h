@@ -25,6 +25,11 @@ public:
 		Windows
 	};
 
+	enum class Format : uint8_t {
+		CFG,
+		INI
+	};
+
 	class Entry;
 	class Section;
 
@@ -43,6 +48,7 @@ public:
 	public:
 		enum class Type {
 			Empty,
+			Boolean,
 			Integer,
 			Float,
 			Hexadecimal,
@@ -61,6 +67,7 @@ public:
 		bool setName(const std::string & newName);
 		Type getType() const;
 		bool isEmpty() const;
+		bool isBoolean() const;
 		bool isInteger() const;
 		bool isFloat() const;
 		bool isHexadecimal() const;
@@ -77,6 +84,7 @@ public:
 		const std::string & getMultiStringValue(size_t index) const;
 		const std::vector<std::string> & getMultiStringValue() const;
 		void setEmpty();
+		void setBooleanValue(bool value);
 		void setIntegerValue(int64_t value);
 		void setFloatValue(float value);
 		void setHexadecimalValueFromDecimal(int64_t value);
@@ -107,7 +115,7 @@ public:
 	private:
 		std::string m_name;
 		Type m_type;
-		std::variant<int64_t, float, std::string, std::vector<std::string>> m_value;
+		std::variant<bool, int64_t, float, std::string, std::vector<std::string>> m_value;
 		Section * m_parentSection;
 		GameConfiguration * m_parentGameConfiguration;
 	};
@@ -186,6 +194,7 @@ public:
 		bool operator != (const Section & s) const;
 
 		static constexpr char COMMENT_CHARACTER = ';';
+		static inline const std::string ALTERNATE_COMMENT_STRING = "//";
 		static constexpr char NAME_START_CHARACTER = '[';
 		static constexpr char NAME_END_CHARACTER = ']';
 
@@ -201,7 +210,7 @@ public:
 		GameConfiguration * m_parentGameConfiguration;
 	};
 
-	GameConfiguration();
+	GameConfiguration(Format format = DEFAULT_FORMAT);
 	GameConfiguration(GameConfiguration && c) noexcept;
 	GameConfiguration(const GameConfiguration & c);
 	GameConfiguration & operator = (GameConfiguration && c) noexcept;
@@ -220,6 +229,8 @@ public:
 	void removeStyle(Style style);
 	NewlineType getNewlineType() const;
 	void setNewlineType(NewlineType newlineType);
+	Format getFormat() const;
+	void setFormat(Format format);
 
 	size_t numberOfEntries() const;
 	bool hasEntry(const Entry & entry) const;
@@ -257,6 +268,8 @@ public:
 	bool updateWithBetterControls();
 
 	std::string toString() const;
+	static std::optional<GameConfiguration::NewlineType> detectNewlineType(const std::string & data);
+	static std::optional<GameConfiguration::Format> detectFormat(const std::string & data);
 	static std::unique_ptr<GameConfiguration> parseFrom(const std::string & data);
 
 	static std::unique_ptr<GameConfiguration> loadFrom(const std::string & filePath);
@@ -269,6 +282,7 @@ public:
 	bool operator == (const GameConfiguration & c) const;
 	bool operator != (const GameConfiguration & c) const;
 
+	static constexpr Format DEFAULT_FORMAT = Format::CFG;
 	static inline const std::string DEFAULT_FILE_EXTENSION = "CFG";
 	static inline const std::string DEFAULT_FILE_NAME = "DUKE3D." + DEFAULT_FILE_EXTENSION;
 	static const std::string SETUP_SECTION_NAME;
@@ -585,6 +599,7 @@ private:
 
 	Style m_style;
 	NewlineType m_newlineType;
+	Format m_format;
 	std::string m_filePath;
 	EntryMap m_entries;
 	SectionMap m_sections;

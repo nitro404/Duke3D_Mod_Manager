@@ -3,6 +3,7 @@
 #include <Utilities/FileUtilities.h>
 #include <Utilities/StringUtilities.h>
 
+#include <magic_enum/magic_enum.hpp>
 #include <spdlog/spdlog.h>
 
 #include <filesystem>
@@ -123,13 +124,15 @@ bool GameConfiguration::NameComparator::operator () (const std::string & nameA, 
 	});
 }
 
-GameConfiguration::GameConfiguration()
+GameConfiguration::GameConfiguration(Format format)
 	: m_style(Style::None)
-	, m_newlineType(Utilities::newLine[0] == '\r' ? NewlineType::Windows : NewlineType::Unix) { }
+	, m_newlineType(Utilities::newLine[0] == '\r' ? NewlineType::Windows : NewlineType::Unix)
+	, m_format(format) { }
 
 GameConfiguration::GameConfiguration(GameConfiguration && c) noexcept
 	: m_style(c.m_style)
 	, m_newlineType(c.m_newlineType)
+	, m_format(c.m_format)
 	, m_filePath(std::move(c.m_filePath))
 	, m_entries(std::move(c.m_entries))
 	, m_sections(std::move(c.m_sections))
@@ -140,6 +143,7 @@ GameConfiguration::GameConfiguration(GameConfiguration && c) noexcept
 GameConfiguration::GameConfiguration(const GameConfiguration & c)
 	: m_style(c.m_style)
 	, m_newlineType(c.m_newlineType)
+	, m_format(c.m_format)
 	, m_filePath(c.m_filePath)
 	, m_orderedSectionNames(c.m_orderedSectionNames) {
 	for(EntryMap::const_iterator i = c.m_entries.cbegin(); i != c.m_entries.cend(); ++i) {
@@ -159,6 +163,7 @@ GameConfiguration & GameConfiguration::operator = (GameConfiguration && c) noexc
 
 		m_style = c.m_style;
 		m_newlineType = c.m_newlineType;
+		m_format = c.m_format;
 		m_filePath = std::move(c.m_filePath);
 		m_entries = std::move(c.m_entries);
 		m_sections = std::move(c.m_sections);
@@ -175,6 +180,7 @@ GameConfiguration & GameConfiguration::operator = (const GameConfiguration & c) 
 
 	m_style = c.m_style;
 	m_newlineType = c.m_newlineType;
+	m_format = c.m_format;
 	m_orderedSectionNames = c.m_orderedSectionNames;
 
 	for(EntryMap::const_iterator i = c.m_entries.cbegin(); i != c.m_entries.cend(); ++i) {
@@ -262,6 +268,18 @@ void GameConfiguration::setNewlineType(NewlineType newlineType) {
 	}
 
 	m_newlineType = newlineType;
+}
+
+GameConfiguration::Format GameConfiguration::getFormat() const {
+	return m_format;
+}
+
+void GameConfiguration::setFormat(Format format) {
+	if(m_format == format) {
+		return;
+	}
+
+	m_format = format;
 }
 
 size_t GameConfiguration::numberOfEntries() const {
@@ -670,6 +688,141 @@ std::string GameConfiguration::toString() const {
 	return gameConfigurationStream.str();
 }
 
+std::optional<GameConfiguration::NewlineType> GameConfiguration::detectNewlineType(const std::string & data) {
+	char currentCharacter = '\0';
+	size_t newlineOffset = 0;
+
+	std::optional<NewlineType> optionalDetectedNewlineType;
+
+	while(newlineOffset < data.size()) {
+		currentCharacter = data[newlineOffset++];
+
+		if(currentCharacter == '\r') {
+			optionalDetectedNewlineType = NewlineType::Windows;
+			break;
+		}
+		else if(currentCharacter == '\n') {
+			optionalDetectedNewlineType = NewlineType::Unix;
+			break;
+		}
+	}
+
+	return optionalDetectedNewlineType;
+}
+
+std::optional<GameConfiguration::Format> GameConfiguration::detectFormat(const std::string & data) {
+	size_t offset = 0;
+	std::string_view line;
+	std::string_view key;
+	std::string_view value;
+	std::optional<Format> optionalDetectedFormat;
+	std::optional<Format> optionalSuspectedFormat;
+
+	while(offset < data.size()) {
+		line = Utilities::readLine(data, offset);
+
+		if(line.empty() ||
+		   line[0] == Section::COMMENT_CHARACTER ||
+		   line[0] == Section::NAME_START_CHARACTER) {
+			continue;
+		}
+
+		if(Utilities::startsWith(line, Section::ALTERNATE_COMMENT_STRING)) {
+			spdlog::trace("Found C++ style comment, {} file format detected.", magic_enum::enum_name(Format::INI));
+
+			optionalDetectedFormat = Format::INI;
+
+			break;
+		}
+
+		size_t assignmentCharacterIndex = line.find_first_of("=");
+
+		if(assignmentCharacterIndex == std::string::npos) {
+			continue;
+		}
+
+		size_t keyEndIndex = line.find_last_not_of(" \t", assignmentCharacterIndex - 1);
+
+		if(keyEndIndex == std::string::npos) {
+			continue;
+		}
+
+		key = std::string_view(line.data(), keyEndIndex + 1);
+
+		if(key.empty()) {
+			continue;
+		}
+
+		size_t valueStartIndex = line.find_first_not_of(" \t", assignmentCharacterIndex + 1);
+
+		if(valueStartIndex == std::string::npos) {
+			continue;
+		}
+
+		value = std::string_view(line.data() + valueStartIndex, line.length() - valueStartIndex);
+
+		if(std::isupper(value[0]) || std::islower(value[0])) {
+			spdlog::trace("Found unquoted string value, {} file format detected.", magic_enum::enum_name(Format::INI));
+
+			optionalDetectedFormat = Format::INI;
+
+			break;
+		}
+		else if(value[0] == '\"' && value.size() >= 5) {
+			const size_t lastQuoteIndex = value.find_last_of("\"");
+
+			if(lastQuoteIndex != std::string::npos) {
+				const std::string_view innerValue(value.data() + 1, lastQuoteIndex - 1);
+				const size_t innerQuoteIndex = innerValue.find_first_of("\"");
+
+				if(innerQuoteIndex + 1 < innerValue.size() && innerValue[innerQuoteIndex + 1] == ',') {
+					spdlog::trace("Found comma-separated multi-string value, {} file format detected.", magic_enum::enum_name(Format::INI));
+
+					optionalDetectedFormat = Format::INI;
+
+					break;
+				}
+				else {
+					spdlog::trace("Found whitespace separated multi-string value, {} file format detected.", magic_enum::enum_name(Format::CFG));
+
+					optionalDetectedFormat = Format::CFG;
+
+					break;
+				}
+			}
+		}
+		else if(value.size() == 1 && value[0] == Entry::EMPTY_VALUE_CHARACTER) {
+			spdlog::trace("Found empty value indicator, {} file format suspected.", magic_enum::enum_name(Format::CFG));
+
+			optionalSuspectedFormat = Format::CFG;
+		}
+		else if(value.length() > 2 && Utilities::startsWith(value, "0x")) {
+			bool validHexadecimalValue = true;
+
+			for(size_t i = 2; i < value.length(); i++) {
+				const char c = value[i];
+
+				if(!(std::isdigit(c) || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f'))) {
+					validHexadecimalValue = false;
+					break;
+				}
+			}
+
+			if(validHexadecimalValue) {
+				spdlog::trace("Found hexadecimal value, {} file format suspected.", magic_enum::enum_name(Format::CFG));
+
+				optionalSuspectedFormat = Format::CFG;
+			}
+		}
+	}
+
+	if(optionalDetectedFormat.has_value()) {
+		return optionalDetectedFormat.value();
+	}
+
+	return optionalSuspectedFormat;
+}
+
 std::unique_ptr<GameConfiguration> GameConfiguration::parseFrom(const std::string & data) {
 	std::unique_ptr<GameConfiguration> gameConfiguration(std::make_unique<GameConfiguration>());
 
@@ -677,26 +830,26 @@ std::unique_ptr<GameConfiguration> GameConfiguration::parseFrom(const std::strin
 		return std::move(gameConfiguration);
 	}
 
-	char currentCharacter = '\0';
-	size_t newlineOffset = 0;
+	std::optional<NewlineType> optionalDetectedNewlineType(detectNewlineType(data));
 
-	while(newlineOffset < data.size()) {
-		currentCharacter = data[newlineOffset++];
+	if(optionalDetectedNewlineType.has_value()) {
+		spdlog::trace("Detected {} type newlines in game configuration data.", magic_enum::enum_name(optionalDetectedNewlineType.value()));
 
-		if(currentCharacter == '\r') {
-			spdlog::trace("Detected Windows style newlines in game configuration data.");
+		gameConfiguration->setNewlineType(optionalDetectedNewlineType.value());
+	}
+	else {
+		spdlog::trace("Failed to detect newline type, defaulting to {}.", magic_enum::enum_name(gameConfiguration->getNewlineType()));
+	}
 
-			gameConfiguration->setNewlineType(NewlineType::Windows);
+	std::optional<Format> optionalDetectedFormat(detectFormat(data));
 
-			break;
-		}
-		else if(currentCharacter == '\n') {
-			spdlog::trace("Detected Unix style newlines in game configuration data.");
+	if(optionalDetectedFormat.has_value()) {
+		spdlog::trace("Parsing {} game configuration file format.", magic_enum::enum_name(optionalDetectedFormat.value()));
 
-			gameConfiguration->setNewlineType(NewlineType::Unix);
-
-			break;
-		}
+		gameConfiguration->setFormat(optionalDetectedFormat.value());
+	}
+	else {
+		spdlog::trace("Failed to detect game configuration file format, defaulting to {}.", magic_enum::enum_name(gameConfiguration->getFormat()));
 	}
 
 	size_t offset = 0;
