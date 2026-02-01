@@ -2707,7 +2707,12 @@ bool GameConfiguration::updateWithBetterControls() {
 		}
 	}
 
-	std::shared_ptr<Entry> showOpponentsWeaponEntry(getEntryWithName(SHOW_OPPONENTS_WEAPON_ENTRY_NAME));
+	std::vector<std::shared_ptr<Entry>> showOpponentsWeaponEntries(getEntriesWithName(SHOW_OPPONENTS_WEAPON_ENTRY_NAME));
+	std::shared_ptr<Entry> showOpponentsWeaponEntry(showOpponentsWeaponEntries.empty() ? nullptr : showOpponentsWeaponEntries.front());
+
+	if(showOpponentsWeaponEntries.size() > 1) {
+		spdlog::warn("Multiple '{}' game configuration entries found, modifying the first entry only. This may produce undesireable results.", SHOW_OPPONENTS_WEAPON_ENTRY_NAME);
+	}
 
 	if(showOpponentsWeaponEntry != nullptr) {
 		if(Utilities::areStringsEqual(showOpponentsWeaponEntry->getMultiStringValue(0), "W")) {
@@ -2721,7 +2726,12 @@ bool GameConfiguration::updateWithBetterControls() {
 		if(!keyDefinitionsSection->setEntryMultiStringValue(SHOW_OPPONENTS_WEAPON_ENTRY_NAME, "", 0, true, true)) { return false; }
 	}
 
-	std::shared_ptr<Entry> mapFollowModeEntry(getEntryWithName(MAP_FOLLOW_MODE_ENTRY_NAME));
+	std::vector<std::shared_ptr<Entry>> mapFollowModeEntries(getEntriesWithName(MAP_FOLLOW_MODE_ENTRY_NAME));
+	std::shared_ptr<Entry> mapFollowModeEntry(mapFollowModeEntries.empty() ? nullptr : mapFollowModeEntries.front());
+
+	if(mapFollowModeEntries.size() > 1) {
+		spdlog::warn("Multiple '{}' game configuration entries found, modifying the first entry only. This may produce undesireable results.", MAP_FOLLOW_MODE_ENTRY_NAME);
+	}
 
 	if(mapFollowModeEntry != nullptr) {
 		if(Utilities::areStringsEqual(mapFollowModeEntry->getMultiStringValue(0), "F")) {

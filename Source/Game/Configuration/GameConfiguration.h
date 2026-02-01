@@ -33,7 +33,7 @@ public:
 		bool operator () (const std::string & nameA, const std::string & nameB) const;
 	};
 
-	using EntryMap = std::map<std::string, std::shared_ptr<Entry>, NameComparator>;
+	using EntryMap = std::multimap<std::string, std::shared_ptr<Entry>, NameComparator>;
 	using SectionMap = std::map<std::string, std::shared_ptr<Section>, NameComparator>;
 
 	class Entry final {
@@ -225,13 +225,12 @@ public:
 	bool hasEntry(const Entry & entry) const;
 	bool hasEntryWithName(const std::string & entryName) const;
 	std::shared_ptr<Entry> getEntry(const Entry & entry) const;
-	std::shared_ptr<Entry> getEntryWithName(const std::string & entryName) const;
-	bool setEntryName(const std::string & oldEntryName, const std::string & newEntryName);
+	std::vector<std::shared_ptr<Entry>> getEntriesWithName(const std::string & entryName) const;
 	bool setEntryName(Entry & entry, const std::string & newEntryName);
 	bool addEntryToSection(std::shared_ptr<Entry> entry, const Section & section);
 	bool addEntryToSectionWithName(std::shared_ptr<Entry> entry, const std::string & sectionName);
 	bool removeEntry(const Entry & entry);
-	bool removeEntryWithName(const std::string & entryName);
+	size_t removeAllEntriesWithName(const std::string & entryName);
 	size_t removeEntries(const std::vector<std::shared_ptr<Entry>> & entries);
 	void clearEntries();
 

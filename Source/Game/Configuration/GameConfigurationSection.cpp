@@ -697,7 +697,14 @@ std::unique_ptr<GameConfiguration::Section> GameConfiguration::Section::parseFro
 				spdlog::warn("Failed to parse configuration entry from line: '{}' at offset {}.", line, offset - line.length());
 			}
 			else {
-				entries.emplace_back(entry);
+				if(std::find_if(entries.cbegin(), entries.cend(), [entry](const std::shared_ptr<Entry> & existingEntry) {
+					return Utilities::areStringsEqual(entry->getName(), existingEntry->getName());
+				}) != entries.cend()) {
+					spdlog::error("Skipping duplicate '{}' section entry with name '{}'.", sectionName, entry->getName());
+				}
+				else {
+					entries.emplace_back(entry);
+				}
 			}
 		}
 

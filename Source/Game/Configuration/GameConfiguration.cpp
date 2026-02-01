@@ -269,13 +269,15 @@ size_t GameConfiguration::numberOfEntries() const {
 }
 
 bool GameConfiguration::hasEntry(const Entry & entry) const {
-	std::shared_ptr<Entry> sharedEntry(getEntry(entry));
+	std::pair<EntryMap::const_iterator, EntryMap::const_iterator> entryRange(m_entries.equal_range(entry.getName()));
 
-	if(sharedEntry == nullptr || &entry != sharedEntry.get()) {
-		return false;
+	for(EntryMap::const_iterator entryIterator = entryRange.first; entryIterator != entryRange.second; ++entryIterator) {
+		if(entryIterator->second.get() == &entry) {
+			return true;
+		}
 	}
 
-	return true;
+	return false;
 }
 
 bool GameConfiguration::hasEntryWithName(const std::string & entryName) const {
@@ -283,61 +285,58 @@ bool GameConfiguration::hasEntryWithName(const std::string & entryName) const {
 }
 
 std::shared_ptr<GameConfiguration::Entry> GameConfiguration::getEntry(const Entry & entry) const {
-	std::shared_ptr<Entry> sharedEntry(getEntryWithName(entry.getName()));
+	std::pair<EntryMap::const_iterator, EntryMap::const_iterator> entryRange(m_entries.equal_range(entry.getName()));
 
-	if(sharedEntry == nullptr || &entry != sharedEntry.get()) {
-		return nullptr;
+	for(EntryMap::const_iterator entryIterator = entryRange.first; entryIterator != entryRange.second; ++entryIterator) {
+		if(entryIterator->second.get() == &entry) {
+			return entryIterator->second;
+		}
 	}
 
-	return sharedEntry;
+	return nullptr;
 }
 
-std::shared_ptr<GameConfiguration::Entry> GameConfiguration::getEntryWithName(const std::string & entryName) const {
-	EntryMap::const_iterator entryIterator(m_entries.find(entryName));
+std::vector<std::shared_ptr<GameConfiguration::Entry>> GameConfiguration::getEntriesWithName(const std::string & entryName) const {
+	std::vector<std::shared_ptr<GameConfiguration::Entry>> entriesWithName;
 
-	if(entryIterator == m_entries.cend()) {
-		return nullptr;
+	std::pair<EntryMap::const_iterator, EntryMap::const_iterator> entryRange(m_entries.equal_range(entryName));
+
+	for(EntryMap::const_iterator entryIterator = entryRange.first; entryIterator != entryRange.second; ++entryIterator) {
+		entriesWithName.emplace_back(entryIterator->second);
 	}
 
-	return entryIterator->second;
-}
-
-bool GameConfiguration::setEntryName(const std::string & oldEntryName, const std::string & newEntryName) {
-	std::shared_ptr<Entry> sharedEntry(getEntry(oldEntryName));
-
-	if(sharedEntry == nullptr) {
-		return false;
-	}
-
-	return setEntryName(*sharedEntry, newEntryName);
+	return entriesWithName;
 }
 
 bool GameConfiguration::setEntryName(Entry & entry, const std::string & newEntryName) {
-	if(!Entry::isNameValid(newEntryName) || hasEntry(newEntryName)) {
+	if(!Entry::isNameValid(newEntryName)) {
 		return false;
 	}
 
-	std::shared_ptr<Entry> sharedEntry(getEntry(entry));
+	std::pair<EntryMap::const_iterator, EntryMap::const_iterator> entryRange(m_entries.equal_range(entry.getName()));
 
-	if(sharedEntry == nullptr || m_entries.erase(entry.getName()) == 0) {
-		return false;
+	for(EntryMap::const_iterator entryIterator = entryRange.first; entryIterator != entryRange.second; ++entryIterator) {
+		if(entryIterator->second.get() == &entry) {
+			std::shared_ptr<Entry> sharedEntry(entryIterator->second);
+			m_entries.erase(entryIterator);
+			sharedEntry->m_name = newEntryName;
+			m_entries.emplace(newEntryName, sharedEntry);
+
+			return true;
+		}
 	}
 
-	entry.m_name = newEntryName;
-
-	m_entries.emplace(newEntryName, sharedEntry);
-
-	return true;
+	return false;
 }
 
 bool GameConfiguration::addEntryToSection(std::shared_ptr<Entry> entry, const Section & section) {
-	std::shared_ptr<Section> sharedSection(getSection(section));
-
-	if(sharedSection == nullptr || hasEntryWithName(entry->m_name)) {
+	if(!Entry::isValid(entry.get(), false)) {
 		return false;
 	}
 
-	if(!entry->isValid(false)) {
+	std::shared_ptr<Section> sharedSection(getSection(section));
+
+	if(sharedSection == nullptr || sharedSection->hasEntryWithName(entry->getName())) {
 		return false;
 	}
 
@@ -351,17 +350,36 @@ bool GameConfiguration::addEntryToSection(std::shared_ptr<Entry> entry, const Se
 }
 
 bool GameConfiguration::addEntryToSectionWithName(std::shared_ptr<Entry> entry, const std::string & sectionName) {
-	std::shared_ptr<Section> sharedSection(getSectionWithName(sectionName));
-
-	if(sharedSection == nullptr) {
+	if(!Entry::isValid(entry.get(), false)) {
 		return false;
 	}
 
-	return addEntryToSection(entry, *sharedSection);
+	std::shared_ptr<Section> sharedSection(getSectionWithName(sectionName));
+
+	if(sharedSection == nullptr || sharedSection->hasEntryWithName(entry->getName())) {
+		return false;
+	}
+
+	entry->m_parentSection = sharedSection.get();
+	entry->m_parentGameConfiguration = this;
+
+	sharedSection->m_entries.emplace_back(entry);
+	m_entries.emplace(entry->getName(), entry);
+
+	return true;
 }
 
 bool GameConfiguration::removeEntry(const Entry & entry) {
-	std::shared_ptr<Entry> sharedEntry(getEntry(entry));
+	std::shared_ptr<Entry> sharedEntry;
+	std::pair<EntryMap::const_iterator, EntryMap::const_iterator> entryRange(m_entries.equal_range(entry.getName()));
+	EntryMap::const_iterator entryIterator = entryRange.second;
+
+	for(entryIterator = entryRange.first; entryIterator != entryRange.second; ++entryIterator) {
+		if(entryIterator->second.get() == &entry) {
+			sharedEntry = entryIterator->second;
+			break;
+		}
+	}
 
 	if(sharedEntry == nullptr || sharedEntry->m_parentSection == nullptr) {
 		return false;
@@ -385,17 +403,13 @@ bool GameConfiguration::removeEntry(const Entry & entry) {
 	sharedEntry->m_parentSection = nullptr;
 	sharedEntry->m_parentGameConfiguration = nullptr;
 
-	return m_entries.erase(sharedEntry->getName()) != 0;
+	m_entries.erase(entryIterator);
+
+	return true;
 }
 
-bool GameConfiguration::removeEntryWithName(const std::string & entryName) {
-	std::shared_ptr<Entry> sharedEntry(getEntryWithName(entryName));
-
-	if(sharedEntry == nullptr) {
-		return false;
-	}
-
-	return removeEntry(*sharedEntry);
+size_t GameConfiguration::removeAllEntriesWithName(const std::string & entryName) {
+	return removeEntries(getEntriesWithName(entryName));
 }
 
 size_t GameConfiguration::removeEntries(const std::vector<std::shared_ptr<Entry>> & entries) {
@@ -403,15 +417,15 @@ size_t GameConfiguration::removeEntries(const std::vector<std::shared_ptr<Entry>
 		return true;
 	}
 
-	size_t entriesRemoved = 0;
+	size_t numberofEntriesRemoved = 0;
 
 	for(const std::shared_ptr<Entry> & entry : entries) {
 		if(removeEntry(*entry)) {
-			entriesRemoved++;
+			numberofEntriesRemoved++;
 		}
 	}
 
-	return entriesRemoved;
+	return numberofEntriesRemoved;
 }
 
 void GameConfiguration::clearEntries() {
@@ -547,7 +561,7 @@ bool GameConfiguration::addSection(std::shared_ptr<Section> section) {
 	}
 
 	for(const std::shared_ptr<Entry> & entry : section->m_entries) {
-		if(hasEntryWithName(entry->m_name)) {
+		if(section->hasEntryWithName(entry->m_name)) {
 			return false;
 		}
 	}
@@ -714,11 +728,6 @@ std::unique_ptr<GameConfiguration> GameConfiguration::parseFrom(const std::strin
 		section->m_parentGameConfiguration = gameConfiguration.get();
 
 		for(std::vector<std::shared_ptr<Entry>>::const_iterator i = section->m_entries.cbegin(); i != section->m_entries.cend(); ++i) {
-			if(gameConfiguration->hasEntryWithName((*i)->getName())) {
-				spdlog::error("Duplicate entry with name '{}'.", (*i)->getName());
-				return nullptr;
-			}
-
 			(*i)->m_parentGameConfiguration = gameConfiguration.get();
 			gameConfiguration->m_entries.emplace((*i)->getName(), *i);
 		}
