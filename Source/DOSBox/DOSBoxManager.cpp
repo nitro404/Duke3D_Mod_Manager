@@ -1073,7 +1073,7 @@ std::unique_ptr<Archive> DOSBoxManager::downloadLatestDOSBoxVersion(const std::s
 		SegmentAnalytics::getInstance()->track("DOSBox Application Downloaded", properties);
 	}
 
-	return std::move(dosboxArchive);
+	return dosboxArchive;
 }
 
 bool DOSBoxManager::installLatestDOSBoxVersion(const std::string & dosboxVersionID, const std::string & destinationDirectoryPath, bool overwrite, bool * aborted) {

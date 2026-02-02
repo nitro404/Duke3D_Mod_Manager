@@ -125,7 +125,7 @@ std::optional<TaggedItem> TaggedItem::getFrom(const ByteBuffer & byteBuffer, siz
 		return {};
 	}
 
-	return std::move(value);
+	return value;
 }
 
 TaggedItem TaggedItem::readFrom(const ByteBuffer & byteBuffer, bool * error) {
@@ -154,7 +154,7 @@ std::optional<TaggedItem> TaggedItem::readFrom(const ByteBuffer & byteBuffer) {
 		return {};
 	}
 
-	return std::move(value);
+	return value;
 }
 
 bool TaggedItem::putIn(ByteBuffer & byteBuffer, size_t offset) const {

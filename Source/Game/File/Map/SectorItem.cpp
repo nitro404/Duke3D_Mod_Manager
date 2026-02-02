@@ -352,7 +352,7 @@ std::optional<SectorItem> SectorItem::parseFrom(const rapidjson::Value & sectorI
 		return {};
 	}
 
-	return std::move(value);
+	return value;
 }
 
 bool SectorItem::operator == (const SectorItem & sectorItem) const {

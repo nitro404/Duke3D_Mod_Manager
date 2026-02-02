@@ -827,7 +827,7 @@ std::unique_ptr<GameConfiguration> GameConfiguration::parseFrom(const std::strin
 	std::unique_ptr<GameConfiguration> gameConfiguration(std::make_unique<GameConfiguration>());
 
 	if(data.empty()) {
-		return std::move(gameConfiguration);
+		return gameConfiguration;
 	}
 
 	std::optional<NewlineType> optionalDetectedNewlineType(detectNewlineType(data));
@@ -898,7 +898,7 @@ std::unique_ptr<GameConfiguration> GameConfiguration::parseFrom(const std::strin
 		spdlog::warn("Game configuration validation check failed after parsing.");
 	}
 
-	return std::move(gameConfiguration);
+	return gameConfiguration;
 }
 
 std::unique_ptr<GameConfiguration> GameConfiguration::loadFrom(const std::string & filePath) {
@@ -928,7 +928,7 @@ std::unique_ptr<GameConfiguration> GameConfiguration::loadFrom(const std::string
 
 	gameConfiguration->m_filePath = filePath;
 
-	return std::move(gameConfiguration);
+	return gameConfiguration;
 }
 
 bool GameConfiguration::save(bool overwrite, bool createParentDirectories) const {

@@ -159,7 +159,7 @@ std::unique_ptr<ByteBuffer> GroupFile::transferData() {
 
 	m_data = std::make_unique<ByteBuffer>();
 
-	return std::move(data);
+	return data;
 }
 
 const ByteBuffer & GroupFile::getTrailingData() const {

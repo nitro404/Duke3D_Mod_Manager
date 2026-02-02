@@ -103,7 +103,7 @@ std::optional<PlayerSpawn> PlayerSpawn::getFrom(const ByteBuffer & byteBuffer, s
 		return {};
 	}
 
-	return std::move(value);
+	return value;
 }
 
 PlayerSpawn PlayerSpawn::readFrom(const ByteBuffer & byteBuffer, bool * error) {
@@ -132,7 +132,7 @@ std::optional<PlayerSpawn> PlayerSpawn::readFrom(const ByteBuffer & byteBuffer) 
 		return {};
 	}
 
-	return std::move(value);
+	return value;
 }
 
 bool PlayerSpawn::putIn(ByteBuffer & byteBuffer, size_t offset) const {
@@ -208,7 +208,7 @@ std::optional<PlayerSpawn> PlayerSpawn::parseFrom(const rapidjson::Value & secto
 		return {};
 	}
 
-	return std::move(value);
+	return value;
 }
 
 std::string PlayerSpawn::toString() const {

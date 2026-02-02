@@ -58,7 +58,7 @@ rapidjson::Value StandAloneMod::toJSON(rapidjson::MemoryPoolAllocator<rapidjson:
 	rapidjson::Value versionValue(m_version.c_str(), allocator);
 	standAloneModValue.AddMember(rapidjson::StringRef(JSON_VERSION_PROPERTY_NAME), versionValue, allocator);
 
-	return std::move(standAloneModValue);
+	return standAloneModValue;
 }
 
 std::unique_ptr<StandAloneMod> StandAloneMod::parseFrom(const rapidjson::Value & standAloneModValue) {
