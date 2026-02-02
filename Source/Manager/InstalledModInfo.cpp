@@ -508,8 +508,15 @@ std::unique_ptr<InstalledModInfo> InstalledModInfo::loadFrom(const GameVersion &
 	if(!gameVersion.isConfigured()) {
 		return nullptr;
 	}
+	
+	std::optional<std::string> optionalEvaluatedGamePath(gameVersion.getEvaluatedGamePath());
 
-	return loadFrom(Utilities::joinPaths(gameVersion.getGamePath(), DEFAULT_FILE_NAME));
+	if(!optionalEvaluatedGamePath.has_value()) {
+		spdlog::error("Failed to evaluate game path when attempting to load installed mod info from file.");
+		return nullptr;
+	}
+
+	return loadFrom(Utilities::joinPaths(optionalEvaluatedGamePath.value(), DEFAULT_FILE_NAME));
 }
 
 std::unique_ptr<InstalledModInfo> InstalledModInfo::loadFrom(const std::string & filePath) {
@@ -563,7 +570,14 @@ bool InstalledModInfo::saveTo(const GameVersion & gameVersion) {
 		return false;
 	}
 
-	return saveTo(Utilities::joinPaths(gameVersion.getGamePath(), DEFAULT_FILE_NAME));
+	std::optional<std::string> optionalEvaluatedGamePath(gameVersion.getEvaluatedGamePath());
+
+	if(!optionalEvaluatedGamePath.has_value()) {
+		spdlog::error("Failed to evaluate game path when attempting to save installed mod info to file.");
+		return false;
+	}
+
+	return saveTo(Utilities::joinPaths(optionalEvaluatedGamePath.value(), DEFAULT_FILE_NAME));
 }
 
 bool InstalledModInfo::saveTo(const std::string & filePath, bool overwrite) const {

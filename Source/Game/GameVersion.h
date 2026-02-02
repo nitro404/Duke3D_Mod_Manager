@@ -62,13 +62,16 @@ public:
 	bool isRemovable() const;
 	bool hasGroupFile() const;
 	bool hasGamePath() const;
-	const std::string & getGamePath() const;
+	const std::string & getUnevaluatedGamePath() const;
+	std::optional<std::string> getEvaluatedGamePath() const;
 	void setGamePath(const std::string & gamePath);
 	void clearGamePath();
 	const std::string & getGameExecutableName() const;
+	std::optional<std::string> getEvaluatedGameExecutableFilePath() const;
 	void setGameExecutableName(const std::string & gameExecutableName);
 	bool hasGameExecutableDirectoryPath() const;
-	const std::optional<std::string> & getGameExecutableDirectoryPath() const;
+	const std::optional<std::string> & getUnevaluatedGameExecutableDirectoryPath() const;
+	std::optional<std::string> getEvaluatedGameExecutableDirectoryPath() const;
 	void setGameExecutableDirectoryPath(const std::string & directoryPath);
 	void clearGameExecutableDirectoryPath();
 	bool hasSetupExecutableName() const;
@@ -77,9 +80,9 @@ public:
 	void clearSetupExecutableName();
 	const std::string & getGameConfigurationFileName() const;
 	bool setGameConfigurationFileName(const std::string & fileName);
-	const std::optional<std::string> & getGameConfigurationDirectoryPath() const;
-	std::string getEvaluatedGameConfigurationDirectoryPath() const;
-	std::string getEvaluatedGameConfigurationFilePath() const;
+	const std::optional<std::string> & getUnevaluatedGameConfigurationDirectoryPath() const;
+	std::optional<std::string> getEvaluatedGameConfigurationDirectoryPath() const;
+	std::optional<std::string> getEvaluatedGameConfigurationFilePath() const;
 	bool setGameConfigurationDirectoryPath(const std::string & directoryPath);
 	void clearGameConfigurationDirectoryPath();
 	bool hasLaunchArguments() const;
@@ -87,7 +90,8 @@ public:
 	void setLaunchArguments(const std::string & arguments);
 	void clearLaunchArguments();
 	bool hasGroupFileInstallPath() const;
-	const std::optional<std::string> & getGroupFileInstallPath() const;
+	const std::optional<std::string> & getUnevaluatedGroupFileInstallPath() const;
+	std::optional<std::string> getEvaluatedGroupFileInstallPath() const;
 	void setGroupFileInstallPath(const std::string & setupExecutableName);
 	void clearGroupFileInstallPath();
 	bool hasGroupFileMaximum() const;
@@ -261,8 +265,8 @@ public:
 	void clearNotes();
 
 	static bool isDefaultGameVersionWithIDInstallable(const std::string & gameVersionID);
-	static std::optional<std::string> getGameExecutableDirectoryPathForDefaultGameVersionWithID(const std::string & gameVersionID);
-	static std::optional<std::string> getGroupFileInstallPathForDefaultGameVersionNameWithID(const std::string & gameVersionID);
+	static std::optional<std::string> getEvaluatedGameExecutableDirectoryPathForDefaultGameVersionWithID(const std::string & gameVersionID);
+	static std::optional<std::string> getEvaluatedGroupFileInstallPathForDefaultGameVersionNameWithID(const std::string & gameVersionID);
 	static const GameVersion * getDefaultGameVersionWithID(const std::string & gameVersionID);
 
 	void addMetadata(std::map<std::string, std::any> & metadata) const;
@@ -329,6 +333,7 @@ public:
 
 private:
 	void setModified(bool modified);
+	std::optional<std::string> evaluateFilePath(const std::string & filePath) const;
 
 	std::string m_id;
 	std::string m_longName;

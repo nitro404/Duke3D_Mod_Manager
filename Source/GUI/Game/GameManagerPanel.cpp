@@ -613,23 +613,33 @@ bool GameManagerPanel::uninstallGameVersion(size_t index) {
 		return false;
 	}
 
-	if(!std::filesystem::is_directory(std::filesystem::path(gameVersion->getGamePath()))) {
-		wxMessageBox(fmt::format("'{}' path '{}' is not a valid directory.", gameVersion->getLongName(), gameVersion->getGamePath()), "Uninstall Failed", wxOK | wxICON_WARNING, this);
+	std::optional<std::string> optionalEvaluatedGamePath(gameVersion->getEvaluatedGamePath());
+
+	if(!optionalEvaluatedGamePath.has_value()) {
+		wxMessageBox(fmt::format("Failed to evaluate '{}' game path.\n\nCheck console for details.", gameVersion->getLongName()), "Uninstallation Failed", wxOK | wxICON_ERROR, this);
 
 		return false;
 	}
 
-	int uninstallConfirmationResult = wxMessageBox(fmt::format("Are you sure you want to uninstall '{}' from '{}'? This will remove all files located in this directory, so be sure to back up any valuable data!", gameVersion->getLongName(), gameVersion->getGamePath()), "Uninstall Confirmation", wxYES_NO | wxCANCEL | wxICON_QUESTION, this);
+	std::string evaluatedGamePath(optionalEvaluatedGamePath.value());
+
+	if(!std::filesystem::is_directory(std::filesystem::path(evaluatedGamePath))) {
+		wxMessageBox(fmt::format("'{}' path '{}' is not a valid directory.", gameVersion->getLongName(), evaluatedGamePath), "Uninstall Failed", wxOK | wxICON_WARNING, this);
+
+		return false;
+	}
+
+	int uninstallConfirmationResult = wxMessageBox(fmt::format("Are you sure you want to uninstall '{}' from '{}'? This will remove all files located in this directory, so be sure to back up any valuable data!", gameVersion->getLongName(), evaluatedGamePath), "Uninstall Confirmation", wxYES_NO | wxCANCEL | wxICON_QUESTION, this);
 
 	if(uninstallConfirmationResult != wxYES) {
 		return false;
 	}
 
 	std::error_code errorCode;
-	std::filesystem::remove_all(std::filesystem::path(gameVersion->getGamePath()), errorCode);
+	std::filesystem::remove_all(std::filesystem::path(evaluatedGamePath), errorCode);
 
 	if(errorCode) {
-		wxMessageBox(fmt::format("Failed to remove '{}' game directory '{}': {}", gameVersion->getLongName(), gameVersion->getGamePath(), errorCode.message()), "Directory Removal Failed", wxOK | wxICON_ERROR, this);
+		wxMessageBox(fmt::format("Failed to remove '{}' game directory '{}': {}", gameVersion->getLongName(), evaluatedGamePath, errorCode.message()), "Directory Removal Failed", wxOK | wxICON_ERROR, this);
 		return false;
 	}
 

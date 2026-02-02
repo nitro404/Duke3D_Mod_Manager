@@ -4,6 +4,7 @@
 #include "Game/GameVersionCollection.h"
 #include "Mod/ModGameVersion.h"
 
+#include <FilePathVariableEvaluator.h>
 #include <Utilities/FileUtilities.h>
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>
@@ -127,25 +128,25 @@ const std::string GameVersion::WORLD_TOUR_ID("world_tour");
 // Note: Duke Nukem 3D: 1.3D & Atomic Edition 1.5 game version identifiers are pre-defined separately in order to avoid a circular dependency:
 static const std::string REGULAR_ID("regular");
 static const std::string ATOMIC_ID("atomic");
-const GameVersion GameVersion::LAMEDUKE                ("lameduke",    "Duke Nukem 3D Beta 1.3.95 (LameDuke)",        "LameDuke",                 true,  false, "", "D3D.EXE",            {},       "SETUP.DAT",                          {},                                          true,  {},    false, {},    {},    0,  "LameDuke",  {},    {},     {},    {},      "/v", "/l", "/s", 0, "/r", {},    {},   {},   {},   {},    {},    "SETUP.EXE", {}, {},    {},     {},    true, "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS },                                                     { },                                                                                                                                      { },                                              { },                                                                                      { DOSBoxConfiguration({ DOSBoxConfiguration::Section("cpu", { DOSBoxConfiguration::Section::Entry("cycles", "50000") }) }) });
-const GameVersion GameVersion::ORIGINAL_BETA_VERSION   ("beta",        "Duke Nukem 3D Beta 0.99",                     "Duke 3D Beta 0.99",        true,  true,  "", "DUKE3D.EXE",         {},       GameConfiguration::DEFAULT_FILE_NAME, {},                                          true,  {},    false, {},    {},    0,  "Beta",      {},    {},     {},    {},      "/v", "/l", "/s", 0, "/r", {},    "/t", {},   "/m", {},    {},    "SETUP.EXE", "", {},    {},     {},    true, "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS },                                                     { REGULAR_ID },                                                                                                                           { },                                              { "Has extremely poor support for mods.", "Does not function properly out of the box." });
-const GameVersion GameVersion::ORIGINAL_REGULAR_VERSION(REGULAR_ID,    "Duke Nukem 3D 1.3D",                          "Duke 3D 1.3D",             true,  false, "", "DUKE3D.EXE",         {},       GameConfiguration::DEFAULT_FILE_NAME, {},                                          true,  {},    true,  {},    {},    1,  "Regular",   "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", {},    "/t", "/u", "/m", "/ns", "/nm", "SETUP.EXE", "", {},    {},     true,  {},   "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS },                                                     { ORIGINAL_BETA_VERSION.getID() });
-const GameVersion GameVersion::ORIGINAL_PLUTONIUM_PAK  ("plutonium",   "Duke Nukem 3D: Plutonium Pak 1.4",            "Plutonium Pak",            true,  true,  "", "DUKE3D.EXE",         {},       GameConfiguration::DEFAULT_FILE_NAME, {},                                          true,  {},    true,  false, {},    4,  "PlutPak",   "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", "SETUP.EXE", "", {},    {},     {},    {},   "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS },                                                     { ATOMIC_ID },                                                                                                                            { },                                              { "Virtually identical to Duke Nukem 3D Atomic Edition." });
-const GameVersion GameVersion::ORIGINAL_ATOMIC_EDITION (ATOMIC_ID,     "Duke Nukem 3D: Atomic Edition 1.5",           "Atomic Edition",           true,  false, "", "DUKE3D.EXE",         {},       GameConfiguration::DEFAULT_FILE_NAME, {},                                          true,  {},    true,  true,  {},    4,  "Atomic",    "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", "SETUP.EXE", "", {},    {},     {},    {},   "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS },                                                     { ORIGINAL_PLUTONIUM_PAK.getID() });
-const GameVersion GameVersion::JFDUKE3D                ("jfduke3d",    "JFDuke3D",                                    "JFDuke3D",                 true,  false, "", "duke3d.exe",         {},       GameConfiguration::DEFAULT_FILE_NAME, ":APPDATA:/:GAMEID:",                        true,  {},    true,  true,  {},    4,  "JFDuke3D",  "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", {},    {},     {},    {},   "http://www.jonof.id.au/jfduke3d",                               "https://github.com/jonof/jfduke3d",                                        { OperatingSystem::Windows, OperatingSystem::MacOS },                         { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
-const GameVersion GameVersion::MEGATON_EDITION         ("megaton",     "Duke Nukem 3D: Megaton Edition",              "Megaton Edition",          false, true,  "", "duke3d.exe",         "../bin", GameConfiguration::DEFAULT_FILE_NAME, {},                                          true,  {},    true,  true,  {},    4,  "Megaton",   "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          {}, {},    {},     {},    {},   "https://store.steampowered.com/app/225140",                     "https://github.com/TermiT/duke3d-megaton",                                 { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(), JFDUKE3D.getID() },                  { "duke3d-megaton.def", "duke3d-megaton_3.def" });
-const GameVersion GameVersion::DUKE3DW                 ("duke3dw",     "Duke3dw",                                     "Duke3dw",                  true,  true,  "", "Duke3dw.exe",        {},       "Duke3dw.cfg",                        {},                                          true,  {},    true,  true,  {},    8,  "Duke3dw",   "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", "/h",  {},     {},    {},   "http://www.proasm.com/duke/Duke3dw.html",                       "",                                                                         { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(), JFDUKE3D.getID() });
-const GameVersion GameVersion::EDUKE32                 ("eduke32",     "eDuke32",                                     "eDuke32",                  true,  false, "", "eduke32.exe",        {},       "eduke32.cfg",                        {},                                          false, true,  true,  true,  true,  8,  "eDuke32",   "-x ", "-mx ", "-g ", "-map ", "-v", "-l", "-s", 1, "-r", "-d ", "-t", "-u", "-m", "-ns", "-nm", {},          "", "-h ", "-mh ", {},    {},   "https://www.eduke32.com",                                       "https://voidpoint.io/terminx/eduke32",                                     { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(), JFDUKE3D.getID() });
-const GameVersion GameVersion::NETDUKE32               ("netduke32",   "NetDuke32",                                   "NetDuke32",                true,  true,  "", "netduke32.exe",      {},       "netduke32.cfg",                      {},                                          false, true,  true,  true,  true,  8,  "NetDuke",   "-x ", "-mx ", "-g ", "-map ", "-v", "-l", "-s", 1, "-r", "-d ", "-t", "-u", "-m", "-ns", "-nm", {},          "", "-h ", "-mh ", {},    {},   "https://wiki.eduke32.com/wiki/NetDuke32",                       "https://voidpoint.io/StrikerTheHedgefox/eduke32-csrefactor/-/tree/master", { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(), JFDUKE3D.getID(), EDUKE32.getID() });
-const GameVersion GameVersion::RED_NUKEM               ("rednukem",    "RedNukem",                                    "RedNukem",                 true,  true,  "", "rednukem.exe",       {},       "rednukem.cfg",                       {},                                          false, true,  true,  true,  {},    8,  "RedNukem",  "-x ", "-mx ", "-g ", "-map ", "-v", "-l", "-s", 1, "-r", "-d ", "-t", "-u", "-m", "-ns", "-nm", {},          "", "-h ", "-mh ", {},    {},   "https://lerppu.net/wannabethesis",                              "https://github.com/nukeykt/NRedneck",                                      { OperatingSystem::Windows },                                                 { ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(),  JFDUKE3D.getID() });
-const GameVersion GameVersion::DUKE3D_W32              ("duke3d_w32",  "Duke3d_w32",                                  "Duke3d_w32",               true,  true,  "", "duke3d_w32.exe",     {},       GameConfiguration::DEFAULT_FILE_NAME, {},                                          true,  {},    false, true,  {},    4,  "Duke_w32",  "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", {},    {},     {},    {},   "http://www.rancidmeat.com/project.php3?id=1",                   "",                                                                         { OperatingSystem::Windows },                                                 { ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
-const GameVersion GameVersion::XDUKE                   ("xduke",       "xDuke",                                       "xDuke",                    true,  true,  "", "duke3d_w32.exe",     {},       GameConfiguration::DEFAULT_FILE_NAME, {},                                          true,  {},    false, false, {},    4,  "xDuke",     "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", {},    {},     {},    {},   "http://vision.gel.ulaval.ca/~klein/duke3d",                     "",                                                                         { OperatingSystem::Windows },                                                 { ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
-const GameVersion GameVersion::RDUKE                   ("rduke",       "rDuke",                                       "rDuke",                    true,  true,  "", "rduke_r10.exe",      {},       GameConfiguration::DEFAULT_FILE_NAME, {},                                          true,  {},    false, false, {},    4,  "rDuke",     "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", {},    {},     {},    {},   "",                                                              "https://github.com/radar-duker/radars-xduke-fork",                         { OperatingSystem::Windows },                                                 { ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
-//const GameVersion GameVersion::CHOCOLATE_DUKE3D        ("chocolate",   "Chocolate Duke Nukem 3D",                     "Chocolate Duke3D",         true,  true,  "", "Game.exe",           {},       GameConfiguration::DEFAULT_FILE_NAME, {},                                          true,  {},    false, true,  {},    4,  "Chocolate", "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          {}, {},    {},     {},    {},   "https://fabiensanglard.net/duke3d/chocolate_duke_nukem_3D.php", "https://github.com/fabiensanglard/chocolate_duke3D",                       { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
-const GameVersion GameVersion::BELGIAN_CHOCOLATE_DUKE3D("belgian",     "Belgian Chocolate Duke Nukem 3D",             "Belgian Chocolate Duke3D", true,  true,  "", "ChocoDuke3D.64.exe", {},       GameConfiguration::DEFAULT_FILE_NAME, {},                                          true,  {},    false, false, {},    4,  "Belgian",   "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", {},    {},     {},    {},   "",                                                              "https://github.com/GPSnoopy/BelgianChocolateDuke3D",                       { OperatingSystem::Windows, OperatingSystem::Linux, OperatingSystem::MacOS }, { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
-const GameVersion GameVersion::RAZE                    ("raze",        "Raze",                                        "Raze",                     true,  true,  "", "raze.exe",           {},       "raze.ini",                           ":USERPROFILE:/Documents/My Games/:GAMEID:", true,  true,  true,  true,  {},    {}, "Raze",      "-x ", {},     "-g ", "-map ", "-v", "-l", "-s", 1, "-r", "-d ", "-t", "-u", "-m", "-ns", "-nm", {},          "", {},    {},     {},    {},   "https://raze.zdoom.org/about",                                  "https://github.com/coelckers/Raze",                                        { OperatingSystem::Windows, OperatingSystem::Linux, OperatingSystem::MacOS }, { ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(),  JFDUKE3D.getID() });
-const GameVersion GameVersion::PKDUKE3D                ("pkduke3d",    "pkDuke3D",                                    "pkDuke3D",                 true,  true,  "", "pkDuke3d.exe",       {},       GameConfiguration::DEFAULT_FILE_NAME, {},                                          true,  {},    true,  true,  {},    4,  "pkDuke3D",  "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", {},    {},     {},    {},   "https://bitbucket.org/pogokeen/pkduke3d/downloads",             "https://bitbucket.org/pogokeen/pkduke3d",                                  { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(), JFDUKE3D.getID() },                  { },                                              { "Has some issues running mods, such as missing episode names." });
-//const GameVersion GameVersion::BUILDGDX                ("buildgdx",    "BuildGDX",                                    "BuildGDX".                 true,  true,  "", "BuildGDX.jar",       {},       "",                                   {},                                          true,  true,  true,  true,  {},    {}, "BuildGDX",  "",    {},     "",    "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          {}, {},    {},     {},    {},   "https://m210.duke4.net/index.php/downloads/category/8-java",    "https://gitlab.com/m210/BuildGDX",                                         { OperatingSystem::Windows, OperatingSystem::Linux, OperatingSystem::MacOS }, { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
+const GameVersion GameVersion::LAMEDUKE                ("lameduke",    "Duke Nukem 3D Beta 1.3.95 (LameDuke)",        "LameDuke",                 true,  false, "", "D3D.EXE",            {},       "SETUP.DAT",                          {},                                   true,  {},    false, {},    {},    0,  "LameDuke",  {},    {},     {},    {},      "/v", "/l", "/s", 0, "/r", {},    {},   {},   {},   {},    {},    "SETUP.EXE", {}, {},    {},     {},    true, "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS },                                                     { },                                                                                                                                      { },                                              { },                                                                                      { DOSBoxConfiguration({ DOSBoxConfiguration::Section("cpu", { DOSBoxConfiguration::Section::Entry("cycles", "50000") }) }) });
+const GameVersion GameVersion::ORIGINAL_BETA_VERSION   ("beta",        "Duke Nukem 3D Beta 0.99",                     "Duke 3D Beta 0.99",        true,  true,  "", "DUKE3D.EXE",         {},       GameConfiguration::DEFAULT_FILE_NAME, {},                                   true,  {},    false, {},    {},    0,  "Beta",      {},    {},     {},    {},      "/v", "/l", "/s", 0, "/r", {},    "/t", {},   "/m", {},    {},    "SETUP.EXE", "", {},    {},     {},    true, "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS },                                                     { REGULAR_ID },                                                                                                                           { },                                              { "Has extremely poor support for mods.", "Does not function properly out of the box." });
+const GameVersion GameVersion::ORIGINAL_REGULAR_VERSION(REGULAR_ID,    "Duke Nukem 3D 1.3D",                          "Duke 3D 1.3D",             true,  false, "", "DUKE3D.EXE",         {},       GameConfiguration::DEFAULT_FILE_NAME, {},                                   true,  {},    true,  {},    {},    1,  "Regular",   "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", {},    "/t", "/u", "/m", "/ns", "/nm", "SETUP.EXE", "", {},    {},     true,  {},   "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS },                                                     { ORIGINAL_BETA_VERSION.getID() });
+const GameVersion GameVersion::ORIGINAL_PLUTONIUM_PAK  ("plutonium",   "Duke Nukem 3D: Plutonium Pak 1.4",            "Plutonium Pak",            true,  true,  "", "DUKE3D.EXE",         {},       GameConfiguration::DEFAULT_FILE_NAME, {},                                   true,  {},    true,  false, {},    4,  "PlutPak",   "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", "SETUP.EXE", "", {},    {},     {},    {},   "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS },                                                     { ATOMIC_ID },                                                                                                                            { },                                              { "Virtually identical to Duke Nukem 3D Atomic Edition." });
+const GameVersion GameVersion::ORIGINAL_ATOMIC_EDITION (ATOMIC_ID,     "Duke Nukem 3D: Atomic Edition 1.5",           "Atomic Edition",           true,  false, "", "DUKE3D.EXE",         {},       GameConfiguration::DEFAULT_FILE_NAME, {},                                   true,  {},    true,  true,  {},    4,  "Atomic",    "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", "SETUP.EXE", "", {},    {},     {},    {},   "https://www.dukenukem.com",                                     "",                                                                         { OperatingSystem::DOS },                                                     { ORIGINAL_PLUTONIUM_PAK.getID() });
+const GameVersion GameVersion::JFDUKE3D                ("jfduke3d",    "JFDuke3D",                                    "JFDuke3D",                 true,  false, "", "duke3d.exe",         {},       GameConfiguration::DEFAULT_FILE_NAME, "<APPDATA>/<GAMEID>",                 true,  {},    true,  true,  {},    4,  "JFDuke3D",  "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", {},    {},     {},    {},   "http://www.jonof.id.au/jfduke3d",                               "https://github.com/jonof/jfduke3d",                                        { OperatingSystem::Windows, OperatingSystem::MacOS },                         { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
+const GameVersion GameVersion::MEGATON_EDITION         ("megaton",     "Duke Nukem 3D: Megaton Edition",              "Megaton Edition",          false, true,  "", "duke3d.exe",         "../bin", GameConfiguration::DEFAULT_FILE_NAME, {},                                   true,  {},    true,  true,  {},    4,  "Megaton",   "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          {}, {},    {},     {},    {},   "https://store.steampowered.com/app/225140",                     "https://github.com/TermiT/duke3d-megaton",                                 { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(), JFDUKE3D.getID() },                  { "duke3d-megaton.def", "duke3d-megaton_3.def" });
+const GameVersion GameVersion::DUKE3DW                 ("duke3dw",     "Duke3dw",                                     "Duke3dw",                  true,  true,  "", "Duke3dw.exe",        {},       "Duke3dw.cfg",                        {},                                   true,  {},    true,  true,  {},    8,  "Duke3dw",   "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", "/h",  {},     {},    {},   "http://www.proasm.com/duke/Duke3dw.html",                       "",                                                                         { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(), JFDUKE3D.getID() });
+const GameVersion GameVersion::EDUKE32                 ("eduke32",     "eDuke32",                                     "eDuke32",                  true,  false, "", "eduke32.exe",        {},       "eduke32.cfg",                        {},                                   false, true,  true,  true,  true,  8,  "eDuke32",   "-x ", "-mx ", "-g ", "-map ", "-v", "-l", "-s", 1, "-r", "-d ", "-t", "-u", "-m", "-ns", "-nm", {},          "", "-h ", "-mh ", {},    {},   "https://www.eduke32.com",                                       "https://voidpoint.io/terminx/eduke32",                                     { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(), JFDUKE3D.getID() });
+const GameVersion GameVersion::NETDUKE32               ("netduke32",   "NetDuke32",                                   "NetDuke32",                true,  true,  "", "netduke32.exe",      {},       "netduke32.cfg",                      {},                                   false, true,  true,  true,  true,  8,  "NetDuke",   "-x ", "-mx ", "-g ", "-map ", "-v", "-l", "-s", 1, "-r", "-d ", "-t", "-u", "-m", "-ns", "-nm", {},          "", "-h ", "-mh ", {},    {},   "https://wiki.eduke32.com/wiki/NetDuke32",                       "https://voidpoint.io/StrikerTheHedgefox/eduke32-csrefactor/-/tree/master", { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(), JFDUKE3D.getID(), EDUKE32.getID() });
+const GameVersion GameVersion::RED_NUKEM               ("rednukem",    "RedNukem",                                    "RedNukem",                 true,  true,  "", "rednukem.exe",       {},       "rednukem.cfg",                       {},                                   false, true,  true,  true,  {},    8,  "RedNukem",  "-x ", "-mx ", "-g ", "-map ", "-v", "-l", "-s", 1, "-r", "-d ", "-t", "-u", "-m", "-ns", "-nm", {},          "", "-h ", "-mh ", {},    {},   "https://lerppu.net/wannabethesis",                              "https://github.com/nukeykt/NRedneck",                                      { OperatingSystem::Windows },                                                 { ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(),  JFDUKE3D.getID() });
+const GameVersion GameVersion::DUKE3D_W32              ("duke3d_w32",  "Duke3d_w32",                                  "Duke3d_w32",               true,  true,  "", "duke3d_w32.exe",     {},       GameConfiguration::DEFAULT_FILE_NAME, {},                                   true,  {},    false, true,  {},    4,  "Duke_w32",  "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", {},    {},     {},    {},   "http://www.rancidmeat.com/project.php3?id=1",                   "",                                                                         { OperatingSystem::Windows },                                                 { ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
+const GameVersion GameVersion::XDUKE                   ("xduke",       "xDuke",                                       "xDuke",                    true,  true,  "", "duke3d_w32.exe",     {},       GameConfiguration::DEFAULT_FILE_NAME, {},                                   true,  {},    false, false, {},    4,  "xDuke",     "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", {},    {},     {},    {},   "http://vision.gel.ulaval.ca/~klein/duke3d",                     "",                                                                         { OperatingSystem::Windows },                                                 { ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
+const GameVersion GameVersion::RDUKE                   ("rduke",       "rDuke",                                       "rDuke",                    true,  true,  "", "rduke_r10.exe",      {},       GameConfiguration::DEFAULT_FILE_NAME, {},                                   true,  {},    false, false, {},    4,  "rDuke",     "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", {},    {},     {},    {},   "",                                                              "https://github.com/radar-duker/radars-xduke-fork",                         { OperatingSystem::Windows },                                                 { ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
+//const GameVersion GameVersion::CHOCOLATE_DUKE3D        ("chocolate",   "Chocolate Duke Nukem 3D",                     "Chocolate Duke3D",         true,  true,  "", "Game.exe",           {},       GameConfiguration::DEFAULT_FILE_NAME, {},                                   true,  {},    false, true,  {},    4,  "Chocolate", "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          {}, {},    {},     {},    {},   "https://fabiensanglard.net/duke3d/chocolate_duke_nukem_3D.php", "https://github.com/fabiensanglard/chocolate_duke3D",                       { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
+const GameVersion GameVersion::BELGIAN_CHOCOLATE_DUKE3D("belgian",     "Belgian Chocolate Duke Nukem 3D",             "Belgian Chocolate Duke3D", true,  true,  "", "ChocoDuke3D.64.exe", {},       GameConfiguration::DEFAULT_FILE_NAME, {},                                   true,  {},    false, false, {},    4,  "Belgian",   "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", {},    {},     {},    {},   "",                                                              "https://github.com/GPSnoopy/BelgianChocolateDuke3D",                       { OperatingSystem::Windows, OperatingSystem::Linux, OperatingSystem::MacOS }, { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
+const GameVersion GameVersion::RAZE                    ("raze",        "Raze",                                        "Raze",                     true,  true,  "", "raze.exe",           {},       "raze.ini",                           "<HOME>/Documents/My Games/<GAMEID>", true,  true,  true,  true,  {},    {}, "Raze",      "-x ", {},     "-g ", "-map ", "-v", "-l", "-s", 1, "-r", "-d ", "-t", "-u", "-m", "-ns", "-nm", {},          "", {},    {},     {},    {},   "https://raze.zdoom.org/about",                                  "https://github.com/coelckers/Raze",                                        { OperatingSystem::Windows, OperatingSystem::Linux, OperatingSystem::MacOS }, { ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(),  JFDUKE3D.getID() });
+const GameVersion GameVersion::PKDUKE3D                ("pkduke3d",    "pkDuke3D",                                    "pkDuke3D",                 true,  true,  "", "pkDuke3d.exe",       {},       GameConfiguration::DEFAULT_FILE_NAME, {},                                   true,  {},    true,  true,  {},    4,  "pkDuke3D",  "/x",  {},     "/g",  "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          "", {},    {},     {},    {},   "https://bitbucket.org/pogokeen/pkduke3d/downloads",             "https://bitbucket.org/pogokeen/pkduke3d",                                  { OperatingSystem::Windows },                                                 { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID(), JFDUKE3D.getID() },                  { },                                              { "Has some issues running mods, such as missing episode names." });
+//const GameVersion GameVersion::BUILDGDX                ("buildgdx",    "BuildGDX",                                    "BuildGDX".                 true,  true,  "", "BuildGDX.jar",       {},       "",                                   {},                                   true,  true,  true,  true,  {},    {}, "BuildGDX",  "",    {},     "",    "-map ", "/v", "/l", "/s", 1, "/r", "/d",  "/t", "/u", "/m", "/ns", "/nm", {},          {}, {},    {},     {},    {},   "https://m210.duke4.net/index.php/downloads/category/8-java",    "https://gitlab.com/m210/BuildGDX",                                         { OperatingSystem::Windows, OperatingSystem::Linux, OperatingSystem::MacOS }, { ORIGINAL_REGULAR_VERSION.getID(), ORIGINAL_PLUTONIUM_PAK.getID(), ORIGINAL_ATOMIC_EDITION.getID() });
 
 const std::vector<const GameVersion *> GameVersion::DEFAULT_GAME_VERSIONS = {
 	&LAMEDUKE,
@@ -634,8 +635,12 @@ bool GameVersion::hasGamePath() const {
 	return !m_gamePath.empty();
 }
 
-const std::string & GameVersion::getGamePath() const {
+const std::string & GameVersion::getUnevaluatedGamePath() const {
 	return m_gamePath;
+}
+
+std::optional<std::string> GameVersion::getEvaluatedGamePath() const {
+	return evaluateFilePath(m_gamePath);
 }
 
 void GameVersion::setGamePath(const std::string & gamePath) {
@@ -663,6 +668,20 @@ const std::string & GameVersion::getGameExecutableName() const {
 	return m_gameExecutableName;
 }
 
+std::optional<std::string> GameVersion::getEvaluatedGameExecutableFilePath() const {
+	if(!m_gameExecutableDirectoryPath.has_value() || m_gameExecutableDirectoryPath->empty()) {
+		return m_gameExecutableName;
+	}
+
+	std::optional<std::string> optionalEvaluatedGameExecutableDirectoryPath(evaluateFilePath(m_gameExecutableDirectoryPath.value()));
+
+	if(!optionalEvaluatedGameExecutableDirectoryPath.has_value()) {
+		return {};
+	}
+
+	return Utilities::joinPaths(optionalEvaluatedGameExecutableDirectoryPath.value(), m_gameExecutableName);
+}
+
 void GameVersion::setGameExecutableName(const std::string & gameExecutableName) {
 	std::string formattedGameExecutableName(Utilities::trimString(gameExecutableName));
 
@@ -679,8 +698,16 @@ bool GameVersion::hasGameExecutableDirectoryPath() const {
 	return m_gameExecutableDirectoryPath.has_value();
 }
 
-const std::optional<std::string> & GameVersion::getGameExecutableDirectoryPath() const {
+const std::optional<std::string> & GameVersion::getUnevaluatedGameExecutableDirectoryPath() const {
 	return m_gameExecutableDirectoryPath;
+}
+
+std::optional<std::string> GameVersion::getEvaluatedGameExecutableDirectoryPath() const {
+	if(!m_gameExecutableDirectoryPath.has_value()) {
+		return {};
+	}
+
+	return evaluateFilePath(m_gameExecutableDirectoryPath.value());
 }
 
 void GameVersion::setGameExecutableDirectoryPath(const std::string & directoryPath) {
@@ -759,70 +786,26 @@ bool GameVersion::setGameConfigurationFileName(const std::string & fileName) {
 	return true;
 }
 
-const std::optional<std::string> & GameVersion::getGameConfigurationDirectoryPath() const {
+const std::optional<std::string> & GameVersion::getUnevaluatedGameConfigurationDirectoryPath() const {
 	return m_gameConfigurationDirectoryPath;
 }
 
-std::string GameVersion::getEvaluatedGameConfigurationDirectoryPath() const {
-	static const char VARIABLE_CHAR = ':';
-	static const std::regex VARIABLE_REG_EXP(fmt::format("{0}[^{0}]+{0}", VARIABLE_CHAR));
-
-	if(!m_gameConfigurationDirectoryPath.has_value() || m_gameConfigurationDirectoryPath.value().empty()) {
+std::optional<std::string> GameVersion::getEvaluatedGameConfigurationDirectoryPath() const {
+	if(!m_gameConfigurationDirectoryPath.has_value()) {
 		return {};
 	}
 
-	std::vector<std::string> directoryPathParts(Utilities::regularExpressionStringSplit(m_gameConfigurationDirectoryPath.value(), VARIABLE_REG_EXP));
-	std::vector<std::string> directoryPathVariableNames;
-	std::string directoryPathSearchString = m_gameConfigurationDirectoryPath.value();
-	std::smatch directoryPathVariableMatch;
-
-	while(std::regex_search(directoryPathSearchString, directoryPathVariableMatch, VARIABLE_REG_EXP)) {
-		for(std::sub_match submatch : directoryPathVariableMatch) {
-			std::string variableName(submatch.str());
-			directoryPathVariableNames.push_back(variableName.substr(1, variableName.length() - 2));
-		}
-
-		directoryPathSearchString = directoryPathVariableMatch.suffix().str();
-	}
-
-	bool variableFirst = directoryPathParts.empty() || m_gameConfigurationDirectoryPath->find(directoryPathParts[0]) != 0;
-
-	std::stringstream newDirectoryPath;
-	size_t j = 0;
-
-	for(size_t i = 0; i < directoryPathParts.size(); i++) {
-		if(!variableFirst) {
-			newDirectoryPath << directoryPathParts[i];
-		}
-
-		if(j < directoryPathVariableNames.size()) {
-			if(Utilities::areStringsEqualIgnoreCase(directoryPathVariableNames[j], "GAMEID")) {
-				newDirectoryPath << m_id;
-			}
-			else {
-				const char * environmentVariableValue = std::getenv(directoryPathVariableNames[j].c_str());
-
-				if(environmentVariableValue != nullptr) {
-					newDirectoryPath << environmentVariableValue;
-				}
-				else {
-					newDirectoryPath << fmt::format("{0}{1}{0}", VARIABLE_CHAR, directoryPathVariableNames[j]);
-				}
-			}
-
-			j++;
-		}
-
-		if(variableFirst) {
-			newDirectoryPath << directoryPathParts[i];
-		}
-	}
-
-	return newDirectoryPath.str();
+	return evaluateFilePath(m_gameConfigurationDirectoryPath.value());
 }
 
-std::string GameVersion::getEvaluatedGameConfigurationFilePath() const {
-	return Utilities::joinPaths(getEvaluatedGameConfigurationDirectoryPath(), m_gameConfigurationFileName);
+std::optional<std::string> GameVersion::getEvaluatedGameConfigurationFilePath() const {
+	std::optional<std::string> optionalEvaluatedGameConfigurationDirectoryPath(getEvaluatedGameConfigurationDirectoryPath());
+
+	if(!optionalEvaluatedGameConfigurationDirectoryPath.has_value() || optionalEvaluatedGameConfigurationDirectoryPath->empty()) {
+		return m_gameConfigurationFileName;
+	}
+
+	return Utilities::joinPaths(optionalEvaluatedGameConfigurationDirectoryPath.value(), m_gameConfigurationFileName);
 }
 
 bool GameVersion::setGameConfigurationDirectoryPath(const std::string & directoryPath) {
@@ -881,8 +864,16 @@ bool GameVersion::hasGroupFileInstallPath() const {
 	return m_groupFileInstallPath.has_value();
 }
 
-const std::optional<std::string> & GameVersion::getGroupFileInstallPath() const {
+const std::optional<std::string> & GameVersion::getUnevaluatedGroupFileInstallPath() const {
 	return m_groupFileInstallPath;
+}
+
+std::optional<std::string> GameVersion::getEvaluatedGroupFileInstallPath() const {
+	if(!m_groupFileInstallPath.has_value()) {
+		return {};
+	}
+
+	return evaluateFilePath(m_groupFileInstallPath.value());
 }
 
 void GameVersion::setGroupFileInstallPath(const std::string & groupFileInstallPath) {
@@ -1786,6 +1777,12 @@ std::shared_ptr<const DOSBoxConfiguration> GameVersion::getDefaultDOSBoxConfigur
 	return nullptr;
 }
 
+std::optional<std::string> GameVersion::evaluateFilePath(const std::string & filePath) const {
+	return FilePathVariableEvaluator::getInstance()->evaluateFilePath(filePath, FilePathVariableEvaluator::VariableMap({
+		{ "GAMEID", m_id }
+	}));
+}
+
 size_t GameVersion::numberOfSupportedOperatingSystems() const {
 	return m_supportedOperatingSystems.size();
 }
@@ -2265,20 +2262,20 @@ bool GameVersion::isDefaultGameVersionWithIDInstallable(const std::string & game
 		   defaultGameVersion->isInstallable();
 }
 
-std::optional<std::string> GameVersion::getGameExecutableDirectoryPathForDefaultGameVersionWithID(const std::string & gameVersionID) {
+std::optional<std::string> GameVersion::getEvaluatedGameExecutableDirectoryPathForDefaultGameVersionWithID(const std::string & gameVersionID) {
 	for(const GameVersion * gameVersion : DEFAULT_GAME_VERSIONS) {
 		if(Utilities::areStringsEqual(gameVersion->getID(), gameVersionID)) {
-			return gameVersion->getGameExecutableDirectoryPath();
+			return gameVersion->getEvaluatedGameExecutableDirectoryPath();
 		}
 	}
 
 	return {};
 }
 
-std::optional<std::string> GameVersion::getGroupFileInstallPathForDefaultGameVersionNameWithID(const std::string & gameVersionID) {
+std::optional<std::string> GameVersion::getEvaluatedGroupFileInstallPathForDefaultGameVersionNameWithID(const std::string & gameVersionID) {
 	for(const GameVersion * gameVersion : DEFAULT_GAME_VERSIONS) {
 		if(Utilities::areStringsEqual(gameVersion->getID(), gameVersionID)) {
-			return gameVersion->getGroupFileInstallPath();
+			return gameVersion->getEvaluatedGroupFileInstallPath();
 		}
 	}
 

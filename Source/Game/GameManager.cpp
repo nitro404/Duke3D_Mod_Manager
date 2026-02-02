@@ -3049,28 +3049,35 @@ bool GameManager::installGame(const std::string & gameVersionID, const std::stri
 				spdlog::warn("Failed to update default game configuration with better controls.");
 			}
 
-			std::string gameConfigurationFilePath(gameVersion->getEvaluatedGameConfigurationFilePath());
+			std::optional<std::string> optionalGameConfigurationFilePath(gameVersion->getEvaluatedGameConfigurationFilePath());
 
-			bool isGameConfigurationFilePathAbsolute = Utilities::isFilePathAbsolute(gameConfigurationFilePath);
+			if(optionalGameConfigurationFilePath.has_value()) {
+				std::string gameConfigurationFilePath(std::move(optionalGameConfigurationFilePath.value()));
 
-			if(!isGameConfigurationFilePathAbsolute) {
-				gameConfigurationFilePath = Utilities::joinPaths(destinationDirectoryPath, gameConfigurationFilePath);
-			}
+				bool isGameConfigurationFilePathAbsolute = Utilities::isFilePathAbsolute(gameConfigurationFilePath);
 
-			// only overwrite game configuration files that are located within the game directory to avoid clobbering global configuration files
-			if(gameConfiguration->saveTo(gameConfigurationFilePath, !isGameConfigurationFilePathAbsolute)) {
-				spdlog::info("Successfully generated and saved default game configuration to file: '{}'.", gameConfigurationFilePath);
+				if(!isGameConfigurationFilePathAbsolute) {
+					gameConfigurationFilePath = Utilities::joinPaths(destinationDirectoryPath, gameConfigurationFilePath);
+				}
+
+				// only overwrite game configuration files that are located within the game directory to avoid clobbering global configuration files
+				if(gameConfiguration->saveTo(gameConfigurationFilePath, !isGameConfigurationFilePathAbsolute)) {
+					spdlog::info("Successfully generated and saved default game configuration to file: '{}'.", gameConfigurationFilePath);
+				}
+				else {
+					spdlog::warn("Failed to save default game configuration to file: '{}'.", gameConfigurationFilePath);
+				}
+
+				if(settings->segmentAnalyticsEnabled) {
+					std::map<std::string, std::any> properties;
+					gameVersion->addMetadata(properties);
+					properties["fileName"] = gameVersion->getGameConfigurationFileName();
+
+					segmentAnalytics->track("Game Configuration Generated", properties);
+				}
 			}
 			else {
-				spdlog::warn("Failed to save default game configuration to file: '{}'.", gameConfigurationFilePath);
-			}
-
-			if(settings->segmentAnalyticsEnabled) {
-				std::map<std::string, std::any> properties;
-				gameVersion->addMetadata(properties);
-				properties["fileName"] = gameVersion->getGameConfigurationFileName();
-
-				segmentAnalytics->track("Game Configuration Generated", properties);
+				spdlog::warn("Failed to evaluate game configuration file path, default game configuration file not saved.");
 			}
 		}
 	}
@@ -3081,9 +3088,17 @@ bool GameManager::installGame(const std::string & gameVersionID, const std::stri
 
 	// don't need to install the group file or verify it separately when using a fallback download for either of the original game versions, since it's already installed & verified
 	if (!isOriginalGameFallback && gameVersion->hasGroupFileInstallPath()) {
+		std::optional<std::string> optionalEvaluatedGroupFileInstallPath(gameVersion->getEvaluatedGroupFileInstallPath());
+
+		if(optionalEvaluatedGroupFileInstallPath.has_value()) {
+			spdlog::error("Failed to install group file to '{}' game directory due to game path evaluation failure.", gameVersion->getLongName());
+			return false;
+		}
+
+		std::string evaluatedGroupFileInstallPath(std::move(optionalEvaluatedGroupFileInstallPath.value()));
 		bool internalGroupDownloadAborted = false;
 
-		if(!installGroupFile(gameVersion->getID(), Utilities::joinPaths(destinationDirectoryPath, gameVersion->getGroupFileInstallPath().value()), overwrite, &groupSymlinked, &worldTourGroup, &groupGameVersionID, &internalGroupDownloadAborted)) {
+		if(!installGroupFile(gameVersion->getID(), Utilities::joinPaths(destinationDirectoryPath, evaluatedGroupFileInstallPath), overwrite, &groupSymlinked, &worldTourGroup, &groupGameVersionID, &internalGroupDownloadAborted)) {
 			if(internalGroupDownloadAborted) {
 				if(aborted != nullptr) {
 					*aborted = true;
@@ -3674,6 +3689,14 @@ void GameManager::updateGroupFileSymlinks() {
 			continue;
 		}
 
+		std::optional<std::string> optionalEvaluatedGamePath(gameVersion->getEvaluatedGamePath());
+
+		if(!optionalEvaluatedGamePath.has_value()) {
+			spdlog::error("Failed to update '{}' group file symbolic link due to game path evaluation failure.", gameVersion->getLongName());
+			continue;
+		}
+
+		std::string evaluatedGamePath(std::move(optionalEvaluatedGamePath.value()));
 		std::string groupFilePath(getGroupFilePath(gameVersion->getID()));
 
 		if(groupFilePath.empty()) {
@@ -3701,7 +3724,7 @@ void GameManager::updateGroupFileSymlinks() {
 			}
 		}
 
-		std::filesystem::path gameGroupFilePath(Utilities::joinPaths(gameVersion->getGamePath(), GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME));
+		std::filesystem::path gameGroupFilePath(Utilities::joinPaths(evaluatedGamePath, GroupGRP::DUKE_NUKEM_3D_GROUP_FILE_NAME));
 
 		if(std::filesystem::is_regular_file(gameGroupFilePath) && !std::filesystem::is_symlink(gameGroupFilePath)) {
 			spdlog::trace("'{}' has local group file, no symbolic link target update required.", gameVersion->getLongName());

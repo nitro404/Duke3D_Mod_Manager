@@ -1779,7 +1779,14 @@ void ModBrowserPanel::onUninstallButtonPressed(wxCommandEvent & event) {
 			return;
 		}
 
-		int uninstallConfirmationResult = wxMessageBox(fmt::format("Are you sure you want to uninstall stand-alone '{}' mod from '{}'? This will remove all files located in the directory, so be sure to back up any valuable data!", standAloneModFullName, standAloneMod->getGamePath()), "Uninstall Confirmation", wxYES_NO | wxCANCEL | wxICON_QUESTION, this);
+		std::optional<std::string> optionalEvaluatedGamePath(standAloneMod->getEvaluatedGamePath());
+
+		if(!optionalEvaluatedGamePath.has_value()) {
+			spdlog::error("Cannot uninstall stand-alone '{}' mod due to game path evaluation failure.", standAloneModFullName);
+			return;
+		}
+
+		int uninstallConfirmationResult = wxMessageBox(fmt::format("Are you sure you want to uninstall stand-alone '{}' mod from '{}'? This will remove all files located in the directory, so be sure to back up any valuable data!", standAloneModFullName, optionalEvaluatedGamePath.value()), "Uninstall Confirmation", wxYES_NO | wxCANCEL | wxICON_QUESTION, this);
 
 		if(uninstallConfirmationResult != wxYES) {
 			return;
