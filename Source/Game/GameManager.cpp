@@ -722,6 +722,9 @@ std::vector<std::string> GameManager::getGameDownloadURLs(const std::string & ga
 	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::DUKE3D_W32.getID())) {
 		return getDuke3d_w32DownloadURLs(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value());
 	}
+	else if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::BUILDGDX.getID())) {
+		return { getBuildGDXDownloadURL(optionalOperatingSystemType.value(), optionalOperatingSystemArchitectureType.value()) };
+	}
 
 	return {};
 }
@@ -2390,6 +2393,70 @@ std::vector<std::string> GameManager::getDuke3d_w32DownloadURLs(DeviceInformatio
 	}
 
 	return downloadURLs;
+}
+
+std::string GameManager::getBuildGDXDownloadURL(DeviceInformationBridge::OperatingSystemType operatingSystemType, DeviceInformationBridge::ArchitectureType architectureType) const {
+	static const std::string BUILDGDX_WEBSITE_BASE_URL("https://m210.duke4.net");
+	static const std::string BUILDGDX_DOWNLOAD_PAGE_URL(Utilities::joinPaths(BUILDGDX_WEBSITE_BASE_URL, "index.php/downloads/download/8-java/53-buildgdx"));
+	static const std::string BUILDGDX_DOWNLOAD_ELEMENT_CLASS_NAME("jd_download_url");
+
+	if(!m_initialized) {
+		spdlog::error("Game manager not initialized!");
+		return {};
+	}
+
+	HTTPService * httpService = HTTPService::getInstance();
+
+	if(!httpService->isInitialized()) {
+		return {};
+	}
+
+	std::shared_ptr<HTTPRequest> downloadPageRequest(httpService->createRequest(HTTPRequest::Method::Get, BUILDGDX_DOWNLOAD_PAGE_URL));
+	downloadPageRequest->setConnectionTimeout(5s);
+	downloadPageRequest->setNetworkTimeout(10s);
+
+	std::shared_ptr<HTTPResponse> response(httpService->sendRequestAndWait(downloadPageRequest));
+
+	if(response == nullptr || response->isFailure()) {
+		spdlog::error("Failed to retrieve BuildGDX download page with error: {}", response != nullptr ? response->getErrorMessage() : "Invalid request.");
+		return {};
+	}
+	else if(response->isFailureStatusCode()) {
+		std::string statusCodeName(HTTPUtilities::getStatusCodeName(response->getStatusCode()));
+		spdlog::error("Failed to get BuildGDX download page ({}{})!", response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
+		return {};
+	}
+
+	std::string pageHTML(Utilities::tidyHTML(response->getBodyAsString()));
+
+	response.reset();
+
+	if(pageHTML.empty()) {
+		spdlog::error("Failed to tidy BuildGDX download page HTML.");
+		return {};
+	}
+
+	tinyxml2::XMLDocument document;
+
+	if(document.Parse(pageHTML.c_str(), pageHTML.length()) != tinyxml2::XML_SUCCESS) {
+		spdlog::error("Failed to parse BuildGDX download page XHTML with error: '{}'.", document.ErrorStr());
+		return {};
+	}
+
+	const tinyxml2::XMLElement * downloadLinkElement = Utilities::findFirstXMLElementWithClassName(document.RootElement(), BUILDGDX_DOWNLOAD_ELEMENT_CLASS_NAME);
+
+	if(downloadLinkElement == nullptr) {
+		spdlog::error("BuildGDX download page XHTML is missing element with '{}' class name.", BUILDGDX_DOWNLOAD_ELEMENT_CLASS_NAME);
+		return {};
+	}
+
+	const char * downloadLinkHrefRaw = downloadLinkElement->Attribute("href");
+
+	if(Utilities::stringLength(downloadLinkHrefRaw) == 0) {
+		return {};
+	}
+
+	return Utilities::joinPaths(BUILDGDX_WEBSITE_BASE_URL, std::string_view(downloadLinkHrefRaw));
 }
 
 bool GameManager::installGame(const std::string & gameVersionID, const std::string & destinationDirectoryPath, std::string * newGameExecutableName, bool useFallback, bool overwrite, bool * aborted) {

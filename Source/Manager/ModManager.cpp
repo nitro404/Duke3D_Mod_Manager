@@ -2589,12 +2589,25 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	std::optional<std::string> optionalEvaluatedGamePath(selectedGameVersion->getEvaluatedGamePath());
 
 	if(!optionalEvaluatedGamePath.has_value()) {
-		notifyLaunchError(fmt::format("Failed to evaluate '{}' game path when attempting to run game.", selectedGameVersion->getLongName()));
+		notifyLaunchError(fmt::format("Failed to evaluate '{}' game path when attempting to launch.", selectedGameVersion->getLongName()));
 
 		return false;
 	}
 
-	std::string evaluatedGamePath(std::move(optionalEvaluatedGamePath.value()));
+	const std::string evaluatedGamePath(std::move(optionalEvaluatedGamePath.value()));
+	std::optional<std::string> optionalEvaluatedAlternateModFilesInstallPath;
+
+	if(selectedGameVersion->hasAlternateModFilesInstallPath()) {
+		optionalEvaluatedAlternateModFilesInstallPath = selectedGameVersion->getEvaluatedAlternateModFilesInstallPath();
+
+		if(!optionalEvaluatedAlternateModFilesInstallPath.has_value()) {
+			notifyLaunchError(fmt::format("Failed to evaluate '{}' alternate mod files install path when attempting to launch.", selectedGameVersion->getLongName()));
+
+			return false;
+		}
+	}
+
+	const std::string & modFilesInstallPath = optionalEvaluatedAlternateModFilesInstallPath.has_value() ? optionalEvaluatedAlternateModFilesInstallPath.value() : evaluatedGamePath;
 
 	std::vector<std::string> customConFilePaths;
 	std::vector<std::string> customDefFilePaths;
@@ -2603,23 +2616,23 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	std::vector<std::shared_ptr<ModFile>> modDefFiles;
 	std::vector<std::shared_ptr<ModFile>> modGroupFiles;
 	std::vector<std::shared_ptr<ModFile>> modDependencyGroupFiles;
-	std::vector<std::string> relativeModConFilePaths;
-	std::vector<std::string> relativeModDefFilePaths;
-	std::vector<std::string> relativeModGroupFilePaths;
-	std::vector<std::string> relativeModDependencyGroupFilePaths;
-	std::vector<std::string> absoluteModConFilePaths;
-	std::vector<std::string> absoluteModDefFilePaths;
-	std::vector<std::string> absoluteModGroupFilePaths;
-	std::vector<std::string> absoluteModDependencyGroupFilePaths;
-	std::vector<std::string> allRelativeConFilePaths;
-	std::vector<std::string> allRelativeDefFilePaths;
-	std::vector<std::string> allRelativeGroupFilePaths;
-	std::vector<std::string> allAbsoluteConFilePaths;
-	std::vector<std::string> allAbsoluteDefFilePaths;
-	std::vector<std::string> allAbsoluteGroupFilePaths;
-	std::string relativeCustomFilesBaseDirectoryPath;
-	std::string relativeModFilesBaseDirectoryPath;
-	std::string absoluteModFilesBaseDirectoryPath;
+	std::vector<std::string> targetModConFilePaths;
+	std::vector<std::string> targetModDefFilePaths;
+	std::vector<std::string> targetModGroupFilePaths;
+	std::vector<std::string> targetModDependencyGroupFilePaths;
+	std::vector<std::string> sourceModConFilePaths;
+	std::vector<std::string> sourceModDefFilePaths;
+	std::vector<std::string> sourceModGroupFilePaths;
+	std::vector<std::string> sourceModDependencyGroupFilePaths;
+	std::vector<std::string> allTargetConFilePaths;
+	std::vector<std::string> allTargetDefFilePaths;
+	std::vector<std::string> allTargetGroupFilePaths;
+	std::vector<std::string> allSourceConFilePaths;
+	std::vector<std::string> allSourceDefFilePaths;
+	std::vector<std::string> allSourceGroupFilePaths;
+	std::string targetCustomFilesBaseDirectoryPath;
+	std::string targetModFilesBaseDirectoryPath;
+	std::string sourceModFilesBaseDirectoryPath;
 	bool customMod = false;
 
 	if(m_arguments != nullptr) {
@@ -2637,14 +2650,14 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 		std::shared_ptr<GameVersion> targetGameVersion(getGameVersions()->getGameVersionWithID(selectedModGameVersion->getGameVersionID()));
 		const std::string & modDirectoryName(targetGameVersion->getModDirectoryName());
-		absoluteModFilesBaseDirectoryPath = Utilities::joinPaths(getModsDirectoryPath(), modDirectoryName);
+		sourceModFilesBaseDirectoryPath = Utilities::joinPaths(getModsDirectoryPath(), modDirectoryName);
 
 		if(selectedGameVersion->doesSupportSubdirectories()) {
 			if(Utilities::areSymlinksSupported()) {
-				relativeModFilesBaseDirectoryPath = Utilities::joinPaths(settings->modsSymlinkName, modDirectoryName);
+				targetModFilesBaseDirectoryPath = Utilities::joinPaths(settings->modsSymlinkName, modDirectoryName);
 			}
-			else {
-				relativeModFilesBaseDirectoryPath = settings->gameTempDirectoryName;
+			else if(!optionalEvaluatedAlternateModFilesInstallPath.has_value()) {
+				targetModFilesBaseDirectoryPath = settings->gameTempDirectoryName;
 			}
 		}
 
@@ -2662,112 +2675,112 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 		for(const std::shared_ptr<ModFile> & modConFile : modConFiles) {
 			if(selectedGameVersion->areScriptFilesReadFromGroup()) {
-				relativeModConFilePaths.push_back(modConFile->getFileName());
+				targetModConFilePaths.push_back(modConFile->getFileName());
 			}
 			else {
-				absoluteModConFilePaths.push_back(Utilities::joinPaths(absoluteModFilesBaseDirectoryPath, modConFile->getFileName()));
-				relativeModConFilePaths.push_back(Utilities::joinPaths(relativeModFilesBaseDirectoryPath, modConFile->getFileName()));
+				sourceModConFilePaths.push_back(Utilities::joinPaths(sourceModFilesBaseDirectoryPath, modConFile->getFileName()));
+				targetModConFilePaths.push_back(Utilities::joinPaths(targetModFilesBaseDirectoryPath, modConFile->getFileName()));
 			}
 		}
 
 		for(const std::shared_ptr<ModFile> & modDefFile : modDefFiles) {
 			if(selectedGameVersion->areScriptFilesReadFromGroup()) {
-				relativeModDefFilePaths.push_back(modDefFile->getFileName());
+				targetModDefFilePaths.push_back(modDefFile->getFileName());
 			}
 			else {
-				absoluteModDefFilePaths.push_back(Utilities::joinPaths(absoluteModFilesBaseDirectoryPath, modDefFile->getFileName()));
-				relativeModDefFilePaths.push_back(Utilities::joinPaths(relativeModFilesBaseDirectoryPath, modDefFile->getFileName()));
+				sourceModDefFilePaths.push_back(Utilities::joinPaths(sourceModFilesBaseDirectoryPath, modDefFile->getFileName()));
+				targetModDefFilePaths.push_back(Utilities::joinPaths(targetModFilesBaseDirectoryPath, modDefFile->getFileName()));
 			}
 		}
 
 		for(const std::shared_ptr<ModFile> & modGroupFile : modGroupFiles) {
-			relativeModGroupFilePaths.push_back(Utilities::joinPaths(relativeModFilesBaseDirectoryPath, modGroupFile->getFileName()));
-			absoluteModGroupFilePaths.push_back(Utilities::joinPaths(absoluteModFilesBaseDirectoryPath, modGroupFile->getFileName()));
+			sourceModGroupFilePaths.push_back(Utilities::joinPaths(sourceModFilesBaseDirectoryPath, modGroupFile->getFileName()));
+			targetModGroupFilePaths.push_back(Utilities::joinPaths(targetModFilesBaseDirectoryPath, modGroupFile->getFileName()));
 		}
 
 		for(const std::shared_ptr<ModFile> & modDependencyGroupFile : modDependencyGroupFiles) {
 			std::shared_ptr<GameVersion> modDependencyGameVersion(getGameVersions()->getGameVersionWithID(modDependencyGroupFile->getParentModGameVersion()->getGameVersionID()));
 			const std::string & modDependencyDirectoryName(modDependencyGameVersion->getModDirectoryName());
-			std::string absoluteModDependencyFilesBaseDirectoryPath(Utilities::joinPaths(getModsDirectoryPath(), modDependencyDirectoryName));
-			std::string relativeModDependencyFilesBaseDirectoryPath;
+			std::string sourceModDependencyFilesBaseDirectoryPath(Utilities::joinPaths(getModsDirectoryPath(), modDependencyDirectoryName));
+			std::string modDependencyFilesBaseDirectoryPath;
 
 			if(selectedGameVersion->doesSupportSubdirectories()) {
 				if(Utilities::areSymlinksSupported()) {
-					relativeModDependencyFilesBaseDirectoryPath = Utilities::joinPaths(settings->modsSymlinkName, modDependencyDirectoryName);
+					modDependencyFilesBaseDirectoryPath = Utilities::joinPaths(settings->modsSymlinkName, modDependencyDirectoryName);
 				}
-				else {
-					relativeModDependencyFilesBaseDirectoryPath = settings->gameTempDirectoryName;
+				else if(!optionalEvaluatedAlternateModFilesInstallPath.has_value()) {
+					modDependencyFilesBaseDirectoryPath = settings->gameTempDirectoryName;
 				}
 			}
 
-			relativeModDependencyGroupFilePaths.push_back(Utilities::joinPaths(relativeModDependencyFilesBaseDirectoryPath, modDependencyGroupFile->getFileName()));
-			absoluteModDependencyGroupFilePaths.push_back(Utilities::joinPaths(absoluteModDependencyFilesBaseDirectoryPath, modDependencyGroupFile->getFileName()));
+			targetModDependencyGroupFilePaths.push_back(Utilities::joinPaths(modDependencyFilesBaseDirectoryPath, modDependencyGroupFile->getFileName()));
+			sourceModDependencyGroupFilePaths.push_back(Utilities::joinPaths(sourceModDependencyFilesBaseDirectoryPath, modDependencyGroupFile->getFileName()));
 		}
 
-		allRelativeConFilePaths = relativeModConFilePaths;
-		allRelativeDefFilePaths = relativeModDefFilePaths;
-		allRelativeGroupFilePaths = relativeModDependencyGroupFilePaths;
-		allAbsoluteConFilePaths = absoluteModConFilePaths;
-		allAbsoluteDefFilePaths = absoluteModDefFilePaths;
-		allAbsoluteGroupFilePaths = absoluteModDependencyGroupFilePaths;
+		allTargetConFilePaths = targetModConFilePaths;
+		allTargetDefFilePaths = targetModDefFilePaths;
+		allTargetGroupFilePaths = targetModDependencyGroupFilePaths;
+		allSourceConFilePaths = sourceModConFilePaths;
+		allSourceDefFilePaths = sourceModDefFilePaths;
+		allSourceGroupFilePaths = sourceModDependencyGroupFilePaths;
 
-		for(const std::string & relativeModGroupFilePath : relativeModGroupFilePaths) {
-			allRelativeGroupFilePaths.push_back(relativeModGroupFilePath);
+		for(const std::string & targetModGroupFilePath : targetModGroupFilePaths) {
+			allTargetGroupFilePaths.push_back(targetModGroupFilePath);
 		}
 
-		for(const std::string & absoluteModGroupFilePath : absoluteModGroupFilePaths) {
-			allAbsoluteGroupFilePaths.push_back(absoluteModGroupFilePath);
+		for(const std::string & sourceModGroupFilePath : sourceModGroupFilePaths) {
+			allSourceGroupFilePaths.push_back(sourceModGroupFilePath);
 		}
 	}
 
 	if(selectedGameVersion->doesSupportSubdirectories()) {
 		if(Utilities::areSymlinksSupported()) {
-			relativeCustomFilesBaseDirectoryPath = settings->appSymlinkName;
+			targetCustomFilesBaseDirectoryPath = settings->appSymlinkName;
 		}
-		else {
-			relativeCustomFilesBaseDirectoryPath = settings->gameTempDirectoryName;
+		else if(!optionalEvaluatedAlternateModFilesInstallPath.has_value()) {
+			targetCustomFilesBaseDirectoryPath = settings->gameTempDirectoryName;
 		}
 	}
 
 	if(!customConFilePaths.empty()) {
-		allRelativeConFilePaths.clear();
+		allTargetConFilePaths.clear();
 
 		for(const std::string & customConFilePath : customConFilePaths) {
-			if(relativeCustomFilesBaseDirectoryPath.empty()) {
-				allRelativeConFilePaths.push_back(std::string(Utilities::getFileName(customConFilePath)));
+			if(targetCustomFilesBaseDirectoryPath.empty()) {
+				allTargetConFilePaths.push_back(std::string(Utilities::getFileName(customConFilePath)));
 			}
 			else {
-				allRelativeConFilePaths.push_back(Utilities::joinPaths(relativeCustomFilesBaseDirectoryPath, customConFilePath));
+				allTargetConFilePaths.push_back(Utilities::joinPaths(targetCustomFilesBaseDirectoryPath, customConFilePath));
 			}
 
-			allAbsoluteConFilePaths.push_back(customConFilePath);
+			allSourceConFilePaths.push_back(customConFilePath);
 		}
 	}
 
 	if(!customDefFilePaths.empty()) {
-		allRelativeDefFilePaths.clear();
+		allTargetDefFilePaths.clear();
 
 		for(const std::string & customDefFilePath : customDefFilePaths) {
-			if(relativeCustomFilesBaseDirectoryPath.empty()) {
-				allRelativeDefFilePaths.push_back(std::string(Utilities::getFileName(customDefFilePath)));
+			if(targetCustomFilesBaseDirectoryPath.empty()) {
+				allTargetDefFilePaths.push_back(std::string(Utilities::getFileName(customDefFilePath)));
 			}
 			else {
-				allRelativeDefFilePaths.push_back(Utilities::joinPaths(relativeCustomFilesBaseDirectoryPath, customDefFilePath));
+				allTargetDefFilePaths.push_back(Utilities::joinPaths(targetCustomFilesBaseDirectoryPath, customDefFilePath));
 			}
 
-			allAbsoluteDefFilePaths.push_back(customDefFilePath);
+			allSourceDefFilePaths.push_back(customDefFilePath);
 		}
 	}
 
 	for(const std::string & customGroupFilePath : customGroupFilePaths) {
-		if(relativeCustomFilesBaseDirectoryPath.empty()) {
-			allRelativeGroupFilePaths.push_back(std::string(Utilities::getFileName(customGroupFilePath)));
+		if(targetCustomFilesBaseDirectoryPath.empty()) {
+			allTargetGroupFilePaths.push_back(std::string(Utilities::getFileName(customGroupFilePath)));
 		}
 		else {
-			allRelativeGroupFilePaths.push_back(Utilities::joinPaths(relativeCustomFilesBaseDirectoryPath, customGroupFilePath));
+			allTargetGroupFilePaths.push_back(Utilities::joinPaths(targetCustomFilesBaseDirectoryPath, customGroupFilePath));
 		}
 
-		allAbsoluteGroupFilePaths.push_back(customGroupFilePath);
+		allSourceGroupFilePaths.push_back(customGroupFilePath);
 	}
 
 	bool hasAnyGroupFiles = !modDependencyGroupFiles.empty() + !modGroupFiles.empty() + !customGroupFilePaths.empty();
@@ -2775,11 +2788,11 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	bool doesRequireCombinedZip = doesRequireCombinedGroup && (((selectedModGameVersion != nullptr && selectedModGameVersion->hasFileOfType("zip")) || std::find_if(modDependencyGroupFiles.cbegin(), modDependencyGroupFiles.cend(), [](const std::shared_ptr<ModFile> & dependencyModFile) { return Utilities::areStringsEqualIgnoreCase(dependencyModFile->getType(), "zip"); }) != modDependencyGroupFiles.cend() || std::find_if(customGroupFilePaths.cbegin(), customGroupFilePaths.cend(), [](const std::string & groupFile) { return Utilities::hasFileExtension(groupFile, "zip"); }) != customGroupFilePaths.cend()));
 	bool shouldSymlinkToCombinedGroup = doesRequireCombinedGroup && Utilities::areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories();
 	bool shouldConfigureApplicationTemporaryDirectory = shouldSymlinkToCombinedGroup || selectedGameVersion->doesRequireDOSBox();
-	bool shouldConfigureGameTemporaryDirectory = !Utilities::areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories();
+	bool shouldUseGameTemporaryDirectory = !Utilities::areSymlinksSupported() && selectedGameVersion->doesSupportSubdirectories() && !optionalEvaluatedAlternateModFilesInstallPath.has_value();
 
 	std::string combinedGroupFileName;
-	std::string absoluteCombinedGroupFilePath;
-	std::string relativeCombinedGroupFilePath;
+	std::string sourceCombinedGroupFilePath;
+	std::string targetCombinedGroupFilePath;
 	std::unique_ptr<Group> combinedGroup;
 	std::unique_ptr<ZipArchive> combinedZip;
 
@@ -2816,16 +2829,16 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 			}
 
 			if(shouldSymlinkToCombinedGroup) {
-				absoluteCombinedGroupFilePath = Utilities::joinPaths(settings->appTempDirectoryPath, combinedGroupFileName);
-				relativeCombinedGroupFilePath = Utilities::joinPaths(settings->tempSymlinkName, combinedGroupFileName);
+				sourceCombinedGroupFilePath = Utilities::joinPaths(settings->appTempDirectoryPath, combinedGroupFileName);
+				targetCombinedGroupFilePath = Utilities::joinPaths(settings->tempSymlinkName, combinedGroupFileName);
 			}
-			else if(shouldConfigureGameTemporaryDirectory) {
-				absoluteCombinedGroupFilePath = Utilities::joinPaths(evaluatedGamePath, settings->gameTempDirectoryName, combinedGroupFileName);
-				relativeCombinedGroupFilePath = Utilities::joinPaths(settings->gameTempDirectoryName, combinedGroupFileName);
+			else if(shouldUseGameTemporaryDirectory) {
+				sourceCombinedGroupFilePath = Utilities::joinPaths(modFilesInstallPath, settings->gameTempDirectoryName, combinedGroupFileName);
+				targetCombinedGroupFilePath = Utilities::joinPaths(settings->gameTempDirectoryName, combinedGroupFileName);
 			}
 			else {
-				absoluteCombinedGroupFilePath = Utilities::joinPaths(evaluatedGamePath, combinedGroupFileName);
-				relativeCombinedGroupFilePath = combinedGroupFileName;
+				sourceCombinedGroupFilePath = Utilities::joinPaths(modFilesInstallPath, combinedGroupFileName);
+				targetCombinedGroupFilePath = combinedGroupFileName;
 			}
 
 			std::shared_ptr<GameVersion> dukeNukemGroupGameVersion;
@@ -2848,7 +2861,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 			}
 
 			if(doesRequireCombinedZip) {
-				combinedZip = ZipArchive::createNew(absoluteCombinedGroupFilePath);
+				combinedZip = ZipArchive::createNew(sourceCombinedGroupFilePath);
 
 				if(selectedGameVersion->doesRequireOriginalGameFiles()) {
 					std::shared_ptr<GroupFile> groupFile;
@@ -2873,16 +2886,16 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 					combinedGroup = std::make_unique<GroupGRP>();
 				}
 
-				combinedGroup->setFilePath(absoluteCombinedGroupFilePath);
+				combinedGroup->setFilePath(sourceCombinedGroupFilePath);
 			}
 		}
 
-		for(const std::string & absoluteGroupFilePath : allAbsoluteGroupFilePaths) {
-			if(Utilities::hasFileExtension(absoluteGroupFilePath, "zip")) {
-				std::unique_ptr<ZipArchive> modZip(ZipArchive::readFrom(absoluteGroupFilePath));
+		for(const std::string & sourceGroupFilePath : allSourceGroupFilePaths) {
+			if(Utilities::hasFileExtension(sourceGroupFilePath, "zip")) {
+				std::unique_ptr<ZipArchive> modZip(ZipArchive::readFrom(sourceGroupFilePath));
 
 				if(modZip == nullptr) {
-					notifyLaunchError(fmt::format("Failed to load zip archive from file path: '{}'.", absoluteGroupFilePath));
+					notifyLaunchError(fmt::format("Failed to load zip archive from file path: '{}'.", sourceGroupFilePath));
 
 					return false;
 				}
@@ -2909,13 +2922,13 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 					}
 				}
 
-				spdlog::info("Added {} file{} from '{}' to combined zip archive file.", addedFileCount, addedFileCount == 1 ? "" : "s", Utilities::getFileName(absoluteGroupFilePath));
+				spdlog::info("Added {} file{} from '{}' to combined zip archive file.", addedFileCount, addedFileCount == 1 ? "" : "s", Utilities::getFileName(sourceGroupFilePath));
 			}
 			else {
-				std::unique_ptr<Group> modGroup(GroupGRP::loadFrom(absoluteGroupFilePath));
+				std::unique_ptr<Group> modGroup(GroupGRP::loadFrom(sourceGroupFilePath));
 
 				if(modGroup == nullptr) {
-					notifyLaunchError(fmt::format("Failed to load group from file path: '{}'.", absoluteGroupFilePath));
+					notifyLaunchError(fmt::format("Failed to load group from file path: '{}'.", sourceGroupFilePath));
 
 					return false;
 				}
@@ -2937,14 +2950,14 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 					}
 				}
 
-				spdlog::info("Added {} file{} from '{}' to combined {} file.", modGroup->numberOfFiles(), modGroup->numberOfFiles() == 1 ? "" : "s", Utilities::getFileName(absoluteGroupFilePath), combinedZip != nullptr ? "zip archive" : "group");
+				spdlog::info("Added {} file{} from '{}' to combined {} file.", modGroup->numberOfFiles(), modGroup->numberOfFiles() == 1 ? "" : "s", Utilities::getFileName(sourceGroupFilePath), combinedZip != nullptr ? "zip archive" : "group");
 			}
 		}
 	}
 
 	std::string customMap;
-	std::string relativeCustomMapFilePath;
-	std::string absoluteCustomMapFilePath;
+	std::string targetCustomMapFilePath;
+	std::string sourceCustomMapFilePath;
 
 	if(m_arguments != nullptr) {
 		customMap = m_arguments->getFirstValue("map");
@@ -2952,30 +2965,30 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		if(!customMap.empty()) {
 			launchStatus("Configuring custom map file path.");
 
-			std::string relativeCustomApplicationBaseDirectoryPath;
-			std::string relativeCustomMapsBaseDirectoryPath;
+			std::string targetCustomApplicationBaseDirectoryPath;
+			std::string targetCustomMapsBaseDirectoryPath;
 
 			if(selectedGameVersion->doesSupportSubdirectories()) {
 				if(Utilities::areSymlinksSupported()) {
-					relativeCustomApplicationBaseDirectoryPath = settings->appSymlinkName;
-					relativeCustomMapsBaseDirectoryPath = settings->mapsSymlinkName;
+					targetCustomApplicationBaseDirectoryPath = settings->appSymlinkName;
+					targetCustomMapsBaseDirectoryPath = settings->mapsSymlinkName;
 				}
-				else {
-					relativeCustomApplicationBaseDirectoryPath = settings->gameTempDirectoryName;
-					relativeCustomMapsBaseDirectoryPath = settings->gameTempDirectoryName;
+				else if(!optionalEvaluatedAlternateModFilesInstallPath.has_value()) {
+					targetCustomApplicationBaseDirectoryPath = settings->gameTempDirectoryName;
+					targetCustomMapsBaseDirectoryPath = settings->gameTempDirectoryName;
 				}
 			}
 
 			if(std::filesystem::is_regular_file(std::filesystem::path(customMap))) {
-				relativeCustomMapFilePath = Utilities::joinPaths(relativeCustomApplicationBaseDirectoryPath, customMap);
-				absoluteCustomMapFilePath = customMap;
+				targetCustomMapFilePath = Utilities::joinPaths(targetCustomApplicationBaseDirectoryPath, customMap);
+				sourceCustomMapFilePath = customMap;
 			}
 			else {
 				std::string mapsDirectoryPath(getMapsDirectoryPath());
 
 				if(std::filesystem::is_regular_file(Utilities::joinPaths(mapsDirectoryPath, customMap))) {
-					relativeCustomMapFilePath = Utilities::joinPaths(relativeCustomMapsBaseDirectoryPath, customMap);
-					absoluteCustomMapFilePath = Utilities::joinPaths(mapsDirectoryPath, customMap);
+					targetCustomMapFilePath = Utilities::joinPaths(targetCustomMapsBaseDirectoryPath, customMap);
+					sourceCustomMapFilePath = Utilities::joinPaths(mapsDirectoryPath, customMap);
 				}
 				else {
 					spdlog::error("Map '{}' does not exist in application or maps directories.", customMap);
@@ -2986,7 +2999,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 	std::string temporaryDirectoryName;
 
-	if(shouldConfigureGameTemporaryDirectory) {
+	if(shouldUseGameTemporaryDirectory) {
 		temporaryDirectoryName = settings->gameTempDirectoryName;
 	}
 	else if(shouldConfigureApplicationTemporaryDirectory) {
@@ -3059,7 +3072,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		scriptArgs.addArgument("DEFFLAG", selectedGameVersion->getDefFileArgumentFlag().value());
 	}
 
-	if(shouldConfigureGameTemporaryDirectory) {
+	if(shouldUseGameTemporaryDirectory) {
 		scriptArgs.addArgument("MAPSDIR", settings->gameTempDirectoryName);
 		scriptArgs.addArgument("MODSDIR", settings->gameTempDirectoryName);
 	}
@@ -3073,28 +3086,28 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		scriptArgs.addArgument("TEMPDIR", temporaryDirectoryName);
 	}
 
-	scriptArgs.addArgument("MAP", relativeCustomMapFilePath);
+	scriptArgs.addArgument("MAP", targetCustomMapFilePath);
 
 	if(selectedModGameVersion != nullptr && !standAlone) {
-		for(const std::string & relativeConFilePath : allRelativeConFilePaths) {
-			scriptArgs.addArgument("CON", relativeConFilePath);
+		for(const std::string & targetConFilePath : allTargetConFilePaths) {
+			scriptArgs.addArgument("CON", targetConFilePath);
 		}
 
 		if(doesRequireCombinedGroup) {
-			scriptArgs.addArgument("COMBINEDGROUP", relativeCombinedGroupFilePath);
+			scriptArgs.addArgument("COMBINEDGROUP", targetCombinedGroupFilePath);
 		}
 		else {
-			for(const std::string & relativeGroupFilePath : allRelativeGroupFilePaths) {
-				if(!selectedGameVersion->areZipArchiveGroupsSupported() && Utilities::hasFileExtension(relativeGroupFilePath, "zip")) {
+			for(const std::string & targetGroupFilePath : allTargetGroupFilePaths) {
+				if(!selectedGameVersion->areZipArchiveGroupsSupported() && Utilities::hasFileExtension(targetGroupFilePath, "zip")) {
 					continue;
 				}
 
-				scriptArgs.addArgument("GROUP", relativeGroupFilePath);
+				scriptArgs.addArgument("GROUP", targetGroupFilePath);
 			}
 		}
 
-		for(const std::string & relativeDefFilePath : allRelativeDefFilePaths) {
-			scriptArgs.addArgument("DEF", relativeDefFilePath);
+		for(const std::string & targetDefFilePath : allTargetDefFilePaths) {
+			scriptArgs.addArgument("DEF", targetDefFilePath);
 		}
 	}
 
@@ -3152,7 +3165,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 	launchStatus("Generating game launch command.");
 
-	std::string command(generateCommand(selectedGameVersion, allRelativeConFilePaths, allRelativeDefFilePaths, allRelativeGroupFilePaths, scriptArgs, relativeCombinedGroupFilePath, combinedDOSBoxConfigurationFilePath, relativeCustomMapFilePath));
+	std::string command(generateCommand(selectedGameVersion, evaluatedGamePath, allTargetConFilePaths, allTargetDefFilePaths, allTargetGroupFilePaths, scriptArgs, targetCombinedGroupFilePath, combinedDOSBoxConfigurationFilePath, targetCustomMapFilePath));
 
 	if(command.empty()) {
 		notifyLaunchError("Failed to generate game launch command.");
@@ -3165,7 +3178,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 	launchStatus("Checking for and removing previous mod files from game directory.");
 
-	if(!removeModFilesFromGameDirectory(*selectedGameVersion)) {
+	if(!removeModFilesFromDirectory(modFilesInstallPath)) {
 		notifyLaunchError(fmt::format("Failed to remove existing mod files from '{}' game directory.", selectedGameVersion->getLongName()));
 		return false;
 	}
@@ -3193,8 +3206,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 	launchStatus("Creating symbolic links and copying temporary files.");
 
-	if(!createSymlinksOrCopyTemporaryFiles(*selectedGameVersion, allAbsoluteConFilePaths, allAbsoluteDefFilePaths, allAbsoluteGroupFilePaths, absoluteCustomMapFilePath, doesRequireCombinedGroup, shouldConfigureApplicationTemporaryDirectory, installedModInfo.get())) {
-		if(!removeModFilesFromGameDirectory(*selectedGameVersion, *installedModInfo)) {
+	if(!createSymlinksOrCopyTemporaryFiles(*selectedGameVersion, evaluatedGamePath, modFilesInstallPath, shouldUseGameTemporaryDirectory, allSourceConFilePaths, allSourceDefFilePaths, allSourceGroupFilePaths, sourceCustomMapFilePath, doesRequireCombinedGroup, shouldConfigureApplicationTemporaryDirectory, installedModInfo.get())) {
+		if(!removeModFilesFromDirectory(modFilesInstallPath, *installedModInfo)) {
 			spdlog::error("Failed to remove '{}' mod files from '{}' game directory.", selectedModVersionType->getFullName(), selectedGameVersion->getLongName());
 		}
 
@@ -3209,7 +3222,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		size_t totalNumberOfBackedUpConflictingGameFiles = 0;
 
 		for(const std::string & conflictingGameFileExtension : CONFLICTING_GAME_FILE_EXTENSIONS) {
-			std::vector<std::string> originalRenamedGameFilePaths(ModManager::renameFilesWithSuffixTo(conflictingGameFileExtension, conflictingGameFileExtension + DEFAULT_BACKUP_FILE_RENAME_SUFFIX, evaluatedGamePath));
+			std::vector<std::string> originalRenamedGameFilePaths(ModManager::renameFilesWithSuffixTo(conflictingGameFileExtension, conflictingGameFileExtension + DEFAULT_BACKUP_FILE_RENAME_SUFFIX, modFilesInstallPath));
 
 			for(const std::string & originalRenamedGameFilePath : originalRenamedGameFilePaths) {
 				installedModInfo->addOriginalFile(originalRenamedGameFilePath);
@@ -3229,7 +3242,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		}
 
 		for(const std::string & conflictingGameFileName : conflictingGameFileNames) {
-			std::filesystem::path originalGameFilePath(Utilities::joinPaths(evaluatedGamePath, conflictingGameFileName));
+			std::filesystem::path originalGameFilePath(Utilities::joinPaths(modFilesInstallPath, conflictingGameFileName));
 
 			if(!std::filesystem::is_regular_file(originalGameFilePath)) {
 				continue;
@@ -3247,10 +3260,10 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 				continue;
 			}
 
-			std::filesystem::path relativeRenamedFilePath(std::filesystem::relative(originalGameFilePath, std::filesystem::path(evaluatedGamePath), errorCode));
+			std::filesystem::path relativeRenamedFilePath(std::filesystem::relative(originalGameFilePath, std::filesystem::path(modFilesInstallPath), errorCode));
 
 			if(errorCode) {
-				spdlog::warn("Failed to relativize renamed conflicting game file path: '{}' against base path: '{}'.", originalGameFilePath.string(), evaluatedGamePath);
+				spdlog::warn("Failed to relativize renamed conflicting game file path: '{}' against base path: '{}'.", originalGameFilePath.string(), modFilesInstallPath);
 				continue;
 			}
 
@@ -3271,20 +3284,20 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		size_t demoFileNumber = 1;
 
 		for(std::map<std::string, std::unique_ptr<ByteBuffer>, FileNameComparator>::const_iterator i = demoFiles.cbegin(); i != demoFiles.cend(); ++i) {
-			if(i->second->writeTo(Utilities::joinPaths(evaluatedGamePath, i->first))) {
+			if(i->second->writeTo(Utilities::joinPaths(modFilesInstallPath, i->first))) {
 				numberOfDemoFilesWritten++;
 				installedModInfo->addModFile(i->first);
 
-				spdlog::debug("Wrote demo #{}/{} '{}' to game directory '{}'.", demoFileNumber++, demoFiles.size(), i->first, evaluatedGamePath);
+				spdlog::debug("Wrote demo #{}/{} '{}' to directory '{}'.", demoFileNumber++, demoFiles.size(), i->first, modFilesInstallPath);
 			}
 			else {
-				spdlog::warn("Failed to write '{}' demo file to game directory '{}'.", i->first, evaluatedGamePath);
+				spdlog::warn("Failed to write '{}' demo file to directory '{}'.", i->first, modFilesInstallPath);
 			}
 		}
 
 		demoFiles.clear();
 
-		spdlog::info("Wrote {} demo{} to game directory '{}'.", numberOfDemoFilesWritten, numberOfDemoFilesWritten == 1 ? "" : "s", evaluatedGamePath);
+		spdlog::info("Wrote {} demo{} to directory '{}'.", numberOfDemoFilesWritten, numberOfDemoFilesWritten == 1 ? "" : "s", modFilesInstallPath);
 	}
 
 	if(combinedGroup != nullptr || combinedZip != nullptr) {
@@ -3302,24 +3315,24 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		if(combinedGroupOrZipArchiveSaved) {
 			if(!shouldSymlinkToCombinedGroup) {
 				std::error_code errorCode;
-				std::filesystem::path relativeCombinedGroupFilePath(std::filesystem::relative(std::filesystem::path(absoluteCombinedGroupFilePath), std::filesystem::path(evaluatedGamePath), errorCode));
+				std::filesystem::path relativeCombinedGroupFilePath(std::filesystem::relative(std::filesystem::path(sourceCombinedGroupFilePath), std::filesystem::path(modFilesInstallPath), errorCode));
 
 				if(!errorCode) {
 					installedModInfo->addModFile(relativeCombinedGroupFilePath.string());
 				}
 				else {
-					spdlog::warn("Failed to relativize combined group file path: '{}' against base path: '{}'.", absoluteCombinedGroupFilePath, evaluatedGamePath);
+					spdlog::warn("Failed to relativize combined group file path: '{}' against base path: '{}'.", sourceCombinedGroupFilePath, modFilesInstallPath);
 				}
 			}
 
-			spdlog::info("Saved combined group to file: '{}'.", absoluteCombinedGroupFilePath);
+			spdlog::info("Saved combined group to file: '{}'.", sourceCombinedGroupFilePath);
 		}
 		else {
-			if(!removeModFilesFromGameDirectory(*selectedGameVersion, *installedModInfo)) {
+			if(!removeModFilesFromDirectory(modFilesInstallPath, *installedModInfo)) {
 				spdlog::error("Failed to remove '{}' mod files from '{}' game directory.", selectedModVersionType->getFullName(), selectedGameVersion->getLongName());
 			}
 
-			notifyLaunchError(fmt::format("Failed to write combined group to file: '{}'.", absoluteCombinedGroupFilePath));
+			notifyLaunchError(fmt::format("Failed to write combined group to file: '{}'.", sourceCombinedGroupFilePath));
 
 			return false;
 		}
@@ -3331,8 +3344,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	if(m_selectedMod != nullptr && selectedGameVersion->doesRequireGroupFileExtraction()) {
 		launchStatus("Extracting group file contents to game directory.");
 
-		if(!extractModFilesToGameDirectory(*selectedModGameVersion, *selectedGameVersion, *selectedGameVersion, installedModInfo.get(), allAbsoluteGroupFilePaths)) {
-			if(!removeModFilesFromGameDirectory(*selectedGameVersion, *installedModInfo)) {
+		if(!extractModFilesToDirectory(modFilesInstallPath, *selectedModGameVersion, *selectedGameVersion, *selectedGameVersion, installedModInfo.get(), allSourceGroupFilePaths)) {
+			if(!removeModFilesFromDirectory(modFilesInstallPath, *installedModInfo)) {
 				spdlog::error("Failed to remove '{}' mod files from '{}' game directory.", selectedModVersionType->getFullName(), selectedGameVersion->getLongName());
 			}
 
@@ -3345,8 +3358,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	if(installedModInfo != nullptr && !installedModInfo->isEmpty()) {
 		launchStatus("Saving installed mod info to file in game directory.");
 
-		if(installedModInfo->saveToDirectory(evaluatedGamePath)) {
-			spdlog::info("Saved installed mod info to file '{}' in '{}' game directory.", InstalledModInfo::DEFAULT_FILE_NAME, selectedGameVersion->getLongName());
+		if(installedModInfo->saveToDirectory(modFilesInstallPath)) {
+			spdlog::info("Saved installed mod info to file '{}' in '{}' game directory: '{}'.", InstalledModInfo::DEFAULT_FILE_NAME, selectedGameVersion->getLongName(), modFilesInstallPath);
 		}
 		else {
 			spdlog::warn("Failed to save installed mod info to '{}' game directory. Closing the application while the game is still running may result in your game being left in a bad state.", selectedGameVersion->getLongName());
@@ -3355,8 +3368,8 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 	std::string customMapMessage;
 
-	if(!relativeCustomMapFilePath.empty()) {
-		customMapMessage = fmt::format(" with custom map '{}'", Utilities::getFileName(relativeCustomMapFilePath));
+	if(!targetCustomMapFilePath.empty()) {
+		customMapMessage = fmt::format(" with custom map '{}'", Utilities::getFileName(targetCustomMapFilePath));
 	}
 
 	std::chrono::milliseconds runDelayDuration(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - runStartTimePoint));
@@ -3482,7 +3495,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	m_gameProcess = ProcessCreator::getInstance()->createProcess(command, workingDirectory);
 
 	if(m_gameProcess == nullptr) {
-		if(installedModInfo != nullptr && !installedModInfo->isEmpty() && !removeModFilesFromGameDirectory(*selectedGameVersion, *installedModInfo)) {
+		if(installedModInfo != nullptr && !installedModInfo->isEmpty() && !removeModFilesFromDirectory(modFilesInstallPath, *installedModInfo)) {
 			spdlog::error("Failed to remove '{}' mod files from '{}' game directory.", selectedModVersionType->getFullName(), selectedGameVersion->getLongName());
 		}
 
@@ -3511,24 +3524,24 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	terminatedConnection.disconnect();
 
 	if(installedModInfo != nullptr && !installedModInfo->isEmpty()) {
-		if(!removeModFilesFromGameDirectory(*selectedGameVersion, *installedModInfo)) {
+		if(!removeModFilesFromDirectory(modFilesInstallPath, *installedModInfo)) {
 			spdlog::error("Failed to remove '{}' mod files from '{}' game directory.", selectedModVersionType->getFullName(), selectedGameVersion->getLongName());
 		}
 	}
 
-	if(!absoluteCombinedGroupFilePath.empty() && shouldSymlinkToCombinedGroup) {
-		std::filesystem::path filePath(absoluteCombinedGroupFilePath);
+	if(!sourceCombinedGroupFilePath.empty() && shouldSymlinkToCombinedGroup) {
+		std::filesystem::path filePath(sourceCombinedGroupFilePath);
 
 		if(std::filesystem::is_regular_file(filePath)) {
 			launchStatus(fmt::format("Deleting generated combined {} file.", doesRequireCombinedZip ? "zip" : "group"));
 
-			spdlog::info("Deleting temporary combined group file: '{}'.", absoluteCombinedGroupFilePath);
+			spdlog::info("Deleting temporary combined group file: '{}'.", sourceCombinedGroupFilePath);
 
 			std::error_code errorCode;
 			std::filesystem::remove(filePath, errorCode);
 
 			if(errorCode) {
-				spdlog::error("Failed to delete temporary combined group file '{}': {}", absoluteCombinedGroupFilePath, errorCode.message());
+				spdlog::error("Failed to delete temporary combined group file '{}': {}", sourceCombinedGroupFilePath, errorCode.message());
 			}
 		}
 	}
@@ -3552,7 +3565,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 
 	launchStatus("Removing symbolic links.");
 
-	removeSymlinks(*selectedGameVersion);
+	removeSymlinks(*selectedGameVersion, modFilesInstallPath, shouldUseGameTemporaryDirectory);
 
 	m_gameProcess.reset();
 
@@ -3602,26 +3615,12 @@ void ModManager::notifyLaunchError(const std::string & errorMessage) {
 	launchError(errorMessage);
 }
 
-bool ModManager::areModFilesPresentInGameDirectory(const GameVersion & gameVersion) {
-	if(!gameVersion.isConfigured()) {
-		return false;
-	}
-
-	std::optional<std::string> optionalEvaluatedGamePath(gameVersion.getEvaluatedGamePath());
-
-	if(!optionalEvaluatedGamePath.has_value()) {
-		return false;
-	}
-
-	return areModFilesPresentInGameDirectory(optionalEvaluatedGamePath.value());
+bool ModManager::areModFilesPresentInDirectory(const std::string & modFilesInstallPath) {
+	return !modFilesInstallPath.empty() &&
+		   std::filesystem::is_regular_file(std::filesystem::path(Utilities::joinPaths(modFilesInstallPath, InstalledModInfo::DEFAULT_FILE_NAME)));
 }
 
-bool ModManager::areModFilesPresentInGameDirectory(const std::string & gamePath) {
-	return !gamePath.empty() &&
-		   std::filesystem::is_regular_file(std::filesystem::path(Utilities::joinPaths(gamePath, InstalledModInfo::DEFAULT_FILE_NAME)));
-}
-
-bool ModManager::extractModFilesToGameDirectory(const ModGameVersion & modGameVersion, const GameVersion & selectedGameVersion, const GameVersion & targetGameVersion, InstalledModInfo * installedModInfo, const std::vector<std::string> & groupFilePaths) {
+bool ModManager::extractModFilesToDirectory(const std::string & modFilesInstallPath, const ModGameVersion & modGameVersion, const GameVersion & selectedGameVersion, const GameVersion & targetGameVersion, InstalledModInfo * installedModInfo, const std::vector<std::string> & groupFilePaths) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	struct FilePathComparator {
@@ -3633,6 +3632,11 @@ bool ModManager::extractModFilesToGameDirectory(const ModGameVersion & modGameVe
 		}
 	};
 
+	if(modFilesInstallPath.empty()) {
+		spdlog::error("Failed to extract '{}' mod files to '{}' game directory due to empty mod files install path.", modGameVersion.getFullName(true), selectedGameVersion.getLongName());
+		return false;
+	}
+
 	if(!modGameVersion.isValid(true)) {
 		spdlog::error("Failed to extract '{}' mod files to '{}' game directory due to invalid mod game version.", modGameVersion.getFullName(true), selectedGameVersion.getLongName());
 		return false;
@@ -3642,15 +3646,6 @@ bool ModManager::extractModFilesToGameDirectory(const ModGameVersion & modGameVe
 		spdlog::error("Failed to extract '{}' mod files to '{}' game directory due to invalid '{}' target game version.", modGameVersion.getFullName(false), selectedGameVersion.getLongName(), targetGameVersion.getLongName());
 		return false;
 	}
-
-	std::optional<std::string> optionalEvaluatedGamePath(selectedGameVersion.getEvaluatedGamePath());
-
-	if(!optionalEvaluatedGamePath.has_value()) {
-		spdlog::error("Failed to extract '{}' mod files to '{}' game directory due to game path evaluation failure.", modGameVersion.getFullName(false), selectedGameVersion.getLongName());
-		return false;
-	}
-
-	std::string evaluatedGamePath(std::move(optionalEvaluatedGamePath.value()));
 
 	SettingsManager * settings = SettingsManager::getInstance();
 
@@ -3702,9 +3697,9 @@ bool ModManager::extractModFilesToGameDirectory(const ModGameVersion & modGameVe
 	std::vector<std::string> originalFilePaths;
 
 	for(auto modFilesIterator = modFiles.cbegin(); modFilesIterator != modFiles.cend(); ++modFilesIterator) {
-		if(std::filesystem::is_regular_file(std::filesystem::path(Utilities::joinPaths(evaluatedGamePath, modFilesIterator->first)))) {
-			if(std::filesystem::is_regular_file(std::filesystem::path(Utilities::joinPaths(evaluatedGamePath, modFilesIterator->first) + DEFAULT_BACKUP_FILE_RENAME_SUFFIX))) {
-				spdlog::error("Cannot temporarily rename original '{}' file, original backup file already exists at path: '{}'. Please manually restore or remove this file.", selectedGameVersion.getLongName(), Utilities::joinPaths(evaluatedGamePath, modFilesIterator->first) + DEFAULT_BACKUP_FILE_RENAME_SUFFIX);
+		if(std::filesystem::is_regular_file(std::filesystem::path(Utilities::joinPaths(modFilesInstallPath, modFilesIterator->first)))) {
+			if(std::filesystem::is_regular_file(std::filesystem::path(Utilities::joinPaths(modFilesInstallPath, modFilesIterator->first) + DEFAULT_BACKUP_FILE_RENAME_SUFFIX))) {
+				spdlog::error("Cannot temporarily rename original '{}' file, original backup file already exists at path: '{}'. Please manually restore or remove this file.", selectedGameVersion.getLongName(), Utilities::joinPaths(modFilesInstallPath, modFilesIterator->first) + DEFAULT_BACKUP_FILE_RENAME_SUFFIX);
 				return false;
 			}
 
@@ -3714,8 +3709,8 @@ bool ModManager::extractModFilesToGameDirectory(const ModGameVersion & modGameVe
 
 	for(const std::string & originalFilePath : originalFilePaths) {
 		std::string relativeRenamedFilePath(originalFilePath + DEFAULT_BACKUP_FILE_RENAME_SUFFIX);
-		std::string fullOriginalFilePath(Utilities::joinPaths(evaluatedGamePath, originalFilePath));
-		std::string fullRenamedFilePath(Utilities::joinPaths(evaluatedGamePath, relativeRenamedFilePath));
+		std::string fullOriginalFilePath(Utilities::joinPaths(modFilesInstallPath, originalFilePath));
+		std::string fullRenamedFilePath(Utilities::joinPaths(modFilesInstallPath, relativeRenamedFilePath));
 
 		spdlog::debug("Renaming '{}' file '{}' to '{}'.", selectedGameVersion.getLongName(), originalFilePath, relativeRenamedFilePath);
 
@@ -3743,7 +3738,7 @@ bool ModManager::extractModFilesToGameDirectory(const ModGameVersion & modGameVe
 			continue;
 		}
 
-		std::string fullModFilePath(Utilities::joinPaths(evaluatedGamePath, modFilesIterator->first));
+		std::string fullModFilePath(Utilities::joinPaths(modFilesInstallPath, modFilesIterator->first));
 
 		if(!modFilesIterator->second->writeTo(fullModFilePath)) {
 			spdlog::error("Failed to write mod file #{} of {} ('{}') to '{}' game directory.", fileNumber, modFiles.size(), modFilesIterator->first, selectedGameVersion.getLongName());
@@ -3760,69 +3755,47 @@ bool ModManager::extractModFilesToGameDirectory(const ModGameVersion & modGameVe
 	return true;
 }
 
-bool ModManager::removeModFilesFromGameDirectory(const GameVersion & gameVersion) {
+bool ModManager::removeModFilesFromDirectory(const std::string & modFilesInstallPath) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
-	if(!gameVersion.isConfigured()) {
-		return false;
-	}
-
-	if(!areModFilesPresentInGameDirectory(gameVersion)) {
+	if(!areModFilesPresentInDirectory(modFilesInstallPath)) {
 		return true;
 	}
 
-	std::optional<std::string> optionalEvaluatedGamePath(gameVersion.getEvaluatedGamePath());
-
-	if(!optionalEvaluatedGamePath.has_value()) {
-		spdlog::error("Failed to remove mod files from '{}' game directory due to game path evaluation failure.", gameVersion.getLongName());
-		return false;
-	}
-
-	std::string evaluatedGamePath(std::move(optionalEvaluatedGamePath.value()));
-
-	std::unique_ptr<InstalledModInfo> installedModInfo(InstalledModInfo::loadFromDirectory(evaluatedGamePath));
+	std::unique_ptr<InstalledModInfo> installedModInfo(InstalledModInfo::loadFromDirectory(modFilesInstallPath));
 
 	if(installedModInfo == nullptr) {
 		return false;
 	}
 
-	return removeModFilesFromGameDirectory(gameVersion, *installedModInfo);
+	return removeModFilesFromDirectory(modFilesInstallPath, *installedModInfo);
 }
 
-bool ModManager::removeModFilesFromGameDirectory(const GameVersion & gameVersion, const InstalledModInfo & installedModInfo) {
+bool ModManager::removeModFilesFromDirectory(const std::string & modFilesInstallPath, const InstalledModInfo & installedModInfo) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	if(installedModInfo.isEmpty()) {
 		return true;
 	}
 
-	if(!gameVersion.isConfigured() || !installedModInfo.isValid()) {
+	if(modFilesInstallPath.empty() || !installedModInfo.isValid()) {
 		return false;
 	}
 
-	std::optional<std::string> optionalEvaluatedGamePath(gameVersion.getEvaluatedGamePath());
-
-	if(!optionalEvaluatedGamePath.has_value()) {
-		spdlog::error("Failed to remove mod files from '{}' game directory due to game path evaluation failure.", gameVersion.getLongName());
-		return false;
-	}
-
-	std::string evaluatedGamePath(std::move(optionalEvaluatedGamePath.value()));
-
-	if(!std::filesystem::is_directory(std::filesystem::path(evaluatedGamePath))) {
+	if(!std::filesystem::is_directory(std::filesystem::path(modFilesInstallPath))) {
 		return false;
 	}
 
 	if(installedModInfo.numberOfModFiles() != 0) {
-		spdlog::info("Removing {} '{}' mod file{} from '{}' game directory...", installedModInfo.numberOfModFiles(), installedModInfo.getFullModName(), installedModInfo.numberOfModFiles() == 1 ? "" : "s", gameVersion.getLongName());
+		spdlog::info("Removing {} '{}' mod file{} from '{}' game directory...", installedModInfo.numberOfModFiles(), installedModInfo.getFullModName(), installedModInfo.numberOfModFiles() == 1 ? "" : "s", installedModInfo.getGameLongName());
 
 		for(size_t i = 0; i < installedModInfo.numberOfModFiles(); i++) {
 			std::string relativeModFilePath(installedModInfo.getModFile(i));
-			std::string fullModFilePath(Utilities::joinPaths(evaluatedGamePath, relativeModFilePath));
+			std::string fullModFilePath(Utilities::joinPaths(modFilesInstallPath, relativeModFilePath));
 			bool modFileExists = std::filesystem::is_regular_file(std::filesystem::path(fullModFilePath));
 
 			if(!modFileExists) {
-				spdlog::warn("Mod file #{} of {} ('{}') no longer exists in '{}' game directory.", i + 1, installedModInfo.numberOfModFiles(), relativeModFilePath, gameVersion.getLongName());
+				spdlog::warn("Mod file #{} of {} ('{}') no longer exists in '{}' game directory.", i + 1, installedModInfo.numberOfModFiles(), relativeModFilePath, installedModInfo.getGameLongName());
 				continue;
 			}
 
@@ -3830,38 +3803,38 @@ bool ModManager::removeModFilesFromGameDirectory(const GameVersion & gameVersion
 			std::filesystem::remove(std::filesystem::path(fullModFilePath), errorCode);
 
 			if(errorCode) {
-				spdlog::error("Failed to remove mod file #{} of {} ('{}') from '{}' game directory: {}", i + 1, installedModInfo.numberOfModFiles(), relativeModFilePath, gameVersion.getLongName(), errorCode.message());
+				spdlog::error("Failed to remove mod file #{} of {} ('{}') from '{}' game directory: {}", i + 1, installedModInfo.numberOfModFiles(), relativeModFilePath, installedModInfo.getGameLongName(), errorCode.message());
 				continue;
 			}
 
-			spdlog::debug("Removed mod file #{} of {} ('{}') from '{}' game directory.", i + 1, installedModInfo.numberOfModFiles(), relativeModFilePath, gameVersion.getLongName());
+			spdlog::debug("Removed mod file #{} of {} ('{}') from '{}' game directory.", i + 1, installedModInfo.numberOfModFiles(), relativeModFilePath, installedModInfo.getGameLongName());
 		}
 	}
 
 	if(installedModInfo.numberOfOriginalFiles() != 0) {
-		spdlog::info("Renaming {0} '{1}' backed up game file{2} back to {3} original name{2}...", installedModInfo.numberOfOriginalFiles(), gameVersion.getLongName(), installedModInfo.numberOfOriginalFiles() == 1 ? "" : "s", installedModInfo.numberOfOriginalFiles() == 1 ? "its" : "their");
+		spdlog::info("Renaming {0} '{1}' backed up game file{2} back to {3} original name{2}...", installedModInfo.numberOfOriginalFiles(), installedModInfo.getGameLongName(), installedModInfo.numberOfOriginalFiles() == 1 ? "" : "s", installedModInfo.numberOfOriginalFiles() == 1 ? "its" : "their");
 
 		for(size_t i = 0; i < installedModInfo.numberOfOriginalFiles(); i++) {
 			std::string relativeOriginalFilePath(installedModInfo.getOriginalFile(i));
 			std::string relativeRenamedFilePath(relativeOriginalFilePath + DEFAULT_BACKUP_FILE_RENAME_SUFFIX);
-			std::string fullOriginalFilePath(Utilities::joinPaths(evaluatedGamePath, relativeOriginalFilePath));
-			std::string fullRenamedFilePath(Utilities::joinPaths(evaluatedGamePath, relativeRenamedFilePath));
+			std::string fullOriginalFilePath(Utilities::joinPaths(modFilesInstallPath, relativeOriginalFilePath));
+			std::string fullRenamedFilePath(Utilities::joinPaths(modFilesInstallPath, relativeRenamedFilePath));
 			bool originalFileExists = std::filesystem::is_regular_file(std::filesystem::path(fullOriginalFilePath));
 			bool renamedFileExists = std::filesystem::is_regular_file(std::filesystem::path(fullRenamedFilePath));
 
 			if(!renamedFileExists) {
-				spdlog::error("Renamed backup file #{} of {} ('{}') no longer exists in '{}' game directory.", i + 1, installedModInfo.numberOfOriginalFiles(), relativeRenamedFilePath, gameVersion.getLongName());
+				spdlog::error("Renamed backup file #{} of {} ('{}') no longer exists in '{}' game directory.", i + 1, installedModInfo.numberOfOriginalFiles(), relativeRenamedFilePath, installedModInfo.getGameLongName());
 				continue;
 			}
 
 			if(originalFileExists) {
-				spdlog::error("Original file #{} of {} ('{}') already exists in '{}' game directory, it will be replaced.", i + 1, installedModInfo.numberOfOriginalFiles(), relativeOriginalFilePath, gameVersion.getLongName());
+				spdlog::error("Original file #{} of {} ('{}') already exists in '{}' game directory, it will be replaced.", i + 1, installedModInfo.numberOfOriginalFiles(), relativeOriginalFilePath, installedModInfo.getGameLongName());
 
 				std::error_code errorCode;
 				std::filesystem::remove(std::filesystem::path(fullOriginalFilePath), errorCode);
 
 				if(errorCode) {
-					spdlog::error("Failed to remove original file ('{}') from '{}' game directory: {}", relativeOriginalFilePath, gameVersion.getLongName(), errorCode.message());
+					spdlog::error("Failed to remove original file ('{}') from '{}' game directory: {}", relativeOriginalFilePath, installedModInfo.getGameLongName(), errorCode.message());
 					continue;
 				}
 			}
@@ -3870,18 +3843,18 @@ bool ModManager::removeModFilesFromGameDirectory(const GameVersion & gameVersion
 			std::filesystem::rename(std::filesystem::path(fullRenamedFilePath), std::filesystem::path(fullOriginalFilePath), errorCode);
 
 			if(errorCode) {
-				spdlog::error("Failed to rename original backed up '{}' game file #{} of {} from '{}' to '{}': {}", gameVersion.getLongName(), i + 1, installedModInfo.numberOfOriginalFiles(), relativeRenamedFilePath, relativeOriginalFilePath, errorCode.message());
+				spdlog::error("Failed to rename original backed up '{}' game file #{} of {} from '{}' to '{}': {}", installedModInfo.getGameLongName(), i + 1, installedModInfo.numberOfOriginalFiles(), relativeRenamedFilePath, relativeOriginalFilePath, errorCode.message());
 				continue;
 			}
 
-			spdlog::info("Renamed original backed up '{}' game file #{} of {} from '{}' to '{}'.", gameVersion.getLongName(), i + 1, installedModInfo.numberOfOriginalFiles(), relativeRenamedFilePath, relativeOriginalFilePath);
+			spdlog::info("Renamed original backed up '{}' game file #{} of {} from '{}' to '{}'.", installedModInfo.getGameLongName(), i + 1, installedModInfo.numberOfOriginalFiles(), relativeRenamedFilePath, relativeOriginalFilePath);
 		}
 	}
 
-	std::filesystem::path installedModInfoFilePath(Utilities::joinPaths(evaluatedGamePath, InstalledModInfo::DEFAULT_FILE_NAME));
+	std::filesystem::path installedModInfoFilePath(Utilities::joinPaths(modFilesInstallPath, InstalledModInfo::DEFAULT_FILE_NAME));
 
 	if(!std::filesystem::exists(installedModInfoFilePath)) {
-		spdlog::warn("Installed mod info file '{}' no longer exists in '{}' game directory.", InstalledModInfo::DEFAULT_FILE_NAME, evaluatedGamePath);
+		spdlog::warn("Installed mod info file '{}' no longer exists in directory: '{}'.", InstalledModInfo::DEFAULT_FILE_NAME, modFilesInstallPath);
 		return true;
 	}
 
@@ -3889,16 +3862,16 @@ bool ModManager::removeModFilesFromGameDirectory(const GameVersion & gameVersion
 	std::filesystem::remove(installedModInfoFilePath, errorCode);
 
 	if(errorCode) {
-		spdlog::error("Failed to remove installed mod info file '{}' from '{}' game directory: {}", InstalledModInfo::DEFAULT_FILE_NAME, gameVersion.getLongName(), errorCode.message());
+		spdlog::error("Failed to remove installed mod info file '{}' from '{}' game directory: {}", InstalledModInfo::DEFAULT_FILE_NAME, installedModInfo.getGameLongName(), errorCode.message());
 		return true;
 	}
 
-	spdlog::info("Removed installed mod info file '{}' from '{}' game directory.", InstalledModInfo::DEFAULT_FILE_NAME, gameVersion.getLongName());
+	spdlog::info("Removed installed mod info file '{}' from '{}' game directory.", InstalledModInfo::DEFAULT_FILE_NAME, installedModInfo.getGameLongName());
 
 	return true;
 }
 
-std::string ModManager::generateCommand(std::shared_ptr<GameVersion> gameVersion, const std::vector<std::string> & relativeConFilePaths, const std::vector<std::string> & relativeDefFilePaths, const std::vector<std::string> & relativeGroupFilePaths, ScriptArguments & scriptArgs, std::string_view relativeCombinedGroupFilePath, std::string_view combinedDOSBoxConfigurationFilePath, std::string_view relativeCustomMapFilePath) const {
+std::string ModManager::generateCommand(std::shared_ptr<GameVersion> gameVersion, const std::string & evaluatedGamePath, const std::vector<std::string> & targetConFilePaths, const std::vector<std::string> & targetDefFilePaths, const std::vector<std::string> & targetGroupFilePaths, ScriptArguments & scriptArgs, std::string_view targetCombinedGroupFilePath, std::string_view combinedDOSBoxConfigurationFilePath, std::string_view targetCustomMapFilePath) const {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	static const std::regex respawnModeRegExp("[123x]");
@@ -3920,14 +3893,10 @@ std::string ModManager::generateCommand(std::shared_ptr<GameVersion> gameVersion
 		return {};
 	}
 
-	std::optional<std::string> optionalEvaluatedGamePath(gameVersion->getEvaluatedGamePath());
-
-	if(!optionalEvaluatedGamePath.has_value()) {
-		spdlog::error("Failed to generate launch command due to '{}' game path evaluation failure.", gameVersion->getLongName());
+	if(evaluatedGamePath.empty()) {
+		spdlog::error("Game path cannot be empty.");
 		return {};
 	}
-
-	std::string evaluatedGamePath(std::move(optionalEvaluatedGamePath.value()));
 
 	if(settings->dataDirectoryPath.empty()) {
 		spdlog::error("Empty data path.");
@@ -4114,14 +4083,14 @@ std::string ModManager::generateCommand(std::shared_ptr<GameVersion> gameVersion
 		command << " " << gameVersion->getLaunchArguments();
 	}
 
-	if(!relativeCustomMapFilePath.empty()) {
+	if(!targetCustomMapFilePath.empty()) {
 		if(settings->mapsSymlinkName.empty()) {
 			spdlog::error("Maps directory symbolic link name is empty.");
 			return {};
 		}
 
 		if(gameVersion->hasMapFileArgumentFlag()) {
-			command << " " << gameVersion->getMapFileArgumentFlag().value() << relativeCustomMapFilePath;
+			command << " " << gameVersion->getMapFileArgumentFlag().value() << targetCustomMapFilePath;
 		}
 		else {
 			spdlog::warn("Game version '{}' does not have a map file argument flag specified in its configuration.", gameVersion->getLongName());
@@ -4129,69 +4098,87 @@ std::string ModManager::generateCommand(std::shared_ptr<GameVersion> gameVersion
 	}
 
 	if(!gameVersion->doesRequireGroupFileExtraction()) {
-		if(!gameVersion->hasGroupFileArgumentFlag()) {
-			spdlog::error("Game version '{}' does not have a group file argument flag specified in its configuration.", gameVersion->getLongName());
+		if(!gameVersion->hasGroupFileArgumentFlag() && !gameVersion->hasAlternateModFilesInstallPath()) {
+			spdlog::error("Game version '{}' does not have a group file argument flag specified in its configuration and also does not specify an alternate mod files install path.", gameVersion->getLongName());
 			return {};
 		}
 
-		if(!relativeConFilePaths.empty()) {
-			if(!gameVersion->hasConFileArgumentFlag()) {
-				spdlog::error("Game version '{}' does not have a con file argument flag specified in its configuration.", gameVersion->getLongName());
-				return {};
-			}
-			else if(relativeConFilePaths.size() > 1 && !gameVersion->hasExtraConFileArgumentFlag()) {
-				spdlog::error("Multiple con files specified, but game version '{}' does not have an extra con file argument flag specified in its configuration.", gameVersion->getLongName());
+		if(!targetConFilePaths.empty()) {
+			if(!gameVersion->hasConFileArgumentFlag() && !gameVersion->hasAlternateModFilesInstallPath()) {
+				spdlog::error("Game version '{}' does not have a con file argument flag specified in its configuration and also does not specify an alternate mod files install path.", gameVersion->getLongName());
 				return {};
 			}
 
-			for(std::vector<std::string>::const_iterator i = relativeConFilePaths.cbegin(); i != relativeConFilePaths.cend(); ++i) {
-				const std::string & relativeConFilePath = *i;
+			if(targetConFilePaths.size() > 1 && !gameVersion->hasExtraConFileArgumentFlag() && !gameVersion->hasAlternateModFilesInstallPath()) {
+				spdlog::error("Multiple con files specified, but game version '{}' does not have an extra con file argument flag specified in its configuration and also does not specify an alternate mod files install path.", gameVersion->getLongName());
+				return {};
+			}
 
-				command << " ";
-
-				if(i == relativeConFilePaths.begin()) {
-					command << gameVersion->getConFileArgumentFlag().value();
+			if(gameVersion->hasConFileArgumentFlag()) {
+				if(targetConFilePaths.size() > 1 && !gameVersion->hasExtraConFileArgumentFlag()) {
+					spdlog::error("Multiple con files specified, but game version '{}' does not have an extra con file argument flag specified in its configuration.", gameVersion->getLongName());
+					return {};
 				}
-				else {
-					command << gameVersion->getExtraConFileArgumentFlag().value();
-				}
 
-				command << relativeConFilePath;
+				for(std::vector<std::string>::const_iterator i = targetConFilePaths.cbegin(); i != targetConFilePaths.cend(); ++i) {
+					const std::string & relativeConFilePath = *i;
+
+					command << " ";
+
+					if(i == targetConFilePaths.begin()) {
+						command << gameVersion->getConFileArgumentFlag().value();
+					}
+					else {
+						command << gameVersion->getExtraConFileArgumentFlag().value();
+					}
+
+					command << relativeConFilePath;
+				}
 			}
 		}
 
-		if(!relativeDefFilePaths.empty()) {
-			if(!gameVersion->hasDefFileArgumentFlag()) {
-				spdlog::error("Game version '{}' does not have a def file argument flag specified in its configuration.", gameVersion->getLongName());
-				return {};
-			}
-			else if(relativeDefFilePaths.size() > 1 && !gameVersion->hasExtraDefFileArgumentFlag()) {
-				spdlog::error("Multiple def files specified, but game version '{}' does not have an extra def file argument flag specified in its configuration.", gameVersion->getLongName());
+		if(!targetDefFilePaths.empty()) {
+			if(!gameVersion->hasDefFileArgumentFlag() && !gameVersion->hasAlternateModFilesInstallPath()) {
+				spdlog::error("Game version '{}' does not have a def file argument flag specified in its configuration and also does not specify an alternate mod files install path.", gameVersion->getLongName());
 				return {};
 			}
 
-			for(std::vector<std::string>::const_iterator i = relativeDefFilePaths.cbegin(); i != relativeDefFilePaths.cend(); ++i) {
-				const std::string & relativeDefFilePath = *i;
+			if(targetDefFilePaths.size() > 1 && !gameVersion->hasExtraDefFileArgumentFlag() && !gameVersion->hasAlternateModFilesInstallPath()) {
+				spdlog::error("Multiple def files specified, but game version '{}' does not have an extra def file argument flag specified in its configuration and also does not specify an alternate mod files install path.", gameVersion->getLongName());
+				return {};
+			}
 
-				command << " ";
-
-				if(i == relativeDefFilePaths.begin()) {
-					command << gameVersion->getDefFileArgumentFlag().value();
+			if(gameVersion->hasDefFileArgumentFlag()) {
+				if(targetDefFilePaths.size() > 1 && !gameVersion->hasExtraDefFileArgumentFlag()) {
+					spdlog::error("Multiple def files specified, but game version '{}' does not have an extra def file argument flag specified in its configuration.", gameVersion->getLongName());
+					return {};
 				}
-				else {
-					command << gameVersion->getExtraDefFileArgumentFlag().value();
-				}
 
-				command << relativeDefFilePath;
+				for(std::vector<std::string>::const_iterator i = targetDefFilePaths.cbegin(); i != targetDefFilePaths.cend(); ++i) {
+					const std::string & relativeDefFilePath = *i;
+
+					command << " ";
+
+					if(i == targetDefFilePaths.begin()) {
+						command << gameVersion->getDefFileArgumentFlag().value();
+					}
+					else {
+						command << gameVersion->getExtraDefFileArgumentFlag().value();
+					}
+
+					command << relativeDefFilePath;
+				}
 			}
 		}
 
-		if(!relativeCombinedGroupFilePath.empty()) {
-			command << " " << gameVersion->getGroupFileArgumentFlag().value() << relativeCombinedGroupFilePath;
-		}
-		else {
-			for(const std::string & relativeGroupFilePath : relativeGroupFilePaths) {
-				command << " " << gameVersion->getGroupFileArgumentFlag().value() << relativeGroupFilePath;
+		if(gameVersion->hasGroupFileArgumentFlag()) {
+			if(!targetCombinedGroupFilePath.empty()) {
+				command << " " << gameVersion->getGroupFileArgumentFlag().value() << targetCombinedGroupFilePath;
+			}
+			else {
+				for(const std::string & relativeGroupFilePath : targetGroupFilePaths) {
+					command << " " << gameVersion->getGroupFileArgumentFlag().value() << relativeGroupFilePath;
+				}
 			}
 		}
 	}
@@ -5439,31 +5426,22 @@ void ModManager::clearApplicationTemporaryDirectory() {
 	}
 }
 
-bool ModManager::createGameTemporaryDirectory(const GameVersion & gameVersion) {
+bool ModManager::createGameTemporaryDirectory(const std::string & modFilesInstallPath) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	SettingsManager * settings = SettingsManager::getInstance();
 
-	if(!gameVersion.isConfigured()) {
-		spdlog::error("Failed to create game temporary directory, provided game version is not configured.");
+	if(modFilesInstallPath.empty()) {
+		spdlog::error("Failed to create game temporary directory, mod files install path cannot be empty.");
 		return false;
 	}
-
-	std::optional<std::string> optionalEvaluatedGamePath(gameVersion.getEvaluatedGamePath());
-
-	if(!optionalEvaluatedGamePath.has_value()) {
-		spdlog::error("Failed to create game temporary directory due to '{}' game path evaluation failure.", gameVersion.getLongName());
-		return false;
-	}
-
-	std::string evaluatedGamePath(std::move(optionalEvaluatedGamePath.value()));
 
 	if(settings->gameTempDirectoryName.empty() || settings->gameTempDirectoryName.find_first_of("/\\") != std::string::npos) {
 		spdlog::error("Missing or invalid game temporary directory name, must not be empty and not contain any path separators.");
 		return false;
 	}
 
-	std::string gameTempDirectoryPath(Utilities::joinPaths(evaluatedGamePath, settings->gameTempDirectoryName));
+	std::string gameTempDirectoryPath(Utilities::joinPaths(modFilesInstallPath, settings->gameTempDirectoryName));
 
 	if(std::filesystem::is_directory(gameTempDirectoryPath)) {
 		return true;
@@ -5482,31 +5460,22 @@ bool ModManager::createGameTemporaryDirectory(const GameVersion & gameVersion) {
 	return true;
 }
 
-bool ModManager::removeGameTemporaryDirectory(const GameVersion & gameVersion) {
+bool ModManager::removeGameTemporaryDirectory(const std::string & modFilesInstallPath) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	SettingsManager * settings = SettingsManager::getInstance();
 
-	if(!gameVersion.isConfigured()) {
-		spdlog::error("Failed to remove game temporary directory, provided game version is not configured.");
+	if(modFilesInstallPath.empty()) {
+		spdlog::error("Failed to remove game temporary directory, provided mod files install path cannot be empty.");
 		return false;
 	}
-	
-	std::optional<std::string> optionalEvaluatedGamePath(gameVersion.getEvaluatedGamePath());
-
-	if(!optionalEvaluatedGamePath.has_value()) {
-		spdlog::error("Failed to remove game temporary directory due to '{}' game path evaluation failure.", gameVersion.getLongName());
-		return false;
-	}
-
-	std::string evaluatedGamePath(std::move(optionalEvaluatedGamePath.value()));
 
 	if(settings->gameTempDirectoryName.empty() || settings->gameTempDirectoryName.find_first_of("/\\") != std::string::npos) {
 		spdlog::error("Missing or invalid game temporary directory name, must not be empty and not contain any path separators.");
 		return false;
 	}
 
-	std::string gameTempDirectoryPath(Utilities::joinPaths(evaluatedGamePath, settings->gameTempDirectoryName));
+	std::string gameTempDirectoryPath(Utilities::joinPaths(modFilesInstallPath, settings->gameTempDirectoryName));
 
 	if(!std::filesystem::is_directory(gameTempDirectoryPath)) {
 		return true;
@@ -5612,24 +5581,16 @@ bool ModManager::removeSymlink(const std::string & symlinkName, const std::strin
 	return true;
 }
 
-bool ModManager::createSymlinksOrCopyTemporaryFiles(const GameVersion & gameVersion, const std::vector<std::string> & conFilePaths, const std::vector<std::string> & defFilePaths, const std::vector<std::string> & groupFilePaths, std::string_view customMapFilePath, bool doesRequireCombinedGroup, bool createTempSymlink, InstalledModInfo * installedModInfo) {
+bool ModManager::createSymlinksOrCopyTemporaryFiles(const GameVersion & gameVersion, const std::string & evaluatedGamePath, const std::string & modFilesInstallPath, bool shouldUseTemporaryDirectory, const std::vector<std::string> & sourceConFilePaths, const std::vector<std::string> & sourceDefFilePaths, const std::vector<std::string> & sourceGroupFilePaths, std::string_view customMapFilePath, bool doesRequireCombinedGroup, bool createTempSymlink, InstalledModInfo * installedModInfo) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	SettingsManager * settings = SettingsManager::getInstance();
 
-	if(!gameVersion.isConfigured() || !areSymlinkSettingsValid() || (createTempSymlink && settings->appTempDirectoryPath.empty())) {
+	if(!gameVersion.isConfigured() || !areSymlinkSettingsValid() || (createTempSymlink && settings->appTempDirectoryPath.empty()) || modFilesInstallPath.empty()) {
 		return false;
 	}
 
-	std::optional<std::string> optionalEvaluatedGamePath(gameVersion.getEvaluatedGamePath());
-
-	if(!optionalEvaluatedGamePath.has_value()) {
-		spdlog::error("Failed to create symbolic links or copy temporary files to '{}' game directory due to game path evaluation failure.", gameVersion.getLongName());
-		return false;
-	}
-
-	std::string evaluatedGamePath(std::move(optionalEvaluatedGamePath.value()));
-	std::string mapsDirectoryPath(getMapsDirectoryPath());
+	const std::string mapsDirectoryPath(getMapsDirectoryPath());
 
 	if(Utilities::areSymlinksSupported() && gameVersion.doesSupportSubdirectories()) {
 		bool result = true;
@@ -5637,47 +5598,47 @@ bool ModManager::createSymlinksOrCopyTemporaryFiles(const GameVersion & gameVers
 		result &= createSymlink(evaluatedGamePath, settings->gameSymlinkName, std::filesystem::current_path().string());
 
 		if(createTempSymlink) {
-			result &= createSymlink(settings->appTempDirectoryPath, settings->tempSymlinkName, evaluatedGamePath);
+			result &= createSymlink(settings->appTempDirectoryPath, settings->tempSymlinkName, modFilesInstallPath);
 		}
 
-		result &= createSymlink(std::filesystem::current_path().string(), settings->appSymlinkName, evaluatedGamePath);
+		result &= createSymlink(std::filesystem::current_path().string(), settings->appSymlinkName, modFilesInstallPath);
 
-		result &= createSymlink(getModsDirectoryPath(), settings->modsSymlinkName, evaluatedGamePath);
+		result &= createSymlink(getModsDirectoryPath(), settings->modsSymlinkName, modFilesInstallPath);
 
 		if(!mapsDirectoryPath.empty()) {
-			result &= createSymlink(mapsDirectoryPath, settings->mapsSymlinkName, evaluatedGamePath);
+			result &= createSymlink(mapsDirectoryPath, settings->mapsSymlinkName, modFilesInstallPath);
 		}
 
 		return result;
 	}
 
-	if(gameVersion.doesSupportSubdirectories() && !createGameTemporaryDirectory(gameVersion)) {
+	if(shouldUseTemporaryDirectory && !createGameTemporaryDirectory(modFilesInstallPath)) {
 		return false;
 	}
 
 	std::string relativeFileDestinationDirectoryPath;
-	std::string absoluteFileDestinationDirectoryPath(evaluatedGamePath);
+	std::string absoluteFileDestinationDirectoryPath(modFilesInstallPath);
 
-	if(gameVersion.doesSupportSubdirectories()) {
+	if(shouldUseTemporaryDirectory) {
 		relativeFileDestinationDirectoryPath = settings->gameTempDirectoryName;
 		absoluteFileDestinationDirectoryPath = Utilities::joinPaths(absoluteFileDestinationDirectoryPath, relativeFileDestinationDirectoryPath);
 	}
 
-	std::vector<std::string> modFilePaths(conFilePaths);
+	std::vector<std::string> sourceModFilePaths(sourceConFilePaths);
 
-	for(const std::string & defFilePath : defFilePaths) {
-		modFilePaths.push_back(defFilePath);
+	for(const std::string & sourceDefFilePath : sourceDefFilePaths) {
+		sourceModFilePaths.push_back(sourceDefFilePath);
 	}
 
 	if(!doesRequireCombinedGroup) {
-		for(const std::string & groupFilePath : groupFilePaths) {
-			modFilePaths.push_back(groupFilePath);
+		for(const std::string & sourceGroupFilePath : sourceGroupFilePaths) {
+			sourceModFilePaths.push_back(sourceGroupFilePath);
 		}
 	}
 
 	if(!gameVersion.doesRequireGroupFileExtraction()) {
-		for(const std::string & modFilePath : modFilePaths) {
-			std::string_view modFileFileName(Utilities::getFileName(modFilePath));
+		for(const std::string & sourceModFilePath : sourceModFilePaths) {
+			std::string_view modFileFileName(Utilities::getFileName(sourceModFilePath));
 			std::string relativeModFileDestinationFilePath(Utilities::joinPaths(relativeFileDestinationDirectoryPath, modFileFileName));
 			std::string absoluteModFileDestionationFilePath(Utilities::joinPaths(absoluteFileDestinationDirectoryPath, modFileFileName));
 
@@ -5703,10 +5664,10 @@ bool ModManager::createSymlinksOrCopyTemporaryFiles(const GameVersion & gameVers
 			}
 
 			std::error_code errorCode;
-			std::filesystem::copy_file(std::filesystem::path(modFilePath), std::filesystem::path(absoluteModFileDestionationFilePath), errorCode);
+			std::filesystem::copy_file(std::filesystem::path(sourceModFilePath), std::filesystem::path(absoluteModFileDestionationFilePath), errorCode);
 
 			if(errorCode) {
-				spdlog::error("Failed to copy mod file '{}' from '{}' to directory '{}': {}", modFileFileName, Utilities::getFilePath(modFilePath), absoluteFileDestinationDirectoryPath, errorCode.message());
+				spdlog::error("Failed to copy mod file '{}' from '{}' to directory '{}': {}", modFileFileName, Utilities::getFilePath(sourceModFilePath), absoluteFileDestinationDirectoryPath, errorCode.message());
 				return false;
 			}
 
@@ -5762,46 +5723,37 @@ bool ModManager::createSymlinksOrCopyTemporaryFiles(const GameVersion & gameVers
 	return true;
 }
 
-bool ModManager::removeSymlinks(const GameVersion & gameVersion) {
+bool ModManager::removeSymlinks(const GameVersion & gameVersion, const std::string & modFilesInstallPath, bool shouldUseTemporaryDirectory) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	SettingsManager * settings = SettingsManager::getInstance();
 
-	if(!gameVersion.isConfigured() || !areSymlinkSettingsValid()) {
+	if(!gameVersion.isConfigured() || !areSymlinkSettingsValid() || modFilesInstallPath.empty()) {
 		return false;
 	}
 
 	if(Utilities::areSymlinksSupported() && gameVersion.doesSupportSubdirectories()) {
-		std::optional<std::string> optionalEvaluatedGamePath(gameVersion.getEvaluatedGamePath());
-
-		if(!optionalEvaluatedGamePath.has_value()) {
-			spdlog::error("Failed to remove symbolic links from '{}' game directory due to game path evaluation failure.", gameVersion.getLongName());
-			return false;
-		}
-
-		std::string evaluatedGamePath(std::move(optionalEvaluatedGamePath.value()));
-
 		bool result = true;
 
 		result &= removeSymlink(settings->gameSymlinkName, std::filesystem::current_path().string());
 
-		result &= removeSymlink(settings->appSymlinkName, evaluatedGamePath);
+		result &= removeSymlink(settings->appSymlinkName, modFilesInstallPath);
 
-		result &= removeSymlink(settings->tempSymlinkName, evaluatedGamePath);
+		result &= removeSymlink(settings->tempSymlinkName, modFilesInstallPath);
 
-		result &= removeSymlink(settings->modsSymlinkName, evaluatedGamePath);
+		result &= removeSymlink(settings->modsSymlinkName, modFilesInstallPath);
 
 		std::string mapsDirectoryPath(getMapsDirectoryPath());
 
 		if(!mapsDirectoryPath.empty()) {
-			result &= removeSymlink(settings->mapsSymlinkName, evaluatedGamePath);
+			result &= removeSymlink(settings->mapsSymlinkName, modFilesInstallPath);
 		}
 
 		return result;
 	}
 
-	if(gameVersion.doesSupportSubdirectories()) {
-		return removeGameTemporaryDirectory(gameVersion);
+	if(shouldUseTemporaryDirectory) {
+		return removeGameTemporaryDirectory(modFilesInstallPath);
 	}
 
 	return true;

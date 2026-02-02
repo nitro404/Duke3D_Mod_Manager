@@ -472,6 +472,82 @@
 					]
 				}
 			]
+		},
+		{
+			"id": "buildgdx",
+			"name": "BuildGDX",
+			"versions": [
+				{
+					"version": "1.18",
+					"releaseDate": "January 11, 2025",
+					"files": [
+						{
+							"fileName": "BuildGDX_with_JRE_1.18.zip",
+							"fileSize": 41413382,
+							"type": "Game",
+							"sha1": "26b8f4fe6d02e68fc17bf1001c386e27258c010a",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x64"
+						}
+					]
+				},
+				{
+					"version": "1.16",
+					"releaseDate": "December 5, 2021",
+					"files": [
+						{
+							"fileName": "BuildGDX_with_JRE_1.16.zip",
+							"fileSize": 37979258,
+							"type": "Game",
+							"sha1": "1a9cf7eeeef532f1d6e23377164dea40eed7ada5",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x64"
+						}
+					]
+				},
+				{
+					"version": "1.15",
+					"releaseDate": "August 17, 2020",
+					"files": [
+						{
+							"fileName": "BuildGDX_with_JRE_1.15.zip",
+							"fileSize": 36963952,
+							"type": "Game",
+							"sha1": "3ed2a913e7689463ecc7cb1004f6a21faaef781d",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x64"
+						}
+					]
+				},
+				{
+					"version": "1.14",
+					"releaseDate": "July 26, 2020",
+					"files": [
+						{
+							"fileName": "BuildGDX_with_JRE_1.14.zip",
+							"fileSize": 36905049,
+							"type": "Game",
+							"sha1": "e53e600a4ccb6513f04a0a0f89a0717464a71781",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x64"
+						}
+					]
+				},
+				{
+					"version": "1.13",
+					"releaseDate": "June 25, 2020",
+					"files": [
+						{
+							"fileName": "BuildGDX_with_JRE_1.13.zip",
+							"fileSize": 36858209,
+							"type": "Game",
+							"sha1": "4c393a3eb570a4e179141f2a701f48df99ac05ce",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x64"
+						}
+					]
+				}
+			]
 		}
 	]
 }
