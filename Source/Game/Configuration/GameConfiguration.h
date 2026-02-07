@@ -156,6 +156,7 @@ public:
 		size_t indexOfEntryWithName(const std::string & entryName) const;
 		std::shared_ptr<Entry> getEntry(size_t index) const;
 		std::shared_ptr<Entry> getEntryWithName(const std::string & entryName) const;
+		const std::vector<std::shared_ptr<GameConfiguration::Entry>> & getEntries() const;
 		bool addEntry(std::shared_ptr<Entry> entry);
 		bool addEmptyEntry(const std::string & entryName);
 		bool addIntegerEntry(const std::string & entryName, int64_t value);
@@ -237,6 +238,7 @@ public:
 	bool hasEntryWithName(const std::string & entryName) const;
 	std::shared_ptr<Entry> getEntry(const Entry & entry) const;
 	std::vector<std::shared_ptr<Entry>> getEntriesWithName(const std::string & entryName) const;
+	const EntryMap & getEntries() const;
 	bool setEntryName(Entry & entry, const std::string & newEntryName);
 	bool addEntryToSection(std::shared_ptr<Entry> entry, const Section & section);
 	bool addEntryToSectionWithName(std::shared_ptr<Entry> entry, const std::string & sectionName);

@@ -326,6 +326,10 @@ std::vector<std::shared_ptr<GameConfiguration::Entry>> GameConfiguration::getEnt
 	return entriesWithName;
 }
 
+const GameConfiguration::EntryMap & GameConfiguration::getEntries() const {
+	return m_entries;
+}
+
 bool GameConfiguration::setEntryName(Entry & entry, const std::string & newEntryName) {
 	if(!Entry::isNameValid(newEntryName)) {
 		return false;

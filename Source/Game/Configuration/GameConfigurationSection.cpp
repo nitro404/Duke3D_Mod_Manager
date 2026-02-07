@@ -335,6 +335,10 @@ std::shared_ptr<GameConfiguration::Entry> GameConfiguration::Section::getEntryWi
 	return *entryIterator;
 }
 
+const std::vector<std::shared_ptr<GameConfiguration::Entry>> & GameConfiguration::Section::getEntries() const {
+	return m_entries;
+}
+
 bool GameConfiguration::Section::addEntry(std::shared_ptr<Entry> entry) {
 	if(m_parentGameConfiguration == nullptr) {
 		return false;
