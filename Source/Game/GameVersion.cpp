@@ -911,7 +911,7 @@ bool GameVersion::doesGroupCountExceedMaximumGroupFilesLimit(uint16_t groupCount
 		return false;
 	}
 
-	return groupCount > m_maximumGroupFiles.value() - 1;
+	return groupCount > m_maximumGroupFiles.value();
 }
 
 void GameVersion::setMaximumGroupFiles(uint16_t maximumGroupFiles) {
