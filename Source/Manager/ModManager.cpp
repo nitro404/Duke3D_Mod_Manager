@@ -3189,6 +3189,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	}
 
 	std::unique_ptr<InstalledModInfo> installedModInfo(std::make_unique<InstalledModInfo>(selectedModVersion.get()));
+	installedModInfo->setGameInfo(*selectedGameVersion);
 
 	launchStatus("Creating symbolic links and copying temporary files.");
 
@@ -3344,7 +3345,7 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	if(installedModInfo != nullptr && !installedModInfo->isEmpty()) {
 		launchStatus("Saving installed mod info to file in game directory.");
 
-		if(installedModInfo->saveTo(*selectedGameVersion)) {
+		if(installedModInfo->saveToDirectory(evaluatedGamePath)) {
 			spdlog::info("Saved installed mod info to file '{}' in '{}' game directory.", InstalledModInfo::DEFAULT_FILE_NAME, selectedGameVersion->getLongName());
 		}
 		else {
@@ -3770,7 +3771,16 @@ bool ModManager::removeModFilesFromGameDirectory(const GameVersion & gameVersion
 		return true;
 	}
 
-	std::unique_ptr<InstalledModInfo> installedModInfo(InstalledModInfo::loadFrom(gameVersion));
+	std::optional<std::string> optionalEvaluatedGamePath(gameVersion.getEvaluatedGamePath());
+
+	if(!optionalEvaluatedGamePath.has_value()) {
+		spdlog::error("Failed to remove mod files from '{}' game directory due to game path evaluation failure.", gameVersion.getLongName());
+		return false;
+	}
+
+	std::string evaluatedGamePath(std::move(optionalEvaluatedGamePath.value()));
+
+	std::unique_ptr<InstalledModInfo> installedModInfo(InstalledModInfo::loadFromDirectory(evaluatedGamePath));
 
 	if(installedModInfo == nullptr) {
 		return false;

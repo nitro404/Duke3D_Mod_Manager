@@ -28,14 +28,19 @@ static const std::string JSON_MOD_INFO_CATEGORY_PROPERTY_NAME("mod");
 static const std::string JSON_MOD_ID_PROPERTY_NAME("id");
 static const std::string JSON_MOD_NAME_PROPERTY_NAME("name");
 static const std::string JSON_MOD_VERSION_PROPERTY_NAME("version");
+static const std::string JSON_GAME_INFO_CATEGORY_PROPERTY_NAME("game");
+static const std::string JSON_GAME_ID_PROPERTY_NAME("id");
+static const std::string JSON_GAME_SHORT_NAME_PROPERTY_NAME("shortName");
+static const std::string JSON_GAME_LONG_NAME_PROPERTY_NAME("longName");
 static const std::string JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME("installedTimestamp");
 static const std::string JSON_ORIGINAL_FILES_LIST_PROPERTY_NAME("originalFiles");
 static const std::string JSON_MOD_FILES_LIST_PROPERTY_NAME("modFiles");
 
-static const std::array<std::string, 6> JSON_INSTALLED_MOD_INFO_PROPERTY_NAMES = {
+static const std::array<std::string, 7> JSON_INSTALLED_MOD_INFO_PROPERTY_NAMES = {
 	JSON_FILE_TYPE_PROPERTY_NAME,
 	JSON_FILE_FORMAT_VERSION_PROPERTY_NAME,
 	JSON_MOD_INFO_CATEGORY_PROPERTY_NAME,
+	JSON_GAME_INFO_CATEGORY_PROPERTY_NAME,
 	JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME,
 	JSON_ORIGINAL_FILES_LIST_PROPERTY_NAME,
 	JSON_MOD_FILES_LIST_PROPERTY_NAME
@@ -113,6 +118,28 @@ const std::string & InstalledModInfo::getModVersion() const {
 
 std::string InstalledModInfo::getFullModName() const {
 	return m_modName + (m_modVersion.empty() ? "" : " ") + m_modVersion;
+}
+
+const std::string & InstalledModInfo::getGameID() const {
+	return m_gameID;
+}
+
+const std::string & InstalledModInfo::getGameShortName() const {
+	return m_gameShortName;
+}
+
+const std::string & InstalledModInfo::getGameLongName() const {
+	return m_gameLongName;
+}
+
+void InstalledModInfo::setGameInfo(const GameVersion & gameVersion) {
+	if(!gameVersion.isValid()) {
+		return;
+	}
+
+	m_gameID = gameVersion.getID();
+	m_gameShortName = gameVersion.getShortName();
+	m_gameLongName = gameVersion.getLongName();
 }
 
 std::chrono::time_point<std::chrono::system_clock> InstalledModInfo::getInstalledTimestamp() const {
@@ -270,6 +297,25 @@ rapidjson::Document InstalledModInfo::toJSON() const {
 
 	installedModInfoDocument.AddMember(rapidjson::StringRef(JSON_MOD_INFO_CATEGORY_PROPERTY_NAME.c_str(), JSON_MOD_INFO_CATEGORY_PROPERTY_NAME.length()), modInfoValue, allocator);
 
+	rapidjson::Value gameInfoValue(rapidjson::kObjectType);
+
+	if(m_gameID.empty()) {
+		rapidjson::Value gameIDValue(m_gameID.c_str(), allocator);
+		gameInfoValue.AddMember(rapidjson::StringRef(JSON_GAME_ID_PROPERTY_NAME.c_str()), gameIDValue, allocator);
+	}
+
+	if(m_gameShortName.empty()) {
+		rapidjson::Value gameShortNameValue(m_gameShortName.c_str(), allocator);
+		gameInfoValue.AddMember(rapidjson::StringRef(JSON_GAME_SHORT_NAME_PROPERTY_NAME.c_str()), gameShortNameValue, allocator);
+	}
+
+	if(m_gameLongName.empty()) {
+		rapidjson::Value gameLongNameValue(m_gameLongName.c_str(), allocator);
+		gameInfoValue.AddMember(rapidjson::StringRef(JSON_GAME_LONG_NAME_PROPERTY_NAME.c_str()), gameLongNameValue, allocator);
+	}
+
+	installedModInfoDocument.AddMember(rapidjson::StringRef(JSON_GAME_INFO_CATEGORY_PROPERTY_NAME.c_str(), JSON_GAME_INFO_CATEGORY_PROPERTY_NAME.length()), gameInfoValue, allocator);
+
 	rapidjson::Value installedTimestampValue(Utilities::timePointToString(m_installedTimestamp, Utilities::TimeFormat::ISO8601).c_str(), allocator);
 	installedModInfoDocument.AddMember(rapidjson::StringRef(JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME.c_str()), installedTimestampValue, allocator);
 
@@ -411,6 +457,61 @@ std::unique_ptr<InstalledModInfo> InstalledModInfo::parseFrom(const rapidjson::V
 		modVersion = Utilities::trimString(modVersionValue.GetString());
 	}
 
+	// retrieve game info category
+	if(!installedModInfoValue.HasMember(JSON_GAME_INFO_CATEGORY_PROPERTY_NAME.c_str())) {
+		spdlog::error("Installed mod info is missing '{}' property.", JSON_GAME_INFO_CATEGORY_PROPERTY_NAME);
+		return nullptr;
+	}
+
+	const rapidjson::Value & gameInfoValue = installedModInfoValue[JSON_GAME_INFO_CATEGORY_PROPERTY_NAME.c_str()];
+
+	if(!gameInfoValue.IsObject()) {
+		spdlog::error("Installed mod info has an invalid '{}' property type: '{}', expected 'object'.", JSON_GAME_INFO_CATEGORY_PROPERTY_NAME, Utilities::typeToString(gameInfoValue.GetType()));
+		return nullptr;
+	}
+
+	// parse game identifier
+	std::string gameID;
+
+	if(gameInfoValue.HasMember(JSON_GAME_ID_PROPERTY_NAME.c_str())) {
+		const rapidjson::Value & gameIDValue = gameInfoValue[JSON_GAME_ID_PROPERTY_NAME.c_str()];
+
+		if(!gameIDValue.IsString()) {
+			spdlog::error("Installed game info has an invalid '{}' category '{}' property type: '{}', expected 'string'.", JSON_GAME_INFO_CATEGORY_PROPERTY_NAME, JSON_GAME_ID_PROPERTY_NAME, Utilities::typeToString(gameIDValue.GetType()));
+			return nullptr;
+		}
+
+		gameID = Utilities::trimString(gameIDValue.GetString());
+	}
+
+	// parse game short name
+	std::string gameShortName;
+
+	if(gameInfoValue.HasMember(JSON_GAME_SHORT_NAME_PROPERTY_NAME.c_str())) {
+		const rapidjson::Value & gameShortNameValue = gameInfoValue[JSON_GAME_SHORT_NAME_PROPERTY_NAME.c_str()];
+
+		if(!gameShortNameValue.IsString()) {
+			spdlog::error("Installed game info has an invalid '{}' category '{}' property type: '{}', expected 'string'.", JSON_GAME_INFO_CATEGORY_PROPERTY_NAME, JSON_GAME_SHORT_NAME_PROPERTY_NAME, Utilities::typeToString(gameShortNameValue.GetType()));
+			return nullptr;
+		}
+
+		gameShortName = Utilities::trimString(gameShortNameValue.GetString());
+	}
+
+	// parse game long name
+	std::string gameLongName;
+
+	if(gameInfoValue.HasMember(JSON_GAME_LONG_NAME_PROPERTY_NAME.c_str())) {
+		const rapidjson::Value & gameLongNameValue = gameInfoValue[JSON_GAME_LONG_NAME_PROPERTY_NAME.c_str()];
+
+		if(!gameLongNameValue.IsString()) {
+			spdlog::error("Installed game info has an invalid '{}' category '{}' property type: '{}', expected 'string'.", JSON_GAME_INFO_CATEGORY_PROPERTY_NAME, JSON_GAME_LONG_NAME_PROPERTY_NAME, Utilities::typeToString(gameLongNameValue.GetType()));
+			return nullptr;
+		}
+
+		gameLongName = Utilities::trimString(gameLongNameValue.GetString());
+	}
+
 	// parse mod installed timestamp
 	if(!installedModInfoValue.HasMember(JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME.c_str())) {
 		spdlog::error("Installed mod info is missing '{}' property.", JSON_INSTALLED_TIMESTAMP_PROPERTY_NAME);
@@ -501,25 +602,23 @@ std::unique_ptr<InstalledModInfo> InstalledModInfo::parseFrom(const rapidjson::V
 		modFiles.emplace_back(modFile);
 	}
 
-	return std::unique_ptr<InstalledModInfo>(new InstalledModInfo(modID, modName, modVersion, optionalInstalledTimestamp.value(), originalFiles, modFiles));
+	std::unique_ptr<InstalledModInfo> installedModInfo(new InstalledModInfo(modID, modName, modVersion, optionalInstalledTimestamp.value(), originalFiles, modFiles));
+	installedModInfo->m_gameID = gameID;
+	installedModInfo->m_gameShortName = gameShortName;
+	installedModInfo->m_gameLongName = gameLongName;
+
+	return installedModInfo;
 }
 
-std::unique_ptr<InstalledModInfo> InstalledModInfo::loadFrom(const GameVersion & gameVersion) {
-	if(!gameVersion.isConfigured()) {
-		return nullptr;
-	}
-	
-	std::optional<std::string> optionalEvaluatedGamePath(gameVersion.getEvaluatedGamePath());
-
-	if(!optionalEvaluatedGamePath.has_value()) {
-		spdlog::error("Failed to evaluate game path when attempting to load installed mod info from file.");
+std::unique_ptr<InstalledModInfo> InstalledModInfo::loadFromDirectory(const std::string & modFilesInstallPath) {
+	if(modFilesInstallPath.empty()) {
 		return nullptr;
 	}
 
-	return loadFrom(Utilities::joinPaths(optionalEvaluatedGamePath.value(), DEFAULT_FILE_NAME));
+	return loadFromFile(Utilities::joinPaths(modFilesInstallPath, DEFAULT_FILE_NAME));
 }
 
-std::unique_ptr<InstalledModInfo> InstalledModInfo::loadFrom(const std::string & filePath) {
+std::unique_ptr<InstalledModInfo> InstalledModInfo::loadFromFile(const std::string & filePath) {
 	if(filePath.empty()) {
 		return nullptr;
 	}
@@ -565,22 +664,15 @@ std::unique_ptr<InstalledModInfo> InstalledModInfo::loadFromJSON(const std::stri
 	return installedModInfo;
 }
 
-bool InstalledModInfo::saveTo(const GameVersion & gameVersion) {
-	if(!gameVersion.isConfigured()) {
+bool InstalledModInfo::saveToDirectory(const std::string & modFilesInstallPath) {
+	if(modFilesInstallPath.empty()) {
 		return false;
 	}
 
-	std::optional<std::string> optionalEvaluatedGamePath(gameVersion.getEvaluatedGamePath());
-
-	if(!optionalEvaluatedGamePath.has_value()) {
-		spdlog::error("Failed to evaluate game path when attempting to save installed mod info to file.");
-		return false;
-	}
-
-	return saveTo(Utilities::joinPaths(optionalEvaluatedGamePath.value(), DEFAULT_FILE_NAME));
+	return saveToFile(Utilities::joinPaths(modFilesInstallPath, DEFAULT_FILE_NAME));
 }
 
-bool InstalledModInfo::saveTo(const std::string & filePath, bool overwrite) const {
+bool InstalledModInfo::saveToFile(const std::string & filePath, bool overwrite) const {
 	if(filePath.empty()) {
 		return false;
 	}

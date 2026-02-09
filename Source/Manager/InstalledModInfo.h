@@ -24,6 +24,10 @@ public:
 	const std::string & getModName() const;
 	const std::string & getModVersion() const;
 	std::string getFullModName() const;
+	const std::string & getGameID() const;
+	const std::string & getGameShortName() const;
+	const std::string & getGameLongName() const;
+	void setGameInfo(const GameVersion & gameVersion);
 	std::chrono::time_point<std::chrono::system_clock> getInstalledTimestamp() const;
 	bool isEmpty() const;
 
@@ -49,12 +53,11 @@ public:
 
 	rapidjson::Document toJSON() const;
 	static std::unique_ptr<InstalledModInfo> parseFrom(const rapidjson::Value & installedModInfoValue);
-
-	static std::unique_ptr<InstalledModInfo> loadFrom(const GameVersion & gameVersion);
-	static std::unique_ptr<InstalledModInfo> loadFrom(const std::string & filePath);
+	static std::unique_ptr<InstalledModInfo> loadFromDirectory(const std::string & modFilesInstallPath);
+	static std::unique_ptr<InstalledModInfo> loadFromFile(const std::string & filePath);
 	static std::unique_ptr<InstalledModInfo> loadFromJSON(const std::string & filePath);
-	bool saveTo(const GameVersion & gameVersion);
-	bool saveTo(const std::string & filePath, bool overwrite = true) const;
+	bool saveToDirectory(const std::string & modFilesInstallPath);
+	bool saveToFile(const std::string & filePath, bool overwrite = true) const;
 	bool saveToJSON(const std::string & filePath, bool overwrite = true) const;
 
 	bool isValid() const;
@@ -73,6 +76,9 @@ private:
 	std::string m_modID;
 	std::string m_modName;
 	std::string m_modVersion;
+	std::string m_gameID;
+	std::string m_gameShortName;
+	std::string m_gameLongName;
 	std::chrono::time_point<std::chrono::system_clock> m_installedTimestamp;
 	std::vector<std::string> m_originalFiles;
 	std::vector<std::string> m_modFiles;
