@@ -136,6 +136,27 @@
 			"name": "JFDuke3D",
 			"versions": [
 				{
+					"version": "20260105",
+					"releaseDate": "January 5, 2026",
+					"files": [
+						{
+							"fileName": "jfduke3d-20260105-win.zip",
+							"fileSize": 1574370,
+							"type": "Game",
+							"sha1": "7cb66ea4f292c3cc1322a67b9cd232a55b7fa458",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x64"
+						},
+						{
+							"fileName": "jfduke3d-20260105-mac.zip",
+							"fileSize": 6285792,
+							"type": "Game",
+							"sha1": "822bd100a723a92861c4f77525c7f41ed88fcfd7",
+							"operatingSystem": "MacOS"
+						}
+					]
+				},
+				{
 					"version": "20211225",
 					"releaseDate": "December 25, 2021",
 					"files": [
