@@ -136,6 +136,7 @@ static constexpr const char * TIME_ZONE_DATA_UPDATE_FREQUENCY_PROPERTY_NAME = "t
 static constexpr const char * NOTIFICATIONS_CATEGORY_NAME = "notifications";
 
 static constexpr const char * NOTIFICATIONS_ANALYTICS_CONFIRMATION_PROPERTY_NAME = "analyticsConfirmation";
+static constexpr const char * NOTIFICATIONS_UNSUPPORTED_SYMLINKS_ACKNOWLEDGEMENT_PROPERTY_NAME = "unsupportedSymlinksAcknowledgement";
 
 static constexpr const char * NOTIFICATIONS_DISCLAIMERS_CATEGORY_NAME = "disclaimers";
 
@@ -389,6 +390,7 @@ SettingsManager::SettingsManager()
 	, cacertUpdateFrequency(DEFAULT_CACERT_UPDATE_FREQUENCY)
 	, timeZoneDataUpdateFrequency(DEFAULT_TIME_ZONE_DATA_UPDATE_FREQUENCY)
 	, analyticsConfirmationAcknowledged(false)
+	, unsupportedSymlinksAcknowledged(false)
 	, gameDisclaimerAcknowledged(false)
 	, dosboxDisclaimerAcknowledged(false)
 	, standAloneModDisclaimerAcknowledged(false)
@@ -472,6 +474,7 @@ void SettingsManager::reset() {
 	timeZoneDataLastDownloadedTimestamp.reset();
 	timeZoneDataUpdateFrequency = DEFAULT_TIME_ZONE_DATA_UPDATE_FREQUENCY;
 	analyticsConfirmationAcknowledged = false;
+	unsupportedSymlinksAcknowledged = false;
 	gameDisclaimerAcknowledged = false;
 	dosboxDisclaimerAcknowledged = false;
 	standAloneModDisclaimerAcknowledged = false;
@@ -716,6 +719,7 @@ rapidjson::Document SettingsManager::toJSON() const {
 	rapidjson::Value notificationsCategoryValue(rapidjson::kObjectType);
 
 	notificationsCategoryValue.AddMember(rapidjson::StringRef(NOTIFICATIONS_ANALYTICS_CONFIRMATION_PROPERTY_NAME), rapidjson::Value(analyticsConfirmationAcknowledged), allocator);
+	notificationsCategoryValue.AddMember(rapidjson::StringRef(NOTIFICATIONS_UNSUPPORTED_SYMLINKS_ACKNOWLEDGEMENT_PROPERTY_NAME), rapidjson::Value(unsupportedSymlinksAcknowledged), allocator);
 
 	rapidjson::Value disclaimersCategoryValue(rapidjson::kObjectType);
 
@@ -980,6 +984,7 @@ bool SettingsManager::parseFrom(const rapidjson::Value & settingsDocument) {
 		const rapidjson::Value & notificationsValue = settingsDocument[NOTIFICATIONS_CATEGORY_NAME];
 
 		assignBooleanSetting(analyticsConfirmationAcknowledged, notificationsValue, NOTIFICATIONS_ANALYTICS_CONFIRMATION_PROPERTY_NAME);
+		assignBooleanSetting(unsupportedSymlinksAcknowledged, notificationsValue, NOTIFICATIONS_UNSUPPORTED_SYMLINKS_ACKNOWLEDGEMENT_PROPERTY_NAME);
 
 		if(notificationsValue.HasMember(NOTIFICATIONS_DISCLAIMERS_CATEGORY_NAME) && notificationsValue[NOTIFICATIONS_DISCLAIMERS_CATEGORY_NAME].IsObject()) {
 			const rapidjson::Value & disclaimersValue = notificationsValue[NOTIFICATIONS_DISCLAIMERS_CATEGORY_NAME];

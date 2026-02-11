@@ -176,6 +176,7 @@ public:
 	std::optional<std::chrono::time_point<std::chrono::system_clock>> timeZoneDataLastDownloadedTimestamp;
 	std::chrono::minutes timeZoneDataUpdateFrequency;
 	bool analyticsConfirmationAcknowledged;
+	bool unsupportedSymlinksAcknowledged;
 	bool gameDisclaimerAcknowledged;
 	bool dosboxDisclaimerAcknowledged;
 	bool standAloneModDisclaimerAcknowledged;

@@ -8,6 +8,7 @@
 #include <Application/ComponentRegistry.h>
 #include <LibraryInformation.h>
 #include <Logging/LogSystem.h>
+#include <Utilities/FileUtilities.h>
 
 #include <expat.h>
 #include <fmt/core.h>
@@ -128,6 +129,14 @@ void ModManagerApplication::initialize() {
 		}
 
 		settings->analyticsConfirmationAcknowledged = true;
+	}
+
+	if(!settings->unsupportedSymlinksAcknowledged && !Utilities::areSymlinksSupported()) {
+		int result = wxMessageBox("Symbolic links are not supported unless this application is launched as administrator. Everything will still work, but this means that mod files will need to be automatically copied to the game directory unnecessarily instead of creating links to them. If you want to avoid this and have faster mod launch times and less disk usage, consider re-launching as administrator!", "Symbolic Links Not Supported", wxOK | wxICON_INFORMATION, nullptr);
+
+		if(result == wxOK) {
+			settings->unsupportedSymlinksAcknowledged = true;
+		}
 	}
 
 	std::unique_ptr<wxProgressDialog> initializingProgressDialog(std::make_unique<wxProgressDialog>(
