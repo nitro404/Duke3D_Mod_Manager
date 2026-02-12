@@ -287,6 +287,28 @@
 			"name": "RedNukem",
 			"versions": [
 				{
+					"version": "r14331",
+					"releaseDate": "January 8, 2026",
+					"files": [
+						{
+							"fileName": "rednukem_win64_20260108-r14331.7z",
+							"fileSize": 2386041,
+							"type": "Game",
+							"sha1": "df84c7e7cdf689d5a40ec46d3ae3d90be8399ff0",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x64"
+						},
+						{
+							"fileName": "rednukem_win32_20260108-r14331.7z",
+							"fileSize": 2346598,
+							"type": "Game",
+							"sha1": "df84c7e7cdf689d5a40ec46d3ae3d90be8399ff0",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x86"
+						}
+					]
+				},
+				{
 					"version": "r13357",
 					"releaseDate": "November 29, 2022",
 					"files": [
