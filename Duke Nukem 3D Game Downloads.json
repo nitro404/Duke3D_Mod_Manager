@@ -276,6 +276,26 @@
 			"name": "Raze",
 			"versions": [
 				{
+					"version": "1.11.0",
+					"releaseDate": "February 22, 2025",
+					"files": [
+						{
+							"fileName": "Raze-1.11.0b-windows.zip",
+							"fileSize": 18364194,
+							"type": "Game",
+							"sha1": "c14624ac34baf2174e33b6f9058c121f3879626c",
+							"operatingSystem": "Windows"
+						},
+						{
+							"fileName": "raze-macos-1.11.0.zip",
+							"fileSize": 31930373,
+							"type": "Game",
+							"sha1": "01978e62a0d9026512838e9b7608f9aa055295db",
+							"operatingSystem": "MacOS"
+						}
+					]
+				},
+				{
 					"version": "1.5.0",
 					"releaseDate": "July 22, 2022",
 					"files": [
