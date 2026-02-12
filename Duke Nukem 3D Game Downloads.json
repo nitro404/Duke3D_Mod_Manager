@@ -192,7 +192,29 @@
 			"name": "eDuke32",
 			"versions": [
 				{
-					"version": "20221026-10165-a9c797dcb",
+					"version": "10664",
+					"releaseDate": "February 3, 2026",
+					"files": [
+						{
+							"fileName": "eduke32_win64_20260203-10664-ba6b7bb1d.7z",
+							"fileSize": 4118492,
+							"type": "Game",
+							"sha1": "b520291c94274236203da8943f4370af5bf635d2",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x64"
+						},
+						{
+							"fileName": "eduke32_win32_20260203-10664-ba6b7bb1d.7z",
+							"fileSize": 4066721,
+							"type": "Game",
+							"sha1": "64100b44e541b243cdbcdce4df4680dc38af603f",
+							"operatingSystem": "Windows",
+							"processorArchitecture": "x86"
+						}
+					]
+				},
+				{
+					"version": "10165",
 					"releaseDate": "October 26, 2022",
 					"files": [
 						{
