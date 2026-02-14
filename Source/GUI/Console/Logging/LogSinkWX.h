@@ -1,5 +1,5 @@
-#ifndef _LOG_SINK_WINDOWS_H_
-#define _LOG_SINK_WINDOWS_H_
+#ifndef _LOG_SINK_WX_H_
+#define _LOG_SINK_WX_H_
 
 #include <boost/signals2.hpp>
 #include <fmt/format.h>
@@ -31,4 +31,4 @@ private:
 	const LogSinkWX & operator = (const LogSinkWX &) = delete;
 };
 
-#endif // _LOG_SINK_WINDOWS_H_
+#endif // _LOG_SINK_WX_H_
