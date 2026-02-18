@@ -36,6 +36,7 @@ public:
 	std::string getSizeAsString() const;
 	bool hasData() const;
 	const ByteBuffer & getData() const;
+	ByteBuffer & getData();
 	std::unique_ptr<ByteBuffer> transferData();
 	bool hasTrailingData() const;
 	const ByteBuffer & getTrailingData() const;

@@ -154,6 +154,11 @@ const ByteBuffer & GroupFile::getData() const {
 	return *m_data;
 }
 
+ByteBuffer & GroupFile::getData() {
+	m_data->setReadOffset(0);
+	return *m_data;
+}
+
 std::unique_ptr<ByteBuffer> GroupFile::transferData() {
 	std::unique_ptr<ByteBuffer> data(std::move(m_data));
 
