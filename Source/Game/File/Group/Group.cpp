@@ -419,6 +419,67 @@ bool Group::renameFile(const std::string & oldFileName, const std::string & newF
 	return renameFile(indexOfFileWithName(oldFileName), newFileName);
 }
 
+bool Group::reverseFileExtension(size_t index) {
+	if(index >= m_files.size()) {
+		return false;
+	}
+
+	return m_files[index]->setFileName(Utilities::reverseFileExtension(m_files[index]->getFileName()));
+}
+
+bool Group::reverseFileExtension(const GroupFile & file) {
+	return reverseFileExtension(indexOfFile(file));
+}
+
+bool Group::reverseFileExtensionOfFileWithName(const std::string & fileName) {
+	return reverseFileExtension(indexOfFileWithName(fileName));
+}
+
+size_t Group::reverseFileExtension(const std::string & fileExtension) {
+	size_t numberOfTileExtensionsReversed = 0u;
+
+	for(std::shared_ptr<GroupFile> & groupFile : m_files) {
+		if(groupFile->hasFileExtension(fileExtension)) {
+			if(groupFile->setFileName(Utilities::reverseFileExtension(groupFile->getFileName()))) {
+				numberOfTileExtensionsReversed++;
+			}
+		}
+	}
+
+	return numberOfTileExtensionsReversed;
+}
+
+size_t Group::reverseFileExtensions(const std::vector<std::string> & fileExtensions) {
+	size_t numberOfTileExtensionsReversed = 0u;
+	std::string_view currentFileExtension;
+
+	for(std::shared_ptr<GroupFile> & groupFile : m_files) {
+		for(const std::string & fileExtension : fileExtensions) {
+			currentFileExtension = groupFile->getFileExtension();
+
+			if(Utilities::areStringsEqualIgnoreCase(currentFileExtension, fileExtension)) {
+				if(groupFile->setFileName(Utilities::reverseFileExtension(groupFile->getFileName()))) {
+					numberOfTileExtensionsReversed++;
+				}
+			}
+		}
+	}
+
+	return numberOfTileExtensionsReversed;
+}
+
+size_t Group::reverseAllFileExtensions() {
+	size_t numberOfTileExtensionsReversed = 0u;
+	
+	for(std::shared_ptr<GroupFile> & groupFile : m_files) {
+		if(groupFile->setFileName(Utilities::reverseFileExtension(groupFile->getFileName()))) {
+			numberOfTileExtensionsReversed++;
+		}
+	}
+
+	return numberOfTileExtensionsReversed;
+}
+
 bool Group::replaceFile(size_t index, const std::string & newFilePath, bool keepExistingFileName) {
 	if(index >= m_files.size()) {
 		return false;

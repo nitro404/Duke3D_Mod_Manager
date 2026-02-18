@@ -67,6 +67,12 @@ public:
 	bool renameFile(size_t index, const std::string & newFileName);
 	bool renameFile(const GroupFile & file, const std::string & newFileName);
 	bool renameFile(const std::string & oldFileName, const std::string & newFileName);
+	bool reverseFileExtension(size_t index);
+	bool reverseFileExtension(const GroupFile & file);
+	bool reverseFileExtensionOfFileWithName(const std::string & fileName);
+	size_t reverseFileExtension(const std::string & fileExtension);
+	size_t reverseFileExtensions(const std::vector<std::string> & fileExtensions);
+	size_t reverseAllFileExtensions();
 	bool replaceFile(size_t index, const std::string & newFilePath, bool keepExistingFileName = true);
 	bool replaceFile(size_t index, std::unique_ptr<GroupFile> file, bool keepExistingFileName = true);
 	bool replaceFile(size_t index, const GroupFile & file, bool keepExistingFileName = true);
