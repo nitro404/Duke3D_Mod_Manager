@@ -3157,7 +3157,7 @@ bool GameManager::installGame(const std::string & gameVersionID, const std::stri
 	if (!isOriginalGameFallback && gameVersion->hasGroupFileInstallPath()) {
 		std::optional<std::string> optionalEvaluatedGroupFileInstallPath(gameVersion->getEvaluatedGroupFileInstallPath());
 
-		if(optionalEvaluatedGroupFileInstallPath.has_value()) {
+		if(!optionalEvaluatedGroupFileInstallPath.has_value()) {
 			spdlog::error("Failed to install group file to '{}' game directory due to game path evaluation failure.", gameVersion->getLongName());
 			return false;
 		}
