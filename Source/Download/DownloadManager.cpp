@@ -82,6 +82,8 @@ bool DownloadManager::initialize() {
 			spdlog::info("Failed to download latest mod list, using last downloaded mod list instead.");
 		}
 		else {
+			spdlog::warn("Failed to download mod list!");
+
 			return false;
 		}
 	}
@@ -362,7 +364,13 @@ DownloadCache * DownloadManager::getDownloadCache() const {
 
 bool DownloadManager::downloadModList(bool force) {
 	if(!HTTPService::getInstance()->checkForInternetConnectivity()) {
-		return isModListDownloaded();
+		if(isModListDownloaded()) {
+			return true;
+		}
+
+		spdlog::warn("No internet connection detected while attempting to download mod list!");
+
+		return false;
 	}
 
 	SettingsManager * settings = SettingsManager::getInstance();
