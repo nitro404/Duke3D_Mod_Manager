@@ -104,6 +104,48 @@ ModManagerApplication::~ModManagerApplication() { }
 #include <cdio++/cdio.hpp>
 #include <cdio++/iso9660.hpp>
 
+#include <google/vcdecoder.h>
+#include <google/vcencoder.h>
+
+class OpenVCDiffByteBufferOutputStream final {
+public:
+	OpenVCDiffByteBufferOutputStream(std::shared_ptr<ByteBuffer> data)
+		: m_data(data) {
+		if(m_data == nullptr) {
+			m_data = std::make_shared<ByteBuffer>();
+		}
+	}
+
+	std::shared_ptr<ByteBuffer> getData() const {
+		return m_data;
+	}
+
+	OpenVCDiffByteBufferOutputStream& append(const char * data, size_t size) {
+		m_data->writeBytes(reinterpret_cast<const uint8_t *>(data), size);
+
+		return *this;
+	}
+
+	void clear() {
+		m_data->clear();
+	}
+
+	void push_back(char value) {
+		m_data->writeByte(static_cast<uint8_t>(value));
+	}
+
+	void reserve(size_t numberOfBytes) {
+		m_data->reserve(numberOfBytes);
+	}
+
+	size_t size() const {
+		return m_data->getSize();
+	}
+
+private:
+	std::shared_ptr<ByteBuffer> m_data;
+};
+
 void ModManagerApplication::initialize() {
 	m_modManager = std::make_shared<ModManager>();
 	m_logSinkWX = std::make_shared<LogSinkWX>();
@@ -122,6 +164,72 @@ void ModManagerApplication::initialize() {
 	libraryInformation->addLibrary("wxWidgets", fmt::format("{}.{}.{}.{}", wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER, wxSUBRELEASE_NUMBER));
 
 	LogSystem::getInstance()->addLogSink(m_logSinkWX);
+
+	//std::unique_ptr<ByteBuffer> dataA(ByteBuffer::readFrom("1.txt"));
+	//std::unique_ptr<ByteBuffer> dataB(ByteBuffer::readFrom("2.txt"));
+
+	std::unique_ptr<ByteBuffer> dataA(ByteBuffer::readFrom("WORLD_TOUR.GRP"));
+	std::unique_ptr<ByteBuffer> dataB(ByteBuffer::readFrom("ATOMIC.GRP"));
+
+	open_vcdiff::HashedDictionary dictionary(reinterpret_cast<const char *>(dataA->getRawData()), dataA->getSize(), false);
+
+	if(!dictionary.Init()) {
+		spdlog::error("Failed to initialize hashed dictionary.");
+		return;
+	}
+
+	std::shared_ptr<ByteBuffer> delta(std::make_shared<ByteBuffer>());
+	OpenVCDiffByteBufferOutputStream deltaInterface(delta);
+	open_vcdiff::VCDiffStreamingEncoder encoder(&dictionary, open_vcdiff::VCD_FORMAT_INTERLEAVED, true); // VCD_FORMAT_INTERLEAVED / VCD_FORMAT_JSON
+
+	if(!encoder.StartEncoding(&deltaInterface)) {
+		spdlog::error("Failed to start encoding.");
+		return;
+	}
+
+	if(!encoder.EncodeChunk(reinterpret_cast<const char *>(dataB->getRawData()), dataB->getSize(), &deltaInterface)) {
+		spdlog::error("Failed to encode chunk.");
+		return;
+	}
+
+	if(!encoder.FinishEncoding(&deltaInterface)) {
+		spdlog::error("Failed to finish encoding.");
+		return;
+	}
+
+	std::shared_ptr<ByteBuffer> output(std::make_shared<ByteBuffer>());
+	OpenVCDiffByteBufferOutputStream outputInterface(output);
+	open_vcdiff::VCDiffStreamingDecoder decoder;
+
+	decoder.StartDecoding(reinterpret_cast<const char *>(dataA->getRawData()), dataA->getSize());
+
+	if(!decoder.DecodeChunk(reinterpret_cast<const char *>(delta->getRawData()), delta->getSize(), &outputInterface)) {
+		spdlog::error("Failed to decode chunk.");
+		return;
+	}
+
+	if(!decoder.FinishDecoding()) {
+		spdlog::error("Failed to finish decoding.");
+		return;
+	}
+
+	spdlog::info("DATA A SIZE: {}, SHA1: {}", dataA->getSize(), dataA->getSHA1());
+	spdlog::info("DATA B SIZE: {}, SHA1: {}", dataB->getSize(), dataB->getSHA1());
+	spdlog::info("DELTA  SIZE: {}, SHA1: {}", delta->getSize(), delta->getSHA1());
+	spdlog::info("OUTPUT SIZE: {}, SHA1: {}", output->getSize(), output->getSHA1());
+
+/*
+	std::string rawDelta;
+	open_vcdiff::VCDiffEncoder encoder(reinterpret_cast<const char *>(dataA->getRawData()), dataA->getSize());
+	encoder.SetFormatFlags(open_vcdiff::VCD_FORMAT_INTERLEAVED);
+	encoder.Encode(reinterpret_cast<const char *>(dataB->getRawData()), dataB->getSize(), &rawDelta);
+
+	std::string target;
+	open_vcdiff::VCDiffDecoder decoder;
+	decoder.Decode(reinterpret_cast<const char *>(dataA->getRawData()), dataA->getSize(), rawDelta, &target);
+*/
+
+return;
 
 	//const std::string cueFileName("Duke - Nuclear Winter (USA).cue");
 	//const std::string cueFileName("Duke Caribbean - Life's a Beach (USA).cue");
