@@ -470,7 +470,7 @@ size_t Group::reverseFileExtensions(const std::vector<std::string> & fileExtensi
 
 size_t Group::reverseAllFileExtensions() {
 	size_t numberOfTileExtensionsReversed = 0u;
-	
+
 	for(std::shared_ptr<GroupFile> & groupFile : m_files) {
 		if(groupFile->setFileName(Utilities::reverseFileExtension(groupFile->getFileName()))) {
 			numberOfTileExtensionsReversed++;
@@ -478,6 +478,30 @@ size_t Group::reverseAllFileExtensions() {
 	}
 
 	return numberOfTileExtensionsReversed;
+}
+
+bool Group::swapFilePositions(size_t indexA, int indexB) {
+	if(indexA >= m_files.size() || indexB >= m_files.size()) {
+		return false;
+	}
+
+	if(indexA == indexB) {
+		return true;
+	}
+
+	std::shared_ptr<GroupFile> fileA(m_files[indexA]);
+	m_files[indexA] = m_files[indexB];
+	m_files[indexB] = fileA;
+
+	return true;
+}
+
+bool Group::swapFilePositions(const GroupFile & fileA, const GroupFile & fileB) {
+	return swapFilePositions(indexOfFile(fileA), indexOfFile(fileB));
+}
+
+bool Group::swapFilePositionsByName(const std::string & fileNameA, const std::string & fileNameB) {
+	return swapFilePositions(indexOfFileWithName(fileNameA), indexOfFileWithName(fileNameB));
 }
 
 bool Group::replaceFile(size_t index, const std::string & newFilePath, bool keepExistingFileName) {

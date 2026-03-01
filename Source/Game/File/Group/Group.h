@@ -73,6 +73,9 @@ public:
 	size_t reverseFileExtension(const std::string & fileExtension);
 	size_t reverseFileExtensions(const std::vector<std::string> & fileExtensions);
 	size_t reverseAllFileExtensions();
+	bool swapFilePositions(size_t indexA, int indexB);
+	bool swapFilePositions(const GroupFile & fileA, const GroupFile & fileB);
+	bool swapFilePositionsByName(const std::string & fileNameA, const std::string & fileNameB);
 	bool replaceFile(size_t index, const std::string & newFilePath, bool keepExistingFileName = true);
 	bool replaceFile(size_t index, std::unique_ptr<GroupFile> file, bool keepExistingFileName = true);
 	bool replaceFile(size_t index, const GroupFile & file, bool keepExistingFileName = true);
