@@ -442,14 +442,14 @@ std::unique_ptr<Tile> Tile::parseFrom(const rapidjson::Value & tileValue) {
 		return std::make_unique<Tile>(number, static_cast<uint16_t>(width), static_cast<uint16_t>(height), optionalAttributes.value(), std::move(data));
 	}
 	else if(dataValue.IsString()) {
-		std::optional<ByteBuffer> optionalData(ByteBuffer::fromBase64(dataValue.GetString()));
+		std::unique_ptr<ByteBuffer> data(ByteBuffer::fromBase64(dataValue.GetString()));
 
-		if(!optionalData.has_value()) {
+		if(data == nullptr) {
 			spdlog::error("Tile #{} has invalid base 64 encoded data.", number);
 			return nullptr;
 		}
 
-		return std::make_unique<Tile>(number, static_cast<uint16_t>(width), static_cast<uint16_t>(height), optionalAttributes.value(), std::move(optionalData.value()));
+		return std::make_unique<Tile>(number, static_cast<uint16_t>(width), static_cast<uint16_t>(height), optionalAttributes.value(), std::move(data));
 	}
 	else {
 		spdlog::error("Tile #{} has an invalid '{}' property type: '{}', expected 'array' or 'string'.", number, JSON_DATA_PROPERTY_NAME, Utilities::typeToString(dataValue.GetType()));

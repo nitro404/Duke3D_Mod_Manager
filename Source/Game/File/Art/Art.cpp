@@ -782,14 +782,14 @@ std::unique_ptr<Art> Art::parseFrom(const rapidjson::Value & artValue) {
 		return std::make_unique<Art>(localTileStart, localTileEnd, legacyTileCount, std::move(tiles), std::move(trailingData));
 	}
 	else if(trailingDataValue.IsString()) {
-		std::optional<ByteBuffer> optionalTrailingData(ByteBuffer::fromBase64(trailingDataValue.GetString()));
+		std::unique_ptr<ByteBuffer> trailingData(ByteBuffer::fromBase64(trailingDataValue.GetString()));
 
-		if(!optionalTrailingData.has_value()) {
+		if(trailingData == nullptr) {
 			spdlog::error("Art has invalid base 64 encoded trailing data.");
 			return nullptr;
 		}
 
-		return std::make_unique<Art>(localTileStart, localTileEnd, legacyTileCount, std::move(tiles), std::move(optionalTrailingData.value()));
+		return std::make_unique<Art>(localTileStart, localTileEnd, legacyTileCount, std::move(tiles), std::move(trailingData));
 	}
 	else {
 		spdlog::error("Art has an invalid '{}' property type: '{}', expected 'array' or 'string'.", JSON_TRAILING_DATA_PROPERTY_NAME, Utilities::typeToString(trailingDataValue.GetType()));
