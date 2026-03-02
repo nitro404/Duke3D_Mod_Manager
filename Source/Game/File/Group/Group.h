@@ -76,6 +76,7 @@ public:
 	bool swapFilePositions(size_t indexA, int indexB);
 	bool swapFilePositions(const GroupFile & fileA, const GroupFile & fileB);
 	bool swapFilePositionsByName(const std::string & fileNameA, const std::string & fileNameB);
+	bool reorderFilesByName(const std::vector<std::string> & reorderedFileNames);
 	bool replaceFile(size_t index, const std::string & newFilePath, bool keepExistingFileName = true);
 	bool replaceFile(size_t index, std::unique_ptr<GroupFile> file, bool keepExistingFileName = true);
 	bool replaceFile(size_t index, const GroupFile & file, bool keepExistingFileName = true);

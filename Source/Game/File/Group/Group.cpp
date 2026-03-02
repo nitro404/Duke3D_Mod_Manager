@@ -504,6 +504,30 @@ bool Group::swapFilePositionsByName(const std::string & fileNameA, const std::st
 	return swapFilePositions(indexOfFileWithName(fileNameA), indexOfFileWithName(fileNameB));
 }
 
+bool Group::reorderFilesByName(const std::vector<std::string> & reorderedFileNames) {
+	if(m_files.size() != reorderedFileNames.size()) {
+		return false;
+	}
+
+	std::vector<std::shared_ptr<GroupFile>> reorderedFiles;
+	std::vector<size_t> fileIndexes;
+
+	for(const std::string & fileName : reorderedFileNames) {
+		size_t fileIndex = indexOfFileWithName(fileName);
+
+		if(fileIndex == std::numeric_limits<size_t>::max() || std::find(fileIndexes.cbegin(), fileIndexes.cend(), fileIndex) != fileIndexes.cend()) {
+			return false;
+		}
+
+		fileIndexes.push_back(fileIndex);
+		reorderedFiles.push_back(m_files[fileIndex]);
+	}
+
+	m_files = std::move(reorderedFiles);
+
+	return true;
+}
+
 bool Group::replaceFile(size_t index, const std::string & newFilePath, bool keepExistingFileName) {
 	if(index >= m_files.size()) {
 		return false;
