@@ -130,6 +130,10 @@ set(MAIN_SOURCE_FILES
 	Game/File/Sound/WAV/SoundWAV.cpp
 	Game/File/Zip/Zip.h
 	Game/File/Zip/Zip.cpp
+	Game/Generator/AddonGroupFileGenerator.h
+	Game/Generator/AddonGroupFileGenerator.cpp
+	Game/Generator/AddonGroupFileLocator.h
+	Game/Generator/AddonGroupFileLocator.cpp
 	Manager/InstalledModInfo.h
 	Manager/InstalledModInfo.cpp
 	Manager/ModManager.h
