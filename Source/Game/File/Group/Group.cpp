@@ -614,7 +614,7 @@ bool Group::replaceFile(const GroupFile & file, const std::string & newFilePath,
 }
 
 bool Group::replaceFile(const GroupFile & file, std::unique_ptr<GroupFile> newFile, bool keepExistingFileName) {
-	return replaceFile(indexOfFile(file), std::move(file), keepExistingFileName);
+	return replaceFile(indexOfFile(file), file, keepExistingFileName);
 }
 
 bool Group::replaceFile(const GroupFile & file, const GroupFile & newFile, bool keepExistingFileName) {
