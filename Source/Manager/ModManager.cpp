@@ -625,7 +625,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 		std::filesystem::create_directories(mapsDirectoryPath, errorCode);
 
 		if(errorCode) {
-			spdlog::warn("Failed to create maps directory structure '{}'.", mapsDirectoryPath.string(), errorCode.message());
+			spdlog::warn("Failed to create maps directory structure '{}' with error: {}.", mapsDirectoryPath.string(), errorCode.message());
 		}
 		else {
 			spdlog::info("Created maps directory structure: '{}'.", mapsDirectoryPath.string());
