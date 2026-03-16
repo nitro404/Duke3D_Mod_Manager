@@ -134,6 +134,10 @@ set(MAIN_SOURCE_FILES
 	Game/Generator/AddonGroupFileGenerator.cpp
 	Game/Generator/AddonGroupFileLocator.h
 	Game/Generator/AddonGroupFileLocator.cpp
+	Game/Generator/GameAddon.h
+	Game/Generator/GameAddon.cpp
+	Game/Generator/GameAddonDiscImageDownloader.h
+	Game/Generator/GameAddonDiscImageDownloader.cpp
 	Manager/InstalledModInfo.h
 	Manager/InstalledModInfo.cpp
 	Manager/ModManager.h

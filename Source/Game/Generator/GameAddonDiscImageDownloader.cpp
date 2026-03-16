@@ -4,6 +4,7 @@
 
 #include <Analytics/Segment/SegmentAnalytics.h>
 #include <Archive/ArchiveFactoryRegistry.h>
+#include <Network/HTTPService.h>
 #include <Utilities/CDIOUtilities.h>
 #include <Utilities/FileUtilities.h>
 
@@ -11,15 +12,15 @@
 
 GameAddonDiscImageDownloader::GameAddonDiscImageDownloader() { }
 
-std::string GameAddonDiscImageDownloader::getGameAddonDownloadURL(GameAddon gameAddon) const {
+std::string GameAddonDiscImageDownloader::getGameAddonDownloadURL(GameAddon gameAddon) {
 	switch(gameAddon) {
-		case DukeCaribbeanLifesABeach:
+		case GameAddon::DukeCaribbeanLifesABeach:
 			// https://archive.org/details/dukecaribbeanlifesabeachusa
 			return "https://archive.org/download/dukecaribbeanlifesabeachusa/Duke%20Caribbean%20-%20Life%27s%20a%20Beach%20%28USA%29.zip";
-		case DukeItOutInDC:
+		case GameAddon::DukeItOutInDC:
 			// https://archive.org/details/dukeitoutindcusa
 			return "https://archive.org/download/dukeitoutindcusa/Duke%20It%20Out%20in%20D.C.%20%28USA%29.zip";
-		case NuclearWinter:
+		case GameAddon::NuclearWinter:
 			// https://archive.org/details/dukenuclearwinterusa
 			return "https://archive.org/download/dukenuclearwinterusa/Duke%20-%20Nuclear%20Winter%20%28USA%29.zip";
 	}
@@ -32,7 +33,7 @@ std::unique_ptr<Archive> GameAddonDiscImageDownloader::downloadGameAddonArchive(
 	HTTPService * httpService = HTTPService::getInstance();
 
 	if(!httpService->isInitialized()) {
-		return false;
+		return nullptr;
 	}
 
 	std::string gameAddonDiscImageArchiveDownloadURL(getGameAddonDownloadURL(gameAddon));
@@ -52,12 +53,12 @@ std::unique_ptr<Archive> GameAddonDiscImageDownloader::downloadGameAddonArchive(
 
 	if(response == nullptr || response->isFailure()) {
 		spdlog::error("Failed to download '{}' game addon disc image archive with error: {}", getGameAddonName(gameAddon), response != nullptr ? response->getErrorMessage() : "Invalid request.");
-		return false;
+		return nullptr;
 	}
 	else if(response->isFailureStatusCode()) {
 		std::string statusCodeName(HTTPUtilities::getStatusCodeName(response->getStatusCode()));
 		spdlog::error("Failed to download '{}' game addon disc image archive ({}{})!", getGameAddonName(gameAddon), response->getStatusCode(), statusCodeName.empty() ? "" : " " + statusCodeName);
-		return false;
+		return nullptr;
 	}
 
 	spdlog::info("'{}' game addon disc image archive downloaded successfully after {} ms.", getGameAddonName(gameAddon), response->getRequestDuration().value().count());
@@ -97,7 +98,7 @@ std::pair<std::unique_ptr<ISO9660::FS>, std::string> GameAddonDiscImageDownloade
 
 	if(gameAddonDiscImageArchive == nullptr) {
 		spdlog::error("Failed to obtain '{}' game addon disc image archive.", getGameAddonName(gameAddon));
-		return nullptr;
+		return {};
 	}
 
 	std::string gameAddonDiscImageTempDirectoryPath(Utilities::joinPaths(settings->appTempDirectoryPath, getGameAddonID(gameAddon)));
@@ -106,7 +107,7 @@ std::pair<std::unique_ptr<ISO9660::FS>, std::string> GameAddonDiscImageDownloade
 
 	if(gameAddonDiscImageFiles.empty()) {
 		spdlog::warn("No '{}' game addon disc images found inside of archive.", getGameAddonName(gameAddon));
-		return nullptr;
+		return {};
 	}
 	else if(gameAddonDiscImageFiles.size() != 1) {
 		spdlog::warn("Found multiple '{}' game addon disc images inside of archive, using first one.", getGameAddonName(gameAddon));
@@ -119,17 +120,17 @@ std::pair<std::unique_ptr<ISO9660::FS>, std::string> GameAddonDiscImageDownloade
 		std::filesystem::create_directories(std::filesystem::path(gameAddonDiscImageTempDirectoryPath), errorCode);
 
 		if(errorCode) {
-			spdlog::error("Failed to create '{}' game addon disc image temporary directory structure '{}' with error: {}.", getGameAddonName(gameAddon), gameAddonDiscImageTempDirectoryPath.string(), errorCode.message());
-			return nullptr;
+			spdlog::error("Failed to create '{}' game addon disc image temporary directory structure '{}' with error: {}.", getGameAddonName(gameAddon), gameAddonDiscImageTempDirectoryPath, errorCode.message());
+			return {};
 		}
 		else {
-			spdlog::info("Created '{}' game addon disc image temporary directory structure: '{}'.", getGameAddonName(gameAddon), mapsDirectoryPath.string());
+			spdlog::info("Created '{}' game addon disc image temporary directory structure: '{}'.", getGameAddonName(gameAddon), gameAddonDiscImageTempDirectoryPath);
 		}
 	}
 
 	if(gameAddonDiscImageArchive->extractAllEntries(gameAddonDiscImageTempDirectoryPath) == 0) {
 		spdlog::error("Failed to extract all game addon disc image archive entries.");
-		return nullptr;
+		return {};
 	}
 
 	gameAddonDiscImageFiles.clear();
@@ -139,11 +140,12 @@ std::pair<std::unique_ptr<ISO9660::FS>, std::string> GameAddonDiscImageDownloade
 
 	if(gameAddonDiscImage == nullptr) {
 		// TODO: error
-		return nullptr;
+		return {};
 	}
 
 	// TODO: stuff - temp files on file system, need to be removed..
-
+	
+	std::error_code errorCode;
 	std::filesystem::remove(std::filesystem::path(gameAddonDiscImageTempDirectoryPath), errorCode);
 
 	if(errorCode) {
@@ -151,5 +153,5 @@ std::pair<std::unique_ptr<ISO9660::FS>, std::string> GameAddonDiscImageDownloade
 	}
 
 	// TODO:
-	return std::make_pair(std::move(gameAddonDiscImage, gameAddonDiscImageTempDirectoryPath));
+	return std::make_pair(std::move(gameAddonDiscImage), gameAddonDiscImageTempDirectoryPath);
 }
