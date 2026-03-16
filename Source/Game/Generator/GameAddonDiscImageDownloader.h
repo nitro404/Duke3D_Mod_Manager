@@ -20,7 +20,7 @@ public:
 private:
 	GameAddonDiscImageDownloader();
 
-	static std::vector<std::string> getGameAddonDownloadURL(GameAddon gameAddon);
+	static std::string getGameAddonDownloadURL(GameAddon gameAddon);
 	static std::unique_ptr<Archive> downloadGameAddonArchive(GameAddon gameAddon);
 	static std::pair<std::unique_ptr<ISO9660::FS>, std::string> downloadGameAddonDiscImage(GameAddon gameAddon);
 
