@@ -1,12 +1,12 @@
-#include <GameAddon.h>
+#include "GameAddon.h"
 
 extern std::string getGameAddonID(GameAddon gameAddon) {
 	switch(gameAddon) {
-		case DukeCaribbeanLifesABeach:
+		case GameAddon::DukeCaribbeanLifesABeach:
 			return "duke_caribbean";
-		case DukeItOutInDC:
+		case GameAddon::DukeItOutInDC:
 			return "duke_it_out_in_dc";
-		case NuclearWinter:
+		case GameAddon::NuclearWinter:
 			return "nuclear_winter";
 	}
 
@@ -15,11 +15,11 @@ extern std::string getGameAddonID(GameAddon gameAddon) {
 
 extern std::string getGameAddonName(GameAddon gameAddon) {
 	switch(gameAddon) {
-		case DukeCaribbeanLifesABeach:
+		case GameAddon::DukeCaribbeanLifesABeach:
 			return "Duke Caribbean: Life's a Beach";
-		case DukeItOutInDC:
+		case GameAddon::DukeItOutInDC:
 			return "Duke It Out in D.C.";
-		case NuclearWinter:
+		case GameAddon::NuclearWinter:
 			return "Nuclear Winter";
 	}
 
