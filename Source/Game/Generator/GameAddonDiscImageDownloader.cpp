@@ -9,6 +9,7 @@
 #include <Utilities/FileUtilities.h>
 
 #include <filesystem>
+#include <vector>
 
 GameAddonDiscImageDownloader::GameAddonDiscImageDownloader() { }
 
@@ -103,7 +104,7 @@ std::pair<std::unique_ptr<ISO9660::FS>, std::string> GameAddonDiscImageDownloade
 
 	std::string gameAddonDiscImageTempDirectoryPath(Utilities::joinPaths(settings->appTempDirectoryPath, getGameAddonID(gameAddon)));
 
-	std::vector<std::shared_ptr<ArchiveEntry>> gameAddonDiscImageFiles(gameAddonDiscImageArchive->getFilesWithExtension("ISO", "CUE", "MDS", "IMG", "NRG"));
+	std::vector<std::shared_ptr<ArchiveEntry>> gameAddonDiscImageFiles(gameAddonDiscImageArchive->getEntriesWithExtensions({ "ISO", "CUE", "MDS", "IMG", "NRG" }));
 
 	if(gameAddonDiscImageFiles.empty()) {
 		spdlog::warn("No '{}' game addon disc images found inside of archive.", getGameAddonName(gameAddon));
