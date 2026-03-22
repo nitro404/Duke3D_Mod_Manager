@@ -16,14 +16,13 @@
 
 class GameAddonDiscImageDownloader final : public Singleton<GameAddonDiscImageDownloader> {
 public:
-
-private:
 	GameAddonDiscImageDownloader();
 
 	static std::string getGameAddonDownloadURL(GameAddon gameAddon);
 	static std::unique_ptr<Archive> downloadGameAddonArchive(GameAddon gameAddon);
 	static std::pair<std::unique_ptr<ISO9660::FS>, std::string> downloadGameAddonDiscImage(GameAddon gameAddon);
 
+private:
 	GameAddonDiscImageDownloader(const GameAddonDiscImageDownloader &) = delete;
 	const GameAddonDiscImageDownloader & operator = (const GameAddonDiscImageDownloader &) = delete;
 };

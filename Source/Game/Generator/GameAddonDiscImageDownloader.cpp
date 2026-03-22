@@ -67,7 +67,7 @@ std::unique_ptr<Archive> GameAddonDiscImageDownloader::downloadGameAddonArchive(
 	std::unique_ptr<Archive> gameAddonDiscImageArchive(ArchiveFactoryRegistry::getInstance()->createArchiveFrom(response->transferBody()));
 
 	if(gameAddonDiscImageArchive == nullptr) {
-		// TODO: error
+		spdlog::error("Failed to create archive handle from downloaded '{}' game addon disc image archive file.", getGameAddonName(gameAddon));
 		return nullptr;
 	}
 
@@ -75,8 +75,7 @@ std::unique_ptr<Archive> GameAddonDiscImageDownloader::downloadGameAddonArchive(
 		std::map<std::string, std::any> properties;
 		properties["gameAddonID"] = getGameAddonID(gameAddon);
 		properties["gameAddonName"] = getGameAddonName(gameAddon);
-		// TODO: get decoded file name (maybe from header?)
-		//properties["fileName"] = TOODO;
+		properties["fileName"] = Utilities::getFileName(gameAddonDiscImageArchiveDownloadURL);
 		properties["fileSize"] = response->getBody()->getSize();
 		properties["eTag"] = response->getETag();
 		properties["transferDurationMs"] = response->getRequestDuration().value().count();
