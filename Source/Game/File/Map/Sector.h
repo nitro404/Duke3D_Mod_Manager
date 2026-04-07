@@ -23,7 +23,7 @@ public:
 	Sector(const Sector & sector);
 	Sector & operator = (Sector && sector) noexcept;
 	Sector & operator = (const Sector & sector);
-	virtual ~Sector();
+	~Sector() override;
 
 	bool isCeilingParallaxed() const;
 	void setCeilingParallaxed(bool parallaxed);

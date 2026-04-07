@@ -22,7 +22,7 @@ public:
 	Group(const Group & group);
 	Group & operator = (Group && group) noexcept;
 	Group & operator = (const Group & group);
-	virtual ~Group();
+	~Group() override;
 
 	size_t numberOfFiles() const;
 	bool hasFile(const GroupFile & file) const;

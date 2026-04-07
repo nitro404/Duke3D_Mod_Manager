@@ -13,7 +13,7 @@ public:
 	PaletteJASC(const PaletteJASC & palette);
 	PaletteJASC & operator = (PaletteJASC && palette) noexcept;
 	PaletteJASC & operator = (const PaletteJASC & palette);
-	virtual ~PaletteJASC();
+	~PaletteJASC() override;
 
 	const std::string & getVersion() const;
 	virtual std::shared_ptr<ColourTable> getColourTable(uint8_t colourTableIndex = 0) const override;

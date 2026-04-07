@@ -97,7 +97,7 @@ public:
 	Sprite(const Sprite & sprite);
 	Sprite & operator = (Sprite && sprite) noexcept;
 	Sprite & operator = (const Sprite & sprite);
-	virtual ~Sprite();
+	~Sprite() override;
 
 	bool isClippingBlocked() const;
 	void setBlockClipping(bool clippingBlocked);

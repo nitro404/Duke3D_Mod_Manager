@@ -35,7 +35,7 @@ public:
 		, m_value(value)
 		, m_message(message) { }
 
-	virtual ~DOSBoxInstallProgressEvent() { }
+	~DOSBoxInstallProgressEvent() override { }
 
 	int getValue() const {
 		return m_value;
@@ -74,7 +74,7 @@ public:
 		: wxEvent(0, EVENT_DOSBOX_INSTALL_DONE)
 		, m_success(success) { }
 
-	virtual ~DOSBoxInstallDoneEvent() { }
+	~DOSBoxInstallDoneEvent() override { }
 
 	virtual wxEvent * Clone() const override {
 		return new DOSBoxInstallDoneEvent(*this);

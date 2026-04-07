@@ -22,7 +22,7 @@ public:
 	ReleasesLoadedEvent()
 		: wxEvent(0, EVENT_RELEASES_LOADED) { }
 
-	virtual ~ReleasesLoadedEvent() { }
+	~ReleasesLoadedEvent() override { }
 
 	virtual wxEvent * Clone() const override {
 		return new ReleasesLoadedEvent(*this);

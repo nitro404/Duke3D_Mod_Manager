@@ -27,7 +27,7 @@ public:
 	Art(const Art & art);
 	Art & operator = (Art && art) noexcept;
 	Art & operator = (const Art & art);
-	virtual ~Art();
+	~Art() override;
 
 	uint32_t getVersion() const;
 	void setVersion(uint32_t version);

@@ -18,7 +18,7 @@ class ModDownloadPanel;
 class ModDownloadsPanel final : public wxPanel {
 public:
 	ModDownloadsPanel(wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
-	virtual ~ModDownloadsPanel();
+	~ModDownloadsPanel() override;
 
 	void setMod(std::shared_ptr<Mod> mod);
 

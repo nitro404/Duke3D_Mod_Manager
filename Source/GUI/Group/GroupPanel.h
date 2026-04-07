@@ -22,7 +22,7 @@ class MetadataPanel;
 class GroupPanel final : public wxPanel {
 public:
 	GroupPanel(std::unique_ptr<Group> group, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
-	virtual ~GroupPanel();
+	~GroupPanel() override;
 
 	std::string getPanelName() const;
 	const Group * getGroup() const;

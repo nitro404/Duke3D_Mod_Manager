@@ -17,7 +17,7 @@
 class MetadataPanel final : public wxScrolledWindow {
 public:
 	MetadataPanel(wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER, const std::string & title = {});
-	virtual ~MetadataPanel();
+	~MetadataPanel() override;
 
 	void setMetadata(const std::vector<std::pair<std::string, std::string>> & metadata);
 	void clearMetadata();

@@ -11,7 +11,7 @@
 class LogSinkWX : public spdlog::sinks::base_sink<std::mutex> {
 public:
 	LogSinkWX();
-	virtual ~LogSinkWX();
+	~LogSinkWX() override;
 
 	void initialize();
 

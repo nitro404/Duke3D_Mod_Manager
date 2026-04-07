@@ -28,7 +28,7 @@ class SimilarModsPanel;
 class ModInfoPanel final : public wxScrolledWindow {
 public:
 	ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<GameVersionCollection> gameVersions, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
-	virtual ~ModInfoPanel();
+	~ModInfoPanel() override;
 
 	void setMod(std::shared_ptr<Mod> mod);
 	void setModVersionType(std::shared_ptr<ModVersionType> modVersionType);

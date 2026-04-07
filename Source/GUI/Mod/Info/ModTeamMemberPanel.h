@@ -21,7 +21,7 @@ class ModTeamMember;
 class ModTeamMemberPanel final : public wxPanel {
 public:
 	ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
-	virtual ~ModTeamMemberPanel();
+	~ModTeamMemberPanel() override;
 
 	boost::signals2::signal<void (std::string /* modTeamMemberName */)> modTeamMemberSelectionRequested;
 

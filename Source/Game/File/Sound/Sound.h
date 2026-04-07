@@ -31,7 +31,7 @@ public:
 	Sound(int format, uint32_t sampleRate, uint16_t numberOfChannels, const std::string & filePath = {});
 	Sound(Sound && sound) noexcept;
 	Sound & operator = (Sound && sound) noexcept;
-	virtual ~Sound();
+	~Sound() override;
 
 	std::chrono::milliseconds getDuration() const;
 	uint32_t getBitrate() const;

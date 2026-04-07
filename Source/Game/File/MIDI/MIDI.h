@@ -22,7 +22,7 @@ public:
 	MIDI(const MIDI & midi);
 	MIDI & operator = (MIDI && midi) noexcept;
 	MIDI & operator = (const MIDI & midi);
-	virtual ~MIDI();
+	~MIDI() override;
 
 	std::chrono::milliseconds getDuration() const;
 	int numberOfTracks() const;

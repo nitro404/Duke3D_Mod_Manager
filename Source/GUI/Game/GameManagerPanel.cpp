@@ -36,7 +36,7 @@ public:
 		, m_value(value)
 		, m_message(message) { }
 
-	virtual ~GameInstallProgressEvent() { }
+	~GameInstallProgressEvent() override { }
 
 	int getValue() const {
 		return m_value;
@@ -75,7 +75,7 @@ public:
 		: wxEvent(0, EVENT_GAME_INSTALL_DONE)
 		, m_success(success) { }
 
-	virtual ~GameInstallDoneEvent() { }
+	~GameInstallDoneEvent() override { }
 
 	virtual wxEvent * Clone() const override {
 		return new GameInstallDoneEvent(*this);

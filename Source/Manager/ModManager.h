@@ -48,7 +48,7 @@ class StandAloneModCollection;
 class ModManager final : public Application {
 public:
 	ModManager();
-	virtual ~ModManager();
+	~ModManager() override;
 
 	bool isInitialized() const;
 	bool isInitializing() const;

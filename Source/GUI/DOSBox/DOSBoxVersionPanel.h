@@ -21,7 +21,7 @@ class DOSBoxVersionPanel final
 	: public wxPanel {
 public:
 	DOSBoxVersionPanel(std::shared_ptr<DOSBoxVersion> dosboxVersion, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
-	virtual ~DOSBoxVersionPanel();
+	~DOSBoxVersionPanel() override;
 
 	bool isModified() const;
 	std::string getPanelName() const;

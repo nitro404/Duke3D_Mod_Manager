@@ -24,7 +24,7 @@ class SettingsManagerPanel;
 class ModManagerFrame final : public wxFrame {
 public:
 	ModManagerFrame();
-	virtual ~ModManagerFrame();
+	~ModManagerFrame() override;
 
 	bool isInitialized() const;
 	bool initialize(std::shared_ptr<ModManager> modManager);

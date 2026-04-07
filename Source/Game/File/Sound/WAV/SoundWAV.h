@@ -24,7 +24,7 @@ public:
 	SoundWAV(FileHandle fileHandle, SF_INFO && info, std::unique_ptr<ByteBuffer> data = nullptr);
 	SoundWAV(SoundWAV && sound) noexcept;
 	SoundWAV & operator = (SoundWAV && sound) noexcept;
-	virtual ~SoundWAV();
+	~SoundWAV() override;
 
 	static std::unique_ptr<SoundWAV> readFrom(const ByteBuffer & byteBuffer);
 	static std::unique_ptr<SoundWAV> loadFrom(const std::string & filePath);

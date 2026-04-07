@@ -20,7 +20,7 @@ class wxPropertyGridEvent;
 class DOSBoxConfigurationPanel final : public wxPanel {
 public:
 	DOSBoxConfigurationPanel(std::shared_ptr<DOSBoxConfiguration> dosboxConfiguration, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
-	virtual ~DOSBoxConfigurationPanel();
+	~DOSBoxConfigurationPanel() override;
 
 	bool isEnabled() const;
 	void enable();

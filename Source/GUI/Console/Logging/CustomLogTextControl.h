@@ -17,7 +17,7 @@
 class CustomLogTextControl final : public wxLogTextCtrl {
 public:
 	CustomLogTextControl(wxTextCtrl * textControl);
-	virtual ~CustomLogTextControl();
+	~CustomLogTextControl() override;
 
 	virtual void DoLogTextAtLevel(wxLogLevel level, const wxString & message) override;
 

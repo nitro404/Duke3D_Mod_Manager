@@ -33,7 +33,7 @@ class wxProgressDialog;
 class DOSBoxManagerPanel final : public wxPanel {
 public:
 	DOSBoxManagerPanel(std::shared_ptr<ModManager> modManager, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
-	virtual ~DOSBoxManagerPanel();
+	~DOSBoxManagerPanel() override;
 
 	bool hasDOSBoxVersionPanel(const DOSBoxVersionPanel * dosboxVersionPanel) const;
 	bool hasPanelWithDOSBoxVersion(const DOSBoxVersion * dosboxVersion) const;

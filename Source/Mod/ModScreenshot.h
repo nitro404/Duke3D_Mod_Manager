@@ -10,7 +10,7 @@ public:
 	ModScreenshot(const ModScreenshot & s);
 	ModScreenshot & operator = (ModScreenshot && s) noexcept;
 	ModScreenshot & operator = (const ModScreenshot & s);
-	virtual ~ModScreenshot();
+	~ModScreenshot() override;
 
 	virtual tinyxml2::XMLElement * toXML(tinyxml2::XMLDocument * document) const override;
 	static std::unique_ptr<ModScreenshot> parseFrom(const rapidjson::Value & modScreenshotValue, bool skipFileInfoValidation = false);

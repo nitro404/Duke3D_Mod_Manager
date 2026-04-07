@@ -150,7 +150,7 @@ public:
 	PaletteDAT(const PaletteDAT & palette);
 	PaletteDAT & operator = (PaletteDAT && palette) noexcept;
 	PaletteDAT & operator = (const PaletteDAT & palette);
-	virtual ~PaletteDAT();
+	~PaletteDAT() override;
 
 	Type getType() const;
 	bool hasTrailingData() const;

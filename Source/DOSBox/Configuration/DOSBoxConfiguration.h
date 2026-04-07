@@ -106,7 +106,7 @@ public:
 		Section(const Section & section);
 		Section & operator = (Section && section) noexcept;
 		Section & operator = (const Section & section);
-		virtual ~Section();
+		~Section() override;
 
 		const std::string & getName() const;
 		bool setName(const std::string & newName);
@@ -215,7 +215,7 @@ public:
 	DOSBoxConfiguration(const DOSBoxConfiguration & configuration);
 	DOSBoxConfiguration & operator = (DOSBoxConfiguration && configuration) noexcept;
 	DOSBoxConfiguration & operator = (const DOSBoxConfiguration & configuration);
-	virtual ~DOSBoxConfiguration();
+	~DOSBoxConfiguration() override;
 
 	bool hasFilePath() const;
 	const std::string & getFilePath() const;

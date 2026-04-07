@@ -59,7 +59,7 @@ public:
 	Wall(const Wall & wall);
 	Wall & operator = (Wall && wall) noexcept;
 	Wall & operator = (const Wall & wall);
-	virtual ~Wall();
+	~Wall() override;
 
 	bool isClippingBlocked() const;
 	void setBlockClipping(bool blockClipping);

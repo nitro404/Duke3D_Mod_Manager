@@ -18,7 +18,7 @@ class ArgumentParser;
 class SettingsManager final : public Singleton<SettingsManager> {
 public:
 	SettingsManager();
-	virtual ~SettingsManager();
+	~SettingsManager() override;
 
 	void reset();
 

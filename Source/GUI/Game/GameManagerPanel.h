@@ -33,7 +33,7 @@ class wxProgressDialog;
 class GameManagerPanel final : public wxPanel {
 public:
 	GameManagerPanel(std::shared_ptr<GameManager> gameManager, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
-	virtual ~GameManagerPanel();
+	~GameManagerPanel() override;
 
 	bool hasGameVersionPanel(const GameVersionPanel * gameVersionPanel) const;
 	bool hasPanelWithGameVersion(const GameVersion * gameVersion) const;

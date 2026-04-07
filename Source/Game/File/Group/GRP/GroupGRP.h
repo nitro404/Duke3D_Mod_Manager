@@ -11,7 +11,7 @@ public:
 	GroupGRP(const GroupGRP & group);
 	GroupGRP & operator = (GroupGRP && group) noexcept;
 	GroupGRP & operator = (const GroupGRP & group);
-	virtual ~GroupGRP();
+	~GroupGRP() override;
 
 	static std::unique_ptr<GroupGRP> readFrom(const ByteBuffer & byteBuffer);
 	virtual bool writeTo(ByteBuffer & byteBuffer) const override;

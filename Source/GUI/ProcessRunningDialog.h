@@ -21,7 +21,7 @@ class ProcessTerminatedEvent;
 class ProcessRunningDialog final : public wxDialog {
 public:
 	ProcessRunningDialog(wxWindow * parent, const std::string & title, const std::string & message, const std::string & closeButtonCaption);
-	virtual ~ProcessRunningDialog();
+	~ProcessRunningDialog() override;
 
 	void setStatus(const std::string & status);
 	void clearStatus();

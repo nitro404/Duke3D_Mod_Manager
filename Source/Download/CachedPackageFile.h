@@ -19,7 +19,7 @@ public:
 	CachedPackageFile & operator = (CachedPackageFile && f) noexcept;
 	CachedPackageFile & operator = (CachedFile && f) noexcept;
 	CachedPackageFile & operator = (const CachedPackageFile & f);
-	virtual ~CachedPackageFile();
+	~CachedPackageFile() override;
 
 	size_t numberOfCachedFiles() const;
 	bool hasCachedFile(const CachedFile * cachedFile) const;

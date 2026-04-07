@@ -18,7 +18,7 @@ public:
 		, m_nativeExitCode(0)
 		, m_forceTerminated(false) { }
 
-	virtual ~ProcessTerminatedEvent() { }
+	~ProcessTerminatedEvent() override { }
 
 	virtual wxEvent * Clone() const override {
 		return new ProcessTerminatedEvent(*this);

@@ -25,7 +25,7 @@ class DOSBoxSettingsPanel final
 	: public wxPanel {
 public:
 	DOSBoxSettingsPanel(std::shared_ptr<ModManager> modManager, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxALIGN_LEFT);
-	virtual ~DOSBoxSettingsPanel();
+	~DOSBoxSettingsPanel() override;
 
 	bool areSettingsModified() const;
 	bool areSettingsValid() const;

@@ -17,7 +17,7 @@
 class SunstormInteractiveMetadataPanel final : public wxPanel {
 public:
 	SunstormInteractiveMetadataPanel(std::shared_ptr<GroupSSI> group, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER, const std::string & title = {});
-	virtual ~SunstormInteractiveMetadataPanel();
+	~SunstormInteractiveMetadataPanel() override;
 
 private:
 	void onTitleTextChanged(wxCommandEvent & event);

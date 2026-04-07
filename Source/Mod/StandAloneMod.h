@@ -17,7 +17,7 @@ public:
 	StandAloneMod(const StandAloneMod & standAloneMod);
 	StandAloneMod & operator = (StandAloneMod && standAloneMod) noexcept;
 	StandAloneMod & operator = (const StandAloneMod & standAloneMod);
-	virtual ~StandAloneMod();
+	~StandAloneMod() override;
 
 	std::string getVersion() const;
 

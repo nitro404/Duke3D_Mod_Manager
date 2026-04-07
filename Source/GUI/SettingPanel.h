@@ -30,7 +30,7 @@ class StringChoiceSettingPanel;
 
 class SettingPanel : public wxPanel {
 public:
-	virtual ~SettingPanel();
+	~SettingPanel() override;
 
 	const std::string & getName() const;
 	std::string getValue() const;
@@ -104,7 +104,7 @@ class StringChoiceSettingPanel final : public SettingPanel {
 	friend class SettingPanel;
 
 public:
-	virtual ~StringChoiceSettingPanel();
+	~StringChoiceSettingPanel() override;
 
 	bool setChoices(const std::vector<std::string> & choices, const std::vector<std::string> & values = {});
 

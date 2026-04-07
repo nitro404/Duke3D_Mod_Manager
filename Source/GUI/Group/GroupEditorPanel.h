@@ -25,7 +25,7 @@ class SignalConnectionGroup;
 class GroupEditorPanel final : public wxPanel {
 public:
 	GroupEditorPanel(wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
-	virtual ~GroupEditorPanel();
+	~GroupEditorPanel() override;
 
 	bool hasGroupPanel(const GroupPanel * groupPanel) const;
 	bool hasPanelWithGroup(const Group * group) const;

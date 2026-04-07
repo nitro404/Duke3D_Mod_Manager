@@ -24,7 +24,7 @@ public:
 	PalettePAL(const PalettePAL & palette);
 	PalettePAL & operator = (PalettePAL && palette) noexcept;
 	PalettePAL & operator = (const PalettePAL & palette);
-	virtual ~PalettePAL();
+	~PalettePAL() override;
 
 	uint16_t getVersion() const;
 	const std::vector<ColourFlag> & getColourFlags() const;

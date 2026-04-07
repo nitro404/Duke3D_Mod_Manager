@@ -11,7 +11,7 @@ public:
 	PaletteACT(const PaletteACT & palette);
 	PaletteACT & operator = (PaletteACT && palette) noexcept;
 	PaletteACT & operator = (const PaletteACT & palette);
-	virtual ~PaletteACT();
+	~PaletteACT() override;
 
 	virtual std::shared_ptr<ColourTable> getColourTable(uint8_t colourTableIndex = 0) const override;
 	static std::unique_ptr<PaletteACT> readFrom(const ByteBuffer & byteBuffer);

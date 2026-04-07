@@ -48,7 +48,7 @@ public:
 	Partition(const Partition & partition);
 	Partition & operator = (Partition && partition) noexcept;
 	Partition & operator = (const Partition & partition);
-	virtual ~Partition();
+	~Partition() override;
 
 	Type getType() const;
 	void setType(Type type);

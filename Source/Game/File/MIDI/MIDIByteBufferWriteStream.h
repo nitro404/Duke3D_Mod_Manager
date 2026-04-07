@@ -16,7 +16,7 @@ public:
 	MIDIByteBufferWriteStream(const MIDIByteBufferWriteStream & writeStream);
 	MIDIByteBufferWriteStream & operator = (MIDIByteBufferWriteStream && writeStream) noexcept;
 	MIDIByteBufferWriteStream & operator = (const MIDIByteBufferWriteStream & writeStream);
-	virtual ~MIDIByteBufferWriteStream();
+	~MIDIByteBufferWriteStream() override;
 
 	ByteBuffer & getData();
 	const ByteBuffer & getData() const;

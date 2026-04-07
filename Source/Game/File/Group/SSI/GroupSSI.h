@@ -14,7 +14,7 @@ public:
 	GroupSSI(const GroupSSI & group);
 	GroupSSI & operator = (GroupSSI && group) noexcept;
 	GroupSSI & operator = (const GroupSSI & group);
-	virtual ~GroupSSI();
+	~GroupSSI() override;
 
 	uint32_t getVersion() const;
 	bool setVersion(uint32_t version);

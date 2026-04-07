@@ -21,7 +21,7 @@ public:
 	DOSBoxVersionCollection(const DOSBoxVersionCollection & dosboxVersions);
 	DOSBoxVersionCollection & operator = (DOSBoxVersionCollection && dosboxVersions) noexcept;
 	DOSBoxVersionCollection & operator = (const DOSBoxVersionCollection & dosboxVersions);
-	virtual ~DOSBoxVersionCollection();
+	~DOSBoxVersionCollection();
 
 	size_t numberOfDOSBoxVersions() const;
 	bool hasDOSBoxVersion(const DOSBoxVersion & dosboxVersion) const;

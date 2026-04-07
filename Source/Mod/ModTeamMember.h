@@ -25,7 +25,7 @@ public:
 	ModTeamMember(const ModTeamMember & m);
 	ModTeamMember & operator = (ModTeamMember && m) noexcept;
 	ModTeamMember & operator = (const ModTeamMember & m);
-	virtual ~ModTeamMember();
+	~ModTeamMember();
 
 	bool hasAlias() const;
 	bool hasEmail() const;

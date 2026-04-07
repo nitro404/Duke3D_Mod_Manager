@@ -16,7 +16,7 @@ public:
 	SoundVOC(FileHandle fileHandle, SF_INFO && info, std::unique_ptr<ByteBuffer> data = nullptr);
 	SoundVOC(SoundVOC && sound) noexcept;
 	SoundVOC & operator = (SoundVOC && sound) noexcept;
-	virtual ~SoundVOC();
+	~SoundVOC() override;
 
 	static std::unique_ptr<SoundVOC> readFrom(const ByteBuffer & byteBuffer);
 	static std::unique_ptr<SoundVOC> loadFrom(const std::string & filePath);

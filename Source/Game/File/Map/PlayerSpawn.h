@@ -23,7 +23,7 @@ public:
 	PlayerSpawn(const SectorItem & sectorItem);
 	PlayerSpawn & operator = (PlayerSpawn && playerSpawn) noexcept;
 	PlayerSpawn & operator = (const PlayerSpawn & playerSpawn);
-	virtual ~PlayerSpawn();
+	~PlayerSpawn() override;
 
 	static PlayerSpawn getFrom(const ByteBuffer & byteBuffer, size_t offset, bool * error);
 	static std::optional<PlayerSpawn> getFrom(const ByteBuffer & byteBuffer, size_t offset);

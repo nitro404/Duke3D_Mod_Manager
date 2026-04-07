@@ -53,7 +53,7 @@ public:
 		, m_success(success)
 		, m_aborted(aborted) { }
 
-	virtual ~ModManagerInitializationDoneEvent() { }
+	~ModManagerInitializationDoneEvent() override { }
 
 	virtual wxEvent * Clone() const override {
 		return new ModManagerInitializationDoneEvent(*this);

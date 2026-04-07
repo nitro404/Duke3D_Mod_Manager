@@ -24,7 +24,7 @@ class wxGenericHyperlinkCtrl;
 class RelatedModsPanel final : public wxPanel {
 public:
 	RelatedModsPanel(std::shared_ptr<ModCollection> mods, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
-	virtual ~RelatedModsPanel();
+	~RelatedModsPanel();
 
 	bool setMod(std::shared_ptr<Mod> mod);
 	bool setMods(std::shared_ptr<ModCollection> mods);

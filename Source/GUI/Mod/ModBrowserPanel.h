@@ -42,7 +42,7 @@ class ModMatch;
 class ModBrowserPanel final : public wxPanel {
 public:
 	ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
-	virtual ~ModBrowserPanel();
+	~ModBrowserPanel() override;
 
 	void update();
 	void updateModListFilterType();

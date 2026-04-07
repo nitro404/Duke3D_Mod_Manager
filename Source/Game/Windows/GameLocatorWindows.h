@@ -6,7 +6,7 @@
 class GameLocatorWindows final : public GameLocator {
 public:
 	GameLocatorWindows();
-	virtual ~GameLocatorWindows();
+	~GameLocatorWindows() override;
 
 	// GameLocator Virtuals
 	virtual std::vector<std::pair<std::string, std::string>> getGameSearchPaths() override;

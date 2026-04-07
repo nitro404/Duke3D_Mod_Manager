@@ -17,7 +17,7 @@ class PreformattedLogFormatter;
 class ConsolePanel final : public wxPanel {
 public:
 	ConsolePanel(wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
-	virtual ~ConsolePanel();
+	~ConsolePanel() override;
 
 private:
 	CustomLogTextControl * m_logger;

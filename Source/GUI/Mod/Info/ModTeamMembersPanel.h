@@ -26,7 +26,7 @@ class ModTeamMemberPanel;
 class ModTeamMembersPanel final : public wxPanel {
 public:
 	ModTeamMembersPanel(wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
-	virtual ~ModTeamMembersPanel();
+	~ModTeamMembersPanel() override;
 
 	void setTeam(std::shared_ptr<ModTeam> team);
 

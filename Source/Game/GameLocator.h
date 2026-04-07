@@ -10,7 +10,7 @@
 
 class GameLocator : public Singleton<GameLocator> {
 public:
-	virtual ~GameLocator();
+	~GameLocator() override;
 
 	bool locateGames();
 

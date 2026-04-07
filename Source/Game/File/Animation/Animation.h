@@ -15,7 +15,7 @@ public:
 	Animation(const Animation & animation);
 	Animation & operator = (Animation && animation) noexcept;
 	Animation & operator = (const Animation & animation);
-	virtual ~Animation();
+	~Animation() override;
 
 	virtual uint16_t getFrameWidth() const = 0;
 	virtual uint16_t getFrameHeight() const = 0;

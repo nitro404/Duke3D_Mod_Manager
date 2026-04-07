@@ -25,7 +25,7 @@ class ModManagerInitializationDoneEvent;
 class ModManagerApplication : public wxApp {
 public:
 	ModManagerApplication();
-	virtual ~ModManagerApplication();
+	~ModManagerApplication() override;
 
 	void reload();
 	void displayArgumentHelp();

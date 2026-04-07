@@ -20,7 +20,7 @@ class ModVersionType;
 class ModDependencyPanel final : public wxPanel {
 public:
 	ModDependencyPanel(std::shared_ptr<ModVersionType> modVersionType, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
-	virtual ~ModDependencyPanel();
+	~ModDependencyPanel() override;
 
 	boost::signals2::signal<void (std::string /* modID */, std::string /* modVersion */, std::string /* modVersionType */)> modVersionTypeSelectionRequested;
 

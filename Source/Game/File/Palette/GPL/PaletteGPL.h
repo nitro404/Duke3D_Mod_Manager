@@ -14,7 +14,7 @@ public:
 	PaletteGPL(const PaletteGPL & palette);
 	PaletteGPL & operator = (PaletteGPL && palette) noexcept;
 	PaletteGPL & operator = (const PaletteGPL & palette);
-	virtual ~PaletteGPL();
+	~PaletteGPL() override;
 
 	virtual std::shared_ptr<ColourTable> getColourTable(uint8_t colourTableIndex = 0) const override;
 	size_t numberOfNamedColours() const;

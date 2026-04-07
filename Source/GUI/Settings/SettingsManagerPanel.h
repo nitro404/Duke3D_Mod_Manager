@@ -27,7 +27,7 @@ class SettingsManagerPanel final
 	: public wxPanel {
 public:
 	SettingsManagerPanel(std::shared_ptr<ModManager> modManager, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
-	virtual ~SettingsManagerPanel();
+	~SettingsManagerPanel() override;
 
 	bool isModified() const;
 	bool isValid() const;

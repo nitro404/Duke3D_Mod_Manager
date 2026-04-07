@@ -17,7 +17,7 @@ public:
 	Palette(const Palette & palette);
 	Palette & operator = (Palette && palette) noexcept;
 	Palette & operator = (const Palette & palette);
-	virtual ~Palette();
+	~Palette() override;
 
 	bool hasTransparentColourIndex(uint8_t colourTableIndex = 0) const;
 	std::optional<uint8_t> getTransparentColourIndex(uint8_t colourTableIndex = 0) const;

@@ -23,7 +23,7 @@ class ModDependencyPanel;
 class ModDependenciesPanel final : public wxPanel {
 public:
 	ModDependenciesPanel(std::shared_ptr<ModCollection> mods, wxWindow * parent, wxWindowID windowID = wxID_ANY, const wxPoint & position = wxDefaultPosition, const wxSize & size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER);
-	virtual ~ModDependenciesPanel();
+	~ModDependenciesPanel() override;
 
 	void setModVersionType(std::shared_ptr<ModVersionType> modVersionType);
 

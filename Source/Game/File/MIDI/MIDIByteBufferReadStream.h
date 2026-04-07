@@ -18,7 +18,7 @@ public:
 	MIDIByteBufferReadStream(const MIDIByteBufferReadStream & readStream);
 	MIDIByteBufferReadStream & operator = (MIDIByteBufferReadStream && readStream) noexcept;
 	MIDIByteBufferReadStream & operator = (const MIDIByteBufferReadStream & readStream);
-	virtual ~MIDIByteBufferReadStream();
+	~MIDIByteBufferReadStream() override;
 
 	// MIDIFileReadStream Virtuals
 	virtual void Rewind() override;

@@ -22,7 +22,7 @@ public:
 	Map(const Map & map);
 	Map & operator = (Map && map) noexcept;
 	Map & operator = (const Map & map);
-	virtual ~Map();
+	~Map() override;
 
 	uint32_t getVersion() const;
 	PlayerSpawn & getPlayerSpawn();

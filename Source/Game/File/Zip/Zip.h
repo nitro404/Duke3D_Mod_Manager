@@ -19,7 +19,7 @@ public:
 	Zip(const Zip & zip);
 	Zip & operator = (Zip && zip) noexcept;
 	Zip & operator = (const Zip & zip);
-	virtual ~Zip();
+	~Zip() override;
 
 	static std::unique_ptr<Zip> readFrom(const ByteBuffer & byteBuffer);
 	static std::unique_ptr<Zip> loadFrom(const std::string & filePath);

@@ -123,7 +123,7 @@ public:
 	AnimationANM(const AnimationANM & animation);
 	AnimationANM & operator = (AnimationANM && animation) noexcept;
 	AnimationANM & operator = (const AnimationANM & animation);
-	virtual ~AnimationANM();
+	~AnimationANM() override;
 
 	uint16_t maximumNumberOfLargePages() const;
 	uint32_t numberOfRecords() const;
