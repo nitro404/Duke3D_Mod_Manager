@@ -13,9 +13,9 @@ public:
 private:
 	AddonGroupFileGenerator();
 
-	//static std::unique_ptr<Group> generateDukeCaribbeanLifesABeachGroup() const;
-	//static std::unique_ptr<Group> generateDukeItOutInDCGroup() const;
-	//static std::unique_ptr<Group> generateNuclearWinterGroup() const;
+	static std::unique_ptr<Group> generateDukeCaribbeanLifesABeachGroup();
+	static std::unique_ptr<Group> generateDukeItOutInDCGroup();
+	static std::unique_ptr<Group> generateNuclearWinterGroup();
 
 	AddonGroupFileGenerator(const AddonGroupFileGenerator &) = delete;
 	const AddonGroupFileGenerator & operator = (const AddonGroupFileGenerator &) = delete;
