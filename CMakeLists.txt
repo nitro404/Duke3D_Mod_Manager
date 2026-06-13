@@ -45,7 +45,7 @@ if(MSVC)
 		/bigobj
 		/Zc:__cplusplus
 	)
-else()
+elseif(MINGW)
 	add_compile_options(-Wa,-mbig-obj)
 endif()
 

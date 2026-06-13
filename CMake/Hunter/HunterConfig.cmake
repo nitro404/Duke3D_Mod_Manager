@@ -105,9 +105,9 @@ hunter_config(nanosvg
 
 # PCRE2 is used by wxWidgets.
 hunter_config(pcre2
-	URL "https://github.com/Telefrag-Software/pcre/archive/refs/heads/hunter-10.43.0.1.zip"
-	VERSION "10.43.0.1"
-	SHA1 "b6a4700010ff2c97239323842298b2efb8d2baac"
+	URL "https://github.com/Telefrag-Software/pcre/archive/refs/heads/hunter-10.43.0.2.zip"
+	VERSION "10.43.0.2"
+	SHA1 "b210a13831b8a374ca6a42300b763d689cf24db8"
 	CMAKE_ARGS
 		BUILD_STATIC_LIBS=ON
 		PCRE2_BUILD_PCRE2_8=ON
@@ -195,9 +195,9 @@ hunter_config(WebP
 )
 
 hunter_config(wxWidgets
-	URL "https://github.com/Telefrag-Software/wxWidgets/archive/refs/heads/hunter-3.3.1.0.zip"
-	VERSION "3.3.1.0"
-	SHA1 "97c1225e7fa387831d093eb88a9de6ea1d8eba52"
+	URL "https://github.com/Telefrag-Software/wxWidgets/archive/refs/heads/hunter-3.3.1.1.zip"
+	VERSION "3.3.1.1"
+	SHA1 "a3bdf3eb7e2e5bf85a59170c056a16528a663845"
 	CMAKE_ARGS
 		wxBUILD_MONOLITHIC=ON
 		wxBUILD_SHARED=OFF

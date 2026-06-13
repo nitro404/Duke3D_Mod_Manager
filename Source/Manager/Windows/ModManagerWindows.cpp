@@ -8,6 +8,6 @@ void ModManager::assignPlatformFactories() {
 	FactoryRegistry & factoryRegistry = FactoryRegistry::getInstance();
 
 	factoryRegistry.setFactory<GameLocator>([]() {
-		return std::make_unique<GameLocatorWindows>();
+		return std::unique_ptr<GameLocator>(new GameLocatorWindows());
 	});
 }
