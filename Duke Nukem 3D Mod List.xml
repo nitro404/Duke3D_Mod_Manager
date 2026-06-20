@@ -12128,4 +12128,23 @@
 			<download filename="Mission_Istanbul-ModMgrA.zip" filesize="62983071" game="Atomic" type="Mod Manager Files" state="Converted" sha1="e340f016bba594b86f23fbb259e689f2baa10c6b"/>
 		</downloads>
 	</mod>
+	<mod name="1999 Russia" id="1999_russia" type="Partial Conversion">
+		<team>
+			<member name="Sanek" email="bechtin7@mail.ru" discord="Sanek#6142" country="Russia"/>
+		</team>
+		<versions>
+			<version release_date="February 21, 2010">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="1999R.CON" size="154120" type="con" sha1="ac23760f34e83a2034c60d381ca677cc818468b5"/>
+						<file name="1999R.GRP" size="5406404" type="zip" sha1="0442c1e567506a1b38a5554dcbac906ef94db1db"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="1999Russia.zip" filesize="3867578" game="eDuke32" type="Original Files" sha1="97a47e6cc7c41fdaab0e3d2ef698a1790e46b4d1"/>
+			<download filename="1999_Russia-ModMgrE.zip" filesize="3801393" game="eDuke32" type="Mod Manager Files" state="Native" sha1="57053145b60484c014940f38f9a47e246f7059e0"/>
+		</downloads>
+	</mod>
 </mods>
