@@ -12318,4 +12318,24 @@
 			<download filename="Der_Zorn_Gottes-ModMgrE.zip" filesize="6532431" game="eDuke32" type="Mod Manager Files" state="Native" sha1="5f785175186e09ad3b55c13c1fcf8a3a0525d878"/>
 		</downloads>
 	</mod>
+	<mod name="Simpler Times" id="simpler_times" type="Map" website="https://www.moddb.com/mods/simpler-times">
+		<team>
+			<member name="Alex Pistol" email="aleks4duke@gmail.com" discord="Ledsbourne#2631" steam="Ledsbourne" country="Poland"/>
+		</team>
+		<versions>
+			<version release_date="December 23, 2023">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="SIMPLER_TIMES.CON" size="157982" type="con" sha1="914b5ef8b5117d421d71cb9b333e2525aad2ed1b"/>
+						<file name="Simpler_Times.zip" size="7586815" type="zip" sha1="c655f8e81ce99dcee10dba666cf58cd01031804e"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="SIMPLER_TIMES.zip" filesize="11475744" game="eDuke32" type="Original Files" sha1="7104b68905d3ff1adec23e08bb9b1964062e497a"/>
+			<download filename="SIMPLER_TIMES-32BIT.zip" filesize="11536850" special="32-bit Version" game="eDuke32" type="Original Files" sha1="9430f41e17f0a3f35716a2e4b67c3e9658ba12ee"/>
+			<download filename="Simpler_Times-ModMgrE.zip" filesize="7586983" game="eDuke32" type="Mod Manager Files" state="Native" sha1="18a1500ba3555aa8dab22ae2a4196e5f95eb8e9a"/>
+		</downloads>
+	</mod>
 </mods>
