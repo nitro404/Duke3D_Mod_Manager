@@ -12338,4 +12338,33 @@
 			<download filename="Simpler_Times-ModMgrE.zip" filesize="7586983" game="eDuke32" type="Mod Manager Files" state="Native" sha1="18a1500ba3555aa8dab22ae2a4196e5f95eb8e9a"/>
 		</downloads>
 	</mod>
+	<mod name="Exodus" id="exodus" type="Total Conversion" version="1.1" website="https://www.moddb.com/mods/duke-nukem-3d-exodus">
+		<team>
+			<member name="Romeobk" email="romeobk1103@gmail.com"/>
+		</team>
+		<versions>
+			<version id="1.0" release_date="January 17, 2026">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="EXODUS.CON" size="151214" type="con" sha1="02653f44c7dff0547d3f52971fa8ca32daada89d"/>
+						<file name="Exodus_1.0.zip" size="40302684" type="zip" sha1="6ba17fa6a2f25953243bf197d85d59238ce588a4"/>
+					</game>
+				</type>
+			</version>
+			<version id="1.1" release_date="February 13, 2026">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="EXODUS.CON" size="151214" type="con" sha1="02653f44c7dff0547d3f52971fa8ca32daada89d"/>
+						<file name="Exodus_1.1.zip" size="39922136" type="zip" sha1="ec547d7b61dea0ce3ec7948bce6842443eaa084f"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="DN3D_EXODUS_V1.0.rar" filesize="55532682" version="1.0" game="eDuke32" type="Original Files" sha1="9bbdc31e8d5dcacce611b58fee5f9bc623410134"/>
+			<download filename="DN3D_EXODUS_V1.1.rar" filesize="38148433" version="1.1" game="eDuke32" type="Original Files" sha1="71d9f8005774858a9f77ff69602f117e89fe9a92"/>
+			<download filename="Exodus_1.0-ModMgrE.zip" filesize="40302846" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="ce8fbf0fd0eb06b2351f3204ce54779f1909646f"/>
+			<download filename="Exodus_1.1-ModMgrE.zip" filesize="39922298" version="1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e6462b742fb52959e3970a1decb1d3120c2875f3"/>
+		</downloads>
+	</mod>
 </mods>
