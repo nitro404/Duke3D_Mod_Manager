@@ -12147,4 +12147,23 @@
 			<download filename="1999_Russia-ModMgrE.zip" filesize="3801393" game="eDuke32" type="Mod Manager Files" state="Native" sha1="57053145b60484c014940f38f9a47e246f7059e0"/>
 		</downloads>
 	</mod>
+	<mod name="Pacocta" id="pacocta" type="Enemy Replacement">
+		<versions>
+			<version release_date="August 7, 1999">
+				<type>
+					<game type="Regular" state="Native">
+						<file name="PACOCTA.GRP" size="1047690" type="grp" sha1="85a41a0e16a4a6f20f93b457f50be11d8ae90ce4"/>
+					</game>
+					<game type="Atomic" state="Converted">
+						<file name="PACOCTA.GRP" size="1221970" type="grp" sha1="a4d0f628f2d350d8685b389f98a3eea51e88a4a3"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="pacocta.zip" filesize="376516" game="Regular" type="Original Files" sha1="2fc603eb114d048493a99a820a9dfe6a2090c99a"/>
+			<download filename="Pacocta-ModMgrR.zip" filesize="369637" game="Regular" type="Mod Manager Files" state="Native" sha1="a60d779355cd0657bfc77b0c49bda1e63546a393"/>
+			<download filename="Pacocta-ModMgrA.zip" filesize="440121" game="Atomic" type="Mod Manager Files" state="Converted" sha1="94bd39a3931b895f6589a0b8b6f84959a4af067e"/>
+		</downloads>
+	</mod>
 </mods>
