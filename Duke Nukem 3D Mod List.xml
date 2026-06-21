@@ -12109,7 +12109,7 @@
 	</mod>
 	<mod name="Mission Istanbul" id="mission_istanbul" type="Total Conversion">
 		<team>
-			<member name="Gingis Khan"/>
+			<member name="Gingis Khan" alias="LakiSoft"/>
 		</team>
 		<versions>
 			<version release_date="July 18, 2017">
@@ -12365,6 +12365,26 @@
 			<download filename="DN3D_EXODUS_V1.1.rar" filesize="38148433" version="1.1" game="eDuke32" type="Original Files" sha1="71d9f8005774858a9f77ff69602f117e89fe9a92"/>
 			<download filename="Exodus_1.0-ModMgrE.zip" filesize="40302846" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="ce8fbf0fd0eb06b2351f3204ce54779f1909646f"/>
 			<download filename="Exodus_1.1-ModMgrE.zip" filesize="39922298" version="1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e6462b742fb52959e3970a1decb1d3120c2875f3"/>
+		</downloads>
+	</mod>
+	<mod name="Duke Nukem IV" id="duke_nukem_iv" type="Total Conversion" version="1.2" website="http://dukenukem.wikia.com/wiki/User_blog:Duke_Nukem_IV/Duke_Nukem_IV_Game">
+		<team>
+			<member name="Gingis Khan" alias="LakiSoft"/>
+			<member name="FirstMarine"/>
+		</team>
+		<versions>
+			<version id="1.2" release_date="July 6, 2014">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="DUKE4.CON" size="151164" type="con" sha1="06693c2ce9986e38a5a90f40b65b1dce3bfda72b"/>
+						<file name="DUKE4.GRP" size="23334249" type="grp" sha1="2869ff7b7654cf01539d4dc1c4be6bd8ab574990"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="duke4.7z" filesize="13057903" version="1.2" game="Atomic" type="Original Files" sha1="808078ab945ab043ba00579212e4301c73e8c2ac"/>
+			<download filename="Duke_Nukem_IV_1.2-ModMgrA.zip" filesize="13670304" version="1.2" game="Atomic" type="Mod Manager Files" state="Native" sha1="4981b3b35649d84ca5482c1b87c809b084a4e865"/>
 		</downloads>
 	</mod>
 </mods>
