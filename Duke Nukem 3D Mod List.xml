@@ -178,7 +178,7 @@
 	</mod>
 	<mod name="ADG Episode" id="adg_episode" type="Total Conversion" version="1.0">
 		<team>
-			<member name="Alejandro Glavic" email="aglavic@yahoo.com.ar"/>
+			<member name="Alejandro Glavic" email="aglavic@yahoo.com.ar" country="Argentina"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="December 2, 2001">
@@ -521,7 +521,7 @@
 			<member name="Wim Cools"/>
 			<member name="Geoffrey van Dijk" alias="Fakir Baba" email="fakirnogwat@hotmail.com"/>
 			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com"/>
-			<member name="Alejandro" email="Aglavic@uol.com.ar"/>
+			<member name="Alejandro Glavic" email="aglavic@yahoo.com.ar" country="Argentina"/>
 			<member name="Rob Bomber" email="VvBoMBeRvV@aol.com"/>
 			<member name="Slawomir Lawrynowicz" alias="LAW" email="Law2@wp.pl"/>
 			<member name="John Henderson" alias="J.H" email="Johnhenderson16@lineone.net"/>
@@ -1833,7 +1833,7 @@
 			<member name="Mikko Sandt" email="sirpa.sandt@pp.inet.fi"/>
 			<member name="Mark Antony Rossi"/>
 			<member name="Julien Dykmans"/>
-			<member name="Alejandro Glavic"/>
+			<member name="Alejandro Glavic" email="aglavic@yahoo.com.ar" country="Argentina"/>
 			<member name="Billy Boy"/>
 			<member name="Mike von Skellington"/>
 		</team>
@@ -12187,5 +12187,27 @@
 		<notes>
 			<note>Replaces E1L1 and E1L2.</note>
 		</notes>
+	</mod>
+	<mod name="Welcome Home" id="welcome_home" type="Map" website="http://www.planetduke.com/amc">
+		<team>
+			<member name="Alejandro Glavic" email="aglavic@yahoo.com.ar" country="Argentina"/>
+		</team>
+		<versions>
+			<version release_date="May 27, 2003">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="WHOME.CON" size="151191" type="con" sha1="0188d4d329134cb286f4abe86f0de8d0f429e49f"/>
+						<file name="WHOME.GRP" size="2110773" type="grp" sha1="7fce210c8d22ab6df0590da7e7ff2bce0880fec1"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="whome.zip" filesize="658040" game="Atomic" type="Original Files" sha1="538980e58f3cf8aaedca462e7826797f06b19c62"/>
+			<download filename="Welcome_Home-ModMgrA.zip" filesize="704704" game="Atomic" type="Mod Manager Files" state="Native" sha1="123352e0cfa9d64892a5c7dba95eef3108a08bdb"/>
+		</downloads>
+		<related>
+			<mod id="grins_of_divinity_episode_1_system_sol_invaded"/>
+		</related>
 	</mod>
 </mods>
