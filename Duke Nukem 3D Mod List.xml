@@ -9312,6 +9312,9 @@
 			<download filename="DNA4PC.zip" filesize="17515368" version="Alpha" game="Atomic" type="Original Files" sha1="8294ee7ad949c15fcaceba56dbf33de2f55e7d7e"/>
 			<download filename="Duke_Nukem_Advance_4_PC_Alpha-ModMgrA.zip" filesize="319063" version="Alpha" game="Atomic" type="Mod Manager Files" state="Native" sha1="4e61fc5d7320c9c98ec750926d7aaa5d4236ee5b"/>
 		</downloads>
+		<related>
+			<mod id="duke_nukem_advance"/>
+		</related>
 	</mod>
 	<mod name="Plug and Pray Remake" id="plug_and_pray_remake" type="Total Conversion" website="http://forums.duke4.net/topic/6770-plug-and-pray-remake">
 		<team>
@@ -12228,5 +12231,71 @@
 			<download filename="battleduke.zip" filesize="2499912" game="Atomic" type="Original Files" sha1="e89480041c18a9fae1f0bf1f226e04ab68390457"/>
 			<download filename="BattleDuke-ModMgrA.zip" filesize="176566" game="Atomic" type="Mod Manager Files" state="Native" sha1="bf26a8ad110ab1c0a3d19e3fa98ea4e6bad7b762"/>
 		</downloads>
+	</mod>
+	<mod name="Duke Nukem: Advance for PC" id="duke_nukem_advance" type="Total Conversion" version="1.0 Playtest" website="https://www.moddb.com/mods/duke-nukem-advance-tc" repository="https://github.com/branung/DNA4PC">
+		<team>
+			<member name="Branung" website="https://www.moddb.com/members/branung" github="branung" country="United States"/>
+			<member name="Max Ylitalo" alias="Oasiz"/>
+			<member name="Dzierzan"/>
+			<member name="Jimmy Gnosis"/>
+			<member name="Gianni Matragrano"/>
+		</team>
+		<versions>
+			<version id="0.7.1" release_date="April 30, 2025">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DNA.CON" size="152940" type="con" sha1="bc5254a39b492759c6a8dc7195efaaa406009a16"/>
+						<file name="Duke_Nukem_Advance_0.7.1.zip" size="9731782" type="zip" sha1="b20b4f873b59f94fa08c41f5b069e635daf797e7"/>
+					</game>
+				</type>
+				<type id="Golden Desert Eagle">
+					<game type="eDuke32" state="Native">
+						<file name="DNA.CON" size="152940" type="con" sha1="bc5254a39b492759c6a8dc7195efaaa406009a16"/>
+						<file name="Duke_Nukem_Advance_0.7.1.zip" size="9731782" type="zip" sha1="b20b4f873b59f94fa08c41f5b069e635daf797e7"/>
+						<file name="Duke_Nukem_Advance_0.7.1_-_Golden_Desert_Eagle.zip" size="390047" type="zip" sha1="665ffab6fe1b2ef4ae37f61ca16fe855c9306600"/>
+					</game>
+				</type>
+			</version>
+			<version id="0.8.10" release_date="June 10, 2025">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DNA.CON" size="154149" type="con" sha1="a98c57bdf58f41d0c3cb2966aadbe4168ab8143d"/>
+						<file name="Duke_Nukem_Advance_0.8.10.zip" size="23078342" type="zip" sha1="c21821cba21a1926c147e4b7224e57f52e0282db"/>
+					</game>
+				</type>
+				<type id="Golden Desert Eagle">
+					<game type="eDuke32" state="Native">
+						<file name="DNA.CON" size="154149" type="con" sha1="a98c57bdf58f41d0c3cb2966aadbe4168ab8143d"/>
+						<file name="Duke_Nukem_Advance_0.8.10.zip" size="23078342" type="zip" sha1="c21821cba21a1926c147e4b7224e57f52e0282db"/>
+						<file name="Duke_Nukem_Advance_0.8.10_-_Golden_Desert_Eagle.zip" size="389968" type="zip" sha1="b012823a839d991d8f6ca4765f9dd4525483b356"/>
+					</game>
+				</type>
+			</version>
+			<version id="1.0 Playtest" release_date="May 7, 2026">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DNA4PC.CON" size="26" type="con" sha1="f027605a5ae248d1ae8c670424a508b6d60a460c"/>
+						<file name="Duke_Nukem_Advance_1.0_Playtest.zip" size="21453915" type="zip" sha1="c9da54aad70a1a0f30a461948e32570cb1217397"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="dukeadvance_v0.7.1.zip" filesize="18524994" version="0.7.1" game="eDuke32" type="Original Files" sha1="560adbfaf634a7c7bd1c10f89cad295a14c3de2f"/>
+			<download filename="dukeadvance_v0.8.10.zip" filesize="26268565" version="0.8.10" game="eDuke32" type="Original Files" sha1="57069f186bd7f406a04399dd891670d450920052"/>
+			<download filename="DNA4PC-d3f8103.zip" filesize="30485291" version="1.0 Playtest" game="eDuke32" type="Original Files" sha1="4b54f9b7b51fe02a6e7773c8a4184734120a6fad"/>
+			<download filename="GoldenEagle.zip" filesize="378573" version_type="Golden Desert Eagle" game="eDuke32" type="Original Files" sha1="c401213bb3c8a92d7fc0480a3bb1b02ecc113893"/>
+			<download filename="Duke_Nukem_Advance_0.7.1-ModMgrE.zip" filesize="9731972" version="0.7.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="73cfe6267637dc97e2925dfdb8e5dbb7dc1fc762"/>
+			<download filename="Duke_Nukem_Advance_0.7.1_-_Golden_Desert_Eagle-ModMgrE.zip" filesize="390281" version="0.7.1" version_type="Golden Desert Eagle" game="eDuke32" type="Mod Manager Files" state="Native" sha1="648eee1b431f43733e01347d5cb73d808786c3f4"/>
+			<download filename="Duke_Nukem_Advance_0.8.10-ModMgrE.zip" filesize="23078534" version="0.8.10" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c4be4fff5cf246cccd43435791ce1120ee22a734"/>
+			<download filename="Duke_Nukem_Advance_0.8.10_-_Golden_Desert_Eagle-ModMgrE.zip" filesize="390204" version="0.8.10" version_type="Golden Desert Eagle" game="eDuke32" type="Mod Manager Files" state="Native" sha1="655288c3440a026fbdeba9e365b2f9b949596bd2"/>
+			<download filename="Duke_Nukem_Advance_1.0_Playtest-ModMgrE.zip" filesize="21454119" version="1.0 Playtest" game="eDuke32" type="Mod Manager Files" state="Native" sha1="2231012024f26439c5fdcd147d7e46acafd329ef"/>
+		</downloads>
+		<notes>
+			<note>A continuation of Duke Nukem Advance 4 PC.</note>
+		</notes>
+		<related>
+			<mod id="duke_nukem_advance_4_pc"/>
+		</related>
 	</mod>
 </mods>
