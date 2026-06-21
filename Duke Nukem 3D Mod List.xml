@@ -12210,4 +12210,23 @@
 			<mod id="grins_of_divinity_episode_1_system_sol_invaded"/>
 		</related>
 	</mod>
+	<mod name="BattleDuke" id="battleduke" type="Episode">
+		<team>
+			<member name="Sanek" email="bechtin7@mail.ru" discord="Sanek#6142" country="Russia"/>
+		</team>
+		<versions>
+			<version release_date="June 4, 2022">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="BD.CON" size="151188" type="con" sha1="99296db6f2f5531af8d5eb2922028c1bc8675e16"/>
+						<file name="BD.GRP" size="725785" type="grp" sha1="ffb626ddf6aaa0f4e48b54aad90660b09353d2f6"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="battleduke.zip" filesize="2499912" game="Atomic" type="Original Files" sha1="e89480041c18a9fae1f0bf1f226e04ab68390457"/>
+			<download filename="BattleDuke-ModMgrA.zip" filesize="176566" game="Atomic" type="Mod Manager Files" state="Native" sha1="bf26a8ad110ab1c0a3d19e3fa98ea4e6bad7b762"/>
+		</downloads>
+	</mod>
 </mods>
