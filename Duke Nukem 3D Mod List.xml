@@ -10370,6 +10370,14 @@
 			<member name="Maarten Pinxten" email="mfpinxten@hotmail.com"/>
 		</team>
 		<versions>
+			<version id="0.2 Alpha" release_date="April 28, 2007">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="ICDGAME.CON" size="180810" type="con" sha1="85c7b40daa9065d0b27b3f40661fe65bdb2fbbad"/>
+						<file name="NUCLEAR_SHOWDOWN_0.2_ALPHA.GRP" size="3533614" type="grp" sha1="18e88e607b577008a5bb02ed6caa19bf21d06f00"/>
+					</game>
+				</type>
+			</version>
 			<version id="1.1" release_date="August 29, 2009">
 				<type>
 					<game type="eDuke32" state="Native">
@@ -10399,9 +10407,11 @@
 			</version>
 		</versions>
 		<downloads>
+			<download filename="Nuclear_Showdown_Alpha_v02.zip" filesize="996101" version="0.2 Alpha" game="eDuke32" type="Original Files" sha1="7dda73b02a51766df135c927adc45e73162cfa43"/>
 			<download filename="Nuclear_Showdown_v1.1.rar" filesize="6174051" version="1.1" game="eDuke32" type="Original Files" sha1="96bba275ebb246c6ceeecab60362381643256876"/>
 			<download filename="Nuclear_Showdown_v2.zip" filesize="7507901" version="2.0" game="eDuke32" type="Original Files" sha1="637dbda313d980a639dd233c4fcdf05d12cdcc2a"/>
 			<download filename="Nuclear_Showdown_V2.1.zip" filesize="10565637" version="2.1" game="eDuke32" type="Original Files" sha1="6b39a130d7427d3048c9411fd7a527f89fa03b5a"/>
+			<download filename="Nuclear_Showdown_0.2_Alpha-ModMgrE.zip" filesize="966833" version="0.2 Alpha" game="eDuke32" type="Mod Manager Files" state="Native" sha1="5f526f1db84e04533ffd3173c7b3a3fa260b3b46"/>
 			<download filename="Nuclear_Showdown_1.1-ModMgrE.zip" filesize="8803381" version="1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="f8a5d89c1da983cfc90bad4e2859ed4e1f50af2f"/>
 			<download filename="Nuclear_Showdown_2.0-ModMgrE.zip" filesize="8834475" version="2.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="f573ef92b58ba9849d3b634cfae5c76201f90a23"/>
 			<download filename="Nuclear_Showdown_2.1-ModMgrE.zip" filesize="11894169" version="2.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c666ebdb2b07cc040f604bf4ea43816f0e11c78e"/>
