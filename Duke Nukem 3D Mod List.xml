@@ -1599,7 +1599,7 @@
 	</mod>
 	<mod name="Dukey Nukem 3D" id="dukey_nukem_3d" type="Total Conversion">
 		<team>
-			<member name="Luis D. Ramirez" alias="Nuker"/>
+			<member name="Luis D. Ramirez" alias="Nuker" email="Jussme1@aol.com"/>
 		</team>
 		<versions>
 			<version release_date="August 4, 1998">
@@ -12165,5 +12165,27 @@
 			<download filename="Pacocta-ModMgrR.zip" filesize="369637" game="Regular" type="Mod Manager Files" state="Native" sha1="a60d779355cd0657bfc77b0c49bda1e63546a393"/>
 			<download filename="Pacocta-ModMgrA.zip" filesize="440121" game="Atomic" type="Mod Manager Files" state="Converted" sha1="94bd39a3931b895f6589a0b8b6f84959a4af067e"/>
 		</downloads>
+	</mod>
+	<mod name="LA Duke3D" id="la_duke3d" type="Episode" version="1">
+		<team>
+			<member name="Luis D. Ramirez" alias="Nuker" email="Jussme1@aol.com"/>
+		</team>
+		<versions>
+			<version id="1" release_date="August 24, 1998">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="LADUKE.CON" size="151192" type="con" sha1="da7494610f40b3c38e185ecf7712a9215a9431d6"/>
+						<file name="LADUKE.GRP" size="293794" type="grp" sha1="64b56059525230caf9ea0ca153e3efc144737438"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="laduke.zip" filesize="41328" version="1" game="Atomic" type="Original Files" sha1="e9ccddb6abde74aa695dbc1c2fdc5c99d4e0e0ac"/>
+			<download filename="LA_Duke3D-ModMgrA.zip" filesize="86438" version="1" game="Atomic" type="Mod Manager Files" state="Native" sha1="fca4994713817b08e232d156638e37be45dcab48"/>
+		</downloads>
+		<notes>
+			<note>Replaces E1L1 and E1L2.</note>
+		</notes>
 	</mod>
 </mods>
