@@ -12298,4 +12298,24 @@
 			<mod id="duke_nukem_advance_4_pc"/>
 		</related>
 	</mod>
+	<mod name="Der Zorn Gottes" id="der_zorn_gottes" type="Map" website="https://www.moddb.com/mods/der-zorn-gottes">
+		<team>
+			<member name="Alex Pistol" email="aleks4duke@gmail.com" discord="Ledsbourne#2631" steam="Ledsbourne" country="Poland"/>
+		</team>
+		<versions>
+			<version release_date="October 20, 2023">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DZG.CON" size="152915" type="con" sha1="d3a38fdcc0befb6a383c20849b092406b5bc7726"/>
+						<file name="Der_Zorn_Gottes.zip" size="6532259" type="zip" sha1="e02647cb407202fd94f9a3ab74b59bbffe6e740d"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="DER_ZORN_GOTTES.zip" filesize="10465169" game="eDuke32" type="Original Files" sha1="48cc04b1bc2fcdafbb5b49972738d94b078df10d"/>
+			<download filename="DER_ZORN_GOTTES-32BIT.zip" filesize="10526275" special="32-bit Version" game="eDuke32" type="Original Files" sha1="3d6f7c940c8c25bf35e886a7a86b62b5dd483b2e"/>
+			<download filename="Der_Zorn_Gottes-ModMgrE.zip" filesize="6532431" game="eDuke32" type="Mod Manager Files" state="Native" sha1="5f785175186e09ad3b55c13c1fcf8a3a0525d878"/>
+		</downloads>
+	</mod>
 </mods>
