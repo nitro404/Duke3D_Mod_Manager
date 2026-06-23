@@ -9736,6 +9736,57 @@
 			<download filename="Outpost_X-ModMgrE.zip" filesize="5838218" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c9669c4a6f70c8cd84189b1038e0b68e451dee40"/>
 		</downloads>
 	</mod>
+	<mod name="Graveyard" id="graveyard" type="Total Conversion" version="1.2" website="http://dukeworld.duke4.net/2001-current/tc/graveyard">
+		<team>
+			<member name="Mark"/>
+			<member name="TeaMonster"/>
+			<member name="chicken"/>
+			<member name="Psionic"/>
+		</team>
+		<versions>
+			<version id="1.0" release_date="January 11, 2015">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="assets/GRAVEYARD.CON" size="1989" type="con" sha1="7ce8a261047f456a28c19b952565277b35603ae6"/>
+						<file name="assets/duke3d.def" size="155" type="def" sha1="4777e082ab9694b5e742437406e02c1b10cf0a78"/>
+						<file name="Graveyard_1.0.zip" size="213368142" type="zip" sha1="c456e60df7c647787697270070fddfc46238072a"/>
+					</game>
+				</type>
+			</version>
+			<version id="1.1" release_date="March 24, 2015">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="assets/GRAVEYARD.CON" size="1989" type="con" sha1="7ce8a261047f456a28c19b952565277b35603ae6"/>
+						<file name="assets/duke3d.def" size="204" type="def" sha1="f5b35363ecdbdf93f6c411d3c757302cdfa0a22e"/>
+						<file name="Graveyard_1.1.zip" size="213374418" type="zip" sha1="7064b4d9290168a795e7803fb261be9f50212f63"/>
+					</game>
+				</type>
+			</version>
+			<version id="1.2" release_date="April 17, 2015">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="assets/GRAVEYARD.CON" size="1989" type="con" sha1="7ce8a261047f456a28c19b952565277b35603ae6"/>
+						<file name="assets/duke3d.def" size="204" type="def" sha1="f5b35363ecdbdf93f6c411d3c757302cdfa0a22e"/>
+						<file name="Graveyard_1.2.zip" size="213392523" type="zip" sha1="e48eb6c97f1769d1bdd5b8b62ba8ef7a4c8e3239"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="graveyard.zip" filesize="215332885" version="1.0" game="eDuke32" type="Original Files" sha1="9d9442f8f4088e42ed6b20b962364bda9904ee91"/>
+			<download filename="graveyard patch.zip" filesize="379828" version="1.1" special="Patch" game="eDuke32" type="Original Files" sha1="d2bd54ddc9e0e98f1fa258c5816febe441738d12"/>
+			<download filename="graveyard patch 2.zip" filesize="98676" version="1.2" special="Patch" game="eDuke32" type="Original Files" sha1="bc825c5a1904183c53dd3285ba72f13504bca413"/>
+			<download filename="Graveyard_1.0-ModMgrE.zip" filesize="213368310" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="78d7a1ca5bd6a8158aea0ea591965af7812c7258"/>
+			<download filename="Graveyard_1.1-ModMgrE.zip" filesize="213374586" version="1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="5dacec2b1c4582c09e34402c5fb19f5298d0a69a"/>
+			<download filename="Graveyard_1.2-ModMgrE.zip" filesize="213392691" version="1.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="82eb98ff4b1a7a1c706e7bd346466f1fb1e118c9"/>
+		</downloads>
+		<notes>
+			<note>Enemy AI may not work properly on versions of eDuke32 released after March 2014.</note>
+		</notes>
+		<related>
+			<mod id="decay"/>
+		</related>
+	</mod>
 	<mod name="Metropolitan Mayhem" id="metropolitan_mayhem" type="Episode" website="https://www.moddb.com/mods/metropolitan-mayhem">
 		<team>
 			<member name="Corentin Dallay" alias="MetHy"/>
