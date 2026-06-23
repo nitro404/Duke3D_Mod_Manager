@@ -4199,7 +4199,7 @@
 	</mod>
 	<mod name="Total Infiltration" id="total_infiltration" type="Total Conversion">
 		<team>
-			<member name="Devastator" email="zheka_XX@TUT.by"/>
+			<member name="Devastator" email="zheka_XX@TUT.by" country="Belarus"/>
 		</team>
 		<versions>
 			<version>
@@ -12528,5 +12528,24 @@
 			<mod id="castle_dukenstein"/>
 			<mod id="wolf_2_duke"/>
 		</similar>
+	</mod>
+	<mod name="MiNd sTOrM" id="mind_storm" type="Map">
+		<team>
+			<member name="Devastator" email="zheka_XX@TUT.by" country="Belarus"/>
+		</team>
+		<versions>
+			<version release_date="February 15, 2004">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="MS.CON" size="151329" type="con" sha1="7a6056ebed6f9ffb361ec33f0f7924d8a0a0a5e6"/>
+						<file name="MS.GRP" size="891308" type="grp" sha1="513bdc7d19f9b46fdf7f4e86f2e76b291ef7153c"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="ms.zip" filesize="223121" game="Atomic" type="Original Files" sha1="ea5e60033849687f20a3f6efadf769cd53e38014"/>
+			<download filename="MiNd_sTOrM-ModMgrA.zip" filesize="244636" game="Atomic" type="Mod Manager Files" state="Native" sha1="56d6f07ab5772c63a942efb195351eb8d5dafe84"/>
+		</downloads>
 	</mod>
 </mods>
