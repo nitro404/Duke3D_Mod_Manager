@@ -398,6 +398,11 @@
 			<download filename="arwolf.zip" filesize="2381185" game="Atomic" type="Original Files" sha1="ede5ba79d2389d6ec9ae0e73eb498fced82f4af8"/>
 			<download filename="Arctic_Wolf-ModMgrA.zip" filesize="2359394" game="Atomic" type="Mod Manager Files" state="Native" sha1="f47f7be44b10ccd27390bc9ae5e02832496459e1"/>
 		</downloads>
+		<similar>
+			<mod id="castle_dukenstein"/>
+			<mod id="wolf_2_duke"/>
+			<mod id="wolf_3d"/>
+		</similar>
 	</mod>
 	<mod name="Arrival" id="arrival" type="Partial Conversion">
 		<versions>
@@ -720,6 +725,11 @@
 			<download filename="Castle_Dukenstein_6.1-ModMgrR.zip" filesize="2160710" version="6.1" game="Regular" type="Mod Manager Files" state="Native" sha1="20338673b8b48992955980dab0216a50b9b6670c"/>
 			<download filename="Castle_Dukenstein_6.1-ModMgrA.zip" filesize="2327273" version="6.1" game="Atomic" type="Mod Manager Files" state="Converted" sha1="970eaebf7b01b4af323d4a96f3a71fc9a60d187a"/>
 		</downloads>
+		<similar>
+			<mod id="arctic_wolf"/>
+			<mod id="wolf_2_duke"/>
+			<mod id="wolf_3d"/>
+		</similar>
 	</mod>
 	<mod name="Chimera" id="chimera" type="Total Conversion">
 		<team>
@@ -4624,6 +4634,11 @@
 			<download filename="Wolf_2_Duke_3.02-ModMgrA.zip" filesize="1873914" version="3.02" game="Atomic" type="Mod Manager Files" state="Native" sha1="3a262a848a79e456b53f03d53edc40b9bd27be92"/>
 			<download filename="Wolf_2_Duke_4.05-ModMgrA.zip" filesize="3600929" version="4.05" game="Atomic" type="Mod Manager Files" state="Native" sha1="96a4aca20710aa170c260b5680b36eded7e9f6ba"/>
 		</downloads>
+		<similar>
+			<mod id="arctic_wolf"/>
+			<mod id="castle_dukenstein"/>
+			<mod id="wolf_3d"/>
+		</similar>
 	</mod>
 	<mod name="Wolf-Pack" id="wold-pack" type="Total Conversion" version="1.3" website="http://www.geocities.com/TimesSquare/Lair/5827">
 		<team>
@@ -12489,5 +12504,29 @@
 			<download filename="duke4.7z" filesize="13057903" version="1.2" game="Atomic" type="Original Files" sha1="808078ab945ab043ba00579212e4301c73e8c2ac"/>
 			<download filename="Duke_Nukem_IV_1.2-ModMgrA.zip" filesize="13670304" version="1.2" game="Atomic" type="Mod Manager Files" state="Native" sha1="4981b3b35649d84ca5482c1b87c809b084a4e865"/>
 		</downloads>
+	</mod>
+	<mod name="Wolf 3D" id="wolf_3d" type="Total Conversion" website="https://www.dukemaps.net/wolfenstein-3d-mod">
+		<team>
+			<member name="MrEsturk"/>
+		</team>
+		<versions>
+			<version release_date="April 29, 2022">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="WOLF3D.CON" size="1494" type="con" sha1="f076bf57dab811669c4a8cfe8755415ba2063da8"/>
+						<file name="WOLF3D.GRP" size="21585155" type="grp" sha1="eabfa699892009b668e8de690c158f07c6604c4f"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Main-File-2-1-0-0-1651305438.zip" filesize="5352938" game="Atomic" type="Original Files" sha1="a7871cf8c6ec2f692444fd706b54a2121afa1309"/>
+			<download filename="Wolf_3D-ModMgrA.zip" filesize="5488229" game="Atomic" type="Mod Manager Files" state="Native" sha1="d172c40c422355cb69dd6a26840615c78db2bfb7"/>
+		</downloads>
+		<similar>
+			<mod id="arctic_wolf"/>
+			<mod id="castle_dukenstein"/>
+			<mod id="wolf_2_duke"/>
+		</similar>
 	</mod>
 </mods>
