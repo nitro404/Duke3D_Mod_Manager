@@ -10717,6 +10717,48 @@
 			<download filename="The_Christmas_Project_1.01-ModMgrE.zip" filesize="7666648" version="1.01" game="eDuke32" type="Mod Manager Files" state="Native" sha1="7bd441349fcb1ab7ac9e3c00ae9a8a1fc2a053e1"/>
 		</downloads>
 	</mod>
+	<mod name="William JCM&apos;s Weapon Pak" id="william_jcms_weapon_pak" type="Weapon Patch" version="V3 Rev8 Update 1">
+		<team>
+			<member name="William JCM" website="http://williamjcm.webnode.com"/>
+		</team>
+		<versions>
+			<version id="V3" release_date="September 26, 2008">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="WJCM.CON" size="152955" type="con" sha1="70163a4fad31ec36117fc0647b6e6ae81d868626"/>
+						<file name="WJCM3.GRP" size="8553185" type="grp" sha1="9c82f5b6a41b1016404ddd001a5c731043c8bffb"/>
+					</game>
+				</type>
+			</version>
+			<version id="V3 Rev6" release_date="January 24, 2009">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="WJCM.CON" size="151041" type="con" sha1="16c87f1520b0e66142aff66d93aaf5336b22bd3e"/>
+						<file name="WJCM31.GRP" size="8573075" type="grp" sha1="73678c5bd5327a5535b4f9a87e17dee6a10a6267"/>
+					</game>
+				</type>
+			</version>
+			<version id="V3 Rev8 Update 1" release_date="April 30, 2009">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="WJCM.CON" size="153359" type="con" sha1="5084f3c3100e46acead00acffd1c86d410372965"/>
+						<file name="WJCM33.GRP" size="8290718" type="grp" sha1="f11d362aea96c2eca2f4586b8edc5f678969a957"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="wjcm3.zip" filesize="3521713" version="V3" game="eDuke32" type="Original Files" sha1="9de7d556eea4fd95032b14d656660741e0306cfe"/>
+			<download filename="wjcm31.zip" filesize="3644642" version="V3 Rev6" game="eDuke32" type="Original Files" sha1="2df1da195b3e9fb7dded01a38a956af5d97ab0fa"/>
+			<download filename="wjcm33.zip" filesize="6445033" version="V3 Rev8 Update 1" game="eDuke32" type="Original Files" sha1="71a723fa5b2be92b5d0ac86ac7b8f1c30d0b002a"/>
+			<download filename="William_JCMs_Weapon_Pak_V3-ModMgrE.zip" filesize="3046629" version="V3" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b05eac285e2c20888873e0acdbbe797a5b9f73a2"/>
+			<download filename="William_JCMs_Weapon_Pak_V3_Rev6-ModMgrE.zip" filesize="3055443" version="V3 Rev6" game="eDuke32" type="Mod Manager Files" state="Native" sha1="8bfec7716f0f7a388e03365eed8f001a8f02fb3a"/>
+			<download filename="William_JCMs_Weapon_Pak_V3_Rev8_Update_1-ModMgrE.zip" filesize="2971665" version="V3 Rev8 Update 1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="d9f7ea7b62d7e7dbb4f03628b6210a434f2728ca"/>
+		</downloads>
+		<related>
+			<mod id="evil_incarnate"/>
+		</related>
+	</mod>
 	<mod name="White Noise" id="white_noise" type="Total Conversion" version="0.9" website="https://www.moddb.com/games/duke-nukem-3d/addons/white-noise">
 		<team country="Germany">
 			<member name="uLTra" youtube="ultra8103"/>
