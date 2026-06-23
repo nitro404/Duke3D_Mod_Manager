@@ -5456,18 +5456,18 @@
 			<version release_date="August 29, 1998">
 				<game type="Regular" state="Native">
 					<file name="KILLKILL.CON" size="99776" type="con" sha1="a7de1a18e843846dbbe87134e7cfe9f3af6fdcd6"/>
-					<file name="KILLKILL.GRP" size="8087160" type="grp" sha1="65a83f11bcae340c6991924a7bf55a6980aeb12d"/>
+					<file name="KILLKILL.GRP" size="15542374" type="grp" sha1="9e98b054a3146297c4f8d10725cd3793a3837cb2"/>
 				</game>
 				<game type="Atomic" state="Converted">
 					<file name="KILLKILL.CON" size="151225" type="con" sha1="dc1e7dd96b826bcdc4e6f1f073078f5c440f3b80"/>
-					<file name="KILLKILL.GRP" size="8632259" type="grp" sha1="79bee1a2842a76b55e3c077e3989b68fc32f2a67"/>
+					<file name="KILLKILL.GRP" size="16087473" type="grp" sha1="55f6d713d0a1c77c4709557d4fb8275c8f2c17af"/>
 				</game>
 			</version>
 		</versions>
 		<downloads>
 			<download filename="killkill.zip" filesize="5387695" corrupted="true" game="Regular" type="Original Files" sha1="0a4e0e211fd2a598685004a219a51baf3c00d778"/>
-			<download filename="KILL!_KILL!_KILL!-ModMgrR.zip" filesize="3005133" game="Regular" type="Mod Manager Files" state="Native" sha1="2c7996fddb37c94b9cfd049b60a009ff44295e5d"/>
-			<download filename="KILL!_KILL!_KILL!-ModMgrA.zip" filesize="3246075" game="Atomic" type="Mod Manager Files" state="Converted" sha1="31ecb2817594a28ab933b5ede99f36472ac5ec14"/>
+			<download filename="KILL!_KILL!_KILL!-ModMgrR.zip" filesize="5364052" game="Regular" type="Mod Manager Files" state="Native" sha1="df9eff1f22c4cf9f5f116e284db40ffdcaa12bfe"/>
+			<download filename="KILL!_KILL!_KILL!-ModMgrA.zip" filesize="5604797" game="Atomic" type="Mod Manager Files" state="Converted" sha1="586eb3cdb791aca23ba91cfecddf283816fd24c2"/>
 		</downloads>
 	</mod>
 	<mod name="Knife" id="knife" type="Weapon Patch">
