@@ -12608,7 +12608,7 @@
 	</mod>
 	<mod name="Bad Weekend" id="bad_weekend" type="Partial Conversion">
 		<team>
-			<member name="Mister Sinister" email="m1ster_s1n1ster@yahoo.com"/>
+			<member name="Mister Sinister" email="m1ster_s1n1ster@yahoo.com" country="Russia"/>
 		</team>
 		<versions>
 			<version release_date="June 8, 2010">
@@ -12623,6 +12623,25 @@
 		<downloads>
 			<download filename="badweekend.zip" filesize="33618107" game="eDuke32" type="Original Files" sha1="efb6db0e50537bab74c72a20d1715afba1e7f4cb"/>
 			<download filename="Bad_Weekend-ModMgrE.zip" filesize="30312290" game="eDuke32" type="Mod Manager Files" state="Native" sha1="a41edf163dda02f92f1f769f02b0c3a93420e15f"/>
+		</downloads>
+	</mod>
+	<mod name="Death Drive" id="death_drive" type="Episode">
+		<team>
+			<member name="Mister Sinister" email="littlecutepixie@gmail.com" country="Russia"/>
+		</team>
+		<versions>
+			<version release_date="May 1, 2015">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="DEADRIVE.CON" size="151194" type="con" sha1="545663bcfb8a751fbd1328e992a534dd6526b7e6"/>
+						<file name="DEADRIVE.GRP" size="2263224" type="grp" sha1="f5ddfbc2177e6f7799be044abd76aeb70b5c81b5"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="DDRIVE FINAL.zip" filesize="1130010" game="Atomic" type="Original Files" sha1="b80a21dff87c352f8df16b91b6000cb9afe45737"/>
+			<download filename="Death_Drive-ModMgrA.zip" filesize="1180270" game="Atomic" type="Mod Manager Files" state="Native" sha1="a91513a2e3bc7d168804a0d3e7652c0df749df52"/>
 		</downloads>
 	</mod>
 </mods>
