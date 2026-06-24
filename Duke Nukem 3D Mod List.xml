@@ -12682,4 +12682,23 @@
 			<download filename="Aquatic_Hive-ModMgrA.zip" filesize="203232" game="Atomic" type="Mod Manager Files" state="Native" sha1="3db841bb6e0a322cad981728dadccf867e5a348a"/>
 		</downloads>
 	</mod>
+	<mod name="Reichskanzlei" id="reichskanzlei" type="Map" version="1.1">
+		<team>
+			<member name="Petr Kucera" alias="Artec" country="Poland"/>
+		</team>
+		<versions>
+			<version id="1.1" release_date="May 19, 2003">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="RK.CON" size="151189" type="con" sha1="7a56904d008be9ca1b18a43730243c33438e2cd7"/>
+						<file name="RK.GRP" size="3517802" type="grp" sha1="2c42b5bd9f2c1d4a0d66d0469fe7cb9f6fd0ee5f"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Reichskanzlei.zip" filesize="1611919" version="1.1" game="Atomic" type="Original Files" sha1="0d804f989e10f440f2745168f33e797868b5143e"/>
+			<download filename="Reichskanzlei-ModMgrA.zip" filesize="1653027" version="1.1" game="Atomic" type="Mod Manager Files" state="Native" sha1="dc0405caaed0d72a5daff22189f4124e1d2c9608"/>
+		</downloads>
+	</mod>
 </mods>
