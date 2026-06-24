@@ -8599,7 +8599,7 @@
 			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
 			<member name="Michael Crisp" alias="Micky C"/>
 			<member name="Mikko Sandt" email="sirpa.sandt@pp.inet.fi"/>
-			<member name="Mister Sinister"/>
+			<member name="Mister Sinister" email="m1ster_s1n1ster@yahoo.com"/>
 			<member name="Aymeric Nocus" alias="MRCK" email="aymeric-nocus@tele2.fr" youtube="MisterCK" discord="ck3d#2928" country="France"/>
 			<member name="Paul B"/>
 			<member name="Steambull"/>
@@ -12604,6 +12604,25 @@
 		<downloads>
 			<download filename="depot.zip" filesize="3310992" game="Atomic" type="Original Files" sha1="81b66e99ece58f490be1ba294c53230ff29cbd0f"/>
 			<download filename="Supply_Depot-ModMgrA.zip" filesize="3343579" game="Atomic" type="Mod Manager Files" state="Native" sha1="9c48ee4fbfb19f1882a012a9c39b10f5c96ecd64"/>
+		</downloads>
+	</mod>
+	<mod name="Bad Weekend" id="bad_weekend" type="Partial Conversion">
+		<team>
+			<member name="Mister Sinister" email="m1ster_s1n1ster@yahoo.com"/>
+		</team>
+		<versions>
+			<version release_date="June 8, 2010">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="BADGAME.CON" size="149328" type="con" sha1="612e6fd02a573bb2eab132a0a98e77be8cdc6396"/>
+						<file name="Bad_Weekend.zip" size="30312126" type="zip" sha1="3b840396db1b2d8a7d6f61c8a0af3492b94fe796"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="badweekend.zip" filesize="33618107" game="eDuke32" type="Original Files" sha1="efb6db0e50537bab74c72a20d1715afba1e7f4cb"/>
+			<download filename="Bad_Weekend-ModMgrE.zip" filesize="30312290" game="eDuke32" type="Mod Manager Files" state="Native" sha1="a41edf163dda02f92f1f769f02b0c3a93420e15f"/>
 		</downloads>
 	</mod>
 </mods>
