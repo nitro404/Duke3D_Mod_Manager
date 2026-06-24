@@ -12567,4 +12567,24 @@
 			<download filename="Draculas_Castle-ModMgrE.zip" filesize="4539741" game="eDuke32" type="Mod Manager Files" state="Native" sha1="2e8c6693e2e4e6483c395f6a6ac5e811934a5062"/>
 		</downloads>
 	</mod>
+	<mod name="The Space Mission" id="the_space_mission" type="Episode" version="V1">
+		<team>
+			<member name="Paul Monteray" alias="High Treason" email="pau174u@AOL.com"/>
+		</team>
+		<versions>
+			<version id="V1" release_date="April 15, 2012">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="SPACE.CON" size="151738" type="con" sha1="c2f27de8fffeac85a303f2043bde0c570be9e49f"/>
+						<file name="SPACE.DEF" size="3552" type="def" sha1="20aecf9d80d50785735ed59c2475b793c95a3f50"/>
+						<file name="The_Space_Mission.zip" size="16941926" type="zip" sha1="02362855d9ecf9bd787e5423ca6bc94c7c559da6"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Space_V1.zip" filesize="16931292" version="V1" game="eDuke32" type="Original Files" sha1="74a0fb5a3514080aecd1a9be12b7a34b97631cc5"/>
+			<download filename="The_Space_Mission-ModMgrE.zip" filesize="16942102" version="V1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="19ebf902561f1e5ce74d9810525a9809d69e60f0"/>
+		</downloads>
+	</mod>
 </mods>
