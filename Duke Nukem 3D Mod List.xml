@@ -12644,4 +12644,23 @@
 			<download filename="Death_Drive-ModMgrA.zip" filesize="1180270" game="Atomic" type="Mod Manager Files" state="Native" sha1="a91513a2e3bc7d168804a0d3e7652c0df749df52"/>
 		</downloads>
 	</mod>
+	<mod name="Jade Base" id="jade_base" type="Map">
+		<team>
+			<member name="Devastator" email="Devastator5151@mail.ru" country="Belarus"/>
+		</team>
+		<versions>
+			<version release_date="March 23, 2003">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="JADEBASE.CON" size="152770" type="con" sha1="649c166a8b768ada0c5b175f6c97d66342ed3e5c"/>
+						<file name="JADEBASE.GRP" size="2521745" type="grp" sha1="e6f4454979242b68344b91a4aad0b6295c871d29"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="jade.zip" filesize="662182" game="Regular" type="Original Files" sha1="db9f4822c891e67cf7024ea8f6bf606e8163e333"/>
+			<download filename="Jade_Base-ModMgrA.zip" filesize="662084" game="Atomic" type="Mod Manager Files" state="Native" sha1="4fd825c44cabba46b0120883b65c1e7079482571"/>
+		</downloads>
+	</mod>
 </mods>
