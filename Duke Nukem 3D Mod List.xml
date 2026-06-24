@@ -525,7 +525,7 @@
 			<member name="Kevin Cools" alias="Kef_Nukem" email="kevincools@hotmail.com"/>
 			<member name="Wim Cools"/>
 			<member name="Geoffrey van Dijk" alias="Fakir Baba" email="fakirnogwat@hotmail.com"/>
-			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com"/>
+			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
 			<member name="Alejandro Glavic" email="aglavic@yahoo.com.ar" country="Argentina"/>
 			<member name="Rob Bomber" email="VvBoMBeRvV@aol.com"/>
 			<member name="Slawomir Lawrynowicz" alias="LAW" email="Law2@wp.pl"/>
@@ -12546,6 +12546,25 @@
 		<downloads>
 			<download filename="ms.zip" filesize="223121" game="Atomic" type="Original Files" sha1="ea5e60033849687f20a3f6efadf769cd53e38014"/>
 			<download filename="MiNd_sTOrM-ModMgrA.zip" filesize="244636" game="Atomic" type="Mod Manager Files" state="Native" sha1="56d6f07ab5772c63a942efb195351eb8d5dafe84"/>
+		</downloads>
+	</mod>
+	<mod name="Dracula&apos;s Castle" id="draculas_castle" type="Map" website="http://jbladefps.blogspot.co.uk">
+		<team>
+			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
+		</team>
+		<versions>
+			<version release_date="October 22, 2016">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DRACULA.CON" size="151194" type="con" sha1="046f3565d1e3994276af4ac58a5f9197d7e707e6"/>
+						<file name="DRACULAS_CASTLE.GRP" size="7032559" type="grp" sha1="1af0dc18b31c5878b86ea739def0414b3725270c"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="DRACULA_E32.zip" filesize="4540037" game="eDuke32" type="Original Files" sha1="8b26614f8145fc1d6c45d4da2d8130a724bfc053"/>
+			<download filename="Draculas_Castle-ModMgrE.zip" filesize="4539741" game="eDuke32" type="Mod Manager Files" state="Native" sha1="2e8c6693e2e4e6483c395f6a6ac5e811934a5062"/>
 		</downloads>
 	</mod>
 </mods>
