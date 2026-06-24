@@ -12663,4 +12663,23 @@
 			<download filename="Jade_Base-ModMgrA.zip" filesize="662084" game="Atomic" type="Mod Manager Files" state="Native" sha1="4fd825c44cabba46b0120883b65c1e7079482571"/>
 		</downloads>
 	</mod>
+	<mod name="Aquatic Hive" id="aquatic_hive" type="Map">
+		<team>
+			<member name="Devastator" email="zheka_XX@TUT.by" country="Belarus"/>
+		</team>
+		<versions>
+			<version release_date="November 16, 2004">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="HYDRHIVE.CON" size="151194" type="con" sha1="664e8fe03857915737aff5695fe1eadb92464da9"/>
+						<file name="HYDRHIVE.GRP" size="843094" type="grp" sha1="538608fc1b54c245d19702043bbde5d5c5e896a8"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="aquatichive.zip" filesize="146851" game="Atomic" type="Original Files" sha1="45057ad345ae38038fe17cd4e5e9d7fe63b57053"/>
+			<download filename="Aquatic_Hive-ModMgrA.zip" filesize="203232" game="Atomic" type="Mod Manager Files" state="Native" sha1="3db841bb6e0a322cad981728dadccf867e5a348a"/>
+		</downloads>
+	</mod>
 </mods>
