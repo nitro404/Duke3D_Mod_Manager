@@ -12739,4 +12739,25 @@
 			<download filename="Alien_4_-_Resurrection-ModMgrA.zip" filesize="325522" game="Atomic" type="Mod Manager Files" state="Native" sha1="37e249374dc2003dfe95feec21e7a26579997424"/>
 		</downloads>
 	</mod>
+	<mod name="Rendezvous" id="rendezvous" type="Episode">
+		<team>
+			<member name="Henri K" alias="RazorZ" email="builder.henry@hotmail.com"/>
+		</team>
+		<versions>
+			<version release_date="May 14, 2010">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="REZGAME.CON" size="151857" type="con" sha1="ae65fe8f9438d5d9a9b1fd9376470a590e3fb440"/>
+						<file name="RENDEZVOUS.GRP" size="2526982" type="grp" sha1="0dccf04b869b96d32bba8b45e088c1f45e14f0e2"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="REZL1.zip" filesize="156608" part="1" numparts="3" game="eDuke32" type="Original Files" sha1="77f7c357f60c56e55a6bf4d62a33c968d2769f9d"/>
+			<download filename="REZ2.zip" filesize="128119" part="2" numparts="3" game="eDuke32" type="Original Files" sha1="5cb59224f152e27bab48a8d581dfa0554fcbe1fd"/>
+			<download filename="REZ3.zip" filesize="437621" part="3" numparts="3" game="eDuke32" type="Original Files" sha1="f2df50509c88c3ee5d90fb07e6ec9297a8bbd072"/>
+			<download filename="Rendezvous-ModMgrE.zip" filesize="617971" game="eDuke32" type="Mod Manager Files" state="Native" sha1="940cba5457f06a1f65d0c869860ecc4637d49566"/>
+		</downloads>
+	</mod>
 </mods>
