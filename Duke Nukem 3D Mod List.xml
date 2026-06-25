@@ -12779,4 +12779,23 @@
 			<download filename="Turok_2-ModMgrE.zip" filesize="3378939" game="eDuke32" type="Mod Manager Files" state="Native" sha1="376b50c07801a380f9c1423bf1354f5f8139e724"/>
 		</downloads>
 	</mod>
+	<mod name="Mill Town Rampage" id="mill_town_rampage" type="Episode" version="1.01">
+		<team>
+			<member name="David B." email="m.y.loo@hotmail.com"/>
+		</team>
+		<versions>
+			<version id="1.01" release_date="July 8, 2013">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="MTRGAME.CON" size="151208" type="con" sha1="bde3350f21a889ca57aca291865438f59b0ea955"/>
+						<file name="Mill_Town_Rampage_1.01.zip" size="31646587" type="zip" sha1="9a546174938ee7a7ad964e3132368a5e09c01fc6"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="MillTownRampage.zip" filesize="31624262" version="1.01" game="eDuke32" type="Original Files" sha1="11659d0e7192ee9e766bfba56085f2694d85c9f2"/>
+			<download filename="Mill_Town_Rampage_1.01-ModMgrE.zip" filesize="31646773" version="1.01" game="eDuke32" type="Mod Manager Files" state="Native" sha1="1183caa5511ddcb5cda344eff27134759c358687"/>
+		</downloads>
+	</mod>
 </mods>
