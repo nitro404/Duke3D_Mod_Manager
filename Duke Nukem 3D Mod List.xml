@@ -12720,4 +12720,23 @@
 			<download filename="Overtime-ModMgrA.zip" filesize="718317" game="Atomic" type="Mod Manager Files" state="Converted" sha1="310b64adbc465232d94000e7a65e3d18e33d9b54"/>
 		</downloads>
 	</mod>
+	<mod name="Alien 4: Resurrection" id="alien_4_resurrection" type="Map">
+		<team>
+			<member name="Devastator" email="zheka_XX@TUT.by" country="Belarus"/>
+		</team>
+		<versions>
+			<version release_date="June 23, 2004">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="A4.CON" size="152474" type="con" sha1="8c2f236017de1d209b50b59a8261213969ef652b"/>
+						<file name="A4.GRP" size="1459096" type="grp" sha1="34e953e496973bac629b7be84266915cbd3b210c"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="alien4resurrection.rar" filesize="278033" game="Atomic" type="Original Files" sha1="4b0d94daa6e7973a256d7d670e669246160f2d3f"/>
+			<download filename="Alien_4_-_Resurrection-ModMgrA.zip" filesize="325522" game="Atomic" type="Mod Manager Files" state="Native" sha1="37e249374dc2003dfe95feec21e7a26579997424"/>
+		</downloads>
+	</mod>
 </mods>
