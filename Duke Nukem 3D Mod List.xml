@@ -1563,8 +1563,11 @@
 			<version release_date="December 28, 1999">
 				<game type="Atomic" state="Native">
 					<file name="DSA2.CON" size="154269" type="con" sha1="2bb2ddc7319e0935569b724f3c67cb953fdb79d6"/>
-					<file name="DSA2.GRP" size="20926540" type="grp" sha1="12e84cc8ada0eca8c640f7141a12c2c52c4e9979"/>
+					<file name="DSA2.GRP" size="7743461" type="grp" sha1="de6f399a5fc236a84901dd96b127b6ae153166b7"/>
 				</game>
+				<dependencies>
+					<dependency id="nuclear_winter"/>
+				</dependencies>
 			</version>
 		</versions>
 		<downloads>
@@ -1572,7 +1575,7 @@
 			<download filename="dsa2b.zip" filesize="253635" part="2" numparts="4" game="Atomic" type="Original Files" sha1="0ce3778b799682f5c560101156a5110dc5f3521a"/>
 			<download filename="dsa2c.zip" filesize="598359" part="3" numparts="4" game="Atomic" type="Original Files" sha1="56416ae34339a2f6e5ffc9d8d75166f2aadbcc9f"/>
 			<download filename="dsa2d.zip" filesize="1552840" part="4" numparts="4" game="Atomic" type="Original Files" sha1="ebbff8cbd79e54da985af1b44d2e8757cd1c90b7"/>
-			<download filename="Dukes_Snowy_Adventure_II_Stolen_Weapons-ModMgrA.zip" filesize="7886260" game="Atomic" type="Mod Manager Files" state="Native" sha1="84c406e79155520c004d3079baebef76b0f01f80"/>
+			<download filename="Dukes_Snowy_Adventure_II_Stolen_Weapons-ModMgrA.zip" filesize="2676069" game="Atomic" type="Mod Manager Files" state="Native" sha1="29ee91bd2711d82fdac5c0e5ba71efb35eeb07d8"/>
 		</downloads>
 	</mod>
 	<mod name="DukeVR" id="dukevr" type="Total Conversion" website="http://www.geocities.com/fakirnogwat/vr">
