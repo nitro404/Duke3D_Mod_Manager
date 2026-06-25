@@ -1063,13 +1063,16 @@
 			<version id="1.20" release_date="October 27, 1998">
 				<game type="Atomic" state="Native">
 					<file name="DCWAFFLE.CON" size="163031" type="con" sha1="7cc84c7a678766850b845d0b89b7d7ebe64c1398"/>
-					<file name="DCWAFFLE.GRP" size="10657583" type="grp" sha1="d223201d965426f97e67ced7ad9a89d2e4c7c046"/>
+					<file name="DCWAFFLE.GRP" size="2600249" type="grp" sha1="6d176f5b80590c04239a8f259ed57613a7c0bf9b"/>
 				</game>
+				<dependencies>
+					<dependency id="duke_it_out_in_dc"/>
+				</dependencies>
 			</version>
 		</versions>
 		<downloads>
 			<download filename="DUKEDCWW.zip" filesize="803954" version="1.20" game="Atomic" type="Original Files" sha1="feef085b165cb84c40ceda2eb390a9003411e1e6"/>
-			<download filename="Duke_It_Out_in_D.C._Waffle_Edition_1.20-ModMgrA.zip" filesize="3108847" version="1.20" game="Atomic" type="Mod Manager Files" state="Native" sha1="7e377cfd467a7b88060de8fe1c9995745b465ff4"/>
+			<download filename="Duke_It_Out_in_D.C._Waffle_Edition_1.20-ModMgrA.zip" filesize="830978" version="1.20" game="Atomic" type="Mod Manager Files" state="Native" sha1="96f0e8cc87385dc0aa2ee35c78f7ecc95c1f5990"/>
 		</downloads>
 		<similar>
 			<mod id="duke_it_out_in_dc"/>
