@@ -12760,4 +12760,23 @@
 			<download filename="Rendezvous-ModMgrE.zip" filesize="617971" game="eDuke32" type="Mod Manager Files" state="Native" sha1="940cba5457f06a1f65d0c869860ecc4637d49566"/>
 		</downloads>
 	</mod>
+	<mod name="Turok 2" id="turok_2" type="Map">
+		<team>
+			<member name="Duke64Nukem" alias="Kamikaze Nukem" email="duke64nukem@gmail.com" discord="Sixty Four#1072"/>
+		</team>
+		<versions>
+			<version release_date="November 26, 2014">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="TUROK2.CON" size="151192" type="con" sha1="d66de14e67425a51c80311e5df329c66bb6c5b4c"/>
+						<file name="TUROK2.GRP" size="4102743" type="grp" sha1="bb8269de0649a82509f57f52a80f4c1d4eef6ba4"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Turok2.zip" filesize="3328295" game="eDuke32" type="Original Files" sha1="e13213efb9cf6ccbaa7f8634ff9a280c8880b52b"/>
+			<download filename="Turok_2-ModMgrE.zip" filesize="3378939" game="eDuke32" type="Mod Manager Files" state="Native" sha1="376b50c07801a380f9c1423bf1354f5f8139e724"/>
+		</downloads>
+	</mod>
 </mods>
