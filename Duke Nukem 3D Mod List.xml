@@ -1955,12 +1955,13 @@
 				<type id="Multiplayer">
 					<game type="Regular" state="Native">
 						<file name="IW11MULT.CON" size="111223" type="con" sha1="77e9180578e5ea4611cbbed92ca5a0054c96134a"/>
-						<file name="IW11.GRP" size="48206721" type="grp" shared="true" sha1="8d3907a181212edbc1cd6f300234ebcda89115f2"/>
 					</game>
 					<game type="Atomic" state="Converted">
 						<file name="IW11MULT.CON" size="159268" type="con" sha1="8184a1a77599c02c06cd209c0434716f498c66f7"/>
-						<file name="IW11.GRP" size="46085693" type="grp" shared="true" sha1="6652e298bbd2e4747b877ca9bf6d3a465c4f8f0a"/>
 					</game>
+					<dependencies>
+						<dependency id="imagination_world" version="1.1" version_type="Single Player"/>
+					</dependencies>
 				</type>
 			</version>
 		</versions>
