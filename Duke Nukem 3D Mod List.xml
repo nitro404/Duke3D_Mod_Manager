@@ -12798,4 +12798,23 @@
 			<download filename="Mill_Town_Rampage_1.01-ModMgrE.zip" filesize="31646773" version="1.01" game="eDuke32" type="Mod Manager Files" state="Native" sha1="1183caa5511ddcb5cda344eff27134759c358687"/>
 		</downloads>
 	</mod>
+	<mod name="Vacation Cove" id="vacation_cove" type="Episode">
+		<team>
+			<member name="N.E. Voigt" alias="HangNail" email="nevoigt@icqmail.com"/>
+		</team>
+		<versions>
+			<version release_date="August 6, 2008">
+				<type>
+					<game type="JFDuke3D" state="Native">
+						<file name="VCOVE.CON" size="151194" type="con" sha1="a19f1b033a9088e959c5a548f425de802bdb486c"/>
+						<file name="VCOVE.GRP" size="15379484" type="grp" sha1="490180ebc08c3def99bbc56a38df0256ac7fe024"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="vcove.zip" filesize="6815865" game="JFDuke3D" type="Original Files" sha1="881803bc53c93f099d910705ad562ceae5a405fd"/>
+			<download filename="Vacation_Cove-ModMgrJF.zip" filesize="6794380" game="JFDuke3D" type="Mod Manager Files" state="Native" sha1="f89c9aa791ede3760f9cdc3cc5070193dbb50a4f"/>
+		</downloads>
+	</mod>
 </mods>
