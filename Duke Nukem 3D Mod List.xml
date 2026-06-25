@@ -12701,4 +12701,23 @@
 			<download filename="Reichskanzlei-ModMgrA.zip" filesize="1653027" version="1.1" game="Atomic" type="Mod Manager Files" state="Native" sha1="dc0405caaed0d72a5daff22189f4124e1d2c9608"/>
 		</downloads>
 	</mod>
+	<mod name="Overtime" id="overtime" type="Map">
+		<team>
+			<member name="Aymeric Nocus" alias="MRCK" email="aymeric-nocus@tele2.fr" youtube="MisterCK" discord="ck3d#2928" country="France"/>
+		</team>
+		<versions>
+			<version release_date="April 3, 2004">
+				<type>
+					<game type="Atomic" state="Converted">
+						<file name="OVERTIME.CON" size="151194" type="con" sha1="359dd67f98f8b0efa27b5fe307c94c59edd105a2"/>
+						<file name="OVERTIME.GRP" size="2969529" type="grp" sha1="5d338d3b2d4678e6fbefb322c0ceb95ab5cc4eae"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="overtime.zip" filesize="668827" game="Regular" type="Original Files" sha1="268c9c4999158da9c9796bcec800b0566f7ace1a"/>
+			<download filename="Overtime-ModMgrA.zip" filesize="718317" game="Atomic" type="Mod Manager Files" state="Converted" sha1="310b64adbc465232d94000e7a65e3d18e33d9b54"/>
+		</downloads>
+	</mod>
 </mods>
