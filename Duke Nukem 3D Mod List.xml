@@ -2047,9 +2047,11 @@
 				<type id="X-Rated">
 					<game type="Atomic" state="Native">
 						<file name="JJ101A.CON" size="152074" type="con" sha1="45c871bd992e86e6c26981af5d62970f2f7056ca"/>
-						<file name="JJ101A.GRP" size="8858853" type="grp" sha1="07a2e38edb736b74de27866540045730c581a48c"/>
-						<file name="JJ101XXX.GRP" size="7793215" type="grp" shared="true" sha1="1aeed517384e45f72cd864cdc21e033c31099ba3"/>
+						<file name="JJXXX.GRP" size="7793215" type="grp" shared="true" sha1="1aeed517384e45f72cd864cdc21e033c31099ba3"/>
 					</game>
+					<dependencies>
+						<dependency id="jj_duke" version="1.01a"/>
+					</dependencies>
 				</type>
 			</version>
 			<version id="1.01b" release_date="February 23, 1999">
@@ -2062,9 +2064,11 @@
 				<type id="X-Rated">
 					<game type="Atomic" state="Native">
 						<file name="JJ101B.CON" size="152074" type="con" sha1="45c871bd992e86e6c26981af5d62970f2f7056ca"/>
-						<file name="JJ101B.GRP" size="8859701" type="grp" sha1="c76125ef1aff65d20ccc992f17b4480d7f8186dd"/>
-						<file name="JJ101XXX.GRP" size="7793215" type="grp" shared="true" sha1="1aeed517384e45f72cd864cdc21e033c31099ba3"/>
+						<file name="JJXXX.GRP" size="7793215" type="grp" shared="true" sha1="1aeed517384e45f72cd864cdc21e033c31099ba3"/>
 					</game>
+					<dependencies>
+						<dependency id="jj_duke" version="1.01b"/>
+					</dependencies>
 				</type>
 			</version>
 			<version id="1.01c" release_date="June 5, 1999">
@@ -2077,9 +2081,11 @@
 				<type id="X-Rated">
 					<game type="Atomic" state="Native">
 						<file name="JJ101C.CON" size="152074" type="con" sha1="45c871bd992e86e6c26981af5d62970f2f7056ca"/>
-						<file name="JJ101C.GRP" size="8860808" type="grp" sha1="3a5b7bc64a20ae8b47bb7ca1b2a82de973234ee6"/>
-						<file name="JJ101XXX.GRP" size="7793215" type="grp" shared="true" sha1="1aeed517384e45f72cd864cdc21e033c31099ba3"/>
+						<file name="JJXXX.GRP" size="7793215" type="grp" shared="true" sha1="1aeed517384e45f72cd864cdc21e033c31099ba3"/>
 					</game>
+					<dependencies>
+						<dependency id="jj_duke" version="1.01c"/>
+					</dependencies>
 				</type>
 			</version>
 		</versions>
@@ -2087,9 +2093,10 @@
 			<download filename="jjd101a.zip" filesize="6860740" version="1.01a" game="Atomic" type="Original Files" sha1="c3299394bd096c8c9afecd599105a6cf94ce5b31"/>
 			<download filename="jj101a-101b.zip" filesize="22153" version="1.01b" special="(1.01a - 1.01b Patch)" game="Atomic" type="Original Files" sha1="0a16af57b386af9ce843e312453b5a4b3a16285c"/>
 			<download filename="jj101a-101c.zip" filesize="98500" version="1.01c" special="(1.01a - 1.01c Patch)" game="Atomic" type="Original Files" sha1="6de7783f49e437b965951e56eae90793ada31840"/>
-			<download filename="JJ_Duke_1.01a-ModMgrA.zip" filesize="6829929" version="1.01a" game="Atomic" type="Mod Manager Files" state="Native" sha1="8c4cf77dcbb3c6d67997c296f14974a317711df0"/>
-			<download filename="JJ_Duke_1.01b-ModMgrA.zip" filesize="6827705" version="1.01b" game="Atomic" type="Mod Manager Files" state="Native" sha1="c5710ef3ccc130f725263f305c1427ea6ba194d2"/>
-			<download filename="JJ_Duke_1.01c-ModMgrA.zip" filesize="6827411" version="1.01c" game="Atomic" type="Mod Manager Files" state="Native" sha1="6bf36716ff793d61c192c0cc4b822efa0ac6844e"/>
+			<download filename="JJ_Duke_1.01a-ModMgrA.zip" filesize="4128282" version="1.01a" game="Atomic" type="Mod Manager Files" state="Native" sha1="51066615e1b2398107e1a4b76ac83e7653c0dcdd"/>
+			<download filename="JJ_Duke_1.01b-ModMgrA.zip" filesize="4126058" version="1.01b" game="Atomic" type="Mod Manager Files" state="Native" sha1="3686f38a108c8b9e18f7019d6f18a784c8fe1928"/>
+			<download filename="JJ_Duke_1.01c-ModMgrA.zip" filesize="4125764" version="1.01c" game="Atomic" type="Mod Manager Files" state="Native" sha1="5bae3cd127c465040798eaf6c990b8509ada4e22"/>
+			<download filename="JJ_Duke_X-Rated-ModMgrA.zip" filesize="2701663" version_type="X-Rated" game="Atomic" type="Mod Manager Files" state="Native" sha1="e580bd2ea4bd5c2dcb9f9cca3d8dc497267a9afe"/>
 		</downloads>
 	</mod>
 	<mod name="JLauriol" id="jlauriol" type="Episode" version="2.0" website="http://members.aol.com/jlauriol/index.htm">
