@@ -8774,9 +8774,11 @@
 					<game type="eDuke32" state="Native">
 						<file name="EDUKE.CON" size="53" type="con" sha1="eeffb715d5942a243156b23de3cca8d4930af2fb"/>
 						<file name="duke3d.def" size="83" type="def" sha1="5d9d50e94ba2f7771de2af351e31701b420e54a7"/>
-						<file name="Alien_Armageddon_2.10.zip" size="143893591" type="zip" sha1="698774f08f6b1bf83c4471a696ea435bf122d7d1"/>
 						<file name="Alien_Armageddon_2.10_Censored.zip" size="7434165" type="zip" sha1="2345370977da01d0c5a753a4e632a3798f4c96b8"/>
 					</game>
+					<dependencies>
+						<dependency id="alien_armageddon" version="2.10"/>
+					</dependencies>
 				</type>
 			</version>
 			<version id="2.15" release_date="March 17, 2019">
@@ -8791,9 +8793,11 @@
 					<game type="eDuke32" state="Native">
 						<file name="EDUKE.CON" size="53" type="con" sha1="eeffb715d5942a243156b23de3cca8d4930af2fb"/>
 						<file name="duke3d.def" size="83" type="def" sha1="5d9d50e94ba2f7771de2af351e31701b420e54a7"/>
-						<file name="Alien_Armageddon_2.15.zip" size="147874136" type="zip" sha1="285ad27b61430e68f1cb1d6e150b1e5f89cf2abc"/>
 						<file name="Alien_Armageddon_2.15_Censored.zip" size="7434165" type="zip" sha1="332338352c65f2a04262929c00f939abda5b0547"/>
 					</game>
+					<dependencies>
+						<dependency id="alien_armageddon" version="2.15"/>
+					</dependencies>
 				</type>
 			</version>
 			<version id="3.0" release_date="March 6, 2020">
@@ -8808,9 +8812,11 @@
 					<game type="eDuke32" state="Native">
 						<file name="EDUKE.CON" size="140" type="con" sha1="182f1aa9465b5ac9dcd1ad9ced98e020027cf628"/>
 						<file name="duke3d.def" size="103" type="def" sha1="cba4613b936cb00fa9c62d87edfed2da697cd751"/>
-						<file name="Alien_Armageddon_3.0.zip" size="266555083" type="zip" sha1="8bdfd237c48221d2581b35d6fc12479146533ee3"/>
 						<file name="Alien_Armageddon_3.0_Censored.zip" size="21172094" type="zip" sha1="021dbf644c1f86a2f58c9d5ed8349fdd426ba640"/>
 					</game>
+					<dependencies>
+						<dependency id="alien_armageddon" version="3.0"/>
+					</dependencies>
 				</type>
 			</version>
 			<version id="3.1" release_date="March 13, 2020">
@@ -8825,9 +8831,11 @@
 					<game type="eDuke32" state="Native">
 						<file name="EDUKE.CON" size="140" type="con" sha1="182f1aa9465b5ac9dcd1ad9ced98e020027cf628"/>
 						<file name="duke3d.def" size="103" type="def" sha1="cba4613b936cb00fa9c62d87edfed2da697cd751"/>
-						<file name="Alien_Armageddon_3.1.zip" size="266619569" type="zip" sha1="908915994f4feca9909f19163108852a618bd98e"/>
 						<file name="Alien_Armageddon_3.1_Censored.zip" size="21170330" type="zip" sha1="f884336d6ea4c9a762dabf15beb6a5dd9224e8e3"/>
 					</game>
+					<dependencies>
+						<dependency id="alien_armageddon" version="3.1"/>
+					</dependencies>
 				</type>
 			</version>
 			<version id="3.13" release_date="March 18, 2020">
@@ -8842,9 +8850,11 @@
 					<game type="eDuke32" state="Native">
 						<file name="EDUKE.CON" size="140" type="con" sha1="182f1aa9465b5ac9dcd1ad9ced98e020027cf628"/>
 						<file name="duke3d.def" size="103" type="def" sha1="cba4613b936cb00fa9c62d87edfed2da697cd751"/>
-						<file name="Alien_Armageddon_3.13.zip" size="267083597" type="zip" sha1="b346f40eb226965fc364a4c13ca12c54856467ac"/>
 						<file name="Alien_Armageddon_3.13_Censored.zip" size="20500933" type="zip" sha1="afb1f2e32c83b5fd8ddfcd165d7bdfb162042775"/>
 					</game>
+					<dependencies>
+						<dependency id="alien_armageddon" version="3.13"/>
+					</dependencies>
 				</type>
 			</version>
 			<version id="3.14" release_date="April 2, 2020">
@@ -8859,9 +8869,11 @@
 					<game type="eDuke32" state="Native">
 						<file name="EDUKE.CON" size="140" type="con" sha1="182f1aa9465b5ac9dcd1ad9ced98e020027cf628"/>
 						<file name="duke3d.def" size="103" type="def" sha1="cba4613b936cb00fa9c62d87edfed2da697cd751"/>
-						<file name="Alien_Armageddon_3.14.zip" size="272056500" type="zip" sha1="cca67eabde1d918f3480cb5da3ac4a0fe9cbdbd5"/>
 						<file name="Alien_Armageddon_3.14_Censored.zip" size="20848093" type="zip" sha1="3af931d388a9a848fc36a121291eb1652c5b399d"/>
 					</game>
+					<dependencies>
+						<dependency id="alien_armageddon" version="3.14"/>
+					</dependencies>
 				</type>
 			</version>
 			<version id="3.14b" release_date="April 3, 2020">
@@ -8876,9 +8888,11 @@
 					<game type="eDuke32" state="Native">
 						<file name="EDUKE.CON" size="140" type="con" sha1="182f1aa9465b5ac9dcd1ad9ced98e020027cf628"/>
 						<file name="duke3d.def" size="103" type="def" sha1="cba4613b936cb00fa9c62d87edfed2da697cd751"/>
-						<file name="Alien_Armageddon_3.14b.zip" size="272056507" type="zip" sha1="aec26af90bf99f219ab3bbf3e2c536de8cd9c2d4"/>
 						<file name="Alien_Armageddon_3.14b_Censored.zip" size="20848093" type="zip" sha1="2bacfadb4fe41f82e1f86f439b9c307d3777fed2"/>
 					</game>
+					<dependencies>
+						<dependency id="alien_armageddon" version="3.14b"/>
+					</dependencies>
 				</type>
 			</version>
 			<version id="4.34" release_date="September 25, 2021">
@@ -8893,9 +8907,11 @@
 					<game type="eDuke32" state="Native">
 						<file name="EDUKE.CON" size="140" type="con" sha1="182f1aa9465b5ac9dcd1ad9ced98e020027cf628"/>
 						<file name="duke3d.def" size="103" type="def" sha1="cba4613b936cb00fa9c62d87edfed2da697cd751"/>
-						<file name="Alien_Armageddon_4.34.zip" size="381215475" type="zip" sha1="5e23b9d88aa523cd1d75467e4109e62aa3cc015e"/>
 						<file name="Alien_Armageddon_4.34_Censored.zip" size="26042528" type="zip" sha1="50d43681969153e9fcb808e58eaddc5bf92259f7"/>
 					</game>
+					<dependencies>
+						<dependency id="alien_armageddon" version="4.34"/>
+					</dependencies>
 				</type>
 			</version>
 			<version id="4.60a" release_date="October 18, 2022">
@@ -8910,9 +8926,11 @@
 					<game type="eDuke32" state="Native">
 						<file name="EDUKE.CON" size="80" type="con" sha1="5d32747a4b346875fe957214f4a73c0cdb4d6f51"/>
 						<file name="duke3d.def" size="65421" type="def" sha1="a8942d9a77a51b04eb59d542fa9bdfb833a66b87"/>
-						<file name="Alien_Armageddon_4.60a.zip" size="507542695" type="zip" sha1="39e47e88f3a1f14f12eab28f5b51967ba92fefcc"/>
 						<file name="Alien_Armageddon_4.60a_Censored.zip" size="24902778" type="zip" sha1="37d91565b3d46a14d6475e80864ff5cc29c28064"/>
 					</game>
+					<dependencies>
+						<dependency id="alien_armageddon" version="4.60a"/>
+					</dependencies>
 				</type>
 			</version>
 			<version id="4.67" release_date="January 8, 2023">
@@ -8927,9 +8945,11 @@
 					<game type="eDuke32" state="Native">
 						<file name="EDUKE.CON" size="80" type="con" sha1="5d32747a4b346875fe957214f4a73c0cdb4d6f51"/>
 						<file name="duke3d.def" size="65670" type="def" sha1="f72bc3229c6d17465e023a7ce3bae263c60f09ef"/>
-						<file name="Alien_Armageddon_4.67.zip" size="507722098" type="zip" sha1="ad10ad0344de5743e593a09674571538aae3261e"/>
 						<file name="Alien_Armageddon_4.67_Censored.zip" size="24902778" type="zip" sha1="d29a9f8471ff44313c97392b8c3b85b12497fa46"/>
 					</game>
+					<dependencies>
+						<dependency id="alien_armageddon" version="4.67"/>
+					</dependencies>
 				</type>
 			</version>
 		</versions>
@@ -8955,16 +8975,26 @@
 			<download filename="Alien_Armageddon_1.02-ModMgrE.zip" filesize="89396803" version="1.02" game="eDuke32" type="Mod Manager Files" state="Native" sha1="8e1f42405e95adef95768fff44500a536ea25b3a"/>
 			<download filename="Alien_Armageddon_2.0-ModMgrE.zip" filesize="126245012" version="2.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c9f82c00ba4091d48c8fb07acd43fb0829e94a4c"/>
 			<download filename="Alien_Armageddon_2.02-ModMgrE.zip" filesize="126200862" version="2.02" game="eDuke32" type="Mod Manager Files" state="Native" sha1="9614deb617d6eb19c4efd585e0b306fdb7b92fc2"/>
-			<download filename="Alien_Armageddon_2.10-ModMgrE.zip" filesize="150954383" version="2.10" game="eDuke32" type="Mod Manager Files" state="Native" sha1="1284983ea54102d1f8dd2b93ff1d49166a72a43e"/>
-			<download filename="Alien_Armageddon_2.15-ModMgrE.zip" filesize="154906687" version="2.15" game="eDuke32" type="Mod Manager Files" state="Native" sha1="0c6afadc6035d129b09406ef547338f88e7f8638"/>
-			<download filename="Alien_Armageddon_3.0-ModMgrE.zip" filesize="287112295" version="3.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="5866a95c0a83119b12c107b1f69b081a3b6ca396"/>
-			<download filename="Alien_Armageddon_3.1-ModMgrE.zip" filesize="287177001" version="3.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="4d8e61ce4b9ff732549d11dc0d145866f5559e37"/>
-			<download filename="Alien_Armageddon_3.13-ModMgrE.zip" filesize="286957558" version="3.13" game="eDuke32" type="Mod Manager Files" state="Native" sha1="68bcce1de8ec1596b5bf6d389c3773caa24cd4ad"/>
-			<download filename="Alien_Armageddon_3.14-ModMgrE.zip" filesize="292264297" version="3.14" game="eDuke32" type="Mod Manager Files" state="Native" sha1="ff1bd464065468fb5efd8c142eec6af077a272c8"/>
-			<download filename="Alien_Armageddon_3.14b-ModMgrE.zip" filesize="292263002" version="3.14b" game="eDuke32" type="Mod Manager Files" state="Native" sha1="ca04023a3615e42c6d2e4c700e9e69bab3e0411e"/>
-			<download filename="Alien_Armageddon_4.34-ModMgrE.zip" filesize="405685335" version="4.34" game="eDuke32" type="Mod Manager Files" state="Native" sha1="46990efea09f77e006ddfdb61d8d0ed0877d80eb"/>
-			<download filename="Alien_Armageddon_4.60a-ModMgrE.zip" filesize="530676506" version="4.60a" game="eDuke32" type="Mod Manager Files" state="Native" sha1="2a8cceea8c2105ff3f268fe812e3f3e975b36c46"/>
-			<download filename="Alien_Armageddon_4.67-ModMgrE.zip" filesize="530822707" version="4.67" game="eDuke32" type="Mod Manager Files" state="Native" sha1="1c7d43b75a2ab329824b46b1028461cebdcb46ac"/>
+			<download filename="Alien_Armageddon_2.10-ModMgrE.zip" filesize="143534521" version="2.10" game="eDuke32" type="Mod Manager Files" state="Native" sha1="20558f6b02da4bc263211fbdc89b1150cdf5f9b5"/>
+			<download filename="Alien_Armageddon_2.10_-_Censored-ModMgrE.zip" filesize="7419884" version="2.10" version_type="Censored" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c65bd5f849eb87faa35f005ce0310171e01aa1d6"/>
+			<download filename="Alien_Armageddon_2.15-ModMgrE.zip" filesize="147486825" version="2.15" game="eDuke32" type="Mod Manager Files" state="Native" sha1="238e744547d231687b8eb77687978a10b3c4f38d"/>
+			<download filename="Alien_Armageddon_2.15_-_Censored-ModMgrE.zip" filesize="7419884" version="2.15" version_type="Censored" game="eDuke32" type="Mod Manager Files" state="Native" sha1="fab01abe72534078f1c0ea0d06814f04105c24c0"/>
+			<download filename="Alien_Armageddon_3.0-ModMgrE.zip" filesize="266017021" version="3.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="f15944fd43984f4728f6e35aad626265596ae977"/>
+			<download filename="Alien_Armageddon_3.0_-_Censored-ModMgrE.zip" filesize="21095296" version="3.0" version_type="Censored" game="eDuke32" type="Mod Manager Files" state="Native" sha1="363e5614651bd41076eb99d062b9ab70eef455d9"/>
+			<download filename="Alien_Armageddon_3.1-ModMgrE.zip" filesize="266083857" version="3.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="1fd20386eda51a68e15be234b5e338e283e574d4"/>
+			<download filename="Alien_Armageddon_3.1_-_Censored-ModMgrE.zip" filesize="21093166" version="3.1" version_type="Censored" game="eDuke32" type="Mod Manager Files" state="Native" sha1="6c02fb58010c7640d745bf54f1000eaeda088411"/>
+			<download filename="Alien_Armageddon_3.13-ModMgrE.zip" filesize="266533693" version="3.13" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b66eb43c216d65ed085f2b86138dfb7afe8ade7e"/>
+			<download filename="Alien_Armageddon_3.13_-_Censored-ModMgrE.zip" filesize="20423887" version="3.13" version_type="Censored" game="eDuke32" type="Mod Manager Files" state="Native" sha1="fbca717593b66c41247c6514f371edd59fa758a8"/>
+			<download filename="Alien_Armageddon_3.14-ModMgrE.zip" filesize="271494672" version="3.14" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b7622b3f3694ae90785a0b600e161854ba99c11e"/>
+			<download filename="Alien_Armageddon_3.14_-_Censored-ModMgrE.zip" filesize="20769647" version="3.14" version_type="Censored" game="eDuke32" type="Mod Manager Files" state="Native" sha1="a1c624d9f7fb1abd12eb49903843ecee43c07f6b"/>
+			<download filename="Alien_Armageddon_3.14b-ModMgrE.zip" filesize="271493651" version="3.14b" game="eDuke32" type="Mod Manager Files" state="Native" sha1="abb535c3c0270c088eac105d26f71eeb2e6071a1"/>
+			<download filename="Alien_Armageddon_3.14b_-_Censored-ModMgrE.zip" filesize="20769373" version="3.14b" version_type="Censored" game="eDuke32" type="Mod Manager Files" state="Native" sha1="322897ad64a85e5f531480a71bd2cc243269d892"/>
+			<download filename="Alien_Armageddon_4.34-ModMgrE.zip" filesize="379712341" version="4.34" game="eDuke32" type="Mod Manager Files" state="Native" sha1="49bc808cc75f8209316d2c5d2d47cf4cc0f6381d"/>
+			<download filename="Alien_Armageddon_4.34_-_Censored-ModMgrE.zip" filesize="25973016" version="4.34" version_type="Censored" game="eDuke32" type="Mod Manager Files" state="Native" sha1="646ef581128a169baaa26f7e7027fd00517cce12"/>
+			<download filename="Alien_Armageddon_4.60a-ModMgrE.zip" filesize="505842819" version="4.60a" game="eDuke32" type="Mod Manager Files" state="Native" sha1="cd8eead7d51f83ede20267ef997c6c50c39b9e19"/>
+			<download filename="Alien_Armageddon_4.60a_-_Censored-ModMgrE.zip" filesize="24833709" version="4.60a" version_type="Censored" game="eDuke32" type="Mod Manager Files" state="Native" sha1="9950c45d953f5c983b2fba79fa6e494481e7e4eb"/>
+			<download filename="Alien_Armageddon_4.67-ModMgrE.zip" filesize="505988486" version="4.67" game="eDuke32" type="Mod Manager Files" state="Native" sha1="72970ae7ca4bce82492f8d5913334ec87e2efad7"/>
+			<download filename="Alien_Armageddon_4.67_-_Censored-ModMgrE.zip" filesize="24834243" version="4.67" version_type="Censored" game="eDuke32" type="Mod Manager Files" state="Native" sha1="a2bf27ea95d00d3a617bde939096e98f1561b358"/>
 		</downloads>
 	</mod>
 	<mod name="Duke Nukem Arena" id="duke_nukem_arena" type="Dukematch">
