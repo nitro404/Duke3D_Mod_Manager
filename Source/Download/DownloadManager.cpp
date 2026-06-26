@@ -565,8 +565,9 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 	spdlog::info("Successfully downloaded '{}' mod package file '{}' after {} ms, verifying file integrity using SHA1 hash...", modGameVersion.getFullName(true), modDownload->getFileName(), response->getRequestDuration().value().count());
 
 	std::string modPackageFileSHA1(response->getBody()->getSHA1());
-	if(modPackageFileSHA1 != modDownload->getSHA1()) {
-		spdlog::error("Failed to download '{}' mod package file '{}' due to data corruption, SHA1 hash check failed!", modGameVersion.getFullName(true), modDownload->getFileName());
+
+	if(!Utilities::areStringsEqualIgnoreCase(modPackageFileSHA1, modDownload->getSHA1())) {
+		spdlog::error("Failed to download '{}' mod package file '{}' due to data corruption, SHA1 hash check failed! Calculated '{}', but expected '{}'.", modGameVersion.getFullName(true), modDownload->getFileName(), modPackageFileSHA1, modDownload->getSHA1());
 		return false;
 	}
 
@@ -656,7 +657,7 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 				return false;
 			}
 			else if(!Utilities::areStringsEqualIgnoreCase(modFileEntryData->getSHA1(), modFile->getSHA1())) {
-				spdlog::error("Failed to download '{}' mod package file '{}', zip entry file '{}' SHA1 hash validation failed!", modGameVersion.getFullName(true), modDownload->getFileName(), modFile->getFileName());
+				spdlog::error("Failed to download '{}' mod package file '{}', zip entry file '{}' SHA1 hash validation failed! Calculated '{}', but expected '{}'.", modGameVersion.getFullName(true), modDownload->getFileName(), modFile->getFileName(), modFileEntryData->getSHA1(), modFile->getSHA1());
 				return false;
 			}
 		}
