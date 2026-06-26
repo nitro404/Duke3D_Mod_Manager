@@ -463,6 +463,10 @@ bool StandAloneModCollection::isValid(const StandAloneModCollection * standAlone
 }
 
 bool StandAloneModCollection::operator == (const StandAloneModCollection & standAloneMods) const {
+	if(this == &standAloneMods) {
+		return true;
+	}
+
 	if(m_standAloneMods.size() != standAloneMods.m_standAloneMods.size()) {
 		return false;
 	}

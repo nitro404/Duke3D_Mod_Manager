@@ -120,6 +120,10 @@ uint8_t PaletteDAT::ShadeTable::operator[] (size_t index) const {
 }
 
 bool PaletteDAT::ShadeTable::operator == (const ShadeTable & shadeTable) const {
+	if(this == &shadeTable) {
+		return true;
+	}
+
 	return *m_shadeData == *shadeTable.m_shadeData;
 }
 

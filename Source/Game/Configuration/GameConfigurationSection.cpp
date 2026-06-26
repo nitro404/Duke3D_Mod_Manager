@@ -809,13 +809,17 @@ void GameConfiguration::Section::updateParent() {
 	}
 }
 
-bool GameConfiguration::Section::operator == (const Section & s) const {
-	return Utilities::areStringsEqualIgnoreCase(m_name, s.m_name) &&
-		   Utilities::areStringsEqual(m_precedingComments, s.m_precedingComments) &&
-		   Utilities::areStringsEqual(m_followingComments, s.m_followingComments) &&
-		   m_entries == s.m_entries;
+bool GameConfiguration::Section::operator == (const Section & section) const {
+	if(this == &section) {
+		return true;
+	}
+
+	return Utilities::areStringsEqualIgnoreCase(m_name, section.m_name) &&
+		   Utilities::areStringsEqual(m_precedingComments, section.m_precedingComments) &&
+		   Utilities::areStringsEqual(m_followingComments, section.m_followingComments) &&
+		   m_entries == section.m_entries;
 }
 
-bool GameConfiguration::Section::operator != (const Section & s) const {
-	return !operator == (s);
+bool GameConfiguration::Section::operator != (const Section & section) const {
+	return !operator == (section);
 }

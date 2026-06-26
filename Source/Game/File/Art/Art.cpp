@@ -941,6 +941,10 @@ bool Art::isValid(const Art * art, bool verifyParent) {
 }
 
 bool Art::operator == (const Art & art) const {
+	if(this == &art) {
+		return true;
+	}
+
 	if(m_version != art.m_version ||
 	   m_localTileStart != art.m_localTileStart ||
 	   m_localTileEnd != art.m_localTileEnd ||

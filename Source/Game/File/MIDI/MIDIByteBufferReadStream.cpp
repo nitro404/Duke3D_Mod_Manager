@@ -64,6 +64,10 @@ bool MIDIByteBufferReadStream::isValid() const {
 }
 
 bool MIDIByteBufferReadStream::operator == (const MIDIByteBufferReadStream & readStream) const {
+	if(this == &readStream) {
+		return true;
+	}
+
 	return m_data == nullptr && readStream.m_data == nullptr ||
 		   (m_data != nullptr && readStream.m_data != nullptr && *m_data == *readStream.m_data);
 }

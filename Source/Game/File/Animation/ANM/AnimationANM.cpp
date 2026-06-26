@@ -822,6 +822,10 @@ bool AnimationANM::isValidBitmapType(uint8_t bitmapType) {
 }
 
 bool AnimationANM::operator == (const AnimationANM & animation) const {
+	if(this == &animation) {
+		return true;
+	}
+
 	return m_maximumNumberOfLargePages == animation.m_maximumNumberOfLargePages &&
 		   m_numberOfRecords == animation.m_numberOfRecords &&
 		   m_numberOfRecordsPermittedInLargePage == animation.m_numberOfRecordsPermittedInLargePage &&

@@ -1086,6 +1086,10 @@ std::unique_ptr<Wall> Wall::parseFrom(const rapidjson::Value & wallValue) {
 }
 
 bool Wall::operator == (const Wall & wall) const {
+	if(this == &wall) {
+		return true;
+	}
+
 	return TaggedItem::operator == (wall) &&
 		   TexturedItem::operator == (wall) &&
 		   m_position == wall.m_position &&

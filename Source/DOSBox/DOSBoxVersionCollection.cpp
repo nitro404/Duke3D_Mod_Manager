@@ -688,17 +688,21 @@ bool DOSBoxVersionCollection::isValid() const {
 	return true;
 }
 
-bool DOSBoxVersionCollection::isValid(const DOSBoxVersionCollection * g) {
-	return g != nullptr && g->isValid();
+bool DOSBoxVersionCollection::isValid(const DOSBoxVersionCollection * dosboxVersionCollection) {
+	return dosboxVersionCollection != nullptr && dosboxVersionCollection->isValid();
 }
 
-bool DOSBoxVersionCollection::operator == (const DOSBoxVersionCollection & g) const {
-	if(m_dosboxVersions.size() != g.m_dosboxVersions.size()) {
+bool DOSBoxVersionCollection::operator == (const DOSBoxVersionCollection & dosboxVersionCollection) const {
+	if(this == &dosboxVersionCollection) {
+		return true;
+	}
+
+	if(m_dosboxVersions.size() != dosboxVersionCollection.m_dosboxVersions.size()) {
 		return false;
 	}
 
-	for(size_t i = 0; i < g.m_dosboxVersions.size(); i++) {
-		if(*m_dosboxVersions[i] != *g.m_dosboxVersions[i]) {
+	for(size_t i = 0; i < dosboxVersionCollection.m_dosboxVersions.size(); i++) {
+		if(*m_dosboxVersions[i] != *dosboxVersionCollection.m_dosboxVersions[i]) {
 			return false;
 		}
 	}
@@ -706,8 +710,8 @@ bool DOSBoxVersionCollection::operator == (const DOSBoxVersionCollection & g) co
 	return true;
 }
 
-bool DOSBoxVersionCollection::operator != (const DOSBoxVersionCollection & g) const {
-	return !operator == (g);
+bool DOSBoxVersionCollection::operator != (const DOSBoxVersionCollection & dosboxVersionCollection) const {
+	return !operator == (dosboxVersionCollection);
 }
 
 void DOSBoxVersionCollection::onDOSBoxVersionModified(DOSBoxVersion & dosboxVersion) {

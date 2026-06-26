@@ -301,6 +301,10 @@ std::string GroupFile::formatFileName(std::string_view fileName) {
 }
 
 bool GroupFile::operator == (const GroupFile & file) const {
+	if(this == &file) {
+		return true;
+	}
+
 	return Utilities::areStringsEqualIgnoreCase(m_fileName, file.m_fileName) &&
 		   *m_data == *file.m_data &&
 		   ((m_trailingData == nullptr && file.m_trailingData == nullptr) || (m_trailingData != nullptr && file.m_trailingData != nullptr && *m_trailingData == *file.m_trailingData) );

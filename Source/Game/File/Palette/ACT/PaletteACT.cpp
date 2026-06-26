@@ -199,6 +199,10 @@ void PaletteACT::updateParent() {
 }
 
 bool PaletteACT::operator == (const PaletteACT & palette) const {
+	if(this == &palette) {
+		return true;
+	}
+
 	return *m_colourTable == *palette.m_colourTable;
 }
 

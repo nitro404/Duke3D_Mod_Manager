@@ -93,6 +93,10 @@ bool StandAloneMod::isValid(const StandAloneMod * standAloneMod) {
 }
 
 bool StandAloneMod::operator == (const StandAloneMod & standAloneMod) const {
+	if(this == &standAloneMod) {
+		return true;
+	}
+
 	return GameVersion::operator == (standAloneMod) &&
 		   Utilities::areStringsEqualIgnoreCase(m_version, standAloneMod.m_version);
 }

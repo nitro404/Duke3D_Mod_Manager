@@ -292,28 +292,32 @@ bool ModIdentifier::isValid() const {
 	return true;
 }
 
-bool ModIdentifier::isValid(const ModIdentifier * m) {
-	return m != nullptr && m->isValid();
+bool ModIdentifier::isValid(const ModIdentifier * modIdentifier) {
+	return modIdentifier != nullptr && modIdentifier->isValid();
 }
 
-bool ModIdentifier::operator == (const ModIdentifier & m) const {
-	if(!Utilities::areStringsEqualIgnoreCase(m_name, m.m_name) ||
-	   m_version.has_value() != m.m_version.has_value() ||
-	   m_versionType.has_value() != m.m_versionType.has_value()) {
+bool ModIdentifier::operator == (const ModIdentifier & modIdentifier) const {
+	if(this == &modIdentifier) {
+		return true;
+	}
+
+	if(!Utilities::areStringsEqualIgnoreCase(m_name, modIdentifier.m_name) ||
+	   m_version.has_value() != modIdentifier.m_version.has_value() ||
+	   m_versionType.has_value() != modIdentifier.m_versionType.has_value()) {
 		return false;
 	}
 
-	if(m_version.has_value() && m.m_version.has_value() && !Utilities::areStringsEqualIgnoreCase(m_version.value(), m.m_version.value())) {
+	if(m_version.has_value() && modIdentifier.m_version.has_value() && !Utilities::areStringsEqualIgnoreCase(m_version.value(), modIdentifier.m_version.value())) {
 		return false;
 	}
 
-	if(m_versionType.has_value() && m.m_versionType.has_value() && !Utilities::areStringsEqualIgnoreCase(m_versionType.value(), m.m_versionType.value())) {
+	if(m_versionType.has_value() && modIdentifier.m_versionType.has_value() && !Utilities::areStringsEqualIgnoreCase(m_versionType.value(), modIdentifier.m_versionType.value())) {
 		return false;
 	}
 
 	return true;
 }
 
-bool ModIdentifier::operator != (const ModIdentifier & m) const {
-	return !operator == (m);
+bool ModIdentifier::operator != (const ModIdentifier & modIdentifier) const {
+	return !operator == (modIdentifier);
 }

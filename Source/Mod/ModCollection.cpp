@@ -1105,18 +1105,22 @@ bool ModCollection::isValid(const GameVersionCollection * gameVersions, bool ski
 	return true;
 }
 
-bool ModCollection::isValid(const ModCollection * m, const GameVersionCollection * gameVersions, bool skipFileInfoValidation) {
-	return m != nullptr && m->isValid(gameVersions, skipFileInfoValidation);
+bool ModCollection::isValid(const ModCollection * modCollection, const GameVersionCollection * gameVersions, bool skipFileInfoValidation) {
+	return modCollection != nullptr && modCollection->isValid(gameVersions, skipFileInfoValidation);
 }
 
-bool ModCollection::operator == (const ModCollection & m) const {
-	if(m_fileRevision != m.m_fileRevision ||
-	   m_mods.size() != m.m_mods.size()) {
+bool ModCollection::operator == (const ModCollection & modCollection) const {
+	if(this == &modCollection) {
+		return true;
+	}
+
+	if(m_fileRevision != modCollection.m_fileRevision ||
+	   m_mods.size() != modCollection.m_mods.size()) {
 		return false;
 	}
 
-	for(size_t i = 0; i < m.m_mods.size(); i++) {
-		if(*m_mods[i] != *m.m_mods[i]) {
+	for(size_t i = 0; i < modCollection.m_mods.size(); i++) {
+		if(*m_mods[i] != *modCollection.m_mods[i]) {
 			return false;
 		}
 	}
@@ -1124,6 +1128,6 @@ bool ModCollection::operator == (const ModCollection & m) const {
 	return true;
 }
 
-bool ModCollection::operator != (const ModCollection & m) const {
-	return !operator == (m);
+bool ModCollection::operator != (const ModCollection & modCollection) const {
+	return !operator == (modCollection);
 }

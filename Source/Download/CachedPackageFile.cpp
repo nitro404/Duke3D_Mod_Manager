@@ -212,15 +212,19 @@ bool CachedPackageFile::isValid() const {
 		   !getETag().empty();
 }
 
-bool CachedPackageFile::isValid(const CachedPackageFile * f) {
-	return f != nullptr &&
-		   f->isValid();
+bool CachedPackageFile::isValid(const CachedPackageFile * cachedPackageFile) {
+	return cachedPackageFile != nullptr &&
+		   cachedPackageFile->isValid();
 }
 
-bool CachedPackageFile::operator == (const CachedPackageFile & f) const {
-	return Utilities::areStringsEqual(getFileName(), f.getFileName());
+bool CachedPackageFile::operator == (const CachedPackageFile & cachedPackageFile) const {
+	if(this == &cachedPackageFile) {
+		return true;
+	}
+
+	return Utilities::areStringsEqual(getFileName(), cachedPackageFile.getFileName());
 }
 
-bool CachedPackageFile::operator != (const CachedPackageFile & f) const {
-	return !operator == (f);
+bool CachedPackageFile::operator != (const CachedPackageFile & cachedPackageFile) const {
+	return !operator == (cachedPackageFile);
 }

@@ -78,6 +78,10 @@ int16_t Velocity3D::operator    [] (size_t index) const {
 }
 
 bool Velocity3D::operator == (const Velocity3D & v) const {
+	if(this == &v) {
+		return true;
+	}
+
 	return x == v.x &&
 		   y == v.y &&
 		   z == v.z;

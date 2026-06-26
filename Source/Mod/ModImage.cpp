@@ -581,17 +581,21 @@ bool ModImage::isValid(const ModImage * i, bool skipFileInfoValidation) {
 	return i != nullptr && i->isValid(skipFileInfoValidation);
 }
 
-bool ModImage::operator == (const ModImage & i) const {
-	return m_fileSize == i.m_fileSize &&
-		   m_width == i.m_width &&
-		   m_height == i.m_height &&
-		   Utilities::areStringsEqualIgnoreCase(m_fileName, i.m_fileName) &&
-		   Utilities::areStringsEqualIgnoreCase(m_type, i.m_type) &&
-		   Utilities::areStringsEqualIgnoreCase(m_subfolder, i.m_subfolder) &&
-		   Utilities::areStringsEqualIgnoreCase(m_caption, i.m_caption) &&
-		   m_sha1 == i.m_sha1;
+bool ModImage::operator == (const ModImage & modImage) const {
+	if(this == &modImage) {
+		return true;
+	}
+
+	return m_fileSize == modImage.m_fileSize &&
+		   m_width == modImage.m_width &&
+		   m_height == modImage.m_height &&
+		   Utilities::areStringsEqualIgnoreCase(m_fileName, modImage.m_fileName) &&
+		   Utilities::areStringsEqualIgnoreCase(m_type, modImage.m_type) &&
+		   Utilities::areStringsEqualIgnoreCase(m_subfolder, modImage.m_subfolder) &&
+		   Utilities::areStringsEqualIgnoreCase(m_caption, modImage.m_caption) &&
+		   m_sha1 == modImage.m_sha1;
 }
 
-bool ModImage::operator != (const ModImage & i) const {
-	return !operator == (i);
+bool ModImage::operator != (const ModImage & modImage) const {
+	return !operator == (modImage);
 }

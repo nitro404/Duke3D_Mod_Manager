@@ -162,16 +162,20 @@ bool ModMatch::isValid() const {
 	return true;
 }
 
-bool ModMatch::isValid(const ModMatch * m) {
-	return m != nullptr && m->isValid();
+bool ModMatch::isValid(const ModMatch * modMatch) {
+	return modMatch != nullptr && modMatch->isValid();
 }
 
-bool ModMatch::operator == (const ModMatch & m) const {
-	return m_mod == m.m_mod &&
-		   m_modVersion == m.m_modVersion &&
-		   m_modVersionType == m.m_modVersionType;
+bool ModMatch::operator == (const ModMatch & modMatch) const {
+	if(this == &modMatch) {
+		return true;
+	}
+
+	return m_mod == modMatch.m_mod &&
+		   m_modVersion == modMatch.m_modVersion &&
+		   m_modVersionType == modMatch.m_modVersionType;
 }
 
-bool ModMatch::operator != (const ModMatch & m) const {
-	return !operator == (m);
+bool ModMatch::operator != (const ModMatch & modMatch) const {
+	return !operator == (modMatch);
 }

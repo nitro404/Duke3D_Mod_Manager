@@ -1032,11 +1032,15 @@ void GameConfiguration::updateParent() {
 	}
 }
 
-bool GameConfiguration::operator == (const GameConfiguration & c) const {
-	return m_entries == c.m_entries &&
-		   m_sections == c.m_sections;
+bool GameConfiguration::operator == (const GameConfiguration & configuration) const {
+	if(this == &configuration) {
+		return true;
+	}
+
+	return m_entries == configuration.m_entries &&
+		   m_sections == configuration.m_sections;
 }
 
-bool GameConfiguration::operator != (const GameConfiguration & c) const {
-	return !operator == (c);
+bool GameConfiguration::operator != (const GameConfiguration & configuration) const {
+	return !operator == (configuration);
 }

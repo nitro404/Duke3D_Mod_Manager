@@ -892,6 +892,10 @@ void DOSBoxConfiguration::Section::onEntryValueChanged(Entry & entry, std::strin
 }
 
 bool DOSBoxConfiguration::Section::operator == (const Section & section) const {
+	if(this == &section) {
+		return true;
+	}
+
 	if(CommentCollection::operator != (section) ||
 	   !Utilities::areStringsEqualIgnoreCase(m_name, section.m_name) ||
 	   m_entries.size() != section.m_entries.size()) {

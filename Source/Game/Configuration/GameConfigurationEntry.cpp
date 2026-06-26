@@ -635,6 +635,10 @@ bool GameConfiguration::Entry::isNameValid(const std::string & entryName) {
 }
 
 bool GameConfiguration::Entry::operator == (const Entry & entry) const {
+	if(this == &entry) {
+		return true;
+	}
+
 	return Utilities::areStringsEqualIgnoreCase(m_name, entry.m_name) &&
 		   m_value == entry.m_value;
 }

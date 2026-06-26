@@ -899,26 +899,30 @@ bool ModDownload::isValid(bool skipFileInfoValidation) const {
 		   m_partNumber > m_partCount;
 }
 
-bool ModDownload::isValid(const ModDownload * d, bool skipFileInfoValidation) {
-	return d != nullptr && d->isValid(skipFileInfoValidation);
+bool ModDownload::isValid(const ModDownload * modDownload, bool skipFileInfoValidation) {
+	return modDownload != nullptr && modDownload->isValid(skipFileInfoValidation);
 }
 
-bool ModDownload::operator == (const ModDownload & d) const {
-	return m_fileSize == d.m_fileSize &&
-		   m_partNumber == d.m_partNumber &&
-		   m_partCount == d.m_partCount &&
-		   m_converted == d.m_converted &&
-		   m_corrupted == d.m_corrupted &&
-		   m_repaired == d.m_repaired &&
-		   Utilities::areStringsEqualIgnoreCase(m_fileName, d.m_fileName) &&
-		   Utilities::areStringsEqualIgnoreCase(m_version, d.m_version) &&
-		   Utilities::areStringsEqualIgnoreCase(m_versionType, d.m_versionType) &&
-		   Utilities::areStringsEqualIgnoreCase(m_special, d.m_special) &&
-		   Utilities::areStringsEqualIgnoreCase(m_gameVersionID, d.m_gameVersionID) &&
-		   Utilities::areStringsEqualIgnoreCase(m_type, d.m_type) &&
-		   m_sha1 == d.m_sha1;
+bool ModDownload::operator == (const ModDownload & modDownload) const {
+	if(this == &modDownload) {
+		return true;
+	}
+
+	return m_fileSize == modDownload.m_fileSize &&
+		   m_partNumber == modDownload.m_partNumber &&
+		   m_partCount == modDownload.m_partCount &&
+		   m_converted == modDownload.m_converted &&
+		   m_corrupted == modDownload.m_corrupted &&
+		   m_repaired == modDownload.m_repaired &&
+		   Utilities::areStringsEqualIgnoreCase(m_fileName, modDownload.m_fileName) &&
+		   Utilities::areStringsEqualIgnoreCase(m_version, modDownload.m_version) &&
+		   Utilities::areStringsEqualIgnoreCase(m_versionType, modDownload.m_versionType) &&
+		   Utilities::areStringsEqualIgnoreCase(m_special, modDownload.m_special) &&
+		   Utilities::areStringsEqualIgnoreCase(m_gameVersionID, modDownload.m_gameVersionID) &&
+		   Utilities::areStringsEqualIgnoreCase(m_type, modDownload.m_type) &&
+		   m_sha1 == modDownload.m_sha1;
 }
 
-bool ModDownload::operator != (const ModDownload & d) const {
-	return !operator == (d);
+bool ModDownload::operator != (const ModDownload & modDownload) const {
+	return !operator == (modDownload);
 }

@@ -597,6 +597,10 @@ bool Sound::isSuccess(int errorCode, const std::string & errorMessage) {
 }
 
 bool Sound::operator == (const Sound & sound) const {
+	if(this == &sound) {
+		return true;
+	}
+
 	return m_fileHandle.get() == sound.m_fileHandle.get();
 }
 

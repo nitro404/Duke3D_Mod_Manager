@@ -512,6 +512,10 @@ bool GameDownloadVersion::isValid(const GameDownloadVersion * v) {
 }
 
 bool GameDownloadVersion::operator == (const GameDownloadVersion & v) const {
+	if(this == &v) {
+		return true;
+	}
+
 	if(m_files.size() != v.m_files.size() ||
 	   !Utilities::areStringsEqualIgnoreCase(m_version, v.m_version)) {
 		return false;

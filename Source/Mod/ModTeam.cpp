@@ -667,19 +667,23 @@ bool ModTeam::isValid(const ModTeam * modTeam) {
 	return modTeam != nullptr && modTeam->isValid();
 }
 
-bool ModTeam::operator == (const ModTeam & m) const {
-	if(!Utilities::areStringsEqual(m_name, m.m_name) ||
-	   !Utilities::areStringsEqual(m_website, m.m_website) ||
-	   !Utilities::areStringsEqual(m_email, m.m_email) ||
-	   !Utilities::areStringsEqual(m_twitter, m.m_twitter) ||
-	   !Utilities::areStringsEqual(m_discord, m.m_discord) ||
-	   m_location != m.m_location ||
-	   m_members.size() != m.m_members.size()) {
+bool ModTeam::operator == (const ModTeam & modTeam) const {
+	if(this == &modTeam) {
+		return true;
+	}
+
+	if(!Utilities::areStringsEqual(m_name, modTeam.m_name) ||
+	   !Utilities::areStringsEqual(m_website, modTeam.m_website) ||
+	   !Utilities::areStringsEqual(m_email, modTeam.m_email) ||
+	   !Utilities::areStringsEqual(m_twitter, modTeam.m_twitter) ||
+	   !Utilities::areStringsEqual(m_discord, modTeam.m_discord) ||
+	   m_location != modTeam.m_location ||
+	   m_members.size() != modTeam.m_members.size()) {
 		return false;
 	}
 
 	for(size_t i = 0; i < m_members.size(); i++) {
-		if(*m_members[i] != *m.m_members[i]) {
+		if(*m_members[i] != *modTeam.m_members[i]) {
 			return false;
 		}
 	}
@@ -687,6 +691,6 @@ bool ModTeam::operator == (const ModTeam & m) const {
 	return true;
 }
 
-bool ModTeam::operator != (const ModTeam & m) const {
-	return !operator == (m);
+bool ModTeam::operator != (const ModTeam & modTeam) const {
+	return !operator == (modTeam);
 }

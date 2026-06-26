@@ -308,6 +308,10 @@ bool ModDependency::isValid(const ModDependency * dependency) {
 }
 
 bool ModDependency::operator == (const ModDependency & dependency) const {
+	if(this == &dependency) {
+		return true;
+	}
+
 	return Utilities::areStringsEqualIgnoreCase(m_id, dependency.m_id) &&
 		   Utilities::areStringsEqualIgnoreCase(m_version, dependency.m_version) &&
 		   Utilities::areStringsEqualIgnoreCase(m_versionType, dependency.m_versionType);

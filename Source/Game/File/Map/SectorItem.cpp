@@ -356,6 +356,10 @@ std::optional<SectorItem> SectorItem::parseFrom(const rapidjson::Value & sectorI
 }
 
 bool SectorItem::operator == (const SectorItem & sectorItem) const {
+	if(this == &sectorItem) {
+		return true;
+	}
+
 	return m_position == sectorItem.m_position &&
 		   m_angle == sectorItem.m_angle &&
 		   m_sectorIndex == sectorItem.m_sectorIndex;

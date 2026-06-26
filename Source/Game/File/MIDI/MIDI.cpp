@@ -162,6 +162,10 @@ bool MIDI::isValid(bool verifyParent) const {
 }
 
 bool MIDI::operator == (const MIDI & midi) const {
+	if(this == &midi) {
+		return true;
+	}
+
 	return m_tracks.get() == midi.m_tracks.get() &&
 		   m_division == midi.m_division;
 }

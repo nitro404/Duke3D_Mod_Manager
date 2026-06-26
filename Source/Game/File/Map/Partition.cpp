@@ -347,6 +347,10 @@ std::unique_ptr<Partition> Partition::parseFrom(const rapidjson::Value & partiti
 }
 
 bool Partition::operator == (const Partition & partition) const {
+	if(this == &partition) {
+		return true;
+	}
+
 	return TexturedItem::operator == (partition) &&
 		   m_type == partition.m_type &&
 		   m_height == partition.m_height &&
@@ -629,6 +633,10 @@ std::optional<Partition::Attributes> Partition::Attributes::parseFrom(const rapi
 }
 
 bool Partition::Attributes::operator == (const Attributes & attributes) const {
+	if(this == &attributes) {
+		return true;
+	}
+
 	return rawValue == attributes.rawValue;
 }
 

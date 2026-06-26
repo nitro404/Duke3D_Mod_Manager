@@ -71,6 +71,10 @@ int MIDIByteBufferWriteStream::WriteChar(int character) {
 }
 
 bool MIDIByteBufferWriteStream::operator == (const MIDIByteBufferWriteStream & writeStream) const {
+	if(this == &writeStream) {
+		return true;
+	}
+
 	return m_byteBuffer == writeStream.m_byteBuffer;
 }
 

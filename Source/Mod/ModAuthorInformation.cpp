@@ -63,15 +63,19 @@ bool ModAuthorInformation::isValid() const {
 	return !m_name.empty();
 }
 
-bool ModAuthorInformation::isValid(const ModAuthorInformation * m) {
-	return m != nullptr && m->isValid();
+bool ModAuthorInformation::isValid(const ModAuthorInformation * modAuthorInformation) {
+	return modAuthorInformation != nullptr && modAuthorInformation->isValid();
 }
 
-bool ModAuthorInformation::operator == (const ModAuthorInformation & m) const {
-	return Utilities::areStringsEqualIgnoreCase(m_name, m.m_name) &&
-		   m_numberOfMods == m.m_numberOfMods;
+bool ModAuthorInformation::operator == (const ModAuthorInformation & modAuthorInformation) const {
+	if(this == &modAuthorInformation) {
+		return true;
+	}
+
+	return Utilities::areStringsEqualIgnoreCase(m_name, modAuthorInformation.m_name) &&
+		   m_numberOfMods == modAuthorInformation.m_numberOfMods;
 }
 
-bool ModAuthorInformation::operator != (const ModAuthorInformation & m) const {
-	return !operator == (m);
+bool ModAuthorInformation::operator != (const ModAuthorInformation & modAuthorInformation) const {
+	return !operator == (modAuthorInformation);
 }

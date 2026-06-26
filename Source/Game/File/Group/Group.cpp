@@ -819,6 +819,10 @@ void Group::onGroupFileModified(GroupFile & groupFile) {
 }
 
 bool Group::operator == (const Group & group) const {
+	if(this == &group) {
+		return true;
+	}
+
 	if(m_files.size() != group.m_files.size()) {
 		return false;
 	}

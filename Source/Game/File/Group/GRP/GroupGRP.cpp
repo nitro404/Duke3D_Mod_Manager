@@ -214,6 +214,10 @@ size_t GroupGRP::getSizeInBytes() const {
 }
 
 bool GroupGRP::operator == (const GroupGRP & group) const {
+	if(this == &group) {
+		return true;
+	}
+
 	return Group::operator == (group);
 }
 

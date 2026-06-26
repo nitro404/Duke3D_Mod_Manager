@@ -336,6 +336,10 @@ const Colour & ColourTable::operator[] (size_t colourIndex) const {
 }
 
 bool ColourTable::operator == (const ColourTable & colourTable) const {
+	if(this == &colourTable) {
+		return true;
+	}
+
 	return m_colours == colourTable.m_colours;
 }
 

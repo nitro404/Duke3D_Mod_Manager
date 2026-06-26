@@ -287,6 +287,10 @@ void AnimationANM::LargePageDescriptor::clearParent() {
 }
 
 bool AnimationANM::LargePageDescriptor::operator == (const LargePageDescriptor & largePageDescriptor) const {
+	if(this == &largePageDescriptor) {
+		return true;
+	}
+
 	return m_firstRecordNumber == largePageDescriptor.m_firstRecordNumber &&
 		   m_numberOfRecords == largePageDescriptor.m_numberOfRecords &&
 		   m_lastRecordContinuesToNextLargePage == largePageDescriptor.m_lastRecordContinuesToNextLargePage &&

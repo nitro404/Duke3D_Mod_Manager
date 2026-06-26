@@ -479,18 +479,22 @@ bool ModFile::isValid(bool skipFileInfoValidation) const {
 		   !m_type.empty();
 }
 
-bool ModFile::isValid(const ModFile * f, bool skipFileInfoValidation) {
-	return f != nullptr && f->isValid(skipFileInfoValidation);
+bool ModFile::isValid(const ModFile * modFile, bool skipFileInfoValidation) {
+	return modFile != nullptr && modFile->isValid(skipFileInfoValidation);
 }
 
-bool ModFile::operator == (const ModFile & f) const {
-	return m_fileSize == f.m_fileSize &&
-		   m_shared == f.m_shared &&
-		   Utilities::areStringsEqualIgnoreCase(m_fileName, f.m_fileName) &&
-		   Utilities::areStringsEqualIgnoreCase(m_type, f.m_type) &&
-		   m_sha1 == f.m_sha1;
+bool ModFile::operator == (const ModFile & modFile) const {
+	if(this == &modFile) {
+		return true;
+	}
+
+	return m_fileSize == modFile.m_fileSize &&
+		   m_shared == modFile.m_shared &&
+		   Utilities::areStringsEqualIgnoreCase(m_fileName, modFile.m_fileName) &&
+		   Utilities::areStringsEqualIgnoreCase(m_type, modFile.m_type) &&
+		   m_sha1 == modFile.m_sha1;
 }
 
-bool ModFile::operator != (const ModFile & f) const {
-	return !operator == (f);
+bool ModFile::operator != (const ModFile & modFile) const {
+	return !operator == (modFile);
 }

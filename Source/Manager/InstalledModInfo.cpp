@@ -728,19 +728,23 @@ bool InstalledModInfo::isValid() const {
 	return true;
 }
 
-bool InstalledModInfo::isValid(const InstalledModInfo * i) {
-	return i != nullptr && i->isValid();
+bool InstalledModInfo::isValid(const InstalledModInfo * installedModInfo) {
+	return installedModInfo != nullptr && installedModInfo->isValid();
 }
 
-bool InstalledModInfo::operator == (const InstalledModInfo & i) const {
-	return m_installedTimestamp == i.m_installedTimestamp &&
-		   Utilities::areStringsEqual(m_modID, i.m_modID) &&
-		   Utilities::areStringsEqual(m_modName, i.m_modName) &&
-		   Utilities::areStringsEqual(m_modVersion, i.m_modVersion) &&
-		   m_originalFiles == i.m_originalFiles &&
-		   m_modFiles == i.m_modFiles;
+bool InstalledModInfo::operator == (const InstalledModInfo & installedModInfo) const {
+	if(this == &installedModInfo) {
+		return true;
+	}
+
+	return m_installedTimestamp == installedModInfo.m_installedTimestamp &&
+		   Utilities::areStringsEqual(m_modID, installedModInfo.m_modID) &&
+		   Utilities::areStringsEqual(m_modName, installedModInfo.m_modName) &&
+		   Utilities::areStringsEqual(m_modVersion, installedModInfo.m_modVersion) &&
+		   m_originalFiles == installedModInfo.m_originalFiles &&
+		   m_modFiles == installedModInfo.m_modFiles;
 }
 
-bool InstalledModInfo::operator != (const InstalledModInfo & i) const {
-	return !operator == (i);
+bool InstalledModInfo::operator != (const InstalledModInfo & installedModInfo) const {
+	return !operator == (installedModInfo);
 }

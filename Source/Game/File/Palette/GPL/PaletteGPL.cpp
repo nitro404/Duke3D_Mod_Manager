@@ -600,6 +600,10 @@ void PaletteGPL::updateParent() {
 }
 
 bool PaletteGPL::operator == (const PaletteGPL & palette) const {
+	if(this == &palette) {
+		return true;
+	}
+
 	return *m_colourTable == *palette.m_colourTable &&
 		   m_colourNames == palette.m_colourNames;
 }

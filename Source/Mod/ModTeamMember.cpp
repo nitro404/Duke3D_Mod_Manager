@@ -850,27 +850,31 @@ bool ModTeamMember::isValid() const {
 	return !m_name.empty();
 }
 
-bool ModTeamMember::isValid(const ModTeamMember * m) {
-	return m != nullptr && m->isValid();
+bool ModTeamMember::isValid(const ModTeamMember * modTeamMember) {
+	return modTeamMember != nullptr && modTeamMember->isValid();
 }
 
-bool ModTeamMember::operator == (const ModTeamMember & m) const {
-	return Utilities::areStringsEqualIgnoreCase(m_name, m.m_name) &&
-		   Utilities::areStringsEqualIgnoreCase(m_alias, m.m_alias) &&
-		   Utilities::areStringsEqualIgnoreCase(m_email, m.m_email) &&
-		   Utilities::areStringsEqualIgnoreCase(m_twitter, m.m_twitter) &&
-		   Utilities::areStringsEqualIgnoreCase(m_website, m.m_website) &&
-		   Utilities::areStringsEqualIgnoreCase(m_youTube, m.m_youTube) &&
-		   Utilities::areStringsEqualIgnoreCase(m_reddit, m.m_reddit) &&
-		   Utilities::areStringsEqualIgnoreCase(m_gitHub, m.m_gitHub) &&
-		   Utilities::areStringsEqualIgnoreCase(m_discord, m.m_discord) &&
-		   Utilities::areStringsEqualIgnoreCase(m_steamID, m.m_steamID) &&
-		   Utilities::areStringsEqualIgnoreCase(m_aim, m.m_aim) &&
-		   Utilities::areStringsEqual(m_icq, m.m_icq) &&
-		   Utilities::areStringsEqualIgnoreCase(m_yahoo, m.m_yahoo) &&
-		   Utilities::areStringsEqual(m_phoneNumber, m.m_phoneNumber);
+bool ModTeamMember::operator == (const ModTeamMember & modTeamMember) const {
+	if(this == &modTeamMember) {
+		return true;
+	}
+
+	return Utilities::areStringsEqualIgnoreCase(m_name, modTeamMember.m_name) &&
+		   Utilities::areStringsEqualIgnoreCase(m_alias, modTeamMember.m_alias) &&
+		   Utilities::areStringsEqualIgnoreCase(m_email, modTeamMember.m_email) &&
+		   Utilities::areStringsEqualIgnoreCase(m_twitter, modTeamMember.m_twitter) &&
+		   Utilities::areStringsEqualIgnoreCase(m_website, modTeamMember.m_website) &&
+		   Utilities::areStringsEqualIgnoreCase(m_youTube, modTeamMember.m_youTube) &&
+		   Utilities::areStringsEqualIgnoreCase(m_reddit, modTeamMember.m_reddit) &&
+		   Utilities::areStringsEqualIgnoreCase(m_gitHub, modTeamMember.m_gitHub) &&
+		   Utilities::areStringsEqualIgnoreCase(m_discord, modTeamMember.m_discord) &&
+		   Utilities::areStringsEqualIgnoreCase(m_steamID, modTeamMember.m_steamID) &&
+		   Utilities::areStringsEqualIgnoreCase(m_aim, modTeamMember.m_aim) &&
+		   Utilities::areStringsEqual(m_icq, modTeamMember.m_icq) &&
+		   Utilities::areStringsEqualIgnoreCase(m_yahoo, modTeamMember.m_yahoo) &&
+		   Utilities::areStringsEqual(m_phoneNumber, modTeamMember.m_phoneNumber);
 }
 
-bool ModTeamMember::operator != (const ModTeamMember & m) const {
-	return !operator == (m);
+bool ModTeamMember::operator != (const ModTeamMember & modTeamMember) const {
+	return !operator == (modTeamMember);
 }

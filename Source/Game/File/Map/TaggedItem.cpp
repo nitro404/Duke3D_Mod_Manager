@@ -371,6 +371,10 @@ std::optional<TaggedItem> TaggedItem::parseFrom(const rapidjson::Value & tagInfo
 }
 
 bool TaggedItem::operator == (const TaggedItem & taggedItem) const {
+	if(this == &taggedItem) {
+		return true;
+	}
+
 	return m_lowTag == taggedItem.m_lowTag &&
 		   m_highTag == taggedItem.m_highTag &&
 		   m_extra == taggedItem.m_extra;

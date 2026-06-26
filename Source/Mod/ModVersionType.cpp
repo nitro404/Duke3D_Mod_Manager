@@ -937,28 +937,32 @@ bool ModVersionType::isValid(bool skipFileInfoValidation) const {
 	return true;
 }
 
-bool ModVersionType::isValid(const ModVersionType * t, bool skipFileInfoValidation) {
-	return t != nullptr && t->isValid(skipFileInfoValidation);
+bool ModVersionType::isValid(const ModVersionType * modVersionType, bool skipFileInfoValidation) {
+	return modVersionType != nullptr && modVersionType->isValid(skipFileInfoValidation);
 }
 
-bool ModVersionType::operator == (const ModVersionType & t) const {
-	if(!Utilities::areStringsEqualIgnoreCase(m_type, t.m_type)) {
+bool ModVersionType::operator == (const ModVersionType & modVersionType) const {
+	if(this == &modVersionType) {
+		return true;
+	}
+
+	if(!Utilities::areStringsEqualIgnoreCase(m_type, modVersionType.m_type)) {
 		return false;
 	}
 
-	if(m_gameVersions.size() != t.m_gameVersions.size() ||
-	   m_dependencies.size() != t.m_dependencies.size()) {
+	if(m_gameVersions.size() != modVersionType.m_gameVersions.size() ||
+	   m_dependencies.size() != modVersionType.m_dependencies.size()) {
 		return false;
 	}
 
 	for(size_t i = 0; i < m_gameVersions.size(); i++) {
-		if(!Utilities::areStringsEqualIgnoreCase(m_gameVersions[i]->getGameVersionID(), t.m_gameVersions[i]->getGameVersionID())) {
+		if(!Utilities::areStringsEqualIgnoreCase(m_gameVersions[i]->getGameVersionID(), modVersionType.m_gameVersions[i]->getGameVersionID())) {
 			return false;
 		}
 	}
 
 	for(size_t i = 0; i < m_dependencies.size(); i++) {
-		if(*m_dependencies[i] != *t.m_dependencies[i]) {
+		if(*m_dependencies[i] != *modVersionType.m_dependencies[i]) {
 			return false;
 		}
 	}
@@ -966,6 +970,6 @@ bool ModVersionType::operator == (const ModVersionType & t) const {
 	return true;
 }
 
-bool ModVersionType::operator != (const ModVersionType & t) const {
-	return !operator == (t);
+bool ModVersionType::operator != (const ModVersionType & modVersionType) const {
+	return !operator == (modVersionType);
 }

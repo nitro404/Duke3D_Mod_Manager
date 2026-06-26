@@ -233,6 +233,10 @@ void CommentCollection::setCommentCollectionModified(bool value) {
 }
 
 bool CommentCollection::operator == (const CommentCollection & comments) const {
+	if(this == &comments) {
+		return true;
+	}
+
 	return m_comments == comments.m_comments;
 }
 

@@ -233,6 +233,10 @@ std::string DOSBoxConfiguration::Section::Entry::toString() const {
 }
 
 bool DOSBoxConfiguration::Section::Entry::operator == (const Entry & entry) const {
+	if(this == &entry) {
+		return true;
+	}
+
 	return Utilities::areStringsEqual(m_name, entry.m_name) &&
 		   Utilities::areStringsEqual(m_value, entry.m_value);
 }

@@ -2361,50 +2361,54 @@ std::vector<std::shared_ptr<ModAuthorInformation>> OrganizedModCollection::merge
 	return result;
 }
 
-bool OrganizedModCollection::operator == (const OrganizedModCollection & m) const {
-	if((m_mods == nullptr && m.m_mods != nullptr) ||
-	   (m_mods != nullptr && m.m_mods == nullptr) ||
-	   (m_favouriteMods == nullptr && m.m_favouriteMods != nullptr) ||
-	   (m_favouriteMods != nullptr && m.m_favouriteMods == nullptr) ||
-	   (m_gameVersions == nullptr && m.m_gameVersions != nullptr) ||
-	   (m_gameVersions != nullptr && m.m_gameVersions == nullptr) ||
-	   (m_selectedTeam == nullptr && m.m_selectedTeam != nullptr) ||
-	   (m_selectedTeam != nullptr && m.m_selectedTeam == nullptr) ||
-	   (m_selectedAuthor == nullptr && m.m_selectedAuthor != nullptr) ||
-	   (m_selectedAuthor != nullptr && m.m_selectedAuthor == nullptr) ||
-	   m_organizedMods.size() != m.m_organizedMods.size() ||
-	   m_organizedGameVersions.size() != m.m_organizedGameVersions.size() ||
-	   m_teams.size() != m.m_teams.size() ||
-	   m_authors.size() != m.m_authors.size() ||
-	   m_filterType != m.m_filterType ||
-	   m_sortType != m.m_sortType ||
-	   m_sortDirection != m.m_sortDirection ||
-	   (m_mods != nullptr && m.m_mods != nullptr && *m_mods != *m.m_mods) ||
-	   (m_favouriteMods != nullptr && m.m_favouriteMods != nullptr && *m_favouriteMods != *m.m_favouriteMods) ||
-	   (m_gameVersions != nullptr && m.m_gameVersions != nullptr && *m_gameVersions != *m.m_gameVersions)) {
+bool OrganizedModCollection::operator == (const OrganizedModCollection & organizedModCollection) const {
+	if(this == &organizedModCollection) {
+		return true;
+	}
+
+	if((m_mods == nullptr && organizedModCollection.m_mods != nullptr) ||
+	   (m_mods != nullptr && organizedModCollection.m_mods == nullptr) ||
+	   (m_favouriteMods == nullptr && organizedModCollection.m_favouriteMods != nullptr) ||
+	   (m_favouriteMods != nullptr && organizedModCollection.m_favouriteMods == nullptr) ||
+	   (m_gameVersions == nullptr && organizedModCollection.m_gameVersions != nullptr) ||
+	   (m_gameVersions != nullptr && organizedModCollection.m_gameVersions == nullptr) ||
+	   (m_selectedTeam == nullptr && organizedModCollection.m_selectedTeam != nullptr) ||
+	   (m_selectedTeam != nullptr && organizedModCollection.m_selectedTeam == nullptr) ||
+	   (m_selectedAuthor == nullptr && organizedModCollection.m_selectedAuthor != nullptr) ||
+	   (m_selectedAuthor != nullptr && organizedModCollection.m_selectedAuthor == nullptr) ||
+	   m_organizedMods.size() != organizedModCollection.m_organizedMods.size() ||
+	   m_organizedGameVersions.size() != organizedModCollection.m_organizedGameVersions.size() ||
+	   m_teams.size() != organizedModCollection.m_teams.size() ||
+	   m_authors.size() != organizedModCollection.m_authors.size() ||
+	   m_filterType != organizedModCollection.m_filterType ||
+	   m_sortType != organizedModCollection.m_sortType ||
+	   m_sortDirection != organizedModCollection.m_sortDirection ||
+	   (m_mods != nullptr && organizedModCollection.m_mods != nullptr && *m_mods != *organizedModCollection.m_mods) ||
+	   (m_favouriteMods != nullptr && organizedModCollection.m_favouriteMods != nullptr && *m_favouriteMods != *organizedModCollection.m_favouriteMods) ||
+	   (m_gameVersions != nullptr && organizedModCollection.m_gameVersions != nullptr && *m_gameVersions != *organizedModCollection.m_gameVersions)) {
 		return false;
 	}
 
 	for(size_t i = 0; i < m_organizedMods.size(); i++) {
-		if(m_organizedMods[i] != m.m_organizedMods[i]) {
+		if(m_organizedMods[i] != organizedModCollection.m_organizedMods[i]) {
 			return false;
 		}
 	}
 
 	for(size_t i = 0; i < m_organizedGameVersions.size(); i++) {
-		if(m_organizedGameVersions[i] != m.m_organizedGameVersions[i]) {
+		if(m_organizedGameVersions[i] != organizedModCollection.m_organizedGameVersions[i]) {
 			return false;
 		}
 	}
 
 	for(size_t i = 0; i < m_teams.size(); i++) {
-		if(m_teams[i] != m.m_teams[i]) {
+		if(m_teams[i] != organizedModCollection.m_teams[i]) {
 			return false;
 		}
 	}
 
 	for(size_t i = 0; i < m_authors.size(); i++) {
-		if(m_authors[i] != m.m_authors[i]) {
+		if(m_authors[i] != organizedModCollection.m_authors[i]) {
 			return false;
 		}
 	}
@@ -2412,6 +2416,6 @@ bool OrganizedModCollection::operator == (const OrganizedModCollection & m) cons
 	return true;
 }
 
-bool OrganizedModCollection::operator != (const OrganizedModCollection & m) const {
-	return !operator == (m);
+bool OrganizedModCollection::operator != (const OrganizedModCollection & organizedModCollection) const {
+	return !operator == (organizedModCollection);
 }

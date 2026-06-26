@@ -1385,6 +1385,10 @@ void DOSBoxConfiguration::onSectionEntriesCleared(Section & section) {
 }
 
 bool DOSBoxConfiguration::operator == (const DOSBoxConfiguration & configuration) const {
+	if(this == &configuration) {
+		return true;
+	}
+
 	if(CommentCollection::operator != (configuration) ||
 	   m_sections.size() != configuration.m_sections.size()) {
 		return false;

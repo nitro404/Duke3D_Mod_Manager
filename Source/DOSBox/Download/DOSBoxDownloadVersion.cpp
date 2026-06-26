@@ -452,18 +452,22 @@ bool DOSBoxDownloadVersion::isValid() const {
 	return true;
 }
 
-bool DOSBoxDownloadVersion::isValid(const DOSBoxDownloadVersion * v) {
-	return v != nullptr && v->isValid();
+bool DOSBoxDownloadVersion::isValid(const DOSBoxDownloadVersion * dosboxDownloadVersion) {
+	return dosboxDownloadVersion != nullptr && dosboxDownloadVersion->isValid();
 }
 
-bool DOSBoxDownloadVersion::operator == (const DOSBoxDownloadVersion & v) const {
-	if(m_files.size() != v.m_files.size() ||
-	   !Utilities::areStringsEqualIgnoreCase(m_version, v.m_version)) {
+bool DOSBoxDownloadVersion::operator == (const DOSBoxDownloadVersion & dosboxDownloadVersion) const {
+	if(this == &dosboxDownloadVersion) {
+		return true;
+	}
+
+	if(m_files.size() != dosboxDownloadVersion.m_files.size() ||
+	   !Utilities::areStringsEqualIgnoreCase(m_version, dosboxDownloadVersion.m_version)) {
 		return false;
 	}
 
 	for(size_t i = 0; i < m_files.size(); i++) {
-		if(m_files[i] != v.m_files[i]) {
+		if(m_files[i] != dosboxDownloadVersion.m_files[i]) {
 			return false;
 		}
 	}
@@ -471,6 +475,6 @@ bool DOSBoxDownloadVersion::operator == (const DOSBoxDownloadVersion & v) const 
 	return true;
 }
 
-bool DOSBoxDownloadVersion::operator != (const DOSBoxDownloadVersion & v) const {
-	return !operator == (v);
+bool DOSBoxDownloadVersion::operator != (const DOSBoxDownloadVersion & dosboxDownloadVersion) const {
+	return !operator == (dosboxDownloadVersion);
 }

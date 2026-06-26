@@ -638,6 +638,10 @@ bool GroupSSI::isValidVersion(uint32_t version) {
 }
 
 bool GroupSSI::operator == (const GroupSSI & group) const {
+	if(this == &group) {
+		return true;
+	}
+
 	if(Group::operator != (group) ||
 	   m_version != group.m_version ||
 	   !Utilities::areStringsEqual(m_title, group.m_title) ||

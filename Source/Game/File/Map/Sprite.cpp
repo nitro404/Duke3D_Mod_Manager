@@ -1469,6 +1469,10 @@ std::unique_ptr<Sprite> Sprite::parseFrom(const rapidjson::Value & spriteValue) 
 }
 
 bool Sprite::operator == (const Sprite & sprite) const {
+	if(this == &sprite) {
+		return true;
+	}
+
 	return SectorItem::operator == (sprite) &&
 		   TaggedItem::operator == (sprite) &&
 		   TexturedItem::operator == (sprite) &&
@@ -1855,6 +1859,10 @@ std::optional<Sprite::Attributes> Sprite::Attributes::parseFrom(const rapidjson:
 }
 
 bool Sprite::Attributes::operator == (const Attributes & attributes) const {
+	if(this == &attributes) {
+		return true;
+	}
+
 	return rawValue == attributes.rawValue;
 }
 

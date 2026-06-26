@@ -439,18 +439,22 @@ bool DOSBoxDownloadCollection::isValid() const {
 	return true;
 }
 
-bool DOSBoxDownloadCollection::isValid(const DOSBoxDownloadCollection * c) {
-	return c != nullptr && c->isValid();
+bool DOSBoxDownloadCollection::isValid(const DOSBoxDownloadCollection * dosboxDownloadCollection) {
+	return dosboxDownloadCollection != nullptr && dosboxDownloadCollection->isValid();
 }
 
-bool DOSBoxDownloadCollection::operator == (const DOSBoxDownloadCollection & c) const {
-	if(m_fileRevision != c.m_fileRevision ||
-	   m_downloads.size() != c.m_downloads.size()) {
+bool DOSBoxDownloadCollection::operator == (const DOSBoxDownloadCollection & dosboxDownloadCollection) const {
+	if(this == &dosboxDownloadCollection) {
+		return true;
+	}
+
+	if(m_fileRevision != dosboxDownloadCollection.m_fileRevision ||
+	   m_downloads.size() != dosboxDownloadCollection.m_downloads.size()) {
 		return false;
 	}
 
-	for(size_t i = 0; i < c.m_downloads.size(); i++) {
-		if(*m_downloads[i] != *c.m_downloads[i]) {
+	for(size_t i = 0; i < dosboxDownloadCollection.m_downloads.size(); i++) {
+		if(*m_downloads[i] != *dosboxDownloadCollection.m_downloads[i]) {
 			return false;
 		}
 	}
@@ -458,6 +462,6 @@ bool DOSBoxDownloadCollection::operator == (const DOSBoxDownloadCollection & c) 
 	return true;
 }
 
-bool DOSBoxDownloadCollection::operator != (const DOSBoxDownloadCollection & c) const {
-	return !operator == (c);
+bool DOSBoxDownloadCollection::operator != (const DOSBoxDownloadCollection & dosboxDownloadCollection) const {
+	return !operator == (dosboxDownloadCollection);
 }

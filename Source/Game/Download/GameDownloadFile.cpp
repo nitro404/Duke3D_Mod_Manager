@@ -320,19 +320,23 @@ bool GameDownloadFile::isValid() const {
 		   !m_sha1.empty();
 }
 
-bool GameDownloadFile::isValid(const GameDownloadFile * f) {
-	return f != nullptr && f->isValid();
+bool GameDownloadFile::isValid(const GameDownloadFile * gameDownloadFile) {
+	return gameDownloadFile != nullptr && gameDownloadFile->isValid();
 }
 
-bool GameDownloadFile::operator == (const GameDownloadFile & f) const {
-	return Utilities::areStringsEqualIgnoreCase(m_fileName, f.m_fileName) &&
-		   m_fileSize == f.m_fileSize &&
-		   m_type == f.m_type &&
-		   m_sha1 == f.m_sha1 &&
-		   m_operatingSystem == f.m_operatingSystem &&
-		   m_processorArchitecture == f.m_processorArchitecture;
+bool GameDownloadFile::operator == (const GameDownloadFile & gameDownloadFile) const {
+	if(this == &gameDownloadFile) {
+		return true;
+	}
+
+	return Utilities::areStringsEqualIgnoreCase(m_fileName, gameDownloadFile.m_fileName) &&
+		   m_fileSize == gameDownloadFile.m_fileSize &&
+		   m_type == gameDownloadFile.m_type &&
+		   m_sha1 == gameDownloadFile.m_sha1 &&
+		   m_operatingSystem == gameDownloadFile.m_operatingSystem &&
+		   m_processorArchitecture == gameDownloadFile.m_processorArchitecture;
 }
 
-bool GameDownloadFile::operator != (const GameDownloadFile & f) const {
-	return !operator == (f);
+bool GameDownloadFile::operator != (const GameDownloadFile & gameDownloadFile) const {
+	return !operator == (gameDownloadFile);
 }

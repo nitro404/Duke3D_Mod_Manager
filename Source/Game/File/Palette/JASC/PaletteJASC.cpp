@@ -269,6 +269,10 @@ void PaletteJASC::updateParent() {
 }
 
 bool PaletteJASC::operator == (const PaletteJASC & palette) const {
+	if(this == &palette) {
+		return true;
+	}
+
 	return *m_colourTable == *palette.m_colourTable &&
 		   Utilities::areStringsEqual(m_version, palette.m_version);
 }

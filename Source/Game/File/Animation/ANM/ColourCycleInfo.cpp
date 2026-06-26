@@ -305,6 +305,10 @@ void AnimationANM::ColourCycleInfo::clearParent() {
 }
 
 bool AnimationANM::ColourCycleInfo::operator == (const ColourCycleInfo & colourCycleInfo) const {
+	if(this == &colourCycleInfo) {
+		return true;
+	}
+
 	return m_count == colourCycleInfo.m_count &&
 		   m_rate == colourCycleInfo.m_rate &&
 		   m_flags == colourCycleInfo.m_flags &&

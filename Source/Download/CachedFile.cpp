@@ -258,15 +258,19 @@ bool CachedFile::isValid() const {
 		   !m_sha1.empty();
 }
 
-bool CachedFile::isValid(const CachedFile * f) {
-	return f != nullptr &&
-		   f->isValid();
+bool CachedFile::isValid(const CachedFile * cachedFile) {
+	return cachedFile != nullptr &&
+		   cachedFile->isValid();
 }
 
-bool CachedFile::operator == (const CachedFile & f) const {
-	return Utilities::areStringsEqual(m_fileName, f.m_fileName);
+bool CachedFile::operator == (const CachedFile & cachedFile) const {
+	if(this == &cachedFile) {
+		return true;
+	}
+
+	return Utilities::areStringsEqual(m_fileName, cachedFile.m_fileName);
 }
 
-bool CachedFile::operator != (const CachedFile & f) const {
-	return !operator == (f);
+bool CachedFile::operator != (const CachedFile & cachedFile) const {
+	return !operator == (cachedFile);
 }

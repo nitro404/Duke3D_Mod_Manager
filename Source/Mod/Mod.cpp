@@ -3155,76 +3155,80 @@ void Mod::updateParent() {
 	}
 }
 
-bool Mod::operator == (const Mod & m) const {
-	if(!Utilities::areStringsEqualIgnoreCase(m_id, m.m_id) ||
-	   !Utilities::areStringsEqualIgnoreCase(m_name, m.m_name) ||
-	   !Utilities::areStringsEqualIgnoreCase(m_alias, m.m_alias)||
-	   !Utilities::areStringsEqualIgnoreCase(m_type, m.m_type) ||
-	   !Utilities::areStringsEqualIgnoreCase(m_preferredVersion, m.m_preferredVersion) ||
-	   !Utilities::areStringsEqualIgnoreCase(m_defaultVersionType, m.m_defaultVersionType) ||
-	   !Utilities::areStringsEqualIgnoreCase(m_website, m.m_website)||
-	   !Utilities::areStringsEqualIgnoreCase(m_repositoryURL, m.m_repositoryURL) ||
-	   (m_team == nullptr && m.m_team != nullptr) ||
-	   (m_team != nullptr && m.m_team == nullptr) ||
-	   m_versions.size() == m.m_versions.size() ||
-	   m_downloads.size() == m.m_downloads.size() ||
-	   m_screenshots.size() == m.m_screenshots.size() ||
-	   m_images.size() == m.m_images.size() ||
-	   m_videos.size() == m.m_videos.size() ||
-	   m_notes.size() == m.m_notes.size() ||
-	   m_relatedMods.size() != m.m_relatedMods.size() ||
-	   m_similarMods.size() != m.m_similarMods.size()) {
+bool Mod::operator == (const Mod & mod) const {
+	if(this == &mod) {
+		return true;
+	}
+
+	if(!Utilities::areStringsEqualIgnoreCase(m_id, mod.m_id) ||
+	   !Utilities::areStringsEqualIgnoreCase(m_name, mod.m_name) ||
+	   !Utilities::areStringsEqualIgnoreCase(m_alias, mod.m_alias)||
+	   !Utilities::areStringsEqualIgnoreCase(m_type, mod.m_type) ||
+	   !Utilities::areStringsEqualIgnoreCase(m_preferredVersion, mod.m_preferredVersion) ||
+	   !Utilities::areStringsEqualIgnoreCase(m_defaultVersionType, mod.m_defaultVersionType) ||
+	   !Utilities::areStringsEqualIgnoreCase(m_website, mod.m_website)||
+	   !Utilities::areStringsEqualIgnoreCase(m_repositoryURL, mod.m_repositoryURL) ||
+	   (m_team == nullptr && mod.m_team != nullptr) ||
+	   (m_team != nullptr && mod.m_team == nullptr) ||
+	   m_versions.size() == mod.m_versions.size() ||
+	   m_downloads.size() == mod.m_downloads.size() ||
+	   m_screenshots.size() == mod.m_screenshots.size() ||
+	   m_images.size() == mod.m_images.size() ||
+	   m_videos.size() == mod.m_videos.size() ||
+	   m_notes.size() == mod.m_notes.size() ||
+	   m_relatedMods.size() != mod.m_relatedMods.size() ||
+	   m_similarMods.size() != mod.m_similarMods.size()) {
 		return false;
 	}
 
-	if(m_team != nullptr && m.m_team != nullptr && *m_team != *m.m_team) {
+	if(m_team != nullptr && mod.m_team != nullptr && *m_team != *mod.m_team) {
 		return false;
 	}
 
 	for(size_t i = 0; i < m_versions.size(); i++) {
-		if(*m_versions[i] != *m.m_versions[i]) {
+		if(*m_versions[i] != *mod.m_versions[i]) {
 			return false;
 		}
 	}
 
 	for(size_t i = 0; i < m_downloads.size(); i++) {
-		if(*m_downloads[i] != *m.m_downloads[i]) {
+		if(*m_downloads[i] != *mod.m_downloads[i]) {
 			return false;
 		}
 	}
 
 	for(size_t i = 0; i < m_screenshots.size(); i++) {
-		if(*m_screenshots[i] != *m.m_screenshots[i]) {
+		if(*m_screenshots[i] != *mod.m_screenshots[i]) {
 			return false;
 		}
 	}
 
 	for(size_t i = 0; i < m_images.size(); i++) {
-		if(*m_images[i] != *m.m_images[i]) {
+		if(*m_images[i] != *mod.m_images[i]) {
 			return false;
 		}
 	}
 
 	for(size_t i = 0; i < m_videos.size(); i++) {
-		if(*m_videos[i] != *m.m_videos[i]) {
+		if(*m_videos[i] != *mod.m_videos[i]) {
 			return false;
 		}
 	}
 
 	for(size_t i = 0; i < m_notes.size(); i++) {
-		if(!Utilities::areStringsEqual(m_notes[i], m.m_notes[i])) {
+		if(!Utilities::areStringsEqual(m_notes[i], mod.m_notes[i])) {
 			return false;
 		}
 	}
 
 	for (size_t i = 0; i < m_relatedMods.size(); i++) {
-		if(!Utilities::areStringsEqual(m_relatedMods[i], m.m_relatedMods[i])) {
+		if(!Utilities::areStringsEqual(m_relatedMods[i], mod.m_relatedMods[i])) {
 			return false;
 		}
 	}
 
 	for (size_t i = 0; i < m_similarMods.size(); i++) {
-		if(!Utilities::areStringsEqual(m_similarMods[i], m.m_similarMods[i])) {
+		if(!Utilities::areStringsEqual(m_similarMods[i], mod.m_similarMods[i])) {
 			return false;
 		}
 	}
@@ -3232,6 +3236,6 @@ bool Mod::operator == (const Mod & m) const {
 	return true;
 }
 
-bool Mod::operator != (const Mod & m) const {
-	return !operator == (m);
+bool Mod::operator != (const Mod & mod) const {
+	return !operator == (mod);
 }

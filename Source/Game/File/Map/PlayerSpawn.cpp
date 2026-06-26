@@ -216,6 +216,10 @@ std::string PlayerSpawn::toString() const {
 }
 
 bool PlayerSpawn::operator == (const PlayerSpawn & playerSpawn) const {
+	if(this == &playerSpawn) {
+		return true;
+	}
+
 	return SectorItem::operator == (playerSpawn);
 }
 

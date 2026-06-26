@@ -870,6 +870,10 @@ void PaletteDAT::updateParent() {
 }
 
 bool PaletteDAT::operator == (const PaletteDAT & palette) const {
+	if(this == &palette) {
+		return true;
+	}
+
 	if(m_type != palette.m_type ||
 	   m_colourTables.size() != palette.m_colourTables.size() ||
 	   *m_trailingData != *palette.m_trailingData) {

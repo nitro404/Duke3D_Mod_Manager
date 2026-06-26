@@ -120,6 +120,10 @@ uint8_t PaletteDAT::TranslucencyTable::operator[] (size_t index) const {
 }
 
 bool PaletteDAT::TranslucencyTable::operator == (const TranslucencyTable & translucencyTable) const {
+	if(this == &translucencyTable) {
+		return true;
+	}
+
 	return *m_translucencyData == *translucencyTable.m_translucencyData;
 }
 

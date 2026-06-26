@@ -1616,6 +1616,10 @@ size_t Sector::getSizeInBytes(uint32_t mapVersion) {
 }
 
 bool Sector::operator == (const Sector & sector) const {
+	if(this == &sector) {
+		return true;
+	}
+
 	if(m_ceiling == nullptr ||
 	   m_floor == nullptr ||
 	   sector.m_ceiling == nullptr ||

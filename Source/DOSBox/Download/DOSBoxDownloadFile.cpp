@@ -272,18 +272,22 @@ bool DOSBoxDownloadFile::isValid() const {
 		   !m_sha1.empty();
 }
 
-bool DOSBoxDownloadFile::isValid(const DOSBoxDownloadFile * f) {
-	return f != nullptr && f->isValid();
+bool DOSBoxDownloadFile::isValid(const DOSBoxDownloadFile * dosboxDownloadFile) {
+	return dosboxDownloadFile != nullptr && dosboxDownloadFile->isValid();
 }
 
-bool DOSBoxDownloadFile::operator == (const DOSBoxDownloadFile & f) const {
-	return Utilities::areStringsEqualIgnoreCase(m_fileName, f.m_fileName) &&
-		   m_fileSize == f.m_fileSize &&
-		   m_sha1 == f.m_sha1 &&
-		   m_operatingSystem == f.m_operatingSystem &&
-		   m_processorArchitecture == f.m_processorArchitecture;
+bool DOSBoxDownloadFile::operator == (const DOSBoxDownloadFile & dosboxDownloadFile) const {
+	if(this == &dosboxDownloadFile) {
+		return true;
+	}
+
+	return Utilities::areStringsEqualIgnoreCase(m_fileName, dosboxDownloadFile.m_fileName) &&
+		   m_fileSize == dosboxDownloadFile.m_fileSize &&
+		   m_sha1 == dosboxDownloadFile.m_sha1 &&
+		   m_operatingSystem == dosboxDownloadFile.m_operatingSystem &&
+		   m_processorArchitecture == dosboxDownloadFile.m_processorArchitecture;
 }
 
-bool DOSBoxDownloadFile::operator != (const DOSBoxDownloadFile & f) const {
-	return !operator == (f);
+bool DOSBoxDownloadFile::operator != (const DOSBoxDownloadFile & dosboxDownloadFile) const {
+	return !operator == (dosboxDownloadFile);
 }

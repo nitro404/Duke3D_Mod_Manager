@@ -341,6 +341,10 @@ bool Location::isValid(const Location * location) {
 }
 
 bool Location::operator == (const Location & location) const {
+	if(this == &location) {
+		return true;
+	}
+
 	return Utilities::areStringsEqual(m_town, location.m_town) &&
 		   Utilities::areStringsEqual(m_city, location.m_city) &&
 		   Utilities::areStringsEqual(m_province, location.m_province) &&

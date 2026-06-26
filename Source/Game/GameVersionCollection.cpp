@@ -750,17 +750,21 @@ bool GameVersionCollection::isValid() const {
 	return true;
 }
 
-bool GameVersionCollection::isValid(const GameVersionCollection * g) {
-	return g != nullptr && g->isValid();
+bool GameVersionCollection::isValid(const GameVersionCollection * gameVersionCollection) {
+	return gameVersionCollection != nullptr && gameVersionCollection->isValid();
 }
 
-bool GameVersionCollection::operator == (const GameVersionCollection & g) const {
-	if(m_gameVersions.size() != g.m_gameVersions.size()) {
+bool GameVersionCollection::operator == (const GameVersionCollection & gameVersionCollection) const {
+	if(this == &gameVersionCollection) {
+		return true;
+	}
+
+	if(m_gameVersions.size() != gameVersionCollection.m_gameVersions.size()) {
 		return false;
 	}
 
-	for(size_t i = 0; i < g.m_gameVersions.size(); i++) {
-		if(*m_gameVersions[i] != *g.m_gameVersions[i]) {
+	for(size_t i = 0; i < gameVersionCollection.m_gameVersions.size(); i++) {
+		if(*m_gameVersions[i] != *gameVersionCollection.m_gameVersions[i]) {
 			return false;
 		}
 	}
@@ -768,8 +772,8 @@ bool GameVersionCollection::operator == (const GameVersionCollection & g) const 
 	return true;
 }
 
-bool GameVersionCollection::operator != (const GameVersionCollection & g) const {
-	return !operator == (g);
+bool GameVersionCollection::operator != (const GameVersionCollection & gameVersionCollection) const {
+	return !operator == (gameVersionCollection);
 }
 
 void GameVersionCollection::onGameVersionModified(GameVersion & gameVersion) {

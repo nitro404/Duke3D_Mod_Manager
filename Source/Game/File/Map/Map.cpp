@@ -795,6 +795,10 @@ bool Map::isValid(const Map * map, bool verifyParent) {
 }
 
 bool Map::operator == (const Map & map) const {
+	if(this == &map) {
+		return true;
+	}
+
 	if(m_version != map.m_version ||
 	   m_playerSpawn != map.m_playerSpawn ||
 	   *m_trailingData != *map.m_trailingData ||

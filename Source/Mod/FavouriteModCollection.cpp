@@ -431,13 +431,17 @@ size_t FavouriteModCollection::checkForMissingFavouriteMods(const ModCollection 
 	return numberOfMissingFavouriteMods;
 }
 
-bool FavouriteModCollection::operator == (const FavouriteModCollection & m) const {
-	if(m_favourites.size() != m.m_favourites.size()) {
+bool FavouriteModCollection::operator == (const FavouriteModCollection & FavouriteModCollection) const {
+	if(this == &FavouriteModCollection) {
+		return true;
+	}
+
+	if(m_favourites.size() != FavouriteModCollection.m_favourites.size()) {
 		return false;
 	}
 
 	for(size_t i = 0; i < m_favourites.size(); i++) {
-		if(*m_favourites[i] != *m.m_favourites[i]) {
+		if(*m_favourites[i] != *FavouriteModCollection.m_favourites[i]) {
 			return false;
 		}
 	}
@@ -445,6 +449,6 @@ bool FavouriteModCollection::operator == (const FavouriteModCollection & m) cons
 	return true;
 }
 
-bool FavouriteModCollection::operator != (const FavouriteModCollection & m) const {
-	return !operator == (m);
+bool FavouriteModCollection::operator != (const FavouriteModCollection & FavouriteModCollection) const {
+	return !operator == (FavouriteModCollection);
 }

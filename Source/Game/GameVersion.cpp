@@ -3909,6 +3909,10 @@ bool GameVersion::isValid(const GameVersion * gameVersion) {
 }
 
 bool GameVersion::operator == (const GameVersion & gameVersion) const {
+	if(this == &gameVersion) {
+		return true;
+	}
+
 	if(m_standAlone != gameVersion.m_standAlone ||
 	   m_installable != gameVersion.m_installable ||
 	   m_removable != gameVersion.m_removable ||

@@ -213,6 +213,10 @@ std::optional<TexturedItem> TexturedItem::parseFrom(const rapidjson::Value & tex
 }
 
 bool TexturedItem::operator == (const TexturedItem & texturedItem) const {
+	if(this == &texturedItem) {
+		return true;
+	}
+
 	return m_tileNumber == texturedItem.m_tileNumber &&
 		   m_shade == texturedItem.m_shade &&
 		   m_paletteLookupTableNumber == texturedItem.m_paletteLookupTableNumber;

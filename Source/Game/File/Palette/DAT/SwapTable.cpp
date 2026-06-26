@@ -171,6 +171,10 @@ uint8_t PaletteDAT::SwapTable::operator[] (size_t index) const {
 }
 
 bool PaletteDAT::SwapTable::operator == (const SwapTable & swapTable) const {
+	if(this == &swapTable) {
+		return true;
+	}
+
 	return m_swapIndex == swapTable.m_swapIndex &&
 		   *m_swapData == *swapTable.m_swapData;
 }

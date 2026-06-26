@@ -413,15 +413,19 @@ bool GameDownload::isValid(const GameDownload * d) {
 	return d != nullptr && d->isValid();
 }
 
-bool GameDownload::operator == (const GameDownload & v) const {
-	if(m_versions.size() != v.m_versions.size() ||
-	   !Utilities::areStringsEqual(m_id, v.m_id) ||
-	   !Utilities::areStringsEqual(m_name, v.m_name)) {
+bool GameDownload::operator == (const GameDownload & gameDownload) const {
+	if(this == &gameDownload) {
+		return true;
+	}
+
+	if(m_versions.size() != gameDownload.m_versions.size() ||
+	   !Utilities::areStringsEqual(m_id, gameDownload.m_id) ||
+	   !Utilities::areStringsEqual(m_name, gameDownload.m_name)) {
 		return false;
 	}
 
 	for(size_t i = 0; i < m_versions.size(); i++) {
-		if(m_versions[i] != v.m_versions[i]) {
+		if(m_versions[i] != gameDownload.m_versions[i]) {
 			return false;
 		}
 	}
@@ -429,6 +433,6 @@ bool GameDownload::operator == (const GameDownload & v) const {
 	return true;
 }
 
-bool GameDownload::operator != (const GameDownload & d) const {
-	return !operator == (d);
+bool GameDownload::operator != (const GameDownload & gameDownload) const {
+	return !operator == (gameDownload);
 }

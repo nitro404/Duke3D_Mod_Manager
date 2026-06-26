@@ -458,6 +458,10 @@ std::unique_ptr<Tile> Tile::parseFrom(const rapidjson::Value & tileValue) {
 }
 
 bool Tile::operator == (const Tile & tile) const {
+	if(this == &tile) {
+		return true;
+	}
+
 	return m_number == tile.m_number &&
 		   m_width == tile.m_width &&
 		   m_height == tile.m_height &&
@@ -741,6 +745,10 @@ std::optional<Tile::Attributes> Tile::Attributes::parseFrom(const rapidjson::Val
 }
 
 bool Tile::Attributes::operator == (const Attributes & attributes) const {
+	if(this == &attributes) {
+		return true;
+	}
+
 	return rawValue == attributes.rawValue;
 }
 

@@ -469,6 +469,10 @@ bool GameDownloadCollection::isValid(const GameDownloadCollection * c) {
 }
 
 bool GameDownloadCollection::operator == (const GameDownloadCollection & c) const {
+	if(this == &c) {
+		return true;
+	}
+
 	if(m_fileRevision != c.m_fileRevision ||
 	   m_downloads.size() != c.m_downloads.size()) {
 		return false;

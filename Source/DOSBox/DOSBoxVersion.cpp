@@ -998,6 +998,10 @@ bool DOSBoxVersion::isValid(const DOSBoxVersion * dosboxVersion) {
 }
 
 bool DOSBoxVersion::operator == (const DOSBoxVersion & dosboxVersion) const {
+	if(this == &dosboxVersion) {
+		return true;
+	}
+
 	return m_removable == dosboxVersion.m_removable &&
 		   Utilities::areStringsEqual(m_id, dosboxVersion.m_id) &&
 		   Utilities::areStringsEqual(m_longName, dosboxVersion.m_longName) &&

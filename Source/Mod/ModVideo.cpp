@@ -350,17 +350,21 @@ bool ModVideo::isValid() const {
 	return !m_url.empty();
 }
 
-bool ModVideo::isValid(const ModVideo * v) {
-	return v != nullptr && v->isValid();
+bool ModVideo::isValid(const ModVideo * modVideo) {
+	return modVideo != nullptr && modVideo->isValid();
 }
 
-bool ModVideo::operator == (const ModVideo & v) const {
-	return m_width == v.m_width &&
-		   m_height == v.m_height &&
-		   Utilities::areStringsEqualIgnoreCase(m_url, v.m_url) &&
-		   Utilities::areStringsEqualIgnoreCase(m_title, v.m_title);
+bool ModVideo::operator == (const ModVideo & modVideo) const {
+	if(this == &modVideo) {
+		return true;
+	}
+
+	return m_width == modVideo.m_width &&
+		   m_height == modVideo.m_height &&
+		   Utilities::areStringsEqualIgnoreCase(m_url, modVideo.m_url) &&
+		   Utilities::areStringsEqualIgnoreCase(m_title, modVideo.m_title);
 }
 
-bool ModVideo::operator != (const ModVideo & v) const {
-	return !operator == (v);
+bool ModVideo::operator != (const ModVideo & modVideo) const {
+	return !operator == (modVideo);
 }
