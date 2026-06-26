@@ -7448,22 +7448,28 @@
 			<version id="V1" release_date="May 22, 2007">
 				<game type="Atomic" state="Native">
 					<file name="SHARK_V1.CON" size="98724" type="con" sha1="8c366f3f0fa77521241d1dea187b91a12f6683c1"/>
-					<file name="SHARK_V1.GRP" size="22621813" type="grp" sha1="8551d4f71492ee89f02cf721497f1f93a87ca1c1"/>
+					<file name="SHARK_V1.GRP" size="429753" type="grp" sha1="312a0f041fcbf75cbdb6f85fe4c366cf6b9e0ae0"/>
 				</game>
+				<dependencies>
+					<dependency id="duke_caribbean"/>
+				</dependencies>
 			</version>
 			<version id="V2" release_date="June 14, 2007">
 				<game type="Atomic" state="Native">
 					<file name="SHARK_V2.CON" size="98724" type="con" sha1="8c366f3f0fa77521241d1dea187b91a12f6683c1"/>
-					<file name="SHARK_V2.GRP" size="22854922" type="grp" sha1="0eef3322aecafb83fe507831c454a57f8b2b91ef"/>
+					<file name="SHARK_V2.GRP" size="662862" type="grp" sha1="13196f82d0bc5b5f76612b894ead7a3808e5c58c"/>
 				</game>
+				<dependencies>
+					<dependency id="duke_caribbean"/>
+				</dependencies>
 			</version>
 		</versions>
 		<downloads>
 			<download filename="sharkscove.zip" filesize="86923" version="V1" game="Atomic" type="Original Files" sha1="ce4c555f415931e453c5e23f8dee7b27ddeb64d2"/>
 			<download filename="sharkcove2.zip" filesize="147792" version="V2" game="Atomic" type="Original Files" sha1="970677e44cac7d589df966b94a3eccfd7097462b"/>
 			<download filename="sharkcove_hrp.zip" filesize="46027" special="High Resolution Pack" game="Atomic" type="Patch" sha1="36af6e152fbbce08055fc96e001bde9939d1e79e"/>
-			<download filename="Shark&apos;s_Cove_V1-ModMgrA.zip" filesize="10695344" version="V1" game="Atomic" type="Mod Manager Files" state="Native" sha1="8474a4131cf26d2ca2530529df04de6d3540eb00"/>
-			<download filename="Shark&apos;s_Cove_V2-ModMgrA.zip" filesize="10753170" version="V2" game="Atomic" type="Mod Manager Files" state="Native" sha1="feb7d549c2b96a85713381200b9f74b286a06030"/>
+			<download filename="Shark&apos;s_Cove_V1-ModMgrA.zip" filesize="116803" version="V1" game="Atomic" type="Mod Manager Files" state="Native" sha1="5bf7a7674f8bac815eddaa320de494c02528d9b5"/>
+			<download filename="Shark&apos;s_Cove_V2-ModMgrA.zip" filesize="175605" version="V2" game="Atomic" type="Mod Manager Files" state="Native" sha1="19b68ac3e7e0e12ecad1247a8eefc5d2161e66f5"/>
 		</downloads>
 	</mod>
 	<mod name="Blastoff" id="blastoff" type="Episode" website="http://www.xs4all.nl/~jaapm">
