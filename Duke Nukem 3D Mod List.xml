@@ -2952,7 +2952,7 @@
 				</game>
 				<game type="Atomic" state="Converted">
 					<file name="PLATOON.CON" size="149313" type="con" sha1="ae58533321c671479f6849b0e4959bc91697d7a9"/>
-					<file name="PLATOON.GRP" size="13528164" type="grp" sha1="04a922d093291d7344e20d658b1731f93e1d911b"/>
+					<file name="PLATOON.GRP" size="13528164" type="grp" sha1="f95fba8e1f8afb24f8a82555ecb894e1cbd423ad"/>
 				</game>
 			</version>
 		</versions>
