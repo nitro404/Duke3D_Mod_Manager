@@ -12408,9 +12408,11 @@
 				<type id="Golden Desert Eagle">
 					<game type="eDuke32" state="Native">
 						<file name="DNA.CON" size="152940" type="con" sha1="bc5254a39b492759c6a8dc7195efaaa406009a16"/>
-						<file name="Duke_Nukem_Advance_0.7.1.zip" size="9731782" type="zip" sha1="b20b4f873b59f94fa08c41f5b069e635daf797e7"/>
 						<file name="Duke_Nukem_Advance_0.7.1_-_Golden_Desert_Eagle.zip" size="390047" type="zip" sha1="665ffab6fe1b2ef4ae37f61ca16fe855c9306600"/>
 					</game>
+					<dependencies>
+						<dependency id="duke_nukem_advance" version="0.7.1"/>
+					</dependencies>
 				</type>
 			</version>
 			<version id="0.8.10" release_date="June 10, 2025">
@@ -12423,9 +12425,11 @@
 				<type id="Golden Desert Eagle">
 					<game type="eDuke32" state="Native">
 						<file name="DNA.CON" size="154149" type="con" sha1="a98c57bdf58f41d0c3cb2966aadbe4168ab8143d"/>
-						<file name="Duke_Nukem_Advance_0.8.10.zip" size="23078342" type="zip" sha1="c21821cba21a1926c147e4b7224e57f52e0282db"/>
 						<file name="Duke_Nukem_Advance_0.8.10_-_Golden_Desert_Eagle.zip" size="389968" type="zip" sha1="b012823a839d991d8f6ca4765f9dd4525483b356"/>
 					</game>
+					<dependencies>
+						<dependency id="duke_nukem_advance" version="0.8.10"/>
+					</dependencies>
 				</type>
 			</version>
 			<version id="1.0 Playtest" release_date="May 7, 2026">
