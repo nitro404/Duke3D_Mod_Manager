@@ -288,7 +288,7 @@
 				</game>
 				<game type="Atomic" state="Converted">
 					<file name="ALIENS.CON" size="137780" type="con" sha1="8ca63d5a0d2f44e93ad4cc791655ed5d480290a9"/>
-					<file name="ALIENS.GRP" size="8416055" type="grp" sha1="3ca18157b8deac40a3654ae46907ec6bd8d6b353"/>
+					<file name="ALIENS.GRP" size="8416055" type="grp" sha1="8426c7bf3d9e5553214a0d88f7740e67dca1b817"/>
 				</game>
 			</version>
 		</versions>
