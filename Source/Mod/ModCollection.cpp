@@ -530,15 +530,35 @@ std::vector<std::shared_ptr<ModFile>> ModCollection::getModDependencyGroupFiles(
 		std::vector<std::shared_ptr<ModFile>> currentModDependencyGroupModFiles(getModDependencyGroupFiles(modDependencyModGameVersion->getParentModVersionType()->getDependencies(), gameVersion, gameVersions, allowCompatibleGameVersions, true));
 
 		for(const std::shared_ptr<ModFile> & currentModDependencyGroupModFile : currentModDependencyGroupModFiles) {
+			if(std::find_if(groupModFiles.cbegin(), groupModFiles.cend(), [&currentModDependencyGroupModFile](const std::shared_ptr<ModFile> & existingGroupModFile) {
+				return *currentModDependencyGroupModFile == *existingGroupModFile;
+			}) != groupModFiles.cend()) {
+				continue;
+			}
+
 			groupModFiles.push_back(currentModDependencyGroupModFile);
 		}
 	}
 
+	bool shouldAddModFile = false;
+
 	for(const std::shared_ptr<ModFile> & modFile : modDependencyModGameVersion->getFiles()) {
+		shouldAddModFile = false;
+
 		if(modFile->hasFileExtension("grp")) {
-			groupModFiles.push_back(modFile);
+			shouldAddModFile = true;
 		}
 		else if(gameVersion.areZipArchiveGroupsSupported() && modFile->hasFileExtension("zip")) {
+			shouldAddModFile = true;
+		}
+
+		if(shouldAddModFile) {
+			if(std::find_if(groupModFiles.cbegin(), groupModFiles.cend(), [&modFile](const std::shared_ptr<ModFile> & existingGroupModFile) {
+				return *modFile == *existingGroupModFile;
+			}) != groupModFiles.cend()) {
+				continue;
+			}
+
 			groupModFiles.push_back(modFile);
 		}
 	}
@@ -561,6 +581,12 @@ std::vector<std::shared_ptr<ModFile>> ModCollection::getModDependencyGroupFiles(
 			currentModDependencyGroupModFiles = getModDependencyGroupFiles(modDependencyModGameVersion->getParentModVersionType()->getDependencies(), gameVersion, gameVersions, allowCompatibleGameVersions, true);
 
 			for(const std::shared_ptr<ModFile> & currentModDependencyGroupModFile : currentModDependencyGroupModFiles) {
+				if(std::find_if(allModDependencyGroupModFiles.cbegin(), allModDependencyGroupModFiles.cend(), [&currentModDependencyGroupModFile](const std::shared_ptr<ModFile> & existingModDependencyGroupModFile) {
+					return *currentModDependencyGroupModFile == *existingModDependencyGroupModFile;
+				}) != allModDependencyGroupModFiles.cend()) {
+					continue;
+				}
+
 				allModDependencyGroupModFiles.push_back(currentModDependencyGroupModFile);
 			}
 		}
@@ -570,6 +596,12 @@ std::vector<std::shared_ptr<ModFile>> ModCollection::getModDependencyGroupFiles(
 		currentModDependencyGroupModFiles = getModDependencyGroupFiles(*modDependency, gameVersion, gameVersions, allowCompatibleGameVersions, false);
 
 		for(const std::shared_ptr<ModFile> & currentModDependencyGroupModFile : currentModDependencyGroupModFiles) {
+			if(std::find_if(allModDependencyGroupModFiles.cbegin(), allModDependencyGroupModFiles.cend(), [&currentModDependencyGroupModFile](const std::shared_ptr<ModFile> & existingModDependencyGroupModFile) {
+				return *currentModDependencyGroupModFile == *existingModDependencyGroupModFile;
+			}) != allModDependencyGroupModFiles.cend()) {
+				continue;
+			}
+
 			allModDependencyGroupModFiles.push_back(currentModDependencyGroupModFile);
 		}
 	}
