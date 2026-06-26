@@ -6941,8 +6941,11 @@
 				<type id="Dukematch 2000 Mission Pack">
 					<game type="Atomic" state="Native">
 						<file name="DTDM2KMP.CON" size="151745" type="con" sha1="1132d1166be237f7d310e9e3c1117e2b2feacde7"/>
-						<file name="DTDM2KMP.GRP" size="11107327" type="grp" sha1="70d26a130d6d036dc8e4f83188037c63b1f21bec"/>
+						<file name="DTDM2KMP.GRP" size="684937" type="grp" sha1="1f71e0208ab6d4e649945d90addf1ebbcee76d1e"/>
 					</game>
+					<dependencies>
+						<dependency id="duke_tournament"/>
+					</dependencies>
 				</type>
 			</version>
 		</versions>
@@ -6952,7 +6955,7 @@
 			<download filename="dtadd-on.zip" filesize="158424" version_type="Dukematch 2000 Mission Pack" game="Atomic" type="Maps" sha1="7f826b0275e179fd918a8f6a0e38da36fd8fa366"/>
 			<download filename="Duke_Tournament_Test_Demo-ModMgrA.zip" filesize="570674" version="Test Demo" game="Atomic" type="Mod Manager Files" state="Native" sha1="ab2af72350fb9c726db0bd14de3a7ea23b1cbda2"/>
 			<download filename="Duke_Tournament-ModMgrA.zip" filesize="3548534" game="Atomic" type="Mod Manager Files" state="Native" sha1="7681622f0b65311997de15f6b0f0d7fe3a5b3024"/>
-			<download filename="Duke_Tournament_Dukematch_2000_Mission_Pack-ModMgrA.zip" filesize="3702881" version_type="Dukematch 2000 Mission Pack" game="Atomic" type="Mod Manager Files" state="Native" sha1="c97cc13381406ecff2198d607491ac62c523c3fa"/>
+			<download filename="Duke_Tournament_Dukematch_2000_Mission_Pack-ModMgrA.zip" filesize="212832" version_type="Dukematch 2000 Mission Pack" game="Atomic" type="Mod Manager Files" state="Native" sha1="860bcdf3c8c13d1360342690dbe30f712444f3f4"/>
 		</downloads>
 	</mod>
 	<mod name="Eye of Cul" id="eye_of_cul" type="Episode" website="http://www.geocities.com/eyedecul/duke3d/duke3d.html">
