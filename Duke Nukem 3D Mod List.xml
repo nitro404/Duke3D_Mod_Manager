@@ -4258,18 +4258,21 @@
 			<version release_date="April 21, 2000">
 				<game type="Regular" state="Native">
 					<file name="PTOD3.CON" size="99528" type="con" sha1="347a535d117c21ed64588d8500bcb83201631a18"/>
-					<file name="PTOD3.GRP" size="13970658" type="grp" sha1="1b2d92d340bcd96e7bdd5452423d6d2f7b52e1e6"/>
+					<file name="PTOD3.GRP" size="3062806" type="grp" sha1="a2c388bfca725d7c33bc8f208a931b4104c0ac4d"/>
 				</game>
 				<game type="Atomic" state="Converted">
 					<file name="PTOD3.CON" size="149375" type="con" sha1="3c649575c15d6449ceaa4cbfb38999d06ff34eba"/>
-					<file name="PTOD3.GRP" size="14665647" type="grp" sha1="0d3f8de07a4554e652a40cf2c2d635dc3a488285"/>
+					<file name="PTOD3.GRP" size="3338170" type="grp" sha1="15a5bc64a96ea9d3a98fa496d6bd519d255a2bea"/>
 				</game>
+				<dependencies>
+					<dependency id="platoon" version="1.1B"/>
+				</dependencies>
 			</version>
 		</versions>
 		<downloads>
 			<download filename="ptod3.zip" filesize="774506" game="Regular" type="Original Files" sha1="f98c0b3f0d97f82c58909d38f23338b1628a0ede"/>
-			<download filename="Tour_of_Duty_III-ModMgrR.zip" filesize="4174074" game="Regular" type="Mod Manager Files" state="Native" sha1="9bf04ba80d2549759e262757a22a32315d8eaa36"/>
-			<download filename="Tour_of_Duty_III-ModMgrA.zip" filesize="4397637" game="Atomic" type="Mod Manager Files" state="Converted" sha1="4e8f1ce5911c8ce132584a9af910a7c86edf3dcf"/>
+			<download filename="Tour_of_Duty_III-ModMgrR.zip" filesize="776573" game="Regular" type="Mod Manager Files" state="Native" sha1="c501998e326fdd8c7c48373cdc7f68379304b15c"/>
+			<download filename="Tour_of_Duty_III-ModMgrA.zip" filesize="830036" game="Atomic" type="Mod Manager Files" state="Converted" sha1="22b95d1e6bf8c4a34a73ba249467a262407c1391"/>
 		</downloads>
 		<related>
 			<mod id="platoon"/>
