@@ -825,7 +825,7 @@ std::shared_ptr<ModDownload> Mod::getDownloadForGameVersion(const ModGameVersion
 
 	for(const std::shared_ptr<ModDownload> & modDownload : m_downloads) {
 		if(modDownload->isModManagerFiles() &&
-		   Utilities::areStringsEqualIgnoreCase(modDownload->getVersion(), modVersion->getVersion()) &&
+		   (modDownload->getVersion().empty() || Utilities::areStringsEqualIgnoreCase(modDownload->getVersion(), modVersion->getVersion())) &&
 		   Utilities::areStringsEqualIgnoreCase(modDownload->getGameVersionID(), modGameVersion->getGameVersionID())) {
 			if(modVersion->numberOfTypes() == 1) {
 				return modDownload;
