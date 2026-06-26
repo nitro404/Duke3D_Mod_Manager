@@ -2805,6 +2805,30 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		}
 	};
 
+	if(!m_localMode && !standAlone && selectedModGameVersion != nullptr) {
+		if(m_downloadManager->isModGameVersionDownloaded(*selectedModGameVersion, m_mods.get(), getGameVersions().get(), true, true)) {
+			launchStatus("Checking for updates to mod files.");
+		}
+		else {
+			launchStatus("Starting mod download.");
+		}
+
+		SignalConnectionGroup downloadManagerConnectionGroup(connectDownloadManagerSignals());
+
+		bool internalAborted = false;
+		bool modDownloaded = m_downloadManager->downloadModGameVersion(*selectedModGameVersion, *m_mods, *getGameVersions(), true, true, false, &internalAborted);
+
+		downloadManagerConnectionGroup.disconnect();
+
+		if(internalAborted) {
+			return false;
+		}
+		else if(!modDownloaded) {
+			notifyLaunchError(fmt::format("Failed to download '{}' game version of '{}' mod!", getGameVersions()->getLongNameOfGameVersionWithID(selectedModGameVersion->getGameVersionID()), selectedModGameVersion->getFullName(false)));
+			return false;
+		}
+	}
+
 	std::map<std::string, std::unique_ptr<ByteBuffer>, FileNameComparator> demoFiles;
 
 	if(doesRequireCombinedGroup || (!m_demoRecordingEnabled && settings->demoExtractionEnabled)) {
@@ -3004,30 +3028,6 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	}
 	else if(shouldConfigureApplicationTemporaryDirectory) {
 		temporaryDirectoryName = settings->tempSymlinkName;
-	}
-
-	if(!m_localMode && !standAlone && selectedModGameVersion != nullptr) {
-		if(m_downloadManager->isModGameVersionDownloaded(*selectedModGameVersion, m_mods.get(), getGameVersions().get(), true, true)) {
-			launchStatus("Checking for updates to mod files.");
-		}
-		else {
-			launchStatus("Starting mod download.");
-		}
-
-		SignalConnectionGroup downloadManagerConnectionGroup(connectDownloadManagerSignals());
-
-		bool internalAborted = false;
-		bool modDownloaded = m_downloadManager->downloadModGameVersion(*selectedModGameVersion, *m_mods, *getGameVersions(), true, true, false, &internalAborted);
-
-		downloadManagerConnectionGroup.disconnect();
-
-		if(internalAborted) {
-			return false;
-		}
-		else if(!modDownloaded) {
-			notifyLaunchError(fmt::format("Failed to download '{}' game version of '{}' mod!", getGameVersions()->getLongNameOfGameVersionWithID(selectedModGameVersion->getGameVersionID()), selectedModGameVersion->getFullName(false)));
-			return false;
-		}
 	}
 
 	launchStatus("Congfiguring script arguments.");
