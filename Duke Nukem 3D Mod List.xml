@@ -4474,14 +4474,15 @@
 			<version id="2.04" release_date="October 7, 1999">
 				<game type="Regular" state="Native">
 					<file name="VIXENS2.CON" size="123168" type="con" shared="true" sha1="9df41123026a1361a644c342695b2b3135eff5a8"/>
-					<file name="VIXENS23.GRP" size="36619898" type="grp" shared="true" sha1="c1ed22836967db4ddbcacb6363e8b8f7c7254ade"/>
 					<file name="VIXENS24.GRP" size="193414" type="grp" sha1="1c7f43702b1d853d3f9a59989d374aa05520d2e8"/>
 				</game>
 				<game type="Atomic" state="Native">
 					<file name="VIXENS2.CON" size="174362" type="con" shared="true" sha1="4890fa2fbeafbe23ecbb265b583dcc43d35fb588"/>
-					<file name="VIXENS23.GRP" size="37109567" type="grp" shared="true" sha1="fe9f6ebc97a8c43c2534971d863441a1f29593e5"/>
 					<file name="VIXENS24.GRP" size="193414" type="grp" sha1="e66c10cfc9cddef2fbb7a48254abb49322b6d24e"/>
 				</game>
+				<dependencies>
+					<dependency id="vixens_resurrection" version="2.03"/>
+				</dependencies>
 			</version>
 		</versions>
 		<downloads>
@@ -4491,8 +4492,8 @@
 			<download filename="vixens2theme.exe" filesize="2629913" type="Theme" sha1="27f1f982a81f5cd4be0cf867ede47fb2cb619acc"/>
 			<download filename="Vixens_Resurrection_2.03-ModMgrR.zip" filesize="13949601" version="2.03" game="Regular" type="Mod Manager Files" state="Native" sha1="18fcb0cf5e7668f8852b41d3c5f37fbd004097eb"/>
 			<download filename="Vixens_Resurrection_2.03-ModMgrA.zip" filesize="14141201" version="2.03" game="Atomic" type="Mod Manager Files" state="Converted" sha1="6ce5754b3e2ec4c43adffe16260a3abd92711cf0"/>
-			<download filename="Vixens_Resurrection_2.04-ModMgrR.zip" filesize="14007712" version="2.04" game="Regular" type="Mod Manager Files" state="Native" sha1="9fdda0d43772eb492946f43f1e47074f6b3ad528"/>
-			<download filename="Vixens_Resurrection_2.04-ModMgrA.zip" filesize="14199315" version="2.04" game="Atomic" type="Mod Manager Files" state="Converted" sha1="c84a784d7584909d38c83136c91220134a863b24"/>
+			<download filename="Vixens_Resurrection_2.04-ModMgrR.zip" filesize="58133" version="2.04" game="Regular" type="Mod Manager Files" state="Native" sha1="f9355243e3f14e4892b32ecabe7ab8ae760d8197"/>
+			<download filename="Vixens_Resurrection_2.04-ModMgrA.zip" filesize="58136" version="2.04" game="Atomic" type="Mod Manager Files" state="Converted" sha1="fba39928cb59013a20719d0121242372d190c457"/>
 		</downloads>
 		<related>
 			<mod id="vixens"/>
