@@ -7540,22 +7540,25 @@
 				<type id="Russian">
 					<game type="Regular" state="Native">
 						<file name="SAVE_EBN.CON" size="99647" type="con" sha1="b0ccf24604290ac8c1c3d4bcb55dcbf5bbc7bcfe"/>
-						<file name="SAVE_EBN.GRP" size="6869486" type="grp" sha1="c08e6046e8aa6d02ac4b409e180de82cb35ca654"/>
 						<file name="EBN_RUS.GRP" size="187226" type="grp" shared="true" sha1="1eabf50431dc6daa25cc36e43346c5122bb06036"/>
 					</game>
 					<game type="Atomic" state="Converted">
 						<file name="SAVE_EBN.CON" size="151198" type="con" sha1="d89c31df5e17be5309e5fb93ab1c4a4f7bff58c7"/>
-						<file name="SAVE_EBN.GRP" size="7464928" type="grp" sha1="06fb902b1538ef57e2edca90d23cd0a385a2d1a0"/>
 						<file name="EBN_RUS.GRP" size="187226" type="grp" shared="true" sha1="1eabf50431dc6daa25cc36e43346c5122bb06036"/>
 					</game>
+					<dependencies>
+						<dependency id="save_ebn" version_type="English"/>
+					</dependencies>
 				</type>
 			</version>
 		</versions>
 		<downloads>
 			<download filename="save_ebn.zip" filesize="2232009" game="Regular" type="Original Files" sha1="707421de02496e35482f2f342369b70fc8a3088f"/>
 			<download filename="serusvoc.zip" filesize="115288" special="Russian Voice Patch" game="Regular" type="Patch" sha1="3d1a40185bd51d225eeca4bc53a8c42385882a4c"/>
-			<download filename="Save_EBN-ModMgrR.zip" filesize="2370414" game="Regular" type="Mod Manager Files" state="Native" sha1="2c341e066a83491133e480be468e2364defd40db"/>
-			<download filename="Save_EBN-ModMgrA.zip" filesize="2558557" game="Atomic" type="Mod Manager Files" state="Converted" sha1="e9477216da7a365695b83115fb397ddaaa3354d1"/>
+			<download filename="Save_EBN_-_English-ModMgrR.zip" filesize="2255113" version_type="English" game="Regular" type="Mod Manager Files" state="Native" sha1="95f88f749a631423de8aedeffac8339adb70c95a"/>
+			<download filename="Save_EBN_-_Russian-ModMgrR.zip" filesize="115323" version_type="Russian" game="Regular" type="Mod Manager Files" state="Native" sha1="2ba73bbcd8b94c5bf6aa53df65e552da55b35616"/>
+			<download filename="Save_EBN_-_English-ModMgrA.zip" filesize="2443256" version_type="English" game="Atomic" type="Mod Manager Files" state="Converted" sha1="a19fe282859417bceab64e4bab64941ce5d868f2"/>
+			<download filename="Save_EBN_-_Russian-ModMgrA.zip" filesize="115323" version_type="Russian" game="Atomic" type="Mod Manager Files" state="Converted" sha1="7c50c8c1d1fb04d310579c2859d1e7c6081c0551"/>
 		</downloads>
 	</mod>
 	<mod name="Duke 2000: The Space Invasion" id="duke_2000_the_space_invasion" type="Episode" version="Final" website="http://www.d3dmm.webprovider.com">
