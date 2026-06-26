@@ -632,8 +632,21 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 			modFileEntry = modDownloadZipArchive->getEntry(modFile->getFileName());
 
 			if(modFileEntry.expired()) {
-				spdlog::error("Failed to download '{}' mod package file '{}', mod file '{}' not found!", modGameVersion.getFullName(true), modDownload->getFileName(), modFile->getFileName());
-				return false;
+				bool modDependencyGameVersionHasFile = false;
+
+				for(const std::shared_ptr<ModGameVersion> & modDependencyGameVersion : modDependencyGameVersions) {
+					if(modDependencyGameVersion->hasFile(modFile->getFileName())) {
+						modDependencyGameVersionHasFile =  true;
+						break;
+					}
+				}
+
+				if(!modDependencyGameVersionHasFile) {
+					spdlog::error("Failed to download '{}' mod package file '{}', mod file '{}' not found in current package or any dependencies!", modGameVersion.getFullName(true), modDownload->getFileName(), modFile->getFileName());
+					return false;
+				}
+
+				continue;
 			}
 
 			std::unique_ptr<ByteBuffer> modFileEntryData(modFileEntry.lock()->getData());
