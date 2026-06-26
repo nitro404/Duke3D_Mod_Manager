@@ -6850,15 +6850,18 @@
 				<type id="Danish">
 					<game type="Atomic" state="Native">
 						<file name="DUKEDK.CON" size="173548" type="con" sha1="492d3e73afec0dd500c849951746226eccfb394b"/>
-						<file name="DUKEDK.GRP" size="27256349" type="grp" sha1="201dceacf7133d1c83aad349dcdc62c44cc7c1f6"/>
 						<file name="DUKEDK2.GRP" size="3168897" type="grp" shared="true" sha1="963d249c886ca53a5aefe1aa0f126afc957de79e"/>
 					</game>
+					<dependencies>
+						<dependency id="duke_in_denmark" version_type="English"/>
+					</dependencies>
 				</type>
 			</version>
 		</versions>
 		<downloads>
 			<download filename="dukedk.zip" filesize="14148189" game="Atomic" type="Original Files" sha1="473f5969e61a8abe2532a9f17a1696d4db2527b0"/>
-			<download filename="Duke_in_Denmark-ModMgrA.zip" filesize="13572478" game="Atomic" type="Mod Manager Files" state="Native" sha1="91424db78eeaab3b8a558bedf519ea88710bf7ef"/>
+			<download filename="Duke_in_Denmark_-_English-ModMgrA.zip" filesize="11135556" version_type="English" game="Atomic" type="Mod Manager Files" state="Native" sha1="e1b31ff45c8b411413577127b08ad6158234a9c9"/>
+			<download filename="Duke_in_Denmark_-_Danish-ModMgrA.zip" filesize="2436944" version_type="Danish" game="Atomic" type="Mod Manager Files" state="Native" sha1="ef90491596e475c1f1eda7dafec0071cf7707b81"/>
 		</downloads>
 	</mod>
 	<mod name="Duke Is 007" id="duke_is_007" type="Episode">
