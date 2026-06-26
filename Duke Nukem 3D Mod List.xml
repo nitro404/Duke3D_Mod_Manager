@@ -8039,33 +8039,39 @@
 				<type id="Heavy Weapons">
 					<game type="Regular" state="Native">
 						<file name="SWATTECH.CON" size="100103" type="con" sha1="db3a930b917c13c1e790483146e30dfc07c8d385"/>
-						<file name="SWATTECH.GRP" size="15125303" type="grp" sha1="c570dd18c768de2a4fb9a330ab5a0a53e0ebbbda"/>
 						<file name="SVTHEAVY.GRP" size="4292047" type="grp" shared="true" sha1="5b82c6d999b8fa4f68c3aff41581ea56c6227011"/>
 					</game>
 					<game type="Atomic" state="Converted">
 						<file name="SWATTECH.CON" size="151735" type="con" sha1="c4679efc0ca9f5d06556aeb574457396ad35f9c1"/>
-						<file name="SWATTECH.GRP" size="15734314" type="grp" sha1="84eeb356566f1f3ff0bdc95025b8e22cfd41693e"/>
 						<file name="SVTHEAVY.GRP" size="4828838" type="grp" shared="true" sha1="2e8e6e4e08b860674ebea673476006ebe94c9222"/>
 					</game>
+					<dependencies>
+						<dependency id="swat_vs_tech" version="Demo 2" version_type="Original Weapons"/>
+					</dependencies>
 				</type>
 				<type id="Sniper Weapons">
 					<game type="Regular" state="Native">
 						<file name="SWATTECH.CON" size="100103" type="con" sha1="db3a930b917c13c1e790483146e30dfc07c8d385"/>
-						<file name="SWATTECH.GRP" size="15125303" type="grp" sha1="c570dd18c768de2a4fb9a330ab5a0a53e0ebbbda"/>
 						<file name="SVTSNIPE.GRP" size="4393409" type="grp" shared="true" sha1="b066f27111fa61085970a12995d47b2c1686c062"/>
 					</game>
 					<game type="Atomic" state="Converted">
 						<file name="SWATTECH.CON" size="151735" type="con" sha1="c4679efc0ca9f5d06556aeb574457396ad35f9c1"/>
-						<file name="SWATTECH.GRP" size="15734314" type="grp" sha1="84eeb356566f1f3ff0bdc95025b8e22cfd41693e"/>
 						<file name="SVTSNIPE.GRP" size="4930172" type="grp" shared="true" sha1="feeaa455a8974c6d75c358511c3cdf2f092ffb0f"/>
 					</game>
+					<dependencies>
+						<dependency id="swat_vs_tech" version="Demo 2" version_type="Original Weapons"/>
+					</dependencies>
 				</type>
 			</version>
 		</versions>
 		<downloads>
 			<download filename="swatdemo2.zip" filesize="6219441" version="Demo 2" game="Regular" type="Original Files" sha1="c1e89c3800627e3d3e197ce4ec6a465592162f71"/>
-			<download filename="SWAT_vs._TECH_Demo_2-ModMgrR.zip" filesize="6130770" version="Demo 2" game="Regular" type="Mod Manager Files" state="Native" sha1="1b5f32afb06fdb8d12c19bda8689d46a239ff4ad"/>
-			<download filename="SWAT_vs._TECH_Demo_2-ModMgrA.zip" filesize="6688573" version="Demo 2" game="Atomic" type="Mod Manager Files" state="Converted" sha1="258a15ac5cdd9181e1281c7179e7faaa9a9326f4"/>
+			<download filename="SWAT_vs._TECH_Demo_2_-_Original_Weapons-ModMgrR.zip" filesize="4033268" version="Demo 2" version_type="Original Weapons" game="Regular" type="Mod Manager Files" state="Native" sha1="87dc629d318675134ea2d706207b196b722953a0"/>
+			<download filename="SWAT_vs._TECH_Demo_2_-_Heavy_Weapons-ModMgrR.zip" filesize="1052564" version="Demo 2" version_type="Heavy Weapons" game="Regular" type="Mod Manager Files" state="Native" sha1="c6c1d26ba6b0bfcd4980cfb7e2d96e4cae685a01"/>
+			<download filename="SWAT_vs._TECH_Demo_2_-_Sniper_Weapons-ModMgrR.zip" filesize="1044982" version="Demo 2" version_type="Sniper Weapons" game="Regular" type="Mod Manager Files" state="Native" sha1="707a40af5871a9fc0d0fc37fa62d8acaa85d4aed"/>
+			<download filename="SWAT_vs._TECH_Demo_2_-_Original_Weapons-ModMgrA.zip" filesize="4235452" version="Demo 2" version_type="Original Weapons" game="Atomic" type="Mod Manager Files" state="Converted" sha1="972b7c3cbe7cf189b97b9a2fa6071bc6848f7a2f"/>
+			<download filename="SWAT_vs._TECH_Demo_2_-_Heavy_Weapons-ModMgrA.zip" filesize="1229819" version="Demo 2" version_type="Heavy Weapons" game="Atomic" type="Mod Manager Files" state="Converted" sha1="3a7023b07076bb888a429dff2d6f019fc14f5cc4"/>
+			<download filename="SWAT_vs._TECH_Demo_2_-_Sniper_Weapons-ModMgrA.zip" filesize="1223346" version="Demo 2" version_type="Sniper Weapons" game="Atomic" type="Mod Manager Files" state="Converted" sha1="ab481ecef72423fdcc337e513515005e39578230"/>
 		</downloads>
 	</mod>
 	<mod name="The Asteroid" id="the_asteroid" type="Episode" website="http://www.multimania.com/duke3d">
