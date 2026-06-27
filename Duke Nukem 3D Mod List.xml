@@ -12955,4 +12955,23 @@
 			<download filename="The_Premium_Edition_-_Single_Player_Frag_Practice-ModMgrA.zip" filesize="851197" game="Atomic" type="Mod Manager Files" state="Converted" sha1="190f0422d96e9190982f77d111e8c7e8b663bc8b"/>
 		</downloads>
 	</mod>
+	<mod name="WildLife Test" id="wildlife_test" type="Partial Conversion" website="http://mb.mirage.org/tcs/sta">
+		<team>
+			<member name="Jonathan Strander" alias="Mblackwell" email="Mblackwell50@hotmail.com"/>
+		</team>
+		<versions>
+			<version release_date="May 29, 2003">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="WILDLIFE.CON" size="161210" type="con" sha1="f9d3a707b4499fcb7dba4e66b3c979e40e68c890"/>
+						<file name="WILDLIFE.GRP" size="5332916" type="grp" sha1="41d399d7e826597d7fbac2f2685aa901e3002fb3"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="wildlifemod.zip" filesize="995996" game="Atomic" type="Original Files" sha1="7c3f77ebc423290f7b7d343d66aa9eea53648f84"/>
+			<download filename="WildLife_Test-ModMgrA.zip" filesize="974235" game="Atomic" type="Mod Manager Files" state="Native" sha1="c86c742e711762fdd16f2747c2af5ae1485d661d"/>
+		</downloads>
+	</mod>
 </mods>
