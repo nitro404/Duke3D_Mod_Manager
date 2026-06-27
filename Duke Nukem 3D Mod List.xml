@@ -12928,4 +12928,31 @@
 			<download filename="Vacation_Cove-ModMgrJF.zip" filesize="6794380" game="JFDuke3D" type="Mod Manager Files" state="Native" sha1="f89c9aa791ede3760f9cdc3cc5070193dbb50a4f"/>
 		</downloads>
 	</mod>
+	<mod name="The Premium Edition: Single Player Frag Practice" id="the_premium_edition_single_player_frag_practice" type="Map Pack">
+		<team>
+			<member name="Rob Wijkstra" alias="HighWire" email="Rob_Wijkstra@hotmail.com"/>
+		</team>
+		<versions>
+			<version release_date="February 17, 2003">
+				<type>
+					<game type="Regular" state="Native">
+						<file name="FRAGPRAC.CON" size="105064" type="con" sha1="f8fbd2c00c2d1655bd93a960af43e7af8fd1bf4c"/>
+						<file name="FRAGPRAC.GRP" size="3087418" type="grp" sha1="4c5d5a5cd99d3db54735a13c64484ad71355088e"/>
+					</game>
+					<game type="Atomic" state="Converted">
+						<file name="FRAGPRAC.CON" size="154409" type="con" sha1="ac5b36c3eaf97edaa877d038085ebba3921b7515"/>
+						<file name="FRAGPRAC.GRP" size="3322906" type="grp" sha1="d94c53e941a7284c591f2c56ceef297576a85059"/>
+					</game>
+					<dependencies>
+						<dependency id="the_premium_edition" version="1.6"/>
+					</dependencies>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="FragPrac.zip" filesize="747721" game="Regular" type="Original Files" sha1="6f5037308d842dd5f2f673259112475476051d6f"/>
+			<download filename="The_Premium_Edition_-_Single_Player_Frag_Practice-ModMgrR.zip" filesize="764840" game="Regular" type="Mod Manager Files" state="Native" sha1="3db7cd0445bdd4e950bb902feebb05cf59f7e2bc"/>
+			<download filename="The_Premium_Edition_-_Single_Player_Frag_Practice-ModMgrA.zip" filesize="851197" game="Atomic" type="Mod Manager Files" state="Converted" sha1="190f0422d96e9190982f77d111e8c7e8b663bc8b"/>
+		</downloads>
+	</mod>
 </mods>
