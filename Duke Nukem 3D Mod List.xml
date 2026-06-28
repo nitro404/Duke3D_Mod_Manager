@@ -2444,8 +2444,8 @@
 		</related>
 	</mod>
 	<mod name="Mic Episode" id="mic_episode" type="Episode" website="http://come.to/micheld">
-		<team country="France">
-			<member name="Michel Dorange" email="micheld@club-internet.fr"/>
+		<team>
+			<member name="Michel Dorange" email="micheld@club-internet.fr" country="France"/>
 		</team>
 		<versions>
 			<version release_date="November 3, 1998">
