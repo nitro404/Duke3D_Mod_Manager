@@ -13356,6 +13356,29 @@
 			<download filename="Duke&apos;s_Nightmare_V4-ModMgrJF.zip" filesize="884265" version="V4" game="JFDuke3D" type="Mod Manager Files" state="Native" sha1="0943720b27f6679c04cd0d4af04d9218471774cc"/>
 		</downloads>
 	</mod>
+	<mod name="Have Fun Storming the Castle!" id="have_fun_storming_the_castle" type="Map">
+		<team>
+			<member name="SalaciusCrumb" alias="SC" email="salaciuscrumb@gmx.net" icq="58098027"/>
+		</team>
+		<versions>
+			<version release_date="April 26, 2010">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="hfstc.con" size="151192" type="con" sha1="d9d91f8bfbcf65e6de49c3175c6d0f9cac6261ea"/>
+						<file name="hfstc.def" size="159" type="def" sha1="461645f213c75cf4f95012602893e97a44944b0a"/>
+						<file name="Have_Fun_Storming_the_Castle!.zip" size="2374430" type="zip" sha1="6f6151fd35e5bea9dfc9058f6d5c90dfe13f3d18"/>
+					</game>
+					<dependencies>
+						<dependency id="duke_plus"/>
+					</dependencies>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="hfstc.zip" filesize="2344788" game="eDuke32" type="Original Files" sha1="2ce4c80fd58104d3dd40a7e9d20030d0071bc170"/>
+			<download filename="Have_Fun_Storming_the_Castle!-ModMgrE.zip" filesize="2374630" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e4ee18eb6844570551fe381089ac054c08add858"/>
+		</downloads>
+	</mod>
 	<mod name="Demolition" id="demolition" type="Map">
 		<team>
 			<member name="Devastator" email="zheka_XX@TUT.by" country="Belarus"/>
