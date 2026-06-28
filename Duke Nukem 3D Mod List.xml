@@ -12974,4 +12974,23 @@
 			<download filename="WildLife_Test-ModMgrA.zip" filesize="974235" game="Atomic" type="Mod Manager Files" state="Native" sha1="c86c742e711762fdd16f2747c2af5ae1485d661d"/>
 		</downloads>
 	</mod>
+	<mod name="Duke&apos;s Nightmare" id="dukes_nightmare" type="Map" version="V4">
+		<team>
+			<member name="The Commander" email="codynz3000@hotmail.com"/>
+		</team>
+		<versions>
+			<version id="V4" release_date="April 29, 2009">
+				<type>
+					<game type="JFDuke3D" state="Native">
+						<file name="DNV4.CON" size="151191" type="con" sha1="74c9c057e887eafe056236b5147b7881220f2ffb"/>
+						<file name="DNV4.GRP" size="1565567" type="grp" sha1="753953c498a4d97e7f2c85e6bea9d045bd9ecaf9"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="DukesNightmare.zip" filesize="827639" version="V4" game="JFDuke3D" type="Original Files" sha1="526648a94195b6dfaee53614c39bfb7c315c621c"/>
+			<download filename="Duke&apos;s_Nightmare_V4-ModMgrJF.zip" filesize="884265" version="V4" game="JFDuke3D" type="Mod Manager Files" state="Native" sha1="0943720b27f6679c04cd0d4af04d9218471774cc"/>
+		</downloads>
+	</mod>
 </mods>
