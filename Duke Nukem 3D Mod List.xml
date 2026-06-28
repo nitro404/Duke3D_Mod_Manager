@@ -13012,4 +13012,23 @@
 			<download filename="Demolition-ModMgrA.zip" filesize="149841" game="Atomic" type="Mod Manager Files" state="Native" sha1="b5672f37b1a26a12a4e0bafd2eb3f8a6c0866ef4"/>
 		</downloads>
 	</mod>
+	<mod name="Nightshade Army" id="nightshade_army" type="Map">
+		<team>
+			<member name="Mike Norvak" email="mikenorvak@blacksense.net" country="Mexico"/>
+		</team>
+		<versions>
+			<version>
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="NSA.CON" size="151190" type="con" sha1="b44501dc8d7016bdee213bb3c1d2c27a3d85864c"/>
+						<file name="NIGHTSHADE_ARMY.GRP" size="3914370" type="grp" sha1="9fc15b70c0812a5d5779eb9cee7b03f7ea7db09d"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Nightshade.zip" filesize="2398431" game="eDuke32" type="Original Files" sha1="bccfff6615680661ce5021d71b6b09f8efb4142e"/>
+			<download filename="Nightshade_Army-ModMgrE.zip" filesize="2426559" game="eDuke32" type="Mod Manager Files" state="Native" sha1="fd547042765c4704df4fb7f04c6bf89efda1311c"/>
+		</downloads>
+	</mod>
 </mods>
