@@ -13031,4 +13031,168 @@
 			<download filename="Nightshade_Army-ModMgrE.zip" filesize="2426559" game="eDuke32" type="Mod Manager Files" state="Native" sha1="fd547042765c4704df4fb7f04c6bf89efda1311c"/>
 		</downloads>
 	</mod>
+	<mod name="The Epsilon Project" id="The_Epsilon_Project" type="Total Conversion" version="50 Plus">
+		<team name="Sycon Technologies">
+			<member name="Geoff Halliday" alias="Link/Adereth" email="icosa@softhome.net" website="http://www.geocities.com/adereth_2000/lameduke/index.html" aim="Adereth2000" icq="65019858" yahoo="Adereth_2000"/>
+		</team>
+		<versions>
+			<version id="50 Plus" release_date="June 14, 2003">
+				<type>
+					<game type="Stand-Alone" state="Native">
+						<properties base="LameDuke" game_exe_name="epsilon.exe" setup_exe_name="SETUP.EXE" game_config_file_name="SETUP.DAT" game_config_directory_path="" skill_start_value="0" local_working_directory="true" supports_subdirectories="false" requires_group_file_extraction="true"/>
+						<arguments>
+							<argument name="episode" flag="/v"/>
+							<argument name="level" flag="/l"/>
+							<argument name="skill" flag="/s"/>
+							<argument name="record-demo" flag="/r"/>
+						</arguments>
+						<operatingsystems>
+							<operatingsystem name="DOS"/>
+						</operatingsystems>
+						<files>
+							<file name="AI.CON" size="21686" type="con" sha1="2f92c63b7f2d5e0ccc773f3a67304d119609336e"/>
+							<file name="bethtoll.ldt" size="61118" type="mid" sha1="19c083ccfeba44de496377e33bd9abe8ed49d728"/>
+							<file name="BIGLITE.VOC" size="3615" type="voc" sha1="a1aff591e958e82a91a3606ab76f7deab25b0e2b"/>
+							<file name="BODYBLOP.VOC" size="3716" type="voc" sha1="e2e8288cdfa91d1c78a7574df81d4515717b4bd5"/>
+							<file name="BROWNEYE.ldt" size="33022" type="mid" sha1="a99fdeb0997d3b4c99c96538fa19929949c56cfa"/>
+							<file name="cethtoll.ldt" size="9625" type="mid" sha1="ed9c4bc4c6ffc4c11630f0789e9f1d7d88214013"/>
+							<file name="CLIPIN.VOC" size="7531" type="voc" sha1="f9fb586bbd3560e495a4d538bde38e1fcf9aca30"/>
+							<file name="CLIPOUT.VOC" size="5254" type="voc" sha1="a76d608e8733437b266927ba92f2b4b23b13a191"/>
+							<file name="COPTER.VOC" size="3026" type="voc" sha1="9f204c3b1e6638b728a1b6962e57aed969b70d39"/>
+							<file name="D_DEAD2.ldt" size="19975" type="mid" sha1="7c77a72ed6e6a29ed6901941ca64119418aca611"/>
+							<file name="Defs.con" size="4470" type="con" sha1="ce1cf790eeb125cd3ed7825e0b7d16c2fd615f9d"/>
+							<file name="dethtoll.ldt" size="65574" type="mid" sha1="a1b9ca50b8c67f8a1184856b6082f9e70681ad4c"/>
+							<file name="DOOR1.VOC" size="5233" type="voc" sha1="58a9782876bc4609efc0e7d252bdf4763c36c641"/>
+							<file name="DOOR2.VOC" size="7254" type="voc" sha1="e29fd0cb34cc67a09af2c6183714523484719acd"/>
+							<file name="DOS4GW.EXE" size="271476" type="exe" sha1="58bb654fc6d1b3a69abbb95d4dde9dbfe20fbfd0"/>
+							<file name="DRIPPING.VOC" size="20966" type="voc" sha1="59c701bff7e47b6edf15c7499047743ce52dc7ce"/>
+							<file name="e1l1.ldt" size="22650" type="mid" sha1="78cae11098554c72192a44afc1cbf14ef40f7c2a"/>
+							<file name="E2M1.ldt" size="35997" type="mid" sha1="fed61d9f3647b19d7cdec8b03014bf66f25b2d9f"/>
+							<file name="ELEV1.VOC" size="8533" type="voc" sha1="cede502c5ad7ebd183cd9ee03585227c9aa3c0fe"/>
+							<file name="ELEV2.VOC" size="3734" type="voc" sha1="728fcbd79606eaad9d7db3594947fbe56468973b"/>
+							<file name="ELEV3.VOC" size="9433" type="voc" sha1="e8d2b05a50c5b1e9369f25b6fdd7988b373f1ce3"/>
+							<file name="epsilon.exe" size="685121" type="exe" sha1="9d9efb83c84e73078f8d4e6d7035076db5204447"/>
+							<file name="EXPL1.VOC" size="7477" type="voc" sha1="4c4958c1e7167ae19c39d7419ae747516ff052c5"/>
+							<file name="ext.ldc" size="3024" type="con" sha1="e64ad9033a99d95e73cdfea5cf92997cdf9c6468"/>
+							<file name="FASTWAY.ldt" size="35632" type="mid" sha1="ff490de338a4ed78363fa4ac71596f2fc6a42cac"/>
+							<file name="FILE_ID.DIZ" size="446" type="diz" sha1="7114f45db77c10e8f2a79b848ac9520fabe647bd"/>
+							<file name="FLOGHORN.ldt" size="4351" type="mid" sha1="792bd4ae8f45561a78cd8f5328222c3e806e8612"/>
+							<file name="FTA_HF.VOC" size="1508" type="voc" sha1="d4753c68aadce2528ed987b47e20cb8744e858b0"/>
+							<file name="FTA_HM.VOC" size="2140" type="voc" sha1="045e363fa675b4b2f3c18a5c17c21e6f6fd3c056"/>
+							<file name="FTA_R.VOC" size="11605" type="voc" sha1="01483b1794e8444b324752c94f9205bb48e7e5ae"/>
+							<file name="FTA_R.WAV" size="14142" type="wav" sha1="8bccdad5606341cf22475dbad7cd1c5ad284e881"/>
+							<file name="Game.con" size="4803" type="con" sha1="c989a5237e066a7695f90d03d6f7c9c927fefbcd"/>
+							<file name="GETWEAPN.VOC" size="1849" type="voc" sha1="adc82b90b41d3c76a5395e1dd2528fe13928de22"/>
+							<file name="GLASS.VOC" size="8674" type="voc" sha1="422c44cf999c7e0fbd0b3ebfa6bfbcf97e29c162"/>
+							<file name="GO.BAT" size="2476" type="bat" sha1="7813ae59aba4a885c7f1ef7623452d6fb4869df3"/>
+							<file name="grabbag.ldt" size="14652" type="mid" sha1="e87efd38ccd7cb9b11a2a50fa5f27f1bdad1f52f"/>
+							<file name="grabbag_0.ldt" size="15373" type="mid" sha1="2984697d3b873c7a998d7ba8c0e4230d23b3c414"/>
+							<file name="GUN1.VOC" size="5758" type="voc" sha1="e56446e2f01e24d716a176614ab0de83b9079997"/>
+							<file name="intro.ldt" size="83621" type="mid" sha1="3759712208422535d887b5e36226d517d350cb92"/>
+							<file name="JETPAKI.VOC" size="6524" type="voc" sha1="a7398407ccf310f5df5a5287cad964be160df792"/>
+							<file name="JETPAKOF.VOC" size="15000" type="voc" sha1="303c75c499b7598a72e934f22bc9d2928917ff81"/>
+							<file name="JETPAKON.VOC" size="15000" type="voc" sha1="9ca60a5da8640bea6178982fd18240f7a5a8fe1d"/>
+							<file name="JUMP.VOC" size="1849" type="voc" sha1="5bdece71b1c654555b72fb18cb1d58516ce07042"/>
+							<file name="KNUCKLE.VOC" size="1695" type="voc" sha1="51ff67d7d13a2b0d638d3d1345657e976bb58e6a"/>
+							<file name="L1.MAP" size="103661" type="map" sha1="d2da8e361760e5c056998ccd8f0fba1b6d63f0b2"/>
+							<file name="L2.MAP" size="93139" type="map" sha1="821c6378dd13df306744efc0d585e487931b8636"/>
+							<file name="L3.MAP" size="115591" type="map" sha1="5b0d21ae42b44f55159a7b8fd29466f9da69de61"/>
+							<file name="L4.MAP" size="152441" type="map" sha1="5a7c8bd8c2d513f8ce95e0e55127803649c9a450"/>
+							<file name="L5.MAP" size="172800" type="map" sha1="cd8842674926b234ec6082bddc89d07fe6f0aea3"/>
+							<file name="L6.MAP" size="175523" type="map" sha1="5c2f7df3d2fa10cb7c4464dd990976ff36b81ddd"/>
+							<file name="L7.MAP" size="139086" type="map" sha1="41faf4d019d0db03288f56aa3ff216e13a308eb8"/>
+							<file name="L8.MAP" size="14353" type="map" sha1="1beb444d9a7c876620db39e37f1ada5a911141f7"/>
+							<file name="L9.MAP" size="32130" type="map" sha1="030ef2305a46edfd0b81dac46bfab0cb31018199"/>
+							<file name="LAND.VOC" size="2154" type="voc" sha1="876807adeb5c96f91bb0a0e82566df8118b9c091"/>
+							<file name="listmaps.bat" size="22" type="bat" sha1="9084e833015210a45350786311e64c93d4fedf33"/>
+							<file name="LITEFLCK.VOC" size="2924" type="voc" sha1="34762b9ec26f44ea5f5b3bd9e6a349d93983a69b"/>
+							<file name="LOOKUP.DAT" size="2057" type="dat" sha1="eecc70f7d4d9f883956ab17b82c4005f3a4b1f93"/>
+							<file name="M1.MAP" size="165222" type="map" sha1="06addf61eb7b2c981b05e8a44640ab164a7e64c2"/>
+							<file name="M2.MAP" size="150738" type="map" sha1="c3e169e5780a57fada97dc96eec3e527979f0c90"/>
+							<file name="M3.MAP" size="118749" type="map" sha1="8c5399b0a89a6e783a41a7e6c19e212bc966ad35"/>
+							<file name="M4.MAP" size="174167" type="map" sha1="bcaf01023a9f54fb02378d1e1df969d4761f3cf1"/>
+							<file name="M5.MAP" size="117899" type="map" sha1="16f7daf2604efe6b24a2f460c5e88e6094c43da7"/>
+							<file name="M6.MAP" size="130020" type="map" sha1="ee6692c6c442912d05340f8ada4dae9f24f79982"/>
+							<file name="M7.MAP" size="143780" type="map" sha1="046f6d6f3b453507c4a2d454e9bddc5a510aa5c9"/>
+							<file name="M8.MAP" size="13306" type="map" sha1="b280d8bf297d2b2627e9d3ea61931159b9455ef2"/>
+							<file name="map.bat" size="20" type="bat" sha1="79327aeacea31eb45549d2e5e0365512f5a158d0"/>
+							<file name="MISTACHE.ldt" size="13973" type="mid" sha1="6e4bbbd8c19d8080158cfa4ef47c112e8bee58c9"/>
+							<file name="music.con" size="558" type="con" sha1="dffae2833c93b35ee10d589cd1dfbbd0abb2c994"/>
+							<file name="mydemo_1.dmo" size="0" type="dmo" sha1="da39a3ee5e6b4b0d3255bfef95601890afd80709"/>
+							<file name="Mydemo_2.dmo" size="23679" type="dmo" sha1="ded58c20db6acc912ab28b59f1a19c104c3930e8"/>
+							<file name="Mydemo_3.dmo" size="1711" type="dmo" sha1="482bf0f6aa9949e9f3a5c686a96a0ba5e9a34031"/>
+							<file name="Mydemo_4.dmo" size="17751" type="dmo" sha1="8668b4d3e2ade968f2bbed194239612e3c2f7d40"/>
+							<file name="Mydemo_5.dmo" size="13199" type="dmo" sha1="609b5f061733fbec6d1d7b5797a8ba620e728744"/>
+							<file name="Mydemo_6.dmo" size="42143" type="dmo" sha1="081535ff024f94227cb1c80165aaad9cd14e173a"/>
+							<file name="Mydemo_7.dmo" size="28407" type="dmo" sha1="6d0779c44a34a2bac8a093149621d317748717b0"/>
+							<file name="Mydemo_8.dmo" size="6199" type="dmo" sha1="0f52f5369cf660ba9deb200d0edc2e17ec88dd3b"/>
+							<file name="mydemo_9.dmo" size="16519" type="dmo" sha1="4e80185f5ad2ec3fd4cc1b599f37e70980f35246"/>
+							<file name="N1.MAP" size="142056" type="map" sha1="255ce58aa33c0d00c196f9350be3d50c7ae611da"/>
+							<file name="N2.MAP" size="161312" type="map" sha1="c163fb086227c9cc116e4daf3d7c2c47b43751b6"/>
+							<file name="N3.MAP" size="138631" type="map" sha1="a9300bf1f49b14a53b8be96200fef4c8597fa8dd"/>
+							<file name="N4.MAP" size="102567" type="map" sha1="e0232443c01146fd23c19cb79f6cbf9cf670eec5"/>
+							<file name="N5.MAP" size="176321" type="map" sha1="6a640df1994b3adf9ae0b655a8d0b4d7594102e1"/>
+							<file name="N6.MAP" size="97044" type="map" sha1="316a92ea2dc2753cf925b711a733ccb7f6377ee3"/>
+							<file name="N7.MAP" size="116374" type="map" sha1="12f382db7c0b1efbd7245250b6d51a876d5d646e"/>
+							<file name="N8.MAP" size="14652" type="map" sha1="c55b076e1e1610236f836d5465d9836162d1d913"/>
+							<file name="NAMES.H" size="4739" type="header" sha1="9cbc2bdc69417d2f6e8b7c56d882893d431db988"/>
+							<file name="NEO.CON" size="19889" type="con" sha1="5d801f3c8672343585e002585308296a29762d23"/>
+							<file name="notice.diz" size="199" type="diz" sha1="807c0e0a42dc89daf53716a524398d3f82c8764f"/>
+							<file name="O1.MAP" size="68146" type="map" sha1="5490c2f988366388adff0e2ed81ae240e12ec3dc"/>
+							<file name="O2.MAP" size="26452" type="map" sha1="801e65fae0f75dce40b6202b32cf387be952c9af"/>
+							<file name="O3.MAP" size="29343" type="map" sha1="1972e51e9ac58de33215aba3dc2a6cc0f58fe48f"/>
+							<file name="O4.MAP" size="25673" type="map" sha1="644d6b37e2e3726108a0883ed7ddfb1775ee7067"/>
+							<file name="OCTAAT1.VOC" size="26749" type="voc" sha1="ed65576b44b9d6be4e399fc3923a5238d12f9dc4"/>
+							<file name="ONBOARD.VOC" size="4994" type="voc" sha1="1e875d9a1e5e9d68c00c4b0a1a9be8458b85cb17"/>
+							<file name="opening1.ldt" size="12349" type="mid" sha1="27fab9e57a439e58691830d388acc5ff6241fead"/>
+							<file name="PALETTE.DAT" size="41600" type="dat" sha1="7fb7cc8093d713ec8a4aeb57751784587d22e67b"/>
+							<file name="rave.LDT" size="48410" type="mid" sha1="de1a2c4381e77dd72061794f5096bfdae2e6f224"/>
+							<file name="REACTOR.VOC" size="7441" type="voc" sha1="2302ac5090e13cc2a66cb1ecfae6ae3c1d7f788d"/>
+							<file name="reaper.ldt" size="15090" type="mid" sha1="069dea6d5965f0c9f7ca6adecef616e89a1aafef"/>
+							<file name="REBOUND.VOC" size="6260" type="voc" sha1="dfb030929e48e1bd6a079da47056ff41176a5569"/>
+							<file name="RPG.VOC" size="10182" type="voc" sha1="19c7282cb39f2a825ef1c2e9b5e4a8b30fe093b1"/>
+							<file name="RUNNING.VOC" size="1498" type="voc" sha1="02d9abb1c23dbdd66cfbe4ff52a3809305fe9795"/>
+							<file name="RUNNINGW.VOC" size="4290" type="voc" sha1="50f4364e7006594e6ac959c369e788c302945b94"/>
+							<file name="SCUBA.VOC" size="22434" type="vox" sha1="0f2f2652de48916efb452e5f4fd87431957555ae"/>
+							<file name="SETUP.DAT" size="23" type="dat" sha1="bd44663b51f31a7aa93fbe233f72b4d693395ae0"/>
+							<file name="SETUP.EXE" size="32032" type="exe" sha1="cd7e2c5ba6415a51b78eb69c148c45cefc6ae458"/>
+							<file name="SHOOTING.VOC" size="4065" type="voc" sha1="8c1c5b8bdc30bb5c68a4f04e62dcec7812ce7bc9"/>
+							<file name="snake1.ldt" size="33414" type="mid" sha1="d57e8cd6dc96e28dd6903c967f3ab4c975a2dbb0"/>
+							<file name="SQUISH1.VOC" size="10681" type="voc" sha1="94eb876bafb053d5028c96bad6b21733daf5ece2"/>
+							<file name="stalker.ldt" size="43121" type="mid" sha1="b21f8bdb2c23f65be9ffc844510c47be81f01bea"/>
+							<file name="startup.ldt" size="7601" type="mid" sha1="4d6ae929a8270771611583747a4841553060fe9c"/>
+							<file name="streets.ldt" size="51032" type="mid" sha1="d0d8665e31e7cbc58822e915c9e94929f2d3ade2"/>
+							<file name="SUBWAY.VOC" size="12622" type="voc" sha1="428012f639bae88872101208118c72c666d192cf"/>
+							<file name="SWITCH.VOC" size="2420" type="voc" sha1="3453de0ab881a9e25e2208800ff5718230ce1f49"/>
+							<file name="TABLES.DAT" size="11904" type="dat" sha1="e46b638e982e4f6df796db9573e6e6de235841fd"/>
+							<file name="thecall.ldt" size="17453" type="mid" sha1="e9b963dd62ffca68a03440e2be090e6c88c84a10"/>
+							<file name="TILES000.ART" size="1737991" type="art" sha1="2ffbce2be79c628d9797dfc7c62d6ad7fffc3e4a"/>
+							<file name="TILES001.ART" size="1717909" type="art" sha1="7375cfdce87ec7e8e2f66cf96daf9e8945086e38"/>
+							<file name="TILES002.ART" size="1263630" type="art" sha1="983672641e991d54a729eb41c0a07afb9347c0a0"/>
+							<file name="TILES003.ART" size="1577222" type="art" sha1="c028bc3a39bf845f64832c6e5c4839b96802996c"/>
+							<file name="TILES004.ART" size="941049" type="art" sha1="b1bbc7e5fcf3b993f1386507a5a9c93a6682dfb6"/>
+							<file name="tiles005.art" size="726780" type="art" sha1="77d545360cce4cae4077dbd8a63c1e808a751ce4"/>
+							<file name="TILES006.ART" size="611444" type="art" sha1="56960a37c4558b71809a4843b41d2f388aa90be1"/>
+							<file name="TILES007.ART" size="1757004" type="art" sha1="15a36484f005c538365ab86c73208068d052ad71"/>
+							<file name="TILES008.ART" size="2922955" type="art" sha1="2eed1f6ae73c6508d9946ac5b6465135f8d792e2"/>
+							<file name="TILES009.ART" size="4964761" type="art" sha1="ab1f1ed4d5a59321b3f1ff33455117e24e39f5c8"/>
+							<file name="TILES010.ART" size="4793982" type="art" sha1="7a2f3300f19e14bcd5024dc58fb8ac4730b41e62"/>
+							<file name="tonight.ldt" size="45584" type="mid" sha1="e266f18197de4456b2f07e3f46c7211073fb2b44"/>
+							<file name="UNFORGIV.ldt" size="54905" type="mid" sha1="a246b97e70b6ebaa68893ca1b0656aa071bf781a"/>
+							<file name="useMap.bat" size="452" type="bat" sha1="1f162daa27e8eba6454bde36e1254998c0ae2e6a"/>
+							<file name="vars.con" size="4248" type="con" sha1="436356ce216a294f76bde8aabf40b2bcd6274643"/>
+							<file name="WAR1.MAP" size="68006" type="map" sha1="368cb78ef802e85e4249d197b844d78c85697aee"/>
+							<file name="WAR2.MAP" size="22343" type="map" sha1="b480f7e50acd26e93dccd3ada7257172eed14887"/>
+							<file name="WATERFAL.VOC" size="32245" type="voc" sha1="db78e7f4390b724c34796e061b8a3232f085d3c1"/>
+							<file name="zeldaund.ldt" size="8015" type="mid" sha1="690ff8a70f0b1df1053b64de75f6f705849dc889"/>
+						</files>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="epsilon50PLUS.zip" filesize="7421283" version="50 Plus" game="Stand-Alone" type="Original Files" sha1="db49898d226f491b5fb5dfe4f6be12e5eb0acb52"/>
+			<download filename="The_Epsilon_Project_50_Plus-ModMgrSA.zip" filesize="8190949" version="50 Plus" game="Stand-Alone" type="Mod Manager Files" state="Native" sha1="0b6ebc64f0500e4f13967f299921e6623362049a"/>
+		</downloads>
+	</mod>
 </mods>
