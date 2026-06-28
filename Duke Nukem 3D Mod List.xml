@@ -8634,7 +8634,7 @@
 			<member name="Daedolon"/>
 			<member name="Dukebot"/>
 			<member name="Forge"/>
-			<member name="High Treason"/>
+			<member name="Paul Monteray" alias="High Treason" email="pau174u@AOL.com" youtube="HighTreasonLP"/>
 			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
 			<member name="Michael Crisp" alias="Micky C"/>
 			<member name="Mikko Sandt" email="sirpa.sandt@pp.inet.fi"/>
@@ -12680,7 +12680,7 @@
 	</mod>
 	<mod name="The Space Mission" id="the_space_mission" type="Episode" version="V1">
 		<team>
-			<member name="Paul Monteray" alias="High Treason" email="pau174u@AOL.com"/>
+			<member name="Paul Monteray" alias="High Treason" email="pau174u@AOL.com" youtube="HighTreasonLP"/>
 		</team>
 		<versions>
 			<version id="V1" release_date="April 15, 2012">
