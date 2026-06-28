@@ -12993,4 +12993,23 @@
 			<download filename="Duke&apos;s_Nightmare_V4-ModMgrJF.zip" filesize="884265" version="V4" game="JFDuke3D" type="Mod Manager Files" state="Native" sha1="0943720b27f6679c04cd0d4af04d9218471774cc"/>
 		</downloads>
 	</mod>
+	<mod name="Demolition" id="demolition" type="Map">
+		<team>
+			<member name="Devastator" email="zheka_XX@TUT.by" country="Belarus"/>
+		</team>
+		<versions>
+			<version release_date="March 11, 2008">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="DEMOL.CON" size="157114" type="con" sha1="4cf571c429b9ff65656c944ba0fba34fbd55906d"/>
+						<file name="DEMOL.GRP" size="563573" type="grp" sha1="084f54ec1d9764c52ef430b6e82fc4bb41ba7471"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="demolition.zip" filesize="125890" game="Atomic" type="Original Files" sha1="f6fcd0d0cc42a65443e631afa23cd624f42e33f9"/>
+			<download filename="Demolition-ModMgrA.zip" filesize="149841" game="Atomic" type="Mod Manager Files" state="Native" sha1="b5672f37b1a26a12a4e0bafd2eb3f8a6c0866ef4"/>
+		</downloads>
+	</mod>
 </mods>
