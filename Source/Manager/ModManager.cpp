@@ -4788,14 +4788,23 @@ size_t ModManager::updateModFileInfo(Mod & mod, bool skipPopulatedFiles, std::op
 				continue;
 			}
 
-			std::shared_ptr<GameVersion> gameVersion(getGameVersions()->getGameVersionWithID(modDownload->getGameVersionID()));
+			std::string modDirectoryName;
 
-			if(gameVersion == nullptr) {
-				spdlog::warn("Could not find game configuration for game version '{}', skipping update of download file info: '{}'.", getGameVersions()->getLongNameOfGameVersionWithID(modDownload->getGameVersionID()), modDownload->getFileName());
-				continue;
+			if(modDownload->isStandAlone()) {
+				modDirectoryName = GameVersion::STANDALONE_DIRECTORY_NAME;
+			}
+			else {
+				std::shared_ptr<GameVersion> gameVersion(getGameVersions()->getGameVersionWithID(modDownload->getGameVersionID()));
+
+				if(gameVersion == nullptr) {
+					spdlog::warn("Could not find game configuration for game version '{}', skipping update of download file info: '{}'.", getGameVersions()->getLongNameOfGameVersionWithID(modDownload->getGameVersionID()), modDownload->getFileName());
+					continue;
+				}
+
+				modDirectoryName = Utilities::toLowerCase(gameVersion->getModDirectoryName());
 			}
 
-			downloadFilePath = Utilities::joinPaths(settings->modPackageDownloadsDirectoryPath, Utilities::toLowerCase(gameVersion->getModDirectoryName()), modDownload->getFileName());
+			downloadFilePath = Utilities::joinPaths(settings->modPackageDownloadsDirectoryPath, modDirectoryName, modDownload->getFileName());
 		}
 		else {
 			if(settings->modSourceFilesDirectoryPath.empty()) {
@@ -5023,7 +5032,14 @@ size_t ModManager::updateModFileInfo(Mod & mod, bool skipPopulatedFiles, std::op
 
 			for(size_t k = 0; k < modVersionType->numberOfGameVersions(); k++) {
 				std::shared_ptr<ModGameVersion> modGameVersion(modVersionType->getGameVersion(k));
-				std::shared_ptr<GameVersion> gameVersion(getGameVersions()->getGameVersionWithID(modGameVersion->getGameVersionID()));
+				std::shared_ptr<GameVersion> gameVersion;
+
+				if(modVersionType->isStandAlone()) {
+					gameVersion = modGameVersion->getStandAloneGameVersion();
+				}
+				else {
+					gameVersion = getGameVersions()->getGameVersionWithID(modGameVersion->getGameVersionID());
+				}
 
 				if(!GameVersion::isValid(gameVersion.get())) {
 					spdlog::warn("Mod '{}' game version #{} is not valid, skipping update of mod files info.", mod.getFullName(i, j), k + 1);
@@ -5032,32 +5048,34 @@ size_t ModManager::updateModFileInfo(Mod & mod, bool skipPopulatedFiles, std::op
 
 				gameModsPath = Utilities::joinPaths(settings->modsDirectoryPath, gameVersion->getModDirectoryName());
 
-				if(!std::filesystem::is_directory(gameModsPath)) {
-					spdlog::warn("Mod '{}' '{}' game version directory '{}' does not exist or is not a valid directory, skipping update of mod files info.", mod.getFullName(i, j), gameVersion->getLongName(), gameModsPath);
-					continue;
-				}
-
-				if(gameVersion->areZipArchiveGroupsSupported()) {
-					std::shared_ptr<ModFile> modZipFile(modGameVersion->getFirstFileOfType("zip"));
-
-					if(modZipFile != nullptr) {
-						zipArchiveFilePath = Utilities::joinPaths(gameModsPath, modZipFile->getFileName());
-						zipArchive = ZipArchive::readFrom(zipArchiveFilePath, Utilities::emptyString, true);
-
-						if(zipArchive != nullptr) {
-							spdlog::info("Opened '{}' zip file '{}'.", modVersionType->getFullName(), zipArchiveFilePath);
-						}
+				if(!modVersionType->isStandAlone()) {
+					if(!std::filesystem::is_directory(gameModsPath)) {
+						spdlog::warn("Mod '{}' '{}' game version directory '{}' does not exist or is not a valid directory, skipping update of mod files info.", mod.getFullName(i, j), gameVersion->getLongName(), gameModsPath);
+						continue;
 					}
-					else {
-						std::shared_ptr<ModFile> modGroupFile(modGameVersion->getFirstFileOfType("grp"));
 
-						if(modGroupFile != nullptr) {
-							groupFilePath = Utilities::joinPaths(gameModsPath, modGroupFile->getFileName());
+					if(gameVersion->areZipArchiveGroupsSupported()) {
+						std::shared_ptr<ModFile> modZipFile(modGameVersion->getFirstFileOfType("zip"));
 
-							group = GroupGRP::loadFrom(groupFilePath);
+						if(modZipFile != nullptr) {
+							zipArchiveFilePath = Utilities::joinPaths(gameModsPath, modZipFile->getFileName());
+							zipArchive = ZipArchive::readFrom(zipArchiveFilePath, Utilities::emptyString, true);
 
-							if(group == nullptr) {
-								spdlog::error("Failed to open mod group file '{}'.", groupFilePath);
+							if(zipArchive != nullptr) {
+								spdlog::info("Opened '{}' zip file '{}'.", modVersionType->getFullName(), zipArchiveFilePath);
+							}
+						}
+						else {
+							std::shared_ptr<ModFile> modGroupFile(modGameVersion->getFirstFileOfType("grp"));
+
+							if(modGroupFile != nullptr) {
+								groupFilePath = Utilities::joinPaths(gameModsPath, modGroupFile->getFileName());
+
+								group = GroupGRP::loadFrom(groupFilePath);
+
+								if(group == nullptr) {
+									spdlog::error("Failed to open mod group file '{}'.", groupFilePath);
+								}
 							}
 						}
 					}
@@ -5134,7 +5152,22 @@ size_t ModManager::updateModFileInfo(Mod & mod, bool skipPopulatedFiles, std::op
 						}
 					}
 					else {
-						modFilePath = Utilities::joinPaths(gameModsPath, modFile->getFileName());
+						if(modGameVersion->isStandAlone()) {
+							if(settings->modSourceFilesDirectoryPath.empty()) {
+								continue;
+							}
+
+							std::string downloadFileBasePath(Utilities::joinPaths(settings->modSourceFilesDirectoryPath, Utilities::getSafeDirectoryName(mod.getName()), Utilities::getSafeDirectoryName(modVersion->getVersion()), "Mod Manager Files", "Stand-Alone (Native)"));
+
+							modFilePath = Utilities::joinPaths(downloadFileBasePath, "Files", modFile->getFileName());
+
+							if(!std::filesystem::is_regular_file(std::filesystem::path(modFilePath))) {
+								modFilePath = Utilities::joinPaths(downloadFileBasePath, "Game", modFile->getFileName());
+							}
+						}
+						else {
+							modFilePath = Utilities::joinPaths(gameModsPath, modFile->getFileName());
+						}
 
 						if(!std::filesystem::is_regular_file(std::filesystem::path(modFilePath))) {
 							spdlog::warn("Skipping update of missing '{}' mod file info: '{}'.", mod.getFullName(i, j), modFilePath);
