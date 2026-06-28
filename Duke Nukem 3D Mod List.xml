@@ -13308,6 +13308,28 @@
 			<download filename="The_Premium_Edition_-_Single_Player_Frag_Practice-ModMgrA.zip" filesize="851197" game="Atomic" type="Mod Manager Files" state="Converted" sha1="190f0422d96e9190982f77d111e8c7e8b663bc8b"/>
 		</downloads>
 	</mod>
+	<mod name="Shrapnel City" id="shrapnel_city" type="Map">
+		<team>
+			<member name="Danny Mason" email="rlb33333@hotmail.com"/>
+		</team>
+		<versions>
+			<version release_date="August 26, 2013">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="SHRAPNEL.CON" size="151194" type="con" sha1="ffbac2a31fff6f3f0f1017866dcf7c1aebd30090"/>
+						<file name="Shrapnel_City.zip" size="13641695" type="zip" sha1="538c10990284a786cb86f98c4566dd0479a67091"/>
+					</game>
+					<dependencies>
+						<dependency id="duke_plus"/>
+					</dependencies>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="ShrapnelCity01.zip" filesize="13607471" game="eDuke32" type="Original Files" sha1="383feb95a6788ff4c8e6720124697a45bcde075b"/>
+			<download filename="Shrapnel_City-ModMgrE.zip" filesize="13641863" game="eDuke32" type="Mod Manager Files" state="Native" sha1="09022748cd5d2f720cedd70c8c4f8a7237394b6e"/>
+		</downloads>
+	</mod>
 	<mod name="WildLife Test" id="wildlife_test" type="Partial Conversion" version="V2" website="http://mb.mirage.org/tcs/sta">
 		<team>
 			<member name="Jonathan Strander" alias="Mblackwell" email="Mblackwell50@hotmail.com"/>
