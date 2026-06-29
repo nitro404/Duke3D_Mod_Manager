@@ -13218,4 +13218,58 @@
 			<note>Holding the use key while firing the RPG spawns mortar bombs.</note>
 		</notes>
 	</mod>
+	<mod name="New World" id="new_world" type="Total Conversion" version_type="Medium" website="http://members.zoom.com/HCAD">
+		<team>
+			<member name="James Ferry" alias="Veldrik" email="James_Ferry@classic.msn.com" city="Sydney" state="New South Wales" country="Australia"/>
+		</team>
+		<versions>
+			<version release_date="March 21, 1998">
+				<type id="Easy">
+					<game type="Regular" state="Native">
+						<file name="NW_EASY.CON" size="110439" type="con" sha1="2c0a08c24317958c69aad31e9fbaecfc5a01fec4"/>
+						<file name="NEWWORLD.GRP" size="2308543" type="grp" sha1="03ab8daf9d146df593b347d94c337b7ae358d1d9"/>
+					</game>
+					<game type="Atomic" state="Converted">
+						<file name="NW_EASY.CON" size="161914" type="con" sha1="a4987a9f79aace9ef532a1371a90e88ba5a1f59b"/>
+						<file name="NEWWORLD.GRP" size="2867529" type="grp" sha1="45931f60a317d45c2f0815d2d9b1e6ba42d7b87e"/>
+					</game>
+				</type>
+				<type id="Medium">
+					<game type="Regular" state="Native">
+						<file name="NW_MED.CON" size="110441" type="con" sha1="b6c1f602b188ee22c28935c2310a84a1815a4664"/>
+						<file name="NEWWORLD.GRP" size="2308543" type="grp" sha1="03ab8daf9d146df593b347d94c337b7ae358d1d9"/>
+					</game>
+					<game type="Atomic" state="Converted">
+						<file name="NW_MED.CON" size="161916" type="con" sha1="ffadb14f900faa106462e9508a9d868de3ba99a3"/>
+						<file name="NEWWORLD.GRP" size="2867529" type="grp" sha1="45931f60a317d45c2f0815d2d9b1e6ba42d7b87e"/>
+					</game>
+				</type>
+				<type id="Hard">
+					<game type="Regular" state="Native">
+						<file name="NW_HARD.CON" size="110439" type="con" sha1="5542ef2cf716412ed3e129a9ba7094c443f43061"/>
+						<file name="NEWWORLD.GRP" size="2308543" type="grp" sha1="03ab8daf9d146df593b347d94c337b7ae358d1d9"/>
+					</game>
+					<game type="Atomic" state="Converted">
+						<file name="NW_HARD.CON" size="161914" type="con" sha1="43d789be5b0d0b80f510abd3f44e664a6f12d34a"/>
+						<file name="NEWWORLD.GRP" size="2867529" type="grp" sha1="45931f60a317d45c2f0815d2d9b1e6ba42d7b87e"/>
+					</game>
+				</type>
+				<type id="Very Hard">
+					<game type="Regular" state="Native">
+						<file name="NW_VHARD.CON" size="110443" type="con" sha1="1a4d8d7ad8783ccfd27c717a5621be9be05efcba"/>
+						<file name="NEWWORLD.GRP" size="2308543" type="grp" sha1="03ab8daf9d146df593b347d94c337b7ae358d1d9"/>
+					</game>
+					<game type="Atomic" state="Converted">
+						<file name="NW_VHARD.CON" size="161918" type="con" sha1="3372b329f6bc99d38db8e6b8bf4698d4b7dfe1e9"/>
+						<file name="NEWWORLD.GRP" size="2867529" type="grp" sha1="45931f60a317d45c2f0815d2d9b1e6ba42d7b87e"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="NewWorld.zip" filesize="597208" game="Regular" type="Original Files" sha1="b33e3433e7bd737e1006040da4c41c25d9aec878"/>
+			<download filename="New_World-ModMgrR.zip" filesize="703018" game="Regular" type="Mod Manager Files" state="Native" sha1="21970683030dd0400e5f572ef9471612e8862c57"/>
+			<download filename="New_World-ModMgrA.zip" filesize="934173" game="Atomic" type="Mod Manager Files" state="Native" sha1="464902b23d4e4e343b496a1f41073bdadd31e105"/>
+		</downloads>
+	</mod>
 </mods>
