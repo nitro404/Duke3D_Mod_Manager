@@ -13271,5 +13271,33 @@
 			<download filename="New_World-ModMgrR.zip" filesize="703018" game="Regular" type="Mod Manager Files" state="Native" sha1="21970683030dd0400e5f572ef9471612e8862c57"/>
 			<download filename="New_World-ModMgrA.zip" filesize="934173" game="Atomic" type="Mod Manager Files" state="Native" sha1="464902b23d4e4e343b496a1f41073bdadd31e105"/>
 		</downloads>
+		<related>
+			<mod id="new_world_iii"/>
+		</related>
+	</mod>
+	<mod name="New World III" id="new_world_iii" type="Total Conversion" version="1.6" website="http://members.zoom.com/HCAD">
+		<team>
+			<member name="James Ferry" alias="Veldrik" email="James_Ferry@classic.msn.com" city="Sydney" state="New South Wales" country="Australia"/>
+		</team>
+		<versions>
+			<version id="1.6" release_date="February 26, 1999">
+				<game type="Regular" state="Native">
+					<file name="NW3.CON" size="117653" type="con" sha1="4b866294717cdea946b7ee82f85c22733ba2c8eb"/>
+					<file name="NW3.GRP" size="13576924" type="grp" sha1="4ad38c09407065b217990d258bf771ffd402b147"/>
+				</game>
+				<game type="Atomic" state="Converted">
+					<file name="NW3.CON" size="162544" type="con" sha1="c84569e1749207eee15ac98d2df3855d959834c9"/>
+					<file name="NW3.GRP" size="14149671" type="grp" sha1="25f5c218092782c55e018b95ba6cc39a5d03f320"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="nw3.zip" filesize="3695510" version="1.6" game="Regular" type="Original Files" sha1="6fe61f4edc97214c2d9049b18a42a26d0ae40fe0"/>
+			<download filename="New_World_III_1.6-ModMgrR.zip" filesize="4276549" version="1.6" game="Regular" type="Mod Manager Files" state="Native" sha1="5ab3ce1fdb40ee48ddb59b13f99a9a9f0c78b87a"/>
+			<download filename="New_World_III_1.6-ModMgrA.zip" filesize="4547969" version="1.6" game="Atomic" type="Mod Manager Files" state="Converted" sha1="48cb01ffef1f9dade5b003064cfc8262a6c6463a"/>
+		</downloads>
+		<related>
+			<mod id="new_world"/>
+		</related>
 	</mod>
 </mods>
