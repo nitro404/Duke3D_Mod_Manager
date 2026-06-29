@@ -13195,4 +13195,27 @@
 			<download filename="The_Epsilon_Project_50_Plus-ModMgrSA.zip" filesize="8190949" version="50 Plus" game="Stand-Alone" type="Mod Manager Files" state="Native" sha1="0b6ebc64f0500e4f13967f299921e6623362049a"/>
 		</downloads>
 	</mod>
+	<mod name="DukeFire" id="dukefire" type="Weapon Patch" version="2.0">
+		<team>
+			<member name="Matt Purgar" email="mpurgar@juno.com"/>
+		</team>
+		<versions>
+			<version id="2.0" release_date="May 29, 1997">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="DUKEFIRE.CON" size="146401" type="con" sha1="651f60bd7da93dc26ecd5be8e29d010e834141cb"/>
+						<file name="DUKEFIRE.GRP" size="3682659" type="grp" sha1="f9e27f874e09f622f4ec57b5e2373848370d54d6"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="DukeFire2.0.zip" filesize="1032648" version="2.0" game="Atomic" type="Original Files" sha1="5ef880a66d20d9695ff944e9be83c8378a29d33f"/>
+			<download filename="DukeFire_2.0-ModMgrA.zip" filesize="1059869" version="2.0" game="Atomic" type="Mod Manager Files" state="Native" sha1="624030425ec87e2f80e395d8b73ca49ee51d1964"/>
+		</downloads>
+		<notes>
+			<note>Holding the use key while detonating pipebombs produces an even larger vertical explosion.</note>
+			<note>Holding the use key while firing the RPG spawns mortar bombs.</note>
+		</notes>
+	</mod>
 </mods>
