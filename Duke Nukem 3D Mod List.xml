@@ -3079,6 +3079,7 @@
 		</downloads>
 		<related>
 			<mod id="pray_your_prayers"/>
+			<mod id="repent"/>
 		</related>
 	</mod>
 	<mod name="Predator: Future War" id="predator_future_war" type="Total Conversion" website="http://www.dukeworld.com/predtc">
@@ -13391,5 +13392,30 @@
 			<note>The Polymer rendering mode is incompatible with this mod.</note>
 			<note>Voxels must be turned on in game under the display setup options.</note>
 		</notes>
+	</mod>
+	<mod name="Repent" id="repent" type="Map">
+		<team>
+			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
+		</team>
+		<versions>
+			<version release_date="January 19, 2008">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="REPENT.CON" size="148852" type="con" sha1="dacaa0cb782a6a436d76fb0b29e3c8baca37d0d4"/>
+						<file name="REPENT.GRP" size="431177" type="grp" sha1="edfdbe491a044a61821d889e04eb1d99bdae58c5"/>
+					</game>
+					<dependencies>
+						<dependency id="pray_your_prayers_2000"/>
+					</dependencies>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Repent.7z" filesize="3565484" game="Atomic" type="Original Files" sha1="40e8164d1efce306984094232385d68e44bbc2b2"/>
+			<download filename="Repent-ModMgrA.zip" filesize="113821" game="Atomic" type="Mod Manager Files" state="Native" sha1="b020eeb5220e1f862f672cbf443a3d526cfdf52f"/>
+		</downloads>
+		<related>
+			<mod id="pray_your_prayers_2000"/>
+		</related>
 	</mod>
 </mods>
