@@ -13369,4 +13369,27 @@
 			<mod id="alien_versus_predator"/>
 		</related>
 	</mod>
+	<mod name="Voxel Duke Nukem 3D" id="voxel_duke_nukem_3d" type="Voxel Pack" version="1.0" website="https://www.moddb.com/mods/voxel-duke-nukem-3d">
+		<team>
+			<member name="Daniel Peterson" alias="Cheello" twitter="DanielWienerson" website="https://www.moddb.com/members/chillo1" youtube="cheelo_art" country="United States"/>
+		</team>
+		<versions>
+			<version id="1.0" release_date="November 21, 2025">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="main.def" size="54" type="def" sha1="f070f62f256842c87fa055ea0525c55947f02c0c"/>
+						<file name="Voxel_Duke_Nukem_3D_1.0.zip" size="19146585" type="zip" sha1="36f69b1bc1e252559fc685f2293e9fd122598b1f"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="voxel_duke3d.zip" filesize="18777563" version="1.0" game="eDuke32" type="Original Files" sha1="8e84b70bbfc0d8f64f553a5652af2f09d53a5500"/>
+			<download filename="Voxel_Duke_Nukem_3D_1.0-ModMgrE.zip" filesize="19146773" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="30d065f297c3c6a20bb2c6fbda66573f70937a92"/>
+		</downloads>
+		<notes>
+			<note>The Polymer rendering mode is incompatible with this mod.</note>
+			<note>Voxels must be turned on in game under the display setup options.</note>
+		</notes>
+	</mod>
 </mods>
