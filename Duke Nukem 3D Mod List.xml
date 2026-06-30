@@ -13432,4 +13432,80 @@
 			<mod id="pray_your_prayers_2000"/>
 		</related>
 	</mod>
+	<mod name="Duke Nukum V" id="duke_nukum_v" type="Episode" version="0.96.2" website="https://www.moddb.com/mods/duke-nukum-v">
+		<team>
+			<member name="Aymeric Nocus" alias="MRCK" email="aymeric-nocus@tele2.fr" youtube="MisterCK" discord="ck3d#2928" country="France"/>
+		</team>
+		<versions>
+			<version id="0.91" release_date="April 23, 2026">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DNV.CON" size="151190" type="con" sha1="bd2c93932fd71fdd1ab6bb4269fc24ed6810ba6d"/>
+						<file name="Duke_Nukum_V_0.91.zip" size="762779" type="zip" sha1="984a11ce5e877f3649fa4db97a29088d2ed86bdb"/>
+					</game>
+				</type>
+			</version>
+			<version id="0.92.1" release_date="April 26, 2026">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DNV.CON" size="151190" type="con" sha1="bd2c93932fd71fdd1ab6bb4269fc24ed6810ba6d"/>
+						<file name="Duke_Nukum_V_0.92.1.zip" size="2977397" type="zip" sha1="65f38d6ac7948e5cafed8932821a3a7689e32043"/>
+					</game>
+				</type>
+			</version>
+			<version id="0.93.1" release_date="May 1, 2026">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DNV.CON" size="151190" type="con" sha1="bd2c93932fd71fdd1ab6bb4269fc24ed6810ba6d"/>
+						<file name="Duke_Nukum_V_0.93.1.zip" size="3214262" type="zip" sha1="3807d482ea1cd344de538f620494f7b3a4558d56"/>
+					</game>
+				</type>
+			</version>
+			<version id="0.94" release_date="May 1, 2026">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DNV.CON" size="151190" type="con" sha1="bd2c93932fd71fdd1ab6bb4269fc24ed6810ba6d"/>
+						<file name="Duke_Nukum_V_0.94.zip" size="1455822" type="zip" sha1="637631775d29bc9dc356b54f1879b4c1299f3bb8"/>
+					</game>
+				</type>
+			</version>
+			<version id="0.95" release_date="May 1, 2026">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DNV.CON" size="151190" type="con" sha1="bd2c93932fd71fdd1ab6bb4269fc24ed6810ba6d"/>
+						<file name="Duke_Nukum_V_0.95.zip" size="1690962" type="zip" sha1="b1cecca6b0bda6f0a82f841add82c2f6cd6251e7"/>
+					</game>
+				</type>
+			</version>
+			<version id="0.96.2" release_date="May 1, 2026">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DNV.CON" size="151190" type="con" sha1="bd2c93932fd71fdd1ab6bb4269fc24ed6810ba6d"/>
+						<file name="Duke_Nukum_V_0.96.2.zip" size="1923429" type="zip" sha1="94778da4549f723d4a912896e6afb1ce5fb9bbf8"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="DNV_v091.rar" filesize="543125" version="0.91" game="eDuke32" type="Original Files" sha1="f64646911d8a1d5d4652c4e29b876a7cd4a6995c"/>
+			<download filename="DNV_v092.1.rar" filesize="2413255" version="0.92.1" game="eDuke32" type="Original Files" sha1="b96cd1810981bfea14e6671d93887af6b7a731c9"/>
+			<download filename="DNV_v093.1.rar" filesize="2566824" version="0.93.1" game="eDuke32" type="Original Files" sha1="ebc56b27c4d6d05c521b66657179574ab7114207"/>
+			<download filename="DNV_v094.rar" filesize="964772" version="0.94" game="eDuke32" type="Original Files" sha1="506c7b8118bdac31e59bd03d5d3aee0887fd9b77"/>
+			<download filename="DNV_v095.rar" filesize="1100582" version="0.95" game="eDuke32" type="Original Files" sha1="4b759e78f95ce75de841936226ac4f7d0a8d4586"/>
+			<download filename="DNV_v096.2.rar" filesize="1275853" version="0.96.2" game="eDuke32" type="Original Files" sha1="b7b64e37482c69bc752a778c6953ec90b7d58965"/>
+			<download filename="DNVL1_beta_release.1.rar" filesize="144983" special="Level 1" game="eDuke32" type="Original Files" sha1="b2872b188f233c3f84620217e40b182110b31cb2"/>
+			<download filename="DNVL2_beta_release.1.rar" filesize="179882" special="Level 2" game="eDuke32" type="Original Files" sha1="085f6402e51f38d699669fda73862804f1c8b189"/>
+			<download filename="DNVL3_beta_release.1.rar" filesize="118629" special="Level 3" game="eDuke32" type="Original Files" sha1="af3f0202a523743e6a9b65ecdb9be4064069cdf5"/>
+			<download filename="DNVL4_beta_release.1.rar" filesize="153421" special="Level 4" game="eDuke32" type="Original Files" sha1="4fc0024fa1eb24208386f8efbf78509dd6bc807c"/>
+			<download filename="DNVL6_beta_release.1.rar" filesize="149208" special="Level 6" game="eDuke32" type="Original Files" sha1="18c60dd95f5df8ccb63a312624134e3a410071cb"/>
+			<download filename="DNVL7_beta_release.2.rar" filesize="135779" special="Level 7" game="eDuke32" type="Original Files" sha1="f282b5c55974ab16493a772251f04148cee112db"/>
+			<download filename="DNVL8_beta_release.1.rar" filesize="159208" special="Level 8" game="eDuke32" type="Original Files" sha1="f63eea82b554373dc99fdb386b9604bca6b4125b"/>
+			<download filename="Duke_Nukum_V_0.91-ModMgrE.zip" filesize="762955" version="0.91" game="eDuke32" type="Mod Manager Files" state="Native" sha1="15483dcabff3b1ec3105a811c80dc78220e3fd93"/>
+			<download filename="Duke_Nukum_V_0.92.1-ModMgrE.zip" filesize="2977577" version="0.92.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="8178feaaed6551f2e67479795accefe1157ef06d"/>
+			<download filename="Duke_Nukum_V_0.93.1-ModMgrE.zip" filesize="3214442" version="0.93.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e1f102f909732863d9acb177cdcd16ac7069bff5"/>
+			<download filename="Duke_Nukum_V_0.94-ModMgrE.zip" filesize="1455998" version="0.94" game="eDuke32" type="Mod Manager Files" state="Native" sha1="62fb82bc1b49f988326b2872233923b386467c17"/>
+			<download filename="Duke_Nukum_V_0.95-ModMgrE.zip" filesize="1691138" version="0.95" game="eDuke32" type="Mod Manager Files" state="Native" sha1="7af6752d7ceee39a9a539cf76b0d641565ec45e0"/>
+			<download filename="Duke_Nukum_V_0.96.2-ModMgrE.zip" filesize="1923609" version="0.96.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="1f7efe604c24d9df80b0fffee120b2ca926c3c56"/>
+		</downloads>
+	</mod>
 </mods>
