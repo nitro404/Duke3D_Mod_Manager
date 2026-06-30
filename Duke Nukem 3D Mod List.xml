@@ -13273,6 +13273,7 @@
 		</downloads>
 		<related>
 			<mod id="new_world_iii"/>
+			<mod id="new_world_iv"/>
 		</related>
 	</mod>
 	<mod name="New World III" id="new_world_iii" type="Total Conversion" version="1.6" website="http://members.zoom.com/HCAD">
@@ -13298,6 +13299,28 @@
 		</downloads>
 		<related>
 			<mod id="new_world"/>
+			<mod id="new_world_iv"/>
+		</related>
+	</mod>
+	<mod name="New World IV" id="new_world_iv" type="Total Conversion" version="Alpha 0.01" website="http://www.dukeworld.com/nw3/nwiv">
+		<team>
+			<member name="James Ferry" alias="Veldrik" email="James_Ferry@classic.msn.com" city="Sydney" state="New South Wales" country="Australia"/>
+		</team>
+		<versions>
+			<version id="Alpha 0.01" release_date="January 12, 2000">
+				<game type="Atomic" state="Native">
+					<file name="NWIVALPH.CON" size="121875" type="con" sha1="b4bfcfcb97456eeaeb257b5b3ad15ca932413e82"/>
+					<file name="NWIVALPH.GRP" size="9770403" type="grp" sha1="7b56b399730a6672b05c5e6026ec53c1e1a38a8a"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="nwivalph.exe" filesize="2889127" version="Alpha 0.01" game="Atomic" type="Original Files" sha1="f3d9a5be71897024f1effd6ccff33a0c56b09305"/>
+			<download filename="New_World_IV_Alpha_0.01-ModMgrA.zip" filesize="2897643" version="Alpha 0.01" game="Atomic" type="Mod Manager Files" state="Native" sha1="257835a64972689f37500147afdb972437e5b92d"/>
+		</downloads>
+		<related>
+			<mod id="new_world"/>
+			<mod id="new_world_iii"/>
 		</related>
 	</mod>
 </mods>
