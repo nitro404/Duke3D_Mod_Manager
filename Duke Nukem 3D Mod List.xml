@@ -4143,6 +4143,16 @@
 			<member name="Jacek Gordinier"/>
 		</team>
 		<versions>
+			<version id="Preview 2" release_date="August 19, 2001">
+				<game type="Atomic" state="Native">
+					<file name="TN_PREV2.GRP" size="4030151" type="grp" sha1="0163516bfe57c5abe8f6274b9d1498389706e6f6"/>
+				</game>
+			</version>
+			<version id="Preview 3" release_date="August 26, 2001">
+				<game type="Atomic" state="Native">
+					<file name="TN_PREV3.GRP" size="6485565" type="grp" sha1="0b8e94338ddd57768eb31e463a2d05ae4559433f"/>
+				</game>
+			</version>
 			<version id="Demo" release_date="August 11, 2008">
 				<game type="Atomic" state="Native">
 					<file name="TOONNUKE.GRP" size="7612684" type="grp" sha1="ac5f2fc085e019ea818dd8a44f4bfd9b538042f8"/>
@@ -4150,7 +4160,11 @@
 			</version>
 		</versions>
 		<downloads>
+			<download filename="toon_nukem_preview2.zip" filesize="1374208" version="Preview 2" game="Atomic" type="Original Files" sha1="b004a3d662dc1a1111a117692cb4c12dfae1d840"/>
+			<download filename="toon_nukem_preview3.zip" filesize="2026228" version="Preview 3" game="Atomic" type="Original Files" sha1="1a139856617f55d606a47d3321ec62d6acdb879f"/>
 			<download filename="Toon Nukem Demo.zip" filesize="2515394" version="Demo" game="Atomic" type="Original Files" sha1="b47c79354bba8b5565047f16ff97a317c4358e63"/>
+			<download filename="Toon_Nukem_Preview_2-ModMgrA.zip" filesize="1341498" version="Preview 2" game="Atomic" type="Mod Manager Files" state="Native" sha1="738e7cc1dd86ca1460b600640dd0497f056295b7"/>
+			<download filename="Toon_Nukem_Preview_3-ModMgrA.zip" filesize="1963005" version="Preview 3" game="Atomic" type="Mod Manager Files" state="Native" sha1="6ec0cee75764f54c7f64e391434a252098d8643a"/>
 			<download filename="Toon_Nukem_Demo-ModMgrA.zip" filesize="2379171" version="Demo" game="Atomic" type="Mod Manager Files" state="Native" sha1="880a35947320e37b48c385902bceb59e0cb8310f"/>
 		</downloads>
 		<videos>
