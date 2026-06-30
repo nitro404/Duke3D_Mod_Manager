@@ -2448,7 +2448,7 @@
 	</mod>
 	<mod name="Mic Episode" id="mic_episode" type="Episode" website="http://come.to/micheld">
 		<team>
-			<member name="Michel Dorange" email="micheld@club-internet.fr"/>
+			<member name="Michel Dorange" email="micheld@club-internet.fr" country="France"/>
 		</team>
 		<versions>
 			<version release_date="November 3, 1998">
@@ -3645,7 +3645,7 @@
 			<member name="Qui-Gon" email="amlar@newearth3.freeserve.co.uk" icq="56266139"/>
 			<member name="Cybermage" email="cybermage@iobox.com" icq="48658075"/>
 			<member name="Chasm" email="swinger20001@hotmail.com"/>
-			<member name="Brandon Geyer" email="geyerd@hotmail.com" icq="43820070"/>
+			<member name="Brandon Geyer" alias="Solid" email="geyerd@hotmail.com" icq="43820070"/>
 			<member name="Crow550" email="crow550@aol.com" icq="56670588"/>
 			<member name="Piccilo" email="limpbizkit2419@aol.com"/>
 		</team>
@@ -6998,7 +6998,7 @@
 	</mod>
 	<mod name="Funky Stuff" id="funky_stuff" type="Partial Conversion" version="Beta 0.31" website="http://half.freeservers.com">
 		<team>
-			<member name="Solid" email="geyerd@coastalnet.com"/>
+			<member name="Brandon Geyer" alias="Solid" email="geyerd@coastalnet.com" website="http://half.freeservers.com" icq="43820070"/>
 		</team>
 		<versions>
 			<version id="Beta 0.31" release_date="November 12, 1999">
