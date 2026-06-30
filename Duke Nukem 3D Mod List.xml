@@ -274,6 +274,7 @@
 		<related>
 			<mod id="alien_versus_predator_2"/>
 			<mod id="predator_ii"/>
+			<mod id="return_to_fury_161"/>
 		</related>
 	</mod>
 	<mod name="Aliens" id="aliens" type="Total Conversion">
@@ -13341,6 +13342,31 @@
 		<related>
 			<mod id="new_world"/>
 			<mod id="new_world_iii"/>
+		</related>
+	</mod>
+	<mod name="Return to Fury 161" id="return_to_fury_161" type="Map">
+		<team>
+			<member name="Slawomir Lawrynowicz" alias="LAW" email="law2@wp.pl" country="Poland"/>
+		</team>
+		<versions>
+			<version release_date="November 17, 2006">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="FURY161.CON" size="129092" type="con" sha1="8b5f76e03ae7e6f6c1f8c7cf8a17d064b5c3db42"/>
+						<file name="FURY161.GRP" size="2083437" type="grp" sha1="7b1e718caf1e905d5f78d5198c545342299bed96"/>
+					</game>
+					<dependencies>
+						<dependency id="alien_versus_predator"/>
+					</dependencies>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Fury161r.zip" filesize="860425" game="Atomic" type="Original Files" sha1="f19619ddcf3a1a0c224abf32ccaca72c29de04c4"/>
+			<download filename="Return_to_Fury_161-ModMgrA.zip" filesize="882640" game="Atomic" type="Mod Manager Files" state="Native" sha1="ac133509e24d2e3efb66afccfb38241176e8eacd"/>
+		</downloads>
+		<related>
+			<mod id="alien_versus_predator"/>
 		</related>
 	</mod>
 </mods>
