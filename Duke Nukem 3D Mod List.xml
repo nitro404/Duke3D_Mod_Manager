@@ -400,6 +400,7 @@
 		</downloads>
 		<similar>
 			<mod id="castle_dukenstein"/>
+			<mod id="silver_wolf"/>
 			<mod id="wolf_2_duke"/>
 			<mod id="wolf_3d"/>
 		</similar>
@@ -727,6 +728,7 @@
 		</downloads>
 		<similar>
 			<mod id="arctic_wolf"/>
+			<mod id="silver_wolf"/>
 			<mod id="wolf_2_duke"/>
 			<mod id="wolf_3d"/>
 		</similar>
@@ -4655,6 +4657,7 @@
 		<similar>
 			<mod id="arctic_wolf"/>
 			<mod id="castle_dukenstein"/>
+			<mod id="silver_wolf"/>
 			<mod id="wolf_3d"/>
 		</similar>
 	</mod>
@@ -12037,6 +12040,12 @@
 			<download filename="Silver_Wolf_v1.0.zip" filesize="119023609" version="1.0" game="Stand-Alone" type="Original Files" sha1="d3ef7250724d0a4549705615c6161bda6e848ee2"/>
 			<download filename="Silver_Wolf_1.0-ModMgrSA.zip" filesize="116046146" version="1.0" game="Stand-Alone" type="Mod Manager Files" state="Native" sha1="b55f0c3681543951ec4679640079376f0ef438ee"/>
 		</downloads>
+		<similar>
+			<mod id="arctic_wolf"/>
+			<mod id="castle_dukenstein"/>
+			<mod id="wolf_2_duke"/>
+			<mod id="wolf_3d"/>
+		</similar>
 	</mod>
 	<mod name="A.W.O.L." id="awol" type="Total Conversion" website="https://store.steampowered.com/app/1740150/AWOL">
 		<team name="Shotspark Studios" website="https://www.shotsparkstudios.com" twitter="shotsparkstudio" discord="https://discord.gg/EBX5MXjDp8">
@@ -12637,6 +12646,7 @@
 		<similar>
 			<mod id="arctic_wolf"/>
 			<mod id="castle_dukenstein"/>
+			<mod id="silver_wolf"/>
 			<mod id="wolf_2_duke"/>
 		</similar>
 	</mod>
