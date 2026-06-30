@@ -12965,12 +12965,12 @@
 			<download filename="The_Premium_Edition_-_Single_Player_Frag_Practice-ModMgrA.zip" filesize="851197" game="Atomic" type="Mod Manager Files" state="Converted" sha1="190f0422d96e9190982f77d111e8c7e8b663bc8b"/>
 		</downloads>
 	</mod>
-	<mod name="WildLife Test" id="wildlife_test" type="Partial Conversion" website="http://mb.mirage.org/tcs/sta">
+	<mod name="WildLife Test" id="wildlife_test" type="Partial Conversion" version="V2" website="http://mb.mirage.org/tcs/sta">
 		<team>
 			<member name="Jonathan Strander" alias="Mblackwell" email="Mblackwell50@hotmail.com"/>
 		</team>
 		<versions>
-			<version release_date="May 29, 2003">
+			<version id="V1" release_date="May 29, 2003">
 				<type>
 					<game type="Atomic" state="Native">
 						<file name="WILDLIFE.CON" size="161210" type="con" sha1="f9d3a707b4499fcb7dba4e66b3c979e40e68c890"/>
@@ -12978,10 +12978,20 @@
 					</game>
 				</type>
 			</version>
+			<version id="V2" release_date="May 30, 2003">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="WL_V2.CON" size="162765" type="con" sha1="a006c9c83cad2d2eca932a64c78b7443f6e3ade7"/>
+						<file name="WL_V2.GRP" size="5565876" type="grp" sha1="e33af5ceef5423b7edf1ff698d327d6e3372473f"/>
+					</game>
+				</type>
+			</version>
 		</versions>
 		<downloads>
-			<download filename="wildlifemod.zip" filesize="995996" game="Atomic" type="Original Files" sha1="7c3f77ebc423290f7b7d343d66aa9eea53648f84"/>
-			<download filename="WildLife_Test-ModMgrA.zip" filesize="974235" game="Atomic" type="Mod Manager Files" state="Native" sha1="c86c742e711762fdd16f2747c2af5ae1485d661d"/>
+			<download filename="wildlifemod.zip" filesize="995996" version="V1" game="Atomic" type="Original Files" sha1="7c3f77ebc423290f7b7d343d66aa9eea53648f84"/>
+			<download filename="wildlifemod2.zip" filesize="1060930" version="V2" game="Atomic" type="Original Files" sha1="f81ec9a7e88559382a4e068dcddb91711e880faa"/>
+			<download filename="WildLife_Test_V1-ModMgrA.zip" filesize="974235" version="V1" game="Atomic" type="Mod Manager Files" state="Native" sha1="c86c742e711762fdd16f2747c2af5ae1485d661d"/>
+			<download filename="WildLife_Test_V2-ModMgrA.zip" filesize="1038828" version="V2" game="Atomic" type="Mod Manager Files" state="Native" sha1="5680d2f276006d765c5a437bd0f0a6411480d2b9"/>
 		</downloads>
 	</mod>
 	<mod name="Duke&apos;s Nightmare" id="dukes_nightmare" type="Map" version="V4">
