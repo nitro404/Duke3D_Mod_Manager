@@ -13529,4 +13529,26 @@
 			<download filename="CandyMania-ModMgrE.zip" filesize="9112169" game="eDuke32" type="Mod Manager Files" state="Native" sha1="cdb0e41e50aa36073d9327dcdcb039c85d233412"/>
 		</downloads>
 	</mod>
+	<mod name="Imp2Duke" id="imp2duke" type="Enemy Replacement" version="1.1">
+		<team>
+			<member name="Jonas P." email="joXonoX@aol.com" country="Germany"/>
+		</team>
+		<versions>
+			<version id="1.1" release_date="June 11, 1996">
+				<type>
+					<game type="Regular" state="Native">
+						<file name="IMP2DUKE.GRP" size="583936" type="grp" sha1="4f1ab2e41142b1142576882d3e67159f2c615f25"/>
+					</game>
+					<game type="Atomic" state="Converted">
+						<file name="IMP2DUKE.GRP" size="587983" type="grp" sha1="c8d00dd46eb7d35b51f4ce578782387accbfa0a8"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="imp2duke.zip" filesize="75891" version="1.1" game="Regular" type="Original Files" sha1="92db77f22749bd650f95c5133e4dda27d082a203"/>
+			<download filename="Imp2Duke_1.1-ModMgrR.zip" filesize="115969" version="1.1" game="Regular" type="Mod Manager Files" state="Native" sha1="f08540894f5841ba07738f19dc5af1e92e08fa8e"/>
+			<download filename="Imp2Duke_1.1-ModMgrA.zip" filesize="116035" version="1.1" game="Atomic" type="Mod Manager Files" state="Converted" sha1="3f1847893716e8c30ff8de34e2eb73963af0a20d"/>
+		</downloads>
+	</mod>
 </mods>
