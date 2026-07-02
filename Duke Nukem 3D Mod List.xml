@@ -13508,4 +13508,25 @@
 			<download filename="Duke_Nukum_V_0.96.2-ModMgrE.zip" filesize="1923609" version="0.96.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="1f7efe604c24d9df80b0fffee120b2ca926c3c56"/>
 		</downloads>
 	</mod>
+	<mod name="CandyMania" id="candymania" type="Total Conversion">
+		<team name="Oddball Wizards">
+			<member name="Sanek" email="bechtin7@mail.ru" discord="Sanek#6142" country="Russia"/>
+			<member name="Jonathan Strander" alias="Mblackwell" email="Mblackwell50@hotmail.com"/>
+		</team>
+		<versions>
+			<version release_date="October 30, 2017">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="CANDY.CON" size="173532" type="con" sha1="26cece7fd577223be7e6d5658f32440b5e1e5f57"/>
+						<file name="candy.def" size="632" type="def" sha1="2e6df0e52a752d8f2065c247d6e73f2219bebf47"/>
+						<file name="CandyMania.zip" size="9112007" type="zip" sha1="c8d4910aa542d8b589e955626c7af61880565dfb"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="CandyMania.zip" filesize="13802550" game="eDuke32" type="Original Files" sha1="55700f251b4cbcb7f71e65ee03cd1b5cbea69d90"/>
+			<download filename="CandyMania-ModMgrE.zip" filesize="9112169" game="eDuke32" type="Mod Manager Files" state="Native" sha1="cdb0e41e50aa36073d9327dcdcb039c85d233412"/>
+		</downloads>
+	</mod>
 </mods>
