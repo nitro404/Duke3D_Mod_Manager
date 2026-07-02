@@ -13977,6 +13977,41 @@
 			<note>Works best with the Polymer renderer.</note>
 		</notes>
 	</mod>
+	<mod name="Trequonia" id="trequonia" type="Total Conversion" version_type="High Resolution" website="https://www.moddb.com/mods/trequonia">
+		<team>
+			<member name="Cedric Lutes" alias="Zaxtor Znort" email="zaxtor2001@yahoo.com" website="http://www.angelfire.com/theforce/zaxtor2001dukenukem"/>
+		</team>
+		<versions>
+			<version release_date="August 25, 2018">
+				<type id="Low Resolution">
+					<game type="eDuke32" state="Native">
+						<file name="TREQUONIA.CON" type="con"/>
+						<file name="TREQUONIA_LOWRES.DEF" type="def"/>
+						<file name="Trequonia_Base.zip" type="zip" special="Base"/>
+						<file name="Trequonia_Low_Resolution.zip" type="zip"/>
+					</game>
+				</type>
+				<type id="High Resolution">
+					<game type="eDuke32" state="Native">
+						<file name="TREQUONIA.CON" type="con"/>
+						<file name="TREQUONIA_HIGHRES.DEF" type="def"/>
+						<file name="Trequonia_Base.zip" type="zip" special="Base"/>
+						<file name="Trequonia_High_Resolution.zip" type="zip"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Trequonia_whole_thing.zip" game="eDuke32" type="Original Files"/>
+			<download filename="Trequonia_Base-ModMgrE.zip" special="Base" game="eDuke32" type="Mod Manager Files" state="Native"/>
+			<download filename="Trequonia_Low_Resolution-ModMgrE.zip" version_type="Low Resolution" game="eDuke32" type="Mod Manager Files" state="Native"/>
+			<download filename="Trequonia_High_Resolution-ModMgrE.zip" version_type="High Resolution" game="eDuke32" type="Mod Manager Files" state="Native"/>
+		</downloads>
+		<notes>
+			<note>Does not work with the Polymer renderer.</note>
+			<note>Does not work with 8-bit mode, and will cause texture rendering issues.</note>
+		</notes>
+	</mod>
 	<mod name="Motion Sensor Mine" id="motion_sensor_mine" type="Con Edit">
 		<team>
 			<member name="VPR" email="eb56@hotmail.com"/>
