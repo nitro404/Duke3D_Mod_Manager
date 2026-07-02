@@ -298,6 +298,7 @@ public:
 	boost::signals2::signal<void (GameVersion & /* gameVersion */)> modified;
 
 	static const std::string ALL_VERSIONS;
+	static const std::string ALL_VERSIONS_DIRECTORY_NAME;
 	static const std::string STANDALONE;
 	static const std::string STANDALONE_DIRECTORY_NAME;
 	static const std::string WORLD_TOUR_ID;

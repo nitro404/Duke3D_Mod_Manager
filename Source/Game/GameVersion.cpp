@@ -126,6 +126,7 @@ static const std::string GAME_CFG_VARIABLE_NAME("GAMECFG");
 static const std::regex GAME_CFG_VARIABLE_REGEX(fmt::format("^.*{0}{2}:[^{0}{1}]+{1}.*$", FilePathVariableEvaluator::DEFAULT_VARIABLE_START_CHAR, FilePathVariableEvaluator::DEFAULT_VARIABLE_END_CHAR, GAME_CFG_VARIABLE_NAME));
 
 const std::string GameVersion::ALL_VERSIONS("all");
+const std::string GameVersion::ALL_VERSIONS_DIRECTORY_NAME("all");
 const std::string GameVersion::STANDALONE("stand-alone");
 const std::string GameVersion::STANDALONE_DIRECTORY_NAME("stand-alone");
 const std::string GameVersion::WORLD_TOUR_ID("world_tour");

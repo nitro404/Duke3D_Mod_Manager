@@ -4793,6 +4793,9 @@ size_t ModManager::updateModFileInfo(Mod & mod, bool skipPopulatedFiles, std::op
 			if(modDownload->isStandAlone()) {
 				modDirectoryName = GameVersion::STANDALONE_DIRECTORY_NAME;
 			}
+			else if(modDownload->isForAllGameVersions()) {
+				modDirectoryName = GameVersion::ALL_VERSIONS_DIRECTORY_NAME;
+			}
 			else {
 				std::shared_ptr<GameVersion> gameVersion(getGameVersions()->getGameVersionWithID(modDownload->getGameVersionID()));
 

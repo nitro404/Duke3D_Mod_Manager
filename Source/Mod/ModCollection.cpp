@@ -1069,6 +1069,7 @@ bool ModCollection::checkGameVersions(const GameVersionCollection & gameVersions
 
 			if(!modDownload->getGameVersionID().empty() &&
 			   !modDownload->isStandAlone() &&
+			   !modDownload->isForAllGameVersions() &&
 			   !Utilities::areStringsEqualIgnoreCase(modDownload->getGameVersionID(), GameVersion::ALL_VERSIONS) &&
 			   !gameVersions.hasGameVersionWithID(modDownload->getGameVersionID())) {
 				if(verbose) {

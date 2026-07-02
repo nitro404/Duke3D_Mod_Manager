@@ -237,6 +237,10 @@ bool ModDownload::isStandAlone() const {
 	return Utilities::areStringsEqualIgnoreCase(m_gameVersionID, GameVersion::STANDALONE);
 }
 
+bool ModDownload::isForAllGameVersions() const {
+	return Utilities::areStringsEqualIgnoreCase(m_gameVersionID, GameVersion::ALL_VERSIONS);
+}
+
 bool ModDownload::isConverted() const {
 	return m_converted.has_value() ? m_converted.value() : false;
 }

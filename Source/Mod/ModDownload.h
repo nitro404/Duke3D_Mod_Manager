@@ -45,6 +45,7 @@ public:
 	const std::string & getSubfolder() const;
 	const std::string & getSHA1() const;
 	bool isStandAlone() const;
+	bool isForAllGameVersions() const;
 	bool isConverted() const;
 	std::optional<bool> getConverted() const;
 	bool isCorrupted() const;

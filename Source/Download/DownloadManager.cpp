@@ -510,7 +510,7 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 
 	std::string modDownloadLocalBasePath(Utilities::joinPaths(settings->downloadsDirectoryPath, settings->modDownloadsDirectoryName, gameVersion->getModDirectoryName()));
 	std::string modPackageDownloadLocalFilePath(Utilities::joinPaths(modDownloadLocalBasePath, modDownload->getFileName()));
-	std::string modDownloadRemoteFilePath(Utilities::joinPaths(settings->remoteDownloadsDirectoryName, settings->remoteModDownloadsDirectoryName, modDownload->getSubfolder(), Utilities::toLowerCase(gameVersion->getModDirectoryName()), modDownload->getFileName()));
+	std::string modDownloadRemoteFilePath(Utilities::joinPaths(settings->remoteDownloadsDirectoryName, settings->remoteModDownloadsDirectoryName, modDownload->getSubfolder(), modDownload->isForAllGameVersions() ? GameVersion::ALL_VERSIONS_DIRECTORY_NAME : Utilities::toLowerCase(gameVersion->getModDirectoryName()), modDownload->getFileName()));
 	std::string modDownloadURL(Utilities::joinPaths(httpService->getBaseURL(), modDownloadRemoteFilePath));
 
 	spdlog::info("Downloading '{}' mod from: '{}'...", modGameVersion.getFullName(true), modDownloadURL);
