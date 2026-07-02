@@ -93,8 +93,8 @@
 	</mod>
 	<mod name="666" id="666" type="Total Conversion" version="1.8">
 		<team>
-			<member name="jAsOn" email="Jason@cdc.it"/>
-			<member name="Nikos" email="Kotounks@mac20.bronxlab.unimi.it"/>
+			<member name="jAsOn" email="Jason@cdc.it" country="Italy"/>
+			<member name="Nikos" email="Kotounks@mac20.bronxlab.unimi.it" country="Italy"/>
 		</team>
 		<versions>
 			<version id="1.8" release_date="January 2, 1997">
@@ -1742,7 +1742,7 @@
 	</mod>
 	<mod name="Final Battle" id="final_battle" type="Total Conversion">
 		<team>
-			<member name="Antonino Zingone" alias="Imprak" email="room786@ipsnet.it"/>
+			<member name="Antonino Zingone" alias="Imprak" email="room786@ipsnet.it" country="Italy"/>
 		</team>
 		<versions>
 			<version release_date="August 13, 1996">
@@ -3189,7 +3189,7 @@
 	</mod>
 	<mod name="Project X" id="project_x" type="Total Conversion" version="Demo" website="http://www.dukeworld.com/projectx">
 		<team>
-			<member name="TerminX" email="terminx@theoffspring.net" discord="terminx#9428"/>
+			<member name="Richard Gobeille" alias="TerminX" email="terminx@theoffspring.net" discord="terminx#9428"/>
 		</team>
 		<versions>
 			<version id="Demo" release_date="November 27, 1998">
@@ -7759,8 +7759,8 @@
 		</downloads>
 	</mod>
 	<mod name="Fire TC" id="fire_tc" type="Total Conversion">
-		<team name="Extreme Software" country="Poland">
-			<member name="cAGE" email="aleks997@friko7.onet.pl"/>
+		<team name="Extreme Software">
+			<member name="cAGE" email="aleks997@friko7.onet.pl" country="Poland"/>
 			<member name="Xkill"/>
 		</team>
 		<versions>
@@ -8444,14 +8444,14 @@
 			<member name="chicken"/>
 			<member name="Daedolon"/>
 			<member name="Hellbound"/>
-			<member name="Cage" email="cageds@tlen.pl"/>
+			<member name="Cage" email="cageds@tlen.pl" country="Poland"/>
 			<member name="Diehard"/>
 			<member name="Jimbob"/>
 			<member name="SalaciusCrumb" alias="SC" email="salaciuscrumb@gmx.net" icq="58098027"/>
 			<member name="Soy Leonardo Pellegrini" alias="DavoX" discord="Leo &quot;DavoX&quot; Pellegrini#3287"/>
 			<member name="Parkar"/>
 			<member name="Reaper_Man" email="lrdmecha@yahoo.com" aim="lrdmecha1015" icq="60008413"/>
-			<member name="TerminX" email="terminx@theoffspring.net"/>
+			<member name="Richard Gobeille" alias="TerminX" email="terminx@gmail.com" discord="terminx#9428"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="October 26, 2015">
@@ -8649,7 +8649,7 @@
 	<mod name="Duke Hard" id="duke_hard" type="Episode" version="1.2.1" website="http://www.moddb.com/mods/duke-hard">
 		<team>
 			<member name="Corentin Dallay" alias="MetHy"/>
-			<member name="Cage" email="cageds@tlen.pl"/>
+			<member name="Cage" email="cageds@tlen.pl" country="Poland"/>
 			<member name="Daedolon"/>
 			<member name="Dukebot"/>
 			<member name="Forge"/>
@@ -8741,7 +8741,7 @@
 			<member name="Cernex"/>
 			<member name="Doom64hunter"/>
 			<member name="Geedra"/>
-			<member name="Cage" email="cageds@tlen.pl"/>
+			<member name="Cage" email="cageds@tlen.pl" country="Poland"/>
 			<member name="Bullov"/>
 			<member name="William Gee" email="geewillywizz@live.com" discord="William Gee#2015" country="New Zealand"/>
 		</team>
@@ -9919,7 +9919,7 @@
 			<member name="Hendricks266" discord="Hendricks266#8920"/>
 			<member name="Nukey"/>
 			<member name="Max Ylitalo" alias="Oasiz"/>
-			<member name="TerminX" email="terminx@theoffspring.net"/>
+			<member name="Richard Gobeille" alias="TerminX" email="terminx@gmail.com" discord="terminx#9428"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="March 1, 2018">
@@ -10122,8 +10122,8 @@
 		<team name="Brullov Studios" website="https://brullov-studios.itch.io">
 			<member name="Artem Brullov" twitter="brullov_art" website="https://itch.io/profile/brullov" youtube="brullov_labs" reddit="brullov" discord="brullov#4495" country="Ukraine"/>
 			<member name="Max Ylitalo" alias="Oasiz"/>
-			<member name="Riccardo Capogna" alias="RichardStorm" email="riccardo.capogna@yahoo.it"/>
-			<member name="Cage" email="cageds@tlen.pl"/>
+			<member name="Riccardo Capogna" alias="RichardStorm" email="riccardo.capogna@yahoo.it" country="Italy"/>
+			<member name="Cage" email="cageds@tlen.pl" country="Poland"/>
 		</team>
 		<versions>
 			<version id="1.1" release_date="January 2, 2021">
@@ -10508,7 +10508,7 @@
 			<member name="Michael Caraballo"/>
 			<member name="Robert Caraballo"/>
 			<member name="Olivier Boucher"/>
-			<member name="Alias Conrad Coldwood"/>
+			<member name="Conrad Coldwood"/>
 			<member name="Geoffrey van Dijk" alias="Fakir Baba" email="fakirnogwat@hotmail.com"/>
 			<member name="Rob Wijkstra" alias="HighWire" email="Rob_Wijkstra@hotmail.com"/>
 			<member name="Mariusz"/>
@@ -11891,7 +11891,7 @@
 		<team discord="https://discord.gg/jNrKdk5">
 			<member name="William Gee" email="geewillywizz@live.com" website="http://wgrealms.williamgeegallery.com" discord="William Gee#2015" country="New Zealand"/>
 			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld" discord="Danarama#9209"/>
-			<member name="Cage" email="cageds@tlen.pl"/>
+			<member name="Cage" email="cageds@tlen.pl" country="Poland"/>
 		</team>
 		<versions>
 			<version id="1.0 RC2" release_date="November 9, 2009">
@@ -11966,7 +11966,7 @@
 			<member name="William Gee" email="geewillywizz@live.com" website="http://wgrealms.williamgeegallery.com" discord="William Gee#2015" country="New Zealand"/>
 			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld" discord="Danarama#9209"/>
 			<member name="sebabdukeboss20" discord="sebabdukeboss20#5996"/>
-			<member name="Cage" email="cageds@tlen.pl"/>
+			<member name="Cage" email="cageds@tlen.pl" country="Poland"/>
 			<member name="Forge"/>
 			<member name="Doom64hunter"/>
 			<member name="Geedra"/>
@@ -12068,7 +12068,7 @@
 			<member name="Andrew Childs" alias="Hudson" twitter="aschilds"/>
 			<member name="Michelle Sleeper" twitter="msleeperdotcom"/>
 			<member name="Jay Desso" alias="Metalagent47" twitter="metalagent47"/>
-			<member name="Riccardo Capogna" alias="RichardStorm" email="riccardo.capogna@yahoo.it"/>
+			<member name="Riccardo Capogna" alias="RichardStorm" email="riccardo.capogna@yahoo.it" country="Italy"/>
 			<member name="Yijian Fong" alias="Yij" twitter="YijArt"/>
 			<member name="Tommaso Pavignani" alias="Pavigna" twitter="tom_pavigna"/>
 			<member name="Michael LaBruyere" alias="dbzfanatic" twitter="dbzfanatic_1"/>
@@ -13603,5 +13603,140 @@
 			<download filename="DukePlus_2.35-ModMgrE.zip" filesize="130660896" version="2.35" game="eDuke32" type="Mod Manager Files" state="Native" sha1="7873e24810ded662011df380717f3e1d4f6b2b1b"/>
 			<download filename="DukePlus_2.50.1-ModMgrE.zip" filesize="130854421" version="2.50.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="69a29ca7cea3e53e0c5b7769804f5acd1314e505"/>
 		</downloads>
+	</mod>
+	<mod name="High Resolution Pack" id="high_resolution_pack" type="Total Conversion" version="5.5.750" website="http://hrp.duke4.net">
+		<team>
+			<member name="Robin Reisinger" alias="NightFright" email="nightfright2k7@gmail.com" youtube="NightFright2k19" country="Germany"/>
+			<member name="Richard Gobeille" alias="TerminX" email="terminx@gmail.com" discord="terminx#9428"/>
+			<member name="0815Jack"/>
+			<member name="ADM"/>
+			<member name="Alexander Filippov"/>
+			<member name="AlgorithMan"/>
+			<member name="Besli"/>
+			<member name="Conrad Coldwood"/>
+			<member name="Another Duke Fan"/>
+			<member name="Armando"/>
+			<member name="Audiocraz"/>
+			<member name="BlitZ"/>
+			<member name="Cage" email="cageds@tlen.pl" country="Poland"/>
+			<member name="chicken"/>
+			<member name="Daedolon"/>
+			<member name="Devastator" email="zheka_XX@TUT.by" country="Belarus"/>
+			<member name="Ding Bat"/>
+			<member name="DLT"/>
+			<member name="dood!"/>
+			<member name="Dreams"/>
+			<member name="DukeAtomic"/>
+			<member name="Ecmaster76"/>
+			<member name="endmilled"/>
+			<member name="Fearpi"/>
+			<member name="Flacken.WS"/>
+			<member name="Luciano Gallo" alias="Gambini" email="gallo.luciano1@gmail.com" website="http://gambinidesign.blogspot.com" country="Argentina"/>
+			<member name="Gman"/>
+			<member name="gt1750"/>
+			<member name="Hendricks266" discord="Hendricks266#8920"/>
+			<member name="Impact"/>
+			<member name="JaJo"/>
+			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
+			<member name="jimbob"/>
+			<member name="Kevin Cools" alias="Kef_Nukem" email="kevincools@hotmail.com"/>
+			<member name="Kev_Hectic"/>
+			<member name="Kevin9er"/>
+			<member name="Killd a ton"/>
+			<member name="L.D. Simone"/>
+			<member name="L2theKING"/>
+			<member name="Lemming"/>
+			<member name="Lightsource"/>
+			<member name="Marked"/>
+			<member name="Megadeus"/>
+			<member name="motionblur"/>
+			<member name="Night Hacker"/>
+			<member name="nyne"/>
+			<member name="ooppee"/>
+			<member name="ozz"/>
+			<member name="Parkar"/>
+			<member name="Piccolo"/>
+			<member name="Zykov Eddy" alias="Piterplus" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com" country="Russia"/>
+			<member name="princetonEO"/>
+			<member name="Rellik66"/>
+			<member name="Roger"/>
+			<member name="Roma Loom"/>
+			<member name="Quakis"/>
+			<member name="Semicharm"/>
+			<member name="Sky Fox"/>
+			<member name="Steveeeie"/>
+			<member name="SwissCM"/>
+			<member name="Tesserex"/>
+			<member name="theRobot"/>
+			<member name="toadie2k"/>
+			<member name="Tip"/>
+			<member name="Vasilinka"/>
+			<member name="Viciarg"/>
+			<member name="WarHammer"/>
+			<member name="White Alven"/>
+			<member name="yossa"/>
+			<member name="alandog"/>
+			<member name="Blunty"/>
+			<member name="Cipher"/>
+			<member name="Dr. Kill"/>
+			<member name="drvarek"/>
+			<member name="efikkan"/>
+			<member name="empyrock"/>
+			<member name="Eric R"/>
+			<member name="escapist"/>
+			<member name="Esslan"/>
+			<member name="Forder"/>
+			<member name="General Failure"/>
+			<member name="GodBlitZor"/>
+			<member name="Hellbound"/>
+			<member name="ilovefoxes"/>
+			<member name="Jean Gorospe"/>
+			<member name="Jokke_r"/>
+			<member name="Kralex"/>
+			<member name="Madaut"/>
+			<member name="MagNet"/>
+			<member name="Mark Skelton"/>
+			<member name="Mean Person"/>
+			<member name="Millenia"/>
+			<member name="Mr.Fibbles"/>
+			<member name="Plagman"/>
+			<member name="Radar1013"/>
+			<member name="Renegado"/>
+			<member name="Soul Collector"/>
+			<member name="Spiker"/>
+			<member name="Supertanker"/>
+			<member name="Tea Monster"/>
+			<member name="vakooja"/>
+			<member name="YicklePigeon"/>
+			<member name="zilppuri"/>
+			<member name="Lezing/CraigFatman"/>
+			<member name="Dave-ros"/>
+			<member name="DSotM"/>
+			<member name="ikkejw"/>
+			<member name="noctrun"/>
+			<member name="Okira"/>
+			<member name="Zebius"/>
+			<member name="Hunter_rus"/>
+			<member name="LeoD"/>
+			<member name="Michael Crisp" alias="Micky C"/>
+		</team>
+		<versions>
+			<version id="5.5.750" release_date="November 27, 2025">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="duke3d_hrp.def" size="235" type="def" sha1="1ea228989a8e9937e1b3f66626093d4501f04baf"/>
+						<file name="High_Resolution_Pack_5.5.750.zip" size="959515567" type="zip" sha1="e449811186686ebff2c7dccc15f3ea63d716cf78"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="duke3d_hrp-r750.zip" filesize="1004721371" version="5.5.750" game="eDuke32" type="Original Files" sha1="f98555033daead5abfc41229dcfc0ddb9f3f3bb2"/>
+			<download filename="dn3d_hrp55-sfx.exe" filesize="1101918241" version="5.5.750" special="Self-Extracting Executable" game="eDuke32" type="Original Files" sha1="37438df70c395adfe74299095a14492cf4c79d0b"/>
+			<download filename="High_Resolution_Pack_5.5.750-ModMgrE.zip" filesize="959515765" version="5.5.750" game="eDuke32" type="Mod Manager Files" state="Native" sha1="1ecba85270fd1e55a63d5d94329796606a843dff"/>
+		</downloads>
+		<notes>
+			<note>Works best with the Polymer renderer.</note>
+		</notes>
 	</mod>
 </mods>
