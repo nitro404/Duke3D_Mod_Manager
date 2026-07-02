@@ -8614,7 +8614,7 @@
 	</mod>
 	<mod name="Duke Forces" id="Duke_Forces" type="Total Conversion" version="2.10c" website="https://www.moddb.com/mods/duke-forces">
 		<team>
-			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" discord="Danarama#9209"/>
+			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld" discord="Danarama#9209"/>
 		</team>
 		<versions>
 			<version id="1.1" release_date="May 21, 2016">
@@ -8724,7 +8724,7 @@
 	</mod>
 	<mod name="Alien Armageddon" id="alien_armageddon" type="Total Conversion" version="4.67" website="https://www.moddb.com/mods/duke-nukem-alien-armageddon">
 		<team>
-			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" discord="Danarama#9209"/>
+			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld" discord="Danarama#9209"/>
 			<member name="sebabdukeboss20" discord="sebabdukeboss20#5996"/>
 			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com" discord="Mrlijn#8650"/>
 			<member name="Maarten van Oostrum"/>
@@ -9018,7 +9018,7 @@
 	</mod>
 	<mod name="Duke Nukem Arena" id="duke_nukem_arena" type="Dukematch">
 		<team>
-			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" discord="Danarama#9209"/>
+			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld" discord="Danarama#9209"/>
 		</team>
 		<versions>
 			<version release_date="January 28, 2007">
@@ -9087,7 +9087,7 @@
 	</mod>
 	<mod name="Attrition" id="attrition" type="Total Conversion" version="2.0" website="https://www.moddb.com/mods/duke-nukem-attrition">
 		<team>
-			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" discord="Danarama#9209"/>
+			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld" discord="Danarama#9209"/>
 		</team>
 		<versions>
 			<version id="1.01" release_date="April 17, 2010">
@@ -10685,7 +10685,7 @@
 	</mod>
 	<mod name="Spooky" id="spooky" type="Partial Conversion" website="https://forums.duke4.net/topic/11447-spookymod">
 		<team>
-			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" discord="Danarama#9209"/>
+			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld" discord="Danarama#9209"/>
 			<member name="sebabdukeboss20" discord="sebabdukeboss20#5996"/>
 		</team>
 		<versions>
@@ -13549,6 +13549,59 @@
 			<download filename="imp2duke.zip" filesize="75891" version="1.1" game="Regular" type="Original Files" sha1="92db77f22749bd650f95c5133e4dda27d082a203"/>
 			<download filename="Imp2Duke_1.1-ModMgrR.zip" filesize="115969" version="1.1" game="Regular" type="Mod Manager Files" state="Native" sha1="f08540894f5841ba07738f19dc5af1e92e08fa8e"/>
 			<download filename="Imp2Duke_1.1-ModMgrA.zip" filesize="116035" version="1.1" game="Atomic" type="Mod Manager Files" state="Converted" sha1="3f1847893716e8c30ff8de34e2eb73963af0a20d"/>
+		</downloads>
+	</mod>
+	<mod name="DukePlus" id="dukeplus" type="Total Conversion" version="2.50.1" website="https://www.moddb.com/mods/duke-plus">
+		<team>
+			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld" discord="Danarama#9209"/>
+		</team>
+		<versions>
+			<version id="2.11" release_date="July 30, 2010">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+						<file name="dukeplus.def" size="59442" type="def" sha1="7e9c64af918fc60912fbc478877919500ef82bec"/>
+						<file name="DukePlus_2.11.zip" size="46091889" type="zip" sha1="336f0dd62660977886fe3e86b6a335d7d9383de9"/>
+					</game>
+				</type>
+			</version>
+			<version id="2.14" release_date="November 14, 2010">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+						<file name="dukeplus.def" size="58755" type="def" sha1="0dc5b13006a81b50d14f77d84c5ba215432bfe89"/>
+						<file name="DukePlus_2.14.zip" size="45089869" type="zip" sha1="6042e2206703156f331f54555673f0b53b13c650"/>
+					</game>
+				</type>
+			</version>
+			<version id="2.35" release_date="January 5, 2013">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+						<file name="dukeplus.def" size="123398" type="def" sha1="ba542c1935c9b18106da7ea3f360c2d8675f666d"/>
+						<file name="DukePlus_2.35.zip" size="130660728" type="zip" sha1="510500f58b52a45807242f5450943cf06f811b28"/>
+					</game>
+				</type>
+			</version>
+			<version id="2.50.1" release_date="June 3, 2020">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+						<file name="dukeplus.def" size="131543" type="def" sha1="e7ceb7eee16d84beacd7b0cb12d562ca812a7e10"/>
+						<file name="DukePlus_2.50.1.zip" size="130854249" type="zip" sha1="973e9fa3cafc22cb47f10080ead96d4570c575ba"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="DukePlus_2.11.rar" filesize="42226585" version="2.11" game="eDuke32" type="Original Files" sha1="653f92379f11f31ce64a19418cf9c18d5cabccc4"/>
+			<download filename="DukePlus_2.14.rar" filesize="41834731" version="2.14" game="eDuke32" type="Original Files" sha1="698f8a95f42e9cb704480d89bf6ccbdf4c9c5f12"/>
+			<download filename="DUKEPLUS_2.35.zip" filesize="135800824" version="2.35" game="eDuke32" type="Original Files" sha1="8b055bd94502ef8af32b54edfab77ca2e4461b91"/>
+			<download filename="DukePlus_251.7z" filesize="108656325" version="2.50.1" game="eDuke32" type="Original Files" sha1="d05059c8d12b29e9b1e537a76dc05eb836220fd4"/>
+			<download filename="DukePlus_2.11-ModMgrE.zip" filesize="46092057" version="2.11" game="eDuke32" type="Mod Manager Files" state="Native" sha1="a68409ff2ad027863536dd528ceec677d250f7ae"/>
+			<download filename="DukePlus_2.14-ModMgrE.zip" filesize="45090037" version="2.14" game="eDuke32" type="Mod Manager Files" state="Native" sha1="147e4877f8b4b6d16ad01a694dd01c5bafc5c074"/>
+			<download filename="DukePlus_2.35-ModMgrE.zip" filesize="130660896" version="2.35" game="eDuke32" type="Mod Manager Files" state="Native" sha1="7873e24810ded662011df380717f3e1d4f6b2b1b"/>
+			<download filename="DukePlus_2.50.1-ModMgrE.zip" filesize="130854421" version="2.50.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="69a29ca7cea3e53e0c5b7769804f5acd1314e505"/>
 		</downloads>
 	</mod>
 </mods>
