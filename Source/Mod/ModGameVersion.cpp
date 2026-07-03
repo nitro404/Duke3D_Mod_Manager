@@ -534,14 +534,14 @@ const std::vector<std::shared_ptr<ModFile>> & ModGameVersion::getFiles() const {
 	return m_files;
 }
 
-std::shared_ptr<ModDownload> ModGameVersion::getDownload() const {
+std::vector<std::shared_ptr<ModDownload>> ModGameVersion::getDownloads() const {
 	const Mod * mod = getParentMod();
 
 	if(mod == nullptr) {
-		return nullptr;
+		return {};
 	}
 
-	return mod->getDownloadForGameVersion(this);
+	return mod->getDownloadsForGameVersion(this);
 }
 
 bool ModGameVersion::addFile(const ModFile & file) {

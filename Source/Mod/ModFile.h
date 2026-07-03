@@ -21,7 +21,7 @@ class ModFile final {
 	friend class ModGameVersion;
 
 public:
-	ModFile(const std::string & name, uint64_t fileSize, const std::string & type, const std::string & sha1 = std::string());
+	ModFile(const std::string & name, uint64_t fileSize, const std::string & type, const std::string & sha1 = {}, const std::string & special = {});
 	ModFile(ModFile && f) noexcept;
 	ModFile(const ModFile & f);
 	ModFile & operator = (ModFile && f) noexcept;
@@ -36,6 +36,8 @@ public:
 	const std::string & getSHA1() const;
 	bool isShared() const;
 	std::optional<bool> getShared() const;
+	bool hasSpecial() const;
+	const std::string & getSpecial() const;
 	bool isUsedByAllGameVersions() const;
 	std::optional<bool> getUsedByAllGameVersions() const;
 	const Mod * getParentMod() const;
@@ -49,6 +51,8 @@ public:
 	void setSHA1(const std::string & sha1);
 	void setShared(bool shared);
 	void clearShared();
+	void setSpecial(const std::string & special);
+	void clearSpecial();
 	void setUsedByAllGameVersions(bool usedByAllGameVersions);
 	void clearUsedByAllGameVersions();
 
@@ -73,6 +77,7 @@ private:
 	std::string m_type;
 	std::string m_sha1;
 	std::optional<bool> m_shared;
+	std::string m_special;
 	std::optional<bool> m_usedByAllGameVersions;
 	const ModGameVersion * m_parentModGameVersion;
 };

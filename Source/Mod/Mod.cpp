@@ -826,36 +826,62 @@ std::optional<std::string> Mod::getDownloadFileNameByType(const std::string & ty
 	return {};
 }
 
-std::shared_ptr<ModDownload> Mod::getDownloadForGameVersion(const ModGameVersion * modGameVersion) const {
+std::vector<std::shared_ptr<ModDownload>> Mod::getDownloadsForGameVersion(const ModGameVersion * modGameVersion) const {
 	if(!ModGameVersion::isValid(modGameVersion, true) || modGameVersion->getParentMod() != this) {
-		return nullptr;
+		return {};
 	}
 
 	const ModVersion * modVersion = modGameVersion->getParentModVersion();
 
 	if(modVersion == nullptr) {
-		return nullptr;
+		return {};
 	}
 
+	bool regularMatchFound = false;
+	bool specialMatchFound = false;
+	std::vector<std::shared_ptr<ModDownload>> modDownloads;
 	std::shared_ptr<ModDownload> partiallyMatchingModDownload;
 
 	for(const std::shared_ptr<ModDownload> & modDownload : m_downloads) {
 		if(modDownload->isModManagerFiles() &&
 		   (modDownload->getVersion().empty() || Utilities::areStringsEqualIgnoreCase(modDownload->getVersion(), modVersion->getVersion())) &&
 		   (modDownload->isForAllGameVersions() || Utilities::areStringsEqualIgnoreCase(modDownload->getGameVersionID(), modGameVersion->getGameVersionID()))) {
-			if(modVersion->numberOfTypes() == 1) {
-				return modDownload;
+			if(!regularMatchFound) {
+				if(modVersion->numberOfTypes() == 1) {
+					regularMatchFound = true;
+					modDownloads.push_back(modDownload);
+				}
+				else if(Utilities::areStringsEqualIgnoreCase(modDownload->getVersionType(), modGameVersion->getParentModVersionType()->getType())) {
+					regularMatchFound = true;
+					modDownloads.push_back(modDownload);
+				}
+				else {
+					partiallyMatchingModDownload = modDownload;
+				}
 			}
-			else if(Utilities::areStringsEqualIgnoreCase(modDownload->getVersionType(), modGameVersion->getParentModVersionType()->getType())) {
-				return modDownload;
-			}
-			else {
-				partiallyMatchingModDownload = modDownload;
+
+			if(!specialMatchFound && modDownload->hasSpecial()) {
+				for(const std::shared_ptr<ModFile> & modFile : modGameVersion->getFiles()) {
+					if(modFile->hasSpecial() && Utilities::areStringsEqualIgnoreCase(modDownload->getSpecial(), modFile->getSpecial())) {
+						if(std::find(modDownloads.cbegin(), modDownloads.cend(), modDownload) != modDownloads.cend()) {
+							break;
+						}
+
+						specialMatchFound = true;
+						modDownloads.push_back(modDownload);
+
+						break;
+					}
+				}
 			}
 		}
 	}
 
-	return partiallyMatchingModDownload;
+	if(!regularMatchFound && partiallyMatchingModDownload != nullptr) {
+		modDownloads.push_back(partiallyMatchingModDownload);
+	}
+
+	return modDownloads;
 }
 
 std::shared_ptr<ModVersion> Mod::getModVersionForDownload(const ModDownload * modDownload) const {

@@ -484,6 +484,8 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 		modDirectoryName = gameVersion->getModDirectoryName();
 	}
 
+	// TODO: fixme:
+
 	std::shared_ptr<ModDownload> modDownload(modGameVersion.getDownload());
 
 	if(modDownload == nullptr) {

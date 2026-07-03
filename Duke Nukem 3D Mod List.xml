@@ -7665,36 +7665,34 @@
 		</team>
 		<versions>
 			<version release_date="November 20, 2000">
-				<type id="English">
+				<base>
 					<game type="Regular" state="Native">
 						<file name="SAVE_EBN.CON" size="99647" type="con" sha1="b0ccf24604290ac8c1c3d4bcb55dcbf5bbc7bcfe"/>
-						<file name="SAVE_EBN.GRP" size="6869486" type="grp" sha1="c08e6046e8aa6d02ac4b409e180de82cb35ca654"/>
+						<file name="SAVE_EBN.GRP" size="6648243" type="grp" sha1="500a35d78360f0ac01a91b9ab668f1ed29c51bd0"/>
 					</game>
 					<game type="Atomic" state="Converted">
 						<file name="SAVE_EBN.CON" size="151198" type="con" sha1="d89c31df5e17be5309e5fb93ab1c4a4f7bff58c7"/>
-						<file name="SAVE_EBN.GRP" size="7464928" type="grp" sha1="06fb902b1538ef57e2edca90d23cd0a385a2d1a0"/>
+						<file name="SAVE_EBN.GRP" size="7243685" type="grp" sha1="7f4b17936ce326b85303446e0d55babb83c371d0"/>
+					</game>
+				</base>
+				<type id="English">
+					<game type="All" state="Native">
+						<file name="EBN_EN.GRP" size="221259" type="grp" sha1="a367a75cb68f568ee94dd1dd38ef5b228a761a4e"/>
 					</game>
 				</type>
 				<type id="Russian">
-					<game type="Regular" state="Native">
-						<file name="SAVE_EBN.CON" size="99647" type="con" sha1="b0ccf24604290ac8c1c3d4bcb55dcbf5bbc7bcfe"/>
-						<file name="EBN_RUS.GRP" size="187226" type="grp" used_by_all_game_versions="true" sha1="1eabf50431dc6daa25cc36e43346c5122bb06036"/>
+					<game type="All" state="Native">
+						<file name="EBN_RUS.GRP" size="187226" type="grp" sha1="1eabf50431dc6daa25cc36e43346c5122bb06036"/>
 					</game>
-					<game type="Atomic" state="Converted">
-						<file name="SAVE_EBN.CON" size="151198" type="con" sha1="d89c31df5e17be5309e5fb93ab1c4a4f7bff58c7"/>
-						<file name="EBN_RUS.GRP" size="187226" type="grp" used_by_all_game_versions="true" sha1="1eabf50431dc6daa25cc36e43346c5122bb06036"/>
-					</game>
-					<dependencies>
-						<dependency id="save_ebn" version_type="English"/>
-					</dependencies>
 				</type>
 			</version>
 		</versions>
 		<downloads>
 			<download filename="save_ebn.zip" filesize="2232009" game="Regular" type="Original Files" sha1="707421de02496e35482f2f342369b70fc8a3088f"/>
-			<download filename="serusvoc.zip" filesize="115288" special="Russian Voice Patch" game="Regular" type="Patch" sha1="3d1a40185bd51d225eeca4bc53a8c42385882a4c"/>
-			<download filename="Save_EBN_-_English-ModMgrR.zip" filesize="2255113" version_type="English" game="Regular" type="Mod Manager Files" state="Native" sha1="95f88f749a631423de8aedeffac8339adb70c95a"/>
-			<download filename="Save_EBN_-_English-ModMgrA.zip" filesize="2443256" version_type="English" game="Atomic" type="Mod Manager Files" state="Converted" sha1="a19fe282859417bceab64e4bab64941ce5d868f2"/>
+			<download filename="serusvoc.zip" filesize="115288" version_type="Russian" special="Voice Patch" game="Regular" type="Patch" sha1="3d1a40185bd51d225eeca4bc53a8c42385882a4c"/>
+			<download filename="Save_EBN_-_Base-ModMgrR.zip" filesize="2132410" special="Base" game="Regular" type="Mod Manager Files" state="Native" sha1="4191e76f56bb7a54a6fb5b64eb36809895025242"/>
+			<download filename="Save_EBN_-_Base-ModMgrA.zip" filesize="2319696" special="Base" game="Atomic" type="Mod Manager Files" state="Converted" sha1="e170747ef3d37f69a70db9c9010ed5985597eba1"/>
+			<download filename="Save_EBN_-_English-ModMgr.zip" filesize="117873" version_type="English" game="All" type="Mod Manager Files" state="Native" sha1="abf34f8849ea6de4421f3cbceff4f18265a6ab61"/>
 			<download filename="Save_EBN_-_Russian-ModMgr.zip" filesize="115323" version_type="Russian" game="All" type="Mod Manager Files" state="Native" sha1="7c50c8c1d1fb04d310579c2859d1e7c6081c0551"/>
 		</downloads>
 	</mod>

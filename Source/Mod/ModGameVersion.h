@@ -85,7 +85,7 @@ public:
 	template <typename ...Arguments, typename = typename std::enable_if<sizeof...(Arguments) >= 2>::type>
 	std::vector<std::string> getFileNamesOfType(Arguments &&... arguments) const;
 	const std::vector<std::shared_ptr<ModFile>> & getFiles() const;
-	std::shared_ptr<ModDownload> getDownload() const;
+	std::vector<std::shared_ptr<ModDownload>> getDownloads() const;
 	bool addFile(const ModFile & file);
 	bool removeFile(size_t index);
 	bool removeFile(const ModFile & file);

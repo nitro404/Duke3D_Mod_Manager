@@ -108,7 +108,7 @@ public:
 	std::shared_ptr<ModDownload> getDownload(const std::string & fileName) const;
 	std::shared_ptr<ModDownload> getDownloadByType(const std::string & type) const;
 	std::optional<std::string> getDownloadFileNameByType(const std::string & type) const;
-	std::shared_ptr<ModDownload> getDownloadForGameVersion(const ModGameVersion * modGameVersion) const;
+	std::vector<std::shared_ptr<ModDownload>> getDownloadsForGameVersion(const ModGameVersion * modGameVersion) const;
 	std::shared_ptr<ModVersion> getModVersionForDownload(const ModDownload * modDownload) const;
 	std::shared_ptr<ModVersionType> getModVersionTypeForDownload(const ModDownload * modDownload) const;
 	const std::vector<std::shared_ptr<ModDownload>> & getDownloads() const;
