@@ -9991,7 +9991,7 @@
 	</mod>
 	<mod name="Electric Highways" id="electric_highways" type="Total Conversion" version="1.1.0" website="https://gamejolt.com/games/electric-highways/89123">
 		<team>
-			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com"/>
+			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com" country="Russia"/>
 			<member name="Xitilon" website="http://r0.faisu.net"/>
 		</team>
 		<versions>
@@ -10885,7 +10885,7 @@
 	<mod name="White Noise" id="white_noise" type="Total Conversion" version="0.9" website="https://www.moddb.com/games/duke-nukem-3d/addons/white-noise">
 		<team country="Germany">
 			<member name="uLTra" youtube="ultra8103"/>
-			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com"/>
+			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com" country="Russia"/>
 		</team>
 		<versions>
 			<version id="0.9" release_date="November 13, 2019">
@@ -13788,5 +13788,36 @@
 			<note>The mine will arm after 5 seconds.</note>
 			<note>Unarmed mines are yellow, armed mines are red.</note>
 		</notes>
+	</mod>
+	<mod name="Quake 3 Weapon Patch" id="quake_3_weapon_patch" type="Weapon Patch" version="1.1">
+		<team>
+			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com" country="Russia"/>
+		</team>
+		<versions>
+			<version id="1.0" release_date="September 4, 2008">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="3QUAKEWP.CON" size="157125" type="con" sha1="7b2fca9dfaa2cbd8422d632df1b06f3606dd0553"/>
+						<file name="3QUAKEWP.DEF" size="1129" type="def" sha1="2512967b7319c0ee042f6c247bc82531fc7c219e"/>
+						<file name="Quake_3_Weapon_Patch_1.0.zip" size="2374657" type="zip" sha1="d11689e80d6911669af8414dd41aecd06da98689"/>
+					</game>
+				</type>
+			</version>
+			<version id="1.1" release_date="December 21, 2008">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="3QUAKEWP.CON" size="159789" type="con" sha1="a20bccd9a9d7516abe22d44113909c993a95628b"/>
+						<file name="3QUAKEWP.DEF" size="1129" type="def" sha1="2512967b7319c0ee042f6c247bc82531fc7c219e"/>
+						<file name="Quake_3_Weapon_Patch_1.1.zip" size="2443761" type="zip" sha1="a372b28c42db4b3338614ee941d8e2784e3cc8f5"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="3QUAKEWP.zip" filesize="2412507" version="1.0" game="eDuke32" type="Original Files" sha1="ec06f5e772ce5ce0d07cb124b5f0f1fa9935b1d9"/>
+			<download filename="3QUAKEWP_V1.1_.zip" filesize="2438717" version="1.1" game="eDuke32" type="Original Files" sha1="e2848eedd614338b218f926221b15cf764bc574c"/>
+			<download filename="Quake_3_Weapon_Patch_1.0-ModMgrE.zip" filesize="2374847" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="7b4e2c60f39a35257787457c0f4df098365155bd"/>
+			<download filename="Quake_3_Weapon_Patch_1.1-ModMgrE.zip" filesize="2443951" version="1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="4db5921da815dad541569ac7f77444f9c2b334d9"/>
+		</downloads>
 	</mod>
 </mods>
