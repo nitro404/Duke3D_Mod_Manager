@@ -11460,7 +11460,7 @@
 					<game type="eDuke32" state="Native">
 						<file name="SOB.CON" size="237448" type="con" sha1="f67e4e2d827b2346485e8eedb6c424d6f2ae3b5b"/>
 						<file name="SOB.def" size="3301" type="def" sha1="a9d9c24ac461baf91ceb511f11181c36ea585e46"/>
-						<file name="SOB_HD.def" type="def"/>
+						<file name="SOB_HD.def" size="30431" type="def" sha1="240b3e3f3e5fbc65b720aaa6820e75e4470d98db"/>
 					</game>
 					<dependencies>
 						<dependency id="duke_nukem_3d_savior_of_babes" version="0.65 Hotfix"/>
