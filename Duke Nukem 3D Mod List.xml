@@ -13759,4 +13759,34 @@
 			<note>Works best with the Polymer renderer.</note>
 		</notes>
 	</mod>
+	<mod name="Motion Sensor Mine" id="motion_sensor_mine" type="Con Edit">
+		<team>
+			<member name="VPR" email="eb56@hotmail.com"/>
+		</team>
+		<versions>
+			<version release_date="February 5, 1999">
+				<type>
+					<game type="Regular" state="Native">
+						<file name="MSMINE.CON" size="101021" type="con" sha1="585083ac2f26044f56f6254a96cdc8c376045069"/>
+						<file name="MSMINE.GRP" size="2675846" type="grp" sha1="f7a5fd9d670f84ef5bee09ecce5756480cf6c80f"/>
+					</game>
+					<game type="Atomic" state="Converted">
+						<file name="MSMINE.CON" size="152181" type="con" sha1="834d77e6d6b552cca458d7cd72f5b5f3ea2e964d"/>
+						<file name="MSMINE.GRP" size="3270873" type="grp" sha1="0c7ab9a6ce3e3aa790434f49eaaa870d2e9ff8c6"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="msmine.zip" filesize="776365" game="Regular" type="Original Files" sha1="43cd5ead0816b567460c0bb1d3fcd40d9af5712b"/>
+			<download filename="Motion_Sensor_Mine-ModMgrR.zip" filesize="768872" game="Regular" type="Mod Manager Files" state="Native" sha1="3c47d0dc82a3b796b71b865e2c7c238c0d53edb6"/>
+			<download filename="Motion_Sensor_Mine-ModMgrA.zip" filesize="980195" game="Atomic" type="Mod Manager Files" state="Converted" sha1="8528114b418adbf5b901dfb0d54911afbe676722"/>
+		</downloads>
+		<notes>
+			<note>The motion sensor mine replaces the protective boots and small health pickups.</note>
+			<note>To place a mine, select it in your inventory, crouch, and press your use key.</note>
+			<note>The mine will arm after 5 seconds.</note>
+			<note>Unarmed mines are yellow, armed mines are red.</note>
+		</notes>
+	</mod>
 </mods>
