@@ -8115,12 +8115,12 @@
 			<download filename="The_Asteroid-ModMgrA.zip" filesize="338960" game="Atomic" type="Mod Manager Files" state="Converted" sha1="164e65bd3818501399bbfa445141e8cf953517f8"/>
 		</downloads>
 	</mod>
-	<mod name="The Final Missions" id="the_final_missions" type="Episode" website="http://www.geocities.com/duhast222">
+	<mod name="The Final Missions" id="the_final_missions" type="Episode" version="1.1" website="http://www.geocities.com/duhast222">
 		<team>
 			<member name="Alan Nick" email="duhast222@yahoo.com"/>
 		</team>
 		<versions>
-			<version release_date="February 28, 2001">
+			<version id="1.0" release_date="February 28, 2001">
 				<game type="Regular" state="Native">
 					<file name="EPISODE1.CON" size="101762" type="con" sha1="bda05e0c91a7988c3fe957834bcffb3a7453bd57"/>
 					<file name="EPISODE1.GRP" size="4971024" type="grp" sha1="8294b500b10a92162a1ed34af05fce7f6d5b94d2"/>
@@ -8130,12 +8130,32 @@
 					<file name="EPISODE1.GRP" size="5376992" type="grp" sha1="c053fac21a80514e31fa3b93a91750e7619b2c67"/>
 				</game>
 			</version>
+			<version id="1.1" release_date="June 13, 2001">
+				<game type="Regular" state="Native">
+					<file name="TFM_1.1.CON" size="101761" type="con" sha1="b5930a0ddc038b7cc29d3e484c8be84c0618222e"/>
+					<file name="TFM_1.1.GRP" size="295922" type="grp" sha1="17c56dd6d7a2580aa247a5b47f6d3155ebcf8436"/>
+				</game>
+				<game type="Atomic" state="Converted">
+					<file name="TFM_1.1.CON" size="153952" type="con" sha1="9394c56e1b63b5ae5d82fe2e31c5875298e67fd6"/>
+					<file name="TFM_1.1.GRP" size="369268" type="grp" sha1="273dd7ec743bb029e0302683cb33b2947e53be13"/>
+				</game>
+				<dependencies>
+					<dependency id="the_final_missions" version="1.0"/>
+				</dependencies>
+			</version>
 		</versions>
 		<downloads>
-			<download filename="Episode1.zip" filesize="1101833" game="Regular" type="Original Files" sha1="1f5ab0e6a229fdf097ad3981feb60b739d4ed114"/>
-			<download filename="The_Final_Missions-ModMgrR.zip" filesize="1055989" game="Regular" type="Mod Manager Files" state="Native" sha1="6ad22be5301beea813a158b943ccb85a941491ba"/>
-			<download filename="The_Final_Missions-ModMgrA.zip" filesize="1217630" game="Atomic" type="Mod Manager Files" state="Converted" sha1="f2ebfc5d0c20e040ad2c17ddfa1ff495836cdfa4"/>
+			<download filename="Episode1.zip" filesize="1101833" version="1.0" game="Regular" type="Original Files" sha1="1f5ab0e6a229fdf097ad3981feb60b739d4ed114"/>
+			<download filename="Cesaro.zip" filesize="18073" version="1.1" part="1" numparts="2" game="Regular" type="Original Files" sha1="869f9b57ff95b45f7fb8ba66409cbaf2c421cdbf"/>
+			<download filename="Scrtlevl.zip" filesize="45537" version="1.1" part="2" numparts="2" game="All" type="Original Files" sha1="01761c4e006fe7dbb5b6dfe232f07a6afaec4579"/>
+			<download filename="The_Final_Missions_1.0-ModMgrR.zip" filesize="1055989" version="1.0" game="Regular" type="Mod Manager Files" state="Native" sha1="6ad22be5301beea813a158b943ccb85a941491ba"/>
+			<download filename="The_Final_Missions_1.0-ModMgrA.zip" filesize="1217630" version="1.0" game="Atomic" type="Mod Manager Files" state="Converted" sha1="f2ebfc5d0c20e040ad2c17ddfa1ff495836cdfa4"/>
+			<download filename="The_Final_Missions_1.1-ModMgrR.zip" filesize="79210" version="1.1" game="Regular" type="Mod Manager Files" state="Native" sha1="08d02a8adb371cf0a9f7291e4fb7aa6790128904"/>
+			<download filename="The_Final_Missions_1.1-ModMgrA.zip" filesize="99566" version="1.1" game="Atomic" type="Mod Manager Files" state="Converted" sha1="f2aae0f30f0139ebb99659cf5074a3117400857d"/>
 		</downloads>
+		<notes>
+			<note>E2L3 and E2L11 are additionally replaced in version 1.1.</note>
+		</notes>
 	</mod>
 	<mod name="The Real Bad Ass" id="the_real_bad_ass" type="Episode" version="V2">
 		<team country="France">
