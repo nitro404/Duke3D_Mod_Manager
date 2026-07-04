@@ -13936,4 +13936,28 @@
 			<download filename="Cluster_Bombs_Beta-ModMgrA.zip" filesize="59450" version="Beta" game="Atomic" type="Mod Manager Files" state="Converted" sha1="5095e1d98e882019afcae94d8ff7bdeaccac1d5a"/>
 		</downloads>
 	</mod>
+	<mod name="Doom Pak 1" id="doom_pak_1" type="Weapon Patch">
+		<team>
+			<member name="Garth" alias="The_Dwarfer" email="garth@tinyonline.co.uk"/>
+		</team>
+		<versions>
+			<version release_date="January 6, 2000">
+				<type>
+					<game type="Regular" state="Native">
+						<file name="DOOMPAK1.CON" size="99771" type="con" sha1="99c8738e7983fb9f07bb1c4505df012997c08d26"/>
+						<file name="DOOMPAK1.GRP" size="6209463" type="grp" sha1="c8ca130b4afc27998ec3b2e862fd687f56898482"/>
+					</game>
+					<game type="Atomic" state="Converted">
+						<file name="DOOMPAK1.CON" size="151121" type="con" sha1="845f0f435ce26d3667aef7efee59b6fbed6ed9fb"/>
+						<file name="DOOMPAK1.GRP" size="6801656" type="grp" sha1="6c86e4fd7dff3a2b025e348fe0992d85b7f19c00"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="doompak1.zip" filesize="2371732" game="Regular" type="Original Files" sha1="5a2e14c1141c756e205b2b4fbd8e904ab40a809c"/>
+			<download filename="Doom_Pak_1-ModMgrR.zip" filesize="2326600" game="Regular" type="Mod Manager Files" state="Native" sha1="9124936afe53cd7be8b206e1ace18edef7337ee3"/>
+			<download filename="Doom_Pak_1-ModMgrA.zip" filesize="2548394" game="Atomic" type="Mod Manager Files" state="Converted" sha1="3740b70e2459cbef7c152089e034308c50f5fa5a"/>
+		</downloads>
+	</mod>
 </mods>
