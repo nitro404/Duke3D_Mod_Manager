@@ -13840,4 +13840,28 @@
 			<download filename="Quake_3_Weapon_Patch_1.1-ModMgrE.zip" filesize="2443951" version="1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="4db5921da815dad541569ac7f77444f9c2b334d9"/>
 		</downloads>
 	</mod>
+	<mod name="Donut Grenade" id="donut_grenade" type="Weapon Patch" version="2.0" website="http://www.geocities.com/southparkduke/sst">
+		<team>
+			<member name="Funduke" email="funduke@hotmail.com"/>
+		</team>
+		<versions>
+			<version id="2.0" release_date="June 8, 2004">
+				<type>
+					<game type="Regular" state="Converted">
+						<file name="DONUT2.CON" size="99641" type="con" sha1="d126d3b753cee7a50e0ef5e6d10cd40aea88cf06"/>
+						<file name="DONUT2.GRP" size="7865591" type="grp" sha1="0f4bb154388c5860acdb843c290a61719a217bfc"/>
+					</game>
+					<game type="Atomic" state="Native">
+						<file name="DONUT2.CON" size="151192" type="con" sha1="e8bcffcf1572dc40a2cfe10088edda3bd73fb802"/>
+						<file name="DONUT2.GRP" size="4259607" type="grp" sha1="d9e4230a4ef628c304236ee1aefa2c26ba783115"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="donut2.zip" filesize="61463" version="2.0" game="Regular" type="Original Files" sha1="8db24594766901f2f8c18d595bcac5fb23375678"/>
+			<download filename="Donut_Grenade_2.0-ModMgrR.zip" filesize="2492750" version="2.0" game="Regular" type="Mod Manager Files" state="Converted" sha1="8e1ec98985b50535ce6c4b81dcf05327b1fa643f"/>
+			<download filename="Donut_Grenade_2.0-ModMgrA.zip" filesize="1316266" version="2.0" game="Atomic" type="Mod Manager Files" state="Native" sha1="56d52e49dd9cc73124e8ce13ff41c51b03d75f0c"/>
+		</downloads>
+	</mod>
 </mods>
