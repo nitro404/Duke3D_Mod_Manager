@@ -4882,13 +4882,13 @@
 			<screenshot filename="DUKE0003.png" filesize="197357" width="480" height="360" sha1="3247ecca8b51537959cd64a4ae316282edfe1245"/>
 		</screenshots>
 	</mod>
-	<mod name="M16A2 &amp; M249SAW" id="m16a2_m249saw" type="Weapon Patch">
+	<mod name="M16A2 &amp; M249SAW" id="m16a2_m249saw" type="Weapon Patch" version="1.1">
 		<team country="Finland">
 			<member name="Bad Karma" email="hese@ksilta.edu.ouka.fi"/>
 			<member name="Black" email="mixu@kastelli.edu.ouka.fi"/>
 		</team>
 		<versions>
-			<version release_date="February 20, 1997">
+			<version id="1.0" release_date="February 20, 1997">
 				<game type="Regular" state="Native">
 					<file name="M16_M249.CON" size="99643" type="con" sha1="3e764d42914413a6af16b95246eeccbe977695ab"/>
 					<file name="M16_M249.GRP" size="1195806" type="grp" sha1="974a1b93f43ae47914191ed32474ba60a997be6d"/>
@@ -4898,11 +4898,24 @@
 					<file name="M16_M249.GRP" size="1567237" type="grp" sha1="8065ec50d621d1f42bdc8cc16c3d82a4edcf332c"/>
 				</game>
 			</version>
+			<version id="1.1" release_date="February 27, 1997">
+				<game type="Regular" state="Native">
+					<file name="M16M249B.CON" size="99643" type="con" sha1="f8e85beba1cb8a049f6938983b08fd34211d15e8"/>
+					<file name="M16M249B.GRP" size="1200692" type="grp" sha1="8e98c8415934b5127b8503a31afcf4cb8e919057"/>
+				</game>
+				<game type="Atomic" state="Converted">
+					<file name="M16M249B.CON" size="151194" type="con" sha1="ea3eea873d860e4eecab80b6fa6cdcc89378fe3b"/>
+					<file name="M16M249B.GRP" size="1508123" type="grp" sha1="80cf8c4a1e06f030d11c7a7529575c8dbdd1bbca"/>
+				</game>
+			</version>
 		</versions>
 		<downloads>
-			<download filename="m16_m249.zip" filesize="327398" game="Regular" type="Original Files" sha1="c90c8a4911d79740908c183813dc989055d8249b"/>
-			<download filename="M16A2_&amp;_M249SAW-ModMgrR.zip" filesize="340446" game="Regular" type="Mod Manager Files" state="Native" sha1="6357fbd126faff7fe83e2ed187eaf87fc2033152"/>
-			<download filename="M16A2_&amp;_M249SAW-ModMgrA.zip" filesize="520481" game="Atomic" type="Mod Manager Files" state="Converted" sha1="6039c29ea1a00643ad6b724fbce62992fcde83d2"/>
+			<download filename="dn3dguns.zip" filesize="327398" version="1.0" game="Regular" type="Original Files" sha1="c90c8a4911d79740908c183813dc989055d8249b"/>
+			<download filename="dn3dguns-v11.zip" filesize="315218" version="1.1" game="Regular" type="Original Files" sha1="45800f56d3335eaf09f21d6d234d435fa46596ff"/>
+			<download filename="M16A2_&amp;_M249SAW_1.0-ModMgrR.zip" filesize="340446" version="1.0" game="Regular" type="Mod Manager Files" state="Native" sha1="6357fbd126faff7fe83e2ed187eaf87fc2033152"/>
+			<download filename="M16A2_&amp;_M249SAW_1.0-ModMgrA.zip" filesize="520481" version="1.0" game="Atomic" type="Mod Manager Files" state="Converted" sha1="6039c29ea1a00643ad6b724fbce62992fcde83d2"/>
+			<download filename="M16A2_&amp;_M249SAW_1.1-ModMgrR.zip" filesize="347632" version="1.1" game="Regular" type="Mod Manager Files" state="Native" sha1="591d95150e2c87297c50b4d77aacd12f832af2c3"/>
+			<download filename="M16A2_&amp;_M249SAW_1.1-ModMgrA.zip" filesize="492716" version="1.1" game="Atomic" type="Mod Manager Files" state="Converted" sha1="eb6ed981be2be9417262d4c2fa97360e83c3e0db"/>
 		</downloads>
 		<screenshots>
 			<screenshot filename="DUKE0000.png" filesize="217205" width="480" height="360" sha1="8c7ad4e39d27cdcbaab15e9816edaa75aa154cbd"/>
