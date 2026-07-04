@@ -6034,6 +6034,7 @@
 			</version>
 		</versions>
 		<downloads>
+			<download filename="steelchair.zip" filesize="822027" game="Regular" type="Original Files" sha1="459ac721c3a17abfa725fafc6d16c653c388e73f"/>
 			<download filename="steelchairfix.zip" filesize="279736" game="Regular" type="Original Files" sha1="6aa59a227a3f1ab5157475751c949666939595a6"/>
 			<download filename="Steel_Chair-ModMgrR.zip" filesize="307937" game="Regular" type="Mod Manager Files" state="Native" sha1="04dd71e504a18e9923102012fbc312e45570f044"/>
 			<download filename="Steel_Chair-ModMgrA.zip" filesize="480907" game="Atomic" type="Mod Manager Files" state="Converted" sha1="32ce6a2e55fc6c375978e27be863663d9f7dc6c3"/>
