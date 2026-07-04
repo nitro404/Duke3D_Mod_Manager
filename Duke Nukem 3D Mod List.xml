@@ -7735,7 +7735,7 @@
 		</downloads>
 	</mod>
 	<mod name="Duke Nukem Team Fortress" id="duke_nukem_team_fortress" type="Dukematch" website="http://come.to/mort.duke3d">
-		<team name="Blazing Torch Designs" country="Great Britain">
+		<team name="Blazing Torch Designs" website="http://www.blazing-torch.org.uk" country="Great Britain">
 			<member name="Mort" email="mort@eidosnet.co.uk" website="http://members.xoom.com/mortuus99/Duke3d"/>
 			<member name="The Master of Stealth" website="http://www.geocities.com/TimesSquare/Arcade/8963"/>
 			<member name="Yorick" website="http://come.to/thewarp"/>
@@ -13910,6 +13910,30 @@
 			<download filename="better.zip" filesize="781748" version="1.0" game="Regular" type="Original Files" sha1="0224dffc8e42aac5813995b9f603ceacf8ea07c8"/>
 			<download filename="Better_Weapons_1.0-ModMgrR.zip" filesize="781773" version="1.0" game="Regular" type="Mod Manager Files" state="Native" sha1="7cf8240a780c0e124b47bf0d59868ba7c11261db"/>
 			<download filename="Better_Weapons_1.0-ModMgrA.zip" filesize="989578" version="1.0" game="Atomic" type="Mod Manager Files" state="Converted" sha1="1416a25d638bca2e0d4910b1c6fccbf6eb0ed7e6"/>
+		</downloads>
+	</mod>
+	<mod name="Cluster Bombs" id="cluster_bombs" type="Weapon Patch" version="Beta" website="http://come.to/mortuus">
+		<team name="Blazing Torch Designs" website="http://www.blazing-torch.org.uk" country="Great Britain">
+			<member name="Mort" email="mort@eidosnet.co.uk" website="http://members.xoom.com/mortuus99/Duke3d"/>
+		</team>
+		<versions>
+			<version id="Beta" release_date="January 17, 1997">
+				<type>
+					<game type="Regular" state="Native">
+						<file name="C-BOMBS.CON" size="100270" type="con" sha1="b7aaf1bdadf48fc37384d370ececf774939bd452"/>
+						<file name="C-BOMBS.GRP" size="141379" type="grp" sha1="1cb64d4ba7ed02af2c2b7b6b799c98b62c64e4b4"/>
+					</game>
+					<game type="Atomic" state="Converted">
+						<file name="C-BOMBS.CON" size="151780" type="con" sha1="8bf91f89572de36db7cd07d496c5e214192c45ab"/>
+						<file name="C-BOMBS.GRP" size="201439" type="grp" sha1="a5a81b7994a64e0a04218288dbf0b3cf48bcb69d"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="c-bombs.zip" filesize="27251" version="Beta" game="Regular" type="Original Files" sha1="58c3db05bda4e8e958e7067cf9ca519d13509472"/>
+			<download filename="Cluster_Bombs_Beta-ModMgrR.zip" filesize="42441" version="Beta" game="Regular" type="Mod Manager Files" state="Native" sha1="56b70475e0ad1ea0a920f9f68f4252309894b4d2"/>
+			<download filename="Cluster_Bombs_Beta-ModMgrA.zip" filesize="59450" version="Beta" game="Atomic" type="Mod Manager Files" state="Converted" sha1="5095e1d98e882019afcae94d8ff7bdeaccac1d5a"/>
 		</downloads>
 	</mod>
 </mods>
