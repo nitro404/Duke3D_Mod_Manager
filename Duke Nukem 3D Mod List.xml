@@ -5759,6 +5759,10 @@
 		</team>
 		<versions>
 			<version id="1.0" release_date="August 31, 1997">
+				<game type="Regular" state="Native">
+					<file name="NUKEBOMB.CON" size="100751" type="con" sha1="893fef64cdf44bbb258cf0f68767cb3ed28434bd"/>
+					<file name="NUKEBOMB.GRP" size="210040" type="grp" sha1="b16db9cb36d950bf67d1b6b8573fb5b04393e64a"/>
+				</game>
 				<game type="Atomic" state="Native">
 					<file name="NUKEBOMB.CON" size="152242" type="con" sha1="dc3b20477b6950940bfa5c546fb4d52adc4f7162"/>
 					<file name="NUKEBOMB.GRP" size="277154" type="grp" sha1="82750714b8e6835b128b4a7891b9fc0d4bda7b78"/>
@@ -5766,7 +5770,9 @@
 			</version>
 		</versions>
 		<downloads>
+			<download filename="nuke.zip" filesize="71219" version="1.0" game="Regular" type="Original Files" sha1="ebc854f2a50dcf77dfb11a7e8eff44ae565449d5"/>
 			<download filename="nukeatom.zip" filesize="82065" version="1.0" game="Atomic" type="Original Files" sha1="c40b09d55cb9d06b6cb2237052ca2970837cb9aa"/>
+			<download filename="Nuclear_Pipebomb_1.0-ModMgrR.zip" filesize="86507" version="1.0" game="Regular" type="Mod Manager Files" state="Native" sha1="c13d6a786295525f9a88c606f693fe99173cd8ca"/>
 			<download filename="Nuclear_Pipebomb_1.0-ModMgrA.zip" filesize="105689" version="1.0" game="Atomic" type="Mod Manager Files" state="Native" sha1="13aa0b8912cae4ee2a9a26de383adb9a6be438f0"/>
 		</downloads>
 		<screenshots>
