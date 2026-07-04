@@ -13888,4 +13888,28 @@
 			<download filename="Cool_Guns_2-ModMgrA.zip" filesize="1358858" game="Atomic" type="Mod Manager Files" state="Converted" sha1="155129612fef303eeb406842241755f1eb8659ad"/>
 		</downloads>
 	</mod>
+	<mod name="Better Weapons" id="better_weapons" type="Weapon Patch" version="1.0">
+		<team>
+			<member name="The Jester" email="dean_machine@hotmail.com"/>
+		</team>
+		<versions>
+			<version id="1.0" release_date="January 17, 1998">
+				<type>
+					<game type="Regular" state="Native">
+						<file name="BETTER.CON" size="99641" type="con" sha1="fdeb81396796455841e2a8d283aff2bc92ea47b3"/>
+						<file name="BETTER.GRP" size="2870905" type="grp" sha1="a749367e1cfdd2efebe9b19f0523abd3f472b8b8"/>
+					</game>
+					<game type="Atomic" state="Converted">
+						<file name="BETTER.CON" size="151192" type="con" sha1="4bd147736cb24a6b90838a0ac2200464b55748bc"/>
+						<file name="BETTER.GRP" size="3459223" type="grp" sha1="8fc4447813355ba610d474a8b39fde6596254132"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="better.zip" filesize="781748" version="1.0" game="Regular" type="Original Files" sha1="0224dffc8e42aac5813995b9f603ceacf8ea07c8"/>
+			<download filename="Better_Weapons_1.0-ModMgrR.zip" filesize="781773" version="1.0" game="Regular" type="Mod Manager Files" state="Native" sha1="7cf8240a780c0e124b47bf0d59868ba7c11261db"/>
+			<download filename="Better_Weapons_1.0-ModMgrA.zip" filesize="989578" version="1.0" game="Atomic" type="Mod Manager Files" state="Converted" sha1="1416a25d638bca2e0d4910b1c6fccbf6eb0ed7e6"/>
+		</downloads>
+	</mod>
 </mods>
