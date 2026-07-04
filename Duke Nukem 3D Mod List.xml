@@ -13864,4 +13864,28 @@
 			<download filename="Donut_Grenade_2.0-ModMgrA.zip" filesize="1316266" version="2.0" game="Atomic" type="Mod Manager Files" state="Native" sha1="56d52e49dd9cc73124e8ce13ff41c51b03d75f0c"/>
 		</downloads>
 	</mod>
+	<mod name="Cool Guns 2" id="cool_guns_2" type="Weapon Patch">
+		<team>
+			<member name="Minion" email="minion5@hotmail.com"/>
+		</team>
+		<versions>
+			<version release_date="May 6, 1999">
+				<type>
+					<game type="Regular" state="Native">
+						<file name="COOLGUN2.CON" size="100762" type="con" sha1="af62b4a346c0b6f51df559b0322334dfe6c86a23"/>
+						<file name="COOLGUN2.GRP" size="3688351" type="grp" sha1="247021321805ca846e438b90061ad407ccc06f8a"/>
+					</game>
+					<game type="Atomic" state="Converted">
+						<file name="COOLGUN2.CON" size="151194" type="con" sha1="6a81c81bc650aa2630ee3cc3171637de8438275d"/>
+						<file name="COOLGUN2.GRP" size="4058632" type="grp" sha1="5121b937ae51f75efc2be16b85145c6edd76d071"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="hollycow.zip" filesize="1203028" game="Regular" type="Original Files" sha1="a4068770d4db980f9a5f8efea2a7e3dc17694414"/>
+			<download filename="Cool_Guns_2-ModMgrR.zip" filesize="1191657" game="Regular" type="Mod Manager Files" state="Native" sha1="fd9e16a8fd3cb61e7edf93ddd9e8f58b7e607d18"/>
+			<download filename="Cool_Guns_2-ModMgrA.zip" filesize="1358858" game="Atomic" type="Mod Manager Files" state="Converted" sha1="155129612fef303eeb406842241755f1eb8659ad"/>
+		</downloads>
+	</mod>
 </mods>
