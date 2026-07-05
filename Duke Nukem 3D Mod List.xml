@@ -3916,7 +3916,7 @@
 			<member name="Matthew Harris"/>
 			<member name="Brady Cox"/>
 			<member name="Simon Castles"/>
-			<member name="Ryan Isenberg"/>
+			<member name="Ryan Isenberg" alias="Tagg" email="tagg94@aol.com"/>
 			<member name="Aaron Barber"/>
 			<member name="Jeff Heath"/>
 			<member name="Crista Forest"/>
@@ -14052,6 +14052,27 @@
 			<download filename="Aliens_Revenge.rar" filesize="197360" game="Regular" type="Original Files" sha1="52e20ffa8a3d2f011e5b16f7513ef6f66343f17c"/>
 			<download filename="Alien&apos;s_Revenge-ModMgrR.zip" filesize="289088" game="Regular" type="Mod Manager Files" state="Native" sha1="a4a776fd1e2ea6b9051bdd4b60c5c400b3030e1c"/>
 			<download filename="Alien&apos;s_Revenge-ModMgrA.zip" filesize="305874" game="Atomic" type="Mod Manager Files" state="Converted" sha1="ba7807bd230ec3c67b7059748fb72e3b52b922f1"/>
+		</downloads>
+	</mod>
+	<mod name="V Series" id="v_series" type="Episode">
+		<team>
+			<member name="Ryan Isenberg" alias="Tagg" email="tagg94@aol.com"/>
+		</team>
+		<versions>
+			<version release_date="May 4, 1997">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="V-SERIES.CON" size="151194" type="con" sha1="895b98faa5aed6fbbdc485a5edbc2f39c61d4473"/>
+						<file name="V-SERIES.GRP" size="909772" type="grp" sha1="caa7e24f0bb7fca160f82b4610f9090360a282d0"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="v3.zip" filesize="61938" part="1" numparts="3" game="Atomic" type="Original Files" sha1="4ca26569733b525bd59e30bafeb334befa5762d3"/>
+			<download filename="v4.zip" filesize="59698" part="2" numparts="3" game="Atomic" type="Original Files" sha1="336937fb32abd7ede605e26a3192c4f0b34a2084"/>
+			<download filename="v5.zip" filesize="99044" part="3" numparts="3" game="Atomic" type="Original Files" sha1="534ac91a78e3bb4b409bc891ce6c038a70a3a392"/>
+			<download filename="V_Series-ModMgrA.zip" filesize="274314" game="Atomic" type="Mod Manager Files" state="Native" sha1="4f5128b2a61e13daca6d1eadb24c4c321c309765"/>
 		</downloads>
 	</mod>
 </mods>
