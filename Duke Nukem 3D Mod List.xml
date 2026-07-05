@@ -13960,4 +13960,28 @@
 			<download filename="Doom_Pak_1-ModMgrA.zip" filesize="2548394" game="Atomic" type="Mod Manager Files" state="Converted" sha1="3740b70e2459cbef7c152089e034308c50f5fa5a"/>
 		</downloads>
 	</mod>
+	<mod name="Neil&apos;s Zone" id="neils_zone" type="Map" website="http://members.xoom.com/net_atlas/quarters">
+		<team>
+			<member name="Neil Edelman" email="dreaded.neil@phreaker.net" icq="705130"/>
+		</team>
+		<versions>
+			<version release_date="February 14, 1999">
+				<type>
+					<game type="Regular" state="Native">
+						<file name="NEILZONE.CON" size="99643" type="con" sha1="54ed2375bbaf3e3c63063ca4ca772bbee00df46b"/>
+						<file name="NEILZONE.GRP" size="4248637" type="grp" sha1="3d14942c5e93a733ee74aaa818921f12d63a3f83"/>
+					</game>
+					<game type="Atomic" state="Converted">
+						<file name="NEILZONE.CON" size="151194" type="con" sha1="9e6fa9dc5d27b5afd7aced7b0bfd692a3e032b48"/>
+						<file name="NEILZONE.GRP" size="4308708" type="grp" sha1="c67f1bf2293c547b131adbac2c810d9386c40143"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="aardvark.zip" filesize="1319528" game="Regular" type="Original Files" sha1="adf5f30f2fd2f139594f9c7482ce5a33c1f3abc1"/>
+			<download filename="Neil&apos;s_Zone-ModMgrR.zip" filesize="1336535" game="Regular" type="Mod Manager Files" state="Native" sha1="706d39585a8970e9e271c952325e2517d6c5c602"/>
+			<download filename="Neil&apos;s_Zone-ModMgrA.zip" filesize="1353524" game="Atomic" type="Mod Manager Files" state="Converted" sha1="ada7fe193676ce668b29be6713a687d7265581f4"/>
+		</downloads>
+	</mod>
 </mods>
