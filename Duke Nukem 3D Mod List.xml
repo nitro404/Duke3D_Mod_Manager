@@ -14030,4 +14030,28 @@
 			<download filename="Flamethrower_3_1.0-ModMgrA.zip" filesize="248995" version="1.0" game="Atomic" type="Mod Manager Files" state="Converted" sha1="788ecea43caa5484ff66d85f4c20f84e12d48998"/>
 		</downloads>
 	</mod>
+	<mod name="Alien&apos;s Revenge" id="aliens_revenge" type="Episode">
+		<team>
+			<member name="Ben Brown" alias="Magic" email="ben.brown@talk21.com"/>
+		</team>
+		<versions>
+			<version release_date="September 7, 2000">
+				<type>
+					<game type="Regular" state="Native">
+						<file name="AR.CON" size="99637" type="con" sha1="a5a690abd287098590854acf664e5718475665be"/>
+						<file name="AR.GRP" size="1061162" type="grp" sha1="313705d22061ae4dcfa281c6b9804e1e80f86320"/>
+					</game>
+					<game type="Atomic" state="Converted">
+						<file name="AR.CON" size="151188" type="con" sha1="06150c570466ff819461d40bbb7655b8e2183f2d"/>
+						<file name="AR.GRP" size="1121237" type="grp" sha1="6e80f852b1028e7c07a25f570ac16f637fec6fa7"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Aliens_Revenge.rar" filesize="197360" game="Regular" type="Original Files" sha1="52e20ffa8a3d2f011e5b16f7513ef6f66343f17c"/>
+			<download filename="Alien&apos;s_Revenge-ModMgrR.zip" filesize="289088" game="Regular" type="Mod Manager Files" state="Native" sha1="a4a776fd1e2ea6b9051bdd4b60c5c400b3030e1c"/>
+			<download filename="Alien&apos;s_Revenge-ModMgrA.zip" filesize="305874" game="Atomic" type="Mod Manager Files" state="Converted" sha1="ba7807bd230ec3c67b7059748fb72e3b52b922f1"/>
+		</downloads>
+	</mod>
 </mods>
