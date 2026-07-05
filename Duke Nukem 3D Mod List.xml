@@ -14111,4 +14111,23 @@
 			<download filename="Deadfall-ModMgrA.zip" filesize="883234" game="Atomic" type="Mod Manager Files" state="Native" sha1="9bec13423eab35936f37e9f0546bf864f19608e0"/>
 		</downloads>
 	</mod>
+	<mod name="Death on Earth" id="death_on_earth" type="Episode">
+		<team>
+			<member name="Sergei Bezborodko" email="Sergei@ontariofsbo.com" province="Ontario" country="Canada"/>
+		</team>
+		<versions>
+			<version release_date="August 15, 2000">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="DOE.CON" size="151189" type="con" sha1="1a9c83d4ee31f882e56149283a10cb628c0b69a9"/>
+						<file name="DOE.GRP" size="935446" type="grp" sha1="95fc23ed7f9060a24df2b845dd02ed5251645c6d"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="deonearth.zip" filesize="205116" game="Atomic" type="Original Files" sha1="596132ca488d8c22faebce5bb76fe79e7aab4da4"/>
+			<download filename="Death_on_Earth-ModMgrA.zip" filesize="257337" game="Atomic" type="Mod Manager Files" state="Native" sha1="4555c55f42f494e3a2b0fd373dfb7a6d60ee89c3"/>
+		</downloads>
+	</mod>
 </mods>
