@@ -1853,7 +1853,7 @@
 			<member name="Mark Antony Rossi"/>
 			<member name="Julien Dykmans"/>
 			<member name="Alejandro Glavic" email="aglavic@yahoo.com.ar" country="Argentina"/>
-			<member name="Billy Boy"/>
+			<member name="Billy Boy" email="gawana@aol.com"/>
 			<member name="Mike von Skellington"/>
 		</team>
 		<versions>
@@ -14090,6 +14090,25 @@
 		<downloads>
 			<download filename="Crossroads.7z" filesize="4393052" game="Atomic" type="Original Files" sha1="da00ee3ca817aa59e02da1f1aa41684a458b0154"/>
 			<download filename="Crossroads-ModMgrA.zip" filesize="5141605" game="Atomic" type="Mod Manager Files" state="Native" sha1="e75a95c2a86e61db4f670deeb4783fa230014827"/>
+		</downloads>
+	</mod>
+	<mod name="Deadfall" id="deadfall" type="Map">
+		<team>
+			<member name="Billy Boy" email="gawana@aol.com"/>
+		</team>
+		<versions>
+			<version release_date="January 31, 2001">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="DEADFALL.CON" size="151386" type="con" sha1="dd57071355ad73e801b07a1a5bd13409681db213"/>
+						<file name="DEADFALL.GRP" size="1591517" type="grp" sha1="32180c8a2e8c3a8349a16af243a0b5f2b1f72b6e"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="deadfall.zip" filesize="858426" game="Atomic" type="Original Files" sha1="f03e5f994550d8c9c70e4b94dc530e517baaa217"/>
+			<download filename="Deadfall-ModMgrA.zip" filesize="883234" game="Atomic" type="Mod Manager Files" state="Native" sha1="9bec13423eab35936f37e9f0546bf864f19608e0"/>
 		</downloads>
 	</mod>
 </mods>
