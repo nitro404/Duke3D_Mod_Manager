@@ -14075,4 +14075,21 @@
 			<download filename="V_Series-ModMgrA.zip" filesize="274314" game="Atomic" type="Mod Manager Files" state="Native" sha1="4f5128b2a61e13daca6d1eadb24c4c321c309765"/>
 		</downloads>
 	</mod>
+	<mod name="Crossroads" id="crossroads" type="Partial Conversion" website="https://lzg.duke4.net/crrs.htm">
+		<team name="Lezing Entertainment" website="http://www.lezsite.narod.ru" country="Russia">
+			<member name="Maxim Chinyakin" alias="Lezing" email="slike1990@mail.ru"/>
+		</team>
+		<versions>
+			<version release_date="December 18, 2009">
+				<game type="Atomic" state="Native">
+					<file name="CROSSRDS.CON" size="159491" type="con" sha1="a0d855ca431dc377d293a95396e04890e0f68732"/>
+					<file name="CROSSRDS.GRP" size="10457559" type="grp" sha1="90c0f6d16d602c5727df6326a8a307ed4405f7ef"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Crossroads.7z" filesize="4393052" game="Atomic" type="Original Files" sha1="da00ee3ca817aa59e02da1f1aa41684a458b0154"/>
+			<download filename="Crossroads-ModMgrA.zip" filesize="5141605" game="Atomic" type="Mod Manager Files" state="Native" sha1="e75a95c2a86e61db4f670deeb4783fa230014827"/>
+		</downloads>
+	</mod>
 </mods>
