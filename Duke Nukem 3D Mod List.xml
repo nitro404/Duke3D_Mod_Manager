@@ -7255,7 +7255,7 @@
 			<download filename="The_End_of_the_World-ModMgrA.zip" filesize="708845" game="Atomic" type="Mod Manager Files" state="Native" sha1="bf99911c203ef64b2c1ff0d767ecc85876572217"/>
 		</downloads>
 	</mod>
-	<mod name="Mystique: Ages in Time" id="Mystique_-_Ages_in_Time" type="Total Conversion" version="1.1" website="http://www.mystique.org">
+	<mod name="Mystique: Ages in Time" id="mystique_-_ages_in_time" type="Total Conversion" version="1.1" website="http://www.mystique.org">
 		<team>
 			<member name="Chris Day"/>
 			<member name="Jason O&apos;Connell" alias="LevelMaster"/>
@@ -13982,6 +13982,28 @@
 			<download filename="aardvark.zip" filesize="1319528" game="Regular" type="Original Files" sha1="adf5f30f2fd2f139594f9c7482ce5a33c1f3abc1"/>
 			<download filename="Neil&apos;s_Zone-ModMgrR.zip" filesize="1336535" game="Regular" type="Mod Manager Files" state="Native" sha1="706d39585a8970e9e271c952325e2517d6c5c602"/>
 			<download filename="Neil&apos;s_Zone-ModMgrA.zip" filesize="1353524" game="Atomic" type="Mod Manager Files" state="Converted" sha1="ada7fe193676ce668b29be6713a687d7265581f4"/>
+		</downloads>
+	</mod>
+	<mod name="RM - Shotgun" id="rm_-_shotgun" type="Weapon Patch">
+		<team>
+			<member name="Ralf Modlich" email="ralf.modlich@t-online.de" website="http://members.xoom.com/RalfM" country="Germany"/>
+		</team>
+		<versions>
+			<version release_date="June 9, 1998">
+				<type>
+					<game type="Regular" state="Native">
+						<file name="RMSHOT.GRP" size="2388293" type="grp" sha1="5cb81adec6456fbfc3f0d753dcdce46936297c2b"/>
+					</game>
+					<game type="Atomic" state="Converted">
+						<file name="RMSHOT.GRP" size="2388293" type="grp" sha1="57cb8f4c488c3a69a0289bf773c240c99dad9fbf"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="rmshot.zip" filesize="802870" game="Regular" type="Original Files" sha1="caf6b600c6d951bad293b971bebccc79f79eed35"/>
+			<download filename="RM_-_Shotgun-ModMgrR.zip" filesize="788872" game="Regular" type="Mod Manager Files" state="Native" sha1="e273de444d01309c93262d411084cc4ffbe44252"/>
+			<download filename="RM_-_Shotgun-ModMgrA.zip" filesize="788119" game="Atomic" type="Mod Manager Files" state="Converted" sha1="3a5cbe456b9aadc1d13edb128b9875f825b24745"/>
 		</downloads>
 	</mod>
 </mods>
