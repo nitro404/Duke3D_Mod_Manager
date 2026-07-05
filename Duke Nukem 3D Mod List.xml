@@ -14130,4 +14130,26 @@
 			<download filename="Death_on_Earth-ModMgrA.zip" filesize="257337" game="Atomic" type="Mod Manager Files" state="Native" sha1="4555c55f42f494e3a2b0fd373dfb7a6d60ee89c3"/>
 		</downloads>
 	</mod>
+	<mod name="EDF Camp" id="edf_camp" type="Episode">
+		<team>
+			<member name="Peter Johnston" email="duke_master@hotmail.com" icq="81906970"/>
+		</team>
+		<versions>
+			<version release_date="October 5, 2001">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="EDF_CAMP.CON" size="151194" type="con" sha1="6c205926b2e28b2c2f800e0cc4b2f1dcd9bddf6a"/>
+						<file name="EDF_CAMP.GRP" size="1786170" type="grp" sha1="3a2d6f5ebe0cad3590c4a82bb95aeded65274800"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Edf_camp.zip" filesize="400463" game="Atomic" type="Original Files" sha1="9ff52ddeb5f181371ba60803c0a2b49b8c5180f1"/>
+			<download filename="EDF_Camp-ModMgrA.zip" filesize="444679" game="Atomic" type="Mod Manager Files" state="Native" sha1="42746331b311fed9a55b9d8ab74a5248dde719d1"/>
+		</downloads>
+		<notes>
+			<note>Also features a new version of 'Stadium' (E3L9).</note>
+		</notes>
+	</mod>
 </mods>
