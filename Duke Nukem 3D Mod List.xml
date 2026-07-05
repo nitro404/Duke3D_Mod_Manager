@@ -14006,4 +14006,28 @@
 			<download filename="RM_-_Shotgun-ModMgrA.zip" filesize="788119" game="Atomic" type="Mod Manager Files" state="Converted" sha1="3a5cbe456b9aadc1d13edb128b9875f825b24745"/>
 		</downloads>
 	</mod>
+	<mod name="Flamethrower (3)" id="flamethrower_3" type="Weapon Patch" version="1.0">
+		<team>
+			<member name="Scott Nivens" email="tjad0003@gold.tc.umn.edu"/>
+		</team>
+		<versions>
+			<version id="1.0" release_date="October 20, 1996">
+				<type>
+					<game type="Regular" state="Native">
+						<file name="FLAME_10.CON" size="99252" type="con" sha1="3b6ee9b3c8755d95b7055b323180bf1f59fd3392"/>
+						<file name="FLAME_10.GRP" size="751424" type="grp" sha1="a9377b0ec1e864f903c318d70b0264b6a1ecb1df"/>
+					</game>
+					<game type="Atomic" state="Converted">
+						<file name="FLAME_10.CON" size="150552" type="con" sha1="ee6c6eccac24e3a8c044acef9ecd3f20975ab832"/>
+						<file name="FLAME_10.GRP" size="821618" type="grp" sha1="f70be2c3e1215e0fbcd892fd2a474b67cb71c730"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="flameS.zip" filesize="220494" version="1.0" game="Regular" type="Original Files" sha1="f22ebe1011554e85a8683431c9325d3f65211aa1"/>
+			<download filename="Flamethrower_3_1.0-ModMgrR.zip" filesize="229785" version="1.0" game="Regular" type="Mod Manager Files" state="Native" sha1="43bd6cf753f9c5be1723d6500f676dce9eb6c9a0"/>
+			<download filename="Flamethrower_3_1.0-ModMgrA.zip" filesize="248995" version="1.0" game="Atomic" type="Mod Manager Files" state="Converted" sha1="788ecea43caa5484ff66d85f4c20f84e12d48998"/>
+		</downloads>
+	</mod>
 </mods>
