@@ -736,7 +736,7 @@
 	</mod>
 	<mod name="Chimera" id="chimera" type="Total Conversion">
 		<team>
-			<member name="George-W. &quot;Jaco&quot; BERNARD"/>
+			<member name="George-William Bernard" alias="Jaco" email="georgewb@infonie.fr"/>
 		</team>
 		<versions>
 			<version release_date="February 5, 2001">
@@ -751,6 +751,10 @@
 			<download filename="chmtheme.zip" filesize="967271" type="Windows Theme" sha1="8b0826b5c62180e76c31f75c0a42ebbcf2f888b0"/>
 			<download filename="Chimera-ModMgrA.zip" filesize="15226728" game="Atomic" type="Mod Manager Files" state="Native" sha1="81b1d509934a2d4d160cd739dd4cd7000ac5569f"/>
 		</downloads>
+		<related>
+			<mod id="last_reaction_water_bases"/>
+			<mod id="genetic"/>
+		</related>
 	</mod>
 	<mod name="Command &amp; Conquer" id="command_and_conquer" type="Total Conversion" version="Beta">
 		<team>
@@ -1703,7 +1707,7 @@
 			<member name="Dukebert"/>
 			<member name="Jeff Fleckenstein" alias="Fleck"/>
 			<member name="John R. Leonard" alias="ODAIBA"/>
-			<member name="Mikko Sandt" alias="Jackotrades" email="sirpa.sandt@pp.inet.fi"/>
+			<member name="Mikko Sandt" alias="Jackotrades" email="sirpa.sandt@pp.inet.fi" icq="71211982" country="Finland"/>
 		</team>
 		<versions>
 			<version release_date="February 7, 2002">
@@ -1725,7 +1729,7 @@
 	</mod>
 	<mod name="Fight the Future" id="fight_the_future" type="Total Conversion">
 		<team>
-			<member name="Mikko Sandt" email="sirpa.sandt@pp.inet.fi"/>
+			<member name="Mikko Sandt" alias="Jackotrades" email="sirpa.sandt@pp.inet.fi" icq="71211982" country="Finland"/>
 		</team>
 		<versions>
 			<version release_date="March 21, 1999">
@@ -1789,7 +1793,7 @@
 	</mod>
 	<mod name="Future TC (Duke 2088)" id="future_tc" type="Total Conversion">
 		<team>
-			<member name="Mikko Sandt" email="sirpa.sandt@pp.inet.fi"/>
+			<member name="Mikko Sandt" alias="Jackotrades" email="sirpa.sandt@pp.inet.fi" icq="71211982" country="Finland"/>
 		</team>
 		<versions>
 			<version release_date="September 30, 1998">
@@ -1849,7 +1853,7 @@
 			<member name="Eliseu Gouveia"/>
 			<member name="Rick_Randy"/>
 			<member name="Tom Miller"/>
-			<member name="Mikko Sandt" email="sirpa.sandt@pp.inet.fi"/>
+			<member name="Mikko Sandt" alias="Jackotrades" email="sirpa.sandt@pp.inet.fi" icq="71211982" country="Finland"/>
 			<member name="Mark Antony Rossi"/>
 			<member name="Julien Dykmans"/>
 			<member name="Alejandro Glavic" email="aglavic@yahoo.com.ar" country="Argentina"/>
@@ -2121,7 +2125,7 @@
 	</mod>
 	<mod name="Last Reaction &amp; Water Bases" id="last_reaction_water_bases" type="Total Conversion" version="V2">
 		<team>
-			<member name="George-William Bernard" email="georgewb@infonie.fr"/>
+			<member name="George-William Bernard" alias="Jaco" email="georgewb@infonie.fr"/>
 		</team>
 		<versions>
 			<version id="V1" release_date="February 8, 1999">
@@ -2144,6 +2148,10 @@
 			<download filename="Last_Reaction_and_Water_Bases_V1-ModMgrA.zip" filesize="8705323" version="V1" game="Atomic" type="Mod Manager Files" state="Native" sha1="090e442f900027f033aba5e086564ae5b10625e3"/>
 			<download filename="Last_Reaction_and_Water_Bases_V2-ModMgrA.zip" filesize="8701099" version="V2" game="Atomic" type="Mod Manager Files" state="Native" sha1="9fcbd0bdb97cbb26dc7cb36189df1cdbb60dd3c4"/>
 		</downloads>
+		<related>
+			<mod id="chimera"/>
+			<mod id="genetic"/>
+		</related>
 	</mod>
 	<mod name="Layre" id="layre" type="Total Conversion">
 		<team>
@@ -2526,7 +2534,7 @@
 	</mod>
 	<mod name="MSSP Episode" id="mssp_episode" type="Episode" version="3.0" website="http://www.dukeworld.com/mssp">
 		<team>
-			<member name="Mikko Sandt" email="mikko.sandt@surfeu.fi" country="Finland"/>
+			<member name="Mikko Sandt" alias="Jackotrades" email="sirpa.sandt@pp.inet.fi" icq="71211982" country="Finland"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="July 21, 2000">
@@ -3870,7 +3878,7 @@
 	</mod>
 	<mod name="The Brave New World" id="the_brave_new_world" type="Total Conversion" website="http://www.planetduke.com/msdn">
 		<team>
-			<member name="Mikko Sandt" email="mikko.sandt@satabaana.net"/>
+			<member name="Mikko Sandt" alias="Jackotrades" email="mikko.sandt@satabaana.net" icq="71211982" country="Finland"/>
 		</team>
 		<versions>
 			<version release_date="January 1, 2004">
@@ -6957,7 +6965,7 @@
 	</mod>
 	<mod name="Duke Tournament" id="duke_tournament" type="Total Conversion" version_type="Dukematch 2000 Mission Pack" website="http://www.dukeworld.com/duketournament">
 		<team>
-			<member name="Mikko Sandt" email="sirpa.sandt@pp.inet.fi" icq="71211982"/>
+			<member name="Mikko Sandt" alias="Jackotrades" email="sirpa.sandt@pp.inet.fi" icq="71211982" country="Finland"/>
 			<member name="Dean Lillie" alias="Swiss Cheeseman"/>
 			<member name="Dj-Mougias"/>
 			<member name="Chris Pufahl"/>
@@ -8696,7 +8704,7 @@
 			<member name="Paul Monteray" alias="High Treason" email="pau174u@AOL.com" youtube="HighTreasonLP"/>
 			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
 			<member name="Michael Crisp" alias="Micky C"/>
-			<member name="Mikko Sandt" email="sirpa.sandt@pp.inet.fi"/>
+			<member name="Mikko Sandt" alias="Jackotrades" email="sirpa.sandt@pp.inet.fi" icq="71211982" country="Finland"/>
 			<member name="Mister Sinister" email="m1ster_s1n1ster@yahoo.com"/>
 			<member name="Aymeric Nocus" alias="MRCK" email="aymeric-nocus@tele2.fr" youtube="MisterCK" discord="ck3d#2928" country="France"/>
 			<member name="Paul B"/>
@@ -9934,7 +9942,7 @@
 		<team>
 			<member name="Corentin Dallay" alias="MetHy"/>
 			<member name="Aymeric Nocus" alias="MRCK" email="aymeric-nocus@tele2.fr" youtube="MisterCK" discord="ck3d#2928" country="France"/>
-			<member name="Mikko Sandt" alias="Jackotrades" email="sirpa.sandt@pp.inet.fi"/>
+			<member name="Mikko Sandt" alias="Jackotrades" email="sirpa.sandt@pp.inet.fi" icq="71211982" country="Finland"/>
 			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com" discord="Mrlijn#8650"/>
 		</team>
 		<versions>
@@ -12120,7 +12128,7 @@
 			<member name="Max Ylitalo" alias="Oasiz"/>
 			<member name="Jarmo Kylmäaho"/>
 			<member name="Corentin Dallay" alias="MetHy"/>
-			<member name="Mikko Sandt" email="sirpa.sandt@pp.inet.fi" icq="71211982"/>
+			<member name="Mikko Sandt" alias="Jackotrades" email="sirpa.sandt@pp.inet.fi" icq="71211982" country="Finland"/>
 			<member name="Aymeric Nocus" alias="ck3D" email="aymeric-nocus@tele2.fr" website="https://www.ko-fi.com/blastradius" youtube="MisterCK" discord="ck3d#2928" country="France"/>
 			<member name="Vlad Borisenko" twitter="shtovladya"/>
 			<member name="Katherine Baskin" alias="The Baskinator" twitter="baskinator"/>
@@ -14151,5 +14159,32 @@
 		<notes>
 			<note>Also features a new version of 'Stadium' (E3L9).</note>
 		</notes>
+	</mod>
+	<mod name="Genetic" id="genetic" type="Total Conversion">
+		<team>
+			<member name="George-William Bernard" alias="Jaco" email="georgewb@infonie.fr"/>
+			<member name="Mikko Sandt" alias="Jackotrades" email="sirpa.sandt@pp.inet.fi" icq="71211982" country="Finland"/>
+		</team>
+		<versions>
+			<version>
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="GENETIC.CON" size="283081" type="con" sha1="01e0302913c9702ae2e46ff25e47476f2144417f"/>
+						<file name="GENETIC.GRP" size="39425985" type="grp" sha1="474cb0fa1e767268b45daf676003ea9c4bf44684"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="DN3DGenetic.zip" filesize="14700219" game="Atomic" type="Original Files" sha1="9c1793c6085c8fd48188b9e82a87aa4e61bdf5cf"/>
+			<download filename="Genetic-ModMgrA.zip" filesize="14372447" game="Atomic" type="Mod Manager Files" state="Native" sha1="3b745fa1c9c51d7997b7966ee35b85ced42c219c"/>
+		</downloads>
+		<notes>
+			<note>This is a combination of Last Reaction, Water Bases, &amp; Chimera.</note>
+		</notes>
+		<related>
+			<mod id="last_reaction_water_bases"/>
+			<mod id="chimera"/>
+		</related>
 	</mod>
 </mods>
