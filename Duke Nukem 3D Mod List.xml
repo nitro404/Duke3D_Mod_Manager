@@ -14187,4 +14187,23 @@
 			<mod id="chimera"/>
 		</related>
 	</mod>
+	<mod name="Minigame" id="minigame" type="Partial Conversion">
+		<team>
+			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com" country="Russia"/>
+		</team>
+		<versions>
+			<version release_date="October 27, 2008">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="MINIGAME.CON" size="160758" type="con" sha1="81117f3866602ead61355233459b77aa277872e2"/>
+						<file name="MINIGAME.GRP" size="1616794" type="grp" sha1="cc9248bbe309fc38c7883919c14327d60af26792"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="MGAME.zip" filesize="468886" game="Atomic" type="Original Files" sha1="88ad947ec725beffb32af6b19cdfff13677d8bf4"/>
+			<download filename="Minigame-ModMgrA.zip" filesize="484371" game="Atomic" type="Mod Manager Files" state="Native" sha1="050926c45af890ec12606eec7cd6c2b6b176e7e1"/>
+		</downloads>
+	</mod>
 </mods>
