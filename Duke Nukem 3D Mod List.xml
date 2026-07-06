@@ -14225,4 +14225,23 @@
 			<download filename="New_Invasion_-_Episode_1_-_Retirement_Ruckus_1.1R-ModMgrA.zip" filesize="2780730" version="1.1R" game="Atomic" type="Mod Manager Files" state="Native" sha1="9e95e961ff566cc43daf4017709e8698b22f37f7"/>
 		</downloads>
 	</mod>
+	<mod name="SRAN Series" id="sran_series" type="Episode" website="https://lzg.duke4.net/smaps.htm">
+		<team>
+			<member name="Maxim Chinyakin" alias="Lezing" email="slike1990@mail.ru"/>
+		</team>
+		<versions>
+			<version release_date="April 29, 2010">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="SRANS.CON" size="151191" type="con" sha1="a659f785d990e4161e62377d928b534c0bb7ebf9"/>
+						<file name="SRANS.GRP" size="472096" type="grp" sha1="315a500bc829b6d4e24199d7ff148d6e69a9fc04"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="srans.zip" filesize="70728" game="Atomic" type="Original Files" sha1="0b7b9684164ae258e0d2cd19e7d81c2e6a299427"/>
+			<download filename="SRAN_Series-ModMgrA.zip" filesize="127645" game="Atomic" type="Mod Manager Files" state="Native" sha1="68f5253f0cd687e1368f697c6e8b81b9443750ac"/>
+		</downloads>
+	</mod>
 </mods>
