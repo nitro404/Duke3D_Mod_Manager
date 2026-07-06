@@ -8701,7 +8701,7 @@
 			<member name="Daedolon"/>
 			<member name="Dukebot"/>
 			<member name="Forge"/>
-			<member name="Paul Monteray" alias="High Treason" email="pau174u@AOL.com" youtube="HighTreasonLP"/>
+			<member name="Paul Monteray" alias="High Treason" email="pau174u@AOL.com" youtube="HighTreason610" discord="DXZeff"/>
 			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
 			<member name="Michael Crisp" alias="Micky C"/>
 			<member name="Mikko Sandt" alias="Jackotrades" email="sirpa.sandt@pp.inet.fi" icq="71211982" country="Finland"/>
@@ -12754,7 +12754,7 @@
 	</mod>
 	<mod name="The Space Mission" id="the_space_mission" type="Episode" version="V1">
 		<team>
-			<member name="Paul Monteray" alias="High Treason" email="pau174u@AOL.com" youtube="HighTreasonLP"/>
+			<member name="Paul Monteray" alias="High Treason" email="pau174u@AOL.com" youtube="HighTreason610" discord="DXZeff"/>
 		</team>
 		<versions>
 			<version id="V1" release_date="April 15, 2012">
@@ -14204,6 +14204,25 @@
 		<downloads>
 			<download filename="MGAME.zip" filesize="468886" game="Atomic" type="Original Files" sha1="88ad947ec725beffb32af6b19cdfff13677d8bf4"/>
 			<download filename="Minigame-ModMgrA.zip" filesize="484371" game="Atomic" type="Mod Manager Files" state="Native" sha1="050926c45af890ec12606eec7cd6c2b6b176e7e1"/>
+		</downloads>
+	</mod>
+	<mod name="New Invasion - Episode 1: Retirement Ruckus" id="new_invasion_-_episode_1_-_retirement_ruckus" type="Episode" version="1.1R" website="https://www.moddb.com/games/duke-nukem-3d/downloads/new-invasion-episode-1-retirement-ruckus">
+		<team>
+			<member name="Paul Monteray" alias="High Treason" email="pau174u@AOL.com" youtube="HighTreason610" discord="DXZeff"/>
+		</team>
+		<versions>
+			<version id="1.1R" release_date="September 16, 2024">
+				<type>
+					<game type="Atomic" state="Native">
+						<file name="NIE1RR.CON" size="151194" type="con" sha1="9bf989471e6713602e3197474391930430844436"/>
+						<file name="NIE1RR.GRP" size="7109647" type="grp" sha1="2d2bbf519a40677e20def5a497447cb77c0471e5"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="NIFILE1E.zip" filesize="2828923" version="1.1R" game="Atomic" type="Original Files" sha1="562fcd3723b0735b888e43f56703575bf3da6091"/>
+			<download filename="New_Invasion_-_Episode_1_-_Retirement_Ruckus_1.1R-ModMgrA.zip" filesize="2780730" version="1.1R" game="Atomic" type="Mod Manager Files" state="Native" sha1="9e95e961ff566cc43daf4017709e8698b22f37f7"/>
 		</downloads>
 	</mod>
 </mods>
