@@ -1695,7 +1695,7 @@
 			<member name="Andrew Robinson" alias="Robbo"/>
 			<member name="Tom Welsome" alias="RocketBoy"/>
 			<member name="Daniel Halpern" alias="Pøstmåñ" email="dwarner@servtech.com"/>
-			<member name="Bob Averill"/>
+			<member name="Bob Averill" email="bob.averill@gmail.com" website="http://www.teleport.com/~edaa/bobpage/index.html"/>
 			<member name="Jonah Bishop" email="jonahb@3dportal.com"/>
 			<member name="Will Mabie"/>
 			<member name="András Piroska"/>
@@ -14435,6 +14435,25 @@
 			<download filename="jwc.zip" filesize="468493" game="Atomic" type="Original Files" sha1="7874ae5ec27df9f121e05439741537c079ef5958"/>
 			<download filename="Dual_Pistols-ModMgrR.zip" filesize="333180" game="Regular" type="Mod Manager Files" state="Converted" sha1="525861ce7e803a6cdb75f15ccfecaab5c615030d"/>
 			<download filename="Dual_Pistols-ModMgrA.zip" filesize="505681" game="Atomic" type="Mod Manager Files" state="Native" sha1="c6b664fb1dd6fd5345f511ab4461c6b5824be76d"/>
+		</downloads>
+	</mod>
+	<mod name="BobSP" id="bobsp" type="Episode">
+		<team>
+			<member name="Bob Averill" email="bob.averill@gmail.com" website="http://www.teleport.com/~edaa/bobpage/index.html"/>
+		</team>
+		<versions>
+			<version release_date="February 14, 2014">
+				<game type="JFDuke3D" state="Native">
+					<file name="BOBSP.CON" size="151191" type="con" sha1="9cb8b6ed501b3ddeb576daecf9c51b4a57fa5242"/>
+					<file name="BOBSP.GRP" size="13415357" type="grp" sha1="237cbc5e0b83d1886aaf5823c2f11476ef1a31ce"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="bobsp1-4.zip" filesize="783589" game="JFDuke3D" type="Original Files" sha1="4f9b59734db541c6a7dad69a326eadd1dbe4963c"/>
+			<download filename="bobspx.zip" filesize="199025" special="Xenocide Map" game="JFDuke3D" type="Original Files" sha1="ca29e08ee39e05716944a2ff2323c2d4a3969176"/>
+			<download filename="bobspx_2.zip" filesize="10015397" special="Updated Xenocide Map" game="JFDuke3D" type="Original Files" sha1="7e8d3bb0e3e31dc424dea2cd47620e219c7239bb"/>
+			<download filename="BobSP-ModMgrJF.zip" filesize="10619662" game="JFDuke3D" type="Mod Manager Files" state="Native" sha1="5b259366bc1866b656c4c8b2fcb5023b36462106"/>
 		</downloads>
 	</mod>
 </mods>
