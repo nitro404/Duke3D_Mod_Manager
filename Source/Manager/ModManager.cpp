@@ -2835,6 +2835,18 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 		if(doesRequireCombinedGroup) {
 			launchStatus(fmt::format("Generating combined {} file (this may take some time).", doesRequireCombinedZip ? "zip" : "group"));
 
+			std::string baseCombinedGroupFileName;
+
+			if(!modGroupFiles.empty()) {
+				baseCombinedGroupFileName = Utilities::getFileNameNoExtension(modGroupFiles.back()->getFileName());
+			}
+			else if(!modConFiles.empty()) {
+				baseCombinedGroupFileName = Utilities::getFileNameNoExtension(modConFiles.back()->getFileName());
+			}
+			else if(!modDefFiles.empty()) {
+				baseCombinedGroupFileName = Utilities::getFileNameNoExtension(modDefFiles.back()->getFileName());
+			}
+
 			if(doesRequireCombinedZip) {
 				if(!selectedGameVersion->areZipArchiveGroupsSupported()) {
 					notifyLaunchError(fmt::format("Zip archive group files are not supported by '{}'.", selectedGameVersion->getLongName()));
@@ -2842,12 +2854,12 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 					return false;
 				}
 
-				combinedGroupFileName = fmt::format("{}-Combined.zip", Utilities::getFileNameNoExtension(modGroupFiles.back()->getFileName()));
+				combinedGroupFileName = fmt::format("{}-Combined.zip", baseCombinedGroupFileName.empty() ? "Mod" : baseCombinedGroupFileName);
 
 				spdlog::info("Generating combined zip archive file '{}'...", combinedGroupFileName);
 			}
 			else {
-				combinedGroupFileName = Utilities::replaceFileExtension(modGroupFiles.back()->getFileName(), "CMB");
+				combinedGroupFileName = (baseCombinedGroupFileName.empty() ? "MOD" : baseCombinedGroupFileName) + ".CMB";
 
 				spdlog::info("Generating combined group file '{}'...", combinedGroupFileName);
 			}
