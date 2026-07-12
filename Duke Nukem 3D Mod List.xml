@@ -2643,6 +2643,7 @@
 		</downloads>
 		<related>
 			<mod id="fm2x"/>
+			<mod id="fm3x"/>
 		</related>
 	</mod>
 	<mod name="N.I.B. (Nuclear Indestructible Biology)" id="nib_nuclear_indestructible_biology" type="Total Conversion" website="Http://dukeworld.com/nib/index.html">
@@ -14287,6 +14288,40 @@
 		</downloads>
 		<related>
 			<mod id="new_york_rebellion"/>
+			<mod id="fm3x"/>
+		</related>
+	</mod>
+	<mod name="FM3X" id="fm3x" type="Episode" version="3.000.19980929">
+		<team>
+			<member name="Fernando Márquez" email="cristomarquez@gmail.com" country="Chile"/>
+		</team>
+		<versions>
+			<version id="3.000.19980929" release_date="September 29, 1998">
+				<type>
+					<game type="Regular" state="Native">
+						<file name="FM3X_100.CON" size="99647" type="con" sha1="875a8fd57867fe9e84607e5e13c7ba57027603c2"/>
+						<file name="FM3X_100.GRP" size="10492048" type="grp" sha1="e1db01ffd7ba339a38c73c65e77e15264bc74f79"/>
+					</game>
+					<game type="Plutonium" state="Native">
+						<file name="FM3X_100.CON" size="151200" type="con" sha1="81a91ac90acc8efacd62a47094d576b2d7d1681e"/>
+						<file name="FM3X_100.GRP" size="11088134" type="grp" sha1="ab3c3cd7b862687af0b208164cfd06155941d865"/>
+					</game>
+					<game type="Atomic" state="Native">
+						<file name="FM3X_100.CON" size="151198" type="con" sha1="0b163729fff6bbcea6eaefc4b5a9372a457e9842"/>
+						<file name="FM3X_100.GRP" size="11098402" type="grp" sha1="0b1c328bb2ee3e42e1f3d540d140afcd5115a248"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="FM3XGRP.zip" filesize="9505791" version="3.000.19980929" game="All" type="Original Files" sha1="610f3525d1225f3d56d56e9d6b87498c5e7b0859"/>
+			<download filename="FM3X_3.000.19980929-ModMgrR.zip" filesize="3118260" version="3.000.19980929" game="Regular" type="Mod Manager Files" state="Native" sha1="0c0d147d3b061dfe6de02de734ef7e14bf89f7f5"/>
+			<download filename="FM3X_3.000.19980929-ModMgrP.zip" filesize="3198456" version="3.000.19980929" game="Plutonium" type="Mod Manager Files" state="Native" sha1="cf554bdd917a9b588485383828a56997d6a0e3a6"/>
+			<download filename="FM3X_3.000.19980929-ModMgrA.zip" filesize="3209604" version="3.000.19980929" game="Atomic" type="Mod Manager Files" state="Native" sha1="d4ff0b50d77766d636d5bb5718a453aeb9a982bc"/>
+		</downloads>
+		<related>
+			<mod id="new_york_rebellion"/>
+			<mod id="fm2x"/>
 		</related>
 	</mod>
 </mods>
