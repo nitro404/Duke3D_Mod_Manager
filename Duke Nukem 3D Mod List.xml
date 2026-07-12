@@ -14418,4 +14418,23 @@
 			<mod id="fm4x"/>
 		</related>
 	</mod>
+	<mod name="Dual Pistols" id="dual_pistols" type="Weapon Patch">
+		<versions>
+			<version release_date="November 19, 1999">
+				<game type="Regular" state="Converted">
+					<file name="JOHNWOO.CON" size="99642" type="con" sha1="08b17e961bc7ab053f9ffbbe3ce2e1e371cc02f6"/>
+					<file name="JOHNWOO.GRP" size="1153649" type="grp" sha1="34e5bb4526e001e9b6499989e71a6f496c1f4322"/>
+				</game>
+				<game type="Atomic" state="Native">
+					<file name="JOHNWOO.CON" size="151193" type="con" sha1="770a3b9d2dda7913c1f0dd57236ad4073fdab1c3"/>
+					<file name="JOHNWOO.GRP" size="1524429" type="grp" sha1="54d05af49d2633b98e76ec3677d90bf449e698a0"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="jwc.zip" filesize="468493" game="Atomic" type="Original Files" sha1="7874ae5ec27df9f121e05439741537c079ef5958"/>
+			<download filename="Dual_Pistols-ModMgrR.zip" filesize="333180" game="Regular" type="Mod Manager Files" state="Converted" sha1="525861ce7e803a6cdb75f15ccfecaab5c615030d"/>
+			<download filename="Dual_Pistols-ModMgrA.zip" filesize="505681" game="Atomic" type="Mod Manager Files" state="Native" sha1="c6b664fb1dd6fd5345f511ab4461c6b5824be76d"/>
+		</downloads>
+	</mod>
 </mods>
