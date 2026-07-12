@@ -5711,7 +5711,7 @@ bool ModManager::createSymlinksOrCopyTemporaryFiles(const GameVersion & gameVers
 				installedModInfo->addModFile(relativeModFileDestinationFilePath);
 			}
 
-			spdlog::debug("Copied mod file '{}' to directory '{}'.", modFileFileName, absoluteFileDestinationDirectoryPath);
+			spdlog::debug("Copied mod file '{}' to directory '{}'.", sourceModFilePath, absoluteFileDestinationDirectoryPath);
 		}
 	}
 
