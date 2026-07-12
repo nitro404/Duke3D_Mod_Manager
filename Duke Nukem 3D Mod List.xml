@@ -2627,7 +2627,7 @@
 	</mod>
 	<mod name="New York Rebellion" id="new_york_rebellion" type="Episode">
 		<team>
-			<member name="Fernando Márquez" email="cristomarquez@udec.cl"/>
+			<member name="Fernando Márquez" email="cristomarquez@udec.cl" country="Chile"/>
 		</team>
 		<versions>
 			<version release_date="December 21, 1996">
@@ -2641,6 +2641,9 @@
 			<download filename="nyr.zip" filesize="1303965" game="Atomic" type="Original Files" sha1="056442623cc67ae539378106828dc95fee647226"/>
 			<download filename="New_York_Rebellion-ModMgrA.zip" filesize="1339310" game="Atomic" type="Mod Manager Files" state="Native" sha1="f0f5177a31b5a056f13c0568bc470d956e19cab6"/>
 		</downloads>
+		<related>
+			<mod id="fm2x"/>
+		</related>
 	</mod>
 	<mod name="N.I.B. (Nuclear Indestructible Biology)" id="nib_nuclear_indestructible_biology" type="Total Conversion" website="Http://dukeworld.com/nib/index.html">
 		<team name="Virtual Atmospheric Morbid Productions (V.A.M.P.)" email="xxxzoo@geocities.com">
@@ -14243,5 +14246,47 @@
 			<download filename="srans.zip" filesize="70728" game="Atomic" type="Original Files" sha1="0b7b9684164ae258e0d2cd19e7d81c2e6a299427"/>
 			<download filename="SRAN_Series-ModMgrA.zip" filesize="127645" game="Atomic" type="Mod Manager Files" state="Native" sha1="68f5253f0cd687e1368f697c6e8b81b9443750ac"/>
 		</downloads>
+	</mod>
+	<mod name="FM2X" id="fm2x" type="Episode" version="1.03.120309">
+		<team>
+			<member name="Fernando Márquez" email="cristomarquez@gmail.com" country="Chile"/>
+		</team>
+		<versions>
+			<version id="1.00.020209" release_date="February 2, 2009">
+				<type>
+					<game type="Regular" state="Converted">
+						<file name="FM2X_100.CON" size="99643" type="con" sha1="bddaa62afe6f74dada79b1ee472c423411a40d7d"/>
+						<file name="FM2X_100.GRP" size="7193533" type="grp" sha1="a555c48dd89c0caf4d529991f3d3e57b3b715668"/>
+					</game>
+					<game type="Atomic" state="Native">
+						<file name="FM2X_100.CON" size="151194" type="con" sha1="432f225c5874faf6c1d51569ca041d78db8344d1"/>
+						<file name="FM2X_100.GRP" size="7253723" type="grp" sha1="44c5160fdf9af455634ffdcc4424c34eae4729b1"/>
+					</game>
+				</type>
+			</version>
+			<version id="1.03.120309" release_date="March 12, 2009">
+				<type>
+					<game type="Regular" state="Converted">
+						<file name="FM2X_103.CON" size="99643" type="con" sha1="bddaa62afe6f74dada79b1ee472c423411a40d7d"/>
+						<file name="FM2X_103.GRP" size="7196259" type="grp" sha1="116a3db54cd9c518b0c7bea0aab0cc68e3569dd8"/>
+					</game>
+					<game type="Atomic" state="Native">
+						<file name="FM2X_103.CON" size="151194" type="con" sha1="432f225c5874faf6c1d51569ca041d78db8344d1"/>
+						<file name="FM2X_103.GRP" size="7256346" type="grp" sha1="2911993116ce750e78713191c174bcec93819b24"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="fm2x.zip" filesize="2615625" version="1.00.020209" game="Atomic" type="Original Files" sha1="5b89a99670748a37d96c840fce60ad06947900c5"/>
+			<download filename="FM2X_1.03.zip" filesize="2616799" version="1.03.120309" game="Atomic" type="Original Files" sha1="4be7dbe5a18c804a26f4d4ebf36835998d56516e"/>
+			<download filename="FM2X_1.00.020209-ModMgrR.zip" filesize="2552640" version="1.00.020209" game="Regular" type="Mod Manager Files" state="Converted" sha1="0beb9fcf0245c6f191f7c3d0b1f7a2623387a39d"/>
+			<download filename="FM2X_1.00.020209-ModMgrA.zip" filesize="2569939" version="1.00.020209" game="Atomic" type="Mod Manager Files" state="Native" sha1="d71edc5b7282ee72adc64408643537f48bb95bb3"/>
+			<download filename="FM2X_1.03.120309-ModMgrR.zip" filesize="2554559" version="1.03.120309" game="Regular" type="Mod Manager Files" state="Converted" sha1="13c0e004a108b246eff04cac076ea95f4f8a12b5"/>
+			<download filename="FM2X_1.03.120309-ModMgrA.zip" filesize="2571274" version="1.03.120309" game="Atomic" type="Mod Manager Files" state="Native" sha1="c36a3dbbc3f3c504c9cc7ace19f8b6a9932485b4"/>
+		</downloads>
+		<related>
+			<mod id="new_york_rebellion"/>
+		</related>
 	</mod>
 </mods>
