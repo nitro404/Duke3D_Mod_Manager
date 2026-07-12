@@ -2644,6 +2644,7 @@
 		<related>
 			<mod id="fm2x"/>
 			<mod id="fm3x"/>
+			<mod id="fm4x"/>
 		</related>
 	</mod>
 	<mod name="N.I.B. (Nuclear Indestructible Biology)" id="nib_nuclear_indestructible_biology" type="Total Conversion" website="Http://dukeworld.com/nib/index.html">
@@ -14289,6 +14290,7 @@
 		<related>
 			<mod id="new_york_rebellion"/>
 			<mod id="fm3x"/>
+			<mod id="fm4x"/>
 		</related>
 	</mod>
 	<mod name="FM3X" id="fm3x" type="Episode" version="3.000.19980929">
@@ -14322,6 +14324,36 @@
 		<related>
 			<mod id="new_york_rebellion"/>
 			<mod id="fm2x"/>
+			<mod id="fm4x"/>
+		</related>
+	</mod>
+	<mod name="FM4X" id="fm4x" type="Episode" version="4.000.19990812">
+		<team>
+			<member name="Fernando Márquez" email="cristomarquez@gmail.com" country="Chile"/>
+		</team>
+		<versions>
+			<version id="4.000.19990812" release_date="August 12, 1999">
+				<type>
+					<game type="Plutonium" state="Native">
+						<file name="FM4X_400.CON" size="151200" type="con" sha1="0ac05f175de2858f636d94a73850de0d15ffc8d8"/>
+						<file name="FM4X_400.GRP" size="15130844" type="grp" sha1="6ce91f036c32e0215af5015cbe6e1abb0270d680"/>
+					</game>
+					<game type="Atomic" state="Native">
+						<file name="FM4X_400.CON" size="151198" type="con" sha1="8ee7f7850e1159cbc5d6656772249de6c165cf6e"/>
+						<file name="FM4X_400.GRP" size="15145863" type="grp" sha1="5e3b9089b962191dfcece3b92392489a2596f366"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="fm4x.zip" filesize="11821914" version="4.000.19990812" game="All" type="Original Files" sha1="bd050da31536f44c4b1bb0bb37ef3e60f8940370"/>
+			<download filename="FM4X_4.000.19990812-ModMgrP.zip" filesize="4325965" version="4.000.19990812" game="Plutonium" type="Mod Manager Files" state="Native" sha1="9bceddbc3feb808667df6a2eff0e8e6695cd2974"/>
+			<download filename="FM4X_4.000.19990812-ModMgrA.zip" filesize="4341662" version="4.000.19990812" game="Atomic" type="Mod Manager Files" state="Native" sha1="489dd0ac914a53058d7821a7d4b0200bc58eb263"/>
+		</downloads>
+		<related>
+			<mod id="new_york_rebellion"/>
+			<mod id="fm2x"/>
+			<mod id="fm3x"/>
 		</related>
 	</mod>
 </mods>
