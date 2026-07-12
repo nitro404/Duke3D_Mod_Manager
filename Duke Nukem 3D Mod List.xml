@@ -2645,6 +2645,7 @@
 			<mod id="fm2x"/>
 			<mod id="fm3x"/>
 			<mod id="fm4x"/>
+			<mod id="fm7x"/>
 		</related>
 	</mod>
 	<mod name="N.I.B. (Nuclear Indestructible Biology)" id="nib_nuclear_indestructible_biology" type="Total Conversion" website="Http://dukeworld.com/nib/index.html">
@@ -14291,6 +14292,7 @@
 			<mod id="new_york_rebellion"/>
 			<mod id="fm3x"/>
 			<mod id="fm4x"/>
+			<mod id="fm7x"/>
 		</related>
 	</mod>
 	<mod name="FM3X" id="fm3x" type="Episode" version="3.000.19980929">
@@ -14325,6 +14327,7 @@
 			<mod id="new_york_rebellion"/>
 			<mod id="fm2x"/>
 			<mod id="fm4x"/>
+			<mod id="fm7x"/>
 		</related>
 	</mod>
 	<mod name="FM4X" id="fm4x" type="Episode" version="4.000.19990812">
@@ -14354,6 +14357,65 @@
 			<mod id="new_york_rebellion"/>
 			<mod id="fm2x"/>
 			<mod id="fm3x"/>
+			<mod id="fm7x"/>
+		</related>
+	</mod>
+	<mod name="FM7X" id="fm7x" type="Episode" version_type="X">
+		<team>
+			<member name="Fernando Márquez" email="cristomarquez@udec.cl" country="Chile"/>
+		</team>
+		<versions>
+			<version release_date="May 31, 2000">
+				<type id="X">
+					<game type="Regular" state="Native">
+						<file name="FM5X.CON" size="99647" type="con" sha1="9e0c80381942dd95d194630087d94156bef5d574"/>
+						<file name="FM5X.GRP" size="11510833" type="grp" sha1="ed95a296ce61427f4cc3c72479db8ad43d59bfc3"/>
+					</game>
+					<game type="Plutonium" state="Native">
+						<file name="FM7X.CON" size="151200" type="con" sha1="68f997e05a7cd647bdba225ff65c6492de2401d3"/>
+						<file name="FM7X.GRP" size="20432368" type="grp" sha1="13092c175819e652fa26b53126170ef1b73ec825"/>
+					</game>
+					<game type="Atomic" state="Native">
+						<file name="FM7X.CON" size="151198" type="con" sha1="7252421d6f4408381894e608af3cb374945d9d89"/>
+						<file name="FM7X.GRP" size="20431492" type="grp" sha1="7f9b0a8a7a890b010a7b659f2cbd489263fec74e"/>
+					</game>
+					<game type="eDuke32" state="Native">
+						<file name="FM7X.CON" size="151198" type="con" sha1="7252421d6f4408381894e608af3cb374945d9d89"/>
+						<file name="FM7X.GRP" size="20344524" type="grp" sha1="e2684304aade19f8d6a9be84664ff2b40e87f0e2"/>
+					</game>
+				</type>
+				<type id="Y">
+					<game type="Regular" state="Native">
+						<file name="FM5Y.CON" size="99647" type="con" sha1="751406734202357552ee0443bc78caaabc9138fd"/>
+					</game>
+					<game type="Plutonium" state="Native">
+						<file name="FM7Y.CON" size="151200" type="con" sha1="dc0a165f21cdbc81e46ee4a9ff4814b4ded01e80"/>
+					</game>
+					<game type="Atomic" state="Native">
+						<file name="FM7Y.CON" size="151198" type="con" sha1="d87ee833d295c47fc27dda2e8cc4d6f03c8c62dd"/>
+					</game>
+					<dependencies>
+						<dependency id="fm7x" version_type="X"/>
+					</dependencies>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="FM7X-GRP.ZIP" filesize="20792905" game="All" type="Original Files" sha1="347e92320c58942c987a22ed08c0bc044fdafa65"/>
+			<download filename="FM7X-NetDuke32.zip" filesize="20560501" game="eDuke32" type="Original Files" sha1="101d5e5e7178035819ab4b389f8ef91501c576fa"/>
+			<download filename="FM7X-FULL.ZIP" filesize="66534509" special="Includes Base Game Files" game="All" type="Original Files" sha1="9eb2bed5fff732c0dd1efa14611580ed654cf3f8"/>
+			<download filename="FM7X.ISO" filesize="39960576" special="Disc Image" game="All" type="Original Files" sha1="ffe9bddf67eb8d76a963e0ba664fd09965e356df"/>
+			<download filename="FM7X-DOS.ZIP" filesize="24271306" special="Disc Image Contents" game="All" type="Original Files" sha1="d2d6367896d4efda30dac1047a469ea494ee9cd4"/>
+			<download filename="FM5X-ModMgrR.zip" filesize="3497233" game="Regular" type="Mod Manager Files" state="Native" sha1="8819a3afc7d6ca9fab15e859323bab8e0acb0b92"/>
+			<download filename="FM7X-ModMgrP.zip" filesize="5801351" game="Plutonium" type="Mod Manager Files" state="Native" sha1="be57de0a670dec2dceeaebad05d50047d8925a9a"/>
+			<download filename="FM7X-ModMgrA.zip" filesize="5800680" game="Atomic" type="Mod Manager Files" state="Native" sha1="53f3c650b509609f374aae2013e20512247dbcb4"/>
+			<download filename="FM7X-ModMgrE.zip" filesize="5666102" game="eDuke32" type="Mod Manager Files" state="Native" sha1="f42d139456996c8c0771d471d10823dbe0f39884"/>
+		</downloads>
+		<related>
+			<mod id="new_york_rebellion"/>
+			<mod id="fm2x"/>
+			<mod id="fm3x"/>
+			<mod id="fm4x"/>
 		</related>
 	</mod>
 </mods>
