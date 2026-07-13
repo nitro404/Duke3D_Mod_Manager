@@ -8502,7 +8502,7 @@
 			<member name="Diehard"/>
 			<member name="Jimbob"/>
 			<member name="SalaciusCrumb" alias="SC" email="salaciuscrumb@gmx.net" icq="58098027"/>
-			<member name="Soy Leonardo Pellegrini" alias="DavoX" discord="Leo &quot;DavoX&quot; Pellegrini#3287"/>
+			<member name="Leonardo Pellegrini" alias="DavoX" email="sidecasper@hotmail.com" discord="Pellegrini#3287"/>
 			<member name="Parkar"/>
 			<member name="Reaper_Man" email="lrdmecha@yahoo.com" aim="lrdmecha1015" icq="60008413"/>
 			<member name="Richard Gobeille" alias="TerminX" email="terminx@gmail.com" discord="terminx#9428"/>
@@ -8709,7 +8709,7 @@
 			<member name="Forge"/>
 			<member name="Paul Monteray" alias="High Treason" email="pau174u@AOL.com" youtube="HighTreason610" discord="DXZeff"/>
 			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
-			<member name="Michael Crisp" alias="Micky C"/>
+			<member name="Michael Crisp" alias="Micky C" email="mickel999@gmail.com"/>
 			<member name="Mikko Sandt" alias="Jackotrades" email="sirpa.sandt@pp.inet.fi" icq="71211982" country="Finland"/>
 			<member name="Mister Sinister" email="m1ster_s1n1ster@yahoo.com"/>
 			<member name="Aymeric Nocus" alias="MRCK" email="aymeric-nocus@tele2.fr" youtube="MisterCK" discord="ck3d#2928" country="France"/>
@@ -13947,7 +13947,8 @@
 			<member name="vakooja"/>
 			<member name="YicklePigeon"/>
 			<member name="zilppuri"/>
-			<member name="Lezing/CraigFatman"/>
+			<member name="Maxim Chinyakin" alias="Lezing" email="slike1990@mail.ru"/>
+			<member name="CraigFatman"/>
 			<member name="Dave-ros"/>
 			<member name="DSotM"/>
 			<member name="ikkejw"/>
@@ -13956,7 +13957,7 @@
 			<member name="Zebius"/>
 			<member name="Hunter_rus"/>
 			<member name="LeoD"/>
-			<member name="Michael Crisp" alias="Micky C"/>
+			<member name="Michael Crisp" alias="Micky C" email="mickel999@gmail.com"/>
 		</team>
 		<versions>
 			<version id="5.5.750" release_date="November 27, 2025">
@@ -14732,6 +14733,72 @@
 			<download filename="Duke_Express_1.9-ModMgrE.zip" filesize="277014" version="1.9" game="eDuke32" type="Mod Manager Files" state="Native" sha1="667278d6871c1a4a2db5f596a2bc56b69df48f65"/>
 			<download filename="Duke_Express_1.9.3-ModMgrE.zip" filesize="283501" version="1.9.3" game="eDuke32" type="Mod Manager Files" state="Native" sha1="5ec0bcc13bb998e9d9722a51a8642e863d661e7d"/>
 			<download filename="Duke_Express_1.9.4-ModMgrE.zip" filesize="2282223" version="1.9.4" game="eDuke32" type="Mod Manager Files" state="Native" sha1="91097cff442a07f470e8eca3f7bb77d4a9b792be"/>
+		</downloads>
+	</mod>
+	<mod name="Duke Nukem Forever" id="duke_nukem_forever" type="Total Conversion" version="1.01" version_type="DLC Pack" website="https://www.moddb.com/mods/duke-nukem-forever">
+		<team>
+			<member name="Mikko Sandt" alias="Jackotrades" email="mikko.sandt@gmail.com" icq="71211982" country="Finland"/>
+			<member name="Luciano Gallo" alias="Gambini" email="gallo.luciano1@gmail.com" website="http://gambinidesign.blogspot.com" country="Argentina"/>
+			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld" discord="Danarama#9209"/>
+			<member name="Michael Crisp" alias="Micky C" email="mickel999@gmail.com" youtube="CursedLemon"/>
+			<member name="Leonardo Pellegrini" alias="DavoX" email="sidecasper@hotmail.com" youtube="RealDavox" discord="Pellegrini#3287"/>
+			<member name="Maxim Chinyakin" alias="Lezing" email="slike1990@mail.ru"/>
+			<member name="Geoffrey van Dijk" alias="Fakir Baba" email="fakirnogwat@hotmail.com"/>
+			<member name="Mike Norvak" email="mikenorvak@blacksense.net" youtube="mikenorvak" country="Mexico"/>
+			<member name="Corentin Dallay" alias="MetHy"/>
+		</team>
+		<versions>
+			<version id="1.0" release_date="April 29, 2013">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DNFGAME.CON" size="232007" type="con" sha1="166d28cc9647ff16089ef8a0ae8eb56dfbc31000"/>
+						<file name="DNF.DEF" size="2450" type="def" sha1="e4f9092bb20d5b233ff26cfe31fe579aad3ee4b1"/>
+						<file name="DUKE_NUKEM_FOREVER_1.0.GRP" size="55523901" type="grp" sha1="9ef2a9e190bd9b7efe85e8674dea2946f4ab8426"/>
+					</game>
+				</type>
+				<type id="DLC Pack">
+					<game type="eDuke32" state="Native">
+						<file name="DLCGAME.CON" size="232075" type="con" sha1="7f240c5d71e1e12ad4250c1b12f6ce0a22c31003"/>
+						<file name="DNF.DEF" size="2450" type="def" sha1="e4f9092bb20d5b233ff26cfe31fe579aad3ee4b1"/>
+						<file name="DLC.DEF" size="478" type="def" sha1="d6b309de31c261b4b4689f637c29ba6979da7226"/>
+						<file name="Duke_Nukem_Forever_DLC_Pack.zip" size="12675297" type="zip" sha1="d307ef78f9ef15376305f86ed91e54a52afc4533"/>
+					</game>
+					<dependencies>
+						<dependency id="duke_nukem_forever" version="1.0"/>
+					</dependencies>
+				</type>
+			</version>
+			<version id="1.01" release_date="April 27, 2014">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DNFGAME.CON" size="232007" type="con" sha1="166d28cc9647ff16089ef8a0ae8eb56dfbc31000"/>
+						<file name="DNF.DEF" size="2450" type="def" sha1="e4f9092bb20d5b233ff26cfe31fe579aad3ee4b1"/>
+						<file name="DUKE_NUKEM_FOREVER_1.01.GRP" size="31915" type="grp" sha1="a03f190d3f866e2368f57e0bd4b98800755c9798"/>
+					</game>
+					<dependencies>
+						<dependency id="duke_nukem_forever" version="1.0"/>
+					</dependencies>
+				</type>
+				<type id="DLC Pack">
+					<game type="eDuke32" state="Native">
+						<file name="DLCGAME.CON" size="232075" type="con" sha1="7f240c5d71e1e12ad4250c1b12f6ce0a22c31003"/>
+						<file name="DNF.DEF" size="2450" type="def" sha1="e4f9092bb20d5b233ff26cfe31fe579aad3ee4b1"/>
+						<file name="DLC.DEF" size="478" type="def" sha1="d6b309de31c261b4b4689f637c29ba6979da7226"/>
+						<file name="Duke_Nukem_Forever_DLC_Pack.zip" size="12675297" type="zip" sha1="d307ef78f9ef15376305f86ed91e54a52afc4533"/>
+					</game>
+					<dependencies>
+						<dependency id="duke_nukem_forever" version="1.01"/>
+					</dependencies>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="DNF.rar" filesize="30684650" version="1.0" game="eDuke32" type="Original Files" sha1="240d0aded5c3fcf99e4a319182b6b6277533185b"/>
+			<download filename="DNF_2013_1.01_update_-speedometer_fix-.rar" filesize="5713" version="1.01" game="eDuke32" type="Original Files" sha1="ec125b8513630db3d50de339bdb903c7e979499f"/>
+			<download filename="DNFDLC.zip" filesize="12688382" version_type="DLC Pack" game="eDuke32" type="Original Files" sha1="1a959c352c1ff5e45cccf1fdc1e86ccd451142b3"/>
+			<download filename="Duke_Nukem_Forever_1.0-ModMgrE.zip" filesize="32155184" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="3c5f1951f65b8782ed88b0fadac5ab56deb14f75"/>
+			<download filename="Duke_Nukem_Forever_1.01-ModMgrE.zip" filesize="6069" version="1.01" game="eDuke32" type="Mod Manager Files" state="Native" sha1="30f9e1c02571634ac7dc637b7c7fe1ced38135e8"/>
+			<download filename="Duke_Nukem_Forever_DLC_Pack-ModMgrE.zip" filesize="12675493" version_type="DLC Pack" game="eDuke32" type="Mod Manager Files" state="Native" sha1="420c17df180628a36391783248cc7fa1b139ed68"/>
 		</downloads>
 	</mod>
 </mods>
