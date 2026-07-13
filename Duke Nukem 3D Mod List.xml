@@ -14515,4 +14515,53 @@
 			<download filename="BobSP-ModMgrJF.zip" filesize="10619662" game="JFDuke3D" type="Mod Manager Files" state="Native" sha1="5b259366bc1866b656c4c8b2fcb5023b36462106"/>
 		</downloads>
 	</mod>
+	<mod name="Duke Nukem 3D Director&apos;s Cut" id="directors_cut" type="Partial Conversion" version="1.9" website="https://www.moddb.com/mods/duke-nukem-3d-directors-cut1">
+		<team>
+			<member name="Dukemnuke" country="Brazil"/>
+		</team>
+		<versions>
+			<version id="1.9" release_date="June 10, 2023">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DCUT_D3D.CON" size="153658" type="con" sha1="03afcb89896b977b37ad019244f3cade7d447e25"/>
+						<file name="DIRECTORS_CUT_1.9.GRP" size="10510654" type="grp" sha1="bf98d04da1f65431f202f8568f1351487efcdd05"/>
+					</game>
+				</type>
+				<type id="Duke It Out in D.C.">
+					<game type="eDuke32" state="Native">
+						<file name="DCUT_DC.CON" size="153530" type="con" sha1="67009ac8449e63bb5b47a1688b6983ff3368503b"/>
+						<file name="DIRECTORS_CUT_1.9_DUKE_IT_OUT_IN_DC.GRP" size="10525610" type="grp" sha1="8c839e321d6d0419fb3639d3ad1cb7d71a555206"/>
+					</game>
+					<dependencies>
+						<dependency id="duke_it_out_in_dc"/>
+					</dependencies>
+				</type>
+				<type id="Nuclear Winter">
+					<game type="eDuke32" state="Native">
+						<file name="DCUT_NW.CON" size="156635" type="con" sha1="c668bbea1f4634be78f6ff8e2941c07f43fdfe49"/>
+						<file name="DIRECTORS_CUT_1.9_NUCLEAR_WINTER.GRP" size="10455413" type="grp" sha1="0f85921e44a058db58090bd4138eda46524b6910"/>
+					</game>
+					<dependencies>
+						<dependency id="nuclear_winter"/>
+					</dependencies>
+				</type>
+				<type id="Duke Caribbean: Life&apos;s a Beach">
+					<game type="Atomic" state="Native">
+						<file name="DCUT_VAC.CON" size="103317" type="con" sha1="5998df42be35fbc544ca6ef59465c937601ff0ee"/>
+						<file name="DCUT_VAC.GRP" size="4988213" type="grp" sha1="3b45c33eab7c49ef32afb80d7d1437aa16cc6fac"/>
+					</game>
+					<dependencies>
+						<dependency id="duke_caribbean"/>
+					</dependencies>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Duke_Nukem_3D_Directors_Cut_Eduke32.5.zip" filesize="22291540" version="1.9" game="eDuke32" type="Original Files" sha1="f0c209b4f890eaa71dc4af00acfb40d44e1d7ee1"/>
+			<download filename="Duke_Nukem_3D_Director&apos;s_Cut_1.9-ModMgrE.zip" filesize="3438894" version="1.9" game="eDuke32" type="Mod Manager Files" state="Native" sha1="0db882998a32e6a12d95214857a6e5047e75e440"/>
+			<download filename="Duke_Nukem_3D_Director&apos;s_Cut_1.9_-_Duke_It_Out_in_D.C.-ModMgrE.zip" filesize="3444369" version="1.9" version_type="Duke It Out in D.C." game="eDuke32" type="Mod Manager Files" state="Native" sha1="8bfee739b9a77dbe2ec2ec0328ba48bcae5b983c"/>
+			<download filename="Duke_Nukem_3D_Director&apos;s_Cut_1.9_-_Nuclear_Winter-ModMgrE.zip" filesize="3381186" version="1.9" version_type="Nuclear Winter" game="eDuke32" type="Mod Manager Files" state="Native" sha1="deb5b98ab057fcead91a83793ef8c2a79e9fe61d"/>
+			<download filename="Duke_Nukem_3D_Director&apos;s_Cut_1.9_-_Duke_Caribbean_-_Life&apos;s_a_Beach-ModMgrA.zip" filesize="1713179" version="1.9" version_type="Duke Caribbean: Life&apos;s a Beach" game="Atomic" type="Mod Manager Files" state="Native" sha1="5fcc5a72ccca9a87a3581c2b94e389b645a46c6b"/>
+		</downloads>
+	</mod>
 </mods>
