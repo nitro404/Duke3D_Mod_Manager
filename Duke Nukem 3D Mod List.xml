@@ -8758,7 +8758,7 @@
 			<download filename="Duke_Hard_1.2.1-ModMgrE.zip" filesize="44728140" version="1.2.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c9ea637a8b366fbcd1a735d38315cd50a0a69e56"/>
 		</downloads>
 	</mod>
-	<mod name="Duke Nukem: Weapon of Mass Destruction" id="duke_nukem_weapon_of_mass_destruction" type="Total Conversion" version="1.20" website="https://www.moddb.com/mods/duke-nukem-weapon-of-mass-destruction">
+	<mod name="Duke Nukem: Weapon of Mass Destruction" id="duke_nukem_weapon_of_mass_destruction" type="Total Conversion" version="1.51b" website="https://www.moddb.com/mods/duke-nukem-weapon-of-mass-destruction">
 		<team>
 			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld" discord="Danarama#9209"/>
 		</team>
@@ -8770,10 +8770,37 @@
 					<file name="Duke_Nukem_-_Weapon_of_Mass_Destruction_1.20.zip" size="13924339" type="zip" sha1="9db11e28161e88e98b6c89eed740400d395d9805"/>
 				</game>
 			</version>
+			<version id="1.43" release_date="September 22, 2008">
+				<game type="eDuke32" state="Native">
+					<file name="dtgame.con" size="410516" type="con" sha1="dfe10ce6215fc8d67c01beed9d87a152aecee6bc"/>
+					<file name="dt.def" size="19572" type="def" sha1="b73609018644c372281f0ec8427b7c193f988dd1"/>
+					<file name="Duke_Nukem_-_Weapon_of_Mass_Destruction_1.43.zip" size="15380648" type="zip" sha1="d5a8203395679d61eae143122d35c951045987d4"/>
+				</game>
+			</version>
+			<version id="1.50" release_date="September 25, 2008">
+				<game type="eDuke32" state="Native">
+					<file name="dnwmd_cons/dtgame.con" size="411388" type="con" sha1="110f1f07c2dfbac273cc7d09aeafbce5189d5ce8"/>
+					<file name="dt.def" size="20705" type="def" sha1="501b9113814b27adddc5a7eb356bd9b472521a97"/>
+					<file name="Duke_Nukem_-_Weapon_of_Mass_Destruction_1.50.zip" size="15343826" type="zip" sha1="f7904fe068f580adc0becc7e8b9e75eeea2683b3"/>
+				</game>
+			</version>
+			<version id="1.51b" release_date="November 4, 2022">
+				<game type="eDuke32" state="Native">
+					<file name="dnwmd_cons/dtgame.con" size="411396" type="con" sha1="47fdd639f5d98e2f87d223bbf535871ab188e329"/>
+					<file name="dt.def" size="20705" type="def" sha1="a02ec1c4e9df6dcc12093f3c26d1ed72c200be96"/>
+					<file name="Duke_Nukem_-_Weapon_of_Mass_Destruction_1.51b.zip" size="15352936" type="zip" sha1="b992f373729967e08187fdbbbb19b754ecee48c0"/>
+				</game>
+			</version>
 		</versions>
 		<downloads>
 			<download filename="DNWMD.rar" filesize="13062549" version="1.20" game="eDuke32" type="Original Files" sha1="0ec10eead7d474d3e5bead4bc8db55fe2d57f033"/>
+			<download filename="DNWMD143.1.rar" filesize="14152038" version="1.43" game="eDuke32" type="Original Files" sha1="56263f5eca6d8a5874fb84aac808edfeb469dd55"/>
+			<download filename="DNWMD15.rar" filesize="14164818" version="1.50" game="eDuke32" type="Original Files" sha1="ee10595ce3dcff2887da0355843c25f81b5be679"/>
+			<download filename="DNWMD.1.zip" filesize="18166063" version="1.51b" game="eDuke32" type="Original Files" sha1="92b66356ac62f6b3046db32d4d58c5985a01929e"/>
 			<download filename="Duke_Nukem_-_Weapon_of_Mass_Destruction_1.20-ModMgrE.zip" filesize="13742209" version="1.20" game="eDuke32" type="Mod Manager Files" state="Native" sha1="0fcbc962b38b0e3af78fdfa0e667ffb91c7145a9"/>
+			<download filename="Duke_Nukem_-_Weapon_of_Mass_Destruction_1.43-ModMgrE.zip" filesize="15380878" version="1.43" game="eDuke32" type="Mod Manager Files" state="Native" sha1="609e25a269d934f55a36e13e17d607493fecef42"/>
+			<download filename="Duke_Nukem_-_Weapon_of_Mass_Destruction_1.50-ModMgrE.zip" filesize="15344056" version="1.50" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c593db2debd1f65b0da951ad46275f34cf027c6a"/>
+			<download filename="Duke_Nukem_-_Weapon_of_Mass_Destruction_1.51b-ModMgrE.zip" filesize="15353168" version="1.51b" game="eDuke32" type="Mod Manager Files" state="Native" sha1="ed5aee3dc7566605b56988a5639db3759df26b92"/>
 		</downloads>
 	</mod>
 	<mod name="Alien Armageddon" id="alien_armageddon" type="Total Conversion" version="5.66" website="https://www.moddb.com/mods/duke-nukem-alien-armageddon">
