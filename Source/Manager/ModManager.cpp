@@ -4838,6 +4838,10 @@ size_t ModManager::updateModFileInfo(Mod & mod, bool skipPopulatedFiles, std::op
 				downloadFilePath = Utilities::joinPaths(downloadFileBasePath, modDownload->getVersionType(), modDownload->getFileName());
 			}
 
+			if(!modDownload->getVersion().empty() && !modDownload->getVersionType().empty() && !std::filesystem::is_regular_file(std::filesystem::path(downloadFilePath))) {
+				downloadFilePath = Utilities::joinPaths(downloadFileBasePath, modDownload->getVersion(), modDownload->getVersionType(), modDownload->getFileName());
+			}
+
 			if(!modDownload->getSpecial().empty() && !std::filesystem::is_regular_file(std::filesystem::path(downloadFilePath))) {
 				downloadFilePath = Utilities::joinPaths(downloadFileBasePath, modDownload->getSpecial(), modDownload->getFileName());
 			}
