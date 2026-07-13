@@ -14801,4 +14801,40 @@
 			<download filename="Duke_Nukem_Forever_DLC_Pack-ModMgrE.zip" filesize="12675493" version_type="DLC Pack" game="eDuke32" type="Mod Manager Files" state="Native" sha1="420c17df180628a36391783248cc7fa1b139ed68"/>
 		</downloads>
 	</mod>
+	<mod name="Superweapon" id="superweapon" type="Partial Conversion" version="2">
+		<versions>
+			<version id="1">
+				<game type="eDuke32" state="Native">
+					<file name="SUPWEAP1.CON" size="154088" type="con" sha1="5d50dddacc460042c0e15788fda17121f408339c"/>
+					<file name="SUPERWEAPON_1.GRP" size="11478898" type="grp" sha1="d4101763d3195286a61c5fd5fb31f3e5fde36131"/>
+				</game>
+			</version>
+			<version id="2" release_date="September 5, 2008">
+				<game type="eDuke32" state="Native">
+					<file name="SUPWEAP2.CON" size="154029" type="con" sha1="37601ea312167a845eb2ef0c41959eaa57b89daf"/>
+					<file name="SUPERWEAPON_2.GRP" size="11168170" type="grp" sha1="316460ca33c13e603e943625e6a78c81366421ea"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="superweapon1.zip" filesize="3490386" version="1" game="eDuke32" type="Original Files" sha1="760170f9380a2031ab5fc7b26df0d0bf1beca295"/>
+			<download filename="superweapon2.zip" filesize="3290267" version="2" game="eDuke32" type="Original Files" sha1="420454d2f676fd1b4cfd0e3e57309b98d743ae1c"/>
+			<download filename="Superweapon_1-ModMgrE.zip" filesize="3596754" version="1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="41bfe9b5fe38b698e8e8f0f4199e3f2960e194e9"/>
+			<download filename="Superweapon_2-ModMgrE.zip" filesize="3389676" version="2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="6fc87ca2105bda9ae48dcd436456fb3c0b2023f4"/>
+		</downloads>
+	</mod>
+	<mod name="Superweapon 3" id="superweapon_3" type="Partial Conversion">
+		<versions>
+			<version release_date="May 28, 2010">
+				<game type="eDuke32" state="Native">
+					<file name="SUPWEAP3.CON" size="161411" type="con" sha1="5a18f365b177e49bef5b94f4a7b64326cbed6142"/>
+					<file name="SUPERWEAPON_3.GRP" size="20439440" type="grp" sha1="124bc735f7e513e6c4e050c6c9e04428ec81d500"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="superweapon3.zip" filesize="10722688" game="eDuke32" type="Original Files" sha1="0619b365e913ce0a0c8fdffe64c16d737ca1fe99"/>
+			<download filename="Superweapon_3-ModMgrE.zip" filesize="11265383" game="eDuke32" type="Mod Manager Files" state="Native" sha1="1bd4c3967e23620d699b69d2786043e4887a8419"/>
+		</downloads>
+	</mod>
 </mods>
