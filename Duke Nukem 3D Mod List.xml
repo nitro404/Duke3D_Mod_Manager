@@ -12569,11 +12569,22 @@
 						<file name="THE_WALL_1.01.GRP" size="46313235" type="grp" sha1="964bd26dca44f1148d08948880bd1d8c0850c1e7"/>
 					</game>
 				</type>
+				<type id="Midified">
+					<game type="eDuke32" state="Native">
+						<file name="THEGAME.CON" size="149155" type="con" sha1="986bc11cacfa0f7b80a530936f6a1afbea6b43d3"/>
+						<file name="THE_WALL_1.01_MIDIFIED.GRP" size="4257191" type="grp" sha1="20dc9bf133323de5e50ec4dbf1dd7e5ea552f2cd"/>
+					</game>
+					<dependencies>
+						<dependency id="the_wall" version="1.01"/>
+					</dependencies>
+				</type>
 			</version>
 		</versions>
 		<downloads>
 			<download filename="thewall(1.01).zip" filesize="31139887" version="1.01" game="eDuke32" type="Original Files" sha1="e4dc2dbfcc9e8050a17a86d9fde5d0ef722afeb6"/>
+			<download filename="TheWallMidified.zip" filesize="11637984" version="1.01" version_type="Midified" game="eDuke32" type="Original Files" sha1="b8fcf40bee737f9abd79679c9f816dbd3a7014ab"/>
 			<download filename="The_Wall_1.01-ModMgrE.zip" filesize="30266179" version="1.01" game="eDuke32" type="Mod Manager Files" state="Native" sha1="668c8858f79597598da33a001169bdd723139907"/>
+			<download filename="The_Wall_1.01_-_Midified-ModMgrE.zip" filesize="1159358" version="1.01" version_type="Midified" game="eDuke32" type="Mod Manager Files" state="Native" sha1="346dcd90c7b84f1a8169279f4a96ed26f818a9e8"/>
 		</downloads>
 	</mod>
 	<mod name="It Lives" id="it_lives" type="Map" version="1.05" website="https://www.moddb.com/members/gambini/addons/it-lives-v-105">
