@@ -10395,11 +10395,65 @@
 			<download filename="HardG-ModMgrE.zip" filesize="1799318" game="eDuke32" type="Mod Manager Files" state="Native" sha1="089a30d0d6a19dc304f0aa716fd28198f4f80561"/>
 		</downloads>
 	</mod>
-	<mod name="KickAss Duke" id="kickass_duke" type="Total Conversion" version="1.13" website="https://www.moddb.com/mods/kickass-duke">
+	<mod name="KickAss Duke" id="kickass_duke" type="Total Conversion" version="1.2" website="https://www.moddb.com/mods/kickass-duke">
 		<team>
 			<member name="Riccardo Capogna" alias="RichardStorm" email="riccardo.capogna@yahoo.it" country="Italy"/>
 		</team>
 		<versions>
+			<version id="1.0" release_date="June 7, 2018">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="KICKASS.CON" size="90777" type="con" sha1="d4c1b083531e8ab2a19c83b9a8272a7738fd4989"/>
+						<file name="kickass.def" size="44469" type="def" sha1="9eadcb3ea3d58c02b37e0ba829ace64e59a538d7"/>
+						<file name="KickAss_Duke_1.0.zip" size="30171621" type="zip" sha1="ad8124e8fe788765c38773ded479298030769454"/>
+					</game>
+				</type>
+			</version>
+			<version id="1.01" release_date="June 21, 2018">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="KICKASS.CON" size="90777" type="con" sha1="d4c1b083531e8ab2a19c83b9a8272a7738fd4989"/>
+						<file name="kickass.def" size="44469" type="def" sha1="de21b53579aa03ab213eb84eb28933034be40f5a"/>
+						<file name="KickAss_Duke_1.01.zip" size="30014792" type="zip" sha1="bcbd68d8453952c55fc008ccd0638f07f690c4eb"/>
+					</game>
+				</type>
+			</version>
+			<version id="1.02" release_date="September 8, 2018">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="KICKASS.CON" size="90777" type="con" sha1="d4c1b083531e8ab2a19c83b9a8272a7738fd4989"/>
+						<file name="kickass.def" size="44469" type="def" sha1="de21b53579aa03ab213eb84eb28933034be40f5a"/>
+						<file name="KickAss_Duke_1.02.zip" size="30015034" type="zip" sha1="e1e922d3f29dd0972a4ee5b50013573d5689a5fc"/>
+					</game>
+				</type>
+			</version>
+			<version id="1.1.1" release_date="August 2, 2019">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="KICKASS.CON" size="592365" type="con" sha1="a2dea9a1640263f4e73b563580cc48f1378ade4d"/>
+						<file name="kickass.def" size="40199" type="def" sha1="0dd8a980deb58abaddf3fba66aae2e6fa19315a9"/>
+						<file name="KickAss_Duke_1.1.1.zip" size="40130846" type="zip" sha1="a86d46511979392667b4bada99f51983881db76b"/>
+					</game>
+				</type>
+			</version>
+			<version id="1.11" release_date="March 15, 2020">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="KICKASS.CON" size="595992" type="con" sha1="fb8e79b02f61d5539fffd63f6eee5109d23064ae"/>
+						<file name="kickass.def" size="40542" type="def" sha1="21f3b25dcfb4d0ca36ad5cdfcada5639c928db1a"/>
+						<file name="KickAss_Duke_1.11.zip" size="39304532" type="zip" sha1="7d1908b0203f9e2c38fa77b6d5e5ff9f3655f0c6"/>
+					</game>
+				</type>
+			</version>
+			<version id="1.12" release_date="March 26, 2020">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="KICKASS.CON" size="595993" type="con" sha1="9af2fcbeca83dd71e6ef02faef38c1f076c9be72"/>
+						<file name="kickass.def" size="40542" type="def" sha1="21f3b25dcfb4d0ca36ad5cdfcada5639c928db1a"/>
+						<file name="KickAss_Duke_1.12.zip" size="39304579" type="zip" sha1="5196be067da9a2f4578010f788eefeebdb47c724"/>
+					</game>
+				</type>
+			</version>
 			<version id="1.13" release_date="November 28, 2022">
 				<type>
 					<game type="eDuke32" state="Native">
@@ -10409,10 +10463,54 @@
 					</game>
 				</type>
 			</version>
+			<version id="1.14" release_date="March 5, 2023">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="KICKASS.CON" size="596118" type="con" sha1="69c16a9cea5e3fe146180ef3e46ccb95f0108831"/>
+						<file name="kickass.def" size="46646" type="def" sha1="d91e16fbafef246d601ea1a0ce4b18add63fc3d0"/>
+						<file name="KickAss_Duke_1.14.zip" size="47103480" type="zip" sha1="88d9c191ca7f322e5a0547137603b1db0155109e"/>
+					</game>
+				</type>
+			</version>
+			<version id="1.2" release_date="November 9, 2025">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="KICKASS.CON" size="616961" type="con" sha1="a22318e95ac47eb57b1ffcfe5cfe5b9ca039c738"/>
+						<file name="kickass.def" size="46858" type="def" sha1="d043db3d3c8ce6da1baf8b442b84ffa4a2ae09e1"/>
+						<file name="KickAss_Duke_1.2.zip" size="48123179" type="zip" sha1="2be8b922bdc8f7cdfacd2bebcd5d8610fa2011a7"/>
+					</game>
+				</type>
+				<type id="High Resolution Pack">
+					<game type="eDuke32" state="Native">
+						<file name="KICKASS.CON" size="616961" type="con" sha1="a22318e95ac47eb57b1ffcfe5cfe5b9ca039c738"/>
+						<file name="KADHRP_polymost.def" size="1686" type="def" sha1="8201f2df6edf9f765a03654fe0b9f1e95df46e4f"/>
+					</game>
+					<dependencies>
+						<dependency id="high_resolution_pack" version="5.5.750"/>
+						<dependency id="kickass_duke" version="1.2"/>
+					</dependencies>
+				</type>
+			</version>
 		</versions>
 		<downloads>
+			<download filename="KickAssDuke.rar" filesize="31569230" version="1.0" game="eDuke32" type="Original Files" sha1="bc42cdb40468534cf41387224924790caabdea63"/>
+			<download filename="KickAssDuke_1.01.zip" filesize="31713388" version="1.01" game="eDuke32" type="Original Files" sha1="547341ade6aa35a22f08d19a0a47a849777a7171"/>
+			<download filename="KickAssDuke_1.02.zip" filesize="31551403" version="1.02" game="eDuke32" type="Original Files" sha1="d27f42cb8d7329b413f46623376233e42644e950"/>
+			<download filename="KickAssDuke_1.1.1.zip" filesize="41803146" version="1.1.1" game="eDuke32" type="Original Files" sha1="09e7b0a19c55340e82ef1165ede880a8cbf738f0"/>
+			<download filename="KickAssDuke_1.11.zip" filesize="41275489" version="1.11" game="eDuke32" type="Original Files" sha1="ad8fcd7118edd61029ec80c4884e3a7b77e2e6ef"/>
+			<download filename="KickAssDuke_1.12.zip" filesize="41275537" version="1.12" game="eDuke32" type="Original Files" sha1="3f0a7d24f3aed5f4750057d2071e1a26a98a2a3f"/>
 			<download filename="KickAssDuke_1_13.zip" filesize="42087861" version="1.13" game="eDuke32" type="Original Files" sha1="d92cb6377ad158f8796933f83c7db1ba4671a975"/>
+			<download filename="KickAssDuke_1_14.zip" filesize="49858058" version="1.14" game="eDuke32" type="Original Files" sha1="5b8be6b7615a5ea8c75ff7491fb880c1e53377ce"/>
+			<download filename="KickAssDuke_1_2.zip" filesize="51198294" version="1.2" game="eDuke32" type="Original Files" sha1="ebabcff1eda1436e948b1c1e5129fbfdfa53e9bb"/>
+			<download filename="KickAss_Duke_1.0-ModMgrE.zip" filesize="30171795" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="9af1e05283a1c90464990f115e28d9197bb99060"/>
+			<download filename="KickAss_Duke_1.01-ModMgrE.zip" filesize="30014968" version="1.01" game="eDuke32" type="Mod Manager Files" state="Native" sha1="8d97621c775973a91fb35ecb31a408b5e12d8fb6"/>
+			<download filename="KickAss_Duke_1.02-ModMgrE.zip" filesize="30015210" version="1.02" game="eDuke32" type="Mod Manager Files" state="Native" sha1="1a4ecf83cfa11599e927ec5dc0a7f72e57770539"/>
+			<download filename="KickAss_Duke_1.1.1-ModMgrE.zip" filesize="40131024" version="1.1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="9059a3553a2077444ddf93e305f6b15e6df316b9"/>
+			<download filename="KickAss_Duke_1.11-ModMgrE.zip" filesize="39304708" version="1.11" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e37d75b24635c40ab6d209e7cc54994dbf540913"/>
+			<download filename="KickAss_Duke_1.12-ModMgrE.zip" filesize="39304755" version="1.12" game="eDuke32" type="Mod Manager Files" state="Native" sha1="35929cbfdb3caeca7732e685a2ff41a97d1afa7f"/>
 			<download filename="KickAss_Duke_1.13-ModMgrE.zip" filesize="39051213" version="1.13" game="eDuke32" type="Mod Manager Files" state="Native" sha1="35db257257a2d670731816054e2e2adf20cb6d8f"/>
+			<download filename="KickAss_Duke_1.14-ModMgrE.zip" filesize="47103656" version="1.14" game="eDuke32" type="Mod Manager Files" state="Native" sha1="d93165d82ff66a535c59a49bca159216c03f7b4f"/>
+			<download filename="KickAss_Duke_1.2-ModMgrE.zip" filesize="48123353" version="1.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="1358f294d5e4c048157c96f65ba3afc093f93dff"/>
 		</downloads>
 	</mod>
 	<mod name="Mr The Killer" id="mr_the_killer" type="Total Conversion" version="2.1.4" website="http://www.mrthekiller.com">
