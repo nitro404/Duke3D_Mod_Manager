@@ -14008,7 +14008,7 @@
 			<note>Unarmed mines are yellow, armed mines are red.</note>
 		</notes>
 	</mod>
-	<mod name="Quake 3 Weapon Patch" id="quake_3_weapon_patch" type="Weapon Patch" version="1.1">
+	<mod name="Quake 3 Weapon Patch" id="quake_3_weapon_patch" type="Weapon Patch" version="1.2">
 		<team>
 			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com" country="Russia"/>
 		</team>
@@ -14031,12 +14031,23 @@
 					</game>
 				</type>
 			</version>
+			<version id="1.2" release_date="April 3, 2011">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="3QUAKEWP.CON" size="159756" type="con" sha1="3ef99db8bbb2fa0d6df74ea3b13456ff0aef77db"/>
+						<file name="3QUAKEWP.DEF" size="1129" type="def" sha1="2512967b7319c0ee042f6c247bc82531fc7c219e"/>
+						<file name="Quake_3_Weapon_Patch_1.2.zip" size="2881889" type="zip" sha1="dcb7826560a3576eb2c8b9a840867bc602e011ec"/>
+					</game>
+				</type>
+			</version>
 		</versions>
 		<downloads>
 			<download filename="3QUAKEWP.zip" filesize="2412507" version="1.0" game="eDuke32" type="Original Files" sha1="ec06f5e772ce5ce0d07cb124b5f0f1fa9935b1d9"/>
 			<download filename="3QUAKEWP_V1.1_.zip" filesize="2438717" version="1.1" game="eDuke32" type="Original Files" sha1="e2848eedd614338b218f926221b15cf764bc574c"/>
+			<download filename="3QUAKEWP_V1.2.zip" filesize="2840631" version="1.2" game="eDuke32" type="Original Files" sha1="2fabf3373faae9c2640660c2c00d7e92dd7f093e"/>
 			<download filename="Quake_3_Weapon_Patch_1.0-ModMgrE.zip" filesize="2374847" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="7b4e2c60f39a35257787457c0f4df098365155bd"/>
 			<download filename="Quake_3_Weapon_Patch_1.1-ModMgrE.zip" filesize="2443951" version="1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="4db5921da815dad541569ac7f77444f9c2b334d9"/>
+			<download filename="Quake_3_Weapon_Patch_1.2-ModMgrE.zip" filesize="2882079" version="1.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="3a4693e484e815eec5b186b675e22b31b5511a1b"/>
 		</downloads>
 	</mod>
 	<mod name="Donut Grenade" id="donut_grenade" type="Weapon Patch" version="2.0" website="http://www.geocities.com/southparkduke/sst">
