@@ -2847,6 +2847,14 @@ bool Mod::checkVersions(bool verbose) const {
 	bool hasOriginalDownload = false;
 	bool hasModManagerDownload = false;
 	bool hasRepairedDownload = false;
+	bool hasAllVersionsDownload = false;
+
+	for(std::vector<std::shared_ptr<ModDownload>>::const_iterator j = m_downloads.begin(); j != m_downloads.end(); ++j) {
+		if(Utilities::areStringsEqualIgnoreCase((*j)->getSpecial(), "All Versions")) {
+			hasAllVersionsDownload = true;
+			break;
+		}
+	}
 
 	for(std::vector<std::shared_ptr<ModVersion>>::const_iterator i = m_versions.begin(); i != m_versions.end(); ++i) {
 		hasOriginalDownload = false;
@@ -2868,7 +2876,7 @@ bool Mod::checkVersions(bool verbose) const {
 			}
 		}
 
-		if(!hasOriginalDownload || !hasModManagerDownload) {
+		if((!hasOriginalDownload && !hasAllVersionsDownload) || !hasModManagerDownload) {
 			if(verbose) {
 				spdlog::warn("Mod '{}' is missing download {}of type: '{}'.", m_id, (*i)->getVersion().empty() ? "" : fmt::format("for version: '{}' ", (*i)->getVersion()), !hasOriginalDownload ? ModDownload::ORIGINAL_FILES_TYPE : ModDownload::MOD_MANAGER_FILES_TYPE);
 			}
