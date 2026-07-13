@@ -14876,4 +14876,21 @@
 			<download filename="The_Pursuer-ModMgrE.zip" filesize="81252205" game="eDuke32" type="Mod Manager Files" state="Native" sha1="ddf5e6db736826d093f697062dd121385320b0db"/>
 		</downloads>
 	</mod>
+	<mod name="Die Hard: Nakatomi Plaza" id="die_hard_-_nakatomi_plaza" type="Total Conversion" version="Beta">
+		<team>
+			<member name="Chris Landrum" email="dhnpduke3d@topcities.com" website="clgd.topcities.com"/>
+		</team>
+		<versions>
+			<version id="Beta" release_date="June 2, 2002">
+				<game type="Atomic" state="Native">
+					<file name="NAKATOMI.CON" size="148981" type="con" sha1="bb5ee88fbaa7cab3723f49129d8b53656bc8e578"/>
+					<file name="NAKATOMI.GRP" size="7445903" type="grp" sha1="13ee4bab6240a3d9fa37304b48d9849852404493"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Nakatomi Plaza (Die Hard TC) Beta.7z" filesize="3057032" version="Beta" game="Atomic" type="Original Files" sha1="4f4f7ecba9028ea8d790491d5d179c742f9c9bd3"/>
+			<download filename="Die_Hard_-_Nakatomi_Plaza_Beta-ModMgrA.zip" filesize="3382571" version="Beta" game="Atomic" type="Mod Manager Files" state="Native" sha1="694f4b12ea18cae01a32e84526436dbacec3403a"/>
+		</downloads>
+	</mod>
 </mods>
