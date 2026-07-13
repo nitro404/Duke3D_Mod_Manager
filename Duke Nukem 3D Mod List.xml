@@ -14564,4 +14564,49 @@
 			<download filename="Duke_Nukem_3D_Director&apos;s_Cut_1.9_-_Duke_Caribbean_-_Life&apos;s_a_Beach-ModMgrA.zip" filesize="1713179" version="1.9" version_type="Duke Caribbean: Life&apos;s a Beach" game="Atomic" type="Mod Manager Files" state="Native" sha1="5fcc5a72ccca9a87a3581c2b94e389b645a46c6b"/>
 		</downloads>
 	</mod>
+	<mod name="Duke Express" id="duke_express" type="Map" version="1.9.4" website="https://www.moddb.com/games/duke-nukem-3d/addons/duke-express">
+		<team>
+			<member name="Romeobk" email="romeobk1103@gmail.com"/>
+		</team>
+		<versions>
+			<version id="1.8" release_date="September 11, 2018">
+				<game type="eDuke32" state="Native">
+					<file name="DUKE_EXPRESS.CON" size="151198" type="con" sha1="e054e95c00f5d94bd2b7e2872582d4f8bb532efb"/>
+					<file name="Duke_Express_1.8.zip" size="275580" type="zip" sha1="6934cbee5d67982702a1dc06e697a1fb067f910c"/>
+				</game>
+			</version>
+			<version id="1.8.1" release_date="September 12, 2018">
+				<game type="eDuke32" state="Native">
+					<file name="DUKE_EXPRESS.CON" size="151198" type="con" sha1="e054e95c00f5d94bd2b7e2872582d4f8bb532efb"/>
+					<file name="Duke_Express_1.8.1.zip" size="276259" type="zip" sha1="e3a3477626952bbc9c7b85dfc9b52f1d139db9bb"/>
+				</game>
+			</version>
+			<version id="1.9" release_date="September 18, 2018">
+				<game type="eDuke32" state="Native">
+					<file name="DUKE_EXPRESS.CON" size="151198" type="con" sha1="e054e95c00f5d94bd2b7e2872582d4f8bb532efb"/>
+					<file name="Duke_Express_1.9.zip" size="276840" type="zip" sha1="1d39b83ef135dd0b1a550c8d6dabd0f07004e694"/>
+				</game>
+			</version>
+			<version id="1.9.3" release_date="November 23, 2018">
+				<game type="eDuke32" state="Native">
+					<file name="DUKE_EXPRESS.CON" size="151198" type="con" sha1="e054e95c00f5d94bd2b7e2872582d4f8bb532efb"/>
+					<file name="Duke_Express_1.9.3.zip" size="283323" type="zip" sha1="7baa8eae2e8d2e6b7f83ee566e4089b163c7cd7d"/>
+				</game>
+			</version>
+			<version id="1.9.4" release_date="March 31, 2025">
+				<game type="eDuke32" state="Native">
+					<file name="DUKE_EXPRESS.CON" size="151198" type="con" sha1="e054e95c00f5d94bd2b7e2872582d4f8bb532efb"/>
+					<file name="Duke_Express_1.9.4.zip" size="2282045" type="zip" sha1="70604079626592603c04aa288a36d98eafd6c233"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="DukeExpress.4.rar" filesize="10089199" special="All Versions" game="eDuke32" type="Original Files" sha1="d4f56e4d1117669a8c78b9bee6119567230110ae"/>
+			<download filename="Duke_Express_1.8-ModMgrE.zip" filesize="275754" version="1.8" game="eDuke32" type="Mod Manager Files" state="Native" sha1="6e2503eba6a4e02b62b8f64396326a52b30c0cd4"/>
+			<download filename="Duke_Express_1.8.1-ModMgrE.zip" filesize="276437" version="1.8.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c6f5ad2797bdc2fa681102c71b272ea37848ac83"/>
+			<download filename="Duke_Express_1.9-ModMgrE.zip" filesize="277014" version="1.9" game="eDuke32" type="Mod Manager Files" state="Native" sha1="667278d6871c1a4a2db5f596a2bc56b69df48f65"/>
+			<download filename="Duke_Express_1.9.3-ModMgrE.zip" filesize="283501" version="1.9.3" game="eDuke32" type="Mod Manager Files" state="Native" sha1="5ec0bcc13bb998e9d9722a51a8642e863d661e7d"/>
+			<download filename="Duke_Express_1.9.4-ModMgrE.zip" filesize="2282223" version="1.9.4" game="eDuke32" type="Mod Manager Files" state="Native" sha1="91097cff442a07f470e8eca3f7bb77d4a9b792be"/>
+		</downloads>
+	</mod>
 </mods>
