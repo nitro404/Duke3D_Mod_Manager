@@ -14848,4 +14848,21 @@
 			<download filename="Superweapon_3-ModMgrE.zip" filesize="11265383" game="eDuke32" type="Mod Manager Files" state="Native" sha1="1bd4c3967e23620d699b69d2786043e4887a8419"/>
 		</downloads>
 	</mod>
+	<mod name="The Pursuer" id="the_pursuer" type="Partial Conversion">
+		<team>
+			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com" country="Russia"/>
+		</team>
+		<versions>
+			<version release_date="August 21, 2017">
+				<game type="eDuke32" state="Native">
+					<file name="PURSGAME.CON" size="158955" type="con" sha1="0da5c80e306edf6824bc4586e86d4824b34a968b"/>
+					<file name="THE_PURSUER.GRP" size="83352044" type="grp" sha1="dfef62e2bf71ea602eb71a48d4668d150ad3e1e8"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Pursuer.zip" filesize="81380648" game="eDuke32" type="Original Files" sha1="fd6a17978925d4c905bbead96bdbb0e7c0aa72c6"/>
+			<download filename="The_Pursuer-ModMgrE.zip" filesize="81252205" game="eDuke32" type="Mod Manager Files" state="Native" sha1="ddf5e6db736826d093f697062dd121385320b0db"/>
+		</downloads>
+	</mod>
 </mods>
