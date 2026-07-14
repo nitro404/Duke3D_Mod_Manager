@@ -15064,4 +15064,26 @@
 			<download filename="Worlds_1.4-ModMgrA.zip" filesize="3001784" version="1.4" game="Atomic" type="Mod Manager Files" state="Converted" sha1="fe51de69cbbb113cff17abd7c095d40e3456862a"/>
 		</downloads>
 	</mod>
+	<mod name="The Haunting" id="the_haunting" type="Map">
+		<team>
+			<member name="Rea" website="http://www.home.clara.net/wolfe"/>
+		</team>
+		<versions>
+			<version>
+				<game type="Regular" state="Native">
+					<file name="HAUNTING.CON" size="99643" type="con" sha1="6723842333de2cc8e35bc716c4543d124569a684"/>
+					<file name="HAUNTING.GRP" size="2515400" type="grp" sha1="f8e4a78755f87ce57cb28f8a729ce78a54a69d94"/>
+				</game>
+				<game type="Atomic" state="Converted">
+					<file name="HAUNTING.CON" size="151194" type="con" sha1="53f39b05f022440099209a9cf2dd03d019c63cb7"/>
+					<file name="HAUNTING.GRP" size="2575472" type="grp" sha1="6ca61bcae8d5035abbcd51eb5c33ab4966f2335e"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Haunting.zip" filesize="715171" game="Regular" type="Original Files" sha1="604be11db5a0d21544d06dd4c51a6799619ce064"/>
+			<download filename="The_Haunting-ModMgrR.zip" filesize="721540" game="Regular" type="Mod Manager Files" state="Native" sha1="31339dea8222177a832a1abe5a52d541c800798a"/>
+			<download filename="The_Haunting-ModMgrA.zip" filesize="737720" game="Atomic" type="Mod Manager Files" state="Converted" sha1="311fbe77695586095e63c517bc1abc483bcd283b"/>
+		</downloads>
+	</mod>
 </mods>
