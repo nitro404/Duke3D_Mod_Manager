@@ -14893,21 +14893,35 @@
 			<download filename="Die_Hard_-_Nakatomi_Plaza_Beta-ModMgrA.zip" filesize="3382571" version="Beta" game="Atomic" type="Mod Manager Files" state="Native" sha1="694f4b12ea18cae01a32e84526436dbacec3403a"/>
 		</downloads>
 	</mod>
-	<mod name="Survival Technology" id="survival_technology" type="Total Conversion" version="Demo">
+	<mod name="Survival" id="survival" type="Total Conversion" version="2.0">
 		<team name="JsGames">
 			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
+			<member name="Geoffrey van Dijk" alias="Fakir Baba" email="fakirnogwat@hotmail.com"/>
+			<member name="Rusty Nails" email="R_nails20@hotmail.com"/>
+			<member name="William Gee" email="geewillywizz@live.com" discord="William Gee#2015" country="New Zealand"/>
+			<member name="Sang"/>
+			<member name="Rob Wijkstra" alias="HighWire" email="Rob_Wijkstra@hotmail.com"/>
 		</team>
 		<versions>
-			<version id="Demo" release_date="February 27, 2003">
+			<version id="Technology Demo" release_date="February 27, 2003">
 				<game type="eDuke32" state="Native">
 					<file name="SEDUKE.CON" size="157456" type="con" sha1="5d9925b50ff35b470001a07d39afd9e03ae37235"/>
 					<file name="SURVIVAL_TECHNOLOGY_DEMO.GRP" size="19303136" type="grp" sha1="dea6053421ebd378c39e6e9b1232ee1d2689983b"/>
 				</game>
 			</version>
+			<version id="2.0" release_date="July 17, 2006">
+				<game type="eDuke32" state="Native">
+					<file name="SEduke.CON" size="122484" type="con" sha1="088c58e8e3a1c16103c86d32fa696e5c47cbcb9d"/>
+					<file name="survival.def" size="14006" type="def" sha1="fc2d01f76846452730bf652a83142145df6e8d5b"/>
+					<file name="Survival_2.0.zip" size="59896986" type="zip" sha1="f2a41a320d0c294b095beb4b10865ae38b0eec46"/>
+				</game>
+			</version>
 		</versions>
 		<downloads>
-			<download filename="stech.zip" filesize="7278630" version="Demo" game="eDuke32" type="Original Files" sha1="67cd8a0028a6d00aa5d01fa7dc848ae07cfff09d"/>
-			<download filename="Survival_Technology_Demo-ModMgrE.zip" filesize="7238348" version="Demo" game="eDuke32" type="Mod Manager Files" state="Native" sha1="83c65bfa121384415150aa3fff4dfae25cac5330"/>
+			<download filename="stech.zip" filesize="7278630" version="Technology Demo" game="eDuke32" type="Original Files" sha1="67cd8a0028a6d00aa5d01fa7dc848ae07cfff09d"/>
+			<download filename="Survivalv2.zip" filesize="62408406" version="2.0" game="eDuke32" type="Original Files" sha1="b5e89e63aa9e522d595b669e8f422de430af46db"/>
+			<download filename="Survival_Technology_Demo-ModMgrE.zip" filesize="7238348" version="Technology Demo" game="eDuke32" type="Mod Manager Files" state="Native" sha1="83c65bfa121384415150aa3fff4dfae25cac5330"/>
+			<download filename="Survival_2.0-ModMgrE.zip" filesize="59897152" version="2.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="f184ccc87da1bf7d0f5a97674d459fc171726794"/>
 		</downloads>
 	</mod>
 </mods>
