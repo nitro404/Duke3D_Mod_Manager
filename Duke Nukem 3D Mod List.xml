@@ -12058,6 +12058,9 @@
 		</notes>
 	</mod>
 	<mod name="Duke Nukem Forever Gloves" id="duke_nukem_forever_gloves" type="Weapon Patch" website="https://www.moddb.com/games/duke-nukem-3d/addons/dnf-gloves">
+		<team>
+			<member name="Hawkeyefile" email="hawkeyefile@gmail.com"/>
+		</team>
 		<versions>
 			<version release_date="September 26, 2022">
 				<type>
@@ -14962,6 +14965,36 @@
 		<downloads>
 			<download filename="DukeCraft-09-06-2006.rar" filesize="8511346" game="eDuke32" type="Original Files" sha1="91d8bef7fdbdb5fdb93af861b82ef77a436cb0be"/>
 			<download filename="DukeCraft-ModMgrE.zip" filesize="3847634" game="eDuke32" type="Mod Manager Files" state="Native" sha1="822e487dfa919ffb216a9761d71198349c50d1a5"/>
+		</downloads>
+	</mod>
+	<mod name="LameDuke X" id="lameduke_x" type="Total Conversion" version="0.04a">
+		<team>
+			<member name="Hawkeyefile" email="hawkeyefile@gmail.com"/>
+		</team>
+		<versions>
+			<version id="0.04" release_date="February 5, 2007">
+				<game type="eDuke32" state="Native">
+					<file name="LAMEDUKEX.CON" size="151038" type="con" sha1="9039f2ea8b5b119a02712e498aa8a2556eb89ab9"/>
+					<file name="lamedukex.def" size="223" type="def" sha1="21928465645632027ab7cbabc9ca76d4ea376a70"/>
+					<file name="LameDuke_X_0.04.zip" size="9765856" type="zip" sha1="b1e44765a34b4288cc936dcd2cb7bf30cba154ae"/>
+				</game>
+			</version>
+			<version id="0.04a" release_date="February 5, 2007">
+				<game type="eDuke32" state="Native">
+					<file name="LAMEDUKEX.CON" size="151038" type="con" sha1="9039f2ea8b5b119a02712e498aa8a2556eb89ab9"/>
+					<file name="lamedukex.def" size="223" type="def" sha1="21928465645632027ab7cbabc9ca76d4ea376a70"/>
+					<file name="LameDuke_X_0.04a.zip" size="9765856" type="zip" sha1="b1e44765a34b4288cc936dcd2cb7bf30cba154ae"/>
+				</game>
+				<dependencies>
+					<dependency id="lameduke_x" version="0.04"/>
+				</dependencies>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="lamedukex.rar" filesize="9242365" version="0.04" game="eDuke32" type="Original Files" sha1="9b25748e7ea30fed82e11bd6451afd667558638e"/>
+			<download filename="lamedukex_patch4a.rar" filesize="194458" version="0.04a" special="Patch" game="eDuke32" type="Original Files" sha1="35d99801b3f1d4b316bd22cf2b13e40df643ea72"/>
+			<download filename="LameDuke_X_0.04-ModMgrE.zip" filesize="9765983" version="0.04" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c5c0a5191425d0f5f03a2d866223029920437765"/>
+			<download filename="LameDuke_X_0.04a-ModMgrE.zip" filesize="255885" version="0.04a" game="eDuke32" type="Mod Manager Files" state="Native" sha1="8f79542fb200835460c29e66c6855dbe345be9e0"/>
 		</downloads>
 	</mod>
 </mods>
