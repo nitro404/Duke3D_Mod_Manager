@@ -10600,7 +10600,7 @@
 			<download filename="Mr_The_Killer_2.1.4-ModMgrE.zip" filesize="69282127" version="2.1.4" game="eDuke32" type="Mod Manager Files" state="Native" sha1="30477776edb666c74688e742c6ece376c9892ab7"/>
 		</downloads>
 	</mod>
-	<mod name="Infestation in Time" id="infestation_in_time" type="Total Conversion" version="0.0" website="http://www.mydukemods.ucoz.ru">
+	<mod name="Infestation in Time" id="infestation_in_time" type="Total Conversion" version="1.5" website="http://www.mydukemods.ucoz.ru">
 		<team name="Zykov Eddy Software" email="edik.zykov@mail.ru">
 			<member name="Zykov Eddy" alias="E.Z" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com" country="Russia"/>
 		</team>
@@ -10614,10 +10614,31 @@
 					</game>
 				</type>
 			</version>
+			<version id="1.5" release_date="May 15, 2012">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="IITGAME.CON" size="190326" type="con" sha1="302a78965934b84680f0972574a81916c68ff6cb"/>
+						<file name="IITTC.DEF" size="25371" type="def" sha1="73b3739bffebe08b716ca7cf87d535bcf18bc485"/>
+						<file name="Infestation_in_Time_1.5.zip" size="56039076" type="zip" sha1="bdea6e7d2aa84698b689d8817f197dc53dc74ea8"/>
+					</game>
+				</type>
+				<type id="High Resolution Pack">
+					<game type="eDuke32" state="Native">
+						<file name="IITGAME.CON" size="190326" type="con" sha1="302a78965934b84680f0972574a81916c68ff6cb"/>
+						<file name="IITTC.DEF" size="25371" type="def" sha1="73b3739bffebe08b716ca7cf87d535bcf18bc485"/>
+					</game>
+					<dependencies>
+						<dependency id="high_resolution_pack" version="5.5.750"/>
+						<dependency id="infestation_in_time" version="1.5"/>
+					</dependencies>
+				</type>
+			</version>
 		</versions>
 		<downloads>
 			<download filename="IIT.zip" filesize="60556730" version="0.0" game="eDuke32" type="Original Files" sha1="a788ef74b98e2c46ae81cafee7304f28dac9e896"/>
+			<download filename="iit_revisited_fixed.zip" filesize="56196488" version="1.5" game="eDuke32" type="Original Files" sha1="d53e69fa81e6a421c40bf9b5b415e155b467b36c"/>
 			<download filename="Infestation_in_Time_0.0-ModMgrE.zip" filesize="59067081" version="0.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="d894aa49023191334729383536a6fc454ec7be9b"/>
+			<download filename="Infestation_in_Time_1.5-ModMgrE.zip" filesize="56039264" version="1.5" game="eDuke32" type="Mod Manager Files" state="Native" sha1="3832d1d2de20cd0e32987e0553102263b2de36f3"/>
 		</downloads>
 	</mod>
 	<mod name="KaiseR Land" id="kaiser_land" type="Episode" website="http://www.bur.st/~duke3d">
