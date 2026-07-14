@@ -3365,7 +3365,7 @@
 		</downloads>
 	</mod>
 	<mod name="Retribution: No Regret!" id="retribution_no_regret" type="Total Conversion" version="0.7 Sneak Preview" website="http://www.elitegames.com/duke3d/alliance">
-		<team name="Alliance">
+		<team name="Alliance" website="http://www.dukeworld.com/alliance">
 			<member name="Garrp" email="garyp@erinet.com"/>
 			<member name="Wumpus" email="emd@donet.com"/>
 			<member name="Fragmaster"/>
@@ -6645,7 +6645,7 @@
 		</downloads>
 	</mod>
 	<mod name="ALLIANCE Death Match Addon" id="alliance_death_match_addon" type="Weapon Patch" version="1.0" website="http://www.elitegames.com/duke3d/alliance">
-		<team>
+		<team name="Alliance" website="http://www.dukeworld.com/alliance">
 			<member name="Garrp" email="garyp@erinet.com"/>
 			<member name="Wumpus" email="emd@donet.com"/>
 		</team>
@@ -15018,6 +15018,28 @@
 		<downloads>
 			<download filename="SilverballZ.zip" filesize="33888611" game="eDuke32" type="Original Files" sha1="a51e1e2d63cfc3fdd19dc9531064565b5fa48bc8"/>
 			<download filename="SilverballZ-ModMgrE.zip" filesize="31995412" game="eDuke32" type="Mod Manager Files" state="Native" sha1="668de9a875fdd6aeecd84580616faf313b8182bd"/>
+		</downloads>
+	</mod>
+	<mod name="Killing 101: Circle Strafing" id="killing_101_-_circle_strafing" type="Map" website="http://home.earthlink.net/~rtravis1/">
+		<team name="Alliance" website="http://www.dukeworld.com/alliance">
+			<member name="Wumpus" email="emd@donet.com"/>
+		</team>
+		<versions>
+			<version release_date="June 2, 1997">
+				<game type="Regular" state="Native">
+					<file name="KILL101.CON" size="100478" type="con" sha1="360ba1dfb88a4694f97b31698c9c6fea8012882f"/>
+					<file name="KILL101.GRP" size="204564" type="grp" sha1="7132a51cd99fc5f7add3f7f8fd0b95ee91555720"/>
+				</game>
+				<game type="Atomic" state="Converted">
+					<file name="KILL101.CON" size="151879" type="con" sha1="aeba9b1916644e87e5caa9d19615c89c84575d82"/>
+					<file name="KILL101.GRP" size="271848" type="grp" sha1="3733465f7f0d92eef6e5e3239ca4a2890e4b8f44"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="kill101.zip" filesize="50910" game="Regular" type="Original Files" sha1="ee3d2d29f355a497e2c1caf5bf3ffa32730129ff"/>
+			<download filename="Killing_101_-_Circle_Strafing-ModMgrR.zip" filesize="65715" game="Regular" type="Mod Manager Files" state="Native" sha1="132e7027dde724ade1066e1a25384d26ae564162"/>
+			<download filename="Killing_101_-_Circle_Strafing-ModMgrA.zip" filesize="84775" game="Atomic" type="Mod Manager Files" state="Converted" sha1="880e0f2b4d2c387248f376bbf8c1ab4b0291d5b0"/>
 		</downloads>
 	</mod>
 </mods>
