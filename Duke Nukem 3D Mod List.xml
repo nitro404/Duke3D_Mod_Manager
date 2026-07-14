@@ -14893,4 +14893,21 @@
 			<download filename="Die_Hard_-_Nakatomi_Plaza_Beta-ModMgrA.zip" filesize="3382571" version="Beta" game="Atomic" type="Mod Manager Files" state="Native" sha1="694f4b12ea18cae01a32e84526436dbacec3403a"/>
 		</downloads>
 	</mod>
+	<mod name="Survival Technology" id="survival_technology" type="Total Conversion" version="Demo">
+		<team name="JsGames">
+			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
+		</team>
+		<versions>
+			<version id="Demo" release_date="February 27, 2003">
+				<game type="eDuke32" state="Native">
+					<file name="SEDUKE.CON" size="157456" type="con" sha1="5d9925b50ff35b470001a07d39afd9e03ae37235"/>
+					<file name="SURVIVAL_TECHNOLOGY_DEMO.GRP" size="19303136" type="grp" sha1="dea6053421ebd378c39e6e9b1232ee1d2689983b"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="stech.zip" filesize="7278630" version="Demo" game="eDuke32" type="Original Files" sha1="67cd8a0028a6d00aa5d01fa7dc848ae07cfff09d"/>
+			<download filename="Survival_Technology_Demo-ModMgrE.zip" filesize="7238348" version="Demo" game="eDuke32" type="Mod Manager Files" state="Native" sha1="83c65bfa121384415150aa3fff4dfae25cac5330"/>
+		</downloads>
+	</mod>
 </mods>
