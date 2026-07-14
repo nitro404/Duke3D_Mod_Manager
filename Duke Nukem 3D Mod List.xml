@@ -15042,4 +15042,26 @@
 			<download filename="Killing_101_-_Circle_Strafing-ModMgrA.zip" filesize="84775" game="Atomic" type="Mod Manager Files" state="Converted" sha1="880e0f2b4d2c387248f376bbf8c1ab4b0291d5b0"/>
 		</downloads>
 	</mod>
+	<mod name="Worlds" id="worlds" type="Episode" version="1.4">
+		<team>
+			<member name="Josh R. Dunlavy" email="Jimey@mindspring.com" website="http://duke_jimn17.tripod.com/episode.htm"/>
+		</team>
+		<versions>
+			<version id="1.4" release_date="July 12, 2000">
+				<game type="Regular" state="Native">
+					<file name="WORLDS14.CON" size="97704" type="con" sha1="7fd8f285a189c81408154692b114e8fcdae7f9f8"/>
+					<file name="WORLDS14.GRP" size="7115157" type="grp" sha1="8406d86199968196744765bb31c7dca49c72d967"/>
+				</game>
+				<game type="Atomic" state="Converted">
+					<file name="WORLDS14.CON" size="149024" type="con" sha1="6a29011b31ab9e5aa7567a21c6a3dea81524f57a"/>
+					<file name="WORLDS14.GRP" size="7185616" type="grp" sha1="a20b942c1326f60cb950109824f304ea0c125a54"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="worlds-e.exe" filesize="3007431" version="1.4" game="Regular" type="Original Files" sha1="95e4fda62ddbfff56b530a0a38232206f88130ae"/>
+			<download filename="Worlds_1.4-ModMgrR.zip" filesize="2983268" version="1.4" game="Regular" type="Mod Manager Files" state="Native" sha1="e05595d1e747af836f6b97780d3755db509370a6"/>
+			<download filename="Worlds_1.4-ModMgrA.zip" filesize="3001784" version="1.4" game="Atomic" type="Mod Manager Files" state="Converted" sha1="fe51de69cbbb113cff17abd7c095d40e3456862a"/>
+		</downloads>
+	</mod>
 </mods>
