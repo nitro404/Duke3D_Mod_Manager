@@ -14997,4 +14997,27 @@
 			<download filename="LameDuke_X_0.04a-ModMgrE.zip" filesize="255885" version="0.04a" game="eDuke32" type="Mod Manager Files" state="Native" sha1="8f79542fb200835460c29e66c6855dbe345be9e0"/>
 		</downloads>
 	</mod>
+	<mod name="SilverballZ" id="silverballz" type="Total Conversion" website="https://manicware.itch.io/silverballz">
+		<team name="Manicware" website="https://manicware.itch.io">
+			<member name="Sanek"/>
+			<member name="Mblackwell" email="Mblackwell50@hotmail.com"/>
+			<member name="Brandon Blume" alias="MusicallyInspired"/>
+			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com"/>
+		</team>
+		<versions>
+			<version release_date="February 25, 2019">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="SB.CON" size="189709" type="con" sha1="bdecf689812e0772049c0c266f44d7c0a0f46dd7"/>
+						<file name="sb.def" size="280" type="def" sha1="8179987ec77c7a1d5cad63b23c721edbae1eca4b"/>
+						<file name="SilverballZ.zip" size="31995243" type="zip" sha1="3df6ed47c7956b6215e836275f354ec51e72ff50"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="SilverballZ.zip" filesize="33888611" game="eDuke32" type="Original Files" sha1="a51e1e2d63cfc3fdd19dc9531064565b5fa48bc8"/>
+			<download filename="SilverballZ-ModMgrE.zip" filesize="31995412" game="eDuke32" type="Mod Manager Files" state="Native" sha1="668de9a875fdd6aeecd84580616faf313b8182bd"/>
+		</downloads>
+	</mod>
 </mods>
