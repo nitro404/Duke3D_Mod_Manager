@@ -15086,4 +15086,21 @@
 			<download filename="The_Haunting-ModMgrA.zip" filesize="737720" game="Atomic" type="Mod Manager Files" state="Converted" sha1="311fbe77695586095e63c517bc1abc483bcd283b"/>
 		</downloads>
 	</mod>
+	<mod name="The Haunting 2" id="the_haunting_2" type="Map">
+		<team>
+			<member name="Rea" website="http://www.home.clara.net/wolfe"/>
+		</team>
+		<versions>
+			<version>
+				<game type="Atomic" state="Native">
+					<file name="HAUNT2PP.CON" size="151254" type="con" sha1="71ed3231dbe1c33ac048eb5113b60ed698add605"/>
+					<file name="HAUNT2PP.GRP" size="1728513" type="grp" sha1="bb6569c295d34019554123f2766e26623b96ba48"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Haunt2pp.zip" filesize="449361" game="Atomic" type="Original Files" sha1="af7c2d28f76533f251b794e91ec3dfc0d9b18592"/>
+			<download filename="The_Haunting_2-ModMgrA.zip" filesize="447347" game="Atomic" type="Mod Manager Files" state="Native" sha1="e3015e2527911c0c0d4bddfeb63e26327bd4dd8c"/>
+		</downloads>
+	</mod>
 </mods>
