@@ -14924,4 +14924,23 @@
 			<download filename="Survival_2.0-ModMgrE.zip" filesize="59897152" version="2.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="f184ccc87da1bf7d0f5a97674d459fc171726794"/>
 		</downloads>
 	</mod>
+	<mod name="DukeCraft" id="dukecraft" type="Partial Conversion">
+		<team>
+			<member name="Mblackwell" email="Mblackwell50@hotmail.com"/>
+		</team>
+		<versions>
+			<version release_date="September 6, 2006">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="DCRAFT.CON" size="153533" type="con" sha1="9baf308878c6dcfa4757839543036eec44d9fd17"/>
+						<file name="DUKECRAFT.GRP" size="12003880" type="grp" sha1="6cce391d0aa82b405222d3e6119fd78133873cd9"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="DukeCraft-09-06-2006.rar" filesize="8511346" game="eDuke32" type="Original Files" sha1="91d8bef7fdbdb5fdb93af861b82ef77a436cb0be"/>
+			<download filename="DukeCraft-ModMgrE.zip" filesize="3847634" game="eDuke32" type="Mod Manager Files" state="Native" sha1="822e487dfa919ffb216a9761d71198349c50d1a5"/>
+		</downloads>
+	</mod>
 </mods>
