@@ -1171,6 +1171,15 @@
 			<download filename="Duke_Meets_Doom_3.0-ModMgrA.zip" filesize="8003464" version="3.0" game="Atomic" type="Mod Manager Files" state="Native" sha1="a88c9091cf8ced2cedaa106ec9f3a16f59ce1b2a"/>
 			<download filename="Duke_Meets_Doom_3.1-ModMgrA.zip" filesize="8103391" version="3.1" game="Atomic" type="Mod Manager Files" state="Native" sha1="428f3b2c7bb8bd50a78b1724997e93391807fde3"/>
 		</downloads>
+		<similar>
+			<mod id="doom_2"/>
+			<mod id="doom_pak_1"/>
+			<mod id="doom_death_match_pack"/>
+			<mod id="doom_chaingun"/>
+			<mod id="doom_weapons"/>
+			<mod id="doom_weapons_2"/>
+			<mod id="hellduke"/>
+		</similar>
 	</mod>
 	<mod name="Duke Nukem 3D eXTREME" id="duke_nukem_3d_extreme" type="Dukematch" version="Beta 2">
 		<team>
@@ -5197,6 +5206,15 @@
 		<screenshots>
 			<screenshot filename="DUKE0000.png" filesize="370617" width="480" height="360" sha1="6cdb6636f5c64da626dab7a689bfb123dac10935"/>
 		</screenshots>
+		<similar>
+			<mod id="duke_meets_doom"/>
+			<mod id="doom_2"/>
+			<mod id="doom_pak_1"/>
+			<mod id="doom_death_match_pack"/>
+			<mod id="doom_weapons"/>
+			<mod id="doom_weapons_2"/>
+			<mod id="hellduke"/>
+		</similar>
 	</mod>
 	<mod name="Doom Weapons" id="doom_weapons" type="Weapon Patch">
 		<versions>
@@ -5211,6 +5229,15 @@
 			<download filename="lizdog.zip" filesize="1407735" game="Atomic" type="Original Files" sha1="3dbdec86c60930716927b7d1ded61d1a9238d40e"/>
 			<download filename="Doom_Weapons-ModMgrA.zip" filesize="1420758" game="Atomic" type="Mod Manager Files" state="Native" sha1="646dbcb4662b999be5890a5cc0725f7dd23376b0"/>
 		</downloads>
+		<similar>
+			<mod id="duke_meets_doom"/>
+			<mod id="doom_2"/>
+			<mod id="doom_pak_1"/>
+			<mod id="doom_death_match_pack"/>
+			<mod id="doom_chaingun"/>
+			<mod id="doom_weapons_2"/>
+			<mod id="hellduke"/>
+		</similar>
 	</mod>
 	<mod name="Double Barrel Shotgun" id="double_barrel_shotgun" type="Weapon Patch" website="http://www.geocities.com/siliconvalley/park/5436/maps.html">
 		<team>
@@ -6409,6 +6436,15 @@
 			<download filename="DOOM_Death_Match_Pack_2.3-ModMgrA.zip" filesize="3852692" version="2.3" game="Atomic" type="Mod Manager Files" state="Native" sha1="28704eb50ff31a45afb8c36302efaa12eace17a4"/>
 			<download filename="DOOM_Death_Match_Pack_2.3a-ModMgrA.zip" filesize="3852680" version="2.3a" game="Atomic" type="Mod Manager Files" state="Native" sha1="2bdba1df8f7733e0dbaa3e6e41c85b5a45dddd17"/>
 		</downloads>
+		<similar>
+			<mod id="duke_meets_doom"/>
+			<mod id="doom_2"/>
+			<mod id="doom_pak_1"/>
+			<mod id="doom_chaingun"/>
+			<mod id="doom_weapons"/>
+			<mod id="doom_weapons_2"/>
+			<mod id="hellduke"/>
+		</similar>
 	</mod>
 	<mod name="Far Beyond Duked: Another Chapter" id="far_beyond_duked_another_chapter" type="Dukematch" website="http://members.aol.com/kkornx/duke.html">
 		<team>
@@ -6887,6 +6923,15 @@
 			<download filename="doom2tc.zip" filesize="226502" game="Atomic" type="Original Files" sha1="499c13eca0e5fe375bb95eb459021922dca6d934"/>
 			<download filename="DOOM_2-ModMgrA.zip" filesize="246306" game="Atomic" type="Mod Manager Files" state="Native" sha1="2d730b9799c5de98dc3278ce8686fca3e90a0b13"/>
 		</downloads>
+		<similar>
+			<mod id="duke_meets_doom"/>
+			<mod id="doom_pak_1"/>
+			<mod id="doom_death_match_pack"/>
+			<mod id="doom_chaingun"/>
+			<mod id="doom_weapons"/>
+			<mod id="doom_weapons_2"/>
+			<mod id="hellduke"/>
+		</similar>
 	</mod>
 	<mod name="Duke in Denmark" id="duke_in_denmark" type="Total Conversion" version_type="Danish">
 		<team>
@@ -8577,6 +8622,15 @@
 			<download filename="Doom_Weapons_1.0-ModMgrE.zip" filesize="240138" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="aa6ac1fbfa7f52bd0dc440218d12a9b33f9c4c3e"/>
 			<download filename="Doom_Weapons_1.1-ModMgrE.zip" filesize="239976" version="1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b797f18997c35371736e6ea7132e312d222ad289"/>
 		</downloads>
+		<similar>
+			<mod id="duke_meets_doom"/>
+			<mod id="doom_2"/>
+			<mod id="doom_pak_1"/>
+			<mod id="doom_death_match_pack"/>
+			<mod id="doom_chaingun"/>
+			<mod id="doom_weapons"/>
+			<mod id="hellduke"/>
+		</similar>
 	</mod>
 	<mod name="Lameduke Forever" id="lameduke_forever" type="Total Conversion" version="0.02" website="http://www.geocities.com/southparkduke/lame">
 		<team>
@@ -14204,6 +14258,15 @@
 			<download filename="Doom_Pak_1-ModMgrR.zip" filesize="2326600" game="Regular" type="Mod Manager Files" state="Native" sha1="9124936afe53cd7be8b206e1ace18edef7337ee3"/>
 			<download filename="Doom_Pak_1-ModMgrA.zip" filesize="2548394" game="Atomic" type="Mod Manager Files" state="Converted" sha1="3740b70e2459cbef7c152089e034308c50f5fa5a"/>
 		</downloads>
+		<similar>
+			<mod id="duke_meets_doom"/>
+			<mod id="doom_2"/>
+			<mod id="doom_death_match_pack"/>
+			<mod id="doom_chaingun"/>
+			<mod id="doom_weapons"/>
+			<mod id="doom_weapons_2"/>
+			<mod id="hellduke"/>
+		</similar>
 	</mod>
 	<mod name="Neil&apos;s Zone" id="neils_zone" type="Map" website="http://members.xoom.com/net_atlas/quarters">
 		<team>
@@ -15151,5 +15214,73 @@
 			<download filename="dukexxx.zip" filesize="365634" version="0.91" game="eDuke32" type="Original Files" sha1="f671ef0bb37e0bdf0555818ff23c29472741d3b7"/>
 			<download filename="Nude_Patch_0.91-ModMgrE.zip" filesize="364693" version="0.91" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c0ad0e29cbd41aae5ce335e0521f1972d544a8c6"/>
 		</downloads>
+	</mod>
+	<mod name="Hellduke!" id="hellduke" type="Total Conversion" version="1.3b" website="https://www.moddb.com/mods/hellduke-tc">
+		<team>
+			<member name="Doruk Aksoy" alias="XTHX2" email="thunderwrath2001@gmail.com" country="Turkey"/>
+		</team>
+		<versions>
+			<version id="1.0" release_date="July 11, 2008">
+				<game type="eDuke32" state="Native">
+					<file name="HELLGAME.CON" size="164467" type="con" sha1="f28e579705785701586bd8e7acb4dfc13b05a833"/>
+					<file name="DDEF.DEF" size="15962" type="def" sha1="ffc26dc8c6fd7554497f6e9f925397c8140c33b2"/>
+					<file name="Hellduke!_1.0.zip" size="47165204" type="zip" sha1="3b45b6e80937cfbfebfff3c7300870770570039b"/>
+				</game>
+			</version>
+			<version id="1.3" release_date="July 31, 2008">
+				<game type="eDuke32" state="Native">
+					<file name="HELLGAME.CON" size="181769" type="con" sha1="ed14e47931421bbef146aee4283d8e01b48e9a1b"/>
+					<file name="DDEF.DEF" size="16185" type="def" sha1="73caddf7fa21e8e695b8a152cbd7b17e0cfff348"/>
+					<file name="Hellduke!_1.3.zip" size="67612748" type="zip" sha1="1c28a664b4ab07b7a7e817efefcb280c0b380643"/>
+				</game>
+			</version>
+			<version id="1.3a" release_date="July 28, 2008">
+				<game type="eDuke32" state="Native">
+					<file name="HELLGAME.CON" size="181769" type="con" sha1="ed14e47931421bbef146aee4283d8e01b48e9a1b"/>
+					<file name="DDEF.DEF" size="16185" type="def" sha1="73caddf7fa21e8e695b8a152cbd7b17e0cfff348"/>
+					<file name="Hellduke!_1.3a.zip" size="69506142" type="zip" sha1="d34e27268e1237c217cbe5bfa999a67ec1fc88b2"/>
+				</game>
+			</version>
+			<version id="1.3b" release_date="August 10, 2008">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="HELLGAME.CON" size="181768" type="con" sha1="470be9952f8b37ef954fea7abe814a4fba07bbf2"/>
+						<file name="DDEF.DEF" size="16885" type="def" sha1="64acd83bd57b51b938706ac31018dcc87e441f7d"/>
+						<file name="Hellduke!_1.3b.zip" size="62142330" type="zip" sha1="d39675152ffe3784581041e2470f95250907f1e6"/>
+					</game>
+				</type>
+				<type id="High Resolution Pack">
+					<game type="eDuke32" state="Native">
+						<file name="HELLGAME.CON" size="181768" type="con" sha1="470be9952f8b37ef954fea7abe814a4fba07bbf2"/>
+						<file name="DDEF.DEF" size="16885" type="def" sha1="64acd83bd57b51b938706ac31018dcc87e441f7d"/>
+						<file name="DDEFHRP.DEF" size="70039" type="def" sha1="99dff7928c0acbc056706e663836c80d2f8a1442"/>
+						<file name="Hellduke!_1.3b_High_Resolution_Pack.zip" size="44509470" type="zip" sha1="793bcd5f287aeb62f173ac7e7b637533a9bfbab7"/>
+					</game>
+					<dependencies>
+						<dependency id="hellduke" version="1.3b"/>
+					</dependencies>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="HelldukeTCv10.zip" filesize="47437756" version="1.0" game="eDuke32" type="Original Files" sha1="b33333688f7375987bde54847f7691a11837639e"/>
+			<download filename="HelldukeTCv13.7z" filesize="61137461" version="1.3" game="eDuke32" type="Original Files" sha1="0443fbc117f780e401ad90683de0160c9defd4f8"/>
+			<download filename="HellUpdatev13a.zip" filesize="44944656" version="1.3a" game="eDuke32" type="Original Files" sha1="78232d230394cb969014cc1d80cf21bb2de09078"/>
+			<download filename="Hellduke_TCv13b.7z" filesize="44944656" version="1.3b" game="eDuke32" type="Original Files" sha1="78232d230394cb969014cc1d80cf21bb2de09078"/>
+			<download filename="Hellduke!_1.0-ModMgrE.zip" filesize="47165372" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="baa199551d1967364e9953ecd4f932e800ea88aa"/>
+			<download filename="Hellduke!_1.3-ModMgrE.zip" filesize="67612916" version="1.3" game="eDuke32" type="Mod Manager Files" state="Native" sha1="0da40502fd837f727c4e2f0b05eda451d52c9bed"/>
+			<download filename="Hellduke!_1.3a-ModMgrE.zip" filesize="69506312" version="1.3a" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c8e783b999120454e58eec91bbf2f79535daf4d1"/>
+			<download filename="Hellduke!_1.3b-ModMgrE.zip" filesize="62142500" version="1.3b" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c2140cca22da70557168e76381d920a32e73f442"/>
+			<download filename="Hellduke!_1.3b_High_Resolution_Pack-ModMgrE.zip" filesize="44509682" version="1.3b" version_type="High Resolution Pack" game="eDuke32" type="Mod Manager Files" state="Native" sha1="4ab1b27c1577dde7d99f582445559a74f06ac753"/>
+		</downloads>
+		<similar>
+			<mod id="duke_meets_doom"/>
+			<mod id="doom_2"/>
+			<mod id="doom_pak_1"/>
+			<mod id="doom_death_match_pack"/>
+			<mod id="doom_chaingun"/>
+			<mod id="doom_weapons"/>
+			<mod id="doom_weapons_2"/>
+		</similar>
 	</mod>
 </mods>
