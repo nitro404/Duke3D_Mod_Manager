@@ -896,8 +896,8 @@
 	</mod>
 	<mod name="Desert Storm" id="desert_storm" type="Total Conversion" website="http://www.geocities.com/timessquare/labyrinth/5295/">
 		<team>
-			<member name="Jeffrey Mathis" email="gmathis@ktsnet.com"/>
-			<member name="Jeremy Mathis"/>
+			<member name="Jeffrey Mathis" alias="DM" email="gmathis@ktsnet.com"/>
+			<member name="Jeremy Mathis" alias="JNM" email="jnmathis@bigfoot.com"/>
 		</team>
 		<versions>
 			<version release_date="November 1, 1998">
