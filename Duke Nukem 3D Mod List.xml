@@ -15103,4 +15103,53 @@
 			<download filename="The_Haunting_2-ModMgrA.zip" filesize="447347" game="Atomic" type="Mod Manager Files" state="Native" sha1="e3015e2527911c0c0d4bddfeb63e26327bd4dd8c"/>
 		</downloads>
 	</mod>
+	<mod name="Nude Patch" id="nude_patch" type="Art" version="0.91">
+		<team>
+			<member name="fgsfds" twitter="fgsfds228"/>
+		</team>
+		<versions>
+			<version id="0.91" release_date="May 3, 2020">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="dukexxx.def" size="11590" type="def" sha1="a1d2b1266beadfe53a7a84c064822dfced90b6c6"/>
+						<file name="Nude_Patch_0.91.zip" size="364521" type="zip" sha1="71156f09c66cae872f58769623f4600dceb23dd9"/>
+					</game>
+				</type>
+				<type id="Duke It Out in D.C.">
+					<game type="eDuke32" state="Native">
+						<file name="DUKEDC.CON" size="151192" type="con" sha1="26afde6c4974f679d0c24dd59ef6b1a72343c299"/>
+						<file name="dukexxx.def" size="11590" type="def" sha1="a1d2b1266beadfe53a7a84c064822dfced90b6c6"/>
+						<file name="Nude_Patch_0.91.zip" size="364521" type="zip" sha1="71156f09c66cae872f58769623f4600dceb23dd9"/>
+					</game>
+					<dependencies>
+						<dependency id="duke_it_out_in_dc"/>
+					</dependencies>
+				</type>
+				<type id="Nuclear Winter">
+					<game type="eDuke32" state="Native">
+						<file name="NWINTER.CON" size="154269" type="con" sha1="2bb2ddc7319e0935569b724f3c67cb953fdb79d6"/>
+						<file name="dukexxx.def" size="11590" type="def" sha1="a1d2b1266beadfe53a7a84c064822dfced90b6c6"/>
+						<file name="Nude_Patch_0.91.zip" size="364521" type="zip" sha1="71156f09c66cae872f58769623f4600dceb23dd9"/>
+					</game>
+					<dependencies>
+						<dependency id="nuclear_winter"/>
+					</dependencies>
+				</type>
+				<type id="Duke Caribbean: Life&apos;s a Beach">
+					<game type="eDuke32" state="Native">
+						<file name="VACATION.CON" size="98724" type="con" sha1="8c366f3f0fa77521241d1dea187b91a12f6683c1"/>
+						<file name="dukexxx.def" size="11590" type="def" sha1="a1d2b1266beadfe53a7a84c064822dfced90b6c6"/>
+						<file name="Nude_Patch_0.91.zip" size="364521" type="zip" sha1="71156f09c66cae872f58769623f4600dceb23dd9"/>
+					</game>
+					<dependencies>
+						<dependency id="duke_caribbean"/>
+					</dependencies>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="dukexxx.zip" filesize="365634" version="0.91" game="eDuke32" type="Original Files" sha1="f671ef0bb37e0bdf0555818ff23c29472741d3b7"/>
+			<download filename="Nude_Patch_0.91-ModMgrE.zip" filesize="364693" version="0.91" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c0ad0e29cbd41aae5ce335e0521f1972d544a8c6"/>
+		</downloads>
+	</mod>
 </mods>
