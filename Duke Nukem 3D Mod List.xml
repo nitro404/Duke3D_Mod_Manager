@@ -15283,4 +15283,24 @@
 			<mod id="doom_weapons_2"/>
 		</similar>
 	</mod>
+	<mod name="Hollywood Holocaust Rethinked" id="Hollywood_Holocaust_Rethinked" type="Total Conversion" version="1.1" website="https://www.moddb.com/mods/hollywood-holocaust-rethinked">
+		<team name="Team Misfit" website="https://www.moddb.com/company/team-misfit">
+			<member name="Tea Monster" email="tea_monster@yahoo.com"/>
+			<member name="Mark"/>
+			<member name="Spiker"/>
+		</team>
+		<versions>
+			<version id="1.1" release_date="August 28, 2017">
+				<game type="eDuke32" state="Native">
+					<file name="HHR.CON" size="154859" type="con" sha1="229711ac3ecc81f8869a82ffc8a7bf3a7eb28ee8"/>
+					<file name="hhr.def" size="64" type="def" sha1="2b7499745e38a7f2f5e3e308bd88dba6cb197ff1"/>
+					<file name="Hollywood_Holocaust_Rethinked_1.1.zip" size="1275644535" type="zip" sha1="c1f6e3773a6e7c7d01e3b6a88ae02e7018e18f55"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="HHRv1_1.zip" filesize="1275607138" version="1.1" game="eDuke32" type="Original Files" sha1="6de7b4a0ad792a6d4ceabec48d99010fa9931bf4"/>
+			<download filename="Hollywood_Holocaust_Rethinked_1.1-ModMgrE.zip" filesize="1275644743" version="1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="77f9237c9d52dc0263fc715710e23d66b767d46a"/>
+		</downloads>
+	</mod>
 </mods>
