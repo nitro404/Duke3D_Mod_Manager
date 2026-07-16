@@ -15303,4 +15303,23 @@
 			<download filename="Hollywood_Holocaust_Rethinked_1.1-ModMgrE.zip" filesize="1275644743" version="1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="77f9237c9d52dc0263fc715710e23d66b767d46a"/>
 		</downloads>
 	</mod>
+	<mod name="Joaquina&apos;s Horror Tale" id="joaquinas_horror_tale" type="Total Conversion">
+		<team>
+			<member name="Rubenskv" email="contato@rubenskv.com" website="http://www.rubenskv.com"/>
+		</team>
+		<versions>
+			<version release_date="October 19, 2022">
+				<game type="eDuke32" state="Native">
+					<file name="HORROR_TALE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="HORROR_TALE.def" size="131551" type="def" sha1="adbc0a8889664a149398e3e6bd0253d49a0255f1"/>
+					<file name="voxels.def" size="117" type="def" sha1="a51763a9e612a7b6a2849b811fcaf0199bb15d3c"/>
+					<file name="Joaquina&apos;s_Horror_Tale.zip" size="289948709" type="zip" sha1="e4af787a7c9175657dd37a53215f0ee69167916d"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="joaquinahorrortale.zip" filesize="291652205" game="eDuke32" type="Original Files" sha1="ae8c55a1b266edd199f3f7b878d558421750b342"/>
+			<download filename="Joaquina&apos;s_Horror_Tale-ModMgrE.zip" filesize="289948895" game="eDuke32" type="Mod Manager Files" state="Native" sha1="37bf7ecb3f7bd8a5ea5518c7b67e3f5321e79a48"/>
+		</downloads>
+	</mod>
 </mods>
