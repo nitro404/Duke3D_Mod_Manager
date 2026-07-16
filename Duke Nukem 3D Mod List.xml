@@ -15577,4 +15577,65 @@
 			<download filename="SD_Duke_1.2.6-ModMgrE.zip" filesize="5545890" version="1.2.6" game="eDuke32" type="Mod Manager Files" state="Native" sha1="badf9c3058cd8c0e793cd93b5ab3ad048dce37d6"/>
 		</downloads>
 	</mod>
+	<mod name="Voxel Pack" id="voxel_pack" type="Partial Conversion" version="Preview 10" website="https://www.moddb.com/mods/duke-nukem-3d-voxel-pack/addons" repository="https://github.com/NightFright2k19/duke3d_voxelpack">
+		<team>
+			<member name="Robin Reisinger" alias="NightFright" email="nightfright2k7@gmail.com" youtube="NightFright2k19" country="Germany"/>
+		</team>
+		<versions>
+			<version id="2.0 RC1" release_date="December 3, 2020">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="voxels.def" size="95" type="def" sha1="33b9ef42473500cca0b2c6b066b7d6cb64c86169"/>
+						<file name="Voxel_Pack_2.0_RC1.zip" size="3489508" type="zip" sha1="167c97b96a23f0039500e94f6ec84c520c366c44"/>
+					</game>
+				</type>
+			</version>
+			<version id="2.0 RC2" release_date="March 1, 2022">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="voxels.def" size="91" type="def" sha1="17c05a1bb19ef6e0d0e648ac9dc392a8e8b11de3"/>
+						<file name="Voxel_Pack_2.0_RC2.zip" size="4656177" type="zip" sha1="1454d00e54e67f7422113af46f29edcaad39e35c"/>
+					</game>
+				</type>
+			</version>
+			<version id="Preview 10" release_date="January 5, 2026">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="duke3d_voxels.def" size="409" type="def" sha1="3c60e34fb39d285f302adcda1ff6a85b83f09769"/>
+						<file name="Voxel_Pack_Preview_10.zip" size="15822739" type="zip" sha1="307cd8ecfccea13b704ae4c3f33ea42589fb8b3a"/>
+					</game>
+				</type>
+				<type id="Nuclear Winter">
+					<game type="eDuke32" state="Native">
+						<file name="NWINTER.CON" size="154269" type="con" sha1="2bb2ddc7319e0935569b724f3c67cb953fdb79d6"/>
+						<file name="duke3d_voxels.def" size="409" type="def" sha1="3c60e34fb39d285f302adcda1ff6a85b83f09769"/>
+						<file name="voxels/nwinter.def" size="69" type="def" sha1="b53be4d1f4f865b123cb511f15357b03bee858de"/>
+						<file name="Voxel_Pack_Preview_10.zip" size="15822739" type="zip" sha1="307cd8ecfccea13b704ae4c3f33ea42589fb8b3a"/>
+					</game>
+					<dependencies>
+						<dependency id="nuclear_winter"/>
+					</dependencies>
+				</type>
+				<type id="Duke Caribbean: Life&apos;s a Beach">
+					<game type="eDuke32" state="Native">
+						<file name="VACATION.CON" size="98724" type="con" sha1="8c366f3f0fa77521241d1dea187b91a12f6683c1"/>
+						<file name="duke3d_voxels.def" size="409" type="def" sha1="3c60e34fb39d285f302adcda1ff6a85b83f09769"/>
+						<file name="voxels/vacation.def" size="236" type="def" sha1="87d0a1c62473a1639769b955ba58abfe228e96c4"/>
+						<file name="Voxel_Pack_Preview_10.zip" size="15822739" type="zip" sha1="307cd8ecfccea13b704ae4c3f33ea42589fb8b3a"/>
+					</game>
+					<dependencies>
+						<dependency id="duke_caribbean"/>
+					</dependencies>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="duke3d_voxels.1.zip" filesize="3327368" version="2.0 RC1" game="eDuke32" type="Original Files" sha1="162961d9a5163c66430a3fe664565d246c0f79ea"/>
+			<download filename="duke3d_voxels.zip" filesize="4432485" version="2.0 RC2" game="eDuke32" type="Original Files" sha1="0c15408382e51a1ccd01b1274f7bf8da720d8174"/>
+			<download filename="duke3d-voxel-pack_p10.zip" filesize="15546432" version="Preview 10" game="eDuke32" type="Original Files" sha1="5120efde51a0b0a5e5c5f44041e1a20850953e7f"/>
+			<download filename="Voxel_Pack_2.0_RC1-ModMgrE.zip" filesize="3489686" version="2.0 RC1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c248a6a34b5353c477c5f320a9f9742a331b7977"/>
+			<download filename="Voxel_Pack_2.0_RC2-ModMgrE.zip" filesize="4656355" version="2.0 RC2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="0e35a359023bbc8ba12c38446b4b46d0b2953339"/>
+			<download filename="Voxel_Pack_Preview_10-ModMgrE.zip" filesize="15822923" version="Preview 10" game="eDuke32" type="Mod Manager Files" state="Native" sha1="31edd3dd5640ddb98890879549c80103cafeb306"/>
+		</downloads>
+	</mod>
 </mods>
