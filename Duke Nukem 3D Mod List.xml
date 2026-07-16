@@ -15671,7 +15671,7 @@
 			<note>Works best with the Polymost renderer.</note>
 		</notes>
 	</mod>
-	<mod name="Duke Nukem: Horror Castle" id="duke_nukem_-_horror_castle" type="Total Conversion" version="6.4" website="https://www.moddb.com/mods/duke-nukem-horror-castle">
+	<mod name="Duke Nukem: Horror Castle" id="duke_nukem_-_horror_castle" alias="zombie_nukem" type="Total Conversion" version="6.4" website="https://www.moddb.com/mods/duke-nukem-horror-castle">
 		<team>
 			<member name="William Gee" email="geewillywizz@live.com" discord="William Gee#2015" country="New Zealand"/>
 		</team>
@@ -15687,6 +15687,42 @@
 		<downloads>
 			<download filename="DNHCv6.4.zip" filesize="97790146" version="6.4" game="eDuke32" type="Original Files" sha1="e67c3e855fff9769e1d964e3123e00c32c5b3015"/>
 			<download filename="Duke_Nukem_-_Horror_Castle_6.4-ModMgrE.zip" filesize="93733255" version="6.4" game="eDuke32" type="Mod Manager Files" state="Native" sha1="ad6b35ec361e38742e48a48fbb28093ec7df093d"/>
+		</downloads>
+	</mod>
+	<mod name="Zombie Nukem" id="zombie_nukem" alias="duke_nukem_-_horror_castle" type="Total Conversion" version="3.1" website="https://www.moddb.com/mods/duke-nukem-horror-castle">
+		<team>
+			<member name="William Gee" email="geewillywizz@live.com" discord="William Gee#2015" country="New Zealand"/>
+		</team>
+		<versions>
+			<version id="1.0" release_date="May 26, 2025">
+				<game type="eDuke32" state="Native">
+					<file name="ZOMBIE.CON" size="218886" type="con" sha1="3a04b621c850224fc428ead388c2b1fbef26aedf"/>
+					<file name="zombie.def" size="280" type="def" sha1="af3c9693188de9c29ce12d37bf306be19c48b20a"/>
+					<file name="Zombie_Nukem_1.0.zip" size="100247120" type="zip" sha1="a9e62502d791a009b11bf839746314d8ac090f92"/>
+				</game>
+			</version>
+			<version id="2.2" release_date="December 19, 2025">
+				<game type="eDuke32" state="Native">
+					<file name="ZOMBIE.CON" size="213399" type="con" sha1="34162b167c0665cba6fc908b03fca08fc986fb0b"/>
+					<file name="zombie.def" size="315" type="def" sha1="4cdb9285cb0c93b572717311fd5f8f5e41ccf261"/>
+					<file name="Zombie_Nukem_2.2.zip" size="94553623" type="zip" sha1="d5872b97e82fb8f87b9538bfc12ab8c74eb23b43"/>
+				</game>
+			</version>
+			<version id="3.1" release_date="January 21, 2026">
+				<game type="eDuke32" state="Native">
+					<file name="ZOMBIE.CON" size="213399" type="con" sha1="34162b167c0665cba6fc908b03fca08fc986fb0b"/>
+					<file name="zombie.def" size="315" type="def" sha1="4cdb9285cb0c93b572717311fd5f8f5e41ccf261"/>
+					<file name="Zombie_Nukem_3.1.zip" size="94602243" type="zip" sha1="c327e67f07adfc4f89f8e19d4697a9e651ac3f78"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="ZombieNukem.zip" filesize="101634675" version="1.0" game="eDuke32" type="Original Files" sha1="64c6e05199c3302cfc4e362b79e0629dc3e62ac6"/>
+			<download filename="ZOMBIENUKEMv2.2.zip" filesize="95798138" version="2.2" game="eDuke32" type="Original Files" sha1="9ed8630ee8c6301c59bfcf3e12c6eb6f754345aa"/>
+			<download filename="ZOMBIENUKEMv3.1.zip" filesize="95852442" version="3.1" game="eDuke32" type="Original Files" sha1="1c5b5f54e0bb7753ad33f08d112d78f0158dc1b2"/>
+			<download filename="Zombie_Nukem_1.0-ModMgrE.zip" filesize="100247294" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="6e9d9c94b9f39c3b4bda094bf6b2e25f05f2649e"/>
+			<download filename="Zombie_Nukem_2.2-ModMgrE.zip" filesize="94553797" version="2.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="da9414a47854b90671fb14348b845a55c46e848b"/>
+			<download filename="Zombie_Nukem_3.1-ModMgrE.zip" filesize="94602417" version="3.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b2259cd893d38eac1285115e743af7bd9224bd52"/>
 		</downloads>
 	</mod>
 </mods>
