@@ -15638,4 +15638,37 @@
 			<download filename="Voxel_Pack_Preview_10-ModMgrE.zip" filesize="15822923" version="Preview 10" game="eDuke32" type="Mod Manager Files" state="Native" sha1="31edd3dd5640ddb98890879549c80103cafeb306"/>
 		</downloads>
 	</mod>
+	<mod name="Submachine" id="submachine" type="Map" version_type="Voxel Pack" website="https://www.moddb.com/mods/submachine">
+		<team>
+			<member name="Alex Pistol" email="aleks4duke@gmail.com" discord="Ledsbourne#2631" steam="Ledsbourne" country="Poland"/>
+		</team>
+		<versions>
+			<version release_date="May 2, 2021">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="SUBMACHINE.CON" size="151201" type="con" sha1="1880f57b9366b27dcee847545ec1b3097370d61c"/>
+						<file name="Submachine.zip" size="10205695" type="zip" sha1="e7e44dd8a8932289a6fb2b1ed7eef1ba1ba1fc4f"/>
+					</game>
+				</type>
+				<type id="Voxel Pack">
+					<game type="eDuke32" state="Native">
+						<file name="SUBMACHINE_VOXELS.CON" size="151208" type="con" sha1="7a0b6d6cf40c34d2cd75ed747b1646c4a2ef1f6b"/>
+						<file name="duke3d_voxels.def" size="409" type="def" sha1="3c60e34fb39d285f302adcda1ff6a85b83f09769"/>
+						<file name="Submachine_Voxel_Pack.zip" size="10202669" type="zip" sha1="9b4639fb473b5f57d3f3457b848059bac86fb1af"/>
+					</game>
+					<dependencies>
+						<dependency id="voxel_pack" version="Preview 10"/>
+					</dependencies>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="SUBMACHINE.1.ZIP" filesize="10492975" game="eDuke32" type="Original Files" sha1="b8688d4a89271d513bbede3eb390e537a59d4500"/>
+			<download filename="Submachine-ModMgrE.zip" filesize="10205857" game="eDuke32" type="Mod Manager Files" state="Native" sha1="a3ca3e8f1e396a2e3acb1560bdeb6cffa6a7ed1d"/>
+			<download filename="Submachine_Voxel_Pack-ModMgrE.zip" filesize="10202853" game="eDuke32" type="Mod Manager Files" state="Native" sha1="9fe0a63a3bc1b5b762f5f03b4c7599fbf425e07f"/>
+		</downloads>
+		<notes>
+			<note>Works best with the Polymost renderer.</note>
+		</notes>
+	</mod>
 </mods>
