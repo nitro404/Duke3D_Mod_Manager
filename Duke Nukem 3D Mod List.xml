@@ -15460,4 +15460,121 @@
 			<download filename="Joaquina&apos;s_Horror_Tale-ModMgrE.zip" filesize="289948895" game="eDuke32" type="Mod Manager Files" state="Native" sha1="37bf7ecb3f7bd8a5ea5518c7b67e3f5321e79a48"/>
 		</downloads>
 	</mod>
+	<mod name="SD Duke" id="sd_duke" type="Partial Conversion" version="1.2.6" version_type="High Resolution Pack">
+		<team>
+			<member name="Hellbound"/>
+			<member name="Parkar"/>
+			<member name="Hendricks266" discord="Hendricks266#8920"/>
+			<member name="Hunter_rus"/>
+		</team>
+		<versions>
+			<version id="Beta" release_date="January 29, 2006">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="sd_duke.con" size="152022" type="con" sha1="4f2dc80a2f3c4c414a9128166e1fc6fbd79530c9"/>
+						<file name="sd_duke.def" size="17173" type="def" sha1="13136a3de7c0aeabe9575ed490ea2f6b9c724768"/>
+						<file name="SD_Duke_Beta.zip" size="8933850" type="zip" sha1="41818b5e5abb6917f19ce3beacbd925d15402e3b"/>
+					</game>
+				</type>
+				<type id="High Resolution Pack">
+					<game type="eDuke32" state="Native">
+						<file name="sd_duke.con" size="152022" type="con" sha1="4f2dc80a2f3c4c414a9128166e1fc6fbd79530c9"/>
+						<file name="sd_duke_hrp.def" size="43" type="def" sha1="3c265a3c487374aa6aa846199b412f7f91249803"/>
+					</game>
+					<dependencies>
+						<dependency id="high_resolution_pack" version="5.5.750"/>
+						<dependency id="sd_duke" version="Beta"/>
+					</dependencies>
+				</type>
+			</version>
+			<version id="1.1" release_date="April 1, 2007">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="sd_duke.con" size="151328" type="con" sha1="e470bfdb6329cdec3e1420e73e03a58e2317c825"/>
+						<file name="sd_duke.def" size="27605" type="def" sha1="76a21e9f487f9905c4bce46c561837caf6afbcd7"/>
+						<file name="SD_Duke_1.1.zip" size="11565571" type="zip" sha1="1c4250cc4a53fe03ab1dc9e96f5f6b6e5f99d32f"/>
+					</game>
+				</type>
+				<type id="High Resolution Pack">
+					<game type="eDuke32" state="Native">
+						<file name="sd_duke.con" size="151328" type="con" sha1="e470bfdb6329cdec3e1420e73e03a58e2317c825"/>
+						<file name="sd_duke_hrp.def" size="43" type="def" sha1="3c265a3c487374aa6aa846199b412f7f91249803"/>
+					</game>
+					<dependencies>
+						<dependency id="high_resolution_pack" version="5.5.750"/>
+						<dependency id="sd_duke" version="1.1"/>
+					</dependencies>
+				</type>
+			</version>
+			<version id="1.2.4" release_date="April 1, 2008">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="sd_duke.con" size="453" type="con" sha1="adbbdd2079527411672127660196debf5512d051"/>
+						<file name="sd_duke.def" size="25454" type="def" sha1="244eef9b07552dd24b425f90bc4d39cea08852d6"/>
+						<file name="SD_Duke_1.2.4.zip" size="8251685" type="zip" sha1="0fee78efd6f56533b7dad0c3676a36a484126dc0"/>
+					</game>
+				</type>
+				<type id="High Resolution Pack">
+					<game type="eDuke32" state="Native">
+						<file name="sd_duke.con" size="453" type="con" sha1="adbbdd2079527411672127660196debf5512d051"/>
+						<file name="sd_duke_hrp.def" size="97" type="def" sha1="9efa8af21efc3a7bdb6c9df65093e970e77da817"/>
+					</game>
+					<dependencies>
+						<dependency id="high_resolution_pack" version="5.5.750"/>
+						<dependency id="sd_duke" version="1.2.4"/>
+					</dependencies>
+				</type>
+			</version>
+			<version id="1.2.5" release_date="May 28, 2009">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="sd_duke.con" size="446" type="con" sha1="f503caae0ff55adbe18c0f9fdd8f2804f1aea385"/>
+						<file name="sd_duke.def" size="15129" type="def" sha1="bdd2292790c818699af236e55ea97ce8297e3c28"/>
+						<file name="SD_Duke_1.2.5.zip" size="8249270" type="zip" sha1="fa6cff5530aec6b80a539c8b382ae700f5632838"/>
+					</game>
+				</type>
+				<type id="High Resolution Pack">
+					<game type="eDuke32" state="Native">
+						<file name="sd_duke.con" size="446" type="con" sha1="f503caae0ff55adbe18c0f9fdd8f2804f1aea385"/>
+						<file name="sd_duke_hrp.def" size="99" type="def" sha1="0557840189eb7f1f96277546562f8a03fc1daaf1"/>
+					</game>
+					<dependencies>
+						<dependency id="high_resolution_pack" version="5.5.750"/>
+						<dependency id="sd_duke" version="1.2.5"/>
+					</dependencies>
+				</type>
+			</version>
+			<version id="1.2.6" release_date="May 29, 2009">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="sd_duke.con" size="446" type="con" sha1="f503caae0ff55adbe18c0f9fdd8f2804f1aea385"/>
+						<file name="sd_duke.def" size="23542" type="def" sha1="007208ea46d358c8697ee998daca666aa4ed7b25"/>
+						<file name="SD_Duke_1.2.6.zip" size="5545722" type="zip" sha1="213ceaef8779c0ba4f94add04d8435429ce38468"/>
+					</game>
+				</type>
+				<type id="High Resolution Pack">
+					<game type="eDuke32" state="Native">
+						<file name="sd_duke.con" size="446" type="con" sha1="f503caae0ff55adbe18c0f9fdd8f2804f1aea385"/>
+						<file name="sd_duke_hrp.def" size="99" type="def" sha1="0557840189eb7f1f96277546562f8a03fc1daaf1"/>
+					</game>
+					<dependencies>
+						<dependency id="high_resolution_pack" version="5.5.750"/>
+						<dependency id="sd_duke" version="1.2.6"/>
+					</dependencies>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="sd_duke_beta.zip" filesize="9621294" version="Beta" game="eDuke32" type="Original Files" sha1="2a452db134d0c17404ad1c14a7ace9d407a4d924"/>
+			<download filename="sd_duke_v1.1.rar" filesize="11420557" version="1.1" game="eDuke32" type="Original Files" sha1="2c0dfcd916f78eba93125a6548d59fa73ff9aa97"/>
+			<download filename="sd_duke_v1.2.4.rar" filesize="16303598" version="1.2.4" game="eDuke32" type="Original Files" sha1="ae3ee297caa605893fc3d57d6a8fa9b6dd80fff2"/>
+			<download filename="SD_Duke_v1.25.zip" filesize="1633581" version="1.2.5" game="eDuke32" type="Original Files" sha1="a428023ca41c20e5c3f37841fe62ab5aaca125ec"/>
+			<download filename="SD_Duke_v1.26.zip" filesize="5489113" version="1.2.6" game="eDuke32" type="Original Files" sha1="2a16ee79d2296272b376114a8da4ffcf563bf14d"/>
+			<download filename="SD_Duke_Beta-ModMgrE.zip" filesize="8934016" version="Beta" game="eDuke32" type="Mod Manager Files" state="Native" sha1="90e0606af8a3b5fedb1f36a5a09f67afacee1f5a"/>
+			<download filename="SD_Duke_1.1-ModMgrE.zip" filesize="11565735" version="1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="061f0ec75fdeffbbb1f75afe0d28eb85fb97485e"/>
+			<download filename="SD_Duke_1.2.4-ModMgrE.zip" filesize="8251853" version="1.2.4" game="eDuke32" type="Mod Manager Files" state="Native" sha1="5b0bfbe8150a4aa37b8c87dcb54949836256e86f"/>
+			<download filename="SD_Duke_1.2.5-ModMgrE.zip" filesize="8249438" version="1.2.5" game="eDuke32" type="Mod Manager Files" state="Native" sha1="acc8249cb7c1e3d1980f75c15d7b7ecb7a03b303"/>
+			<download filename="SD_Duke_1.2.6-ModMgrE.zip" filesize="5545890" version="1.2.6" game="eDuke32" type="Mod Manager Files" state="Native" sha1="badf9c3058cd8c0e793cd93b5ab3ad048dce37d6"/>
+		</downloads>
+	</mod>
 </mods>
