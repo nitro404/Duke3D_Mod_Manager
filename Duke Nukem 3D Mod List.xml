@@ -15671,4 +15671,22 @@
 			<note>Works best with the Polymost renderer.</note>
 		</notes>
 	</mod>
+	<mod name="Duke Nukem: Horror Castle" id="duke_nukem_-_horror_castle" type="Total Conversion" version="6.4" website="https://www.moddb.com/mods/duke-nukem-horror-castle">
+		<team>
+			<member name="William Gee" email="geewillywizz@live.com" discord="William Gee#2015" country="New Zealand"/>
+		</team>
+		<versions>
+			<version id="6.4" release_date="October 30, 2025">
+				<game type="eDuke32" state="Native">
+					<file name="DNHC.CON" size="217271" type="con" sha1="f057b3a5c3e1b4bebb1cf78af53ff1fb7125db04"/>
+					<file name="dnhc.def" size="235" type="def" sha1="376abcbd2867aa3ad4474f24532a9e70f6f07c03"/>
+					<file name="Duke_Nukem_-_Horror_Castle_6.4.zip" size="93733053" type="zip" sha1="237e18e96c27d27a01d85beceee8bc0eec9de9ff"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="DNHCv6.4.zip" filesize="97790146" version="6.4" game="eDuke32" type="Original Files" sha1="e67c3e855fff9769e1d964e3123e00c32c5b3015"/>
+			<download filename="Duke_Nukem_-_Horror_Castle_6.4-ModMgrE.zip" filesize="93733255" version="6.4" game="eDuke32" type="Mod Manager Files" state="Native" sha1="ad6b35ec361e38742e48a48fbb28093ec7df093d"/>
+		</downloads>
+	</mod>
 </mods>
