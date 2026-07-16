@@ -12172,17 +12172,17 @@
 			<download filename="Epic_1.00000000000000000000000000000001-ModMgrE.zip" filesize="2076955" version="1.00000000000000000000000000000001" game="Atomic" type="Mod Manager Files" state="Native" sha1="91631fcb07eedb6fcb6d369783ff37c9cfad8535"/>
 		</downloads>
 	</mod>
-	<mod name="Retro Deathmatch" id="retro_deathmatch" type="Dukematch" version="0.055" version_type="Beta" website="https://www.moddb.com/mods/retro-deathmatch">
+	<mod name="Retro Deathmatch" id="retro_deathmatch" type="Dukematch" version="0.081" version_type="Beta" website="https://www.moddb.com/mods/retro-deathmatch">
 		<team>
-			<member name="Graphics" website="https://www.moddb.com/mods/retro-deathmatch" discord="Graphics#8685"/>
+			<member name="Graphics" discord="Graphics#8685"/>
 		</team>
 		<versions>
 			<version id="0.053" release_date="March 18, 2023">
 				<type id="Beta">
 					<game type="eDuke32" state="Native">
 						<file name="RETRO_DM.CON" size="152212" type="con" sha1="16587f0f64d4f29514c6e7acb7b4c4b5dd4b96af"/>
-						<file name="RETRO_DM.def" size="382010" type="def" sha1="ef3fa44a435dce9e0c98606217f9fae3987dcd0a"/>
-						<file name="Retro_Deathmatch_0.053.zip" size="23713547" type="zip" sha1="ac0f2de278f99aa61d6254c66e5e1f4de5b4cad3"/>
+						<file name="RETRO_DM.def" size="235100" type="def" sha1="21f54acb9edea4f6f78226a010fd4f9c5f71e3a5"/>
+						<file name="Retro_Deathmatch_0.053.zip" size="23697816" type="zip" sha1="924b76d8a35c86c6789880448f877e682f703cf3"/>
 					</game>
 				</type>
 			</version>
@@ -12190,17 +12190,39 @@
 				<type id="Beta">
 					<game type="eDuke32" state="Native">
 						<file name="RETRO_DM.CON" size="152212" type="con" sha1="16587f0f64d4f29514c6e7acb7b4c4b5dd4b96af"/>
-						<file name="RETRO_DM.def" size="382010" type="def" sha1="ef3fa44a435dce9e0c98606217f9fae3987dcd0a"/>
-						<file name="Retro_Deathmatch_0.055.zip" size="45925538" type="zip" sha1="02dfce6d4612539dbd7c1b2c03652ab87221345c"/>
+						<file name="RETRO_DM.def" size="242392" type="def" sha1="2d02b31835377d627f20b84d15a64c8e1e59d189"/>
+						<file name="Retro_Deathmatch_0.055.zip" size="45931381" type="zip" sha1="6ffd96c19d23de6bbd6bc381bd9de7db3aa7509c"/>
+					</game>
+				</type>
+			</version>
+			<version id="0.062" release_date="May 1, 2024">
+				<type id="Beta">
+					<game type="eDuke32" state="Native">
+						<file name="RETRO_DM.CON" size="151194" type="con" sha1="b253117ee5cc39ee39ea7d095d798cd30d266950"/>
+						<file name="RETRO_DM.def" size="257434" type="def" sha1="1111e2f2437bc42412390d4cadcb223757191813"/>
+						<file name="Retro_Deathmatch_0.062.zip" size="57035869" type="zip" sha1="0534d8757abad35b94ee4e6eaad27a69e8f67514"/>
+					</game>
+				</type>
+			</version>
+			<version id="0.081" release_date="April 13, 2025">
+				<type id="Beta">
+					<game type="eDuke32" state="Native">
+						<file name="RETRO_DM.CON" size="151194" type="con" sha1="b253117ee5cc39ee39ea7d095d798cd30d266950"/>
+						<file name="RETRO_DM.def" size="288842" type="def" sha1="7e4ae52210c77906368b77af231e1ef02a216f72"/>
+						<file name="Retro_Deathmatch_0.081.zip" size="117409714" type="zip" sha1="d7620aa74dda25f271387d8bc452ce8b7eb131eb"/>
 					</game>
 				</type>
 			</version>
 		</versions>
 		<downloads>
-			<download filename="Retro_Deathmatch_v0.053.zip" filesize="24248126" version="0.053" game="eDuke32" type="Original Files" sha1="ad28933a64861738ea01ff29fab35661126960f9"/>
-			<download filename="RetroDeathmatch.v0.055.zip" filesize="46090325" version="0.055" game="eDuke32" type="Original Files" sha1="145ba4f22077d917ee75ff5c81846a982127d36f"/>
-			<download filename="Retro_Deathmatch_0.053-ModMgrE.zip" filesize="21775459" version="0.053" game="eDuke32" type="Mod Manager Files" state="Native" sha1="13814091d6e68e701cfe79d874458469f98e3b1b"/>
-			<download filename="Retro_Deathmatch_0.055-ModMgrE.zip" filesize="43963062" version="0.055" game="eDuke32" type="Mod Manager Files" state="Native" sha1="fb3c76d84d92cadaa41a063e258db95c84c509c8"/>
+			<download filename="Retro_Deathmatch_v0.053.zip" filesize="24248126" version="0.053" version_type="Beta" game="eDuke32" type="Original Files" sha1="ad28933a64861738ea01ff29fab35661126960f9"/>
+			<download filename="RetroDeathmatch.v0.055.zip" filesize="46090325" version="0.055" version_type="Beta" game="eDuke32" type="Original Files" sha1="145ba4f22077d917ee75ff5c81846a982127d36f"/>
+			<download filename="Retro_Deathmatch.v0.062.zip" filesize="56192055" version="0.062" version_type="Beta" game="eDuke32" type="Original Files" sha1="296512a48eb8090427c3e4817c05baafa9a3b8b7"/>
+			<download filename="RetroDeathmatch.v0.081.zip" filesize="117856648" version="0.081" version_type="Beta" game="eDuke32" type="Original Files" sha1="b35b241d5a712fcdb8adf8f341945f0e8606c686"/>
+			<download filename="Retro_Deathmatch_0.053-ModMgrE.zip" filesize="23698002" version="0.053" version_type="Beta" game="eDuke32" type="Mod Manager Files" state="Native" sha1="3d113448788ad035b2012d4c38ab9d012f54aa91"/>
+			<download filename="Retro_Deathmatch_0.055-ModMgrE.zip" filesize="45931567" version="0.055" version_type="Beta" game="eDuke32" type="Mod Manager Files" state="Native" sha1="ad3117b854b8061b11e96a19535f2056f1f8afe4"/>
+			<download filename="Retro_Deathmatch_0.062-ModMgrE.zip" filesize="57036055" version="0.062" version_type="Beta" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c1dc69b56f129d49b036e1886d49f2d6817d1137"/>
+			<download filename="Retro_Deathmatch_0.081-ModMgrE.zip" filesize="117409900" version="0.081" version_type="Beta" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c73e485c1780bcde4b99ca118b3da883c74d8d3a"/>
 		</downloads>
 	</mod>
 	<mod name="WGRealms 2: Siege Breaker" id="wgrealms_2_-_siege_breaker" alias="wg_realms_-_demon_throne" type="Total Conversion" version="1.201" website="https://www.moddb.com/games/wgrealms-2">
