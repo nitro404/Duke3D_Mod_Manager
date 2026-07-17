@@ -4438,21 +4438,29 @@
 			<download filename="Urban_Chaos-ModMgrA.zip" filesize="1066411" game="Atomic" type="Mod Manager Files" state="Native" sha1="f854bcd10bcb0b1bb45d08ce705b1fd585496092"/>
 		</downloads>
 	</mod>
-	<mod name="Vermin Clearance" id="vermin_clearance" type="Episode">
+	<mod name="Vermin Clearance" id="vermin_clearance" type="Episode" version="2.0">
 		<team>
 			<member name="Frode Waksvik" alias="Puritan"/>
 		</team>
 		<versions>
-			<version release_date="November 27, 2002">
+			<version id="1.0" release_date="November 27, 2002">
 				<game type="Atomic" state="Native">
 					<file name="VERMIN.CON" size="151358" type="con" sha1="465db01552223a0afc3e0c1618231f5b8d7649e5"/>
 					<file name="VERMIN.GRP" size="5459115" type="grp" sha1="ac862723ea22f0efadce044e36d766fa23d39779"/>
 				</game>
 			</version>
+			<version id="2.0" release_date="March 20, 2010">
+				<game type="Atomic" state="Native">
+					<file name="VERMIN2.CON" size="151380" type="con" sha1="7c3d303a0a6d7bb1f293b78644b112d8fab29bac"/>
+					<file name="VERMIN2.GRP" size="5424753" type="grp" sha1="a87e0e3ea6e72b61e3d256ac965e04c655b33bd1"/>
+				</game>
+			</version>
 		</versions>
 		<downloads>
-			<download filename="Vermin.zip" filesize="2626193" game="Atomic" type="Original Files" sha1="ba48f3e6423da163d54b9370863fd5166c619c86"/>
-			<download filename="Vermin_Clearance-ModMgrA.zip" filesize="2481038" game="Atomic" type="Mod Manager Files" state="Native" sha1="2184ddc761c3eefb0f4bf6289fbb71aec99cd840"/>
+			<download filename="Vermin.zip" filesize="2626193" version="1.0" game="Atomic" type="Original Files" sha1="ba48f3e6423da163d54b9370863fd5166c619c86"/>
+			<download filename="Vermin2.zip" filesize="2460941" version="2.0" game="Atomic" type="Original Files" sha1="3667b49e4cb710513c7e818c41fbdf1acacd26a5"/>
+			<download filename="Vermin_Clearance_1.0-ModMgrA.zip" filesize="2481038" version="1.0" game="Atomic" type="Mod Manager Files" state="Native" sha1="2184ddc761c3eefb0f4bf6289fbb71aec99cd840"/>
+			<download filename="Vermin_Clearance_2.0-ModMgrA.zip" filesize="2470778" version="2.0" game="Atomic" type="Mod Manager Files" state="Native" sha1="2c84eec6f153300de2ef87ee1ef23a63fb9911a4"/>
 		</downloads>
 	</mod>
 	<mod name="Victimized" id="victimized" type="Total Conversion" version="1.0" website="http://www.execpc.com/~victim">
