@@ -36,6 +36,8 @@ public:
 	const std::string & getSHA1() const;
 	bool isShared() const;
 	std::optional<bool> getShared() const;
+	bool isUsedByAllGameVersions() const;
+	std::optional<bool> getUsedByAllGameVersions() const;
 	const Mod * getParentMod() const;
 	const ModVersion * getParentModVersion() const;
 	const ModVersionType * getParentModVersionType() const;
@@ -47,6 +49,8 @@ public:
 	void setSHA1(const std::string & sha1);
 	void setShared(bool shared);
 	void clearShared();
+	void setUsedByAllGameVersions(bool usedByAllGameVersions);
+	void clearUsedByAllGameVersions();
 
 	rapidjson::Value toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const;
 	tinyxml2::XMLElement * toXML(tinyxml2::XMLDocument * document) const;
@@ -69,6 +73,7 @@ private:
 	std::string m_type;
 	std::string m_sha1;
 	std::optional<bool> m_shared;
+	std::optional<bool> m_usedByAllGameVersions;
 	const ModGameVersion * m_parentModGameVersion;
 };
 

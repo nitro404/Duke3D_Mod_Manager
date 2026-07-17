@@ -517,8 +517,8 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 		return true;
 	}
 
-	std::string modDownloadLocalBasePath(Utilities::joinPaths(settings->downloadsDirectoryPath, settings->modDownloadsDirectoryName, modDirectoryName));
-	std::string modPackageDownloadLocalFilePath(Utilities::joinPaths(modDownloadLocalBasePath, modDownload->getFileName()));
+	std::string modDownloadLocalBasePath(Utilities::joinPaths(settings->downloadsDirectoryPath, settings->modDownloadsDirectoryName));
+	std::string modPackageDownloadLocalFilePath(Utilities::joinPaths(modDownloadLocalBasePath, modDirectoryName, modDownload->getFileName()));
 	std::string modDownloadRemoteFilePath(Utilities::joinPaths(settings->remoteDownloadsDirectoryName, settings->remoteModDownloadsDirectoryName, modDownload->getSubfolder(), modDownload->isForAllGameVersions() ? GameVersion::ALL_VERSIONS_DIRECTORY_NAME : Utilities::toLowerCase(modDirectoryName), modDownload->getFileName()));
 	std::string modDownloadURL(Utilities::joinPaths(httpService->getBaseURL(), modDownloadRemoteFilePath));
 
@@ -675,7 +675,7 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 	if(!standAlone) {
 		notifyModDownloadStatusChanged(modGameVersion, fmt::format("Extracting '{}' mod files from archive package file.", modGameVersion.getParentModVersionType()->getFullName()));
 
-		if(!modDownloadZipArchive->extractAllEntries(modDownloadLocalBasePath, true)) {
+		if(!modDownloadZipArchive->extractAllEntries(Utilities::joinPaths(modDownloadLocalBasePath, modDownload->isForAllGameVersions() ? GameVersion::ALL_VERSIONS_DIRECTORY_NAME : modDirectoryName), true)) {
 			spdlog::error("Failed to extract '{}' mod package file '{}' contents to directory: '{}'.", modGameVersion.getFullName(true), modDownload->getFileName(), modDownloadLocalBasePath);
 			return false;
 		}

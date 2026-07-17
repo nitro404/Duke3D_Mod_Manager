@@ -2639,7 +2639,6 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	std::vector<std::string> allSourceGroupFilePaths;
 	std::string targetCustomFilesBaseDirectoryPath;
 	std::string targetModFilesBaseDirectoryPath;
-	std::string sourceModFilesBaseDirectoryPath;
 	bool customMod = false;
 
 	if(m_arguments != nullptr) {
@@ -2655,25 +2654,20 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 	if(!standAlone && selectedModGameVersion != nullptr) {
 		launchStatus("Collecting list of all mod file paths.");
 
-		std::shared_ptr<GameVersion> targetGameVersion;
+		std::shared_ptr<GameVersion> targetGameVersion(getGameVersions()->getGameVersionWithID(selectedModGameVersion->getGameVersionID()));
 		std::string modDirectoryName;
 
-		if(selectedModGameVersion->isForAllGameVersions()) {
+		if(targetGameVersion != nullptr) {
+			modDirectoryName = targetGameVersion->getModDirectoryName();
+		}
+		else if(selectedModGameVersion->isForAllGameVersions()) {
 			modDirectoryName = GameVersion::ALL_VERSIONS_DIRECTORY_NAME;
 		}
 		else {
-			targetGameVersion = getGameVersions()->getGameVersionWithID(selectedModGameVersion->getGameVersionID());
+			notifyLaunchError(fmt::format("No target game version with ID: '{}'.", selectedModGameVersion->getGameVersionID()));
 
-			if(targetGameVersion == nullptr) {
-				notifyLaunchError(fmt::format("No target game version with ID: '{}'.", selectedModGameVersion->getGameVersionID()));
-
-				return false;
-			}
-
-			modDirectoryName = targetGameVersion->getModDirectoryName();
+			return false;
 		}
-
-		sourceModFilesBaseDirectoryPath = Utilities::joinPaths(getModsDirectoryPath(), modDirectoryName);
 
 		if(selectedGameVersion->doesSupportSubdirectories()) {
 			if(Utilities::areSymlinksSupported()) {
@@ -2696,12 +2690,16 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 			modGroupFiles = selectedModGameVersion->getFilesOfType("grp");
 		}
 
+		std::string sourceModConFilePath;
+		std::string sourceModDefFilePath;
+		std::string sourceModGroupFilePath;
+
 		for(const std::shared_ptr<ModFile> & modConFile : modConFiles) {
 			if(selectedGameVersion->areScriptFilesReadFromGroup()) {
 				targetModConFilePaths.push_back(modConFile->getFileName());
 			}
 			else {
-				sourceModConFilePaths.push_back(Utilities::joinPaths(sourceModFilesBaseDirectoryPath, modConFile->getFileName()));
+				sourceModConFilePaths.push_back(Utilities::joinPaths(getModsDirectoryPath(), modConFile->isUsedByAllGameVersions() ? GameVersion::ALL_VERSIONS_DIRECTORY_NAME : modDirectoryName, modConFile->getFileName()));
 				targetModConFilePaths.push_back(Utilities::joinPaths(targetModFilesBaseDirectoryPath, modConFile->getFileName()));
 			}
 		}
@@ -2711,33 +2709,31 @@ bool ModManager::runSelectedMod(std::shared_ptr<GameVersion> alternateGameVersio
 				targetModDefFilePaths.push_back(modDefFile->getFileName());
 			}
 			else {
-				sourceModDefFilePaths.push_back(Utilities::joinPaths(sourceModFilesBaseDirectoryPath, modDefFile->getFileName()));
+				sourceModDefFilePaths.push_back(Utilities::joinPaths(getModsDirectoryPath(), modDefFile->isUsedByAllGameVersions() ? GameVersion::ALL_VERSIONS_DIRECTORY_NAME : modDirectoryName, modDefFile->getFileName()));
 				targetModDefFilePaths.push_back(Utilities::joinPaths(targetModFilesBaseDirectoryPath, modDefFile->getFileName()));
 			}
 		}
 
 		for(const std::shared_ptr<ModFile> & modGroupFile : modGroupFiles) {
-			sourceModGroupFilePaths.push_back(Utilities::joinPaths(sourceModFilesBaseDirectoryPath, modGroupFile->getFileName()));
+			sourceModGroupFilePaths.push_back(Utilities::joinPaths(getModsDirectoryPath(), modGroupFile->isUsedByAllGameVersions() ? GameVersion::ALL_VERSIONS_DIRECTORY_NAME : modDirectoryName, modGroupFile->getFileName()));
 			targetModGroupFilePaths.push_back(Utilities::joinPaths(targetModFilesBaseDirectoryPath, modGroupFile->getFileName()));
 		}
 
 		for(const std::shared_ptr<ModFile> & modDependencyGroupFile : modDependencyGroupFiles) {
 			std::shared_ptr<GameVersion> modDependencyGameVersion(getGameVersions()->getGameVersionWithID(modDependencyGroupFile->getParentModGameVersion()->getGameVersionID()));
-			const std::string & modDependencyDirectoryName(modDependencyGameVersion->getModDirectoryName());
-			std::string sourceModDependencyFilesBaseDirectoryPath(Utilities::joinPaths(getModsDirectoryPath(), modDependencyDirectoryName));
 			std::string modDependencyFilesBaseDirectoryPath;
 
 			if(selectedGameVersion->doesSupportSubdirectories()) {
 				if(Utilities::areSymlinksSupported()) {
-					modDependencyFilesBaseDirectoryPath = Utilities::joinPaths(settings->modsSymlinkName, modDependencyDirectoryName);
+					modDependencyFilesBaseDirectoryPath = Utilities::joinPaths(settings->modsSymlinkName, modDependencyGameVersion->getModDirectoryName());
 				}
 				else if(!optionalEvaluatedAlternateModFilesInstallPath.has_value()) {
 					modDependencyFilesBaseDirectoryPath = settings->gameTempDirectoryName;
 				}
 			}
 
+			sourceModDependencyGroupFilePaths.push_back(Utilities::joinPaths(getModsDirectoryPath(), modDependencyGroupFile->isUsedByAllGameVersions() ? GameVersion::ALL_VERSIONS_DIRECTORY_NAME : modDependencyGameVersion->getModDirectoryName(), modDependencyGroupFile->getFileName()));
 			targetModDependencyGroupFilePaths.push_back(Utilities::joinPaths(modDependencyFilesBaseDirectoryPath, modDependencyGroupFile->getFileName()));
-			sourceModDependencyGroupFilePaths.push_back(Utilities::joinPaths(sourceModDependencyFilesBaseDirectoryPath, modDependencyGroupFile->getFileName()));
 		}
 
 		allTargetConFilePaths = targetModConFilePaths;
@@ -4636,8 +4632,11 @@ size_t ModManager::checkModForMissingFiles(const Mod & mod, std::optional<size_t
 	std::shared_ptr<ModFile> modFile;
 	std::shared_ptr<GameVersion> gameVersion;
 	std::string modFilePath;
+	std::string alternateModFilePath;
 	std::string gameModsPath;
+	std::string allVersionsGameModsPath(Utilities::joinPaths(settings->modsDirectoryPath, GameVersion::ALL_VERSIONS_DIRECTORY_NAME));
 	std::string modDirectoryName;
+	bool modFileFound = false;
 
 	for(size_t i = (versionIndex.has_value() ? versionIndex.value() : 0); i < (versionIndex.has_value() ? versionIndex.value() + 1 : mod.numberOfVersions()); i++) {
 		if(i >= mod.numberOfVersions()) {
@@ -4682,10 +4681,22 @@ size_t ModManager::checkModForMissingFiles(const Mod & mod, std::optional<size_t
 				}
 
 				for(size_t l = 0; l < modGameVersion->numberOfFiles(); l++) {
+					modFileFound = false;
 					modFile = modGameVersion->getFile(l);
 					modFilePath = Utilities::joinPaths(gameModsPath, modFile->getFileName());
 
-					if(!std::filesystem::is_regular_file(std::filesystem::path(modFilePath))) {
+					if(std::filesystem::is_regular_file(std::filesystem::path(modFilePath))) {
+						modFileFound = true;
+					}
+					else if(std::filesystem::is_directory(allVersionsGameModsPath)) {
+						alternateModFilePath = Utilities::joinPaths(allVersionsGameModsPath, modFile->getFileName());
+
+						if(std::filesystem::is_regular_file(std::filesystem::path(alternateModFilePath))) {
+							modFileFound = true;
+						}
+					}
+
+					if(!modFileFound) {
 						if(gameVersion->areScriptFilesReadFromGroup() && modFile->getType() != "zip" && modFile->getType() != "grp") {
 							continue;
 						}

@@ -21,12 +21,14 @@ static const std::string XML_MOD_FILE_FILE_SIZE_ATTRIBUTE_NAME("size");
 static const std::string XML_MOD_FILE_TYPE_ATTRIBUTE_NAME("type");
 static const std::string XML_MOD_FILE_SHA1_ATTRIBUTE_NAME("sha1");
 static const std::string XML_MOD_FILE_SHARED_ATTRIBUTE_NAME("shared");
-static const std::array<std::string, 5> XML_MOD_FILE_ATTRIBUTE_NAMES = {
+static const std::string XML_MOD_FILE_USED_BY_ALL_GAME_VERSIONS_ATTRIBUTE_NAME("used_by_all_game_versions");
+static const std::array<std::string, 6> XML_MOD_FILE_ATTRIBUTE_NAMES = {
 	XML_MOD_FILE_FILE_NAME_ATTRIBUTE_NAME,
 	XML_MOD_FILE_FILE_SIZE_ATTRIBUTE_NAME,
 	XML_MOD_FILE_TYPE_ATTRIBUTE_NAME,
 	XML_MOD_FILE_SHA1_ATTRIBUTE_NAME,
-	XML_MOD_FILE_SHARED_ATTRIBUTE_NAME
+	XML_MOD_FILE_SHARED_ATTRIBUTE_NAME,
+	XML_MOD_FILE_USED_BY_ALL_GAME_VERSIONS_ATTRIBUTE_NAME
 };
 
 static constexpr const char * JSON_MOD_FILE_FILE_NAME_PROPERTY_NAME = "fileName";
@@ -34,12 +36,14 @@ static constexpr const char * JSON_MOD_FILE_FILE_SIZE_PROPERTY_NAME = "fileSize"
 static constexpr const char * JSON_MOD_FILE_TYPE_PROPERTY_NAME = "type";
 static constexpr const char * JSON_MOD_FILE_SHA1_PROPERTY_NAME = "sha1";
 static constexpr const char * JSON_MOD_FILE_SHARED_PROPERTY_NAME = "shared";
-static const std::array<std::string_view, 5> JSON_MOD_FILE_PROPERTY_NAMES = {
+static constexpr const char * JSON_MOD_FILE_USED_BY_ALL_GAME_VERSIONS_PROPERTY_NAME = "usedByAllGameVersions";
+static const std::array<std::string_view, 6> JSON_MOD_FILE_PROPERTY_NAMES = {
 	JSON_MOD_FILE_FILE_NAME_PROPERTY_NAME,
 	JSON_MOD_FILE_FILE_SIZE_PROPERTY_NAME,
 	JSON_MOD_FILE_TYPE_PROPERTY_NAME,
 	JSON_MOD_FILE_SHA1_PROPERTY_NAME,
-	JSON_MOD_FILE_SHARED_PROPERTY_NAME
+	JSON_MOD_FILE_SHARED_PROPERTY_NAME,
+	JSON_MOD_FILE_USED_BY_ALL_GAME_VERSIONS_PROPERTY_NAME
 };
 
 ModFile::ModFile(const std::string & fileName, uint64_t fileSize, const std::string & type, const std::string & sha1)
@@ -57,6 +61,7 @@ ModFile::ModFile(ModFile && f) noexcept
 	, m_type(std::move(f.m_type))
 	, m_sha1(std::move(f.m_sha1))
 	, m_shared(f.m_shared)
+	, m_usedByAllGameVersions(f.m_usedByAllGameVersions)
 	, m_parentModGameVersion(nullptr) { }
 
 ModFile::ModFile(const ModFile & f)
@@ -66,6 +71,7 @@ ModFile::ModFile(const ModFile & f)
 	, m_type(f.m_type)
 	, m_sha1(f.m_sha1)
 	, m_shared(f.m_shared)
+	, m_usedByAllGameVersions(f.m_usedByAllGameVersions)
 	, m_parentModGameVersion(nullptr) { }
 
 ModFile & ModFile::operator = (ModFile && f) noexcept {
@@ -76,6 +82,7 @@ ModFile & ModFile::operator = (ModFile && f) noexcept {
 		m_type = std::move(f.m_type);
 		m_sha1 = std::move(f.m_sha1);
 		m_shared = f.m_shared;
+		m_usedByAllGameVersions = f.m_usedByAllGameVersions;
 	}
 
 	return *this;
@@ -88,6 +95,7 @@ ModFile & ModFile::operator = (const ModFile & f) {
 	m_type = f.m_type;
 	m_sha1 = f.m_sha1;
 	m_shared = f.m_shared;
+	m_usedByAllGameVersions = f.m_usedByAllGameVersions;
 
 	return *this;
 }
@@ -126,6 +134,14 @@ bool ModFile::isShared() const {
 
 std::optional<bool> ModFile::getShared() const {
 	return m_shared;
+}
+
+bool ModFile::isUsedByAllGameVersions() const {
+	return m_usedByAllGameVersions.has_value() ? m_usedByAllGameVersions.value() : false;
+}
+
+std::optional<bool> ModFile::getUsedByAllGameVersions() const {
+	return m_usedByAllGameVersions;
 }
 
 const Mod * ModFile::getParentMod() const {
@@ -184,6 +200,14 @@ void ModFile::clearShared() {
 	m_shared.reset();
 }
 
+void ModFile::setUsedByAllGameVersions(bool usedByAllGameVersions) {
+	m_usedByAllGameVersions = usedByAllGameVersions;
+}
+
+void ModFile::clearUsedByAllGameVersions() {
+	m_usedByAllGameVersions.reset();
+}
+
 void ModFile::setParentModGameVersion(const ModGameVersion * modGameVersion) {
 	m_parentModGameVersion = modGameVersion;
 }
@@ -201,6 +225,10 @@ rapidjson::Value ModFile::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAl
 
 	if(m_shared.has_value()) {
 		modFileValue.AddMember(rapidjson::StringRef(JSON_MOD_FILE_SHARED_PROPERTY_NAME), rapidjson::Value(m_shared.value()), allocator);
+	}
+
+	if(m_usedByAllGameVersions.has_value()) {
+		modFileValue.AddMember(rapidjson::StringRef(JSON_MOD_FILE_USED_BY_ALL_GAME_VERSIONS_PROPERTY_NAME), rapidjson::Value(m_usedByAllGameVersions.value()), allocator);
 	}
 
 	if(!m_sha1.empty()) {
@@ -228,6 +256,10 @@ tinyxml2::XMLElement * ModFile::toXML(tinyxml2::XMLDocument * document) const {
 
 	if(m_shared.has_value()) {
 		modFileElement->SetAttribute(XML_MOD_FILE_SHARED_ATTRIBUTE_NAME.c_str(), m_shared.value());
+	}
+
+	if(m_usedByAllGameVersions.has_value()) {
+		modFileElement->SetAttribute(XML_MOD_FILE_USED_BY_ALL_GAME_VERSIONS_ATTRIBUTE_NAME.c_str(), m_usedByAllGameVersions.value());
 	}
 
 	if(!m_sha1.empty()) {
@@ -361,6 +393,18 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const rapidjson::Value & modFileValu
 		newModFile->setShared(modFileSharedValue.GetBool());
 	}
 
+	// parse the mod file used by all game versions property
+	if(modFileValue.HasMember(JSON_MOD_FILE_USED_BY_ALL_GAME_VERSIONS_PROPERTY_NAME)) {
+		const rapidjson::Value & modFileUsedByAllGameVersionsValue = modFileValue[JSON_MOD_FILE_USED_BY_ALL_GAME_VERSIONS_PROPERTY_NAME];
+
+		if(!modFileUsedByAllGameVersionsValue.IsBool()) {
+			spdlog::error("Mod file '{}' property has invalid type: '{}', expected 'boolean'.", JSON_MOD_FILE_USED_BY_ALL_GAME_VERSIONS_PROPERTY_NAME, Utilities::typeToString(modFileUsedByAllGameVersionsValue.GetType()));
+			return nullptr;
+		}
+
+		newModFile->setUsedByAllGameVersions(modFileUsedByAllGameVersionsValue.GetBool());
+	}
+
 	return newModFile;
 }
 
@@ -407,6 +451,7 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const tinyxml2::XMLElement * modFile
 
 	// read the mod file attributes
 	const char * modFileSharedData = modFileElement->Attribute(XML_MOD_FILE_SHARED_ATTRIBUTE_NAME.c_str());
+	const char * modFileUsedByAllGameVersionsData = modFileElement->Attribute(XML_MOD_FILE_USED_BY_ALL_GAME_VERSIONS_ATTRIBUTE_NAME.c_str());
 	const char * modFileName = modFileElement->Attribute(XML_MOD_FILE_FILE_NAME_ATTRIBUTE_NAME.c_str());
 	const char * modFileSizeData = modFileElement->Attribute(XML_MOD_FILE_FILE_SIZE_ATTRIBUTE_NAME.c_str());
 
@@ -465,6 +510,17 @@ std::unique_ptr<ModFile> ModFile::parseFrom(const tinyxml2::XMLElement * modFile
 		newModFile->setShared(shared);
 	}
 
+	if(modFileUsedByAllGameVersionsData != nullptr) {
+		bool usedByAllGameVersions = Utilities::parseBoolean(modFileUsedByAllGameVersionsData, &error);
+
+		if(error) {
+			spdlog::error("Attribute '{}' in element '{}' has an invalid value: '{}', expected boolean.", XML_MOD_FILE_USED_BY_ALL_GAME_VERSIONS_ATTRIBUTE_NAME, XML_MOD_FILE_ELEMENT_NAME, modFileUsedByAllGameVersionsData);
+			return nullptr;
+		}
+
+		newModFile->setUsedByAllGameVersions(usedByAllGameVersions);
+	}
+
 	return newModFile;
 }
 
@@ -490,6 +546,7 @@ bool ModFile::operator == (const ModFile & modFile) const {
 
 	return m_fileSize == modFile.m_fileSize &&
 		   m_shared == modFile.m_shared &&
+		   m_usedByAllGameVersions == m_usedByAllGameVersions &&
 		   Utilities::areStringsEqualIgnoreCase(m_fileName, modFile.m_fileName) &&
 		   Utilities::areStringsEqualIgnoreCase(m_type, modFile.m_type) &&
 		   m_sha1 == modFile.m_sha1;
