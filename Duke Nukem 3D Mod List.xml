@@ -2783,6 +2783,7 @@
 			<mod id="driving_home_for_christmas"/>
 			<mod id="fallout_freeze"/>
 			<mod id="countdown_to_christmas"/>
+			<mod id="pere_noel_duke_nukem"/>
 		</similar>
 	</mod>
 	<mod name="Nuke the Bastards" id="nuke_the_bastards" type="Episode">
@@ -4793,6 +4794,7 @@
 			<mod id="driving_home_for_christmas"/>
 			<mod id="fallout_freeze"/>
 			<mod id="countdown_to_christmas"/>
+			<mod id="pere_noel_duke_nukem"/>
 		</similar>
 	</mod>
 	<mod name="Y2K Nuklear Meltdown" id="y2k_nuklear_meltdown" type="Total Conversion" version="Demo 1.2" website="http://www.dukeworld.com/dukey2k">
@@ -6650,6 +6652,7 @@
 			<mod id="driving_home_for_christmas"/>
 			<mod id="fallout_freeze"/>
 			<mod id="countdown_to_christmas"/>
+			<mod id="pere_noel_duke_nukem"/>
 		</similar>
 	</mod>
 	<mod name="Glock 18" id="glock_18" type="Weapon Patch">
@@ -7308,6 +7311,7 @@
 			<mod id="duke_nukem_xmas_2014"/>
 			<mod id="fallout_freeze"/>
 			<mod id="countdown_to_christmas"/>
+			<mod id="pere_noel_duke_nukem"/>
 		</similar>
 	</mod>
 	<mod name="The End of the World" id="the_end_of_the_world" type="Partial Conversion">
@@ -9941,6 +9945,7 @@
 			<mod id="driving_home_for_christmas"/>
 			<mod id="fallout_freeze"/>
 			<mod id="countdown_to_christmas"/>
+			<mod id="pere_noel_duke_nukem"/>
 		</similar>
 	</mod>
 	<mod name="DukeRUS" id="dukerus" type="Translation" website="http://M210.duke4.net">
@@ -10332,6 +10337,7 @@
 			<mod id="driving_home_for_christmas"/>
 			<mod id="duke_nukem_xmas_2014"/>
 			<mod id="countdown_to_christmas"/>
+			<mod id="pere_noel_duke_nukem"/>
 		</similar>
 	</mod>
 	<mod name="Haunted Nukem" id="haunted_nukem" type="Total Conversion" version="2.1" website="https://www.moddb.com/mods/haunted-nukem">
@@ -11420,6 +11426,7 @@
 			<mod id="duke_nukem_xmas_2014"/>
 			<mod id="driving_home_for_christmas"/>
 			<mod id="fallout_freeze"/>
+			<mod id="pere_noel_duke_nukem"/>
 		</similar>
 	</mod>
 	<mod name="Duke Nukem in Russia (New Year)" id="duke_nukem_in_russia" type="Total Conversion" website="http://www.coolduke.narod.ru/maps.htm">
@@ -15798,6 +15805,28 @@
 		</downloads>
 		<similar>
 			<mod id="south_park_tc"/>
+		</similar>
+	</mod>
+	<mod name="Père Noël Duke Nukem" id="pere_noel_duke_nukem" type="Duke Replacement">
+		<versions>
+			<version release_date="December 30, 1998">
+				<game type="All" state="Native">
+					<file name="NOEL3D.GRP" size="949202" type="grp" sha1="c9401e3f9ac0f6cd0f6e18af30de9c3416322eb9"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="noeld3D.zip" filesize="293278" game="All" type="Original Files" sha1="37ab99c3cee42b1a7b9e99a1adc0315270c17627"/>
+			<download filename="Pere_Noel_Duke_Nukem-ModMgr.zip" filesize="285588" game="All" type="Mod Manager Files" state="Native" sha1="cc49f4b41fb5753b0ac9a4edcfcbd9453b50bf91"/>
+		</downloads>
+		<similar>
+			<mod id="nuclear_winter"/>
+			<mod id="xmas_duke_96"/>
+			<mod id="xmas_1997"/>
+			<mod id="duke_nukem_xmas_2014"/>
+			<mod id="driving_home_for_christmas"/>
+			<mod id="fallout_freeze"/>
+			<mod id="countdown_to_christmas"/>
 		</similar>
 	</mod>
 </mods>
