@@ -7115,13 +7115,16 @@
 			<version release_date="July 21, 1997">
 				<game type="Atomic" state="Native">
 					<file name="GLOBMELT.CON" size="181577" type="con" sha1="d6da407df1a3298652ab1bc18e9d3dbee5bcdb13"/>
-					<file name="GLOBMELT.GRP" size="34950459" type="grp" sha1="8a2d17b045704774d2b1a81c9b7d6410c824597a"/>
+					<file name="GLOBMELT.GRP" size="1782040" type="grp" sha1="4efa23775c07f647b0e058066713231e01d3cb21"/>
 				</game>
+				<dependencies>
+					<dependency id="the_gate" version="1.0"/>
+				</dependencies>
 			</version>
 		</versions>
 		<downloads>
 			<download filename="globemelt.zip" filesize="479163" game="Atomic" type="Original Files" sha1="7e0ab66bc46bf312e6ea1cd06ae46828e45df964"/>
-			<download filename="Global_Meltdown-ModMgrA.zip" filesize="12709902" game="Atomic" type="Mod Manager Files" state="Native" sha1="fcf385f5618b8d32dccfbdfdc8bceb96e1c1822e"/>
+			<download filename="Global_Meltdown-ModMgrA.zip" filesize="500851" game="Atomic" type="Mod Manager Files" state="Native" sha1="ea01eba1e1d42100ca8371fe853f107bb24bd3a6"/>
 		</downloads>
 	</mod>
 	<mod name="Industrial Complex Episode" id="industrial_complex" type="Episode">
