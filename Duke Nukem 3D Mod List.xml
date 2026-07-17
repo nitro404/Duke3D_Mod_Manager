@@ -15749,4 +15749,22 @@
 			<mod id="duke_nukem_64"/>
 		</similar>
 	</mod>
+	<mod name="The SkyTown" id="the_skytown" type="Total Conversion" website="https://lzg.duke4.net/sttc.htm">
+		<team>
+			<member name="Maxim Chinyakin" alias="Lezing" email="slike1990@mail.ru"/>
+		</team>
+		<versions>
+			<version release_date="July 8, 2010">
+				<game type="eDuke32" state="Native">
+					<file name="sttcGAME.CON" size="151929" type="con" sha1="1323d46cd59ec272783c6c3e316897d72cb54a42"/>
+					<file name="sttc.def" size="2847" type="def" sha1="a63e7ad10c81e5572ab4632aea519079357bb029"/>
+					<file name="The_SkyTown.zip" size="3693316" type="zip" sha1="e9905c125dc0c041bd3bc6158e7a5ac09256d2e2"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="sttcwips.zip" filesize="3745189" game="eDuke32" type="Original Files" sha1="1f2b75499d0f4a68a813d5a243b57cd11d7c20eb"/>
+			<download filename="The_SkyTown-ModMgrE.zip" filesize="3693480" game="eDuke32" type="Mod Manager Files" state="Native" sha1="34a22fd57394f51fe935f82bfe5b943d99eb525c"/>
+		</downloads>
+	</mod>
 </mods>
