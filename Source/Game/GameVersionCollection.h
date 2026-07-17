@@ -36,7 +36,6 @@ public:
 	std::string getLongNameOfGameVersionWithID(const std::string & gameVersionID) const;
 	std::string getShortNameOfGameVersionWithID(const std::string & gameVersionID) const;
 	const std::vector<std::shared_ptr<GameVersion>> & getGameVersions() const;
-	std::vector<std::shared_ptr<GameVersion>> getGameVersionsCompatibleWith(size_t index, bool includeSupported = false, std::optional<bool> configured = {}) const;
 	std::vector<std::shared_ptr<GameVersion>> getGameVersionsCompatibleWith(const std::string & gameVersionID, bool includeSupported = false, std::optional<bool> configured = {}) const;
 	std::vector<std::shared_ptr<GameVersion>> getGameVersionsCompatibleWith(const GameVersion & gameVersion, bool includeSupported = false, std::optional<bool> configured = {}) const;
 	std::vector<std::shared_ptr<GameVersion>> getGameVersionsCompatibleWith(const ModGameVersion & modGameVersion, bool includeSupported = false, std::optional<bool> configured = {}) const;

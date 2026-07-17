@@ -39,6 +39,7 @@ public:
 	std::shared_ptr<GameVersion> getStandAloneGameVersion() const;
 	std::string getFullName(bool includeGameVersionID) const;
 	bool isStandAlone() const;
+	bool isForAllGameVersions() const;
 	bool isConverted() const;
 	const Mod * getParentMod() const;
 	const ModVersion * getParentModVersion() const;

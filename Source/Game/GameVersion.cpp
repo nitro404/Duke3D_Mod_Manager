@@ -126,6 +126,8 @@ static const std::string GAME_CFG_VARIABLE_NAME("GAMECFG");
 static const std::regex GAME_CFG_VARIABLE_REGEX(fmt::format("^.*{0}{2}:[^{0}{1}]+{1}.*$", FilePathVariableEvaluator::DEFAULT_VARIABLE_START_CHAR, FilePathVariableEvaluator::DEFAULT_VARIABLE_END_CHAR, GAME_CFG_VARIABLE_NAME));
 
 const std::string GameVersion::ALL_VERSIONS("all");
+const std::string GameVersion::ALL_VERSIONS_SHORT_NAME("All Versions");
+const std::string GameVersion::ALL_VERSIONS_LONG_NAME("All Versions");
 const std::string GameVersion::ALL_VERSIONS_DIRECTORY_NAME("all");
 const std::string GameVersion::STANDALONE("stand-alone");
 const std::string GameVersion::STANDALONE_DIRECTORY_NAME("stand-alone");
@@ -2050,7 +2052,7 @@ bool GameVersion::hasCompatibleGameVersionWithID(const std::string & gameVersion
 
 size_t GameVersion::indexOfCompatibleGameVersionWithID(const std::string & gameVersionID) const {
 	auto compatibleGameVersionIterator = std::find_if(m_compatibleGameVersionIdentifiers.cbegin(), m_compatibleGameVersionIdentifiers.cend(), [&gameVersionID](const std::string & currentGameVersionID) {
-		return Utilities::areStringsEqualIgnoreCase(gameVersionID, currentGameVersionID);
+		return Utilities::areStringsEqualIgnoreCase(gameVersionID, currentGameVersionID) || Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ALL_VERSIONS);
 	});
 
 	if(compatibleGameVersionIterator == m_compatibleGameVersionIdentifiers.cend()) {
@@ -2078,7 +2080,7 @@ const std::vector<std::string> & GameVersion::getCompatibleGameVersionIdentifier
 
 std::shared_ptr<ModGameVersion> GameVersion::getMostCompatibleModGameVersion(const std::vector<std::shared_ptr<ModGameVersion>> & modGameVersions) const {
 	for(std::vector<std::shared_ptr<ModGameVersion>>::const_iterator i = modGameVersions.begin(); i != modGameVersions.end(); ++i) {
-		if(Utilities::areStringsEqualIgnoreCase(m_id, (*i)->getGameVersionID())) {
+		if(Utilities::areStringsEqualIgnoreCase(m_id, (*i)->getGameVersionID()) || Utilities::areStringsEqualIgnoreCase((*i)->getGameVersionID(), GameVersion::ALL_VERSIONS)) {
 			return *i;
 		}
 	}
@@ -2096,7 +2098,7 @@ std::vector<std::shared_ptr<ModGameVersion>> GameVersion::getCompatibleModGameVe
 	std::vector<std::shared_ptr<ModGameVersion>> compatibleModGameVersions;
 
 	for(std::vector<std::shared_ptr<ModGameVersion>>::const_iterator i = modGameVersions.begin(); i != modGameVersions.end(); ++i) {
-		if(Utilities::areStringsEqualIgnoreCase(m_id, (*i)->getGameVersionID())) {
+		if(Utilities::areStringsEqualIgnoreCase(m_id, (*i)->getGameVersionID()) || Utilities::areStringsEqualIgnoreCase((*i)->getGameVersionID(), GameVersion::ALL_VERSIONS)) {
 			compatibleModGameVersions.insert(compatibleModGameVersions.begin(), *i);
 			continue;
 		}
@@ -2122,7 +2124,7 @@ std::vector<std::shared_ptr<GameVersion>> GameVersion::getCompatibleGameVersions
 
 	for(const std::string & gameVersionID : m_compatibleGameVersionIdentifiers) {
 		std::vector<std::shared_ptr<GameVersion>>::const_iterator compatibleGameVersionIterator(std::find_if(gameVersions.cbegin(), gameVersions.cend(), [gameVersionID](const std::shared_ptr<GameVersion> & currentGameVersion) {
-			return Utilities::areStringsEqualIgnoreCase(currentGameVersion->getID(), gameVersionID);
+			return Utilities::areStringsEqualIgnoreCase(currentGameVersion->getID(), gameVersionID) || Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ALL_VERSIONS);
 		}));
 
 		if(compatibleGameVersionIterator != gameVersions.cend() && *compatibleGameVersionIterator != nullptr) {

@@ -456,23 +456,32 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 	HTTPService * httpService = HTTPService::getInstance();
 
 	bool standAlone = modGameVersion.isStandAlone();
+	bool allGameVersions = modGameVersion.isForAllGameVersions();
 	std::shared_ptr<GameVersion> gameVersion;
+	std::string modDirectoryName;
 
-	if(standAlone) {
-		gameVersion = modGameVersion.getStandAloneGameVersion();
+	if(allGameVersions) {
+		modDirectoryName = GameVersion::ALL_VERSIONS_DIRECTORY_NAME;
 	}
 	else {
-		if(!gameVersions.isValid()) {
-			spdlog::error("Failed to download mod, invalid game version collection provided!");
+		if(standAlone) {
+			gameVersion = modGameVersion.getStandAloneGameVersion();
+		}
+		else {
+			if(!gameVersions.isValid()) {
+				spdlog::error("Failed to download mod, invalid game version collection provided!");
+				return false;
+			}
+
+			gameVersion = gameVersions.getGameVersionWithID(modGameVersion.getGameVersionID());
+		}
+
+		if(gameVersion == nullptr) {
+			spdlog::error("Failed to download '{}' mod, could not find game version with ID '{}'! Is your game version configuration file missing information?", modGameVersion.getParentModVersionType()->getFullName(), modGameVersion.getGameVersionID());
 			return false;
 		}
 
-		gameVersion = gameVersions.getGameVersionWithID(modGameVersion.getGameVersionID());
-	}
-
-	if(gameVersion == nullptr) {
-		spdlog::error("Failed to download '{}' mod, could not find game version with ID '{}'! Is your game version configuration file missing information?", modGameVersion.getParentModVersionType()->getFullName(), modGameVersion.getGameVersionID());
-		return false;
+		modDirectoryName = gameVersion->getModDirectoryName();
 	}
 
 	std::shared_ptr<ModDownload> modDownload(modGameVersion.getDownload());
@@ -508,9 +517,9 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 		return true;
 	}
 
-	std::string modDownloadLocalBasePath(Utilities::joinPaths(settings->downloadsDirectoryPath, settings->modDownloadsDirectoryName, gameVersion->getModDirectoryName()));
+	std::string modDownloadLocalBasePath(Utilities::joinPaths(settings->downloadsDirectoryPath, settings->modDownloadsDirectoryName, modDirectoryName));
 	std::string modPackageDownloadLocalFilePath(Utilities::joinPaths(modDownloadLocalBasePath, modDownload->getFileName()));
-	std::string modDownloadRemoteFilePath(Utilities::joinPaths(settings->remoteDownloadsDirectoryName, settings->remoteModDownloadsDirectoryName, modDownload->getSubfolder(), modDownload->isForAllGameVersions() ? GameVersion::ALL_VERSIONS_DIRECTORY_NAME : Utilities::toLowerCase(gameVersion->getModDirectoryName()), modDownload->getFileName()));
+	std::string modDownloadRemoteFilePath(Utilities::joinPaths(settings->remoteDownloadsDirectoryName, settings->remoteModDownloadsDirectoryName, modDownload->getSubfolder(), modDownload->isForAllGameVersions() ? GameVersion::ALL_VERSIONS_DIRECTORY_NAME : Utilities::toLowerCase(modDirectoryName), modDownload->getFileName()));
 	std::string modDownloadURL(Utilities::joinPaths(httpService->getBaseURL(), modDownloadRemoteFilePath));
 
 	spdlog::info("Downloading '{}' mod from: '{}'...", modGameVersion.getFullName(true), modDownloadURL);
@@ -574,7 +583,7 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 	spdlog::debug("Mod '{}' package file '{}' file integrity verified!", modGameVersion.getFullName(true), modDownload->getFileName());
 
 	if(standAlone) {
-		spdlog::info("Mod '{}' package file saved to '{}' mod download directory.", modGameVersion.getFullName(true), gameVersion->getModDirectoryName());
+		spdlog::info("Mod '{}' package file saved to '{}' mod download directory.", modGameVersion.getFullName(true), modDirectoryName);
 
 		notifyModDownloadStatusChanged(modGameVersion, "Saving stand-alone mod package file archive to file system.");
 
@@ -621,7 +630,7 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 			modFile = modGameVersion.getFile(i);
 
 			// eDuke32 mod files can be read straight out of the group or zip file, and are not stored separately
-			if(gameVersion->areZipArchiveGroupsSupported() && modFile->getType() != "zip") {
+			if(!allGameVersions && gameVersion->areZipArchiveGroupsSupported() && modFile->getType() != "zip") {
 				continue;
 			}
 
@@ -674,7 +683,7 @@ bool DownloadManager::downloadModGameVersion(const ModGameVersion & modGameVersi
 
 	notifyModDownloadStatusChanged(modGameVersion, "Updating download cache.");
 
-	m_downloadCache->updateCachedPackageFile(*modDownload, modGameVersion, *gameVersion, modDownloadZipArchive->getCompressedSize(), response->getETag());
+	m_downloadCache->updateCachedPackageFile(*modDownload, modGameVersion, allGameVersions ? GameVersion::ALL_VERSIONS : gameVersion->getID(), allGameVersions ? false : gameVersion->areScriptFilesReadFromGroup(), modDownloadZipArchive->getCompressedSize(), response->getETag());
 
 	size_t numberOfFiles = modDownloadZipArchive->numberOfFiles();
 
@@ -729,23 +738,32 @@ bool DownloadManager::uninstallModGameVersion(const ModGameVersion & modGameVers
 	HTTPService * httpService = HTTPService::getInstance();
 
 	bool standAlone = modGameVersion.isStandAlone();
+	bool allGameVersions = modGameVersion.isForAllGameVersions();
 	std::shared_ptr<GameVersion> gameVersion;
+	std::string modDirectoryName;
 
-	if(standAlone) {
-		gameVersion = modGameVersion.getStandAloneGameVersion();
+	if(allGameVersions) {
+		modDirectoryName = GameVersion::ALL_VERSIONS_DIRECTORY_NAME;
 	}
 	else {
-		if(!gameVersions.isValid()) {
-			spdlog::error("Failed to download mod, invalid game version collection provided!");
+		if(standAlone) {
+			gameVersion = modGameVersion.getStandAloneGameVersion();
+		}
+		else {
+			if(!gameVersions.isValid()) {
+				spdlog::error("Failed to download mod, invalid game version collection provided!");
+				return false;
+			}
+
+			gameVersion = gameVersions.getGameVersionWithID(modGameVersion.getGameVersionID());
+		}
+
+		if(gameVersion == nullptr) {
+			spdlog::error("Failed to download '{}' mod, could not find game version with ID '{}'! Is your game version configuration file missing information?", modGameVersion.getParentModVersionType()->getFullName(), modGameVersion.getGameVersionID());
 			return false;
 		}
 
-		gameVersion = gameVersions.getGameVersionWithID(modGameVersion.getGameVersionID());
-	}
-
-	if(gameVersion == nullptr) {
-		spdlog::error("Failed to download '{}' mod, could not find game version with ID '{}'! Is your game version configuration file missing information?", modGameVersion.getParentModVersionType()->getFullName(), modGameVersion.getGameVersionID());
-		return false;
+		modDirectoryName = gameVersion->getModDirectoryName();
 	}
 
 	std::shared_ptr<ModDownload> modDownload(modGameVersion.getDownload());
@@ -762,7 +780,7 @@ bool DownloadManager::uninstallModGameVersion(const ModGameVersion & modGameVers
 		return false;
 	}
 
-	std::string modDownloadLocalBasePath(Utilities::joinPaths(settings->downloadsDirectoryPath, settings->modDownloadsDirectoryName, gameVersion->getModDirectoryName()));
+	std::string modDownloadLocalBasePath(Utilities::joinPaths(settings->downloadsDirectoryPath, settings->modDownloadsDirectoryName, modDirectoryName));
 	std::string modPackageDownloadLocalFilePath(Utilities::joinPaths(modDownloadLocalBasePath, modDownload->getFileName()));
 
 	if(standAlone) {

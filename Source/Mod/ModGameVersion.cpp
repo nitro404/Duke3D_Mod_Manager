@@ -268,6 +268,10 @@ bool ModGameVersion::isStandAlone() const {
 	return m_standAloneGameVersion != nullptr;
 }
 
+bool ModGameVersion::isForAllGameVersions() const {
+	return Utilities::areStringsEqualIgnoreCase(m_gameVersionID, GameVersion::ALL_VERSIONS);
+}
+
 bool ModGameVersion::isConverted() const {
 	return m_converted;
 }
@@ -1735,6 +1739,10 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const tinyxml2::XMLEle
 }
 
 bool ModGameVersion::isGameVersionSupported(const GameVersion & gameVersion) const {
+	if(isForAllGameVersions()) {
+		return true;
+	}
+
 	if(isStandAlone()) {
 		return false;
 	}
@@ -1744,6 +1752,10 @@ bool ModGameVersion::isGameVersionSupported(const GameVersion & gameVersion) con
 }
 
 bool ModGameVersion::isGameVersionCompatible(const GameVersion & gameVersion) const {
+	if(isForAllGameVersions()) {
+		return true;
+	}
+
 	if(isStandAlone()) {
 		return false;
 	}
@@ -1759,7 +1771,12 @@ bool ModGameVersion::isValid(bool skipFileInfoValidation, bool skipGroupFileVali
 		return false;
 	}
 
-	if(!isStandAlone() && !hasFileOfType("grp") && !hasFileOfType("zip")) {
+	if(isStandAlone()) {
+		if(isForAllGameVersions()) {
+			return false;
+		}
+	}
+	else if(!hasFileOfType("grp") && !hasFileOfType("zip")) {
 		if(!skipGroupFileValidation && (m_parentModVersionType == nullptr || (m_parentModVersionType != nullptr && !m_parentModVersionType->hasDependencies()))) {
 			return false;
 		}

@@ -1053,7 +1053,7 @@ bool ModCollection::checkGameVersions(const GameVersionCollection & gameVersions
 				for(size_t l = 0; l < modVersionType->numberOfGameVersions(); l++) {
 					modGameVersion = modVersionType->getGameVersion(l);
 
-					if(!modGameVersion->isStandAlone() && !gameVersions.hasGameVersionWithID(modGameVersion->getGameVersionID())) {
+					if(!modGameVersion->isStandAlone() && !modGameVersion->isForAllGameVersions() && !gameVersions.hasGameVersionWithID(modGameVersion->getGameVersionID())) {
 						if(verbose) {
 							spdlog::warn("Mod '{}' contains unknown game version ID: '{}'.", mod->getFullName(j, k), modGameVersion->getGameVersionID());
 						}

@@ -138,7 +138,7 @@ std::shared_ptr<CachedFile> DownloadCache::getCachedFile(const ModFile & modFile
 	return cachedPackageFile->getCachedFileWithName(modFile.getFileName());
 }
 
-bool DownloadCache::updateCachedPackageFile(const ModDownload & modDownload, const ModGameVersion & modGameVersion, const GameVersion & gameVersion, uint64_t fileSize, const std::string & eTag) {
+bool DownloadCache::updateCachedPackageFile(const ModDownload & modDownload, const ModGameVersion & modGameVersion, const std::string & gameVersionID, bool areScriptFilesReadFromGroup, uint64_t fileSize, const std::string & eTag) {
 	if(!modDownload.isValid()) {
 		spdlog::error("Failed to update cached package file, mod download is invalid.");
 		return false;
@@ -159,7 +159,7 @@ bool DownloadCache::updateCachedPackageFile(const ModDownload & modDownload, con
 		return false;
 	}
 
-	if(!Utilities::areStringsEqualIgnoreCase(modGameVersion.getGameVersionID(), gameVersion.getID())) {
+	if(!Utilities::areStringsEqualIgnoreCase(modGameVersion.getGameVersionID(), gameVersionID)) {
 		spdlog::error("Failed to update cached package file, mod game version ID does not match provided game version ID.");
 		return false;
 	}
@@ -185,7 +185,7 @@ bool DownloadCache::updateCachedPackageFile(const ModDownload & modDownload, con
 	for(size_t i = 0; i < modGameVersion.numberOfFiles(); i++) {
 		modFile = modGameVersion.getFile(i);
 
-		if(gameVersion.areScriptFilesReadFromGroup() && modFile->getType() != "zip" && modFile->getType() != "grp") {
+		if(areScriptFilesReadFromGroup && modFile->getType() != "zip" && modFile->getType() != "grp") {
 			continue;
 		}
 

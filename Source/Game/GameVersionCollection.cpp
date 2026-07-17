@@ -141,9 +141,14 @@ std::shared_ptr<GameVersion> GameVersionCollection::getGameVersionWithID(const s
 }
 
 std::string GameVersionCollection::getLongNameOfGameVersionWithID(const std::string & gameVersionID) const {
+	if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ALL_VERSIONS)) {
+		return GameVersion::ALL_VERSIONS_LONG_NAME;
+	}
+
 	std::shared_ptr<GameVersion> gameVersion(getGameVersionWithID(gameVersionID));
 
 	if(gameVersion == nullptr) {
+		spdlog::warn("No game version with ID '{}' found.", gameVersionID);
 		return {};
 	}
 
@@ -151,9 +156,14 @@ std::string GameVersionCollection::getLongNameOfGameVersionWithID(const std::str
 }
 
 std::string GameVersionCollection::getShortNameOfGameVersionWithID(const std::string & gameVersionID) const {
+	if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ALL_VERSIONS)) {
+		return GameVersion::ALL_VERSIONS_SHORT_NAME;
+	}
+
 	std::shared_ptr<GameVersion> gameVersion(getGameVersionWithID(gameVersionID));
 
 	if(gameVersion == nullptr) {
+		spdlog::warn("No game version with ID '{}' found.", gameVersionID);
 		return {};
 	}
 
@@ -164,14 +174,20 @@ const std::vector<std::shared_ptr<GameVersion>> & GameVersionCollection::getGame
 	return m_gameVersions;
 }
 
-std::vector<std::shared_ptr<GameVersion>> GameVersionCollection::getGameVersionsCompatibleWith(size_t index, bool includeSupported, std::optional<bool> configured) const {
-	std::vector<std::shared_ptr<GameVersion>> compatibleGameVersions;
-
-	if(index >= m_gameVersions.size()) {
-		return compatibleGameVersions;
+std::vector<std::shared_ptr<GameVersion>> GameVersionCollection::getGameVersionsCompatibleWith(const std::string & gameVersionID, bool includeSupported, std::optional<bool> configured) const {
+	if(Utilities::areStringsEqualIgnoreCase(gameVersionID, GameVersion::ALL_VERSIONS)) {
+		return m_gameVersions;
 	}
 
-	const std::shared_ptr<GameVersion> gameVersion = m_gameVersions[index];
+	size_t gameVersionIndex = indexOfGameVersionWithID(gameVersionID);
+
+	if(gameVersionIndex >= m_gameVersions.size()) {
+		return {};
+	}
+
+	std::vector<std::shared_ptr<GameVersion>> compatibleGameVersions;
+
+	const std::shared_ptr<GameVersion> gameVersion = m_gameVersions[gameVersionIndex];
 
 	if(includeSupported) {
 		compatibleGameVersions.push_back(gameVersion);
@@ -195,16 +211,12 @@ std::vector<std::shared_ptr<GameVersion>> GameVersionCollection::getGameVersions
 	return compatibleGameVersions;
 }
 
-std::vector<std::shared_ptr<GameVersion>> GameVersionCollection::getGameVersionsCompatibleWith(const std::string & gameVersionID, bool includeSupported, std::optional<bool> configured) const {
-	return getGameVersionsCompatibleWith(indexOfGameVersionWithID(gameVersionID), includeSupported, configured);
-}
-
 std::vector<std::shared_ptr<GameVersion>> GameVersionCollection::getGameVersionsCompatibleWith(const GameVersion & gameVersion, bool includeSupported, std::optional<bool> configured) const {
-	return getGameVersionsCompatibleWith(indexOfGameVersion(gameVersion), includeSupported, configured);
+	return getGameVersionsCompatibleWith(gameVersion.getID(), includeSupported, configured);
 }
 
 std::vector<std::shared_ptr<GameVersion>> GameVersionCollection::getGameVersionsCompatibleWith(const ModGameVersion & modGameVersion, bool includeSupported, std::optional<bool> configured) const {
-	return getGameVersionsCompatibleWith(indexOfGameVersionWithID(modGameVersion.getGameVersionID()), includeSupported, configured);
+	return getGameVersionsCompatibleWith(modGameVersion.getGameVersionID(), includeSupported, configured);
 }
 
 std::vector<std::pair<std::shared_ptr<GameVersion>, std::vector<std::shared_ptr<ModGameVersion>>>> GameVersionCollection::getGameVersionsCompatibleWith(const std::vector<std::shared_ptr<ModGameVersion>> & modGameVersions, bool includeSupported, std::optional<bool> configured) const {
