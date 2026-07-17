@@ -8719,6 +8719,9 @@
 			<download filename="Duke_Nukem_64_0.9.2-ModMgrE.zip" filesize="20204422" version="0.9.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="080ff40ca04700f202a0fde3783acf35feba6e1d"/>
 			<download filename="Duke_Nukem_64_0.9.3-ModMgrE.zip" filesize="22244452" version="0.9.3" game="eDuke32" type="Mod Manager Files" state="Native" sha1="02ad331eba897ee990bb0bc77b5a82680d13a155"/>
 		</downloads>
+		<similar>
+			<mod id="dn64_revisited"/>
+		</similar>
 	</mod>
 	<mod name="Duke Forces" id="Duke_Forces" type="Total Conversion" version="2.10c" website="https://www.moddb.com/mods/duke-forces">
 		<team>
@@ -15724,5 +15727,26 @@
 			<download filename="Zombie_Nukem_2.2-ModMgrE.zip" filesize="94553797" version="2.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="da9414a47854b90671fb14348b845a55c46e848b"/>
 			<download filename="Zombie_Nukem_3.1-ModMgrE.zip" filesize="94602417" version="3.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b2259cd893d38eac1285115e743af7bd9224bd52"/>
 		</downloads>
+	</mod>
+	<mod name="DN64 Revisited" id="dn64_revisited" type="Partial Conversion" version="1.0" website="https://www.moddb.com/mods/dn64-revisited">
+		<team>
+			<member name="Duke64Nukem" alias="Kamikaze Nukem" email="duke64nukem@gmail.com" discord="Sixty Four#1072"/>
+		</team>
+		<versions>
+			<version id="1.0" release_date="August 1, 2023">
+				<game type="eDuke32" state="Native">
+					<file name="DN64.CON" size="151195" type="con" sha1="3f80f38a4d1593002a8a20e00e4d59b1ee80beb7"/>
+					<file name="dn64.def" size="714" type="def" sha1="f7fc9e39e8e9ca59fdbd5096661c6338fd276eab"/>
+					<file name="DN64_Revisited_1.0.zip" size="13147922" type="zip" sha1="db210ae569beacae336734bc5eeb38746f2dee95"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="DN64RevisitedV1.0.zip" filesize="13125741" version="1.0" game="eDuke32" type="Original Files" sha1="c9b6575cd34825241a23351eb904e7d9d8a9202f"/>
+			<download filename="DN64_Revisited_1.0-ModMgrE.zip" filesize="13148100" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="7861dc3e440dd3cc6c1cca65a16a0d9b3079a9c7"/>
+		</downloads>
+		<similar>
+			<mod id="duke_nukem_64"/>
+		</similar>
 	</mod>
 </mods>
