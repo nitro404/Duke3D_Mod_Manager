@@ -6687,6 +6687,9 @@
 			<download filename="South_Park_TC-ModMgrR.zip" filesize="2959565" game="Regular" type="Mod Manager Files" state="Native" sha1="f04a83b3b67873495345ccc7cff9a82b11fbcaea"/>
 			<download filename="South_Park_TC-ModMgrA.zip" filesize="2976510" game="Atomic" type="Mod Manager Files" state="Native" sha1="48c60708cb63145b0906175ddc799a9733920380"/>
 		</downloads>
+		<similar>
+			<mod id="cartman_duke_nukem"/>
+		</similar>
 	</mod>
 	<mod name="ALLIANCE Death Match Addon" id="alliance_death_match_addon" type="Weapon Patch" version="1.0" website="http://www.elitegames.com/duke3d/alliance">
 		<team name="Alliance" website="http://www.dukeworld.com/alliance">
@@ -15777,5 +15780,24 @@
 			<download filename="sttcwips.zip" filesize="3745189" game="eDuke32" type="Original Files" sha1="1f2b75499d0f4a68a813d5a243b57cd11d7c20eb"/>
 			<download filename="The_SkyTown-ModMgrE.zip" filesize="3693480" game="eDuke32" type="Mod Manager Files" state="Native" sha1="34a22fd57394f51fe935f82bfe5b943d99eb525c"/>
 		</downloads>
+	</mod>
+	<mod name="Cartman Duke Nukem" id="cartman_duke_nukem" type="Duke Replacement">
+		<team>
+			<member name="Paul Gabb" email="paulgabb@yahoo.com"/>
+		</team>
+		<versions>
+			<version release_date="December 16, 1999">
+				<game type="All" state="Native">
+					<file name="CARTMAN.GRP" size="1099157" type="grp" sha1="7db9e759469a6a9dcd34d4fa2e05ab18c2e42959"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="cartman.zip" filesize="213272" game="All" type="Original Files" sha1="2f0d898337edde5647c4a3968ee91076f099296c"/>
+			<download filename="Cartman_Duke_Nukem-ModMgr.zip" filesize="216865" game="All" type="Mod Manager Files" state="Native" sha1="31b2e6a27fe1adf4a489f1865a7d8f7e82ee19e6"/>
+		</downloads>
+		<similar>
+			<mod id="south_park_tc"/>
+		</similar>
 	</mod>
 </mods>
