@@ -1249,6 +1249,7 @@
 		</versions>
 		<downloads>
 			<download filename="dncctest.zip" filesize="2831711" version="Test" game="Atomic" type="Original Files" sha1="a007cf207dad8c045ad9f46943d950838265475c"/>
+			<download filename="City Crackdown Fragments.rar" filesize="21237257" special="Unfinished Maps" game="Atomic" type="Original Files" sha1="ed5c7edeaedbd03a015b093c3fa75aa8795749c5"/>
 			<download filename="dncc-640.jpg" filesize="54450" version="Test" special="640x480" type="Wallpaper 1" sha1="ca55c37dee9304e1371d4c4d125c2c7d5390c3b3"/>
 			<download filename="dncc-800.jpg" filesize="69050" version="Test" special="800x600" type="Wallpaper 1" sha1="2fb15d0b630a585593f7061e5132f1e1bf983975"/>
 			<download filename="dncc-1024.jpg" filesize="91703" version="Test" special="1024x768" type="Wallpaper 1" sha1="43026998da554025636f1f9da998777fef2ecd46"/>
