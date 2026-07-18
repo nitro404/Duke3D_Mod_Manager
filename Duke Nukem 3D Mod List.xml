@@ -8673,8 +8673,8 @@
 	<mod name="Duke Nukem 64" id="duke_nukem_64" type="Total Conversion" version="0.9.3" website="https://www.moddb.com/mods/dn64">
 		<team>
 			<member name="Fox" discord="Fox#2395"/>
-			<member name="Nukey"/>
-			<member name="Hendricks266" discord="Hendricks266#8920"/>
+			<member name="Ryan Lennox" alias="Nukey" email="kid.amn3siac@gmail.com"/>
+			<member name="Evan Ramos" alias="Hendricks266" email="hendricks266@gmail.com" twitter="hendricks266" bluesky="hendricks266.bsky.social" github="Hendricks266" discord="Hendricks266#8920"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="June 15, 2008">
@@ -8793,7 +8793,7 @@
 			<member name="Stumpy"/>
 			<member name="Taivo"/>
 			<member name="Drek"/>
-			<member name="Hendricks266" discord="Hendricks266#8920"/>
+			<member name="Evan Ramos" alias="Hendricks266" email="hendricks266@gmail.com" twitter="hendricks266" bluesky="hendricks266.bsky.social" github="Hendricks266" discord="Hendricks266#8920"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="June 23, 2014">
@@ -8895,7 +8895,7 @@
 			<member name="Never Forgotten"/>
 			<member name="NUKEMDAVE" twitter="NUKEMDAVE" youtube="NUKEMDAVE" github="NUKEMDAVE" steam="NUKEMDAVE"/>
 			<member name="Cernex"/>
-			<member name="Doom64hunter"/>
+			<member name="Dino Bollinger" alias="Doom64hunter" email="dino.bollinger@gmail.com" github="dibollinger" country="Switzerland"/>
 			<member name="Geedra"/>
 			<member name="Cage" email="cageds@tlen.pl" country="Poland"/>
 			<member name="Bullov"/>
@@ -10106,9 +10106,9 @@
 		<team>
 			<member name="Daedolon"/>
 			<member name="Fox" discord="Fox#2395"/>
-			<member name="Hendricks266" discord="Hendricks266#8920"/>
-			<member name="Nukey"/>
-			<member name="Max Ylitalo" alias="Oasiz"/>
+			<member name="Evan Ramos" alias="Hendricks266" email="hendricks266@gmail.com" twitter="hendricks266" bluesky="hendricks266.bsky.social" github="Hendricks266" discord="Hendricks266#8920"/>
+			<member name="Ryan Lennox" alias="Nukey" email="kid.amn3siac@gmail.com"/>
+			<member name="Max Ylitalo" alias="Oasiz" github="oasiz-"/>
 			<member name="Richard Gobeille" alias="TerminX" email="terminx@gmail.com" discord="terminx#9428"/>
 		</team>
 		<versions>
@@ -10257,7 +10257,7 @@
 		<team name="YayFace Productions">
 			<member name="Alan A. Nick" alias="opusvideo" email="anickvideo@gmail.com" website="http://www.youtube.com/opusvideo2001"/>
 			<member name="Mark Hadley"/>
-			<member name="Ryan Lennox"/>
+			<member name="Ryan Lennox" alias="Nukey" email="kid.amn3siac@gmail.com"/>
 		</team>
 		<versions>
 			<version release_date="December 17, 2013">
@@ -10311,7 +10311,7 @@
 	<mod name="Fallout Freeze" id="fallout_freeze" type="Total Conversion" version="1.1" website="https://brullov.itch.io/fallout-freeze">
 		<team name="Brullov Studios" website="https://brullov-studios.itch.io">
 			<member name="Artem Brullov" twitter="brullov_art" website="https://itch.io/profile/brullov" youtube="brullov_labs" reddit="brullov" discord="brullov#4495" country="Ukraine"/>
-			<member name="Max Ylitalo" alias="Oasiz"/>
+			<member name="Max Ylitalo" alias="Oasiz" github="oasiz-"/>
 			<member name="Riccardo Capogna" alias="RichardStorm" email="riccardo.capogna@yahoo.it" country="Italy"/>
 			<member name="Cage" email="cageds@tlen.pl" country="Poland"/>
 		</team>
@@ -12446,7 +12446,7 @@
 			<member name="sebabdukeboss20" discord="sebabdukeboss20#5996"/>
 			<member name="Cage" email="cageds@tlen.pl" country="Poland"/>
 			<member name="Forge"/>
-			<member name="Doom64hunter"/>
+			<member name="Dino Bollinger" alias="Doom64hunter" email="dino.bollinger@gmail.com" github="dibollinger" country="Switzerland"/>
 			<member name="Geedra"/>
 			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com" discord="Mrlijn#8650"/>
 			<member name="Maarten van Oostrum" email="oostrum_maarten@hotmail.com"/>
@@ -12555,7 +12555,7 @@
 			<member name="Sean Bellwether" alias="Raziel" email="RTRPRaziel@aol.com"/>
 			<member name="Mark"/>
 			<member name="Dave Tietz"/>
-			<member name="Max Ylitalo" alias="Oasiz"/>
+			<member name="Max Ylitalo" alias="Oasiz" github="oasiz-"/>
 			<member name="Jarmo Kylmäaho"/>
 			<member name="Corentin Dallay" alias="MetHy"/>
 			<member name="Mikko Sandt" alias="Jackotrades" email="sirpa.sandt@pp.inet.fi" icq="71211982" country="Finland"/>
@@ -12564,7 +12564,7 @@
 			<member name="Katherine Baskin" alias="The Baskinator" twitter="baskinator"/>
 			<member name="Jarkko Rotstén" alias="Roz" twitter="rotsten"/>
 			<member name="Nick Palsmeier" alias="Damien Azreal" twitter="AzrealNick"/>
-			<member name="Jordon Moss" alias="StrikerTheHedgeFox"/>
+			<member name="Jordon Moss" alias="StrikerTheHedgeFox" github="StrikerTheHedgefox"/>
 		</team>
 		<versions>
 			<version release_date="September 15, 2022">
@@ -12974,7 +12974,7 @@
 	<mod name="Duke Nukem: Advance for PC" id="duke_nukem_advance" type="Total Conversion" version="1.0 Playtest" website="https://www.moddb.com/mods/duke-nukem-advance-tc" repository="https://github.com/branung/DNA4PC">
 		<team>
 			<member name="Branung" website="https://www.moddb.com/members/branung" github="branung" country="United States"/>
-			<member name="Max Ylitalo" alias="Oasiz"/>
+			<member name="Max Ylitalo" alias="Oasiz" github="oasiz-"/>
 			<member name="Dzierzan"/>
 			<member name="Jimmy Gnosis"/>
 			<member name="Gianni Matragrano"/>
@@ -14123,7 +14123,7 @@
 			<member name="Luciano Gallo" alias="Gambini" email="gallo.luciano1@gmail.com" website="http://gambinidesign.blogspot.com" country="Argentina"/>
 			<member name="Gman"/>
 			<member name="gt1750"/>
-			<member name="Hendricks266" discord="Hendricks266#8920"/>
+			<member name="Evan Ramos" alias="Hendricks266" email="hendricks266@gmail.com" twitter="hendricks266" bluesky="hendricks266.bsky.social" github="Hendricks266" discord="Hendricks266#8920"/>
 			<member name="Impact"/>
 			<member name="JaJo"/>
 			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
@@ -15488,7 +15488,7 @@
 		<team>
 			<member name="Hellbound"/>
 			<member name="Parkar"/>
-			<member name="Hendricks266" discord="Hendricks266#8920"/>
+			<member name="Evan Ramos" alias="Hendricks266" email="hendricks266@gmail.com" twitter="hendricks266" bluesky="hendricks266.bsky.social" github="Hendricks266" discord="Hendricks266#8920"/>
 			<member name="Hunter_rus"/>
 		</team>
 		<versions>
