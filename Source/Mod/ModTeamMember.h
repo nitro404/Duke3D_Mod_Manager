@@ -30,6 +30,7 @@ public:
 	bool hasAlias() const;
 	bool hasEmail() const;
 	bool hasTwitter() const;
+	bool hasBluesky() const;
 	bool hasWebsite() const;
 	bool hasYouTube() const;
 	bool hasReddit() const;
@@ -46,6 +47,7 @@ public:
 	const std::string & getAlias() const;
 	const std::string & getEmail() const;
 	const std::string & getTwitter() const;
+	const std::string & getBluesky() const;
 	const std::string & getWebsite() const;
 	const std::string & getYouTube() const;
 	const std::string & getReddit() const;
@@ -65,6 +67,7 @@ public:
 	void setAlias(const std::string & alias);
 	void setEmail(const std::string & email);
 	void setTwitter(const std::string & twitter);
+	void setBluesky(const std::string & bluesky);
 	void setWebsite(const std::string & website);
 	void setYouTube(const std::string & youTube);
 	void setReddit(const std::string & reddit);
@@ -96,6 +99,7 @@ private:
 	std::string m_alias;
 	std::string m_email;
 	std::string m_twitter;
+	std::string m_bluesky;
 	std::string m_website;
 	std::string m_youTube;
 	std::string m_reddit;
