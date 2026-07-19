@@ -15917,4 +15917,21 @@
 			<download filename="Alpha_Project_0.0_Alpha-ModMgrE.zip" filesize="101283476" version="0.0 Alpha" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b91441c060420eaadf90f5d9a9601e33f21fd89b"/>
 		</downloads>
 	</mod>
+	<mod name="Anatoly Tabakow 3D" id="anatoly_tabakow_3d" type="Voice Replacement" website="https://www.moddb.com/mods/duke-nukem-3d-but-its-anatoly-tabakow">
+		<team>
+			<member name="Alx_2004" website="https://www.moddb.com/company/alx-2004"/>
+		</team>
+		<versions>
+			<version release_date="February 9, 2025">
+				<game type="eDuke32" state="Native">
+					<file name="AT3D.CON" size="151194" type="con" sha1="202f43ee38f3c6a5cdc999366629c9f0efd49dfc"/>
+					<file name="Anatoly_Tabakow_3D.zip" size="1947116" type="zip" sha1="2259680e8128ecc82fc9b249710a479f1325e4e0"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Anatoly_Tabakow_3D.zip" filesize="2299241" game="eDuke32" type="Original Files" sha1="85b647ce6f43a602b83b593371f158097408594f"/>
+			<download filename="Anatoly_Tabakow_3D-ModMgrE.zip" filesize="1947294" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b686fe2ba8b2405dda1e9669c69c7fe27fb021ca"/>
+		</downloads>
+	</mod>
 </mods>
