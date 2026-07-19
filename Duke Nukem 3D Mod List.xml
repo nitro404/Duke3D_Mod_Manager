@@ -16033,4 +16033,21 @@
 			<download filename="High_Quality_Sound_Effects_-_Duke_Caribbean_Lifes_a_Beach-ModMgrE.zip" filesize="21530636" version_type="Duke Caribbean: Life&apos;s a Beach" game="eDuke32" type="Mod Manager Files" state="Native" sha1="361541779bf8dd9fdae4902e9c61747feedb12c8"/>
 		</downloads>
 	</mod>
+	<mod name="The Metro" id="the_metro" type="Episode">
+		<versions>
+			<version release_date="June 20, 2002">
+				<game type="Atomic" state="Native">
+					<file name="THEMETRO.CON" size="151192" type="con" sha1="49f38fb14f4b6003db69c04d90c03e151ab37ba8"/>
+					<file name="THEMETRO.GRP" size="309450" type="grp" sha1="4133c228153fc0c27b5a148e5935206dd4432682"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="The_Metro.zip" filesize="89921" game="Atomic" type="Original Files" sha1="fe38a727be3165d68ac454d4d131854aac0f0c7d"/>
+			<download filename="The_Metro-ModMgrA.zip" filesize="86171" game="Atomic" type="Mod Manager Files" state="Native" sha1="6dd773162a39ed3e33818db1abf955928c4bd395"/>
+		</downloads>
+		<notes>
+			<note>The original first level of the episode (metro.map) is missing, so the remaining 3 levels were bumped up.</note>
+		</notes>
+	</mod>
 </mods>
