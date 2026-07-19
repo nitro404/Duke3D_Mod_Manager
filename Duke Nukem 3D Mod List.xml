@@ -12984,7 +12984,7 @@
 		<team>
 			<member name="Branung" website="https://www.moddb.com/members/branung" github="branung" country="United States"/>
 			<member name="Max Ylitalo" alias="Oasiz" github="oasiz-"/>
-			<member name="Dzierzan"/>
+			<member name="Dzierzan" website="https://www.moddb.com/members/dzierzan" country="Poland"/>
 			<member name="Jimmy Gnosis"/>
 			<member name="Gianni Matragrano"/>
 		</team>
@@ -15985,5 +15985,52 @@
 		<notes>
 			<note>Missing both maps, so this is essentially just a weapon patch.</note>
 		</notes>
+	</mod>
+	<mod name="High Quality Sound Effects" id="high_quality_sound_effects" type="Sound Pack" website="https://www.moddb.com/mods/duke-nukem-3d-high-quality-sound-effects">
+		<team>
+			<member name="Dzierzan" website="https://www.moddb.com/members/dzierzan" country="Poland"/>
+			<member name="Futuretime23"/>
+			<member name="perkristian"/>
+			<member name="DeevDaRabbit"/>
+			<member name="Triaxis"/>
+			<member name="meowsandstuff"/>
+		</team>
+		<versions>
+			<version release_date="January 29, 2024">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="HQSounds.def" size="30434" type="def" sha1="a032c4e6d0ba061a31a42822da00655a268a83a8"/>
+						<file name="High_Quality_Sound_Effects.zip" size="80683871" type="zip" sha1="1079d5f33acff1bef7b706c4e2e66ac877d94fd2"/>
+					</game>
+				</type>
+				<type id="Nuclear Winter">
+					<game type="eDuke32" state="Native">
+						<file name="NWINTER.CON" size="154269" type="con" sha1="2bb2ddc7319e0935569b724f3c67cb953fdb79d6"/>
+						<file name="HQSounds-nwinter-sounds.def" size="3330" type="def" sha1="19c01979f2e054c1aa143d63d58255127e420852"/>
+						<file name="High_Quality_Sound_Effects_-_Nuclear_Winter.zip" size="11511055" type="grp" sha1="29b2c0ff5e63a0682503aa24cf279c7038e82537"/>
+					</game>
+					<dependencies>
+						<dependency id="nuclear_winter"/>
+					</dependencies>
+				</type>
+				<type id="Duke Caribbean: Life&apos;s a Beach">
+					<game type="eDuke32" state="Native">
+						<file name="VACATION.CON" size="98724" type="con" sha1="8c366f3f0fa77521241d1dea187b91a12f6683c1"/>
+						<file name="HQSounds-vacation-sounds.def" size="12644" type="def" sha1="a18edea3dd2874508989c7fdcc9292359f3672ba"/>
+						<file name="High_Quality_Sound_Effects_-_Duke_Caribbean_Lifes_a_Beach.zip" size="21530380" type="grp" sha1="1cb01afdeb1359b1198e0b2df9964720f92d7e93"/>
+					</game>
+					<dependencies>
+						<dependency id="duke_caribbean"/>
+					</dependencies>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="DukeNukemHQSounds.zip" filesize="80672069" game="eDuke32" type="Original Files" sha1="80ed9c5955db0c673b3736d0acf6a197a19e16b2"/>
+			<download filename="Duke_Nukem_HQ_Sounds_for_World_Tour.zip" filesize="17220559" special="World Tour Edition" game="eDuke32" type="Original Files" sha1="f3ae2c88144a4165019e287fb725b2115cc0ce1a"/>
+			<download filename="High_Quality_Sound_Effects-ModMgrE.zip" filesize="80684065" game="eDuke32" type="Mod Manager Files" state="Native" sha1="282abbe7f0c6ebd003682d8157bebe24ec456336"/>
+			<download filename="High_Quality_Sound_Effects_-_Nuclear_Winter-ModMgrE.zip" filesize="11511283" version_type="Nuclear Winter" game="eDuke32" type="Mod Manager Files" state="Native" sha1="ee5aa2a5ab1328c25dec2b3e35f14f0afd115682"/>
+			<download filename="High_Quality_Sound_Effects_-_Duke_Caribbean_Lifes_a_Beach-ModMgrE.zip" filesize="21530636" version_type="Duke Caribbean: Life&apos;s a Beach" game="eDuke32" type="Mod Manager Files" state="Native" sha1="361541779bf8dd9fdae4902e9c61747feedb12c8"/>
+		</downloads>
 	</mod>
 </mods>
