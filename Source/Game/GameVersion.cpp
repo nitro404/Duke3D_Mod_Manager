@@ -1035,7 +1035,7 @@ const std::optional<bool> & GameVersion::getRequiresGroupFileExtraction() const 
 }
 
 void GameVersion::setRequiresGroupFileExtraction(bool requiresGroupFileExtraction) {
-	if(m_requiresGroupFileExtraction == requiresGroupFileExtraction) {
+	if(m_requiresGroupFileExtraction.has_value() && m_requiresGroupFileExtraction.value() == requiresGroupFileExtraction) {
 		return;
 	}
 
@@ -3902,7 +3902,7 @@ bool GameVersion::isValid() const {
 		return false;
 	}
 
-	if(m_requiresOriginalGameFiles && m_requiresGroupFileExtraction) {
+	if(m_requiresOriginalGameFiles && m_requiresGroupFileExtraction.has_value() && m_requiresGroupFileExtraction.value()) {
 		return false;
 	}
 
