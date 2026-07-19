@@ -8559,7 +8559,7 @@
 			<member name="Jonathan Strander" alias="Mblackwell" email="Mblackwell50@hotmail.com"/>
 			<member name="Mark"/>
 			<member name="chicken"/>
-			<member name="Daedolon"/>
+			<member name="Daedolon" email="daedolon@nauticom.net"/>
 			<member name="Hellbound"/>
 			<member name="Cage" email="cageds@tlen.pl" country="Poland"/>
 			<member name="Diehard"/>
@@ -8779,7 +8779,7 @@
 		<team>
 			<member name="Corentin Dallay" alias="MetHy"/>
 			<member name="Cage" email="cageds@tlen.pl" country="Poland"/>
-			<member name="Daedolon"/>
+			<member name="Daedolon" email="daedolon@nauticom.net"/>
 			<member name="Dukebot"/>
 			<member name="Forge"/>
 			<member name="Paul Monteray" alias="High Treason" email="pau174u@AOL.com" youtube="HighTreason610" discord="DXZeff"/>
@@ -10102,9 +10102,9 @@
 			<download filename="Metropolitan_Mayhem-ModMgrE.zip" filesize="633140" game="eDuke32" type="Mod Manager Files" state="Native" sha1="8f9d66e1a16494e341988e44ffa5cb0c8a7d68ce"/>
 		</downloads>
 	</mod>
-	<mod name="Duke Nukem: Total Meltdown" id="duke_nukem_total_meltdown" type="Total Conversion" version="1.0.3" website="https://www.moddb.com/mods/dntm">
+	<mod name="Duke Nukem: Total Meltdown" id="duke_nukem_total_meltdown" type="Total Conversion" version="1.1" website="https://www.moddb.com/mods/dntm">
 		<team>
-			<member name="Daedolon"/>
+			<member name="Daedolon" email="daedolon@nauticom.net"/>
 			<member name="Fox" discord="Fox#2395"/>
 			<member name="Evan Ramos" alias="Hendricks266" email="hendricks266@gmail.com" twitter="hendricks266" bluesky="hendricks266.bsky.social" github="Hendricks266" discord="Hendricks266#8920"/>
 			<member name="Ryan Lennox" alias="Nukey" email="kid.amn3siac@gmail.com"/>
@@ -10140,6 +10140,13 @@
 					<file name="Duke_Nukem_Total_Meltdown_1.0.3.zip" size="329684609" type="zip" sha1="df16f9ae625f66778daeaab4e95efe53ae553de8"/>
 				</game>
 			</version>
+			<version id="1.1" release_date="February 5, 2024">
+				<game type="eDuke32" state="Native">
+					<file name="cons/load.con" size="329" type="con" sha1="b880b6effca0c0d842f4e5a00b2095c4fe000837"/>
+					<file name="defs/load.def" size="145" type="def" sha1="fee425e845084c561cc22b1f351cb4fa0e94de06"/>
+					<file name="Duke_Nukem_Total_Meltdown_1.1.zip" size="329695301" type="zip" sha1="dbf228d75f46a2eb53270ebe1b27f50b6af830cb"/>
+				</game>
+			</version>
 		</versions>
 		<downloads>
 			<download filename="duketm_v1.0.zip" filesize="333985244" version="1.0" game="eDuke32" type="Original Files" sha1="83348adbcf8757ce0165f543275458b78d108076"/>
@@ -10149,10 +10156,12 @@
 			<download filename="duketm_v1.0.2_patch.zip" filesize="7532647" version="1.0.2" special="Patch" game="eDuke32" type="Original Files" sha1="d640cbdc567471a234b9f4fd6aa83b667ce515d6"/>
 			<download filename="duketm_v1.0.3.zip" filesize="334123646" version="1.0.3" game="eDuke32" type="Original Files" sha1="60555624237a766437ad2ba88957a8c97d041500"/>
 			<download filename="duketm_v1.0.3_patch.zip" filesize="7675384" version="1.0.3" special="Patch" game="eDuke32" type="Original Files" sha1="77ff78daf6d08cf8249bec41543329b6335cbe4f"/>
+			<download filename="duketm_v1.1b.zip" filesize="337892553" version="1.1" game="eDuke32" type="Original Files" sha1="0eb0e16d22be249139c5b7f3d4d26bfcf9a03fbc"/>
 			<download filename="Duke_Nukem_Total_Meltdown_1.0-ModMgrE.zip" filesize="328812295" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="cd332d601dc8ec52583d9502b18659b130d2f78a"/>
 			<download filename="Duke_Nukem_Total_Meltdown_1.0.1-ModMgrE.zip" filesize="328812749" version="1.0.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e2926cb81b325c42a64e921bb52c91f705921865"/>
 			<download filename="Duke_Nukem_Total_Meltdown_1.0.2-ModMgrE.zip" filesize="328812948" version="1.0.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e27cfbb0591d552f4ff299e12d6f59f13f3e5235"/>
 			<download filename="Duke_Nukem_Total_Meltdown_1.0.3-ModMgrE.zip" filesize="328812639" version="1.0.3" game="eDuke32" type="Mod Manager Files" state="Native" sha1="46ad987125cbfaf67b00d3a047d95f6876915e47"/>
+			<download filename="Duke_Nukem_Total_Meltdown_1.1-ModMgrE.zip" filesize="329695501" version="1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e6518ed8d09267c43fcfddf983c9a9f66d75e9da"/>
 		</downloads>
 		<similar>
 			<mod id="plug_and_pray_remake"/>
@@ -14112,7 +14121,7 @@
 			<member name="BlitZ"/>
 			<member name="Cage" email="cageds@tlen.pl" country="Poland"/>
 			<member name="chicken"/>
-			<member name="Daedolon"/>
+			<member name="Daedolon" email="daedolon@nauticom.net"/>
 			<member name="Devastator" email="zheka_XX@TUT.by" country="Belarus"/>
 			<member name="Ding Bat"/>
 			<member name="DLT"/>
