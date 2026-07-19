@@ -15961,4 +15961,29 @@
 			<download filename="TESTOVIRON_3D_Poverty_Edition_0.8-ModMgrE.zip" filesize="38683613" version="0.8" game="eDuke32" type="Mod Manager Files" state="Native" sha1="3d60cbe36e9eb9b0adbcd7550a3a706959df4141"/>
 		</downloads>
 	</mod>
+	<mod name="Duke City Episode" id="duke_city_episode" type="Partial Conversion" version="Demo">
+		<team>
+			<member name="Jake Hanna" email="jhanna@mail.ocis.net"/>
+		</team>
+		<versions>
+			<version id="Demo" release_date="February 18, 1998">
+				<game type="Regular" state="Native">
+					<file name="DCITYDEM.CON" size="99643" type="con" sha1="7de181836eb7603dd973639724971c06b1923815"/>
+					<file name="DCITYDEM.GRP" size="4530318" type="grp" sha1="1f1dbe0ecd875862992a190d9eaf13f24a27aee2"/>
+				</game>
+				<game type="Atomic" state="Converted">
+					<file name="DCITYDEM.CON" size="151194" type="con" sha1="21c259cb4c2ea35c37a44a278f5ce31aa94aa0c6"/>
+					<file name="DCITYDEM.GRP" size="5118664" type="grp" sha1="4e34bd2e7e50b4f299f64ea366c66935b6fef372"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="dcitydemo.zip" filesize="2010509" version="Demo" game="Regular" type="Original Files" sha1="dd471387a5fe91f811087715325fe636428b6d08"/>
+			<download filename="Duke_City_Episode_Demo-ModMgrR.zip" filesize="1663531" version="Demo" game="Regular" type="Mod Manager Files" state="Native" sha1="ed1fc8623147c932356c6c81e961a6084cd7336c"/>
+			<download filename="Duke_City_Episode_Demo-ModMgrA.zip" filesize="1871154" version="Demo" game="Atomic" type="Mod Manager Files" state="Converted" sha1="b353dcbbece1d83c4f281f20a2be3dfcae070a3d"/>
+		</downloads>
+		<notes>
+			<note>Missing both maps, so this is essentially just a weapon patch.</note>
+		</notes>
+	</mod>
 </mods>
