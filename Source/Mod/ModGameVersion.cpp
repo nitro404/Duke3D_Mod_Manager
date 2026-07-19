@@ -1595,7 +1595,7 @@ std::unique_ptr<ModGameVersion> ModGameVersion::parseFrom(const tinyxml2::XMLEle
 				standAloneGameVersion->setGameConfigurationDirectoryPath(properties[XML_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_DIRECTORY_PATH_NAME]);
 			}
 
-			if(properties.find(XML_MOD_GAME_VERSION_PROPERTY_SKILL_START_VALUE_NAME) != properties.cend()) {
+			if(properties.find(XML_MOD_GAME_VERSION_PROPERTY_SKILL_START_VALUE_NAME) != properties.cend() && !properties[XML_MOD_GAME_VERSION_PROPERTY_SKILL_START_VALUE_NAME].empty()) {
 				standAloneGameVersion->setSkillStartValue(Utilities::parseUnsignedByte(properties[XML_MOD_GAME_VERSION_PROPERTY_SKILL_START_VALUE_NAME]).value_or(GameVersion::DEFAULT_SKILL_START_VALUE));
 			}
 

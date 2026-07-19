@@ -192,7 +192,6 @@ GameVersion::GameVersion()
 	, m_localWorkingDirectory(DEFAULT_LOCAL_WORKING_DIRECTORY)
 	, m_supportsSubdirectories(DEFAULT_SUPPORTS_SUBDIRECTORIES)
 	, m_worldTourGroupSupported(DEFAULT_WORLD_TOUR_GROUP_SUPPORTED)
-	, m_skillStartValue(DEFAULT_SKILL_START_VALUE)
 	, m_dosboxConfiguration(std::make_shared<DOSBoxConfiguration>())
 	, m_modified(false) { }
 
