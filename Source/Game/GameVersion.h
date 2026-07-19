@@ -56,6 +56,7 @@ public:
 	void clearLastPlayedTimePoint();
 	bool isStandAlone() const;
 	void setStandAlone(bool standAlone);
+	bool hasBase() const;
 	std::string getBase() const;
 	void setBase(const std::string & base);
 	bool isInstallable() const;

@@ -2319,7 +2319,11 @@ bool ModManager::installStandAloneMod(const ModGameVersion & standAloneModGameVe
 		std::map<std::string, std::any> properties;
 		properties["modID"] = standAloneMod->getID();
 		properties["modName"] = standAloneMod->getLongName();
-		properties["modBaseGame"] = standAloneMod->getBase();
+
+		if(standAloneMod->hasBase()) {
+			properties["modBaseGame"] = standAloneMod->getBase();
+		}
+
 		properties["version"] = standAloneMod->getVersion();
 		properties["gameExecutableName"] = standAloneMod->getGameExecutableName();
 

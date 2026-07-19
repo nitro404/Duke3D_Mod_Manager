@@ -650,12 +650,15 @@ rapidjson::Value ModGameVersion::toJSON(rapidjson::MemoryPoolAllocator<rapidjson
 		rapidjson::Value propertiesValue(rapidjson::kObjectType);
 
 		std::vector<std::pair<std::string, std::optional<std::string>>> stringProperties({
-			{ JSON_MOD_GAME_VERSION_PROPERTY_BASE_PROPERTY_NAME,                               m_standAloneGameVersion->getBase() },
 			{ JSON_MOD_GAME_VERSION_PROPERTY_GAME_EXECUTABLE_NAME_PROPERTY_NAME,               m_standAloneGameVersion->getGameExecutableName() },
 			{ JSON_MOD_GAME_VERSION_PROPERTY_SETUP_EXECUTABLE_NAME_PROPERTY_NAME,              m_standAloneGameVersion->getSetupExecutableName() },
 			{ JSON_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_FILE_NAME_PROPERTY_NAME,       m_standAloneGameVersion->getGameConfigurationFileName() },
 			{ JSON_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_DIRECTORY_PATH_PROPERTY_NAME,  m_standAloneGameVersion->getUnevaluatedGameConfigurationDirectoryPath() }
 		});
+
+		if(m_standAloneGameVersion->hasBase()) {
+			stringProperties.insert(stringProperties.begin(), std::make_pair(JSON_MOD_GAME_VERSION_PROPERTY_BASE_PROPERTY_NAME, m_standAloneGameVersion->getBase()));
+		}
 
 		for(const std::pair<std::string, std::optional<std::string>> & stringProperty : stringProperties) {
 			if(!stringProperty.second.has_value()) {
@@ -761,12 +764,15 @@ tinyxml2::XMLElement * ModGameVersion::toXML(tinyxml2::XMLDocument * document) c
 		tinyxml2::XMLElement * propertiesElement = document->NewElement(XML_MOD_GAME_VERSION_PROPERTIES_ELEMENT_NAME.c_str());
 
 		std::vector<std::pair<std::string, std::optional<std::string>>> stringProperties({
-			{ XML_MOD_GAME_VERSION_PROPERTY_BASE_NAME,                              m_standAloneGameVersion->getBase() },
 			{ XML_MOD_GAME_VERSION_PROPERTY_GAME_EXE_NAME_NAME,                     m_standAloneGameVersion->getGameExecutableName() },
 			{ XML_MOD_GAME_VERSION_PROPERTY_SETUP_EXE_NAME_NAME,                    m_standAloneGameVersion->getSetupExecutableName() },
 			{ XML_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_FILE_NAME_NAME,      m_standAloneGameVersion->getGameConfigurationFileName() },
 			{ XML_MOD_GAME_VERSION_PROPERTY_GAME_CONFIGURATION_DIRECTORY_PATH_NAME, m_standAloneGameVersion->getUnevaluatedGameConfigurationDirectoryPath() }
 		});
+
+		if(m_standAloneGameVersion->hasBase()) {
+			stringProperties.insert(stringProperties.begin(), std::make_pair(XML_MOD_GAME_VERSION_PROPERTY_BASE_NAME, m_standAloneGameVersion->getBase()));
+		}
 
 		if(m_standAloneGameVersion->hasSkillStartValue()) {
 			stringProperties.emplace_back(XML_MOD_GAME_VERSION_PROPERTY_SKILL_START_VALUE_NAME, std::to_string(m_standAloneGameVersion->getSkillStartValue().value()));

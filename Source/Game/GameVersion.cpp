@@ -623,6 +623,10 @@ void GameVersion::setStandAlone(bool standAlone) {
 	m_standAlone = standAlone;
 }
 
+bool GameVersion::hasBase() const {
+	return !m_base.empty();
+}
+
 std::string GameVersion::getBase() const {
 	return m_base;
 }
@@ -3875,7 +3879,6 @@ bool GameVersion::isValid() const {
 	if(m_id.empty() ||
 	   m_longName.empty() ||
 	   m_shortName.empty() ||
-	   (m_standAlone && m_base.empty()) ||
 	   m_gameExecutableName.empty() ||
 	   m_gameConfigurationFileName.empty() || 
 	   (!m_standAlone && m_modDirectoryName.empty()) ||
