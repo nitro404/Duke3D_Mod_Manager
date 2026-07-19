@@ -7495,7 +7495,7 @@
 	</mod>
 	<mod name="Zbychu Jowisz 3D" id="zbychu_jowisz_3d" type="Partial Conversion" website="https://www.moddb.com/mods/zbychu-jowisz">
 		<team>
-			<member name="Zbychu Jowisz" alias="Brick Jove"/>
+			<member name="Zbychu Jowisz" alias="Brick Jove" website="https://www.moddb.com/members/brickjovian" country="Germany"/>
 		</team>
 		<versions>
 			<version release_date="June 24, 2015">
@@ -15932,6 +15932,33 @@
 		<downloads>
 			<download filename="Anatoly_Tabakow_3D.zip" filesize="2299241" game="eDuke32" type="Original Files" sha1="85b647ce6f43a602b83b593371f158097408594f"/>
 			<download filename="Anatoly_Tabakow_3D-ModMgrE.zip" filesize="1947294" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b686fe2ba8b2405dda1e9669c69c7fe27fb021ca"/>
+		</downloads>
+	</mod>
+	<mod name="TESTOVIRON 3D Poverty Edition" id="testoviron_3d" type="Voice Replacement" version="0.8" website="https://www.moddb.com/addons/testoviron-3d">
+		<team>
+			<member name="Zbychu Jowisz" alias="Brick Jove" website="https://www.moddb.com/members/brickjovian" country="Germany"/>
+		</team>
+		<versions>
+			<version id="0.7" release_date="January 27, 2016">
+				<game type="eDuke32" state="Native">
+					<file name="TESTO3D.CON" size="151194" type="con" sha1="95787857eaf12f28d67ac2d4c7355b43a034c81b"/>
+					<file name="testo3d.def" size="287" type="def" sha1="10523787369260fe87443d034636c51aa0357e52"/>
+					<file name="TESTOVIRON_3D_Poverty_Edition_0.7.zip" size="33878791" type="zip" sha1="bd863a41a975bba6e4c99204933a9442b3c17d07"/>
+				</game>
+			</version>
+			<version id="0.8" release_date="January 27, 2016">
+				<game type="eDuke32" state="Native">
+					<file name="TESTO3D.CON" size="151194" type="con" sha1="95787857eaf12f28d67ac2d4c7355b43a034c81b"/>
+					<file name="testo_gfx.def" size="538" type="def" sha1="e150a098df7a761014953fc4aa4489c7d43eae2d"/>
+					<file name="TESTOVIRON_3D_Poverty_Edition_0.8.zip" size="38683405" type="zip" sha1="dd160b4c32b4b66bdfa8294ff6ac36003d7a1014"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="testo3d_poverty_edition.zip" filesize="33655647" version="0.7" game="eDuke32" type="Original Files" sha1="7486dee0b9fb7d7a652a414d199843d994ead15d"/>
+			<download filename="testo3d_0.8.zip" filesize="39495902" version="0.8" game="eDuke32" type="Original Files" sha1="0b1f639aa02bc21db3b3f1981d2b4caf0766d598"/>
+			<download filename="TESTOVIRON_3D_Poverty_Edition_0.7-ModMgrE.zip" filesize="33878999" version="0.7" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e36a5ee6166cad0df5e4c3bc0bd2ba96980ca494"/>
+			<download filename="TESTOVIRON_3D_Poverty_Edition_0.8-ModMgrE.zip" filesize="38683613" version="0.8" game="eDuke32" type="Mod Manager Files" state="Native" sha1="3d60cbe36e9eb9b0adbcd7550a3a706959df4141"/>
 		</downloads>
 	</mod>
 </mods>
