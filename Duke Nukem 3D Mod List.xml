@@ -13799,6 +13799,7 @@
 		<related>
 			<mod id="new_world_iii"/>
 			<mod id="new_world_iv"/>
+			<mod id="new_world_ix"/>
 		</related>
 	</mod>
 	<mod name="New World III" id="new_world_iii" type="Total Conversion" version="1.6" website="http://members.zoom.com/HCAD">
@@ -13825,6 +13826,7 @@
 		<related>
 			<mod id="new_world"/>
 			<mod id="new_world_iv"/>
+			<mod id="new_world_ix"/>
 		</related>
 	</mod>
 	<mod name="New World IV" id="new_world_iv" type="Total Conversion" version="Alpha 0.01" website="http://www.dukeworld.com/nw3/nwiv">
@@ -13846,6 +13848,7 @@
 		<related>
 			<mod id="new_world"/>
 			<mod id="new_world_iii"/>
+			<mod id="new_world_ix"/>
 		</related>
 	</mod>
 	<mod name="Return to Fury 161" id="return_to_fury_161" type="Map">
@@ -15828,5 +15831,63 @@
 			<mod id="fallout_freeze"/>
 			<mod id="countdown_to_christmas"/>
 		</similar>
+	</mod>
+	<mod name="New World IX" id="new_world_ix" type="Total Conversion" website="http://www.dukeworld.com/nw3/nwiv">
+		<team>
+			<member name="James Ferry" alias="Veldrik" email="James_Ferry@classic.msn.com" city="Sydney" state="New South Wales" country="Australia"/>
+		</team>
+		<versions>
+			<version release_date="September 17, 2002">
+				<type>
+					<game type="Stand-Alone" state="Native">
+						<properties game_exe_name="GAME.EXE" setup_exe_name="SETUP.EXE" game_config_file_name="SETUP.DAT" game_config_directory_path="" local_working_directory="true" supports_subdirectories="true" requires_group_file_extraction="true"/>
+						<arguments>
+							<argument name="map-file" flag=" "/>
+						</arguments>
+						<operatingsystems>
+							<operatingsystem name="DOS"/>
+						</operatingsystems>
+						<files>
+							<file name="028.kvx" size="55176" type="kvx" sha1="1e12abced7c076c7078d1d57075b0fca89af1bf2"/>
+							<file name="baseref.kvx" size="11114" type="kvx" sha1="56a2e6b219ebca5bc8f4383d9b52a86fbe47ffe1"/>
+							<file name="BUILD.EXE" size="395091" type="exe" sha1="963b2b9bde76b6d6f2082f6e3127be8f299ebd0b"/>
+							<file name="crate1.kvx" size="78316" type="kvx" sha1="1eff795641aedd36b35ac26d6a903de25155225b"/>
+							<file name="dist9src.zip" size="246571" type="zip" sha1="864e36ed3bb74c22e47f91c58a031f8d14aea8e0"/>
+							<file name="DOS4GW.EXE" size="265396" type="exe" sha1="c489f83dc15a9ffc3c502707da40e581ec79bfe6"/>
+							<file name="EDITART.EXE" size="100790" type="exe" sha1="421a46dab4d6c241b1007b7dd5a1e84020fef629"/>
+							<file name="GAME.EXE" size="452947" type="exe" sha1="7566dbd9298ca217d7701da49df15d325315217e"/>
+							<file name="grnbotle.kvx" size="13841" type="kvx" sha1="c4c29e53919ebf1ecfc8f7e32da9c778d35620f4"/>
+							<file name="joinflor.kvx" size="11176" type="kvx" sha1="f66422f9b043997f04215c901edaecea0ab669e7"/>
+							<file name="joinroof.kvx" size="11176" type="kvx" sha1="75ca536be78325103d02a7033cfa93fbade826d6"/>
+							<file name="joinwall.kvx" size="11216" type="kvx" sha1="e38334d3327e4c2776175dcbb25c34601340d152"/>
+							<file name="LOOKUP.DAT" size="10266" type="dat" sha1="38a50c304814242725b6a869173e9b02f9588e3d"/>
+							<file name="NAMES.H" size="1672" type="header" sha1="918fc21e373b5e56dd49697a74caf1ff0d776e80"/>
+							<file name="newref.kvx" size="11232" type="kvx" sha1="cf26b0ccd9eac463fb0f2e2833303459f8eb2100"/>
+							<file name="nukeland.map" size="9450" type="map" sha1="339bcb327fed27d5f1b235316f106e54f0bf9c7e"/>
+							<file name="nwiv.ini" size="2322" type="ini" sha1="9ef6ec9281f0c910d67186aed53131832870eb32"/>
+							<file name="palette.dat" size="82690" type="dat" sha1="d00e67eb7c80fb03fdc225301c4a4ffccbbba757"/>
+							<file name="SETUP.DAT" size="28" type="dat" sha1="7604648fb2e60d044a225c2460e43171921b2ea6"/>
+							<file name="SETUP.EXE" size="42616" type="exe" sha1="fb42a832f22515fd3eaa58cc8a9a11b14870ef85"/>
+							<file name="TABLES.DAT" size="8448" type="dat" sha1="533d9d5e5ae7657d822a10ecb07adb2b61d02851"/>
+							<file name="TILES000.art" size="668095" type="art" sha1="7355e9e9d57b94dc91ada6bab4596f1f64fa1db1"/>
+							<file name="TILES001.ART" size="22050" type="art" sha1="adeedb4e74cebf332927359e8aa8dc9640abd998"/>
+							<file name="tyre.kvx" size="26115" type="kvx" sha1="7a7e38f2af77cb69ef684b94abc70be2e2a80abc"/>
+							<file name="voxel001.kvx" size="21990" type="kvx" sha1="5894832550bf7635b2aca2eb30390009371e5673"/>
+							<file name="WAVE.EXE" size="74874" type="exe" sha1="b18d4c10eabba877b5b92964f98d8157fbc3f825"/>
+							<file name="waves.kwv" size="212682" type="kwv" sha1="8d49966a208dd2ba933dfafc884aaa656fc4ae6a"/>
+						</files>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="dist9.zip" filesize="1204064" game="Stand-Alone" type="Original Files" sha1="5ab18e66de9fdaa8f4dd199132d3e3d3c6e48591"/>
+			<download filename="New_World_IX-ModMgrSA.zip" filesize="1343351" game="Stand-Alone" type="Mod Manager Files" state="Native" sha1="219595c4dfb69cf2111a2187176415895b1e01bc"/>
+		</downloads>
+		<related>
+			<mod id="new_world"/>
+			<mod id="new_world_iii"/>
+			<mod id="new_world_iv"/>
+		</related>
 	</mod>
 </mods>
