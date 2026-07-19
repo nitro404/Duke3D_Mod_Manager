@@ -1208,6 +1208,25 @@ void GameVersion::clearZipArchiveGroupsSupported() {
 	setModified(true);
 }
 
+bool GameVersion::hasAnyArgumentFlags() const {
+	return m_conFileArgumentFlag.has_value() ||
+		   m_extraConFileArgumentFlag.has_value() ||
+		   m_groupFileArgumentFlag.has_value() ||
+		   m_defFileArgumentFlag.has_value() ||
+		   m_extraDefFileArgumentFlag.has_value() ||
+		   m_mapFileArgumentFlag.has_value() ||
+		   m_episodeArgumentFlag.has_value() ||
+		   m_levelArgumentFlag.has_value() ||
+		   m_skillArgumentFlag.has_value() ||
+		   m_recordDemoArgumentFlag.has_value() ||
+		   m_playDemoArgumentFlag.has_value() ||
+		   m_respawnModeArgumentFlag.has_value() ||
+		   m_weaponSwitchOrderArgumentFlag.has_value() ||
+		   m_disableMonstersArgumentFlag.has_value() ||
+		   m_disableSoundArgumentFlag.has_value() ||
+		   m_disableMusicArgumentFlag.has_value();
+}
+
 bool GameVersion::hasConFileArgumentFlag() const {
 	return m_conFileArgumentFlag.has_value();
 }

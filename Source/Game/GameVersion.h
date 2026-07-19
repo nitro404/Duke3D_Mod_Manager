@@ -132,6 +132,7 @@ public:
 	std::optional<bool> getZipArchiveGroupsSupported() const;
 	void setZipArchiveGroupsSupported(bool zipArchiveGroupsSupported);
 	void clearZipArchiveGroupsSupported();
+	bool hasAnyArgumentFlags() const;
 	bool hasConFileArgumentFlag() const;
 	const std::optional<std::string> & getConFileArgumentFlag() const;
 	bool setConFileArgumentFlag(const std::string & flag);

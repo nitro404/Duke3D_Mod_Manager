@@ -803,41 +803,43 @@ tinyxml2::XMLElement * ModGameVersion::toXML(tinyxml2::XMLDocument * document) c
 
 		modGameVersionElement->InsertEndChild(propertiesElement);
 
-		tinyxml2::XMLElement * argumentsElement = document->NewElement(XML_MOD_GAME_VERSION_ARGUMENTS_ELEMENT_NAME.c_str());
+		if(m_standAloneGameVersion->hasAnyArgumentFlags()) {
+			tinyxml2::XMLElement * argumentsElement = document->NewElement(XML_MOD_GAME_VERSION_ARGUMENTS_ELEMENT_NAME.c_str());
 
-		std::vector<std::pair<std::string, std::optional<std::string>>> arguments({
-			{ XML_MOD_GAME_VERSION_ARGUMENT_CON_FILE_NAME,            m_standAloneGameVersion->getConFileArgumentFlag() },
-			{ XML_MOD_GAME_VERSION_ARGUMENT_EXTRA_CON_FILE_NAME,      m_standAloneGameVersion->getExtraConFileArgumentFlag() },
-			{ XML_MOD_GAME_VERSION_ARGUMENT_GROUP_FILE_NAME,          m_standAloneGameVersion->getGroupFileArgumentFlag() },
-			{ XML_MOD_GAME_VERSION_ARGUMENT_DEF_FILE_NAME,            m_standAloneGameVersion->getDefFileArgumentFlag() },
-			{ XML_MOD_GAME_VERSION_ARGUMENT_EXTRA_DEF_FILE_NAME,      m_standAloneGameVersion->getExtraDefFileArgumentFlag() },
-			{ XML_MOD_GAME_VERSION_ARGUMENT_MAP_FILE_NAME,            m_standAloneGameVersion->getMapFileArgumentFlag() },
-			{ XML_MOD_GAME_VERSION_ARGUMENT_EPISODE_NAME,             m_standAloneGameVersion->getEpisodeArgumentFlag() },
-			{ XML_MOD_GAME_VERSION_ARGUMENT_LEVEL_NAME,               m_standAloneGameVersion->getLevelArgumentFlag() },
-			{ XML_MOD_GAME_VERSION_ARGUMENT_SKILL_NAME,               m_standAloneGameVersion->getSkillArgumentFlag() },
-			{ XML_MOD_GAME_VERSION_ARGUMENT_RECORD_DEMO_NAME,         m_standAloneGameVersion->getRecordDemoArgumentFlag() },
-			{ XML_MOD_GAME_VERSION_ARGUMENT_PLAY_DEMO_NAME,           m_standAloneGameVersion->getPlayDemoArgumentFlag() },
-			{ XML_MOD_GAME_VERSION_ARGUMENT_RESPAWN_MODE_NAME,        m_standAloneGameVersion->getRespawnModeArgumentFlag() },
-			{ XML_MOD_GAME_VERSION_ARGUMENT_WEAPON_SWITCH_ORDER_NAME, m_standAloneGameVersion->getWeaponSwitchOrderArgumentFlag() },
-			{ XML_MOD_GAME_VERSION_ARGUMENT_DISABLE_MONSTERS_NAME,    m_standAloneGameVersion->getDisableMonstersArgumentFlag() },
-			{ XML_MOD_GAME_VERSION_ARGUMENT_DISABLE_SOUND_NAME,       m_standAloneGameVersion->getDisableSoundArgumentFlag() },
-			{ XML_MOD_GAME_VERSION_ARGUMENT_DISABLE_MUSIC_NAME,       m_standAloneGameVersion->getDisableMusicArgumentFlag() }
-		});
+			std::vector<std::pair<std::string, std::optional<std::string>>> arguments({
+				{ XML_MOD_GAME_VERSION_ARGUMENT_CON_FILE_NAME,            m_standAloneGameVersion->getConFileArgumentFlag() },
+				{ XML_MOD_GAME_VERSION_ARGUMENT_EXTRA_CON_FILE_NAME,      m_standAloneGameVersion->getExtraConFileArgumentFlag() },
+				{ XML_MOD_GAME_VERSION_ARGUMENT_GROUP_FILE_NAME,          m_standAloneGameVersion->getGroupFileArgumentFlag() },
+				{ XML_MOD_GAME_VERSION_ARGUMENT_DEF_FILE_NAME,            m_standAloneGameVersion->getDefFileArgumentFlag() },
+				{ XML_MOD_GAME_VERSION_ARGUMENT_EXTRA_DEF_FILE_NAME,      m_standAloneGameVersion->getExtraDefFileArgumentFlag() },
+				{ XML_MOD_GAME_VERSION_ARGUMENT_MAP_FILE_NAME,            m_standAloneGameVersion->getMapFileArgumentFlag() },
+				{ XML_MOD_GAME_VERSION_ARGUMENT_EPISODE_NAME,             m_standAloneGameVersion->getEpisodeArgumentFlag() },
+				{ XML_MOD_GAME_VERSION_ARGUMENT_LEVEL_NAME,               m_standAloneGameVersion->getLevelArgumentFlag() },
+				{ XML_MOD_GAME_VERSION_ARGUMENT_SKILL_NAME,               m_standAloneGameVersion->getSkillArgumentFlag() },
+				{ XML_MOD_GAME_VERSION_ARGUMENT_RECORD_DEMO_NAME,         m_standAloneGameVersion->getRecordDemoArgumentFlag() },
+				{ XML_MOD_GAME_VERSION_ARGUMENT_PLAY_DEMO_NAME,           m_standAloneGameVersion->getPlayDemoArgumentFlag() },
+				{ XML_MOD_GAME_VERSION_ARGUMENT_RESPAWN_MODE_NAME,        m_standAloneGameVersion->getRespawnModeArgumentFlag() },
+				{ XML_MOD_GAME_VERSION_ARGUMENT_WEAPON_SWITCH_ORDER_NAME, m_standAloneGameVersion->getWeaponSwitchOrderArgumentFlag() },
+				{ XML_MOD_GAME_VERSION_ARGUMENT_DISABLE_MONSTERS_NAME,    m_standAloneGameVersion->getDisableMonstersArgumentFlag() },
+				{ XML_MOD_GAME_VERSION_ARGUMENT_DISABLE_SOUND_NAME,       m_standAloneGameVersion->getDisableSoundArgumentFlag() },
+				{ XML_MOD_GAME_VERSION_ARGUMENT_DISABLE_MUSIC_NAME,       m_standAloneGameVersion->getDisableMusicArgumentFlag() }
+			});
 
-		for(const std::pair<std::string, std::optional<std::string>> & argument : arguments) {
-			if(!argument.second.has_value()) {
-				continue;
+			for(const std::pair<std::string, std::optional<std::string>> & argument : arguments) {
+				if(!argument.second.has_value()) {
+					continue;
+				}
+
+				tinyxml2::XMLElement * argumentElement = document->NewElement(XML_MOD_GAME_VERSION_ARGUMENT_ELEMENT_NAME.c_str());
+
+				argumentElement->SetAttribute(XML_MOD_GAME_VERSION_ARGUMENT_NAME_PROPERTY_NAME.c_str(), argument.first.c_str());
+				argumentElement->SetAttribute(XML_MOD_GAME_VERSION_ARGUMENT_FLAG_PROPERTY_NAME.c_str(), argument.second.value().c_str());
+
+				argumentsElement->InsertEndChild(argumentElement);
 			}
 
-			tinyxml2::XMLElement * argumentElement = document->NewElement(XML_MOD_GAME_VERSION_ARGUMENT_ELEMENT_NAME.c_str());
-
-			argumentElement->SetAttribute(XML_MOD_GAME_VERSION_ARGUMENT_NAME_PROPERTY_NAME.c_str(), argument.first.c_str());
-			argumentElement->SetAttribute(XML_MOD_GAME_VERSION_ARGUMENT_FLAG_PROPERTY_NAME.c_str(), argument.second.value().c_str());
-
-			argumentsElement->InsertEndChild(argumentElement);
+			modGameVersionElement->InsertEndChild(argumentsElement);
 		}
-
-		modGameVersionElement->InsertEndChild(argumentsElement);
 
 		tinyxml2::XMLElement * operatingSystemsElement = document->NewElement(XML_MOD_GAME_VERSION_OPERATING_SYSTEMS_ELEMENT_NAME.c_str());
 
