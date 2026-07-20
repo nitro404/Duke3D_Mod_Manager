@@ -8786,7 +8786,7 @@
 			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
 			<member name="Michael Crisp" alias="Micky C" email="mickel999@gmail.com"/>
 			<member name="Mikko Sandt" alias="Jackotrades" email="sirpa.sandt@pp.inet.fi" icq="71211982" country="Finland"/>
-			<member name="Mister Sinister" email="m1ster_s1n1ster@yahoo.com"/>
+			<member name="Mister Sinister" email="m1ster_s1n1ster@yahoo.com" country="Russia"/>
 			<member name="Aymeric Nocus" alias="MRCK" email="aymeric-nocus@tele2.fr" youtube="MisterCK" discord="ck3d#2928" country="France"/>
 			<member name="Paul B"/>
 			<member name="Steambull"/>
@@ -13241,23 +13241,29 @@
 			<download filename="Supply_Depot-ModMgrA.zip" filesize="3343579" game="Atomic" type="Mod Manager Files" state="Native" sha1="9c48ee4fbfb19f1882a012a9c39b10f5c96ecd64"/>
 		</downloads>
 	</mod>
-	<mod name="Bad Weekend" id="bad_weekend" type="Partial Conversion">
+	<mod name="Bad Weekend" id="bad_weekend" type="Partial Conversion" version="1.1">
 		<team>
 			<member name="Mister Sinister" email="m1ster_s1n1ster@yahoo.com" country="Russia"/>
 		</team>
 		<versions>
-			<version release_date="June 8, 2010">
-				<type>
-					<game type="eDuke32" state="Native">
-						<file name="BADGAME.CON" size="149328" type="con" sha1="612e6fd02a573bb2eab132a0a98e77be8cdc6396"/>
-						<file name="Bad_Weekend.zip" size="30312126" type="zip" sha1="3b840396db1b2d8a7d6f61c8a0af3492b94fe796"/>
-					</game>
-				</type>
+			<version id="1.0" release_date="June 10, 2010">
+				<game type="eDuke32" state="Native">
+					<file name="BADGAME.CON" size="149328" type="con" sha1="612e6fd02a573bb2eab132a0a98e77be8cdc6396"/>
+					<file name="Bad_Weekend_1.0.zip" size="30312164" type="zip" sha1="c8aa5a25c3b58b4b16c8da6932c5d32b08ad3e71"/>
+				</game>
+			</version>
+			<version id="1.1" release_date="June 13, 2010">
+				<game type="eDuke32" state="Native">
+					<file name="BADGAME.CON" size="149328" type="con" sha1="612e6fd02a573bb2eab132a0a98e77be8cdc6396"/>
+					<file name="Bad_Weekend_1.1.zip" size="30312126" type="zip" sha1="3b840396db1b2d8a7d6f61c8a0af3492b94fe796"/>
+				</game>
 			</version>
 		</versions>
 		<downloads>
-			<download filename="badweekend.zip" filesize="33618107" game="eDuke32" type="Original Files" sha1="efb6db0e50537bab74c72a20d1715afba1e7f4cb"/>
-			<download filename="Bad_Weekend-ModMgrE.zip" filesize="30312290" game="eDuke32" type="Mod Manager Files" state="Native" sha1="a41edf163dda02f92f1f769f02b0c3a93420e15f"/>
+			<download filename="bad_w.zip" filesize="33513626" version="1.0" game="eDuke32" type="Original Files" sha1="16948cce0fd46b4d40fe7543a34dad77df813f2f"/>
+			<download filename="BW_.zip" filesize="33618107" version="1.1" game="eDuke32" type="Original Files" sha1="efb6db0e50537bab74c72a20d1715afba1e7f4cb"/>
+			<download filename="Bad_Weekend_1.0-ModMgrE.zip" filesize="30312336" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="973b55625439caec1dc0d4e432d92e2aae3a4f72"/>
+			<download filename="Bad_Weekend_1.1-ModMgrE.zip" filesize="30312298" version="1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="1877931e45e9c2fc514e5074624dc7b492a082ac"/>
 		</downloads>
 	</mod>
 	<mod name="Death Drive" id="death_drive" type="Episode">
