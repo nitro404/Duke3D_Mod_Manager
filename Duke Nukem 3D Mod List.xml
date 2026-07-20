@@ -16050,4 +16050,24 @@
 			<note>The original first level of the episode (metro.map) is missing, so the remaining 3 levels were bumped up.</note>
 		</notes>
 	</mod>
+	<mod name="NightStrike" id="nightstrike" type="Total Conversion" version="1.5.0.2">
+		<team>
+			<member name="Manson" email="manson@games.dk" website="http://fiota.homepage.dk" country="Denmark"/>
+		</team>
+		<versions>
+			<version id="1.5.0.2" release_date="June 25, 2001">
+				<game type="eDuke32" state="Native">
+					<file name="NS.CON" size="10720" type="con" sha1="898d38f2e26b985d92574d95435b6b042a5c7c47"/>
+					<file name="NightStrike_1.5.0.2.zip" size="18446181" type="zip" sha1="4533db7faefe79356eeb38d626dbee7d81f07d0d"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="NS-release1.5.0.2.zip" filesize="18549453" version="1.5.0.2" game="eDuke32" type="Original Files" sha1="8ad2a5bc5ab9390f200f4b46c6bf08148a019a61"/>
+			<download filename="NightStrike_1.5.0.2-ModMgrE.zip" filesize="18446342" version="1.5.0.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="f0b12adab87f09c5f2c782ecda5d7f083e0767c5"/>
+		</downloads>
+		<notes>
+			<note>To navigate the menu use your inventory left/right, and primary attack keys.</note>
+		</notes>
+	</mod>
 </mods>
