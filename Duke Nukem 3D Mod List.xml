@@ -16113,4 +16113,120 @@
 			<download filename="Battlefield_3-ModMgrE.zip" filesize="4244968" game="eDuke32" type="Mod Manager Files" state="Native" sha1="9285a523a06a0e93be98272b2f6e8bb795af7b64"/>
 		</downloads>
 	</mod>
+	<mod name="Cosmetic Duke" id="cosmetic_duke" type="Quality of Life Patch" version="1.9" website="https://www.moddb.com/mods/cosmetic-duke">
+		<team>
+			<member name="DecemberMan" website="https://www.moddb.com/members/decemberman" country="Poland"/>
+		</team>
+		<versions>
+			<version id="1.9" release_date="February 17, 2024">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="COSMETIC.CON" size="171" type="con" sha1="87d4aed64b549630a976d38468dd637566f7efaa"/>
+						<file name="COSMETIC.DEF" size="13855" type="def" sha1="422cd52a32a323479babad3f69cf0de40c100000"/>
+						<file name="Cosmetic_Duke_1.9.zip" size="71406281" type="zip" sha1="e5961c01928a450e5f1ec29f8fcec0b0f00d0df4"/>
+					</game>
+				</type>
+				<type id="Duke It Out in D.C.">
+					<game type="eDuke32" state="Native">
+						<file name="DUKEDC.CON" size="171" type="con" sha1="87d4aed64b549630a976d38468dd637566f7efaa"/>
+						<file name="DUKEDC.DEF" size="13962" type="def" sha1="91ad5eb164cc37d8e5bcda8c8618784af38f0160"/>
+						<file name="Cosmetic_Duke_1.9_-_Duke_It_Out_in_D.C.zip" size="4720344" type="zip" sha1="bbc2ee8c713ce4b70e911beabe3254905362ed56"/>
+					</game>
+					<dependencies>
+						<dependency id="duke_it_out_in_dc"/>
+						<dependency id="cosmetic_duke" version="1.9"/>
+					</dependencies>
+				</type>
+				<type id="Nuclear Winter">
+					<game type="eDuke32" state="Native">
+						<file name="NWINTER.CON" size="218" type="con" sha1="6c266b4c4a0a1db42edacfb4ce2c94d53654a10a"/>
+						<file name="NWINTER.DEF" size="23131" type="def" sha1="973dce6390a66d8e7d49c3509010cc6b2e861211"/>
+						<file name="Cosmetic_Duke_1.9_-_Nuclear_Winter.zip" size="15793249" type="zip" sha1="13a7a875dbc4a90e590e206eb1079ce9e94faad6"/>
+					</game>
+					<dependencies>
+						<dependency id="nuclear_winter"/>
+						<dependency id="cosmetic_duke" version="1.9"/>
+					</dependencies>
+				</type>
+				<type id="Duke Caribbean: Life&apos;s a Beach">
+					<game type="eDuke32" state="Native">
+						<file name="VACATION.CON" size="267" type="con" sha1="e5386439f2d5514638a297d7cbd9b27f31433647"/>
+						<file name="VACATION.DEF" size="14264" type="def" sha1="4d3c2088df45445d214a292fffcb47db892e980b"/>
+						<file name="Cosmetic_Duke_1.9_-_Duke_Caribbean_-_Lifes_a_Beach.zip" size="27570761" type="zip" sha1="12679cd1434aafdb69a637e4aa9794e4de9c00f0"/>
+					</game>
+					<dependencies>
+						<dependency id="duke_caribbean"/>
+						<dependency id="cosmetic_duke" version="1.9"/>
+					</dependencies>
+				</type>
+				<type id="25th Century Duke">
+					<game type="eDuke32" state="Native">
+						<file name="25CDUKE.CON" size="151189" type="con" sha1="f0f5cdefb3e1b2243290ff55704d49ec5ca87012"/>
+						<file name="25CDUKE.DEF" size="14291" type="def" sha1="5cbf12cae4ffb111b955df8923224fe26b564e6e"/>
+						<file name="Cosmetic_Duke_1.9_-_25th_Century_Duke.zip" size="364085" type="zip" sha1="64c14f46de041358f384689f73bca7c80a6173c2"/>
+					</game>
+					<dependencies>
+						<dependency id="25th_century_duke" version="1.0"/>
+						<dependency id="cosmetic_duke" version="1.9"/>
+					</dependencies>
+				</type>
+				<type id="Infinity: Secrets of the Acropolis">
+					<game type="eDuke32" state="Native">
+						<file name="SOTA.CON" size="66" type="con" sha1="8ed2169a5242482622ab987a1f7c25afb65d0237"/>
+						<file name="SOTA.DEF" size="14488" type="def" sha1="2f1370f11b40ac1a50e99ffd945aad41c6a0a7ec"/>
+						<file name="Cosmetic_Duke_1.9_-_Infinity_-_Secrets_of_the_Acropolis.zip" size="491291" type="zip" sha1="dbd32b8532215f0c08f1775fbdfb71954506c837"/>
+					</game>
+					<dependencies>
+						<dependency id="infinity_secrets_of_the_acropolis" version="1.0"/>
+						<dependency id="cosmetic_duke" version="1.9"/>
+					</dependencies>
+				</type>
+				<type id="Murder: The EDF Conspiracy">
+					<game type="eDuke32" state="Native">
+						<file name="MURDER.CON" size="166755" type="con" sha1="3d5ac38951dd7a890a24bd8a2c473c3178a399be"/>
+						<file name="MURDER.DEF" size="10089" type="def" sha1="6f4fdc5187907aa951140cfaacb908978ff5837b"/>
+						<file name="Cosmetic_Duke_1.9_-_Murder_-_The_EDF_Conspiracy.zip" size="2051777" type="zip" sha1="345dbf5d129b4356538854b3b41915675c1f0691"/>
+					</game>
+					<dependencies>
+						<dependency id="murder_the_edf_conspiracy" version="1.0"/>
+						<dependency id="cosmetic_duke" version="1.9"/>
+					</dependencies>
+				</type>
+				<type id="Pray Your Prayers 2000">
+					<game type="eDuke32" state="Native">
+						<file name="PYP2000.CON" size="148853" type="con" sha1="77d866dc8f417349ef8bca8f72a6adca01932f64"/>
+						<file name="PYP_2000.DEF" size="12707" type="def" sha1="eac8b91112572dd21acd2eddfd9f76e011b709cd"/>
+						<file name="Cosmetic_Duke_1.9_-_Pray_Your_Prayers_2000.zip" size="3796810" type="zip" sha1="646b3cb6fffc09122ae41a7a862b08d1a4e6bedf"/>
+					</game>
+					<dependencies>
+						<dependency id="pray_your_prayers_2000"/>
+						<dependency id="cosmetic_duke" version="1.9"/>
+					</dependencies>
+				</type>
+				<type id="The Gate">
+					<game type="eDuke32" state="Native">
+						<file name="THEGATE.CON" size="395" type="con" sha1="b6d821af7d3b1a06b569ea92b3c88b70fb8a2e0b"/>
+						<file name="THEGATE.DEF" size="13552" type="def" sha1="7c862b2c4f838c387a24865164da94429acfaacf"/>
+						<file name="Cosmetic_Duke_1.9_-_The_Gate.zip" size="982945" type="zip" sha1="f0117e8f998e165af86f4239d0fda735b22ca421"/>
+					</game>
+					<dependencies>
+						<dependency id="the_gate" version="1.0"/>
+						<dependency id="cosmetic_duke" version="1.9"/>
+					</dependencies>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Cosmetic_Duke_19.1.zip" filesize="135950188" version="1.9" game="eDuke32" type="Original Files" sha1="73a29fae6488c990a67b112b5ad2848a3e3547d8"/>
+			<download filename="Cosmetic_Duke_1.9-ModMgrE.zip" filesize="71406457" version="1.9" game="eDuke32" type="Mod Manager Files" state="Native" sha1="89b7690e88725ec8312990aa61647da3cdb84ed0"/>
+			<download filename="Cosmetic_Duke_1.9_-_Duke_It_Out_in_D.C.-ModMgrE.zip" filesize="4720562" version="1.9" version_type="Duke It Out in D.C." game="eDuke32" type="Mod Manager Files" state="Native" sha1="2755dc5c5f0808c0007daca1ae8a31564839daf1"/>
+			<download filename="Cosmetic_Duke_1.9_-_Nuclear_Winter-ModMgrE.zip" filesize="15793459" version="1.9" version_type="Nuclear Winter" game="eDuke32" type="Mod Manager Files" state="Native" sha1="1fa45b690f34bd790eee73c332dc49adc6f541ec"/>
+			<download filename="Cosmetic_Duke_1.9_-_Duke_Caribbean_-_Lifes_a_Beach-ModMgrE.zip" filesize="27571003" version="1.9" version_type="Duke Caribbean: Life&apos;s a Beach" game="eDuke32" type="Mod Manager Files" state="Native" sha1="22504e009af0ef0c4fc7264ab44507ad77e3b27b"/>
+			<download filename="Cosmetic_Duke_1.9_-_25th_Century_Duke-ModMgrE.zip" filesize="364301" version="1.9" version_type="25th Century Duke" game="eDuke32" type="Mod Manager Files" state="Native" sha1="86091347b3e6b57945879dad222b613ba72777d4"/>
+			<download filename="Cosmetic_Duke_1.9_-_Infinity_-_Secrets_of_the_Acropolis-ModMgrE.zip" filesize="491543" version="1.9" version_type="Infinity: Secrets of the Acropolis" game="eDuke32" type="Mod Manager Files" state="Native" sha1="afe1cf7a2c79eb474cca8b3814737326f5835968"/>
+			<download filename="Cosmetic_Duke_1.9_-_Murder_-_The_EDF_Conspiracy-ModMgrE.zip" filesize="2052013" version="1.9" version_type="Murder: The EDF Conspiracy" game="eDuke32" type="Mod Manager Files" state="Native" sha1="f2b39b967a28833aa439b74a2f7f53ea018035ad"/>
+			<download filename="Cosmetic_Duke_1.9_-_Pray_Your_Prayers_2000-ModMgrE.zip" filesize="3797036" version="1.9" version_type="Pray Your Prayers 2000" game="eDuke32" type="Mod Manager Files" state="Native" sha1="85342945853b45ddeff1b0aae0b320d1570f5030"/>
+			<download filename="Cosmetic_Duke_1.9_-_The_Gate-ModMgrE.zip" filesize="983143" version="1.9" version_type="The Gate" game="eDuke32" type="Mod Manager Files" state="Native" sha1="ab0c7aad4bb7aa0b8eccf47e212bb8b33aa80eb7"/>
+		</downloads>
+	</mod>
 </mods>
