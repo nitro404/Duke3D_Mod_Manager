@@ -10011,7 +10011,7 @@
 	</mod>
 	<mod name="Outpost X" id="outpost_x" type="Episode">
 		<team>
-			<member name="Sangluss" email="sangmahn@hotmail.com" country="Belgium"/>
+			<member name="Cedric Haegeman" alias="Sangluss" email="sangmahn@hotmail.com" country="Belgium"/>
 		</team>
 		<versions>
 			<version release_date="April 15, 2009">
@@ -15160,7 +15160,7 @@
 			<member name="Geoffrey van Dijk" alias="Fakir Baba" email="fakirnogwat@hotmail.com"/>
 			<member name="Rusty Nails" email="R_nails20@hotmail.com"/>
 			<member name="William Gee" email="geewillywizz@live.com" discord="William Gee#2015" country="New Zealand"/>
-			<member name="Sang"/>
+			<member name="Cedric Haegeman" alias="Sangluss" email="sangmahn@hotmail.com" country="Belgium"/>
 			<member name="Rob Wijkstra" alias="HighWire" email="Rob_Wijkstra@hotmail.com"/>
 		</team>
 		<versions>
@@ -16069,5 +16069,25 @@
 		<notes>
 			<note>To navigate the menu use your inventory left/right, and primary attack keys.</note>
 		</notes>
+	</mod>
+	<mod name="Battlefield 3" id="battlefield_3" type="Episode">
+		<team>
+			<member name="Cedric Haegeman" alias="Sangluss" email="maxdenukem@msn.com" country="Belgium"/>
+		</team>
+		<versions>
+			<version release_date="October 12, 2005">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="BF3_GAME.CON" size="150944" type="con" sha1="b637450f17a07f5638ea9ff472057521b1452a59"/>
+						<file name="bf3.def" size="2032" type="def" sha1="4501efb1c16758fcbd2dfe679c526c3c943614fa"/>
+						<file name="Battlefield_3.zip" size="4244800" type="zip" sha1="ead2d3f928cafd44b2d9c9581d60b615ece61367"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="bf32.rar" filesize="3690709" game="eDuke32" type="Original Files" sha1="873b634e345f36f1b734c7e23f26da1aba1f2e1b"/>
+			<download filename="Battlefield_3-ModMgrE.zip" filesize="4244968" game="eDuke32" type="Mod Manager Files" state="Native" sha1="9285a523a06a0e93be98272b2f6e8bb795af7b64"/>
+		</downloads>
 	</mod>
 </mods>
