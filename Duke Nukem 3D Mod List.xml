@@ -4341,10 +4341,11 @@
 			<mod id="coolio_tc"/>
 		</related>
 	</mod>
-	<mod name="Undead 3D" id="undead_3d" type="Total Conversion" version="Demo" website="http://www.dukeworld.com/undead">
-		<team name="RAGE Production Team" email="rptundeadtc@aol.com">
+	<mod name="Undead" id="undead" type="Total Conversion" version="4.0" version_type="Special Edition" website="http://www.dukeworld.com/undead">
+		<team name="RAGE Production Team &amp; DevilSoft Entertainment" email="rptundeadtc@aol.com">
 			<member name="Brandon Venske" alias="RAGE V" email="vinine100@aol.com"/>
 			<member name="Mike Erickson" alias="RAGE E" email="rptundeadtc@aol.com"/>
+			<member name="Devon Mullane" email="catinthehat3@prodigy.net"/>
 		</team>
 		<versions>
 			<version id="Demo" release_date="July 11, 2000">
@@ -4353,10 +4354,20 @@
 					<file name="UD3DDEMO.GRP" size="30205786" type="grp" sha1="891ece1a127ece9a9d38b4eda19623c2971af4a7"/>
 				</game>
 			</version>
+			<version id="4.0" release_date="October 29, 2000">
+				<type id="Special Edition">
+					<game type="eDuke32" state="Native">
+						<file name="UNDEAD.CON" size="175455" type="con" sha1="aab49f4cac74a58ce910c8bb1f1ef78c0368158c"/>
+						<file name="Undead_4.0_Special_Edition.zip" size="12870361" type="zip" sha1="8e68e4f360881c59b86162949ce644a2c2c8c2f9"/>
+					</game>
+				</type>
+			</version>
 		</versions>
 		<downloads>
 			<download filename="ud3ddemo.zip" filesize="14084970" version="Demo" game="Atomic" type="Original Files" sha1="72397ac40c20c11d67be25656d47a276891ff214"/>
+			<download filename="edukeundead.zip" filesize="13084875" version="4.0" version_type="Special Edition" game="eDuke32" type="Original Files" sha1="d668cac782eedf8e893afa91d41f0120081453c4"/>
 			<download filename="Undead_3D_Demo-ModMgrA.zip" filesize="13810262" version="Demo" game="Atomic" type="Mod Manager Files" state="Native" sha1="78f5cbe7138f78134268cc51b6c34b7f83e62d07"/>
+			<download filename="Undead_4.0_Special_Edition-ModMgrE.zip" filesize="12869368" version="4.0" version_type="Special Edition" game="eDuke32" type="Mod Manager Files" state="Native" sha1="5828e55cdabac224bafe03cbb592297356c372b8"/>
 		</downloads>
 	</mod>
 	<mod name="Under World 2.0" id="under_world" type="Total Conversion">
