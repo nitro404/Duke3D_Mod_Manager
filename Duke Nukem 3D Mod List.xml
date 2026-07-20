@@ -3971,6 +3971,9 @@
 			<download filename="the-gate.sit.bin" filesize="17215744" version="1.0" special="Unofficial Mac Version" type="Mac Version" sha1="daee54fc85634c94cd6a65880a2709eb1ce1be89"/>
 			<download filename="The_Gate_1.0-ModMgrA.zip" filesize="15016685" version="1.0" game="Atomic" type="Mod Manager Files" state="Native" sha1="903fa71e058fa81273f46d05023f807a157b1fbb"/>
 		</downloads>
+		<related>
+			<mod id="the_return"/>
+		</related>
 	</mod>
 	<mod name="The Legacy" id="the_legacy" type="Total Conversion" version="1.0" website="http://www.angelfire.com/nt/Tiburonq">
 		<team name="Tiburonq Entertainment" email="tiburonq@geocities.com">
@@ -4118,6 +4121,9 @@
 			<download filename="macreturn_sea.bin" filesize="5997952" type="Mac Version" sha1="0f4cc260bac77069b31e6ea2a793f27049c5ed43"/>
 			<download filename="The_Return-ModMgrA.zip" filesize="5953961" game="Atomic" type="Mod Manager Files" state="Native" sha1="b7b62a344b524c86c2cd38a1335eb45c2fc7591b"/>
 		</downloads>
+		<related>
+			<mod id="the_gate"/>
+		</related>
 	</mod>
 	<mod name="The Ultimate Space Prison" id="the_ultimate_space_prison" type="Map Pack" version="2.1 Demo">
 		<team>
