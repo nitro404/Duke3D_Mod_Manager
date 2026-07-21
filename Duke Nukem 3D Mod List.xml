@@ -14080,51 +14080,259 @@
 			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld" discord="Danarama#9209"/>
 		</team>
 		<versions>
+			<version id="1.15" release_date="December 14, 2007">
+				<game type="eDuke32" state="Native">
+					<file name="DUKEPLUS.CON" size="336614" type="con" sha1="52446a0ba6e042a8a46b4178847f58924a7c7eb4"/>
+					<file name="dukeplus.def" size="4304" type="def" sha1="04a8cb5e38b07afe8e37685d526dcb5da3e9e648"/>
+					<file name="DukePlus_1.15.zip" size="969398" type="zip" sha1="68e49921b85d2b0a839cecd4fe26a525ea6a9118"/>
+				</game>
+			</version>
+			<version id="1.70" release_date="June 22, 2008">
+				<game type="eDuke32" state="Native">
+					<file name="DUKEPLUS.CON" size="517307" type="con" sha1="318124c5c9039bd78c6edb7a421870bd5a8775cc"/>
+					<file name="dukeplus.def" size="19861" type="def" sha1="96768b6c82ccb9e0aa8a6be79a2bf6d0c011c547"/>
+					<file name="DukePlus_1.70.zip" size="8086020" type="zip" sha1="2b5d29e3d9b0186be6398a0c0114a428421ea8bb"/>
+				</game>
+			</version>
+			<version id="1.80" release_date="August 29, 2008">
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="23700" type="def" sha1="8e1e22a24b19d2bdfc6086e3631633a9bfda2fec"/>
+					<file name="DukePlus_1.80.zip" size="9205149" type="zip" sha1="8f6f3ec22da0b6b9e7cf3a12351a46fcbfeb7ee4"/>
+				</game>
+			</version>
+			<version id="1.90" release_date="November 7, 2008">
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="30906" type="def" sha1="49249358abdf79d3ac346d3f717e9d82589c3eb1"/>
+					<file name="DukePlus_1.90.zip" size="12007067" type="zip" sha1="0fedb4ec39f2459dbf4615327f1fe54ca47c27aa"/>
+				</game>
+			</version>
+			<version id="1.92" release_date="December 9, 2008">
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="30906" type="def" sha1="49249358abdf79d3ac346d3f717e9d82589c3eb1"/>
+					<file name="DukePlus_1.92.zip" size="11910659" type="zip" sha1="e40c5c3470ca982c389b9aa0ebf32a0848b0ebac"/>
+				</game>
+			</version>
+			<version id="1.93" release_date="December 14, 2008">
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="31310" type="def" sha1="d246cf5214015e90c2a5300a216c9e7b11194c9e"/>
+					<file name="DukePlus_1.93.zip" size="11911248" type="zip" sha1="d946d8035e94bc55eb9beb6fae382073b941d649"/>
+				</game>
+			</version>
+			<version id="1.95" release_date="December 21, 2008">
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="32431" type="def" sha1="bdc7ffce3b7ebb06727cdce887fe6287c048c64d"/>
+					<file name="DukePlus_1.95.zip" size="11932222" type="zip" sha1="767e81dba3fe128b0aae43508eaf5a9624133349"/>
+				</game>
+			</version>
+			<version id="1.96" release_date="December 23, 2008">
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="32511" type="def" sha1="eb4ca122d00c69b2f33002f05c6f796e28c7f1ea"/>
+					<file name="DukePlus_1.96.zip" size="11966642" type="zip" sha1="706ead3c2cf012ac0ffed31c6d0cac01c297da35"/>
+				</game>
+			</version>
+			<version id="1.97" release_date="January 8, 2009">
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="32511" type="def" sha1="eb4ca122d00c69b2f33002f05c6f796e28c7f1ea"/>
+					<file name="DukePlus_1.97.zip" size="11968780" type="zip" sha1="b3a52287ccc9ea776b969a9e9d7e8a5282b4246e"/>
+				</game>
+			</version>
+			<version id="1.98">
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="37039" type="def" sha1="192f3d9516c08fe0934e613b0e182d68700bf496"/>
+					<file name="DukePlus_1.98.zip" size="13119527" type="zip" sha1="19855d9ba1cdc8a1b44bd620b44539e0c697bf77"/>
+				</game>
+			</version>
+			<version id="1.99" release_date="February 9, 2009">
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="38255" type="def" sha1="e5028b6a188e3254a613b0ebe6adb0848a9b4b4a"/>
+					<file name="DukePlus_1.99.zip" size="13278303" type="zip" sha1="d5dab1aebf9976f12844884f5a72ead454ae89e4"/>
+				</game>
+			</version>
+			<version id="2.00" release_date="May 3, 2009">
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="39950" type="def" sha1="4fb2ba428400e4c666c601df442f389d424ea4ea"/>
+					<file name="DukePlus_2.00.zip" size="15081572" type="zip" sha1="ed4d5bfc3f3daed63900e34561f439d24d49dcbe"/>
+				</game>
+			</version>
+			<version id="2.01" release_date="June 8, 2009">
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="39950" type="def" sha1="4fb2ba428400e4c666c601df442f389d424ea4ea"/>
+					<file name="DukePlus_2.01.zip" size="15533124" type="zip" sha1="156b9b5c4222bdd4da430338f294ad68bb71c6ec"/>
+				</game>
+			</version>
+			<version id="2.02" release_date="June 13, 2009">
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="40018" type="def" sha1="34da8f93d640e386d8da0caa5f2d2f963040aeb3"/>
+					<file name="DukePlus_2.02.zip" size="15388334" type="zip" sha1="26f102cc8ef3d49d598229c11c98a2aef7378ae2"/>
+				</game>
+			</version>
+			<version id="2.02a" release_date="June 13, 2009">
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="40102" type="def" sha1="9b629e1493f9b888f72a698ebc9bf70a8c7ca630"/>
+					<file name="DukePlus_2.02a.zip" size="14895225" type="zip" sha1="79373538666658e4ed697e0f6e0bf16889d8fefb"/>
+				</game>
+			</version>
+			<version id="2.03" release_date="July 2, 2009">
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="40102" type="def" sha1="9b629e1493f9b888f72a698ebc9bf70a8c7ca630"/>
+					<file name="DukePlus_2.03.zip" size="14894497" type="zip" sha1="cae6508bb9c8b36fb894aa924309cf0c37ce76ff"/>
+				</game>
+			</version>
+			<version id="2.05" release_date="August 2, 2009">
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="40177" type="def" sha1="7252c4020eb7760aadcc503a53f75a7ea957bca5"/>
+					<file name="DukePlus_2.05.zip" size="15710944" type="zip" sha1="1a5733a6b689690997b3d1c9d3d858ac8b9dad37"/>
+				</game>
+			</version>
+			<version id="2.06" release_date="December 23, 2009">
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="43496" type="def" sha1="2cfab16e631a9f692426f1afe02def79ba27a21d"/>
+					<file name="DukePlus_2.06.zip" size="21155268" type="zip" sha1="bba96e14251ccf10b6f8bbaa1b3c80f1633824dd"/>
+				</game>
+			</version>
+			<version id="2.07" release_date="January 22, 2010">
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="55704" type="def" sha1="a78b61b3202a294f6e8ccea58ffb76666293e98b"/>
+					<file name="DukePlus_2.07.zip" size="27022923" type="zip" sha1="bab8605182281b022caefb9818bf870f39b86574"/>
+				</game>
+			</version>
+			<version id="2.07v2" release_date="January 22, 2010">
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="55704" type="def" sha1="a78b61b3202a294f6e8ccea58ffb76666293e98b"/>
+					<file name="DukePlus_2.07v2.zip" size="27022920" type="zip" sha1="93e4268b8650b3ed25215d13a75b8c3d6628fb6c"/>
+				</game>
+			</version>
+			<version id="2.09" release_date="March 20, 2010">
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="58442" type="def" sha1="23ed4b7526bf6871d71c9a5bbc459de6b4c48c0b"/>
+					<file name="DukePlus_2.09.zip" size="34316991" type="zip" sha1="ad29039106593fb017e54f202495abd2acfd86c0"/>
+				</game>
+			</version>
+			<version id="2.10" release_date="July 6, 2010">
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="58745" type="def" sha1="5df55a67685790b03cd0b47fb6f41cdf3c4e3c95"/>
+					<file name="DukePlus_2.10.zip" size="36103309" type="zip" sha1="8e4f4856922db63d622f52af8519c5cc9df3e174"/>
+				</game>
+			</version>
 			<version id="2.11" release_date="July 30, 2010">
-				<type>
-					<game type="eDuke32" state="Native">
-						<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
-						<file name="dukeplus.def" size="59442" type="def" sha1="7e9c64af918fc60912fbc478877919500ef82bec"/>
-						<file name="DukePlus_2.11.zip" size="46091889" type="zip" sha1="336f0dd62660977886fe3e86b6a335d7d9383de9"/>
-					</game>
-				</type>
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="59442" type="def" sha1="7e9c64af918fc60912fbc478877919500ef82bec"/>
+					<file name="DukePlus_2.11.zip" size="46091889" type="zip" sha1="336f0dd62660977886fe3e86b6a335d7d9383de9"/>
+				</game>
 			</version>
 			<version id="2.14" release_date="November 14, 2010">
-				<type>
-					<game type="eDuke32" state="Native">
-						<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
-						<file name="dukeplus.def" size="58755" type="def" sha1="0dc5b13006a81b50d14f77d84c5ba215432bfe89"/>
-						<file name="DukePlus_2.14.zip" size="45089869" type="zip" sha1="6042e2206703156f331f54555673f0b53b13c650"/>
-					</game>
-				</type>
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="58755" type="def" sha1="0dc5b13006a81b50d14f77d84c5ba215432bfe89"/>
+					<file name="DukePlus_2.14.zip" size="45089869" type="zip" sha1="6042e2206703156f331f54555673f0b53b13c650"/>
+				</game>
+			</version>
+			<version id="2.20" release_date="January 26, 2011">
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="113792" type="def" sha1="e687a45925340ed9ea98df789df1eb3bb12dc929"/>
+					<file name="DukePlus_2.20.zip" size="94622484" type="zip" sha1="c0ad2e3f76d07db416927540f09220c75d727b06"/>
+				</game>
 			</version>
 			<version id="2.35" release_date="January 5, 2013">
-				<type>
-					<game type="eDuke32" state="Native">
-						<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
-						<file name="dukeplus.def" size="123398" type="def" sha1="ba542c1935c9b18106da7ea3f360c2d8675f666d"/>
-						<file name="DukePlus_2.35.zip" size="130660728" type="zip" sha1="510500f58b52a45807242f5450943cf06f811b28"/>
-					</game>
-				</type>
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="123398" type="def" sha1="ba542c1935c9b18106da7ea3f360c2d8675f666d"/>
+					<file name="DukePlus_2.35.zip" size="130660728" type="zip" sha1="510500f58b52a45807242f5450943cf06f811b28"/>
+				</game>
+			</version>
+			<version id="2.40" release_date="July 20, 2016">
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="36" type="con" sha1="4850419cd1820ef11d5a8ea15dd68f689b081115"/>
+					<file name="dukeplus.def" size="131469" type="def" sha1="6aae043dd6a082b665f85dac681df7a934e65282"/>
+					<file name="DukePlus_2.40.zip" size="130819803" type="zip" sha1="f9b2afae5d91ec04155983b16f245b97f8955e74"/>
+				</game>
 			</version>
 			<version id="2.50.1" release_date="June 3, 2020">
-				<type>
-					<game type="eDuke32" state="Native">
-						<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
-						<file name="dukeplus.def" size="131543" type="def" sha1="e7ceb7eee16d84beacd7b0cb12d562ca812a7e10"/>
-						<file name="DukePlus_2.50.1.zip" size="130854249" type="zip" sha1="973e9fa3cafc22cb47f10080ead96d4570c575ba"/>
-					</game>
-				</type>
+				<game type="eDuke32" state="Native">
+					<file name="EDUKE.CON" size="27" type="con" sha1="e96302aadc9f296f0bd33c6e8ccfb0cf3626f107"/>
+					<file name="dukeplus.def" size="131543" type="def" sha1="e7ceb7eee16d84beacd7b0cb12d562ca812a7e10"/>
+					<file name="DukePlus_2.50.1.zip" size="130854249" type="zip" sha1="973e9fa3cafc22cb47f10080ead96d4570c575ba"/>
+				</game>
 			</version>
 		</versions>
 		<downloads>
+			<download filename="DukePlus1.15.rar" filesize="1639340" version="1.15" game="eDuke32" type="Original Files" sha1="57b5ea261b195adc5965bbc04a17b4e2f6a98354"/>
+			<download filename="DukePlus1.70.rar" filesize="7874316" version="1.70" game="eDuke32" type="Original Files" sha1="a9dfdc80976d47a262bb00ff36e2b1fe715e4257"/>
+			<download filename="DukePlus1.80.rar" filesize="8849787" version="1.80" game="eDuke32" type="Original Files" sha1="bb042cdd2433ded2ddb58a6ceb958f4c531078e0"/>
+			<download filename="DukePlus1.90skycar_beta.rar" filesize="11447743" version="1.90" game="eDuke32" type="Original Files" sha1="7c63ead80e0d530f84f758dd1059a828798b764a"/>
+			<download filename="DukePlus1.92.rar" filesize="11369419" version="1.92" game="eDuke32" type="Original Files" sha1="6c66b2ef6af084fa3b81c9d6622f1db38bf648ed"/>
+			<download filename="DukePlus1.93.rar" filesize="11361162" version="1.93" game="eDuke32" type="Original Files" sha1="e7b6cd77f235d7de0f68f3f49c4bb85d481b028a"/>
+			<download filename="DukePlus1.95.rar" filesize="11376583" version="1.95" game="eDuke32" type="Original Files" sha1="c2b76b22df3ed53ff2b2a879f091efa9cdc1a55c"/>
+			<download filename="DukePlus1.96.rar" filesize="11404963" version="1.96" game="eDuke32" type="Original Files" sha1="3160664d5eb196f8cfb0ef8f9b0c2cb293b539a8"/>
+			<download filename="DukePlus1.97.rar" filesize="11406340" version="1.97" game="eDuke32" type="Original Files" sha1="32470b8c856137ecc070180a13b16ddc8313b80f"/>
+			<download filename="DukePlus1.98.rar" filesize="12549122" version="1.98" game="eDuke32" type="Original Files" sha1="e5da9c86f3c7d471bcdaeb5f7e7a19a2c448664b"/>
+			<download filename="DukePlus1.99.rar" filesize="12699108" version="1.99" game="eDuke32" type="Original Files" sha1="037e8cbb128c183ea65083d71f093bad6a8cc07b"/>
+			<download filename="DukePlus2.00.rar" filesize="15390489" version="2.00" game="eDuke32" type="Original Files" sha1="76528f26570b9e78b236c4336575be9163497c3b"/>
+			<download filename="DukePlus2.01.rar" filesize="15843311" version="2.01" game="eDuke32" type="Original Files" sha1="f5c153cffd99a6c3b39667795a8b1dd61d97e397"/>
+			<download filename="DukePlus2.02.rar" filesize="15777394" version="2.02" game="eDuke32" type="Original Files" sha1="0dfaa6cedda17339f4b3cf0f1614f676d214d52f"/>
+			<download filename="DukePlus2.02a.rar" filesize="15289167" version="2.02a" game="eDuke32" type="Original Files" sha1="b8c40d8e6cf1534c41715eebfb69b98418b5536d"/>
+			<download filename="DukePlus2.03.rar" filesize="15288498" version="2.03" game="eDuke32" type="Original Files" sha1="348ad5411dbb6a1d8faa6e304b1826fdec29f3ea"/>
+			<download filename="DukePlus2.05.rar" filesize="15906092" version="2.05" game="eDuke32" type="Original Files" sha1="b57deaca5360933ec09ef4a7ea3f0e773f94512a"/>
+			<download filename="DukePlus2.06.rar" filesize="19923206" version="2.06" game="eDuke32" type="Original Files" sha1="6be54c31b3a4ef6a55a08df6954c44ba10ebc4a0"/>
+			<download filename="DukePlus2.07.rar" filesize="25166715" version="2.07" game="eDuke32" type="Original Files" sha1="ad3c1967176a18aa3fbae7da60bba57ec2a19700"/>
+			<download filename="Duke Plus2.07v2.rar" filesize="25166722" version="2.07v2" game="eDuke32" type="Original Files" sha1="39dd1e4e9cc67321b583171c59d85aa6d3b061a8"/>
+			<download filename="DukePlus2.09.rar" filesize="32426828" version="2.09" game="eDuke32" type="Original Files" sha1="548e3f627d63b320b987be491b1aff77bdd57316"/>
+			<download filename="DukePlus2.10.rar" filesize="34119002" version="2.10" game="eDuke32" type="Original Files" sha1="102951148d5ca4676b6fe6e771769750199d9bb1"/>
 			<download filename="DukePlus_2.11.rar" filesize="42226585" version="2.11" game="eDuke32" type="Original Files" sha1="653f92379f11f31ce64a19418cf9c18d5cabccc4"/>
 			<download filename="DukePlus_2.14.rar" filesize="41834731" version="2.14" game="eDuke32" type="Original Files" sha1="698f8a95f42e9cb704480d89bf6ccbdf4c9c5f12"/>
+			<download filename="DukePlus2.20.rar" filesize="86891723" version="2.20" game="eDuke32" type="Original Files" sha1="501f5cf2bb86fcdb6712084ba6fb31c3e8b139b7"/>
 			<download filename="DUKEPLUS_2.35.zip" filesize="135800824" version="2.35" game="eDuke32" type="Original Files" sha1="8b055bd94502ef8af32b54edfab77ca2e4461b91"/>
+			<download filename="DukePlus2.40.zip" filesize="134571846" version="2.40" game="eDuke32" type="Original Files" sha1="5ddc5cffd48a2e9b6262ca67087430c1bca8125a"/>
 			<download filename="DukePlus_251.7z" filesize="108656325" version="2.50.1" game="eDuke32" type="Original Files" sha1="d05059c8d12b29e9b1e537a76dc05eb836220fd4"/>
+			<download filename="DukePlus_1.15-ModMgrE.zip" filesize="969566" version="1.15" game="eDuke32" type="Mod Manager Files" state="Native" sha1="08619e5b1aae79ebac9c9e655647bcabb1a00ec7"/>
+			<download filename="DukePlus_1.70-ModMgrE.zip" filesize="8086188" version="1.70" game="eDuke32" type="Mod Manager Files" state="Native" sha1="2d4489c8482ccda4cf2a2b94d16de298e2ecd9dd"/>
+			<download filename="DukePlus_1.80-ModMgrE.zip" filesize="9205317" version="1.80" game="eDuke32" type="Mod Manager Files" state="Native" sha1="8b5c5b9f230826fd8a678f036af56b22ca81ab27"/>
+			<download filename="DukePlus_1.90-ModMgrE.zip" filesize="12007235" version="1.90" game="eDuke32" type="Mod Manager Files" state="Native" sha1="85276803ce95be741dc4a8cba2a31fa7c47e66f0"/>
+			<download filename="DukePlus_1.92-ModMgrE.zip" filesize="11910827" version="1.92" game="eDuke32" type="Mod Manager Files" state="Native" sha1="4f4c59fae83acc6d1607306e1da4c5473bb644e8"/>
+			<download filename="DukePlus_1.93-ModMgrE.zip" filesize="11911416" version="1.93" game="eDuke32" type="Mod Manager Files" state="Native" sha1="1848cff6e59e0d65ce9c30dcfb52420f1def92ff"/>
+			<download filename="DukePlus_1.95-ModMgrE.zip" filesize="11932390" version="1.95" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c4947d502ce2ce4128346ae09014272cea9f55c2"/>
+			<download filename="DukePlus_1.96-ModMgrE.zip" filesize="11966810" version="1.96" game="eDuke32" type="Mod Manager Files" state="Native" sha1="455a0374f57eb02881a12803e845dd049cac9bb9"/>
+			<download filename="DukePlus_1.97-ModMgrE.zip" filesize="11968948" version="1.97" game="eDuke32" type="Mod Manager Files" state="Native" sha1="6f8d09d5e8ff7a3a65de5173d8dbb9e83be8a4f7"/>
+			<download filename="DukePlus_1.98-ModMgrE.zip" filesize="13119695" version="1.98" game="eDuke32" type="Mod Manager Files" state="Native" sha1="906be1b5cfcaadb4ef2628a99726b3f229a06afc"/>
+			<download filename="DukePlus_1.99-ModMgrE.zip" filesize="13278471" version="1.99" game="eDuke32" type="Mod Manager Files" state="Native" sha1="263a32d6d85132df56d93112ab9fe2c0cfee894b"/>
+			<download filename="DukePlus_2.00-ModMgrE.zip" filesize="15081740" version="2.00" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e30a58e21e69bdf94d1faacd95c47ad7d8ee98f5"/>
+			<download filename="DukePlus_2.01-ModMgrE.zip" filesize="15533292" version="2.01" game="eDuke32" type="Mod Manager Files" state="Native" sha1="69e99bbd1ba5c67088c7257b52aaa2638aa3253f"/>
+			<download filename="DukePlus_2.02-ModMgrE.zip" filesize="15388502" version="2.02" game="eDuke32" type="Mod Manager Files" state="Native" sha1="2466176c34bd8bca10807242f6b6f89f65f521e8"/>
+			<download filename="DukePlus_2.02a-ModMgrE.zip" filesize="14895395" version="2.02a" game="eDuke32" type="Mod Manager Files" state="Native" sha1="0cae1ff4899a769d0362a60f8f21c803756abad1"/>
+			<download filename="DukePlus_2.03-ModMgrE.zip" filesize="14894665" version="2.03" game="eDuke32" type="Mod Manager Files" state="Native" sha1="5f164f9cfd18a5442aba950bbee1098fcc215f96"/>
+			<download filename="DukePlus_2.05-ModMgrE.zip" filesize="15711112" version="2.05" game="eDuke32" type="Mod Manager Files" state="Native" sha1="eb25760ae74ee19d7e19ec7b5daee3f3c33f1d23"/>
+			<download filename="DukePlus_2.06-ModMgrE.zip" filesize="21155436" version="2.06" game="eDuke32" type="Mod Manager Files" state="Native" sha1="3588b61a561ae6c3805fe707e60a8e569dee9f7d"/>
+			<download filename="DukePlus_2.07-ModMgrE.zip" filesize="27023091" version="2.07" game="eDuke32" type="Mod Manager Files" state="Native" sha1="7bc777a1e2f904b9d39159562edcac1ef880681a"/>
+			<download filename="DukePlus_2.07v2-ModMgrE.zip" filesize="27023092" version="2.07v2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="54f40d4d11c6d6414dfc1a0b7394901e4298d89a"/>
+			<download filename="DukePlus_2.09-ModMgrE.zip" filesize="34317159" version="2.09" game="eDuke32" type="Mod Manager Files" state="Native" sha1="09537a5cb143797574e845a4853d84a9360fb640"/>
+			<download filename="DukePlus_2.10-ModMgrE.zip" filesize="36103477" version="2.10" game="eDuke32" type="Mod Manager Files" state="Native" sha1="f7c89e4c3d2d4da30758dc72d3f395a4499e9a79"/>
 			<download filename="DukePlus_2.11-ModMgrE.zip" filesize="46092057" version="2.11" game="eDuke32" type="Mod Manager Files" state="Native" sha1="a68409ff2ad027863536dd528ceec677d250f7ae"/>
 			<download filename="DukePlus_2.14-ModMgrE.zip" filesize="45090037" version="2.14" game="eDuke32" type="Mod Manager Files" state="Native" sha1="147e4877f8b4b6d16ad01a694dd01c5bafc5c074"/>
+			<download filename="DukePlus_2.20-ModMgrE.zip" filesize="94622652" version="2.20" game="eDuke32" type="Mod Manager Files" state="Native" sha1="848d7e1d978dbb20e267849ae08d90a1d335c3df"/>
 			<download filename="DukePlus_2.35-ModMgrE.zip" filesize="130660896" version="2.35" game="eDuke32" type="Mod Manager Files" state="Native" sha1="7873e24810ded662011df380717f3e1d4f6b2b1b"/>
+			<download filename="DukePlus_2.40-ModMgrE.zip" filesize="130819971" version="2.40" game="eDuke32" type="Mod Manager Files" state="Native" sha1="21943ad9175c32c04f43ba9030e9487788247142"/>
 			<download filename="DukePlus_2.50.1-ModMgrE.zip" filesize="130854421" version="2.50.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="69a29ca7cea3e53e0c5b7769804f5acd1314e505"/>
 		</downloads>
 	</mod>
