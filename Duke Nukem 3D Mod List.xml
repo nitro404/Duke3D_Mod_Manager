@@ -4605,6 +4605,10 @@
 			<download filename="wgrealms.zip" filesize="4269613" game="Atomic" type="Original Files" sha1="cba43cec14f9cb7784c5a71ee6ce889eb9c863fc"/>
 			<download filename="WGRealms_Episode-ModMgrA.zip" filesize="4228736" game="Atomic" type="Mod Manager Files" state="Native" sha1="795a7bdbcb484a4451d624126c5b133439878dc6"/>
 		</downloads>
+		<related>
+			<mod id="wgrealms_2_-_siege_breaker"/>
+			<mod id="wgrealms_3_-_ganymede"/>
+		</related>
 	</mod>
 	<mod name="When Scum Returns" id="when_scum_returns" type="Total Conversion" version="2.0" website="http://www.dukeworld.com/wsr">
 		<team name="Novaware" email="aic_wsr@yahoo.com">
@@ -12464,6 +12468,10 @@
 			<download filename="WGRealms_2_-_Siege_Breaker_1.2-ModMgrE.zip" filesize="55492806" version="1.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="6bb3d6ca7d8ac280365c02ea6c06b7ece5957a32"/>
 			<download filename="WGRealms_2_-_Siege_Breaker_1.201-ModMgrE.zip" filesize="55495863" version="1.201" game="eDuke32" type="Mod Manager Files" state="Native" sha1="bbea023a5ef6aebfa79bccc9239c2700a3c9c571"/>
 		</downloads>
+		<related>
+			<mod id="wgrealms_episode"/>
+			<mod id="wgrealms_3_-_ganymede"/>
+		</related>
 	</mod>
 	<mod name="WG Realms: Demon Throne" id="wg_realms_-_demon_throne" alias="wgrealms_2_-_siege_breaker" type="Total Conversion" version="3.01" website="https://www.moddb.com/games/wgrealms-2">
 		<team discord="https://discord.gg/jNrKdk5">
@@ -16457,5 +16465,29 @@
 			<download filename="wgnwV1.2.zip" filesize="4050960" version="1.2" game="eDuke32" type="Original Files" sha1="2edfee68d3cdccea33b6c7cefaf36148f9beec40"/>
 			<download filename="WG_Nuclear_Winter_1.2-ModMgrE.zip" filesize="1166168" version="1.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e07ff3188efce2127c2e2a464fa023a15a670284"/>
 		</downloads>
+	</mod>
+	<mod name="WGRealms 3: Ganymede" id="wgrealms_3_-_ganymede" type="Total Conversion" version="1.3" website="https://www.moddb.com/mods/wgr3-ganymede">
+		<team>
+			<member name="William Gee" email="geewillywizz@gmail.com" website="https://wggames.nz" discord="William Gee#2015" country="New Zealand"/>
+		</team>
+		<versions>
+			<version id="1.3" release_date="January 20, 2023">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="GANYMEDE.CON" size="155945" type="con" sha1="62a547e63fdf8c6068f98ecdf9cab79aad5bccd8"/>
+						<file name="ganymede.def" size="1582" type="def" sha1="7f8703daa598e2c6330155e627f42b09297a5fec"/>
+						<file name="WGRealms_3_-_Ganymede_1.3.zip" size="24149009" type="zip" sha1="77dd7a5b9e3110937784c533956fd8df634c085f"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="GANYMEDE_v1.3.zip" filesize="23701836" version="1.3" game="eDuke32" type="Original Files" sha1="e9632494594039a9de96e15fb2160f6a9d270e30"/>
+			<download filename="WGRealms_3_-_Ganymede_1.3-ModMgrE.zip" filesize="24149201" version="1.3" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c0d29fc2aa2ef661b393ab15c0df8687b39f50ce"/>
+		</downloads>
+		<related>
+			<mod id="wgrealms_episode"/>
+			<mod id="wgrealms_2_-_siege_breaker"/>
+		</related>
 	</mod>
 </mods>
