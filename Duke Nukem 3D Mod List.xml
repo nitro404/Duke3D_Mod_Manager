@@ -1020,7 +1020,7 @@
 			<member name="Maarten van Oostrum" email="oostrum_maarten@hotmail.com"/>
 			<member name="Iggy"/>
 			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
-			<member name="William Gee" email="geewillywizz@live.com" discord="William Gee#2015" country="New Zealand"/>
+			<member name="William Gee" email="geewillywizz@live.com" website="https://wggames.nz" discord="William Gee#2015" country="New Zealand"/>
 		</team>
 		<versions>
 			<version release_date="January 29, 2006">
@@ -4591,7 +4591,7 @@
 	</mod>
 	<mod name="WGRealms Episode" id="wgrealms_episode" type="Total Conversion" website="http://www.geocities.com/wgrealms">
 		<team>
-			<member name="William Gee" email="geewillywizz@hotmail.com" discord="William Gee#2015" country="New Zealand"/>
+			<member name="William Gee" email="geewillywizz@hotmail.com" website="https://wggames.nz" discord="William Gee#2015" country="New Zealand"/>
 		</team>
 		<versions>
 			<version release_date="July 30, 2004">
@@ -7546,7 +7546,7 @@
 	</mod>
 	<mod name="WGSpace Episode" id="wgspace_episode" type="Episode" website="http://wgrealms.williamgeegallery.com">
 		<team>
-			<member name="William Gee" email="geewillywizz@live.com" discord="William Gee#2015" country="New Zealand"/>
+			<member name="William Gee" email="geewillywizz@live.com" website="https://wggames.nz" discord="William Gee#2015" country="New Zealand"/>
 		</team>
 		<versions>
 			<version release_date="August 6, 2008">
@@ -8916,7 +8916,7 @@
 			<member name="Geedra"/>
 			<member name="Cage" email="cageds@tlen.pl" country="Poland"/>
 			<member name="Bullov"/>
-			<member name="William Gee" email="geewillywizz@live.com" discord="William Gee#2015" country="New Zealand"/>
+			<member name="William Gee" email="geewillywizz@live.com" website="https://wggames.nz" discord="William Gee#2015" country="New Zealand"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="August 24, 2018">
@@ -15390,7 +15390,7 @@
 			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
 			<member name="Geoffrey van Dijk" alias="Fakir Baba" email="fakirnogwat@hotmail.com"/>
 			<member name="Rusty Nails" email="R_nails20@hotmail.com"/>
-			<member name="William Gee" email="geewillywizz@live.com" discord="William Gee#2015" country="New Zealand"/>
+			<member name="William Gee" email="geewillywizz@live.com" website="https://wggames.nz" discord="William Gee#2015" country="New Zealand"/>
 			<member name="Cedric Haegeman" alias="Sangluss" email="sangmahn@hotmail.com" country="Belgium"/>
 			<member name="Rob Wijkstra" alias="HighWire" email="Rob_Wijkstra@hotmail.com"/>
 		</team>
@@ -15940,7 +15940,7 @@
 	</mod>
 	<mod name="Duke Nukem: Horror Castle" id="duke_nukem_-_horror_castle" alias="zombie_nukem" type="Total Conversion" version="6.4" website="https://www.moddb.com/mods/duke-nukem-horror-castle">
 		<team>
-			<member name="William Gee" email="geewillywizz@live.com" discord="William Gee#2015" country="New Zealand"/>
+			<member name="William Gee" email="geewillywizz@live.com" website="https://wggames.nz" discord="William Gee#2015" country="New Zealand"/>
 		</team>
 		<versions>
 			<version id="6.4" release_date="October 30, 2025">
@@ -15958,7 +15958,7 @@
 	</mod>
 	<mod name="Zombie Nukem" id="zombie_nukem" alias="duke_nukem_-_horror_castle" type="Total Conversion" version="3.1" website="https://www.moddb.com/mods/duke-nukem-horror-castle">
 		<team>
-			<member name="William Gee" email="geewillywizz@live.com" discord="William Gee#2015" country="New Zealand"/>
+			<member name="William Gee" email="geewillywizz@live.com" website="https://wggames.nz" discord="William Gee#2015" country="New Zealand"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="May 26, 2025">
@@ -16435,6 +16435,27 @@
 			<download filename="Cosmetic_Duke_1.9_-_Murder_-_The_EDF_Conspiracy-ModMgrE.zip" filesize="2052013" version="1.9" version_type="Murder: The EDF Conspiracy" game="eDuke32" type="Mod Manager Files" state="Native" sha1="f2b39b967a28833aa439b74a2f7f53ea018035ad"/>
 			<download filename="Cosmetic_Duke_1.9_-_Pray_Your_Prayers_2000-ModMgrE.zip" filesize="3797036" version="1.9" version_type="Pray Your Prayers 2000" game="eDuke32" type="Mod Manager Files" state="Native" sha1="85342945853b45ddeff1b0aae0b320d1570f5030"/>
 			<download filename="Cosmetic_Duke_1.9_-_The_Gate-ModMgrE.zip" filesize="983143" version="1.9" version_type="The Gate" game="eDuke32" type="Mod Manager Files" state="Native" sha1="ab0c7aad4bb7aa0b8eccf47e212bb8b33aa80eb7"/>
+		</downloads>
+	</mod>
+	<mod name="WG Nuclear Winter" id="wg_nuclear_winter" type="Episode" version="1.2" website="https://www.moddb.com/mods/wg-nuclear-winter">
+		<team>
+			<member name="William Gee" email="geewillywizz@gmail.com" website="https://wggames.nz" discord="William Gee#2015" country="New Zealand"/>
+		</team>
+		<versions>
+			<version id="1.2" release_date="December 20, 2024">
+				<game type="eDuke32" state="Native">
+					<file name="NWINTER.CON" size="154269" type="con" sha1="2bb2ddc7319e0935569b724f3c67cb953fdb79d6"/>
+					<file name="wgnw.def" size="169" type="def" sha1="96816a3fda845405ea10d398dd0cebbf27b9fb00"/>
+					<file name="WG_Nuclear_Winter_1.2.zip" size="1165984" type="zip" sha1="0ed035615ebe94d8c7e4ff251452e32f01d412d0"/>
+				</game>
+				<dependencies>
+					<dependency id="nuclear_winter"/>
+				</dependencies>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="wgnwV1.2.zip" filesize="4050960" version="1.2" game="eDuke32" type="Original Files" sha1="2edfee68d3cdccea33b6c7cefaf36148f9beec40"/>
+			<download filename="WG_Nuclear_Winter_1.2-ModMgrE.zip" filesize="1166168" version="1.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e07ff3188efce2127c2e2a464fa023a15a670284"/>
 		</downloads>
 	</mod>
 </mods>
