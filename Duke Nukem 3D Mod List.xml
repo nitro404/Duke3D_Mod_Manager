@@ -7556,13 +7556,13 @@
 			<version release_date="August 6, 2008">
 				<game type="Atomic" state="Native">
 					<file name="WGSPACE.CON" size="151194" type="con" sha1="da33e8c23d45a57d1800c4badf584dc3fa9e30be"/>
-					<file name="WGSPACE.GRP" size="5709823" type="grp" sha1="28ce94b9f99aaae87ce5848a4fe8caeb16a8c682"/>
+					<file name="WGSPACE.GRP" size="5707030" type="grp" sha1="1f44b9ee4e0ee77f8dc54e3e5a62d96c74b35891"/>
 				</game>
 			</version>
 		</versions>
 		<downloads>
-			<download filename="wgspaceepisode.zip" filesize="1689732" game="Atomic" type="Original Files" sha1="b8cc97fa2c371e0a615fde0f58c4745320e6d663"/>
-			<download filename="WGSpace_Episode-ModMgrA.zip" filesize="1657365" game="Atomic" type="Mod Manager Files" state="Native" sha1="d23d427c658398bb00c92aad71056406b9e83f2a"/>
+			<download filename="WGSpaceEpisode.zip" filesize="1689526" game="Atomic" type="Original Files" sha1="c6e079ebbe193cc0ed4b7ea059eb27e99b3ac130"/>
+			<download filename="WGSpace_Episode-ModMgrA.zip" filesize="1656582" game="Atomic" type="Mod Manager Files" state="Native" sha1="99b0423395d1d900ee7f9c60510883e16e3b4189"/>
 		</downloads>
 	</mod>
 	<mod name="L.A. Rumble" id="la_rumble" type="Episode" website="https://www.moddb.com/mods/dukenukem-la-rumble">
