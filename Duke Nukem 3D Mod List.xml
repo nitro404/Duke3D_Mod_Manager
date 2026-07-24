@@ -16509,6 +16509,25 @@
 			<download filename="WG_Dukematch_1.4-ModMgrE.zip" filesize="11213999" version="1.4" game="eDuke32" type="Mod Manager Files" state="Native" sha1="651aa6c05c99394fcd7119b1e2b5bac94fac2a1c"/>
 		</downloads>
 	</mod>
+	<mod name="WG 2009 Pack" id="wg_2009_pack" type="Total Conversion">
+		<team>
+			<member name="William Gee" email="geewillywizz@gmail.com" website="http://wgrealms.williamgeegallery.com" discord="William Gee#2015" country="New Zealand"/>
+		</team>
+		<versions>
+			<version release_date="March 14, 2009">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="WG2009.CON" size="151194" type="con" sha1="da33e8c23d45a57d1800c4badf584dc3fa9e30be"/>
+						<file name="WG2009.GRP" size="21400491" type="grp" sha1="7bd2e5399d3ac0941d1c40878847627d669f75d1"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="WG2009Pack.zip" filesize="7450601" game="eDuke32" type="Original Files" sha1="d287a5305e566e80e2aeaef97dc60e51a301f9aa"/>
+			<download filename="WG_2009_Pack-ModMgrE.zip" filesize="7170901" game="eDuke32" type="Mod Manager Files" state="Native" sha1="ef9c1ca429f4aec01c487e1e392db4ba54674a16"/>
+		</downloads>
+	</mod>
 	<mod name="Naferia&apos;s Reign: The Invasion of the Dark Mistress" id="naferias_reign_-_the_invasion_of_the_dark_mistress" type="Total Conversion" version="5.22" website="http://naferia.duke4.net" repository="https://github.com/LordMisfit/NR-IotDM">
 		<team website="http://www.moddb.com/mods/9889/naferias-reign-the-dark-mistress">
 			<member name="Jack Walker" alias="Lord Misfit" email="clint20@neo.rr.com" website="http://misfittechstudios.netii.net" github="LordMisfit" state="Ohio" country="United States"/>
