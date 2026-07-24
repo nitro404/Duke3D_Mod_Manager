@@ -16490,6 +16490,25 @@
 			<mod id="wgrealms_2_-_siege_breaker"/>
 		</related>
 	</mod>
+	<mod name="WG Dukematch" id="wg_dukematch" type="Dukematch" version="1.4" website="https://www.moddb.com/mods/wg-mega-pack/downloads/wgdm">
+		<team>
+			<member name="William Gee" email="geewillywizz@gmail.com" website="https://wggames.nz" discord="William Gee#2015" country="New Zealand"/>
+		</team>
+		<versions>
+			<version id="1.4" release_date="March 6, 2025">
+				<type>
+					<game type="eDuke32" state="Native">
+						<file name="WGDM.CON" size="151198" type="con" sha1="bcdc975542b8cb1e16caee214d7df63030510ac0"/>
+						<file name="WGDUKEMATCH.GRP" size="23336422" type="grp" sha1="c3f76c1930834d435609fcb79416225e34d036a0"/>
+					</game>
+				</type>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="WGDMv1.4.zip" filesize="10739733" version="1.4" game="eDuke32" type="Original Files" sha1="97c5846effc19b5bb583cb47d6067b54e153cb85"/>
+			<download filename="WG_Dukematch_1.4-ModMgrE.zip" filesize="11213999" version="1.4" game="eDuke32" type="Mod Manager Files" state="Native" sha1="651aa6c05c99394fcd7119b1e2b5bac94fac2a1c"/>
+		</downloads>
+	</mod>
 	<mod name="Naferia&apos;s Reign: The Invasion of the Dark Mistress" id="naferias_reign_-_the_invasion_of_the_dark_mistress" type="Total Conversion" version="5.22" website="http://naferia.duke4.net" repository="https://github.com/LordMisfit/NR-IotDM">
 		<team website="http://www.moddb.com/mods/9889/naferias-reign-the-dark-mistress">
 			<member name="Jack Walker" alias="Lord Misfit" email="clint20@neo.rr.com" website="http://misfittechstudios.netii.net" github="LordMisfit" state="Ohio" country="United States"/>
