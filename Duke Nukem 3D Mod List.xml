@@ -16490,4 +16490,149 @@
 			<mod id="wgrealms_2_-_siege_breaker"/>
 		</related>
 	</mod>
+	<mod name="Naferia&apos;s Reign: The Invasion of the Dark Mistress" id="naferias_reign_-_the_invasion_of_the_dark_mistress" type="Total Conversion" version="5.22" website="http://naferia.duke4.net" repository="https://github.com/LordMisfit/NR-IotDM">
+		<team website="http://www.moddb.com/mods/9889/naferias-reign-the-dark-mistress">
+			<member name="Jack Walker" alias="Lord Misfit" email="clint20@neo.rr.com" website="http://misfittechstudios.netii.net" github="LordMisfit" state="Ohio" country="United States"/>
+		</team>
+		<versions>
+			<version id="5.00" release_date="December 31, 2007">
+				<game type="eDuke32" state="Native">
+					<file name="NR.CON" size="1472376" type="con" sha1="b7c253d6caa245c577bca047766faae7f0514bfe"/>
+					<file name="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.00.zip" size="25912580" type="zip" sha1="1192a18aedf59403c1c8e7f02d9266485b314d24"/>
+				</game>
+			</version>
+			<version id="5.06" release_date="August 7, 2008">
+				<game type="eDuke32" state="Native">
+					<file name="NR.CON" size="938723" type="con" sha1="bfe5f0aec04de0b0b4e95593bc4916698e7b0c53"/>
+					<file name="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.06.zip" size="38625796" type="zip" sha1="f75fd6c0c1680264d42cfe5c91506ff8bbb108d0"/>
+				</game>
+			</version>
+			<version id="5.07" release_date="August 27, 2008">
+				<game type="eDuke32" state="Native">
+					<file name="NR.CON" size="939303" type="con" sha1="a735553330f3af10afdcae78b1a200e653ec9909"/>
+					<file name="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.07.zip" size="38676473" type="zip" sha1="73b4affc3e6e9b43da2943cbc862f95b6debae18"/>
+				</game>
+			</version>
+			<version id="5.09" release_date="September 19, 2008">
+				<game type="eDuke32" state="Native">
+					<file name="NR.CON" size="1091389" type="con" sha1="436bd9000ba510b73060495175b7f01c216756b6"/>
+					<file name="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.09.zip" size="40311433" type="zip" sha1="6a9cc16ceb7a16bb78ad18c02a28e0948a7b5522"/>
+				</game>
+			</version>
+			<version id="5.10" release_date="October 26, 2008">
+				<game type="eDuke32" state="Native">
+					<file name="NR.CON" size="1164007" type="con" sha1="66452b20d95b42cdd7673caf5a13c35257162b56"/>
+					<file name="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.10.zip" size="41629452" type="zip" sha1="2ff74adff0e23b6410bde187f8d86ec71894f521"/>
+				</game>
+			</version>
+			<version id="5.11" release_date="December 19, 2008">
+				<game type="eDuke32" state="Native">
+					<file name="NR.CON" size="1152969" type="con" sha1="5ba7a1ef5aa4c4737fffd8a2d79496ee27319906"/>
+					<file name="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.11.zip" size="42371870" type="zip" sha1="fbc5e26b263cae37ea6205eed93214aef4ea903e"/>
+				</game>
+			</version>
+			<version id="5.12" release_date="January 3, 2009">
+				<game type="eDuke32" state="Native">
+					<file name="NR.CON" size="1191413" type="con" sha1="52d8e90437b332139a3e745dd64bcae597a600bb"/>
+					<file name="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.12.zip" size="43134644" type="zip" sha1="1599a1574a489d15177a951c0293d8ccf26c31eb"/>
+				</game>
+			</version>
+			<version id="5.13" release_date="March 13, 2009">
+				<game type="eDuke32" state="Native">
+					<file name="NR.CON" size="1252928" type="con" sha1="f944b0cd34a0f427b441ea3dd750fb569698476b"/>
+					<file name="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.13.zip" size="43602525" type="zip" sha1="a09ad30b7db8ac9220d7a7e2b5c121b618002f7f"/>
+				</game>
+			</version>
+			<version id="5.14" release_date="May 15, 2009">
+				<game type="eDuke32" state="Native">
+					<file name="NR.CON" size="1243693" type="con" sha1="e47aeec6502118a8ea470edf01e82384abfa3408"/>
+					<file name="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.14.zip" size="47373385" type="zip" sha1="611396f27a21e4077f885578fda634d545269776"/>
+				</game>
+			</version>
+			<version id="5.15" release_date="July 15, 2009">
+				<game type="eDuke32" state="Native">
+					<file name="NR.CON" size="1249626" type="con" sha1="5eead3434f11d7ff43e3259613fb2d338c5fa56c"/>
+					<file name="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.15.zip" size="53861642" type="zip" sha1="f44f280aac20cd6bcf1bf22fa37b128a37e5cbcb"/>
+				</game>
+			</version>
+			<version id="5.16" release_date="August 28, 2009">
+				<game type="eDuke32" state="Native">
+					<file name="NR.CON" size="1326378" type="con" sha1="d6ed2042081c0708b47de25d8ba9c93c379d4bf2"/>
+					<file name="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.16.zip" size="59841042" type="zip" sha1="a35d80f68f6d5b96f0b0b2f7ec3e4c522b3e6eef"/>
+				</game>
+			</version>
+			<version id="5.17" release_date="November 8, 2009">
+				<game type="eDuke32" state="Native">
+					<file name="NR.CON" size="1397980" type="con" sha1="e6078ffbd7b78d27c60a339a2f7812527a324e00"/>
+					<file name="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.17.zip" size="61628905" type="zip" sha1="2de8e3a37da4a4de3f9ee65e83de280e879411d8"/>
+				</game>
+			</version>
+			<version id="5.18" release_date="December 29, 2009">
+				<game type="eDuke32" state="Native">
+					<file name="NR.CON" size="1453183" type="con" sha1="f50ec553d31982f591f485f03e4ca46b236498f9"/>
+					<file name="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.18.zip" size="63188480" type="zip" sha1="d5c2ace3e06bf9f481e04ef0b339ce5b6abc833a"/>
+				</game>
+			</version>
+			<version id="5.19" release_date="February 28, 2010">
+				<game type="eDuke32" state="Native">
+					<file name="NR.CON" size="1553928" type="con" sha1="6b45cd48483f24769a1ba0346abf853672303f34"/>
+					<file name="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.19.zip" size="65782688" type="zip" sha1="1e3f58dcc66eeda95cc53350ee95124445d8d41d"/>
+				</game>
+			</version>
+			<version id="5.20" release_date="June 10, 2010">
+				<game type="eDuke32" state="Native">
+					<file name="NR.CON" size="1613040" type="con" sha1="9a13a5fc0e4711ab8a5cf19c598112b9cff54857"/>
+					<file name="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.20.zip" size="66643951" type="zip" sha1="b5d95595fe05c55da50bcfb590f584591800895c"/>
+				</game>
+			</version>
+			<version id="5.21" release_date="September 26, 2011">
+				<game type="eDuke32" state="Native">
+					<file name="NR.CON" size="1679143" type="con" sha1="64d369cb3522b7ed5d1cef2e6c83aef19b17186e"/>
+					<file name="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.21.zip" size="67112397" type="zip" sha1="d15308885981f86fe0f2b4278f20f21f7eab5bac"/>
+				</game>
+			</version>
+			<version id="5.22" release_date="December 24, 2012">
+				<game type="eDuke32" state="Native">
+					<file name="NR.CON" size="1731347" type="con" sha1="94e21868ea0e4a0b9e3fc60f783b41133988ffac"/>
+					<file name="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.22.zip" size="69825510" type="zip" sha1="a4d27bc3627ed53d5a8ba204a018a733f8bab1e1"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="NR-Normalv5.00.zip" filesize="27869429" version="5.00" game="eDuke32" type="Original Files" sha1="e1a5c7d77bd6918b89ba39d2650c9c96415b8e09"/>
+			<download filename="NR-Normalv5.06.zip" filesize="41149291" version="5.06" game="eDuke32" type="Original Files" sha1="d615ac09a628cc9079654793fce71d2487b8bd97"/>
+			<download filename="NR-Normalv5.07.zip" filesize="40144161" version="5.07" game="eDuke32" type="Original Files" sha1="8d4e6ebe605aa97cc54b15e3444c6e0b89bf366c"/>
+			<download filename="NR-Normalv5.09.zip" filesize="40943382" version="5.09" game="eDuke32" type="Original Files" sha1="86a2e53de657968ac702d13025654af2e26b38f2"/>
+			<download filename="NR-Normalv5.10.zip" filesize="42187144" version="5.10" game="eDuke32" type="Original Files" sha1="750c3d360c4d5c02a725f9f91f7294420219ef9c"/>
+			<download filename="NR-Normalv5.11.zip" filesize="42904162" version="5.11" game="eDuke32" type="Original Files" sha1="9ed554925f2ddb2e3ee1fc4811d4f255d8566ba8"/>
+			<download filename="NR-Normalv5.12.zip" filesize="43619756" version="5.12" game="eDuke32" type="Original Files" sha1="7601e64ed9909f97b75de82de2ef38c9d03aa2ba"/>
+			<download filename="NR-Normalv5.13.7z" filesize="38874812" version="5.13" game="eDuke32" type="Original Files" sha1="824c2c36ee7693f145ff9a8043234b48c483cfa5"/>
+			<download filename="NR-Normalv5.14.05162009l.zip" filesize="48014350" version="5.14" game="eDuke32" type="Original Files" sha1="26b22c4a4379e60987941903fc8a0a588cfc7792"/>
+			<download filename="NR-Normalv5.15.07152009l.7z" filesize="47141360" version="5.15" game="eDuke32" type="Original Files" sha1="4b9117b3c80cad3e60a00979fd37bf12b4b67f87"/>
+			<download filename="NR-Normalv5.16.08282009.7z" filesize="52115661" version="5.16" game="eDuke32" type="Original Files" sha1="196661ce3f7ea04ac1d1fd051c64cc4d71849841"/>
+			<download filename="NR-Normalv5.17.7z" filesize="53616174" version="5.17" game="eDuke32" type="Original Files" sha1="271140434b6b9cf3348456c9fdc34411d4d1705c"/>
+			<download filename="NR-Normalv5.18.12302009.7z" filesize="53282650" version="5.18" game="eDuke32" type="Original Files" sha1="9a8e0ff927e98cbc88dd79115ad7faaaf479de01"/>
+			<download filename="NR-Normalv5.19.03012010.7z" filesize="54753270" version="5.19" game="eDuke32" type="Original Files" sha1="97ae1ed3f4c283ec47a08b7655a913d83432348b"/>
+			<download filename="NR-Normalv5.20.06112010l.7z" filesize="55427290" version="5.20" game="eDuke32" type="Original Files" sha1="8cff4108c56502aace0a34b3a2fea23687d6f2d0"/>
+			<download filename="NR-Normalv5.21.09262011.7z" filesize="57901353" version="5.21" game="eDuke32" type="Original Files" sha1="3c4558e1433bd0fdb0da2e5ef319a38391a0c328"/>
+			<download filename="NR-Normalv5.22.12242012.7z" filesize="61063493" version="5.22" game="eDuke32" type="Original Files" sha1="2224e68c3d13327c0461342860dd723a6a114f1a"/>
+			<download filename="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.00-ModMgrE.zip" filesize="25912832" version="5.00" game="eDuke32" type="Mod Manager Files" state="Native" sha1="acdd90083a6013eb0ed7d9ad2ae9157b9bf08b30"/>
+			<download filename="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.06-ModMgrE.zip" filesize="38626048" version="5.06" game="eDuke32" type="Mod Manager Files" state="Native" sha1="cb1a8fa9d6725160f2448629cbbcab578ecf2ec9"/>
+			<download filename="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.07-ModMgrE.zip" filesize="38676725" version="5.07" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e7c7a7c48d3946e8b5e2aa191658a32c1ff4f6d3"/>
+			<download filename="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.09-ModMgrE.zip" filesize="40311685" version="5.09" game="eDuke32" type="Mod Manager Files" state="Native" sha1="13122245f1f74eaad21b955496eea7f5b3fbeef1"/>
+			<download filename="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.10-ModMgrE.zip" filesize="41629704" version="5.10" game="eDuke32" type="Mod Manager Files" state="Native" sha1="2378544302f1ce77866cfbf0bb0e9e14362825ae"/>
+			<download filename="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.11-ModMgrE.zip" filesize="42372122" version="5.11" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e84417460a2b182dc52535f1e3db1f86687f44f8"/>
+			<download filename="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.12-ModMgrE.zip" filesize="43134896" version="5.12" game="eDuke32" type="Mod Manager Files" state="Native" sha1="45606da1abb2243a0f3027eeb16db9dadbe72f72"/>
+			<download filename="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.13-ModMgrE.zip" filesize="43602777" version="5.13" game="eDuke32" type="Mod Manager Files" state="Native" sha1="35ff72e954c9064d877fdec41d140457675c84d4"/>
+			<download filename="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.14-ModMgrE.zip" filesize="47373637" version="5.14" game="eDuke32" type="Mod Manager Files" state="Native" sha1="7f9bad92ff92b27537a8aeaefbd917bec3601976"/>
+			<download filename="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.15-ModMgrE.zip" filesize="53861894" version="5.15" game="eDuke32" type="Mod Manager Files" state="Native" sha1="67b3c68b1fa631d1e8fb3245a5ccd5995930e6cc"/>
+			<download filename="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.16-ModMgrE.zip" filesize="59841294" version="5.16" game="eDuke32" type="Mod Manager Files" state="Native" sha1="ae5d67d811ac2e9ece0f57578475805d082864fd"/>
+			<download filename="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.17-ModMgrE.zip" filesize="61629157" version="5.17" game="eDuke32" type="Mod Manager Files" state="Native" sha1="0da0ea80a59f8fa08102aa81b8388755f8f45149"/>
+			<download filename="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.18-ModMgrE.zip" filesize="63188732" version="5.18" game="eDuke32" type="Mod Manager Files" state="Native" sha1="a3d5cd766f8ebe51b9f59f61aba2f4a8383d0c6d"/>
+			<download filename="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.19-ModMgrE.zip" filesize="65782940" version="5.19" game="eDuke32" type="Mod Manager Files" state="Native" sha1="cf097890b566529252d037ddf16a29571e40e1fa"/>
+			<download filename="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.20-ModMgrE.zip" filesize="66644203" version="5.20" game="eDuke32" type="Mod Manager Files" state="Native" sha1="52b5352006b6f78b4d370f325f7a20eda636777e"/>
+			<download filename="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.21-ModMgrE.zip" filesize="67112649" version="5.21" game="eDuke32" type="Mod Manager Files" state="Native" sha1="8f415d1c948f8051ab25b7541b4a1e27c825267b"/>
+			<download filename="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.22-ModMgrE.zip" filesize="69825762" version="5.22" game="eDuke32" type="Mod Manager Files" state="Native" sha1="ee55a8b5417d15f40813c1d37a63c09c79c30ef4"/>
+		</downloads>
+	</mod>
 </mods>
