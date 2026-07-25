@@ -14,6 +14,8 @@ static constexpr uint32_t PLUTONIUM_PAK_EXECUTABLE_SIZE = 1240151;
 static constexpr uint32_t PLUTONIUM_PAK_NO_CD_CRACK_BYTE_INDEX = 553795;
 static constexpr uint32_t ATOMIC_EDITION_EXECUTABLE_SIZE = 1246231;
 static constexpr uint32_t ATOMIC_EDITION_NO_CD_CRACK_BYTE_INDEX = 556947;
+static constexpr uint32_t ATOMIC_EDITION_SPECIAL_EDITION_EXECUTABLE_SIZE = 1246439;
+static constexpr uint32_t ATOMIC_EDITION_SPECIAL_EDITION_NO_CD_CRACK_BYTE_INDEX = 556963;
 static constexpr uint8_t NO_CD_CRACK_BYTE_VALUE = 42;
 static const std::string CDROM_INI_FILE_NAME("CDROM.INI");
 static const std::string CDROM_INI_FILE_CONTENTS("D:\\support\\");
@@ -51,6 +53,12 @@ NoCDCracker::GameExecutableStatus NoCDCracker::getGameExecutableStatus(const Byt
 	else if(Utilities::areStringsEqual(gameExecutableSHA1, GameVersion::ATOMIC_EDITION_GAME_EXECTUABLE_CRACKED_SHA1)) {
 		gameExecutableStatus |= GameExecutableStatus::AtomicEdition | GameExecutableStatus::Cracked;
 	}
+	else if(Utilities::areStringsEqual(gameExecutableSHA1, GameVersion::ATOMIC_EDITION_SPECIAL_EDITION_GAME_EXECTUABLE_UNCRACKED_SHA1)) {
+		gameExecutableStatus |= GameExecutableStatus::AtomicEdition | GameExecutableStatus::SpecialEdition;
+	}
+	else if(Utilities::areStringsEqual(gameExecutableSHA1, GameVersion::ATOMIC_EDITION_SPECIAL_EDITION_GAME_EXECTUABLE_CRACKED_SHA1)) {
+		gameExecutableStatus |= GameExecutableStatus::AtomicEdition| GameExecutableStatus::SpecialEdition | GameExecutableStatus::Cracked;
+	}
 	else if(Utilities::areStringsEqual(gameExecutableSHA1, GameVersion::REGULAR_VERSION_GAME_EXECUTABLE_SHA1)) {
 		gameExecutableStatus |= GameExecutableStatus::RegularVersion;
 	}
@@ -68,8 +76,13 @@ bool NoCDCracker::isRegularVersionGameExecutable(const std::string & gameExecuta
 bool NoCDCracker::isPlutoniumPakGameExecutable(const std::string & gameExecutablePath) {
 	return Any(getGameExecutableStatus(gameExecutablePath) & GameExecutableStatus::PlutoniumPak);
 }
+
 bool NoCDCracker::isAtomicEditionGameExecutable(const std::string & gameExecutablePath) {
 	return Any(getGameExecutableStatus(gameExecutablePath) & GameExecutableStatus::AtomicEdition);
+}
+
+bool NoCDCracker::isAtomicEditionSpecialEditionGameExecutable(const std::string & gameExecutablePath) {
+	return Any(getGameExecutableStatus(gameExecutablePath) & GameExecutableStatus::AtomicEdition) && Any(getGameExecutableStatus(gameExecutablePath) & GameExecutableStatus::SpecialEdition);
 }
 
 bool NoCDCracker::isGameExecutableCrackable(const std::string & gameExecutablePath) {
@@ -104,11 +117,20 @@ bool NoCDCracker::crackGameExecutable(const std::string & inputGameExecutablePat
 	uint32_t noCDCrackByteIndex = 0;
 
 	if(Any(gameExecutableStatus & GameExecutableStatus::AtomicEdition)) {
-		if(gameExecutableBuffer->getSize() != ATOMIC_EDITION_EXECUTABLE_SIZE) {
-			return false;
-		}
+		if(None(gameExecutableStatus & GameExecutableStatus::SpecialEdition)) {
+			if(gameExecutableBuffer->getSize() != ATOMIC_EDITION_EXECUTABLE_SIZE) {
+				return false;
+			}
 
-		noCDCrackByteIndex = ATOMIC_EDITION_NO_CD_CRACK_BYTE_INDEX;
+			noCDCrackByteIndex = ATOMIC_EDITION_NO_CD_CRACK_BYTE_INDEX;
+		}
+		else {
+			if(gameExecutableBuffer->getSize() != ATOMIC_EDITION_SPECIAL_EDITION_EXECUTABLE_SIZE) {
+				return false;
+			}
+
+			noCDCrackByteIndex = ATOMIC_EDITION_SPECIAL_EDITION_NO_CD_CRACK_BYTE_INDEX;
+		}
 	}
 	else if(Any(gameExecutableStatus & GameExecutableStatus::PlutoniumPak)) {
 		if(gameExecutableBuffer->getSize() != PLUTONIUM_PAK_EXECUTABLE_SIZE) {

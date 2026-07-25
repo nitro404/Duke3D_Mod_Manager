@@ -16,7 +16,8 @@ public:
 		RegularVersion = 1 << 2,
 		PlutoniumPak = 1 << 3,
 		AtomicEdition = 1 << 4,
-		Cracked = 1 << 5
+		SpecialEdition = 1 << 5,
+		Cracked = 1 << 6
 	};
 
 	static GameExecutableStatus getGameExecutableStatus(const std::string & gameExecutablePath);
@@ -24,6 +25,7 @@ public:
 	static bool isRegularVersionGameExecutable(const std::string & gameExecutablePath);
 	static bool isPlutoniumPakGameExecutable(const std::string & gameExecutablePath);
 	static bool isAtomicEditionGameExecutable(const std::string & gameExecutablePath);
+	static bool isAtomicEditionSpecialEditionGameExecutable(const std::string & gameExecutablePath);
 	static bool isGameExecutableCrackable(const std::string & gameExecutablePath);
 	static bool isGameExecutableCracked(const std::string & gameExecutablePath);
 	static bool crackGameExecutable(const std::string & gameExecutablePath, bool writeCDROMFile = true);
