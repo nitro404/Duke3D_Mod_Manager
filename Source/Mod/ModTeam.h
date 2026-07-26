@@ -32,6 +32,7 @@ public:
 	bool hasName() const;
 	const std::string & getName() const;
 	const std::string & getWebsite() const;
+	const std::string & getModDBURL() const;
 	const std::string & getEmail() const;
 	const std::string & getTwitter() const;
 	const std::string & getDiscord() const;
@@ -41,6 +42,7 @@ public:
 
 	void setName(const std::string & name);
 	void setWebsite(const std::string & website);
+	void setModDBURL(const std::string & moddbURL);
 	void setEmail(const std::string & email);
 	void setTwitter(const std::string & twitter);
 	void setDiscord(const std::string & discord);
@@ -78,6 +80,7 @@ protected:
 private:
 	std::string m_name;
 	std::string m_website;
+	std::string m_moddbURL;
 	std::string m_email;
 	std::string m_twitter;
 	std::string m_discord;

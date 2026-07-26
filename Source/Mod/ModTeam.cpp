@@ -15,6 +15,7 @@
 static const std::string XML_MOD_TEAM_ELEMENT_NAME("team");
 static const std::string XML_MOD_TEAM_NAME_ATTRIBUTE_NAME("name");
 static const std::string XML_MOD_TEAM_WEBSITE_ATTRIBUTE_NAME("website");
+static const std::string XML_MOD_TEAM_MODDB_ATTRIBUTE_NAME("moddb");
 static const std::string XML_MOD_TEAM_EMAIL_ATTRIBUTE_NAME("email");
 static const std::string XML_MOD_TEAM_TWITTER_ATTRIBUTE_NAME("twitter");
 static const std::string XML_MOD_TEAM_DISCORD_ATTRIBUTE_NAME("discord");
@@ -23,9 +24,10 @@ static const std::string XML_MOD_TEAM_CITY_ATTRIBUTE_NAME("city");
 static const std::string XML_MOD_TEAM_PROVINCE_ATTRIBUTE_NAME("province");
 static const std::string XML_MOD_TEAM_STATE_ATTRIBUTE_NAME("state");
 static const std::string XML_MOD_TEAM_COUNTRY_ATTRIBUTE_NAME("country");
-static const std::array<std::string_view, 10> XML_MOD_TEAM_ATTRIBUTE_NAMES = {
+static const std::array<std::string_view, 11> XML_MOD_TEAM_ATTRIBUTE_NAMES = {
 	XML_MOD_TEAM_NAME_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_WEBSITE_ATTRIBUTE_NAME,
+	XML_MOD_TEAM_MODDB_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_EMAIL_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_TWITTER_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_DISCORD_ATTRIBUTE_NAME,
@@ -38,6 +40,7 @@ static const std::array<std::string_view, 10> XML_MOD_TEAM_ATTRIBUTE_NAMES = {
 
 static constexpr const char * JSON_MOD_TEAM_NAME_PROPERTY_NAME = "name";
 static constexpr const char * JSON_MOD_TEAM_WEBSITE_PROPERTY_NAME = "website";
+static constexpr const char * JSON_MOD_TEAM_MODDB_URL_PROPERTY_NAME = "moddbURL";
 static constexpr const char * JSON_MOD_TEAM_EMAIL_PROPERTY_NAME = "email";
 static constexpr const char * JSON_MOD_TEAM_TWITTER_PROPERTY_NAME = "twitter";
 static constexpr const char * JSON_MOD_TEAM_DISCORD_PROPERTY_NAME = "discord";
@@ -47,9 +50,10 @@ static constexpr const char * JSON_MOD_TEAM_PROVINCE_PROPERTY_NAME = "province";
 static constexpr const char * JSON_MOD_TEAM_STATE_PROPERTY_NAME = "state";
 static constexpr const char * JSON_MOD_TEAM_COUNTRY_PROPERTY_NAME = "country";
 static constexpr const char * JSON_MOD_TEAM_MEMBERS_PROPERTY_NAME = "members";
-static const std::array<std::string_view, 11> JSON_MOD_TEAM_PROPERTY_NAMES = {
+static const std::array<std::string_view, 12> JSON_MOD_TEAM_PROPERTY_NAMES = {
 	JSON_MOD_TEAM_NAME_PROPERTY_NAME,
 	JSON_MOD_TEAM_WEBSITE_PROPERTY_NAME,
+	JSON_MOD_TEAM_MODDB_URL_PROPERTY_NAME,
 	JSON_MOD_TEAM_EMAIL_PROPERTY_NAME,
 	JSON_MOD_TEAM_TWITTER_PROPERTY_NAME,
 	JSON_MOD_TEAM_DISCORD_PROPERTY_NAME,
@@ -70,6 +74,7 @@ ModTeam::ModTeam(const std::string & name, const std::string & website, const st
 ModTeam::ModTeam(ModTeam && m) noexcept
 	: m_name(std::move(m.m_name))
 	, m_website(std::move(m.m_website))
+	, m_moddbURL(std::move(m.m_moddbURL))
 	, m_email(std::move(m.m_email))
 	, m_twitter(std::move(m.m_twitter))
 	, m_discord(std::move(m.m_discord))
@@ -82,6 +87,7 @@ ModTeam::ModTeam(ModTeam && m) noexcept
 ModTeam::ModTeam(const ModTeam & m)
 	: m_name(m.m_name)
 	, m_website(m.m_website)
+	, m_moddbURL(m.m_moddbURL)
 	, m_email(m.m_email)
 	, m_twitter(m.m_twitter)
 	, m_discord(m.m_discord)
@@ -98,6 +104,7 @@ ModTeam & ModTeam::operator = (ModTeam && m) noexcept {
 	if(this != &m) {
 		m_name = std::move(m.m_name);
 		m_website = std::move(m.m_website);
+		m_moddbURL = std::move(m.m_moddbURL);
 		m_email = std::move(m.m_email);
 		m_twitter = std::move(m.m_twitter);
 		m_discord = std::move(m.m_discord);
@@ -115,6 +122,7 @@ ModTeam & ModTeam::operator = (const ModTeam & m) {
 
 	m_name = m.m_name;
 	m_website = m.m_website;
+	m_moddbURL = m.m_moddbURL;
 	m_email = m.m_email;
 	m_twitter = m.m_twitter;
 	m_discord = m.m_discord;
@@ -143,6 +151,10 @@ const std::string & ModTeam::getName() const {
 
 const std::string & ModTeam::getWebsite() const {
 	return m_website;
+}
+
+const std::string & ModTeam::getModDBURL() const {
+	return m_moddbURL;
 }
 
 const std::string & ModTeam::getEmail() const {
@@ -175,6 +187,10 @@ void ModTeam::setName(const std::string & name) {
 
 void ModTeam::setWebsite(const std::string & website) {
 	m_website = Utilities::trimString(website);
+}
+
+void ModTeam::setModDBURL(const std::string & moddbURL) {
+	m_moddbURL = Utilities::trimString(moddbURL);
 }
 
 void ModTeam::setEmail(const std::string & email) {
@@ -352,6 +368,11 @@ rapidjson::Value ModTeam::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAl
 		modTeamValue.AddMember(rapidjson::StringRef(JSON_MOD_TEAM_WEBSITE_PROPERTY_NAME), websiteValue, allocator);
 	}
 
+	if(!m_moddbURL.empty()) {
+		rapidjson::Value moddbURLValue(m_moddbURL.c_str(), allocator);
+		modTeamValue.AddMember(rapidjson::StringRef(JSON_MOD_TEAM_MODDB_URL_PROPERTY_NAME), moddbURLValue, allocator);
+	}
+
 	if(!m_email.empty()) {
 		rapidjson::Value emailValue(m_email.c_str(), allocator);
 		modTeamValue.AddMember(rapidjson::StringRef(JSON_MOD_TEAM_EMAIL_PROPERTY_NAME), emailValue, allocator);
@@ -396,6 +417,10 @@ tinyxml2::XMLElement * ModTeam::toXML(tinyxml2::XMLDocument * document) const {
 
 	if(!m_website.empty()) {
 		modTeamElement->SetAttribute(XML_MOD_TEAM_WEBSITE_ATTRIBUTE_NAME.c_str(), m_website.c_str());
+	}
+
+	if(!m_moddbURL.empty()) {
+		modTeamElement->SetAttribute(XML_MOD_TEAM_MODDB_ATTRIBUTE_NAME.c_str(), m_moddbURL.c_str());
 	}
 
 	if(!m_email.empty()) {
@@ -470,6 +495,18 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const rapidjson::Value & modTeamValu
 		}
 
 		newModTeam->setWebsite(modTeamWebsiteValue.GetString());
+	}
+
+	// parse the mod team ModDB URL property
+	if(modTeamValue.HasMember(JSON_MOD_TEAM_MODDB_URL_PROPERTY_NAME)) {
+		const rapidjson::Value & modTeamModDBURLValue = modTeamValue[JSON_MOD_TEAM_MODDB_URL_PROPERTY_NAME];
+
+		if(!modTeamModDBURLValue.IsString()) {
+			spdlog::error("Mod team '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_TEAM_MODDB_URL_PROPERTY_NAME, Utilities::typeToString(modTeamModDBURLValue.GetType()));
+			return nullptr;
+		}
+
+		newModTeam->setModDBURL(modTeamModDBURLValue.GetString());
 	}
 
 	// parse the mod team email property
@@ -585,12 +622,17 @@ std::unique_ptr<ModTeam> ModTeam::parseFrom(const tinyxml2::XMLElement * modTeam
 	// read the mod team attributes
 	const char * teamName = modTeamElement->Attribute(XML_MOD_TEAM_NAME_ATTRIBUTE_NAME.c_str());
 	const char * teamWebsite = modTeamElement->Attribute(XML_MOD_TEAM_WEBSITE_ATTRIBUTE_NAME.c_str());
+	const char * teamModDBURL = modTeamElement->Attribute(XML_MOD_TEAM_MODDB_ATTRIBUTE_NAME.c_str());
 	const char * teamEmail = modTeamElement->Attribute(XML_MOD_TEAM_EMAIL_ATTRIBUTE_NAME.c_str());
 	const char * teamTwitter = modTeamElement->Attribute(XML_MOD_TEAM_TWITTER_ATTRIBUTE_NAME.c_str());
 	const char * teamDiscord = modTeamElement->Attribute(XML_MOD_TEAM_DISCORD_ATTRIBUTE_NAME.c_str());
 
 	// initialize the mod team
 	std::unique_ptr<ModTeam> newModTeam = std::make_unique<ModTeam>(teamName == nullptr ? "" : teamName, teamWebsite == nullptr ? "" : teamWebsite, teamEmail == nullptr ? "" : teamEmail);
+
+	if(teamModDBURL != nullptr) {
+		newModTeam->setModDBURL(teamModDBURL);
+	}
 
 	if(teamTwitter != nullptr) {
 		newModTeam->setTwitter(teamTwitter);
@@ -674,6 +716,7 @@ bool ModTeam::operator == (const ModTeam & modTeam) const {
 
 	if(!Utilities::areStringsEqual(m_name, modTeam.m_name) ||
 	   !Utilities::areStringsEqual(m_website, modTeam.m_website) ||
+	   !Utilities::areStringsEqual(m_moddbURL, modTeam.m_moddbURL) ||
 	   !Utilities::areStringsEqual(m_email, modTeam.m_email) ||
 	   !Utilities::areStringsEqual(m_twitter, modTeam.m_twitter) ||
 	   !Utilities::areStringsEqual(m_discord, modTeam.m_discord) ||
