@@ -19,6 +19,7 @@ static const std::string XML_MOD_TEAM_MEMBER_EMAIL_ATTRIBUTE_NAME("email");
 static const std::string XML_MOD_TEAM_MEMBER_TWITTER_ATTRIBUTE_NAME("twitter");
 static const std::string XML_MOD_TEAM_MEMBER_BLUESKY_ATTRIBUTE_NAME("bluesky");
 static const std::string XML_MOD_TEAM_MEMBER_WEBSITE_ATTRIBUTE_NAME("website");
+static const std::string XML_MOD_TEAM_MEMBER_MODDB_ATTRIBUTE_NAME("moddb");
 static const std::string XML_MOD_TEAM_MEMBER_YOUTUBE_ATTRIBUTE_NAME("youtube");
 static const std::string XML_MOD_TEAM_MEMBER_REDDIT_ATTRIBUTE_NAME("reddit");
 static const std::string XML_MOD_TEAM_MEMBER_GITHUB_ATTRIBUTE_NAME("github");
@@ -33,13 +34,14 @@ static const std::string XML_MOD_TEAM_MEMBER_CITY_ATTRIBUTE_NAME("city");
 static const std::string XML_MOD_TEAM_MEMBER_PROVINCE_ATTRIBUTE_NAME("province");
 static const std::string XML_MOD_TEAM_MEMBER_STATE_ATTRIBUTE_NAME("state");
 static const std::string XML_MOD_TEAM_MEMBER_COUNTRY_ATTRIBUTE_NAME("country");
-static const std::array<std::string_view, 20> XML_MOD_TEAM_MEMBER_ATTRIBUTE_NAMES = {
+static const std::array<std::string_view, 21> XML_MOD_TEAM_MEMBER_ATTRIBUTE_NAMES = {
 	XML_MOD_TEAM_MEMBER_NAME_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_MEMBER_ALIAS_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_MEMBER_EMAIL_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_MEMBER_TWITTER_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_MEMBER_BLUESKY_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_MEMBER_WEBSITE_ATTRIBUTE_NAME,
+	XML_MOD_TEAM_MEMBER_MODDB_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_MEMBER_YOUTUBE_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_MEMBER_REDDIT_ATTRIBUTE_NAME,
 	XML_MOD_TEAM_MEMBER_GITHUB_ATTRIBUTE_NAME,
@@ -62,6 +64,7 @@ static constexpr const char * JSON_MOD_TEAM_MEMBER_EMAIL_PROPERTY_NAME = "email"
 static constexpr const char * JSON_MOD_TEAM_MEMBER_TWITTER_PROPERTY_NAME = "twitter";
 static constexpr const char * JSON_MOD_TEAM_MEMBER_BLUESKY_PROPERTY_NAME = "bluesky";
 static constexpr const char * JSON_MOD_TEAM_MEMBER_WEBSITE_PROPERTY_NAME = "website";
+static constexpr const char * JSON_MOD_TEAM_MEMBER_MODDB_URL_PROPERTY_NAME = "moddbURL";
 static constexpr const char * JSON_MOD_TEAM_MEMBER_YOUTUBE_PROPERTY_NAME = "youTube";
 static constexpr const char * JSON_MOD_TEAM_MEMBER_REDDIT_PROPERTY_NAME = "reddit";
 static constexpr const char * JSON_MOD_TEAM_MEMBER_GITHUB_PROPERTY_NAME = "gitHub";
@@ -76,13 +79,14 @@ static constexpr const char * JSON_MOD_TEAM_MEMBER_CITY_PROPERTY_NAME = "city";
 static constexpr const char * JSON_MOD_TEAM_MEMBER_PROVINCE_PROPERTY_NAME = "province";
 static constexpr const char * JSON_MOD_TEAM_MEMBER_STATE_PROPERTY_NAME = "state";
 static constexpr const char * JSON_MOD_TEAM_MEMBER_COUNTRY_PROPERTY_NAME = "country";
-static const std::array<std::string_view, 20> JSON_MOD_TEAM_MEMBER_PROPERTY_NAMES = {
+static const std::array<std::string_view, 21> JSON_MOD_TEAM_MEMBER_PROPERTY_NAMES = {
 	JSON_MOD_TEAM_MEMBER_NAME_PROPERTY_NAME,
 	JSON_MOD_TEAM_MEMBER_ALIAS_PROPERTY_NAME,
 	JSON_MOD_TEAM_MEMBER_EMAIL_PROPERTY_NAME,
 	JSON_MOD_TEAM_MEMBER_TWITTER_PROPERTY_NAME,
 	JSON_MOD_TEAM_MEMBER_BLUESKY_PROPERTY_NAME,
 	JSON_MOD_TEAM_MEMBER_WEBSITE_PROPERTY_NAME,
+	JSON_MOD_TEAM_MEMBER_MODDB_URL_PROPERTY_NAME,
 	JSON_MOD_TEAM_MEMBER_YOUTUBE_PROPERTY_NAME,
 	JSON_MOD_TEAM_MEMBER_REDDIT_PROPERTY_NAME,
 	JSON_MOD_TEAM_MEMBER_GITHUB_PROPERTY_NAME,
@@ -113,6 +117,7 @@ ModTeamMember::ModTeamMember(ModTeamMember && m) noexcept
 	, m_twitter(std::move(m.m_twitter))
 	, m_bluesky(std::move(m.m_bluesky))
 	, m_website(std::move(m.m_website))
+	, m_moddbURL(std::move(m.m_moddbURL))
 	, m_youTube(std::move(m.m_youTube))
 	, m_reddit(std::move(m.m_reddit))
 	, m_gitHub(std::move(m.m_gitHub))
@@ -132,6 +137,7 @@ ModTeamMember::ModTeamMember(const ModTeamMember & m)
 	, m_twitter(m.m_twitter)
 	, m_bluesky(m.m_bluesky)
 	, m_website(m.m_website)
+	, m_moddbURL(m.m_moddbURL)
 	, m_youTube(m.m_youTube)
 	, m_reddit(m.m_reddit)
 	, m_gitHub(m.m_gitHub)
@@ -152,6 +158,7 @@ ModTeamMember & ModTeamMember::operator = (ModTeamMember && m) noexcept {
 		m_twitter = std::move(m.m_twitter);
 		m_bluesky = std::move(m.m_bluesky);
 		m_website = std::move(m.m_website);
+		m_moddbURL = std::move(m.m_moddbURL);
 		m_youTube = std::move(m.m_youTube);
 		m_reddit = std::move(m.m_reddit);
 		m_gitHub = std::move(m.m_gitHub);
@@ -174,6 +181,7 @@ ModTeamMember & ModTeamMember::operator = (const ModTeamMember & m) {
 	m_twitter = m.m_twitter;
 	m_bluesky = m.m_bluesky;
 	m_website = m.m_website;
+	m_moddbURL = m.m_moddbURL;
 	m_youTube = m.m_youTube;
 	m_reddit = m.m_reddit;
 	m_gitHub = m.m_gitHub;
@@ -210,6 +218,10 @@ bool ModTeamMember::hasBluesky() const {
 
 bool ModTeamMember::hasWebsite() const {
 	return !m_website.empty();
+}
+
+bool ModTeamMember::hasModDBURL() const {
+	return !m_moddbURL.empty();
 }
 
 bool ModTeamMember::hasYouTube() const {
@@ -274,6 +286,10 @@ const std::string & ModTeamMember::getBluesky() const {
 
 const std::string & ModTeamMember::getWebsite() const {
 	return m_website;
+}
+
+const std::string & ModTeamMember::getModDBURL() const {
+	return m_moddbURL;
 }
 
 const std::string & ModTeamMember::getYouTube() const {
@@ -356,6 +372,10 @@ void ModTeamMember::setWebsite(const std::string & website) {
 	m_website = Utilities::trimString(website);
 }
 
+void ModTeamMember::setModDBURL(const std::string & moddbURL) {
+	m_moddbURL = Utilities::trimString(moddbURL);
+}
+
 void ModTeamMember::setYouTube(const std::string & youTube) {
 	m_youTube = Utilities::trimString(youTube);
 }
@@ -429,6 +449,11 @@ rapidjson::Value ModTeamMember::toJSON(rapidjson::MemoryPoolAllocator<rapidjson:
 	if(!m_website.empty()) {
 		rapidjson::Value websiteValue(m_website.c_str(), allocator);
 		modTeamMemberValue.AddMember(rapidjson::StringRef(JSON_MOD_TEAM_MEMBER_WEBSITE_PROPERTY_NAME), websiteValue, allocator);
+	}
+
+	if(!m_moddbURL.empty()) {
+		rapidjson::Value moddbURLValue(m_moddbURL.c_str(), allocator);
+		modTeamMemberValue.AddMember(rapidjson::StringRef(JSON_MOD_TEAM_MEMBER_MODDB_URL_PROPERTY_NAME), moddbURLValue, allocator);
 	}
 
 	if(!m_youTube.empty()) {
@@ -508,6 +533,10 @@ tinyxml2::XMLElement * ModTeamMember::toXML(tinyxml2::XMLDocument * document) co
 
 	if(!m_website.empty()) {
 		modTeamMemberElement->SetAttribute(XML_MOD_TEAM_MEMBER_WEBSITE_ATTRIBUTE_NAME.c_str(), m_website.c_str());
+	}
+
+	if(!m_moddbURL.empty()) {
+		modTeamMemberElement->SetAttribute(XML_MOD_TEAM_MEMBER_MODDB_ATTRIBUTE_NAME.c_str(), m_moddbURL.c_str());
 	}
 
 	if(!m_youTube.empty()) {
@@ -656,6 +685,18 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const rapidjson::Value &
 		}
 
 		newModTeamMember->setWebsite(modTeamMemberWebsiteValue.GetString());
+	}
+
+	// parse the mod team member ModDB URL property
+	if(modTeamMemberValue.HasMember(JSON_MOD_TEAM_MEMBER_MODDB_URL_PROPERTY_NAME)) {
+		const rapidjson::Value & modTeamMemberModDBURLValue = modTeamMemberValue[JSON_MOD_TEAM_MEMBER_MODDB_URL_PROPERTY_NAME];
+
+		if(!modTeamMemberModDBURLValue.IsString()) {
+			spdlog::error("Mod team member '{}' property has invalid type: '{}', expected 'string'.", JSON_MOD_TEAM_MEMBER_MODDB_URL_PROPERTY_NAME, Utilities::typeToString(modTeamMemberModDBURLValue.GetType()));
+			return nullptr;
+		}
+
+		newModTeamMember->setModDBURL(modTeamMemberModDBURLValue.GetString());
 	}
 
 	// parse the mod team member YouTube property
@@ -822,6 +863,7 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const tinyxml2::XMLEleme
 	const char * teamMemberTwitter = modTeamMemberElement->Attribute(XML_MOD_TEAM_MEMBER_TWITTER_ATTRIBUTE_NAME.c_str());
 	const char * teamMemberBluesky = modTeamMemberElement->Attribute(XML_MOD_TEAM_MEMBER_BLUESKY_ATTRIBUTE_NAME.c_str());
 	const char * teamMemberWebsite = modTeamMemberElement->Attribute(XML_MOD_TEAM_MEMBER_WEBSITE_ATTRIBUTE_NAME.c_str());
+	const char * teamMemberModDBURL = modTeamMemberElement->Attribute(XML_MOD_TEAM_MEMBER_MODDB_ATTRIBUTE_NAME.c_str());
 	const char * teamMemberYouTube = modTeamMemberElement->Attribute(XML_MOD_TEAM_MEMBER_YOUTUBE_ATTRIBUTE_NAME.c_str());
 	const char * teamMemberReddit = modTeamMemberElement->Attribute(XML_MOD_TEAM_MEMBER_REDDIT_ATTRIBUTE_NAME.c_str());
 	const char * teamMemberGitHub = modTeamMemberElement->Attribute(XML_MOD_TEAM_MEMBER_GITHUB_ATTRIBUTE_NAME.c_str());
@@ -846,6 +888,10 @@ std::unique_ptr<ModTeamMember> ModTeamMember::parseFrom(const tinyxml2::XMLEleme
 
 	if(teamMemberBluesky != nullptr) {
 		newModTeamMember->setBluesky(teamMemberBluesky);
+	}
+
+	if(teamMemberModDBURL != nullptr) {
+		newModTeamMember->setModDBURL(teamMemberModDBURL);
 	}
 
 	if(teamMemberYouTube != nullptr) {
@@ -911,6 +957,7 @@ bool ModTeamMember::operator == (const ModTeamMember & modTeamMember) const {
 		   Utilities::areStringsEqualIgnoreCase(m_twitter, modTeamMember.m_twitter) &&
 		   Utilities::areStringsEqualIgnoreCase(m_bluesky, modTeamMember.m_bluesky) &&
 		   Utilities::areStringsEqualIgnoreCase(m_website, modTeamMember.m_website) &&
+		   Utilities::areStringsEqualIgnoreCase(m_moddbURL, modTeamMember.m_moddbURL) &&
 		   Utilities::areStringsEqualIgnoreCase(m_youTube, modTeamMember.m_youTube) &&
 		   Utilities::areStringsEqualIgnoreCase(m_reddit, modTeamMember.m_reddit) &&
 		   Utilities::areStringsEqualIgnoreCase(m_gitHub, modTeamMember.m_gitHub) &&

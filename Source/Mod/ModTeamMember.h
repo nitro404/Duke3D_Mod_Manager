@@ -32,6 +32,7 @@ public:
 	bool hasTwitter() const;
 	bool hasBluesky() const;
 	bool hasWebsite() const;
+	bool hasModDBURL() const;
 	bool hasYouTube() const;
 	bool hasReddit() const;
 	bool hasGitHub() const;
@@ -49,6 +50,7 @@ public:
 	const std::string & getTwitter() const;
 	const std::string & getBluesky() const;
 	const std::string & getWebsite() const;
+	const std::string & getModDBURL() const;
 	const std::string & getYouTube() const;
 	const std::string & getReddit() const;
 	const std::string & getGitHub() const;
@@ -69,6 +71,7 @@ public:
 	void setTwitter(const std::string & twitter);
 	void setBluesky(const std::string & bluesky);
 	void setWebsite(const std::string & website);
+	void setModDBURL(const std::string & moddbURL);
 	void setYouTube(const std::string & youTube);
 	void setReddit(const std::string & reddit);
 	void setGitHub(const std::string & gitHub);
@@ -101,6 +104,7 @@ private:
 	std::string m_twitter;
 	std::string m_bluesky;
 	std::string m_website;
+	std::string m_moddbURL;
 	std::string m_youTube;
 	std::string m_reddit;
 	std::string m_gitHub;
