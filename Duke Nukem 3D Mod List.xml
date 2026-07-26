@@ -15697,7 +15697,7 @@
 		</similar>
 	</mod>
 	<mod name="Hollywood Holocaust Rethinked" id="Hollywood_Holocaust_Rethinked" type="Total Conversion" version="1.1" moddb="https://www.moddb.com/mods/hollywood-holocaust-rethinked">
-		<team name="Team Misfit" website="https://www.moddb.com/company/team-misfit">
+		<team name="Team Misfit" moddb="https://www.moddb.com/company/team-misfit">
 			<member name="Tea Monster" email="tea_monster@yahoo.com"/>
 			<member name="Mark"/>
 			<member name="Spiker"/>
@@ -16528,8 +16528,8 @@
 			<download filename="WG_2009_Pack-ModMgrE.zip" filesize="7170901" game="eDuke32" type="Mod Manager Files" state="Native" sha1="ef9c1ca429f4aec01c487e1e392db4ba54674a16"/>
 		</downloads>
 	</mod>
-	<mod name="Naferia&apos;s Reign: The Invasion of the Dark Mistress" id="naferias_reign_-_the_invasion_of_the_dark_mistress" type="Total Conversion" version="5.22" website="http://naferia.duke4.net" repository="https://github.com/LordMisfit/NR-IotDM">
-		<team website="http://www.moddb.com/mods/9889/naferias-reign-the-dark-mistress">
+	<mod name="Naferia&apos;s Reign: The Invasion of the Dark Mistress" id="naferias_reign_-_the_invasion_of_the_dark_mistress" type="Total Conversion" version="5.22" website="http://naferia.duke4.net" moddb="http://www.moddb.com/mods/9889/naferias-reign-the-dark-mistress" repository="https://github.com/LordMisfit/NR-IotDM">
+		<team>
 			<member name="Jack Walker" alias="Lord Misfit" email="clint20@neo.rr.com" website="http://misfittechstudios.netii.net" github="LordMisfit" state="Ohio" country="United States"/>
 		</team>
 		<versions>
