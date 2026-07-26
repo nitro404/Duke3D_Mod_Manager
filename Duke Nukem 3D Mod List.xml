@@ -7516,7 +7516,7 @@
 	</mod>
 	<mod name="Zbychu Jowisz 3D" id="zbychu_jowisz_3d" type="Partial Conversion" moddb="https://www.moddb.com/mods/zbychu-jowisz">
 		<team>
-			<member name="Zbychu Jowisz" alias="Brick Jove" website="https://www.moddb.com/members/brickjovian" country="Germany"/>
+			<member name="Zbychu Jowisz" alias="Brick Jove" moddb="https://www.moddb.com/members/brickjovian" country="Germany"/>
 		</team>
 		<versions>
 			<version release_date="June 24, 2015">
@@ -9589,7 +9589,7 @@
 	</mod>
 	<mod name="Fatal Mode (Atomic)" id="fatal_mode_atomic" type="Total Conversion" version="1.0" moddb="https://www.moddb.com/mods/duke3d-fatal-mode-atomic">
 		<team>
-			<member name="Oszkár Winkler" alias="oscarincage" email="oscarincage@gmail.com" website="https://www.moddb.com/members/oscarincage" country="Hungary"/>
+			<member name="Oszkár Winkler" alias="oscarincage" email="oscarincage@gmail.com" moddb="https://www.moddb.com/members/oscarincage" country="Hungary"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="March 12, 2020">
@@ -10442,7 +10442,7 @@
 	</mod>
 	<mod name="Hardcore" id="hardcore" type="Total Conversion" version="1.3" moddb="https://www.moddb.com/mods/david-bjorge">
 		<team>
-			<member name="David Bjorge" alias="Dukeis1" website="https://www.moddb.com/company/david-bjorge"/>
+			<member name="David Bjorge" alias="Dukeis1" moddb="https://www.moddb.com/company/david-bjorge"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="August 16, 2015">
@@ -10962,7 +10962,7 @@
 	</mod>
 	<mod name="Operation Multiverse" id="operation_multiverse" type="Total Conversion" version="1.0" moddb="https://www.moddb.com/mods/operation-multiverse">
 		<team>
-			<member name="David Bjorge" alias="Dukeis1" website="https://www.moddb.com/company/david-bjorge"/>
+			<member name="David Bjorge" alias="Dukeis1" moddb="https://www.moddb.com/company/david-bjorge"/>
 		</team>
 		<versions>
 			<version id="Alpha" release_date="September 16, 2017">
@@ -12030,7 +12030,7 @@
 	</mod>
 	<mod name="The Way of All Flesh" id="the_way_of_all_flesh" type="Episode" version="1.2" moddb="https://www.moddb.com/mods/duke-nukem-3d-the-way-of-all-flesh">
 		<team>
-			<member name="MissingNO57" email="missingno@seznam.cz" website="https://www.moddb.com/members/missingno57/downloads" country="Czech Republic"/>
+			<member name="MissingNO57" email="missingno@seznam.cz" moddb="https://www.moddb.com/members/missingno57/downloads" country="Czech Republic"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="January 19, 2022">
@@ -12199,7 +12199,7 @@
 	</mod>
 	<mod name="Leisure Suit Larry" id="leisure_suit_larry" type="Partial Conversion" moddb="https://www.moddb.com/games/duke-nukem-3d/addons/leisure-suit-larry-mod-for-duke-nukem-3d">
 		<team country="Portugal">
-			<member name="ALF" email="barroselasnow@hotmail.com" website="https://www.moddb.com/members/alfdude"/>
+			<member name="ALF" email="barroselasnow@hotmail.com" moddb="https://www.moddb.com/members/alfdude"/>
 		</team>
 		<versions>
 			<version release_date="August 14, 2018">
@@ -12230,7 +12230,7 @@
 	</mod>
 	<mod name="ALF&apos;s Resort" id="alfs_resort" type="Total Conversion" moddb="https://www.moddb.com/games/duke-nukem-3d/addons/alfs-resort">
 		<team country="Portugal">
-			<member name="ALF" email="barroselasnow@hotmail.com" website="https://www.moddb.com/members/alfdude"/>
+			<member name="ALF" email="barroselasnow@hotmail.com" moddb="https://www.moddb.com/members/alfdude"/>
 		</team>
 		<versions>
 			<version release_date="August 14, 2018">
@@ -13007,9 +13007,9 @@
 	</mod>
 	<mod name="Duke Nukem: Advance for PC" id="duke_nukem_advance" type="Total Conversion" version="1.0 Playtest" moddb="https://www.moddb.com/mods/duke-nukem-advance-tc" repository="https://github.com/branung/DNA4PC">
 		<team>
-			<member name="Branung" website="https://www.moddb.com/members/branung" github="branung" country="United States"/>
+			<member name="Branung" moddb="https://www.moddb.com/members/branung" github="branung" country="United States"/>
 			<member name="Max Ylitalo" alias="Oasiz" github="oasiz-"/>
-			<member name="Dzierzan" website="https://www.moddb.com/members/dzierzan" country="Poland"/>
+			<member name="Dzierzan" moddb="https://www.moddb.com/members/dzierzan" country="Poland"/>
 			<member name="Jimmy Gnosis"/>
 			<member name="Gianni Matragrano"/>
 		</team>
@@ -13918,7 +13918,7 @@
 	</mod>
 	<mod name="Voxel Duke Nukem 3D" id="voxel_duke_nukem_3d" type="Voxel Pack" version="1.0" moddb="https://www.moddb.com/mods/voxel-duke-nukem-3d">
 		<team>
-			<member name="Daniel Peterson" alias="Cheello" twitter="DanielWienerson" website="https://www.moddb.com/members/chillo1" youtube="cheelo_art" country="United States"/>
+			<member name="Daniel Peterson" alias="Cheello" twitter="DanielWienerson" moddb="https://www.moddb.com/members/chillo1" youtube="cheelo_art" country="United States"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="November 21, 2025">
@@ -16140,7 +16140,7 @@
 	</mod>
 	<mod name="Alpha Project" id="alpha_project" type="Total Conversion" version="0.0 Alpha" moddb="https://www.moddb.com/mods/alpha-project3">
 		<team>
-			<member name="Março Aurélio Andrade" alias="Marcolino123" website="https://www.moddb.com/members/marcolino123" discord="marcolino123#1304" country="Brazil"/>
+			<member name="Março Aurélio Andrade" alias="Marcolino123" moddb="https://www.moddb.com/members/marcolino123" discord="marcolino123#1304" country="Brazil"/>
 		</team>
 		<versions>
 			<version id="0.0 Alpha" release_date="October 16, 2009">
@@ -16158,7 +16158,7 @@
 	</mod>
 	<mod name="Anatoly Tabakow 3D" id="anatoly_tabakow_3d" type="Voice Replacement" moddb="https://www.moddb.com/mods/duke-nukem-3d-but-its-anatoly-tabakow">
 		<team>
-			<member name="Alx_2004" website="https://www.moddb.com/company/alx-2004"/>
+			<member name="Alx_2004" moddb="https://www.moddb.com/company/alx-2004"/>
 		</team>
 		<versions>
 			<version release_date="February 9, 2025">
@@ -16175,7 +16175,7 @@
 	</mod>
 	<mod name="TESTOVIRON 3D Poverty Edition" id="testoviron_3d" type="Voice Replacement" version="0.8" moddb="https://www.moddb.com/addons/testoviron-3d">
 		<team>
-			<member name="Zbychu Jowisz" alias="Brick Jove" website="https://www.moddb.com/members/brickjovian" country="Germany"/>
+			<member name="Zbychu Jowisz" alias="Brick Jove" moddb="https://www.moddb.com/members/brickjovian" country="Germany"/>
 		</team>
 		<versions>
 			<version id="0.7" release_date="January 27, 2016">
@@ -16227,7 +16227,7 @@
 	</mod>
 	<mod name="High Quality Sound Effects" id="high_quality_sound_effects" type="Sound Pack" moddb="https://www.moddb.com/mods/duke-nukem-3d-high-quality-sound-effects">
 		<team>
-			<member name="Dzierzan" website="https://www.moddb.com/members/dzierzan" country="Poland"/>
+			<member name="Dzierzan" moddb="https://www.moddb.com/members/dzierzan" country="Poland"/>
 			<member name="Futuretime23"/>
 			<member name="perkristian"/>
 			<member name="DeevDaRabbit"/>
@@ -16331,7 +16331,7 @@
 	</mod>
 	<mod name="Cosmetic Duke" id="cosmetic_duke" type="Quality of Life Patch" version="1.9" moddb="https://www.moddb.com/mods/cosmetic-duke">
 		<team>
-			<member name="DecemberMan" website="https://www.moddb.com/members/decemberman" country="Poland"/>
+			<member name="DecemberMan" moddb="https://www.moddb.com/members/decemberman" country="Poland"/>
 		</team>
 		<versions>
 			<version id="1.9" release_date="February 17, 2024">
