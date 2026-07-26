@@ -32,6 +32,7 @@ static constexpr const char * JSON_MOD_TYPE_PROPERTY_NAME = "type";
 static constexpr const char * JSON_MOD_PREFERRED_VERSION_NAME_PROPERTY_NAME = "preferredVersion";
 static constexpr const char * JSON_MOD_DEFAULT_VERSION_TYPE_PROPERTY_NAME = "defaultVersionType";
 static constexpr const char * JSON_MOD_WEBSITE_PROPERTY_NAME = "website";
+static constexpr const char * JSON_MOD_MODDB_URL_PROPERTY_NAME = "moddbURL";
 static constexpr const char * JSON_MOD_REPOSITORY_URL_PROPERTY_NAME = "repositoryURL";
 static constexpr const char * JSON_MOD_TEAM_PROPERTY_NAME = "team";
 static constexpr const char * JSON_MOD_VERSIONS_PROPERTY_NAME = "versions";
@@ -42,7 +43,7 @@ static constexpr const char * JSON_MOD_VIDEOS_PROPERTY_NAME = "videos";
 static constexpr const char * JSON_MOD_NOTES_PROPERTY_NAME = "notes";
 static constexpr const char * JSON_MOD_RELATED_MODS_PROPERTY_NAME = "relatedMods";
 static constexpr const char * JSON_MOD_SIMILAR_MODS_PROPERTY_NAME = "similarMods";
-static const std::array<std::string_view, 17> JSON_MOD_PROPERTY_NAMES = {
+static const std::array<std::string_view, 18> JSON_MOD_PROPERTY_NAMES = {
 	JSON_MOD_ID_PROPERTY_NAME,
 	JSON_MOD_NAME_PROPERTY_NAME,
 	JSON_MOD_ALIAS_PROPERTY_NAME,
@@ -50,6 +51,7 @@ static const std::array<std::string_view, 17> JSON_MOD_PROPERTY_NAMES = {
 	JSON_MOD_PREFERRED_VERSION_NAME_PROPERTY_NAME,
 	JSON_MOD_DEFAULT_VERSION_TYPE_PROPERTY_NAME,
 	JSON_MOD_WEBSITE_PROPERTY_NAME,
+	JSON_MOD_MODDB_URL_PROPERTY_NAME,
 	JSON_MOD_REPOSITORY_URL_PROPERTY_NAME,
 	JSON_MOD_TEAM_PROPERTY_NAME,
 	JSON_MOD_VERSIONS_PROPERTY_NAME,
@@ -94,8 +96,9 @@ static const std::string XML_MOD_TYPE_ATTRIBUTE_NAME("type");
 static const std::string XML_MOD_VERSION_ATTRIBUTE_NAME("version");
 static const std::string XML_MOD_VERSION_TYPE_ATTRIBUTE_NAME("version_type");
 static const std::string XML_MOD_WEBSITE_ATTRIBUTE_NAME("website");
+static const std::string XML_MOD_MODDB_ATTRIBUTE_NAME("moddb");
 static const std::string XML_MOD_REPOSITORY_ATTRIBUTE_NAME("repository");
-static const std::array<std::string_view, 8> XML_MOD_ATTRIBUTE_NAMES = {
+static const std::array<std::string_view, 9> XML_MOD_ATTRIBUTE_NAMES = {
 	XML_MOD_ID_ATTRIBUTE_NAME,
 	XML_MOD_NAME_ATTRIBUTE_NAME,
 	XML_MOD_ALIAS_ATTRIBUTE_NAME,
@@ -103,6 +106,7 @@ static const std::array<std::string_view, 8> XML_MOD_ATTRIBUTE_NAMES = {
 	XML_MOD_VERSION_ATTRIBUTE_NAME,
 	XML_MOD_VERSION_TYPE_ATTRIBUTE_NAME,
 	XML_MOD_WEBSITE_ATTRIBUTE_NAME,
+	XML_MOD_MODDB_ATTRIBUTE_NAME,
 	XML_MOD_REPOSITORY_ATTRIBUTE_NAME
 };
 static const std::string XML_RELATED_MOD_ID_ATTRIBUTE_NAME("id");
@@ -123,6 +127,7 @@ Mod::Mod(Mod && m) noexcept
 	, m_preferredVersion(std::move(m.m_preferredVersion))
 	, m_defaultVersionType(std::move(m.m_defaultVersionType))
 	, m_website(std::move(m.m_website))
+	, m_moddbURL(std::move(m.m_moddbURL))
 	, m_repositoryURL(std::move(m.m_repositoryURL))
 	, m_team(m.m_team == nullptr ? nullptr : std::move(m.m_team))
 	, m_versions(std::move(m.m_versions))
@@ -144,6 +149,7 @@ Mod::Mod(const Mod & m)
 	, m_preferredVersion(m.m_preferredVersion)
 	, m_defaultVersionType(m.m_defaultVersionType)
 	, m_website(m.m_website)
+	, m_moddbURL(m.m_moddbURL)
 	, m_repositoryURL(m.m_repositoryURL)
 	, m_notes(m.m_notes)
 	, m_relatedMods(m.m_relatedMods)
@@ -184,6 +190,7 @@ Mod & Mod::operator = (Mod && m) noexcept {
 		m_preferredVersion = std::move(m.m_preferredVersion);
 		m_defaultVersionType = std::move(m.m_defaultVersionType);
 		m_website = std::move(m.m_website);
+		m_moddbURL = std::move(m.m_moddbURL);
 		m_repositoryURL = std::move(m.m_repositoryURL);
 		m_team = m.m_team == nullptr ? nullptr : std::move(m.m_team);
 		m_versions = std::move(m.m_versions);
@@ -215,6 +222,7 @@ Mod & Mod::operator = (const Mod & m) {
 	m_preferredVersion = m.m_preferredVersion;
 	m_defaultVersionType = m.m_defaultVersionType;
 	m_website = m.m_website;
+	m_moddbURL = m.m_moddbURL;
 	m_repositoryURL = m.m_repositoryURL;
 	m_team = m.m_team == nullptr ? nullptr : std::make_shared<ModTeam>(*m.m_team);
 	m_notes = m.m_notes;
@@ -351,6 +359,10 @@ const std::string & Mod::getWebsite() const {
 	return m_website;
 }
 
+const std::string & Mod::getModDBURL() const {
+	return m_moddbURL;
+}
+
 const std::string & Mod::getRepositoryURL() const {
 	return m_repositoryURL;
 }
@@ -433,6 +445,10 @@ void Mod::setDefaultVersionType(const std::string & versionType) {
 
 void Mod::setWebsite(const std::string & website) {
 	m_website = Utilities::trimString(website);
+}
+
+void Mod::setModDBURL(const std::string & moddbURL) {
+	m_moddbURL = Utilities::trimString(moddbURL);
 }
 
 void Mod::setRepositoryURL(const std::string & repositoryURL) {
@@ -1593,6 +1609,11 @@ rapidjson::Value Mod::toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAlloca
 		modValue.AddMember(rapidjson::StringRef(JSON_MOD_WEBSITE_PROPERTY_NAME), websiteValue, allocator);
 	}
 
+	if(!m_moddbURL.empty()) {
+		rapidjson::Value moddbURLValue(m_moddbURL.c_str(), allocator);
+		modValue.AddMember(rapidjson::StringRef(JSON_MOD_MODDB_URL_PROPERTY_NAME), moddbURLValue, allocator);
+	}
+
 	if(!m_repositoryURL.empty()) {
 		rapidjson::Value repositoryURLValue(m_repositoryURL.c_str(), allocator);
 		modValue.AddMember(rapidjson::StringRef(JSON_MOD_REPOSITORY_URL_PROPERTY_NAME), repositoryURLValue, allocator);
@@ -1719,6 +1740,10 @@ tinyxml2::XMLElement * Mod::toXML(tinyxml2::XMLDocument * document) const {
 
 	if(!m_website.empty()) {
 		modElement->SetAttribute(XML_MOD_WEBSITE_ATTRIBUTE_NAME.c_str(), m_website.c_str());
+	}
+
+	if(!m_moddbURL.empty()) {
+		modElement->SetAttribute(XML_MOD_MODDB_ATTRIBUTE_NAME.c_str(), m_moddbURL.c_str());
 	}
 
 	if(!m_repositoryURL.empty()) {
@@ -1950,6 +1975,18 @@ std::unique_ptr<Mod> Mod::parseFrom(const rapidjson::Value & modValue, bool skip
 		}
 
 		newMod->setWebsite(modWebsiteValue.GetString());
+	}
+
+	// parse the mod ModDB URL property
+	if(modValue.HasMember(JSON_MOD_MODDB_URL_PROPERTY_NAME)) {
+		const rapidjson::Value & moddbURLValue = modValue[JSON_MOD_MODDB_URL_PROPERTY_NAME];
+
+		if(!moddbURLValue.IsString()) {
+			spdlog::error("Mod '{}' '{}' property has invalid type: '{}', expected 'string'.", modID, JSON_MOD_MODDB_URL_PROPERTY_NAME, Utilities::typeToString(moddbURLValue.GetType()));
+			return nullptr;
+		}
+
+		newMod->setModDBURL(moddbURLValue.GetString());
 	}
 
 	// parse the mod repository URL property
@@ -2338,6 +2375,9 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement, boo
 	// read the mod website attribute value
 	const char * modWebsite = modElement->Attribute(XML_MOD_WEBSITE_ATTRIBUTE_NAME.c_str());
 
+	// read the mod ModDB URL attribute value
+	const char * moddbURL = modElement->Attribute(XML_MOD_MODDB_ATTRIBUTE_NAME.c_str());
+
 	// read the mod repository URL attribute value
 	const char * modRepositoryURL = modElement->Attribute(XML_MOD_REPOSITORY_ATTRIBUTE_NAME.c_str());
 
@@ -2358,6 +2398,10 @@ std::unique_ptr<Mod> Mod::parseFrom(const tinyxml2::XMLElement * modElement, boo
 
 	if(modWebsite != nullptr) {
 		mod->setWebsite(modWebsite);
+	}
+
+	if(moddbURL != nullptr) {
+		mod->setModDBURL(moddbURL);
 	}
 
 	if(modRepositoryURL != nullptr) {
@@ -3175,6 +3219,7 @@ bool Mod::operator == (const Mod & mod) const {
 	   !Utilities::areStringsEqualIgnoreCase(m_preferredVersion, mod.m_preferredVersion) ||
 	   !Utilities::areStringsEqualIgnoreCase(m_defaultVersionType, mod.m_defaultVersionType) ||
 	   !Utilities::areStringsEqualIgnoreCase(m_website, mod.m_website)||
+	   !Utilities::areStringsEqualIgnoreCase(m_moddbURL, mod.m_moddbURL)||
 	   !Utilities::areStringsEqualIgnoreCase(m_repositoryURL, mod.m_repositoryURL) ||
 	   (m_team == nullptr && mod.m_team != nullptr) ||
 	   (m_team != nullptr && mod.m_team == nullptr) ||

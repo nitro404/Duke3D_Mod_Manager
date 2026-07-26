@@ -54,6 +54,7 @@ public:
 	std::string getLatestReleaseDateAsString() const;
 	std::string getInitialReleaseDateAsString() const;
 	const std::string & getWebsite() const;
+	const std::string & getModDBURL() const;
 	const std::string & getRepositoryURL() const;
 	bool isStandAlone() const;
 	bool hasDependencies() const;
@@ -68,6 +69,7 @@ public:
 	void setPreferredVersionName(const std::string & preferredVersionName);
 	void setDefaultVersionType(const std::string & versionType);
 	void setWebsite(const std::string & website);
+	void setModDBURL(const std::string & moddbURL);
 	void setRepositoryURL(const std::string & repositoryURL);
 	void setTeam(const ModTeam & team);
 	void removeTeam();
@@ -232,6 +234,7 @@ private:
 	std::string m_preferredVersion;
 	std::string m_defaultVersionType;
 	std::string m_website;
+	std::string m_moddbURL;
 	std::string m_repositoryURL;
 	std::shared_ptr<ModTeam> m_team;
 	std::vector<std::shared_ptr<ModVersion>> m_versions;
