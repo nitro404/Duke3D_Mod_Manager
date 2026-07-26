@@ -7514,7 +7514,7 @@
 			<download filename="The_Purify_TC_1.0B-ModMgrA.zip" filesize="15103512" version="1.0B" game="Atomic" type="Mod Manager Files" state="Native" sha1="83f5d7f8aa80bad9e6fd40711b8d4ee1a89b621f"/>
 		</downloads>
 	</mod>
-	<mod name="Zbychu Jowisz 3D" id="zbychu_jowisz_3d" type="Partial Conversion" website="https://www.moddb.com/mods/zbychu-jowisz">
+	<mod name="Zbychu Jowisz 3D" id="zbychu_jowisz_3d" type="Partial Conversion" moddb="https://www.moddb.com/mods/zbychu-jowisz">
 		<team>
 			<member name="Zbychu Jowisz" alias="Brick Jove" website="https://www.moddb.com/members/brickjovian" country="Germany"/>
 		</team>
@@ -7565,7 +7565,7 @@
 			<download filename="WGSpace_Episode-ModMgrA.zip" filesize="1656582" game="Atomic" type="Mod Manager Files" state="Native" sha1="99b0423395d1d900ee7f9c60510883e16e3b4189"/>
 		</downloads>
 	</mod>
-	<mod name="L.A. Rumble" id="la_rumble" type="Episode" website="https://www.moddb.com/mods/dukenukem-la-rumble">
+	<mod name="L.A. Rumble" id="la_rumble" type="Episode" moddb="https://www.moddb.com/mods/dukenukem-la-rumble">
 		<versions>
 			<version release_date="January 10, 2009">
 				<game type="Atomic" state="Converted">
@@ -8621,7 +8621,7 @@
 			<download filename="Direct_System_Demo-ModMgrE.zip" filesize="10301504" version="Demo" game="eDuke32" type="Mod Manager Files" state="Native" sha1="21d1696f8b28b82e4c8bcfd0f4be704d0b80c319"/>
 		</downloads>
 	</mod>
-	<mod name="Dookie Nukem 3D" id="dookie_nukem_3d" type="Total Conversion" version="1.0" website="https://www.moddb.com/mods/dookie-nukem-3d">
+	<mod name="Dookie Nukem 3D" id="dookie_nukem_3d" type="Total Conversion" version="1.0" moddb="https://www.moddb.com/mods/dookie-nukem-3d">
 		<team name="Interceptic">
 			<member name="brownfarted"/>
 		</team>
@@ -8691,7 +8691,7 @@
 			<mod id="lameduke_95_redux"/>
 		</similar>
 	</mod>
-	<mod name="Duke Nukem 64" id="duke_nukem_64" type="Total Conversion" version="0.9.3" website="https://www.moddb.com/mods/dn64">
+	<mod name="Duke Nukem 64" id="duke_nukem_64" type="Total Conversion" version="0.9.3" moddb="https://www.moddb.com/mods/dn64">
 		<team>
 			<member name="Fox" discord="Fox#2395"/>
 			<member name="Ryan Lennox" alias="Nukey" email="kid.amn3siac@gmail.com"/>
@@ -8762,7 +8762,7 @@
 			<mod id="dn64_revisited"/>
 		</similar>
 	</mod>
-	<mod name="Duke Forces" id="Duke_Forces" type="Total Conversion" version="2.10c" website="https://www.moddb.com/mods/duke-forces">
+	<mod name="Duke Forces" id="Duke_Forces" type="Total Conversion" version="2.10c" moddb="https://www.moddb.com/mods/duke-forces">
 		<team>
 			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld" discord="Danarama#9209"/>
 		</team>
@@ -8796,7 +8796,7 @@
 			<download filename="Duke_Forces_2.10c-ModMgrE.zip" filesize="239575006" version="2.10c" game="eDuke32" type="Mod Manager Files" state="Native" sha1="51244c25336b1858f1a2269e94dd49539eea71ba"/>
 		</downloads>
 	</mod>
-	<mod name="Duke Hard" id="duke_hard" type="Episode" version="1.2.1" website="http://www.moddb.com/mods/duke-hard">
+	<mod name="Duke Hard" id="duke_hard" type="Episode" version="1.2.1" moddb="http://www.moddb.com/mods/duke-hard">
 		<team>
 			<member name="Corentin Dallay" alias="MetHy"/>
 			<member name="Cage" email="cageds@tlen.pl" country="Poland"/>
@@ -8854,7 +8854,7 @@
 			<download filename="Duke_Hard_1.2.1-ModMgrE.zip" filesize="44728140" version="1.2.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c9ea637a8b366fbcd1a735d38315cd50a0a69e56"/>
 		</downloads>
 	</mod>
-	<mod name="Duke Nukem: Weapon of Mass Destruction" id="duke_nukem_weapon_of_mass_destruction" type="Total Conversion" version="1.51b" website="https://www.moddb.com/mods/duke-nukem-weapon-of-mass-destruction">
+	<mod name="Duke Nukem: Weapon of Mass Destruction" id="duke_nukem_weapon_of_mass_destruction" type="Total Conversion" version="1.51b" moddb="https://www.moddb.com/mods/duke-nukem-weapon-of-mass-destruction">
 		<team>
 			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld" discord="Danarama#9209"/>
 		</team>
@@ -8899,7 +8899,7 @@
 			<download filename="Duke_Nukem_-_Weapon_of_Mass_Destruction_1.51b-ModMgrE.zip" filesize="15353168" version="1.51b" game="eDuke32" type="Mod Manager Files" state="Native" sha1="ed5aee3dc7566605b56988a5639db3759df26b92"/>
 		</downloads>
 	</mod>
-	<mod name="Alien Armageddon" id="alien_armageddon" type="Total Conversion" version="5.66" website="https://www.moddb.com/mods/duke-nukem-alien-armageddon">
+	<mod name="Alien Armageddon" id="alien_armageddon" type="Total Conversion" version="5.66" moddb="https://www.moddb.com/mods/duke-nukem-alien-armageddon">
 		<team>
 			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld" discord="Danarama#9209"/>
 			<member name="sebabdukeboss20" discord="sebabdukeboss20#5996"/>
@@ -9295,7 +9295,7 @@
 			<download filename="Duke_Nukem_Army_3.15-ModMgrE.zip" filesize="134814648" version="3.15" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e7c2ad6a2fa5aed00eacbb8a1e75dede5b835b43"/>
 		</downloads>
 	</mod>
-	<mod name="Attrition" id="attrition" type="Total Conversion" version="2.0" website="https://www.moddb.com/mods/duke-nukem-attrition">
+	<mod name="Attrition" id="attrition" type="Total Conversion" version="2.0" moddb="https://www.moddb.com/mods/duke-nukem-attrition">
 		<team>
 			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld" discord="Danarama#9209"/>
 		</team>
@@ -9527,7 +9527,7 @@
 			<download filename="Duke_Nukem_Extinction_Demo_2-ModMgrE.zip" filesize="3282783" version="Demo 2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b7815766353373d140a8efc744d0f3cae8fee27c"/>
 		</downloads>
 	</mod>
-	<mod name="Lameduke 95 Redux" id="lameduke_95_redux" type="Total Conversion" website="https://www.moddb.com/mods/lameduke-redux">
+	<mod name="Lameduke 95 Redux" id="lameduke_95_redux" type="Total Conversion" moddb="https://www.moddb.com/mods/lameduke-redux">
 		<team>
 			<member name="Mark Kaminari" alias="MarkKaminari00" website="https://www.youtube.com/@markkaminari007" discord="Mark Kaminari00#8643" country="Italy"/>
 		</team>
@@ -9549,7 +9549,7 @@
 			<mod id="lameduke_forever"/>
 		</similar>
 	</mod>
-	<mod name="Phoenix Holocaust" id="phoenix_holocaust" type="Total Conversion" website="https://www.moddb.com/mods/phoenix-holocaust">
+	<mod name="Phoenix Holocaust" id="phoenix_holocaust" type="Total Conversion" moddb="https://www.moddb.com/mods/phoenix-holocaust">
 		<team>
 			<member name="Mark Kaminari" alias="MarkKaminari00" website="https://www.youtube.com/@markkaminari007" discord="Mark Kaminari00#8643" country="Italy"/>
 		</team>
@@ -9568,7 +9568,7 @@
 			<download filename="Phoenix_Holocaust-ModMgrJF.zip" filesize="6127351" game="JFDuke3D" type="Mod Manager Files" state="Native" sha1="512c2f9148110b73d000a255f877f44dd38a656d"/>
 		</downloads>
 	</mod>
-	<mod name="Shaky Grounds" id="shaky_grounds" type="Episode" website="https://www.moddb.com/mods/shaky-grounds">
+	<mod name="Shaky Grounds" id="shaky_grounds" type="Episode" moddb="https://www.moddb.com/mods/shaky-grounds">
 		<team>
 			<member name="Merlijn van Oostrum" email="merlijn_redhot@hotmail.com" discord="Mrlijn#8650"/>
 		</team>
@@ -9587,7 +9587,7 @@
 			<download filename="Shaky_Grounds-ModMgrE.zip" filesize="61187896" game="eDuke32" type="Mod Manager Files" state="Native" sha1="472f8100769b7a858b1e75896b5670dc16550fcd"/>
 		</downloads>
 	</mod>
-	<mod name="Fatal Mode (Atomic)" id="fatal_mode_atomic" type="Total Conversion" version="1.0" website="https://www.moddb.com/mods/duke3d-fatal-mode-atomic">
+	<mod name="Fatal Mode (Atomic)" id="fatal_mode_atomic" type="Total Conversion" version="1.0" moddb="https://www.moddb.com/mods/duke3d-fatal-mode-atomic">
 		<team>
 			<member name="Oszkár Winkler" alias="oscarincage" email="oscarincage@gmail.com" website="https://www.moddb.com/members/oscarincage" country="Hungary"/>
 		</team>
@@ -9911,7 +9911,7 @@
 			<download filename="Back_in_Business_1.0-ModMgrE.zip" filesize="13166622" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b22720c554a5a579cf809c14d314fb646a7c616e"/>
 		</downloads>
 	</mod>
-	<mod name="Downtown Journey" id="downtown_journey" type="Episode" version="1.1" website="https://www.moddb.com/mods/pretomurara">
+	<mod name="Downtown Journey" id="downtown_journey" type="Episode" version="1.1" moddb="https://www.moddb.com/mods/pretomurara">
 		<team>
 			<member name="Preto Murara" email="pretomurara@gmail.com" country="Brazil"/>
 		</team>
@@ -9940,7 +9940,7 @@
 			<download filename="Downtown_Journey_1.1-ModMgrE.zip" filesize="471260" version="1.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="17caa809e0645c6b46dd2e684e05f8aeafc8ff3a"/>
 		</downloads>
 	</mod>
-	<mod name="Duke Nukem Xmas 2014" id="duke_nukem_xmas_2014" type="Total Conversion" version="1.0" website="http://www.moddb.com/mods/duke-nukem-xmas-2014">
+	<mod name="Duke Nukem Xmas 2014" id="duke_nukem_xmas_2014" type="Total Conversion" version="1.0" moddb="http://www.moddb.com/mods/duke-nukem-xmas-2014">
 		<team name="Balls of Steal Team">
 			<member name="Artem Nevincahny" email="artem.neva@gmail.com"/>
 		</team>
@@ -10101,7 +10101,7 @@
 			<mod id="decay"/>
 		</related>
 	</mod>
-	<mod name="Metropolitan Mayhem" id="metropolitan_mayhem" type="Episode" website="https://www.moddb.com/mods/metropolitan-mayhem">
+	<mod name="Metropolitan Mayhem" id="metropolitan_mayhem" type="Episode" moddb="https://www.moddb.com/mods/metropolitan-mayhem">
 		<team>
 			<member name="Corentin Dallay" alias="MetHy"/>
 			<member name="Aymeric Nocus" alias="MRCK" email="aymeric-nocus@tele2.fr" youtube="MisterCK" discord="ck3d#2928" country="France"/>
@@ -10123,7 +10123,7 @@
 			<download filename="Metropolitan_Mayhem-ModMgrE.zip" filesize="633140" game="eDuke32" type="Mod Manager Files" state="Native" sha1="8f9d66e1a16494e341988e44ffa5cb0c8a7d68ce"/>
 		</downloads>
 	</mod>
-	<mod name="Duke Nukem: Total Meltdown" id="duke_nukem_total_meltdown" type="Total Conversion" version="1.1" website="https://www.moddb.com/mods/dntm">
+	<mod name="Duke Nukem: Total Meltdown" id="duke_nukem_total_meltdown" type="Total Conversion" version="1.1" moddb="https://www.moddb.com/mods/dntm">
 		<team>
 			<member name="Daedolon" email="daedolon@nauticom.net"/>
 			<member name="Fox" discord="Fox#2395"/>
@@ -10283,7 +10283,7 @@
 			<download filename="Electric_Highways_1.1.0-ModMgrSA.zip" filesize="29739785" version="1.1.0" game="Stand-Alone" type="Mod Manager Files" state="Native" sha1="9423e5c35d6b936bde08a4762808dacb73c32d39"/>
 		</downloads>
 	</mod>
-	<mod name="Duke Nukem: Taking Boise" id="duke_nukem_taking_boise" type="Episode" website="https://www.moddb.com/mods/duke-nukem-taking-boise">
+	<mod name="Duke Nukem: Taking Boise" id="duke_nukem_taking_boise" type="Episode" moddb="https://www.moddb.com/mods/duke-nukem-taking-boise">
 		<team name="YayFace Productions">
 			<member name="Alan A. Nick" alias="opusvideo" email="anickvideo@gmail.com" website="http://www.youtube.com/opusvideo2001"/>
 			<member name="Mark Hadley"/>
@@ -10370,7 +10370,7 @@
 			<mod id="pere_noel_duke_nukem"/>
 		</similar>
 	</mod>
-	<mod name="Haunted Nukem" id="haunted_nukem" type="Total Conversion" version="2.1" website="https://www.moddb.com/mods/haunted-nukem">
+	<mod name="Haunted Nukem" id="haunted_nukem" type="Total Conversion" version="2.1" moddb="https://www.moddb.com/mods/haunted-nukem">
 		<team>
 			<member name="Duke64Nukem" alias="Kamikaze Nukem" email="duke64nukem@gmail.com" discord="Sixty Four#1072"/>
 			<member name="bullerbuller7"/>
@@ -10440,7 +10440,7 @@
 			<download filename="Halls_of_Doom-ModMgrE.zip" filesize="11533544" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e74f50aad1df746923bb1f7160a5d360262004d5"/>
 		</downloads>
 	</mod>
-	<mod name="Hardcore" id="hardcore" type="Total Conversion" version="1.3" website="https://www.moddb.com/mods/david-bjorge">
+	<mod name="Hardcore" id="hardcore" type="Total Conversion" version="1.3" moddb="https://www.moddb.com/mods/david-bjorge">
 		<team>
 			<member name="David Bjorge" alias="Dukeis1" website="https://www.moddb.com/company/david-bjorge"/>
 		</team>
@@ -10502,7 +10502,7 @@
 			<download filename="HardG-ModMgrE.zip" filesize="1799318" game="eDuke32" type="Mod Manager Files" state="Native" sha1="089a30d0d6a19dc304f0aa716fd28198f4f80561"/>
 		</downloads>
 	</mod>
-	<mod name="KickAss Duke" id="kickass_duke" type="Total Conversion" version="1.2" website="https://www.moddb.com/mods/kickass-duke">
+	<mod name="KickAss Duke" id="kickass_duke" type="Total Conversion" version="1.2" moddb="https://www.moddb.com/mods/kickass-duke">
 		<team>
 			<member name="Riccardo Capogna" alias="RichardStorm" email="riccardo.capogna@yahoo.it" country="Italy"/>
 		</team>
@@ -10842,7 +10842,7 @@
 			<download filename="Ninjas_with_Guitars_Beta_Test_0.1-ModMgrE.zip" filesize="4812303" version="Beta Test 0.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="299839b80becd1c4eead05aa88408cb6ff99bbdb"/>
 		</downloads>
 	</mod>
-	<mod name="Nuclear Showdown" id="nuclear_showdown" type="Total Conversion" version="2.1" website="https://www.moddb.com/mods/nuclear-showdown-redux">
+	<mod name="Nuclear Showdown" id="nuclear_showdown" type="Total Conversion" version="2.1" moddb="https://www.moddb.com/mods/nuclear-showdown-redux">
 		<team email="Jstanf36@ntlworld.com">
 			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
 			<member name="Michael Caraballo"/>
@@ -10960,7 +10960,7 @@
 			<download filename="Oblivion_3D_Final-ModMgrE.zip" filesize="81638624" version="Final" game="eDuke32" type="Mod Manager Files" state="Native" sha1="7ff0c9e6fc4c3d04e5b63b392f7e6be81de2f49f"/>
 		</downloads>
 	</mod>
-	<mod name="Operation Multiverse" id="operation_multiverse" type="Total Conversion" version="1.0" website="https://www.moddb.com/mods/operation-multiverse">
+	<mod name="Operation Multiverse" id="operation_multiverse" type="Total Conversion" version="1.0" moddb="https://www.moddb.com/mods/operation-multiverse">
 		<team>
 			<member name="David Bjorge" alias="Dukeis1" website="https://www.moddb.com/company/david-bjorge"/>
 		</team>
@@ -11088,7 +11088,7 @@
 			<download filename="Suburbs-ModMgrE.zip" filesize="11690627" version="Demo 0.1c" game="eDuke32" type="Mod Manager Files" state="Native" sha1="3111371df53b5da9ae4ffe0abfda8f8a2c8fd870"/>
 		</downloads>
 	</mod>
-	<mod name="Super Nukem Bros." id="super_nukem_bros" type="Total Conversion" version="6.1" website="https://www.moddb.com/mods/super-nukem-bros">
+	<mod name="Super Nukem Bros." id="super_nukem_bros" type="Total Conversion" version="6.1" moddb="https://www.moddb.com/mods/super-nukem-bros">
 		<team>
 			<member name="NUKEMDAVE" twitter="NUKEMDAVE" youtube="NUKEMDAVE" github="NUKEMDAVE" steam="NUKEMDAVE"/>
 		</team>
@@ -11202,7 +11202,7 @@
 			<mod id="evil_incarnate"/>
 		</related>
 	</mod>
-	<mod name="White Noise" id="white_noise" type="Total Conversion" version="0.9" website="https://www.moddb.com/games/duke-nukem-3d/addons/white-noise">
+	<mod name="White Noise" id="white_noise" type="Total Conversion" version="0.9" moddb="https://www.moddb.com/games/duke-nukem-3d/addons/white-noise">
 		<team country="Germany">
 			<member name="uLTra" youtube="ultra8103"/>
 			<member name="Zykov Eddy" email="edik.zykov@yahoo.com" website="http://www.eddyprojects.blogspot.com" country="Russia"/>
@@ -11265,7 +11265,7 @@
 			<download filename="WG_The_Abyss_Episode-ModMgrE.zip" filesize="389935" game="eDuke32" type="Mod Manager Files" state="Native" sha1="6881b228a4bdfc42bb749a251be15bef263314a7"/>
 		</downloads>
 	</mod>
-	<mod name="Blast Radius" id="blast_radius" type="Total Conversion" version="5.0.7" website="https://www.moddb.com/mods/duke-nukem-3d-blast-radius">
+	<mod name="Blast Radius" id="blast_radius" type="Total Conversion" version="5.0.7" moddb="https://www.moddb.com/mods/duke-nukem-3d-blast-radius">
 		<team country="France">
 			<member name="Aymeric Nocus" alias="ck3D" email="aymeric-nocus@tele2.fr" website="https://www.ko-fi.com/blastradius" youtube="MisterCK" discord="ck3d#2928" country="France"/>
 			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld" discord="Danarama#9209"/>
@@ -11517,7 +11517,7 @@
 			<download filename="On_Vacation-ModMgrE.zip" filesize="807347" game="eDuke32" type="Mod Manager Files" state="Native" sha1="4542ee84971df129db9cd5771664cbc0996e8573"/>
 		</downloads>
 	</mod>
-	<mod name="Zombie Crisis" id="zombie_crisis" type="Total Conversion" website="https://www.moddb.com/games/zombie-crisis">
+	<mod name="Zombie Crisis" id="zombie_crisis" type="Total Conversion" moddb="https://www.moddb.com/games/zombie-crisis">
 		<team>
 			<member name="Andrew Childs" alias="Hudson"/>
 			<member name="Geoffrey van Dijk" alias="Fakir Baba" email="fakirnogwat@hotmail.com"/>
@@ -11766,7 +11766,7 @@
 			<download filename="ODuke_002-ModMgrE.zip" filesize="2603767" version="002" game="eDuke32" type="Mod Manager Files" state="Native" sha1="972b248e262a12eca0e282958d8c0ae540179d17"/>
 		</downloads>
 	</mod>
-	<mod name="Duke Nukem 3D Savior of Babes" id="duke_nukem_3d_savior_of_babes" type="Total Conversion" version="0.99" version_type="HD Sounds" website="https://www.moddb.com/mods/duke-nukem-3d-savior-of-babes">
+	<mod name="Duke Nukem 3D Savior of Babes" id="duke_nukem_3d_savior_of_babes" type="Total Conversion" version="0.99" version_type="HD Sounds" moddb="https://www.moddb.com/mods/duke-nukem-3d-savior-of-babes">
 		<team>
 			<member name="VGames"/>
 			<member name="Valherran"/>
@@ -12028,7 +12028,7 @@
 			<download filename="Duke_Nukem_-_Halloween_Mayhem-ModMgrE.zip" filesize="27421288" game="eDuke32" type="Mod Manager Files" state="Native" sha1="de491f521806dc2b7d927bbf0a6ba9af8d7e0bd7"/>
 		</downloads>
 	</mod>
-	<mod name="The Way of All Flesh" id="the_way_of_all_flesh" type="Episode" version="1.2" website="https://www.moddb.com/mods/duke-nukem-3d-the-way-of-all-flesh">
+	<mod name="The Way of All Flesh" id="the_way_of_all_flesh" type="Episode" version="1.2" moddb="https://www.moddb.com/mods/duke-nukem-3d-the-way-of-all-flesh">
 		<team>
 			<member name="MissingNO57" email="missingno@seznam.cz" website="https://www.moddb.com/members/missingno57/downloads" country="Czech Republic"/>
 		</team>
@@ -12069,7 +12069,7 @@
 			<download filename="The_Way_of_All_Flesh_1.2-ModMgrA.zip" filesize="269197" version="1.2" game="Atomic" type="Mod Manager Files" state="Native" sha1="1c004b770b02a8ff3736a0211d01badf6350678c"/>
 		</downloads>
 	</mod>
-	<mod name="Operation Mallard" id="operation_mallard" type="Total Conversion" version="1.0 Demo" website="https://www.moddb.com/mods/operation-mallard">
+	<mod name="Operation Mallard" id="operation_mallard" type="Total Conversion" version="1.0 Demo" moddb="https://www.moddb.com/mods/operation-mallard">
 		<team name="J and M">
 			<member name="Jimmy de Visser" discord="Flamin_Weenie#8054"/>
 			<member name="Mark"/>
@@ -12117,7 +12117,7 @@
 			<download filename="Anarchy_City_1.1-ModMgrA.zip" filesize="901303" version="1.1" game="Atomic" type="Mod Manager Files" state="Native" sha1="066f2b5369409a0548c8b9ba665bcef8a94a4e9e"/>
 		</downloads>
 	</mod>
-	<mod name="Operation: Reckoning" id="operation_-_reckoning" type="Total Conversion" website="https://www.moddb.com/games/duke-nukem-3d/addons/operation-reckoning">
+	<mod name="Operation: Reckoning" id="operation_-_reckoning" type="Total Conversion" moddb="https://www.moddb.com/games/duke-nukem-3d/addons/operation-reckoning">
 		<team name="Macabre Conversions">
 			<member name="David Biermann" alias="Merciless Madman" email="DB19961@gmail.com"/>
 			<member name="David Taylor"/>
@@ -12139,7 +12139,7 @@
 			<download filename="Operation_-_Reckoning-ModMgrA.zip" filesize="3259904" game="Atomic" type="Mod Manager Files" state="Native" sha1="28420350a092ed686a45135a55cc1906f3ff79bd"/>
 		</downloads>
 	</mod>
-	<mod name="Duke Nukem: Battlefront" id="duke_nukem_-_battlefront" type="Dukematch" website="https://www.moddb.com/games/duke-nukem-3d/addons/duke-nukem-battlefront">
+	<mod name="Duke Nukem: Battlefront" id="duke_nukem_-_battlefront" type="Dukematch" moddb="https://www.moddb.com/games/duke-nukem-3d/addons/duke-nukem-battlefront">
 		<team>
 			<member name="G.A.P."/>
 		</team>
@@ -12177,7 +12177,7 @@
 			<download filename="The_Michael_Dormuth_Saga_Alpha_Build_147-ModMgrA.zip" filesize="271264" version="Alpha Build 147" game="Atomic" type="Mod Manager Files" state="Native" sha1="5d8c85df4c6eb641d81eaa75a7c5e10e5f24d9d0"/>
 		</downloads>
 	</mod>
-	<mod name="The Conundrum" id="the_conundrum" type="Episode" version="1.0" website="https://www.moddb.com/mods/the-conundrum">
+	<mod name="The Conundrum" id="the_conundrum" type="Episode" version="1.0" moddb="https://www.moddb.com/mods/the-conundrum">
 		<team>
 			<member name="Alex Pistol" email="aleks4duke@gmail.com" discord="Ledsbourne#2631" steam="Ledsbourne" country="Poland"/>
 		</team>
@@ -12197,7 +12197,7 @@
 			<download filename="The_Conundrum_1.0-ModMgrE.zip" filesize="9983817" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="8f9da1efd156342fbe40f28495b7084d53971fdd"/>
 		</downloads>
 	</mod>
-	<mod name="Leisure Suit Larry" id="leisure_suit_larry" type="Partial Conversion" website="https://www.moddb.com/games/duke-nukem-3d/addons/leisure-suit-larry-mod-for-duke-nukem-3d">
+	<mod name="Leisure Suit Larry" id="leisure_suit_larry" type="Partial Conversion" moddb="https://www.moddb.com/games/duke-nukem-3d/addons/leisure-suit-larry-mod-for-duke-nukem-3d">
 		<team country="Portugal">
 			<member name="ALF" email="barroselasnow@hotmail.com" website="https://www.moddb.com/members/alfdude"/>
 		</team>
@@ -12228,7 +12228,7 @@
 			<mod id="alfs_resort"/>
 		</related>
 	</mod>
-	<mod name="ALF&apos;s Resort" id="alfs_resort" type="Total Conversion" website="https://www.moddb.com/games/duke-nukem-3d/addons/alfs-resort">
+	<mod name="ALF&apos;s Resort" id="alfs_resort" type="Total Conversion" moddb="https://www.moddb.com/games/duke-nukem-3d/addons/alfs-resort">
 		<team country="Portugal">
 			<member name="ALF" email="barroselasnow@hotmail.com" website="https://www.moddb.com/members/alfdude"/>
 		</team>
@@ -12251,7 +12251,7 @@
 			<mod id="leisure_suit_larry"/>
 		</related>
 	</mod>
-	<mod name="Hunt for Khilafat" id="hunt_for_khilafat" type="Total Conversion" version="1.0" website="https://www.moddb.com/mods/hunt-for-khilafat">
+	<mod name="Hunt for Khilafat" id="hunt_for_khilafat" type="Total Conversion" version="1.0" moddb="https://www.moddb.com/mods/hunt-for-khilafat">
 		<team name="Free Speech Studio">
 			<member name="Jesse Petrilla" email="jesse@datatap.com"/>
 			<member name="Geoffrey van Dijk" alias="Fakir Baba" email="fakirnogwat@hotmail.com"/>
@@ -12281,7 +12281,7 @@
 			<note>Replaces episode 2.</note>
 		</notes>
 	</mod>
-	<mod name="Duke Nukem Forever Gloves" id="duke_nukem_forever_gloves" type="Weapon Patch" website="https://www.moddb.com/games/duke-nukem-3d/addons/dnf-gloves">
+	<mod name="Duke Nukem Forever Gloves" id="duke_nukem_forever_gloves" type="Weapon Patch" moddb="https://www.moddb.com/games/duke-nukem-3d/addons/dnf-gloves">
 		<team>
 			<member name="Hawkeyefile" email="hawkeyefile@gmail.com"/>
 		</team>
@@ -12342,7 +12342,7 @@
 			<download filename="Epic_1.00000000000000000000000000000001-ModMgrE.zip" filesize="2076955" version="1.00000000000000000000000000000001" game="Atomic" type="Mod Manager Files" state="Native" sha1="91631fcb07eedb6fcb6d369783ff37c9cfad8535"/>
 		</downloads>
 	</mod>
-	<mod name="Retro Deathmatch" id="retro_deathmatch" type="Dukematch" version="0.081" version_type="Beta" website="https://www.moddb.com/mods/retro-deathmatch">
+	<mod name="Retro Deathmatch" id="retro_deathmatch" type="Dukematch" version="0.081" version_type="Beta" moddb="https://www.moddb.com/mods/retro-deathmatch">
 		<team>
 			<member name="Graphics" discord="Graphics#8685"/>
 		</team>
@@ -12395,7 +12395,7 @@
 			<download filename="Retro_Deathmatch_0.081-ModMgrE.zip" filesize="117409900" version="0.081" version_type="Beta" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c73e485c1780bcde4b99ca118b3da883c74d8d3a"/>
 		</downloads>
 	</mod>
-	<mod name="WGRealms 2: Siege Breaker" id="wgrealms_2_-_siege_breaker" alias="wg_realms_-_demon_throne" type="Total Conversion" version="1.201" website="https://www.moddb.com/games/wgrealms-2">
+	<mod name="WGRealms 2: Siege Breaker" id="wgrealms_2_-_siege_breaker" alias="wg_realms_-_demon_throne" type="Total Conversion" version="1.201" moddb="https://www.moddb.com/games/wgrealms-2">
 		<team discord="https://discord.gg/jNrKdk5">
 			<member name="William Gee" email="geewillywizz@live.com" website="http://wgrealms.williamgeegallery.com" discord="William Gee#2015" country="New Zealand"/>
 			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld" discord="Danarama#9209"/>
@@ -12473,7 +12473,7 @@
 			<mod id="wgrealms_3_-_ganymede"/>
 		</related>
 	</mod>
-	<mod name="WG Realms: Demon Throne" id="wg_realms_-_demon_throne" alias="wgrealms_2_-_siege_breaker" type="Total Conversion" version="3.01" website="https://www.moddb.com/games/wgrealms-2">
+	<mod name="WG Realms: Demon Throne" id="wg_realms_-_demon_throne" alias="wgrealms_2_-_siege_breaker" type="Total Conversion" version="3.01" moddb="https://www.moddb.com/games/wgrealms-2">
 		<team discord="https://discord.gg/jNrKdk5">
 			<member name="William Gee" email="geewillywizz@live.com" website="http://wgrealms.williamgeegallery.com" discord="William Gee#2015" country="New Zealand"/>
 			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld" discord="Danarama#9209"/>
@@ -12518,7 +12518,7 @@
 			<download filename="WG_Realms_-_Demon_Throne_3.01-ModMgrE.zip" filesize="231759139" version="3.01" game="eDuke32" type="Mod Manager Files" state="Native" sha1="8d51e1772632ace8836dc8bb9eac2e7e79fa14e1"/>
 		</downloads>
 	</mod>
-	<mod name="Silver Wolf" id="silver_wolf" type="Total Conversion" version="1.0" website="https://www.moddb.com/mods/silver-wolf">
+	<mod name="Silver Wolf" id="silver_wolf" type="Total Conversion" version="1.0" moddb="https://www.moddb.com/mods/silver-wolf">
 		<team>
 			<member name="Fox" discord="Fox#2395"/>
 		</team>
@@ -12775,7 +12775,7 @@
 			<image filename="SVy3Egv.png" filesize="152742" type="logo" width="1337" height="400" caption="Diarrhea TC" sha1="911872ede7036f12b3ed2ae64e2cecb96e3f2fad"/>
 		</images>
 	</mod>
-	<mod name="The Thing" id="the_thing" alias="outpost_31" type="Map" website="https://www.moddb.com/games/duke-nukem-3d/addons/the-thing1">
+	<mod name="The Thing" id="the_thing" alias="outpost_31" type="Map" moddb="https://www.moddb.com/games/duke-nukem-3d/addons/the-thing1">
 		<team>
 			<member name="Thobias Fast" alias="Forsete" email="thibiasfast@hotmail.com" youtube="Forsete" discord="Loke#4857"/>
 			<member name="Walter Fox"/>
@@ -12803,7 +12803,7 @@
 			<note>Requires polymost rendering to avoid visual artifacts.</note>
 		</notes>
 	</mod>
-	<mod name="Outpost 31" id="outpost_31" alias="the_thing" type="Map" website="https://www.moddb.com/games/duke-nukem-3d/addons/the-thing1">
+	<mod name="Outpost 31" id="outpost_31" alias="the_thing" type="Map" moddb="https://www.moddb.com/games/duke-nukem-3d/addons/the-thing1">
 		<team>
 			<member name="Thobias Fast" alias="Forsete" email="thobias.fast@gmail.com" youtube="Forsete" discord="Loke#4857"/>
 			<member name="Walter Fox"/>
@@ -12861,7 +12861,7 @@
 			<download filename="The_Wall_1.01_-_Midified-ModMgrE.zip" filesize="1159358" version="1.01" version_type="Midified" game="eDuke32" type="Mod Manager Files" state="Native" sha1="346dcd90c7b84f1a8169279f4a96ed26f818a9e8"/>
 		</downloads>
 	</mod>
-	<mod name="It Lives" id="it_lives" type="Map" version="1.05" website="https://www.moddb.com/members/gambini/addons/it-lives-v-105">
+	<mod name="It Lives" id="it_lives" type="Map" version="1.05" moddb="https://www.moddb.com/members/gambini/addons/it-lives-v-105">
 		<team>
 			<member name="Luciano Gallo" alias="Gambini" email="gallo.luciano1@gmail.com" website="http://gambinidesign.blogspot.com" country="Argentina"/>
 		</team>
@@ -13005,7 +13005,7 @@
 			<download filename="BattleDuke-ModMgrA.zip" filesize="176566" game="Atomic" type="Mod Manager Files" state="Native" sha1="bf26a8ad110ab1c0a3d19e3fa98ea4e6bad7b762"/>
 		</downloads>
 	</mod>
-	<mod name="Duke Nukem: Advance for PC" id="duke_nukem_advance" type="Total Conversion" version="1.0 Playtest" website="https://www.moddb.com/mods/duke-nukem-advance-tc" repository="https://github.com/branung/DNA4PC">
+	<mod name="Duke Nukem: Advance for PC" id="duke_nukem_advance" type="Total Conversion" version="1.0 Playtest" moddb="https://www.moddb.com/mods/duke-nukem-advance-tc" repository="https://github.com/branung/DNA4PC">
 		<team>
 			<member name="Branung" website="https://www.moddb.com/members/branung" github="branung" country="United States"/>
 			<member name="Max Ylitalo" alias="Oasiz" github="oasiz-"/>
@@ -13075,7 +13075,7 @@
 			<mod id="duke_nukem_advance_4_pc"/>
 		</related>
 	</mod>
-	<mod name="Der Zorn Gottes" id="der_zorn_gottes" type="Map" website="https://www.moddb.com/mods/der-zorn-gottes">
+	<mod name="Der Zorn Gottes" id="der_zorn_gottes" type="Map" moddb="https://www.moddb.com/mods/der-zorn-gottes">
 		<team>
 			<member name="Alex Pistol" email="aleks4duke@gmail.com" discord="Ledsbourne#2631" steam="Ledsbourne" country="Poland"/>
 		</team>
@@ -13095,7 +13095,7 @@
 			<download filename="Der_Zorn_Gottes-ModMgrE.zip" filesize="6532431" game="eDuke32" type="Mod Manager Files" state="Native" sha1="5f785175186e09ad3b55c13c1fcf8a3a0525d878"/>
 		</downloads>
 	</mod>
-	<mod name="Simpler Times" id="simpler_times" type="Map" website="https://www.moddb.com/mods/simpler-times">
+	<mod name="Simpler Times" id="simpler_times" type="Map" moddb="https://www.moddb.com/mods/simpler-times">
 		<team>
 			<member name="Alex Pistol" email="aleks4duke@gmail.com" discord="Ledsbourne#2631" steam="Ledsbourne" country="Poland"/>
 		</team>
@@ -13115,7 +13115,7 @@
 			<download filename="Simpler_Times-ModMgrE.zip" filesize="7586983" game="eDuke32" type="Mod Manager Files" state="Native" sha1="18a1500ba3555aa8dab22ae2a4196e5f95eb8e9a"/>
 		</downloads>
 	</mod>
-	<mod name="Exodus" id="exodus" type="Total Conversion" version="1.1" website="https://www.moddb.com/mods/duke-nukem-3d-exodus">
+	<mod name="Exodus" id="exodus" type="Total Conversion" version="1.1" moddb="https://www.moddb.com/mods/duke-nukem-3d-exodus">
 		<team>
 			<member name="Romeobk" email="romeobk1103@gmail.com"/>
 		</team>
@@ -13916,7 +13916,7 @@
 			<mod id="alien_versus_predator"/>
 		</related>
 	</mod>
-	<mod name="Voxel Duke Nukem 3D" id="voxel_duke_nukem_3d" type="Voxel Pack" version="1.0" website="https://www.moddb.com/mods/voxel-duke-nukem-3d">
+	<mod name="Voxel Duke Nukem 3D" id="voxel_duke_nukem_3d" type="Voxel Pack" version="1.0" moddb="https://www.moddb.com/mods/voxel-duke-nukem-3d">
 		<team>
 			<member name="Daniel Peterson" alias="Cheello" twitter="DanielWienerson" website="https://www.moddb.com/members/chillo1" youtube="cheelo_art" country="United States"/>
 		</team>
@@ -13964,7 +13964,7 @@
 			<mod id="pray_your_prayers_2000"/>
 		</related>
 	</mod>
-	<mod name="Duke Nukum V" id="duke_nukum_v" type="Episode" version="0.96.2" website="https://www.moddb.com/mods/duke-nukum-v">
+	<mod name="Duke Nukum V" id="duke_nukum_v" type="Episode" version="0.96.2" moddb="https://www.moddb.com/mods/duke-nukum-v">
 		<team>
 			<member name="Aymeric Nocus" alias="MRCK" email="aymeric-nocus@tele2.fr" youtube="MisterCK" discord="ck3d#2928" country="France"/>
 		</team>
@@ -14083,7 +14083,7 @@
 			<download filename="Imp2Duke_1.1-ModMgrA.zip" filesize="116035" version="1.1" game="Atomic" type="Mod Manager Files" state="Converted" sha1="3f1847893716e8c30ff8de34e2eb73963af0a20d"/>
 		</downloads>
 	</mod>
-	<mod name="DukePlus" id="dukeplus" type="Total Conversion" version="2.50.1" website="https://www.moddb.com/mods/duke-plus">
+	<mod name="DukePlus" id="dukeplus" type="Total Conversion" version="2.50.1" moddb="https://www.moddb.com/mods/duke-plus">
 		<team>
 			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com" website="http://www.csus.edu/indiv/g/gaskilld" discord="Danarama#9209"/>
 		</team>
@@ -14919,7 +14919,7 @@
 			<download filename="Minigame-ModMgrA.zip" filesize="484371" game="Atomic" type="Mod Manager Files" state="Native" sha1="050926c45af890ec12606eec7cd6c2b6b176e7e1"/>
 		</downloads>
 	</mod>
-	<mod name="New Invasion - Episode 1: Retirement Ruckus" id="new_invasion_-_episode_1_-_retirement_ruckus" type="Episode" version="1.1R" website="https://www.moddb.com/games/duke-nukem-3d/downloads/new-invasion-episode-1-retirement-ruckus">
+	<mod name="New Invasion - Episode 1: Retirement Ruckus" id="new_invasion_-_episode_1_-_retirement_ruckus" type="Episode" version="1.1R" moddb="https://www.moddb.com/games/duke-nukem-3d/downloads/new-invasion-episode-1-retirement-ruckus">
 		<team>
 			<member name="Paul Monteray" alias="High Treason" email="pau174u@AOL.com" youtube="HighTreason610" discord="DXZeff"/>
 		</team>
@@ -15163,7 +15163,7 @@
 			<download filename="BobSP-ModMgrJF.zip" filesize="10619662" game="JFDuke3D" type="Mod Manager Files" state="Native" sha1="5b259366bc1866b656c4c8b2fcb5023b36462106"/>
 		</downloads>
 	</mod>
-	<mod name="Duke Nukem 3D Director&apos;s Cut" id="directors_cut" type="Partial Conversion" version="1.9" website="https://www.moddb.com/mods/duke-nukem-3d-directors-cut1">
+	<mod name="Duke Nukem 3D Director&apos;s Cut" id="directors_cut" type="Partial Conversion" version="1.9" moddb="https://www.moddb.com/mods/duke-nukem-3d-directors-cut1">
 		<team>
 			<member name="Dukemnuke" country="Brazil"/>
 		</team>
@@ -15212,7 +15212,7 @@
 			<download filename="Duke_Nukem_3D_Director&apos;s_Cut_1.9_-_Duke_Caribbean_-_Life&apos;s_a_Beach-ModMgrA.zip" filesize="1713179" version="1.9" version_type="Duke Caribbean: Life&apos;s a Beach" game="Atomic" type="Mod Manager Files" state="Native" sha1="5fcc5a72ccca9a87a3581c2b94e389b645a46c6b"/>
 		</downloads>
 	</mod>
-	<mod name="Duke Express" id="duke_express" type="Map" version="1.9.4" website="https://www.moddb.com/games/duke-nukem-3d/addons/duke-express">
+	<mod name="Duke Express" id="duke_express" type="Map" version="1.9.4" moddb="https://www.moddb.com/games/duke-nukem-3d/addons/duke-express">
 		<team>
 			<member name="Romeobk" email="romeobk1103@gmail.com"/>
 		</team>
@@ -15257,7 +15257,7 @@
 			<download filename="Duke_Express_1.9.4-ModMgrE.zip" filesize="2282223" version="1.9.4" game="eDuke32" type="Mod Manager Files" state="Native" sha1="91097cff442a07f470e8eca3f7bb77d4a9b792be"/>
 		</downloads>
 	</mod>
-	<mod name="Duke Nukem Forever" id="duke_nukem_forever" type="Total Conversion" version="1.01" version_type="DLC Pack" website="https://www.moddb.com/mods/duke-nukem-forever">
+	<mod name="Duke Nukem Forever" id="duke_nukem_forever" type="Total Conversion" version="1.01" version_type="DLC Pack" moddb="https://www.moddb.com/mods/duke-nukem-forever">
 		<team>
 			<member name="Mikko Sandt" alias="Jackotrades" email="mikko.sandt@gmail.com" icq="71211982" country="Finland"/>
 			<member name="Luciano Gallo" alias="Gambini" email="gallo.luciano1@gmail.com" website="http://gambinidesign.blogspot.com" country="Argentina"/>
@@ -15628,7 +15628,7 @@
 			<download filename="Nude_Patch_0.91-ModMgrE.zip" filesize="364693" version="0.91" game="eDuke32" type="Mod Manager Files" state="Native" sha1="c0ad0e29cbd41aae5ce335e0521f1972d544a8c6"/>
 		</downloads>
 	</mod>
-	<mod name="Hellduke!" id="hellduke" type="Total Conversion" version="1.3b" website="https://www.moddb.com/mods/hellduke-tc">
+	<mod name="Hellduke!" id="hellduke" type="Total Conversion" version="1.3b" moddb="https://www.moddb.com/mods/hellduke-tc">
 		<team>
 			<member name="Doruk Aksoy" alias="XTHX2" email="thunderwrath2001@gmail.com" country="Turkey"/>
 		</team>
@@ -15696,7 +15696,7 @@
 			<mod id="doom_weapons_2"/>
 		</similar>
 	</mod>
-	<mod name="Hollywood Holocaust Rethinked" id="Hollywood_Holocaust_Rethinked" type="Total Conversion" version="1.1" website="https://www.moddb.com/mods/hollywood-holocaust-rethinked">
+	<mod name="Hollywood Holocaust Rethinked" id="Hollywood_Holocaust_Rethinked" type="Total Conversion" version="1.1" moddb="https://www.moddb.com/mods/hollywood-holocaust-rethinked">
 		<team name="Team Misfit" website="https://www.moddb.com/company/team-misfit">
 			<member name="Tea Monster" email="tea_monster@yahoo.com"/>
 			<member name="Mark"/>
@@ -15852,7 +15852,7 @@
 			<download filename="SD_Duke_1.2.6-ModMgrE.zip" filesize="5545890" version="1.2.6" game="eDuke32" type="Mod Manager Files" state="Native" sha1="badf9c3058cd8c0e793cd93b5ab3ad048dce37d6"/>
 		</downloads>
 	</mod>
-	<mod name="Voxel Pack" id="voxel_pack" type="Partial Conversion" version="Preview 10" website="https://www.moddb.com/mods/duke-nukem-3d-voxel-pack/addons" repository="https://github.com/NightFright2k19/duke3d_voxelpack">
+	<mod name="Voxel Pack" id="voxel_pack" type="Partial Conversion" version="Preview 10" moddb="https://www.moddb.com/mods/duke-nukem-3d-voxel-pack/addons" repository="https://github.com/NightFright2k19/duke3d_voxelpack">
 		<team>
 			<member name="Robin Reisinger" alias="NightFright" email="nightfright2k7@gmail.com" youtube="NightFright2k19" country="Germany"/>
 		</team>
@@ -15913,7 +15913,7 @@
 			<download filename="Voxel_Pack_Preview_10-ModMgrE.zip" filesize="15822923" version="Preview 10" game="eDuke32" type="Mod Manager Files" state="Native" sha1="31edd3dd5640ddb98890879549c80103cafeb306"/>
 		</downloads>
 	</mod>
-	<mod name="Submachine" id="submachine" type="Map" version_type="Voxel Pack" website="https://www.moddb.com/mods/submachine">
+	<mod name="Submachine" id="submachine" type="Map" version_type="Voxel Pack" moddb="https://www.moddb.com/mods/submachine">
 		<team>
 			<member name="Alex Pistol" email="aleks4duke@gmail.com" discord="Ledsbourne#2631" steam="Ledsbourne" country="Poland"/>
 		</team>
@@ -15946,7 +15946,7 @@
 			<note>Works best with the Polymost renderer.</note>
 		</notes>
 	</mod>
-	<mod name="Duke Nukem: Horror Castle" id="duke_nukem_-_horror_castle" alias="zombie_nukem" type="Total Conversion" version="6.4" website="https://www.moddb.com/mods/duke-nukem-horror-castle">
+	<mod name="Duke Nukem: Horror Castle" id="duke_nukem_-_horror_castle" alias="zombie_nukem" type="Total Conversion" version="6.4" moddb="https://www.moddb.com/mods/duke-nukem-horror-castle">
 		<team>
 			<member name="William Gee" email="geewillywizz@live.com" website="https://wggames.nz" discord="William Gee#2015" country="New Zealand"/>
 		</team>
@@ -15964,7 +15964,7 @@
 			<download filename="Duke_Nukem_-_Horror_Castle_6.4-ModMgrE.zip" filesize="93733255" version="6.4" game="eDuke32" type="Mod Manager Files" state="Native" sha1="ad6b35ec361e38742e48a48fbb28093ec7df093d"/>
 		</downloads>
 	</mod>
-	<mod name="Zombie Nukem" id="zombie_nukem" alias="duke_nukem_-_horror_castle" type="Total Conversion" version="3.1" website="https://www.moddb.com/mods/duke-nukem-horror-castle">
+	<mod name="Zombie Nukem" id="zombie_nukem" alias="duke_nukem_-_horror_castle" type="Total Conversion" version="3.1" moddb="https://www.moddb.com/mods/duke-nukem-horror-castle">
 		<team>
 			<member name="William Gee" email="geewillywizz@live.com" website="https://wggames.nz" discord="William Gee#2015" country="New Zealand"/>
 		</team>
@@ -16000,7 +16000,7 @@
 			<download filename="Zombie_Nukem_3.1-ModMgrE.zip" filesize="94602417" version="3.1" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b2259cd893d38eac1285115e743af7bd9224bd52"/>
 		</downloads>
 	</mod>
-	<mod name="DN64 Revisited" id="dn64_revisited" type="Partial Conversion" version="1.0" website="https://www.moddb.com/mods/dn64-revisited">
+	<mod name="DN64 Revisited" id="dn64_revisited" type="Partial Conversion" version="1.0" moddb="https://www.moddb.com/mods/dn64-revisited">
 		<team>
 			<member name="Duke64Nukem" alias="Kamikaze Nukem" email="duke64nukem@gmail.com" discord="Sixty Four#1072"/>
 		</team>
@@ -16138,7 +16138,7 @@
 			<mod id="new_world_iv"/>
 		</related>
 	</mod>
-	<mod name="Alpha Project" id="alpha_project" type="Total Conversion" version="0.0 Alpha" website="https://www.moddb.com/mods/alpha-project3">
+	<mod name="Alpha Project" id="alpha_project" type="Total Conversion" version="0.0 Alpha" moddb="https://www.moddb.com/mods/alpha-project3">
 		<team>
 			<member name="Março Aurélio Andrade" alias="Marcolino123" website="https://www.moddb.com/members/marcolino123" discord="marcolino123#1304" country="Brazil"/>
 		</team>
@@ -16156,7 +16156,7 @@
 			<download filename="Alpha_Project_0.0_Alpha-ModMgrE.zip" filesize="101283476" version="0.0 Alpha" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b91441c060420eaadf90f5d9a9601e33f21fd89b"/>
 		</downloads>
 	</mod>
-	<mod name="Anatoly Tabakow 3D" id="anatoly_tabakow_3d" type="Voice Replacement" website="https://www.moddb.com/mods/duke-nukem-3d-but-its-anatoly-tabakow">
+	<mod name="Anatoly Tabakow 3D" id="anatoly_tabakow_3d" type="Voice Replacement" moddb="https://www.moddb.com/mods/duke-nukem-3d-but-its-anatoly-tabakow">
 		<team>
 			<member name="Alx_2004" website="https://www.moddb.com/company/alx-2004"/>
 		</team>
@@ -16173,7 +16173,7 @@
 			<download filename="Anatoly_Tabakow_3D-ModMgrE.zip" filesize="1947294" game="eDuke32" type="Mod Manager Files" state="Native" sha1="b686fe2ba8b2405dda1e9669c69c7fe27fb021ca"/>
 		</downloads>
 	</mod>
-	<mod name="TESTOVIRON 3D Poverty Edition" id="testoviron_3d" type="Voice Replacement" version="0.8" website="https://www.moddb.com/addons/testoviron-3d">
+	<mod name="TESTOVIRON 3D Poverty Edition" id="testoviron_3d" type="Voice Replacement" version="0.8" moddb="https://www.moddb.com/addons/testoviron-3d">
 		<team>
 			<member name="Zbychu Jowisz" alias="Brick Jove" website="https://www.moddb.com/members/brickjovian" country="Germany"/>
 		</team>
@@ -16225,7 +16225,7 @@
 			<note>Missing both maps, so this is essentially just a weapon patch.</note>
 		</notes>
 	</mod>
-	<mod name="High Quality Sound Effects" id="high_quality_sound_effects" type="Sound Pack" website="https://www.moddb.com/mods/duke-nukem-3d-high-quality-sound-effects">
+	<mod name="High Quality Sound Effects" id="high_quality_sound_effects" type="Sound Pack" moddb="https://www.moddb.com/mods/duke-nukem-3d-high-quality-sound-effects">
 		<team>
 			<member name="Dzierzan" website="https://www.moddb.com/members/dzierzan" country="Poland"/>
 			<member name="Futuretime23"/>
@@ -16329,7 +16329,7 @@
 			<download filename="Battlefield_3-ModMgrE.zip" filesize="4244968" game="eDuke32" type="Mod Manager Files" state="Native" sha1="9285a523a06a0e93be98272b2f6e8bb795af7b64"/>
 		</downloads>
 	</mod>
-	<mod name="Cosmetic Duke" id="cosmetic_duke" type="Quality of Life Patch" version="1.9" website="https://www.moddb.com/mods/cosmetic-duke">
+	<mod name="Cosmetic Duke" id="cosmetic_duke" type="Quality of Life Patch" version="1.9" moddb="https://www.moddb.com/mods/cosmetic-duke">
 		<team>
 			<member name="DecemberMan" website="https://www.moddb.com/members/decemberman" country="Poland"/>
 		</team>
@@ -16445,7 +16445,7 @@
 			<download filename="Cosmetic_Duke_1.9_-_The_Gate-ModMgrE.zip" filesize="983143" version="1.9" version_type="The Gate" game="eDuke32" type="Mod Manager Files" state="Native" sha1="ab0c7aad4bb7aa0b8eccf47e212bb8b33aa80eb7"/>
 		</downloads>
 	</mod>
-	<mod name="WG Nuclear Winter" id="wg_nuclear_winter" type="Episode" version="1.2" website="https://www.moddb.com/mods/wg-nuclear-winter">
+	<mod name="WG Nuclear Winter" id="wg_nuclear_winter" type="Episode" version="1.2" moddb="https://www.moddb.com/mods/wg-nuclear-winter">
 		<team>
 			<member name="William Gee" email="geewillywizz@gmail.com" website="https://wggames.nz" discord="William Gee#2015" country="New Zealand"/>
 		</team>
@@ -16466,7 +16466,7 @@
 			<download filename="WG_Nuclear_Winter_1.2-ModMgrE.zip" filesize="1166168" version="1.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="e07ff3188efce2127c2e2a464fa023a15a670284"/>
 		</downloads>
 	</mod>
-	<mod name="WGRealms 3: Ganymede" id="wgrealms_3_-_ganymede" type="Total Conversion" version="1.3" website="https://www.moddb.com/mods/wgr3-ganymede">
+	<mod name="WGRealms 3: Ganymede" id="wgrealms_3_-_ganymede" type="Total Conversion" version="1.3" moddb="https://www.moddb.com/mods/wgr3-ganymede">
 		<team>
 			<member name="William Gee" email="geewillywizz@gmail.com" website="https://wggames.nz" discord="William Gee#2015" country="New Zealand"/>
 		</team>
@@ -16490,7 +16490,7 @@
 			<mod id="wgrealms_2_-_siege_breaker"/>
 		</related>
 	</mod>
-	<mod name="WG Dukematch" id="wg_dukematch" type="Dukematch" version="1.4" website="https://www.moddb.com/mods/wg-mega-pack/downloads/wgdm">
+	<mod name="WG Dukematch" id="wg_dukematch" type="Dukematch" version="1.4" moddb="https://www.moddb.com/mods/wg-mega-pack/downloads/wgdm">
 		<team>
 			<member name="William Gee" email="geewillywizz@gmail.com" website="https://wggames.nz" discord="William Gee#2015" country="New Zealand"/>
 		</team>
