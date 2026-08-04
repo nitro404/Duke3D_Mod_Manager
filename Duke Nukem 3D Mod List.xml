@@ -1669,9 +1669,9 @@
 			<download filename="Escape_from_Outer_Space_Demo-ModMgrA.zip" filesize="847195" version="Demo" game="Atomic" type="Mod Manager Files" state="Converted" sha1="73b813e5988dc226a8fb9c4c0a7bb5d495cb9d05"/>
 		</downloads>
 	</mod>
-	<mod name="Evil Incarnate" id="evil_incarnate" type="Total Conversion" version="Demo" website="http://www.nitro404.com/mods/evil_incarnate.php">
+	<mod name="Evil Incarnate" id="evil_incarnate" type="Total Conversion" version="Demo" website="https://nitro404.com/mods/evil_incarnate.php">
 		<team>
-			<member name="Kevin Scroggins" alias="nitro glycerine" email="nitro404@gmail.com" twitter="nitro404" website="http://www.nitro404.com" steam="nitro4004" city="Ottawa" province="Ontario" country="Canada"/>
+			<member name="Kevin Scroggins" alias="nitro glycerine" email="nitro404@gmail.com" twitter="nitro404" website="https://nitro404.com" moddb="https://www.moddb.com/members/nitro404" github="nitro404" steam="nitro4004" city="Ottawa" province="Ontario" country="Canada"/>
 			<member name="Tristan Graham" alias="Khorrus" email="tristan.l.graham@gmail.com" city="Ottawa" province="Ontario" country="Canada"/>
 		</team>
 		<versions>
@@ -4168,9 +4168,9 @@
 			<mod id="the_prequel_to_time"/>
 		</related>
 	</mod>
-	<mod name="Toon Nukem" id="toon_nukem" type="Total Conversion" version="Demo" website="http://www.nitro404.com/mods/toon_nukem.php">
+	<mod name="Toon Nukem" id="toon_nukem" type="Total Conversion" version="Demo" website="https://nitro404.com/mods/toon_nukem.php">
 		<team>
-			<member name="Kevin Scroggins" alias="nitro glycerine" email="nitro404@gmail.com" twitter="nitro404" website="http://www.nitro404.com" steam="nitro4004" city="Ottawa" province="Ontario" country="Canada"/>
+			<member name="Kevin Scroggins" alias="nitro glycerine" email="nitro404@gmail.com" twitter="nitro404" website="https://nitro404.com" moddb="https://www.moddb.com/members/nitro404" github="nitro404" steam="nitro4004" city="Ottawa" province="Ontario" country="Canada"/>
 			<member name="Jacek Gordinier"/>
 		</team>
 		<versions>
@@ -5753,7 +5753,7 @@
 	</mod>
 	<mod name="Mob Weapons Patch" id="mob_weapons_patch" type="Weapon Patch" version="1.0" website="http://members.tripod.com/Dvastor13/index.html">
 		<team>
-			<member name="Kenneth Finegan" email="dvastor13@aol.com"/>
+			<member name="Kenneth Finegan" email="dvastor13@aol.com" aim="Hecate1845" icq="44587760"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="May 31, 1999">
@@ -6186,7 +6186,7 @@
 	</mod>
 	<mod name="The Ultimate Weapons Patch" id="the_ultimate_weapons_patch" type="Weapon Patch" version="2.1" website="http://www.dukeworld.com/twitl">
 		<team>
-			<member name="Kenneth Finegan" email="Irony2099@aol.com"/>
+			<member name="Kenneth Finegan" email="Irony2099@aol.com" aim="Hecate1845" icq="44587760"/>
 		</team>
 		<versions>
 			<version id="1.0" release_date="July 25, 1999">
@@ -6597,7 +6597,7 @@
 	</mod>
 	<mod name="Dank Nukem 420: Blaze It" id="dank_nukem_420_blaze_it" type="Total Conversion" version="0.0.1" repository="https://github.com/nitro404/Dank_Nukem_420">
 		<team>
-			<member name="Kevin Scroggins" alias="nitro glycerine" email="nitro404@gmail.com" twitter="nitro404" website="http://www.nitro404.com" steam="nitro4004" city="Ottawa" province="Ontario" country="Canada"/>
+			<member name="Kevin Scroggins" alias="nitro glycerine" email="nitro404@gmail.com" twitter="nitro404" website="https://nitro404.com" moddb="https://www.moddb.com/members/nitro404" github="nitro404" steam="nitro4004" city="Ottawa" province="Ontario" country="Canada"/>
 			<member name="Adam Ciccarino" alias="with_milk"/>
 		</team>
 		<versions>
@@ -16671,6 +16671,25 @@
 			<download filename="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.20-ModMgrE.zip" filesize="66644203" version="5.20" game="eDuke32" type="Mod Manager Files" state="Native" sha1="52b5352006b6f78b4d370f325f7a20eda636777e"/>
 			<download filename="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.21-ModMgrE.zip" filesize="67112649" version="5.21" game="eDuke32" type="Mod Manager Files" state="Native" sha1="8f415d1c948f8051ab25b7541b4a1e27c825267b"/>
 			<download filename="Naferias_Reign_-_The_Invasion_of_the_Dark_Mistress_5.22-ModMgrE.zip" filesize="69825762" version="5.22" game="eDuke32" type="Mod Manager Files" state="Native" sha1="ee55a8b5417d15f40813c1d37a63c09c79c30ef4"/>
+		</downloads>
+	</mod>
+	<mod name="The War Is the Life: Weapons Patch" id="the_war_is_the_life_weapons_patch" type="Weapon Patch" version="1.0.0" moddb="https://www.moddb.com/mods/the-war-is-the-life-weapons-patch" repository="https://github.com/Sector-Limit/The_War_Is_the_Life_Weapons_Patch">
+		<team name="Sector Limit" website="https://sectorlimit.com" email="hello@sectorlimit.com" city="Ottawa" province="Ontario" country="Canada">
+			<member name="Kevin Scroggins" alias="nitro glycerine" email="nitro404@gmail.com" twitter="nitro404" website="https://nitro404.com" moddb="https://www.moddb.com/members/nitro404" github="nitro404" steam="nitro4004" city="Ottawa" province="Ontario" country="Canada"/>
+			<member name="Nikki"/>
+			<member name="Kenneth Finegan" email="Irony2099@aol.com" website="http://www.dukeworld.com/twitl" aim="Hecate1845" icq="44587760"/>
+		</team>
+		<versions>
+			<version id="1.0.0" release_date="August 4, 2026">
+				<game type="Atomic" state="Native">
+					<file name="TWITL_WP.CON" size="25473" type="con" sha1="b1dae595987602fec9c9d8938cca5d48bb4babf6"/>
+					<file name="TWITL_WP.GRP" size="8586099" type="grp" sha1="c718bf72ca5f1a362781595221def428c0f100de"/>
+				</game>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="The_War_Is_the_Life_Weapons_Patch_1.0.0.zip" filesize="2851436" version="1.0.0" game="Atomic" type="Original Files" sha1="6e909b0f595c263a6cf19df1a6d47665d2a96dbb"/>
+			<download filename="The_War_Is_the_Life_Weapons_Patch_1.0.0.zip-ModMgrA.zip" filesize="2848551" version="1.0.0" game="Atomic" type="Mod Manager Files" state="Native" sha1="a8a8b12d03655d1607c00038721a3b6f094ace75"/>
 		</downloads>
 	</mod>
 </mods>
