@@ -8805,7 +8805,7 @@
 			<member name="Forge"/>
 			<member name="Paul Monteray" alias="High Treason" email="pau174u@AOL.com" youtube="HighTreason610" discord="DXZeff"/>
 			<member name="James Stanfield" alias="JBlade" email="jstanf35@hotmail.com" website="http://www.geocities.com/jstanf36"/>
-			<member name="Michael Crisp" alias="Micky C" email="mickel999@gmail.com"/>
+			<member name="Michael Crisp" alias="Micky C" email="mickel999@gmail.com" youtube="CursedLemon"/>
 			<member name="Mikko Sandt" alias="Jackotrades" email="sirpa.sandt@pp.inet.fi" icq="71211982" country="Finland"/>
 			<member name="Mister Sinister" email="m1ster_s1n1ster@yahoo.com" country="Russia"/>
 			<member name="Aymeric Nocus" alias="MRCK" email="aymeric-nocus@tele2.fr" youtube="MisterCK" discord="ck3d#2928" country="France"/>
@@ -12471,6 +12471,7 @@
 		<related>
 			<mod id="wgrealms_episode"/>
 			<mod id="wgrealms_3_-_ganymede"/>
+			<mod id="knee_deep"/>
 		</related>
 	</mod>
 	<mod name="WG Realms: Demon Throne" id="wg_realms_-_demon_throne" alias="wgrealms_2_-_siege_breaker" type="Total Conversion" version="3.01" moddb="https://www.moddb.com/games/wgrealms-2">
@@ -14460,7 +14461,7 @@
 			<member name="Zebius"/>
 			<member name="Hunter_rus"/>
 			<member name="LeoD"/>
-			<member name="Michael Crisp" alias="Micky C" email="mickel999@gmail.com"/>
+			<member name="Michael Crisp" alias="Micky C" email="mickel999@gmail.com" youtube="CursedLemon"/>
 		</team>
 		<versions>
 			<version id="5.5.750" release_date="November 27, 2025">
@@ -16724,6 +16725,40 @@
 			<download filename="duke nukem 3d respawn 2026 v5.2.rar" filesize="104878538" version="5.2" game="eDuke32" type="Original Files" sha1="d27d60807cbe443852c95fd6bccd7e79822201b8"/>
 			<download filename="Duke_Nukem_3D_Respawn_Edition_4.0-ModMgrE.zip" filesize="41265672" version="4.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="8b76464c86ad48d87cd7300bef919c5d9d52d43a"/>
 			<download filename="Duke_Nukem_3D_Respawn_Edition_5.2-ModMgrE.zip" filesize="43106845" version="5.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="184279ba4dceae94ecb51b6c580dc2adab38d60e"/>
+		</downloads>
+	</mod>
+	<mod name="Knee Deep" id="knee_deep" type="Episode" version="1.10" website="https://forums.duke4.net/topic/6109-release-knee-deep">
+		<team>
+			<member name="Derek McPherson"/>
+			<member name="Michael Crisp" alias="Micky C" email="mickel999@gmail.com" youtube="CursedLemon"/>
+		</team>
+		<versions>
+			<version id="1.0" release_date="April 21, 2013">
+				<game type="eDuke32" state="Native">
+					<file name="Knee_Deep.con" size="948288" type="con" sha1="16227f0d01807ce21b87b62a0da9b75e16d3bd11"/>
+					<file name="Knee_Deep.def" size="2826" type="def" sha1="e5123d3e9fca6b9a2a109101d0d16aa52c0e40dc"/>
+					<file name="Knee_Deep_1.0.zip" size="9517973" type="zip" sha1="0823b3e20d728df15d9dd2d9fa1355431469b66d"/>
+				</game>
+				<dependencies>
+					<dependency id="wgrealms_2_-_siege_breaker" version="1.201"/>
+				</dependencies>
+			</version>
+			<version id="1.10" release_date="April 21, 2013">
+				<game type="eDuke32" state="Native">
+					<file name="Knee_Deep.con" size="961539" type="con" sha1="d14de1ef7c684765af182f4c4d128721c0477218"/>
+					<file name="Knee_Deep.def" size="3645" type="def" sha1="3042c8cfb67ddc557f009758951c26acefee5981"/>
+					<file name="Knee_Deep_1.10.zip" size="9624286" type="zip" sha1="1f8f7d0dc512f1934aefffaa1d9c7f2cb7624604"/>
+				</game>
+				<dependencies>
+					<dependency id="wgrealms_2_-_siege_breaker" version="1.201"/>
+				</dependencies>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="Knee Deep V1.00.zip" filesize="10535198" version="1.0" game="eDuke32" type="Original Files" sha1="a8d584413405eff791b496941df7553887e97060"/>
+			<download filename="KneeDeep_1.10.zip" filesize="10685946" version="1.10" game="eDuke32" type="Original Files" sha1="d1463896d701129f62c1ca4b48c7401cb7dca51c"/>
+			<download filename="Knee_Deep_1.0-ModMgrE.zip" filesize="9518141" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="4b2cc81c45fa22271f805d0d32962a0590dcb7c1"/>
+			<download filename="Knee_Deep_1.10-ModMgrE.zip" filesize="9624456" version="1.10" game="eDuke32" type="Mod Manager Files" state="Native" sha1="d9ed9becdeff074627c21c306f099cd76b05956b"/>
 		</downloads>
 	</mod>
 </mods>
