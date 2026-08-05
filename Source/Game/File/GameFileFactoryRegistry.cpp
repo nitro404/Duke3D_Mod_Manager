@@ -7,10 +7,13 @@
 #include "Map/Map.h"
 #include "MIDI/MIDI.h"
 #include "Palette/ACT/PaletteACT.h"
+#include "Palette/CSS/PaletteCSS.h"
 #include "Palette/DAT/PaletteDAT.h"
 #include "Palette/GPL/PaletteGPL.h"
 #include "Palette/JASC/PaletteJASC.h"
+#include "Palette/KPL/PaletteKPL.h"
 #include "Palette/PAL/PalettePAL.h"
+#include "Palette/TXT/PaletteTXT.h"
 #include "Sound/VOC/SoundVOC.h"
 #include "Sound/WAV/SoundWAV.h"
 #include "Zip/Zip.h"
@@ -130,6 +133,14 @@ void GameFileFactoryRegistry::assignDefaultFactories() {
 		return Art::loadFrom(filePath);
 	});
 
+	setFactory("css", []() {
+		return std::make_unique<PaletteCSS>();
+	}, [](const ByteBuffer & data) {
+		return PaletteCSS::readFrom(data);
+	}, [](const std::string & filePath) {
+		return PaletteCSS::loadFrom(filePath);
+	});
+
 	setFactory("dat", []() {
 		return std::make_unique<PaletteDAT>(PaletteDAT::Type::Palette);
 	}, [](const ByteBuffer & data) {
@@ -162,6 +173,14 @@ void GameFileFactoryRegistry::assignDefaultFactories() {
 		return PaletteJASC::loadFrom(filePath);
 	});
 
+	setFactory("kpl", []() {
+		return std::make_unique<PaletteKPL>();
+	}, [](const ByteBuffer & data) {
+		return PaletteKPL::readFrom(data);
+	}, [](const std::string & filePath) {
+		return PaletteKPL::loadFrom(filePath);
+	});
+
 	setFactory("map", []() {
 		return std::make_unique<Map>();
 	}, [](const ByteBuffer & data) {
@@ -192,6 +211,14 @@ void GameFileFactoryRegistry::assignDefaultFactories() {
 		return GroupSSI::readFrom(data);
 	}, [](const std::string & filePath) {
 		return GroupSSI::loadFrom(filePath);
+	});
+
+	setFactory("txt", []() {
+		return std::make_unique<PaletteTXT>();
+	}, [](const ByteBuffer & data) {
+		return PaletteTXT::readFrom(data);
+	}, [](const std::string & filePath) {
+		return PaletteTXT::loadFrom(filePath);
 	});
 
 	setFactory("voc", []() {

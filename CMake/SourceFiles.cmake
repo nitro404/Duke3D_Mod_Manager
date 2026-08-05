@@ -111,6 +111,8 @@ set(MAIN_SOURCE_FILES
 	Game/File/Palette/Palette.cpp
 	Game/File/Palette/ACT/PaletteACT.h
 	Game/File/Palette/ACT/PaletteACT.cpp
+	Game/File/Palette/CSS/PaletteCSS.h
+	Game/File/Palette/CSS/PaletteCSS.cpp
 	Game/File/Palette/DAT/PaletteDAT.h
 	Game/File/Palette/DAT/PaletteDAT.cpp
 	Game/File/Palette/DAT/ShadeTable.cpp
@@ -120,8 +122,12 @@ set(MAIN_SOURCE_FILES
 	Game/File/Palette/GPL/PaletteGPL.cpp
 	Game/File/Palette/JASC/PaletteJASC.h
 	Game/File/Palette/JASC/PaletteJASC.cpp
+	Game/File/Palette/KPL/PaletteKPL.h
+	Game/File/Palette/KPL/PaletteKPL.cpp
 	Game/File/Palette/PAL/PalettePAL.h
 	Game/File/Palette/PAL/PalettePAL.cpp
+	Game/File/Palette/TXT/PaletteTXT.h
+	Game/File/Palette/TXT/PaletteTXT.cpp
 	Game/File/Sound/Sound.h
 	Game/File/Sound/Sound.cpp
 	Game/File/Sound/VOC/SoundVOC.h
