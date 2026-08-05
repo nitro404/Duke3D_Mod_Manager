@@ -16693,4 +16693,37 @@
 			<download filename="The_War_Is_the_Life_Weapons_Patch_1.0.0.zip-ModMgrA.zip" filesize="2848551" version="1.0.0" game="Atomic" type="Mod Manager Files" state="Native" sha1="a8a8b12d03655d1607c00038721a3b6f094ace75"/>
 		</downloads>
 	</mod>
+	<mod name="Duke Nukem 3D Respawn Edition" id="duke_nukem_3d_respawn_edition" type="Total Conversion" version="5.2">
+		<team>
+			<member name="Warren K. Prince" discord="warrenkprince92"/>
+		</team>
+		<versions>
+			<version id="4.0" release_date="February 25, 2026">
+				<game type="eDuke32" state="Native">
+					<file name="RESPAWN.CON" size="332" type="con" sha1="8629e01f4154ba7c0ef3bb57b3ce6a733c8ae77c"/>
+					<file name="respawn.def" size="238" type="def" sha1="58eecc8986aa18ed3aeee220e5630e0c703430b7"/>
+					<file name="Duke_Nukem_3D_Respawn_Edition_4.0.zip" size="41265464" type="zip" sha1="bc84799af087d2428fef697fe34be54866638a46"/>
+				</game>
+				<dependencies>
+					<dependency id="voxel_pack" version="Preview 10"/>
+				</dependencies>
+			</version>
+			<version id="5.2" release_date="April 6, 2026">
+				<game type="eDuke32" state="Native">
+					<file name="RESPAWN.CON" size="396" type="con" sha1="5e928e32bdf59d8cff2e380c4e942e404b98438a"/>
+					<file name="respawn.def" size="394" type="def" sha1="85791880b98b970243eddb2550279775076062f1"/>
+					<file name="Duke_Nukem_3D_Respawn_Edition_5.2.zip" size="43106637" type="zip" sha1="41db8930b770fb6e74bc960c77cdf31213e99236"/>
+				</game>
+				<dependencies>
+					<dependency id="voxel_pack" version="Preview 10"/>
+				</dependencies>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="duke nukem 3d respawn 2026 v4.rar" filesize="103405546" version="4.0" game="eDuke32" type="Original Files" sha1="b57b9521a74645e123a7dd8fb492d457525a8c82"/>
+			<download filename="duke nukem 3d respawn 2026 v5.2.rar" filesize="104878538" version="5.2" game="eDuke32" type="Original Files" sha1="d27d60807cbe443852c95fd6bccd7e79822201b8"/>
+			<download filename="Duke_Nukem_3D_Respawn_Edition_4.0-ModMgrE.zip" filesize="41265672" version="4.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="8b76464c86ad48d87cd7300bef919c5d9d52d43a"/>
+			<download filename="Duke_Nukem_3D_Respawn_Edition_5.2-ModMgrE.zip" filesize="43106845" version="5.2" game="eDuke32" type="Mod Manager Files" state="Native" sha1="184279ba4dceae94ecb51b6c580dc2adab38d60e"/>
+		</downloads>
+	</mod>
 </mods>
