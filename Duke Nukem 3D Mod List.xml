@@ -12472,6 +12472,7 @@
 			<mod id="wgrealms_episode"/>
 			<mod id="wgrealms_3_-_ganymede"/>
 			<mod id="knee_deep"/>
+			<mod id="quest_town">
 		</related>
 	</mod>
 	<mod name="WG Realms: Demon Throne" id="wg_realms_-_demon_throne" alias="wgrealms_2_-_siege_breaker" type="Total Conversion" version="3.01" moddb="https://www.moddb.com/games/wgrealms-2">
@@ -16759,6 +16760,27 @@
 			<download filename="KneeDeep_1.10.zip" filesize="10685946" version="1.10" game="eDuke32" type="Original Files" sha1="d1463896d701129f62c1ca4b48c7401cb7dca51c"/>
 			<download filename="Knee_Deep_1.0-ModMgrE.zip" filesize="9518141" version="1.0" game="eDuke32" type="Mod Manager Files" state="Native" sha1="4b2cc81c45fa22271f805d0d32962a0590dcb7c1"/>
 			<download filename="Knee_Deep_1.10-ModMgrE.zip" filesize="9624456" version="1.10" game="eDuke32" type="Mod Manager Files" state="Native" sha1="d9ed9becdeff074627c21c306f099cd76b05956b"/>
+		</downloads>
+	</mod>
+	<mod name="Quest Town" id="quest_town" type="Total Conversion">
+		<team name="Missed the Mark">
+			<member name="Mark"/>
+		</team>
+		<versions>
+			<version release_date="October 10, 2017">
+				<game type="eDuke32" state="Native">
+					<file name="WGR2MARKGAME.CON" size="414492" type="con" sha1="b5f3e377f186859b7427965d9b9fe8c38afedda6"/>
+					<file name="wgr2.def" size="56409" type="def" sha1="c78211fd0e3441483311455fa4384b7330d2556d"/>
+					<file name="Quest_Town.zip" size="89698370" type="zip" sha1="2e330729e55b521f4189c63aaab6d33f57480523"/>
+				</game>
+				<dependencies>
+					<dependency id="wgrealms_2_-_siege_breaker" version="1.201"/>
+				</dependencies>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="questtown.zip" filesize="125243856" game="eDuke32" type="Original Files" sha1="7d4949167131576899799ff88d15eb5bdd9c0cd7"/>
+			<download filename="Quest_Town-ModMgrE.zip" filesize="89698532" game="eDuke32" type="Mod Manager Files" state="Native" sha1="67340992e70a83fb0f183b9b4d6cb4277f731e65"/>
 		</downloads>
 	</mod>
 </mods>
