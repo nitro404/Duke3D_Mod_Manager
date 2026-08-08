@@ -1,7 +1,9 @@
 #include "PaletteTXT.h"
 
 #include <ByteBuffer.h>
+#include <Utilities/StringUtilities.h>
 
+#include <CSSColorParser/css_color.hpp>
 #include <spdlog/spdlog.h>
 
 PaletteTXT::PaletteTXT(const std::string & filePath)
@@ -61,8 +63,35 @@ std::shared_ptr<ColourTable> PaletteTXT::getColourTable(uint8_t colourTableIndex
 }
 
 std::unique_ptr<PaletteTXT> PaletteTXT::readFrom(const ByteBuffer & byteBuffer) {
-	// TODO:
-	return nullptr;
+	std::vector<Colour> colours;
+
+	std::string line;
+	bool error = false;
+	css_colors::color colour;
+
+	while(true) {
+		line = byteBuffer.readLine(&error);
+
+		if(error || line.empty()) {
+			break;
+		}
+
+		colour = css_colors::parse(line.data());
+
+		if(!colour) {
+			return nullptr;
+		}
+
+		auto formattedColour = colour.as<css_colors::colorspaces::srgb>();
+
+		colours.emplace_back(static_cast<uint8_t>(formattedColour.second.first[0]), static_cast<uint8_t>(formattedColour.second.first[1]), static_cast<uint8_t>(formattedColour.second.first[2]), static_cast<uint8_t>(formattedColour.second.second * 255));
+	}
+
+	if(colours.empty()) {
+		return nullptr;
+	}
+
+	return std::make_unique<PaletteTXT>(std::make_unique<ColourTable>(std::move(colours)));
 }
 
 std::unique_ptr<PaletteTXT> PaletteTXT::loadFrom(const std::string & filePath) {
