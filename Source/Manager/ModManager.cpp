@@ -59,6 +59,7 @@
 #include <Utilities/Utilities.h>
 
 #include <fmt/core.h>
+#include <gcem.hpp>
 #include <jdksmidi/version.h>
 #include <magic_enum/magic_enum.hpp>
 #include <sndfile.h>
@@ -216,6 +217,7 @@ ModManager::ModManager()
 	m_selectedFavouriteModChangedConnection = m_organizedMods->selectedFavouriteModChanged.connect(std::bind(&ModManager::onSelectedFavouriteModChanged, this, std::placeholders::_1));
 
 	LibraryInformation * libraryInformation = LibraryInformation::getInstance();
+	libraryInformation->addLibrary("GCE-Math", fmt::format("{}.{}.{}", GCEM_VERSION_MAJOR, GCEM_VERSION_MINOR, GCEM_VERSION_PATCH));
 	libraryInformation->addLibrary("JDKSMIDI", jdksmidi::LibraryVersion);
 
 	std::string_view libSndFileVersion(sf_version_string());

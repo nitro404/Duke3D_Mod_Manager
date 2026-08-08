@@ -1,6 +1,7 @@
 include_guard()
 
 hunter_add_package(Expat)
+hunter_add_package(gcem)
 hunter_add_package(JDKSMIDI)
 hunter_add_package(Jpeg)
 hunter_add_package(lexilla)
@@ -14,6 +15,7 @@ hunter_add_package(TIFF)
 hunter_add_package(wxWidgets)
 
 find_package(Expat CONFIG REQUIRED)
+find_package(gcem CONFIG REQUIRED)
 find_package(JDKSMIDI CONFIG REQUIRED)
 find_package(Jpeg CONFIG REQUIRED)
 find_package(lexilla CONFIG REQUIRED)
