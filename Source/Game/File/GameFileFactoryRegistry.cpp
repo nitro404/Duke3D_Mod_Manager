@@ -11,6 +11,7 @@
 #include "Palette/DAT/PaletteDAT.h"
 #include "Palette/GPL/PaletteGPL.h"
 #include "Palette/JASC/PaletteJASC.h"
+#include "Palette/KPL/PaletteKPL.h"
 #include "Palette/PAL/PalettePAL.h"
 #include "Palette/TXT/PaletteTXT.h"
 #include "Sound/VOC/SoundVOC.h"
@@ -170,6 +171,14 @@ void GameFileFactoryRegistry::assignDefaultFactories() {
 		return PaletteJASC::readFrom(data);
 	}, [](const std::string & filePath) {
 		return PaletteJASC::loadFrom(filePath);
+	});
+
+	setFactory("kpl", []() {
+		return std::make_unique<PaletteKPL>();
+	}, [](const ByteBuffer & data) {
+		return PaletteKPL::readFrom(data);
+	}, [](const std::string & filePath) {
+		return PaletteKPL::loadFrom(filePath);
 	});
 
 	setFactory("map", []() {

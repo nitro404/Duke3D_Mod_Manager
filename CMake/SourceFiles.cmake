@@ -122,6 +122,8 @@ set(MAIN_SOURCE_FILES
 	Game/File/Palette/GPL/PaletteGPL.cpp
 	Game/File/Palette/JASC/PaletteJASC.h
 	Game/File/Palette/JASC/PaletteJASC.cpp
+	Game/File/Palette/KPL/PaletteKPL.h
+	Game/File/Palette/KPL/PaletteKPL.cpp
 	Game/File/Palette/PAL/PalettePAL.h
 	Game/File/Palette/PAL/PalettePAL.cpp
 	Game/File/Palette/TXT/PaletteTXT.h
