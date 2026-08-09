@@ -3,6 +3,7 @@
 #include "../GameFile.h"
 
 #include <ByteBuffer.h>
+#include <Utilities/StringUtilities.h>
 
 #include <spdlog/spdlog.h>
 
@@ -12,6 +13,7 @@ ColourTable::ColourTable(uint16_t numberOfColours, std::optional<uint8_t> transp
 	: m_transparentColourIndex(transparentColourIndex)
 	, m_alpha(alpha)
 	, m_name(name)
+	, m_modified(false)
 	, m_parent(parent) {
 	m_colours.resize(numberOfColours, Colour::INVISIBLE);
 }
@@ -20,6 +22,7 @@ ColourTable::ColourTable(const Colour & fillColour, uint16_t numberOfColours, st
 	: m_transparentColourIndex(transparentColourIndex)
 	, m_alpha(alpha)
 	, m_name(name)
+	, m_modified(false)
 	, m_parent(parent) {
 	m_colours.resize(numberOfColours, fillColour);
 }
@@ -29,6 +32,7 @@ ColourTable::ColourTable(std::vector<Colour> && colours, std::optional<uint8_t> 
 	, m_transparentColourIndex(transparentColourIndex)
 	, m_alpha(alpha)
 	, m_name(name)
+	, m_modified(false)
 	, m_parent(parent) { }
 
 ColourTable::ColourTable(const std::vector<Colour> & colours, std::optional<uint8_t> transparentColourIndex, bool alpha, std::string_view name, GameFile * parent)
@@ -36,6 +40,7 @@ ColourTable::ColourTable(const std::vector<Colour> & colours, std::optional<uint
 	, m_transparentColourIndex(transparentColourIndex)
 	, m_alpha(alpha)
 	, m_name(name)
+	, m_modified(false)
 	, m_parent(parent) { }
 
 ColourTable::ColourTable(ColourTable && colourTable) noexcept
@@ -43,6 +48,7 @@ ColourTable::ColourTable(ColourTable && colourTable) noexcept
 	, m_transparentColourIndex(std::move(colourTable.m_transparentColourIndex))
 	, m_alpha(colourTable.m_alpha)
 	, m_name(std::move(colourTable.m_name))
+	, m_modified(false)
 	, m_parent(nullptr) { }
 
 ColourTable::ColourTable(const ColourTable & colourTable)
@@ -50,6 +56,7 @@ ColourTable::ColourTable(const ColourTable & colourTable)
 	, m_transparentColourIndex(colourTable.m_transparentColourIndex)
 	, m_alpha(colourTable.m_alpha)
 	, m_name(colourTable.m_name)
+	, m_modified(false)
 	, m_parent(nullptr) { }
 
 ColourTable & ColourTable::operator = (ColourTable && colourTable) noexcept {
@@ -58,6 +65,8 @@ ColourTable & ColourTable::operator = (ColourTable && colourTable) noexcept {
 		m_transparentColourIndex = std::move(colourTable.m_transparentColourIndex);
 		m_alpha = colourTable.m_alpha;
 		m_name = std::move(colourTable.m_name);
+
+		setModified(true);
 	}
 
 	return *this;
@@ -69,10 +78,22 @@ ColourTable & ColourTable::operator = (const ColourTable & colourTable) {
 	m_alpha = colourTable.m_alpha;
 	m_name = std::move(colourTable.m_name);
 
+	setModified(true);
+
 	return *this;
 }
 
 ColourTable::~ColourTable() = default;
+
+bool ColourTable::isModified() const {
+	return m_modified;
+}
+
+void ColourTable::setModified(bool value) {
+	m_modified = value;
+
+	modified(*this);
+}
 
 bool ColourTable::hasTransparentColourIndex() const {
 	return m_transparentColourIndex.has_value();
@@ -102,8 +123,13 @@ bool ColourTable::setColour(uint8_t colourIndex, const Colour & colour) {
 	if(colourIndex >= m_colours.size()) {
 		return false;
 	}
+	else if(m_colours[colourIndex] == colour) {
+		return true;
+	}
 
 	m_colours[colourIndex].setColour(colour);
+
+	setModified(true);
 
 	return true;
 }
@@ -112,8 +138,16 @@ bool ColourTable::setColour(uint8_t colourIndex, uint8_t r, uint8_t g, uint8_t b
 	if(colourIndex >= m_colours.size()) {
 		return false;
 	}
+	else if(m_colours[colourIndex].r == r &&
+			m_colours[colourIndex].g == g &&
+			m_colours[colourIndex].b == b &&
+			m_colours[colourIndex].a == a) {
+		return true;
+	}
 
 	m_colours[colourIndex].setColour(r, g, b, a);
+
+	setModified(true);
 
 	return true;
 }
@@ -122,9 +156,15 @@ bool ColourTable::setColours(const ColourTable & colourTable) {
 	if(!colourTable.isValid()) {
 		return false;
 	}
+	else if(m_colours == colourTable.m_colours &&
+			m_transparentColourIndex == colourTable.m_transparentColourIndex) {
+		return true;
+	}
 
 	m_colours = colourTable.m_colours;
 	m_transparentColourIndex = colourTable.m_transparentColourIndex;
+
+	setModified(true);
 
 	return true;
 }
@@ -133,11 +173,16 @@ void ColourTable::fillWithColour(const Colour & colour) {
 	for(Colour & colour : m_colours) {
 		colour.setColour(colour);
 	}
+
+	setModified(true);
 }
 
 bool ColourTable::setNumberOfColours(uint16_t colourCount, const Colour & fillColour) {
 	if(colourCount > NUMBER_OF_COLOURS) {
 		return false;
+	}
+	else if(m_colours.size() == colourCount) {
+		return true;
 	}
 
 	m_colours.resize(colourCount, fillColour);
@@ -145,6 +190,8 @@ bool ColourTable::setNumberOfColours(uint16_t colourCount, const Colour & fillCo
 	if(m_transparentColourIndex.has_value() && m_transparentColourIndex.value() >= m_colours.size()) {
 		m_transparentColourIndex.reset();
 	}
+
+	setModified(true);
 
 	return true;
 }
@@ -154,11 +201,23 @@ const std::optional<uint8_t> & ColourTable::getTransparentColourIndex() const {
 }
 
 void ColourTable::setTransparentColourIndex(uint8_t transparentColourIndex) {
+	if(m_transparentColourIndex == transparentColourIndex) {
+		return;
+	}
+
 	m_transparentColourIndex = transparentColourIndex;
+
+	setModified(true);
 }
 
 void ColourTable::clearTransparentColourIndex() {
+	if(!m_transparentColourIndex.has_value()) {
+		return;
+	}
+
 	m_transparentColourIndex.reset();
+
+	setModified(true);
 }
 
 bool ColourTable::hasAlphaChannel() const {
@@ -166,7 +225,13 @@ bool ColourTable::hasAlphaChannel() const {
 }
 
 void ColourTable::setHasAlphaChannel(bool alpha) {
+	if(m_alpha == alpha) {
+		return;
+	}
+
 	m_alpha = alpha;
+
+	setModified(true);
 }
 
 bool ColourTable::hasName() const {
@@ -178,11 +243,23 @@ const std::string & ColourTable::getName() const {
 }
 
 void ColourTable::setName(std::string_view name) {
+	if(Utilities::areStringsEqual(m_name, name)) {
+		return;
+	}
+
 	m_name = name;
+
+	setModified(true);
 }
 
 void ColourTable::clearName() {
-	m_name = "";
+	if(m_name.empty()) {
+		return;
+	}
+
+	m_name.clear();
+
+	setModified(true);
 }
 
 std::unique_ptr<ColourTable> ColourTable::getFrom(const ByteBuffer & byteBuffer, size_t offset, uint16_t numberOfColours, bool alpha, Colour::ByteOrder byteOrder) {
@@ -348,7 +425,9 @@ bool ColourTable::operator == (const ColourTable & colourTable) const {
 		return true;
 	}
 
-	return m_colours == colourTable.m_colours;
+	return m_transparentColourIndex == colourTable.m_transparentColourIndex &&
+		   m_alpha == colourTable.m_alpha &&
+		   m_colours == colourTable.m_colours;
 }
 
 bool ColourTable::operator != (const ColourTable & colourTable) const {

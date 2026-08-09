@@ -9,6 +9,8 @@
 #include <vector>
 #include <string>
 
+#include <boost/signals2.hpp>
+
 class GameFile;
 
 class ColourTable final {
@@ -23,6 +25,8 @@ public:
 	ColourTable & operator = (const ColourTable & colourTable);
 	~ColourTable();
 
+	bool isModified() const;
+	void setModified(bool modified);
 	uint16_t numberOfColours() const;
 	const Colour & getColour(uint8_t colourIndex, bool * error = nullptr) const;
 	const std::vector<Colour> & getColours() const;
@@ -63,6 +67,8 @@ public:
 	bool operator == (const ColourTable & colourTable) const;
 	bool operator != (const ColourTable & colourTable) const;
 
+	boost::signals2::signal<void (ColourTable & /* colourTable */)> modified;
+
 	static constexpr uint16_t NUMBER_OF_COLOURS = std::numeric_limits<uint8_t>::max() + 1;
 	static const ColourTable EMPTY_COLOUR_TABLE;
 
@@ -71,6 +77,7 @@ private:
 	std::optional<uint8_t> m_transparentColourIndex;
 	bool m_alpha;
 	std::string m_name;
+	bool m_modified;
 	GameFile * m_parent;
 };
 
