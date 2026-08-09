@@ -1,6 +1,8 @@
 #ifndef _TILE_H_
 #define _TILE_H_
 
+#include <ByteBuffer.h>
+
 #include <rapidjson/document.h>
 
 #include <cstdint>
@@ -10,7 +12,6 @@
 #include <string>
 
 class Art;
-class ByteBuffer;
 
 class Tile final {
 public:
