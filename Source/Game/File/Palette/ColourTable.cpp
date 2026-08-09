@@ -8,30 +8,34 @@
 
 const ColourTable ColourTable::EMPTY_COLOUR_TABLE;
 
-ColourTable::ColourTable(uint16_t numberOfColours, std::optional<uint8_t> transparentColourIndex, bool alpha, GameFile * parent)
+ColourTable::ColourTable(uint16_t numberOfColours, std::optional<uint8_t> transparentColourIndex, bool alpha, std::string_view name, GameFile * parent)
 	: m_transparentColourIndex(transparentColourIndex)
 	, m_alpha(alpha)
+	, m_name(name)
 	, m_parent(parent) {
 	m_colours.resize(numberOfColours, Colour::INVISIBLE);
 }
 
-ColourTable::ColourTable(const Colour & fillColour, uint16_t numberOfColours, std::optional<uint8_t> transparentColourIndex, bool alpha, GameFile * parent)
+ColourTable::ColourTable(const Colour & fillColour, uint16_t numberOfColours, std::optional<uint8_t> transparentColourIndex, bool alpha, std::string_view name, GameFile * parent)
 	: m_transparentColourIndex(transparentColourIndex)
 	, m_alpha(alpha)
+	, m_name(name)
 	, m_parent(parent) {
 	m_colours.resize(numberOfColours, fillColour);
 }
 
-ColourTable::ColourTable(std::vector<Colour> && colours, std::optional<uint8_t> transparentColourIndex, bool alpha, GameFile * parent)
+ColourTable::ColourTable(std::vector<Colour> && colours, std::optional<uint8_t> transparentColourIndex, bool alpha, std::string_view name, GameFile * parent)
 	: m_colours(std::move(colours))
 	, m_transparentColourIndex(transparentColourIndex)
 	, m_alpha(alpha)
+	, m_name(name)
 	, m_parent(parent) { }
 
-ColourTable::ColourTable(const std::vector<Colour> & colours, std::optional<uint8_t> transparentColourIndex, bool alpha, GameFile * parent)
+ColourTable::ColourTable(const std::vector<Colour> & colours, std::optional<uint8_t> transparentColourIndex, bool alpha, std::string_view name, GameFile * parent)
 	: m_colours(colours)
 	, m_transparentColourIndex(transparentColourIndex)
 	, m_alpha(alpha)
+	, m_name(name)
 	, m_parent(parent) { }
 
 ColourTable::ColourTable(ColourTable && colourTable) noexcept
@@ -165,11 +169,15 @@ void ColourTable::setHasAlphaChannel(bool alpha) {
 	m_alpha = alpha;
 }
 
+bool ColourTable::hasName() const {
+	return !m_name.empty();
+}
+
 const std::string & ColourTable::getName() const {
 	return m_name;
 }
 
-void ColourTable::setName(const std::string & name) {
+void ColourTable::setName(std::string_view name) {
 	m_name = name;
 }
 

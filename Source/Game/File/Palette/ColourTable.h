@@ -13,10 +13,10 @@ class GameFile;
 
 class ColourTable final {
 public:
-	ColourTable(uint16_t numberOfColours = 0, std::optional<uint8_t> transparentColourIndex = {}, bool alpha = false, GameFile * parent = nullptr);
-	ColourTable(const Colour & fillColour, uint16_t numberOfColours = NUMBER_OF_COLOURS, std::optional<uint8_t> transparentColourIndex = {}, bool alpha = false, GameFile * parent = nullptr);
-	ColourTable(std::vector<Colour> && colours, std::optional<uint8_t> transparentColourIndex = {}, bool alpha = false, GameFile * parent = nullptr);
-	ColourTable(const std::vector<Colour> & colours, std::optional<uint8_t> transparentColourIndex = {}, bool alpha = false, GameFile * parent = nullptr);
+	ColourTable(uint16_t numberOfColours = 0, std::optional<uint8_t> transparentColourIndex = {}, bool alpha = false, std::string_view name = {}, GameFile * parent = nullptr);
+	ColourTable(const Colour & fillColour, uint16_t numberOfColours = NUMBER_OF_COLOURS, std::optional<uint8_t> transparentColourIndex = {}, bool alpha = false, std::string_view name = {}, GameFile * parent = nullptr);
+	ColourTable(std::vector<Colour> && colours, std::optional<uint8_t> transparentColourIndex = {}, bool alpha = false, std::string_view name = {}, GameFile * parent = nullptr);
+	ColourTable(const std::vector<Colour> & colours, std::optional<uint8_t> transparentColourIndex = {}, bool alpha = false, std::string_view name = {}, GameFile * parent = nullptr);
 	ColourTable(ColourTable && colourTable) noexcept;
 	ColourTable(const ColourTable & colourTable);
 	ColourTable & operator = (ColourTable && colourTable) noexcept;
@@ -37,8 +37,9 @@ public:
 	void clearTransparentColourIndex();
 	bool hasAlphaChannel() const;
 	void setHasAlphaChannel(bool alpha);
+	bool hasName() const;
 	const std::string & getName() const;
-	void setName(const std::string & name);
+	void setName(std::string_view name);
 	void clearName();
 	bool isParentValid() const;
 	GameFile * getParent() const;
