@@ -60,6 +60,7 @@ target_include_directories(${PROJECT_NAME}
 
 target_compile_definitions(${PROJECT_NAME}
 	PUBLIC
+		CSS_COLOR_PARSER_VERSION="${CSSColorParser_VERSION}"
 		LEXILLA_VERSION="${lexilla_VERSION}"
 		NANOSVG_VERSION="${nanosvg_VERSION}"
 		SCINTILLA_VERSION="${scintilla_VERSION}"
