@@ -12472,7 +12472,7 @@
 			<mod id="wgrealms_episode"/>
 			<mod id="wgrealms_3_-_ganymede"/>
 			<mod id="knee_deep"/>
-			<mod id="quest_town">
+			<mod id="quest_town"/>
 		</related>
 	</mod>
 	<mod name="WG Realms: Demon Throne" id="wg_realms_-_demon_throne" alias="wgrealms_2_-_siege_breaker" type="Total Conversion" version="3.01" moddb="https://www.moddb.com/games/wgrealms-2">
