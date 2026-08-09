@@ -46,7 +46,8 @@ public:
 
 	~LaunchFailedEvent() override { }
 
-	virtual wxEvent * Clone() const override {
+	// wxEvent Virtuals
+	wxEvent * Clone() const override {
 		return new LaunchFailedEvent(*this);
 	}
 
@@ -62,7 +63,8 @@ public:
 
 	~GameProcessTerminatedEvent() override { }
 
-	virtual wxEvent * Clone() const override {
+	// wxEvent Virtuals
+	wxEvent * Clone() const override {
 		return new GameProcessTerminatedEvent(*this);
 	}
 
@@ -96,7 +98,8 @@ public:
 		m_message = message;
 	}
 
-	virtual wxEvent * Clone() const override {
+	// wxEvent Virtuals
+	wxEvent * Clone() const override {
 		return new ModInstallProgressEvent(*this);
 	}
 
@@ -117,7 +120,8 @@ public:
 
 	~ModInstallDoneEvent() override { }
 
-	virtual wxEvent * Clone() const override {
+	// wxEvent Virtuals
+	wxEvent * Clone() const override {
 		return new ModInstallDoneEvent(*this);
 	}
 

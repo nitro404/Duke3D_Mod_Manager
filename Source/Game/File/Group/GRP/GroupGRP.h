@@ -14,13 +14,14 @@ public:
 	~GroupGRP() override;
 
 	static std::unique_ptr<GroupGRP> readFrom(const ByteBuffer & byteBuffer);
-	virtual bool writeTo(ByteBuffer & byteBuffer) const override;
 
 	static std::unique_ptr<GroupGRP> createFrom(const std::string & directoryPath);
 	static std::unique_ptr<GroupGRP> loadFrom(const std::string & filePath);
 
-	virtual Endianness getEndianness() const override;
-	virtual size_t getSizeInBytes() const override;
+	// Group Virtuals
+	bool writeTo(ByteBuffer & byteBuffer) const override;
+	Endianness getEndianness() const override;
+	size_t getSizeInBytes() const override;
 
 	bool operator == (const GroupGRP & group) const;
 	bool operator != (const GroupGRP & group) const;

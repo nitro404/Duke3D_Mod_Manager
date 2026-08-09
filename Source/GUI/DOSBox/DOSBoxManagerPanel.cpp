@@ -53,7 +53,8 @@ public:
 		m_message = message;
 	}
 
-	virtual wxEvent * Clone() const override {
+	// wxEvent Virtuals
+	wxEvent * Clone() const override {
 		return new DOSBoxInstallProgressEvent(*this);
 	}
 
@@ -76,7 +77,8 @@ public:
 
 	~DOSBoxInstallDoneEvent() override { }
 
-	virtual wxEvent * Clone() const override {
+	// wxEvent Virtuals
+	wxEvent * Clone() const override {
 		return new DOSBoxInstallDoneEvent(*this);
 	}
 

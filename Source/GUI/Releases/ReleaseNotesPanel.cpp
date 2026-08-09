@@ -24,7 +24,8 @@ public:
 
 	~ReleasesLoadedEvent() override { }
 
-	virtual wxEvent * Clone() const override {
+	// wxEvent Virtuals
+	wxEvent * Clone() const override {
 		return new ReleasesLoadedEvent(*this);
 	}
 

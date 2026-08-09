@@ -54,7 +54,8 @@ public:
 		m_message = message;
 	}
 
-	virtual wxEvent * Clone() const override {
+	// wxEvent Virtuals
+	wxEvent * Clone() const override {
 		return new GameInstallProgressEvent(*this);
 	}
 
@@ -77,7 +78,8 @@ public:
 
 	~GameInstallDoneEvent() override { }
 
-	virtual wxEvent * Clone() const override {
+	// wxEvent Virtuals
+	wxEvent * Clone() const override {
 		return new GameInstallDoneEvent(*this);
 	}
 

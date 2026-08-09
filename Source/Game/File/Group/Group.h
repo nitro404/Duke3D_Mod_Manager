@@ -101,12 +101,13 @@ public:
 
 	std::string toString() const;
 
-	virtual void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
-
-	virtual bool isValid(bool verifyParent = true) const override;
 	static bool isValid(const Group * group, bool verifyParent = true);
 
 	static std::vector<std::unique_ptr<GroupFile>> createGroupFilesFromDirectory(const std::string & directoryPath);
+
+	// GameFile Virtuals
+	void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
+	bool isValid(bool verifyParent = true) const override;
 
 	bool operator == (const Group & group) const;
 	bool operator != (const Group & group) const;
@@ -114,10 +115,12 @@ public:
 	static const bool DEFAULT_REPLACE_FILES = true;
 
 protected:
-	virtual void setModified(bool modified) const override;
 	void onGroupFileModified(GroupFile & groupFile);
 	void connectSignals();
 	void updateParent();
+
+	// GameFile Virtuals
+	void setModified(bool modified) const override;
 
 	std::vector<std::shared_ptr<GroupFile>> m_files;
 	std::vector<boost::signals2::connection> m_fileConnections;

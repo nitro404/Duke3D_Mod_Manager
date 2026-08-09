@@ -33,9 +33,9 @@ public:
 	void onFrameClosed(wxCloseEvent & event);
 
 	// wxApp Virtuals
-	virtual bool OnInit() override;
-	virtual int OnExit() override;
-	virtual void CleanUp() override;
+	bool OnInit() override;
+	int OnExit() override;
+	void CleanUp() override;
 
 private:
 	void initialize();

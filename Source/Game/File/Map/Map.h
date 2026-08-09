@@ -70,7 +70,6 @@ public:
 	void clearTrailingData();
 
 	static std::unique_ptr<Map> readFrom(const ByteBuffer & byteBuffer);
-	virtual bool writeTo(ByteBuffer & byteBuffer) const override;
 
 	rapidjson::Document toJSON() const;
 	rapidjson::Value toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const;
@@ -80,16 +79,18 @@ public:
 	static std::unique_ptr<Map> loadFrom(const std::string & filePath);
 	static std::unique_ptr<Map> loadFromMap(const std::string & filePath);
 	static std::unique_ptr<Map> loadFromJSON(const std::string & filePath);
-	virtual bool saveTo(const std::string & filePath, bool overwrite = true) const override;
 	bool saveToMap(const std::string & filePath, bool overwrite = true) const;
 	bool saveToJSON(const std::string & filePath, bool overwrite = true) const;
 
-	virtual void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
-	virtual Endianness getEndianness() const override;
-	virtual size_t getSizeInBytes() const override;
-
-	virtual bool isValid(bool verifyParent = true) const override;
 	static bool isValid(const Map * map, bool verifyParent = true);
+
+	// GameFile Virtuals
+	bool writeTo(ByteBuffer & byteBuffer) const override;
+	bool saveTo(const std::string & filePath, bool overwrite = true) const override;
+	void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
+	Endianness getEndianness() const override;
+	size_t getSizeInBytes() const override;
+	bool isValid(bool verifyParent = true) const override;
 
 	bool operator == (const Map & map) const;
 	bool operator != (const Map & map) const;

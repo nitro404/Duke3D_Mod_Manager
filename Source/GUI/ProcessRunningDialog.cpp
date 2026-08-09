@@ -20,7 +20,8 @@ public:
 
 	~ProcessTerminatedEvent() override { }
 
-	virtual wxEvent * Clone() const override {
+	// wxEvent Virtuals
+	wxEvent * Clone() const override {
 		return new ProcessTerminatedEvent(*this);
 	}
 

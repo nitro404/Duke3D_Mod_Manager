@@ -16,13 +16,15 @@ public:
 	~PaletteJASC() override;
 
 	const std::string & getVersion() const;
-	virtual std::shared_ptr<ColourTable> getColourTable(uint8_t colourTableIndex = 0) const override;
 	static std::unique_ptr<PaletteJASC> readFrom(const ByteBuffer & byteBuffer);
 	static std::unique_ptr<PaletteJASC> loadFrom(const std::string & filePath);
-	virtual bool writeTo(ByteBuffer & byteBuffer) const override;
-	virtual void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
-	virtual Endianness getEndianness() const override;
-	virtual size_t getSizeInBytes() const override;
+
+	// Palette Virtuals
+	std::shared_ptr<ColourTable> getColourTable(uint8_t colourTableIndex = 0) const override;
+	bool writeTo(ByteBuffer & byteBuffer) const override;
+	void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
+	Endianness getEndianness() const override;
+	size_t getSizeInBytes() const override;
 
 	bool operator == (const PaletteJASC & palette) const;
 	bool operator != (const PaletteJASC & palette) const;

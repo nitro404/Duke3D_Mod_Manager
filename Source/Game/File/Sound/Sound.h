@@ -71,15 +71,17 @@ public:
 	bool setGenre(std::string value) const;
 	bool setProperty(PropertyType propertyType, std::string propertyValue) const;
 
-	virtual bool writeTo(ByteBuffer & byteBuffer) const override;
-	virtual void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
-	virtual size_t getSizeInBytes() const override;
-	virtual bool isValid(bool verifyParent = true) const override;
 	static bool isValid(const Sound * sound, bool verifyParent = true);
 
 	static std::string getFormatName(int format);
 	static std::string getTypeName(int format);
 	static std::string getSubTypeName(int format);
+
+	// GameFile Virtuals
+	bool writeTo(ByteBuffer & byteBuffer) const override;
+	void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
+	size_t getSizeInBytes() const override;
+	bool isValid(bool verifyParent = true) const override;
 
 	bool operator == (const Sound & sound) const;
 	bool operator != (const Sound & sound) const;

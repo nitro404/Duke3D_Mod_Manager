@@ -19,13 +19,14 @@ public:
 	CustomLogTextControl(wxTextCtrl * textControl);
 	~CustomLogTextControl() override;
 
-	virtual void DoLogTextAtLevel(wxLogLevel level, const wxString & message) override;
-
-	CustomLogTextControl(const CustomLogTextControl &) = delete;
-	const CustomLogTextControl & operator = (const CustomLogTextControl &) = delete;
+	// wxLogTextCtrl Virtuals
+	void DoLogTextAtLevel(wxLogLevel level, const wxString & message) override;
 
 private:
 	wxTextCtrl * m_textControl;
+
+	CustomLogTextControl(const CustomLogTextControl &) = delete;
+	const CustomLogTextControl & operator = (const CustomLogTextControl &) = delete;
 };
 
 #endif // _CUSTOM_LOG_TEXT_CONTROL_H_

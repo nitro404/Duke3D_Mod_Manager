@@ -16,7 +16,6 @@ public:
 	PaletteGPL & operator = (const PaletteGPL & palette);
 	~PaletteGPL() override;
 
-	virtual std::shared_ptr<ColourTable> getColourTable(uint8_t colourTableIndex = 0) const override;
 	size_t numberOfNamedColours() const;
 	bool hasColourName(const std::string & colourName) const;
 	size_t indexOfColourName(const std::string & colourName) const;
@@ -47,10 +46,13 @@ public:
 	void clearComments();
 	static std::unique_ptr<PaletteGPL> readFrom(const ByteBuffer & byteBuffer);
 	static std::unique_ptr<PaletteGPL> loadFrom(const std::string & filePath);
-	virtual bool writeTo(ByteBuffer & byteBuffer) const override;
-	virtual void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
-	virtual Endianness getEndianness() const override;
-	virtual size_t getSizeInBytes() const override;
+
+	// Palette Virtuals
+	std::shared_ptr<ColourTable> getColourTable(uint8_t colourTableIndex = 0) const override;
+	bool writeTo(ByteBuffer & byteBuffer) const override;
+	void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
+	Endianness getEndianness() const override;
+	size_t getSizeInBytes() const override;
 
 	bool operator == (const PaletteGPL & palette) const;
 	bool operator != (const PaletteGPL & palette) const;

@@ -25,12 +25,14 @@ public:
 	void setComment(std::string_view comment);
 	void clearComment();
 
-	virtual std::shared_ptr<ColourTable> getColourTable(uint8_t colourTableIndex = 0) const override;
 	static std::unique_ptr<PaletteCSS> readFrom(const ByteBuffer & byteBuffer);
 	static std::unique_ptr<PaletteCSS> loadFrom(const std::string & filePath);
-	virtual bool writeTo(ByteBuffer & byteBuffer) const override;
-	virtual Endianness getEndianness() const override;
-	virtual size_t getSizeInBytes() const override;
+
+	// Palette Virtuals
+	std::shared_ptr<ColourTable> getColourTable(uint8_t colourTableIndex = 0) const override;
+	bool writeTo(ByteBuffer & byteBuffer) const override;
+	Endianness getEndianness() const override;
+	size_t getSizeInBytes() const override;
 
 	bool operator == (const PaletteCSS & palette) const;
 	bool operator != (const PaletteCSS & palette) const;

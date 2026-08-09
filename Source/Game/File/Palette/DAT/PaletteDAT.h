@@ -191,15 +191,17 @@ public:
 	bool removeSwapTableWithIndex(uint8_t swapIndex);
 	void clearSwapTables();
 	static std::optional<PaletteDAT::Type> determineType(const ByteBuffer & byteBuffer);
-	virtual std::shared_ptr<ColourTable> getColourTable(uint8_t colourTableIndex = 0) const override;
-	virtual uint8_t numberOfColourTables() const override;
-	virtual void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
 	static std::unique_ptr<PaletteDAT> readFrom(const ByteBuffer & byteBuffer);
 	static std::unique_ptr<PaletteDAT> loadFrom(const std::string & filePath);
-	virtual bool writeTo(ByteBuffer & byteBuffer) const override;
-	virtual Endianness getEndianness() const override;
-	virtual size_t getSizeInBytes() const override;
-	virtual bool isValid(bool verifyParent = true) const override;
+
+	// Palette Virtuals
+	std::shared_ptr<ColourTable> getColourTable(uint8_t colourTableIndex = 0) const override;
+	uint8_t numberOfColourTables() const override;
+	void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
+	bool writeTo(ByteBuffer & byteBuffer) const override;
+	Endianness getEndianness() const override;
+	size_t getSizeInBytes() const override;
+	bool isValid(bool verifyParent = true) const override;
 
 	bool operator == (const PaletteDAT & palette) const;
 	bool operator != (const PaletteDAT & palette) const;

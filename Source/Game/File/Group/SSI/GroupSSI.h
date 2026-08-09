@@ -42,17 +42,18 @@ public:
 	void clearTrailingData();
 
 	static std::unique_ptr<GroupSSI> readFrom(const ByteBuffer & byteBuffer);
-	virtual bool writeTo(ByteBuffer & byteBuffer) const override;
 
 	static std::unique_ptr<GroupSSI> createFrom(const std::string & directoryPath);
 	static std::unique_ptr<GroupSSI> loadFrom(const std::string & filePath);
 
-	virtual void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
-	virtual Endianness getEndianness() const override;
-	virtual size_t getSizeInBytes() const override;
-
-	virtual bool isValid(bool verifyParent = true) const override;
 	static bool isValidVersion(uint32_t version);
+
+	// Group Virtuals
+	bool writeTo(ByteBuffer & byteBuffer) const override;
+	void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
+	Endianness getEndianness() const override;
+	size_t getSizeInBytes() const override;
+	bool isValid(bool verifyParent = true) const override;
 
 	bool operator == (const GroupSSI & group) const;
 	bool operator != (const GroupSSI & group) const;

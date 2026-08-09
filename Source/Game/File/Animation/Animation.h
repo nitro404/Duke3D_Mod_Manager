@@ -23,9 +23,11 @@ public:
 	virtual std::chrono::milliseconds getDuration() const = 0;
 	virtual std::shared_ptr<ColourTable> getColourTable() const = 0;
 
-	virtual void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
-	virtual bool isValid(bool verifyParent = true) const override;
 	static bool isValid(const Animation * animation, bool verifyParent = true);
+
+	// GameFile Virtuals
+	void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
+	bool isValid(bool verifyParent = true) const override;
 
 protected:
 	Animation(const std::string & filePath = {});

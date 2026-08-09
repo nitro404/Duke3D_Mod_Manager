@@ -16,8 +16,9 @@ public:
 	void initialize();
 
 protected:
-	virtual void sink_it_(const spdlog::details::log_msg & logMessage) override;
-	virtual void flush_() override;
+	// spdlog::sinks::base_sink Virtuals
+	void sink_it_(const spdlog::details::log_msg & logMessage) override;
+	void flush_() override;
 
 private:
 	void onLogLevelChanged(spdlog::level::level_enum logLevel);

@@ -129,8 +129,6 @@ public:
 	uint32_t numberOfRecords() const;
 	uint32_t numberOfRecordsPermittedInLargePage() const;
 	uint16_t getLargePageFileTableOffset() const;
-	virtual uint16_t getFrameWidth() const override;
-	virtual uint16_t getFrameHeight() const override;
 	uint8_t getVariant() const;
 	uint8_t getVersion() const;
 	bool hasLastDelta() const;
@@ -140,28 +138,31 @@ public:
 	uint8_t getOtherRecordsPerFrame() const;
 	uint8_t getBitmapType() const;
 	const RecordTypesData & getRecordTypes();
-	virtual uint32_t numberOfFrames() const override;
 	uint16_t numberOfFramesPerSecond() const;
-	virtual std::chrono::milliseconds getDuration() const override;
 	const HeaderFillerData & getHeaderFillerData() const;
-	virtual std::shared_ptr<ColourTable> getColourTable() const override;
 	const ColourFlagsData & getColourFlags() const;
 	const std::vector<LargePageDescriptor> & getLargePageDescriptors() const;
 	const ByteBuffer & getLargePageData() const;
 
 	static std::unique_ptr<AnimationANM> readFrom(const ByteBuffer & byteBuffer);
 	static std::unique_ptr<AnimationANM> loadFrom(const std::string & filePath);
-	virtual bool writeTo(ByteBuffer & byteBuffer) const override;
-	virtual Endianness getEndianness() const override;
-	virtual void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
-	virtual size_t getSizeInBytes() const override;
-
-	virtual bool isValid(bool verifyParent = true) const override;
 	static bool isValidVariant(uint8_t variant);
 	static bool isValidVersion(uint8_t version);
 	static bool isValidPixelType(uint8_t pixelType);
 	static bool isValidCompressionType(uint8_t compressionType);
 	static bool isValidBitmapType(uint8_t bitmapType);
+
+	// Animation Virtuals
+	uint16_t getFrameWidth() const override;
+	uint16_t getFrameHeight() const override;
+	uint32_t numberOfFrames() const override;
+	std::chrono::milliseconds getDuration() const override;
+	std::shared_ptr<ColourTable> getColourTable() const override;
+	bool writeTo(ByteBuffer & byteBuffer) const override;
+	Endianness getEndianness() const override;
+	void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
+	size_t getSizeInBytes() const override;
+	bool isValid(bool verifyParent = true) const override;
 
 	bool operator == (const AnimationANM & animation) const;
 	bool operator != (const AnimationANM & animation) const;

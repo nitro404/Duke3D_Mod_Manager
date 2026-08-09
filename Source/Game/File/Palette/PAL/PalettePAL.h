@@ -30,14 +30,16 @@ public:
 	const std::vector<ColourFlag> & getColourFlags() const;
 	size_t getDocumentSizeInBytes() const;
 	size_t getPaletteChunkSizeInBytes() const;
-	virtual std::shared_ptr<ColourTable> getColourTable(uint8_t colourTableIndex = 0) const override;
 	static std::unique_ptr<PalettePAL> readFrom(const ByteBuffer & byteBuffer);
 	static std::unique_ptr<PalettePAL> loadFrom(const std::string & filePath);
-	virtual bool writeTo(ByteBuffer & byteBuffer) const override;
-	virtual void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
-	virtual Endianness getEndianness() const override;
-	virtual size_t getSizeInBytes() const override;
-	virtual bool isValid(bool verifyParent = true) const override;
+
+	// Palette Virtuals
+	std::shared_ptr<ColourTable> getColourTable(uint8_t colourTableIndex = 0) const override;
+	bool writeTo(ByteBuffer & byteBuffer) const override;
+	void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
+	Endianness getEndianness() const override;
+	size_t getSizeInBytes() const override;
+	bool isValid(bool verifyParent = true) const override;
 
 	bool operator == (const PalettePAL & palette) const;
 	bool operator != (const PalettePAL & palette) const;

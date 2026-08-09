@@ -13,12 +13,14 @@ public:
 	PaletteACT & operator = (const PaletteACT & palette);
 	~PaletteACT() override;
 
-	virtual std::shared_ptr<ColourTable> getColourTable(uint8_t colourTableIndex = 0) const override;
 	static std::unique_ptr<PaletteACT> readFrom(const ByteBuffer & byteBuffer);
 	static std::unique_ptr<PaletteACT> loadFrom(const std::string & filePath);
-	virtual bool writeTo(ByteBuffer & byteBuffer) const override;
-	virtual Endianness getEndianness() const override;
-	virtual size_t getSizeInBytes() const override;
+
+	// Palette Virtuals
+	std::shared_ptr<ColourTable> getColourTable(uint8_t colourTableIndex = 0) const override;
+	bool writeTo(ByteBuffer & byteBuffer) const override;
+	Endianness getEndianness() const override;
+	size_t getSizeInBytes() const override;
 
 	bool operator == (const PaletteACT & palette) const;
 	bool operator != (const PaletteACT & palette) const;

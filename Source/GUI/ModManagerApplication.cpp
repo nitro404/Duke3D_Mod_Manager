@@ -55,7 +55,8 @@ public:
 
 	~ModManagerInitializationDoneEvent() override { }
 
-	virtual wxEvent * Clone() const override {
+	// wxEvent Virtuals
+	wxEvent * Clone() const override {
 		return new ModManagerInitializationDoneEvent(*this);
 	}
 

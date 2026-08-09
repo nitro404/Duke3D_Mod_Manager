@@ -23,11 +23,13 @@ public:
 
 	static std::unique_ptr<Zip> readFrom(const ByteBuffer & byteBuffer);
 	static std::unique_ptr<Zip> loadFrom(const std::string & filePath);
-	virtual bool writeTo(ByteBuffer & byteBuffer) const override;
-	virtual void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
-	virtual Endianness getEndianness() const override;
-	virtual size_t getSizeInBytes() const override;
-	virtual bool isValid(bool verifyParent = true) const override;
+
+	// GameFile Virtuals
+	bool writeTo(ByteBuffer & byteBuffer) const override;
+	void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
+	Endianness getEndianness() const override;
+	size_t getSizeInBytes() const override;
+	bool isValid(bool verifyParent = true) const override;
 
 private:
 	std::unique_ptr<ZipArchive> m_zipArchive;

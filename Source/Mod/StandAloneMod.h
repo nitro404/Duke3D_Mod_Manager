@@ -24,8 +24,10 @@ public:
 	rapidjson::Value toJSON(rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator) const;
 	static std::unique_ptr<StandAloneMod> parseFrom(const rapidjson::Value & standAloneModValue);
 
-	virtual bool isValid() const override;
 	static bool isValid(const StandAloneMod * standAloneMod);
+
+	// GameVersion Virtuals
+	bool isValid() const override;
 
 	bool operator == (const StandAloneMod & standAloneMod) const;
 	bool operator != (const StandAloneMod & standAloneMod) const;

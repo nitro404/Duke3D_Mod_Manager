@@ -12,12 +12,14 @@ public:
 	ModScreenshot & operator = (const ModScreenshot & s);
 	~ModScreenshot() override;
 
-	virtual tinyxml2::XMLElement * toXML(tinyxml2::XMLDocument * document) const override;
 	static std::unique_ptr<ModScreenshot> parseFrom(const rapidjson::Value & modScreenshotValue, bool skipFileInfoValidation = false);
 	static std::unique_ptr<ModScreenshot> parseFrom(const tinyxml2::XMLElement * modScreenshotElement, bool skipFileInfoValidation = false);
 
-	virtual bool isValid(bool skipFileInfoValidation = false) const override;
 	static bool isValid(const ModScreenshot * s, bool skipFileInfoValidation = false);
+
+	// ModImage Virtuals
+	tinyxml2::XMLElement * toXML(tinyxml2::XMLDocument * document) const override;
+	bool isValid(bool skipFileInfoValidation = false) const override;
 
 private:
 	ModScreenshot(ModImage && s) noexcept;

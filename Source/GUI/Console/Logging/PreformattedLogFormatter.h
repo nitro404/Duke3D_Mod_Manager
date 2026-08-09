@@ -6,5 +6,6 @@ public:
 	~PreformattedLogFormatter() override;
 
 private:
-	virtual wxString Format(wxLogLevel level, const wxString & logMessage, const wxLogRecordInfo & info) const override;
+	// wxLogFormatter Virtuals
+	wxString Format(wxLogLevel level, const wxString & logMessage, const wxLogRecordInfo & info) const override;
 };

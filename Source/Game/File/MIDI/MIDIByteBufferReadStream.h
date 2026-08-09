@@ -21,8 +21,8 @@ public:
 	~MIDIByteBufferReadStream() override;
 
 	// MIDIFileReadStream Virtuals
-	virtual void Rewind() override;
-	virtual int ReadChar() override;
+	void Rewind() override;
+	int ReadChar() override;
 
 	bool isValid() const;
 

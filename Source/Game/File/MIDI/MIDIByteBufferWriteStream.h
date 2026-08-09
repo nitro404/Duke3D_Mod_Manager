@@ -22,8 +22,8 @@ public:
 	const ByteBuffer & getData() const;
 
 	// MIDIFileWriteStream Virtuals
-	virtual long Seek(long offset, int seekOrigin = SEEK_SET) override;
-	virtual int WriteChar(int character) override;
+	long Seek(long offset, int seekOrigin = SEEK_SET) override;
+	int WriteChar(int character) override;
 
 	bool operator == (const MIDIByteBufferWriteStream & writeStream) const;
 	bool operator != (const MIDIByteBufferWriteStream & writeStream) const;

@@ -29,8 +29,9 @@ public:
 	static std::unique_ptr<SoundWAV> readFrom(const ByteBuffer & byteBuffer);
 	static std::unique_ptr<SoundWAV> loadFrom(const std::string & filePath);
 
-	virtual Endianness getEndianness() const override;
-	virtual bool isValid(bool verifyParent = true) const override;
+	// Sound Virtuals
+	Endianness getEndianness() const override;
+	bool isValid(bool verifyParent = true) const override;
 
 	static std::string getSubTypeName(SubType subType);
 	static int getFormatForSubType(SubType subType);
