@@ -11,6 +11,7 @@
 #include "Palette/GPL/PaletteGPL.h"
 #include "Palette/JASC/PaletteJASC.h"
 #include "Palette/PAL/PalettePAL.h"
+#include "Palette/TXT/PaletteTXT.h"
 #include "Sound/VOC/SoundVOC.h"
 #include "Sound/WAV/SoundWAV.h"
 #include "Zip/Zip.h"
@@ -192,6 +193,14 @@ void GameFileFactoryRegistry::assignDefaultFactories() {
 		return GroupSSI::readFrom(data);
 	}, [](const std::string & filePath) {
 		return GroupSSI::loadFrom(filePath);
+	});
+
+	setFactory("txt", []() {
+		return std::make_unique<PaletteTXT>();
+	}, [](const ByteBuffer & data) {
+		return PaletteTXT::readFrom(data);
+	}, [](const std::string & filePath) {
+		return PaletteTXT::loadFrom(filePath);
 	});
 
 	setFactory("voc", []() {
