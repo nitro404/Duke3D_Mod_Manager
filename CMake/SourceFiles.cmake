@@ -111,6 +111,8 @@ set(MAIN_SOURCE_FILES
 	Game/File/Palette/Palette.cpp
 	Game/File/Palette/ACT/PaletteACT.h
 	Game/File/Palette/ACT/PaletteACT.cpp
+	Game/File/Palette/CSS/PaletteCSS.h
+	Game/File/Palette/CSS/PaletteCSS.cpp
 	Game/File/Palette/DAT/PaletteDAT.h
 	Game/File/Palette/DAT/PaletteDAT.cpp
 	Game/File/Palette/DAT/ShadeTable.cpp

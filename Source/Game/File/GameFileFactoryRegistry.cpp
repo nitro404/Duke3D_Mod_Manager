@@ -7,6 +7,7 @@
 #include "Map/Map.h"
 #include "MIDI/MIDI.h"
 #include "Palette/ACT/PaletteACT.h"
+#include "Palette/CSS/PaletteCSS.h"
 #include "Palette/DAT/PaletteDAT.h"
 #include "Palette/GPL/PaletteGPL.h"
 #include "Palette/JASC/PaletteJASC.h"
@@ -129,6 +130,14 @@ void GameFileFactoryRegistry::assignDefaultFactories() {
 		return Art::readFrom(data);
 	}, [](const std::string & filePath) {
 		return Art::loadFrom(filePath);
+	});
+
+	setFactory("css", []() {
+		return std::make_unique<PaletteCSS>();
+	}, [](const ByteBuffer & data) {
+		return PaletteCSS::readFrom(data);
+	}, [](const std::string & filePath) {
+		return PaletteCSS::loadFrom(filePath);
 	});
 
 	setFactory("dat", []() {
