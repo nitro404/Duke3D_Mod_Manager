@@ -4339,7 +4339,6 @@ bool ModManager::handleArguments(const ArgumentParser * args) {
 
 	SettingsManager * settings = SettingsManager::getInstance();
 
-
 	if(args->hasArgument("update-new")) {
 		updateFileInfoForAllMods(true, true);
 	}

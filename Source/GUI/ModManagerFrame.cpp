@@ -4,6 +4,7 @@
 #include "DOSBox/DOSBoxManagerPanel.h"
 #include "Game/GameManagerPanel.h"
 #include "Group/GroupEditorPanel.h"
+#include "Manager/ModManager.h"
 #include "Manager/SettingsManager.h"
 #include "Mod/ModBrowserPanel.h"
 #include "Project.h"

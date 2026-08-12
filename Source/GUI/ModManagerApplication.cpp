@@ -96,12 +96,14 @@ void ModManagerApplication::initialize() {
 
 	LibraryInformation * libraryInformation = LibraryInformation::getInstance();
 	XML_Expat_Version expatVersion = XML_ExpatVersionInfo();
+	libraryInformation->addLibrary("Lexilla", LEXILLA_VERSION);
 	libraryInformation->addLibrary("LibExpat", fmt::format("{}.{}.{}", expatVersion.major, expatVersion.minor, expatVersion.micro));
 	libraryInformation->addLibrary("LibJPEG", JVERSION);
 	libraryInformation->addLibrary("LibPNG", PNG_LIBPNG_VER_STRING);
 	libraryInformation->addLibrary("LibTIFF", TIFFLIB_VERSION_STR_MAJ_MIN_MIC);
 	libraryInformation->addLibrary("NanoSVG", NANOSVG_VERSION);
 	libraryInformation->addLibrary("PCRE2", fmt::format("{}.{}", PCRE2_MAJOR, PCRE2_MINOR), TOSTRING(PCRE2_DATE));
+	libraryInformation->addLibrary("Scintilla", SCINTILLA_VERSION);
 	libraryInformation->addLibrary("WebP", WEBP_VERSION);
 	libraryInformation->addLibrary("wxWidgets", fmt::format("{}.{}.{}.{}", wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER, wxSUBRELEASE_NUMBER));
 
