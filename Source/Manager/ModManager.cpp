@@ -226,7 +226,7 @@ ModManager::ModManager()
 	if(versionStartIndex == std::string::npos) {
 		versionStartIndex = 0;
 	}
-	libraryInformation->addLibrary("libsndfile", std::string(libSndFileVersion.substr(versionStartIndex, libSndFileVersion.length() - versionStartIndex)));
+	libraryInformation->addLibrary("LibSndFile", std::string(libSndFileVersion.substr(versionStartIndex, libSndFileVersion.length() - versionStartIndex)));
 }
 
 ModManager::~ModManager() {
