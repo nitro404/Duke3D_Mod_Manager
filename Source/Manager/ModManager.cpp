@@ -312,6 +312,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 	m_argumentHandlingFailed = false;
 
 	if(!notifyInitializationProgress("Parsing Arguments", aborted)) {
+		m_initializing = false;
 		return false;
 	}
 
@@ -331,6 +332,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 	}
 
 	if(!notifyInitializationProgress("Loading Settings", aborted)) {
+		m_initializing = false;
 		return false;
 	}
 
@@ -351,6 +353,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 	bool skipFileInfoValidation = m_localMode && m_arguments != nullptr && (m_arguments->hasArgument("skip-file-info-validation") || m_arguments->hasArgument("update-new") || m_arguments->hasArgument("update-all"));
 
 	if(!notifyInitializationProgress("Initializing HTTP Service", aborted)) {
+		m_initializing = false;
 		return false;
 	}
 
@@ -366,6 +369,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 
 	if(!httpService->initialize(configuration)) {
 		spdlog::error("Failed to initialize HTTP service!");
+		m_initializing = false;
 		return false;
 	}
 
@@ -380,6 +384,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 	}
 
 	if(!notifyInitializationProgress("Initializing Time Zone Data Manager", aborted)) {
+		m_initializing = false;
 		return false;
 	}
 
@@ -391,6 +396,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 
 		if(!TimeZoneDataManager::getInstance()->initialize(Utilities::joinPaths(settings->dataDirectoryPath, settings->timeZoneDataDirectoryName), settings->fileETags, shouldUpdateTimeZoneData, false, &timeZoneDataUpdated)) {
 			spdlog::error("Failed to initialize time zone data manager!");
+			m_initializing = false;
 			return false;
 		}
 
@@ -401,6 +407,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 	}
 
 	if(!notifyInitializationProgress("Initializing Geo Location Service", aborted)) {
+		m_initializing = false;
 		return false;
 	}
 
@@ -408,10 +415,12 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 
 	if(!geoLocationService->initialize(FREE_GEO_IP_API_KEY)) {
 		spdlog::error("Failed to initialize geo location service!");
+		m_initializing = false;
 		return false;
 	}
 
 	if(!notifyInitializationProgress("Initializing Segment Analytics", aborted)) {
+		m_initializing = false;
 		return false;
 	}
 
@@ -443,18 +452,21 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 	}
 
 	if(!notifyInitializationProgress("Creating DOSBox Command Script Files", aborted)) {
+		m_initializing = false;
 		return false;
 	}
 
 	createDOSBoxTemplateCommandScriptFiles();
 
 	if(!notifyInitializationProgress("Locating Existing Duke Nukem 3D Game Installations", aborted)) {
+		m_initializing = false;
 		return false;
 	}
 
 	GameLocator::getInstance()->locateGames();
 
 	if(!notifyInitializationProgress("Initializing Mod Download Manager", aborted)) {
+		m_initializing = false;
 		return false;
 	}
 
@@ -463,6 +475,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 
 		if(!m_downloadManager->initialize()) {
 			spdlog::error("Failed to initialize download manager!");
+			m_initializing = false;
 			return false;
 		}
 
@@ -470,11 +483,13 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 	}
 
 	if(!notifyInitializationProgress("Initializing DOSBox Manager", aborted)) {
+		m_initializing = false;
 		return false;
 	}
 
 	if(!m_dosboxManager->initialize()) {
 		spdlog::error("Failed to initialize DOSBox manager!");
+		m_initializing = false;
 		return false;
 	}
 
@@ -494,11 +509,13 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 	m_dosboxVersionCollectionItemModifiedConnection = dosboxVersions->itemModified.connect(std::bind(&ModManager::onDOSBoxVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
 
 	if(!notifyInitializationProgress("Initializing Game Manager", aborted)) {
+		m_initializing = false;
 		return false;
 	}
 
 	if(!m_gameManager->initialize()) {
 		spdlog::error("Failed to initialize game manager!");
+		m_initializing = false;
 		return false;
 	}
 
@@ -523,6 +540,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 
 	if(generalDOSBoxConfigurationFilePath.empty()) {
 		spdlog::error("Failed to load general DOSBox configuration file!");
+		m_initializing = false;
 		return false;
 	}
 
@@ -533,6 +551,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 
 		if(generalDOSBoxConfiguration == nullptr) {
 			spdlog::error("Failed to load general DOSBox configuration from file: '{}'.", generalDOSBoxConfigurationFilePath);
+			m_initializing = false;
 			return false;
 		}
 
@@ -546,27 +565,32 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 	}
 
 	if(!notifyInitializationProgress("Loading Mod List", aborted)) {
+		m_initializing = false;
 		return false;
 	}
 
 	if(!m_mods->loadFrom(getModsListFilePath(), getGameVersions().get(), skipFileInfoValidation)) {
 		spdlog::error("Failed to load mod list '{}'!", getModsListFilePath());
+		m_initializing = false;
 		return false;
 	}
 
 	if(m_mods->numberOfMods() == 0) {
 		spdlog::error("No mods loaded!");
+		m_initializing = false;
 		return false;
 	}
 
 	if(!m_mods->checkGameVersions(*getGameVersions())) {
 		spdlog::error("Found at least one invalid or missing game version.");
+		m_initializing = false;
 		return false;
 	}
 
 	spdlog::info("Loaded {} mod{} from '{}'.", m_mods->numberOfMods(), m_mods->numberOfMods() == 1 ? "" : "s", getModsListFilePath());
 
 	if(!notifyInitializationProgress("Loading Installed Stand-Alone Mod List", aborted)) {
+		m_initializing = false;
 		return false;
 	}
 
@@ -577,6 +601,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 	}
 
 	if(!notifyInitializationProgress("Loading Favourite Mod List", aborted)) {
+		m_initializing = false;
 		return false;
 	}
 
@@ -588,6 +613,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 	}
 
 	if(!notifyInitializationProgress("Organizing Mods", aborted)) {
+		m_initializing = false;
 		return false;
 	}
 
@@ -609,6 +635,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 	}
 
 	m_initialized = true;
+	m_initializing = false;
 
 	if(!notifyInitializationProgress("Checking for Missing Files", aborted)) {
 		return false;
