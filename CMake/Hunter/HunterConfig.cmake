@@ -23,9 +23,9 @@ hunter_config(CatchSelfTest
 )
 
 hunter_config(CSSColorParser
-	URL "https://github.com/Telefrag-Software/css-color-cpp/archive/refs/heads/hunter-1.0.0.zip"
-	VERSION "1.0.0"
-	SHA1 "010e7260297e8091d4e97005ebd680eb1cac665b"
+	URL "https://github.com/Telefrag-Software/css-color-cpp/archive/refs/heads/hunter-1.0.0.1.zip"
+	VERSION "1.0.0.1"
+	SHA1 "e66f791c6a5fdeb7425b08333d806ac1cd16ef23"
 )
 
 # LibEXPAT is used by wxWidgets.
