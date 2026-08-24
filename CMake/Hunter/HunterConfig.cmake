@@ -144,14 +144,14 @@ hunter_config(pcre2
 
 # LibPNG is used by wxWidgets.
 hunter_config(PNG
-	URL "https://github.com/Telefrag-Software/libpng/archive/refs/heads/hunter-1.6.53.2.zip"
-	VERSION "1.6.53.2"
-	SHA1 "caa094e0d01bc75599c8574ebb0286945a4139c4"
+	URL "https://github.com/Telefrag-Software/libpng/archive/refs/heads/hunter-1.6.53.3.zip"
+	VERSION "1.6.53.3"
+	SHA1 "89729fe1d0518d6c7d844739a000ecaece97cb10"
 	CMAKE_ARGS
 		BUILD_SHARED_LIBS=OFF
 		PNG_SHARED=OFF
 		PNG_STATIC=ON
-		PNG_EXECUTABLES=OFF
+		PNG_TOOLS=OFF
 		PNG_TESTS=OFF
 		PNG_DEBUG=OFF
 		PNG_DISABLE_AWK=ON
