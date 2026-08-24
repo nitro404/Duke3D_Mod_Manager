@@ -600,7 +600,10 @@ bool DOSBoxManagerPanel::installDOSBoxVersion(size_t index) {
 	}
 
 	m_installProgressDialog = new wxProgressDialog("Installing", fmt::format("Installing '{}', please wait...", dosboxVersion->getLongName()), 101, this, wxPD_CAN_ABORT | wxPD_REMAINING_TIME);
+
+#if defined(D3DMODMGR_ICON)
 	m_installProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
+#endif // D3DMODMGR_ICON
 
 	SignalConnectionGroup dosboxDownloadConnections(
 		dosboxManager->installStatusChanged.connect([this](const std::string & statusMessage) {
@@ -616,7 +619,7 @@ bool DOSBoxManagerPanel::installDOSBoxVersion(size_t index) {
 		})
 	);
 
-	m_installDOSBoxFuture = std::async(std::launch::async, [this, dosboxManager, dosboxVersion, dosboxVersionPanel, destinationDirectoryPath, dosboxDownloadConnections]() mutable {
+	m_installDOSBoxFuture = std::async(std::launch::async, [this, dosboxManager, dosboxVersion, dosboxVersionPanel, destinationDirectoryPath, dosboxDownloadConnections = std::move(dosboxDownloadConnections)]() mutable {
 		bool aborted = false;
 		bool dosboxInstalled = dosboxManager->installLatestDOSBoxVersion(dosboxVersion->getID(), destinationDirectoryPath, true, &aborted);
 

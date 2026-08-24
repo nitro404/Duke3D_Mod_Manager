@@ -3,6 +3,8 @@
 
 #include "../Palette.h"
 
+#include <ByteBuffer.h>
+
 #include <array>
 
 class PaletteDAT final : public Palette {

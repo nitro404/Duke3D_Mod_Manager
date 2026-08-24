@@ -1102,7 +1102,10 @@ bool ModBrowserPanel::installStandAloneMod(std::shared_ptr<ModGameVersion> stand
 	}
 
 	m_installModProgressDialog = new wxProgressDialog("Installing Stand-Alone Mod", fmt::format("Installing '{}', please wait...", standAloneModGameVersion->getParentModVersion()->getFullName()), 101, this, wxPD_CAN_ABORT | wxPD_REMAINING_TIME);
-	m_installModProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
+
+#if defined(D3DMODMGR_ICON)
+    m_installModProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
+#endif // D3DMODMGR_ICON
 
 	SignalConnectionGroup modDownloadConnections(
 		m_modManager->modDownloadStatusChanged.connect([this](const ModGameVersion & modGameVersion, uint8_t downloadStep, uint8_t downloadStepCount, const std::string & status) {
@@ -1120,7 +1123,7 @@ bool ModBrowserPanel::installStandAloneMod(std::shared_ptr<ModGameVersion> stand
 		})
 	);
 
-	m_installModFuture = std::async(std::launch::async, [this, standAloneModGameVersion, destinationDirectoryPath, modDownloadConnections]() mutable {
+	m_installModFuture = std::async(std::launch::async, [this, standAloneModGameVersion, destinationDirectoryPath, modDownloadConnections = std::move(modDownloadConnections)]() mutable {
 		bool aborted = false;
 		bool modInstalled = m_modManager->installStandAloneMod(*standAloneModGameVersion, destinationDirectoryPath, true, &aborted);
 

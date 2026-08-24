@@ -553,7 +553,7 @@ bool PaletteKPL::updateColorSet() const {
 
 		colorSetEntryElement = document.NewElement(KRITA_PALETTE_COLOR_SET_ENTRY_ELEMENT_NAME.c_str());
 		colorSetEntryElement->SetAttribute(KRITA_PALETTE_COLOR_SET_ENTRY_NAME_ATTRIBUTE_NAME.c_str(), fmt::format("#{}", i).c_str());
-		colorSetEntryElement->SetAttribute(KRITA_PALETTE_COLOR_SET_ENTRY_ID_ATTRIBUTE_NAME.c_str(), i + 1);
+		colorSetEntryElement->SetAttribute(KRITA_PALETTE_COLOR_SET_ENTRY_ID_ATTRIBUTE_NAME.c_str(), static_cast<uint64_t>(i + 1));
 		colorSetEntryElement->SetAttribute(KRITA_PALETTE_COLOR_SET_ENTRY_BIT_DEPTH_ATTRIBUTE_NAME.c_str(), std::string(magic_enum::enum_name(BitDepth::U8)).c_str());
 		colorSetEntryElement->SetAttribute(KRITA_PALETTE_COLOR_SET_ENTRY_SPOT_ATTRIBUTE_NAME.c_str(), "false");
 

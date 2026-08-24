@@ -55,10 +55,10 @@ std::unique_ptr<Group> GroupUtilities::combineGroupsFromPaths(Arguments &&... ar
 		std::string_view fileExtension(Utilities::getFileExtension(groupPath));
 
 		if(Utilities::areStringsEqualIgnoreCase(fileExtension, "SSI")) {
-			currentGroup = GroupSSI::loadFrom(groupPath);
+			currentGroup = GroupSSI::loadFrom(std::string(groupPath));
 		}
 		else {
-			currentGroup = GroupGRP::loadFrom(groupPath);
+			currentGroup = GroupGRP::loadFrom(std::string(groupPath));
 		}
 
 		if(combinedGroup == nullptr) {

@@ -295,9 +295,6 @@ public:
 	static const std::string SCREEN_MODE_ENTRY_NAME;
 	static const std::string SCREEN_WIDTH_ENTRY_NAME;
 	static const std::string SCREEN_HEIGHT_ENTRY_NAME;
-	static const std::string SCREEN_MODE_ENTRY_NAME;
-	static const std::string SCREEN_WIDTH_ENTRY_NAME;
-	static const std::string SCREEN_HEIGHT_ENTRY_NAME;
 	static const std::string SCREEN_SHADOWS_ENTRY_NAME;
 	static const std::string SCREEN_PASSWORD_ENTRY_NAME;
 	static const std::string SCREEN_ENVIRONMENT_ENTRY_NAME;

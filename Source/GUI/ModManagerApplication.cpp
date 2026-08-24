@@ -146,7 +146,10 @@ void ModManagerApplication::initialize() {
 		wxPD_AUTO_HIDE | wxPD_CAN_ABORT
 	));
 
+#if defined(D3DMODMGR_ICON)
 	initializingProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
+#endif // D3DMODMGR_ICON
+
 	initializingProgressDialog->Fit();
 
 	m_modManagerInitializationProgressConnection = m_modManager->initializationProgress.connect([this, &initializingProgressDialog](uint8_t initializationStep, uint8_t initializationStepCount, std::string description) {
@@ -199,7 +202,10 @@ void ModManagerApplication::showWindow() {
 		wxPD_AUTO_HIDE | wxPD_CAN_ABORT
 	));
 
+#if defined(D3DMODMGR_ICON)
 	windowCreationProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
+#endif // D3DMODMGR_ICON
+
 	windowCreationProgressDialog->Fit();
 	windowCreationProgressDialog->Update(m_modManager->numberOfInitializationSteps(), windowCreationProgressDialog->GetMessage());
 

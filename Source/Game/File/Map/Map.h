@@ -7,6 +7,7 @@
 #include "Sprite.h"
 #include "Wall.h"
 
+#include <ByteBuffer.h>
 #include <Endianness.h>
 
 #include <rapidjson/document.h>

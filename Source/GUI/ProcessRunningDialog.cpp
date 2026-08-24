@@ -53,7 +53,9 @@ ProcessRunningDialog::ProcessRunningDialog(wxWindow * parent, const std::string 
 	: wxDialog(parent, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxCAPTION | wxCLOSE_BOX, "Process Running Dialog")
 	, m_message(message)
 	, m_messageLabel(nullptr) {
+#if defined(D3DMODMGR_ICON)
 	SetIcon(wxICON(D3DMODMGR_ICON));
+#endif // D3DMODMGR_ICON
 
 	int border = 5;
 

@@ -27,7 +27,9 @@ ModManagerFrame::ModManagerFrame()
 #endif // wxUSE_MENUS
 	, m_notebook(nullptr)
 	, m_settingsManagerPanel(nullptr) {
+#if defined(D3DMODMGR_ICON)
 	SetIcon(wxICON(D3DMODMGR_ICON));
+#endif // D3DMODMGR_ICON
 
 #if wxUSE_MENUS
 	wxMenu * fileMenu = new wxMenu();

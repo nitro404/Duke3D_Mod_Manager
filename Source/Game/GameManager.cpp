@@ -1121,7 +1121,7 @@ static std::vector<NetDuke32Release> getNetDuke32Releases(size_t maxNumberOfRele
 	rapidjson::Value queryVariablesValue(rapidjson::kObjectType);
 
 	queryVariablesValue.AddMember(rapidjson::StringRef("fullPath"), rapidjson::StringRef("StrikerTheHedgefox/eduke32-csrefactor"), allocator);
-	queryVariablesValue.AddMember(rapidjson::StringRef("first"), rapidjson::Value(maxNumberOfReleases), allocator);
+	queryVariablesValue.AddMember(rapidjson::StringRef("first"), rapidjson::Value(static_cast<uint64_t>(maxNumberOfReleases)), allocator);
 	queryVariablesValue.AddMember(rapidjson::StringRef("sort"), rapidjson::Value("RELEASED_AT_DESC"), allocator);
 
 	queryValue.AddMember(rapidjson::StringRef("variables"), queryVariablesValue, allocator);

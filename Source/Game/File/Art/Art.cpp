@@ -893,7 +893,7 @@ Endianness Art::getEndianness() const {
 	return ENDIANNESS;
 }
 
-uint64_t Art::getSizeInBytes() const {
+size_t Art::getSizeInBytes() const {
 	size_t numberOfBytes = (sizeof(uint32_t) * 4) + (m_tiles.size() * ((sizeof(uint16_t) * 2) + sizeof(uint32_t))) + (m_trailingData != nullptr ? m_trailingData->getSize() : 0);
 
 	for(const std::shared_ptr<Tile> & tile : m_tiles) {

@@ -2,7 +2,6 @@
 
 #include "BuildConstants.h"
 
-#include <ByteBuffer.h>
 #include <Utilities/FileUtilities.h>
 #include <Utilities/RapidJSONUtilities.h>
 #include <Utilities/StringUtilities.h>

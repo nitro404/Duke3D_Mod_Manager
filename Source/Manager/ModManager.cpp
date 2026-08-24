@@ -67,7 +67,6 @@
 #include <tinyxml2.h>
 
 #include <array>
-#include <conio.h>
 #include <errno.h>
 #include <filesystem>
 #include <fstream>

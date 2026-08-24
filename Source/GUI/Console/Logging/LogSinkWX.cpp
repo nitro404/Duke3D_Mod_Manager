@@ -1,12 +1,10 @@
 #include "LogSinkWX.h"
 
-#include "../../WXUtilities.h"
+#include "GUI/WXUtilities.h"
 
 #include <Logging/LogSystem.h>
 
 #include <iostream>
-
-#include <windows.h>
 
 LogSinkWX::LogSinkWX()
 	: m_initialized(false) {

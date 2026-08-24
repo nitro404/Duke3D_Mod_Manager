@@ -84,7 +84,7 @@ public:
 	bool saveTo(const std::string & filePath, bool overwrite = true) const override;
 	void addMetadata(std::vector<std::pair<std::string, std::string>> & metadata) const override;
 	Endianness getEndianness() const override;
-	uint64_t getSizeInBytes() const override;
+	size_t getSizeInBytes() const override;
 	bool isValid(bool verifyParent = true) const override;
 
 	bool operator == (const Art & art) const;

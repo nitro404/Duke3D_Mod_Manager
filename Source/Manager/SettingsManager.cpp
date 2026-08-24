@@ -684,35 +684,35 @@ rapidjson::Document SettingsManager::toJSON() const {
 		downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(MOD_LIST_LAST_DOWNLOADED_PROPERTY_NAME), modListLastDownloadedValue, allocator);
 	}
 
-	downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(MOD_LIST_UPDATE_FREQUENCY_PROPERTY_NAME), rapidjson::Value(modListUpdateFrequency.count()), allocator);
+	downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(MOD_LIST_UPDATE_FREQUENCY_PROPERTY_NAME), rapidjson::Value(static_cast<uint64_t>(modListUpdateFrequency.count())), allocator);
 
 	if(dosboxDownloadListLastDownloadedTimestamp.has_value()) {
 		rapidjson::Value dosboxDownloadListLastDownloadedValue(Utilities::timePointToString(dosboxDownloadListLastDownloadedTimestamp.value(), Utilities::TimeFormat::ISO8601).c_str(), allocator);
 		downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_DOWNLOAD_LIST_LAST_DOWNLOADED_PROPERTY_NAME), dosboxDownloadListLastDownloadedValue, allocator);
 	}
 
-	downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_DOWNLOAD_LIST_UPDATE_FREQUENCY_PROPERTY_NAME), rapidjson::Value(dosboxDownloadListUpdateFrequency.count()), allocator);
+	downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(DOSBOX_DOWNLOAD_LIST_UPDATE_FREQUENCY_PROPERTY_NAME), rapidjson::Value(static_cast<uint64_t>(dosboxDownloadListUpdateFrequency.count())), allocator);
 
 	if(gameDownloadListLastDownloadedTimestamp.has_value()) {
 		rapidjson::Value gameDownloadListLastDownloadedValue(Utilities::timePointToString(gameDownloadListLastDownloadedTimestamp.value(), Utilities::TimeFormat::ISO8601).c_str(), allocator);
 		downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(GAME_DOWNLOAD_LIST_LAST_DOWNLOADED_PROPERTY_NAME), gameDownloadListLastDownloadedValue, allocator);
 	}
 
-	downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(GAME_DOWNLOAD_LIST_UPDATE_FREQUENCY_PROPERTY_NAME), rapidjson::Value(gameDownloadListUpdateFrequency.count()), allocator);
+	downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(GAME_DOWNLOAD_LIST_UPDATE_FREQUENCY_PROPERTY_NAME), rapidjson::Value(static_cast<uint64_t>(gameDownloadListUpdateFrequency.count())), allocator);
 
 	if(cacertLastDownloadedTimestamp.has_value()) {
 		rapidjson::Value cacertLastDownloadedValue(Utilities::timePointToString(cacertLastDownloadedTimestamp.value(), Utilities::TimeFormat::ISO8601).c_str(), allocator);
 		downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(CACERT_LAST_DOWNLOADED_PROPERTY_NAME), cacertLastDownloadedValue, allocator);
 	}
 
-	downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(CACERT_UPDATE_FREQUENCY_PROPERTY_NAME), rapidjson::Value(cacertUpdateFrequency.count()), allocator);
+	downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(CACERT_UPDATE_FREQUENCY_PROPERTY_NAME), rapidjson::Value(static_cast<uint64_t>(cacertUpdateFrequency.count())), allocator);
 
 	if(timeZoneDataLastDownloadedTimestamp.has_value()) {
 		rapidjson::Value timeZoneDataLastDownloadedValue(Utilities::timePointToString(timeZoneDataLastDownloadedTimestamp.value(), Utilities::TimeFormat::ISO8601).c_str(), allocator);
 		downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(TIME_ZONE_DATA_LAST_DOWNLOADED_PROPERTY_NAME), timeZoneDataLastDownloadedValue, allocator);
 	}
 
-	downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(TIME_ZONE_DATA_UPDATE_FREQUENCY_PROPERTY_NAME), rapidjson::Value(timeZoneDataUpdateFrequency.count()), allocator);
+	downloadThrottlingCategoryValue.AddMember(rapidjson::StringRef(TIME_ZONE_DATA_UPDATE_FREQUENCY_PROPERTY_NAME), rapidjson::Value(static_cast<uint64_t>(timeZoneDataUpdateFrequency.count())), allocator);
 
 	settingsDocument.AddMember(rapidjson::StringRef(DOWNLOAD_THROTTLING_CATEGORY_NAME), downloadThrottlingCategoryValue, allocator);
 
