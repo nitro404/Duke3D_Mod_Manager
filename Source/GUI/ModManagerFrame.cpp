@@ -22,36 +22,16 @@ ModManagerFrame::ModManagerFrame()
 	: wxFrame(nullptr, wxID_ANY, APPLICATION_NAME, wxDefaultPosition, wxDefaultSize)
 	, m_initialized(false)
 #if wxUSE_MENUS
+	, m_exitMenuItem(nullptr)
 	, m_resetWindowPositionMenuItem(nullptr)
 	, m_resetWindowSizeMenuItem(nullptr)
+	, m_aboutMenuItem(nullptr)
 #endif // wxUSE_MENUS
 	, m_notebook(nullptr)
 	, m_settingsManagerPanel(nullptr) {
 #if defined(D3DMODMGR_ICON)
 	SetIcon(wxICON(D3DMODMGR_ICON));
 #endif // D3DMODMGR_ICON
-
-#if wxUSE_MENUS
-	wxMenu * fileMenu = new wxMenu();
-	fileMenu->Append(wxID_EXIT, "E&xit\tAlt-X", "Close the application");
-
-	wxMenu * viewMenu = new wxMenu();
-	m_resetWindowPositionMenuItem = new wxMenuItem(viewMenu, wxID_ANY, "Reset Window Position", "Resets the window position", wxITEM_NORMAL);
-	viewMenu->Bind(wxEVT_MENU, &ModManagerFrame::onMenuBarItemPressed, this);
-	m_resetWindowSizeMenuItem = new wxMenuItem(viewMenu, wxID_ANY, "Reset Window Size", "Resets the window size", wxITEM_NORMAL);
-	viewMenu->Append(m_resetWindowPositionMenuItem);
-	viewMenu->Append(m_resetWindowSizeMenuItem);
-
-	wxMenu * helpMenu = new wxMenu();
-	helpMenu->Append(wxID_ABOUT, "&About\tF1", "Show application information");
-
-	wxMenuBar * menuBar = new wxMenuBar();
-	menuBar->Append(fileMenu, "&File");
-	menuBar->Append(viewMenu, "&View");
-	menuBar->Append(helpMenu, "&Help");
-
-	SetMenuBar(menuBar);
-#endif // wxUSE_MENUS
 }
 
 ModManagerFrame::~ModManagerFrame() {
@@ -70,6 +50,32 @@ bool ModManagerFrame::initialize(std::shared_ptr<ModManager> modManager) {
 	if(modManager == nullptr) {
 		return false;
 	}
+
+#if wxUSE_MENUS
+	wxMenu * fileMenu = new wxMenu();
+	m_exitMenuItem = new wxMenuItem(fileMenu, wxID_EXIT, "E&xit", "Close the application", wxITEM_NORMAL);
+	fileMenu->Append(m_exitMenuItem);
+	fileMenu->Bind(wxEVT_MENU, &ModManagerFrame::onFileMenuItemPressed, this);
+
+	wxMenu * viewMenu = new wxMenu();
+	m_resetWindowPositionMenuItem = new wxMenuItem(viewMenu, wxID_ANY, "Reset Window Position", "Resets the window position", wxITEM_NORMAL);
+	m_resetWindowSizeMenuItem = new wxMenuItem(viewMenu, wxID_ANY, "Reset Window Size", "Resets the window size", wxITEM_NORMAL);
+	viewMenu->Append(m_resetWindowPositionMenuItem);
+	viewMenu->Append(m_resetWindowSizeMenuItem);
+	viewMenu->Bind(wxEVT_MENU, &ModManagerFrame::onViewMenuItemPressed, this);
+
+	wxMenu * helpMenu = new wxMenu();
+	m_aboutMenuItem = new wxMenuItem(helpMenu, wxID_ABOUT, "&About\tF1", "Show application information", wxITEM_NORMAL);
+	helpMenu->Append(m_aboutMenuItem);
+	helpMenu->Bind(wxEVT_MENU, &ModManagerFrame::onHelpMenuItemPressed, this);
+
+	wxMenuBar * menuBar = new wxMenuBar();
+	menuBar->Append(fileMenu, "&File");
+	menuBar->Append(viewMenu, "&View");
+	menuBar->Append(helpMenu, "&Help");
+
+	SetMenuBar(menuBar);
+#endif // wxUSE_MENUS
 
 	SetPosition(WXUtilities::createWXPoint(SettingsManager::getInstance()->windowPosition));
 	SetSize(WXUtilities::createWXSize(SettingsManager::getInstance()->windowSize));
@@ -158,7 +164,14 @@ bool ModManagerFrame::initialize(std::shared_ptr<ModManager> modManager) {
 }
 
 #if wxUSE_MENUS
-void ModManagerFrame::onMenuBarItemPressed(wxCommandEvent & event) {
+
+void ModManagerFrame::onFileMenuItemPressed(wxCommandEvent & event) {
+	if(event.GetId() == m_exitMenuItem->GetId()) {
+		Close();
+	}
+}
+
+void ModManagerFrame::onViewMenuItemPressed(wxCommandEvent & event) {
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	if(event.GetId() == m_resetWindowPositionMenuItem->GetId()) {
@@ -171,6 +184,28 @@ void ModManagerFrame::onMenuBarItemPressed(wxCommandEvent & event) {
 		SetSize(WXUtilities::createWXSize(settings->windowSize));
 	}
 }
+
+void ModManagerFrame::onHelpMenuItemPressed(wxCommandEvent & event) {
+	if(event.GetId() == m_aboutMenuItem->GetId()) {
+		wxMessageBox(
+			fmt::format(
+				"{} {} ({})\n"
+				"Created by: Kevin Scroggins\n"
+				"\n"
+				"Library Information:\n"
+				"{}",
+				APPLICATION_NAME,
+				APPLICATION_VERSION,
+				APPLICATION_COMMIT_HASH,
+				LibraryInformation::getInstance()->getLibraryInformationString()
+			),
+			"About",
+			wxOK | wxICON_INFORMATION,
+			this
+		);
+	}
+}
+
 #endif // wxUSE_MENUS
 
 void ModManagerFrame::onNotebookPageChanging(wxBookCtrlEvent & event) {
@@ -213,29 +248,6 @@ void ModManagerFrame::onNotebookPageChanged(wxBookCtrlEvent & event) {
 	}
 }
 
-void ModManagerFrame::onQuit(wxCommandEvent& WXUNUSED(event)) {
-	Close();
-}
-
-void ModManagerFrame::onAbout(wxCommandEvent& WXUNUSED(event)) {
-	wxMessageBox(
-		fmt::format(
-			"{} {} ({})\n"
-			"Created by: Kevin Scroggins\n"
-			"\n"
-			"Library Information:\n"
-			"{}",
-			APPLICATION_NAME,
-			APPLICATION_VERSION,
-			APPLICATION_COMMIT_HASH,
-			LibraryInformation::getInstance()->getLibraryInformationString()
-		),
-		"About",
-		wxOK | wxICON_INFORMATION,
-		this
-	);
-}
-
 void ModManagerFrame::onSettingsReset() {
 	requestReload();
 }
@@ -249,8 +261,3 @@ void ModManagerFrame::requestReload() {
 
 	Close();
 }
-
-wxBEGIN_EVENT_TABLE(ModManagerFrame, wxFrame)
-	EVT_MENU(wxID_EXIT, ModManagerFrame::onQuit)
-	EVT_MENU(wxID_ABOUT, ModManagerFrame::onAbout)
-wxEND_EVENT_TABLE()

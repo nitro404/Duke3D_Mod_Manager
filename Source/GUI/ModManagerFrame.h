@@ -30,7 +30,9 @@ public:
 	bool initialize(std::shared_ptr<ModManager> modManager);
 
 #if wxUSE_MENUS
-	void onMenuBarItemPressed(wxCommandEvent & event);
+	void onFileMenuItemPressed(wxCommandEvent & event);
+	void onViewMenuItemPressed(wxCommandEvent & event);
+	void onHelpMenuItemPressed(wxCommandEvent & event);
 #endif // wxUSE_MENUS
 
 	boost::signals2::signal<void ()> reloadRequested;
@@ -39,14 +41,14 @@ private:
 	void requestReload();
 	void onNotebookPageChanging(wxBookCtrlEvent & event);
 	void onNotebookPageChanged(wxBookCtrlEvent & event);
-	void onQuit(wxCommandEvent & event);
-	void onAbout(wxCommandEvent & event);
 	void onSettingsReset();
 	void onSettingsSaved();
 
 #if wxUSE_MENUS
+	wxMenuItem * m_exitMenuItem;
 	wxMenuItem * m_resetWindowPositionMenuItem;
 	wxMenuItem * m_resetWindowSizeMenuItem;
+	wxMenuItem * m_aboutMenuItem;
 #endif // wxUSE_MENUS
 
 	bool m_initialized;
@@ -56,8 +58,6 @@ private:
 
 	ModManagerFrame(const ModManagerFrame &) = delete;
 	const ModManagerFrame & operator = (const ModManagerFrame &) = delete;
-
-	wxDECLARE_EVENT_TABLE();
 };
 
 #endif // _MOD_MANAGER_FRAME_H_
