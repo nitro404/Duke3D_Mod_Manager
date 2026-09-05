@@ -30,9 +30,9 @@ hunter_config(CSSColorParser
 
 # LibEXPAT is used by wxWidgets.
 hunter_config(Expat
-	URL "https://codeload.github.com/libexpat/libexpat/zip/tags/R_2_7_3"
-	VERSION "2.7.3.0"
-	SHA1 "af45665222bb5c749a0750e971f2f72839f8999c"
+	URL "https://codeload.github.com/libexpat/libexpat/zip/tags/R_2_8_4"
+	VERSION "2.8.4.0"
+	SHA1 "fbc849a74cca6aaf1a3d304a0d11b1ec700fd372"
 	CMAKE_ARGS
 		EXPAT_BUILD_TOOLS=OFF
 		EXPAT_BUILD_EXAMPLES=OFF
