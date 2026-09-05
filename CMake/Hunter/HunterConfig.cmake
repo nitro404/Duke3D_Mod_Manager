@@ -83,9 +83,9 @@ hunter_config(scintilla
 
 # LibTIFF is used by wxWidgets.
 hunter_config(TIFF
-	URL "https://github.com/Telefrag-Software/libtiff/archive/refs/heads/hunter-4.7.2.0.zip"
-	VERSION "4.7.2.0"
-	SHA1 "a8cbd5e7aac5e07f739b1a09154c070867a1e235"
+	URL "https://github.com/Telefrag-Software/libtiff/archive/refs/heads/hunter-4.7.2.1.zip"
+	VERSION "4.7.2.1"
+	SHA1 "26b4fa23e9e9442cfcb15b729e8d0888412f60e7"
 	CMAKE_ARGS
 		BUILD_SHARED_LIBS=OFF
 		tiff-cxx=ON
