@@ -9,14 +9,47 @@
 #include <fmt/core.h>
 #include <wx/gbsizer.h>
 
+wxDECLARE_EVENT(EVENT_PROCESS_STATUS_UPDATED, ProcessStatusUpdatedEvent);
+
+class ProcessStatusUpdatedEvent final : public wxEvent {
+public:
+	ProcessStatusUpdatedEvent(const std::string & statusMessage = {})
+		: wxEvent(0, EVENT_PROCESS_STATUS_UPDATED)
+		, m_statusMessage(statusMessage) { }
+
+	~ProcessStatusUpdatedEvent() override { }
+
+	// wxEvent Virtuals
+	wxEvent * Clone() const override {
+		return new ProcessStatusUpdatedEvent(*this);
+	}
+
+	const std::string & getStatusMessage() const {
+		return m_statusMessage;
+	}
+
+	void setStatusMessage(const std::string & statusMessage) {
+		m_statusMessage = statusMessage;
+	}
+
+	DECLARE_DYNAMIC_CLASS(ProcessStatusUpdatedEvent);
+
+private:
+	std::string m_statusMessage;
+};
+
+IMPLEMENT_DYNAMIC_CLASS(ProcessStatusUpdatedEvent, wxEvent);
+
+wxDEFINE_EVENT(EVENT_PROCESS_STATUS_UPDATED, ProcessStatusUpdatedEvent);
+
 wxDECLARE_EVENT(EVENT_PROCESS_TERMINATED, ProcessTerminatedEvent);
 
 class ProcessTerminatedEvent final : public wxEvent {
 public:
-	ProcessTerminatedEvent()
+	ProcessTerminatedEvent(uint64_t nativeExitCode = 0u, bool forceTerminated = false)
 		: wxEvent(0, EVENT_PROCESS_TERMINATED)
-		, m_nativeExitCode(0)
-		, m_forceTerminated(false) { }
+		, m_nativeExitCode(nativeExitCode)
+		, m_forceTerminated(forceTerminated) { }
 
 	~ProcessTerminatedEvent() override { }
 
@@ -78,6 +111,9 @@ ProcessRunningDialog::ProcessRunningDialog(wxWindow * parent, const std::string 
 	processRunningDialogSizer->Add(contentsPanel, 1, wxEXPAND | wxALL, border);
 	SetSizer(processRunningDialogSizer);
 	Fit();
+
+	Bind(EVENT_PROCESS_STATUS_UPDATED, &ProcessRunningDialog::onProcessStatusUpdated, this);
+	Bind(EVENT_PROCESS_TERMINATED, &ProcessRunningDialog::onProcessTerminated, this);
 }
 
 ProcessRunningDialog::~ProcessRunningDialog() {
@@ -85,9 +121,7 @@ ProcessRunningDialog::~ProcessRunningDialog() {
 }
 
 void ProcessRunningDialog::setStatus(const std::string & status) {
-	m_messageLabel->SetLabelText(fmt::format("{}\n\n{}", m_message, status));
-
-	Fit();
+	QueueEvent(new ProcessStatusUpdatedEvent(status));
 }
 
 void ProcessRunningDialog::clearStatus() {
@@ -105,8 +139,6 @@ void ProcessRunningDialog::setProcess(std::shared_ptr<Process> process) {
 
 	m_process = process;
 	m_processTerminatedConnection = m_process->terminated.connect(std::bind(static_cast<void(ProcessRunningDialog::*)(uint64_t, bool)>(&ProcessRunningDialog::onProcessTerminated), this, std::placeholders::_1, std::placeholders::_2));
-
-	Bind(EVENT_PROCESS_TERMINATED, &ProcessRunningDialog::onProcessTerminated, this);
 }
 
 void ProcessRunningDialog::close() {
@@ -122,9 +154,13 @@ void ProcessRunningDialog::close() {
 }
 
 void ProcessRunningDialog::onProcessTerminated(uint64_t nativeExitCode, bool forceTerminated) {
-	ProcessTerminatedEvent * processTerminatedEvent = new ProcessTerminatedEvent();
-	processTerminatedEvent->setProcessExitStatus(nativeExitCode, forceTerminated);
-	QueueEvent(processTerminatedEvent);
+	QueueEvent(new ProcessTerminatedEvent(nativeExitCode, forceTerminated));
+}
+
+void ProcessRunningDialog::onProcessStatusUpdated(ProcessStatusUpdatedEvent & processStatusUpdatedEvent) {
+	m_messageLabel->SetLabelText(fmt::format("{}\n\n{}", m_message, processStatusUpdatedEvent.getStatusMessage()));
+
+	Fit();
 }
 
 void ProcessRunningDialog::onProcessTerminated(ProcessTerminatedEvent & processTerminatedEvent) {

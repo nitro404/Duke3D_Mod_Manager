@@ -16,6 +16,7 @@
 #include <string>
 
 class Process;
+class ProcessStatusUpdatedEvent;
 class ProcessTerminatedEvent;
 
 class ProcessRunningDialog final : public wxDialog {
@@ -31,6 +32,7 @@ public:
 private:
 	void onProcessTerminated(uint64_t nativeExitCode, bool forceTerminated);
 	void onProcessTerminated(ProcessTerminatedEvent & processTerminatedEvent);
+	void onProcessStatusUpdated(ProcessStatusUpdatedEvent & processStatusUpdatedEvent);
 	void onCloseButtonPressed(wxCommandEvent & event);
 	void onClose(wxCloseEvent & closeEvent);
 
