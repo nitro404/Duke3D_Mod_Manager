@@ -7,6 +7,8 @@
 ModDownloadsPanel::ModDownloadsPanel(wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "Mod Downloads")
 	, m_downloadsPanelSizer(nullptr) {
+	wxASSERT(wxIsMainThread());
+
 	int border = 5;
 
 	m_downloadsPanelSizer = new wxFlexGridSizer(1, border, border);
@@ -16,6 +18,8 @@ ModDownloadsPanel::ModDownloadsPanel(wxWindow * parent, wxWindowID windowID, con
 ModDownloadsPanel::~ModDownloadsPanel() { }
 
 void ModDownloadsPanel::setMod(std::shared_ptr<Mod> mod) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_mod == mod) {
 		return;
 	}

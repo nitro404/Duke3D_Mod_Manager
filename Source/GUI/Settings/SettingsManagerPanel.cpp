@@ -25,6 +25,8 @@ SettingsManagerPanel::SettingsManagerPanel(std::shared_ptr<ModManager> modManage
 	, m_modified(false)
 	, m_discardChangesButton(nullptr)
 	, m_saveSettingsButton(nullptr) {
+	wxASSERT(wxIsMainThread());
+
 	SettingsManager * settings = SettingsManager::getInstance();
 	std::shared_ptr<DOSBoxVersionCollection> dosboxVersions(m_modManager->getDOSBoxVersions());
 	std::shared_ptr<GameVersionCollection> gameVersions(m_modManager->getGameVersions());
@@ -197,6 +199,8 @@ bool SettingsManagerPanel::isModified() const {
 }
 
 bool SettingsManagerPanel::isValid() const {
+	wxASSERT(wxIsMainThread());
+
 	for(const SettingPanel * settingPanel : m_settingsPanels) {
 		if(!settingPanel->isValid()) {
 			return false;
@@ -207,6 +211,8 @@ bool SettingsManagerPanel::isValid() const {
 }
 
 void SettingsManagerPanel::reset() {
+	wxASSERT(wxIsMainThread());
+
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	if(settings->segmentAnalyticsEnabled) {
@@ -222,6 +228,8 @@ void SettingsManagerPanel::reset() {
 }
 
 void SettingsManagerPanel::discard() {
+	wxASSERT(wxIsMainThread());
+
 	for(SettingPanel * settingPanel : m_settingsPanels) {
 		settingPanel->discard();
 	}
@@ -233,6 +241,8 @@ void SettingsManagerPanel::discard() {
 }
 
 bool SettingsManagerPanel::save() {
+	wxASSERT(wxIsMainThread());
+
 	size_t numberOfInvalidSettings = 0;
 	std::stringstream invalidSettingPanelNames;
 
@@ -293,11 +303,15 @@ bool SettingsManagerPanel::save() {
 }
 
 void SettingsManagerPanel::updateButtons() {
+	wxASSERT(wxIsMainThread());
+
 	WXUtilities::setButtonEnabled(m_discardChangesButton, m_modified);
 	WXUtilities::setButtonEnabled(m_saveSettingsButton, m_modified);
 }
 
 void SettingsManagerPanel::onResetDefaultsButtonPressed(wxCommandEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	int resetDefaultsResult = wxMessageBox("Are you sure you want to reset to default settings? Application will automatically re-load after settings reset.", "Reset Settings", wxYES_NO | wxCANCEL | wxICON_WARNING, this);
 
 	if(resetDefaultsResult == wxYES) {
@@ -314,6 +328,8 @@ void SettingsManagerPanel::onSaveSettingsButtonPressed(wxCommandEvent & event) {
 }
 
 void SettingsManagerPanel::onSettingModified(SettingPanel & settingPanel) {
+	wxASSERT(wxIsMainThread());
+
 	if(settingPanel.isModified()) {
 		m_modified = true;
 
@@ -323,17 +339,25 @@ void SettingsManagerPanel::onSettingModified(SettingPanel & settingPanel) {
 }
 
 void SettingsManagerPanel::onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection) {
+	wxASSERT(wxIsMainThread());
+
 	m_preferredDOSBoxVersionSettingPanel->setChoices(dosboxVersionCollection.getDOSBoxVersionShortNames(false));
 }
 
 void SettingsManagerPanel::onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion) {
+	wxASSERT(wxIsMainThread());
+
 	m_preferredDOSBoxVersionSettingPanel->setChoices(dosboxVersionCollection.getDOSBoxVersionShortNames(false));
 }
 
 void SettingsManagerPanel::onGameVersionCollectionSizeChanged(GameVersionCollection & gameVersionCollection) {
+	wxASSERT(wxIsMainThread());
+
 	m_preferredGameVersionSettingPanel->setChoices(gameVersionCollection.getGameVersionShortNames(false));
 }
 
 void SettingsManagerPanel::onGameVersionCollectionItemModified(GameVersionCollection & gameVersionCollection, GameVersion & gameVersion) {
+	wxASSERT(wxIsMainThread());
+
 	m_preferredGameVersionSettingPanel->setChoices(gameVersionCollection.getGameVersionShortNames(false));
 }

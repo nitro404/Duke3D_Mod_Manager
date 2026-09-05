@@ -5,6 +5,8 @@
 MetadataPanel::MetadataPanel(wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style, const std::string & title)
 	: wxScrolledWindow(parent, windowID, position, size, style, title.empty() ? "Metadata" : title)
 	, m_metadataPanelSizer(nullptr) {
+	wxASSERT(wxIsMainThread());
+
 	SetScrollRate(5, 5);
 
 	int border = 5;
@@ -18,6 +20,8 @@ MetadataPanel::MetadataPanel(wxWindow * parent, wxWindowID windowID, const wxPoi
 MetadataPanel::~MetadataPanel() { }
 
 void MetadataPanel::setMetadata(const std::vector<std::pair<std::string, std::string>> & metadata) {
+	wxASSERT(wxIsMainThread());
+
 	Freeze();
 
 	clearMetadata();
@@ -43,6 +47,8 @@ void MetadataPanel::setMetadata(const std::vector<std::pair<std::string, std::st
 }
 
 void MetadataPanel::clearMetadata() {
+	wxASSERT(wxIsMainThread());
+
 	DestroyChildren();
 	m_metadataText.clear();
 }

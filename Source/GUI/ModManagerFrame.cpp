@@ -29,6 +29,8 @@ ModManagerFrame::ModManagerFrame()
 #endif // wxUSE_MENUS
 	, m_notebook(nullptr)
 	, m_settingsManagerPanel(nullptr) {
+	wxASSERT(wxIsMainThread());
+
 #if defined(D3DMODMGR_ICON)
 	SetIcon(wxICON(D3DMODMGR_ICON));
 #endif // D3DMODMGR_ICON
@@ -43,6 +45,8 @@ bool ModManagerFrame::isInitialized() const {
 }
 
 bool ModManagerFrame::initialize(std::shared_ptr<ModManager> modManager) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_initialized) {
 		return true;
 	}
@@ -170,12 +174,16 @@ bool ModManagerFrame::initialize(std::shared_ptr<ModManager> modManager) {
 #if wxUSE_MENUS
 
 void ModManagerFrame::onFileMenuItemPressed(wxCommandEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(event.GetId() == m_exitMenuItem->GetId()) {
 		Close();
 	}
 }
 
 void ModManagerFrame::onViewMenuItemPressed(wxCommandEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	if(event.GetId() == m_resetWindowPositionMenuItem->GetId()) {
@@ -190,6 +198,8 @@ void ModManagerFrame::onViewMenuItemPressed(wxCommandEvent & event) {
 }
 
 void ModManagerFrame::onHelpMenuItemPressed(wxCommandEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(event.GetId() == m_aboutMenuItem->GetId()) {
 		wxMessageBox(
 			fmt::format(
@@ -213,6 +223,8 @@ void ModManagerFrame::onHelpMenuItemPressed(wxCommandEvent & event) {
 #endif // wxUSE_MENUS
 
 void ModManagerFrame::onNotebookPageChanging(wxBookCtrlEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	wxWindow * currentPage = m_notebook->GetPage(m_notebook->GetSelection());
 
 	if(dynamic_cast<SettingsManagerPanel *>(currentPage) != nullptr) {
@@ -238,6 +250,8 @@ void ModManagerFrame::onNotebookPageChanging(wxBookCtrlEvent & event) {
 }
 
 void ModManagerFrame::onNotebookPageChanged(wxBookCtrlEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	wxWindow * currentPage = m_notebook->GetPage(m_notebook->GetSelection());
 
 	if(dynamic_cast<SettingsManagerPanel *>(currentPage) != nullptr) {
@@ -261,6 +275,8 @@ void ModManagerFrame::onSettingsSaved() {
 }
 
 void ModManagerFrame::requestReload() {
+	wxASSERT(wxIsMainThread());
+
 	reloadRequested();
 
 	Close();

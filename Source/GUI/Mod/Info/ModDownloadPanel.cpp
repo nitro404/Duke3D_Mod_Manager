@@ -23,6 +23,8 @@
 ModDownloadPanel::ModDownloadPanel(std::shared_ptr<ModDownload> modDownload, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "Mod Download")
 	, m_download(modDownload) {
+	wxASSERT(wxIsMainThread());
+
 	if(ModDownload::isValid(modDownload.get(), true)) {
 		const Mod * mod = modDownload->getParentMod();
 		std::shared_ptr<ModVersion> modVersion(modDownload->getModVersion());
@@ -95,6 +97,8 @@ ModDownloadPanel::ModDownloadPanel(std::shared_ptr<ModDownload> modDownload, wxW
 ModDownloadPanel::~ModDownloadPanel() { }
 
 void ModDownloadPanel::onModDownloadHyperlinkClicked(wxHyperlinkEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		const Mod * mod = m_download->getParentMod();
 

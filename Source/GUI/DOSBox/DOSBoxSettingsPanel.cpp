@@ -14,6 +14,8 @@ DOSBoxSettingsPanel::DOSBoxSettingsPanel(std::shared_ptr<ModManager> modManager,
 	, m_modManager(modManager)
 	, m_preferredDOSBoxVersionSettingPanel(nullptr)
 	, m_modified(false) {
+	wxASSERT(wxIsMainThread());
+
 	SettingsManager * settings = SettingsManager::getInstance();
 	std::shared_ptr<DOSBoxVersionCollection> dosboxVersions(modManager->getDOSBoxVersions());
 
@@ -67,6 +69,8 @@ DOSBoxSettingsPanel::~DOSBoxSettingsPanel() {
 }
 
 bool DOSBoxSettingsPanel::areSettingsModified() const {
+	wxASSERT(wxIsMainThread());
+
 	for(const SettingPanel * settingPanel : m_settingsPanels) {
 		if(settingPanel->isModified()) {
 			return true;
@@ -77,6 +81,8 @@ bool DOSBoxSettingsPanel::areSettingsModified() const {
 }
 
 bool DOSBoxSettingsPanel::areSettingsValid() const {
+	wxASSERT(wxIsMainThread());
+
 	for(const SettingPanel * settingPanel : m_settingsPanels) {
 		if(!settingPanel->isValid()) {
 			return false;
@@ -87,12 +93,16 @@ bool DOSBoxSettingsPanel::areSettingsValid() const {
 }
 
 void DOSBoxSettingsPanel::updateSettings() {
+	wxASSERT(wxIsMainThread());
+
 	for(SettingPanel * settingPanel : m_settingsPanels) {
 		settingPanel->update();
 	}
 }
 
 bool DOSBoxSettingsPanel::saveSettings() {
+	wxASSERT(wxIsMainThread());
+
 	size_t numberOfInvalidSettings = 0;
 	std::stringstream invalidSettingPanelNames;
 
@@ -143,12 +153,16 @@ bool DOSBoxSettingsPanel::saveSettings() {
 }
 
 void DOSBoxSettingsPanel::discardSettings() {
+	wxASSERT(wxIsMainThread());
+
 	for(SettingPanel * settingPanel : m_settingsPanels) {
 		settingPanel->discard();
 	}
 }
 
 void DOSBoxSettingsPanel::resetSettings() {
+	wxASSERT(wxIsMainThread());
+
 	for(SettingPanel * settingPanel : m_settingsPanels) {
 		settingPanel->reset();
 	}
@@ -159,10 +173,14 @@ void DOSBoxSettingsPanel::onSettingModified(SettingPanel & settingPanel) {
 }
 
 void DOSBoxSettingsPanel::onDOSBoxVersionCollectionSizeChanged(DOSBoxVersionCollection & dosboxVersionCollection) {
+	wxASSERT(wxIsMainThread());
+
 	m_preferredDOSBoxVersionSettingPanel->setChoices(dosboxVersionCollection.getDOSBoxVersionShortNames(false), dosboxVersionCollection.getDOSBoxVersionIdentifiers());
 }
 
 void DOSBoxSettingsPanel::onDOSBoxVersionCollectionItemModified(DOSBoxVersionCollection & dosboxVersionCollection, DOSBoxVersion & dosboxVersion) {
+	wxASSERT(wxIsMainThread());
+
 	m_preferredDOSBoxVersionSettingPanel->setChoices(dosboxVersionCollection.getDOSBoxVersionShortNames(false), dosboxVersionCollection.getDOSBoxVersionIdentifiers());
 }
 

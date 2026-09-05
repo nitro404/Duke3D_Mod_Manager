@@ -11,6 +11,8 @@
 ModTeamMembersPanel::ModTeamMembersPanel(wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "Mod Team Members")
 	, m_teamMembersPanelSizer(nullptr) {
+	wxASSERT(wxIsMainThread());
+
 	int border = 5;
 
 	m_teamMembersPanelSizer = new wxFlexGridSizer(1, border, border);
@@ -22,6 +24,8 @@ ModTeamMembersPanel::~ModTeamMembersPanel() {
 }
 
 void ModTeamMembersPanel::setTeam(std::shared_ptr<ModTeam> team) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_team == team) {
 		return;
 	}
@@ -51,5 +55,7 @@ void ModTeamMembersPanel::setTeam(std::shared_ptr<ModTeam> team) {
 }
 
 void ModTeamMembersPanel::onModTeamMemberSelectionRequested(const std::string & modTeamMemberName) {
+	wxASSERT(wxIsMainThread());
+
 	modTeamMemberSelectionRequested(modTeamMemberName);
 }

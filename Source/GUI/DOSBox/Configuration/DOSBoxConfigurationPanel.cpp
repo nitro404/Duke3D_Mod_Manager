@@ -24,6 +24,8 @@ DOSBoxConfigurationPanel::DOSBoxConfigurationPanel(std::shared_ptr<DOSBoxConfigu
 	, m_removeEntryButton(nullptr)
 	, m_discardConfigurationButton(nullptr)
 	, m_saveConfigurationButton(nullptr) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration != nullptr) {
 		m_dosboxConfigurationConnections = SignalConnectionGroup(
 			m_dosboxConfiguration->configurationModified.connect(std::bind(&DOSBoxConfigurationPanel::onConfigurationModified, this, std::placeholders::_1)),
@@ -161,20 +163,32 @@ bool DOSBoxConfigurationPanel::isEnabled() const {
 }
 
 void DOSBoxConfigurationPanel::enable() {
+	wxASSERT(wxIsMainThread());
+
 	setEnabled(true);
 }
 
 void DOSBoxConfigurationPanel::disable() {
+	wxASSERT(wxIsMainThread());
+
 	setEnabled(false);
 }
 
 void DOSBoxConfigurationPanel::setEnabled(bool enabled) {
+	wxASSERT(wxIsMainThread());
+
+	if(m_enabled == enabled) {
+		return;
+	}
+
 	m_enabled = enabled;
 
 	update();
 }
 
 bool DOSBoxConfigurationPanel::isModified() const {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration == nullptr) {
 		return false;
 	}
@@ -183,6 +197,8 @@ bool DOSBoxConfigurationPanel::isModified() const {
 }
 
 std::string DOSBoxConfigurationPanel::getPanelName() const {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration == nullptr) {
 		return {};
 	}
@@ -203,6 +219,8 @@ bool DOSBoxConfigurationPanel::isValid() const {
 }
 
 bool DOSBoxConfigurationPanel::save() {
+	wxASSERT(wxIsMainThread());
+
 	if(!m_enabled || !isValid() || !m_dosboxConfiguration->hasFilePath()) {
 		return false;
 	}
@@ -220,6 +238,8 @@ bool DOSBoxConfigurationPanel::save() {
 }
 
 void DOSBoxConfigurationPanel::discard() {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration == nullptr || !m_enabled) {
 		return;
 	}
@@ -231,6 +251,8 @@ void DOSBoxConfigurationPanel::discard() {
 }
 
 bool DOSBoxConfigurationPanel::selectSection(size_t sectionIndex) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration == nullptr) {
 		return false;
 	}
@@ -246,6 +268,8 @@ bool DOSBoxConfigurationPanel::selectSection(size_t sectionIndex) {
 }
 
 bool DOSBoxConfigurationPanel::selectSection(std::shared_ptr<DOSBoxConfiguration::Section> section) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration == nullptr) {
 		return false;
 	}
@@ -273,6 +297,8 @@ bool DOSBoxConfigurationPanel::selectSection(std::shared_ptr<DOSBoxConfiguration
 }
 
 void DOSBoxConfigurationPanel::clearSelectedSection() {
+	wxASSERT(wxIsMainThread());
+
 	m_configurationSectionPropertyGrid->Clear();
 	m_sectionListBox->SetSelection(wxNOT_FOUND);
 	m_selectedSection.reset();
@@ -281,10 +307,14 @@ void DOSBoxConfigurationPanel::clearSelectedSection() {
 }
 
 void DOSBoxConfigurationPanel::update() {
+	wxASSERT(wxIsMainThread());
+
 	updateButtons();
 }
 
 void DOSBoxConfigurationPanel::updateButtons() {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration == nullptr) {
 		for(wxButton * actionButton : m_actionButtons) {
 			actionButton->Disable();
@@ -309,6 +339,8 @@ void DOSBoxConfigurationPanel::updateButtons() {
 }
 
 void DOSBoxConfigurationPanel::onSectionSelected(wxCommandEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(!isValid()) {
 		return;
 	}
@@ -323,6 +355,8 @@ void DOSBoxConfigurationPanel::onSectionSelected(wxCommandEvent & event) {
 }
 
 void DOSBoxConfigurationPanel::onConfigurationSectionPropertyGridChanged(wxPropertyGridEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_selectedSection == nullptr || !m_enabled) {
 		spdlog::error("Tried to update DOSBox configuration section entry value with no section selected.");
 		return;
@@ -352,6 +386,8 @@ void DOSBoxConfigurationPanel::onConfigurationSectionPropertyGridChanged(wxPrope
 }
 
 void DOSBoxConfigurationPanel::onAddSectionButtonPressed(wxCommandEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration == nullptr || !m_enabled) {
 		return;
 	}
@@ -384,6 +420,8 @@ void DOSBoxConfigurationPanel::onAddSectionButtonPressed(wxCommandEvent & event)
 }
 
 void DOSBoxConfigurationPanel::onRenameSectionButtonPressed(wxCommandEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration == nullptr || m_selectedSection == nullptr || !m_enabled) {
 		return;
 	}
@@ -418,6 +456,8 @@ void DOSBoxConfigurationPanel::onRenameSectionButtonPressed(wxCommandEvent & eve
 }
 
 void DOSBoxConfigurationPanel::onRemoveSectionButtonPressed(wxCommandEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration == nullptr || m_selectedSection == nullptr || !m_enabled) {
 		return;
 	}
@@ -437,6 +477,8 @@ void DOSBoxConfigurationPanel::onRemoveSectionButtonPressed(wxCommandEvent & eve
 }
 
 void DOSBoxConfigurationPanel::onAddEntryButtonPressed(wxCommandEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration == nullptr || m_selectedSection == nullptr || !m_enabled) {
 		return;
 	}
@@ -478,6 +520,8 @@ void DOSBoxConfigurationPanel::onAddEntryButtonPressed(wxCommandEvent & event) {
 }
 
 void DOSBoxConfigurationPanel::onEditEntryButtonPressed(wxCommandEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration == nullptr || m_selectedSection == nullptr || m_selectedSection->numberOfEntries() == 0 || !m_enabled) {
 		return;
 	}
@@ -511,6 +555,8 @@ void DOSBoxConfigurationPanel::onEditEntryButtonPressed(wxCommandEvent & event) 
 }
 
 void DOSBoxConfigurationPanel::onRenameEntryButtonPressed(wxCommandEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration == nullptr || m_selectedSection == nullptr || !m_enabled) {
 		return;
 	}
@@ -558,6 +604,8 @@ void DOSBoxConfigurationPanel::onRenameEntryButtonPressed(wxCommandEvent & event
 }
 
 void DOSBoxConfigurationPanel::onRemoveEntryButtonPressed(wxCommandEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration == nullptr || m_selectedSection == nullptr || !m_enabled) {
 		return;
 	}
@@ -592,6 +640,8 @@ void DOSBoxConfigurationPanel::onSaveConfigurationButtonPressed(wxCommandEvent &
 }
 
 void DOSBoxConfigurationPanel::onConfigurationModified(DOSBoxConfiguration & dosboxConfiguration) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration.get() != &dosboxConfiguration) {
 		return;
 	}
@@ -600,6 +650,8 @@ void DOSBoxConfigurationPanel::onConfigurationModified(DOSBoxConfiguration & dos
 }
 
 void DOSBoxConfigurationPanel::onConfigurationSectionNameChanged(DOSBoxConfiguration & dosboxConfiguration, std::shared_ptr<DOSBoxConfiguration::Section> section, size_t sectionIndex, std::string oldSectionName) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration.get() != &dosboxConfiguration) {
 		return;
 	}
@@ -610,6 +662,8 @@ void DOSBoxConfigurationPanel::onConfigurationSectionNameChanged(DOSBoxConfigura
 }
 
 void DOSBoxConfigurationPanel::onConfigurationSectionAdded(DOSBoxConfiguration & dosboxConfiguration, std::shared_ptr<DOSBoxConfiguration::Section> newSection, size_t sectionIndex) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration.get() != &dosboxConfiguration) {
 		return;
 	}
@@ -618,6 +672,8 @@ void DOSBoxConfigurationPanel::onConfigurationSectionAdded(DOSBoxConfiguration &
 }
 
 void DOSBoxConfigurationPanel::onConfigurationSectionReplaced(DOSBoxConfiguration & dosboxConfiguration, std::shared_ptr<DOSBoxConfiguration::Section> newSection, size_t sectionIndex, std::shared_ptr<DOSBoxConfiguration::Section> oldSection) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration.get() != &dosboxConfiguration) {
 		return;
 	}
@@ -632,6 +688,8 @@ void DOSBoxConfigurationPanel::onConfigurationSectionReplaced(DOSBoxConfiguratio
 }
 
 void DOSBoxConfigurationPanel::onConfigurationSectionInserted(DOSBoxConfiguration & dosboxConfiguration, std::shared_ptr<DOSBoxConfiguration::Section> newSection, size_t sectionIndex) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration.get() != &dosboxConfiguration) {
 		return;
 	}
@@ -646,6 +704,8 @@ void DOSBoxConfigurationPanel::onConfigurationSectionInserted(DOSBoxConfiguratio
 }
 
 void DOSBoxConfigurationPanel::onConfigurationSectionRemoved(DOSBoxConfiguration & dosboxConfiguration, std::shared_ptr<DOSBoxConfiguration::Section> section, size_t sectionIndex) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration.get() != &dosboxConfiguration) {
 		return;
 	}
@@ -658,6 +718,8 @@ void DOSBoxConfigurationPanel::onConfigurationSectionRemoved(DOSBoxConfiguration
 }
 
 void DOSBoxConfigurationPanel::onConfigurationSectionsCleared(DOSBoxConfiguration & dosboxConfiguration) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration.get() != &dosboxConfiguration) {
 		return;
 	}
@@ -668,6 +730,8 @@ void DOSBoxConfigurationPanel::onConfigurationSectionsCleared(DOSBoxConfiguratio
 }
 
 void DOSBoxConfigurationPanel::onConfigurationSectionEntryNameChanged(DOSBoxConfiguration & dosboxConfiguration, std::shared_ptr<DOSBoxConfiguration::Section> section, size_t sectionIndex, std::shared_ptr<DOSBoxConfiguration::Section::Entry> entry, size_t entryIndex, std::string oldEntryName) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration.get() != &dosboxConfiguration || m_selectedSection.get() != section.get()) {
 		return;
 	}
@@ -678,6 +742,8 @@ void DOSBoxConfigurationPanel::onConfigurationSectionEntryNameChanged(DOSBoxConf
 }
 
 void DOSBoxConfigurationPanel::onConfigurationSectionEntryValueChanged(DOSBoxConfiguration & dosboxConfiguration, std::shared_ptr<DOSBoxConfiguration::Section> section, size_t sectionIndex, std::shared_ptr<DOSBoxConfiguration::Section::Entry> entry, size_t entryIndex, std::string oldEntryValue) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration.get() != &dosboxConfiguration || m_selectedSection.get() != section.get()) {
 		return;
 	}
@@ -686,6 +752,8 @@ void DOSBoxConfigurationPanel::onConfigurationSectionEntryValueChanged(DOSBoxCon
 }
 
 void DOSBoxConfigurationPanel::onConfigurationSectionEntryAdded(DOSBoxConfiguration & dosboxConfiguration, std::shared_ptr<DOSBoxConfiguration::Section> section, size_t sectionIndex, std::shared_ptr<DOSBoxConfiguration::Section::Entry> newEntry, size_t entryIndex) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration.get() != &dosboxConfiguration || m_selectedSection.get() != section.get()) {
 		return;
 	}
@@ -695,6 +763,8 @@ void DOSBoxConfigurationPanel::onConfigurationSectionEntryAdded(DOSBoxConfigurat
 }
 
 void DOSBoxConfigurationPanel::onConfigurationSectionEntryReplaced(DOSBoxConfiguration & dosboxConfiguration, std::shared_ptr<DOSBoxConfiguration::Section> section, size_t sectionIndex, std::shared_ptr<DOSBoxConfiguration::Section::Entry> newEntry, size_t entryIndex, std::shared_ptr<DOSBoxConfiguration::Section::Entry> oldEntry) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration.get() != &dosboxConfiguration || m_selectedSection.get() != section.get()) {
 		return;
 	}
@@ -706,6 +776,8 @@ void DOSBoxConfigurationPanel::onConfigurationSectionEntryReplaced(DOSBoxConfigu
 }
 
 void DOSBoxConfigurationPanel::onConfigurationSectionEntryInserted(DOSBoxConfiguration & dosboxConfiguration, std::shared_ptr<DOSBoxConfiguration::Section> section, size_t sectionIndex, std::shared_ptr<DOSBoxConfiguration::Section::Entry> newEntry, size_t entryIndex) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration.get() != &dosboxConfiguration || m_selectedSection.get() != section.get()) {
 		return;
 	}
@@ -723,6 +795,8 @@ void DOSBoxConfigurationPanel::onConfigurationSectionEntryInserted(DOSBoxConfigu
 }
 
 void DOSBoxConfigurationPanel::onConfigurationSectionEntryRemoved(DOSBoxConfiguration & dosboxConfiguration, std::shared_ptr<DOSBoxConfiguration::Section> section, size_t sectionIndex, std::shared_ptr<DOSBoxConfiguration::Section::Entry> entry, size_t entryIndex) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration.get() != &dosboxConfiguration || m_selectedSection.get() != section.get()) {
 		return;
 	}
@@ -732,6 +806,8 @@ void DOSBoxConfigurationPanel::onConfigurationSectionEntryRemoved(DOSBoxConfigur
 }
 
 void DOSBoxConfigurationPanel::onConfigurationSectionEntriesCleared(DOSBoxConfiguration & dosboxConfiguration, std::shared_ptr<DOSBoxConfiguration::Section> section, size_t sectionIndex) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_dosboxConfiguration.get() != &dosboxConfiguration || m_selectedSection.get() != section.get()) {
 		return;
 	}

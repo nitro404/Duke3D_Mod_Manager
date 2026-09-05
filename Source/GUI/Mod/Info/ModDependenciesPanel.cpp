@@ -10,6 +10,8 @@ ModDependenciesPanel::ModDependenciesPanel(std::shared_ptr<ModCollection> mods, 
 	: wxPanel(parent, windowID, position, size, style, "Mod Dependencies")
 	, m_mods(mods)
 	, m_dependenciesPanelSizer(nullptr) {
+	wxASSERT(wxIsMainThread());
+
 	int border = 5;
 
 	m_dependenciesPanelSizer = new wxFlexGridSizer(1, border, border);
@@ -21,6 +23,8 @@ ModDependenciesPanel::~ModDependenciesPanel() {
 }
 
 void ModDependenciesPanel::setModVersionType(std::shared_ptr<ModVersionType> modVersionType) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_modVersionType == modVersionType) {
 		return;
 	}
@@ -52,5 +56,7 @@ void ModDependenciesPanel::setModVersionType(std::shared_ptr<ModVersionType> mod
 }
 
 void ModDependenciesPanel::onModVersionTypeSelectionRequested(const std::string & modID, const std::string & modVersion, const std::string & modVersionType) {
+	wxASSERT(wxIsMainThread());
+
 	modVersionTypeSelectionRequested(modID, modVersion, modVersionType);
 }

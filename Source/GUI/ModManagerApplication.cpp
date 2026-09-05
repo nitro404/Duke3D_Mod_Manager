@@ -123,6 +123,8 @@ ModManagerApplication::ModManagerApplication()
 	: m_modManagerFrame(new ModManagerFrame())
 	, m_newModManagerFrame(nullptr)
 	, m_reloadRequired(false) {
+	wxASSERT(wxIsMainThread());
+
 	SetAppDisplayName(APPLICATION_NAME);
 
 	ComponentRegistry::getInstance().registerGlobalComponents();
@@ -131,6 +133,8 @@ ModManagerApplication::ModManagerApplication()
 ModManagerApplication::~ModManagerApplication() { }
 
 void ModManagerApplication::initialize() {
+	wxASSERT(wxIsMainThread());
+
 	m_modManager = std::make_shared<ModManager>();
 	m_logSinkWX = std::make_shared<LogSinkWX>();
 
@@ -215,15 +219,21 @@ void ModManagerApplication::initialize() {
 }
 
 void ModManagerApplication::reload() {
+	wxASSERT(wxIsMainThread());
+
 	m_reloadRequired = true;
 	m_newModManagerFrame = new ModManagerFrame();
 }
 
 void ModManagerApplication::displayArgumentHelp() {
+	wxASSERT(wxIsMainThread());
+
 	wxMessageBox(ModManager::getArgumentHelpInfo(), "Argument Information", wxOK | wxICON_INFORMATION);
 }
 
 void ModManagerApplication::showWindow() {
+	wxASSERT(wxIsMainThread());
+
 	std::unique_ptr<wxProgressDialog> windowCreationProgressDialog(std::make_unique<wxProgressDialog>("Initializing", BASE_INITIALIZATION_MESSAGE + "\nInitializing window...", m_modManager->numberOfInitializationSteps() + 2, nullptr, wxPD_AUTO_HIDE | wxPD_CAN_ABORT));
 
 #if defined(D3DMODMGR_ICON)
@@ -249,6 +259,8 @@ void ModManagerApplication::showWindow() {
 }
 
 void ModManagerApplication::onInitializationProgressUpdate(ModManagerInitializationProgressUpdateEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_initializingProgressDialog == nullptr) {
 		return;
 	}
@@ -264,6 +276,8 @@ void ModManagerApplication::onInitializationProgressUpdate(ModManagerInitializat
 }
 
 void ModManagerApplication::onInitializationDone(ModManagerInitializationDoneEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	m_initializingProgressDialog.reset();
 
 	if(event.wasSuccessful()) {
@@ -282,6 +296,8 @@ void ModManagerApplication::onInitializationDone(ModManagerInitializationDoneEve
 }
 
 void ModManagerApplication::onFrameClosed(wxCloseEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	SettingsManager * settings = SettingsManager::getInstance();
 
 	settings->windowPosition = WXUtilities::createPoint(m_modManagerFrame->GetPosition());
@@ -303,6 +319,8 @@ void ModManagerApplication::onFrameClosed(wxCloseEvent & event) {
 }
 
 bool ModManagerApplication::OnInit() {
+	wxASSERT(wxIsMainThread());
+
 	if(wxAppConsole::argc != 0) {
 		m_arguments = std::make_shared<ArgumentParser>(wxAppConsole::argc, wxAppConsole::argv);
 	}
@@ -320,6 +338,8 @@ bool ModManagerApplication::OnInit() {
 }
 
 int ModManagerApplication::OnExit() {
+	wxASSERT(wxIsMainThread());
+
 	LogSystem::getInstance()->removeLogSink(m_logSinkWX);
 
 	m_modManager->uninitialize();
@@ -328,6 +348,8 @@ int ModManagerApplication::OnExit() {
 }
 
 void ModManagerApplication::CleanUp() {
+	wxASSERT(wxIsMainThread());
+
 	m_logSinkWX.reset();
 	m_modManager.reset();
 

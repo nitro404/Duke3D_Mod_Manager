@@ -12,6 +12,8 @@
 ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "Mod Team Member")
 	, m_teamMember(teamMember) {
+	wxASSERT(wxIsMainThread());
+
 	Freeze();
 
 	wxGenericHyperlinkCtrl * nameDeepLink = WXUtilities::createDeepLink(this, wxID_ANY, wxString::FromUTF8(teamMember->getName()), teamMember->getName(), wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxHL_ALIGN_LEFT, "Team Member Name");
@@ -185,6 +187,8 @@ ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember
 ModTeamMemberPanel::~ModTeamMemberPanel() { }
 
 void ModTeamMemberPanel::onModTeamMemberNameDeepLinkClicked(wxHyperlinkEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	event.Skip(false);
 
 	modTeamMemberSelectionRequested(m_teamMember->getName());
@@ -198,6 +202,8 @@ void ModTeamMemberPanel::onModTeamMemberNameDeepLinkClicked(wxHyperlinkEvent & e
 }
 
 void ModTeamMemberPanel::onModTeamMemberEmailHyperlinkClicked(wxHyperlinkEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		std::map<std::string, std::any> properties;
 		properties["teamMemberName"] = m_teamMember->getName();
@@ -209,6 +215,8 @@ void ModTeamMemberPanel::onModTeamMemberEmailHyperlinkClicked(wxHyperlinkEvent &
 }
 
 void ModTeamMemberPanel::onModTeamMemberTwitterHyperlinkClicked(wxHyperlinkEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		std::map<std::string, std::any> properties;
 		properties["teamMemberName"] = m_teamMember->getName();
@@ -220,6 +228,8 @@ void ModTeamMemberPanel::onModTeamMemberTwitterHyperlinkClicked(wxHyperlinkEvent
 }
 
 void ModTeamMemberPanel::onModTeamMemberWebsiteHyperlinkClicked(wxHyperlinkEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		std::map<std::string, std::any> properties;
 		properties["teamMemberName"] = m_teamMember->getName();
@@ -230,6 +240,8 @@ void ModTeamMemberPanel::onModTeamMemberWebsiteHyperlinkClicked(wxHyperlinkEvent
 }
 
 void ModTeamMemberPanel::onModTeamMemberYouTubeHyperlinkClicked(wxHyperlinkEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		std::map<std::string, std::any> properties;
 		properties["teamMemberName"] = m_teamMember->getName();
@@ -241,6 +253,8 @@ void ModTeamMemberPanel::onModTeamMemberYouTubeHyperlinkClicked(wxHyperlinkEvent
 }
 
 void ModTeamMemberPanel::onModTeamMemberRedditHyperlinkClicked(wxHyperlinkEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		std::map<std::string, std::any> properties;
 		properties["teamMemberName"] = m_teamMember->getName();
@@ -252,6 +266,8 @@ void ModTeamMemberPanel::onModTeamMemberRedditHyperlinkClicked(wxHyperlinkEvent 
 }
 
 void ModTeamMemberPanel::onModTeamMemberGitHubHyperlinkClicked(wxHyperlinkEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		std::map<std::string, std::any> properties;
 		properties["teamMemberName"] = m_teamMember->getName();
@@ -262,6 +278,8 @@ void ModTeamMemberPanel::onModTeamMemberGitHubHyperlinkClicked(wxHyperlinkEvent 
 }
 
 void ModTeamMemberPanel::onModTeamMemberSteamHyperlinkClicked(wxHyperlinkEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		std::map<std::string, std::any> properties;
 		properties["teamMemberName"] = m_teamMember->getName();

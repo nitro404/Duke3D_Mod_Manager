@@ -11,7 +11,9 @@ SettingPanel::SettingPanel(const std::string & name, wxWindow * parent)
 	: wxPanel(parent)
 	, m_name(name)
 	, m_modified(false)
-	, m_editable(true) { }
+	, m_editable(true) {
+	wxASSERT(wxIsMainThread());
+}
 
 SettingPanel::~SettingPanel() { }
 
@@ -20,6 +22,8 @@ const std::string & SettingPanel::getName() const {
 }
 
 std::string SettingPanel::getValue() const {
+	wxASSERT(wxIsMainThread());
+
 	return m_getValueFunction();
 }
 
@@ -28,6 +32,8 @@ bool SettingPanel::isModified() const {
 }
 
 bool SettingPanel::isValid() const {
+	wxASSERT(wxIsMainThread());
+
 	if(m_defaultValidatorFunction != nullptr && !m_defaultValidatorFunction()) {
 		return false;
 	}
@@ -44,6 +50,8 @@ bool SettingPanel::isEditable() const {
 }
 
 void SettingPanel::setEditable(bool editable) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_editable == editable) {
 		return;
 	}
@@ -54,6 +62,8 @@ void SettingPanel::setEditable(bool editable) {
 }
 
 void SettingPanel::update() {
+	wxASSERT(wxIsMainThread());
+
 	if(m_modified) {
 		return;
 	}
@@ -62,6 +72,8 @@ void SettingPanel::update() {
 }
 
 bool SettingPanel::save() {
+	wxASSERT(wxIsMainThread());
+
 	if(!m_modified) {
 		return true;
 	}
@@ -78,28 +90,38 @@ bool SettingPanel::save() {
 }
 
 void SettingPanel::discard() {
+	wxASSERT(wxIsMainThread());
+
 	m_discardFunction();
 
 	setModified(false);
 }
 
 void SettingPanel::reset() {
+	wxASSERT(wxIsMainThread());
+
 	m_resetFunction();
 
 	setModified(true);
 }
 
 void SettingPanel::setModified(bool modified) {
+	wxASSERT(wxIsMainThread());
+
 	m_modified = modified;
 
 	settingModified(*this);
 }
 
 SettingPanel * SettingPanel::createBooleanSettingPanel(bool & setting, bool defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer) {
+	wxASSERT(wxIsMainThread());
+
 	return createBooleanSettingPanel([&setting]() { return setting; }, [&setting](bool newSetting) { setting = newSetting; }, defaultSetting, name, parent, parentSizer);
 }
 
 SettingPanel * SettingPanel::createBooleanSettingPanel(std::function<bool()> getSettingValueFunction, std::function<void(bool)> setSettingValueFunction, bool defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer) {
+	wxASSERT(wxIsMainThread());
+
 	if(parent == nullptr) {
 		return nullptr;
 	}
@@ -152,10 +174,14 @@ SettingPanel * SettingPanel::createBooleanSettingPanel(std::function<bool()> get
 }
 
 SettingPanel * SettingPanel::createOptionalBooleanSettingPanel(std::optional<bool> & setting, std::optional<bool> defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer) {
+	wxASSERT(wxIsMainThread());
+
 	return createOptionalBooleanSettingPanel([&setting]() { return setting; }, [&setting](bool newSetting) { setting = newSetting; }, [&setting]() { setting.reset(); }, defaultSetting, name, parent, parentSizer);
 }
 
 SettingPanel * SettingPanel::createOptionalBooleanSettingPanel(std::function<std::optional<bool>()> getSettingValueFunction, std::function<void(bool)> setSettingValueFunction, std::function<void()> clearSettingValueFunction, std::optional<bool> defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer) {
+	wxASSERT(wxIsMainThread());
+
 	if(parent == nullptr) {
 		return nullptr;
 	}
@@ -213,18 +239,26 @@ SettingPanel * SettingPanel::createOptionalBooleanSettingPanel(std::function<std
 }
 
 SettingPanel * SettingPanel::createStringSettingPanel(std::string & setting, std::string defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, size_t minLength, size_t maxLength, std::function<bool(const SettingPanel *)> customValidatorFunction) {
+	wxASSERT(wxIsMainThread());
+
 	return createStringSettingPanel<void>([&setting]() -> const std::string & { return setting; }, [&setting](const std::string & newSetting) { setting = newSetting; }, defaultSetting, name, parent, parentSizer, minLength, maxLength, customValidatorFunction);
 }
 
 SettingPanel * SettingPanel::createOptionalStringSettingPanel(std::optional<std::string> & setting, std::optional<std::string> defaultSetting, const std::string & name, wxWindow * parent, wxSizer * parentSizer, size_t minLength, size_t maxLength, std::function<bool(const SettingPanel *)> customValidatorFunction) {
+	wxASSERT(wxIsMainThread());
+
 	return createOptionalStringSettingPanel<void>([&setting]() { return setting; }, [&setting](const std::string & newSetting) { setting = newSetting; }, [&setting]() { setting.reset(); }, defaultSetting, name, parent, parentSizer, minLength, maxLength, customValidatorFunction);
 }
 
 StringChoiceSettingPanel * SettingPanel::createStringChoiceSettingPanel(std::string & setting, std::string defaultSetting, const std::string & name, const std::vector<std::string> & choices, wxWindow * parent, wxSizer * parentSizer, const std::vector<std::string> & values) {
+	wxASSERT(wxIsMainThread());
+
 	return createStringChoiceSettingPanel([&setting]() { return setting; }, [&setting](const std::string & newSetting) { setting = newSetting; return true; }, defaultSetting, name, choices, parent, parentSizer, values);
 }
 
 StringChoiceSettingPanel * SettingPanel::createStringChoiceSettingPanel(std::function<std::string()> getSettingValueFunction, std::function<bool(const std::string &)> setSettingValueFunction, std::string defaultSetting, const std::string & name, const std::vector<std::string> & choices, wxWindow * parent, wxSizer * parentSizer, const std::vector<std::string> & values) {
+	wxASSERT(wxIsMainThread());
+
 	if(parent == nullptr || (!values.empty() && choices.size() != values.size())) {
 		return nullptr;
 	}
@@ -307,6 +341,8 @@ StringChoiceSettingPanel * SettingPanel::createStringChoiceSettingPanel(std::fun
 }
 
 SettingPanel * SettingPanel::createStringMultiChoiceSettingPanel(std::vector<std::string> & setting, const std::string & name, bool caseSensitive, const std::vector<std::string> & choices, wxWindow * parent, size_t minimumNumberOfSelectedItems, wxSizer * parentSizer, const std::vector<std::string> & values, const std::vector<std::string> & defaultValues) {
+	wxASSERT(wxIsMainThread());
+
 	return createStringMultiChoiceSettingPanel(
 		[&setting]() -> const std::vector<std::string> & {
 			return setting;
@@ -352,6 +388,8 @@ SettingPanel * SettingPanel::createStringMultiChoiceSettingPanel(std::vector<std
 }
 
 SettingPanel * SettingPanel::createStringMultiChoiceSettingPanel(std::function<const std::vector<std::string> &()> getSettingValueFunction, std::function<bool(const std::string &)> hasSettingEntryFunction, std::function<bool(const std::string &)> addSettingEntryFunction, std::function<bool(const std::string &)> removeSettingEntryFunction, const std::string & name, bool caseSensitive, const std::vector<std::string> & choices, wxWindow * parent, size_t minimumNumberOfSelectedItems, wxSizer * parentSizer, const std::vector<std::string> & values, const std::vector<std::string> & defaultValues) {
+	wxASSERT(wxIsMainThread());
+
 	if(parent == nullptr || (!values.empty() && choices.size() != values.size())) {
 		return nullptr;
 	}
@@ -476,6 +514,8 @@ StringChoiceSettingPanel::StringChoiceSettingPanel(const std::string & name, wxW
 StringChoiceSettingPanel::~StringChoiceSettingPanel() { }
 
 bool StringChoiceSettingPanel::setChoices(const std::vector<std::string> & choices, const std::vector<std::string> & values) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_setChoicesFunction == nullptr) {
 		return false;
 	}

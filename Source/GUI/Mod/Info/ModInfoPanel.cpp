@@ -65,6 +65,8 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	, m_teamMembersPanel(nullptr)
 	, m_downloadsLabel(nullptr)
 	, m_downloadsPanel(nullptr) {
+	wxASSERT(wxIsMainThread());
+
 	SetScrollRate(5, 5);
 
 	Freeze();
@@ -236,6 +238,8 @@ ModInfoPanel::~ModInfoPanel() {
 }
 
 void ModInfoPanel::setMod(std::shared_ptr<Mod> mod) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_mod == mod) {
 		return;
 	}
@@ -537,6 +541,8 @@ void ModInfoPanel::setMod(std::shared_ptr<Mod> mod) {
 }
 
 void ModInfoPanel::setModVersionType(std::shared_ptr<ModVersionType> modVersionType) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_modVersionType == modVersionType) {
 		return;
 	}
@@ -555,6 +561,8 @@ void ModInfoPanel::setModVersionType(std::shared_ptr<ModVersionType> modVersionT
 }
 
 void ModInfoPanel::onModAliasDeepLinkClicked(wxHyperlinkEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	event.Skip(false);
 
 	modSelectionRequested(m_mod->getAlias());
@@ -569,6 +577,8 @@ void ModInfoPanel::onModAliasDeepLinkClicked(wxHyperlinkEvent & event) {
 }
 
 void ModInfoPanel::onModTeamNameDeepLinkClicked(wxHyperlinkEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	event.Skip(false);
 
 	modTeamSelectionRequested(m_mod->getTeam()->getName());
@@ -584,6 +594,8 @@ void ModInfoPanel::onModTeamNameDeepLinkClicked(wxHyperlinkEvent & event) {
 }
 
 void ModInfoPanel::onModWebsiteHyperlinkClicked(wxHyperlinkEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		std::map<std::string, std::any> properties;
 		properties["modID"] = m_mod->getID();
@@ -595,6 +607,8 @@ void ModInfoPanel::onModWebsiteHyperlinkClicked(wxHyperlinkEvent & event) {
 }
 
 void ModInfoPanel::onModRepositoryHyperlinkClicked(wxHyperlinkEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		std::map<std::string, std::any> properties;
 		properties["modID"] = m_mod->getID();
@@ -606,6 +620,8 @@ void ModInfoPanel::onModRepositoryHyperlinkClicked(wxHyperlinkEvent & event) {
 }
 
 void ModInfoPanel::onTeamWebsiteHyperlinkClicked(wxHyperlinkEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		std::map<std::string, std::any> properties;
 		properties["modID"] = m_mod->getID();
@@ -617,6 +633,8 @@ void ModInfoPanel::onTeamWebsiteHyperlinkClicked(wxHyperlinkEvent & event) {
 }
 
 void ModInfoPanel::onTeamEmailHyperlinkClicked(wxHyperlinkEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		std::map<std::string, std::any> properties;
 		properties["modID"] = m_mod->getID();
@@ -629,6 +647,8 @@ void ModInfoPanel::onTeamEmailHyperlinkClicked(wxHyperlinkEvent & event) {
 }
 
 void ModInfoPanel::onTeamTwitterHyperlinkClicked(wxHyperlinkEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		std::map<std::string, std::any> properties;
 		properties["modID"] = m_mod->getID();
@@ -641,6 +661,8 @@ void ModInfoPanel::onTeamTwitterHyperlinkClicked(wxHyperlinkEvent & event) {
 }
 
 void ModInfoPanel::onTeamDiscordHyperlinkClicked(wxHyperlinkEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		std::map<std::string, std::any> properties;
 		properties["modID"] = m_mod->getID();
@@ -652,17 +674,25 @@ void ModInfoPanel::onTeamDiscordHyperlinkClicked(wxHyperlinkEvent & event) {
 }
 
 void ModInfoPanel::onRelatedModSelectionRequested(const std::string & relatedModID) {
+	wxASSERT(wxIsMainThread());
+
 	modSelectionRequested(relatedModID);
 }
 
 void ModInfoPanel::onSimilarModSelectionRequested(const std::string & similarModID) {
+	wxASSERT(wxIsMainThread());
+
 	modSelectionRequested(similarModID);
 }
 
 void ModInfoPanel::onModTeamMemberSelectionRequested(const std::string & modTeamMemberName) {
+	wxASSERT(wxIsMainThread());
+
 	modTeamMemberSelectionRequested(modTeamMemberName);
 }
 
 void ModInfoPanel::onModVersionTypeSelectionRequested(const std::string & modID, const std::string & modVersion, const std::string & modVersionType) {
+	wxASSERT(wxIsMainThread());
+
 	modVersionTypeSelectionRequested(modID, modVersion, modVersionType);
 }

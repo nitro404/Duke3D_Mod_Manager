@@ -16,6 +16,8 @@
 SimilarModsPanel::SimilarModsPanel(std::shared_ptr<ModCollection> mods, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "Similar Mods")
 	, m_similarModsPanelSizer(nullptr) {
+	wxASSERT(wxIsMainThread());
+
 	int border = 5;
 
 	m_similarModsPanelSizer = new wxFlexGridSizer(1, border, border);
@@ -27,6 +29,8 @@ SimilarModsPanel::SimilarModsPanel(std::shared_ptr<ModCollection> mods, wxWindow
 SimilarModsPanel::~SimilarModsPanel() { }
 
 bool SimilarModsPanel::setMods(std::shared_ptr<ModCollection> mods) {
+	wxASSERT(wxIsMainThread());
+
 	if(!ModCollection::isValid(mods.get(), nullptr, true)) {
 		return false;
 	}
@@ -37,6 +41,8 @@ bool SimilarModsPanel::setMods(std::shared_ptr<ModCollection> mods) {
 }
 
 bool SimilarModsPanel::setMod(std::shared_ptr<Mod> mod) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_mod == mod) {
 		return true;
 	}
@@ -75,6 +81,8 @@ bool SimilarModsPanel::setMod(std::shared_ptr<Mod> mod) {
 }
 
 void SimilarModsPanel::onSimilarModDeepLinkClicked(wxHyperlinkEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	event.Skip(false);
 
 	std::string modID(event.GetURL().mb_str());

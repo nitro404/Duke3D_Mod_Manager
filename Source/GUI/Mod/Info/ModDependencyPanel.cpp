@@ -23,6 +23,8 @@
 ModDependencyPanel::ModDependencyPanel(std::shared_ptr<ModVersionType> modVersionType, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "Mod Dependency")
 	, m_modVersionType(modVersionType) {
+	wxASSERT(wxIsMainThread());
+
 	if(ModVersionType::isValid(m_modVersionType.get(), true)) {
 		int border = 5;
 
@@ -38,6 +40,8 @@ ModDependencyPanel::ModDependencyPanel(std::shared_ptr<ModVersionType> modVersio
 ModDependencyPanel::~ModDependencyPanel() { }
 
 void ModDependencyPanel::onModDependencyDeepLinkClicked(wxHyperlinkEvent & event) {
+	wxASSERT(wxIsMainThread());
+
 	event.Skip(false);
 
 	modVersionTypeSelectionRequested(m_modVersionType->getParentMod()->getID(), m_modVersionType->getParentModVersion()->getVersion(), m_modVersionType->getType());

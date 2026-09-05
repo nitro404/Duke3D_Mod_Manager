@@ -39,6 +39,8 @@ namespace WXUtilities {
 	}
 
 	wxGenericHyperlinkCtrl * createHyperlink(wxWindow * parent, wxWindowID id, const wxString & label, const wxString & url, const wxPoint & position, const wxSize & size, long style , const wxString & name) {
+		wxASSERT(wxIsMainThread());
+
 		// Note: Generic hyperlinks assert if both the label and URL are empty, so a non-empty label must be forced to avoid assertion failures.
 		wxGenericHyperlinkCtrl * hyperlink = new Hyperlink(parent, id, label.empty() ? " " : label.ToStdString(), url, position, size, style, name.ToStdString());
 		hyperlink->SetNormalColour(createWXColour(Colour::BLUE));
@@ -49,6 +51,8 @@ namespace WXUtilities {
 	}
 
 	wxGenericHyperlinkCtrl * createDeepLink(wxWindow * parent, wxWindowID id, const wxString & label, const wxString & url, const wxPoint & position, const wxSize & size, long style, const wxString & name) {
+		wxASSERT(wxIsMainThread());
+
 		// Note: Generic hyperlinks assert if both the label and URL are empty, so a non-empty label must be forced to avoid assertion failures.
 		wxGenericHyperlinkCtrl * deepLink = new Hyperlink(parent, id, label.empty() ? " " : label.ToStdString(), url, position, size, style, name.ToStdString());
 		deepLink->SetNormalColour(createWXColour(Colour::DARK_GREEN));
@@ -59,6 +63,8 @@ namespace WXUtilities {
 	}
 
 	void setButtonEnabled(wxButton * button, bool enabled) {
+		wxASSERT(wxIsMainThread());
+
 		if(button == nullptr) {
 			return;
 		}
@@ -72,6 +78,8 @@ namespace WXUtilities {
 	}
 
 	void setTextControlEnabled(wxTextCtrl * textControl, bool enabled) {
+		wxASSERT(wxIsMainThread());
+
 		if(textControl == nullptr) {
 			return;
 		}

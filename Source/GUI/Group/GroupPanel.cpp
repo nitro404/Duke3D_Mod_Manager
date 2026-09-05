@@ -28,6 +28,8 @@ GroupPanel::GroupPanel(std::unique_ptr<Group> group, wxWindow * parent, wxWindow
 	, m_ssiMetadataPanel(nullptr)
 	, m_fileInfoBoxSizer(nullptr)
 	, m_groupPropertiesSizer(nullptr) {
+	wxASSERT(wxIsMainThread());
+
 	Freeze();
 
 	wxPanel * groupPropertiesPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
@@ -140,6 +142,8 @@ Group * GroupPanel::getGroup() {
 }
 
 size_t GroupPanel::numberOfFilesSelected() const {
+	wxASSERT(wxIsMainThread());
+
 	wxArrayInt selections;
 
 	m_fileListBox->GetSelections(selections);
@@ -148,6 +152,8 @@ size_t GroupPanel::numberOfFilesSelected() const {
 }
 
 std::vector<std::shared_ptr<GroupFile>> GroupPanel::getSelectedFiles() const {
+	wxASSERT(wxIsMainThread());
+
 	wxArrayInt selections;
 
 	m_fileListBox->GetSelections(selections);
@@ -162,6 +168,8 @@ std::vector<std::shared_ptr<GroupFile>> GroupPanel::getSelectedFiles() const {
 }
 
 size_t GroupPanel::getTotalSizeOfSelectedFiles() const {
+	wxASSERT(wxIsMainThread());
+
 	size_t totalSize = 0;
 	std::vector<std::shared_ptr<GroupFile>> selectedFiles(getSelectedFiles());
 
@@ -173,6 +181,8 @@ size_t GroupPanel::getTotalSizeOfSelectedFiles() const {
 }
 
 size_t GroupPanel::extractSelectedFiles(const std::string & directoryPath) const {
+	wxASSERT(wxIsMainThread());
+
 	size_t extractedFileCount = 0;
 	std::vector<std::shared_ptr<GroupFile>> selectedFiles(getSelectedFiles());
 
@@ -186,6 +196,8 @@ size_t GroupPanel::extractSelectedFiles(const std::string & directoryPath) const
 }
 
 void GroupPanel::update() {
+	wxASSERT(wxIsMainThread());
+
 	m_numberOfFilesText->SetLabel(std::to_string(m_group->numberOfFiles()));
 	m_groupSizeText->SetLabel(Utilities::fileSizeToString(m_group->getSizeInBytes()));
 
@@ -209,6 +221,8 @@ void GroupPanel::update() {
 }
 
 void GroupPanel::updateFileInfo() {
+	wxASSERT(wxIsMainThread());
+
 	wxArrayInt selections;
 
 	m_fileListBox->GetSelections(selections);

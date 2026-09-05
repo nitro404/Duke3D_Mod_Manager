@@ -86,6 +86,8 @@ ProcessRunningDialog::ProcessRunningDialog(wxWindow * parent, const std::string 
 	: wxDialog(parent, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxCAPTION | wxCLOSE_BOX, "Process Running Dialog")
 	, m_message(message)
 	, m_messageLabel(nullptr) {
+	wxASSERT(wxIsMainThread());
+
 #if defined(D3DMODMGR_ICON)
 	SetIcon(wxICON(D3DMODMGR_ICON));
 #endif // D3DMODMGR_ICON
@@ -129,10 +131,14 @@ void ProcessRunningDialog::setStatus(const std::string & status) {
 }
 
 void ProcessRunningDialog::clearStatus() {
+	wxASSERT(wxIsMainThread());
+
 	m_messageLabel->SetLabelText(m_message);
 }
 
 void ProcessRunningDialog::setProcess(std::shared_ptr<Process> process) {
+	wxASSERT(wxIsMainThread());
+
 	if(m_process != nullptr) {
 		m_processTerminatedConnection.disconnect();
 	}
@@ -146,6 +152,8 @@ void ProcessRunningDialog::setProcess(std::shared_ptr<Process> process) {
 }
 
 void ProcessRunningDialog::close() {
+	wxASSERT(wxIsMainThread());
+
 	if(m_process == nullptr || !m_process->isRunning()) {
 		return;
 	}
@@ -162,12 +170,16 @@ void ProcessRunningDialog::onProcessTerminated(uint64_t nativeExitCode, bool for
 }
 
 void ProcessRunningDialog::onProcessStatusUpdated(ProcessStatusUpdatedEvent & processStatusUpdatedEvent) {
+	wxASSERT(wxIsMainThread());
+
 	m_messageLabel->SetLabelText(fmt::format("{}\n\n{}", m_message, processStatusUpdatedEvent.getStatusMessage()));
 
 	Fit();
 }
 
 void ProcessRunningDialog::onProcessTerminated(ProcessTerminatedEvent & processTerminatedEvent) {
+	wxASSERT(wxIsMainThread());
+
 	EndModal(processTerminatedEvent.getNativeExitCode());
 }
 

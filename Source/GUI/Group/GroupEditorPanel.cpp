@@ -45,6 +45,8 @@ GroupEditorPanel::GroupEditorPanel(wxWindow * parent, wxWindowID windowID, const
 	, m_extractAllFilesButton(nullptr)
 	, m_closeButton(nullptr)
 	, m_closeAllButton(nullptr) {
+	wxASSERT(wxIsMainThread());
+
 	Freeze();
 
 	m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_TOP | wxNB_MULTILINE, "Groups");
@@ -136,6 +138,8 @@ GroupEditorPanel::GroupEditorPanel(wxWindow * parent, wxWindowID windowID, const
 GroupEditorPanel::~GroupEditorPanel() { }
 
 bool GroupEditorPanel::hasGroupPanel(const GroupPanel * groupPanel) const {
+	wxASSERT(wxIsMainThread());
+
 	for(size_t i = 0; i < m_notebook->GetPageCount(); i++) {
 		if(m_notebook->GetPage(i) == groupPanel) {
 			return true;
@@ -146,6 +150,8 @@ bool GroupEditorPanel::hasGroupPanel(const GroupPanel * groupPanel) const {
 }
 
 bool GroupEditorPanel::hasPanelWithGroup(const Group * group) const {
+	wxASSERT(wxIsMainThread());
+
 	for(size_t i = 0; i < m_notebook->GetPageCount(); i++) {
 		if(getGroup(i) == group) {
 			return true;
@@ -156,6 +162,8 @@ bool GroupEditorPanel::hasPanelWithGroup(const Group * group) const {
 }
 
 size_t GroupEditorPanel::indexOfGroupPanel(const GroupPanel * groupPanel) const {
+	wxASSERT(wxIsMainThread());
+
 	for(size_t i = 0; i < m_notebook->GetPageCount(); i++) {
 		if(m_notebook->GetPage(i) == groupPanel) {
 			return i;
@@ -166,6 +174,8 @@ size_t GroupEditorPanel::indexOfGroupPanel(const GroupPanel * groupPanel) const 
 }
 
 size_t GroupEditorPanel::indexOfPanelWithGroup(const Group * group) const {
+	wxASSERT(wxIsMainThread());
+
 	for(size_t i = 0; i < m_notebook->GetPageCount(); i++) {
 		if(getGroup(i) == group) {
 			return i;
@@ -176,6 +186,8 @@ size_t GroupEditorPanel::indexOfPanelWithGroup(const Group * group) const {
 }
 
 size_t GroupEditorPanel::indexOfPanelWithGroupFilePath(const std::string & filePath) const {
+	wxASSERT(wxIsMainThread());
+
 	std::error_code errorCode;
 	std::filesystem::path actualFilePath(filePath);
 
@@ -189,6 +201,8 @@ size_t GroupEditorPanel::indexOfPanelWithGroupFilePath(const std::string & fileP
 }
 
 GroupPanel * GroupEditorPanel::getGroupPanel(size_t groupPanelIndex) const {
+	wxASSERT(wxIsMainThread());
+
 	if(groupPanelIndex >= m_notebook->GetPageCount()) {
 		return nullptr;
 	}
@@ -197,18 +211,26 @@ GroupPanel * GroupEditorPanel::getGroupPanel(size_t groupPanelIndex) const {
 }
 
 GroupPanel * GroupEditorPanel::getPanelWithGroup(const Group * group) const {
+	wxASSERT(wxIsMainThread());
+
 	return getGroupPanel(indexOfPanelWithGroup(group));
 }
 
 GroupPanel * GroupEditorPanel::getPanelWithGroupFilePath(const std::string & filePath) const {
+	wxASSERT(wxIsMainThread());
+
 	return getGroupPanel(indexOfPanelWithGroupFilePath(filePath));
 }
 
 GroupPanel * GroupEditorPanel::getCurrentGroupPanel() const {
+	wxASSERT(wxIsMainThread());
+
 	return dynamic_cast<GroupPanel *>(m_notebook->GetCurrentPage());
 }
 
 Group * GroupEditorPanel::getGroup(size_t groupPanelIndex) const {
+	wxASSERT(wxIsMainThread());
+
 	GroupPanel * groupPanel = getGroupPanel(groupPanelIndex);
 
 	if(groupPanel == nullptr) {
@@ -219,6 +241,8 @@ Group * GroupEditorPanel::getGroup(size_t groupPanelIndex) const {
 }
 
 Group * GroupEditorPanel::getCurrentGroup() const {
+	wxASSERT(wxIsMainThread());
+
 	GroupPanel * groupPanel = getCurrentGroupPanel();
 
 	if(groupPanel == nullptr) {
@@ -229,11 +253,15 @@ Group * GroupEditorPanel::getCurrentGroup() const {
 }
 
 void GroupEditorPanel::update() {
+	wxASSERT(wxIsMainThread());
+
 	updateButtons();
 	updateGroupPanelNames();
 }
 
 bool GroupEditorPanel::updateGroupPanel(size_t groupPanelIndex) {
+	wxASSERT(wxIsMainThread());
+
 	GroupPanel * groupPanel = getGroupPanel(groupPanelIndex);
 
 	if(groupPanel == nullptr) {
@@ -247,12 +275,16 @@ bool GroupEditorPanel::updateGroupPanel(size_t groupPanelIndex) {
 }
 
 void GroupEditorPanel::updateGroupPanelNames() {
+	wxASSERT(wxIsMainThread());
+
 	for(size_t i = 0; i < m_notebook->GetPageCount(); i++) {
 		updateGroupPanelName(i);
 	}
 }
 
 bool GroupEditorPanel::updateGroupPanelName(size_t groupPanelIndex) {
+	wxASSERT(wxIsMainThread());
+
 	GroupPanel * groupPanel = getGroupPanel(groupPanelIndex);
 
 	if(groupPanel == nullptr) {
@@ -265,6 +297,8 @@ bool GroupEditorPanel::updateGroupPanelName(size_t groupPanelIndex) {
 }
 
 void GroupEditorPanel::updateButtons() {
+	wxASSERT(wxIsMainThread());
+
 	GroupPanel * groupPanel = getCurrentGroupPanel();
 
 	if(groupPanel == nullptr) {
@@ -304,6 +338,8 @@ void GroupEditorPanel::updateButtons() {
 }
 
 bool GroupEditorPanel::addGroupPanel(GroupPanel * groupPanel) {
+	wxASSERT(wxIsMainThread());
+
 	if(groupPanel == nullptr || hasGroupPanel(groupPanel)) {
 		return false;
 	}
@@ -322,6 +358,8 @@ bool GroupEditorPanel::addGroupPanel(GroupPanel * groupPanel) {
 }
 
 bool GroupEditorPanel::newGroup() {
+	wxASSERT(wxIsMainThread());
+
 	int selectedGroupTypeIndex = wxGetSingleChoiceIndex(
 		"Please choose a group type to create:",
 		"Choose Group Type",
@@ -364,6 +402,8 @@ bool GroupEditorPanel::newGroup() {
 }
 
 bool GroupEditorPanel::openGroup(const std::string & filePath) {
+	wxASSERT(wxIsMainThread());
+
 	size_t existingGroupPanelIndex = indexOfPanelWithGroupFilePath(filePath);
 
 	if(existingGroupPanelIndex != std::numeric_limits<size_t>::max()) {
@@ -413,6 +453,8 @@ bool GroupEditorPanel::openGroup(const std::string & filePath) {
 }
 
 size_t GroupEditorPanel::openGroups() {
+	wxASSERT(wxIsMainThread());
+
 	wxFileDialog openFilesDialog(this, "Open Group(s) from File(s)", std::filesystem::current_path().string(), "", FILE_DIALOG_GROUPED_FILE_TYPES, wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST, wxDefaultPosition, wxDefaultSize, "Open Groups");
 	int openFilesResult = openFilesDialog.ShowModal();
 
@@ -434,6 +476,8 @@ size_t GroupEditorPanel::openGroups() {
 }
 
 bool GroupEditorPanel::createGroupFromDirectory(const std::string & directoryPath) {
+	wxASSERT(wxIsMainThread());
+
 	int selectedGroupTypeIndex = wxGetSingleChoiceIndex(
 		"Please choose a group type to create:",
 		"Choose Group Type",
@@ -488,6 +532,8 @@ bool GroupEditorPanel::createGroupFromDirectory(const std::string & directoryPat
 }
 
 bool GroupEditorPanel::createGroupFromDirectory() {
+	wxASSERT(wxIsMainThread());
+
 	wxDirDialog selectDirectoryDialog(this, "Create Group from Directory", std::filesystem::current_path().string(), wxDD_DIR_MUST_EXIST, wxDefaultPosition, wxDefaultSize, "Create Group");
 	int selectDirectoryResult = selectDirectoryDialog.ShowModal();
 
@@ -499,6 +545,8 @@ bool GroupEditorPanel::createGroupFromDirectory() {
 }
 
 bool GroupEditorPanel::saveGroup(Group * group) {
+	wxASSERT(wxIsMainThread());
+
 	if(!Group::isValid(group)) {
 		return false;
 	}
@@ -560,10 +608,14 @@ bool GroupEditorPanel::saveGroup(Group * group) {
 }
 
 bool GroupEditorPanel::saveCurrentGroup() {
+	wxASSERT(wxIsMainThread());
+
 	return saveGroup(getCurrentGroup());
 }
 
 bool GroupEditorPanel::saveGroupAs(Group * group) {
+	wxASSERT(wxIsMainThread());
+
 	if(!Group::isValid(group)) {
 		return false;
 	}
@@ -645,10 +697,14 @@ bool GroupEditorPanel::saveGroupAs(Group * group) {
 }
 
 bool GroupEditorPanel::saveCurrentGroupAs() {
+	wxASSERT(wxIsMainThread());
+
 	return saveGroupAs(getCurrentGroup());
 }
 
 size_t GroupEditorPanel::addFilesToGroup(Group * group) {
+	wxASSERT(wxIsMainThread());
+
 	if(!Group::isValid(group)) {
 		return 0;
 	}
@@ -748,10 +804,14 @@ size_t GroupEditorPanel::addFilesToGroup(Group * group) {
 }
 
 size_t GroupEditorPanel::addFilesToCurrentGroup() {
+	wxASSERT(wxIsMainThread());
+
 	return addFilesToGroup(getCurrentGroup());
 }
 
 size_t GroupEditorPanel::removeSelectedFilesFromGroup(Group * group) {
+	wxASSERT(wxIsMainThread());
+
 	if(!Group::isValid(group)) {
 		return 0;
 	}
@@ -787,10 +847,14 @@ size_t GroupEditorPanel::removeSelectedFilesFromGroup(Group * group) {
 }
 
 size_t GroupEditorPanel::removeSelectedFilesFromCurrentGroup() {
+	wxASSERT(wxIsMainThread());
+
 	return removeSelectedFilesFromGroup(getCurrentGroup());
 }
 
 bool GroupEditorPanel::replaceSelectedFileInGroup(Group * group) {
+	wxASSERT(wxIsMainThread());
+
 	if(!Group::isValid(group)) {
 		return false;
 	}
@@ -885,10 +949,14 @@ bool GroupEditorPanel::replaceSelectedFileInGroup(Group * group) {
 }
 
 bool GroupEditorPanel::replaceSelectedFileInCurrentGroup() {
+	wxASSERT(wxIsMainThread());
+
 	return replaceSelectedFileInGroup(getCurrentGroup());
 }
 
 bool GroupEditorPanel::renameSelectedFileInGroup(Group * group) {
+	wxASSERT(wxIsMainThread());
+
 	if(!Group::isValid(group)) {
 		return false;
 	}
@@ -964,10 +1032,14 @@ bool GroupEditorPanel::renameSelectedFileInGroup(Group * group) {
 }
 
 bool GroupEditorPanel::renameSelectedFileInCurrentGroup() {
+	wxASSERT(wxIsMainThread());
+
 	return renameSelectedFileInGroup(getCurrentGroup());
 }
 
 std::vector<std::shared_ptr<GroupFile>> GroupEditorPanel::extractFilesFromGroup(const Group * group, const std::vector<std::shared_ptr<GroupFile>> & files) {
+	wxASSERT(wxIsMainThread());
+
 	if(!Group::isValid(group)) {
 		return {};
 	}
@@ -1071,6 +1143,8 @@ std::vector<std::shared_ptr<GroupFile>> GroupEditorPanel::extractFilesFromGroup(
 }
 
 std::vector<std::shared_ptr<GroupFile>> GroupEditorPanel::extractSelectedFilesFromGroup(const Group * group) {
+	wxASSERT(wxIsMainThread());
+
 	if(!Group::isValid(group)) {
 		return {};
 	}
@@ -1085,18 +1159,26 @@ std::vector<std::shared_ptr<GroupFile>> GroupEditorPanel::extractSelectedFilesFr
 }
 
 std::vector<std::shared_ptr<GroupFile>> GroupEditorPanel::extractSelectedFilesFromCurrentGroup() {
+	wxASSERT(wxIsMainThread());
+
 	return extractSelectedFilesFromGroup(getCurrentGroup());
 }
 
 std::vector<std::shared_ptr<GroupFile>> GroupEditorPanel::extractAllFilesFromGroup(const Group * group) {
+	wxASSERT(wxIsMainThread());
+
 	return extractFilesFromGroup(group, group->getFiles());
 }
 
 std::vector<std::shared_ptr<GroupFile>> GroupEditorPanel::extractAllFilesFromCurrentGroup() {
+	wxASSERT(wxIsMainThread());
+
 	return extractAllFilesFromGroup(getCurrentGroup());
 }
 
 bool GroupEditorPanel::closeGroupPanel(size_t groupPanelIndex) {
+	wxASSERT(wxIsMainThread());
+
 	Group * group = getGroup(groupPanelIndex);
 
 	if(group == nullptr) {
@@ -1150,6 +1232,8 @@ bool GroupEditorPanel::closeGroupPanel(size_t groupPanelIndex) {
 }
 
 bool GroupEditorPanel::closeCurrentGroupPanel() {
+	wxASSERT(wxIsMainThread());
+
 	int currentGroupPanelIndex = m_notebook->GetSelection();
 
 	if(currentGroupPanelIndex == wxNOT_FOUND) {
@@ -1168,6 +1252,8 @@ bool GroupEditorPanel::closeCurrentGroupPanel() {
 }
 
 bool GroupEditorPanel::closeAllGroupPanels() {
+	wxASSERT(wxIsMainThread());
+
 	while(m_notebook->GetPageCount() != 0) {
 		if(!closeCurrentGroupPanel()) {
 			return false;
