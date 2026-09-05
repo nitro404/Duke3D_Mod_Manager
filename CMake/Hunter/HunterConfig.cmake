@@ -118,9 +118,9 @@ hunter_config(nanosvg
 
 # PCRE2 is used by wxWidgets.
 hunter_config(pcre2
-	URL "https://github.com/Telefrag-Software/pcre/archive/refs/heads/hunter-10.43.0.2.zip"
-	VERSION "10.43.0.2"
-	SHA1 "b210a13831b8a374ca6a42300b763d689cf24db8"
+	URL "https://github.com/Telefrag-Software/pcre/archive/refs/heads/hunter-10.48.0.0.zip"
+	VERSION "10.48.0.0"
+	SHA1 "e856ff6b80d00de644d0fb6afc91dee5cfbf703a"
 	CMAKE_ARGS
 		BUILD_STATIC_LIBS=ON
 		PCRE2_BUILD_PCRE2_8=ON
