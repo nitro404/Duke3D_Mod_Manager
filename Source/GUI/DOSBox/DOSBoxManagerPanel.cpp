@@ -115,6 +115,8 @@ DOSBoxManagerPanel::DOSBoxManagerPanel(std::shared_ptr<ModManager> modManager, w
 	, m_installProgressDialog(nullptr)
 	, m_dosboxInstallationCancelled(false)
 	, m_modified(false) {
+	Freeze();
+
 	m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_TOP | wxNB_MULTILINE, "DOSBox Versions");
 	m_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &DOSBoxManagerPanel::onNotebookPageChanged, this);
 
@@ -234,6 +236,8 @@ DOSBoxManagerPanel::DOSBoxManagerPanel(std::shared_ptr<ModManager> modManager, w
 
 		addDOSBoxVersionPanel(dosboxVersionPanel);
 	}
+
+	Thaw();
 
 	update();
 

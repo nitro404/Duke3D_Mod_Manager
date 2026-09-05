@@ -8,6 +8,8 @@ ConsolePanel::ConsolePanel(wxWindow * parent, wxWindowID windowID, const wxPoint
 	, m_logger(nullptr)
 	, m_logFormatter(nullptr)
 	, m_logTextArea(nullptr) {
+	Freeze();
+
 	m_logTextArea = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
 	m_logTextArea->SetEditable(false);
 
@@ -21,6 +23,8 @@ ConsolePanel::ConsolePanel(wxWindow * parent, wxWindowID windowID, const wxPoint
 	wxBoxSizer * consoleBoxSizer = new wxBoxSizer(wxVERTICAL);
 	consoleBoxSizer->Add(m_logTextArea, 1, wxEXPAND | wxALL, 0);
 	SetSizer(consoleBoxSizer);
+
+	Thaw();
 }
 
 ConsolePanel::~ConsolePanel() { }

@@ -18,6 +18,8 @@ MetadataPanel::MetadataPanel(wxWindow * parent, wxWindowID windowID, const wxPoi
 MetadataPanel::~MetadataPanel() { }
 
 void MetadataPanel::setMetadata(const std::vector<std::pair<std::string, std::string>> & metadata) {
+	Freeze();
+
 	clearMetadata();
 
 	for(const std::pair<std::string, std::string> metadataEntry : metadata) {
@@ -34,6 +36,8 @@ void MetadataPanel::setMetadata(const std::vector<std::pair<std::string, std::st
 		m_metadataPanelSizer->Add(metadataEntryLabel, 1, wxEXPAND | wxALL);
 		m_metadataPanelSizer->Add(metadataEntryText, 1, wxEXPAND | wxALL);
 	}
+
+	Thaw();
 
 	Layout();
 }

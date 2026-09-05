@@ -47,6 +47,8 @@ bool RelatedModsPanel::setMod(std::shared_ptr<Mod> mod) {
 		return false;
 	}
 
+	Freeze();
+
 	DestroyChildren();
 	m_relatedModDeepLinks.clear();
 
@@ -64,6 +66,8 @@ bool RelatedModsPanel::setMod(std::shared_ptr<Mod> mod) {
 		m_relatedModsPanelSizer->Add(relatedModDeepLink, 1, wxEXPAND | wxALL);
 		m_relatedModDeepLinks.push_back(relatedModDeepLink);
 	}
+
+	Thaw();
 
 	Layout();
 

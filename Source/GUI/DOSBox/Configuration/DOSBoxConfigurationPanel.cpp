@@ -43,6 +43,8 @@ DOSBoxConfigurationPanel::DOSBoxConfigurationPanel(std::shared_ptr<DOSBoxConfigu
 		);
 	}
 
+	Freeze();
+
 	wxPanel * sectionsPanel = new wxPanel(this);
 
 	wxStaticText * sectionLabel = new wxStaticText(sectionsPanel, wxID_ANY, "Sections", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
@@ -139,6 +141,8 @@ DOSBoxConfigurationPanel::DOSBoxConfigurationPanel(std::shared_ptr<DOSBoxConfigu
 	configurationSizer->AddGrowableCol(0, 1);
 	configurationSizer->AddGrowableCol(1, 1);
 	SetSizerAndFit(configurationSizer);
+
+	Thaw();
 
 	updateButtons();
 

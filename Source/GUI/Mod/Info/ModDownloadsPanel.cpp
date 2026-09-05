@@ -26,6 +26,8 @@ void ModDownloadsPanel::setMod(std::shared_ptr<Mod> mod) {
 		return;
 	}
 
+	Freeze();
+
 	DestroyChildren();
 	m_downloadPanels.clear();
 
@@ -40,6 +42,8 @@ void ModDownloadsPanel::setMod(std::shared_ptr<Mod> mod) {
 		m_downloadsPanelSizer->Add(modDownloadPanel, 1, wxEXPAND | wxALL);
 		m_downloadPanels.push_back(modDownloadPanel);
 	}
+
+	Thaw();
 
 	Layout();
 }

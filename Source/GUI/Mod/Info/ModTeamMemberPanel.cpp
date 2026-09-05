@@ -12,6 +12,8 @@
 ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember, wxWindow * parent, wxWindowID windowID, const wxPoint & position, const wxSize & size, long style)
 	: wxPanel(parent, windowID, position, size, style, "Mod Team Member")
 	, m_teamMember(teamMember) {
+	Freeze();
+
 	wxGenericHyperlinkCtrl * nameDeepLink = WXUtilities::createDeepLink(this, wxID_ANY, wxString::FromUTF8(teamMember->getName()), teamMember->getName(), wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxHL_ALIGN_LEFT, "Team Member Name");
 	nameDeepLink->Bind(wxEVT_HYPERLINK, &ModTeamMemberPanel::onModTeamMemberNameDeepLinkClicked, this);
 
@@ -176,6 +178,8 @@ ModTeamMemberPanel::ModTeamMemberPanel(std::shared_ptr<ModTeamMember> teamMember
 	detailsContainerSizer->Add(detailsSpacerPanel, 1, wxEXPAND | wxALL);
 	detailsContainerSizer->Add(detailsPanel, 1, wxEXPAND | wxALL);
 	detailsContainerPanel->SetSizer(detailsContainerSizer);
+
+	Thaw();
 }
 
 ModTeamMemberPanel::~ModTeamMemberPanel() { }

@@ -33,6 +33,8 @@ void ModTeamMembersPanel::setTeam(std::shared_ptr<ModTeam> team) {
 		return;
 	}
 
+	Freeze();
+
 	DestroyChildren();
 	m_teamMemberPanels.clear();
 
@@ -42,6 +44,8 @@ void ModTeamMembersPanel::setTeam(std::shared_ptr<ModTeam> team) {
 		m_teamMembersPanelSizer->Add(teamMemberPanel, 1, wxEXPAND | wxALL);
 		m_teamMemberPanels.push_back(teamMemberPanel);
 	}
+
+	Thaw();
 
 	Layout();
 }

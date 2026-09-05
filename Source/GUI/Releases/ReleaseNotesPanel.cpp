@@ -43,6 +43,8 @@ ReleaseNotesPanel::ReleaseNotesPanel(wxWindow * parent, wxWindowID windowID, con
 	, m_releaseDateText(nullptr)
 	, m_scrollableDescriptionWindow(nullptr)
 	, m_releaseDescriptionText(nullptr) {
+	Freeze();
+
 	m_releaseComboBox = new wxComboBox(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, {}, 0, wxDefaultValidator, "Release Version");
 	m_releaseComboBox->SetEditable(false);
 	m_releaseComboBox->Bind(wxEVT_COMBOBOX, &ReleaseNotesPanel::onReleaseSelected, this);
@@ -78,6 +80,8 @@ ReleaseNotesPanel::ReleaseNotesPanel(wxWindow * parent, wxWindowID windowID, con
 	releaseNotesSizer->AddGrowableCol(0, 1);
 	SetSizer(releaseNotesSizer);
 
+	Thaw();
+
 	Bind(EVENT_RELEASES_LOADED, &ReleaseNotesPanel::onReleasesLoaded, this);
 }
 
@@ -100,6 +104,8 @@ void ReleaseNotesPanel::setSelectedRelease(std::shared_ptr<GitHubRelease> releas
 
 	m_selectedRelease = release;
 
+	Freeze();
+
 	if(m_selectedRelease == nullptr || !m_selectedRelease->isValid()) {
 		m_releaseNameText->SetLabel("");
 		m_releaseDateText->SetLabel("");
@@ -110,6 +116,8 @@ void ReleaseNotesPanel::setSelectedRelease(std::shared_ptr<GitHubRelease> releas
 	m_releaseNameText->SetLabel(m_selectedRelease->getReleaseName());
 	m_releaseDateText->SetLabel("  (" + Date(m_selectedRelease->getPublishedTimestamp()).toString() + ")");
 	m_releaseDescriptionText->SetLabel(m_selectedRelease->getBody());
+
+	Thaw();
 
 	m_scrollableDescriptionWindow->FitInside();
 

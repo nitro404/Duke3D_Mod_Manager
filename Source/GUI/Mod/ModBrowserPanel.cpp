@@ -281,6 +281,8 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	Bind(EVENT_MOD_INSTALL_PROGRESS, &ModBrowserPanel::onModInstallProgress, this);
 	Bind(EVENT_MOD_INSTALL_DONE, &ModBrowserPanel::onModInstallDone, this);
 
+	Freeze();
+
 	wxPanel * modListOptionsPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, "Mod List Options");
 
 	m_modSearchTextField = new wxSearchCtrl(modListOptionsPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, "Mod Search");
@@ -538,6 +540,8 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	modBrowserSizer->Add(modSelectionPanel, 1, wxEXPAND | wxALL, 0);
 	modBrowserSizer->Add(m_gameOptionsPanel, 0, wxEXPAND | wxHORIZONTAL, 0);
 	SetSizer(modBrowserSizer);
+
+	Thaw();
 
 	if(m_modManager->hasModSelected()) {
 		updateModList();

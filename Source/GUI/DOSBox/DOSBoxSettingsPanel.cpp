@@ -17,6 +17,8 @@ DOSBoxSettingsPanel::DOSBoxSettingsPanel(std::shared_ptr<ModManager> modManager,
 	SettingsManager * settings = SettingsManager::getInstance();
 	std::shared_ptr<DOSBoxVersionCollection> dosboxVersions(modManager->getDOSBoxVersions());
 
+	Freeze();
+
 	SetOwnFont(GetFont().MakeBold());
 
 	wxWrapSizer * dosboxSettingsSizer = new wxWrapSizer(wxHORIZONTAL);
@@ -36,6 +38,8 @@ DOSBoxSettingsPanel::DOSBoxSettingsPanel(std::shared_ptr<ModManager> modManager,
 	m_settingsPanels.push_back(SettingPanel::createIntegerSettingPanel<uint16_t>(std::bind(&ModManager::getDOSBoxLocalServerPort, modManager.get()), std::bind(&ModManager::setDOSBoxLocalServerPort, modManager.get(), std::placeholders::_1), SettingsManager::DEFAULT_DOSBOX_LOCAL_SERVER_PORT, "Local Server Port", this, dosboxSettingsSizer));
 
 	SetSizerAndFit(dosboxSettingsSizer);
+
+	Thaw();
 
 	m_preferredDOSBoxVersionChangedConnection = modManager->preferredDOSBoxVersionChanged.connect(std::bind(&DOSBoxSettingsPanel::onPreferredDOSBoxVersionChanged, this, std::placeholders::_1));
 	m_dosboxServerIPAddressChangedConnection = modManager->dosboxServerIPAddressChanged.connect(std::bind(&DOSBoxSettingsPanel::onDOSBoxServerIPAddressChanged, this, std::placeholders::_1));

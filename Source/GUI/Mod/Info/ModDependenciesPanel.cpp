@@ -28,6 +28,8 @@ void ModDependenciesPanel::setModVersionType(std::shared_ptr<ModVersionType> mod
 	m_modDependencyPanelConnections.disconnect();
 	m_modVersionType = modVersionType;
 
+	Freeze();
+
 	DestroyChildren();
 	m_dependencyPanels.clear();
 
@@ -43,6 +45,8 @@ void ModDependenciesPanel::setModVersionType(std::shared_ptr<ModVersionType> mod
 		m_dependenciesPanelSizer->Add(modDependencyPanel, 1, wxEXPAND | wxALL);
 		m_dependencyPanels.push_back(modDependencyPanel);
 	}
+
+	Thaw();
 
 	Layout();
 }

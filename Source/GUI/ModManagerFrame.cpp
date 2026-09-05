@@ -51,6 +51,8 @@ bool ModManagerFrame::initialize(std::shared_ptr<ModManager> modManager) {
 		return false;
 	}
 
+	Freeze();
+
 #if wxUSE_MENUS
 	wxMenu * fileMenu = new wxMenu();
 	m_exitMenuItem = new wxMenuItem(fileMenu, wxID_EXIT, "E&xit", "Close the application", wxITEM_NORMAL);
@@ -122,6 +124,8 @@ bool ModManagerFrame::initialize(std::shared_ptr<ModManager> modManager) {
 
 	ConsolePanel * consolePanel = new ConsolePanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 	m_notebook->AddPage(consolePanel, "Console");
+
+	Thaw();
 
 	if(!modManager->isInitialized()) {
 		wxMessageBox(

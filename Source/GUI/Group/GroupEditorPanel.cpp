@@ -45,6 +45,7 @@ GroupEditorPanel::GroupEditorPanel(wxWindow * parent, wxWindowID windowID, const
 	, m_extractAllFilesButton(nullptr)
 	, m_closeButton(nullptr)
 	, m_closeAllButton(nullptr) {
+	Freeze();
 
 	m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_TOP | wxNB_MULTILINE, "Groups");
 	m_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &GroupEditorPanel::onNotebookPageChanged, this);
@@ -126,6 +127,8 @@ GroupEditorPanel::GroupEditorPanel(wxWindow * parent, wxWindowID windowID, const
 	groupEditorPanelSizer->AddGrowableRow(1, 0);
 	groupEditorPanelSizer->AddGrowableCol(0, 1);
 	SetSizerAndFit(groupEditorPanelSizer);
+
+	Thaw();
 
 	update();
 }

@@ -11,7 +11,9 @@ SunstormInteractiveMetadataPanel::SunstormInteractiveMetadataPanel(std::shared_p
 	, m_versionComboBox(nullptr)
 	, m_descriptionTextFields({ nullptr })
 	, m_runFileTextField(nullptr) {
-	int border = 5;
+	Freeze();
+
+	const int border = 5;
 
 	wxFlexGridSizer * sizer = new wxFlexGridSizer(2, border, border);
 	sizer->AddGrowableCol(0, 0);
@@ -64,6 +66,8 @@ SunstormInteractiveMetadataPanel::SunstormInteractiveMetadataPanel(std::shared_p
 	if(!m_group->versionSupportsRunFile()) {
 		m_runFileTextField->Disable();
 	}
+
+	Thaw();
 }
 
 SunstormInteractiveMetadataPanel::~SunstormInteractiveMetadataPanel() { }

@@ -29,6 +29,8 @@ GameVersionPanel::GameVersionPanel(std::shared_ptr<GameVersion> gameVersion, wxW
 	, m_dosboxConfigurationPanel(nullptr)
 	, m_notesTextField(nullptr)
 	, m_modified(false) {
+	Freeze();
+
 	const GameVersion * defaultGameVersion = nullptr;
 
 	for(const GameVersion * currentDefaultGameVersion : GameVersion::DEFAULT_GAME_VERSIONS) {
@@ -227,6 +229,8 @@ GameVersionPanel::GameVersionPanel(std::shared_ptr<GameVersion> gameVersion, wxW
 	gameVersionConfigurationSizer->AddGrowableCol(0, 6);
 	gameVersionConfigurationSizer->AddGrowableCol(1, 1);
 	SetSizerAndFit(gameVersionConfigurationSizer);
+
+	Thaw();
 
 	m_gameVersionModifiedConnection = m_gameVersion->modified.connect(std::bind(&GameVersionPanel::onGameVersionModified, this, std::placeholders::_1));
 

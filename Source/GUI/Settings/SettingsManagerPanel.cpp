@@ -34,7 +34,9 @@ SettingsManagerPanel::SettingsManagerPanel(std::shared_ptr<ModManager> modManage
 	m_gameVersionCollectionSizeChangedConnection = gameVersions->sizeChanged.connect(std::bind(&SettingsManagerPanel::onGameVersionCollectionSizeChanged, this, std::placeholders::_1));
 	m_gameVersionCollectionItemModifiedConnection = gameVersions->itemModified.connect(std::bind(&SettingsManagerPanel::onGameVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
 
-	int wrapSizerOrientation = wxHORIZONTAL;
+	Freeze();
+
+	const int wrapSizerOrientation = wxHORIZONTAL;
 
 	wxWrapSizer * generalSettingsSizer = new wxWrapSizer(wrapSizerOrientation);
 	wxStaticBox * generalSettingsBox = new wxStaticBox(this, wxID_ANY, "General", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "General");
@@ -171,6 +173,8 @@ SettingsManagerPanel::SettingsManagerPanel(std::shared_ptr<ModManager> modManage
 	settingsPanelSizer->AddGrowableCol(0, 3);
 	settingsPanelSizer->AddGrowableCol(1, 1);
 	SetSizerAndFit(settingsPanelSizer);
+
+	Thaw();
 
 	for(SettingPanel * settingPanel : m_settingsPanels) {
 		m_settingModifiedConnections.push_back(settingPanel->settingModified.connect(std::bind(&SettingsManagerPanel::onSettingModified, this, std::placeholders::_1)));

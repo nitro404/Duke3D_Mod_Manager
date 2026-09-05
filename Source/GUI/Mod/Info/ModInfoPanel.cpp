@@ -67,6 +67,8 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	, m_downloadsPanel(nullptr) {
 	SetScrollRate(5, 5);
 
+	Freeze();
+
 	m_modNameLabel = new wxStaticText(this, wxID_ANY, "Mod Name:", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	m_modNameLabel->SetFont(m_modNameLabel->GetFont().MakeBold());
 	m_modNameText = new wxStaticText(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
@@ -222,6 +224,8 @@ ModInfoPanel::ModInfoPanel(std::shared_ptr<ModCollection> mods, std::shared_ptr<
 	modPanelSizer->Add(m_similarModsPanel, 1, wxEXPAND | wxHORIZONTAL);
 
 	SetSizer(modPanelSizer);
+
+	Thaw();
 }
 
 ModInfoPanel::~ModInfoPanel() {

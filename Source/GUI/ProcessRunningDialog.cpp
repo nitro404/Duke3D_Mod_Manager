@@ -90,7 +90,9 @@ ProcessRunningDialog::ProcessRunningDialog(wxWindow * parent, const std::string 
 	SetIcon(wxICON(D3DMODMGR_ICON));
 #endif // D3DMODMGR_ICON
 
-	int border = 5;
+	Freeze();
+
+	const int border = 5;
 
 	wxPanel * contentsPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER);
 
@@ -111,6 +113,8 @@ ProcessRunningDialog::ProcessRunningDialog(wxWindow * parent, const std::string 
 	processRunningDialogSizer->Add(contentsPanel, 1, wxEXPAND | wxALL, border);
 	SetSizer(processRunningDialogSizer);
 	Fit();
+
+	Thaw();
 
 	Bind(EVENT_PROCESS_STATUS_UPDATED, &ProcessRunningDialog::onProcessStatusUpdated, this);
 	Bind(EVENT_PROCESS_TERMINATED, &ProcessRunningDialog::onProcessTerminated, this);

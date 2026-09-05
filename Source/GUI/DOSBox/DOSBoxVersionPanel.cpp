@@ -27,6 +27,8 @@ DOSBoxVersionPanel::DOSBoxVersionPanel(std::shared_ptr<DOSBoxVersion> dosboxVers
 	, m_dosboxConfigurationBox(nullptr)
 	, m_dosboxConfigurationPanel(nullptr)
 	, m_modified(false) {
+	Freeze();
+
 	const DOSBoxVersion * defaultDOSBoxVersion = nullptr;
 
 	for(const DOSBoxVersion * currentDefaultDOSBoxVersion : DOSBoxVersion::DEFAULT_DOSBOX_VERSIONS) {
@@ -36,7 +38,7 @@ DOSBoxVersionPanel::DOSBoxVersionPanel(std::shared_ptr<DOSBoxVersion> dosboxVers
 		}
 	}
 
-	int border = 5;
+	const int border = 5;
 
 	wxWrapSizer * dosboxInformationSizer = new wxWrapSizer(wxHORIZONTAL);
 	wxStaticBox * dosboxInformationBox = new wxStaticBox(this, wxID_ANY, "Information", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT, "Information");
@@ -128,6 +130,8 @@ DOSBoxVersionPanel::DOSBoxVersionPanel(std::shared_ptr<DOSBoxVersion> dosboxVers
 	dosboxVersionSizer->AddGrowableCol(0, 3);
 	dosboxVersionSizer->AddGrowableCol(1, 1);
 	SetSizerAndFit(dosboxVersionSizer);
+
+	Thaw();
 
 	m_dosboxVersionModifiedConnection = m_dosboxVersion->modified.connect(std::bind(&DOSBoxVersionPanel::onDOSBoxVersionModified, this, std::placeholders::_1));
 
