@@ -142,7 +142,7 @@ void ProcessRunningDialog::setProcess(std::shared_ptr<Process> process) {
 }
 
 void ProcessRunningDialog::close() {
-	if(!m_process->isRunning()) {
+	if(m_process == nullptr || !m_process->isRunning()) {
 		return;
 	}
 
