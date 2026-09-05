@@ -111,9 +111,9 @@ hunter_config(TIFF
 
 # NanoSVG is used by wxWidgets.
 hunter_config(nanosvg
-	URL "https://github.com/Telefrag-Software/nanosvg/archive/refs/heads/hunter-2025-11-21.zip"
-	VERSION "2025.11.21"
-	SHA1 "a5e35c0ad9a3784b0627b84ce03c98de211d112d"
+	URL "https://github.com/Telefrag-Software/nanosvg/archive/refs/heads/hunter-2026-07-09.zip"
+	VERSION "2026.07.09"
+	SHA1 "f594ba47545022c951a29c19c701bbea68591169"
 )
 
 # PCRE2 is used by wxWidgets.
