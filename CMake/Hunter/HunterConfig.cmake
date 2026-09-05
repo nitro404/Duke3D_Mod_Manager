@@ -208,9 +208,9 @@ hunter_config(WebP
 )
 
 hunter_config(wxWidgets
-	URL "https://github.com/Telefrag-Software/wxWidgets/archive/refs/heads/hunter-3.3.1.1.zip"
-	VERSION "3.3.1.1"
-	SHA1 "a3bdf3eb7e2e5bf85a59170c056a16528a663845"
+	URL "https://github.com/Telefrag-Software/wxWidgets/archive/refs/heads/hunter-3.3.3.0.zip"
+	VERSION "3.3.3.0"
+	SHA1 "ccd70e3988a5a9ed745bb411c388a4d2d585d9a4"
 	CMAKE_ARGS
 		wxBUILD_MONOLITHIC=ON
 		wxBUILD_SHARED=OFF
