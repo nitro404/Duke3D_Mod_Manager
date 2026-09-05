@@ -17,9 +17,12 @@
 	#include <wx/wx.h>
 #endif
 
+#include <wx/progdlg.h>
+
 #include <memory>
 
 class LogSinkWX;
+class ModManagerInitializationProgressUpdateEvent;
 class ModManagerInitializationDoneEvent;
 
 class ModManagerApplication : public wxApp {
@@ -40,6 +43,7 @@ public:
 private:
 	void initialize();
 	void showWindow();
+	void onInitializationProgressUpdate(ModManagerInitializationProgressUpdateEvent & event);
 	void onInitializationDone(ModManagerInitializationDoneEvent & event);
 	void onReloadRequested();
 
@@ -50,6 +54,8 @@ private:
 	ModManagerFrame * m_newModManagerFrame;
 	boost::signals2::connection m_modManagerFrameReloadRequestedConnection;
 	bool m_reloadRequired;
+	std::future<bool> m_initializeFuture;
+	std::unique_ptr<wxProgressDialog> m_initializingProgressDialog;
 	boost::signals2::connection m_modManagerInitializationProgressConnection;
 
 	ModManagerApplication(const ModManagerApplication &) = delete;

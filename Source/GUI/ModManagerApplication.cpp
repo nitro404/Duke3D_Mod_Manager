@@ -19,7 +19,6 @@
 #include <tiffio.h>
 #include <wx/app.h>
 #include <wx/cmdline.h>
-#include <wx/progdlg.h>
 #include <wx/version.h>
 
 #if !wxUSE_UNICODE || wxUSE_UNICODE_UTF8
@@ -41,6 +40,47 @@
 
 #define QUOTE(name) #name
 #define TOSTRING(macro) QUOTE(macro)
+
+wxDECLARE_EVENT(EVENT_INITIALIZATION_PROGRESS_UPDATE, ModManagerInitializationProgressUpdateEvent);
+
+class ModManagerInitializationProgressUpdateEvent final : public wxEvent {
+public:
+	ModManagerInitializationProgressUpdateEvent(uint8_t initializationStep = 0u, uint8_t initializationStepCount = 0u, std::string description = {})
+		: wxEvent(0, EVENT_INITIALIZATION_PROGRESS_UPDATE)
+		, m_initializationStep(initializationStep)
+		, m_initializationStepCount(initializationStepCount)
+		, m_description(description) { }
+
+	~ModManagerInitializationProgressUpdateEvent() override { }
+
+	// wxEvent Virtuals
+	wxEvent * Clone() const override {
+		return new ModManagerInitializationProgressUpdateEvent(*this);
+	}
+
+	uint8_t getInitializationStep() const {
+		return m_initializationStep;
+	}
+
+	uint8_t getInitializationStepCount() const {
+		return m_initializationStepCount;
+	}
+
+	const std::string & getDescription() const {
+		return m_description;
+	}
+
+	DECLARE_DYNAMIC_CLASS(ModManagerInitializationProgressUpdateEvent);
+private:
+
+	uint8_t m_initializationStep;
+	uint8_t m_initializationStepCount;
+	std::string m_description;
+};
+
+IMPLEMENT_DYNAMIC_CLASS(ModManagerInitializationProgressUpdateEvent, wxEvent);
+
+wxDEFINE_EVENT(EVENT_INITIALIZATION_PROGRESS_UPDATE, ModManagerInitializationProgressUpdateEvent);
 
 wxDECLARE_EVENT(EVENT_INITIALIZATION_DONE, ModManagerInitializationDoneEvent);
 
@@ -138,50 +178,40 @@ void ModManagerApplication::initialize() {
 		}
 	}
 
-	std::unique_ptr<wxProgressDialog> initializingProgressDialog(std::make_unique<wxProgressDialog>(
-		"Initializing",
-		BASE_INITIALIZATION_MESSAGE,
-		m_modManager->numberOfInitializationSteps(),
-		nullptr,
-		wxPD_AUTO_HIDE | wxPD_CAN_ABORT
-	));
+	m_initializingProgressDialog  = std::make_unique<wxProgressDialog>("Initializing", BASE_INITIALIZATION_MESSAGE, m_modManager->numberOfInitializationSteps(), nullptr, wxPD_AUTO_HIDE | wxPD_CAN_ABORT);
 
 #if defined(D3DMODMGR_ICON)
 	initializingProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
 #endif // D3DMODMGR_ICON
 
-	initializingProgressDialog->Fit();
+	m_initializingProgressDialog->Fit();
 
-	m_modManagerInitializationProgressConnection = m_modManager->initializationProgress.connect([this, &initializingProgressDialog](uint8_t initializationStep, uint8_t initializationStepCount, std::string description) {
-		bool updateResult = initializingProgressDialog->Update(initializationStep, fmt::format("{}\n{}...", BASE_INITIALIZATION_MESSAGE, description));
-		initializingProgressDialog->Fit();
-
-		return updateResult;
+	m_modManagerInitializationProgressConnection = m_modManager->initializationProgress.connect([this](uint8_t initializationStep, uint8_t initializationStepCount, std::string description) {
+		QueueEvent(new ModManagerInitializationProgressUpdateEvent(initializationStep, initializationStepCount, std::move(description)));
 	});
 
+	Bind(EVENT_INITIALIZATION_PROGRESS_UPDATE, &ModManagerApplication::onInitializationProgressUpdate, this);
 	Bind(EVENT_INITIALIZATION_DONE, &ModManagerApplication::onInitializationDone, this);
 
 	bool aborted = false;
 
-	std::future<bool> initializeFuture(std::async(std::launch::async, [this, &aborted]() mutable {
-		return m_modManager->initialize(m_arguments, &aborted);
-	}));
+	m_initializeFuture = std::async(std::launch::async, [this]() mutable {
+		const bool initialized = m_modManager->initialize(m_arguments);
 
-	initializeFuture.wait();
+		if(m_modManager->wasInitializationAborted()) {
+			spdlog::info("Initialization aborted!");
 
-	bool initialized = initializeFuture.get();
+			QueueEvent(new ModManagerInitializationDoneEvent(false, true));
+		}
+		else if(!initialized) {
+			QueueEvent(new ModManagerInitializationDoneEvent(false, false));
+		}
+		else {
+			QueueEvent(new ModManagerInitializationDoneEvent(true, true));
+		}
 
-	initializingProgressDialog = nullptr;
-
-	if(aborted) {
-		QueueEvent(new ModManagerInitializationDoneEvent(false, true));
-	}
-	else if(!initialized) {
-		QueueEvent(new ModManagerInitializationDoneEvent(false, false));
-	}
-	else {
-		QueueEvent(new ModManagerInitializationDoneEvent(true, true));
-	}
+		return initialized;
+	});
 }
 
 void ModManagerApplication::reload() {
@@ -194,13 +224,7 @@ void ModManagerApplication::displayArgumentHelp() {
 }
 
 void ModManagerApplication::showWindow() {
-	std::unique_ptr<wxProgressDialog> windowCreationProgressDialog(std::make_unique<wxProgressDialog>(
-		"Initializing",
-		BASE_INITIALIZATION_MESSAGE + "\nInitializing window...",
-		m_modManager->numberOfInitializationSteps() + 2,
-		nullptr,
-		wxPD_AUTO_HIDE | wxPD_CAN_ABORT
-	));
+	std::unique_ptr<wxProgressDialog> windowCreationProgressDialog(std::make_unique<wxProgressDialog>("Initializing", BASE_INITIALIZATION_MESSAGE + "\nInitializing window...", m_modManager->numberOfInitializationSteps() + 2, nullptr, wxPD_AUTO_HIDE | wxPD_CAN_ABORT));
 
 #if defined(D3DMODMGR_ICON)
 	windowCreationProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
@@ -224,7 +248,24 @@ void ModManagerApplication::showWindow() {
 	windowCreationProgressDialog->Update(windowCreationProgressDialog->GetValue() + 1, windowCreationProgressDialog->GetMessage());
 }
 
+void ModManagerApplication::onInitializationProgressUpdate(ModManagerInitializationProgressUpdateEvent & event) {
+	if(m_initializingProgressDialog == nullptr) {
+		return;
+	}
+
+	bool updateResult = m_initializingProgressDialog->Update(event.getInitializationStep(), fmt::format("{}\n{}...", BASE_INITIALIZATION_MESSAGE, event.getDescription()));
+	m_initializingProgressDialog->Fit();
+
+	if(!updateResult) {
+		spdlog::info("Trying to abort initialization.");
+
+		m_modManager->abortInitialization();
+	}
+}
+
 void ModManagerApplication::onInitializationDone(ModManagerInitializationDoneEvent & event) {
+	m_initializingProgressDialog.reset();
+
 	if(event.wasSuccessful()) {
 		showWindow();
 	}
@@ -271,7 +312,9 @@ bool ModManagerApplication::OnInit() {
 		return false;
 	}
 
-	initialize();
+	CallAfter([this]() {
+		initialize();
+	});
 
 	return true;
 }

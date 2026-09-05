@@ -185,6 +185,7 @@ ModManager::ModManager()
 	: Application()
 	, m_initialized(false)
 	, m_initializing(false)
+	, m_initializationAborted(false)
 	, m_localMode(SettingsManager::DEFAULT_LOCAL_MODE)
 	, m_argumentHandlingFailed(false)
 	, m_shouldRunSelectedMod(false)
@@ -249,20 +250,18 @@ bool ModManager::isInitializing() const {
 	return m_initializing;
 }
 
+bool ModManager::wasInitializationAborted() const {
+	return m_initializationAborted;
+}
+
 uint8_t ModManager::numberOfInitializationSteps() const {
 	return NUMBER_OF_INITIALIZATION_STEPS;
 }
 
-bool ModManager::notifyInitializationProgress(const std::string & description, bool * aborted) {
-	if(!*initializationProgress(m_initializationStep++, NUMBER_OF_INITIALIZATION_STEPS, description)) {
-		if(aborted != nullptr) {
-			*aborted = true;
-		}
+bool ModManager::notifyInitializationProgress(const std::string & description) {
+	initializationProgress(m_initializationStep++, NUMBER_OF_INITIALIZATION_STEPS, description);
 
-		return false;
-	}
-
-	return true;
+	return !m_initializationAborted;
 }
 
 void ModManager::notifyModSelectionChanged() {
@@ -288,17 +287,17 @@ void ModManager::notifyModSelectionChanged() {
 	}
 }
 
-bool ModManager::initialize(int argc, char * argv[], bool * aborted) {
+bool ModManager::initialize(int argc, char * argv[]) {
 	std::shared_ptr<ArgumentParser> arguments;
 
 	if(argc != 0) {
 		arguments = std::make_shared<ArgumentParser>(argc, argv);
 	}
 
-	return initialize(arguments, aborted);
+	return initialize(arguments);
 }
 
-bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * aborted) {
+bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments) {
 	std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 	if(m_initialized || m_initializing) {
@@ -310,7 +309,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 	m_initializationStep = 0;
 	m_argumentHandlingFailed = false;
 
-	if(!notifyInitializationProgress("Parsing Arguments", aborted)) {
+	if(!notifyInitializationProgress("Parsing Arguments")) {
 		m_initializing = false;
 		return false;
 	}
@@ -330,7 +329,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 		}
 	}
 
-	if(!notifyInitializationProgress("Loading Settings", aborted)) {
+	if(!notifyInitializationProgress("Loading Settings")) {
 		m_initializing = false;
 		return false;
 	}
@@ -351,7 +350,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 
 	bool skipFileInfoValidation = m_localMode && m_arguments != nullptr && (m_arguments->hasArgument("skip-file-info-validation") || m_arguments->hasArgument("update-new") || m_arguments->hasArgument("update-all"));
 
-	if(!notifyInitializationProgress("Initializing HTTP Service", aborted)) {
+	if(!notifyInitializationProgress("Initializing HTTP Service")) {
 		m_initializing = false;
 		return false;
 	}
@@ -382,7 +381,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 		}
 	}
 
-	if(!notifyInitializationProgress("Initializing Time Zone Data Manager", aborted)) {
+	if(!notifyInitializationProgress("Initializing Time Zone Data Manager")) {
 		m_initializing = false;
 		return false;
 	}
@@ -405,7 +404,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 		}
 	}
 
-	if(!notifyInitializationProgress("Initializing Geo Location Service", aborted)) {
+	if(!notifyInitializationProgress("Initializing Geo Location Service")) {
 		m_initializing = false;
 		return false;
 	}
@@ -418,7 +417,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 		return false;
 	}
 
-	if(!notifyInitializationProgress("Initializing Segment Analytics", aborted)) {
+	if(!notifyInitializationProgress("Initializing Segment Analytics")) {
 		m_initializing = false;
 		return false;
 	}
@@ -450,21 +449,21 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 		}
 	}
 
-	if(!notifyInitializationProgress("Creating DOSBox Command Script Files", aborted)) {
+	if(!notifyInitializationProgress("Creating DOSBox Command Script Files")) {
 		m_initializing = false;
 		return false;
 	}
 
 	createDOSBoxTemplateCommandScriptFiles();
 
-	if(!notifyInitializationProgress("Locating Existing Duke Nukem 3D Game Installations", aborted)) {
+	if(!notifyInitializationProgress("Locating Existing Duke Nukem 3D Game Installations")) {
 		m_initializing = false;
 		return false;
 	}
 
 	GameLocator::getInstance()->locateGames();
 
-	if(!notifyInitializationProgress("Initializing Mod Download Manager", aborted)) {
+	if(!notifyInitializationProgress("Initializing Mod Download Manager")) {
 		m_initializing = false;
 		return false;
 	}
@@ -481,7 +480,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 		m_organizedMods->setDownloadManager(m_downloadManager);
 	}
 
-	if(!notifyInitializationProgress("Initializing DOSBox Manager", aborted)) {
+	if(!notifyInitializationProgress("Initializing DOSBox Manager")) {
 		m_initializing = false;
 		return false;
 	}
@@ -507,7 +506,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 	m_dosboxVersionCollectionSizeChangedConnection = dosboxVersions->sizeChanged.connect(std::bind(&ModManager::onDOSBoxVersionCollectionSizeChanged, this, std::placeholders::_1));
 	m_dosboxVersionCollectionItemModifiedConnection = dosboxVersions->itemModified.connect(std::bind(&ModManager::onDOSBoxVersionCollectionItemModified, this, std::placeholders::_1, std::placeholders::_2));
 
-	if(!notifyInitializationProgress("Initializing Game Manager", aborted)) {
+	if(!notifyInitializationProgress("Initializing Game Manager")) {
 		m_initializing = false;
 		return false;
 	}
@@ -563,7 +562,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 		spdlog::info("Loaded general DOSBox configuration file with {} section{} and {} {}.", sectionCount, sectionCount == 1 ? "" : "s", totalEntryCount, totalEntryCount == 1 ? "entry" : "entries");
 	}
 
-	if(!notifyInitializationProgress("Loading Mod List", aborted)) {
+	if(!notifyInitializationProgress("Loading Mod List")) {
 		m_initializing = false;
 		return false;
 	}
@@ -588,7 +587,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 
 	spdlog::info("Loaded {} mod{} from '{}'.", m_mods->numberOfMods(), m_mods->numberOfMods() == 1 ? "" : "s", getModsListFilePath());
 
-	if(!notifyInitializationProgress("Loading Installed Stand-Alone Mod List", aborted)) {
+	if(!notifyInitializationProgress("Loading Installed Stand-Alone Mod List")) {
 		m_initializing = false;
 		return false;
 	}
@@ -599,7 +598,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 		spdlog::info("Loaded {} installed stand-alone mod configuration{} from '{}'.", m_standAloneMods->numberOfStandAloneMods(), m_standAloneMods->numberOfStandAloneMods() == 1 ? "" : "s", settings->standAloneModsListFilePath);
 	}
 
-	if(!notifyInitializationProgress("Loading Favourite Mod List", aborted)) {
+	if(!notifyInitializationProgress("Loading Favourite Mod List")) {
 		m_initializing = false;
 		return false;
 	}
@@ -611,7 +610,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 		spdlog::info("Loaded {} favourite mod{} from '{}'.", m_favouriteMods->numberOfFavourites(), m_favouriteMods->numberOfFavourites() == 1 ? "" : "s", settings->favouriteModsListFilePath);
 	}
 
-	if(!notifyInitializationProgress("Organizing Mods", aborted)) {
+	if(!notifyInitializationProgress("Organizing Mods")) {
 		m_initializing = false;
 		return false;
 	}
@@ -636,7 +635,7 @@ bool ModManager::initialize(std::shared_ptr<ArgumentParser> arguments, bool * ab
 	m_initialized = true;
 	m_initializing = false;
 
-	if(!notifyInitializationProgress("Checking for Missing Files", aborted)) {
+	if(!notifyInitializationProgress("Checking for Missing Files")) {
 		return false;
 	}
 
@@ -780,6 +779,18 @@ bool ModManager::uninitialize() {
 	}
 
 	m_initialized = false;
+
+	return true;
+}
+
+bool ModManager::abortInitialization() {
+	if(!m_initializing) {
+		return false;
+	}
+
+	spdlog::info("Aborting initialization.");
+
+	m_initializationAborted = true;
 
 	return true;
 }
