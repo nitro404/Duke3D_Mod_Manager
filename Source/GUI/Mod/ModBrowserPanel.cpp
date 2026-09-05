@@ -34,15 +34,64 @@
 #include <filesystem>
 #include <sstream>
 
+wxDECLARE_EVENT(EVENT_LAUNCHED, LaunchedEvent);
+wxDECLARE_EVENT(EVENT_LAUNCH_STATUS_UPDATED, LaunchStatusUpdatedEvent);
 wxDECLARE_EVENT(EVENT_LAUNCH_FAILED, LaunchFailedEvent);
 wxDECLARE_EVENT(EVENT_GAME_PROCESS_TERMINATED, GameProcessTerminatedEvent);
 wxDECLARE_EVENT(EVENT_MOD_INSTALL_PROGRESS, ModInstallProgressEvent);
 wxDECLARE_EVENT(EVENT_MOD_INSTALL_DONE, ModInstallDoneEvent);
 
+class LaunchedEvent final : public wxEvent {
+public:
+	LaunchedEvent()
+		: wxEvent(0, EVENT_LAUNCHED) { }
+
+	~LaunchedEvent() override { }
+
+	// wxEvent Virtuals
+	wxEvent * Clone() const override {
+		return new LaunchedEvent(*this);
+	}
+
+	DECLARE_DYNAMIC_CLASS(LaunchedEvent);
+};
+
+IMPLEMENT_DYNAMIC_CLASS(LaunchedEvent, wxEvent);
+
+class LaunchStatusUpdatedEvent final : public wxEvent {
+public:
+	LaunchStatusUpdatedEvent(const std::string & statusMessage = {})
+		: wxEvent(0, EVENT_LAUNCH_STATUS_UPDATED)
+		, m_statusMessage(statusMessage) { }
+
+	~LaunchStatusUpdatedEvent() override { }
+
+	// wxEvent Virtuals
+	wxEvent * Clone() const override {
+		return new LaunchStatusUpdatedEvent(*this);
+	}
+
+	void setStatusMessage(const std::string & statusMessage) {
+		m_statusMessage = statusMessage;
+	}
+
+	const std::string & getStatusMessage() const {
+		return m_statusMessage;
+	}
+
+	DECLARE_DYNAMIC_CLASS(LaunchStatusUpdatedEvent);
+
+private:
+	std::string m_statusMessage;
+};
+
+IMPLEMENT_DYNAMIC_CLASS(LaunchStatusUpdatedEvent, wxEvent);
+
 class LaunchFailedEvent final : public wxEvent {
 public:
-	LaunchFailedEvent()
-		: wxEvent(0, EVENT_LAUNCH_FAILED) { }
+	LaunchFailedEvent(const std::string & errorMessage = {})
+		: wxEvent(0, EVENT_LAUNCH_FAILED)
+		, m_errorMessage(errorMessage) { }
 
 	~LaunchFailedEvent() override { }
 
@@ -51,7 +100,18 @@ public:
 		return new LaunchFailedEvent(*this);
 	}
 
+	void setErrorMessage(const std::string & errorMessage) {
+		m_errorMessage = errorMessage;
+	}
+
+	const std::string & getErrorMessage() const {
+		return m_errorMessage;
+	}
+
 	DECLARE_DYNAMIC_CLASS(LaunchFailedEvent);
+
+private:
+	std::string m_errorMessage;
 };
 
 IMPLEMENT_DYNAMIC_CLASS(LaunchFailedEvent, wxEvent);
@@ -137,6 +197,8 @@ private:
 
 IMPLEMENT_DYNAMIC_CLASS(ModInstallDoneEvent, wxEvent);
 
+wxDEFINE_EVENT(EVENT_LAUNCHED, LaunchedEvent);
+wxDEFINE_EVENT(EVENT_LAUNCH_STATUS_UPDATED, LaunchStatusUpdatedEvent);
 wxDEFINE_EVENT(EVENT_LAUNCH_FAILED, LaunchFailedEvent);
 wxDEFINE_EVENT(EVENT_GAME_PROCESS_TERMINATED, GameProcessTerminatedEvent);
 wxDEFINE_EVENT(EVENT_MOD_INSTALL_PROGRESS, ModInstallProgressEvent);
@@ -212,7 +274,9 @@ ModBrowserPanel::ModBrowserPanel(std::shared_ptr<ModManager> modManager, wxWindo
 	m_launchErrorConnection = m_modManager->launchError.connect(std::bind(&ModBrowserPanel::onLaunchError, this, std::placeholders::_1));
 	m_gameProcessTerminatedConnection = m_modManager->gameProcessTerminated.connect(std::bind(&ModBrowserPanel::onGameProcessTerminated, this, std::placeholders::_1, std::placeholders::_2));
 
-	Bind(EVENT_LAUNCH_FAILED, &ModBrowserPanel::onLaunchFailed, this);
+	Bind(EVENT_LAUNCHED, &ModBrowserPanel::onGameLaunched, this);
+	Bind(EVENT_LAUNCH_STATUS_UPDATED, &ModBrowserPanel::onGameLaunchStatusUpdated, this);
+	Bind(EVENT_LAUNCH_FAILED, &ModBrowserPanel::onGameLaunchFailed, this);
 	Bind(EVENT_GAME_PROCESS_TERMINATED, &ModBrowserPanel::onGameProcessEnded, this);
 	Bind(EVENT_MOD_INSTALL_PROGRESS, &ModBrowserPanel::onModInstallProgress, this);
 	Bind(EVENT_MOD_INSTALL_DONE, &ModBrowserPanel::onModInstallDone, this);
@@ -1819,20 +1883,36 @@ void ModBrowserPanel::onLaunchButtonPressed(wxCommandEvent & event) {
 }
 
 void ModBrowserPanel::onLaunched() {
+	QueueEvent(new LaunchedEvent());
+}
+
+void ModBrowserPanel::onLaunchStatus(const std::string & statusMessage) {
+	QueueEvent(new LaunchStatusUpdatedEvent(statusMessage));
+}
+
+void ModBrowserPanel::onLaunchError(const std::string & errorMessage) {
+	QueueEvent(new LaunchFailedEvent(errorMessage));
+}
+
+void ModBrowserPanel::onGameProcessTerminated(uint64_t nativeExitCode, bool forceTerminated) {
+	QueueEvent(new GameProcessTerminatedEvent());
+}
+
+void ModBrowserPanel::onGameLaunched(LaunchedEvent & launchedEvent) {
 	updateUninstallButton();
 
 	m_gameRunningDialog->setProcess(m_modManager->getGameProcess());
 }
 
-void ModBrowserPanel::onLaunchStatus(const std::string & statusMessage) {
+void ModBrowserPanel::onGameLaunchStatusUpdated(LaunchStatusUpdatedEvent & launchStatusUpdatedEvent) {
 	if(m_gameRunningDialog == nullptr) {
 		return;
 	}
 
-	m_gameRunningDialog->setStatus(statusMessage);
+	m_gameRunningDialog->setStatus(launchStatusUpdatedEvent.getStatusMessage());
 }
 
-void ModBrowserPanel::onLaunchError(const std::string & errorMessage) {
+void ModBrowserPanel::onGameLaunchFailed(LaunchFailedEvent & launchFailedEvent) {
 	std::shared_ptr<Mod> selectedMod(m_modManager->getSelectedMod());
 	std::shared_ptr<ModGameVersion> selectedModGameVersion(m_modManager->getSelectedModGameVersion());
 
@@ -1847,7 +1927,7 @@ void ModBrowserPanel::onLaunchError(const std::string & errorMessage) {
 			"See console for more details.",
 			m_activeGameVersion->getLongName(),
 			!fullModName.empty() && selectedModGameVersion != nullptr && !selectedModGameVersion->isStandAlone() ? fmt::format(" with mod '{}'", fullModName) : "",
-			errorMessage
+			launchFailedEvent.getErrorMessage()
 		),
 		"Launch Failed",
 		wxOK | wxICON_ERROR,
@@ -1856,21 +1936,13 @@ void ModBrowserPanel::onLaunchError(const std::string & errorMessage) {
 
 	m_activeGameVersion.reset();
 
-	QueueEvent(new LaunchFailedEvent());
-}
-
-void ModBrowserPanel::onGameProcessTerminated(uint64_t nativeExitCode, bool forceTerminated) {
-	m_activeGameVersion.reset();
-
-	QueueEvent(new GameProcessTerminatedEvent());
-}
-
-void ModBrowserPanel::onLaunchFailed(LaunchFailedEvent & launchFailedEvent) {
 	m_gameRunningDialog->Destroy();
 	m_gameRunningDialog = nullptr;
 }
 
-void ModBrowserPanel::onGameProcessEnded(GameProcessTerminatedEvent & gameProcessTerminatedEvent) { }
+void ModBrowserPanel::onGameProcessEnded(GameProcessTerminatedEvent & gameProcessTerminatedEvent) {
+	m_activeGameVersion.reset();
+}
 
 void ModBrowserPanel::onModInstallProgress(ModInstallProgressEvent & event) {
 	if(m_installModProgressDialog == nullptr) {
