@@ -1883,6 +1883,10 @@ void ModBrowserPanel::onLaunchButtonPressed(wxCommandEvent & event) {
 }
 
 void ModBrowserPanel::onLaunched() {
+	updateUninstallButton();
+
+	m_gameRunningDialog->setProcess(m_modManager->getGameProcess());
+
 	QueueEvent(new LaunchedEvent());
 }
 
@@ -1899,9 +1903,6 @@ void ModBrowserPanel::onGameProcessTerminated(uint64_t nativeExitCode, bool forc
 }
 
 void ModBrowserPanel::onGameLaunched(LaunchedEvent & launchedEvent) {
-	updateUninstallButton();
-
-	m_gameRunningDialog->setProcess(m_modManager->getGameProcess());
 }
 
 void ModBrowserPanel::onGameLaunchStatusUpdated(LaunchStatusUpdatedEvent & launchStatusUpdatedEvent) {
