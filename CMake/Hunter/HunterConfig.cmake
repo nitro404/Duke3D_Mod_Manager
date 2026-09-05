@@ -62,9 +62,9 @@ hunter_config(gcem
 
 # LibJPEG is used by LibTIFF and wxWidgets.
 hunter_config(Jpeg
-	URL "https://codeload.github.com/Telefrag-Software/libjpeg/zip/tags/9f"
-	VERSION "9f"
-	SHA1 "983e8b6e4a508944522f48c2dd680331012a322f"
+	URL "https://codeload.github.com/Telefrag-Software/libjpeg/zip/tags/10"
+	VERSION "10"
+	SHA1 "aae9c426f799c52af649a593d9836833ad9b14b3"
 )
 
 # Lexilla is used by wxWidgets.
