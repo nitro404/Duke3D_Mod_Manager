@@ -605,9 +605,9 @@ bool DOSBoxManagerPanel::installDOSBoxVersion(size_t index) {
 
 	m_installProgressDialog = new wxProgressDialog("Installing", fmt::format("Installing '{}', please wait...", dosboxVersion->getLongName()), 101, this, wxPD_CAN_ABORT | wxPD_REMAINING_TIME);
 
-#if defined(D3DMODMGR_ICON)
+#if defined(WINDOWS)
 	m_installProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
-#endif // D3DMODMGR_ICON
+#endif // WINDOWS
 
 	SignalConnectionGroup dosboxDownloadConnections(
 		dosboxManager->installStatusChanged.connect([this](const std::string & statusMessage) {

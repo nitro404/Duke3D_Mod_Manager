@@ -88,9 +88,9 @@ ProcessRunningDialog::ProcessRunningDialog(wxWindow * parent, const std::string 
 	, m_messageLabel(nullptr) {
 	wxASSERT(wxIsMainThread());
 
-#if defined(D3DMODMGR_ICON)
+#if defined(WINDOWS)
 	SetIcon(wxICON(D3DMODMGR_ICON));
-#endif // D3DMODMGR_ICON
+#endif // WINDOWS
 
 	Freeze();
 

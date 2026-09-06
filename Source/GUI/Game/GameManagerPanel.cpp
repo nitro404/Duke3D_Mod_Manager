@@ -527,9 +527,9 @@ bool GameManagerPanel::installGameVersion(size_t index) {
 
 	m_installProgressDialog = new wxProgressDialog("Installing", fmt::format("Installing '{}', please wait...", gameVersion->getLongName()), 101, this, wxPD_CAN_ABORT | wxPD_REMAINING_TIME);
 
-#if defined(D3DMODMGR_ICON)
+#if defined(WINDOWS)
 	m_installProgressDialog->SetIcon(wxICON(D3DMODMGR_ICON));
-#endif // D3DMODMGR_ICON
+#endif // WINDOWS
 
 	SignalConnectionGroup gameDownloadConnections(
 		m_gameManager->installStatusChanged.connect([this](const std::string & statusMessage) {

@@ -31,9 +31,9 @@ ModManagerFrame::ModManagerFrame()
 	, m_settingsManagerPanel(nullptr) {
 	wxASSERT(wxIsMainThread());
 
-#if defined(D3DMODMGR_ICON)
+#if defined(WINDOWS)
 	SetIcon(wxICON(D3DMODMGR_ICON));
-#endif // D3DMODMGR_ICON
+#endif // WINDOWS
 }
 
 ModManagerFrame::~ModManagerFrame() {
