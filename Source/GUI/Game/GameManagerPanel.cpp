@@ -787,9 +787,7 @@ bool GameManagerPanel::removeGameVersion(size_t gameVersionPanelIndex) {
 	m_gameVersionPanelSignalConnectionGroups[gameVersionPanelIndex].disconnect();
 	m_gameVersionPanelSignalConnectionGroups.erase(m_gameVersionPanelSignalConnectionGroups.begin() + gameVersionPanelIndex);
 
-	GameVersionPanel * gameVersionPanel = getGameVersionPanel(gameVersionPanelIndex);
-	m_notebook->RemovePage(gameVersionPanelIndex);
-	delete gameVersionPanel;
+	m_notebook->DeletePage(gameVersionPanelIndex);
 
 	updateButtons();
 

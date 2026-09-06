@@ -833,9 +833,7 @@ bool DOSBoxManagerPanel::removeDOSBoxVersion(size_t dosboxVersionPanelIndex) {
 	m_dosboxVersionPanelSignalConnectionGroups[dosboxVersionPanelIndex].disconnect();
 	m_dosboxVersionPanelSignalConnectionGroups.erase(m_dosboxVersionPanelSignalConnectionGroups.begin() + dosboxVersionPanelIndex);
 
-	DOSBoxVersionPanel * dosboxVersionPanel = getDOSBoxVersionPanel(dosboxVersionPanelIndex);
-	m_notebook->RemovePage(dosboxVersionPanelIndex);
-	delete dosboxVersionPanel;
+	m_notebook->DeletePage(dosboxVersionPanelIndex);
 
 	updateButtons();
 

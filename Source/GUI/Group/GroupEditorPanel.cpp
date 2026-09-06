@@ -1210,9 +1210,7 @@ bool GroupEditorPanel::closeGroupPanel(size_t groupPanelIndex) {
 	m_groupPanelConnections[groupPanelIndex].disconnect();
 	m_groupPanelConnections.erase(m_groupPanelConnections.begin() + groupPanelIndex);
 
-	GroupPanel * groupPanel = getGroupPanel(groupPanelIndex);
-	m_notebook->RemovePage(groupPanelIndex);
-	delete groupPanel;
+	m_notebook->DeletePage(groupPanelIndex);
 
 	if(SettingsManager::getInstance()->segmentAnalyticsEnabled) {
 		std::map<std::string, std::any> properties;
