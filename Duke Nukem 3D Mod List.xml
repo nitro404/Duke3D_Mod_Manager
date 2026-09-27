@@ -16792,4 +16792,27 @@
 			<download filename="Quest_Town-ModMgrE.zip" filesize="89698532" game="eDuke32" type="Mod Manager Files" state="Native" sha1="67340992e70a83fb0f183b9b4d6cb4277f731e65"/>
 		</downloads>
 	</mod>
+	<mod name="Hectic Realms" id="hectic_realms" type="Total Conversion" version="Demo" website="https://www.moddb.com/mods/hectic-realms">
+		<team>
+			<member name="Mike Norvak"/>
+			<member name="Dan Gaskill" alias="DeeperThought" email="deeper-thought@hotmail.com"/>
+			<member name="Cage"/>
+		</team>
+		<versions>
+			<version id="Demo" release_date="February 24, 2018">
+				<game type="eDuke32" state="Native">
+					<file name="WGR2GAME.CON" size="420701" type="con" sha1="bdfff807892ee5e55ace679dde0ff91aeccc689e"/>
+					<file name="wgr2.def" size="52239" type="def" sha1="b53f9ef66aaec0c093f25687be2b5d1ce0933eef"/>
+					<file name="Hectic_Realms_Demo.zip" size="124227932" type="zip" sha1="956ff6d04736f99b66ceb609d1f52965a3ef3afc"/>
+				</game>
+				<dependencies>
+					<dependency id="wgrealms_2_-_siege_breaker" version="1.201"/>
+				</dependencies>
+			</version>
+		</versions>
+		<downloads>
+			<download filename="HECTIC_REALMS_DEMO.zip" filesize="168071839" version="Demo" game="eDuke32" type="Original Files" sha1="d09376b8d797a635bc4b01c52ef79fb63f17d9bb"/>
+			<download filename="Hectic_Realms_Demo-ModMgrE.zip" filesize="124228110" version="Demo" game="eDuke32" type="Mod Manager Files" state="Native" sha1="dddcc521aa5a348edab4353197ec703e4305be03"/>
+		</downloads>
+	</mod>
 </mods>
